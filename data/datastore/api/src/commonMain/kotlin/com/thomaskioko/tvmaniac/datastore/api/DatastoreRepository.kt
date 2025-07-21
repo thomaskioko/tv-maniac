@@ -62,10 +62,18 @@ interface DatastoreRepository {
      * @return A Flow of the user's preferred language code.
      */
     fun observeLanguage(): Flow<String>
-}
 
-enum class AppTheme(val value: String) {
-    LIGHT_THEME("Light Theme"),
-    DARK_THEME("Light Theme"),
-    SYSTEM_THEME("Light Theme"),
+    /**
+     * Saves the user's preferred list style for the watchlist.
+     *
+     * @param listStyle The [ListStyle] to be saved (GRID or LIST).
+     */
+    suspend fun saveListStyle(listStyle: ListStyle)
+
+    /**
+     * Observes the user's preferred list style for the watchlist.
+     *
+     * @return A Flow of the user's preferred [ListStyle], defaulting to GRID.
+     */
+    fun observeListStyle(): Flow<ListStyle>
 }

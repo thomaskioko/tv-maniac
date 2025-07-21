@@ -12,7 +12,6 @@ import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.UPCOMING_SHOWS
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
-import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_SORT_ORDER
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import com.thomaskioko.tvmaniac.util.startOfDay
@@ -37,14 +36,14 @@ class DefaultUpcomingShowsRepository(
     private val logger: Logger,
 ) : UpcomingShowsRepository {
 
-    // TODO:: Load this from duration repository. Default range is 4 months
-    private val params = UpcomingParams(
-        startDate = dateFormatter.formatDate(startOfDay.toEpochMilliseconds()),
-        endDate = dateFormatter.formatDate(startOfDay.plus(122.days).toEpochMilliseconds()),
-        page = DEFAULT_API_PAGE, // TODO:: Get the page from the dao
-    )
-
     override suspend fun fetchUpcomingShows(forceRefresh: Boolean) {
+        val page = 1L // Always fetch first page for non-paginated requests
+        // TODO:: Load this from duration repository. Default range is 4 months
+        val params = UpcomingParams(
+            startDate = dateFormatter.formatDate(startOfDay.toEpochMilliseconds()),
+            endDate = dateFormatter.formatDate(startOfDay.plus(122.days).toEpochMilliseconds()),
+            page = page,
+        )
         when {
             forceRefresh -> store.fresh(params)
             else -> store.get(params)

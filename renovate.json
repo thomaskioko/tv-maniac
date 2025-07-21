@@ -50,13 +50,6 @@
         "org.jetbrains.compose.material3"
       ],
       "groupName": "Compose"
-    },
-    {
-      "groupName": "Project Plugins",
-      "matchPackagePatterns": [
-        "^plugin\\.tvmaniac\\..*"
-      ],
-      "enabled": false
     }
   ]
 }

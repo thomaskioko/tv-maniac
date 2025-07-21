@@ -75,7 +75,7 @@ class UpcomingShowsStore(
                 }
 
                 requestManagerRepository.upsert(
-                    entityId = trendingShows.page.toLong(),
+                    entityId = UPCOMING_SHOWS.requestId,
                     requestType = UPCOMING_SHOWS.name,
                 )
             }

@@ -122,7 +122,7 @@ jobs:
                 run: ./gradlew recordRoborazziDebug
 
             -   name: Push New Screenshots if Available
-                uses: stefanzweifel/git-auto-commit-action@v6
+                uses: stefanzweifel/git-auto-commit-action@v5
                 if: steps.screenshotsrecord.outcome == 'success'
                 with:
                     file_pattern: '**/*.png'
@@ -324,15 +324,27 @@ jobs:
                         fastlane/logs
 
 
-    swift-format:
+
+    swift-lint:
         runs-on: macos-latest
 
         steps:
             -   name: 🚚 Checkout project
                 uses: actions/checkout@v4
 
-            -   name: 🔍 Check Swift Format
-                run: swiftformat --lint --config ios/.swiftformat --swiftversion 0.55.3 --exclude derived_data ios
+            -   name: 💎 Set up Ruby
+                uses: ruby/setup-ruby@v1
+                with:
+                    bundler-cache: true
+
+            -   name: 📦 Install Swift Lint
+                run: brew install swiftlint
+
+            -   name: 📦 Install dependencies with Bundler
+                run: bundle install
+
+            -   name: 🔍 Run SwiftLint
+                run: bundle exec fastlane ios lint
 
     ios-snapshot-test:
         runs-on: macos-15

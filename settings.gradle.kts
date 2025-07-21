@@ -32,7 +32,7 @@ dependencyResolutionManagement {
 }
 
 plugins {
-    id("com.gradle.develocity") version ("4.0.2")
+    id("com.gradle.develocity") version ("4.1")
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
@@ -142,6 +142,7 @@ include(
     ":domain:seasondetails",
     ":domain:showdetails",
     ":domain:similarshows",
+    ":domain:watchlist",
     ":domain:watchproviders",
     ":i18n:api",
     ":i18n:generator",

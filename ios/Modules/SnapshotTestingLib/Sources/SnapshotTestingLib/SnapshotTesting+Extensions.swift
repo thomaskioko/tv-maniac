@@ -48,7 +48,13 @@ public extension View {
         record recording: Bool = false,
         layout: SwiftUISnapshotLayout = .defaultDevice,
         styles: SnapshotStyles = .all,
-        timeout: TimeInterval = 30,
+        timeout: TimeInterval = {
+            // Use longer timeout in CI environment
+            if ProcessInfo.processInfo.environment["CI"] != nil {
+                return 90
+            }
+            return 30
+        }(),
         file: StaticString = #file,
         testName: String
     ) {

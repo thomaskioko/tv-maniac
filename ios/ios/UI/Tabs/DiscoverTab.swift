@@ -36,26 +36,37 @@ struct DiscoverTab: View {
 
     @ViewBuilder
     private func discoverLoadedContent(state: DiscoverViewState) -> some View {
-        ParallaxView(
-            imageHeight: 550,
-            collapsedImageHeight: 120,
-            header: { _ in
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 0) {
+                PullToRefreshView(
+                    coordinateSpaceName: "scrollView"
+                ) {
+                    await MainActor.run {
+                        presenter.dispatch(action: RefreshData())
+                    }
+                }
+
                 ZStack(alignment: .bottom) {
                     headerContent(shows: state.featuredShows)
                     showInfoOverlay(state.featuredShows.map {
                         $0.toSwift()
                     })
                 }
-            },
-            content: {
+                .frame(height: 550)
+
                 discoverListContent(state: state)
-            },
-            onScroll: { offset in
-                let opacity = -offset - 150
-                let normalizedOpacity = opacity / 200
-                showGlass = max(0, min(1, normalizedOpacity))
             }
-        )
+            .background(
+                GeometryReader { geometry in
+                    Color.clear
+                        .onChange(of: geometry.frame(in: .named("scrollView")).minY) { offset in
+                            let opacity = -offset - 150
+                            let normalizedOpacity = opacity / 200
+                            showGlass = max(0, min(1, normalizedOpacity))
+                        }
+                }
+            )
+        }
         .background(Color.background)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarColor(backgroundColor: .clear)
@@ -64,7 +75,7 @@ struct DiscoverTab: View {
             alignment: .top
         )
         .animation(.easeInOut(duration: 0.25), value: showGlass)
-        .coordinateSpace(name: CoordinateSpaces.scrollView)
+        .coordinateSpace(name: "scrollView")
         .edgesIgnoringSafeArea(.top)
     }
 
@@ -143,10 +154,10 @@ struct DiscoverTab: View {
                         .clipShape(Circle())
                 }
 
-                Button(
-                    action: { presenter.dispatch(action: RefreshData()) }
-                ) {
-                    if uiState.isRefreshing {
+                if uiState.isRefreshing {
+                    Button(
+                        action: { presenter.dispatch(action: RefreshData()) }
+                    ) {
                         Image(systemName: "arrow.clockwise")
                             .font(.avenirNext(size: 17))
                             .foregroundColor(.white)
@@ -160,14 +171,6 @@ struct DiscoverTab: View {
                                     rotationAngle = 360
                                 }
                             }
-                    } else {
-                        Image(systemName: "arrow.clockwise")
-                            .font(.avenirNext(size: 17))
-                            .foregroundColor(.white)
-                            .frame(width: 32, height: 32)
-                            .padding(2)
-                            .background(Color.black.opacity(0.3))
-                            .clipShape(Circle())
                     }
                 }
             }

@@ -7,7 +7,6 @@ struct WatchlistTab: View {
     @StateObject @KotlinStateFlow private var uiState: WatchlistState
     @State private var showListSelection = false
     @State private var isRotating = 0.0
-    @State private var changeListStyle = false // TODO: Get from uiState
     @Namespace private var animation
 
     init(presenter: WatchlistPresenter) {
@@ -17,7 +16,7 @@ struct WatchlistTab: View {
 
     private var searchQueryBinding: Binding<String> {
         Binding(
-            get: { uiState.query ?? "" },
+            get: { uiState.query },
             set: { newValue in
                 let trimmedValue = newValue.trimmingCharacters(in: .whitespaces)
                 if !trimmedValue.isEmpty {
@@ -42,16 +41,23 @@ struct WatchlistTab: View {
         .navigationBarTitleDisplayMode(.inline)
         .disableAutocorrection(true)
         .toolbar {
+            let image = if uiState.isGridMode {
+                "list.bullet"
+            } else {
+                "rectangle.grid.2x2"
+            }
             ToolbarItem(placement: .navigationBarLeading) {
                 HStack {
-                    Button(String(\.label_watchlist_list_style),
-                           systemImage: changeListStyle ? "list.dash" : "square.grid.2x2")
-                    {
+                    Button {
                         withAnimation {
-                            changeListStyle.toggle()
                             presenter.dispatch(action: ChangeListStyleClicked())
                         }
+                    } label: {
+                        Label(String(\.label_watchlist_list_style), systemImage: image)
+                            .labelStyle(.iconOnly)
                     }
+                    .buttonBorderShape(.roundedRectangle(radius: 16))
+                    .buttonStyle(.bordered)
                 }
             }
             ToolbarItem(placement: .principal) {
@@ -66,7 +72,7 @@ struct WatchlistTab: View {
         .searchable(
             text: searchQueryBinding,
             placement: .navigationBarDrawer(displayMode: .always),
-            prompt: String(\.label_watchlist_search_hint)
+            prompt: String(\.label_search_placeholder)
         )
         .disableAutocorrection(true)
         .textInputAutocapitalization(.never)
@@ -76,21 +82,10 @@ struct WatchlistTab: View {
 
     @ViewBuilder
     private var contentView: some View {
-        switch onEnum(of: uiState) {
-        case .loadingShows:
-            CenteredFullScreenView {
-                LoadingIndicatorView()
-            }
-        case let .watchlistContent(state):
-            watchlistContent(state)
-        case let .emptyWatchlist(state):
-            CenteredFullScreenView {
-                FullScreenView(
-                    systemName: "exclamationmark.magnifyingglass",
-                    message: state.message ?? String(\.label_search_empty_results)
-                )
-                .frame(maxWidth: .infinity)
-            }
+        if uiState.items.isEmpty {
+            emptyView
+        } else {
+            watchlistContent(uiState)
         }
     }
 
@@ -137,25 +132,25 @@ struct WatchlistTab: View {
     }
 
     @ViewBuilder
-    private func watchlistContent(_ content: WatchlistContent) -> some View {
-        if !content.list.isEmpty {
+    private func watchlistContent(_ content: WatchlistState) -> some View {
+        if !content.items.isEmpty {
             ScrollView(showsIndicators: false) {
-                if changeListStyle {
+                if !uiState.isGridMode {
                     listViewContent(content)
                 } else {
                     gridViewContent(content)
                 }
             }
-            .animation(.spring(response: 0.4, dampingFraction: 0.8), value: changeListStyle)
+            .animation(.spring(response: 0.4, dampingFraction: 0.8), value: uiState.isGridMode)
         } else {
-            empty
+            emptyView
         }
     }
 
     @ViewBuilder
-    private func listViewContent(_ content: WatchlistContent) -> some View {
+    private func listViewContent(_ state: WatchlistState) -> some View {
         LazyVStack(spacing: 8) {
-            ForEach(content.list, id: \.tmdbId) { item in
+            ForEach(state.items, id: \.tmdbId) { item in
                 WatchlistListItem(item: item, namespace: animation)
                     .onTapGesture {
                         presenter.dispatch(action: WatchlistShowClicked(id: item.tmdbId))
@@ -178,9 +173,9 @@ struct WatchlistTab: View {
     }
 
     @ViewBuilder
-    private func gridViewContent(_ content: WatchlistContent) -> some View {
+    private func gridViewContent(_ state: WatchlistState) -> some View {
         LazyVGrid(columns: WatchlistConstants.columns, spacing: WatchlistConstants.spacing) {
-            ForEach(content.list, id: \.tmdbId) { item in
+            ForEach(state.items, id: \.tmdbId) { item in
                 ZStack(alignment: .bottom) {
                     PosterItemView(
                         title: item.title,
@@ -203,20 +198,17 @@ struct WatchlistTab: View {
     }
 
     @ViewBuilder
-    private var empty: some View {
-        let subtitle = uiState.query?.isEmpty ?? true ? "Add shows to keep track of them" : "Try a different keyword!"
-        if let message = uiState.query?
-            .isEmpty ?? true ? "Your watchlist is empty." : "No results found for '\(uiState.query ?? "")'."
-        {
-            CenteredFullScreenView {
-                FullScreenView(
-                    systemName: "magnifyingglass",
-                    message: message,
-                    subtitle: subtitle,
-                    color: Color.secondary
-                )
-                .frame(maxWidth: .infinity)
-            }
+    private var emptyView: some View {
+        let subtitle = uiState.query.isEmpty ? nil : String(\.label_watchlist_empty_result, parameter: uiState.query)
+
+        CenteredFullScreenView {
+            FullScreenView(
+                systemName: "tray",
+                message: String(\.generic_empty_content),
+                subtitle: subtitle,
+                color: Color.secondary
+            )
+            .frame(maxWidth: .infinity)
         }
     }
 }
