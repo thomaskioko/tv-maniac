@@ -325,18 +325,26 @@ jobs:
 
 
 
-    swift-format:
+    swift-lint:
         runs-on: macos-latest
 
         steps:
             -   name: 🚚 Checkout project
                 uses: actions/checkout@v4
 
+            -   name: 💎 Set up Ruby
+                uses: ruby/setup-ruby@v1
+                with:
+                    bundler-cache: true
+
             -   name: 📦 Install Swift Lint
                 run: brew install swiftlint
 
-            -   name: 🔍 Check Swift Format
-                run: bundle exec fastlane lint
+            -   name: 📦 Install dependencies with Bundler
+                run: bundle install
+
+            -   name: 🔍 Run SwiftLint
+                run: bundle exec fastlane ios lint
 
     ios-snapshot-test:
         runs-on: macos-15
