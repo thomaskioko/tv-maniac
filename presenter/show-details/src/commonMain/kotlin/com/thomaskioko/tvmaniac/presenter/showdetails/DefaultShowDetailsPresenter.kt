@@ -75,7 +75,7 @@ class DefaultShowDetailsPresenter(
         )
     }.stateIn(
         scope = coroutineScope,
-        started = SharingStarted.WhileSubscribed(),
+        started = SharingStarted.WhileSubscribed(5000),
         initialValue = _state.value,
     )
 
