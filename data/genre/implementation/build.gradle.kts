@@ -22,8 +22,10 @@ kotlin {
                 implementation(projects.core.networkUtil)
                 implementation(projects.core.util)
                 implementation(projects.data.database.sqldelight)
+                implementation(projects.data.requestManager.api)
                 implementation(projects.domain.genre)
 
+                implementation(libs.kotlinx.datetime)
                 implementation(libs.sqldelight.extensions)
                 implementation(libs.store5)
             }
