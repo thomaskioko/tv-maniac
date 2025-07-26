@@ -48,7 +48,7 @@ class UpcomingShowsStore(
     },
     sourceOfTruth = SourceOfTruth.of(
         reader = { param ->
-            upcomingShowsDao.observeUpcomingShowsStable(param.page).map { shows ->
+            upcomingShowsDao.observeUpcomingShows(param.page).map { shows ->
                 when {
                     shows.isEmpty() -> null // No data, force fetch
                     !requestManagerRepository.isRequestValid(
