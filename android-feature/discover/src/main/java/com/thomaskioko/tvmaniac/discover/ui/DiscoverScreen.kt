@@ -392,6 +392,7 @@ fun PosterCardsPager(
     modifier: Modifier = Modifier,
     onClick: (Long) -> Unit,
 ) {
+    val memoizedOnClick = remember(onClick) { onClick }
     if (list.isEmpty()) return
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
@@ -405,22 +406,23 @@ fun PosterCardsPager(
             verticalAlignment = Alignment.Bottom,
         ) { currentPage ->
 
+            val currentShow = remember(list, currentPage) { list[currentPage] }
             ParallaxCarouselImage(
                 state = pagerState,
                 currentPage = currentPage,
-                imageUrl = list[currentPage].posterImageUrl,
+                imageUrl = currentShow.posterImageUrl,
                 modifier = Modifier
-                    .clickable(onClick = { onClick(list[currentPage].tmdbId) }),
+                    .clickable(onClick = { memoizedOnClick(currentShow.tmdbId) }),
             ) {
                 ShowCardOverlay(
-                    title = list[currentPage].title,
-                    overview = list[currentPage].overView,
+                    title = currentShow.title,
+                    overview = currentShow.overView,
                 )
             }
         }
 
         if (list.isNotEmpty()) {
-            LaunchedEffect(Unit) {
+            LaunchedEffect(key1 = list.size) {
                 while (true) {
                     delay(4_500)
 
@@ -547,7 +549,10 @@ private fun HorizontalRowContent(
                 state = lazyListState,
                 flingBehavior = rememberSnapperFlingBehavior(lazyListState),
             ) {
-                itemsIndexed(tvShows) { index, tvShow ->
+                itemsIndexed(
+                    items = tvShows,
+                    key = { _, tvShow -> tvShow.tmdbId },
+                ) { index, tvShow ->
                     val value = if (index == 0) 16 else 8
 
                     Spacer(modifier = Modifier.width(value.dp))
