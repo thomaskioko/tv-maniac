@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.data.featuredshows.api.FeaturedShowsDao
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Featured_shows
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.FEATURED_SHOWS_TODAY
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
@@ -55,36 +56,57 @@ class FeaturedShowsStore(
             }
         },
         writer = { _, response ->
-            databaseTransactionRunner {
-                featuredShowsDao.deleteFeaturedShows()
+            withContext(dispatchers.databaseWrite) {
+                databaseTransactionRunner {
+                    featuredShowsDao.deleteFeaturedShows()
 
-                val entries = response.results.map { show ->
-                    val showId = show.id.toLong()
+                    // Prepare batch data
+                    val showsToInsert = mutableListOf<Tvshow>()
+                    val featuredEntries = mutableListOf<Featured_shows>()
 
-                    if (!tvShowsDao.showExists(showId)) {
-                        val placeholder = createShowPlaceholder(
-                            id = showId,
-                            name = show.name,
-                            overview = show.overview,
-                            posterPath = show.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
-                            popularity = show.popularity,
-                            voteAverage = show.voteAverage,
-                            voteCount = show.voteCount.toLong(),
-                            genreIds = show.genreIds,
+                    response.results.forEach { show ->
+                        val showId = show.id.toLong()
+                        val formattedPosterPath = show.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) }
+
+                        // Check and prepare show placeholders for batch insert
+                        if (!tvShowsDao.showExists(showId)) {
+                            showsToInsert.add(
+                                createShowPlaceholder(
+                                    id = showId,
+                                    name = show.name,
+                                    overview = show.overview,
+                                    posterPath = formattedPosterPath,
+                                    popularity = show.popularity,
+                                    voteAverage = show.voteAverage,
+                                    voteCount = show.voteCount.toLong(),
+                                    genreIds = show.genreIds,
+                                ),
+                            )
+                        }
+
+                        featuredEntries.add(
+                            Featured_shows(
+                                id = Id(showId),
+                                name = show.name,
+                                poster_path = formattedPosterPath,
+                                overview = show.overview,
+                            ),
                         )
-                        tvShowsDao.upsert(placeholder)
                     }
 
-                    Featured_shows(
-                        id = Id(showId),
-                        name = show.name,
-                        poster_path = show.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
-                        overview = show.overview,
-                    )
-                }
+                    // Batch insert operations
+                    showsToInsert.chunked(100).forEach { batch ->
+                        batch.forEach { show ->
+                            tvShowsDao.upsert(show)
+                        }
+                    }
 
-                entries.forEach { entry ->
-                    featuredShowsDao.upsert(entry)
+                    // Batch insert featured shows
+                    featuredEntries.chunked(100).forEach { batch ->
+                        batch.forEach { entry ->
+                            featuredShowsDao.upsert(entry)
+                        }
+                    }
                 }
             }
         },
