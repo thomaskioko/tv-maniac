@@ -23,9 +23,17 @@ kotlin {
 
                 api(libs.coroutines.core)
 
+                implementation(libs.kotlinx.datetime)
                 implementation(libs.kotlinx.atomicfu)
                 implementation(libs.sqldelight.extensions)
                 implementation(libs.store5)
+            }
+        }
+
+        commonTest {
+            dependencies {
+                implementation(libs.bundles.unittest)
+                implementation(projects.data.database.testing)
             }
         }
     }

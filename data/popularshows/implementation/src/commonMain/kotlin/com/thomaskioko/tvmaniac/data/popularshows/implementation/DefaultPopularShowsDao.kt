@@ -30,19 +30,23 @@ class DefaultPopularShowsDao(
             popularShowsQueries.insert(
                 id = show.id,
                 page = show.page,
+                name = show.name,
+                poster_path = show.poster_path,
+                overview = show.overview,
             )
         }
     }
 
     override fun observePopularShows(page: Long): Flow<List<ShowEntity>> =
         popularShowsQueries
-            .popularShows { id, pageId, title, imageUrl, inLib ->
+            .entriesInPage(Id(page)) { id, pageId, name, posterPath, overview, inLibrary ->
                 ShowEntity(
                     id = id.id,
                     page = pageId.id,
-                    title = title,
-                    posterPath = imageUrl,
-                    inLibrary = inLib == 1L,
+                    title = name,
+                    posterPath = posterPath,
+                    overview = overview,
+                    inLibrary = inLibrary == 1L,
                 )
             }
             .asFlow()

@@ -7,17 +7,18 @@ import com.thomaskioko.tvmaniac.core.store.usingDispatchers
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.Trending_shows
-import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsDao
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsParams
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.TRENDING_SHOWS_TODAY
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
+import com.thomaskioko.tvmaniac.shows.api.createShowPlaceholder
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResult
 import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.SourceOfTruth
@@ -36,44 +37,61 @@ class TrendingShowsStore(
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<TrendingShowsParams, List<ShowEntity>> by storeBuilder(
     fetcher = apiFetcher { params: TrendingShowsParams ->
-        tmdbRemoteDataSource.getTrendingShows(params.timeWindow)
+        tmdbRemoteDataSource.getTrendingShows(params.timeWindow).also {
+            requestManagerRepository.upsert(
+                entityId = TRENDING_SHOWS_TODAY.requestId,
+                requestType = TRENDING_SHOWS_TODAY.name,
+            )
+        }
     },
     sourceOfTruth = SourceOfTruth.of<TrendingShowsParams, TmdbShowResult, List<ShowEntity>>(
-        reader = { param: TrendingShowsParams -> trendingShowsDao.observeTvShow(param.page) },
+        reader = { param: TrendingShowsParams ->
+            trendingShowsDao.observeTrendingShows(param.page).map { shows ->
+                when {
+                    shows.isEmpty() -> null
+                    !requestManagerRepository.isRequestValid(
+                        requestType = TRENDING_SHOWS_TODAY.name,
+                        threshold = TRENDING_SHOWS_TODAY.duration,
+                    ) -> null
+                    else -> shows
+                }
+            }
+        },
         writer = { _: TrendingShowsParams, trendingShows ->
             databaseTransactionRunner {
-                trendingShows.results.forEach { show ->
-                    tvShowsDao.upsert(
-                        Tvshow(
-                            id = Id(show.id.toLong()),
+                val entries = trendingShows.results.map { show ->
+                    val showId = show.id.toLong()
+
+                    if (!tvShowsDao.showExists(showId)) {
+                        val placeholder = createShowPlaceholder(
+                            id = showId,
                             name = show.name,
                             overview = show.overview,
-                            language = show.originalLanguage,
-                            status = null,
-                            first_air_date = show.firstAirDate?.let { dateFormatter.getYear(it) },
+                            posterPath = show.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
                             popularity = show.popularity,
-                            episode_numbers = null,
-                            last_air_date = null,
-                            season_numbers = null,
-                            vote_average = show.voteAverage,
-                            vote_count = show.voteCount.toLong(),
-                            genre_ids = show.genreIds,
-                            poster_path = show.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
-                            backdrop_path = show.backdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
-                        ),
-                    )
+                            voteAverage = show.voteAverage,
+                            voteCount = show.voteCount.toLong(),
+                            genreIds = show.genreIds,
+                        )
+                        tvShowsDao.upsert(placeholder)
+                    }
 
-                    trendingShowsDao.upsert(
-                        Trending_shows(
-                            id = Id(show.id.toLong()),
-                            page = Id(trendingShows.page.toLong()),
-                        ),
+                    Trending_shows(
+                        id = Id(showId),
+                        page = Id(trendingShows.page.toLong()),
+                        name = show.name,
+                        poster_path = show.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
+                        overview = show.overview,
                     )
                 }
-                requestManagerRepository.upsert(
-                    entityId = TRENDING_SHOWS_TODAY.requestId,
-                    requestType = TRENDING_SHOWS_TODAY.name,
-                )
+
+                if (trendingShows.page == 1) {
+                    trendingShowsDao.deleteTrendingShows()
+                }
+
+                entries.forEach { entry ->
+                    trendingShowsDao.upsert(entry)
+                }
             }
         },
     ).usingDispatchers(

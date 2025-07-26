@@ -5,6 +5,8 @@ import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsDao
 import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsParams
 import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsRepository
 import com.thomaskioko.tvmaniac.db.RecommendedShows
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.RECOMMENDED_SHOWS
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -23,6 +25,7 @@ class DefaultRecommendedShowsRepository(
     private val store: RecommendedShowsStore,
     private val dao: RecommendedShowsDao,
     private val dispatchers: AppCoroutineDispatchers,
+    private val requestManagerRepository: RequestManagerRepository,
 ) : RecommendedShowsRepository {
     override suspend fun fetchRecommendedShows(
         id: Long,
@@ -30,8 +33,14 @@ class DefaultRecommendedShowsRepository(
     ) {
         val key = RecommendedShowsParams(showId = id, page = DEFAULT_API_PAGE)
         val isEmpty = dao.observeRecommendedShows(id).first().isEmpty()
+        val isExpired = requestManagerRepository.isRequestExpired(
+            entityId = id,
+            requestType = RECOMMENDED_SHOWS.name,
+            threshold = RECOMMENDED_SHOWS.duration,
+        )
+
         when {
-            forceRefresh || isEmpty -> store.fresh(key)
+            forceRefresh || isEmpty || isExpired -> store.fresh(key)
             else -> store.get(key)
         }
     }

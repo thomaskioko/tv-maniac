@@ -7,16 +7,17 @@ import com.thomaskioko.tvmaniac.core.store.usingDispatchers
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.Toprated_shows
-import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.TOP_RATED_SHOWS
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
+import com.thomaskioko.tvmaniac.shows.api.createShowPlaceholder
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResult
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsDao
 import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.SourceOfTruth
@@ -35,45 +36,67 @@ class TopRatedShowsStore(
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, List<ShowEntity>> by storeBuilder(
     fetcher = apiFetcher { page ->
-        tmdbRemoteDataSource.getTopRatedShows(page = page)
+        tmdbRemoteDataSource.getTopRatedShows(page = page).also {
+            // Update timestamp BEFORE writing to database to ensure reader validation sees fresh timestamp
+            requestManagerRepository.upsert(
+                entityId = TOP_RATED_SHOWS.requestId,
+                requestType = TOP_RATED_SHOWS.name,
+            )
+        }
     },
     sourceOfTruth = SourceOfTruth.of<Long, TmdbShowResult, List<ShowEntity>>(
-        reader = { page: Long -> topRatedShowsDao.observeTopRatedShows(page) },
-        writer = { _, trendingShows ->
+        reader = { page ->
+            topRatedShowsDao.observeTopRatedShows(page).map { shows ->
+                when {
+                    shows.isEmpty() -> null // No data, force fetch
+                    !requestManagerRepository.isRequestValid(
+                        requestType = TOP_RATED_SHOWS.name,
+                        threshold = TOP_RATED_SHOWS.duration,
+                    ) -> null // Stale data, force fetch
+                    else -> shows // Return show data directly from toprated_shows table - completely stable!
+                }
+            }
+        },
+        writer = { _, topRatedShows ->
             databaseTransactionRunner {
-                trendingShows.results.forEach { show ->
-                    tvShowsDao.upsert(
-                        Tvshow(
-                            id = Id(show.id.toLong()),
+                // Store show data directly in toprated_shows table for complete stability
+                val entries = topRatedShows.results.map { show ->
+                    val showId = show.id.toLong()
+
+                    // Also create placeholder in tvshow table if needed (for other parts of app)
+                    if (!tvShowsDao.showExists(showId)) {
+                        val placeholder = createShowPlaceholder(
+                            id = showId,
                             name = show.name,
                             overview = show.overview,
-                            language = show.originalLanguage,
-                            status = null,
-                            first_air_date = show.firstAirDate?.let { dateFormatter.getYear(it) },
+                            posterPath = show.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
                             popularity = show.popularity,
-                            episode_numbers = null,
-                            last_air_date = null,
-                            season_numbers = null,
-                            vote_average = show.voteAverage,
-                            vote_count = show.voteCount.toLong(),
-                            genre_ids = show.genreIds,
-                            poster_path = show.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
-                            backdrop_path = show.backdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
-                        ),
-                    )
+                            voteAverage = show.voteAverage,
+                            voteCount = show.voteCount.toLong(),
+                            genreIds = show.genreIds,
+                        )
+                        tvShowsDao.upsert(placeholder)
+                    }
 
-                    topRatedShowsDao.upsert(
-                        Toprated_shows(
-                            id = Id(show.id.toLong()),
-                            page = Id(trendingShows.page.toLong()),
-                        ),
+                    // Store show data directly in toprated_shows table
+                    Toprated_shows(
+                        id = Id(showId),
+                        page = Id(topRatedShows.page.toLong()),
+                        name = show.name,
+                        poster_path = show.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
+                        overview = show.overview,
                     )
                 }
 
-                requestManagerRepository.upsert(
-                    entityId = TOP_RATED_SHOWS.requestId,
-                    requestType = TOP_RATED_SHOWS.name,
-                )
+                // Clear existing entries for page 1 to maintain consistency
+                if (topRatedShows.page == 1) {
+                    topRatedShowsDao.deleteTrendingShows()
+                }
+
+                // Insert the new entries
+                entries.forEach { entry ->
+                    topRatedShowsDao.upsert(entry)
+                }
             }
         },
     ).usingDispatchers(
