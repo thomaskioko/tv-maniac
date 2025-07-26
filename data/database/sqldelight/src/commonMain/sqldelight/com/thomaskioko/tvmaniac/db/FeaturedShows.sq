@@ -3,7 +3,9 @@ import com.thomaskioko.tvmaniac.db.TmdbId;
 
 CREATE TABLE IF NOT EXISTS featured_shows (
     `id` INTEGER AS Id<TmdbId> PRIMARY KEY NOT NULL,
-     FOREIGN KEY(`id`) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE
+    `name` TEXT,
+    `poster_path` TEXT,
+    `overview` TEXT
 );
 
 -- indices
@@ -12,11 +14,29 @@ CREATE UNIQUE INDEX IF NOT EXISTS `index_featured_shows_show_id` ON `featured_sh
 
 -- queries
 
+entriesInPage:
+SELECT
+    featured_shows.id,
+    COALESCE(featured_shows.name, '') AS name,
+    featured_shows.poster_path,
+    featured_shows.overview,
+    CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+FROM featured_shows
+LEFT OUTER JOIN watchlist ON featured_shows.id = watchlist.id
+WHERE featured_shows.name IS NOT NULL
+ORDER BY featured_shows.id ASC;
+
 insert:
 INSERT OR IGNORE INTO featured_shows(
-    `id`
+    `id`,
+    `name`,
+    `poster_path`,
+    `overview`
 ) VALUES (
-    :id
+    :id,
+    :name,
+    :poster_path,
+    :overview
 );
 
 featuredShows:
