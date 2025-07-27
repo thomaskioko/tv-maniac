@@ -246,7 +246,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
             page = page,
             poster_path = poster_path,
             overview = overview,
-            name = name
+            name = name,
         )
     }
 }
