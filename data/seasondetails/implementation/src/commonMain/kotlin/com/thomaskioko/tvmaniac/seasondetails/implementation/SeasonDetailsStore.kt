@@ -114,7 +114,7 @@ class SeasonDetailsStore(
 ).validator(
     Validator.by {
         withContext(dispatchers.io) {
-            requestManagerRepository.isRequestExpired(
+            !requestManagerRepository.isRequestExpired(
                 entityId = it.seasonId,
                 requestType = SEASON_DETAILS.name,
                 threshold = SEASON_DETAILS.duration,

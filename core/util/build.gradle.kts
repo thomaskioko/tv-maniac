@@ -7,7 +7,10 @@ tvmaniac {
     useDependencyInjection()
     useSerialization()
 
-    optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
+    optIn(
+        "kotlinx.coroutines.ExperimentalCoroutinesApi",
+        "kotlin.time.ExperimentalTime",
+    )
 }
 
 kotlin {

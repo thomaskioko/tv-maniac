@@ -60,9 +60,9 @@ struct UnauthentivatedProfileView: View {
 }
 
 struct BulletList: View {
-    var listItemSpacing: CGFloat? = nil
+    var listItemSpacing: CGFloat?
     var bullet: String = "•"
-    var bulletWidth: CGFloat? = nil
+    var bulletWidth: CGFloat?
     var bulletAlignment: Alignment = .leading
 
     var listItems: [String] = [

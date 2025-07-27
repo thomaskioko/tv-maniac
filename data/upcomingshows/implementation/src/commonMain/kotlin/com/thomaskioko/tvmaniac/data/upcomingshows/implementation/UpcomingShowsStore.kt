@@ -7,17 +7,17 @@ import com.thomaskioko.tvmaniac.core.store.usingDispatchers
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsDao
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.db.Upcoming_shows
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.UPCOMING_SHOWS
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
+import com.thomaskioko.tvmaniac.shows.api.createShowPlaceholder
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResult
 import com.thomaskioko.tvmaniac.util.FormatterUtil
-import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import dev.zacsweers.metro.Inject
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
@@ -30,7 +30,6 @@ class UpcomingShowsStore(
     private val upcomingShowsDao: UpcomingShowsDao,
     private val tvShowsDao: TvShowsDao,
     private val formatterUtil: FormatterUtil,
-    private val dateFormatter: PlatformDateFormatter,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<UpcomingParams, List<ShowEntity>> by storeBuilder(
@@ -39,45 +38,67 @@ class UpcomingShowsStore(
             page = params.page,
             firstAirDate = params.startDate,
             lastAirDate = params.endDate,
-        )
+        ).also {
+            // Update timestamp BEFORE writing to database to ensure reader validation sees fresh timestamp
+            requestManagerRepository.upsert(
+                entityId = UPCOMING_SHOWS.requestId,
+                requestType = UPCOMING_SHOWS.name,
+            )
+        }
     },
-    sourceOfTruth = SourceOfTruth.of<UpcomingParams, TmdbShowResult, List<ShowEntity>>(
-        reader = { param -> upcomingShowsDao.observeUpcomingShows(param.page) },
-        writer = { _: UpcomingParams, trendingShows: TmdbShowResult ->
+    sourceOfTruth = SourceOfTruth.of(
+        reader = { param ->
+            upcomingShowsDao.observeUpcomingShows(param.page).map { shows ->
+                when {
+                    shows.isEmpty() -> null // No data, force fetch
+                    !requestManagerRepository.isRequestValid(
+                        requestType = UPCOMING_SHOWS.name,
+                        threshold = UPCOMING_SHOWS.duration,
+                    ) -> null // Stale data, force fetch
+                    else -> shows // Return show data directly from upcoming_shows table - completely stable!
+                }
+            }
+        },
+        writer = { _: UpcomingParams, upcomingShows: TmdbShowResult ->
             databaseTransactionRunner {
-                trendingShows.results.forEach { show ->
-                    tvShowsDao.upsert(
-                        Tvshow(
-                            id = Id(show.id.toLong()),
+                // Store show data directly in upcoming_shows table for complete stability
+                val entries = upcomingShows.results.map { show ->
+                    val showId = show.id.toLong()
+
+                    // Also create placeholder in tvshow table if needed (for other parts of app)
+                    if (!tvShowsDao.showExists(showId)) {
+                        val placeholder = createShowPlaceholder(
+                            id = showId,
                             name = show.name,
                             overview = show.overview,
-                            language = show.originalLanguage,
-                            status = null,
-                            first_air_date = show.firstAirDate?.let { dateFormatter.getYear(it) },
+                            posterPath = show.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
                             popularity = show.popularity,
-                            episode_numbers = null,
-                            last_air_date = null,
-                            season_numbers = null,
-                            vote_average = show.voteAverage,
-                            vote_count = show.voteCount.toLong(),
-                            genre_ids = show.genreIds,
-                            poster_path = show.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
-                            backdrop_path = show.backdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
-                        ),
-                    )
+                            voteAverage = show.voteAverage,
+                            voteCount = show.voteCount.toLong(),
+                            genreIds = show.genreIds,
+                        )
+                        tvShowsDao.upsert(placeholder)
+                    }
 
-                    upcomingShowsDao.upsert(
-                        Upcoming_shows(
-                            id = Id(show.id.toLong()),
-                            page = Id(trendingShows.page.toLong()),
-                        ),
+                    // Store show data directly in upcoming_shows table
+                    Upcoming_shows(
+                        id = Id(showId),
+                        page = Id(upcomingShows.page.toLong()),
+                        name = show.name,
+                        poster_path = show.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
+                        overview = show.overview,
                     )
                 }
 
-                requestManagerRepository.upsert(
-                    entityId = UPCOMING_SHOWS.requestId,
-                    requestType = UPCOMING_SHOWS.name,
-                )
+                // Clear existing entries for page 1 to maintain consistency
+                if (upcomingShows.page == 1) {
+                    upcomingShowsDao.deleteUpcomingShows()
+                }
+
+                // Insert the new entries
+                entries.forEach { entry ->
+                    upcomingShowsDao.upsert(entry)
+                }
             }
         },
     ).usingDispatchers(

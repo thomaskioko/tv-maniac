@@ -31,23 +31,12 @@ class DefaultTrendingShowsDao(
             trendingShowsQueries.insert(
                 id = show.id,
                 page = show.page,
+                name = show.name,
+                poster_path = show.poster_path,
+                overview = show.overview,
             )
         }
     }
-
-    override fun observeTvShow(page: Long): Flow<List<ShowEntity>> =
-        trendingShowsQueries
-            .trendingShowsByPage(Id(page)) { id, page, title, imageUrl, inLib ->
-                ShowEntity(
-                    id = id.id,
-                    page = page.id,
-                    title = title,
-                    posterPath = imageUrl,
-                    inLibrary = inLib == 1L,
-                )
-            }
-            .asFlow()
-            .mapToList(dispatchers.io)
 
     override fun getPagedTrendingShows(): PagingSource<Int, ShowEntity> =
         QueryPagingSource(
@@ -81,4 +70,19 @@ class DefaultTrendingShowsDao(
     override fun deleteTrendingShows() {
         trendingShowsQueries.transaction { trendingShowsQueries.deleteAll() }
     }
+
+    override fun observeTrendingShows(page: Long): Flow<List<ShowEntity>> =
+        trendingShowsQueries
+            .entriesInPage(Id(page)) { id, pageId, name, posterPath, overview, inLibrary ->
+                ShowEntity(
+                    id = id.id,
+                    page = pageId.id,
+                    title = name,
+                    posterPath = posterPath,
+                    overview = overview,
+                    inLibrary = inLibrary == 1L,
+                )
+            }
+            .asFlow()
+            .mapToList(dispatchers.io)
 }

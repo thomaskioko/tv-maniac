@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.similar.implementation
 
 import com.thomaskioko.tvmaniac.db.SimilarShows
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.SIMILAR_SHOWS
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsDao
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
@@ -19,13 +21,20 @@ import org.mobilenativefoundation.store.store5.impl.extensions.get
 class DefaultSimilarShowsRepository(
     private val store: SimilarShowStore,
     private val dao: SimilarShowsDao,
+    private val requestManagerRepository: RequestManagerRepository,
 ) : SimilarShowsRepository {
 
     override suspend fun fetchSimilarShows(id: Long, forceRefresh: Boolean) {
         val param = SimilarParams(showId = id, page = DEFAULT_API_PAGE)
         val isEmpty = dao.observeSimilarShows(id).first().isEmpty()
+        val isExpired = requestManagerRepository.isRequestExpired(
+            entityId = id,
+            requestType = SIMILAR_SHOWS.name,
+            threshold = SIMILAR_SHOWS.duration,
+        )
+
         when {
-            forceRefresh || isEmpty -> store.fresh(param)
+            forceRefresh || isEmpty || isExpired -> store.fresh(param)
             else -> store.get(param)
         }
     }

@@ -1,43 +1,62 @@
 #!/bin/sh
 
-echo "Running pre-commit checks..."
+set -e  # Exit immediately if any command fails
+
+echo "🔍 Running pre-commit checks..."
+
+# Store the original directory
+ORIGINAL_DIR=$(pwd)
+
+# Cleanup function to ensure we return to original directory
+cleanup() {
+    cd "$ORIGINAL_DIR"
+}
+trap cleanup EXIT
 
 # Run spotlessCheck to verify code formatting
-echo "Checking code formatting with Spotless..."
-./gradlew spotlessCheck
-
-# Check the exit code of the spotlessCheck command
-if [ $? -ne 0 ]; then
-  echo "❌ Code formatting check failed. Please run './gradlew spotlessApply' to fix formatting issues."
-  exit 1
+echo "📝 Checking code formatting with Spotless..."
+if ! ./gradlew spotlessCheck --quiet; then
+    echo "❌ Code formatting check failed. Please run './gradlew spotlessApply' to fix formatting issues."
+    exit 1
 fi
 
 echo "✅ Code formatting check passed."
 
-# Check Swift code formatting with SwiftFormat
-if [ -d "ios" ]; then
-  echo "Checking Swift code formatting with SwiftFormat..."
+# Check if there are iOS files in the commit
+ios_files=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(swift)$')
 
-  # Check if SwiftFormat is installed
-  if ! command -v swiftformat &> /dev/null; then
-    echo "❌ SwiftFormat is not installed. Please install it using 'brew install swiftformat'."
-    exit 1
-  fi
-
-  # Run SwiftFormat check (lint mode only checks without changing files)
-  cd ios && swiftformat . --config .swiftformat --lint --swiftversion 5.9 --exclude derived_data
-
-  # Check the exit code
-  if [ $? -ne 0 ]; then
-    echo "❌ Swift code formatting check failed. Please run the following command to fix formatting issues:"
-    echo "cd ios && swiftformat . --config .swiftformat --swiftversion 5.9 --exclude derived_data"
-    echo "Note: This will modify your files to match the formatting rules. After fixing, commit again."
-    exit 1
-  fi
-
-  echo "✅ Swift code formatting check passed."
-  cd ..
+if [ -n "$ios_files" ]; then
+    if [ -d "ios" ]; then
+        echo "📱 iOS files detected in commit. Running Swift checks..."
+        
+        # Always use fastlane for consistency
+        if command -v bundle &> /dev/null && [ -f "Gemfile" ]; then
+            echo "🧹 Running SwiftLint check via fastlane..."
+            if ! bundle exec fastlane ios lint; then
+                echo "❌ SwiftLint check failed. Please fix the violations and commit again."
+                echo "💡 Run 'bundle exec fastlane ios lint' to see detailed violations."
+                exit 1
+            fi
+            
+            echo "🔍 Running SwiftFormat check via fastlane..."
+            if ! bundle exec fastlane ios check_swift_format; then
+                echo "❌ Swift code formatting check failed. Please run the following command to fix formatting issues:"
+                echo "bundle exec fastlane ios format_swift_code"
+                echo "Note: This will modify your files to match the formatting rules. After fixing, commit again."
+                exit 1
+            fi
+            
+            echo "✅ All Swift checks passed."
+        else
+            echo "❌ Fastlane/Bundle not available. Please ensure Gemfile exists and run 'bundle install'."
+            exit 1
+        fi
+    else
+        echo "⚠️  iOS files detected in commit but ios directory not found. Skipping Swift checks."
+    fi
+else
+    echo "ℹ️  No iOS files in commit, skipping Swift checks."
 fi
 
-echo "All pre-commit checks passed! 🎉"
+echo "🎉 All pre-commit checks passed!"
 exit 0

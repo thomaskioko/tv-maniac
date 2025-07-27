@@ -5,7 +5,9 @@ import com.thomaskioko.tvmaniac.db.TmdbId;
 CREATE TABLE IF NOT EXISTS trending_shows (
     `id` INTEGER AS Id<TmdbId> PRIMARY KEY NOT NULL,
     `page` INTEGER AS Id<PageId> NOT NULL,
-     FOREIGN KEY(`id`) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE
+    `name` TEXT,
+    `poster_path` TEXT,
+    `overview` TEXT
 );
 
 -- indices
@@ -17,14 +19,34 @@ CREATE UNIQUE INDEX IF NOT EXISTS `index_trending_shows_show_id` ON `trending_sh
 insert:
 INSERT OR REPLACE INTO trending_shows(
     `id`,
-    `page`
+    `page`,
+    `name`,
+    `poster_path`,
+    `overview`
 ) VALUES (
     :id,
-    :page
+    :page,
+    :name,
+    :poster_path,
+    :overview
 );
 
 count:
 SELECT count(*) FROM trending_shows;
+
+entriesInPage:
+SELECT
+    trending_shows.id,
+    trending_shows.page,
+    COALESCE(trending_shows.name, '') AS name,
+    trending_shows.poster_path,
+    trending_shows.overview,
+    CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+FROM trending_shows
+LEFT OUTER JOIN watchlist ON trending_shows.id = watchlist.id
+WHERE trending_shows.page = :page
+AND trending_shows.name IS NOT NULL
+ORDER BY trending_shows.id ASC;
 
 trendingShowsByPage:
 SELECT

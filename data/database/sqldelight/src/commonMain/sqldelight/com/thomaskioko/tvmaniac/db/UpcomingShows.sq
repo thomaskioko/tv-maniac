@@ -5,7 +5,9 @@ import com.thomaskioko.tvmaniac.db.TmdbId;
 CREATE TABLE IF NOT EXISTS upcoming_shows(
     `id` INTEGER AS Id<TmdbId> PRIMARY KEY NOT NULL,
     `page` INTEGER AS Id<PageId> NOT NULL,
-     FOREIGN KEY(`id`) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE
+    `name` TEXT,
+    `poster_path` TEXT,
+    `overview` TEXT
 );
 
 -- indices
@@ -17,11 +19,31 @@ CREATE UNIQUE INDEX IF NOT EXISTS `index_upcoming_shows_show_id` ON `upcoming_sh
 insert:
 INSERT OR REPLACE INTO upcoming_shows(
     `id`,
-    `page`
+    `page`,
+    `name`,
+    `poster_path`,
+    `overview`
 ) VALUES (
     :id,
-    :page
+    :page,
+    :name,
+    :poster_path,
+    :overview
 );
+
+entriesInPage:
+SELECT
+    upcoming_shows.id,
+    upcoming_shows.page,
+    COALESCE(upcoming_shows.name, '') AS name,
+    upcoming_shows.poster_path,
+    upcoming_shows.overview,
+    CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+FROM upcoming_shows
+LEFT OUTER JOIN watchlist ON upcoming_shows.id = watchlist.id
+WHERE upcoming_shows.page = :page
+  AND upcoming_shows.name IS NOT NULL  -- Only return entries with show data
+ORDER BY upcoming_shows.id ASC;
 
 upcomingShowsByPage:
 SELECT

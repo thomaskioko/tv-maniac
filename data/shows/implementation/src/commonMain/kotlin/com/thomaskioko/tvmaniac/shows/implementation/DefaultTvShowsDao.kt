@@ -117,4 +117,56 @@ class DefaultTvShowsDao(
     override fun deleteTvShows() {
         tvShowQueries.transaction { tvShowQueries.deleteAll() }
     }
+
+    override fun getShowById(id: Long): Tvshow? {
+        return tvShowQueries.transactionWithResult {
+            if (!tvShowQueries.exists(Id(id)).executeAsOne()) {
+                return@transactionWithResult null
+            }
+
+            tvShowQueries.tvshowDetails(Id(id)) { showId, name, overview, language, first_air_date,
+                                                  last_air_date, popularity, vote_average, status, vote_count, poster_path,
+                                                  backdrop_path, genre_list, in_library,
+                ->
+
+                val genreIds = genre_list?.split(", ")?.mapNotNull { it.toIntOrNull() } ?: emptyList()
+
+                Tvshow(
+                    id = showId,
+                    name = name,
+                    overview = overview,
+                    language = language,
+                    first_air_date = first_air_date,
+                    last_air_date = last_air_date,
+                    popularity = popularity,
+                    vote_average = vote_average,
+                    status = status,
+                    vote_count = vote_count,
+                    poster_path = poster_path,
+                    backdrop_path = backdrop_path,
+                    genre_ids = genreIds,
+                    episode_numbers = null, // Not available in tvshowDetails query
+                    season_numbers = null, // Not available in tvshowDetails query
+                )
+            }.executeAsOneOrNull()
+        }
+    }
+
+    override fun showExists(id: Long): Boolean {
+        return tvShowQueries.exists(Id(id)).executeAsOne()
+    }
+
+    override fun getShowsByIds(ids: List<Long>): List<ShowEntity> {
+        if (ids.isEmpty()) return emptyList()
+
+        return tvShowQueries.showsByIdsStable(ids.map(::Id)) { id, name, posterPath, overview, inLibrary ->
+            ShowEntity(
+                id = id.id,
+                title = name,
+                posterPath = posterPath,
+                overview = overview,
+                inLibrary = inLibrary == 1L,
+            )
+        }.executeAsList()
+    }
 }

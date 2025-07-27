@@ -5,8 +5,7 @@ import kotlin.Boolean;
 CREATE TABLE watchlist(
     id INTEGER AS Id<TmdbId> PRIMARY KEY,
     created_at INTEGER NOT NULL,
-   `is_synced` INTEGER AS Boolean DEFAULT 0,
-    FOREIGN KEY(id) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE
+   `is_synced` INTEGER AS Boolean DEFAULT 0
 );
 
 -- indices
@@ -83,11 +82,9 @@ WHERE id = ?;
 
 unsyncedWatchlist:
 SELECT
-    tvshow.id
+    watchlist.id
 FROM
-    tvshow
-JOIN
-    watchlist ON tvshow.id = watchlist.id
+    watchlist
 WHERE is_synced = 0;
 
 delete:

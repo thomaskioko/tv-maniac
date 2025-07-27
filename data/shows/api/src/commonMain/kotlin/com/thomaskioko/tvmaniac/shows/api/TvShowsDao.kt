@@ -16,4 +16,10 @@ interface TvShowsDao {
     fun deleteTvShows()
 
     suspend fun shouldUpdateShows(shows: List<Int>): Boolean
+
+    fun getShowById(id: Long): Tvshow?
+
+    fun showExists(id: Long): Boolean
+
+    fun getShowsByIds(ids: List<Long>): List<ShowEntity>
 }

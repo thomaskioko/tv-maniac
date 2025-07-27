@@ -30,19 +30,23 @@ class DefaultUpcomingShowsDao(
             upcomingShowsQueries.insert(
                 id = show.id,
                 page = show.page,
+                name = show.name,
+                poster_path = show.poster_path,
+                overview = show.overview,
             )
         }
     }
 
     override fun observeUpcomingShows(page: Long): Flow<List<ShowEntity>> =
         upcomingShowsQueries
-            .upcomingShowsByPage(Id(page)) { id, page, title, imageUrl, inLib ->
+            .entriesInPage(Id(page)) { id, pageId, name, posterPath, overview, inLibrary ->
                 ShowEntity(
                     id = id.id,
-                    page = page.id,
-                    title = title,
-                    posterPath = imageUrl,
-                    inLibrary = inLib == 1L,
+                    page = pageId.id,
+                    title = name,
+                    posterPath = posterPath,
+                    overview = overview,
+                    inLibrary = inLibrary == 1L,
                 )
             }
             .asFlow()

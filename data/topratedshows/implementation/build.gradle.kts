@@ -31,5 +31,12 @@ kotlin {
                 implementation(libs.store5)
             }
         }
+
+        commonTest {
+            dependencies {
+                implementation(libs.bundles.unittest)
+                implementation(projects.data.database.testing)
+            }
+        }
     }
 }

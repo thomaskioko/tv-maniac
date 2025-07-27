@@ -71,6 +71,9 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
         val popularShow = Popular_shows(
             id = Id(999),
             page = Id(1),
+            name = "New Test Show",
+            poster_path = "/new_test.jpg",
+            overview = "New test overview",
         )
 
         // When
@@ -95,6 +98,9 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
         val existingShow = Popular_shows(
             id = Id(1),
             page = Id(2), // Different page
+            name = "Test Show 1 Updated",
+            poster_path = "/test1_updated.jpg",
+            overview = "Updated test overview",
         )
 
         // When
@@ -103,7 +109,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
         // Then - observePopularShows returns ALL shows, not filtered by page
         dao.observePopularShows(page = 2).test {
             val shows = awaitItem()
-            shows.size shouldBe 2 // Still returns all shows
+            shows.size shouldBe 1 // Still returns all shows
             val updatedShow = shows.find { it.id == 1L }
             updatedShow?.page shouldBe 2L
             cancelAndConsumeRemainingEvents()
@@ -123,6 +129,9 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
             val updatedShow = Popular_shows(
                 id = Id(1),
                 page = Id(3),
+                name = "Test Show 1 Updated",
+                poster_path = "/test1_updated.jpg",
+                overview = "Updated test overview",
             )
             dao.upsert(updatedShow)
 
@@ -132,7 +141,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
         // Verify the show was updated (observePopularShows returns ALL shows regardless of page parameter)
         dao.observePopularShows(page = 3).test {
             val shows = awaitItem()
-            shows.size shouldBe 2 // Still returns all shows
+            shows.size shouldBe 1
             val updatedShow = shows.find { it.id == 1L }
             updatedShow?.page shouldBe 3L
             cancelAndConsumeRemainingEvents()
@@ -190,8 +199,142 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
         }
     }
 
+    @Test
+    fun `should observe popular shows`() = runTest {
+        // Given - shows exist from setup with show data populated
+
+        // When & Then
+        dao.observePopularShows(page = 1).test {
+            val shows = awaitItem()
+            shows.size shouldBe 2
+
+            // Verify show data is correctly returned from stable query
+            val show1 = shows.find { it.id == 1L }
+            show1?.title shouldBe "Test Show 1"
+            show1?.posterPath shouldBe "/test1.jpg"
+            show1?.overview shouldBe "Test overview 1"
+            show1?.inLibrary shouldBe false // Always false from stable query
+
+            val show2 = shows.find { it.id == 2L }
+            show2?.title shouldBe "Test Show 2"
+            show2?.posterPath shouldBe "/test2.jpg"
+            show2?.overview shouldBe "Test overview 2"
+            show2?.inLibrary shouldBe false // Always false from stable query
+
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `stable query should not return shows with null names`() = runTest {
+        // Given - insert a show without name (simulating pre-migration data)
+        popularShowsQueries.insert(
+            id = Id(999),
+            page = Id(1),
+            name = null,
+            poster_path = "/test999.jpg",
+            overview = "Test overview 999",
+        )
+
+        // When & Then
+        dao.observePopularShows(page = 1).test {
+            val shows = awaitItem()
+            // Should only return shows with non-null names (the 2 from setup)
+            shows.size shouldBe 2
+            shows.none { it.id == 999L } shouldBe true
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `stable query should filter by page correctly`() = runTest {
+        // Given - add shows to different pages
+        popularShowsQueries.insert(
+            id = Id(999),
+            page = Id(2),
+            name = "Page 2 Show",
+            poster_path = "/page2.jpg",
+            overview = "Page 2 overview",
+        )
+
+        // When & Then
+        dao.observePopularShows(page = 1).test {
+            val page1Shows = awaitItem()
+            page1Shows.size shouldBe 2 // Only page 1 shows
+            page1Shows.all { it.page == 1L } shouldBe true
+            cancelAndConsumeRemainingEvents()
+        }
+
+        dao.observePopularShows(page = 2).test {
+            val page2Shows = awaitItem()
+            page2Shows.size shouldBe 1 // Only page 2 show
+            page2Shows.all { it.page == 2L } shouldBe true
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should handle empty results`() = runTest {
+        // Given - clear all data
+        dao.deletePopularShows()
+
+        // When & Then
+        dao.observePopularShows(page = 1).test {
+            val shows = awaitItem()
+            shows.size shouldBe 0
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should be reactive to data changes`() = runTest {
+        // Given - initial state from setup
+
+        dao.observePopularShows(page = 1).test {
+            // Initial shows
+            val initialShows = awaitItem()
+            initialShows.size shouldBe 2
+
+            // When - add a new show
+            val newShow = Popular_shows(
+                id = Id(999),
+                page = Id(1),
+                name = "New Reactive Show",
+                poster_path = "/reactive.jpg",
+                overview = "Reactive overview",
+            )
+            dao.upsert(newShow)
+
+            // Then - should emit updated list
+            val updatedShows = awaitItem()
+            updatedShows.size shouldBe 3
+            updatedShows.any { it.id == 999L && it.title == "New Reactive Show" } shouldBe true
+
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should handle COALESCE for empty names correctly`() = runTest {
+        database.popularShowsQueries.transaction {
+            database.popularShowsQueries.insert(
+                id = Id(888),
+                page = Id(1),
+                name = "",
+                poster_path = "/empty.jpg",
+                overview = "Empty name test",
+            )
+        }
+
+        dao.observePopularShows(page = 1).test {
+            val shows = awaitItem()
+            val emptyNameShow = shows.find { it.id == 888L }
+            emptyNameShow?.title shouldBe "" // COALESCE should return empty string
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
     private fun insertTestShows() {
-        // Insert test TV shows first
         database.tvShowQueries.upsert(
             id = Id(1),
             name = "Test Show 1",
@@ -228,15 +371,20 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
             backdrop_path = "/backdrop2.jpg",
         )
 
-        // Insert popular shows
         popularShowsQueries.insert(
             id = Id(1),
             page = Id(1),
+            name = "Test Show 1",
+            poster_path = "/test1.jpg",
+            overview = "Test overview 1",
         )
 
         popularShowsQueries.insert(
             id = Id(2),
             page = Id(1),
+            name = "Test Show 2",
+            poster_path = "/test2.jpg",
+            overview = "Test overview 2",
         )
     }
 }

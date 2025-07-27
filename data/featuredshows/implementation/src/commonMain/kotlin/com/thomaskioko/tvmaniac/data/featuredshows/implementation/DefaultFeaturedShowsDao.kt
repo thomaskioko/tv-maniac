@@ -28,19 +28,22 @@ class DefaultFeaturedShowsDao(
         featuredShowsQueries.transaction {
             featuredShowsQueries.insert(
                 id = show.id,
+                name = show.name,
+                poster_path = show.poster_path,
+                overview = show.overview,
             )
         }
     }
 
     override fun observeFeaturedShows(page: Long): Flow<List<ShowEntity>> =
         featuredShowsQueries
-            .featuredShows { id, title, posterPath, overview, inLibrary ->
+            .entriesInPage { id, name, posterPath, overview, inLibrary ->
                 ShowEntity(
                     id = id.id,
-                    title = title,
+                    title = name,
                     posterPath = posterPath,
-                    inLibrary = inLibrary == 1L,
                     overview = overview,
+                    inLibrary = inLibrary == 1L,
                 )
             }
             .asFlow()

@@ -7,6 +7,8 @@ import com.thomaskioko.tvmaniac.core.store.storeBuilder
 import com.thomaskioko.tvmaniac.core.store.usingDispatchers
 import com.thomaskioko.tvmaniac.db.Genres
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.GENRES
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
@@ -15,12 +17,14 @@ import kotlinx.coroutines.withContext
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
+import org.mobilenativefoundation.store.store5.Validator
 
 @Inject
 @SingleIn(AppScope::class)
 class GenreStore(
     private val genreDao: GenreDao,
     private val tmdbRemoteDataSource: TmdbShowsNetworkDataSource,
+    private val requestManagerRepository: RequestManagerRepository,
     private val scope: AppCoroutineScope,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<Unit, List<ShowGenresEntity>> by storeBuilder(
@@ -61,11 +65,24 @@ class GenreStore(
         reader = { _: Unit -> genreDao.observeGenres() },
         writer = { _: Unit, _ ->
             //  Writing is now handled in the fetcher
+            requestManagerRepository.upsert(
+                entityId = GENRES.requestId,
+                requestType = GENRES.name,
+            )
         },
     ).usingDispatchers(
         readDispatcher = dispatchers.databaseRead,
         writeDispatcher = dispatchers.databaseWrite,
     ),
+).validator(
+    Validator.by {
+        withContext(dispatchers.io) {
+            requestManagerRepository.isRequestValid(
+                requestType = GENRES.name,
+                threshold = GENRES.duration,
+            )
+        }
+    },
 )
     .scope(scope.io)
     .build()

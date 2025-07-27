@@ -21,9 +21,11 @@ import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
+import kotlinx.datetime.DateTimePeriod
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.plus
 import org.mobilenativefoundation.store.store5.impl.extensions.fresh
 import org.mobilenativefoundation.store.store5.impl.extensions.get
-import kotlin.time.Duration.Companion.days
 
 @Inject
 @SingleIn(AppScope::class)
@@ -36,12 +38,14 @@ class DefaultUpcomingShowsRepository(
     private val logger: Logger,
 ) : UpcomingShowsRepository {
 
+    private val duration = dateFormatter.formatDate(startOfDay.plus(DateTimePeriod(days = 122), TimeZone.currentSystemDefault()).toEpochMilliseconds())
+
     override suspend fun fetchUpcomingShows(forceRefresh: Boolean) {
         val page = 1L // Always fetch first page for non-paginated requests
         // TODO:: Load this from duration repository. Default range is 4 months
         val params = UpcomingParams(
             startDate = dateFormatter.formatDate(startOfDay.toEpochMilliseconds()),
-            endDate = dateFormatter.formatDate(startOfDay.plus(122.days).toEpochMilliseconds()),
+            endDate = duration,
             page = page,
         )
         when {
@@ -68,7 +72,7 @@ class DefaultUpcomingShowsRepository(
                 val result = store.fresh(
                     UpcomingParams(
                         startDate = dateFormatter.formatDate(startOfDay.toEpochMilliseconds()),
-                        endDate = dateFormatter.formatDate(startOfDay.plus(122.days).toEpochMilliseconds()),
+                        endDate = duration,
                         page = page,
                     ),
                 )
