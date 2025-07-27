@@ -14,4 +14,8 @@ enum class RequestTypeConfig(val requestId: Long, val duration: Duration) {
     TRENDING_SHOWS_TODAY(8, 1.days),
     UPCOMING_SHOWS(9, 3.days),
     WATCH_PROVIDERS(10, 6.days),
+    GENRES(11, 7.days),
+    GENRE_POSTER(12, 7.days),
+    SHOWS_BY_GENRE(13, 3.days),
+    WATCHLIST_METADATA(14, 1.days),
 }

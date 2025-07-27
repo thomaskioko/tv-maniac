@@ -135,7 +135,7 @@ class ShowDetailsStore(
 ).validator(
     Validator.by {
         withContext(dispatchers.io) {
-            requestManagerRepository.isRequestExpired(
+            !requestManagerRepository.isRequestExpired(
                 entityId = it.id.id,
                 requestType = SHOW_DETAILS.name,
                 threshold = SHOW_DETAILS.duration,

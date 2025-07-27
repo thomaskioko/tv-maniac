@@ -28,6 +28,9 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
             Trending_shows(
                 id = show.id,
                 page = Id(1),
+                name = show.name,
+                poster_path = show.poster_path,
+                overview = show.overview,
             )
                 .insert()
         }
@@ -241,6 +244,9 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
         trendingShowsQueries.insert(
             id = id,
             page = page,
+            poster_path = poster_path,
+            overview = overview,
+            name = name,
         )
     }
 }

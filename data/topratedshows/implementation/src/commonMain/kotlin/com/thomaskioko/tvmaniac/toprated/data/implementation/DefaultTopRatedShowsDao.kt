@@ -31,6 +31,9 @@ class DefaultTopRatedShowsDao(
             topRatedShowsQueries.insert(
                 id = show.id,
                 page = show.page,
+                name = show.name,
+                poster_path = show.poster_path,
+                overview = show.overview,
             )
         }
     }
@@ -40,13 +43,14 @@ class DefaultTopRatedShowsDao(
 
     override fun observeTopRatedShows(page: Long): Flow<List<ShowEntity>> =
         topRatedShowsQueries
-            .topRatedShowByPage(Id(page)) { id, showPage, title, imageUrl, inLib ->
+            .entriesInPage(Id(page)) { id, pageId, name, posterPath, overview, inLibrary ->
                 ShowEntity(
                     id = id.id,
-                    page = showPage.id,
-                    title = title,
-                    posterPath = imageUrl,
-                    inLibrary = inLib == 1L,
+                    page = pageId.id,
+                    title = name,
+                    posterPath = posterPath,
+                    overview = overview,
+                    inLibrary = inLibrary == 1L,
                 )
             }
             .asFlow()

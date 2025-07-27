@@ -34,7 +34,7 @@ class DefaultTrendingShowsRepository(
     private val logger: Logger,
 ) : TrendingShowsRepository {
 
-    override fun observeTrendingShows(page: Long): Flow<List<ShowEntity>> = dao.observeTvShow(page)
+    override fun observeTrendingShows(page: Long): Flow<List<ShowEntity>> = dao.observeTrendingShows(page)
 
     override suspend fun fetchTrendingShows(forceRefresh: Boolean) {
         val page = DEFAULT_API_PAGE

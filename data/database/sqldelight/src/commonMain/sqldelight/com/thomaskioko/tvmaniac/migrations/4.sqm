@@ -1,0 +1,155 @@
+import com.thomaskioko.tvmaniac.db.PageId;
+import com.thomaskioko.tvmaniac.db.TmdbId;
+import kotlin.Boolean;
+
+BEGIN TRANSACTION;
+
+-- Migration 4: Add show data columns to category tables and remove foreign key constraints for discover screen stability
+-- This removes the need for JOINs with tvshow table, preventing reactive emissions from foreign key CASCADE constraints
+
+-- SQLite doesn't support dropping foreign key constraints directly
+-- We need to recreate each category table without foreign key constraints
+
+-- 1. POPULAR_SHOWS table transformation
+CREATE TABLE popular_shows_new(
+    `id` INTEGER AS Id<TmdbId> PRIMARY KEY NOT NULL,
+    `page` INTEGER AS Id<PageId> NOT NULL,
+    `name` TEXT,
+    `poster_path` TEXT,
+    `overview` TEXT
+);
+
+-- Copy existing data from popular_shows
+INSERT INTO popular_shows_new (id, page, name, poster_path, overview)
+SELECT id, page, NULL, NULL, NULL FROM popular_shows;
+
+DROP TABLE popular_shows;
+ALTER TABLE popular_shows_new RENAME TO popular_shows;
+CREATE UNIQUE INDEX IF NOT EXISTS `index_popular_shows_show_id` ON `popular_shows` (`id`);
+
+-- 2. FEATURED_SHOWS table transformation
+CREATE TABLE featured_shows_new(
+    `id` INTEGER AS Id<TmdbId> PRIMARY KEY NOT NULL,
+    `name` TEXT,
+    `poster_path` TEXT,
+    `overview` TEXT
+);
+
+-- Copy existing data from featured_shows
+INSERT INTO featured_shows_new (id, name, poster_path, overview)
+SELECT id, NULL, NULL, NULL FROM featured_shows;
+
+DROP TABLE featured_shows;
+ALTER TABLE featured_shows_new RENAME TO featured_shows;
+CREATE UNIQUE INDEX IF NOT EXISTS `index_featured_shows_show_id` ON `featured_shows` (`id`);
+
+-- 3. TOPRATED_SHOWS table transformation
+CREATE TABLE toprated_shows_new(
+    `id` INTEGER AS Id<TmdbId> PRIMARY KEY NOT NULL,
+    `page` INTEGER AS Id<PageId> NOT NULL,
+    `name` TEXT,
+    `poster_path` TEXT,
+    `overview` TEXT
+);
+
+-- Copy existing data from toprated_shows
+INSERT INTO toprated_shows_new (id, page, name, poster_path, overview)
+SELECT id, page, NULL, NULL, NULL FROM toprated_shows;
+
+DROP TABLE toprated_shows;
+ALTER TABLE toprated_shows_new RENAME TO toprated_shows;
+CREATE UNIQUE INDEX IF NOT EXISTS `index_toprated_shows_show_id` ON `toprated_shows` (`id`);
+
+-- 4. TRENDING_SHOWS table transformation
+CREATE TABLE trending_shows_new(
+    `id` INTEGER AS Id<TmdbId> PRIMARY KEY NOT NULL,
+    `page` INTEGER AS Id<PageId> NOT NULL,
+    `name` TEXT,
+    `poster_path` TEXT,
+    `overview` TEXT
+);
+
+-- Copy existing data from trending_shows
+INSERT INTO trending_shows_new (id, page, name, poster_path, overview)
+SELECT id, page, NULL, NULL, NULL FROM trending_shows;
+
+DROP TABLE trending_shows;
+ALTER TABLE trending_shows_new RENAME TO trending_shows;
+CREATE UNIQUE INDEX IF NOT EXISTS `index_trending_shows_show_id` ON `trending_shows` (`id`);
+
+-- 5. UPCOMING_SHOWS table transformation
+CREATE TABLE upcoming_shows_new(
+    `id` INTEGER AS Id<TmdbId> PRIMARY KEY NOT NULL,
+    `page` INTEGER AS Id<PageId> NOT NULL,
+    `name` TEXT,
+    `poster_path` TEXT,
+    `overview` TEXT
+);
+
+-- Copy existing data from upcoming_shows
+INSERT INTO upcoming_shows_new (id, page, name, poster_path, overview)
+SELECT id, page, NULL, NULL, NULL FROM upcoming_shows;
+
+DROP TABLE upcoming_shows;
+ALTER TABLE upcoming_shows_new RENAME TO upcoming_shows;
+CREATE UNIQUE INDEX IF NOT EXISTS `index_upcoming_shows_show_id` ON `upcoming_shows` (`id`);
+
+-- 6. WATCHLIST table transformation - Remove foreign key constraint for stability
+CREATE TABLE watchlist_new(
+    id INTEGER AS Id<TmdbId> PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    is_synced INTEGER AS Boolean DEFAULT 0
+);
+
+-- Copy data from old watchlist table to new table
+INSERT INTO watchlist_new (id, created_at, is_synced)
+SELECT id, created_at, is_synced FROM watchlist;
+
+-- Drop old table
+DROP TABLE watchlist;
+
+-- Rename new table to original name
+ALTER TABLE watchlist_new RENAME TO watchlist;
+
+-- Recreate the index
+CREATE UNIQUE INDEX IF NOT EXISTS `index_watchlists_watchlist_id` ON `watchlist` (`id`);
+
+-- Populate existing category tables with show data from tvshow table
+-- This ensures existing data remains functional after migration
+
+UPDATE popular_shows
+SET
+    name = (SELECT tvshow.name FROM tvshow WHERE tvshow.id = popular_shows.id),
+    poster_path = (SELECT tvshow.poster_path FROM tvshow WHERE tvshow.id = popular_shows.id),
+    overview = (SELECT tvshow.overview FROM tvshow WHERE tvshow.id = popular_shows.id)
+WHERE EXISTS (SELECT 1 FROM tvshow WHERE tvshow.id = popular_shows.id);
+
+UPDATE featured_shows
+SET
+    name = (SELECT tvshow.name FROM tvshow WHERE tvshow.id = featured_shows.id),
+    poster_path = (SELECT tvshow.poster_path FROM tvshow WHERE tvshow.id = featured_shows.id),
+    overview = (SELECT tvshow.overview FROM tvshow WHERE tvshow.id = featured_shows.id)
+WHERE EXISTS (SELECT 1 FROM tvshow WHERE tvshow.id = featured_shows.id);
+
+UPDATE toprated_shows
+SET
+    name = (SELECT tvshow.name FROM tvshow WHERE tvshow.id = toprated_shows.id),
+    poster_path = (SELECT tvshow.poster_path FROM tvshow WHERE tvshow.id = toprated_shows.id),
+    overview = (SELECT tvshow.overview FROM tvshow WHERE tvshow.id = toprated_shows.id)
+WHERE EXISTS (SELECT 1 FROM tvshow WHERE tvshow.id = toprated_shows.id);
+
+UPDATE trending_shows
+SET
+    name = (SELECT tvshow.name FROM tvshow WHERE tvshow.id = trending_shows.id),
+    poster_path = (SELECT tvshow.poster_path FROM tvshow WHERE tvshow.id = trending_shows.id),
+    overview = (SELECT tvshow.overview FROM tvshow WHERE tvshow.id = trending_shows.id)
+WHERE EXISTS (SELECT 1 FROM tvshow WHERE tvshow.id = trending_shows.id);
+
+UPDATE upcoming_shows
+SET
+    name = (SELECT tvshow.name FROM tvshow WHERE tvshow.id = upcoming_shows.id),
+    poster_path = (SELECT tvshow.poster_path FROM tvshow WHERE tvshow.id = upcoming_shows.id),
+    overview = (SELECT tvshow.overview FROM tvshow WHERE tvshow.id = upcoming_shows.id)
+WHERE EXISTS (SELECT 1 FROM tvshow WHERE tvshow.id = upcoming_shows.id);
+
+COMMIT;

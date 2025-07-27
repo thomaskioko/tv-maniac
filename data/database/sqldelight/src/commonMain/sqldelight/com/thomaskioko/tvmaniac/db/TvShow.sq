@@ -130,3 +130,27 @@ exists:
 SELECT EXISTS(
     SELECT 1 FROM tvshow WHERE id = ?
 );
+
+showsByIds:
+SELECT
+    tvshow.id,
+    tvshow.name,
+    tvshow.poster_path,
+    tvshow.overview,
+    CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+FROM
+    tvshow
+LEFT OUTER JOIN
+    watchlist ON tvshow.id = watchlist.id
+WHERE tvshow.id IN ?;
+
+showsByIdsStable:
+SELECT
+    tvshow.id,
+    tvshow.name,
+    tvshow.poster_path,
+    tvshow.overview,
+    0 AS in_library
+FROM
+    tvshow
+WHERE tvshow.id IN ?;
