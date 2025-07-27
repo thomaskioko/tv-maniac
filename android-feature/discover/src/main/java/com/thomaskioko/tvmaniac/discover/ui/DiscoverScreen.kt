@@ -551,7 +551,7 @@ private fun HorizontalRowContent(
             ) {
                 itemsIndexed(
                     items = tvShows,
-                    key = { _, tvShow -> tvShow.tmdbId },
+                    key = { index, tvShow -> "${category}_${tvShow.tmdbId}_$index" },
                 ) { index, tvShow ->
                     val value = if (index == 0) 16 else 8
 
