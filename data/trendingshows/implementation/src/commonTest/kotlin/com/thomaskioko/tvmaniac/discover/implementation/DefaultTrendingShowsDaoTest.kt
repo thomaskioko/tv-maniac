@@ -121,7 +121,6 @@ internal class DefaultTrendingShowsDaoTest : BaseDatabaseTest() {
         // When & Then
         dao.observeTrendingShows(page = 1).test {
             val shows = awaitItem()
-            // Should only return shows with non-null names (the 2 from setup)
             shows.size shouldBe 2
             shows.none { it.id == 999L } shouldBe true
             cancelAndConsumeRemainingEvents()

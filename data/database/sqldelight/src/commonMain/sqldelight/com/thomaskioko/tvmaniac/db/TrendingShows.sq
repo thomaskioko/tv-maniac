@@ -45,6 +45,7 @@ SELECT
 FROM trending_shows
 LEFT OUTER JOIN watchlist ON trending_shows.id = watchlist.id
 WHERE trending_shows.page = :page
+AND trending_shows.name IS NOT NULL
 ORDER BY trending_shows.id ASC;
 
 trendingShowsByPage:
