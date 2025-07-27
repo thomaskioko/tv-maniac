@@ -5,7 +5,6 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.StackNavigator
 import com.arkivanov.decompose.router.stack.childStack
-import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asStateFlow
 import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowsPresenter
@@ -15,19 +14,17 @@ import com.thomaskioko.tvmaniac.search.presenter.SearchShowsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistPresenter
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.StateFlow
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
-@SingleIn(ActivityScope::class)
-class DefaultHomePresenter private constructor(
+class DefaultHomePresenter(
     @Assisted componentContext: ComponentContext,
-    @Assisted private val onShowClicked: (id: Long) -> Unit,
-    @Assisted private val onMoreShowClicked: (id: Long) -> Unit,
-    @Assisted private val onShowGenreClicked: (id: Long) -> Unit,
+    @Assisted("toShowDetail") val onShowClicked: (id: Long) -> Unit,
+    @Assisted("toMoreShows") val onMoreShowClicked: (id: Long) -> Unit,
+    @Assisted("toGenres") val onShowGenreClicked: (id: Long) -> Unit,
     private val discoverPresenterFactory: DiscoverShowsPresenter.Factory,
     private val watchlistPresenterFactory: WatchlistPresenter.Factory,
     private val searchPresenterFactory: SearchShowsPresenter.Factory,
@@ -86,7 +83,7 @@ class DefaultHomePresenter private constructor(
         when (config) {
             is HomeConfig.Discover -> {
                 Child.Discover(
-                    presenter = discoverPresenterFactory(
+                    presenter = discoverPresenterFactory.create(
                         componentContext = componentContext,
                         onNavigateToShowDetails = { id -> onShowClicked(id) },
                         onNavigateToMore = { id -> onMoreShowClicked(id) },
@@ -117,7 +114,7 @@ class DefaultHomePresenter private constructor(
 
             HomeConfig.Settings -> {
                 Child.Settings(
-                    presenter = settingsPresenterFactory(
+                    presenter = settingsPresenterFactory.create(
                         componentContext = componentContext,
                         launchWebView = {
                             traktAuthManager.launchWebView()
@@ -127,31 +124,13 @@ class DefaultHomePresenter private constructor(
             }
         }
 
-    @Inject
-    @SingleIn(ActivityScope::class)
-    @ContributesBinding(ActivityScope::class, HomePresenter.Factory::class)
-    class Factory(
-        private val discoverPresenterFactory: DiscoverShowsPresenter.Factory,
-        private val watchlistPresenterFactory: WatchlistPresenter.Factory,
-        private val searchPresenterFactory: SearchShowsPresenter.Factory,
-        private val settingsPresenterFactory: SettingsPresenter.Factory,
-        private val traktAuthManager: TraktAuthManager,
-    ) : HomePresenter.Factory {
-        override fun invoke(
-            componentContext: ComponentContext,
-            onShowClicked: (id: Long) -> Unit,
-            onMoreShowClicked: (id: Long) -> Unit,
-            onShowGenreClicked: (id: Long) -> Unit,
-        ): HomePresenter = DefaultHomePresenter(
-            componentContext = componentContext,
-            onShowClicked = onShowClicked,
-            onMoreShowClicked = onMoreShowClicked,
-            onShowGenreClicked = onShowGenreClicked,
-            discoverPresenterFactory = discoverPresenterFactory,
-            watchlistPresenterFactory = watchlistPresenterFactory,
-            searchPresenterFactory = searchPresenterFactory,
-            settingsPresenterFactory = settingsPresenterFactory,
-            traktAuthManager = traktAuthManager,
-        )
+    @AssistedFactory
+    fun interface Factory {
+        fun create(
+            @Assisted componentContext: ComponentContext,
+            @Assisted("toShowDetail") onShowClicked: (id: Long) -> Unit,
+            @Assisted("toMoreShows") onMoreShowClicked: (id: Long) -> Unit,
+            @Assisted("toGenres") onShowGenreClicked: (id: Long) -> Unit,
+        ): DefaultHomePresenter
     }
 }

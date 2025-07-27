@@ -7,7 +7,7 @@ tvmaniac {
         withDeviceTestBuilder = true,
     )
     explicitApi()
-    useKotlinInjectAnvilCompiler()
+    useDependencyInjection()
 }
 
 kotlin {

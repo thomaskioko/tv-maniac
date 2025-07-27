@@ -1,9 +1,9 @@
 package com.thomaskioko.trakt.service.implementation
 
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Provides
 import io.ktor.client.engine.darwin.Darwin
-import me.tatarka.inject.annotations.Provides
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
 
 @ContributesTo(AppScope::class)
 interface TraktPlatformComponent {

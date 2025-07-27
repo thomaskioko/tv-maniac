@@ -10,9 +10,9 @@ import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
 import com.thomaskioko.tvmaniac.genre.GenreRepository
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsRepository
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
-import me.tatarka.inject.annotations.Inject
 
 @Inject
 class DiscoverShowsInteractor(

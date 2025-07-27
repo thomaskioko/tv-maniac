@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.traktauth.implementation
 import android.content.Context
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationRequest
 import net.openid.appauth.AuthorizationResponse

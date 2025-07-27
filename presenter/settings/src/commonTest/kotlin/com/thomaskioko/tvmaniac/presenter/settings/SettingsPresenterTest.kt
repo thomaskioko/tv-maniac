@@ -7,7 +7,6 @@ import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.testing.authenticatedAuthState
 import com.thomaskioko.tvmaniac.settings.presenter.ChangeThemeClicked
-import com.thomaskioko.tvmaniac.settings.presenter.DefaultSettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.DismissThemeClicked
 import com.thomaskioko.tvmaniac.settings.presenter.DismissTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
@@ -40,7 +39,7 @@ class SettingsPresenterTest {
     @BeforeTest
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        presenter = DefaultSettingsPresenter(
+        presenter = SettingsPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             datastoreRepository = datastoreRepository,
             traktAuthRepository = traktAuthRepository,

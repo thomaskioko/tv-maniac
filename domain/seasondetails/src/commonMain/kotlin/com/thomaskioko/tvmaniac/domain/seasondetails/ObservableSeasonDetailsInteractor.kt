@@ -7,9 +7,9 @@ import com.thomaskioko.tvmaniac.domain.seasondetails.model.SeasonDetailsResult
 import com.thomaskioko.tvmaniac.domain.seasondetails.model.SeasonImages
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ObservableSeasonDetailsInteractor(

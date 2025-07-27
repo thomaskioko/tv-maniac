@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.presenter.home
 
 import app.cash.turbine.test
+import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
@@ -22,18 +23,15 @@ class HomePresenterTest {
     private val testDispatcher = StandardTestDispatcher()
     private val traktAuthManager = FakeTraktAuthManager()
 
-    private lateinit var presenter: HomePresenter
+    private lateinit var presenter: DefaultHomePresenter
 
     @BeforeTest
     fun before() {
         Dispatchers.setMain(testDispatcher)
         lifecycle.resume()
 
-        presenter = buildHomePresenterFactory()(
-            componentContext = DefaultComponentContext(lifecycle = lifecycle),
-            onShowClicked = {},
-            onMoreShowClicked = {},
-            onShowGenreClicked = {},
+        presenter = buildHomePresenterFactory(
+            DefaultComponentContext(lifecycle = lifecycle),
         )
     }
 
@@ -74,12 +72,18 @@ class HomePresenterTest {
         }
     }
 
-    private fun buildHomePresenterFactory(): HomePresenter.Factory =
-        DefaultHomePresenter.Factory(
-            discoverPresenterFactory = FakeDiscoverShowsPresenterFactory(),
-            watchlistPresenterFactory = FakeWatchlistPresenterFactory(),
+    private fun buildHomePresenterFactory(
+        componentContext: ComponentContext,
+    ): DefaultHomePresenter =
+        DefaultHomePresenter(
+            componentContext = componentContext,
+            traktAuthManager = traktAuthManager,
             searchPresenterFactory = FakeSearchPresenterFactory(),
             settingsPresenterFactory = FakeSettingsPresenterFactory(),
-            traktAuthManager = traktAuthManager,
+            discoverPresenterFactory = FakeDiscoverShowsPresenterFactory(),
+            watchlistPresenterFactory = FakeWatchlistPresenterFactory(),
+            onShowClicked = {},
+            onMoreShowClicked = {},
+            onShowGenreClicked = {},
         )
 }

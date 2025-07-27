@@ -4,7 +4,7 @@ plugins {
 
 tvmaniac {
     addAndroidMultiplatformTarget()
-    useKotlinInjectAnvilCompiler()
+    useDependencyInjection()
 
     optIn(
         "kotlinx.coroutines.ExperimentalCoroutinesApi",

@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.presenter.home
 
-import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowsPresenter
@@ -10,15 +9,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.Serializable
 
 interface HomePresenter {
-    interface Factory {
-        operator fun invoke(
-            componentContext: ComponentContext,
-            onShowClicked: (id: Long) -> Unit,
-            onMoreShowClicked: (id: Long) -> Unit,
-            onShowGenreClicked: (id: Long) -> Unit,
-        ): HomePresenter
-    }
-
     val homeChildStack: StateFlow<ChildStack<*, Child>>
 
     fun onDiscoverClicked()

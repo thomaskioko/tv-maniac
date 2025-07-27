@@ -3,40 +3,39 @@ package com.thomaskioko.tvmaniac.navigation
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.childStack
-import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asStateFlow
 import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsPresenter
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child
-import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
+import com.thomaskioko.tvmaniac.presenter.home.DefaultHomePresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenter
 import com.thomaskioko.tvmaniac.presenter.trailers.TrailersPresenter
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonDetailsUiParam
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
 class DefaultRootPresenter(
     @Assisted componentContext: ComponentContext,
-    @Assisted private val navigator: RootNavigator,
-    private val homePresenterFactory: HomePresenter.Factory,
+    @Assisted val navigator: RootNavigator,
+    private val homePresenterFactory: DefaultHomePresenter.Factory,
     private val moreShowsPresenterFactory: MoreShowsPresenter.Factory,
     private val showDetailsPresenterFactory: ShowDetailsPresenter.Factory,
     private val seasonDetailsPresenterFactory: SeasonDetailsPresenter.Factory,
     private val trailersPresenterFactory: TrailersPresenter.Factory,
-    coroutineScope: CoroutineScope = componentContext.coroutineScope(),
     datastoreRepository: DatastoreRepository,
 ) : RootPresenter, ComponentContext by componentContext {
+
+    private val coroutineScope: CoroutineScope = componentContext.coroutineScope()
 
     override val childStack: StateFlow<ChildStack<*, Child>> = childStack(
         source = navigator.getStackNavigation(),
@@ -57,25 +56,52 @@ class DefaultRootPresenter(
                 initialValue = ThemeState(),
             )
 
-    private fun createScreen(config: RootDestinationConfig, componentContext: ComponentContext): Child =
+    private fun createScreen(
+        config: RootDestinationConfig,
+        componentContext: ComponentContext,
+    ): Child =
         when (config) {
             is RootDestinationConfig.Home ->
                 Child.Home(
-                    presenter = homePresenterFactory(
+                    presenter = homePresenterFactory.create(
                         componentContext = componentContext,
-                        onShowClicked = { id -> navigator.pushNew(RootDestinationConfig.ShowDetails(id)) },
-                        onMoreShowClicked = { id -> navigator.pushNew(RootDestinationConfig.MoreShows(id)) },
-                        onShowGenreClicked = { id -> navigator.pushNew(RootDestinationConfig.GenreShows(id)) },
+                        onShowClicked = { id ->
+                            navigator.pushNew(
+                                RootDestinationConfig.ShowDetails(
+                                    id,
+                                ),
+                            )
+                        },
+                        onMoreShowClicked = { id ->
+                            navigator.pushNew(
+                                RootDestinationConfig.MoreShows(
+                                    id,
+                                ),
+                            )
+                        },
+                        onShowGenreClicked = { id ->
+                            navigator.pushNew(
+                                RootDestinationConfig.GenreShows(
+                                    id,
+                                ),
+                            )
+                        },
                     ),
                 )
 
             is RootDestinationConfig.ShowDetails ->
                 Child.ShowDetails(
-                    presenter = showDetailsPresenterFactory(
+                    presenter = showDetailsPresenterFactory.create(
                         componentContext = componentContext,
-                        id = config.id,
+                        showId = config.id,
                         onBack = navigator::pop,
-                        onNavigateToShow = { id -> navigator.pushToFront(RootDestinationConfig.ShowDetails(id)) },
+                        onNavigateToShow = { id ->
+                            navigator.pushToFront(
+                                RootDestinationConfig.ShowDetails(
+                                    id,
+                                ),
+                            )
+                        },
                         onNavigateToSeason = { params ->
                             navigator.pushNew(
                                 config = RootDestinationConfig.SeasonDetails(
@@ -87,13 +113,20 @@ class DefaultRootPresenter(
                                 ),
                             )
                         },
-                        onNavigateToTrailer = { id -> navigator.pushNew(RootDestinationConfig.Trailers(id)) },
+                        onNavigateToTrailer = { id ->
+                            navigator.pushNew(
+                                RootDestinationConfig.Trailers(
+                                    id,
+                                ),
+                            )
+                        },
                     ),
                 )
 
             is RootDestinationConfig.SeasonDetails ->
                 Child.SeasonDetails(
-                    presenter = seasonDetailsPresenterFactory(
+                    // TODO:: Navigate to episode details
+                    presenter = seasonDetailsPresenterFactory.create(
                         componentContext,
                         param = config.param,
                         onBack = navigator::pop,
@@ -115,7 +148,7 @@ class DefaultRootPresenter(
                 Child.MoreShows(
                     presenter = moreShowsPresenterFactory(
                         componentContext = componentContext,
-                        id = config.id,
+                        categoryId = config.id,
                         onBack = navigator::pop,
                         onNavigateToShowDetails = { id ->
                             navigator.pushNew(RootDestinationConfig.ShowDetails(id))
@@ -126,29 +159,11 @@ class DefaultRootPresenter(
             is RootDestinationConfig.GenreShows -> Child.GenreShows
         }
 
-    @Inject
-    @SingleIn(ActivityScope::class)
-    @ContributesBinding(ActivityScope::class, RootPresenter.Factory::class)
-    class Factory(
-        private val homePresenterFactory: HomePresenter.Factory,
-        private val moreShowsPresenterFactory: MoreShowsPresenter.Factory,
-        private val showDetailsPresenterFactory: ShowDetailsPresenter.Factory,
-        private val seasonDetailsPresenterFactory: SeasonDetailsPresenter.Factory,
-        private val trailersPresenterFactory: TrailersPresenter.Factory,
-        private val datastoreRepository: DatastoreRepository,
-    ) : RootPresenter.Factory {
-        override fun invoke(
-            componentContext: ComponentContext,
-            navigator: RootNavigator,
-        ): RootPresenter = DefaultRootPresenter(
-            componentContext = componentContext,
-            navigator = navigator,
-            homePresenterFactory = homePresenterFactory,
-            moreShowsPresenterFactory = moreShowsPresenterFactory,
-            showDetailsPresenterFactory = showDetailsPresenterFactory,
-            seasonDetailsPresenterFactory = seasonDetailsPresenterFactory,
-            trailersPresenterFactory = trailersPresenterFactory,
-            datastoreRepository = datastoreRepository,
-        )
+    @AssistedFactory
+    fun interface Factory {
+        fun create(
+            @Assisted componentContext: ComponentContext,
+            @Assisted navigator: RootNavigator,
+        ): DefaultRootPresenter
     }
 }

@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.util
 
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import platform.Foundation.NSNumber
 import platform.Foundation.NSNumberFormatter
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 import kotlin.math.floor
 import kotlin.math.log10
 import kotlin.math.pow

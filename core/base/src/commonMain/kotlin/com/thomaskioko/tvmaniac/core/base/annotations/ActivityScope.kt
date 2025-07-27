@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.core.base.annotations
 
-import me.tatarka.inject.annotations.Scope
+import dev.zacsweers.metro.Scope
 
 @Scope
 annotation class ActivityScope

@@ -3,7 +3,7 @@ plugins {
 }
 
 tvmaniac {
-    useKotlinInjectAnvilCompiler()
+    useDependencyInjection()
     useSerialization()
 
     optIn(
@@ -20,6 +20,7 @@ kotlin {
                 implementation(projects.data.traktauth.api)
                 implementation(projects.domain.discover)
                 implementation(projects.domain.genre)
+                implementation(projects.domain.watchlist)
                 implementation(projects.presenter.discover)
                 implementation(projects.presenter.search)
                 implementation(projects.presenter.settings)

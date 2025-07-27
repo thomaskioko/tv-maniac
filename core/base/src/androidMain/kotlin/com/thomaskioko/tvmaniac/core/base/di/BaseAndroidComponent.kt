@@ -4,11 +4,11 @@ import android.app.Application
 import android.content.Context
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Provides
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import me.tatarka.inject.annotations.Provides
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
 
 @ContributesTo(AppScope::class)
 interface BaseAndroidComponent {
