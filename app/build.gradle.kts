@@ -11,7 +11,7 @@ tvmaniac {
     }
 
     android {
-        useKspAnvil()
+        useKotlinInject()
         useCompose()
         useBaselineProfile()
         useManagedDevices()

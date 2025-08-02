@@ -5,7 +5,6 @@ import com.android.build.api.dsl.LibraryExtension
 import com.android.build.api.dsl.androidLibrary
 import com.thomaskioko.tvmaniac.gradle.plugin.AndroidMultiplatformPlugin
 import com.thomaskioko.tvmaniac.gradle.plugin.AndroidPlugin
-import com.thomaskioko.tvmaniac.gradle.plugin.KotlinMultiplatformPlugin
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.addBundleImplementationDependency
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.addImplementationDependency
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.addKspDependencyForAllTargets
@@ -43,19 +42,11 @@ public abstract class BaseExtension(private val project: Project) : ExtensionAwa
         project.addImplementationDependency(project.getDependency("kotlin-serialization-core"))
     }
 
-    public fun useKspAnvil() {
-        project.plugins.apply("com.google.devtools.ksp")
-
-        project.addKspDependencyForAllTargets(project.getDependency("kotlinInject-compiler"))
-        project.addKspDependencyForAllTargets(project.getDependency("kotlinInject-anvil-compiler"))
-
-    }
-
-    public fun useKotlinInjectAnvilCompiler() {
+    public fun useKotlinInject() {
         project.plugins.apply("com.google.devtools.ksp")
 
         project.addBundleImplementationDependency(project.getBundleDependencies("kotlinInject"))
-
+        project.addKspDependencyForAllTargets(project.getDependency("kotlinInject-compiler"))
         project.addKspDependencyForAllTargets(project.getDependency("kotlinInject-anvil-compiler"))
     }
 
