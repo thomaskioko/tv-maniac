@@ -6,17 +6,19 @@ import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 
 class FakeDatastoreRepository : DatastoreRepository {
 
-    private val appThemeFlow: Channel<AppTheme> = Channel(Channel.UNLIMITED)
+    private val appThemeFlow = MutableStateFlow(AppTheme.SYSTEM_THEME)
     private val authStateFlow: Channel<AuthState> = Channel(Channel.UNLIMITED)
     private val languageFlow: Channel<String> = Channel(Channel.UNLIMITED)
     private val listStyleFlow: Channel<ListStyle> = Channel(Channel.UNLIMITED)
 
     suspend fun setTheme(appTheme: AppTheme) {
-        appThemeFlow.send(appTheme)
+        appThemeFlow.value = appTheme
     }
 
     suspend fun setAuthState(authState: AuthState) {
@@ -28,10 +30,10 @@ class FakeDatastoreRepository : DatastoreRepository {
     }
 
     override fun saveTheme(appTheme: AppTheme) {
-        // no -op
+        appThemeFlow.value = appTheme
     }
 
-    override fun observeTheme(): Flow<AppTheme> = appThemeFlow.receiveAsFlow()
+    override fun observeTheme(): Flow<AppTheme> = appThemeFlow.asStateFlow()
 
     override fun clearAuthState() {
         // no -op

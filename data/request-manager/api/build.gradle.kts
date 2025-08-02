@@ -3,7 +3,7 @@ plugins {
 }
 
 tvmaniac {
-    useKotlinInjectAnvilCompiler()
+    useKotlinInject()
 
     optIn(
         "kotlinx.coroutines.ExperimentalCoroutinesApi",

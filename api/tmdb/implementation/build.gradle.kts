@@ -5,7 +5,7 @@ plugins {
 tvmaniac {
     addAndroidMultiplatformTarget()
     useSerialization()
-    useKotlinInjectAnvilCompiler()
+    useKotlinInject()
 }
 
 kotlin {
