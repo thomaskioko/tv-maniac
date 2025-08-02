@@ -98,6 +98,7 @@ include(
     ":data:recommendedshows:testing",
     ":data:request-manager:api",
     ":data:request-manager:implementation",
+    ":data:request-manager:testing",
     ":data:search:api",
     ":data:search:implementation",
     ":data:search:testing",
