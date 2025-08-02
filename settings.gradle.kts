@@ -72,6 +72,7 @@ include(
     ":core:screenshot-tests",
     ":core:util",
     ":core:util:testing",
+    ":core:testing:di",
     ":core:view",
     ":data:cast:api",
     ":data:cast:implementation",

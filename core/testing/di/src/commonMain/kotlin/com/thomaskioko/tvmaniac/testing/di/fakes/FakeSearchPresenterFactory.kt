@@ -1,25 +1,25 @@
-package com.thomaskioko.tvmaniac.presenter.home.fakes
+package com.thomaskioko.tvmaniac.testing.di.fakes
 
 import com.arkivanov.decompose.ComponentContext
+import com.thomaskioko.tvmaniac.search.presenter.InitialSearchState
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowAction
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowState
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowsPresenter
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 class FakeSearchPresenterFactory : SearchShowsPresenter.Factory {
-
     override fun invoke(
         componentContext: ComponentContext,
         onNavigateToShowDetails: (id: Long) -> Unit,
         onNavigateToGenre: (id: Long) -> Unit,
-    ): SearchShowsPresenter = FakeSearchPresenter()
+    ): SearchShowsPresenter = FakeSearchShowsPresenter()
 }
 
-internal class FakeSearchPresenter : SearchShowsPresenter {
-    override val state: StateFlow<SearchShowState>
-        get() = TODO("Not yet implemented")
+internal class FakeSearchShowsPresenter : SearchShowsPresenter {
+    override val state: StateFlow<SearchShowState> = MutableStateFlow(InitialSearchState())
 
     override fun dispatch(action: SearchShowAction) {
-        TODO("Not yet implemented")
+        // No-op for testing
     }
 }

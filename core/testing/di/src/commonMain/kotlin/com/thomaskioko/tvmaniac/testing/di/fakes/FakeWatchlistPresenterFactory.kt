@@ -1,13 +1,13 @@
-package com.thomaskioko.tvmaniac.presenter.home.fakes
+package com.thomaskioko.tvmaniac.testing.di.fakes
 
 import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistAction
 import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistPresenter
 import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistState
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
-
     override fun invoke(
         componentContext: ComponentContext,
         navigateToShowDetails: (showDetails: Long) -> Unit,
@@ -15,9 +15,9 @@ class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
 }
 
 internal class FakeWatchlistPresenter : WatchlistPresenter {
-    override val state: StateFlow<WatchlistState>
-        get() = TODO("Not yet implemented")
+    override val state: StateFlow<WatchlistState> = MutableStateFlow(WatchlistState())
 
     override fun dispatch(action: WatchlistAction) {
+        // No-op for testing
     }
 }
