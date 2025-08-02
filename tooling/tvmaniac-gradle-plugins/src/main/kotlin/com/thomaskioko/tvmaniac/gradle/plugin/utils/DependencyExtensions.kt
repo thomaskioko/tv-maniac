@@ -13,7 +13,7 @@ internal fun Project.addImplementationDependency(
     dependency: Provider<MinimalExternalModuleDependency>?,
     limitToTargets: Set<KotlinPlatformType>? = null,
 ) {
-    addDependency(
+    addDependencyInternal(
         dependency = dependency,
         notMultiplatformConfiguration = "implementation",
         commonConfiguration = "commonMainImplementation",
@@ -26,7 +26,7 @@ internal fun Project.addBundleImplementationDependency(
     dependency: Provider<ExternalModuleDependencyBundle>,
     limitToTargets: Set<KotlinPlatformType>? = null,
 ) {
-    addBundleDependency(
+    addDependencyInternal(
         dependency = dependency,
         notMultiplatformConfiguration = "implementation",
         commonConfiguration = "commonMainImplementation",
@@ -35,7 +35,7 @@ internal fun Project.addBundleImplementationDependency(
     )
 }
 
-private fun <T> Project.addDependencyInternal(
+private fun <T : Any> Project.addDependencyInternal(
     dependency: Provider<T>?,
     notMultiplatformConfiguration: String,
     commonConfiguration: String,
@@ -45,51 +45,21 @@ private fun <T> Project.addDependencyInternal(
     if (dependency == null) return
 
     val extension = kotlinExtension
-    if (extension is KotlinMultiplatformExtension) {
-        if (limitToTargets == null) {
-            dependencies.add(commonConfiguration, dependency)
-        } else {
-            extension.targets.configureEach {
-                if (it.platformType in limitToTargets) {
-                    dependencies.add(it.targetConfiguration(), dependency)
-                }
-            }
-        }
-    } else {
+    if (extension !is KotlinMultiplatformExtension) {
         dependencies.add(notMultiplatformConfiguration, dependency)
+        return
     }
-}
 
-private fun Project.addBundleDependency(
-    dependency: Provider<ExternalModuleDependencyBundle>?,
-    notMultiplatformConfiguration: String,
-    commonConfiguration: String,
-    targetConfiguration: KotlinTarget.() -> String,
-    limitToTargets: Set<KotlinPlatformType>?,
-) {
-    addDependencyInternal(
-        dependency,
-        notMultiplatformConfiguration,
-        commonConfiguration,
-        targetConfiguration,
-        limitToTargets,
-    )
-}
+    if (limitToTargets == null) {
+        dependencies.add(commonConfiguration, dependency)
+        return
+    }
 
-private fun Project.addDependency(
-    dependency: Provider<MinimalExternalModuleDependency>?,
-    notMultiplatformConfiguration: String,
-    commonConfiguration: String,
-    targetConfiguration: KotlinTarget.() -> String,
-    limitToTargets: Set<KotlinPlatformType>?,
-) {
-    addDependencyInternal(
-        dependency,
-        notMultiplatformConfiguration,
-        commonConfiguration,
-        targetConfiguration,
-        limitToTargets,
-    )
+    extension.targets.configureEach {
+        if (it.platformType in limitToTargets) {
+            dependencies.add(it.targetConfiguration(), dependency)
+        }
+    }
 }
 
 internal fun Project.addKspDependencyForAllTargets(dependency: Provider<MinimalExternalModuleDependency>) =

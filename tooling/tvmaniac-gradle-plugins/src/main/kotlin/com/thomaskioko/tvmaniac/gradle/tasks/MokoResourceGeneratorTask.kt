@@ -11,9 +11,13 @@ import javax.inject.Inject
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.ProjectLayout
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.CacheableTask
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 
 @CacheableTask
@@ -22,6 +26,11 @@ public abstract class MokoResourceGeneratorTask
     objectFactory: ObjectFactory,
     layout: ProjectLayout,
 ) : DefaultTask() {
+
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    public val mokoGeneratedFile: RegularFileProperty = objectFactory.fileProperty()
+        .convention(layout.buildDirectory.file("generated/moko-resources/commonMain/src/com/thomaskioko/tvmaniac/i18n/MR.kt"))
 
     @get:OutputDirectory
     public val commonMainOutput: DirectoryProperty = objectFactory.directoryProperty()
@@ -38,7 +47,7 @@ public abstract class MokoResourceGeneratorTask
         outputDir.mkdirs()
 
         val mrClass = ClassName("com.thomaskioko.tvmaniac.i18n", "MR")
-        val mrFile = project.file("build/generated/moko-resources/commonMain/src/com/thomaskioko/tvmaniac/i18n/MR.kt")
+        val mrFile = mokoGeneratedFile.get().asFile
 
         if (!mrFile.exists()) {
             logger.warn("MR.kt file not found at ${mrFile.absolutePath}")
