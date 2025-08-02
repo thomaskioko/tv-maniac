@@ -3,7 +3,7 @@ plugins {
 }
 
 tvmaniac {
-    addAndroidMultiplatformTarget()
+    addAndroidMultiplatformTarget(withDeviceTestBuilder = true)
     useDependencyInjection()
     useSerialization()
 
