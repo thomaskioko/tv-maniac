@@ -5,9 +5,16 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsAction
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsContent
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowSeasonDetailsParam
+import com.thomaskioko.tvmaniac.testing.di.TestScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import me.tatarka.inject.annotations.Inject
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
+import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
+@Inject
+@SingleIn(TestScope::class)
+@ContributesBinding(TestScope::class, ShowDetailsPresenter.Factory::class)
 class FakeShowDetailsPresenterFactory : ShowDetailsPresenter.Factory {
     override fun invoke(
         componentContext: ComponentContext,

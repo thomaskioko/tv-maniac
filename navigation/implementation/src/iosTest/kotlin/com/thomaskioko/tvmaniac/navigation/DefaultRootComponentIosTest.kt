@@ -2,12 +2,11 @@ package com.thomaskioko.tvmaniac.navigation
 
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.testing.di.TestIosComponent
-import com.thomaskioko.tvmaniac.testing.di.create
 
 internal class DefaultRootComponentIosTest : DefaultRootComponentTest() {
-    private val testComponent: TestIosComponent = TestIosComponent::class.create()
+    private val testComponent: TestIosComponent = TestIosComponent.create()
 
-    override val rootPresenterFactory: DefaultRootPresenter.Factory
+    override val rootPresenterFactory: RootPresenter.Factory
         get() = testComponent.rootPresenterFactory
 
     override val datastoreRepository: DatastoreRepository

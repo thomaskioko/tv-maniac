@@ -5,9 +5,16 @@ import com.thomaskioko.tvmaniac.search.presenter.InitialSearchState
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowAction
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowState
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowsPresenter
+import com.thomaskioko.tvmaniac.testing.di.TestScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import me.tatarka.inject.annotations.Inject
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
+import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
+@Inject
+@SingleIn(TestScope::class)
+@ContributesBinding(TestScope::class, SearchShowsPresenter.Factory::class)
 class FakeSearchPresenterFactory : SearchShowsPresenter.Factory {
     override fun invoke(
         componentContext: ComponentContext,

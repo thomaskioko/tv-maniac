@@ -6,6 +6,6 @@ import com.thomaskioko.tvmaniac.testing.di.create
 internal class HomePresenterJvmTest : HomePresenterTest() {
     private val testComponent: TestJvmComponent = TestJvmComponent::class.create()
 
-    override val homePresenterFactory: DefaultHomePresenter.Factory
+    override val homePresenterFactory: HomePresenter.Factory
         get() = testComponent.homePresenterFactory
 }

@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.testing.di
 
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
-import com.thomaskioko.tvmaniac.navigation.DefaultRootPresenter
-import com.thomaskioko.tvmaniac.presenter.home.DefaultHomePresenter
+import com.thomaskioko.tvmaniac.navigation.RootPresenter
+import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import me.tatarka.inject.annotations.Component
 import software.amazon.lastmile.kotlin.inject.anvil.MergeComponent
@@ -15,6 +15,6 @@ abstract class TestJvmComponent : TestJvmComponentMerged {
     abstract val datastoreRepository: DatastoreRepository
     abstract val traktAuthManager: TraktAuthManager
 
-    abstract val rootPresenterFactory: DefaultRootPresenter.Factory
-    abstract val homePresenterFactory: DefaultHomePresenter.Factory
+    abstract val rootPresenterFactory: RootPresenter.Factory
+    abstract val homePresenterFactory: HomePresenter.Factory
 }

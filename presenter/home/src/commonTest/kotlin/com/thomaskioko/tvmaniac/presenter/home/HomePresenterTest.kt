@@ -13,7 +13,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 abstract class HomePresenterTest {
-    abstract val homePresenterFactory: DefaultHomePresenter.Factory
+    abstract val homePresenterFactory: HomePresenter.Factory
 
     private val lifecycle = LifecycleRegistry()
     private val testDispatcher = StandardTestDispatcher()
