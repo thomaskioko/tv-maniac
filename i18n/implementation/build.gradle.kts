@@ -4,7 +4,7 @@ plugins {
 
 tvmaniac {
     explicitApi()
-    useKotlinInjectAnvilCompiler()
+    useKotlinInject()
     addAndroidTarget {
         testOptions.unitTests.isIncludeAndroidResources = true
     }

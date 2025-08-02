@@ -12,7 +12,7 @@ plugins {
 
 tvmaniac {
 
-    useKspAnvil()
+    useKotlinInject()
 
     addIosTargetsWithXcFramework(
         frameworkName = "TvManiac",

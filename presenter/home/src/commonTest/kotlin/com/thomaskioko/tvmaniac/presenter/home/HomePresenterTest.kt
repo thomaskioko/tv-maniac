@@ -4,11 +4,6 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
-import com.thomaskioko.tvmaniac.presenter.home.fakes.FakeDiscoverShowsPresenterFactory
-import com.thomaskioko.tvmaniac.presenter.home.fakes.FakeSearchPresenterFactory
-import com.thomaskioko.tvmaniac.presenter.home.fakes.FakeSettingsPresenterFactory
-import com.thomaskioko.tvmaniac.presenter.home.fakes.FakeWatchlistPresenterFactory
-import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -17,10 +12,11 @@ import kotlinx.coroutines.test.setMain
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-class HomePresenterTest {
+abstract class HomePresenterTest {
+    abstract val homePresenterFactory: HomePresenter.Factory
+
     private val lifecycle = LifecycleRegistry()
     private val testDispatcher = StandardTestDispatcher()
-    private val traktAuthManager = FakeTraktAuthManager()
 
     private lateinit var presenter: HomePresenter
 
@@ -29,7 +25,7 @@ class HomePresenterTest {
         Dispatchers.setMain(testDispatcher)
         lifecycle.resume()
 
-        presenter = buildHomePresenterFactory()(
+        presenter = homePresenterFactory.invoke(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             onShowClicked = {},
             onMoreShowClicked = {},
@@ -73,13 +69,4 @@ class HomePresenterTest {
             awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Settings>()
         }
     }
-
-    private fun buildHomePresenterFactory(): HomePresenter.Factory =
-        DefaultHomePresenter.Factory(
-            discoverPresenterFactory = FakeDiscoverShowsPresenterFactory(),
-            watchlistPresenterFactory = FakeWatchlistPresenterFactory(),
-            searchPresenterFactory = FakeSearchPresenterFactory(),
-            settingsPresenterFactory = FakeSettingsPresenterFactory(),
-            traktAuthManager = traktAuthManager,
-        )
 }

@@ -3,7 +3,7 @@ plugins {
 }
 
 tvmaniac {
-    useKotlinInjectAnvilCompiler()
+    useKotlinInject()
 
     optIn("androidx.paging.ExperimentalPagingApi", "kotlin.time.ExperimentalTime")
 }
