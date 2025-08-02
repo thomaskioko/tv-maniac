@@ -39,8 +39,8 @@ kotlin {
 
         commonTest.dependencies {
             implementation(projects.core.util.testing)
-            implementation(projects.data.datastore.testing)
             implementation(projects.data.traktauth.testing)
+            implementation(projects.core.testing.di)
 
             implementation(libs.bundles.unittest)
         }
