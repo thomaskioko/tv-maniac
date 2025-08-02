@@ -3,8 +3,8 @@ plugins {
 }
 
 tvmaniac {
-    addAndroidMultiplatformTarget()
-    useKotlinInjectAnvilCompiler()
+    addAndroidMultiplatformTarget(withDeviceTestBuilder = true)
+    useKotlinInject()
     useSerialization()
 
     optIn(
