@@ -159,10 +159,10 @@ class MoreShowsPresenter(
     @AssistedFactory
     fun interface Factory {
         operator fun invoke(
-            @Assisted componentContext: ComponentContext,
-            @Assisted categoryId: Long,
-            @Assisted onBack: () -> Unit,
-            @Assisted onNavigateToShowDetails: (Long) -> Unit,
+            componentContext: ComponentContext,
+            categoryId: Long,
+            onBack: () -> Unit,
+            onNavigateToShowDetails: (Long) -> Unit,
         ): MoreShowsPresenter
     }
 }

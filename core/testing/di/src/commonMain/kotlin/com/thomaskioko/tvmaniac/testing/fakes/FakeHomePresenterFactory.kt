@@ -23,7 +23,7 @@ class FakeHomePresenterFactory(
     private val settingsPresenterFactory: SettingsPresenter.Factory,
     private val traktAuthManager: TraktAuthManager,
 ) : DefaultHomePresenter.Factory {
-    override fun invoke(
+    override fun create(
         componentContext: ComponentContext,
         onShowClicked: (id: Long) -> Unit,
         onMoreShowClicked: (id: Long) -> Unit,

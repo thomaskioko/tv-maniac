@@ -7,7 +7,7 @@ import com.thomaskioko.tvmaniac.testing.di.create
 internal class DefaultRootComponentJvmTest : DefaultRootComponentTest() {
     private val testComponent: TestJvmComponent = TestJvmComponent::class.create()
 
-    override val rootPresenterFactory: RootPresenter.Factory
+    override val rootPresenterFactory: DefaultRootPresenter.Factory
         get() = testComponent.rootPresenterFactory
 
     override val datastoreRepository: DatastoreRepository

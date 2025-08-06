@@ -3,7 +3,9 @@ plugins {
 }
 
 tvmaniac {
-    useKotlinInject()
+    useDependencyInjection()
+
+    optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
 }
 
 kotlin {
@@ -11,9 +13,16 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.core.base)
             implementation(projects.core.util)
+            implementation(projects.core.util.testing)
+            implementation(projects.core.logger.api)
+            implementation(projects.core.logger.testing)
             implementation(projects.navigation.api)
             implementation(projects.navigation.implementation)
             implementation(projects.domain.watchlist)
+            implementation(projects.domain.genre)
+            implementation(projects.domain.recommendedshows)
+            implementation(projects.domain.similarshows)
+            implementation(projects.domain.watchproviders)
             implementation(projects.presenter.home)
             implementation(projects.presenter.discover)
             implementation(projects.presenter.search)
@@ -27,17 +36,46 @@ kotlin {
             implementation(projects.data.datastore.testing)
             implementation(projects.data.requestManager.api)
             implementation(projects.data.requestManager.testing)
+            implementation(projects.data.search.api)
+            implementation(projects.data.search.testing)
+            implementation(projects.data.trailers.testing)
+            implementation(projects.data.genre.api)
+            implementation(projects.data.genre.testing)
             implementation(projects.domain.discover)
             implementation(projects.domain.showdetails)
             implementation(projects.domain.seasondetails)
             implementation(projects.data.traktauth.api)
             implementation(projects.data.traktauth.testing)
+            implementation(projects.data.watchlist.api)
+            implementation(projects.data.watchlist.testing)
+            implementation(projects.data.popularshows.api)
+            implementation(projects.data.popularshows.testing)
+            implementation(projects.data.upcomingshows.api)
+            implementation(projects.data.upcomingshows.testing)
+            implementation(projects.data.trendingshows.api)
+            implementation(projects.data.trendingshows.testing)
+            implementation(projects.data.topratedshows.api)
+            implementation(projects.data.topratedshows.testing)
+            implementation(projects.data.cast.api)
+            implementation(projects.data.cast.testing)
+            implementation(projects.data.featuredshows.api)
+            implementation(projects.data.featuredshows.testing)
+            implementation(projects.data.recommendedshows.api)
+            implementation(projects.data.recommendedshows.testing)
+            implementation(projects.data.seasondetails.api)
+            implementation(projects.data.seasondetails.testing)
+            implementation(projects.data.showdetails.api)
+            implementation(projects.data.showdetails.testing)
+            implementation(projects.data.similar.api)
+            implementation(projects.data.similar.testing)
+            implementation(projects.data.watchproviders.api)
+            implementation(projects.data.watchproviders.testing)
+            implementation(projects.data.seasons.testing)
 
             api(libs.decompose.decompose)
             api(libs.kotlin.test)
             api(libs.kotest.assertions)
             api(libs.coroutines.test)
-            api(libs.kotlinInject.runtime)
         }
     }
 }

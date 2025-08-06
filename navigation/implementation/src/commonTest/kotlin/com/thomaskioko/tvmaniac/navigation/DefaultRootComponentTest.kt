@@ -23,7 +23,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 abstract class DefaultRootComponentTest {
-    abstract val rootPresenterFactory: RootPresenter.Factory
+    abstract val rootPresenterFactory: DefaultRootPresenter.Factory
     abstract val datastoreRepository: DatastoreRepository
 
     private val lifecycle = LifecycleRegistry()
@@ -39,7 +39,7 @@ abstract class DefaultRootComponentTest {
 
         val componentContext = DefaultComponentContext(lifecycle = lifecycle)
         navigator = FakeRootNavigator()
-        presenter = rootPresenterFactory(componentContext, navigator)
+        presenter = rootPresenterFactory.create(componentContext, navigator)
     }
 
     @AfterTest
