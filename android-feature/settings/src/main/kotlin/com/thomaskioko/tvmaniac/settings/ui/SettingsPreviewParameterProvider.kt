@@ -6,6 +6,18 @@ import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
 import com.thomaskioko.tvmaniac.settings.presenter.UserInfo
 
+val defaultState =  SettingsState(
+    appTheme = AppTheme.DARK_THEME,
+    imageQuality = ImageQuality.HIGH,
+    isLoading = false,
+    showthemePopup = false,
+    showImageQualityDialog = false,
+    showTraktDialog = false,
+    errorMessage = null,
+    showLogoutDialog = false,
+    userInfo = null,
+)
+
 class SettingsPreviewParameterProvider : PreviewParameterProvider<SettingsState> {
     override val values: Sequence<SettingsState>
         get() {
@@ -26,17 +38,7 @@ class SettingsPreviewParameterProvider : PreviewParameterProvider<SettingsState>
                         userPicUrl = "image.png",
                     ),
                 ),
-                SettingsState(
-                    appTheme = AppTheme.DARK_THEME,
-                    imageQuality = ImageQuality.HIGH,
-                    isLoading = false,
-                    showthemePopup = false,
-                    showImageQualityDialog = false,
-                    showTraktDialog = false,
-                    errorMessage = null,
-                    showLogoutDialog = false,
-                    userInfo = null,
-                ),
+                defaultState,
             )
         }
 }

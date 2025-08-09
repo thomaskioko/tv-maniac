@@ -5,6 +5,7 @@ plugins {
 tvmaniac {
     android {
         useCompose()
+        useRoborazzi()
     }
 
     optIn(
@@ -23,4 +24,6 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.runtime)
     implementation(libs.coil.compose)
+
+    testImplementation(projects.core.screenshotTests)
 }
