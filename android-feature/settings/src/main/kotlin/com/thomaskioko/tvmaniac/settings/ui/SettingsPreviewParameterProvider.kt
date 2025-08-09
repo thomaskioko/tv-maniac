@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.settings.ui
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
+import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
 import com.thomaskioko.tvmaniac.settings.presenter.UserInfo
 
@@ -11,8 +12,10 @@ class SettingsPreviewParameterProvider : PreviewParameterProvider<SettingsState>
             return sequenceOf(
                 SettingsState(
                     appTheme = AppTheme.DARK_THEME,
+                    imageQuality = ImageQuality.MEDIUM,
                     isLoading = false,
                     showthemePopup = false,
+                    showImageQualityDialog = false,
                     showTraktDialog = false,
                     errorMessage = null,
                     showLogoutDialog = false,
@@ -25,8 +28,10 @@ class SettingsPreviewParameterProvider : PreviewParameterProvider<SettingsState>
                 ),
                 SettingsState(
                     appTheme = AppTheme.DARK_THEME,
+                    imageQuality = ImageQuality.HIGH,
                     isLoading = false,
                     showthemePopup = false,
+                    showImageQualityDialog = false,
                     showTraktDialog = false,
                     errorMessage = null,
                     showLogoutDialog = false,

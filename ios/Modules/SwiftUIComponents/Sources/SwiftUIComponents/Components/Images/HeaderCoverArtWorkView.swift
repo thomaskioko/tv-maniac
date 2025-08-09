@@ -27,7 +27,7 @@ public struct HeaderCoverArtWorkView: View {
     public var body: some View {
         if let imageUrl {
             WebImage(
-                url: URL(string: imageUrl), options: .highPriority
+                url: URL(string: imageUrl.transformedImageURL), options: .highPriority
             ) { image in
                 image.resizable()
             } placeholder: {
