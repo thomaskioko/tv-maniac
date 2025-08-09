@@ -50,6 +50,13 @@
     <string name="label_settings_language">Sprache</string>
     <string name="label_settings_language_message">Wählen Sie Ihre bevorzugte Sprache für die App-Oberfläche</string>
     <string name="label_settings_privacy_policy">Datenschutzrichtlinie</string>
+    <string name="label_settings_image_quality">Bildqualität</string>
+    <string name="label_settings_image_quality_high">Hoch</string>
+    <string name="label_settings_image_quality_medium">Mittel</string>
+    <string name="label_settings_image_quality_low">Niedrig</string>
+    <string name="label_settings_image_quality_high_description">Beste Qualität, verbraucht mehr Daten</string>
+    <string name="label_settings_image_quality_medium_description">Ausgewogene Qualität und Datenverbrauch</string>
+    <string name="label_settings_image_quality_low_description">Geringere Qualität, spart Daten</string>
 
     <string name="app_name">Tv Maniac</string>
     <string name="menu_item_discover">Entdecken</string>
