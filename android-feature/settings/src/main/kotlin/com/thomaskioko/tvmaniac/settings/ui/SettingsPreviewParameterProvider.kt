@@ -6,7 +6,7 @@ import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
 import com.thomaskioko.tvmaniac.settings.presenter.UserInfo
 
-val defaultState =  SettingsState(
+val defaultState = SettingsState(
     appTheme = AppTheme.DARK_THEME,
     imageQuality = ImageQuality.HIGH,
     isLoading = false,
