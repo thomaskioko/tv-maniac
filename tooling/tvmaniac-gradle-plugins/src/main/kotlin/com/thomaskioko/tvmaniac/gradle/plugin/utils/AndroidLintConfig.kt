@@ -22,6 +22,16 @@ internal fun Lint.configure(project: Project) {
     abortOnError = true
     warningsAsErrors = true
 
+    // Temporary workaround: Compose lint detector ComposableFlowOperatorDetector crashes with Kotlin metadata 2.1.0
+    // Disable the specific check until Compose lint supports metadata 2.1.0
+    // See build failure message suggesting: disable "FlowOperatorInvokedInComposition"
+    disable.addAll(
+        listOf(
+            "FlowOperatorInvokedInComposition",
+            "StateFlowValueCalledInComposition",
+        ),
+    )
+
     htmlReport = true
     htmlOutput = project.reportsFile("lint-result.html").get().asFile
     textReport = true
