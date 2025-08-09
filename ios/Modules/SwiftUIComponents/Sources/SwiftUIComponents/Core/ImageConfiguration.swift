@@ -1,5 +1,6 @@
 import Foundation
 import SDWebImage
+import UIKit
 
 /// Manages SDWebImage configuration and caching strategies
 public enum ImageConfiguration {
@@ -36,22 +37,74 @@ public enum ImageConfiguration {
         }
     }
 
+    /// Configures SDWebImage with the specified quality settings and all optimizations
     public static func configure(quality: Quality = .medium) {
+        // Configure cache settings based on quality
+        configureCacheSettings(quality: quality)
+        
+        // Configure SDWebImage optimizations
+        configureOptimizations()
+        
+        // Configure download settings
+        configureDownloadSettings()
+        
+        // Update the transformer with the new quality
+        ImageURLTransformer.setTransformer { url in
+            transformTMDBUrl(url, quality: quality)
+        }
+    }
+    
+    /// Configures cache settings based on quality
+    private static func configureCacheSettings(quality: Quality) {
         // Configure cache duration (7 days)
         SDImageCache.shared.config.maxDiskAge = 3600 * 24 * 7
-
+        
         // Configure disk cache size based on quality
         SDImageCache.shared.config.maxDiskSize = quality.diskCacheSize
-
+        
+        // Configure memory cache
         SDImageCache.shared.config.maxMemoryCost = quality.memoryCacheSize
         SDImageCache.shared.config.maxMemoryCount = 50
-
+        
+        // Enable aggressive cache purging for low quality
         if quality == .low {
             SDImageCache.shared.config.diskCacheExpireType = .accessDate
         }
-
-        ImageURLTransformer.setTransformer { url in
-            transformTMDBUrl(url, quality: quality)
+        
+        // Use memory mapping for disk cache reading
+        SDImageCache.shared.config.diskCacheReadingOptions = .mappedIfSafe
+    }
+    
+    /// Configures SDWebImage optimizations
+    private static func configureOptimizations() {
+        // Configure global options processor
+        SDWebImageManager.shared.optionsProcessor = SDWebImageOptionsProcessor { _, options, context in
+            var mutableOptions = options
+            mutableOptions.insert(.scaleDownLargeImages)
+            
+            var mutableContext = context ?? [:]
+            mutableContext[.imageForceDecodePolicy] = SDImageForceDecodePolicy.never.rawValue
+            
+            return SDWebImageOptionsResult(options: mutableOptions, context: mutableContext)
+        }
+    }
+    
+    /// Configures download settings
+    private static func configureDownloadSettings() {
+        // Configure download operation settings
+        SDWebImageDownloader.shared.config.downloadTimeout = 15.0 // 15 seconds timeout
+        SDWebImageDownloader.shared.config.maxConcurrentDownloads = 6 // Limit concurrent downloads
+    }
+    
+    /// Sets up background memory management
+    public static func setupBackgroundMemoryManagement() {
+        // Clear memory cache when app enters background
+        NotificationCenter.default.addObserver(
+            forName: UIApplication.didEnterBackgroundNotification,
+            object: nil,
+            queue: .main
+        ) { _ in
+            SDImageCache.shared.clearMemory()
         }
     }
 

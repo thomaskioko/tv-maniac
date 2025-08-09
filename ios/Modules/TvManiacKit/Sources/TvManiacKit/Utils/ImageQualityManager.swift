@@ -4,7 +4,6 @@ import SDWebImage
 import SwiftUI
 import SwiftUIComponents
 import TvManiac
-import TvManiacKit
 
 /// Manages image quality configuration for SDWebImage
 class ImageQualityManager: ObservableObject {
