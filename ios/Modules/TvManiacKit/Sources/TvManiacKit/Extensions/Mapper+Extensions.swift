@@ -2,6 +2,7 @@ import SwiftUIComponents
 import TvManiac
 
 // MARK: - ImageQuality Mapping
+
 public extension TvManiac.ImageQuality {
     func toSwift() -> SwiftImageQuality {
         switch self {

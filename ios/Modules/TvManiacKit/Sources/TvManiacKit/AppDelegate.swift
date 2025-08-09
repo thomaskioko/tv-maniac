@@ -23,7 +23,7 @@ public class AppDelegate: NSObject, UIApplicationDelegate {
     override public init() {
         super.init()
         LifecycleRegistryExtKt.create(lifecycle)
-        
+
         initializeApp()
 
         appComponent.initializers.initialize()
@@ -32,9 +32,9 @@ public class AppDelegate: NSObject, UIApplicationDelegate {
     deinit {
         LifecycleRegistryExtKt.destroy(lifecycle)
     }
-    
+
     // MARK: - App Initialization
-    
+
     private func initializeApp() {
         FontRegistration.registerFonts()
 
@@ -43,11 +43,11 @@ public class AppDelegate: NSObject, UIApplicationDelegate {
         startImageQualityObserver()
 
         configureAppearance()
-        
+
         let quality = SettingsAppStorage.shared.imageQuality
         print("App initialized with image quality: \(quality.rawValue)")
     }
-    
+
     private func configureImageSystem() {
         let quality = mapToImageConfigurationQuality(SettingsAppStorage.shared.imageQuality)
 
@@ -55,18 +55,18 @@ public class AppDelegate: NSObject, UIApplicationDelegate {
 
         ImageConfiguration.setupBackgroundMemoryManagement()
     }
-    
+
     private func mapToImageConfigurationQuality(_ quality: SwiftImageQuality) -> ImageConfiguration.Quality {
         switch quality {
         case .high:
-            return .high
+            .high
         case .medium:
-            return .medium
+            .medium
         case .low:
-            return .low
+            .low
         }
     }
-    
+
     private func startImageQualityObserver() {
         SettingsAppStorage.shared.objectWillChange
             .sink { [weak self] _ in
@@ -74,9 +74,9 @@ public class AppDelegate: NSObject, UIApplicationDelegate {
             }
             .store(in: &cancellables)
     }
-    
+
     private var cancellables = Set<AnyCancellable>()
-    
+
     private func configureAppearance() {
         // Configure navigation bar appearance
         let appearance = UINavigationBarAppearance()
