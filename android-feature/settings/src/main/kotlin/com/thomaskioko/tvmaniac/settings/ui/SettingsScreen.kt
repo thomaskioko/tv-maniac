@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.CircularProgressIndicator
@@ -57,7 +58,15 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
+import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_profile_pic
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_high
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_high_description
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_low
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_low_description
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_medium
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_medium_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.login
 import com.thomaskioko.tvmaniac.i18n.MR.strings.logout
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_about_description
@@ -79,11 +88,14 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_dialog_logout_message
 import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_dialog_logout_title
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.settings.presenter.ChangeThemeClicked
+import com.thomaskioko.tvmaniac.settings.presenter.DismissImageQualityDialog
 import com.thomaskioko.tvmaniac.settings.presenter.DismissThemeClicked
 import com.thomaskioko.tvmaniac.settings.presenter.DismissTraktDialog
+import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsActions
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
+import com.thomaskioko.tvmaniac.settings.presenter.ShowImageQualityDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ShowTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
 import com.thomaskioko.tvmaniac.settings.presenter.TraktLoginClicked
@@ -151,7 +163,9 @@ internal fun SettingsScreen(
             SettingsScreen(
                 userInfo = state.userInfo,
                 appTheme = state.appTheme,
+                imageQuality = state.imageQuality,
                 showPopup = state.showthemePopup,
+                showImageQualityDialog = state.showImageQualityDialog,
                 showTraktDialog = state.showTraktDialog,
                 isLoading = state.isLoading,
                 onAction = onAction,
@@ -167,7 +181,9 @@ internal fun SettingsScreen(
 fun SettingsScreen(
     userInfo: UserInfo?,
     appTheme: AppTheme,
+    imageQuality: ImageQuality,
     showPopup: Boolean,
+    showImageQualityDialog: Boolean,
     showTraktDialog: Boolean,
     isLoading: Boolean,
     onAction: (SettingsActions) -> Unit,
@@ -197,6 +213,16 @@ fun SettingsScreen(
                 onThemeSelected = { onAction(ThemeSelected(it)) },
                 onThemeClicked = { onAction(ChangeThemeClicked) },
                 onDismissTheme = { onAction(DismissThemeClicked) },
+            )
+        }
+
+        item {
+            ImageQualitySettingsItem(
+                imageQuality = imageQuality,
+                showDialog = showImageQualityDialog,
+                onImageQualityClicked = { onAction(ShowImageQualityDialog) },
+                onImageQualitySelected = { onAction(ImageQualitySelected(it)) },
+                onDismissDialog = { onAction(DismissImageQualityDialog) },
             )
         }
 
@@ -498,6 +524,159 @@ private fun ThemeMenuItem(
             }
         },
     )
+}
+
+@Composable
+private fun ImageQualitySettingsItem(
+    imageQuality: ImageQuality,
+    showDialog: Boolean,
+    onImageQualityClicked: () -> Unit,
+    onImageQualitySelected: (ImageQuality) -> Unit,
+    onDismissDialog: () -> Unit,
+) {
+    val context = LocalContext.current
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onImageQualityClicked() }
+            .padding(start = 16.dp, end = 16.dp),
+    ) {
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Image,
+                tint = MaterialTheme.colorScheme.secondary,
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(end = 16.dp)
+                    .size(48.dp),
+            )
+
+            Column(
+                modifier = Modifier
+                    .padding(end = 8.dp, bottom = 8.dp)
+                    .weight(1f),
+            ) {
+                TitleItem(label_settings_image_quality.resolve(context))
+                SettingDescription(getQualityDescriptionString(imageQuality, context))
+            }
+
+            ImageQualityMenu(
+                isVisible = showDialog,
+                selectedQuality = imageQuality,
+                onDismissDialog = onDismissDialog,
+                onQualitySelected = onImageQualitySelected,
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        ListDivider()
+    }
+}
+
+@Composable
+private fun ImageQualityMenu(
+    isVisible: Boolean,
+    selectedQuality: ImageQuality,
+    onDismissDialog: () -> Unit,
+    onQualitySelected: (ImageQuality) -> Unit,
+) {
+    AnimatedVisibility(
+        visible = isVisible,
+        enter = fadeIn(initialAlpha = 0.4f),
+        exit = fadeOut(animationSpec = tween(durationMillis = 250)),
+    ) {
+        DropdownMenu(
+            expanded = isVisible,
+            onDismissRequest = { onDismissDialog() },
+            offset = DpOffset(16.dp, 32.dp),
+            modifier = Modifier.background(MaterialTheme.colorScheme.surface),
+        ) {
+            ImageQualityMenuItem(
+                quality = ImageQuality.HIGH,
+                selectedQuality = selectedQuality,
+                onQualitySelected = onQualitySelected,
+            )
+
+            ImageQualityMenuItem(
+                quality = ImageQuality.MEDIUM,
+                selectedQuality = selectedQuality,
+                onQualitySelected = onQualitySelected,
+            )
+
+            ImageQualityMenuItem(
+                quality = ImageQuality.LOW,
+                selectedQuality = selectedQuality,
+                onQualitySelected = onQualitySelected,
+            )
+        }
+    }
+}
+
+@Composable
+private fun ImageQualityMenuItem(
+    quality: ImageQuality,
+    selectedQuality: ImageQuality,
+    onQualitySelected: (ImageQuality) -> Unit,
+) {
+    val context = LocalContext.current
+    val qualityTitle = when (quality) {
+        ImageQuality.HIGH -> label_settings_image_quality_high.resolve(context)
+        ImageQuality.MEDIUM -> label_settings_image_quality_medium.resolve(context)
+        ImageQuality.LOW -> label_settings_image_quality_low.resolve(context)
+    }
+
+    DropdownMenuItem(
+        onClick = { onQualitySelected(quality) },
+        text = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f),
+                ) {
+                    Text(
+                        text = qualityTitle,
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                    Text(
+                        text = getQualityDescriptionString(quality, context),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+
+                RadioButton(
+                    selected = selectedQuality == quality,
+                    colors = RadioButtonDefaults.colors(
+                        selectedColor = MaterialTheme.colorScheme.secondary,
+                    ),
+                    onClick = {
+                        onQualitySelected(quality)
+                    },
+                )
+            }
+        },
+    )
+}
+
+@Composable
+private fun getQualityDescriptionString(quality: ImageQuality, context: android.content.Context): String {
+    return when (quality) {
+        ImageQuality.HIGH -> label_settings_image_quality_high_description.resolve(context)
+        ImageQuality.MEDIUM -> label_settings_image_quality_medium_description.resolve(context)
+        ImageQuality.LOW -> label_settings_image_quality_low_description.resolve(context)
+    }
 }
 
 @Composable

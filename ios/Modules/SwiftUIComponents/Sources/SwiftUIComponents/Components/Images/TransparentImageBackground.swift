@@ -20,7 +20,7 @@ public struct TransparentImageBackground: View {
         if let imageUrl {
             ZStack {
                 WebImage(
-                    url: URL(string: imageUrl)
+                    url: URL(string: imageUrl.transformedImageURL)
                 ) { image in
                     image.resizable()
                 } placeholder: {

@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.datastore.testing
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.AuthState
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -16,6 +17,7 @@ class FakeDatastoreRepository : DatastoreRepository {
     private val authStateFlow: Channel<AuthState> = Channel(Channel.UNLIMITED)
     private val languageFlow: Channel<String> = Channel(Channel.UNLIMITED)
     private val listStyleFlow: Channel<ListStyle> = Channel(Channel.UNLIMITED)
+    private val imageQualityFlow = MutableStateFlow(ImageQuality.MEDIUM)
 
     suspend fun setTheme(appTheme: AppTheme) {
         appThemeFlow.value = appTheme
@@ -58,6 +60,12 @@ class FakeDatastoreRepository : DatastoreRepository {
     }
 
     override fun observeListStyle(): Flow<ListStyle> = listStyleFlow.receiveAsFlow()
+
+    override suspend fun saveImageQuality(quality: ImageQuality) {
+        imageQualityFlow.value = quality
+    }
+
+    override fun observeImageQuality(): Flow<ImageQuality> = imageQualityFlow.asStateFlow()
 }
 
 val authenticatedAuthState = AuthState(

@@ -27,7 +27,7 @@ let package = Package(
                 "YouTubePlayerKit",
             ],
             resources: [
-                .process("Resources/Fonts"),
+                .copy("Resources/Fonts"),
             ]
         ),
         .testTarget(

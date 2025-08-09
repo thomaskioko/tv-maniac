@@ -39,7 +39,7 @@ public struct PosterItemView: View {
     public var body: some View {
         if let posterUrl {
             WebImage(
-                url: URL(string: posterUrl),
+                url: URL(string: posterUrl.transformedImageURL),
                 options: [
                     .retryFailed,
                     .highPriority,

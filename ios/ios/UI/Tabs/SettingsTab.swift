@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftUIComponents
+import TvManiac
 import TvManiacKit
 
 struct SettingsTab: View {
@@ -48,6 +49,33 @@ struct SettingsTab: View {
                         color: .red
                     )
                 }
+
+                Picker(
+                    selection: Binding(
+                        get: { uiState.imageQuality.toSwift() },
+                        set: { swiftQuality in
+                            let quality = TvManiac.ImageQuality.fromSwift(swiftQuality)
+                            presenter.dispatch(action: ImageQualitySelected(quality: quality))
+                            store.imageQuality = swiftQuality
+                        }
+                    ),
+                    label: settingsLabel(
+                        title: String(\.label_settings_image_quality),
+                        icon: "photo",
+                        color: .blue
+                    )
+                ) {
+                    ForEach(SwiftImageQuality.allCases, id: \.self) { quality in
+                        Text(imageQualityTitle(for: quality))
+                            .tag(quality)
+                    }
+                }
+                .pickerStyle(.menu)
+
+                Text(imageQualityDescription(for: uiState.imageQuality.toSwift()))
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .padding(.horizontal)
             }
 
             Section(String(\.label_settings_section_trakt_account)) {
@@ -120,6 +148,12 @@ struct SettingsTab: View {
         .onChange(of: uiState.appTheme) { newTheme in
             store.appTheme = newTheme.toDeveiceAppTheme()
         }
+        .onChange(of: uiState.imageQuality) { imageQuality in
+            store.imageQuality = imageQuality.toSwift()
+        }
+        .onAppear {
+            store.imageQuality = uiState.imageQuality.toSwift()
+        }
     }
 
     private func settingsLabel(title: String, icon: String, color: Color) -> some View {
@@ -138,5 +172,27 @@ struct SettingsTab: View {
             Text(title)
         }
         .padding(.vertical, 2)
+    }
+
+    private func imageQualityTitle(for quality: SwiftImageQuality) -> String {
+        switch quality {
+        case .high:
+            String(\.label_settings_image_quality_high)
+        case .medium:
+            String(\.label_settings_image_quality_medium)
+        case .low:
+            String(\.label_settings_image_quality_low)
+        }
+    }
+
+    private func imageQualityDescription(for quality: SwiftImageQuality) -> String {
+        switch quality {
+        case .high:
+            String(\.label_settings_image_quality_high_description)
+        case .medium:
+            String(\.label_settings_image_quality_medium_description)
+        case .low:
+            String(\.label_settings_image_quality_low_description)
+        }
     }
 }
