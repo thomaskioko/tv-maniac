@@ -21,12 +21,16 @@ public struct TabBarView: View {
                     switch onEnum(of: child) {
                     case let .discover(screen):
                         DiscoverTab(presenter: screen.presenter)
+                            .id(ObjectIdentifier(screen))
                     case let .search(screen):
                         SearchTab(presenter: screen.presenter)
+                            .id(ObjectIdentifier(screen))
                     case let .watchlist(screen):
                         WatchlistTab(presenter: screen.presenter)
+                            .id(ObjectIdentifier(screen))
                     case let .settings(screen):
                         SettingsTab(presenter: screen.presenter)
+                            .id(ObjectIdentifier(screen))
                     }
                 }
             }

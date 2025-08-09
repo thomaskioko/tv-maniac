@@ -28,7 +28,7 @@ public struct YoutubeItemView: View {
         player = YouTubePlayer(
             source: .video(id: key),
             parameters: .init(
-                autoPlay: true,
+                autoPlay: false,
                 loopEnabled: true,
                 showControls: true
             ),

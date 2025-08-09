@@ -25,24 +25,26 @@ struct RootNavigationView: View {
         SplashView {
             DecomposeNavigationView(
                 stack: rootPresenter.childStack,
-                onBack: rootNavigator.popTo,
-                content: { child in
-                    switch onEnum(of: child) {
-                    case let .home(child):
-                        TabBarView(presenter: child.presenter)
-                    case let .showDetails(child):
-                        ShowDetailsView(presenter: child.presenter)
-                    case let .seasonDetails(child):
-                        SeasonDetailsView(presenter: child.presenter)
-                    case .moreShows:
-                        EmptyView()
-                    case .trailers:
-                        EmptyView()
-                    case .genreShows:
-                        EmptyView()
-                    }
+                onBack: rootNavigator.popTo
+            ) { child in
+                switch onEnum(of: child) {
+                case let .home(child):
+                    TabBarView(presenter: child.presenter)
+                        .id(ObjectIdentifier(child))
+                case let .showDetails(child):
+                    ShowDetailsView(presenter: child.presenter)
+                        .id(ObjectIdentifier(child))
+                case let .seasonDetails(child):
+                    SeasonDetailsView(presenter: child.presenter)
+                        .id(ObjectIdentifier(child))
+                case .moreShows:
+                    EmptyView()
+                case .trailers:
+                    EmptyView()
+                case .genreShows:
+                    EmptyView()
                 }
-            )
+            }
         }
         .appTheme()
         .onChange(of: themeState.appTheme) { newTheme in
