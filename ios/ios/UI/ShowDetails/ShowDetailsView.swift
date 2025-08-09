@@ -46,6 +46,22 @@ struct ShowDetailsView: View {
         .background(Color.background)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarColor(backgroundColor: .clear)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: {
+                    presenter.dispatch(action: DetailBackClicked())
+                }) {
+                    Image(systemName: "chevron.left")
+                        .foregroundColor(.accentBlue)
+                        .imageScale(.large)
+                        .opacity(1 - showGlass)
+                }
+            }
+        }
+        .swipeBackGesture {
+            presenter.dispatch(action: DetailBackClicked())
+        }
         .overlay(
             GlassToolbar(
                 title: uiState.showDetails.title,
