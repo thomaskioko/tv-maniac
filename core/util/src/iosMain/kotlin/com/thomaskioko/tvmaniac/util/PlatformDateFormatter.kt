@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.util
 
 import co.touchlab.kermit.Logger
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlinx.datetime.LocalDate
 import me.tatarka.inject.annotations.Inject
 import platform.Foundation.NSDate

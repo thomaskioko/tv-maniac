@@ -4,7 +4,7 @@ import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.LastRequestsQueries
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig
 import io.kotest.matchers.shouldBe
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
