@@ -366,7 +366,7 @@ struct PullToRefreshView: View {
             HStack {
                 Spacer()
                 if needRefresh {
-                    ProgressView()
+                    ThemedProgressView()
                 }
                 Spacer()
             }
