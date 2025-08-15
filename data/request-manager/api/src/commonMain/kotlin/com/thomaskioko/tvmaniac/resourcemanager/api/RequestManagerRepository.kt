@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.resourcemanager.api
 
 import kotlin.time.Clock
-import kotlin.time.Instant
 import kotlin.time.Duration
+import kotlin.time.Instant
 
 interface RequestManagerRepository {
 
