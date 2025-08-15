@@ -36,34 +36,23 @@ struct DiscoverTab: View {
 
     @ViewBuilder
     private func discoverLoadedContent(state: DiscoverViewState) -> some View {
-        ScrollView(showsIndicators: false) {
-            VStack(spacing: 0) {
-                PullToRefreshView(
-                    coordinateSpaceName: "scrollView"
-                ) {
-                    await MainActor.run {
-                        presenter.dispatch(action: RefreshData())
+        ZStack(alignment: .bottom) {
+            ParallaxView(
+                imageHeight: 550,
+                collapsedImageHeight: 120,
+                header: { _ in
+                    ZStack(alignment: .bottom) {
+                        headerContent(shows: state.featuredShows)
+                        showInfoOverlay(state.featuredShows.map { $0.toSwift() })
                     }
-                }
-
-                ZStack(alignment: .bottom) {
-                    headerContent(shows: state.featuredShows)
-                    showInfoOverlay(state.featuredShows.map {
-                        $0.toSwift()
-                    })
-                }
-                .frame(height: 550)
-
-                discoverListContent(state: state)
-            }
-            .background(
-                GeometryReader { geometry in
-                    Color.clear
-                        .onChange(of: geometry.frame(in: .named("scrollView")).minY) { offset in
-                            let opacity = -offset - 150
-                            let normalizedOpacity = opacity / 200
-                            showGlass = max(0, min(1, normalizedOpacity))
-                        }
+                },
+                content: {
+                    discoverListContent(state: state)
+                },
+                onScroll: { offset in
+                    let opacity = -offset - 150
+                    let normalizedOpacity = opacity / 200
+                    showGlass = max(0, min(1, normalizedOpacity))
                 }
             )
         }

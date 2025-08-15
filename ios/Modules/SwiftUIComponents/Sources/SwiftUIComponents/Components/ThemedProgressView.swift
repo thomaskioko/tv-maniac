@@ -9,7 +9,7 @@ import SwiftUI
 
 public struct ThemedProgressView: View {
     @State private var rotationAngle: Double = 0
-    
+
     public init() {}
 
     public var body: some View {
