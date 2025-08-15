@@ -130,9 +130,9 @@
     <string name="title_browse_by_genre">Parcourir par genre</string>
     <string name="status_connected">De nouveau en ligne !</string>
     <string name="status_no_connection">Pas de connexion Internet !</string>
-    <string name="settings_title_theme_dark">Activer le thème sombre</string>
-    <string name="settings_title_theme_light">Activer le thème clair</string>
-    <string name="settings_title_theme_system">Changer de thème</string>
+    <string name="settings_title_theme_dark">Sombre thème sombre</string>
+    <string name="settings_title_theme_light">Clair thème clair</string>
+    <string name="settings_title_theme_system">Système thème</string>
     <string name="settings_theme_light">Clair</string>
     <string name="settings_theme_dark">Sombre</string>
     <string name="settings_theme_system">Système</string>
