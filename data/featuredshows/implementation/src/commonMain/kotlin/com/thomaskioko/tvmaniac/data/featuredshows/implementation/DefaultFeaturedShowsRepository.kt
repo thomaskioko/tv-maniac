@@ -21,7 +21,7 @@ class DefaultFeaturedShowsRepository(
 ) : FeaturedShowsRepository {
 
     companion object {
-        private const val FEATURED_SHOWS_COUNT = 5
+        private const val FEATURED_SHOWS_COUNT = 12
     }
 
     override fun observeFeaturedShows(page: Long): Flow<List<ShowEntity>> = dao.observeFeaturedShows(page)

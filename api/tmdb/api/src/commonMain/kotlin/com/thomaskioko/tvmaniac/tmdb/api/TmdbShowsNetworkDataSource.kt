@@ -23,6 +23,10 @@ interface TmdbShowsNetworkDataSource {
      * @param page Page number
      * @param sortBy Default: popularity.desc.
      * @param genres Comma separated list of genre ids.
+     * @param voteAverageGte Minimum vote average (e.g., 7.0)
+     * @param voteCountGte Minimum vote count (e.g., 100)
+     * @param firstAirDateGte Shows aired after this date (YYYY-MM-DD)
+     * @param firstAirDateLte Shows aired before this date (YYYY-MM-DD)
      */
     suspend fun discoverShows(
         page: Long = DEFAULT_API_PAGE,
@@ -30,6 +34,10 @@ interface TmdbShowsNetworkDataSource {
         genres: String? = null,
         watchProviders: String? = null,
         screenedTheatrically: Boolean = true,
+        voteAverageGte: Double? = null,
+        voteCountGte: Int? = null,
+        firstAirDateGte: String? = null,
+        firstAirDateLte: String? = null,
     ): ApiResponse<TmdbShowResult>
 
     /**

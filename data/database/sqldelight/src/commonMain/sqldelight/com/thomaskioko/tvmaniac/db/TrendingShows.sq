@@ -62,7 +62,11 @@ INNER JOIN
 LEFT OUTER JOIN
     watchlist ON tvshow.id = watchlist.id
 WHERE
-    trending_shows.page = :page;
+    trending_shows.page = :page
+    AND tvshow.vote_average >= 6.0
+    AND tvshow.vote_count >= 50
+ORDER BY
+    tvshow.popularity DESC;
 
 pagedTrendingShows:
 SELECT
@@ -77,8 +81,12 @@ INNER JOIN
     tvshow ON tvshow.id = trending_shows.id
 LEFT OUTER JOIN
     watchlist ON tvshow.id = watchlist.id
+WHERE
+    tvshow.vote_average >= 6.0
+    AND tvshow.vote_count >= 50
 ORDER BY
-    trending_shows.page ASC
+    trending_shows.page ASC,
+    tvshow.popularity DESC
 LIMIT
     :limit OFFSET :offset;
 
