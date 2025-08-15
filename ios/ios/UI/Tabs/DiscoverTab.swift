@@ -11,6 +11,7 @@ struct DiscoverTab: View {
     @State private var selectedShow: SwiftShow?
     @State private var showGlass: Double = 0
     @State private var rotationAngle: Double = 0
+    @State private var isDraggingCarousel: Bool = false
     private let title = String(\.label_discover_title)
 
     init(presenter: DiscoverShowsPresenter) {
@@ -92,6 +93,15 @@ struct DiscoverTab: View {
                 ) { index in
                     CarouselItemView(item: items[index])
                 }
+                .simultaneousGesture(
+                    DragGesture(minimumDistance: 5)
+                        .onChanged { _ in
+                            isDraggingCarousel = true
+                        }
+                        .onEnded { _ in
+                            isDraggingCarousel = false
+                        }
+                )
                 headerNavigationBar(shows: items)
             }
         }
@@ -122,10 +132,6 @@ struct DiscoverTab: View {
     private func headerNavigationBar(shows: [SwiftShow]) -> some View {
         let show = getShow(currentIndex: currentIndex, shows: shows)
         HStack {
-            Text(title)
-                .font(.largeTitle)
-                .fontWeight(.bold)
-
             Spacer()
 
             HStack(spacing: 8) {
@@ -215,14 +221,22 @@ struct DiscoverTab: View {
 
     @ViewBuilder
     func customIndicator(_ shows: [SwiftShow]) -> some View {
-        HStack(spacing: 5) {
-            ForEach(shows.indices, id: \.self) { index in
-                Circle()
-                    .fill(currentIndex == index ? .white : .gray.opacity(0.5))
-                    .frame(width: currentIndex == index ? 10 : 6, height: currentIndex == index ? 10 : 6)
+        // Use ZStack to completely isolate the indicator from any parent animations
+        ZStack {
+            Color.clear
+                .frame(height: 10)
+
+            CircularIndicator(
+                totalItems: shows.count,
+                currentIndex: currentIndex,
+                isDragging: isDraggingCarousel
+            )
+            .allowsHitTesting(false)
+            .transaction { transaction in
+                // Disable any inherited animations
+                transaction.animation = nil
             }
         }
-        .animation(.easeInOut, value: currentIndex)
     }
 
     // MARK: - Discover List Content
