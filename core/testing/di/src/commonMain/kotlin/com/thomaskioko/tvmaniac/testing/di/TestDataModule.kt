@@ -1,6 +1,9 @@
 package com.thomaskioko.tvmaniac.testing.di
 
 import com.thomakioko.tvmaniac.util.testing.FakeFormatterUtil
+import com.thomaskioko.tvmaniac.core.base.di.ComputationCoroutineScope
+import com.thomaskioko.tvmaniac.core.base.di.IoCoroutineScope
+import com.thomaskioko.tvmaniac.core.base.di.MainCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
@@ -47,6 +50,8 @@ import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Provides
 import dev.zacsweers.metro.SingleIn
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 
 @ContributesTo(TestScope::class)
@@ -97,7 +102,8 @@ interface TestDataModule {
 
     @Provides
     @SingleIn(TestScope::class)
-    fun provideRecommendedShowsRepository(): RecommendedShowsRepository = FakeRecommendedShowsRepository()
+    fun provideRecommendedShowsRepository(): RecommendedShowsRepository =
+        FakeRecommendedShowsRepository()
 
     @Provides
     @SingleIn(TestScope::class)
@@ -137,11 +143,35 @@ interface TestDataModule {
 
     @Provides
     @SingleIn(TestScope::class)
-    fun provideAppCoroutineDispatchers(): AppCoroutineDispatchers = AppCoroutineDispatchers(
-        io = UnconfinedTestDispatcher(),
-        computation = UnconfinedTestDispatcher(),
-        databaseWrite = UnconfinedTestDispatcher(),
-        databaseRead = UnconfinedTestDispatcher(),
-        main = UnconfinedTestDispatcher(),
-    )
+    fun provideAppCoroutineDispatchers(): AppCoroutineDispatchers {
+        return AppCoroutineDispatchers(
+            io = UnconfinedTestDispatcher(),
+            computation = UnconfinedTestDispatcher(),
+            databaseWrite = UnconfinedTestDispatcher(),
+            databaseRead = UnconfinedTestDispatcher(),
+            main = UnconfinedTestDispatcher(),
+        )
+    }
+
+
+    @Provides
+    @SingleIn(TestScope::class)
+    @IoCoroutineScope
+    fun provideTestIoCoroutineScope(dispatchers: AppCoroutineDispatchers): CoroutineScope {
+        return CoroutineScope(Job() + dispatchers.io)
+    }
+
+    @Provides
+    @SingleIn(TestScope::class)
+    @MainCoroutineScope
+    fun provideTestMainCoroutineScope(dispatchers: AppCoroutineDispatchers): CoroutineScope {
+        return CoroutineScope(Job() + dispatchers.main)
+    }
+
+    @Provides
+    @SingleIn(TestScope::class)
+    @ComputationCoroutineScope
+    fun provideTestComputationCoroutineScope(dispatchers: AppCoroutineDispatchers): CoroutineScope {
+        return CoroutineScope(Job() + dispatchers.computation)
+    }
 }
