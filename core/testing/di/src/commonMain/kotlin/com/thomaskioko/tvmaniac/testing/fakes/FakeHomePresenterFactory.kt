@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.testing.fakes
 import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.presenter.home.DefaultHomePresenter
-import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.testing.TestScope

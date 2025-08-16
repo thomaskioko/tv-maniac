@@ -2,12 +2,12 @@ package com.thomaskioko.tvmaniac.util
 
 import co.touchlab.kermit.Logger
 import dev.zacsweers.metro.Inject
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import platform.Foundation.NSDate
 import platform.Foundation.NSDateFormatter
 import platform.Foundation.NSLocale
 import platform.Foundation.dateWithTimeIntervalSince1970
+import kotlin.time.Clock
 
 @Inject
 actual class PlatformDateFormatter {

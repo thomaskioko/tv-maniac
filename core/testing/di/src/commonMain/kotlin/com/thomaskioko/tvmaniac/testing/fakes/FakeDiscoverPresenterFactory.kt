@@ -46,6 +46,6 @@ class FakeDiscoverPresenterFactory(
         trendingShowsInteractor = trendingShowsInteractor,
         upcomingShowsInteractor = upcomingShowsInteractor,
         genreShowsInteractor = genreShowsInteractor,
-        logger = logger
+        logger = logger,
     )
 }

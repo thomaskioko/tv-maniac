@@ -51,6 +51,13 @@
         l\'application
     </string>
     <string name="label_settings_privacy_policy">Politique de confidentialité</string>
+    <string name="label_settings_image_quality">Qualité d'image</string>
+    <string name="label_settings_image_quality_high">Élevée</string>
+    <string name="label_settings_image_quality_medium">Moyenne</string>
+    <string name="label_settings_image_quality_low">Faible</string>
+    <string name="label_settings_image_quality_high_description">Meilleure qualité, utilise plus de données</string>
+    <string name="label_settings_image_quality_medium_description">Qualité et utilisation des données équilibrées</string>
+    <string name="label_settings_image_quality_low_description">Qualité inférieure, économise les données</string>
 
     <string name="app_name">Tv Maniac</string>
     <string name="menu_item_discover">Découvrir</string>
@@ -123,9 +130,9 @@
     <string name="title_browse_by_genre">Parcourir par genre</string>
     <string name="status_connected">De nouveau en ligne !</string>
     <string name="status_no_connection">Pas de connexion Internet !</string>
-    <string name="settings_title_theme_dark">Activer le thème sombre</string>
-    <string name="settings_title_theme_light">Activer le thème clair</string>
-    <string name="settings_title_theme_system">Changer de thème</string>
+    <string name="settings_title_theme_dark">Sombre thème sombre</string>
+    <string name="settings_title_theme_light">Clair thème clair</string>
+    <string name="settings_title_theme_system">Système thème</string>
     <string name="settings_theme_light">Clair</string>
     <string name="settings_theme_dark">Sombre</string>
     <string name="settings_theme_system">Système</string>

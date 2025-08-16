@@ -53,6 +53,13 @@
     <string name="label_settings_language">Language</string>
     <string name="label_settings_language_message">Choose your preferred language for the app interface</string>
     <string name="label_settings_privacy_policy">Privacy Policy</string>
+    <string name="label_settings_image_quality">Image Quality</string>
+    <string name="label_settings_image_quality_high">High</string>
+    <string name="label_settings_image_quality_medium">Medium</string>
+    <string name="label_settings_image_quality_low">Low</string>
+    <string name="label_settings_image_quality_high_description">Best quality, uses more data</string>
+    <string name="label_settings_image_quality_medium_description">Balanced quality and data usage</string>
+    <string name="label_settings_image_quality_low_description">Lower quality, saves data</string>
 
 
     <string name="app_name">Tv Maniac</string>
@@ -125,9 +132,9 @@
     <string name="status_connected">Back Online!</string>
     <string name="status_no_connection">No Internet Connection!</string>
 
-    <string name="settings_title_theme_dark">Enable Dark Theme</string>
-    <string name="settings_title_theme_light">Enable Light Theme</string>
-    <string name="settings_title_theme_system">Change Theme</string>
+    <string name="settings_title_theme_dark">Dark Theme</string>
+    <string name="settings_title_theme_light">Light Theme</string>
+    <string name="settings_title_theme_system">System Theme</string>
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_dark">Dark</string>
     <string name="settings_theme_system">System</string>

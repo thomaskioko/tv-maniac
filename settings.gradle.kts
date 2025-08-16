@@ -61,6 +61,8 @@ include(
     ":app",
     ":benchmark",
     ":core:base",
+    ":core:imageloading:api",
+    ":core:imageloading:implementation",
     ":core:locale:api",
     ":core:locale:implementation",
     ":core:locale:testing",

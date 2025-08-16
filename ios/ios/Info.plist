@@ -26,18 +26,6 @@
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-    <key>UIAppFonts</key>
-    <array>
-        <string>WorkSans-Black.ttf</string>
-        <string>WorkSans-Bold.ttf</string>
-        <string>WorkSans-ExtraBold.ttf</string>
-        <string>WorkSans-ExtraLight.ttf</string>
-        <string>WorkSans-Light.ttf</string>
-        <string>WorkSans-Medium.ttf</string>
-        <string>WorkSans-Regular.ttf</string>
-        <string>WorkSans-SemiBold.ttf</string>
-        <string>WorkSans-Thin.ttf</string>
-    </array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

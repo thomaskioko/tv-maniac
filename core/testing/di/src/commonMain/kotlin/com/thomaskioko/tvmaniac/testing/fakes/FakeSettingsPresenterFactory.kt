@@ -24,6 +24,6 @@ class FakeSettingsPresenterFactory : SettingsPresenter.Factory {
         componentContext = componentContext,
         launchWebView = launchWebView,
         datastoreRepository = datastoreRepository,
-        traktAuthRepository = traktAuthRepository
+        traktAuthRepository = traktAuthRepository,
     )
 }

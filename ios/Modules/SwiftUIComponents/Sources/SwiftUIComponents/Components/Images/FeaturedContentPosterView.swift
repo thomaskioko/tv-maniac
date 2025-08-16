@@ -33,7 +33,7 @@ public struct FeaturedContentPosterView: View {
 
     public var body: some View {
         if let posterUrl = posterImageUrl {
-            WebImage(url: URL(string: posterUrl), options: .highPriority) { image in
+            WebImage(url: URL(string: posterUrl.transformedImageURL), options: .highPriority) { image in
                 image.resizable()
             } placeholder: {
                 PosterPlaceholder(

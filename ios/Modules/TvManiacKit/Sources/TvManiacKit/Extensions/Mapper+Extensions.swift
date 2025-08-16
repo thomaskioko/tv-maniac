@@ -1,6 +1,32 @@
 import SwiftUIComponents
 import TvManiac
 
+// MARK: - ImageQuality Mapping
+
+public extension TvManiac.ImageQuality {
+    func toSwift() -> SwiftImageQuality {
+        switch self {
+        case .high:
+            .high
+        case .medium:
+            .medium
+        case .low:
+            .low
+        }
+    }
+
+    static func fromSwift(_ swiftQuality: SwiftImageQuality) -> TvManiac.ImageQuality {
+        switch swiftQuality {
+        case .high:
+            .high
+        case .medium:
+            .medium
+        case .low:
+            .low
+        }
+    }
+}
+
 public extension TvManiac.WatchlistItem {
     func toSwift() -> ShowPosterImage {
         .init(

@@ -89,6 +89,7 @@ fastlane/Preview.html
 fastlane/test_output
 fastlane/builds
 /ios/fastlane/report.xml
+ios/build
 
 
 derived_data/

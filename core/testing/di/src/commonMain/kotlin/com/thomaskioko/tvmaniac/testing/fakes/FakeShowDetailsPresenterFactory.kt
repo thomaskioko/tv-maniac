@@ -47,6 +47,6 @@ class FakeShowDetailsPresenterFactory(
         similarShowsInteractor = similarShowsInteractor,
         watchProvidersInteractor = watchProvidersInteractor,
         observableShowDetailsInteractor = observableShowDetailsInteractor,
-        logger = logger
+        logger = logger,
     )
 }

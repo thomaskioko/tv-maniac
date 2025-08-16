@@ -76,4 +76,18 @@ interface DatastoreRepository {
      * @return A Flow of the user's preferred [ListStyle], defaulting to GRID.
      */
     fun observeListStyle(): Flow<ListStyle>
+
+    /**
+     * Saves the user's preferred image quality setting.
+     *
+     * @param quality The [ImageQuality] to be saved (HIGH, MEDIUM, or LOW).
+     */
+    suspend fun saveImageQuality(quality: ImageQuality)
+
+    /**
+     * Observes the user's preferred image quality setting.
+     *
+     * @return A Flow of the current [ImageQuality], defaulting to MEDIUM.
+     */
+    fun observeImageQuality(): Flow<ImageQuality>
 }

@@ -4,13 +4,17 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
+import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.testing.authenticatedAuthState
 import com.thomaskioko.tvmaniac.settings.presenter.ChangeThemeClicked
+import com.thomaskioko.tvmaniac.settings.presenter.DismissImageQualityDialog
 import com.thomaskioko.tvmaniac.settings.presenter.DismissThemeClicked
 import com.thomaskioko.tvmaniac.settings.presenter.DismissTraktDialog
+import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
-import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
+import com.thomaskioko.tvmaniac.settings.presenter.SettingsState.Companion.DEFAULT_STATE
+import com.thomaskioko.tvmaniac.settings.presenter.ShowImageQualityDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ShowTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
 import com.thomaskioko.tvmaniac.settings.presenter.TraktLoginClicked
@@ -53,18 +57,18 @@ class SettingsPresenterTest {
     }
 
     @Test
-    fun initial_state_emits_expected_result() = runTest {
-        presenter.state.test { awaitItem() shouldBe SettingsState.DEFAULT_STATE }
+    fun `should emit default state when initialized`() = runTest {
+        presenter.state.test { awaitItem() shouldBe DEFAULT_STATE }
     }
 
     @Test
-    fun when_theme_is_updated_expected_result_is_emitted() = runTest {
+    fun `should update theme when theme is selected`() = runTest {
         presenter.state.test {
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE // Initial State
+            awaitItem() shouldBe DEFAULT_STATE // Initial State
 
             presenter.dispatch(ChangeThemeClicked)
             awaitItem() shouldBe
-                SettingsState.DEFAULT_STATE.copy(
+                DEFAULT_STATE.copy(
                     showthemePopup = true,
                 )
 
@@ -72,12 +76,12 @@ class SettingsPresenterTest {
             presenter.dispatch(ThemeSelected(AppTheme.DARK_THEME))
 
             awaitItem() shouldBe
-                SettingsState.DEFAULT_STATE.copy(
+                DEFAULT_STATE.copy(
                     showthemePopup = true,
                     appTheme = AppTheme.DARK_THEME,
                 )
             awaitItem() shouldBe
-                SettingsState.DEFAULT_STATE.copy(
+                DEFAULT_STATE.copy(
                     showthemePopup = false,
                     appTheme = AppTheme.DARK_THEME,
                 )
@@ -85,94 +89,94 @@ class SettingsPresenterTest {
     }
 
     @Test
-    fun when_dialog_is_dismissed_expected_result_is_emitted() = runTest {
+    fun `should hide theme dialog when dismissed`() = runTest {
         presenter.state.test {
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE // Initial State
+            awaitItem() shouldBe DEFAULT_STATE // Initial State
 
             presenter.dispatch(ChangeThemeClicked)
 
             awaitItem() shouldBe
-                SettingsState.DEFAULT_STATE.copy(
+                DEFAULT_STATE.copy(
                     showthemePopup = true,
                 )
 
             presenter.dispatch(DismissThemeClicked)
 
             awaitItem() shouldBe
-                SettingsState.DEFAULT_STATE.copy(
+                DEFAULT_STATE.copy(
                     showthemePopup = false,
                 )
         }
     }
 
     @Test
-    fun when_ShowTraktDialog_is_clicked_expected_result_is_emitted() = runTest {
+    fun `should show and hide trakt dialog when toggled`() = runTest {
         presenter.state.test {
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE // Initial State
+            awaitItem() shouldBe DEFAULT_STATE // Initial State
 
             presenter.dispatch(ShowTraktDialog)
 
             awaitItem() shouldBe
-                SettingsState.DEFAULT_STATE.copy(
+                DEFAULT_STATE.copy(
                     showTraktDialog = true,
                 )
 
             presenter.dispatch(DismissTraktDialog)
 
             awaitItem() shouldBe
-                SettingsState.DEFAULT_STATE.copy(
+                DEFAULT_STATE.copy(
                     showTraktDialog = false,
                 )
         }
     }
 
     @Test
-    fun given_TraktLoginClicked_andUserIsAuthenticated_expectedResultIsEmitted() = runTest {
+    fun `should hide trakt dialog when user logs in`() = runTest {
         presenter.state.test {
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE // Initial State
+            awaitItem() shouldBe DEFAULT_STATE // Initial State
 
             presenter.dispatch(ShowTraktDialog)
 
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE.copy(showTraktDialog = true)
+            awaitItem() shouldBe DEFAULT_STATE.copy(showTraktDialog = true)
 
             presenter.dispatch(TraktLoginClicked)
 
             datastoreRepository.setAuthState(authenticatedAuthState)
 
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE.copy(showTraktDialog = false)
+            awaitItem() shouldBe DEFAULT_STATE.copy(showTraktDialog = false)
         }
     }
 
     @Ignore // "Fix once TraktAuthManager is implemented"
     @Test
-    fun given_TraktLoginClicked_andErrorOccurs_expectedResultIsEmitted() = runTest {
+    fun `should show error when trakt login fails`() = runTest {
         presenter.state.test {
             val errorMessage = "Something happened"
 
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE // Initial State
+            awaitItem() shouldBe DEFAULT_STATE // Initial State
 
             presenter.dispatch(ShowTraktDialog)
 
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE.copy(showTraktDialog = true)
+            awaitItem() shouldBe DEFAULT_STATE.copy(showTraktDialog = true)
 
             presenter.dispatch(TraktLoginClicked)
 
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE.copy(showTraktDialog = false)
+            awaitItem() shouldBe DEFAULT_STATE.copy(showTraktDialog = false)
 
             datastoreRepository.setAuthState(authenticatedAuthState)
 
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE.copy(errorMessage = errorMessage)
+            awaitItem() shouldBe DEFAULT_STATE.copy(errorMessage = errorMessage)
         }
     }
 
     @Test
-    fun given_TraktLogoutClicked_expectedResultIsEmitted() = runTest {
+    fun `should clear auth state when user logs out`() = runTest {
         presenter.state.test {
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE // Initial State
+            awaitItem() shouldBe DEFAULT_STATE
 
             presenter.dispatch(ShowTraktDialog)
 
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE.copy(showTraktDialog = true)
+            awaitItem() shouldBe DEFAULT_STATE.copy(showTraktDialog = true)
 
             presenter.dispatch(TraktLoginClicked)
 
@@ -180,7 +184,82 @@ class SettingsPresenterTest {
 
             presenter.dispatch(TraktLogoutClicked)
 
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE
+            awaitItem() shouldBe DEFAULT_STATE
+        }
+    }
+
+    @Test
+    fun `should hide image quality dialog when dismissed`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe DEFAULT_STATE
+
+            presenter.dispatch(ShowImageQualityDialog)
+
+            awaitItem() shouldBe DEFAULT_STATE.copy(
+                showImageQualityDialog = true,
+            )
+
+            presenter.dispatch(DismissImageQualityDialog)
+
+            awaitItem() shouldBe DEFAULT_STATE.copy(
+                showImageQualityDialog = false,
+            )
+        }
+    }
+
+    @Test
+    fun `should update image quality when quality is selected`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe DEFAULT_STATE
+
+            presenter.dispatch(ImageQualitySelected(ImageQuality.HIGH))
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            awaitItem() shouldBe DEFAULT_STATE.copy(
+                imageQuality = ImageQuality.HIGH,
+            )
+
+            presenter.dispatch(ImageQualitySelected(ImageQuality.LOW))
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            awaitItem() shouldBe DEFAULT_STATE.copy(
+                imageQuality = ImageQuality.LOW,
+            )
+
+            presenter.dispatch(ImageQualitySelected(ImageQuality.MEDIUM))
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            awaitItem() shouldBe DEFAULT_STATE.copy(
+                imageQuality = ImageQuality.MEDIUM,
+            )
+        }
+    }
+
+    @Test
+    fun `should persist selected image quality when dialog is reopened`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe DEFAULT_STATE
+
+            presenter.dispatch(ImageQualitySelected(ImageQuality.HIGH))
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            awaitItem() shouldBe DEFAULT_STATE.copy(
+                imageQuality = ImageQuality.HIGH,
+            )
+
+            presenter.dispatch(ShowImageQualityDialog)
+
+            awaitItem() shouldBe DEFAULT_STATE.copy(
+                showImageQualityDialog = true,
+                imageQuality = ImageQuality.HIGH,
+            )
+
+            presenter.dispatch(DismissImageQualityDialog)
+
+            awaitItem() shouldBe DEFAULT_STATE.copy(
+                showImageQualityDialog = false,
+                imageQuality = ImageQuality.HIGH,
+            )
         }
     }
 }

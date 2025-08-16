@@ -12,7 +12,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.jvm.tasks.Jar
 import org.gradle.jvm.toolchain.JvmVendorSpec
-import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
@@ -64,7 +63,6 @@ public abstract class BasePlugin : Plugin<Project> {
 
 
                 freeCompilerArgs.addAll(
-                    // https://youtrack.jetbrains.com/issue/KT-73255
                     "-Xannotation-default-target=param-property",
                     // https://kotlinlang.org/docs/whatsnew2020.html#data-class-copy-function-to-have-the-same-visibility-as-constructor
                     "-Xconsistent-data-class-copy-visibility",
@@ -72,27 +70,18 @@ public abstract class BasePlugin : Plugin<Project> {
                     "-Xcontext-parameters",
                     "-Xcontext-sensitive-resolution",
                     "-Xannotation-target-all",
-                    // opt in to experimental stdlib apis
-                    "-opt-in=kotlin.ExperimentalStdlibApi",
+                    // opt in to experimental apis
                     "-opt-in=kotlin.time.ExperimentalTime",
                     "-opt-in=kotlin.uuid.ExperimentalUuidApi",
                 )
 
                 if (this is KotlinJvmCompilerOptions) {
                     jvmTarget.set(project.jvmTarget)
-                    jvmDefault.set(JvmDefaultMode.NO_COMPATIBILITY)
 
                     freeCompilerArgs.addAll(
-                        // https://youtrack.jetbrains.com/issue/KT-22292
+                        "-Xjvm-default=all",
                         "-Xassertions=jvm",
-                        // Enabling default nullability annotations
-                        "-Xjsr305=strict",
-                        // https://kotlinlang.org/docs/whatsnew1520.html#support-for-jspecify-nullness-annotations
-                        "-Xjspecify-annotations=strict",
-                        // Enhance not null annotated type parameter's types to definitely not null types (@NotNull T => T & Any)
-                        "-Xenhance-type-parameter-types-to-def-not-null",
-                        // https://kotlinlang.org/docs/whatsnew-eap.html#support-for-reading-and-writing-annotations-in-kotlin-metadata
-                        "-Xannotations-in-metadata",
+                        "-Xconsistent-data-class-copy-visibility",
                     )
                 }
             }

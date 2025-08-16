@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.AuthState
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
@@ -43,12 +44,10 @@ class DefaultDatastoreRepository(
         }
 
     override suspend fun saveAuthState(authState: AuthState) {
-        coroutineScope.io.launch {
-            dataStore.edit { preferences ->
-                preferences[KEY_ACCESS_TOKEN] = authState.accessToken!!
-                preferences[KEY_REFRESH_TOKEN] = authState.refreshToken!!
-                preferences[KEY_IS_AUTHORIZED] = authState.isAuthorized
-            }
+        dataStore.edit { preferences ->
+            preferences[KEY_ACCESS_TOKEN] = authState.accessToken!!
+            preferences[KEY_REFRESH_TOKEN] = authState.refreshToken!!
+            preferences[KEY_IS_AUTHORIZED] = authState.isAuthorized
         }
     }
 
@@ -84,10 +83,8 @@ class DefaultDatastoreRepository(
         }
 
     override suspend fun saveLanguage(languageCode: String) {
-        coroutineScope.io.launch {
-            dataStore.edit { preferences ->
-                preferences[KEY_LANGUAGE] = languageCode
-            }
+        dataStore.edit { preferences ->
+            preferences[KEY_LANGUAGE] = languageCode
         }
     }
 
@@ -97,10 +94,8 @@ class DefaultDatastoreRepository(
         }
 
     override suspend fun saveListStyle(listStyle: ListStyle) {
-        coroutineScope.io.launch {
-            dataStore.edit { preferences ->
-                preferences[KEY_LIST_STYLE] = listStyle.name
-            }
+        dataStore.edit { preferences ->
+            preferences[KEY_LIST_STYLE] = listStyle.name
         }
     }
 
@@ -112,6 +107,21 @@ class DefaultDatastoreRepository(
             }
         }
 
+    override suspend fun saveImageQuality(quality: ImageQuality) {
+        dataStore.edit { preferences ->
+            preferences[KEY_IMAGE_QUALITY] = quality.name
+        }
+    }
+
+    override fun observeImageQuality(): Flow<ImageQuality> =
+        dataStore.data.map { preferences ->
+            when (preferences[KEY_IMAGE_QUALITY]) {
+                ImageQuality.HIGH.name -> ImageQuality.HIGH
+                ImageQuality.LOW.name -> ImageQuality.LOW
+                else -> ImageQuality.MEDIUM // Default
+            }
+        }
+
     companion object {
         val KEY_THEME = stringPreferencesKey("app_theme")
         val KEY_ACCESS_TOKEN = stringPreferencesKey("auth_state")
@@ -119,5 +129,6 @@ class DefaultDatastoreRepository(
         val KEY_IS_AUTHORIZED = booleanPreferencesKey("isAuthorized")
         val KEY_LANGUAGE = stringPreferencesKey("app_language")
         val KEY_LIST_STYLE = stringPreferencesKey("list_style")
+        val KEY_IMAGE_QUALITY = stringPreferencesKey("image_quality")
     }
 }

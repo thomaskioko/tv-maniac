@@ -17,7 +17,6 @@ import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResult
 import com.thomaskioko.tvmaniac.util.FormatterUtil
-import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -32,7 +31,6 @@ class TrendingShowsStore(
     private val trendingShowsDao: TrendingShowsDao,
     private val tvShowsDao: TvShowsDao,
     private val formatterUtil: FormatterUtil,
-    private val dateFormatter: PlatformDateFormatter,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<TrendingShowsParams, List<ShowEntity>> by storeBuilder(
@@ -58,39 +56,58 @@ class TrendingShowsStore(
             }
         },
         writer = { _: TrendingShowsParams, trendingShows ->
-            databaseTransactionRunner {
-                val entries = trendingShows.results.map { show ->
-                    val showId = show.id.toLong()
-
-                    if (!tvShowsDao.showExists(showId)) {
-                        val placeholder = createShowPlaceholder(
-                            id = showId,
-                            name = show.name,
-                            overview = show.overview,
-                            posterPath = show.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
-                            popularity = show.popularity,
-                            voteAverage = show.voteAverage,
-                            voteCount = show.voteCount.toLong(),
-                            genreIds = show.genreIds,
-                        )
-                        tvShowsDao.upsert(placeholder)
+            withContext(dispatchers.databaseWrite) {
+                databaseTransactionRunner {
+                    if (trendingShows.page == 1) {
+                        trendingShowsDao.deleteTrendingShows()
                     }
 
-                    Trending_shows(
-                        id = Id(showId),
-                        page = Id(trendingShows.page.toLong()),
-                        name = show.name,
-                        poster_path = show.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
-                        overview = show.overview,
-                    )
-                }
+                    val showsToInsert = mutableListOf<com.thomaskioko.tvmaniac.db.Tvshow>()
+                    val trendingEntries = mutableListOf<Trending_shows>()
 
-                if (trendingShows.page == 1) {
-                    trendingShowsDao.deleteTrendingShows()
-                }
+                    trendingShows.results
+                        .filter { show ->
+                            show.voteAverage >= 6.0 &&
+                                show.voteCount >= 50 &&
+                                show.name.isNotBlank()
+                        }
+                        .forEach { show ->
+                            val showId = show.id.toLong()
+                            val formattedPosterPath = show.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) }
 
-                entries.forEach { entry ->
-                    trendingShowsDao.upsert(entry)
+                            if (!tvShowsDao.showExists(showId)) {
+                                showsToInsert.add(
+                                    createShowPlaceholder(
+                                        id = showId,
+                                        name = show.name,
+                                        overview = show.overview,
+                                        posterPath = formattedPosterPath,
+                                        popularity = show.popularity,
+                                        voteAverage = show.voteAverage,
+                                        voteCount = show.voteCount.toLong(),
+                                        genreIds = show.genreIds,
+                                    ),
+                                )
+                            }
+
+                            trendingEntries.add(
+                                Trending_shows(
+                                    id = Id(showId),
+                                    page = Id(trendingShows.page.toLong()),
+                                    name = show.name,
+                                    poster_path = formattedPosterPath,
+                                    overview = show.overview,
+                                ),
+                            )
+                        }
+
+                    showsToInsert.forEach { show ->
+                        tvShowsDao.upsert(show)
+                    }
+
+                    trendingEntries.forEach { show ->
+                        trendingShowsDao.upsert(show)
+                    }
                 }
             }
         },

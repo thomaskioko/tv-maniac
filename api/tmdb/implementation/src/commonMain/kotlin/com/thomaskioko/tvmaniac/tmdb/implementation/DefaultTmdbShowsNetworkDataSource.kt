@@ -36,6 +36,10 @@ class DefaultTmdbShowsNetworkDataSource(
         genres: String?,
         watchProviders: String?,
         screenedTheatrically: Boolean,
+        voteAverageGte: Double?,
+        voteCountGte: Int?,
+        firstAirDateGte: String?,
+        firstAirDateLte: String?,
     ): ApiResponse<TmdbShowResult> {
         return httpClient.safeRequest {
             url {
@@ -45,9 +49,14 @@ class DefaultTmdbShowsNetworkDataSource(
                 parameter("sort_by", sortBy)
                 parameter("include_adult", "false")
                 parameter("screened_theatrically", screenedTheatrically)
+                parameter("language", "en-US")
 
                 genres?.let { parameter("with_genres", it) }
                 watchProviders?.let { parameter("with_watch_providers", it) }
+                voteAverageGte?.let { parameter("vote_average.gte", it) }
+                voteCountGte?.let { parameter("vote_count.gte", it) }
+                firstAirDateGte?.let { parameter("first_air_date.gte", it) }
+                firstAirDateLte?.let { parameter("first_air_date.lte", it) }
             }
         }
     }

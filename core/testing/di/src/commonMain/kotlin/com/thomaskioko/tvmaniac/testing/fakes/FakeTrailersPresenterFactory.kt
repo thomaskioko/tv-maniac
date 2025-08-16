@@ -20,6 +20,6 @@ class FakeTrailersPresenterFactory(
     ): TrailersPresenter = TrailersPresenter(
         componentContext = componentContext,
         trailerId = traktShowId,
-        repository = repository
+        repository = repository,
     )
 }

@@ -28,6 +28,6 @@ class FakeSearchPresenterFactory(
         onNavigateToGenre = onNavigateToGenre,
         mapper = mapper,
         searchRepository = searchRepository,
-        genreRepository = genreRepository
+        genreRepository = genreRepository,
     )
 }

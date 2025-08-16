@@ -16,6 +16,7 @@ import com.thomaskioko.tvmaniac.shows.api.createShowPlaceholder
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResult
+import com.thomaskioko.tvmaniac.util.DateTimeProvider
 import com.thomaskioko.tvmaniac.util.FormatterUtil
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.map
@@ -31,11 +32,16 @@ class FeaturedShowsStore(
     private val featuredShowsDao: FeaturedShowsDao,
     private val tvShowsDao: TvShowsDao,
     private val formatterUtil: FormatterUtil,
+    private val dateTimeProvider: DateTimeProvider,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, List<ShowEntity>> by storeBuilder(
     fetcher = apiFetcher { page ->
-        tmdbRemoteDataSource.discoverShows(page = page).also {
+        tmdbRemoteDataSource.discoverShows(
+            page = page,
+            firstAirDateGte = dateTimeProvider.getDateMonthsAgo(6),
+            firstAirDateLte = dateTimeProvider.getTodayDate(),
+        ).also {
             requestManagerRepository.upsert(
                 entityId = FEATURED_SHOWS_TODAY.requestId,
                 requestType = FEATURED_SHOWS_TODAY.name,

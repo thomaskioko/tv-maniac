@@ -1,4 +1,5 @@
 import SwiftUI
+import TvManiac
 
 public final class SettingsAppStorage: ObservableObject {
     private init() {}
@@ -7,4 +8,5 @@ public final class SettingsAppStorage: ObservableObject {
 
     @AppStorage("app.theme") public var appTheme: DeveiceAppTheme = .light
     @AppStorage("discover.carousel.index") public var savedIndex = 1
+    @AppStorage("image.quality") public var imageQuality: SwiftImageQuality = .high
 }

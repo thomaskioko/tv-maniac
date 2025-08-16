@@ -33,6 +33,6 @@ class FakeMoreShowsPresenterFactory(
         popularShowsRepository = popularShowsRepository,
         upcomingShowsRepository = upcomingShowsRepository,
         trendingShowsRepository = trendingShowsRepository,
-        topRatedShowsRepository = topRatedShowsRepository
+        topRatedShowsRepository = topRatedShowsRepository,
     )
 }

@@ -12,7 +12,7 @@ import com.thomaskioko.tvmaniac.discover.api.TrendingShowsParams
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.TRENDING_SHOWS_TODAY
-import com.thomaskioko.tvmaniac.shows.api.model.DEFAULT_DAY_TIME_WINDOW
+import com.thomaskioko.tvmaniac.shows.api.model.DEFAULT_WEEK_TIME_WINDOW
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
 import dev.zacsweers.metro.AppScope
@@ -38,7 +38,7 @@ class DefaultTrendingShowsRepository(
 
     override suspend fun fetchTrendingShows(forceRefresh: Boolean) {
         val page = DEFAULT_API_PAGE
-        val param = TrendingShowsParams(timeWindow = DEFAULT_DAY_TIME_WINDOW, page = page)
+        val param = TrendingShowsParams(timeWindow = DEFAULT_WEEK_TIME_WINDOW, page = page)
         when {
             forceRefresh -> store.fresh(param)
             else -> store.get(param)
@@ -58,7 +58,7 @@ class DefaultTrendingShowsRepository(
     private suspend fun fetchPage(page: Long, forceRefresh: Boolean): FetchResult {
         return if (shouldFetchPage(page, forceRefresh)) {
             try {
-                val result = store.fresh(TrendingShowsParams(timeWindow = DEFAULT_DAY_TIME_WINDOW, page = page))
+                val result = store.fresh(TrendingShowsParams(timeWindow = DEFAULT_WEEK_TIME_WINDOW, page = page))
                 updateRequestManager(page)
                 FetchResult.Success(endOfPaginationReached = result.isEmpty())
             } catch (e: CancellationException) {

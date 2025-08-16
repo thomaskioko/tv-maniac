@@ -28,10 +28,7 @@ class SettingsPresenter(
     private val _state: MutableStateFlow<SettingsState> = MutableStateFlow(SettingsState.DEFAULT_STATE)
 
     init {
-        coroutineScope.launch {
-            observeTheme()
-            observeTraktAuthState()
-        }
+        initializeObservers()
     }
 
     public val state: StateFlow<SettingsState> = _state.asStateFlow()
@@ -57,6 +54,33 @@ class SettingsPresenter(
             TraktLogoutClicked -> {
                 coroutineScope.launch { traktAuthRepository.clearAuth() }
             }
+
+            ShowImageQualityDialog -> {
+                updateImageQualityDialogState(true)
+            }
+
+            DismissImageQualityDialog -> {
+                updateImageQualityDialogState(false)
+            }
+
+            is ImageQualitySelected -> {
+                coroutineScope.launch {
+                    datastoreRepository.saveImageQuality(action.quality)
+                    updateImageQualityDialogState(false)
+                }
+            }
+        }
+    }
+
+    private fun initializeObservers() {
+        coroutineScope.launch {
+            observeTheme()
+        }
+        coroutineScope.launch {
+            observeTraktAuthState()
+        }
+        coroutineScope.launch {
+            observeImageQuality()
         }
     }
 
@@ -68,9 +92,19 @@ class SettingsPresenter(
         coroutineScope.launch { _state.update { state -> state.copy(showTraktDialog = showDialog) } }
     }
 
+    private fun updateImageQualityDialogState(showDialog: Boolean) {
+        coroutineScope.launch { _state.update { state -> state.copy(showImageQualityDialog = showDialog) } }
+    }
+
     private suspend fun observeTheme() {
         datastoreRepository.observeTheme().collectLatest {
             _state.update { state -> state.copy(appTheme = it) }
+        }
+    }
+
+    private suspend fun observeImageQuality() {
+        datastoreRepository.observeImageQuality().collectLatest { quality ->
+            _state.update { state -> state.copy(imageQuality = quality) }
         }
     }
 
