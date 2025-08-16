@@ -132,9 +132,9 @@
     <string name="title_browse_by_genre">Nach Genre durchsuchen</string>
     <string name="status_connected">Wieder online!</string>
     <string name="status_no_connection">Keine Internetverbindung!</string>
-    <string name="settings_title_theme_dark">Dunkles Thema aktivieren</string>
-    <string name="settings_title_theme_light">Licht Thema aktivieren</string>
-    <string name="settings_title_theme_system">Thema ändern</string>
+    <string name="settings_title_theme_dark">Dunkles Thema</string>
+    <string name="settings_title_theme_light">Licht Thema</string>
+    <string name="settings_title_theme_system">System Thema</string>
     <string name="settings_theme_light">Licht</string>
     <string name="settings_theme_dark">Dunkel</string>
     <string name="settings_theme_system">System</string>

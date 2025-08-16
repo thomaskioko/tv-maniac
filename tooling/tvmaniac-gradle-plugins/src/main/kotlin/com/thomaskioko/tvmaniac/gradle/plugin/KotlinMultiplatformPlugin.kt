@@ -48,6 +48,7 @@ public abstract class KotlinMultiplatformPlugin : Plugin<Project> {
         target.kotlin {
             compilerOptions {
                 freeCompilerArgs.add("-Xexpect-actual-classes")
+                optIn.add("kotlin.time.ExperimentalTime")
             }
         }
 

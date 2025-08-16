@@ -4,11 +4,10 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
-import kotlin.time.Instant
 
 const val DATE_YYYY_MM_DD_PATTERN = "yyyy-MM-dd"
 
-val startOfDay: Instant = Clock.System.now().toLocalDateTime(TimeZone.UTC).date.atStartOfDayIn(TimeZone.UTC)
+val startOfDay: kotlin.time.Instant = Clock.System.now().toLocalDateTime(TimeZone.UTC).date.atStartOfDayIn(TimeZone.UTC)
 
 expect class PlatformDateFormatter() {
     /**

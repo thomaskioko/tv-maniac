@@ -61,13 +61,17 @@ public abstract class BasePlugin : Plugin<Project> {
                 // In this mode, some deprecations and bug-fixes for unstable code take effect immediately.
                 progressiveMode.set(version >= KotlinVersion.Companion.DEFAULT)
 
-
-                // Enable new Kotlin 2.1
                 freeCompilerArgs.addAll(
-                    "-Xnon-local-break-continue",
-                    "-Xmulti-dollar-interpolation",
-                    "-Xexpect-actual-classes",
-                    "-Xwhen-guards",
+                    "-Xannotation-default-target=param-property",
+                    // https://kotlinlang.org/docs/whatsnew2020.html#data-class-copy-function-to-have-the-same-visibility-as-constructor
+                    "-Xconsistent-data-class-copy-visibility",
+                    // Enable 2.2.0 feature previews
+                    "-Xcontext-parameters",
+                    "-Xcontext-sensitive-resolution",
+                    "-Xannotation-target-all",
+                    // opt in to experimental apis
+                    "-opt-in=kotlin.time.ExperimentalTime",
+                    "-opt-in=kotlin.uuid.ExperimentalUuidApi",
                 )
 
                 if (this is KotlinJvmCompilerOptions) {
@@ -76,7 +80,6 @@ public abstract class BasePlugin : Plugin<Project> {
                     freeCompilerArgs.addAll(
                         "-Xjvm-default=all",
                         "-Xassertions=jvm",
-                        // https://kotlinlang.org/docs/whatsnew2020.html#data-class-copy-function-to-have-the-same-visibility-as-constructor
                         "-Xconsistent-data-class-copy-visibility",
                     )
 
