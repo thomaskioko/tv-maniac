@@ -52,8 +52,11 @@ INNER JOIN
     tvshow ON tvshow.id = featured_shows.id
 LEFT OUTER JOIN
     watchlist ON tvshow.id = watchlist.id
+WHERE
+    tvshow.vote_average >= 7.0
+    AND tvshow.vote_count >= 100
 ORDER BY
-    tvshow.popularity DESC;
+    (tvshow.popularity * 0.3 + tvshow.vote_average * 10 * 0.7) DESC;
 
 delete:
 DELETE FROM featured_shows

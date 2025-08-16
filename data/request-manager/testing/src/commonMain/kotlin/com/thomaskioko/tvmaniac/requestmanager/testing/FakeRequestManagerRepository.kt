@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.requestmanager.testing
 
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
-import kotlinx.datetime.Instant
 import kotlin.time.Duration
+import kotlin.time.Instant
 
 class FakeRequestManagerRepository : RequestManagerRepository {
     override fun upsert(entityId: Long, requestType: String, timestamp: Instant): Long = 0L
