@@ -25,6 +25,7 @@ public abstract class AppPlugin : Plugin<Project> {
             defaultConfig {
                 versionCode = target.getVersion("app-version-code").toInt()
                 versionName = target.getVersion("app-version-name")
+                manifestPlaceholders["appAuthRedirectScheme"] = "tvmaniac"
             }
 
             signingConfigs {
