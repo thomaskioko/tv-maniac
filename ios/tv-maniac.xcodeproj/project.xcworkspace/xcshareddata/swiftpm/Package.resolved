@@ -1,5 +1,5 @@
 {
-  "originHash" : "939d0dc556d1b97211387098c037a6ce25cb1ebdc46d1b3b3ae1fd2040f05d8d",
+  "originHash" : "0ff499a54c136483912bfa49d647df40be9858a0876ac7d0147949c5b4d7be9d",
   "pins" : [
     {
       "identity" : "brightfutures",
@@ -78,8 +78,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-snapshot-testing",
       "state" : {
-        "revision" : "37230a37e83f1b7023be08e1b1a2603fcb1567fb",
-        "version" : "1.18.4"
+        "revision" : "d7e40607dcd6bc26543f5d9433103f06e0b28f8f",
+        "version" : "1.18.6"
       }
     },
     {
@@ -114,8 +114,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SvenTiigi/YouTubePlayerKit.git",
       "state" : {
-        "revision" : "29ef4217810e15ce8c7fce6608a1eecd0935b621",
-        "version" : "2.0.0"
+        "revision" : "a0f3f0996c2d752faa654b69b82acaa444bed922",
+        "version" : "2.0.1"
       }
     }
   ],

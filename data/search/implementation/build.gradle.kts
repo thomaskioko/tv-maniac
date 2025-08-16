@@ -3,7 +3,7 @@ plugins {
 }
 
 tvmaniac {
-    useKotlinInject()
+    useDependencyInjection()
 }
 
 kotlin {

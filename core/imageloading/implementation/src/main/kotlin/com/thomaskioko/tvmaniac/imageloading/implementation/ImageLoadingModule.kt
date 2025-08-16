@@ -2,13 +2,14 @@ package com.thomaskioko.tvmaniac.imageloading.implementation
 
 import android.content.Context
 import android.os.Looper
-import me.tatarka.inject.annotations.Provides
+import com.thomaskioko.tvmaniac.core.base.di.ApplicationContext
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.SingleIn
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 import java.util.concurrent.TimeUnit
 
 @ContributesTo(AppScope::class)
@@ -21,7 +22,9 @@ interface ImageLoadingModule {
 
     @Provides
     @SingleIn(AppScope::class)
-    fun provideCache(context: Context): Cache {
+    fun provideCache(
+        @ApplicationContext context: Context,
+    ): Cache {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             throw IllegalStateException("Cache initialized on main thread.")
         }
