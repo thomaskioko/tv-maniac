@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.core.logger.di
 
-import com.thomaskioko.tvmaniac.core.base.AppInitializer
+import com.thomaskioko.tvmaniac.core.base.di.Initializers
 import com.thomaskioko.tvmaniac.core.logger.LoggingInitializer
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesTo
@@ -11,5 +11,8 @@ import dev.zacsweers.metro.Provides
 interface LoggingInitializerModule {
     @Provides
     @IntoSet
-    fun provideLoggingInitializer(impl: LoggingInitializer): AppInitializer = impl
+    @Initializers
+    fun provideLoggingInitializer(impl: LoggingInitializer): () -> Unit = {
+        impl.init()
+    }
 }

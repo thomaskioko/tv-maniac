@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.imageloading.implementation
 
 import android.content.Context
 import android.os.Looper
+import com.thomaskioko.tvmaniac.core.base.di.ApplicationContext
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Provides
@@ -21,7 +22,9 @@ interface ImageLoadingModule {
 
     @Provides
     @SingleIn(AppScope::class)
-    fun provideCache(context: Context): Cache {
+    fun provideCache(
+        @ApplicationContext context: Context,
+    ): Cache {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             throw IllegalStateException("Cache initialized on main thread.")
         }

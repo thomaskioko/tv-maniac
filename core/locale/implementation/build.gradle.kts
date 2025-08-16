@@ -23,6 +23,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(projects.core.locale.api)
+                implementation(projects.core.base)
                 implementation(projects.data.datastore.api)
                 implementation(libs.coroutines.core)
             }

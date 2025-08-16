@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.watchlist.implementation.di
 
-import com.thomaskioko.tvmaniac.core.base.AppInitializer
+import com.thomaskioko.tvmaniac.core.base.di.AsyncInitializers
 import com.thomaskioko.tvmaniac.watchlist.implementation.WatchlistSyncer
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesTo
@@ -11,5 +11,8 @@ import dev.zacsweers.metro.Provides
 interface WatchlistSyncerModule {
     @Provides
     @IntoSet
-    fun provideWatchlistSyncer(impl: WatchlistSyncer): AppInitializer = impl
+    @AsyncInitializers
+    fun provideWatchlistSyncer(bind: WatchlistSyncer): () -> Unit = {
+        bind.init()
+    }
 }

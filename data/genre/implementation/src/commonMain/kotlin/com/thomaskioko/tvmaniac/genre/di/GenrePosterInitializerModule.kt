@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.genre.di
 
-import com.thomaskioko.tvmaniac.core.base.AppInitializer
+import com.thomaskioko.tvmaniac.core.base.di.AsyncInitializers
 import com.thomaskioko.tvmaniac.genre.GenrePosterInitializer
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesTo
@@ -11,5 +11,8 @@ import dev.zacsweers.metro.Provides
 interface GenrePosterInitializerModule {
     @Provides
     @IntoSet
-    fun provideGenrePosterInitializer(impl: GenrePosterInitializer): AppInitializer = impl
+    @AsyncInitializers
+    fun provideGenrePosterInitializer(bind: GenrePosterInitializer): () -> Unit = {
+        bind.init()
+    }
 }

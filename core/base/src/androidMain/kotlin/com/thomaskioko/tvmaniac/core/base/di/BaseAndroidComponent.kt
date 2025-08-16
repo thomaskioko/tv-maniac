@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 
@@ -14,13 +15,35 @@ import kotlinx.coroutines.Job
 interface BaseAndroidComponent {
 
     @Provides
-    fun provideContext(application: Application): Context = application
+    @ApplicationContext
+    fun provideApplicationContext(application: Application): Context = application
 
     @Provides
-    fun provideCoroutineScope(dispatchers: AppCoroutineDispatchers): AppCoroutineScope =
-        AppCoroutineScope(
-            default = CoroutineScope(Job() + dispatchers.computation),
-            io = CoroutineScope(Job() + dispatchers.io),
-            main = CoroutineScope(Job() + dispatchers.main),
-        )
+    @SingleIn(AppScope::class)
+    @MainCoroutineScope
+    fun provideMainCoroutineScope(dispatchers: AppCoroutineDispatchers): CoroutineScope =
+        CoroutineScope(Job() + dispatchers.main)
+
+    @Provides
+    @SingleIn(AppScope::class)
+    @IoCoroutineScope
+    fun provideIoCoroutineScope(dispatchers: AppCoroutineDispatchers): CoroutineScope =
+        CoroutineScope(Job() + dispatchers.io)
+
+    @Provides
+    @SingleIn(AppScope::class)
+    @ComputationCoroutineScope
+    fun provideComputationCoroutineScope(dispatchers: AppCoroutineDispatchers): CoroutineScope =
+        CoroutineScope(Job() + dispatchers.computation)
+
+    @Provides
+    fun provideAppCoroutineScope(
+        @MainCoroutineScope mainScope: CoroutineScope,
+        @IoCoroutineScope ioScope: CoroutineScope,
+        @ComputationCoroutineScope computationScope: CoroutineScope,
+    ): AppCoroutineScope = AppCoroutineScope(
+        default = computationScope,
+        io = ioScope,
+        main = mainScope,
+    )
 }
