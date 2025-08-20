@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.thomaskioko.tvmaniac.testing.di
 
 import com.thomakioko.tvmaniac.util.testing.FakeFormatterUtil
