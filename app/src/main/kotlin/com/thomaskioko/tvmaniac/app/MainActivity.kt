@@ -16,16 +16,16 @@ import androidx.core.view.WindowCompat
 import com.thomaskioko.tvmaniac.RootScreen
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
-import com.thomaskioko.tvmaniac.inject.ActivityComponent
+import com.thomaskioko.tvmaniac.inject.ActivityGraph
 import com.thomaskioko.tvmaniac.navigation.ThemeState
 
 class MainActivity : ComponentActivity() {
-    private lateinit var component: ActivityComponent
+    private lateinit var component: ActivityGraph
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        component = ActivityComponent.Companion.create(this)
+        component = ActivityGraph.Companion.create(this)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 

@@ -7,7 +7,6 @@ import com.thomakioko.tvmaniac.util.testing.FakeFormatterUtil
 import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
 import com.thomaskioko.tvmaniac.genre.ShowGenresEntity
 import com.thomaskioko.tvmaniac.search.presenter.ClearQuery
-import com.thomaskioko.tvmaniac.search.presenter.DefaultSearchShowsPresenter
 import com.thomaskioko.tvmaniac.search.presenter.EmptySearchResult
 import com.thomaskioko.tvmaniac.search.presenter.InitialSearchState
 import com.thomaskioko.tvmaniac.search.presenter.Mapper
@@ -388,7 +387,7 @@ class SearchShowsPresenterTest {
 
     private fun buildPresenter(
         lifecycle: LifecycleRegistry = LifecycleRegistry(),
-    ): SearchShowsPresenter = DefaultSearchShowsPresenter(
+    ): SearchShowsPresenter = SearchShowsPresenter(
         componentContext = DefaultComponentContext(lifecycle = lifecycle),
         onNavigateToShowDetails = {},
         onNavigateToGenre = {},

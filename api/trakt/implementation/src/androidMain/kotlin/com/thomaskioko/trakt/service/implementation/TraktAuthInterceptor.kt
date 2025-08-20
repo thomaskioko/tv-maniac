@@ -2,9 +2,9 @@ package com.thomaskioko.trakt.service.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import dev.zacsweers.metro.Inject
 import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.runBlocking
-import me.tatarka.inject.annotations.Inject
 import okhttp3.Interceptor
 import okhttp3.Response
 

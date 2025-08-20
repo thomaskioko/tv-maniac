@@ -2,14 +2,12 @@ package com.thomaskioko.tvmaniac.app
 
 import android.app.Application
 import com.thomaskioko.tvmaniac.core.base.extensions.unsafeLazy
-import com.thomaskioko.tvmaniac.inject.ApplicationComponent
-import com.thomaskioko.tvmaniac.inject.create
+import com.thomaskioko.tvmaniac.inject.ApplicationGraph
+import dev.zacsweers.metro.createGraphFactory
 
 class TvManicApplication : Application() {
-    private val component: ApplicationComponent by unsafeLazy {
-        ApplicationComponent::class.create(
-            this,
-        )
+    private val component: ApplicationGraph by unsafeLazy {
+        createGraphFactory<ApplicationGraph.Factory>().create(this)
     }
 
     override fun onCreate() {

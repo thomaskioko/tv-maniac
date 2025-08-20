@@ -4,7 +4,7 @@ plugins {
 
 tvmaniac {
     addAndroidMultiplatformTarget(withDeviceTestBuilder = true)
-    useKotlinInject()
+    useDependencyInjection()
     useSerialization()
 
     optIn(
@@ -21,7 +21,6 @@ kotlin {
             implementation(libs.coroutines.core)
             implementation(libs.kermit)
             implementation(libs.kotlinx.datetime)
-            implementation(libs.bundles.kotlinInject)
             implementation(libs.ktor.core)
             implementation(libs.yamlkt)
         }

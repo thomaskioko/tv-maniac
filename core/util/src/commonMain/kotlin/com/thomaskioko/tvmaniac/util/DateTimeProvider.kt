@@ -1,10 +1,10 @@
 package com.thomaskioko.tvmaniac.util
 
+import dev.zacsweers.metro.Inject
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import kotlinx.datetime.toLocalDateTime
-import me.tatarka.inject.annotations.Inject
 import kotlin.time.Clock
 
 /**

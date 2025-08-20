@@ -6,7 +6,7 @@ import com.thomaskioko.tvmaniac.testing.di.TestIosComponent
 internal class DefaultRootComponentIosTest : DefaultRootComponentTest() {
     private val testComponent: TestIosComponent = TestIosComponent.create()
 
-    override val rootPresenterFactory: RootPresenter.Factory
+    override val rootPresenterFactory: DefaultRootPresenter.Factory
         get() = testComponent.rootPresenterFactory
 
     override val datastoreRepository: DatastoreRepository

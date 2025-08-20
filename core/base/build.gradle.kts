@@ -4,7 +4,7 @@ plugins {
 
 tvmaniac {
     addAndroidMultiplatformTarget(withJava = true)
-    useKotlinInject()
+    useDependencyInjection()
     useSerialization()
 
     optIn(
@@ -20,7 +20,6 @@ kotlin {
 
             implementation(libs.coroutines.core)
             implementation(libs.decompose.decompose)
-            implementation(libs.bundles.kotlinInject)
         }
     }
 }
