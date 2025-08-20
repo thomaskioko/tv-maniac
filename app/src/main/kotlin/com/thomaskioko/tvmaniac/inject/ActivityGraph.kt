@@ -8,11 +8,12 @@ import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.navigation.RootPresenter
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import dev.zacsweers.metro.AppScope
-import dev.zacsweers.metro.ContributesGraphExtension
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.GraphExtension
 import dev.zacsweers.metro.Provides
 import dev.zacsweers.metro.asContribution
 
-@ContributesGraphExtension(ActivityScope::class)
+@GraphExtension(ActivityScope::class)
 interface ActivityGraph {
     val traktAuthManager: TraktAuthManager
     val rootPresenter: RootPresenter
@@ -22,7 +23,8 @@ interface ActivityGraph {
         activity: ComponentActivity,
     ): ComponentContext = activity.defaultComponentContext()
 
-    @ContributesGraphExtension.Factory(AppScope::class)
+    @ContributesTo(AppScope::class)
+    @GraphExtension.Factory
     interface Factory {
         fun createComponent(
             @Provides activity: ComponentActivity,
