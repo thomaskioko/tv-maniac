@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 
@@ -33,10 +34,11 @@ internal fun CircularIndicator(
     isUserScrolling: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    var indicatorProgress by remember { mutableFloatStateOf(0f) }
+    val isInPreview = LocalInspectionMode.current
+    var indicatorProgress by remember { mutableFloatStateOf(if (isInPreview) 1f else 0f) }
 
     LaunchedEffect(currentPage, isUserScrolling) {
-        if (!isUserScrolling) {
+        if (!isUserScrolling && !isInPreview) {
             indicatorProgress = 0f
             val startTime = System.currentTimeMillis()
             while (indicatorProgress < 1f) {
@@ -44,6 +46,8 @@ internal fun CircularIndicator(
                 indicatorProgress = (elapsed / 4500f).coerceAtMost(1f)
                 delay(16)
             }
+        } else if (isInPreview) {
+            indicatorProgress = 1f
         } else {
             indicatorProgress = 0f
         }
