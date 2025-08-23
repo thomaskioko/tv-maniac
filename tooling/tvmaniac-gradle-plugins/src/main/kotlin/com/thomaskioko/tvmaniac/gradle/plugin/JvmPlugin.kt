@@ -18,12 +18,12 @@ public abstract class JvmPlugin : Plugin<Project> {
         target.baseExtension.extensions.create("jvm", JvmExtension::class.java)
 
         target.java {
-            sourceCompatibility = target.javaTargetVersion
-            targetCompatibility = target.javaTargetVersion
+            sourceCompatibility = target.javaTargetVersion.get()
+            targetCompatibility = target.javaTargetVersion.get()
         }
 
         target.tasks.withType(JavaCompile::class.java).configureEach {
-            it.options.release.set(target.javaTargetVersion.majorVersion.toInt())
+            it.options.release.set(target.javaTargetVersion.get().majorVersion.toInt())
         }
 
         target.tasks.withType(Test::class.java).configureEach(Test::defaultTestSetup)
