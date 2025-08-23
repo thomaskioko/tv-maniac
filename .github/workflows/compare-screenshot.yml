@@ -42,7 +42,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - uses: dawidd6/action-download-artifact@v3
+      - uses: dawidd6/action-download-artifact@v11
         continue-on-error: true
         with:
           name: screenshot
