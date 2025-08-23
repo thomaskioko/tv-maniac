@@ -8,6 +8,16 @@ tasks {
         enableStricterValidation = true
         failOnWarning = true
     }
+
+    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        compilerOptions {
+            allWarningsAsErrors.set(false)
+            freeCompilerArgs.addAll(
+                "-opt-in=kotlin.RequiresOptIn",
+                "-Xjvm-default=all"
+            )
+        }
+    }
 }
 
 java {

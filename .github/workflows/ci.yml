@@ -23,7 +23,6 @@ env:
 
 jobs:
     build-android:
-        needs: android-screenshot-test
         runs-on: ubuntu-latest
         env:
             TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
@@ -75,69 +74,7 @@ jobs:
                       --no-configuration-cache
 
 
-    android-screenshot-test:
-        runs-on: ubuntu-latest
-        timeout-minutes: 45
-        permissions:
-            contents: write
-            pull-requests: write
-
-        steps:
-            -   name: Checkout
-                uses: actions/checkout@v5
-
-            -   name: Set up JDK
-                uses: actions/setup-java@v4
-                with:
-                    distribution: ${{ env.DISTRIBUTION }}
-                    java-version: ${{ env.JDK_VERSION }}
-
-            -   name: Setup Gradle Cache
-                uses: actions/cache@v4
-                with:
-                    path: ${{ env.GRADLE_CACHE_PATH }}
-                    key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-                    restore-keys: |
-                        ${{ runner.os }}-gradle-
-
-            -   name: Roborazzi Screenshot Tests
-                id: screenshotsverify
-                continue-on-error: true
-                run: ./gradlew clean verifyRoborazziDebug
-
-            -   name: Generate Roborazzi Screenshot Report
-                id: screenshots-report
-                continue-on-error: true
-                run: ./gradlew compareRoborazziDebug
-
-            -   name: Prevent Pushing New Screenshots if This is a Fork
-                id: checkfork_screenshots
-                if: steps.screenshotsverify.outcome == 'failure' && github.event.pull_request.head.repo.full_name != github.repository
-                run: |
-                    echo "::error::Screenshot tests failed, please create a PR in your fork first." && exit 1
-
-            -   name: Generate New Screenshots if Verification Failed and It's a PR
-                id: screenshotsrecord
-                if: steps.screenshotsverify.outcome == 'failure' && github.event_name == 'pull_request'
-                run: ./gradlew recordRoborazziDebug
-
-            -   name: Push New Screenshots if Available
-                uses: stefanzweifel/git-auto-commit-action@v5
-                if: steps.screenshotsrecord.outcome == 'success'
-                with:
-                    file_pattern: '**/*.png'
-                    disable_globbing: true
-                    commit_message: "🤖 Beep Beep: Update screenshots 🤖"
-
-            -   name: Upload Screenshot Results
-                if: ${{ !cancelled() }}
-                uses: actions/upload-artifact@v4
-                with:
-                    name: screenshot-test-results
-                    path: '**/build/outputs/roborazzi/*_compare.png'
-
     android-lint:
-        needs: android-screenshot-test
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v5

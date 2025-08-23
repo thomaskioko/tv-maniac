@@ -8,25 +8,27 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 public class ResourceGeneratorPlugin : Plugin<Project> {
     override fun apply(target: Project) {
-        target.afterEvaluate { project ->
-            val generateStringsTask =
-                project.tasks.register("generateMokoStrings", MokoResourceGeneratorTask::class.java) { task ->
-                    task.group = "build"
-                    task.description = "Generates resource sealed class from Moko resources"
-                }
+        val generateStringsTask = target.tasks.register("generateMokoStrings", MokoResourceGeneratorTask::class.java) { task ->
+            task.group = "build"
+            task.description = "Generates resource sealed class from Moko resources"
+        }
 
-            val generateMRTask = project.tasks.findByName("generateMRcommonMain")
+        target.afterEvaluate {
+            val generateMRTask = it.tasks.findByName("generateMRcommonMain")
             if (generateMRTask != null) {
-                generateStringsTask.configure { it.dependsOn(generateMRTask) }
+                generateStringsTask.configure { task -> task.dependsOn(generateMRTask) }
             }
+        }
 
-            project.tasks.withType(KotlinCompile::class.java).configureEach { task ->
-                task.dependsOn(generateStringsTask)
-            }
+        target.tasks.withType(KotlinCompile::class.java).configureEach { task ->
+            task.dependsOn(generateStringsTask)
+        }
 
-            // Configure source sets to include generated output
-            project.extensions.configure(KotlinMultiplatformExtension::class.java) { kotlin ->
-                kotlin.sourceSets.getByName("commonMain").kotlin.srcDir(generateStringsTask.get().commonMainOutput)
+        target.pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
+            target.extensions.configure(KotlinMultiplatformExtension::class.java) { kotlin ->
+                kotlin.sourceSets.named("commonMain") { sourceSet ->
+                    sourceSet.kotlin.srcDir(generateStringsTask.map { it.commonMainOutput })
+                }
             }
         }
     }
