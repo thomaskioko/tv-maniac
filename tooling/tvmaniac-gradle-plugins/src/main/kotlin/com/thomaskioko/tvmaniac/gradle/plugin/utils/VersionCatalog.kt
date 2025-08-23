@@ -62,12 +62,15 @@ internal fun Project.getDependencyOrNull(name: String): Provider<MinimalExternal
 internal val Project.javaTarget: String
     get() = getVersion("java-target")
 
-internal val Project.javaTargetVersion: JavaVersion
-    get() = JavaVersion.toVersion(javaTarget)
+internal val Project.javaTargetProvider: Provider<String>
+    get() = provider { getVersion("java-target") }
 
-internal val Project.jvmTarget: JvmTarget
-    get() = JvmTarget.fromTarget(javaTarget)
+internal val Project.javaTargetVersion: Provider<JavaVersion>
+    get() = javaTargetProvider.map { JavaVersion.toVersion(it) }
 
-internal val Project.javaToolchainVersion: JavaLanguageVersion
-    get() = JavaLanguageVersion.of(getVersion("java-toolchain"))
+internal val Project.jvmTarget: Provider<JvmTarget>
+    get() = javaTargetProvider.map { JvmTarget.fromTarget(it) }
+
+internal val Project.javaToolchainVersion: Provider<JavaLanguageVersion>
+    get() = provider { JavaLanguageVersion.of(getVersion("java-toolchain")) }
 

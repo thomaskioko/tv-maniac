@@ -85,8 +85,8 @@ internal fun KotlinProjectExtension.compilerOptions(configure: KotlinCommonCompi
         is KotlinAndroidProjectExtension -> compilerOptions(configure)
         is KotlinMultiplatformExtension -> {
             compilerOptions(configure)
-            targets.configureEach {
-                (it as? HasConfigurableKotlinCompilerOptions<*>)?.compilerOptions(configure)
+            targets.configureEach { target ->
+                (target as? HasConfigurableKotlinCompilerOptions<*>)?.compilerOptions(configure)
             }
         }
 

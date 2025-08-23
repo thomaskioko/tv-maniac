@@ -35,13 +35,11 @@ private fun Project.disableTasks(names: List<String>) {
         return
     }
 
-    afterEvaluate {
-        names.forEach { name ->
-            tasks.named(name).configure {
-                it.enabled = false
-                it.description = "DISABLED"
-                it.setDependsOn(mutableListOf<Any>())
-            }
+    tasks.configureEach { task ->
+        if (task.name in names) {
+            task.enabled = false
+            task.description = "DISABLED"
+            task.setDependsOn(emptyList<Any>())
         }
     }
 }

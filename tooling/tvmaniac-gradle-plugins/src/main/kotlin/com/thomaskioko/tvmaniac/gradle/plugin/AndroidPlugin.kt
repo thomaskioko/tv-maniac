@@ -92,8 +92,8 @@ internal fun Project.androidSetup() {
 
         compileOptions {
             isCoreLibraryDesugaringEnabled = desugarLibrary != null
-            sourceCompatibility = javaTargetVersion
-            targetCompatibility = javaTargetVersion
+            sourceCompatibility = javaTargetVersion.get()
+            targetCompatibility = javaTargetVersion.get()
         }
     }
 
