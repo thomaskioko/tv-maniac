@@ -37,7 +37,7 @@ jobs:
                 uses: actions/checkout@v5
 
             -   name: Set up JDK
-                uses: actions/setup-java@v4
+                uses: actions/setup-java@v5
                 with:
                     distribution: ${{ env.DISTRIBUTION }}
                     java-version: ${{ env.JDK_VERSION }}
@@ -78,7 +78,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v5
-            -   uses: actions/setup-java@v4
+            -   uses: actions/setup-java@v5
                 with:
                     distribution: ${{ env.DISTRIBUTION }}
                     java-version: ${{ env.JDK_VERSION }}
@@ -105,7 +105,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v5
-            -   uses: actions/setup-java@v4
+            -   uses: actions/setup-java@v5
                 with:
                     distribution: ${{ env.DISTRIBUTION }}
                     java-version: ${{ env.JDK_VERSION }}
@@ -125,7 +125,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v5
-            -   uses: actions/setup-java@v4
+            -   uses: actions/setup-java@v5
                 with:
                     distribution: ${{ env.DISTRIBUTION }}
                     java-version: ${{ env.JDK_VERSION }}
@@ -152,7 +152,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v5
-            -   uses: actions/setup-java@v4
+            -   uses: actions/setup-java@v5
                 with:
                     distribution: ${{ env.DISTRIBUTION }}
                     java-version: ${{ env.JDK_VERSION }}
@@ -183,7 +183,7 @@ jobs:
                 uses: actions/checkout@v5
 
             -   name: Set up JDK
-                uses: actions/setup-java@v4
+                uses: actions/setup-java@v5
                 with:
                     distribution: ${{ env.DISTRIBUTION }}
                     java-version: ${{ env.JDK_VERSION }}
