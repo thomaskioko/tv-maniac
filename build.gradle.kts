@@ -16,6 +16,10 @@ plugins {
     alias(libs.plugins.spotless) apply false
     alias(libs.plugins.sqldelight) apply false
     alias(libs.plugins.roborazzi) apply false
-
-    alias(libs.plugins.tvmaniac.root)
+    alias(libs.plugins.app.root) apply false
+    alias(libs.plugins.app.android) apply false
+    alias(libs.plugins.app.application) apply false
+    alias(libs.plugins.app.baseline.profile) apply false
+    alias(libs.plugins.app.kmp) apply false
+    alias(libs.plugins.app.resource.generator) apply false
 }
