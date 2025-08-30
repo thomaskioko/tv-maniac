@@ -1,8 +1,8 @@
 plugins {
-    alias(libs.plugins.tvmaniac.application)
+    alias(libs.plugins.app.application)
 }
 
-tvmaniac {
+scaffold {
     app {
         applicationId("com.thomaskioko.tvmaniac")
         minify(

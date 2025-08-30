@@ -1,9 +1,9 @@
 plugins {
-    alias(libs.plugins.tvmaniac.kmp)
+    alias(libs.plugins.app.kmp)
     alias(libs.plugins.sqldelight)
 }
 
-tvmaniac {
+scaffold {
     addAndroidMultiplatformTarget()
     useKotlinInject()
 }

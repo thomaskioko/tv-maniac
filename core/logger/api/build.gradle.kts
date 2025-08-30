@@ -1,3 +1,3 @@
 plugins {
-    alias(libs.plugins.tvmaniac.kmp)
+    alias(libs.plugins.app.kmp)
 }
