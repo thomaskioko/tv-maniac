@@ -8,6 +8,9 @@ scaffold {
     explicitApi()
 
     addAndroidTarget(
+        configure = {
+          enableAndroidResources()
+        },
         libraryConfiguration = {
             lint {
                 baseline = file("lint-baseline.xml")
