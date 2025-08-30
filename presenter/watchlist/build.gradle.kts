@@ -4,7 +4,7 @@ plugins {
 
 scaffold {
     useKotlinInject()
-    optIn("kotlinx.coroutines.ExperimentalCoroutinesApi",)
+    optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
 }
 
 kotlin {

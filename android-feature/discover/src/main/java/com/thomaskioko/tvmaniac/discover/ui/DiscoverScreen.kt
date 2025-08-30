@@ -31,11 +31,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.DismissState
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.DismissValue
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Movie
@@ -45,7 +42,6 @@ import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme

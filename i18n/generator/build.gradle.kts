@@ -9,7 +9,7 @@ scaffold {
 
     addAndroidTarget(
         configure = {
-          enableAndroidResources()
+            enableAndroidResources()
         },
         libraryConfiguration = {
             lint {
