@@ -16,7 +16,6 @@ kotlin {
             dependencies {
                 implementation(projects.core.base)
                 implementation(libs.sqldelight.primitive.adapters)
-                implementation(libs.bundles.kotlinInject)
                 implementation(libs.kotlinx.datetime)
             }
         }

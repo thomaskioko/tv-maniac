@@ -20,7 +20,6 @@ kotlin {
 
             implementation(libs.coroutines.core)
             implementation(libs.decompose.decompose)
-            implementation(libs.bundles.kotlinInject)
         }
     }
 }
