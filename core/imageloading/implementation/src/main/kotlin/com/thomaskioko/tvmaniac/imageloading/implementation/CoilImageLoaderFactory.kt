@@ -7,18 +7,19 @@ import coil.ImageLoader
 import coil.decode.ImageDecoderDecoder
 import coil.disk.DiskCache
 import coil.memory.MemoryCache
+import com.thomaskioko.tvmaniac.core.base.di.ApplicationContext
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.imageloading.api.ImageQualityProvider
 import com.thomaskioko.tvmaniac.imageloading.implementation.interceptors.TmdbInterceptor
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import okhttp3.OkHttpClient
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
 @SingleIn(AppScope::class)
 class CoilImageLoaderFactory(
-    private val context: Context,
+    @ApplicationContext private val context: Context,
     private val okHttpClient: Lazy<OkHttpClient>,
     private val imageQualityProvider: ImageQualityProvider,
     private val tmdbInterceptor: TmdbInterceptor,

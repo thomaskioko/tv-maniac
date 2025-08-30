@@ -3,7 +3,7 @@ plugins {
 }
 
 tvmaniac {
-    useKotlinInject()
+    useDependencyInjection()
 
     optIn(
         "kotlinx.coroutines.DelicateCoroutinesApi",

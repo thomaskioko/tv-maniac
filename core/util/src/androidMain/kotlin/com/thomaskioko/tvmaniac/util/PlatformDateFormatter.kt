@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.util
 
 import co.touchlab.kermit.Logger
+import dev.zacsweers.metro.Inject
 import kotlinx.datetime.LocalDate
-import me.tatarka.inject.annotations.Inject
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter

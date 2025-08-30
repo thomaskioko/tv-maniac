@@ -6,7 +6,7 @@ tvmaniac {
     android {
         useCompose()
     }
-    useKotlinInject()
+    useDependencyInjection()
 }
 
 dependencies {

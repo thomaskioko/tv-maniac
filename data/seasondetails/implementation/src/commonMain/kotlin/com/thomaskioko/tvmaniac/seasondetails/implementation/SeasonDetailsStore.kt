@@ -19,8 +19,8 @@ import com.thomaskioko.tvmaniac.seasondetails.api.model.SeasonDetailsWithEpisode
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbSeasonDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbSeasonDetailsResponse
 import com.thomaskioko.tvmaniac.util.FormatterUtil
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.withContext
-import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.Validator

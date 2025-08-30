@@ -4,13 +4,14 @@ import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.model.safeRequest
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbSeasonDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbSeasonDetailsResponse
+import com.thomaskioko.tvmaniac.tmdb.implementation.di.TmdbHttpClient
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import io.ktor.client.request.parameter
 import io.ktor.http.HttpMethod
 import io.ktor.http.path
-import me.tatarka.inject.annotations.Inject
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
 @SingleIn(AppScope::class)

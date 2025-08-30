@@ -8,7 +8,7 @@ android-target = "35"
 
 jdk = "17"
 java-target = "17"
-java-toolchain = "17"
+java-toolchain = "23"
 
 agp = "8.12.0"
 android-lint = "31.12.0"
@@ -45,12 +45,11 @@ kenburns = "1.0.7"
 kermit = "2.0.8"
 kotest = "5.9.1"
 kotlin = "2.2.10"
-kotlininject = "0.8.0"
-kotlin-inject-anvil = "0.1.6"
 kotlinx-collections = "0.4.0"
 ksp = "2.2.10-2.0.2"
 ktor = "3.2.3"
 lint = "1.4.2"
+metro = "0.6.1"
 moko-resources = "0.25.0"
 napier = "2.7.1"
 okhttp = "4.12.0"
@@ -124,12 +123,6 @@ kenburns = { module = "com.flaviofaria:kenburnsview", version.ref = "kenburns" }
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 
-kotlinInject-compiler = { module = "me.tatarka.inject:kotlin-inject-compiler-ksp", version.ref = "kotlininject" }
-kotlinInject-runtime = { module = "me.tatarka.inject:kotlin-inject-runtime", version.ref = "kotlininject" }
-kotlinInject-anvil-compiler = { group = "software.amazon.lastmile.kotlin.inject.anvil", name = "compiler", version.ref = "kotlin-inject-anvil" }
-kotlinInject-anvil-runtime = { group = "software.amazon.lastmile.kotlin.inject.anvil", name = "runtime", version.ref = "kotlin-inject-anvil" }
-kotlinInject-anvil-runtime-optional = { group = "software.amazon.lastmile.kotlin.inject.anvil", name = "runtime-optional", version.ref = "kotlin-inject-anvil" }
-
 kotlinx-atomicfu = { module = "org.jetbrains.kotlinx:atomicfu", version.ref = "atomicfu" }
 kotlinx-collections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinx-collections" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "datetime" }
@@ -146,6 +139,7 @@ ktor-serialization = { module = "io.ktor:ktor-client-serialization", version.ref
 ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
 lint-compose = { module = "com.slack.lint.compose:compose-lint-checks", version.ref = "lint" }
+metro-runtime = { module = "dev.zacsweers.metro:runtime", version.ref = "metro" }
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 okhttp-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 moko-resources = { module = "dev.icerock.moko:resources", version.ref = "moko-resources" }
@@ -193,6 +187,7 @@ dependency-analysis = { id = "com.autonomousapps.dependency-analysis", version.r
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
 moko-resources = { id = "dev.icerock.mobile.multiplatform-resources", version.ref = "moko-resources" }
 multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
@@ -210,11 +205,6 @@ tvmaniac-root = { id = "com.thomaskioko.tvmaniac.gradle.root" }
 tvmaniac-resource-generator = { id = "com.thomaskioko.tvmaniac.resource.generator" }
 
 [bundles]
-kotlinInject = [
-  "kotlinInject-runtime",
-  "kotlinInject-anvil-runtime",
-  "kotlinInject-anvil-runtime-optional"
-]
 unittest = [
   "coroutines-test",
   "kotest-assertions",

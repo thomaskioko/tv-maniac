@@ -3,7 +3,7 @@ plugins {
 }
 
 tvmaniac {
-    useKotlinInject()
+    useDependencyInjection()
     useSerialization()
 
     optIn(
@@ -24,6 +24,7 @@ kotlin {
             implementation(projects.domain.showdetails)
             implementation(projects.domain.similarshows)
             implementation(projects.domain.watchproviders)
+            implementation(projects.domain.watchlist)
             implementation(projects.navigation.api)
 
             implementation(projects.presenter.discover)

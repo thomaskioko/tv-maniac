@@ -7,13 +7,14 @@ import com.arkivanov.decompose.router.stack.popTo
 import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.router.stack.pushToFront
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
-import me.tatarka.inject.annotations.Inject
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
+import dev.zacsweers.metro.binding
 
 @Inject
 @SingleIn(ActivityScope::class)
-@ContributesBinding(ActivityScope::class, RootNavigator::class)
+@ContributesBinding(ActivityScope::class, binding = binding<RootNavigator>())
 class DefaultRootNavigator : RootNavigator {
     private val navigation = StackNavigation<RootDestinationConfig>()
 

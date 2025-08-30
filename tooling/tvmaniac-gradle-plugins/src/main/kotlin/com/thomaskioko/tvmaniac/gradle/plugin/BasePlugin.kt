@@ -61,6 +61,7 @@ public abstract class BasePlugin : Plugin<Project> {
                 // In this mode, some deprecations and bug-fixes for unstable code take effect immediately.
                 progressiveMode.set(version >= KotlinVersion.Companion.DEFAULT)
 
+
                 freeCompilerArgs.addAll(
                     "-Xannotation-default-target=param-property",
                     // https://kotlinlang.org/docs/whatsnew2020.html#data-class-copy-function-to-have-the-same-visibility-as-constructor
@@ -82,10 +83,6 @@ public abstract class BasePlugin : Plugin<Project> {
                         "-Xassertions=jvm",
                         "-Xconsistent-data-class-copy-visibility",
                     )
-
-                    if (!isAndroid) {
-                        freeCompilerArgs.add("-Xjdk-release=${project.javaTarget}")
-                    }
                 }
             }
         }

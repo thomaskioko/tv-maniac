@@ -1,10 +1,10 @@
 package com.thomaskioko.tvmaniac.util
 
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.serialization.DeserializationStrategy
-import me.tatarka.inject.annotations.Inject
 import net.mamoe.yamlkt.Yaml
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 interface ResourceReader {
     fun readResource(name: String): String

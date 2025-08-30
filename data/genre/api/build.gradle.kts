@@ -2,6 +2,10 @@ plugins {
     alias(libs.plugins.tvmaniac.kmp)
 }
 
+tvmaniac {
+    useDependencyInjection()
+}
+
 kotlin {
     sourceSets {
         commonMain {
@@ -13,8 +17,6 @@ kotlin {
                 implementation(projects.core.base)
 
                 api(libs.coroutines.core)
-
-                implementation(libs.kotlinInject.runtime)
             }
         }
     }

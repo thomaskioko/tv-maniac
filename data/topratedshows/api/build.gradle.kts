@@ -2,6 +2,10 @@ plugins {
     alias(libs.plugins.tvmaniac.kmp)
 }
 
+tvmaniac {
+    useDependencyInjection()
+}
+
 kotlin {
     sourceSets {
         commonMain {
@@ -13,8 +17,6 @@ kotlin {
 
                 api(libs.androidx.paging.common)
                 api(libs.coroutines.core)
-
-                implementation(libs.kotlinInject.runtime)
             }
         }
     }

@@ -3,6 +3,8 @@ plugins {
 }
 
 tvmaniac {
+    useDependencyInjection()
+
     optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
 }
 
@@ -18,7 +20,6 @@ kotlin {
                 implementation(projects.data.watchlist.api)
 
                 implementation(libs.coroutines.core)
-                implementation(libs.kotlinInject.runtime)
             }
         }
 

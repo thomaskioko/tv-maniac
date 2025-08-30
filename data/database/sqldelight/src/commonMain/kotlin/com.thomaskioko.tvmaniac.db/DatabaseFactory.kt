@@ -4,9 +4,9 @@ import app.cash.sqldelight.db.SqlDriver
 import com.thomaskioko.tvmaniac.db.adapters.IdAdapter
 import com.thomaskioko.tvmaniac.db.adapters.InstantColumnAdapter
 import com.thomaskioko.tvmaniac.db.adapters.intColumnAdapter
-import me.tatarka.inject.annotations.Inject
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 
 @Inject
 @SingleIn(AppScope::class)
