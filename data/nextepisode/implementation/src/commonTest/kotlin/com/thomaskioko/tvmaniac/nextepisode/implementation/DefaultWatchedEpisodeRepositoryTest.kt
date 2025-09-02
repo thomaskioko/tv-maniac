@@ -65,7 +65,7 @@ internal class DefaultWatchedEpisodeRepositoryTest : BaseDatabaseTest() {
             showId = 1L,
             episodeId = 101L,
             seasonNumber = 1L,
-            episodeNumber = 1L
+            episodeNumber = 1L,
         )
 
         // Then - episode should be marked as watched
@@ -234,7 +234,7 @@ internal class DefaultWatchedEpisodeRepositoryTest : BaseDatabaseTest() {
             still_path = "/still.jpg",
             overview = "Next episode overview",
             is_upcoming = 0L,
-            updated_at = 1000L
+            updated_at = 1000L,
         )
 
         // Verify data exists

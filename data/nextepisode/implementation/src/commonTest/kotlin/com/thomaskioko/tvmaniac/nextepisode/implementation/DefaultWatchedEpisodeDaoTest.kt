@@ -7,7 +7,6 @@ import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.nextepisode.api.NextEpisodeDao
 import com.thomaskioko.tvmaniac.nextepisode.api.WatchedEpisodeDao
 import io.kotest.matchers.collections.shouldBeEmpty
-import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -57,13 +56,13 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             showId = 1L,
             episodeId = 101L,
             seasonNumber = 1L,
-            episodeNumber = 1L
+            episodeNumber = 1L,
         )
         watchedEpisodeDao.markAsWatched(
             showId = 1L,
             episodeId = 102L,
             seasonNumber = 1L,
-            episodeNumber = 2L
+            episodeNumber = 2L,
         )
 
         // When & Then
@@ -82,7 +81,6 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             episode2.show_id.id shouldBe 1L
             episode2.episode_id.id shouldBe 102L
             episode2.season_number shouldBe 1L
-
         }
     }
 
@@ -99,20 +97,20 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             runtime = 45,
             stillPath = "/pilot.jpg",
             overview = "The first episode",
-            isUpcoming = false
+            isUpcoming = false,
         )
 
         watchedEpisodeDao.markAsWatched(
             showId = 1L,
             episodeId = 101L,
             seasonNumber = 1L,
-            episodeNumber = 1L
+            episodeNumber = 1L,
         )
         watchedEpisodeDao.markAsWatched(
             showId = 1L,
             episodeId = 102L,
             seasonNumber = 1L,
-            episodeNumber = 2L
+            episodeNumber = 2L,
         )
 
         // When & Then
@@ -133,7 +131,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             showId = 1L,
             episodeId = 101L,
             seasonNumber = 1L,
-            episodeNumber = 1L
+            episodeNumber = 1L,
         )
 
         // Then

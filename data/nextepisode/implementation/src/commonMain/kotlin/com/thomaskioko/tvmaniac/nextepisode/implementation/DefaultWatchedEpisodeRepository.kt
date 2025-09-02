@@ -5,7 +5,6 @@ import com.thomaskioko.tvmaniac.nextepisode.api.NextEpisodeRepository
 import com.thomaskioko.tvmaniac.nextepisode.api.WatchedEpisodeDao
 import com.thomaskioko.tvmaniac.nextepisode.api.WatchedEpisodeRepository
 import com.thomaskioko.tvmaniac.nextepisode.api.model.WatchProgress
-import com.thomaskioko.tvmaniac.nextepisode.api.model.WatchedEpisode
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope

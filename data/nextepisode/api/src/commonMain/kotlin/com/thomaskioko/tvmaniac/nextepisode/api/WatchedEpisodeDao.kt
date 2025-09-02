@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.nextepisode.api
 
 import com.thomaskioko.tvmaniac.db.Watched_episodes
-import com.thomaskioko.tvmaniac.nextepisode.api.model.WatchedEpisode
 import com.thomaskioko.tvmaniac.nextepisode.api.model.WatchProgress
 import kotlinx.coroutines.flow.Flow
 

@@ -102,6 +102,6 @@ class DatabaseFactory(private val sqlDriver: SqlDriver) {
         watched_episodesAdapter = Watched_episodes.Adapter(
             show_idAdapter = IdAdapter(),
             episode_idAdapter = IdAdapter(),
-        )
+        ),
     )
 }

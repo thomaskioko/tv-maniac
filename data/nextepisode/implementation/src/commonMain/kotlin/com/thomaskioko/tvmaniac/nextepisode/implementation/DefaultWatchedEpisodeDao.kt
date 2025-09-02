@@ -40,7 +40,7 @@ public class DefaultWatchedEpisodeDao(
     override fun observeWatchProgress(showId: Long): Flow<WatchProgress> {
         return combine(
             observeWatchedEpisodes(showId),
-            nextEpisodeDao.observeNextEpisode(showId)
+            nextEpisodeDao.observeNextEpisode(showId),
         ) { watchedEpisodes, nextEpisode ->
             val lastWatched = watchedEpisodes.maxByOrNull { it.absoluteEpisodeNumber() }
 
@@ -51,14 +51,6 @@ public class DefaultWatchedEpisodeDao(
                 lastEpisodeWatched = lastWatched?.episode_number,
                 nextEpisode = nextEpisode,
             )
-        }.catch {
-            emit(WatchProgress(
-                showId = showId,
-                totalEpisodesWatched = 0,
-                lastSeasonWatched = null,
-                lastEpisodeWatched = null,
-                nextEpisode = null,
-            ))
         }
     }
 

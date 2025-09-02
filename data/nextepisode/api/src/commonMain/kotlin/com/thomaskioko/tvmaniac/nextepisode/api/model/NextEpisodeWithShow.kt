@@ -15,7 +15,3 @@ public data class NextEpisodeWithShow(
     val isUpcoming: Boolean,
     val followedAt: Long? = null,
 )
-
-
-
-

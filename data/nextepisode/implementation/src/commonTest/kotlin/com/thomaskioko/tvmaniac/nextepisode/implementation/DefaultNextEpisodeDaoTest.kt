@@ -60,7 +60,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             runtime = 45,
             stillPath = "/next-episode.jpg",
             overview = "The next episode to watch",
-            isUpcoming = false
+            isUpcoming = false,
         )
 
         // When & Then
@@ -95,11 +95,11 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         // Given - add shows to watchlist
         database.watchlistQueries.upsert(
             id = Id(1L),
-            created_at = Clock.System.now().toEpochMilliseconds()
+            created_at = Clock.System.now().toEpochMilliseconds(),
         )
         database.watchlistQueries.upsert(
             id = Id(2L),
-            created_at = Clock.System.now().toEpochMilliseconds()
+            created_at = Clock.System.now().toEpochMilliseconds(),
         )
 
         // Add next episodes for both shows
@@ -113,7 +113,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             runtime = 45,
             stillPath = "/episode3.jpg",
             overview = "Episode 3 overview",
-            isUpcoming = false
+            isUpcoming = false,
         )
 
         nextEpisodeDao.upsert(
@@ -126,7 +126,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             runtime = 50,
             stillPath = "/episode5.jpg",
             overview = "Episode 5 overview",
-            isUpcoming = true
+            isUpcoming = true,
         )
 
         // When & Then
@@ -163,7 +163,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             runtime = 60,
             stillPath = "/finale.jpg",
             overview = "The epic season finale",
-            isUpcoming = true
+            isUpcoming = true,
         )
 
         // Then
@@ -195,7 +195,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             runtime = null,
             stillPath = null,
             overview = "No details available",
-            isUpcoming = false
+            isUpcoming = false,
         )
 
         // Then
@@ -225,7 +225,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             runtime = 30,
             stillPath = "/initial.jpg",
             overview = "Initial overview",
-            isUpcoming = true
+            isUpcoming = true,
         )
 
         // When - update with new data
@@ -239,7 +239,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             runtime = 45,
             stillPath = "/updated.jpg",
             overview = "Updated overview",
-            isUpcoming = false
+            isUpcoming = false,
         )
 
         // Then - should have updated data
@@ -268,7 +268,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             runtime = 45,
             stillPath = "/delete.jpg",
             overview = "Will be deleted",
-            isUpcoming = false
+            isUpcoming = false,
         )
 
         // Verify it exists
@@ -291,11 +291,11 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         // Given - add shows to watchlist first, then add next episodes
         database.watchlistQueries.upsert(
             id = Id(1L),
-            created_at = Clock.System.now().toEpochMilliseconds()
+            created_at = Clock.System.now().toEpochMilliseconds(),
         )
         database.watchlistQueries.upsert(
             id = Id(2L),
-            created_at = Clock.System.now().toEpochMilliseconds()
+            created_at = Clock.System.now().toEpochMilliseconds(),
         )
 
         nextEpisodeDao.upsert(1L, 101L, "Episode 1", 1, 1, null, null, null, "Overview 1", false)
@@ -329,11 +329,11 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         // When - add shows to watchlist first, then add episodes
         database.watchlistQueries.upsert(
             id = Id(1L),
-            created_at = Clock.System.now().toEpochMilliseconds()
+            created_at = Clock.System.now().toEpochMilliseconds(),
         )
         database.watchlistQueries.upsert(
             id = Id(2L),
-            created_at = Clock.System.now().toEpochMilliseconds()
+            created_at = Clock.System.now().toEpochMilliseconds(),
         )
 
         nextEpisodeDao.upsert(
@@ -346,7 +346,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             runtime = null,
             stillPath = null,
             overview = "Overview 1",
-            isUpcoming = false
+            isUpcoming = false,
         )
         nextEpisodeDao.upsert(
             showId = 2L,
@@ -358,7 +358,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             runtime = null,
             stillPath = null,
             overview = "Overview 2",
-            isUpcoming = false
+            isUpcoming = false,
         )
 
         // Then
@@ -379,7 +379,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             airDate = null, runtime = null,
             stillPath = null,
             overview = "Fresh",
-            isUpcoming = false
+            isUpcoming = false,
         )
 
         // Manually insert a stale episode with old timestamp directly into database
@@ -395,7 +395,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             still_path = null,
             overview = "Stale",
             is_upcoming = 0L,
-            updated_at = staleTimestamp
+            updated_at = staleTimestamp,
         )
 
         // When
@@ -419,7 +419,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             runtime = 42,
             stillPath = null,
             overview = "Test conversion",
-            isUpcoming = false
+            isUpcoming = false,
         )
 
         // When & Then

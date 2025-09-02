@@ -9,7 +9,7 @@ import com.thomaskioko.tvmaniac.nextepisode.api.NextEpisodeDao
 import com.thomaskioko.tvmaniac.nextepisode.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.nextepisode.implementation.model.NextEpisodeKey
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
-import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.NEXT_EPISODE
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.SEASON_DETAILS
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbSeasonDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbSeasonDetailsResponse
 import com.thomaskioko.tvmaniac.util.FormatterUtil
@@ -18,7 +18,6 @@ import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.Validator
-
 
 @Inject
 public class NextEpisodeStore(
@@ -58,24 +57,23 @@ public class NextEpisodeStore(
 
                 requestManagerRepository.upsert(
                     entityId = key.showId,
-                    requestType = NEXT_EPISODE.name,
+                    requestType = SEASON_DETAILS.name,
                 )
             }
         },
     )
         .usingDispatchers(
-        readDispatcher = dispatchers.databaseRead,
-        writeDispatcher = dispatchers.databaseWrite,
-    ),
+            readDispatcher = dispatchers.databaseRead,
+            writeDispatcher = dispatchers.databaseWrite,
+        ),
 ).validator(
     Validator.by { nextEpisodeWithShow ->
         withContext(dispatchers.io) {
             !requestManagerRepository.isRequestExpired(
                 entityId = nextEpisodeWithShow?.showId ?: return@withContext false,
-                requestType = NEXT_EPISODE.name,
-                threshold = NEXT_EPISODE.duration,
+                requestType = SEASON_DETAILS.name,
+                threshold = SEASON_DETAILS.duration,
             )
         }
-    }
+    },
 ).build()
-

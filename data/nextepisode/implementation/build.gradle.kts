@@ -6,7 +6,7 @@ scaffold {
     explicitApi()
     useKotlinInject()
 
-    optIn("kotlinx.coroutines.DelicateCoroutinesApi",)
+    optIn("kotlinx.coroutines.DelicateCoroutinesApi")
 }
 
 kotlin {
