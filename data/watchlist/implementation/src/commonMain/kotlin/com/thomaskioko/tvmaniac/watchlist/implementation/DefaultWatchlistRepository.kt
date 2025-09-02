@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import com.thomaskioko.tvmaniac.db.SearchWatchlist
 import com.thomaskioko.tvmaniac.db.Watchlists
+import com.thomaskioko.tvmaniac.nextepisode.api.NextEpisodeRepository
 import com.thomaskioko.tvmaniac.shows.api.WatchlistDao
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
 import kotlinx.coroutines.flow.Flow
@@ -25,12 +26,19 @@ class DefaultWatchlistRepository(
     private val watchlistDao: WatchlistDao,
     private val watchlistMetadataStore: WatchlistMetadataStore,
     private val datastoreRepository: DatastoreRepository,
+    private val nextEpisodeRepository: NextEpisodeRepository,
 ) : WatchlistRepository {
 
     override suspend fun updateLibrary(id: Long, addToLibrary: Boolean) {
         when {
             addToLibrary -> watchlistDao.upsert(id)
-            else -> watchlistDao.delete(id)
+            else -> {
+                // Remove from watchlist
+                watchlistDao.delete(id)
+
+                // Clean up all episode tracking data for this show
+                nextEpisodeRepository.removeShowFromTracking(id)
+            }
         }
     }
 

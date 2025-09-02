@@ -20,6 +20,7 @@ kotlin {
                 implementation(projects.core.util)
                 implementation(projects.data.database.sqldelight)
                 implementation(projects.data.datastore.api)
+                implementation(projects.data.nextepisode.api)
                 implementation(projects.data.watchlist.api)
 
                 implementation(libs.sqldelight.extensions)
@@ -31,6 +32,8 @@ kotlin {
             dependencies {
                 implementation(libs.bundles.unittest)
                 implementation(projects.data.database.testing)
+                implementation(projects.data.datastore.testing)
+                implementation(projects.data.nextepisode.testing)
             }
         }
     }
