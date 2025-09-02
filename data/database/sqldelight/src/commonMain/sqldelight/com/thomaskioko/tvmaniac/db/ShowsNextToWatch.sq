@@ -1,0 +1,25 @@
+-- View definition for calculating next episode to watch
+-- This is referenced in migration 5 but needs to be defined here for queries
+CREATE VIEW IF NOT EXISTS shows_next_to_watch AS
+SELECT
+    t.id AS show_id,
+    s.id AS season_id,
+    e.id AS episode_id,
+    MIN((1000 * s.season_number) + e.episode_number) AS next_episode_abs_number
+FROM tvshow t
+INNER JOIN season s ON t.id = s.show_id
+INNER JOIN episode e ON e.season_id = s.id
+LEFT JOIN watched_episodes we ON we.show_id = t.id
+    AND we.season_number = s.season_number
+    AND we.episode_number = e.episode_number
+LEFT JOIN (
+    SELECT
+        show_id,
+        MAX((1000 * season_number) + episode_number) AS last_watched_abs_number
+    FROM watched_episodes
+    GROUP BY show_id
+) AS last_watched ON last_watched.show_id = t.id
+WHERE s.season_number != 0
+  AND we.id IS NULL
+  AND ((1000 * s.season_number) + e.episode_number) > COALESCE(last_watched.last_watched_abs_number, 0)
+GROUP BY t.id;

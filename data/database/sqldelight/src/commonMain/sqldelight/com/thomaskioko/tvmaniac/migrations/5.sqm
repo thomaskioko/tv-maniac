@@ -1,0 +1,68 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.TmdbId;
+import com.thomaskioko.tvmaniac.db.EpisodeId;
+
+-- Migration 5: Add Next Episode Feature with Smart Tracking
+-- This migration adds tables and views for tracking episode viewing progress
+-- and intelligently calculating the next episode to watch
+
+-- 1. Create watched_episodes table to track user viewing history
+CREATE TABLE watched_episodes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    show_id INTEGER AS Id<TmdbId> NOT NULL,
+    episode_id INTEGER AS Id<EpisodeId> NOT NULL,
+    season_number INTEGER NOT NULL,
+    episode_number INTEGER NOT NULL,
+    watched_at INTEGER NOT NULL,
+    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON DELETE CASCADE,
+    UNIQUE(show_id, season_number, episode_number)
+);
+
+-- Create indices for performance
+CREATE INDEX idx_watched_episodes_show_id ON watched_episodes(show_id);
+CREATE INDEX idx_watched_episodes_show_season ON watched_episodes(show_id, season_number);
+
+-- 2. Create next_episode_cache table to store calculated next episodes
+CREATE TABLE next_episode_cache (
+    show_id INTEGER AS Id<TmdbId> PRIMARY KEY,
+    episode_id INTEGER AS Id<EpisodeId>,
+    episode_name TEXT NOT NULL,
+    episode_number INTEGER NOT NULL,
+    season_number INTEGER NOT NULL,
+    air_date TEXT,
+    runtime INTEGER,
+    still_path TEXT,
+    overview TEXT NOT NULL DEFAULT '',
+    is_upcoming INTEGER NOT NULL DEFAULT 0,
+    updated_at INTEGER NOT NULL,
+    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON DELETE CASCADE
+);
+
+-- 3. Create view to intelligently calculate the next episode to watch
+-- This view uses absolute episode numbers (season * 1000 + episode) for easy progression tracking
+CREATE VIEW shows_next_to_watch AS
+SELECT
+    t.id AS show_id,
+    s.id AS season_id,
+    e.id AS episode_id,
+    MIN((1000 * s.season_number) + e.episode_number) AS next_episode_abs_number
+FROM tvshow t
+INNER JOIN season s ON t.id = s.show_id
+INNER JOIN episode e ON e.season_id = s.id
+LEFT JOIN watched_episodes we ON we.show_id = t.id
+    AND we.season_number = s.season_number
+    AND we.episode_number = e.episode_number
+LEFT JOIN (
+    -- Find the last watched episode for each show
+    SELECT
+        show_id,
+        MAX((1000 * season_number) + episode_number) AS last_watched_abs_number
+    FROM watched_episodes
+    GROUP BY show_id
+) AS last_watched ON last_watched.show_id = t.id
+WHERE s.season_number != 0  -- Exclude special seasons (season 0)
+  AND we.id IS NULL  -- Episode hasn't been watched
+  -- Note: episode table doesn't have air_date, we'll rely on episodes being already in DB
+  -- For a full implementation, would need to add air_date to episode table
+  AND ((1000 * s.season_number) + e.episode_number) > COALESCE(last_watched.last_watched_abs_number, 0)  -- Episode comes after last watched
+GROUP BY t.id;
