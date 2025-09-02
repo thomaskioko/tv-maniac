@@ -1,13 +1,16 @@
 plugins {
-    alias(libs.plugins.tvmaniac.kmp)
-    alias(libs.plugins.tvmaniac.resource.generator)
+    alias(libs.plugins.app.kmp)
+    alias(libs.plugins.app.resource.generator)
     alias(libs.plugins.moko.resources)
 }
 
-tvmaniac {
+scaffold {
     explicitApi()
 
     addAndroidTarget(
+        configure = {
+            enableAndroidResources()
+        },
         libraryConfiguration = {
             lint {
                 baseline = file("lint-baseline.xml")

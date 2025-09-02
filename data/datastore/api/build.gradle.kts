@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.tvmaniac.kmp)
+    alias(libs.plugins.app.kmp)
 }
 
 kotlin { sourceSets { commonMain { dependencies { api(libs.coroutines.core) } } } }

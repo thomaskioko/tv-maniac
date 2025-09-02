@@ -1,8 +1,8 @@
 plugins {
-    alias(libs.plugins.tvmaniac.kmp)
+    alias(libs.plugins.app.kmp)
 }
 
-tvmaniac {
+scaffold {
     addAndroidMultiplatformTarget()
     useKotlinInject()
 }
@@ -26,7 +26,6 @@ kotlin {
                 implementation(projects.core.base)
                 implementation(projects.core.logger.api)
                 implementation(projects.data.traktauth.api)
-                implementation(libs.bundles.kotlinInject)
             }
         }
     }

@@ -1,8 +1,8 @@
 plugins {
-    alias(libs.plugins.tvmaniac.application)
+    alias(libs.plugins.app.application)
 }
 
-tvmaniac {
+scaffold {
     app {
         applicationId("com.thomaskioko.tvmaniac")
         minify(
@@ -105,7 +105,6 @@ dependencies {
 
     implementation(libs.decompose.decompose)
     implementation(libs.decompose.extensions.compose)
-    implementation(libs.bundles.kotlinInject)
 
     implementation(libs.androidx.datastore.core)
     implementation(libs.androidx.savedstate)

@@ -5,17 +5,15 @@ enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
 rootProject.name = "tv-maniac"
 
 pluginManagement {
-    includeBuild("tooling")
-
     repositories {
-        gradlePluginPortal()
+        mavenCentral()
         google {
             content {
                 includeGroupByRegex(".*google.*")
                 includeGroupByRegex(".*android.*")
             }
         }
-        mavenCentral()
+        gradlePluginPortal()
     }
 }
 

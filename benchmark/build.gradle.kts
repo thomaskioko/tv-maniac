@@ -1,8 +1,8 @@
 plugins {
-    alias(libs.plugins.tvmaniac.baseline.profile)
+    alias(libs.plugins.app.baseline.profile)
 }
 
-tvmaniac {
+scaffold {
     benchmark {
         minSdkVersion(28)
         useManagedDevices()

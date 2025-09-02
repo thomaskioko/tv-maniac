@@ -1,8 +1,8 @@
 plugins {
-    alias(libs.plugins.tvmaniac.android)
+    alias(libs.plugins.app.android)
 }
 
-tvmaniac {
+scaffold {
     android {
         useCompose()
         useRoborazzi()

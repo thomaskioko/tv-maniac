@@ -6,11 +6,11 @@ import co.touchlab.skie.configuration.SuppressSkieWarning
 import co.touchlab.skie.configuration.SuspendInterop
 
 plugins {
-    alias(libs.plugins.tvmaniac.kmp)
+    alias(libs.plugins.app.kmp)
     alias(libs.plugins.skie)
 }
 
-tvmaniac {
+scaffold {
 
     useKotlinInject()
 

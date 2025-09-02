@@ -1,11 +1,9 @@
 plugins {
-    alias(libs.plugins.tvmaniac.kmp)
+    alias(libs.plugins.app.kmp)
 }
 
-tvmaniac {
-    optIn(
-        "kotlinx.coroutines.ExperimentalCoroutinesApi",
-    )
+scaffold {
+    optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
 }
 
 kotlin {

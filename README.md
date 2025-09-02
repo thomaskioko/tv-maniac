@@ -61,6 +61,12 @@ This will install the following hooks:
 
 ![TvManiac Architecture](https://github.com/thomaskioko/tv-maniac/assets/841885/84e314fc-71a5-40e5-b034-213e6b546f9a)
 
+## Gradle Convention Plugins
+
+The project uses custom Gradle convention plugins to maintain consistent build configurations across modules. These plugins help standardize dependencies,
+compiler settings, and build logic throughout the codebase. For an in-depth guide on how these convention plugins are created, structured, and published to Maven Central,
+check out the article: [Publishing Gradle Convention Plugins](https://thomaskioko.me/posts/publishing_gradle_plugins/).
+
 ## Libraries Used
 
 ### Android

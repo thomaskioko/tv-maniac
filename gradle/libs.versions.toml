@@ -6,9 +6,8 @@ android-compile = "36"
 android-min = "24"
 android-target = "35"
 
-jdk = "17"
-java-target = "17"
-java-toolchain = "17"
+java-target = "21"
+java-toolchain = "21"
 
 agp = "8.12.0"
 android-lint = "31.12.0"
@@ -26,6 +25,7 @@ androidx-palette = "1.0.0"
 androidx-paging = "3.3.6"
 androidx-savedstate = "1.3.2"
 appauth = "0.11.1"
+app-plugins = "0.1.2"
 atomicfu = "0.29.0"
 baselineprofile = "1.4.0"
 benchmarkMacroJunit4 = "1.4.0"
@@ -39,7 +39,6 @@ decompose = "3.3.0"
 dependency-analysis = "3.0.0"
 essenty = "2.5.0"
 desugar = "2.1.5"
-gradle-doctor = "0.12.0"
 junit = "1.3.0"
 kenburns = "1.0.7"
 kermit = "2.0.8"
@@ -103,10 +102,10 @@ androidx-savedstate = { group = "androidx.savedstate", name = "savedstate", vers
 androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junit" }
 androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileinstaller" }
+android-desugarJdkLibs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
 
 appauth = { module = "net.openid:appauth", version.ref = "appauth" }
 
-baselineprofile-gradlePlugin = { group = "androidx.benchmark", name = "benchmark-baseline-profile-gradle-plugin", version.ref = "baselineprofile" }
 coil-base = { module = "io.coil-kt:coil-base", version.ref = "coil" }
 coil-coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
@@ -156,7 +155,6 @@ robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "
 roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", version.ref = "roborazzi" }
 
 snapper = { module = "dev.chrisbanes.snapper:snapper", version.ref = "snapper" }
-spotless-plugin = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
 
 sqldelight-driver-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 sqldelight-driver-jvm = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
@@ -170,17 +168,6 @@ turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 yamlkt = { module = "net.mamoe.yamlkt:yamlkt", version.ref = "yamlkt" }
 youtubePlayer = { module = "com.pierfrancescosoffritti.androidyoutubeplayer:core", version.ref = "youtubePlayer" }
-kotlinpoet-ksp = { module = "com.squareup:kotlinpoet-ksp", version.ref = "kotlinPoet" }
-
-# Build logic dependencies
-android-desugarJdkLibs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
-android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
-compose-compiler-gradle-plugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
-kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-kotlin-gradle-plugin-api = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin-api", version.ref = "kotlin" }
-dependency-analysis-gradle-plugin = { module = "com.autonomousapps:dependency-analysis-gradle-plugin", version.ref = "dependency-analysis" }
-gradle-doctor-gradle-plugin = { group = "com.osacky.doctor", name = "doctor-plugin", version.ref = "gradle-doctor" }
-skie-gradle-plugin = { module = "co.touchlab.skie:gradle-plugin", version.ref = "skie" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -201,13 +188,12 @@ skie = { id = "co.touchlab.skie", version.ref = "skie" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 
-# Project Plugins
-tvmaniac-application = { id = "com.thomaskioko.tvmaniac.gradle.app" }
-tvmaniac-android = { id = "com.thomaskioko.tvmaniac.gradle.android" }
-tvmaniac-baseline-profile = { id = "com.thomaskioko.tvmaniac.gradle.baseline.profile" }
-tvmaniac-kmp = { id = "com.thomaskioko.tvmaniac.gradle.multiplatform" }
-tvmaniac-root = { id = "com.thomaskioko.tvmaniac.gradle.root" }
-tvmaniac-resource-generator = { id = "com.thomaskioko.tvmaniac.resource.generator" }
+app-application = { id = "io.github.thomaskioko.gradle.plugins.app", version.ref = "app-plugins" }
+app-android = { id = "io.github.thomaskioko.gradle.plugins.android", version.ref = "app-plugins" }
+app-baseline-profile = { id = "io.github.thomaskioko.gradle.plugins.baseline.profile", version.ref = "app-plugins" }
+app-kmp = { id = "io.github.thomaskioko.gradle.plugins.multiplatform", version.ref = "app-plugins" }
+app-root = { id = "io.github.thomaskioko.gradle.plugins.root", version.ref = "app-plugins" }
+app-resource-generator = { id = "io.github.thomaskioko.gradle.plugins.resource.generator", version.ref = "app-plugins" }
 
 [bundles]
 kotlinInject = [

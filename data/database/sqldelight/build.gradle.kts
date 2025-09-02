@@ -1,9 +1,9 @@
 plugins {
-    alias(libs.plugins.tvmaniac.kmp)
+    alias(libs.plugins.app.kmp)
     alias(libs.plugins.sqldelight)
 }
 
-tvmaniac {
+scaffold {
     addAndroidMultiplatformTarget()
     useKotlinInject()
 }
@@ -16,7 +16,6 @@ kotlin {
             dependencies {
                 implementation(projects.core.base)
                 implementation(libs.sqldelight.primitive.adapters)
-                implementation(libs.bundles.kotlinInject)
                 implementation(libs.kotlinx.datetime)
             }
         }

@@ -1,8 +1,8 @@
 plugins {
-    alias(libs.plugins.tvmaniac.kmp)
+    alias(libs.plugins.app.kmp)
 }
 
-tvmaniac {
+scaffold {
     addAndroidMultiplatformTarget(withJava = true)
     useKotlinInject()
     useSerialization()
@@ -20,7 +20,6 @@ kotlin {
 
             implementation(libs.coroutines.core)
             implementation(libs.decompose.decompose)
-            implementation(libs.bundles.kotlinInject)
         }
     }
 }
