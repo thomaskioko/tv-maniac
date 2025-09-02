@@ -95,5 +95,13 @@ class DatabaseFactory(private val sqlDriver: SqlDriver) {
             show_idAdapter = IdAdapter(),
             season_idAdapter = IdAdapter(),
         ),
+        next_episode_cacheAdapter = Next_episode_cache.Adapter(
+            show_idAdapter = IdAdapter(),
+            episode_idAdapter = IdAdapter(),
+        ),
+        watched_episodesAdapter = Watched_episodes.Adapter(
+            show_idAdapter = IdAdapter(),
+            episode_idAdapter = IdAdapter(),
+        )
     )
 }
