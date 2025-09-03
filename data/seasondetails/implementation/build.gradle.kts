@@ -17,7 +17,7 @@ kotlin {
                 implementation(projects.data.datastore.api)
                 implementation(projects.core.util)
                 implementation(projects.data.cast.api)
-                implementation(projects.data.episodes.api)
+                implementation(projects.data.episode.api)
                 implementation(projects.data.requestManager.api)
                 implementation(projects.data.seasondetails.api)
                 implementation(projects.data.seasons.api)
