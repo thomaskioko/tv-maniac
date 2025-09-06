@@ -14,10 +14,12 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
-import kotlin.time.Clock
 
 /**
  * Tests for the SQL view-based next episode DAO.
@@ -35,6 +37,8 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         databaseWrite = testDispatcher,
         databaseRead = testDispatcher,
     )
+    private var watchDate = LocalDate(2024, 1, 1)
+        .atStartOfDayIn(TimeZone.UTC).epochSeconds
 
     private lateinit var nextEpisodeDao: NextEpisodeDao
 
@@ -76,14 +80,14 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             episode_id = Id(101L),
             season_number = 1L,
             episode_number = 1L,
-            watched_at = Clock.System.now().toEpochMilliseconds(),
+            watched_at = watchDate,
         )
         database.watchedEpisodesQueries.upsert(
             show_id = Id(1L),
             episode_id = Id(102L),
             season_number = 1L,
             episode_number = 2L,
-            watched_at = Clock.System.now().toEpochMilliseconds(),
+            watched_at = watchDate,
         )
 
         // When & Then - should return episode 3
@@ -104,21 +108,21 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             episode_id = Id(101L),
             season_number = 1L,
             episode_number = 1L,
-            watched_at = Clock.System.now().toEpochMilliseconds(),
+            watched_at = watchDate,
         )
         database.watchedEpisodesQueries.upsert(
             show_id = Id(1L),
             episode_id = Id(102L),
             season_number = 1L,
             episode_number = 2L,
-            watched_at = Clock.System.now().toEpochMilliseconds(),
+            watched_at = watchDate,
         )
         database.watchedEpisodesQueries.upsert(
             show_id = Id(1L),
             episode_id = Id(103L),
             season_number = 1L,
             episode_number = 3L,
-            watched_at = Clock.System.now().toEpochMilliseconds(),
+            watched_at = watchDate,
         )
 
         // When & Then
@@ -133,11 +137,11 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         // Given - add shows to watchlist
         database.watchlistQueries.upsert(
             id = Id(1L),
-            created_at = Clock.System.now().toEpochMilliseconds(),
+            created_at = watchDate,
         )
         database.watchlistQueries.upsert(
             id = Id(2L),
-            created_at = Clock.System.now().toEpochMilliseconds() + 1000,
+            created_at = watchDate + 1000,
         )
 
         // Mark some episodes as watched for show 1
@@ -146,7 +150,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             episode_id = Id(101L),
             season_number = 1L,
             episode_number = 1L,
-            watched_at = Clock.System.now().toEpochMilliseconds(),
+            watched_at = watchDate,
         )
 
         // When & Then
@@ -185,14 +189,14 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             episode_id = Id(301L),
             season_number = 1L,
             episode_number = 1L,
-            watched_at = Clock.System.now().toEpochMilliseconds(),
+            watched_at = watchDate,
         )
         database.watchedEpisodesQueries.upsert(
             show_id = Id(3L),
             episode_id = Id(302L),
             season_number = 1L,
             episode_number = 2L,
-            watched_at = Clock.System.now().toEpochMilliseconds(),
+            watched_at = watchDate,
         )
 
         // When & Then - should return first episode of season 2
@@ -228,14 +232,14 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             episode_id = Id(101L),
             season_number = 1L,
             episode_number = 1L,
-            watched_at = Clock.System.now().toEpochMilliseconds(),
+            watched_at = watchDate,
         )
         database.watchedEpisodesQueries.upsert(
             show_id = Id(1L),
             episode_id = Id(103L),
             season_number = 1L,
             episode_number = 3L,
-            watched_at = Clock.System.now().toEpochMilliseconds(),
+            watched_at = watchDate,
         )
 
         // When & Then - should still return E2 as next
