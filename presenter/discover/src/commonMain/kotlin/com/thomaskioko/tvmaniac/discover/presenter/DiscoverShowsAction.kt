@@ -19,3 +19,5 @@ data class ShowClicked(val id: Long) : DiscoverShowAction
 data class MessageShown(val id: Long) : DiscoverShowAction
 
 data class UpdateShowInLibrary(val id: Long, val inLibrary: Boolean) : DiscoverShowAction
+
+data class NextEpisodeClicked(val showId: Long, val episodeId: Long) : DiscoverShowAction

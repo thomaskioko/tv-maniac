@@ -16,8 +16,11 @@ import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsInteractor
 import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepository
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsInteractor
 import com.thomaskioko.tvmaniac.discover.presenter.model.DiscoverShow
+import com.thomaskioko.tvmaniac.discover.presenter.model.NextEpisodeUiModel
 import com.thomaskioko.tvmaniac.domain.discover.DiscoverShowsInteractor
 import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
+import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
+import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsInteractor
@@ -46,6 +49,7 @@ class DiscoverShowsPresenterTest {
     private val popularShowsRepository = FakePopularShowsRepository()
     private val watchlistRepository = FakeWatchlistRepository()
     private val genreRepository = FakeGenreRepository()
+    private val episodeRepository = FakeEpisodeRepository()
     private val coroutineDispatcher = AppCoroutineDispatchers(
         main = testDispatcher,
         io = testDispatcher,
@@ -100,10 +104,12 @@ class DiscoverShowsPresenterTest {
     fun `should return DataLoaded when data is fetched`() = runTest {
         presenter.state.test {
             setList(emptyList())
+            setNextEpisodes(emptyList())
 
             awaitItem() shouldBe DiscoverViewState.Empty
 
             setList(createDiscoverShowList())
+            setNextEpisodes(createNextEpisodesList())
 
             awaitItem() shouldBe DiscoverViewState(
                 featuredShows = uiModelList(),
@@ -111,6 +117,7 @@ class DiscoverShowsPresenterTest {
                 popularShows = uiModelList(),
                 upcomingShows = uiModelList(),
                 trendingToday = uiModelList(),
+                nextEpisodes = nextEpisodeUiModelList(),
             )
         }
     }
@@ -119,6 +126,7 @@ class DiscoverShowsPresenterTest {
     fun `should return DataLoaded when data is fetched from cache`() = runTest {
         presenter.state.test {
             setList(createDiscoverShowList())
+            setNextEpisodes(createNextEpisodesList())
 
             awaitItem() shouldBe DiscoverViewState.Empty
             awaitItem() shouldBe DiscoverViewState(
@@ -127,6 +135,7 @@ class DiscoverShowsPresenterTest {
                 popularShows = uiModelList(),
                 upcomingShows = uiModelList(),
                 trendingToday = uiModelList(),
+                nextEpisodes = nextEpisodeUiModelList(),
             )
         }
     }
@@ -141,6 +150,7 @@ class DiscoverShowsPresenterTest {
             presenter.dispatch(RefreshData)
 
             setList(createDiscoverShowList())
+            setNextEpisodes(createNextEpisodesList())
 
             awaitItem() shouldBe DiscoverViewState(
                 featuredShows = uiModelList(),
@@ -148,6 +158,7 @@ class DiscoverShowsPresenterTest {
                 popularShows = uiModelList(),
                 upcomingShows = uiModelList(),
                 trendingToday = uiModelList(),
+                nextEpisodes = nextEpisodeUiModelList(),
             )
         }
     }
@@ -156,6 +167,7 @@ class DiscoverShowsPresenterTest {
     fun `should return DataLoaded with refreshed data when refresh is clicked`() = runTest {
         presenter.state.test {
             setList(createDiscoverShowList())
+            setNextEpisodes(createNextEpisodesList())
 
             val expectedList = uiModelList()
             val expectedResult = DiscoverViewState(
@@ -164,6 +176,7 @@ class DiscoverShowsPresenterTest {
                 popularShows = expectedList,
                 upcomingShows = expectedList,
                 trendingToday = expectedList,
+                nextEpisodes = nextEpisodeUiModelList(),
             )
 
             awaitItem() shouldBe DiscoverViewState.Empty
@@ -189,6 +202,7 @@ class DiscoverShowsPresenterTest {
                 popularShows = expectedUpdatedList,
                 upcomingShows = expectedUpdatedList,
                 trendingToday = expectedUpdatedList,
+                nextEpisodes = nextEpisodeUiModelList(),
             )
         }
     }
@@ -196,6 +210,7 @@ class DiscoverShowsPresenterTest {
     @Test
     fun `should return DataLoaded when error occurs and refresh is clicked`() = runTest {
         setList(createDiscoverShowList())
+        setNextEpisodes(createNextEpisodesList())
 
         presenter.state.test {
             awaitItem() shouldBe DiscoverViewState.Empty
@@ -207,6 +222,7 @@ class DiscoverShowsPresenterTest {
                 popularShows = expectedList,
                 upcomingShows = expectedList,
                 trendingToday = expectedList,
+                nextEpisodes = nextEpisodeUiModelList(),
             )
 
             awaitItem() shouldBe expectedResult
@@ -231,12 +247,70 @@ class DiscoverShowsPresenterTest {
                 popularShows = expectedUpdatedList,
                 upcomingShows = expectedUpdatedList,
                 trendingToday = expectedUpdatedList,
+                nextEpisodes = nextEpisodeUiModelList(),
                 featuredRefreshing = false,
                 message = null,
             )
 
             awaitItem() shouldBe expectedUpdatedResult
         }
+    }
+
+    @Test
+    fun `should handle next episode click navigation`() = runTest {
+        var navigatedShowId: Long? = null
+        var navigatedEpisodeId: Long? = null
+
+        val testPresenter = DefaultDiscoverShowsPresenter(
+            componentContext = DefaultComponentContext(lifecycle = LifecycleRegistry()),
+            onNavigateToShowDetails = {},
+            onNavigateToMore = {},
+            onNavigateToEpisode = { showId, episodeId ->
+                navigatedShowId = showId
+                navigatedEpisodeId = episodeId
+            },
+            discoverShowsInteractor = DiscoverShowsInteractor(
+                featuredShowsRepository = featuredShowsRepository,
+                topRatedShowsRepository = topRatedShowsRepository,
+                popularShowsRepository = popularShowsRepository,
+                trendingShowsRepository = trendingShowsRepository,
+                upcomingShowsRepository = upcomingShowsRepository,
+                genreRepository = genreRepository,
+                episodeRepository = episodeRepository,
+                dispatchers = coroutineDispatcher,
+            ),
+            watchlistRepository = watchlistRepository,
+            featuredShowsInteractor = FeaturedShowsInteractor(
+                featuredShowsRepository = featuredShowsRepository,
+                dispatchers = coroutineDispatcher,
+            ),
+            topRatedShowsInteractor = TopRatedShowsInteractor(
+                topRatedShowsRepository = topRatedShowsRepository,
+                dispatchers = coroutineDispatcher,
+            ),
+            popularShowsInteractor = PopularShowsInteractor(
+                popularShowsRepository = popularShowsRepository,
+                dispatchers = coroutineDispatcher,
+            ),
+            trendingShowsInteractor = TrendingShowsInteractor(
+                trendingShowsRepository = trendingShowsRepository,
+                dispatchers = coroutineDispatcher,
+            ),
+            upcomingShowsInteractor = UpcomingShowsInteractor(
+                upcomingShowsRepository = upcomingShowsRepository,
+                dispatchers = coroutineDispatcher,
+            ),
+            genreShowsInteractor = GenreShowsInteractor(
+                repository = genreRepository,
+                dispatchers = coroutineDispatcher,
+            ),
+            logger = FakeLogger(),
+        )
+
+        testPresenter.dispatch(NextEpisodeClicked(showId = 123L, episodeId = 456L))
+
+        navigatedShowId shouldBe 123L
+        navigatedEpisodeId shouldBe 456L
     }
 
     private suspend fun setList(list: List<ShowEntity>) {
@@ -247,6 +321,40 @@ class DiscoverShowsPresenterTest {
         trendingShowsRepository.setTrendingShows(list)
         genreRepository.setGenreResult(emptyList())
     }
+
+    private fun setNextEpisodes(episodes: List<NextEpisodeWithShow>) {
+        episodeRepository.setNextEpisodesForWatchlist(episodes)
+    }
+
+    private fun createNextEpisodesList(size: Int = LIST_SIZE) = List(size) { index ->
+        NextEpisodeWithShow(
+            showId = 84958L + index,
+            showName = "Test Show $index",
+            showPoster = "/test-poster-$index.jpg",
+            episodeId = 1000L + index,
+            episodeName = "Test Episode $index",
+            seasonNumber = 1L,
+            episodeNumber = index.toLong() + 1,
+            runtime = 45L,
+            stillPath = "/test-still-$index.jpg",
+            overview = "Test episode overview $index",
+        )
+    }.toImmutableList()
+
+    private fun nextEpisodeUiModelList(size: Int = LIST_SIZE) = createNextEpisodesList(size).map { episode ->
+        NextEpisodeUiModel(
+            showId = episode.showId,
+            showName = episode.showName,
+            showPoster = episode.showPoster,
+            episodeId = episode.episodeId,
+            episodeTitle = episode.episodeName,
+            episodeNumber = "S${episode.seasonNumber}E${episode.episodeNumber}",
+            runtime = episode.runtime?.let { "$it min" },
+            stillImage = episode.stillPath,
+            overview = episode.overview,
+            isNew = false,
+        )
+    }.toImmutableList()
 
     private fun createDiscoverShowList(size: Int = LIST_SIZE) = List(size) {
         ShowEntity(
@@ -277,6 +385,7 @@ class DiscoverShowsPresenterTest {
         componentContext = DefaultComponentContext(lifecycle = lifecycle),
         onNavigateToShowDetails = {},
         onNavigateToMore = {},
+        onNavigateToEpisode = { _, _ -> },
         discoverShowsInteractor = DiscoverShowsInteractor(
             featuredShowsRepository = featuredShowsRepository,
             topRatedShowsRepository = topRatedShowsRepository,
@@ -284,7 +393,7 @@ class DiscoverShowsPresenterTest {
             trendingShowsRepository = trendingShowsRepository,
             upcomingShowsRepository = upcomingShowsRepository,
             genreRepository = genreRepository,
-
+            episodeRepository = episodeRepository,
             dispatchers = coroutineDispatcher,
         ),
         watchlistRepository = watchlistRepository,
