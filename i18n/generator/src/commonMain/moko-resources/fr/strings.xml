@@ -8,6 +8,7 @@
     <string name="label_discover_popular">Populaire</string>
     <string name="label_discover_top_rated">Les mieux notés</string>
     <string name="label_discover_featured">En vedette</string>
+    <string name="label_discover_up_next">À suivre</string>
     <string name="label_discover_title">Découvrir</string>
     <string name="label_tab_search">Rechercher</string>
     <string name="label_search_title">Rechercher</string>
