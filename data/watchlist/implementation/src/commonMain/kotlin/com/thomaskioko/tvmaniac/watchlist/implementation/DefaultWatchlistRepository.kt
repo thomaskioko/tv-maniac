@@ -42,7 +42,7 @@ class DefaultWatchlistRepository(
 
                 // Fetch season details for all seasons to populate episode data
                 seasonsRepository.observeSeasonsByShowId(id).collect { seasonList ->
-                    seasonList.firstOrNull()?.let { season ->
+                    seasonList.forEach{ season ->
                         seasonDetailsRepository.fetchSeasonDetails(
                             SeasonDetailsParam(
                                 showId = id,
