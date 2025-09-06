@@ -79,7 +79,7 @@ class DiscoverShowsInteractorTest {
                 popularShows = emptyList(),
                 trendingShows = emptyList(),
                 upcomingShows = emptyList(),
-                nextEpisodes = emptyList()
+                nextEpisodes = emptyList(),
             )
             cancelAndConsumeRemainingEvents()
         }
@@ -104,7 +104,7 @@ class DiscoverShowsInteractorTest {
                 popularShows = shows,
                 trendingShows = shows,
                 upcomingShows = shows,
-                nextEpisodes = episodes
+                nextEpisodes = episodes,
             )
             cancelAndConsumeRemainingEvents()
         }

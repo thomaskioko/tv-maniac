@@ -48,7 +48,7 @@ class DefaultWatchlistRepository(
                                 showId = id,
                                 seasonId = season.season_id.id,
                                 seasonNumber = season.season_number,
-                            )
+                            ),
                         )
                     }
                 }
