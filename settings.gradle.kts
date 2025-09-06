@@ -139,6 +139,7 @@ include(
     ":data:watchproviders:implementation",
     ":data:watchproviders:testing",
     ":domain:discover",
+    ":domain:episode",
     ":domain:genre",
     ":domain:recommendedshows",
     ":domain:seasondetails",
