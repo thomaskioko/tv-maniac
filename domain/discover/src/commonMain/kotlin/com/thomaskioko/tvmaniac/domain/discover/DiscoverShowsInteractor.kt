@@ -7,6 +7,8 @@ import com.thomaskioko.tvmaniac.data.featuredshows.api.FeaturedShowsRepository
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsRepository
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsRepository
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
+import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
+import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.genre.GenreRepository
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsRepository
@@ -22,6 +24,7 @@ class DiscoverShowsInteractor(
     private val trendingShowsRepository: TrendingShowsRepository,
     private val upcomingShowsRepository: UpcomingShowsRepository,
     private val genreRepository: GenreRepository,
+    private val episodeRepository: EpisodeRepository,
     private val dispatchers: AppCoroutineDispatchers,
 ) : SubjectInteractor<Unit, DiscoverShowsData>() {
 
@@ -32,13 +35,15 @@ class DiscoverShowsInteractor(
         popularShowsRepository.observePopularShows(),
         trendingShowsRepository.observeTrendingShows(),
         upcomingShowsRepository.observeUpcomingShows(),
-    ) { _, featured, topRated, popular, trending, upcoming ->
+        episodeRepository.observeNextEpisodesForWatchlist(),
+    ) { _, featured, topRated, popular, trending, upcoming, nextEpisodes ->
         DiscoverShowsData(
             featuredShows = featured,
             topRatedShows = topRated,
             popularShows = popular,
             trendingShows = trending,
             upcomingShows = upcoming,
+            nextEpisodes = nextEpisodes,
         )
     }.flowOn(dispatchers.io.limitedParallelism(6))
 }
@@ -49,4 +54,5 @@ data class DiscoverShowsData(
     val popularShows: List<ShowEntity>,
     val trendingShows: List<ShowEntity>,
     val upcomingShows: List<ShowEntity>,
+    val nextEpisodes: List<NextEpisodeWithShow>,
 )
