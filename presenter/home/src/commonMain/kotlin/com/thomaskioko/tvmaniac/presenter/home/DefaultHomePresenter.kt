@@ -90,6 +90,9 @@ class DefaultHomePresenter private constructor(
                         componentContext = componentContext,
                         onNavigateToShowDetails = { id -> onShowClicked(id) },
                         onNavigateToMore = { id -> onMoreShowClicked(id) },
+                        onNavigateToEpisode = { showId, episodeId ->
+                            // TODO:: Add Navigation to episode detail
+                        },
                     ),
                 )
             }
