@@ -2,11 +2,6 @@ import com.thomaskioko.tvmaniac.db.Id;
 import com.thomaskioko.tvmaniac.db.TmdbId;
 import com.thomaskioko.tvmaniac.db.EpisodeId;
 
--- Migration 5: Next Episode Feature with Tivi-Inspired SQL View Architecture
--- This migration implements episode tracking using SQL views for optimal performance
--- Based on architectural patterns from Google's Tivi reference app
-
--- 1. Create watched_episodes table to track user viewing history
 CREATE TABLE watched_episodes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     show_id INTEGER AS Id<TmdbId> NOT NULL,
@@ -27,10 +22,10 @@ CREATE INDEX idx_watched_episodes_show_season ON watched_episodes(show_id, seaso
 -- 2. Drop temporary table if it exists (from SQLDelight schema)
 DROP TABLE IF EXISTS shows_next_to_watch;
 
--- 3. Create optimized SQL view for next episode calculation 
+-- 3. Create optimized SQL view for next episode calculation
 -- Returns all unwatched episodes, allowing UI to prompt for previous episodes
 CREATE VIEW shows_next_to_watch AS
-SELECT 
+SELECT
     tvshow.id AS show_id,
     episode.id AS episode_id,
     episode.title AS episode_name,
@@ -46,7 +41,7 @@ FROM tvshow
 INNER JOIN season ON tvshow.id = season.show_id
 INNER JOIN episode ON episode.season_id = season.id AND episode.show_id = tvshow.id
 LEFT JOIN watched_episodes AS we ON (
-    we.show_id = tvshow.id 
+    we.show_id = tvshow.id
     AND we.episode_id = episode.id
 )
 WHERE season.season_number > 0  -- Exclude special seasons (season 0)

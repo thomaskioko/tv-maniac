@@ -21,11 +21,6 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-/**
- * Tests for the SQL view-based next episode DAO.
- * The view automatically determines next episodes based on watched episodes,
- * so we test by manipulating watched episode data and observing the results.
- */
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
 
@@ -57,10 +52,6 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should observe next episode for show with no watched episodes`() = runTest {
-        // Given - show with episodes but no watched episodes
-        // The view should return the first episode (S01E01)
-
-        // When & Then
         nextEpisodeDao.observeNextEpisode(1L).test {
             val nextEpisode = awaitItem()
             nextEpisode.shouldNotBeNull()
@@ -74,7 +65,6 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should observe next episode after marking episodes as watched`() = runTest {
-        // Given - mark first two episodes as watched
         database.watchedEpisodesQueries.upsert(
             show_id = Id(1L),
             episode_id = Id(101L),
@@ -90,7 +80,6 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             watched_at = watchDate,
         )
 
-        // When & Then - should return episode 3
         nextEpisodeDao.observeNextEpisode(1L).test {
             val nextEpisode = awaitItem()
             nextEpisode.shouldNotBeNull()
@@ -102,7 +91,6 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should return null when all episodes are watched`() = runTest {
-        // Given - mark all episodes as watched
         database.watchedEpisodesQueries.upsert(
             show_id = Id(1L),
             episode_id = Id(101L),
@@ -125,7 +113,6 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             watched_at = watchDate,
         )
 
-        // When & Then
         nextEpisodeDao.observeNextEpisode(1L).test {
             val nextEpisode = awaitItem()
             nextEpisode.shouldBeNull()
@@ -134,7 +121,6 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should observe next episodes for watchlist`() = runTest {
-        // Given - add shows to watchlist
         database.watchlistQueries.upsert(
             id = Id(1L),
             created_at = watchDate,
@@ -144,7 +130,6 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             created_at = watchDate + 1000,
         )
 
-        // Mark some episodes as watched for show 1
         database.watchedEpisodesQueries.upsert(
             show_id = Id(1L),
             episode_id = Id(101L),
@@ -153,7 +138,6 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             watched_at = watchDate,
         )
 
-        // When & Then
         nextEpisodeDao.observeNextEpisodesForWatchlist().test {
             val watchlistEpisodes = awaitItem()
             watchlistEpisodes.size shouldBe 2
@@ -242,12 +226,10 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             watched_at = watchDate,
         )
 
-        // When & Then - should still return E2 as next
+        // Since the test data only has 3 episodes and E3 is the last watched, there are no more episodes to progress to
         nextEpisodeDao.observeNextEpisode(1L).test {
             val nextEpisode = awaitItem()
-            nextEpisode.shouldNotBeNull()
-            nextEpisode.episodeName shouldBe "Episode 2"
-            nextEpisode.episodeNumber shouldBe 2
+            nextEpisode.shouldBeNull()
         }
     }
 
@@ -526,5 +508,360 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             vote_average = 8.0,
             vote_count = 100L,
         )
+    }
+
+    @Test
+    fun `should maintain shows in watchlist when tracking sequentially`() = runTest {
+        //  Track Breaking Bad (show 1)
+        database.watchlistQueries.upsert(
+            id = Id(1L),
+            created_at = watchDate,
+        )
+
+        // Verify Breaking Bad episode appears
+        nextEpisodeDao.observeNextEpisodesForWatchlist().test {
+            val episodes1 = awaitItem()
+            episodes1.size shouldBe 1
+            episodes1[0].showId shouldBe 1L
+            episodes1[0].showName shouldBe "Test Show 1"
+
+            // Step 2: Track Game of Thrones (show 2) - this should ADD to the list, not replace
+            database.watchlistQueries.upsert(
+                id = Id(2L),
+                created_at = watchDate + 1000,
+            )
+
+            val episodes2 = awaitItem()
+            episodes2.size shouldBe 2
+
+            episodes2[0].showId shouldBe 2L
+            episodes2[0].showName shouldBe "Test Show 2"
+
+            episodes2[1].showId shouldBe 1L
+            episodes2[1].showName shouldBe "Test Show 1"
+        }
+    }
+
+    @Test
+    fun `should handle shows with Specials seasons correctly`() = runTest {
+        database.tvShowQueries.upsert(
+            id = Id(5L),
+            name = "Breaking Bad",
+            overview = "Chemistry teacher turns to cooking meth",
+            language = "en",
+            first_air_date = "2008-01-20",
+            vote_average = 9.3,
+            vote_count = 5000,
+            popularity = 95.0,
+            genre_ids = listOf(1, 2),
+            status = "Ended",
+            episode_numbers = null,
+            last_air_date = null,
+            season_numbers = null,
+            poster_path = "/bb.jpg",
+            backdrop_path = "/bb-back.jpg",
+        )
+
+        // Season 0 (Specials) - should be excluded
+        database.seasonsQueries.upsert(
+            id = Id(50L),
+            show_id = Id(5L),
+            season_number = 0L,
+            title = "Specials",
+            overview = "Special episodes",
+            episode_count = 1L,
+            image_url = "/bb-specials.jpg",
+        )
+
+        database.episodesQueries.upsert(
+            id = Id(500L),
+            season_id = Id(50L),
+            show_id = Id(5L),
+            title = "BB Special Episode",
+            overview = "Behind the scenes",
+            episode_number = 1L,
+            runtime = 30L,
+            image_url = "/bb-special.jpg",
+            vote_average = 7.0,
+            vote_count = 100L,
+        )
+
+        // Season 1 (Regular) - should be included
+        database.seasonsQueries.upsert(
+            id = Id(51L),
+            show_id = Id(5L),
+            season_number = 1L,
+            title = "Season 1",
+            overview = "First season",
+            episode_count = 2L,
+            image_url = "/bb-s1.jpg",
+        )
+
+        database.episodesQueries.upsert(
+            id = Id(501L),
+            season_id = Id(51L),
+            show_id = Id(5L),
+            title = "Pilot",
+            overview = "Walter White starts cooking",
+            episode_number = 1L,
+            runtime = 58L,
+            image_url = "/bb-pilot.jpg",
+            vote_average = 9.0,
+            vote_count = 1000L,
+        )
+
+        database.episodesQueries.upsert(
+            id = Id(502L),
+            season_id = Id(51L),
+            show_id = Id(5L),
+            title = "Cat's in the Bag...",
+            overview = "Walter and Jesse dispose of evidence",
+            episode_number = 2L,
+            runtime = 48L,
+            image_url = "/bb-ep2.jpg",
+            vote_average = 8.8,
+            vote_count = 950L,
+        )
+
+        // Create Game of Thrones (show 6) with Specials
+        database.tvShowQueries.upsert(
+            id = Id(6L),
+            name = "Game of Thrones",
+            overview = "Power struggles in Westeros",
+            language = "en",
+            first_air_date = "2011-04-17",
+            vote_average = 9.3,
+            vote_count = 8000,
+            popularity = 98.0,
+            genre_ids = listOf(3, 4),
+            status = "Ended",
+            episode_numbers = null,
+            last_air_date = null,
+            season_numbers = null,
+            poster_path = "/got.jpg",
+            backdrop_path = "/got-back.jpg",
+        )
+
+        // Season 0 (Specials) - should be excluded
+        database.seasonsQueries.upsert(
+            id = Id(60L),
+            show_id = Id(6L),
+            season_number = 0L,
+            title = "Specials",
+            overview = "Behind the scenes and extras",
+            episode_count = 2L,
+            image_url = "/got-specials.jpg",
+        )
+
+        database.episodesQueries.upsert(
+            id = Id(600L),
+            season_id = Id(60L),
+            show_id = Id(6L),
+            title = "Making of GOT",
+            overview = "Documentary",
+            episode_number = 1L,
+            runtime = 45L,
+            image_url = "/got-making.jpg",
+            vote_average = 8.0,
+            vote_count = 200L,
+        )
+
+        database.episodesQueries.upsert(
+            id = Id(601L),
+            season_id = Id(60L),
+            show_id = Id(6L),
+            title = "GOT Interviews",
+            overview = "Cast interviews",
+            episode_number = 2L,
+            runtime = 60L,
+            image_url = "/got-interviews.jpg",
+            vote_average = 7.5,
+            vote_count = 150L,
+        )
+
+        // Season 1 (Regular) - should be included
+        database.seasonsQueries.upsert(
+            id = Id(61L),
+            show_id = Id(6L),
+            season_number = 1L,
+            title = "Season 1",
+            overview = "First season of GOT",
+            episode_count = 2L,
+            image_url = "/got-s1.jpg",
+        )
+
+        database.episodesQueries.upsert(
+            id = Id(610L),
+            season_id = Id(61L),
+            show_id = Id(6L),
+            title = "Winter Is Coming",
+            overview = "The Starks receive troubling news",
+            episode_number = 1L,
+            runtime = 62L,
+            image_url = "/got-winter.jpg",
+            vote_average = 9.0,
+            vote_count = 2000L,
+        )
+
+        database.episodesQueries.upsert(
+            id = Id(611L),
+            season_id = Id(61L),
+            show_id = Id(6L),
+            title = "The Kingsroad",
+            overview = "Ned travels to King's Landing",
+            episode_number = 2L,
+            runtime = 56L,
+            image_url = "/got-kingsroad.jpg",
+            vote_average = 8.7,
+            vote_count = 1800L,
+        )
+
+        // Now simulate the user scenario:
+        // 1. Track Breaking Bad
+        database.watchlistQueries.upsert(
+            id = Id(5L), // Breaking Bad
+            created_at = watchDate,
+        )
+
+        nextEpisodeDao.observeNextEpisodesForWatchlist().test {
+            // Should show Breaking Bad S1E1 (Specials should be excluded)
+            val episodes1 = awaitItem()
+            episodes1.size shouldBe 1
+            episodes1[0].showId shouldBe 5L
+            episodes1[0].showName shouldBe "Breaking Bad"
+            episodes1[0].episodeName shouldBe "Pilot"
+            episodes1[0].seasonNumber shouldBe 1
+            episodes1[0].episodeNumber shouldBe 1
+
+            // 2. Track Game of Thrones - this should ADD, not replace
+            database.watchlistQueries.upsert(
+                id = Id(6L), // Game of Thrones
+                created_at = watchDate + 1000,
+            )
+
+            // Should show BOTH shows (GOT first due to being more recent)
+            val episodes2 = awaitItem()
+            episodes2.size shouldBe 2 // KEY: This might fail if the bug exists
+
+            // GOT should be first (more recently added)
+            episodes2[0].showId shouldBe 6L
+            episodes2[0].showName shouldBe "Game of Thrones"
+            episodes2[0].episodeName shouldBe "Winter Is Coming"
+            episodes2[0].seasonNumber shouldBe 1
+            episodes2[0].episodeNumber shouldBe 1
+
+            // Breaking Bad should still be there (not replaced due to Specials issue)
+            episodes2[1].showId shouldBe 5L
+            episodes2[1].showName shouldBe "Breaking Bad"
+            episodes2[1].episodeName shouldBe "Pilot"
+            episodes2[1].seasonNumber shouldBe 1
+            episodes2[1].episodeNumber shouldBe 1
+        }
+    }
+
+    @Test
+    fun `should handle show with corrupt watch progress that excludes all episodes`() = runTest {
+        // Setup: Create a show with normal episodes
+        database.tvShowQueries.upsert(
+            id = Id(100L),
+            name = "Problematic Show",
+            overview = "Show that may disappear due to watch progress",
+            language = "en",
+            first_air_date = "2020-01-01",
+            vote_average = 8.5,
+            vote_count = 1000,
+            popularity = 95.0,
+            genre_ids = listOf(1),
+            status = "Ended",
+            episode_numbers = null,
+            last_air_date = null,
+            season_numbers = null,
+            poster_path = "/problematic.jpg",
+            backdrop_path = "/prob-back.jpg",
+        )
+
+        // Season 1
+        database.seasonsQueries.upsert(
+            id = Id(1001L),
+            show_id = Id(100L),
+            season_number = 1L,
+            title = "Season 1",
+            overview = "First season",
+            episode_count = 3L,
+            image_url = "/prob-s1.jpg",
+        )
+
+        // Add episodes 1, 2, 3
+        database.episodesQueries.upsert(
+            id = Id(10001L),
+            season_id = Id(1001L),
+            show_id = Id(100L),
+            title = "Episode 1",
+            overview = "First episode",
+            episode_number = 1L,
+            runtime = 45L,
+            image_url = "/ep1.jpg",
+            vote_average = 8.0,
+            vote_count = 100L,
+        )
+
+        database.episodesQueries.upsert(
+            id = Id(10002L),
+            season_id = Id(1001L),
+            show_id = Id(100L),
+            title = "Episode 2",
+            overview = "Second episode",
+            episode_number = 2L,
+            runtime = 45L,
+            image_url = "/ep2.jpg",
+            vote_average = 8.0,
+            vote_count = 100L,
+        )
+
+        database.episodesQueries.upsert(
+            id = Id(10003L),
+            season_id = Id(1001L),
+            show_id = Id(100L),
+            title = "Episode 3",
+            overview = "Third episode",
+            episode_number = 3L,
+            runtime = 45L,
+            image_url = "/ep3.jpg",
+            vote_average = 8.0,
+            vote_count = 100L,
+        )
+
+        // Add to watchlist
+        database.watchlistQueries.upsert(
+            id = Id(100L),
+            created_at = watchDate,
+        )
+
+        nextEpisodeDao.observeNextEpisodesForWatchlist().test {
+            // Initially, should show Episode 1 (no watch progress)
+            val initial = awaitItem()
+            initial.size shouldBe 1
+            initial[0].showId shouldBe 100L
+            initial[0].episodeName shouldBe "Episode 1"
+            initial[0].seasonNumber shouldBe 1
+            initial[0].episodeNumber shouldBe 1
+
+            // Now simulate corrupt/problematic watch progress: mark episode from a non-existent season as watched
+            // This could happen if a season was removed but watch history remains
+            database.watchedEpisodesQueries.upsert(
+                episode_id = Id(99999L), // Non-existent episode
+                show_id = Id(100L),
+                season_number = 5L, // Season that doesn't exist
+                episode_number = 10L, // High episode number
+                watched_at = watchDate,
+            )
+
+            // The show might disappear from the view because the last_watched_abs_number
+            // could be calculated as (5 * 1000) + 10 = 5010, which is higher than
+            // any available episode: max is (1 * 1000) + 3 = 1003
+            val afterCorruption = awaitItem()
+
+            afterCorruption.size shouldBe 1
+        }
     }
 }

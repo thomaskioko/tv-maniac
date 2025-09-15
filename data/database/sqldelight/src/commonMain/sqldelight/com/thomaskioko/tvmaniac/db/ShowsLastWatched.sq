@@ -4,7 +4,6 @@ import com.thomaskioko.tvmaniac.db.EpisodeId;
 
 -- View definition for shows_last_watched
 -- This view calculates the last watched episode for each show
--- Based on Tivi's approach for progression tracking
 CREATE VIEW shows_last_watched AS
 SELECT
     we.show_id,

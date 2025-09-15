@@ -3,8 +3,10 @@ package com.thomaskioko.tvmaniac.episodes.testing
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.Watched_episodes
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
+import com.thomaskioko.tvmaniac.episodes.api.model.LastWatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.episodes.api.model.WatchProgress
+import com.thomaskioko.tvmaniac.episodes.api.model.WatchProgressContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.datetime.DatePeriod
@@ -21,7 +23,6 @@ class FakeEpisodeRepository : EpisodeRepository {
     private val lastWatchedEpisode = mutableMapOf<Long, Watched_episodes?>()
     private val episodeWatchedStatus = mutableMapOf<String, Boolean>()
 
-    // Use LocalDate for readable and deterministic testing timestamps
     private var currentDate = LocalDate(2024, 1, 1) // Jan 1, 2024
 
     fun setCurrentDate(date: LocalDate) {
@@ -49,14 +50,20 @@ class FakeEpisodeRepository : EpisodeRepository {
     }
 
     fun setWatchProgress(showId: Long, progress: WatchProgress) {
-        watchProgress.getOrPut(showId) { MutableStateFlow(createDefaultWatchProgress(showId)) }.value = progress
+        watchProgress.getOrPut(showId) { MutableStateFlow(createDefaultWatchProgress(showId)) }.value =
+            progress
     }
 
     fun setLastWatchedEpisode(showId: Long, episode: Watched_episodes?) {
         lastWatchedEpisode[showId] = episode
     }
 
-    fun setEpisodeWatchedStatus(showId: Long, seasonNumber: Long, episodeNumber: Long, isWatched: Boolean) {
+    fun setEpisodeWatchedStatus(
+        showId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+        isWatched: Boolean,
+    ) {
         episodeWatchedStatus["$showId:$seasonNumber:$episodeNumber"] = isWatched
     }
 
@@ -87,7 +94,8 @@ class FakeEpisodeRepository : EpisodeRepository {
             episode_number = episodeNumber,
             watched_at = getNextTimestamp(), // Each episode gets next day timestamp
         )
-        watchedEpisodes.getOrPut(showId) { MutableStateFlow(emptyList()) }.value = currentList + newEpisode
+        watchedEpisodes.getOrPut(showId) { MutableStateFlow(emptyList()) }.value =
+            currentList + newEpisode
         lastWatchedEpisode[showId] = newEpisode
     }
 
@@ -138,6 +146,46 @@ class FakeEpisodeRepository : EpisodeRepository {
             lastSeasonWatched = null,
             lastEpisodeWatched = null,
             nextEpisode = null,
+        )
+    }
+
+    override suspend fun getWatchProgressContext(showId: Long): WatchProgressContext {
+        return WatchProgressContext(
+            showId = showId,
+            totalEpisodes = 0,
+            watchedEpisodes = watchedEpisodes[showId]?.value?.size ?: 0,
+            lastWatchedSeasonNumber = lastWatchedEpisode[showId]?.season_number?.toInt(),
+            lastWatchedEpisodeNumber = lastWatchedEpisode[showId]?.episode_number?.toInt(),
+            nextEpisode = nextEpisodeForShow[showId]?.value,
+            isWatchingOutOfOrder = false,
+            hasUnwatchedEarlierEpisodes = false,
+            progressPercentage = 0f,
+        )
+    }
+
+    override suspend fun hasUnwatchedEarlierEpisodes(showId: Long): Boolean {
+        return false
+    }
+
+    override suspend fun findEarliestUnwatchedEpisode(showId: Long): NextEpisodeWithShow? {
+        return nextEpisodeForShow[showId]?.value
+    }
+
+    override suspend fun isWatchingOutOfOrder(showId: Long): Boolean {
+        return false
+    }
+
+    override fun observeLastWatchedEpisode(showId: Long): Flow<LastWatchedEpisode?> {
+        return MutableStateFlow(
+            lastWatchedEpisode[showId]?.let { episode ->
+                LastWatchedEpisode(
+                    showId = episode.show_id.id,
+                    episodeId = episode.episode_id.id,
+                    seasonNumber = episode.season_number.toInt(),
+                    episodeNumber = episode.episode_number.toInt(),
+                    watchedAt = episode.watched_at,
+                )
+            },
         )
     }
 }
