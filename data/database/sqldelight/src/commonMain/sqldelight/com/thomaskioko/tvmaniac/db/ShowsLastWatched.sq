@@ -1,0 +1,44 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.TmdbId;
+import com.thomaskioko.tvmaniac.db.EpisodeId;
+
+-- View definition for shows_last_watched
+-- This view calculates the last watched episode for each show
+-- Based on Tivi's approach for progression tracking
+CREATE VIEW shows_last_watched AS
+SELECT
+    we.show_id,
+    season.id AS season_id,
+    we.episode_id,
+    MAX((1000 * we.season_number) + we.episode_number) AS last_watched_abs_number,
+    we.season_number AS last_watched_season,
+    we.episode_number AS last_watched_episode,
+    MAX(we.watched_at) AS last_watched_at
+FROM watched_episodes we
+INNER JOIN season ON season.show_id = we.show_id AND season.season_number = we.season_number
+WHERE (we.season_number > 0 OR (we.season_number = 0 AND season.title != 'Specials'))  -- Only exclude season 0 if titled exactly "Specials"
+GROUP BY we.show_id;
+
+-- Get last watched episode for a specific show
+lastWatchedEpisodeForShow:
+SELECT
+    show_id,
+    season_id,
+    episode_id,
+    last_watched_abs_number,
+    last_watched_season,
+    last_watched_episode,
+    last_watched_at
+FROM shows_last_watched
+WHERE show_id = ?;
+
+-- Get last watched episodes for all shows in watchlist
+lastWatchedEpisodesForWatchlist:
+SELECT
+    lw.*,
+    t.name AS show_name,
+    t.poster_path AS show_poster
+FROM shows_last_watched lw
+INNER JOIN tvshow t ON lw.show_id = t.id
+INNER JOIN watchlist w ON lw.show_id = w.id
+ORDER BY lw.last_watched_at DESC;

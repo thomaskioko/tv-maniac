@@ -1,0 +1,48 @@
+-- Migration to update views to allow different season titles eg Limited Series (season 0) while excluding "Specials"
+
+-- Drop existing views
+DROP VIEW IF EXISTS shows_last_watched;
+DROP VIEW IF EXISTS shows_next_to_watch;
+
+-- Recreate shows_last_watched view with updated filter
+CREATE VIEW shows_last_watched AS
+SELECT
+    we.show_id,
+    season.id AS season_id,
+    we.episode_id,
+    MAX((1000 * we.season_number) + we.episode_number) AS last_watched_abs_number,
+    we.season_number AS last_watched_season,
+    we.episode_number AS last_watched_episode,
+    MAX(we.watched_at) AS last_watched_at
+FROM watched_episodes we
+INNER JOIN season ON season.show_id = we.show_id AND season.season_number = we.season_number
+WHERE (we.season_number > 0 OR (we.season_number = 0 AND season.title != 'Specials'))  -- Only exclude season 0 if titled exactly "Specials"
+GROUP BY we.show_id;
+
+-- Recreate shows_next_to_watch view with updated filter
+CREATE VIEW shows_next_to_watch AS
+SELECT
+    tvshow.id AS show_id,
+    episode.id AS episode_id,
+    episode.title AS episode_name,
+    season.season_number,
+    episode.episode_number,
+    episode.runtime,
+    episode.image_url AS still_path,
+    episode.overview,
+    tvshow.name AS show_name,
+    tvshow.poster_path AS show_poster,
+    ((1000 * season.season_number) + episode.episode_number) AS next_ep_abs_number
+FROM tvshow
+INNER JOIN season ON tvshow.id = season.show_id
+INNER JOIN episode ON episode.season_id = season.id AND episode.show_id = tvshow.id
+LEFT JOIN watched_episodes AS we ON (
+    we.show_id = tvshow.id
+    AND we.episode_id = episode.id
+)
+LEFT JOIN shows_last_watched AS lw ON lw.show_id = tvshow.id
+WHERE (season.season_number > 0 OR (season.season_number = 0 AND season.title != 'Specials'))  -- Only exclude season 0 if titled exactly "Specials"
+  AND we.episode_id IS NULL     -- Episode not watched
+  AND ((1000 * season.season_number) + episode.episode_number) >
+      COALESCE(lw.last_watched_abs_number, 0)  -- Progression from last watched
+ORDER BY tvshow.id, season.season_number, episode.episode_number;

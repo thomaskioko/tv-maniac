@@ -3,9 +3,9 @@ import com.thomaskioko.tvmaniac.db.TmdbId;
 import com.thomaskioko.tvmaniac.db.EpisodeId;
 
 -- View definition for shows_next_to_watch
--- This matches the view created in migration 5.sqm
+-- This view finds the next episode to watch based on viewing progress
 CREATE VIEW shows_next_to_watch AS
-SELECT 
+SELECT
     tvshow.id AS show_id,
     episode.id AS episode_id,
     episode.title AS episode_name,
@@ -21,16 +21,21 @@ FROM tvshow
 INNER JOIN season ON tvshow.id = season.show_id
 INNER JOIN episode ON episode.season_id = season.id AND episode.show_id = tvshow.id
 LEFT JOIN watched_episodes AS we ON (
-    we.show_id = tvshow.id 
+    we.show_id = tvshow.id
     AND we.episode_id = episode.id
 )
-WHERE season.season_number > 0  -- Exclude special seasons (season 0)
+LEFT JOIN shows_last_watched AS lw ON lw.show_id = tvshow.id
+WHERE (season.season_number > 0 OR (season.season_number = 0 AND season.title != 'Specials'))  -- Only exclude season 0 if titled exactly "Specials"
   AND we.episode_id IS NULL     -- Episode not watched
+  AND (
+      lw.last_watched_abs_number IS NULL OR  -- No watch history, start from beginning
+      ((1000 * season.season_number) + episode.episode_number) > lw.last_watched_abs_number  -- Normal progression
+  )
 ORDER BY tvshow.id, season.season_number, episode.episode_number;
 
 -- Get next episode for a specific show
 nextEpisodeForShow:
-SELECT 
+SELECT
     show_id,
     episode_id,
     episode_name,
@@ -41,14 +46,14 @@ SELECT
     overview,
     show_name,
     show_poster
-FROM shows_next_to_watch 
+FROM shows_next_to_watch
 WHERE show_id = ?
 ORDER BY season_number, episode_number
 LIMIT 1;
 
--- Get all next episodes for shows in the watchlist 
+-- Get all next episodes for shows in the watchlist
 nextEpisodesForWatchlist:
-SELECT 
+SELECT
     snw.show_id,
     snw.episode_id,
     snw.episode_name,

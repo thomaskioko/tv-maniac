@@ -4,7 +4,6 @@ import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import com.thomaskioko.tvmaniac.db.SearchWatchlist
 import com.thomaskioko.tvmaniac.db.Watchlists
-import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
@@ -29,7 +28,6 @@ class DefaultWatchlistRepository(
     private val watchlistDao: WatchlistDao,
     private val watchlistMetadataStore: WatchlistMetadataStore,
     private val datastoreRepository: DatastoreRepository,
-    private val episodeRepository: EpisodeRepository,
     private val seasonDetailsRepository: SeasonDetailsRepository,
     private val seasonsRepository: SeasonsRepository,
 ) : WatchlistRepository {
@@ -42,7 +40,7 @@ class DefaultWatchlistRepository(
 
                 // Fetch season details for all seasons to populate episode data
                 seasonsRepository.observeSeasonsByShowId(id).collect { seasonList ->
-                    seasonList.forEach{ season ->
+                    seasonList.forEach { season ->
                         seasonDetailsRepository.fetchSeasonDetails(
                             SeasonDetailsParam(
                                 showId = id,
@@ -56,9 +54,6 @@ class DefaultWatchlistRepository(
             else -> {
                 // Remove from watchlist
                 watchlistDao.delete(id)
-
-                // Clean up all episode tracking data for this show
-                episodeRepository.clearWatchHistoryForShow(id)
             }
         }
     }
