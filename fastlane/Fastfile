@@ -1,7 +1,7 @@
 default_platform(:ios)
 
 # Set timeout for xcodebuild commands
-TEST_DEVICE = "iPhone 16 Pro"
+TEST_DEVICE = "iPhone 16 Pro (18.4)"
 
 platform :ios do
 
