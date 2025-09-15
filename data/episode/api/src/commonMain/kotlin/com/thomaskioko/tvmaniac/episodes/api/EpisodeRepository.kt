@@ -65,7 +65,6 @@ public interface EpisodeRepository {
      */
     public suspend fun clearWatchHistoryForShow(showId: Long)
 
-
     /**
      * Get comprehensive watch progress context with out-of-order watching detection.
      */
