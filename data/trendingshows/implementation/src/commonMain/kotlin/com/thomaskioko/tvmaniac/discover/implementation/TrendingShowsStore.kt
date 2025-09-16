@@ -66,12 +66,7 @@ class TrendingShowsStore(
                     val trendingEntries = mutableListOf<Trending_shows>()
 
                     trendingShows.results
-                        .filter { show ->
-                            show.voteAverage >= 6.0 &&
-                                show.voteCount >= 50 &&
-                                show.name.isNotBlank()
-                        }
-                        .forEach { show ->
+                        .forEachIndexed { index, show ->
                             val showId = show.id.toLong()
                             val formattedPosterPath = show.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) }
 
@@ -86,6 +81,7 @@ class TrendingShowsStore(
                                         voteAverage = show.voteAverage,
                                         voteCount = show.voteCount.toLong(),
                                         genreIds = show.genreIds,
+                                        firstAirDate = show.firstAirDate,
                                     ),
                                 )
                             }
@@ -94,6 +90,7 @@ class TrendingShowsStore(
                                 Trending_shows(
                                     id = Id(showId),
                                     page = Id(trendingShows.page.toLong()),
+                                    position = index.toLong(),
                                     name = show.name,
                                     poster_path = formattedPosterPath,
                                     overview = show.overview,

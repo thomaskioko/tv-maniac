@@ -1,0 +1,76 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.TmdbId;
+import com.thomaskioko.tvmaniac.db.EpisodeId;
+import kotlin.Boolean;
+
+CREATE TABLE watched_episodes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    show_id INTEGER AS Id<TmdbId> NOT NULL,
+    episode_id INTEGER AS Id<EpisodeId> NOT NULL,
+    season_number INTEGER NOT NULL,
+    episode_number INTEGER NOT NULL,
+    watched_at INTEGER NOT NULL,
+    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON DELETE CASCADE,
+    FOREIGN KEY(episode_id) REFERENCES episode(id) ON DELETE CASCADE,
+    UNIQUE(show_id, season_number, episode_number)
+);
+
+-- Indices for performance
+CREATE INDEX IF NOT EXISTS idx_watched_episodes_show_id ON watched_episodes(show_id);
+CREATE INDEX IF NOT EXISTS idx_watched_episodes_show_season ON watched_episodes(show_id, season_number);
+
+-- Queries
+
+upsert:
+INSERT OR REPLACE INTO watched_episodes(
+    show_id,
+    episode_id,
+    season_number,
+    episode_number,
+    watched_at
+) VALUES (?, ?, ?, ?, ?);
+
+getWatchedEpisodes:
+SELECT * FROM watched_episodes
+WHERE show_id = ?
+ORDER BY season_number, episode_number;
+
+getLastWatchedEpisode:
+SELECT * FROM watched_episodes
+WHERE show_id = ?
+ORDER BY season_number DESC, episode_number DESC
+LIMIT 1;
+
+getWatchedEpisodesForSeason:
+SELECT * FROM watched_episodes
+WHERE show_id = ? AND season_number = ?
+ORDER BY episode_number;
+
+getWatchProgressCount:
+SELECT
+    COUNT(*) AS watched_count,
+    MAX(season_number) AS last_season,
+    MAX(episode_number) AS last_episode
+FROM watched_episodes
+WHERE show_id = ?;
+
+markAsWatched:
+INSERT OR REPLACE INTO watched_episodes(
+    show_id, episode_id, season_number, episode_number, watched_at
+) VALUES (?, ?, ?, ?, ?);
+
+markAsUnwatched:
+DELETE FROM watched_episodes
+WHERE show_id = ? AND episode_id = ?;
+
+deleteWatchedEpisode:
+DELETE FROM watched_episodes
+WHERE show_id = ? AND episode_id = ?;
+
+deleteAllForShow:
+DELETE FROM watched_episodes
+WHERE show_id = ?;
+
+isEpisodeWatched:
+SELECT COUNT(*) > 0 FROM watched_episodes
+WHERE show_id = ? AND season_number = ? AND episode_number = ?;

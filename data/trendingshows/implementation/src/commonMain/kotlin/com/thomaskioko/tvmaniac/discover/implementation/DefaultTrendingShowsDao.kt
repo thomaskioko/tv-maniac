@@ -31,6 +31,7 @@ class DefaultTrendingShowsDao(
             trendingShowsQueries.insert(
                 id = show.id,
                 page = show.page,
+                position = show.position,
                 name = show.name,
                 poster_path = show.poster_path,
                 overview = show.overview,

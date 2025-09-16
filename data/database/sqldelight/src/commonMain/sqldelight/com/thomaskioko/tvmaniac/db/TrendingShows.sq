@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.db.TmdbId;
 CREATE TABLE IF NOT EXISTS trending_shows (
     `id` INTEGER AS Id<TmdbId> PRIMARY KEY NOT NULL,
     `page` INTEGER AS Id<PageId> NOT NULL,
+    `position` INTEGER NOT NULL,
     `name` TEXT,
     `poster_path` TEXT,
     `overview` TEXT
@@ -20,12 +21,14 @@ insert:
 INSERT OR REPLACE INTO trending_shows(
     `id`,
     `page`,
+    `position`,
     `name`,
     `poster_path`,
     `overview`
 ) VALUES (
     :id,
     :page,
+    :position,
     :name,
     :poster_path,
     :overview
@@ -46,7 +49,7 @@ FROM trending_shows
 LEFT OUTER JOIN watchlist ON trending_shows.id = watchlist.id
 WHERE trending_shows.page = :page
 AND trending_shows.name IS NOT NULL
-ORDER BY trending_shows.id ASC;
+ORDER BY trending_shows.position ASC;
 
 trendingShowsByPage:
 SELECT
@@ -66,7 +69,7 @@ WHERE
     AND tvshow.vote_average >= 6.0
     AND tvshow.vote_count >= 50
 ORDER BY
-    tvshow.popularity DESC;
+    trending_shows.position ASC;
 
 pagedTrendingShows:
 SELECT
@@ -86,7 +89,7 @@ WHERE
     AND tvshow.vote_count >= 50
 ORDER BY
     trending_shows.page ASC,
-    tvshow.popularity DESC
+    trending_shows.position ASC
 LIMIT
     :limit OFFSET :offset;
 

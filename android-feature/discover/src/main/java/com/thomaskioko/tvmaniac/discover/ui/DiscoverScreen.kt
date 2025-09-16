@@ -1,34 +1,22 @@
 package com.thomaskioko.tvmaniac.discover.ui
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.DismissState
@@ -55,23 +43,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
-import com.thomaskioko.tvmaniac.compose.components.ExpandingText
-import com.thomaskioko.tvmaniac.compose.components.ParallaxCarouselImage
-import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.RefreshButton
 import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
 import com.thomaskioko.tvmaniac.compose.components.ScrimButton
@@ -84,29 +64,28 @@ import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowAction
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverViewState
 import com.thomaskioko.tvmaniac.discover.presenter.MessageShown
+import com.thomaskioko.tvmaniac.discover.presenter.NextEpisodeClicked
 import com.thomaskioko.tvmaniac.discover.presenter.PopularClicked
 import com.thomaskioko.tvmaniac.discover.presenter.RefreshData
 import com.thomaskioko.tvmaniac.discover.presenter.ShowClicked
 import com.thomaskioko.tvmaniac.discover.presenter.TopRatedClicked
 import com.thomaskioko.tvmaniac.discover.presenter.TrendingClicked
 import com.thomaskioko.tvmaniac.discover.presenter.UpComingClicked
-import com.thomaskioko.tvmaniac.discover.presenter.model.DiscoverShow
-import com.thomaskioko.tvmaniac.discover.ui.component.CircularIndicator
+import com.thomaskioko.tvmaniac.discover.ui.component.DiscoverHeaderContent
+import com.thomaskioko.tvmaniac.discover.ui.component.HorizontalRowContent
+import com.thomaskioko.tvmaniac.discover.ui.component.NextEpisodesSection
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_empty_content
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_retry
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_discover_up_next
 import com.thomaskioko.tvmaniac.i18n.MR.strings.missing_api_key
-import com.thomaskioko.tvmaniac.i18n.MR.strings.str_more
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_category_popular
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_category_top_rated
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_category_trending_today
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_category_upcoming
 import com.thomaskioko.tvmaniac.i18n.resolve
-import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.coroutines.delay
 
 @Composable
-fun DiscoverScreen(
+public fun DiscoverScreen(
     presenter: DiscoverShowsPresenter,
     modifier: Modifier = Modifier,
 ) {
@@ -326,11 +305,12 @@ private fun LazyColumnContent(
         }
 
         item {
-            HorizontalRowContent(
-                category = title_category_upcoming.resolve(context),
-                tvShows = dataLoadedState.upcomingShows,
-                onItemClicked = { onAction(ShowClicked(it)) },
-                onMoreClicked = { onAction(UpComingClicked) },
+            NextEpisodesSection(
+                title = label_discover_up_next.resolve(context),
+                nextEpisodes = dataLoadedState.nextEpisodes,
+                onEpisodeClick = { showId, episodeId ->
+                    onAction(NextEpisodeClicked(showId, episodeId))
+                },
             )
         }
 
@@ -340,6 +320,15 @@ private fun LazyColumnContent(
                 tvShows = dataLoadedState.trendingToday,
                 onItemClicked = { onAction(ShowClicked(it)) },
                 onMoreClicked = { onAction(TrendingClicked) },
+            )
+        }
+
+        item {
+            HorizontalRowContent(
+                category = title_category_upcoming.resolve(context),
+                tvShows = dataLoadedState.upcomingShows,
+                onItemClicked = { onAction(ShowClicked(it)) },
+                onMoreClicked = { onAction(UpComingClicked) },
             )
         }
 
@@ -359,181 +348,6 @@ private fun LazyColumnContent(
                 onItemClicked = { onAction(ShowClicked(it)) },
                 onMoreClicked = { onAction(TopRatedClicked) },
             )
-        }
-    }
-}
-
-@Composable
-fun DiscoverHeaderContent(
-    showList: ImmutableList<DiscoverShow>,
-    pagerState: PagerState,
-    modifier: Modifier = Modifier,
-    onShowClicked: (Long) -> Unit,
-) {
-    Column(
-        modifier = modifier.windowInsetsPadding(
-            WindowInsets.systemBars.only(WindowInsetsSides.Horizontal),
-        ),
-    ) {
-        PosterCardsPager(
-            pagerState = pagerState,
-            list = showList,
-            onClick = onShowClicked,
-        )
-    }
-}
-
-@Composable
-fun PosterCardsPager(
-    pagerState: PagerState,
-    list: ImmutableList<DiscoverShow>,
-    modifier: Modifier = Modifier,
-    onClick: (Long) -> Unit,
-) {
-    val memoizedOnClick = remember(onClick) { onClick }
-    if (list.isEmpty()) return
-
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
-    val pagerHeight = screenHeight / 1.5f
-    Box {
-        HorizontalPager(
-            modifier = modifier
-                .fillMaxWidth()
-                .height(pagerHeight),
-            state = pagerState,
-            verticalAlignment = Alignment.Bottom,
-        ) { currentPage ->
-
-            val currentShow = remember(list, currentPage) { list[currentPage] }
-            ParallaxCarouselImage(
-                state = pagerState,
-                currentPage = currentPage,
-                imageUrl = currentShow.posterImageUrl,
-                modifier = Modifier
-                    .clickable(onClick = { memoizedOnClick(currentShow.tmdbId) }),
-            ) {
-                ShowCardOverlay(
-                    title = currentShow.title,
-                    overview = currentShow.overView,
-                )
-            }
-        }
-
-        if (list.isNotEmpty()) {
-            LaunchedEffect(key1 = list.size) {
-                while (true) {
-                    delay(4_500)
-
-                    // Animate to next page with custom animation spec
-                    val nextPage = if (pagerState.currentPage + 1 < list.size) {
-                        pagerState.currentPage + 1
-                    } else {
-                        0
-                    }
-
-                    pagerState.animateScrollToPage(
-                        page = nextPage,
-                        animationSpec = tween(
-                            durationMillis = 800,
-                            easing = FastOutSlowInEasing,
-                        ),
-                    )
-                }
-            }
-
-            CircularIndicator(
-                modifier = Modifier.align(Alignment.BottomCenter),
-                totalItems = list.size,
-                currentPage = pagerState.currentPage,
-                isUserScrolling = pagerState.isScrollInProgress,
-            )
-        }
-    }
-}
-
-@Composable
-private fun ShowCardOverlay(
-    title: String,
-    overview: String?,
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    listOf(Color.Transparent, Color.Black.copy(alpha = 0.8f)),
-                    startY = 500f,
-                    endY = 1000f,
-                ),
-            ),
-    ) {
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .offset(y = -(20).dp)
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.onSecondary,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1,
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            overview?.let {
-                ExpandingText(
-                    text = overview,
-                    textStyle = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onSecondary,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun HorizontalRowContent(
-    category: String,
-    tvShows: ImmutableList<DiscoverShow>,
-    onItemClicked: (Long) -> Unit,
-    onMoreClicked: () -> Unit,
-) {
-    AnimatedVisibility(visible = tvShows.isNotEmpty()) {
-        Column {
-            BoxTextItems(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp),
-                title = category,
-                label = str_more.resolve(LocalContext.current),
-                onMoreClicked = onMoreClicked,
-            )
-
-            val lazyListState = rememberLazyListState()
-
-            LazyRow(
-                state = lazyListState,
-                flingBehavior = rememberSnapperFlingBehavior(lazyListState),
-            ) {
-                itemsIndexed(
-                    items = tvShows,
-                    key = { index, tvShow -> "${category}_${tvShow.tmdbId}_$index" },
-                ) { index, tvShow ->
-                    val value = if (index == 0) 16 else 8
-
-                    Spacer(modifier = Modifier.width(value.dp))
-
-                    PosterCard(
-                        imageUrl = tvShow.posterImageUrl,
-                        title = tvShow.title,
-                        onClick = { onItemClicked(tvShow.tmdbId) },
-                    )
-                }
-            }
         }
     }
 }

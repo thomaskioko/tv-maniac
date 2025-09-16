@@ -1,0 +1,49 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.TmdbId;
+import com.thomaskioko.tvmaniac.db.EpisodeId;
+
+CREATE TABLE watched_episodes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    show_id INTEGER AS Id<TmdbId> NOT NULL,
+    episode_id INTEGER AS Id<EpisodeId> NOT NULL,
+    season_number INTEGER NOT NULL,
+    episode_number INTEGER NOT NULL,
+    watched_at INTEGER NOT NULL,
+    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON DELETE CASCADE,
+    FOREIGN KEY(episode_id) REFERENCES episode(id) ON DELETE CASCADE,
+    UNIQUE(show_id, season_number, episode_number)
+);
+
+-- Create performance indices
+CREATE INDEX idx_watched_episodes_show_id ON watched_episodes(show_id);
+CREATE INDEX idx_watched_episodes_episode_id ON watched_episodes(episode_id);
+CREATE INDEX idx_watched_episodes_show_season ON watched_episodes(show_id, season_number);
+
+-- 2. Drop temporary table if it exists (from SQLDelight schema)
+DROP TABLE IF EXISTS shows_next_to_watch;
+
+-- 3. Create optimized SQL view for next episode calculation
+-- Returns all unwatched episodes, allowing UI to prompt for previous episodes
+CREATE VIEW shows_next_to_watch AS
+SELECT
+    tvshow.id AS show_id,
+    episode.id AS episode_id,
+    episode.title AS episode_name,
+    season.season_number,
+    episode.episode_number,
+    episode.runtime,
+    episode.image_url AS still_path,
+    episode.overview,
+    tvshow.name AS show_name,
+    tvshow.poster_path AS show_poster,
+    ((1000 * season.season_number) + episode.episode_number) AS next_ep_abs_number
+FROM tvshow
+INNER JOIN season ON tvshow.id = season.show_id
+INNER JOIN episode ON episode.season_id = season.id AND episode.show_id = tvshow.id
+LEFT JOIN watched_episodes AS we ON (
+    we.show_id = tvshow.id
+    AND we.episode_id = episode.id
+)
+WHERE season.season_number > 0  -- Exclude special seasons (season 0)
+  AND we.episode_id IS NULL     -- Episode not watched
+ORDER BY tvshow.id, season.season_number, episode.episode_number;

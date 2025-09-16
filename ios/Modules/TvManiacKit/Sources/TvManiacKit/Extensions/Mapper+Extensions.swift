@@ -159,6 +159,23 @@ public extension TvManiac.SeasonImagesModel {
     }
 }
 
+public extension TvManiac.NextEpisodeUiModel {
+    func toSwift() -> SwiftNextEpisode {
+        .init(
+            showId: showId,
+            showName: showName,
+            showPoster: showPoster,
+            episodeId: episodeId,
+            episodeTitle: episodeTitle,
+            episodeNumber: episodeNumber,
+            runtime: runtime,
+            stillImage: stillImage,
+            overview: overview,
+            isNew: isNew
+        )
+    }
+}
+
 public extension TvManiac.ShowItem {
     func toSwift() -> SwiftShow {
         .init(

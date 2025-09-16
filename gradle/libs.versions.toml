@@ -4,7 +4,7 @@ app-version-name = "1.0.0"
 
 android-compile = "36"
 android-min = "24"
-android-target = "35"
+android-target = "36"
 
 java-target = "21"
 java-toolchain = "21"

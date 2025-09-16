@@ -23,7 +23,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
     fun `should return shows when data is available`() {
         val shows = showList()
 
-        for (show in shows) {
+        shows.forEachIndexed { index, show ->
             show.insertTvShowQuery()
             Trending_shows(
                 id = show.id,
@@ -31,6 +31,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
                 name = show.name,
                 poster_path = show.poster_path,
                 overview = show.overview,
+                position = index.toLong(),
             )
                 .insert()
         }
@@ -247,6 +248,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
             poster_path = poster_path,
             overview = overview,
             name = name,
+            position = position,
         )
     }
 }

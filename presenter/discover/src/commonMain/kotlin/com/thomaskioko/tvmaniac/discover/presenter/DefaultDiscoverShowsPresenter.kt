@@ -14,11 +14,14 @@ import com.thomaskioko.tvmaniac.data.featuredshows.api.interactor.FeaturedShowsI
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsInteractor
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsInteractor
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsInteractor
+import com.thomaskioko.tvmaniac.discover.presenter.model.NextEpisodeUiModel
 import com.thomaskioko.tvmaniac.domain.discover.DiscoverShowsInteractor
 import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
+import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
 import com.thomaskioko.tvmaniac.shows.api.model.Category
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsInteractor
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,6 +39,7 @@ class DefaultDiscoverShowsPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val onNavigateToShowDetails: (Long) -> Unit,
     @Assisted private val onNavigateToMore: (Long) -> Unit,
+    @Assisted private val onNavigateToEpisode: (showId: Long, episodeId: Long) -> Unit,
     private val discoverShowsInteractor: DiscoverShowsInteractor,
     private val watchlistRepository: WatchlistRepository,
     private val featuredShowsInteractor: FeaturedShowsInteractor,
@@ -82,7 +86,8 @@ class DefaultDiscoverShowsPresenter(
             _state,
         ) {
                 featuredShowsIsUpdating, topRatedShowsIsUpdating, popularShowsIsUpdating,
-                trendingShowsIsUpdating, upComingIsUpdating, showData, message, currentState,
+                trendingShowsIsUpdating, upComingIsUpdating,
+                showData, message, currentState,
             ->
 
             currentState.copy(
@@ -97,6 +102,7 @@ class DefaultDiscoverShowsPresenter(
                 popularShows = showData.popularShows.toShowList(),
                 trendingToday = showData.trendingShows.toShowList(),
                 upcomingShows = showData.upcomingShows.toShowList(),
+                nextEpisodes = showData.nextEpisodes.map { it.toUiModel() }.toImmutableList(),
             )
         }.stateIn(
             scope = coroutineScope,
@@ -131,6 +137,7 @@ class DefaultDiscoverShowsPresenter(
                 is MessageShown -> {
                     clearMessage(action.id)
                 }
+                is NextEpisodeClicked -> onNavigateToEpisode(action.showId, action.episodeId)
             }
         }
 
@@ -184,11 +191,28 @@ class DefaultDiscoverPresenterFactory(
         componentContext: ComponentContext,
         onNavigateToShowDetails: (id: Long) -> Unit,
         onNavigateToMore: (categoryId: Long) -> Unit,
+        onNavigateToEpisode: (showId: Long, episodeId: Long) -> Unit,
     ) -> DiscoverShowsPresenter,
 ) : DiscoverShowsPresenter.Factory {
     override fun invoke(
         componentContext: ComponentContext,
         onNavigateToShowDetails: (id: Long) -> Unit,
         onNavigateToMore: (categoryId: Long) -> Unit,
-    ): DiscoverShowsPresenter = presenter(componentContext, onNavigateToShowDetails, onNavigateToMore)
+        onNavigateToEpisode: (showId: Long, episodeId: Long) -> Unit,
+    ): DiscoverShowsPresenter = presenter(componentContext, onNavigateToShowDetails, onNavigateToMore, onNavigateToEpisode)
+}
+
+private fun NextEpisodeWithShow.toUiModel(): NextEpisodeUiModel {
+    return NextEpisodeUiModel(
+        showId = showId,
+        showName = showName,
+        showPoster = showPoster,
+        episodeId = episodeId,
+        episodeTitle = episodeName,
+        episodeNumber = "S${seasonNumber}E$episodeNumber",
+        runtime = runtime?.let { "$it min" },
+        stillImage = stillPath,
+        overview = overview,
+        isNew = false, // Will be calculated with actual air dates
+    )
 }

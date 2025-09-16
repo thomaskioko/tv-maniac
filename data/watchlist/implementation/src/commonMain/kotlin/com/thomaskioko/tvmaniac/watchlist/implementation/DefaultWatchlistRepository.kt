@@ -4,6 +4,9 @@ import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import com.thomaskioko.tvmaniac.db.SearchWatchlist
 import com.thomaskioko.tvmaniac.db.Watchlists
+import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
+import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
+import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.shows.api.WatchlistDao
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
 import kotlinx.coroutines.flow.Flow
@@ -25,12 +28,33 @@ class DefaultWatchlistRepository(
     private val watchlistDao: WatchlistDao,
     private val watchlistMetadataStore: WatchlistMetadataStore,
     private val datastoreRepository: DatastoreRepository,
+    private val seasonDetailsRepository: SeasonDetailsRepository,
+    private val seasonsRepository: SeasonsRepository,
 ) : WatchlistRepository {
 
     override suspend fun updateLibrary(id: Long, addToLibrary: Boolean) {
         when {
-            addToLibrary -> watchlistDao.upsert(id)
-            else -> watchlistDao.delete(id)
+            addToLibrary -> {
+                // Add to watchlist
+                watchlistDao.upsert(id)
+
+                // Fetch season details for all seasons to populate episode data
+                seasonsRepository.observeSeasonsByShowId(id).collect { seasonList ->
+                    seasonList.forEach { season ->
+                        seasonDetailsRepository.fetchSeasonDetails(
+                            SeasonDetailsParam(
+                                showId = id,
+                                seasonId = season.season_id.id,
+                                seasonNumber = season.season_number,
+                            ),
+                        )
+                    }
+                }
+            }
+            else -> {
+                // Remove from watchlist
+                watchlistDao.delete(id)
+            }
         }
     }
 
