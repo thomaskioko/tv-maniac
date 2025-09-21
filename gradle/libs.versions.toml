@@ -65,7 +65,7 @@ spotless = "7.2.1"
 store5 = "5.0.0"
 turbine = "1.2.1"
 yamlkt = "0.13.0"
-youtubePlayer = "12.1.2"
+youtubePlayer = "13.0.0"
 kotlinPoet = "2.2.0"
 ktlint = "1.4.0"
 
