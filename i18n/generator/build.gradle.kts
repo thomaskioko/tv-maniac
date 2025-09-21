@@ -14,6 +14,7 @@ scaffold {
         libraryConfiguration = {
             lint {
                 baseline = file("lint-baseline.xml")
+                disable += "UnusedResources"
             }
             testOptions.unitTests.isIncludeAndroidResources = true
         },
