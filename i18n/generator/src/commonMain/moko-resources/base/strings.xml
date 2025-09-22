@@ -14,6 +14,7 @@
     <string name="label_discover_popular">Popular</string>
     <string name="label_discover_top_rated">Top Rated</string>
     <string name="label_discover_featured">Featured</string>
+    <string name="label_discover_up_next">Up Next</string>
     <string name="label_discover_title">Discover</string>
 
     <string name="label_search_title">Search</string>

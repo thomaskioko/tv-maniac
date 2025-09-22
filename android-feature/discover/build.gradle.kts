@@ -4,6 +4,7 @@ plugins {
 
 scaffold {
     android {
+        explicitApi()
         useCompose()
         useRoborazzi()
     }

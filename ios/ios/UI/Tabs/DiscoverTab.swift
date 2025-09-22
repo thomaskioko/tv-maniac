@@ -244,14 +244,13 @@ struct DiscoverTab: View {
     @ViewBuilder
     private func discoverListContent(state: DiscoverViewState) -> some View {
         VStack {
-            HorizontalItemListView(
-                title: String(\.label_discover_upcoming),
+            NextEpisodesSection(
+                title: String(\.label_discover_up_next),
+                episodes: state.nextEpisodes.map { $0.toSwift() },
                 chevronStyle: .chevronOnly,
-                items: state.upcomingShows.map {
-                    $0.toSwift()
-                },
-                onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
-                onMoreClicked: { presenter.dispatch(action: UpComingClicked()) }
+                onEpisodeClick: { showId, episodeId in
+                    presenter.dispatch(action: NextEpisodeClicked(showId: showId, episodeId: episodeId))
+                }
             )
 
             HorizontalItemListView(
@@ -262,6 +261,16 @@ struct DiscoverTab: View {
                 },
                 onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
                 onMoreClicked: { presenter.dispatch(action: TrendingClicked()) }
+            )
+
+            HorizontalItemListView(
+                title: String(\.label_discover_upcoming),
+                chevronStyle: .chevronOnly,
+                items: state.upcomingShows.map {
+                    $0.toSwift()
+                },
+                onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
+                onMoreClicked: { presenter.dispatch(action: UpComingClicked()) }
             )
 
             HorizontalItemListView(

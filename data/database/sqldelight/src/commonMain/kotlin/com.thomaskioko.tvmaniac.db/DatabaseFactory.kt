@@ -95,5 +95,9 @@ class DatabaseFactory(private val sqlDriver: SqlDriver) {
             show_idAdapter = IdAdapter(),
             season_idAdapter = IdAdapter(),
         ),
+        watched_episodesAdapter = Watched_episodes.Adapter(
+            show_idAdapter = IdAdapter(),
+            episode_idAdapter = IdAdapter(),
+        ),
     )
 }

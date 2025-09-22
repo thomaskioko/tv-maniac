@@ -73,6 +73,7 @@ internal class DefaultTrendingShowsDaoTest : BaseDatabaseTest() {
             name = "New Test Show",
             poster_path = "/new_test.jpg",
             overview = "New test overview",
+            position = 1,
         )
 
         dao.upsert(trendingShow)
@@ -116,6 +117,7 @@ internal class DefaultTrendingShowsDaoTest : BaseDatabaseTest() {
             name = null,
             poster_path = "/test999.jpg",
             overview = "Test overview 999",
+            position = 1,
         )
 
         // When & Then
@@ -136,6 +138,7 @@ internal class DefaultTrendingShowsDaoTest : BaseDatabaseTest() {
             name = "Page 2 Show",
             poster_path = "/page2.jpg",
             overview = "Page 2 overview",
+            position = 1,
         )
 
         // When & Then
@@ -192,6 +195,7 @@ internal class DefaultTrendingShowsDaoTest : BaseDatabaseTest() {
                 name = "New Reactive Show",
                 poster_path = "/reactive.jpg",
                 overview = "Reactive overview",
+                position = 1,
             )
             dao.upsert(newShow)
 
@@ -252,6 +256,7 @@ internal class DefaultTrendingShowsDaoTest : BaseDatabaseTest() {
                 name = "",
                 poster_path = "/empty.jpg",
                 overview = "Empty name test",
+                position = 1,
             )
         }
 
@@ -310,6 +315,7 @@ internal class DefaultTrendingShowsDaoTest : BaseDatabaseTest() {
             name = "Test Show 1",
             poster_path = "/test1.jpg",
             overview = "Test overview 1",
+            position = 1,
         )
 
         trendingShowsQueries.insert(
@@ -318,6 +324,7 @@ internal class DefaultTrendingShowsDaoTest : BaseDatabaseTest() {
             name = "Test Show 2",
             poster_path = "/test2.jpg",
             overview = "Test overview 2",
+            position = 1,
         )
     }
 }

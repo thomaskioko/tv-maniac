@@ -16,6 +16,7 @@ interface DiscoverShowsPresenter {
             componentContext: ComponentContext,
             onNavigateToShowDetails: (id: Long) -> Unit,
             onNavigateToMore: (categoryId: Long) -> Unit,
+            onNavigateToEpisode: (showId: Long, episodeId: Long) -> Unit = { _, _ -> },
         ): DiscoverShowsPresenter
     }
 }
