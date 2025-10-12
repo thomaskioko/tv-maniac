@@ -8,8 +8,8 @@ platform :ios do
   before_all do
     setup_ci
     ENV["FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT"] = "180"
-    ENV["TVMANIAC_DEBUG_ONLY"] = "false"
-    ENV["TVMANIAC_ENABLE_IOS"] = "true"
+    ENV["ORG_GRADLE_PROJECT_app_debugOnly"] = "false"
+    ENV["ORG_GRADLE_PROJECT_app_enableIos"] = "true"
   end
 
   desc "Run Snapshot Tests"
