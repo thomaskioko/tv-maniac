@@ -11,7 +11,7 @@
             ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
             <ActionContent
                title = "Run Script"
-               scriptText = "cd &quot;$SRCROOT/..&quot;&#10;./gradlew :shared:embedAndSignAppleFrameworkForXcode :i18n:generator:embedAndSignAppleFrameworkForXcode&#10;">
+               scriptText = "cd &quot;$SRCROOT/..&quot;&#10;./gradlew :shared:embedAndSignAppleFrameworkForXcode :i18n:generator:embedAndSignAppleFrameworkForXcode -Papp.enableIos=true&#10;">
                <EnvironmentBuildable>
                   <BuildableReference
                      BuildableIdentifier = "primary"

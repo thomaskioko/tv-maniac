@@ -6,6 +6,10 @@ rootProject.name = "tv-maniac"
 
 pluginManagement {
     repositories {
+        if (providers.gradleProperty("use.maven.local").orNull == "true") {
+            mavenLocal()
+        }
+
         mavenCentral()
         google {
             content {

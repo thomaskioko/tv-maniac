@@ -13,7 +13,7 @@ scaffold {
     android {
         useKotlinInject()
         useCompose()
-        useBaselineProfile()
+        useBaselineProfile(projects.benchmark)
         useManagedDevices()
     }
 }
@@ -115,8 +115,4 @@ dependencies {
     implementation(libs.androidx.compose.ui.ui)
     implementation(libs.coroutines.core)
     implementation(libs.ktor.core)
-
-    baselineProfile(projects.benchmark)
-
-    runtimeOnly(libs.androidx.profileinstaller)
 }

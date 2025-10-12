@@ -7,6 +7,13 @@ scaffold {
         explicitApi()
         useCompose()
         useRoborazzi()
+
+        libraryConfiguration {
+            lint {
+                baseline = file("lint-baseline.xml")
+                disable += "UsingMaterialAndMaterial3Libraries"
+            }
+        }
     }
 
     optIn(
