@@ -71,7 +71,7 @@ jobs:
                       -Pandroidx.baselineprofile.skipgeneration=true \
                         -Pcompose.enableCompilerMetrics=true \
                         -Pcompose.enableCompilerReports=true \
-                        -Ptvmaniac.debugOnly=false \
+                        -Papp.debugOnly=false \
                       --no-configuration-cache
 
 
@@ -94,7 +94,7 @@ jobs:
                         ${{ runner.os }}-gradle-
 
             -   name: Lint Project
-                run: ./gradlew :app:lintRelease -Ptvmaniac.debugOnly=false
+                run: ./gradlew :app:lintRelease -Papp.debugOnly=false
 
             -   name: Upload Lint Report
                 if: ${{ !cancelled() }}
@@ -121,7 +121,7 @@ jobs:
                         ${{ runner.os }}-gradle-
 
             -   name: Run Spotless
-                run: ./gradlew spotlessCheck -Ptvmaniac.debugOnly=false --no-configuration-cache
+                run: ./gradlew spotlessCheck -Papp.debugOnly=false --no-configuration-cache
 
     dependency-health:
         runs-on: ubuntu-latest
@@ -141,7 +141,7 @@ jobs:
                         ${{ runner.os }}-gradle-
 
             -   name: Dependency Health
-                run: ./gradlew buildHealth -Ptvmaniac.debugOnly=false
+                run: ./gradlew buildHealth -Papp.debugOnly=false
 
             -   name: Upload Dependency health Report
                 uses: actions/upload-artifact@v4
@@ -168,7 +168,7 @@ jobs:
                         ${{ runner.os }}-gradle-
 
             -   name: Run JVM Tests
-                run: ./gradlew jvmTest -Ptvmaniac.debugOnly=false
+                run: ./gradlew jvmTest -Papp.debugOnly=false
 
             -   name: Upload Test Reports
                 uses: actions/upload-artifact@v4
@@ -199,7 +199,7 @@ jobs:
                         ${{ runner.os }}-gradle-
 
             -   name: Run Common iOS Unit Tests
-                run: ./gradlew clean iosSimulatorArm64Test -Ptvmaniac.enableIos=true -Ptvmaniac.debugOnly=false
+                run: ./gradlew clean iosSimulatorArm64Test -Papp.enableIos=true -Papp.debugOnly=false
 
             -   name: Upload Common Test Report
                 uses: actions/upload-artifact@v4
