@@ -5,9 +5,15 @@ plugins {
 scaffold {
     explicitApi()
     useKotlinInject()
-    addAndroidTarget {
-        testOptions.unitTests.isIncludeAndroidResources = true
-    }
+    addAndroidTarget(
+        libraryConfiguration = {
+            lint {
+                baseline = file("lint-baseline.xml")
+                disable += "AppBundleLocaleChanges"
+            }
+            testOptions.unitTests.isIncludeAndroidResources = true
+        },
+    )
 }
 
 kotlin {
