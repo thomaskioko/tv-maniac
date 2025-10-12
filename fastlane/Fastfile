@@ -8,6 +8,8 @@ platform :ios do
   before_all do
     setup_ci
     ENV["FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT"] = "180"
+    ENV["ORG_GRADLE_PROJECT_app_debugOnly"] = "false"
+    ENV["ORG_GRADLE_PROJECT_app_enableIos"] = "true"
   end
 
   desc "Run Snapshot Tests"
@@ -19,7 +21,7 @@ platform :ios do
     run_tests(
       project: "ios/tv-maniac.xcodeproj",
       scheme: "SwiftUIComponents",
-      device: TEST_DEVICE,
+      destination: "platform=iOS Simulator,OS=18.5,name=#{TEST_DEVICE}",
       clean: true,
       result_bundle: true,
       xcargs: "-retry-tests-on-failure -skipPackagePluginValidation",
@@ -35,7 +37,7 @@ platform :ios do
 
       sh("xcodebuild -project ../ios/tv-maniac.xcodeproj \
         -scheme tv-maniac \
-        -destination 'platform=iOS Simulator,name=#{TEST_DEVICE}' \
+        -destination 'platform=iOS Simulator,OS=18.5,name=#{TEST_DEVICE}' \
         -configuration Debug \
         clean build \
         COMPILER_INDEX_STORE_ENABLE=NO"
@@ -53,7 +55,7 @@ platform :ios do
       project: "ios/tv-maniac.xcodeproj",
       scheme: "tv-maniac",
       configuration: "Debug",
-      destination: "platform=iOS Simulator,name=#{TEST_DEVICE}",
+      destination: "platform=iOS Simulator,OS=18.5,name=#{TEST_DEVICE}",
       derived_data_path: "derived_data",
       xcargs: "-skipPackagePluginValidation -resolvePackageDependencies",
       output_directory: "build",
