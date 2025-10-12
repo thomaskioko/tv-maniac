@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - name: Set up JDK 21
         uses: actions/setup-java@v5
@@ -46,6 +48,7 @@ jobs:
         id: get-base-commit
         if: github.event_name == 'pull_request'
         run: |
+          git fetch origin ${{ github.event.pull_request.base.ref }}
           BASE_SHA=$(git merge-base origin/${{ github.event.pull_request.base.ref }} HEAD)
           echo "base_sha=$BASE_SHA" >> "$GITHUB_OUTPUT"
 
