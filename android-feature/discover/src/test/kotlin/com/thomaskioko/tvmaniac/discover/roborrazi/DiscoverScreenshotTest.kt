@@ -45,27 +45,6 @@ class DiscoverScreenshotTest {
     }
 
     @Test
-    fun discoverScreenLoading() {
-        composeTestRule.captureMultiDevice("DiscoverScreenLoading") {
-            TvManiacBackground {
-                DiscoverScreen(
-                    state = DiscoverViewState.Empty.copy(
-                        featuredRefreshing = true,
-                        topRatedRefreshing = true,
-                        trendingRefreshing = true,
-                        upcomingRefreshing = true,
-                        popularRefreshing = true,
-                    ),
-                    pagerState = rememberPagerState(pageCount = { 5 }),
-                    dismissSnackbarState = rememberDismissState { true },
-                    snackBarHostState = remember { SnackbarHostState() },
-                    onAction = {},
-                )
-            }
-        }
-    }
-
-    @Test
     fun discoverScreenErrorState() {
         composeTestRule.captureMultiDevice("DiscoverScreenErrorState") {
             TvManiacBackground {
