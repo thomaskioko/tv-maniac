@@ -48,7 +48,7 @@ jobs:
           # Use --rerun-tasks to disable cache for test task
           ./gradlew recordRoborazziDebug --stacktrace --rerun-tasks
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: ${{ always() }}
         with:
           name: screenshot
@@ -56,7 +56,7 @@ jobs:
             **/build/outputs/roborazzi
           retention-days: 30
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: ${{ always() }}
         with:
           name: screenshot-reports
@@ -64,7 +64,7 @@ jobs:
             **/build/reports
           retention-days: 30
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: ${{ always() }}
         with:
           name: screenshot-test-results
