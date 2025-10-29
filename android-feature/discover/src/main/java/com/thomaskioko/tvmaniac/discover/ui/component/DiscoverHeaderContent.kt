@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
@@ -98,11 +99,13 @@ internal fun PosterCardsPager(
         }
 
         if (list.isNotEmpty()) {
+            val isInPreview = LocalInspectionMode.current
             LaunchedEffect(key1 = list.size) {
+                if (isInPreview) return@LaunchedEffect
+
                 while (true) {
                     delay(4_500)
 
-                    // Animate to next page with custom animation spec
                     val nextPage = if (pagerState.currentPage + 1 < list.size) {
                         pagerState.currentPage + 1
                     } else {

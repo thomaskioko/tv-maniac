@@ -38,7 +38,12 @@ internal fun CircularIndicator(
     var indicatorProgress by remember { mutableFloatStateOf(if (isInPreview) 1f else 0f) }
 
     LaunchedEffect(currentPage, isUserScrolling) {
-        if (!isUserScrolling && !isInPreview) {
+        if (isInPreview) {
+            indicatorProgress = 1f
+            return@LaunchedEffect
+        }
+
+        if (!isUserScrolling) {
             indicatorProgress = 0f
             val startTime = System.currentTimeMillis()
             while (indicatorProgress < 1f) {
@@ -46,8 +51,6 @@ internal fun CircularIndicator(
                 indicatorProgress = (elapsed / 4500f).coerceAtMost(1f)
                 delay(16)
             }
-        } else if (isInPreview) {
-            indicatorProgress = 1f
         } else {
             indicatorProgress = 0f
         }
