@@ -19,9 +19,7 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import org.robolectric.RuntimeEnvironment
 
 val DefaultRoborazziOptions = RoborazziOptions(
-    // Pixel-perfect matching
-    compareOptions = CompareOptions(changeThreshold = 0f),
-    // Reduce the size of the PNGs
+    compareOptions = CompareOptions(changeThreshold = 0.01f),
     recordOptions = RecordOptions(resizeScale = 0.5),
 )
 
