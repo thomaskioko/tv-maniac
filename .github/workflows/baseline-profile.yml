@@ -42,13 +42,14 @@ jobs:
         run: yes | sdkmanager --licenses || trueMovr
 
       - name: Build app and benchmark
-        run: ./gradlew assembleNonMinifiedRelease
+        run: ./gradlew assembleNonMinifiedRelease -Papp.debugOnly=false
 
       - name: Clear Gradle Managed Devices
         run: ./gradlew cleanManagedDevices
 
       - name: Generate Baseline Profile
         run: ./gradlew :app:generateBaselineProfile
+          -Papp.debugOnly=false
           -Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.enabledRules=baselineprofile
           -Pandroid.testoptions.manageddevices.emulator.gpu="swiftshader_indirect"
           --no-configuration-cache
