@@ -14,9 +14,6 @@ env:
     JDK_VERSION: 21
     DISTRIBUTION: 'temurin'
     XCODE_VERSION: 16.4
-    GRADLE_CACHE_PATH: |
-        ~/.gradle/caches
-        ~/.gradle/wrapper
     SPM_CACHE_PATH: |
         ~/Library/Caches/org.swift.swiftpm
         ~/Library/Developer/Xcode/DerivedData
@@ -42,18 +39,8 @@ jobs:
                     distribution: ${{ env.DISTRIBUTION }}
                     java-version: ${{ env.JDK_VERSION }}
 
-            -   name: 📁 Setup Gradle Cache
-                uses: actions/cache@v4
-                with:
-                    path: ${{ env.GRADLE_CACHE_PATH }}
-                    key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-                    restore-keys: |
-                        ${{ runner.os }}-gradle-
-
-            -   name: 🐘 Setup Gradle 8.8
+            -   name: 🐘 Setup Gradle
                 uses: gradle/actions/setup-gradle@v5
-                with:
-                    gradle-version: 8.11
 
             -   name: Add App Secrets
                 run: |
@@ -85,13 +72,8 @@ jobs:
                     distribution: ${{ env.DISTRIBUTION }}
                     java-version: ${{ env.JDK_VERSION }}
 
-            -   name: Setup Gradle Cache
-                uses: actions/cache@v4
-                with:
-                    path: ${{ env.GRADLE_CACHE_PATH }}
-                    key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-                    restore-keys: |
-                        ${{ runner.os }}-gradle-
+            -   name: 🐘 Setup Gradle
+                uses: gradle/actions/setup-gradle@v5
 
             -   name: Lint Project
                 run: ./gradlew :app:lintRelease -Papp.debugOnly=false
@@ -112,13 +94,8 @@ jobs:
                     distribution: ${{ env.DISTRIBUTION }}
                     java-version: ${{ env.JDK_VERSION }}
 
-            -   name: Setup Gradle Cache
-                uses: actions/cache@v4
-                with:
-                    path: ${{ env.GRADLE_CACHE_PATH }}
-                    key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-                    restore-keys: |
-                        ${{ runner.os }}-gradle-
+            -   name: 🐘 Setup Gradle
+                uses: gradle/actions/setup-gradle@v5
 
             -   name: Run Spotless
                 run: ./gradlew spotlessCheck -Papp.debugOnly=false --no-configuration-cache
@@ -132,13 +109,8 @@ jobs:
                     distribution: ${{ env.DISTRIBUTION }}
                     java-version: ${{ env.JDK_VERSION }}
 
-            -   name: Setup Gradle Cache
-                uses: actions/cache@v4
-                with:
-                    path: ${{ env.GRADLE_CACHE_PATH }}
-                    key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-                    restore-keys: |
-                        ${{ runner.os }}-gradle-
+            -   name: 🐘 Setup Gradle
+                uses: gradle/actions/setup-gradle@v5
 
             -   name: Dependency Health
                 run: ./gradlew buildHealth -Papp.debugOnly=false
@@ -159,13 +131,8 @@ jobs:
                     distribution: ${{ env.DISTRIBUTION }}
                     java-version: ${{ env.JDK_VERSION }}
 
-            -   name: Setup Gradle Cache
-                uses: actions/cache@v4
-                with:
-                    path: ${{ env.GRADLE_CACHE_PATH }}
-                    key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-                    restore-keys: |
-                        ${{ runner.os }}-gradle-
+            -   name: 🐘 Setup Gradle
+                uses: gradle/actions/setup-gradle@v5
 
             -   name: Run JVM Tests
                 run: ./gradlew jvmTest -Papp.debugOnly=false
@@ -190,13 +157,8 @@ jobs:
                     distribution: ${{ env.DISTRIBUTION }}
                     java-version: ${{ env.JDK_VERSION }}
 
-            -   name: Setup Gradle Cache
-                uses: actions/cache@v4
-                with:
-                    path: ${{ env.GRADLE_CACHE_PATH }}
-                    key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-                    restore-keys: |
-                        ${{ runner.os }}-gradle-
+            -   name: 🐘 Setup Gradle
+                uses: gradle/actions/setup-gradle@v5
 
             -   name: Run Common iOS Unit Tests
                 run: ./gradlew clean iosSimulatorArm64Test -Papp.enableIos=true -Papp.debugOnly=false
@@ -236,13 +198,8 @@ jobs:
                     restore-keys: |
                         ${{ runner.os }}-spm-
 
-            -   name: 📦 Setup Gradle Cache
-                uses: actions/cache@v4
-                with:
-                    path: ${{ env.GRADLE_CACHE_PATH }}
-                    key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-                    restore-keys: |
-                        ${{ runner.os }}-gradle-
+            -   name: 🐘 Setup Gradle
+                uses: gradle/actions/setup-gradle@v5
 
             -   name: 🧹 Clear Derived Data
                 run: bundle exec fastlane clear_derived_data_lane
@@ -317,13 +274,8 @@ jobs:
                     restore-keys: |
                         ${{ runner.os }}-spm-
 
-            -   name: 📦 Setup Gradle Cache
-                uses: actions/cache@v4
-                with:
-                    path: ${{ env.GRADLE_CACHE_PATH }}
-                    key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-                    restore-keys: |
-                        ${{ runner.os }}-gradle-
+            -   name: 🐘 Setup Gradle
+                uses: gradle/actions/setup-gradle@v5
 
             -   name: Install dependencies with Bundler
                 run: bundle install
