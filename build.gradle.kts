@@ -22,4 +22,5 @@ plugins {
     alias(libs.plugins.app.baseline.profile) apply false
     alias(libs.plugins.app.kmp) apply false
     alias(libs.plugins.app.resource.generator) apply false
+    alias(libs.plugins.app.spotless) apply false
 }

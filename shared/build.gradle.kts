@@ -1,18 +1,11 @@
-import co.touchlab.skie.configuration.DefaultArgumentInterop
-import co.touchlab.skie.configuration.EnumInterop
-import co.touchlab.skie.configuration.FlowInterop
-import co.touchlab.skie.configuration.SealedInterop
-import co.touchlab.skie.configuration.SuppressSkieWarning
-import co.touchlab.skie.configuration.SuspendInterop
-
 plugins {
     alias(libs.plugins.app.kmp)
-    alias(libs.plugins.skie)
 }
 
 scaffold {
 
     useKotlinInject()
+    useSkies()
 
     addIosTargetsWithXcFramework(
         frameworkName = "TvManiac",
@@ -116,23 +109,6 @@ kotlin {
 
                 implementation(projects.navigation.implementation)
             }
-        }
-    }
-}
-
-skie {
-    analytics {
-        disableUpload.set(true)
-    }
-
-    features {
-        group {
-            DefaultArgumentInterop.Enabled(false)
-            SuspendInterop.Enabled(true)
-            FlowInterop.Enabled(true)
-            EnumInterop.Enabled(true)
-            SealedInterop.Enabled(true)
-            SuppressSkieWarning.NameCollision(true)
         }
     }
 }
