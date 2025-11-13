@@ -67,7 +67,6 @@ store5 = "5.0.0"
 turbine = "1.2.1"
 yamlkt = "0.13.0"
 youtubePlayer = "13.0.0"
-kotlinPoet = "2.2.0"
 ktlint = "1.4.0"
 
 [libraries]
@@ -150,7 +149,6 @@ napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 okhttp-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 moko-resources = { module = "dev.icerock.moko:resources", version.ref = "moko-resources" }
 moko-resources-compose = { module = "dev.icerock.moko:resources-compose", version.ref = "moko-resources" }
-moko-resources-generator = { module = "dev.icerock.moko:resources-generator", version.ref = "moko-resources" }
 
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", version.ref = "roborazzi" }
@@ -195,6 +193,7 @@ app-baseline-profile = { id = "io.github.thomaskioko.gradle.plugins.baseline.pro
 app-kmp = { id = "io.github.thomaskioko.gradle.plugins.multiplatform", version.ref = "app-gradle-plugins" }
 app-root = { id = "io.github.thomaskioko.gradle.plugins.root", version.ref = "app-gradle-plugins" }
 app-resource-generator = { id = "io.github.thomaskioko.gradle.plugins.resource.generator", version.ref = "app-gradle-plugins" }
+app-spotless = { id = "io.github.thomaskioko.gradle.plugins.spotless",  version.ref = "app-gradle-plugins" }
 
 [bundles]
 kotlinInject = [
