@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.core.base.AppInitializer
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.locale.api.LocaleProvider
 import dev.icerock.moko.resources.desc.StringDesc
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
@@ -16,6 +17,7 @@ public class MokoLocaleInitializer(
     private val localeProvider: LocaleProvider,
     private val dispatchers: AppCoroutineDispatchers,
 ) : AppInitializer {
+    @OptIn(DelicateCoroutinesApi::class)
     override fun init() {
         GlobalScope.launch(dispatchers.main) {
             localeProvider.currentLocale.collect { locale ->
