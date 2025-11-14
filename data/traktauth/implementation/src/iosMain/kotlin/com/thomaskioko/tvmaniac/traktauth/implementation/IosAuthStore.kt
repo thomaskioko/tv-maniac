@@ -1,21 +1,29 @@
 package com.thomaskioko.tvmaniac.traktauth.implementation
 
 import com.russhwolf.settings.ExperimentalSettingsApi
-import com.russhwolf.settings.NSUserDefaultsSettings
-import com.russhwolf.settings.Settings
+import com.russhwolf.settings.ExperimentalSettingsImplementation
+import com.russhwolf.settings.KeychainSettings
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.traktauth.api.AuthState
 import com.thomaskioko.tvmaniac.traktauth.api.AuthStore
 import com.thomaskioko.tvmaniac.traktauth.api.SimpleAuthState
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
-import platform.Foundation.NSUserDefaults
+import platform.Foundation.CFBridgingRetain
+import platform.Security.kSecAttrAccessible
+import platform.Security.kSecAttrAccessibleAfterFirstUnlock
+import platform.Security.kSecAttrService
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 import kotlin.time.Instant
 
-@OptIn(ExperimentalSettingsApi::class)
+@OptIn(
+    ExperimentalSettingsApi::class,
+    ExperimentalSettingsImplementation::class,
+    ExperimentalForeignApi::class,
+)
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
@@ -23,8 +31,11 @@ class IosAuthStore(
     private val dispatchers: AppCoroutineDispatchers,
 ) : AuthStore {
 
-    private val settings: Settings by lazy {
-        NSUserDefaultsSettings(NSUserDefaults.standardUserDefaults)
+    private val settings by lazy {
+        KeychainSettings(
+            kSecAttrService to CFBridgingRetain("com.thomaskioko.tvmaniac.traktauth"),
+            kSecAttrAccessible to kSecAttrAccessibleAfterFirstUnlock,
+        )
     }
 
     override suspend fun get(): AuthState? = withContext(dispatchers.io) {
