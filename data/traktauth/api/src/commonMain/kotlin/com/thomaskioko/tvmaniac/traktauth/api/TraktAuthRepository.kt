@@ -6,6 +6,10 @@ interface TraktAuthRepository {
 
     val state: Flow<TraktAuthState>
 
+    val authError: Flow<AuthError?>
+
+    val isAuthenticating: Flow<Boolean>
+
     suspend fun getAuthState(): AuthState?
 
     suspend fun login(): AuthState?

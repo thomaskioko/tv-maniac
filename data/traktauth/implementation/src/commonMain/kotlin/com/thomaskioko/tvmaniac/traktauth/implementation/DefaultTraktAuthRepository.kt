@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.traktauth.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.traktauth.api.AuthError
 import com.thomaskioko.tvmaniac.traktauth.api.AuthState
 import com.thomaskioko.tvmaniac.traktauth.api.AuthStore
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
@@ -37,6 +38,9 @@ class DefaultTraktAuthRepository(
     private var authStateExpiry: Instant = Instant.DISTANT_PAST
     private val scope = CoroutineScope(SupervisorJob() + dispatchers.io)
 
+    private val _authError = MutableStateFlow<AuthError?>(null)
+    private val _isAuthenticating = MutableStateFlow(false)
+
     init {
         scope.launch {
             val savedState = authStore.get()
@@ -53,6 +57,10 @@ class DefaultTraktAuthRepository(
         }
     }
 
+    override val authError: Flow<AuthError?> = _authError
+
+    override val isAuthenticating: Flow<Boolean> = _isAuthenticating
+
     override suspend fun getAuthState(): AuthState? {
         val cached = authState.value
 
@@ -66,8 +74,18 @@ class DefaultTraktAuthRepository(
     }
 
     override suspend fun login(): AuthState? {
-        return loginAction.value().also { newState ->
-            updateAuthState(newState ?: AuthState.Empty)
+        _isAuthenticating.value = true
+        _authError.value = null
+
+        return try {
+            loginAction.value().also { newState ->
+                if (newState == null) {
+                    _authError.value = loginAction.value.lastError ?: AuthError.Unknown
+                }
+                updateAuthState(newState ?: AuthState.Empty)
+            }
+        } finally {
+            _isAuthenticating.value = false
         }
     }
 
