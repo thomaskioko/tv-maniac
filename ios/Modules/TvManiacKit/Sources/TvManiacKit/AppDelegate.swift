@@ -21,7 +21,6 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
     )
 
     public lazy var traktAuthRepository = appComponent.traktAuthRepository
-    public lazy var traktLoginAction = appComponent.traktLoginAction
 
     override public init() {
         super.init()

@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.traktauth.api.AuthError
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -61,7 +62,6 @@ class DefaultSettingsPresenter(
                     }
 
                     launchWebView()
-                    traktAuthRepository.login()
                 }
             }
 
@@ -98,6 +98,9 @@ class DefaultSettingsPresenter(
         }
         coroutineScope.launch {
             observeAuthError()
+        }
+        coroutineScope.launch {
+            observeTraktAuthState()
         }
     }
 
@@ -137,6 +140,16 @@ class DefaultSettingsPresenter(
                 state.copy(
                     errorMessage = error?.let { mapAuthErrorToMessage(it) },
                     showTraktDialog = if (error != null) false else state.showTraktDialog,
+                )
+            }
+        }
+    }
+
+    private suspend fun observeTraktAuthState() {
+        traktAuthRepository.state.collectLatest { authState ->
+            _state.update { state ->
+                state.copy(
+                    isAuthenticated = authState == TraktAuthState.LOGGED_IN,
                 )
             }
         }

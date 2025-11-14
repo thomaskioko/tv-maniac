@@ -39,39 +39,29 @@ class FakeTraktAuthRepository : TraktAuthRepository {
         this.loginError = error
     }
 
-    suspend fun setAuthError(error: AuthError?) {
-        _authError.emit(error)
-    }
-
     suspend fun setIsAuthenticating(isAuthenticating: Boolean) {
         _isAuthenticating.emit(isAuthenticating)
     }
 
     override suspend fun getAuthState(): AuthState? = authState
 
-    override suspend fun login(): AuthState? {
-        _isAuthenticating.emit(true)
-
-        return try {
-            if (authState != null) {
-                _authError.emit(null)
-                _state.emit(TraktAuthState.LOGGED_IN)
-                authState
-            } else {
-                if (loginError != null) {
-                    _authError.emit(loginError)
-                }
-                null
-            }
-        } finally {
-            _isAuthenticating.emit(false)
-        }
-    }
-
     override suspend fun refreshTokens(): AuthState? = refreshAuthState
 
     override suspend fun logout() {
         _state.emit(TraktAuthState.LOGGED_OUT)
         authState = null
+    }
+
+    override suspend fun saveTokens(
+        accessToken: String,
+        refreshToken: String,
+        expiresAtSeconds: Long?,
+    ) {
+        // For testing, just update the state
+        _state.emit(TraktAuthState.LOGGED_IN)
+    }
+
+    override suspend fun setAuthError(error: AuthError?) {
+        _authError.emit(error)
     }
 }

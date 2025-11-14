@@ -425,12 +425,19 @@ class SettingsPresenterTest {
 
             awaitItem() shouldBe DEFAULT_STATE.copy(showTraktDialog = true)
 
-            traktAuthRepository.setAuthState(testAuthState)
             traktAuthRepository.setRefreshAuthState(null)
 
             presenter.dispatch(TraktLoginClicked)
 
             awaitItem() shouldBe DEFAULT_STATE.copy(showTraktDialog = false)
+
+            traktAuthRepository.saveTokens(
+                accessToken = "access_token",
+                refreshToken = "refresh_token",
+                expiresAtSeconds = null,
+            )
+
+            awaitItem() shouldBe DEFAULT_STATE.copy(showTraktDialog = false, isAuthenticated = true)
         }
     }
 }

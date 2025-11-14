@@ -4,9 +4,9 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.traktauth.api.AuthError
 import com.thomaskioko.tvmaniac.traktauth.api.AuthState
 import com.thomaskioko.tvmaniac.traktauth.api.AuthStore
+import com.thomaskioko.tvmaniac.traktauth.api.SimpleAuthState
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
-import com.thomaskioko.tvmaniac.traktauth.api.TraktLoginAction
 import com.thomaskioko.tvmaniac.traktauth.api.TraktRefreshTokenAction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -30,7 +30,6 @@ import kotlin.time.Instant
 class DefaultTraktAuthRepository(
     private val dispatchers: AppCoroutineDispatchers,
     private val authStore: AuthStore,
-    private val loginAction: Lazy<TraktLoginAction>,
     private val refreshTokenAction: Lazy<TraktRefreshTokenAction>,
 ) : TraktAuthRepository {
 
@@ -73,22 +72,6 @@ class DefaultTraktAuthRepository(
         }?.also { cacheAuthState(it) }
     }
 
-    override suspend fun login(): AuthState? {
-        _isAuthenticating.value = true
-        _authError.value = null
-
-        return try {
-            loginAction.value().also { newState ->
-                if (newState == null) {
-                    _authError.value = loginAction.value.lastError ?: AuthError.Unknown
-                }
-                updateAuthState(newState ?: AuthState.Empty)
-            }
-        } finally {
-            _isAuthenticating.value = false
-        }
-    }
-
     override suspend fun refreshTokens(): AuthState? {
         return getAuthState()
             ?.let { currentState ->
@@ -101,6 +84,29 @@ class DefaultTraktAuthRepository(
 
     override suspend fun logout() {
         updateAuthState(AuthState.Empty)
+    }
+
+    override suspend fun saveTokens(
+        accessToken: String,
+        refreshToken: String,
+        expiresAtSeconds: Long?,
+    ) {
+        val expiresAt = expiresAtSeconds?.let {
+            Instant.fromEpochSeconds(it)
+        } ?: (Clock.System.now() + 1.hours)
+
+        val authState = SimpleAuthState(
+            accessToken = accessToken,
+            refreshToken = refreshToken,
+            isAuthorized = true,
+            expiresAt = expiresAt,
+        )
+
+        updateAuthState(authState, persist = true)
+    }
+
+    override suspend fun setAuthError(error: AuthError?) {
+        _authError.value = error
     }
 
     private fun cacheAuthState(authState: AuthState) {

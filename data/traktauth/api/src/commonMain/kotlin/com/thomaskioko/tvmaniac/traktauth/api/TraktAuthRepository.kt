@@ -12,9 +12,15 @@ interface TraktAuthRepository {
 
     suspend fun getAuthState(): AuthState?
 
-    suspend fun login(): AuthState?
-
     suspend fun refreshTokens(): AuthState?
 
     suspend fun logout()
+
+    suspend fun saveTokens(
+        accessToken: String,
+        refreshToken: String,
+        expiresAtSeconds: Long?,
+    )
+
+    suspend fun setAuthError(error: AuthError?)
 }
