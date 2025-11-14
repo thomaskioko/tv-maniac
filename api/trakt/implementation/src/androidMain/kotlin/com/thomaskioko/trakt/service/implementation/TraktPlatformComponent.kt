@@ -9,6 +9,5 @@ import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
 interface TraktPlatformComponent {
 
     @Provides
-    fun provideTraktHttpClientEngine(interceptor: TraktAuthInterceptor): TraktHttpClientEngine =
-        OkHttp.create { addInterceptor(interceptor) }
+    fun provideTraktHttpClientEngine(): TraktHttpClientEngine = OkHttp.create()
 }

@@ -2,6 +2,7 @@ package com.thomaskioko.trakt.service.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.Configs
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import kotlinx.serialization.json.Json
@@ -29,6 +30,7 @@ interface TraktComponent {
         json: TraktJson,
         httpClientEngine: TraktHttpClientEngine,
         logger: Logger,
+        traktAuthRepository: TraktAuthRepository,
     ): TraktHttpClient =
         traktHttpClient(
             isDebug = configs.isDebug,
@@ -36,5 +38,6 @@ interface TraktComponent {
             json = json,
             httpClientEngine = httpClientEngine,
             kermitLogger = logger,
+            traktAuthRepository = { traktAuthRepository },
         )
 }

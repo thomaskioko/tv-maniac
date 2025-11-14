@@ -7,14 +7,21 @@ import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.api.TraktLoginAction
 import com.thomaskioko.tvmaniac.traktauth.api.TraktRefreshTokenAction
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Instant
 
 @Inject
 @SingleIn(AppScope::class)
@@ -27,6 +34,17 @@ class DefaultTraktAuthRepository(
 ) : TraktAuthRepository {
 
     private val authState = MutableStateFlow<AuthState?>(null)
+    private var authStateExpiry: Instant = Instant.DISTANT_PAST
+    private val scope = CoroutineScope(SupervisorJob() + dispatchers.io)
+
+    init {
+        scope.launch {
+            val savedState = authStore.get()
+            if (savedState != null && savedState.isAuthorized) {
+                cacheAuthState(savedState)
+            }
+        }
+    }
 
     override val state: Flow<TraktAuthState> = authState.map { state ->
         when (state?.isAuthorized) {
@@ -36,9 +54,15 @@ class DefaultTraktAuthRepository(
     }
 
     override suspend fun getAuthState(): AuthState? {
-        return withContext(dispatchers.io) {
-            authState.value ?: authStore.get()?.also { authState.value = it }
+        val cached = authState.value
+
+        if (cached != null && cached.isAuthorized && Clock.System.now() < authStateExpiry) {
+            return cached
         }
+
+        return withContext(dispatchers.io) {
+            authStore.get()
+        }?.also { cacheAuthState(it) }
     }
 
     override suspend fun login(): AuthState? {
@@ -61,14 +85,25 @@ class DefaultTraktAuthRepository(
         updateAuthState(AuthState.Empty)
     }
 
-    private suspend fun updateAuthState(authState: AuthState) {
-        withContext(dispatchers.io) {
-            if (authState.isAuthorized) {
-                authStore.save(authState)
-            } else {
-                authStore.clear()
+    private fun cacheAuthState(authState: AuthState) {
+        this.authState.update { authState }
+        authStateExpiry = when {
+            authState.isAuthorized -> Clock.System.now() + 1.hours
+            else -> Instant.DISTANT_PAST
+        }
+    }
+
+    private suspend fun updateAuthState(authState: AuthState, persist: Boolean = true) {
+        if (persist) {
+            withContext(dispatchers.io) {
+                if (authState.isAuthorized) {
+                    authStore.save(authState)
+                } else {
+                    authStore.clear()
+                }
             }
         }
-        this.authState.value = authState
+
+        cacheAuthState(authState)
     }
 }

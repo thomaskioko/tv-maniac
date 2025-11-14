@@ -28,6 +28,7 @@ kotlin {
                 implementation(projects.core.base)
                 implementation(projects.core.logger.api)
                 implementation(projects.data.traktauth.api)
+                implementation(projects.api.trakt.api)
                 implementation(libs.ktor.auth)
                 implementation(libs.kotlinx.datetime)
             }
