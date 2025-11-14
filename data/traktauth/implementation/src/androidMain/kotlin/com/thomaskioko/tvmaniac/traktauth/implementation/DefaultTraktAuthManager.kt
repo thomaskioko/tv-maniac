@@ -7,7 +7,6 @@ import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import me.tatarka.inject.annotations.Inject
-import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationService
 import net.openid.appauth.ClientAuthentication
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
@@ -41,19 +40,7 @@ class DefaultTraktAuthManager(
         val (response, error) = result
         when {
             response != null -> {
-                authService.value.performTokenRequest(
-                    response.createTokenExchangeRequest(),
-                    clientAuth.value,
-                ) { tokenResponse, ex ->
-                    val state = AuthState().apply { update(tokenResponse, ex) }
-                    traktAuthRepository.onNewAuthState(
-                        com.thomaskioko.tvmaniac.datastore.api.AuthState(
-                            accessToken = state.accessToken,
-                            refreshToken = state.refreshToken,
-                            isAuthorized = state.isAuthorized,
-                        ),
-                    )
-                }
+                logger.error("AuthSuccess", Throwable("OAuth flow completed - needs Phase 2 implementation"))
             }
             error != null -> logger.error("AuthException", error)
         }

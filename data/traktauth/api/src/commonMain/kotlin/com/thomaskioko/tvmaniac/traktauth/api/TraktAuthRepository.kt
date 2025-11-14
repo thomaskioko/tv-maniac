@@ -1,15 +1,16 @@
 package com.thomaskioko.tvmaniac.traktauth.api
 
-import com.thomaskioko.tvmaniac.datastore.api.AuthState
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.Flow
 
 interface TraktAuthRepository {
 
-    fun observeState(): StateFlow<TraktAuthState>
+    val state: Flow<TraktAuthState>
 
-    fun updateAuthState(authState: AuthState)
+    suspend fun getAuthState(): AuthState?
 
-    fun clearAuth()
+    suspend fun login(): AuthState?
 
-    fun onNewAuthState(newState: AuthState)
+    suspend fun refreshTokens(): AuthState?
+
+    suspend fun logout()
 }

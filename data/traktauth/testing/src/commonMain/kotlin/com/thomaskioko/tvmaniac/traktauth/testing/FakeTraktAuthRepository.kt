@@ -1,31 +1,38 @@
 package com.thomaskioko.tvmaniac.traktauth.testing
 
-import com.thomaskioko.tvmaniac.datastore.api.AuthState
+import com.thomaskioko.tvmaniac.traktauth.api.AuthState
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class FakeTraktAuthRepository : TraktAuthRepository {
 
-    private val state = MutableStateFlow(TraktAuthState.LOGGED_OUT)
+    private val _state = MutableStateFlow(TraktAuthState.LOGGED_OUT)
+    private var authState: AuthState? = null
 
-    suspend fun setAuthState(authState: TraktAuthState) {
-        state.emit(authState)
+    override val state: Flow<TraktAuthState> = _state.asStateFlow()
+
+    suspend fun setState(traktAuthState: TraktAuthState) {
+        _state.emit(traktAuthState)
     }
 
-    override fun observeState(): StateFlow<TraktAuthState> = state.asStateFlow()
-
-    override fun updateAuthState(authState: AuthState) {
-        // no-op
+    fun setAuthState(authState: AuthState?) {
+        this.authState = authState
     }
 
-    override fun clearAuth() {
-        // no-op
+    override suspend fun getAuthState(): AuthState? = authState
+
+    override suspend fun login(): AuthState? {
+        _state.emit(TraktAuthState.LOGGED_IN)
+        return authState
     }
 
-    override fun onNewAuthState(newState: AuthState) {
-        // no-op
+    override suspend fun refreshTokens(): AuthState? = authState
+
+    override suspend fun logout() {
+        _state.emit(TraktAuthState.LOGGED_OUT)
+        authState = null
     }
 }

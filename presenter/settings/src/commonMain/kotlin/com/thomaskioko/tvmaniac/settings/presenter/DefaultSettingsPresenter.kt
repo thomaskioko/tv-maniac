@@ -55,7 +55,7 @@ class DefaultSettingsPresenter(
             }
 
             TraktLogoutClicked -> {
-                coroutineScope.launch { traktAuthRepository.clearAuth() }
+                coroutineScope.launch { traktAuthRepository.logout() }
             }
 
             ShowImageQualityDialog -> {
@@ -106,12 +106,12 @@ class DefaultSettingsPresenter(
     }
 
     private suspend fun observeTraktAuthState() {
-        traktAuthRepository.observeState().collectLatest { result ->
+        traktAuthRepository.state.collectLatest { result ->
             when (result) {
                 TraktAuthState.LOGGED_IN -> {}
                 TraktAuthState.LOGGED_OUT -> {
                     datastoreRepository.clearAuthState()
-                    traktAuthRepository.clearAuth()
+                    traktAuthRepository.logout()
                 }
             }
         }
