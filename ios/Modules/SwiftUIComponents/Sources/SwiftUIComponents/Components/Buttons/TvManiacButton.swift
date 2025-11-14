@@ -9,7 +9,7 @@ struct TvManiacButton: View {
     private let verticalPadding: CGFloat
     private let action: () -> Void
 
-    public init(
+    init(
         text: String,
         color: Color = .accent,
         textColor: Color,
