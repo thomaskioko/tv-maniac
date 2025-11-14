@@ -4,8 +4,8 @@ import com.thomaskioko.tvmaniac.core.base.AppInitializer
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.locale.api.LocaleProvider
 import dev.icerock.moko.resources.desc.StringDesc
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -16,10 +16,12 @@ import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 public class MokoLocaleInitializer(
     private val localeProvider: LocaleProvider,
     private val dispatchers: AppCoroutineDispatchers,
+    private val applicationScope: CoroutineScope,
 ) : AppInitializer {
-    @OptIn(DelicateCoroutinesApi::class)
+    private var localeJob: Job? = null
+
     override fun init() {
-        GlobalScope.launch(dispatchers.main) {
+        localeJob = applicationScope.launch(dispatchers.main) {
             localeProvider.currentLocale.collect { locale ->
                 StringDesc.localeType = StringDesc.LocaleType.Custom(locale)
             }
