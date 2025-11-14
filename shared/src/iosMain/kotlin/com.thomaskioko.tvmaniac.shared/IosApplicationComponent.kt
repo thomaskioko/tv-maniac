@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.shared
 
 import com.thomaskioko.tvmaniac.core.base.AppInitializers
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
+import com.thomaskioko.tvmaniac.traktauth.api.TraktLoginAction
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.MergeComponent
 import software.amazon.lastmile.kotlin.inject.anvil.MergeComponent.CreateComponent
@@ -12,6 +14,8 @@ import kotlin.reflect.KClass
 abstract class IosApplicationComponent : IosViewPresenterComponent.Factory {
     abstract val initializers: AppInitializers
     abstract val componentFactory: IosViewPresenterComponent.Factory
+    abstract val traktAuthRepository: TraktAuthRepository
+    abstract val traktLoginAction: TraktLoginAction
 
     companion object {
         fun create() = IosApplicationComponent::class.createComponent()

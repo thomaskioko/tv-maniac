@@ -5,6 +5,7 @@ public struct TabBarView: View {
     private let presenter: HomePresenter
     @StateObject @KotlinStateFlow private var stack: ChildStack<AnyObject, HomePresenterChild>
     @State private var selectedTab: NavigationTab = .discover
+    @EnvironmentObject private var appDelegate: AppDelegate
 
     init(presenter: HomePresenter) {
         self.presenter = presenter
@@ -29,8 +30,12 @@ public struct TabBarView: View {
                         WatchlistTab(presenter: screen.presenter)
                             .id(ObjectIdentifier(screen))
                     case let .settings(screen):
-                        SettingsTab(presenter: screen.presenter)
-                            .id(ObjectIdentifier(screen))
+                        SettingsTab(
+                            presenter: screen.presenter,
+                            authRepository: appDelegate.traktAuthRepository,
+                            loginAction: appDelegate.traktLoginAction
+                        )
+                        .id(ObjectIdentifier(screen))
                     }
                 }
             }

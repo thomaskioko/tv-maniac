@@ -14,6 +14,7 @@ struct RootNavigationView: View {
     private let rootNavigator: RootNavigator
     @StateObject @KotlinStateFlow private var themeState: ThemeState
     @StateObject private var store = SettingsAppStorage.shared
+    @EnvironmentObject private var appDelegate: AppDelegate
 
     init(rootPresenter: RootPresenter, rootNavigator: RootNavigator) {
         self.rootPresenter = rootPresenter

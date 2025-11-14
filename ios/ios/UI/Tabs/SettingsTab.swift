@@ -13,11 +13,16 @@ struct SettingsTab: View {
     @State private var aboutPage = false
     @Environment(\.openURL) var openURL
     @Environment(\.presentationMode) var presentationMode
-    @ObservedObject private var model = TraktAuthViewModel()
+    @EnvironmentObject private var appDelegate: AppDelegate
+    @StateObject private var authBridge: TraktAuthBridge
+    @StateObject private var authViewModel: TraktAuthViewModel
 
-    init(presenter: SettingsPresenter) {
+    init(presenter: SettingsPresenter, authRepository: TraktAuthRepository, loginAction: TraktLoginAction) {
         self.presenter = presenter
         _uiState = .init(presenter.state)
+        let bridge = TraktAuthBridge(authRepository: authRepository, loginAction: loginAction)
+        _authBridge = StateObject(wrappedValue: bridge)
+        _authViewModel = StateObject(wrappedValue: TraktAuthViewModel(authBridge: bridge))
     }
 
     @ViewBuilder
@@ -135,7 +140,7 @@ struct SettingsTab: View {
                     title: Text(String(\.label_settings_trakt_dialog_title)),
                     message: Text(String(\.label_settings_trakt_dialog_message)),
                     primaryButton: .default(Text(String(\.label_settings_trakt_dialog_button_primary))) {
-                        model.initiateAuthorization()
+                        authViewModel.initiateAuthorization()
                     },
                     secondaryButton: .destructive(Text(String(\.label_settings_trakt_dialog_button_secondary)))
                 )
