@@ -1,2 +1,2 @@
 --indent 4
---exclude ios/build,ios/Modules/*/.build,**/.build,**/build
+--exclude ios/build,ios/Modules/*/.build,**/.build,**/build,**/shared/build
