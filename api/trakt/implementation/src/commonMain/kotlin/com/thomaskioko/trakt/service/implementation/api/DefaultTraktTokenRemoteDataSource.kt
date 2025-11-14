@@ -46,6 +46,9 @@ class DefaultTraktTokenRemoteDataSource(
                 setBody(
                     RefreshAccessTokenBody(
                         refreshToken = refreshToken,
+                        clientId = configs.traktClientId,
+                        clientSecret = configs.traktClientSecret,
+                        redirectUri = configs.traktRedirectUri,
                     ),
                 )
             }
