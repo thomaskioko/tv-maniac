@@ -16,6 +16,7 @@ val defaultState = SettingsState(
     errorMessage = null,
     showLogoutDialog = false,
     userInfo = null,
+    isAuthenticated = false,
 )
 
 class SettingsPreviewParameterProvider : PreviewParameterProvider<SettingsState> {
@@ -31,6 +32,7 @@ class SettingsPreviewParameterProvider : PreviewParameterProvider<SettingsState>
                     showTraktDialog = false,
                     errorMessage = null,
                     showLogoutDialog = false,
+                    isAuthenticated = false,
                     userInfo = UserInfo(
                         slug = "me",
                         userName = "@j_Doe",

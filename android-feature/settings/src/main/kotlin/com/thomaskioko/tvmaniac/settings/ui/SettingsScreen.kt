@@ -67,6 +67,7 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_low
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_low_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_medium
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_medium_description
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_trakt_dialog_button_secondary
 import com.thomaskioko.tvmaniac.i18n.MR.strings.login
 import com.thomaskioko.tvmaniac.i18n.MR.strings.logout
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_about_description
@@ -168,6 +169,7 @@ internal fun SettingsScreen(
                 showImageQualityDialog = state.showImageQualityDialog,
                 showTraktDialog = state.showTraktDialog,
                 isLoading = state.isLoading,
+                isAuthenticated = state.isAuthenticated,
                 onAction = onAction,
                 modifier = Modifier
                     .fillMaxSize()
@@ -186,6 +188,7 @@ fun SettingsScreen(
     showImageQualityDialog: Boolean,
     showTraktDialog: Boolean,
     isLoading: Boolean,
+    isAuthenticated: Boolean,
     onAction: (SettingsActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -198,7 +201,7 @@ fun SettingsScreen(
             TraktProfileSettingsItem(
                 showTraktDialog = showTraktDialog,
                 isLoading = isLoading,
-                loggedIn = userInfo != null,
+                loggedIn = isAuthenticated,
                 traktUserName = userInfo?.userName,
                 traktFullName = userInfo?.fullName,
                 traktUserPicUrl = userInfo?.userPicUrl,
@@ -267,28 +270,26 @@ private fun TraktProfileSettingsItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            if (!traktUserPicUrl.isNullOrBlank()) {
-                if (isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .padding(end = 16.dp)
-                            .size(48.dp),
-                        color = MaterialTheme.colorScheme.secondary,
-                    )
-                } else {
-                    AsyncImageComposable(
-                        model = traktUserPicUrl,
-                        contentDescription = stringResource(
-                            cd_profile_pic.resourceId,
-                            traktUserName ?: traktFullName ?: "",
-                        ),
-                        modifier = Modifier
-                            .padding(end = 16.dp)
-                            .size(48.dp)
-                            .clip(CircleShape)
-                            .border(2.dp, MaterialTheme.colorScheme.secondary, CircleShape),
-                    )
-                }
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .padding(end = 16.dp)
+                        .size(48.dp),
+                    color = MaterialTheme.colorScheme.secondary,
+                )
+            } else if (!traktUserPicUrl.isNullOrBlank()) {
+                AsyncImageComposable(
+                    model = traktUserPicUrl,
+                    contentDescription = stringResource(
+                        cd_profile_pic.resourceId,
+                        traktUserName ?: traktFullName ?: "",
+                    ),
+                    modifier = Modifier
+                        .padding(end = 16.dp)
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .border(2.dp, MaterialTheme.colorScheme.secondary, CircleShape),
+                )
             } else {
                 Icon(
                     imageVector = Icons.Filled.Person,
@@ -356,13 +357,13 @@ fun TrackDialog(
         BasicDialog(
             dialogTitle = title,
             dialogMessage = message,
-            confirmButtonText = login.resolve(context),
-            dismissButtonText = logout.resolve(context),
+            confirmButtonText = if (loggedIn) logout.resolve(context) else login.resolve(context),
+            dismissButtonText = label_settings_trakt_dialog_button_secondary.resolve(context),
             onDismissDialog = onDismissDialog,
-            confirmButtonClicked = onLoginClicked,
-            dismissButtonClicked = onLogoutClicked,
-            enableConfirmButton = !loggedIn,
-            enableDismissButton = loggedIn,
+            confirmButtonClicked = if (loggedIn) onLogoutClicked else onLoginClicked,
+            dismissButtonClicked = onDismissDialog,
+            enableConfirmButton = true,
+            enableDismissButton = true,
         )
     }
 }
