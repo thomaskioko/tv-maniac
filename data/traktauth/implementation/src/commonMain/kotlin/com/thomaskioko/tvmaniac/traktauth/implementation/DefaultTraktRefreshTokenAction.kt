@@ -15,13 +15,13 @@ import kotlin.time.Duration.Companion.seconds
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class IosTraktRefreshTokenAction(
+class DefaultTraktRefreshTokenAction(
     private val traktTokenDataSource: TraktTokenRemoteDataSource,
     private val logger: Logger,
 ) : TraktRefreshTokenAction {
     override suspend fun invoke(currentState: AuthState): AuthState? {
         return try {
-            logger.debug("IosTraktRefreshTokenAction: Requesting token refresh")
+            logger.debug("TraktRefreshTokenAction: Requesting token refresh")
             val response = traktTokenDataSource.getAccessRefreshToken(
                 refreshToken = currentState.refreshToken,
             )
@@ -31,13 +31,13 @@ class IosTraktRefreshTokenAction(
             val expiresIn = response.expiresIn
 
             if (accessToken == null || refreshToken == null || expiresIn == null) {
-                logger.error("IosTraktRefreshTokenAction", "Invalid response - missing tokens")
+                logger.error("TraktRefreshTokenAction", "Invalid response - missing tokens")
                 return null
             }
 
             val expiresAt = Clock.System.now() + expiresIn.seconds
 
-            logger.debug("IosTraktRefreshTokenAction: Token refresh successful")
+            logger.debug("TraktRefreshTokenAction: Token refresh successful")
             SimpleAuthState(
                 accessToken = accessToken,
                 refreshToken = refreshToken,
@@ -45,7 +45,7 @@ class IosTraktRefreshTokenAction(
                 expiresAt = expiresAt,
             )
         } catch (e: Exception) {
-            logger.error("IosTraktRefreshTokenAction: Token refresh failed", e)
+            logger.error("TraktRefreshTokenAction: Token refresh failed", e)
             null
         }
     }
