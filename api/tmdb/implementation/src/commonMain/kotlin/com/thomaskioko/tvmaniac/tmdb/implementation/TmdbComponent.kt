@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.tmdb.implementation
 
-import com.thomaskioko.tvmaniac.core.base.model.Configs
+import com.thomaskioko.tvmaniac.buildconfig.api.BuildConfig
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
@@ -31,16 +31,14 @@ interface TmdbComponent {
     @Provides
     @SingleIn(AppScope::class)
     fun provideTmdbHttpClient(
-        configs: Configs,
         json: TmdbJson,
         httpClientEngine: TmdbHttpClientEngine,
         logger: Logger,
-    ): TmdbHttpClient =
-        tmdbHttpClient(
-            tmdbApiKey = configs.tmdbApiKey,
-            json = json,
-            httpClientEngine = httpClientEngine,
-            kermitLogger = logger,
-            isDebug = configs.isDebug,
-        )
+    ): TmdbHttpClient = tmdbHttpClient(
+        tmdbApiKey = BuildConfig.TMDB_API_KEY,
+        json = json,
+        httpClientEngine = httpClientEngine,
+        kermitLogger = logger,
+        isDebug = BuildConfig.IS_DEBUG,
+    )
 }

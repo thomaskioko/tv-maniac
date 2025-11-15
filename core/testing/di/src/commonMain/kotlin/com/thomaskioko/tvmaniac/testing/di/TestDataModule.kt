@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.testing.di
 
+import com.thomaskioko.tvmaniac.buildconfig.api.BuildConfigRepository
+import com.thomaskioko.tvmaniac.buildconfig.testing.FakeBuildConfigRepository
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
@@ -23,4 +25,8 @@ interface TestDataModule {
     @Provides
     @SingleIn(TestScope::class)
     fun provideRequestManagerRepository(): RequestManagerRepository = FakeRequestManagerRepository()
+
+    @Provides
+    @SingleIn(TestScope::class)
+    fun provideSecureConfigRepository(): BuildConfigRepository = FakeBuildConfigRepository()
 }

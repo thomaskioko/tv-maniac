@@ -1,7 +1,7 @@
 package com.thomaskioko.trakt.service.implementation.api
 
 import com.thomaskioko.trakt.service.implementation.TraktHttpClient
-import com.thomaskioko.tvmaniac.core.base.model.Configs
+import com.thomaskioko.tvmaniac.buildconfig.api.BuildConfig
 import com.thomaskioko.tvmaniac.trakt.api.TraktTokenRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.AccessTokenBody
 import com.thomaskioko.tvmaniac.trakt.api.model.RefreshAccessTokenBody
@@ -19,9 +19,11 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultTraktTokenRemoteDataSource(
-    private val configs: Configs,
     private val httpClient: TraktHttpClient,
 ) : TraktTokenRemoteDataSource {
+
+    private val traktClientId: String = BuildConfig.TRAKT_CLIENT_ID
+    private val traktClientSecret: String = BuildConfig.TRAKT_CLIENT_SECRET
 
     override suspend fun getAccessToken(authCode: String): TraktAccessTokenResponse =
         httpClient
@@ -29,9 +31,9 @@ class DefaultTraktTokenRemoteDataSource(
                 setBody(
                     AccessTokenBody(
                         code = authCode,
-                        clientId = configs.traktClientId,
-                        clientSecret = configs.traktClientSecret,
-                        redirectUri = configs.traktRedirectUri,
+                        clientId = traktClientId,
+                        clientSecret = traktClientSecret,
+                        redirectUri = BuildConfig.TRAKT_REDIRECT_URI,
                         grantType = "authorization_code",
                     ),
                 )
@@ -46,9 +48,9 @@ class DefaultTraktTokenRemoteDataSource(
                 setBody(
                     RefreshAccessTokenBody(
                         refreshToken = refreshToken,
-                        clientId = configs.traktClientId,
-                        clientSecret = configs.traktClientSecret,
-                        redirectUri = configs.traktRedirectUri,
+                        clientId = traktClientId,
+                        clientSecret = traktClientSecret,
+                        redirectUri = BuildConfig.TRAKT_REDIRECT_URI,
                     ),
                 )
             }
@@ -59,9 +61,9 @@ class DefaultTraktTokenRemoteDataSource(
             setBody(
                 AccessTokenBody(
                     code = authCode,
-                    clientId = configs.traktClientId,
-                    clientSecret = configs.traktClientSecret,
-                    redirectUri = configs.traktRedirectUri,
+                    clientId = traktClientId,
+                    clientSecret = traktClientSecret,
+                    redirectUri = BuildConfig.TRAKT_REDIRECT_URI,
                 ),
             )
         }

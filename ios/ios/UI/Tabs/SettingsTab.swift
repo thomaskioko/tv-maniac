@@ -21,23 +21,17 @@ struct SettingsTab: View {
         self.presenter = presenter
         _uiState = .init(presenter.state)
 
-        do {
-            let config = try ConfigLoader.load()
-            let redirectURL = try config.getCallbackURL()
-            authCoordinator = TraktAuthCoordinator(
-                authRepository: authRepository,
-                logger: logger,
-                clientId: config.clientId,
-                clientSecret: config.clientSecret,
-                redirectURL: redirectURL
-            )
-        } catch {
-            fatalError(
-                "Critical: Failed to initialize Trakt authentication. " +
-                    "Ensure dev.yaml exists in Resources with valid traktClientId, traktClientSecret, " +
-                    "and traktRedirectUri. Error: \(error)"
-            )
+        guard let redirectURL = URL(string: BuildConfig.shared.TRAKT_REDIRECT_URI) else {
+            fatalError("Invalid Trakt redirect URI in BuildConfig")
         }
+
+        authCoordinator = TraktAuthCoordinator(
+            authRepository: authRepository,
+            logger: logger,
+            clientId: BuildConfig.shared.TRAKT_CLIENT_ID,
+            clientSecret: BuildConfig.shared.TRAKT_CLIENT_SECRET,
+            redirectURL: redirectURL
+        )
     }
 
     @ViewBuilder

@@ -21,6 +21,7 @@ kotlin {
             dependencies {
                 implementation(projects.api.trakt.api)
                 implementation(projects.core.base)
+                implementation(projects.core.buildconfig.api)
                 implementation(projects.core.logger.api)
                 implementation(projects.data.datastore.api)
                 implementation(projects.data.traktauth.api)
