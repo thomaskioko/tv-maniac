@@ -44,7 +44,13 @@ class AndroidTraktAuthManager(
         }
     }
 
-    override fun launchWebView() = launcher.launch(Unit)
+    override fun launchWebView() {
+        check(::launcher.isInitialized) {
+            "registerResult() must be called before launchWebView(). " +
+                "Call registerResult() in your Activity's onCreate() or onStart()."
+        }
+        launcher.launch(Unit)
+    }
 
     private suspend fun onLoginResult(result: TraktActivityResultContract.Result) {
         val (response, error) = result
