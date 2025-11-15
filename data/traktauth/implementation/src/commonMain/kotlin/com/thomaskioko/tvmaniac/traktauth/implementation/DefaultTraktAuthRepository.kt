@@ -93,7 +93,7 @@ class DefaultTraktAuthRepository(
     ) {
         val expiresAt = expiresAtSeconds?.let {
             Instant.fromEpochSeconds(it)
-        } ?: (Clock.System.now() + 1.hours)
+        } ?: (Clock.System.now() + 24.hours)
 
         val authState = SimpleAuthState(
             accessToken = accessToken,

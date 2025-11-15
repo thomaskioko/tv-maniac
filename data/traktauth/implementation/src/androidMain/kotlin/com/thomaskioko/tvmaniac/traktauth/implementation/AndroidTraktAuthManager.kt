@@ -19,6 +19,8 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
+private const val TYPE_USER_CANCELED = 2
+
 @Inject
 @SingleIn(ActivityScope::class)
 @ContributesBinding(ActivityScope::class)
@@ -64,7 +66,7 @@ class AndroidTraktAuthManager(
             error != null -> {
                 logger.error("AuthException", error)
                 val authError = when (error.type) {
-                    2 -> AuthError.OAuthCancelled
+                    TYPE_USER_CANCELED -> AuthError.OAuthCancelled
                     else -> AuthError.OAuthFailed(error.error ?: "Unknown OAuth error")
                 }
                 loginAction.setAuthError(authError)
