@@ -22,7 +22,10 @@ kotlin {
             implementation(libs.kermit)
             implementation(libs.kotlinx.datetime)
             implementation(libs.ktor.core)
-            implementation(libs.yamlkt)
+        }
+
+        androidMain.dependencies {
+            implementation(libs.androidx.security.crypto)
         }
 
         commonTest.dependencies { implementation(libs.bundles.unittest) }

@@ -67,7 +67,6 @@ sqldelight = "2.1.0"
 spotless = "8.0.0"
 store5 = "5.0.0"
 turbine = "1.2.1"
-yamlkt = "0.13.0"
 youtubePlayer = "13.0.0"
 ktlint = "1.4.0"
 
@@ -173,7 +172,6 @@ store5 = { module = "org.mobilenativefoundation.store:store5", version.ref = "st
 
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
-yamlkt = { module = "net.mamoe.yamlkt:yamlkt", version.ref = "yamlkt" }
 youtubePlayer = { module = "com.pierfrancescosoffritti.androidyoutubeplayer:core", version.ref = "youtubePlayer" }
 
 [plugins]
