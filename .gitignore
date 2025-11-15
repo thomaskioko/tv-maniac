@@ -97,6 +97,9 @@ derived_data/
 
 #.junie/*
 /.junie/guidelines.md
+/docs
+CLAUDE.md
+.claude/commands
 
 # Configuration files with secrets
 **/dev.yaml
