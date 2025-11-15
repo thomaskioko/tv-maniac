@@ -23,4 +23,5 @@ plugins {
     alias(libs.plugins.app.kmp) apply false
     alias(libs.plugins.app.resource.generator) apply false
     alias(libs.plugins.app.spotless) apply false
+    alias(libs.plugins.app.buildconfig) apply false
 }

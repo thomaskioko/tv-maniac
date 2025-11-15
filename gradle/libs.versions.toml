@@ -26,7 +26,7 @@ androidx-palette = "1.0.0"
 androidx-paging = "3.3.6"
 androidx-savedstate = "1.4.0"
 appauth = "0.11.1"
-app-gradle-plugins = "0.3.2"
+app-gradle-plugins = "0.4.0"
 atomicfu = "0.29.0"
 baselineprofile = "1.4.1"
 benchmarkMacroJunit4 = "1.4.1"
@@ -196,6 +196,7 @@ spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 app-application = { id = "io.github.thomaskioko.gradle.plugins.app", version.ref = "app-gradle-plugins" }
 app-android = { id = "io.github.thomaskioko.gradle.plugins.android", version.ref = "app-gradle-plugins" }
 app-baseline-profile = { id = "io.github.thomaskioko.gradle.plugins.baseline.profile", version.ref = "app-gradle-plugins" }
+app-buildconfig = { id = "io.github.thomaskioko.gradle.plugins.buildconfig", version.ref = "app-gradle-plugins" }
 app-kmp = { id = "io.github.thomaskioko.gradle.plugins.multiplatform", version.ref = "app-gradle-plugins" }
 app-root = { id = "io.github.thomaskioko.gradle.plugins.root", version.ref = "app-gradle-plugins" }
 app-resource-generator = { id = "io.github.thomaskioko.gradle.plugins.resource.generator", version.ref = "app-gradle-plugins" }
