@@ -7,19 +7,14 @@
 //
 
 import SwiftUI
-import TvManiacKit
 
 struct ProfileView: View {
-    @StateObject private var authBridge: ObservableTraktAuth
+    @Binding var isAuthenticated: Bool
     @State var isPresented = false
-
-    init(authBridge: ObservableTraktAuth) {
-        _authBridge = StateObject(wrappedValue: authBridge)
-    }
 
     var body: some View {
         NavigationView {
-            if !authBridge.isAuthenticated {
+            if !isAuthenticated {
                 EmptyView()
                     .toolbar {
                         ToolbarItem(placement: .navigationBarTrailing) {

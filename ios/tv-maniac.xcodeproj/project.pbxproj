@@ -124,14 +124,6 @@
 			path = MoreShows;
 			sourceTree = "<group>";
 		};
-		D653924929D8B6B8000EE673 /* Profile */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Profile;
-			path = Feature/Profile;
-			sourceTree = "<group>";
-		};
 		D653925129DABCBA000EE673 /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
@@ -163,7 +155,6 @@
 			isa = PBXGroup;
 			children = (
 				D636CE4B2B44878F003F7876 /* MoreShows */,
-				D653924929D8B6B8000EE673 /* Profile */,
 			);
 			name = View;
 			sourceTree = "<group>";

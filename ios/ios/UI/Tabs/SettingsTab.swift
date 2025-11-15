@@ -15,15 +15,19 @@ struct SettingsTab: View {
     @Environment(\.openURL) var openURL
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject private var appDelegate: AppDelegate
-    @StateObject private var authBridge: ObservableTraktAuth
-    @StateObject private var authViewModel: TraktAuthViewModel
+    private let authCoordinator: TraktAuthCoordinator
 
     init(presenter: SettingsPresenter, authRepository: TraktAuthRepository) {
         self.presenter = presenter
         _uiState = .init(presenter.state)
-        let bridge = ObservableTraktAuth(authRepository: authRepository)
-        _authBridge = StateObject(wrappedValue: bridge)
-        _authViewModel = StateObject(wrappedValue: TraktAuthViewModel(authBridge: bridge))
+
+        let config = try! ConfigLoader.load()
+        authCoordinator = TraktAuthCoordinator(
+            authRepository: authRepository,
+            clientId: config.clientId,
+            clientSecret: config.clientSecret,
+            redirectURL: try! config.getCallbackURL()
+        )
     }
 
     @ViewBuilder
@@ -159,7 +163,7 @@ struct SettingsTab: View {
                         title: Text(String(\.trakt_dialog_login_title)),
                         message: Text(String(\.trakt_dialog_login_message)),
                         primaryButton: .default(Text(String(\.login))) {
-                            authViewModel.initiateAuthorization()
+                            authCoordinator.initiateAuthorization()
                         },
                         secondaryButton: .cancel()
                     )

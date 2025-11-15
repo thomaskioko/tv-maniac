@@ -2,24 +2,19 @@ import AuthenticationServices
 import Foundation
 import TraktAuthKit
 import TvManiac
-import TvManiacKit
 import UIKit
 
-class TraktAuthViewModel: NSObject, ObservableObject {
+public class TraktAuthCoordinator: NSObject {
     private let oauthClient: TraktOAuthClient
-    private let authBridge: ObservableTraktAuth
+    private let authRepository: TraktAuthRepository
 
-    @Published var error: ApplicationError?
-
-    init(authBridge: ObservableTraktAuth) {
-        self.authBridge = authBridge
-
-        let config = try! ConfigLoader.load()
+    public init(authRepository: TraktAuthRepository, clientId: String, clientSecret: String, redirectURL: URL) {
+        self.authRepository = authRepository
 
         let oauthConfig = TraktAuthConfiguration.trakt(
-            clientId: config.clientId,
-            clientSecret: config.clientSecret,
-            redirectURL: try! config.getCallbackURL()
+            clientId: clientId,
+            clientSecret: clientSecret,
+            redirectURL: redirectURL
         )
 
         oauthClient = TraktOAuthClient(configuration: oauthConfig)
@@ -28,7 +23,7 @@ class TraktAuthViewModel: NSObject, ObservableObject {
     }
 
     @MainActor
-    func initiateAuthorization() {
+    public func initiateAuthorization() {
         Task { @MainActor in
             guard let windowScene = UIApplication.shared.connectedScenes
                 .first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
@@ -43,18 +38,18 @@ class TraktAuthViewModel: NSObject, ObservableObject {
                     presentingViewController: rootViewController
                 )
 
-                authBridge.saveTokens(
+                try? await authRepository.saveTokens(
                     accessToken: credential.accessToken,
                     refreshToken: credential.refreshToken,
-                    expiresAtSeconds: credential.expiresAt.map { Int64($0.timeIntervalSince1970) }
+                    expiresAtSeconds: credential.expiresAt.map { KotlinLong(value: Int64($0.timeIntervalSince1970)) }
                 )
 
             } catch let error as TraktAuthError {
                 let authError = mapToKMPError(error)
-                authBridge.handleError(authError)
+                try? await authRepository.setAuthError(error: authError)
 
             } catch {
-                authBridge.handleError(AuthError.Unknown())
+                try? await authRepository.setAuthError(error: AuthError.Unknown())
             }
         }
     }

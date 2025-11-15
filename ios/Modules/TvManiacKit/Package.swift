@@ -16,12 +16,14 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "SwiftUIComponents", path: "../SwiftUIComponents"),
+        .package(name: "TraktAuthKit", path: "../TraktAuthKit"),
     ],
     targets: [
         .target(
             name: "TvManiacKit",
             dependencies: [
                 "SwiftUIComponents",
+                "TraktAuthKit",
             ]
         ),
     ]
