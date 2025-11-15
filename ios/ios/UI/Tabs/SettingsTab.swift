@@ -15,13 +15,13 @@ struct SettingsTab: View {
     @Environment(\.openURL) var openURL
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject private var appDelegate: AppDelegate
-    @StateObject private var authBridge: TraktAuthBridge
+    @StateObject private var authBridge: ObservableTraktAuth
     @StateObject private var authViewModel: TraktAuthViewModel
 
     init(presenter: SettingsPresenter, authRepository: TraktAuthRepository) {
         self.presenter = presenter
         _uiState = .init(presenter.state)
-        let bridge = TraktAuthBridge(authRepository: authRepository)
+        let bridge = ObservableTraktAuth(authRepository: authRepository)
         _authBridge = StateObject(wrappedValue: bridge)
         _authViewModel = StateObject(wrappedValue: TraktAuthViewModel(authBridge: bridge))
     }
