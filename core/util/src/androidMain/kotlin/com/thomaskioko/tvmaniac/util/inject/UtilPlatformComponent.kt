@@ -17,7 +17,7 @@ interface UtilPlatformComponent {
         val configFileName = if (application.packageName.endsWith(".debug")) {
             "dev.yaml"
         } else {
-            "production.yaml"
+            "prod.yaml"
         }
         return resourceReader.readAndDecodeResource(configFileName, Configs.serializer())
     }
