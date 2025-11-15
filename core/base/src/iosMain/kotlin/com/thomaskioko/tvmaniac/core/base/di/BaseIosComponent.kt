@@ -20,4 +20,9 @@ interface BaseIosComponent {
             main = NsQueueCoroutineScope(),
         )
     }
+
+    @Provides
+    fun provideCoroutineScope(appCoroutineScope: AppCoroutineScope): CoroutineScope {
+        return appCoroutineScope.main
+    }
 }

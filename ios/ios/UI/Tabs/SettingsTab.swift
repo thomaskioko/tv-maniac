@@ -8,16 +8,36 @@ struct SettingsTab: View {
     @StateObject @KotlinStateFlow private var uiState: SettingsState
     @StateObject private var store = SettingsAppStorage.shared
     @State private var showingAlert: Bool = false
+    @State private var showingErrorAlert: Bool = false
     @State private var openInYouTube: Bool = false
     @State private var showPolicy = false
     @State private var aboutPage = false
     @Environment(\.openURL) var openURL
     @Environment(\.presentationMode) var presentationMode
-    @ObservedObject private var model = TraktAuthViewModel()
+    @EnvironmentObject private var appDelegate: AppDelegate
+    private let authCoordinator: TraktAuthCoordinator
 
-    init(presenter: SettingsPresenter) {
+    init(presenter: SettingsPresenter, authRepository: TraktAuthRepository, logger: Logger) {
         self.presenter = presenter
         _uiState = .init(presenter.state)
+
+        do {
+            let config = try ConfigLoader.load()
+            let redirectURL = try config.getCallbackURL()
+            authCoordinator = TraktAuthCoordinator(
+                authRepository: authRepository,
+                logger: logger,
+                clientId: config.clientId,
+                clientSecret: config.clientSecret,
+                redirectURL: redirectURL
+            )
+        } catch {
+            fatalError(
+                "Critical: Failed to initialize Trakt authentication. " +
+                    "Ensure dev.yaml exists in Resources with valid traktClientId, traktClientSecret, " +
+                    "and traktRedirectUri. Error: \(error)"
+            )
+        }
     }
 
     @ViewBuilder
@@ -120,25 +140,44 @@ struct SettingsTab: View {
     @ViewBuilder
     private var traktSection: some View {
         Section(String(\.label_settings_section_trakt_account)) {
-            Button {
-                showingAlert = !(uiState.showTraktDialog)
-            } label: {
-                settingsLabel(
-                    title: String(\.label_settings_trakt_connect),
-                    icon: "person.fill",
-                    color: Color.accent
-                )
+            HStack {
+                Button {
+                    showingAlert = true
+                } label: {
+                    settingsLabel(
+                        title: uiState.isAuthenticated ? String(\.logout) : String(\.label_settings_trakt_connect),
+                        icon: "person.fill",
+                        color: Color.accent
+                    )
+                }
+                .buttonStyle(.plain)
+
+                if uiState.isLoading {
+                    Spacer()
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle())
+                }
             }
-            .buttonStyle(.plain)
             .alert(isPresented: $showingAlert) {
-                Alert(
-                    title: Text(String(\.label_settings_trakt_dialog_title)),
-                    message: Text(String(\.label_settings_trakt_dialog_message)),
-                    primaryButton: .default(Text(String(\.label_settings_trakt_dialog_button_primary))) {
-                        model.initiateAuthorization()
-                    },
-                    secondaryButton: .destructive(Text(String(\.label_settings_trakt_dialog_button_secondary)))
-                )
+                if uiState.isAuthenticated {
+                    Alert(
+                        title: Text(String(\.trakt_dialog_logout_title)),
+                        message: Text(String(\.trakt_dialog_logout_message)),
+                        primaryButton: .destructive(Text(String(\.logout))) {
+                            presenter.dispatch(action: TraktLogoutClicked())
+                        },
+                        secondaryButton: .cancel()
+                    )
+                } else {
+                    Alert(
+                        title: Text(String(\.trakt_dialog_login_title)),
+                        message: Text(String(\.trakt_dialog_login_message)),
+                        primaryButton: .default(Text(String(\.login))) {
+                            authCoordinator.initiateAuthorization()
+                        },
+                        secondaryButton: .cancel()
+                    )
+                }
             }
         }
     }
@@ -210,6 +249,16 @@ struct SettingsTab: View {
         }
         .onChange(of: uiState.imageQuality) { imageQuality in
             store.imageQuality = imageQuality.toSwift()
+        }
+        .onChange(of: uiState.errorMessage) { errorMessage in
+            showingErrorAlert = errorMessage != nil
+        }
+        .alert(isPresented: $showingErrorAlert) {
+            Alert(
+                title: Text("Error"),
+                message: Text(uiState.errorMessage ?? "An error occurred"),
+                dismissButton: .default(Text("OK"))
+            )
         }
         .onAppear {
             store.imageQuality = uiState.imageQuality.toSwift()

@@ -8,6 +8,7 @@ kotlin {
             dependencies {
                 api(projects.data.datastore.api)
                 api(libs.coroutines.core)
+                api(libs.kotlinx.datetime)
             }
         }
     }

@@ -8,19 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		D60D952B2CDBE1160039884B /* TvManiacKit in Frameworks */ = {isa = PBXBuildFile; productRef = D60D952A2CDBE1160039884B /* TvManiacKit */; };
+		D60F8D272EC8060C00916042 /* TraktAuthKit in Frameworks */ = {isa = PBXBuildFile; productRef = D60F8D262EC8060C00916042 /* TraktAuthKit */; };
 		D60FA3B32DE8B2C500AB4DFA /* dev.yaml in Resources */ = {isa = PBXBuildFile; fileRef = D60FA3B12DE8B2C500AB4DFA /* dev.yaml */; };
 		D60FA3B42DE8B2C500AB4DFB /* production.yaml in Resources */ = {isa = PBXBuildFile; fileRef = D60FA3B22DE8B2C500AB4DFB /* production.yaml */; };
 		D636CE4D2B4487B1003F7876 /* MoreShowsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D636CE4C2B4487B1003F7876 /* MoreShowsView.swift */; };
-		D653924829D8B6A6000EE673 /* OAuthSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D653924729D8B6A6000EE673 /* OAuthSwift */; };
-		D653924D29D8B70E000EE673 /* TraktManagerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653924C29D8B70E000EE673 /* TraktManagerError.swift */; };
-		D653924F29D8BC7E000EE673 /* TraktAuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653924E29D8BC7E000EE673 /* TraktAuthViewModel.swift */; };
 		D653925329DABCEA000EE673 /* ConfigLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653925229DABCEA000EE673 /* ConfigLoader.swift */; };
 		D653925529DABD04000EE673 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653925429DABD04000EE673 /* Config.swift */; };
 		D653925729DABD8F000EE673 /* ApplicationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653925629DABD8F000EE673 /* ApplicationError.swift */; };
-		D653925B29DAC6A5000EE673 /* UnauthenticatedProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653925A29DAC6A5000EE673 /* UnauthenticatedProfileView.swift */; };
-		D653925D29DAC89D000EE673 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653925C29DAC89D000EE673 /* ProfileView.swift */; };
-		D653926029DAC949000EE673 /* AuthenticatedProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653925F29DAC949000EE673 /* AuthenticatedProfileView.swift */; };
-		D653926B29DAD8FA000EE673 /* trakt_oauth_config.json in Resources */ = {isa = PBXBuildFile; fileRef = D653926A29DAD8FA000EE673 /* trakt_oauth_config.json */; };
 		D6619D372C89D37900D273E7 /* SwiftUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = D6619D362C89D37900D273E7 /* SwiftUIComponents */; };
 		D6619D382C89D37A00D273E8 /* config-dev.json in Resources */ = {isa = PBXBuildFile; fileRef = D6619D392C89D37A00D273E8 /* config-dev.json */; };
 		D6619D3A2C89D37A00D273E9 /* config-prod.json in Resources */ = {isa = PBXBuildFile; fileRef = D6619D3B2C89D37A00D273E9 /* config-prod.json */; };
@@ -43,30 +37,22 @@
 /* Begin PBXFileReference section */
 		7555FF7B242A565900829871 /* tv-maniac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "tv-maniac.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D60D95292CDBDFB30039884B /* TvManiacKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = TvManiacKit; sourceTree = "<group>"; };
 		D60FA3B12DE8B2C500AB4DFA /* dev.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = dev.yaml; sourceTree = "<group>"; };
 		D60FA3B22DE8B2C500AB4DFB /* production.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = production.yaml; sourceTree = "<group>"; };
 		D636CE4C2B4487B1003F7876 /* MoreShowsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreShowsView.swift; sourceTree = "<group>"; };
-		D653924C29D8B70E000EE673 /* TraktManagerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraktManagerError.swift; sourceTree = "<group>"; };
-		D653924E29D8BC7E000EE673 /* TraktAuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraktAuthViewModel.swift; sourceTree = "<group>"; };
 		D653925229DABCEA000EE673 /* ConfigLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigLoader.swift; sourceTree = "<group>"; };
 		D653925429DABD04000EE673 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		D653925629DABD8F000EE673 /* ApplicationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationError.swift; sourceTree = "<group>"; };
 		D653925929DABCF2000EE674 /* Development.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Development.xcconfig; sourceTree = "<group>"; };
 		D653925A29DABCF3000EE675 /* Production.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Production.xcconfig; sourceTree = "<group>"; };
-		D653925A29DAC6A5000EE673 /* UnauthenticatedProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnauthenticatedProfileView.swift; sourceTree = "<group>"; };
-		D653925C29DAC89D000EE673 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
-		D653925F29DAC949000EE673 /* AuthenticatedProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticatedProfileView.swift; sourceTree = "<group>"; };
-		D653926A29DAD8FA000EE673 /* trakt_oauth_config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = trakt_oauth_config.json; sourceTree = "<group>"; };
-		D6619D352C89D36F00D273E7 /* SwiftUIComponents */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = SwiftUIComponents; sourceTree = "<group>"; };
 		D6619D392C89D37A00D273E8 /* config-dev.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "config-dev.json"; sourceTree = "<group>"; };
 		D6619D3B2C89D37A00D273E9 /* config-prod.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "config-prod.json"; sourceTree = "<group>"; };
-		D6BDF2BB2C933DBB0042C86D /* SnapshotTestingLib */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = SnapshotTestingLib; sourceTree = "<group>"; };
 		E9AC834B26CEE00D00829A0D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D65009DC2CF644BE00394D67 /* App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = App; sourceTree = "<group>"; };
+		D6A2A0EB2EC7FD8C0001CD82 /* Modules */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Modules; sourceTree = "<group>"; };
 		D6FE248E2D060E7200AB7700 /* UI */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = UI; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -75,8 +61,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D60F8D272EC8060C00916042 /* TraktAuthKit in Frameworks */,
 				D6619D372C89D37900D273E7 /* SwiftUIComponents in Frameworks */,
-				D653924829D8B6A6000EE673 /* OAuthSwift in Frameworks */,
 				D60D952B2CDBE1160039884B /* TvManiacKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -88,7 +74,7 @@
 			isa = PBXGroup;
 			children = (
 				7555FF7D242A565900829871 /* ios */,
-				D6B723A62C7F521700A8A3C9 /* Modules */,
+				D6A2A0EB2EC7FD8C0001CD82 /* Modules */,
 				7555FF7C242A565900829871 /* Products */,
 				D6619D2A2C8738F200D273E7 /* Frameworks */,
 			);
@@ -106,7 +92,6 @@
 			isa = PBXGroup;
 			children = (
 				E9AC834B26CEE00D00829A0D /* Assets.xcassets */,
-				D653926A29DAD8FA000EE673 /* trakt_oauth_config.json */,
 				D6619D392C89D37A00D273E8 /* config-dev.json */,
 				D6619D3B2C89D37A00D273E9 /* config-prod.json */,
 				7555FF8C242A565B00829871 /* Info.plist */,
@@ -136,18 +121,6 @@
 			path = MoreShows;
 			sourceTree = "<group>";
 		};
-		D653924929D8B6B8000EE673 /* Profile */ = {
-			isa = PBXGroup;
-			children = (
-				D653926129DACA40000EE673 /* TraktAuth */,
-				D653925E29DAC911000EE673 /* Authenticated */,
-				D653925929DAC627000EE673 /* Unauthenticated */,
-				D653925C29DAC89D000EE673 /* ProfileView.swift */,
-			);
-			name = Profile;
-			path = Feature/Profile;
-			sourceTree = "<group>";
-		};
 		D653925129DABCBA000EE673 /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
@@ -159,14 +132,6 @@
 			path = Configuration;
 			sourceTree = "<group>";
 		};
-		D653925929DAC627000EE673 /* Unauthenticated */ = {
-			isa = PBXGroup;
-			children = (
-				D653925A29DAC6A5000EE673 /* UnauthenticatedProfileView.swift */,
-			);
-			path = Unauthenticated;
-			sourceTree = "<group>";
-		};
 		D653925B29DABCF4000EE676 /* XCConfig */ = {
 			isa = PBXGroup;
 			children = (
@@ -174,23 +139,6 @@
 				D653925A29DABCF3000EE675 /* Production.xcconfig */,
 			);
 			path = XCConfig;
-			sourceTree = "<group>";
-		};
-		D653925E29DAC911000EE673 /* Authenticated */ = {
-			isa = PBXGroup;
-			children = (
-				D653925F29DAC949000EE673 /* AuthenticatedProfileView.swift */,
-			);
-			path = Authenticated;
-			sourceTree = "<group>";
-		};
-		D653926129DACA40000EE673 /* TraktAuth */ = {
-			isa = PBXGroup;
-			children = (
-				D653924C29D8B70E000EE673 /* TraktManagerError.swift */,
-				D653924E29D8BC7E000EE673 /* TraktAuthViewModel.swift */,
-			);
-			path = TraktAuth;
 			sourceTree = "<group>";
 		};
 		D6619D2A2C8738F200D273E7 /* Frameworks */ = {
@@ -204,19 +152,8 @@
 			isa = PBXGroup;
 			children = (
 				D636CE4B2B44878F003F7876 /* MoreShows */,
-				D653924929D8B6B8000EE673 /* Profile */,
 			);
 			name = View;
-			sourceTree = "<group>";
-		};
-		D6B723A62C7F521700A8A3C9 /* Modules */ = {
-			isa = PBXGroup;
-			children = (
-				D6BDF2BB2C933DBB0042C86D /* SnapshotTestingLib */,
-				D6619D352C89D36F00D273E7 /* SwiftUIComponents */,
-				D60D95292CDBDFB30039884B /* TvManiacKit */,
-			);
-			path = Modules;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -242,9 +179,9 @@
 			);
 			name = "tv-maniac";
 			packageProductDependencies = (
-				D653924729D8B6A6000EE673 /* OAuthSwift */,
 				D6619D362C89D37900D273E7 /* SwiftUIComponents */,
 				D60D952A2CDBE1160039884B /* TvManiacKit */,
+				D60F8D262EC8060C00916042 /* TraktAuthKit */,
 			);
 			productName = ios;
 			productReference = 7555FF7B242A565900829871 /* tv-maniac.app */;
@@ -276,7 +213,6 @@
 			);
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (
-				D653924629D8B6A6000EE673 /* XCRemoteSwiftPackageReference "OAuthSwift" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -292,7 +228,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D653926B29DAD8FA000EE673 /* trakt_oauth_config.json in Resources */,
 				D6619D382C89D37A00D273E8 /* config-dev.json in Resources */,
 				D6619D3A2C89D37A00D273E9 /* config-prod.json in Resources */,
 				D60FA3B32DE8B2C500AB4DFA /* dev.yaml in Resources */,
@@ -330,12 +265,7 @@
 			files = (
 				D653925329DABCEA000EE673 /* ConfigLoader.swift in Sources */,
 				D636CE4D2B4487B1003F7876 /* MoreShowsView.swift in Sources */,
-				D653925B29DAC6A5000EE673 /* UnauthenticatedProfileView.swift in Sources */,
-				D653924D29D8B70E000EE673 /* TraktManagerError.swift in Sources */,
-				D653924F29D8BC7E000EE673 /* TraktAuthViewModel.swift in Sources */,
 				D653925529DABD04000EE673 /* Config.swift in Sources */,
-				D653926029DAC949000EE673 /* AuthenticatedProfileView.swift in Sources */,
-				D653925D29DAC89D000EE673 /* ProfileView.swift in Sources */,
 				D653925729DABD8F000EE673 /* ApplicationError.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -608,26 +538,14 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		D653924629D8B6A6000EE673 /* XCRemoteSwiftPackageReference "OAuthSwift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/OAuthSwift/OAuthSwift";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.2.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
 /* Begin XCSwiftPackageProductDependency section */
 		D60D952A2CDBE1160039884B /* TvManiacKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = TvManiacKit;
 		};
-		D653924729D8B6A6000EE673 /* OAuthSwift */ = {
+		D60F8D262EC8060C00916042 /* TraktAuthKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = D653924629D8B6A6000EE673 /* XCRemoteSwiftPackageReference "OAuthSwift" */;
-			productName = OAuthSwift;
+			productName = TraktAuthKit;
 		};
 		D6619D362C89D37900D273E7 /* SwiftUIComponents */ = {
 			isa = XCSwiftPackageProductDependency;

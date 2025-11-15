@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 
 data class SettingsState(
+    val isAuthenticated: Boolean,
     val userInfo: UserInfo?,
     val appTheme: AppTheme,
     val imageQuality: ImageQuality,
@@ -18,6 +19,7 @@ data class SettingsState(
 ) {
     companion object {
         val DEFAULT_STATE = SettingsState(
+            isAuthenticated = false,
             userInfo = null,
             appTheme = AppTheme.SYSTEM_THEME,
             imageQuality = ImageQuality.MEDIUM,

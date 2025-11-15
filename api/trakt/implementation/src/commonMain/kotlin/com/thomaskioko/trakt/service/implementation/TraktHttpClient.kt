@@ -1,10 +1,14 @@
 package com.thomaskioko.trakt.service.implementation
 
 import com.thomaskioko.tvmaniac.core.networkutil.model.HttpExceptions
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerTokens
+import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.EMPTY
 import io.ktor.client.plugins.logging.LogLevel
@@ -27,11 +31,36 @@ fun traktHttpClient(
     json: TraktJson,
     httpClientEngine: TraktHttpClientEngine,
     kermitLogger: KermitLogger,
+    traktAuthRepository: () -> TraktAuthRepository,
 ) =
     HttpClient(httpClientEngine) {
         expectSuccess = true
 
         install(ContentNegotiation) { json(json = json) }
+
+        install(Auth) {
+            bearer {
+                loadTokens {
+                    traktAuthRepository().getAuthState()?.let { state ->
+                        BearerTokens(
+                            accessToken = state.accessToken,
+                            refreshToken = state.refreshToken,
+                        )
+                    }
+                }
+
+                refreshTokens {
+                    traktAuthRepository().refreshTokens()?.let { state ->
+                        BearerTokens(
+                            accessToken = state.accessToken,
+                            refreshToken = state.refreshToken,
+                        )
+                    }
+                }
+
+                sendWithoutRequest { request -> request.url.host == "api.trakt.tv" }
+            }
+        }
 
         install(DefaultRequest) {
             apply {

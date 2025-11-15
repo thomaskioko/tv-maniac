@@ -16,8 +16,10 @@ scaffold {
             freeCompilerArgs += listOf("-Xbinary=bundleId=Kotlin", "-Xexport-kdoc")
 
             export(projects.i18n.api)
+            export(projects.core.logger.api)
             export(projects.navigation.api)
             export(projects.data.datastore.api)
+            export(projects.data.traktauth.api)
             export(projects.presenter.discover)
             export(projects.presenter.home)
             export(projects.presenter.watchlist)

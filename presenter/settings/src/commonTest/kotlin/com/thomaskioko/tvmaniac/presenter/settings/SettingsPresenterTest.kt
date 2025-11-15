@@ -6,7 +6,6 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
-import com.thomaskioko.tvmaniac.datastore.testing.authenticatedAuthState
 import com.thomaskioko.tvmaniac.settings.presenter.ChangeThemeClicked
 import com.thomaskioko.tvmaniac.settings.presenter.DefaultSettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.DismissImageQualityDialog
@@ -20,6 +19,8 @@ import com.thomaskioko.tvmaniac.settings.presenter.ShowTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
 import com.thomaskioko.tvmaniac.settings.presenter.TraktLoginClicked
 import com.thomaskioko.tvmaniac.settings.presenter.TraktLogoutClicked
+import com.thomaskioko.tvmaniac.traktauth.api.AuthError
+import com.thomaskioko.tvmaniac.traktauth.api.SimpleAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
@@ -29,8 +30,9 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
-import kotlin.test.Ignore
 import kotlin.test.Test
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.hours
 
 class SettingsPresenterTest {
 
@@ -40,6 +42,13 @@ class SettingsPresenterTest {
     private val traktAuthRepository = FakeTraktAuthRepository()
 
     private lateinit var presenter: SettingsPresenter
+
+    private val testAuthState = SimpleAuthState(
+        accessToken = "test_access_token",
+        refreshToken = "test_refresh_token",
+        isAuthorized = true,
+        expiresAt = Clock.System.now() + 1.hours,
+    )
 
     @BeforeTest
     fun setUp() {
@@ -140,33 +149,26 @@ class SettingsPresenterTest {
 
             awaitItem() shouldBe DEFAULT_STATE.copy(showTraktDialog = true)
 
-            presenter.dispatch(TraktLoginClicked)
+            traktAuthRepository.setAuthState(testAuthState)
+            traktAuthRepository.setRefreshAuthState(testAuthState)
 
-            datastoreRepository.setAuthState(authenticatedAuthState)
+            presenter.dispatch(TraktLoginClicked)
 
             awaitItem() shouldBe DEFAULT_STATE.copy(showTraktDialog = false)
         }
     }
 
-    @Ignore // "Fix once TraktAuthManager is implemented"
     @Test
     fun `should show error when trakt login fails`() = runTest {
         presenter.state.test {
-            val errorMessage = "Something happened"
-
             awaitItem() shouldBe DEFAULT_STATE // Initial State
 
-            presenter.dispatch(ShowTraktDialog)
+            traktAuthRepository.setAuthError(AuthError.NetworkError)
+            testDispatcher.scheduler.advanceUntilIdle()
 
-            awaitItem() shouldBe DEFAULT_STATE.copy(showTraktDialog = true)
-
-            presenter.dispatch(TraktLoginClicked)
-
-            awaitItem() shouldBe DEFAULT_STATE.copy(showTraktDialog = false)
-
-            datastoreRepository.setAuthState(authenticatedAuthState)
-
-            awaitItem() shouldBe DEFAULT_STATE.copy(errorMessage = errorMessage)
+            awaitItem() shouldBe DEFAULT_STATE.copy(
+                errorMessage = "No internet connection. Please check your network.",
+            )
         }
     }
 
@@ -175,17 +177,21 @@ class SettingsPresenterTest {
         presenter.state.test {
             awaitItem() shouldBe DEFAULT_STATE
 
+            traktAuthRepository.setAuthState(testAuthState)
+            traktAuthRepository.setRefreshAuthState(testAuthState)
+
             presenter.dispatch(ShowTraktDialog)
 
             awaitItem() shouldBe DEFAULT_STATE.copy(showTraktDialog = true)
 
             presenter.dispatch(TraktLoginClicked)
 
-            datastoreRepository.setAuthState(authenticatedAuthState)
+            awaitItem() shouldBe DEFAULT_STATE.copy(showTraktDialog = false)
 
             presenter.dispatch(TraktLogoutClicked)
+            testDispatcher.scheduler.advanceUntilIdle()
 
-            awaitItem() shouldBe DEFAULT_STATE
+            expectNoEvents()
         }
     }
 
@@ -261,6 +267,177 @@ class SettingsPresenterTest {
                 showImageQualityDialog = false,
                 imageQuality = ImageQuality.HIGH,
             )
+        }
+    }
+
+    @Test
+    fun `should show loading state during authentication`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe DEFAULT_STATE
+
+            traktAuthRepository.setIsAuthenticating(true)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            awaitItem() shouldBe DEFAULT_STATE.copy(isLoading = true)
+
+            traktAuthRepository.setIsAuthenticating(false)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            awaitItem() shouldBe DEFAULT_STATE.copy(isLoading = false)
+        }
+    }
+
+    @Test
+    fun `should show OAuth cancelled error message`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe DEFAULT_STATE
+
+            traktAuthRepository.setAuthError(AuthError.OAuthCancelled)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            awaitItem() shouldBe DEFAULT_STATE.copy(
+                errorMessage = "Authentication cancelled.",
+            )
+        }
+    }
+
+    @Test
+    fun `should show OAuth failed error message with details`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe DEFAULT_STATE
+
+            traktAuthRepository.setAuthError(AuthError.OAuthFailed("Invalid client"))
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            awaitItem() shouldBe DEFAULT_STATE.copy(
+                errorMessage = "Authentication failed: Invalid client",
+            )
+        }
+    }
+
+    @Test
+    fun `should show token exchange failed error message`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe DEFAULT_STATE
+
+            traktAuthRepository.setAuthError(AuthError.TokenExchangeFailed)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            awaitItem() shouldBe DEFAULT_STATE.copy(
+                errorMessage = "Failed to complete authentication.",
+            )
+        }
+    }
+
+    @Test
+    fun `should show unknown error message`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe DEFAULT_STATE
+
+            traktAuthRepository.setAuthError(AuthError.Unknown)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            awaitItem() shouldBe DEFAULT_STATE.copy(
+                errorMessage = "An error occurred. Please try again.",
+            )
+        }
+    }
+
+    @Test
+    fun `should clear error when new authentication starts`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe DEFAULT_STATE
+
+            traktAuthRepository.setAuthError(AuthError.NetworkError)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            awaitItem() shouldBe DEFAULT_STATE.copy(
+                errorMessage = "No internet connection. Please check your network.",
+            )
+
+            traktAuthRepository.setAuthError(null)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            awaitItem() shouldBe DEFAULT_STATE.copy(errorMessage = null)
+        }
+    }
+
+    @Test
+    fun `should hide trakt dialog when error occurs`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe DEFAULT_STATE
+
+            presenter.dispatch(ShowTraktDialog)
+
+            awaitItem() shouldBe DEFAULT_STATE.copy(showTraktDialog = true)
+
+            traktAuthRepository.setAuthError(AuthError.TokenExchangeFailed)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            awaitItem() shouldBe DEFAULT_STATE.copy(
+                showTraktDialog = false,
+                errorMessage = "Failed to complete authentication.",
+            )
+        }
+    }
+
+    @Test
+    fun `should refresh token instead of launching OAuth when user has valid token`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe DEFAULT_STATE
+
+            presenter.dispatch(ShowTraktDialog)
+
+            awaitItem() shouldBe DEFAULT_STATE.copy(showTraktDialog = true)
+
+            traktAuthRepository.setAuthState(testAuthState)
+            traktAuthRepository.setRefreshAuthState(testAuthState)
+
+            presenter.dispatch(TraktLoginClicked)
+
+            awaitItem() shouldBe DEFAULT_STATE.copy(showTraktDialog = false)
+        }
+    }
+
+    @Test
+    fun `should launch OAuth when user has no token`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe DEFAULT_STATE
+
+            presenter.dispatch(ShowTraktDialog)
+
+            awaitItem() shouldBe DEFAULT_STATE.copy(showTraktDialog = true)
+
+            traktAuthRepository.setAuthState(null)
+
+            presenter.dispatch(TraktLoginClicked)
+
+            awaitItem() shouldBe DEFAULT_STATE.copy(showTraktDialog = false)
+        }
+    }
+
+    @Test
+    fun `should launch OAuth when token refresh fails`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe DEFAULT_STATE
+
+            presenter.dispatch(ShowTraktDialog)
+
+            awaitItem() shouldBe DEFAULT_STATE.copy(showTraktDialog = true)
+
+            traktAuthRepository.setRefreshAuthState(null)
+
+            presenter.dispatch(TraktLoginClicked)
+
+            awaitItem() shouldBe DEFAULT_STATE.copy(showTraktDialog = false)
+
+            traktAuthRepository.saveTokens(
+                accessToken = "access_token",
+                refreshToken = "refresh_token",
+                expiresAtSeconds = null,
+            )
+
+            awaitItem() shouldBe DEFAULT_STATE.copy(showTraktDialog = false, isAuthenticated = true)
         }
     }
 }

@@ -1,8 +1,0 @@
-{
-    "accessTokenUrl": "https://api.trakt.tv/oauth/token",
-    "authorizeUrl": "https://trakt.tv/oauth/authorize",
-    "callbackUrl": "PUT_CALLBACK_URL_HERE",
-    "clientId": "PUT_CLIENT_ID_HERE",
-    "clientSecret": "PUT_CLIENT_SECRET_HERE",
-    "responseType": "code"
-}

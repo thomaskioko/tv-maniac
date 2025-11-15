@@ -22,13 +22,45 @@ probably doing a couple of things wrong. So a lot is changing, but that shouldn'
 | <video src="https://github.com/user-attachments/assets/90ec7924-7d50-40a4-bb0b-89d79aa9bbcd" width=350/> | <video src="https://github.com/user-attachments/assets/69f101b7-e100-4775-9893-6687e455560c" width=350/> |
 
 > [!IMPORTANT]
-> To fetch data, you will need to [create a TMDB API app](https://www.themoviedb.org/settings/api) and generate an API key if you don't have
-> one. Each platform has its own resource key file:
+> ### API Keys & Configuration Setup
 >
-> - **Android**: Add your API keys to `core/util/src/androidMain/resources/dev.yaml`
-> - **iOS**: Add your API keys to `ios/ios/Resources/dev.yaml`
+> The app requires both TMDB and Trakt API credentials to function properly.
 >
-> In both files, replace the placeholder values with your actual API keys.
+> #### 1. TMDB API Key
+> - [Create a TMDB API app](https://www.themoviedb.org/settings/api) and generate an API key
+>
+> #### 2. Trakt OAuth Credentials
+> - [Create a Trakt API app](https://trakt.tv/oauth/applications/new)
+> - Set the **Redirect URI** to: `tvmaniac://callback`
+> - Copy your **Client ID** and **Client Secret**
+>
+> #### 3. Configuration Files
+> Each platform has separate configuration files for development and production builds:
+>
+> **Android Development:**
+> ```bash
+> cp core/util/src/androidMain/resources/dev.yaml.template core/util/src/androidMain/resources/dev.yaml
+> ```
+> Then edit `core/util/src/androidMain/resources/dev.yaml` with your development credentials.
+>
+> **Android Production:**
+> ```bash
+> cp core/util/src/androidMain/resources/prod.yaml.template core/util/src/androidMain/resources/prod.yaml
+> ```
+> Then edit `core/util/src/androidMain/resources/prod.yaml` with your production credentials.
+>
+> **iOS Development:**
+> ```bash
+> cp ios/ios/Resources/dev.yaml.template ios/ios/Resources/dev.yaml
+> ```
+> Then edit `ios/ios/Resources/dev.yaml` with your development credentials.
+>
+> **iOS Production:**
+> ```bash
+> cp ios/ios/Resources/prod.yaml.template ios/ios/Resources/prod.yaml
+> ```
+> Then edit `ios/ios/Resources/prod.yaml` with your production credentials.
+>
 
 ## 🖥 Project Setup & Environment
 
@@ -104,8 +136,8 @@ check out the article: [Publishing Gradle Convention Plugins](https://thomaskiok
 
 ### iOS
 
+* [AppAuth](https://github.com/openid/AppAuth-iOS) - OAuth 2.0 and OpenID Connect client SDK for iOS
 * [SDWebImage](https://github.com/SDWebImage/SDWebImage) - Async image downloader.
-* [OAuthSwift](https://github.com/OAuthSwift/OAuthSwift) Swift-based OAuth library for iOS and macOS.
 * [Youtube PlayerKit](https://github.com/SvenTiigi/YouTubePlayerKit) - Swift Youtube Player
 
 ## Roadmap
@@ -148,6 +180,7 @@ Shared
 - [ ] Fix paging
 - [x] Add test cases.
 - [ ] Improve error handling.
+- [ ] Improve YAML credential setup
 
 ### References & Inspiration
 

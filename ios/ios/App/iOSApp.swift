@@ -15,6 +15,7 @@ struct iOSApp: App {
                 rootPresenter: appDelegate.presenterComponent.rootPresenter,
                 rootNavigator: appDelegate.presenterComponent.rootNavigator
             )
+            .environmentObject(appDelegate)
             .onChange(of: scenePhase) { newPhase in
                 switch newPhase {
                 case .background:

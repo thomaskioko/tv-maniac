@@ -11,7 +11,7 @@ import SwiftUIComponents
 import TvManiac
 import UIKit
 
-public class AppDelegate: NSObject, UIApplicationDelegate {
+public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
     public let lifecycle = LifecycleRegistryKt.LifecycleRegistry()
 
     private lazy var appComponent = IosApplicationComponent.companion.create()
@@ -19,6 +19,9 @@ public class AppDelegate: NSObject, UIApplicationDelegate {
     public lazy var presenterComponent: IosViewPresenterComponent = appComponent.componentFactory.createComponent(
         componentContext: DefaultComponentContext(lifecycle: lifecycle)
     )
+
+    public lazy var traktAuthRepository = appComponent.traktAuthRepository
+    public lazy var logger = appComponent.logger
 
     override public init() {
         super.init()

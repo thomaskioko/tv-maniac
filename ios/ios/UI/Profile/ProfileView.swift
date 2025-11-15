@@ -9,13 +9,13 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @Binding var isAuthenticated: Bool
     @State var isPresented = false
-    @State var isAuthenticated = false
 
     var body: some View {
         NavigationView {
             if !isAuthenticated {
-                UnauthentivatedProfileView()
+                EmptyView()
                     .toolbar {
                         ToolbarItem(placement: .navigationBarTrailing) {
                             Button(
@@ -36,15 +36,7 @@ struct ProfileView: View {
                             )
                         }
                     }
-            } else {
-                AuthenticatedProfileView()
             }
         }
-    }
-}
-
-struct ProfileView_Previews: PreviewProvider {
-    static var previews: some View {
-        ProfileView()
     }
 }

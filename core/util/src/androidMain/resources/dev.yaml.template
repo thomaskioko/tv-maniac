@@ -1,0 +1,5 @@
+isDebug: true
+tmdbApiKey: "YOUR_TMDB_API_KEY_HERE"
+traktClientId: "YOUR_TRAKT_CLIENT_ID_HERE"
+traktClientSecret: "YOUR_TRAKT_CLIENT_SECRET_HERE"
+traktRedirectUri: "tvmaniac://callback"

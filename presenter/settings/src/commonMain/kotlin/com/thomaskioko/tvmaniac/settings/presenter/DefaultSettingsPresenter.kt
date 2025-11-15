@@ -4,6 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.traktauth.api.AuthError
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,14 +49,24 @@ class DefaultSettingsPresenter(
             }
 
             TraktLoginClicked -> {
-                launchWebView()
                 coroutineScope.launch {
-                    _state.update { state -> state.copy(showTraktDialog = !state.showTraktDialog) }
+                    _state.update { state -> state.copy(showTraktDialog = false) }
+
+                    val currentState = traktAuthRepository.getAuthState()
+
+                    if (currentState?.isAuthorized == true) {
+                        val refreshed = traktAuthRepository.refreshTokens()
+                        if (refreshed != null) {
+                            return@launch
+                        }
+                    }
+
+                    launchWebView()
                 }
             }
 
             TraktLogoutClicked -> {
-                coroutineScope.launch { traktAuthRepository.clearAuth() }
+                coroutineScope.launch { traktAuthRepository.logout() }
             }
 
             ShowImageQualityDialog -> {
@@ -80,10 +91,16 @@ class DefaultSettingsPresenter(
             observeTheme()
         }
         coroutineScope.launch {
-            observeTraktAuthState()
+            observeImageQuality()
         }
         coroutineScope.launch {
-            observeImageQuality()
+            observeAuthenticating()
+        }
+        coroutineScope.launch {
+            observeAuthError()
+        }
+        coroutineScope.launch {
+            observeTraktAuthState()
         }
     }
 
@@ -105,21 +122,47 @@ class DefaultSettingsPresenter(
         }
     }
 
-    private suspend fun observeTraktAuthState() {
-        traktAuthRepository.observeState().collectLatest { result ->
-            when (result) {
-                TraktAuthState.LOGGED_IN -> {}
-                TraktAuthState.LOGGED_OUT -> {
-                    datastoreRepository.clearAuthState()
-                    traktAuthRepository.clearAuth()
-                }
+    private suspend fun observeImageQuality() {
+        datastoreRepository.observeImageQuality().collectLatest { quality ->
+            _state.update { state -> state.copy(imageQuality = quality) }
+        }
+    }
+
+    private suspend fun observeAuthenticating() {
+        traktAuthRepository.isAuthenticating.collectLatest { isAuthenticating ->
+            _state.update { state -> state.copy(isLoading = isAuthenticating) }
+        }
+    }
+
+    private suspend fun observeAuthError() {
+        traktAuthRepository.authError.collectLatest { error ->
+            _state.update { state ->
+                state.copy(
+                    errorMessage = error?.let { mapAuthErrorToMessage(it) },
+                    showTraktDialog = if (error != null) false else state.showTraktDialog,
+                )
             }
         }
     }
 
-    private suspend fun observeImageQuality() {
-        datastoreRepository.observeImageQuality().collectLatest { quality ->
-            _state.update { state -> state.copy(imageQuality = quality) }
+    private suspend fun observeTraktAuthState() {
+        traktAuthRepository.state.collectLatest { authState ->
+            _state.update { state ->
+                state.copy(
+                    isAuthenticated = authState == TraktAuthState.LOGGED_IN,
+                )
+            }
+        }
+    }
+
+    private fun mapAuthErrorToMessage(error: AuthError): String {
+        // TODO:: Get Strings from localizer
+        return when (error) {
+            is AuthError.NetworkError -> "No internet connection. Please check your network."
+            is AuthError.OAuthCancelled -> "Authentication cancelled."
+            is AuthError.OAuthFailed -> "Authentication failed: ${error.message}"
+            is AuthError.TokenExchangeFailed -> "Failed to complete authentication."
+            is AuthError.Unknown -> "An error occurred. Please try again."
         }
     }
 }

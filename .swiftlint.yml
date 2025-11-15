@@ -30,3 +30,4 @@ excluded:
     - ios/Modules
     - ios/build
     - vendor/bundle
+    - shared/build
