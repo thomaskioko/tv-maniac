@@ -23,4 +23,9 @@ interface BaseAndroidComponent {
             io = CoroutineScope(Job() + dispatchers.io),
             main = CoroutineScope(Job() + dispatchers.main),
         )
+
+    @Provides
+    fun provideCoroutineScope(appCoroutineScope: AppCoroutineScope): CoroutineScope {
+        return appCoroutineScope.main
+    }
 }
