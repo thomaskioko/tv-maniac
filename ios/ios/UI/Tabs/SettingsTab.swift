@@ -17,17 +17,27 @@ struct SettingsTab: View {
     @EnvironmentObject private var appDelegate: AppDelegate
     private let authCoordinator: TraktAuthCoordinator
 
-    init(presenter: SettingsPresenter, authRepository: TraktAuthRepository) {
+    init(presenter: SettingsPresenter, authRepository: TraktAuthRepository, logger: Logger) {
         self.presenter = presenter
         _uiState = .init(presenter.state)
 
-        let config = try! ConfigLoader.load()
-        authCoordinator = TraktAuthCoordinator(
-            authRepository: authRepository,
-            clientId: config.clientId,
-            clientSecret: config.clientSecret,
-            redirectURL: try! config.getCallbackURL()
-        )
+        do {
+            let config = try ConfigLoader.load()
+            let redirectURL = try config.getCallbackURL()
+            authCoordinator = TraktAuthCoordinator(
+                authRepository: authRepository,
+                logger: logger,
+                clientId: config.clientId,
+                clientSecret: config.clientSecret,
+                redirectURL: redirectURL
+            )
+        } catch {
+            fatalError(
+                "Critical: Failed to initialize Trakt authentication. " +
+                    "Ensure dev.yaml exists in Resources with valid traktClientId, traktClientSecret, " +
+                    "and traktRedirectUri. Error: \(error)"
+            )
+        }
     }
 
     @ViewBuilder
