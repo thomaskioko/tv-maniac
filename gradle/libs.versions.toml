@@ -25,6 +25,7 @@ androidx-material3 = "1.4.0"
 androidx-palette = "1.0.0"
 androidx-paging = "3.3.6"
 androidx-savedstate = "1.4.0"
+androidx-security-crypto = "1.1.0-alpha06"
 appauth = "0.11.1"
 app-gradle-plugins = "0.4.0"
 atomicfu = "0.29.0"
@@ -100,6 +101,7 @@ androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", 
 androidx-paging-common = { group = "androidx.paging", name = "paging-common", version.ref = "androidx-paging" }
 androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
 androidx-savedstate = { group = "androidx.savedstate", name = "savedstate", version.ref = "androidx-savedstate" }
+androidx-security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "androidx-security-crypto" }
 androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junit" }
 androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileinstaller" }
