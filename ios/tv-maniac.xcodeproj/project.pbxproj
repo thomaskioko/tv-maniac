@@ -15,7 +15,6 @@
 		D653925329DABCEA000EE673 /* ConfigLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653925229DABCEA000EE673 /* ConfigLoader.swift */; };
 		D653925529DABD04000EE673 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653925429DABD04000EE673 /* Config.swift */; };
 		D653925729DABD8F000EE673 /* ApplicationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653925629DABD8F000EE673 /* ApplicationError.swift */; };
-		D653926B29DAD8FA000EE673 /* trakt_oauth_config.json in Resources */ = {isa = PBXBuildFile; fileRef = D653926A29DAD8FA000EE673 /* trakt_oauth_config.json */; };
 		D6619D372C89D37900D273E7 /* SwiftUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = D6619D362C89D37900D273E7 /* SwiftUIComponents */; };
 		D6619D382C89D37A00D273E8 /* config-dev.json in Resources */ = {isa = PBXBuildFile; fileRef = D6619D392C89D37A00D273E8 /* config-dev.json */; };
 		D6619D3A2C89D37A00D273E9 /* config-prod.json in Resources */ = {isa = PBXBuildFile; fileRef = D6619D3B2C89D37A00D273E9 /* config-prod.json */; };
@@ -46,7 +45,6 @@
 		D653925629DABD8F000EE673 /* ApplicationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationError.swift; sourceTree = "<group>"; };
 		D653925929DABCF2000EE674 /* Development.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Development.xcconfig; sourceTree = "<group>"; };
 		D653925A29DABCF3000EE675 /* Production.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Production.xcconfig; sourceTree = "<group>"; };
-		D653926A29DAD8FA000EE673 /* trakt_oauth_config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = trakt_oauth_config.json; sourceTree = "<group>"; };
 		D6619D392C89D37A00D273E8 /* config-dev.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "config-dev.json"; sourceTree = "<group>"; };
 		D6619D3B2C89D37A00D273E9 /* config-prod.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "config-prod.json"; sourceTree = "<group>"; };
 		E9AC834B26CEE00D00829A0D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -94,7 +92,6 @@
 			isa = PBXGroup;
 			children = (
 				E9AC834B26CEE00D00829A0D /* Assets.xcassets */,
-				D653926A29DAD8FA000EE673 /* trakt_oauth_config.json */,
 				D6619D392C89D37A00D273E8 /* config-dev.json */,
 				D6619D3B2C89D37A00D273E9 /* config-prod.json */,
 				7555FF8C242A565B00829871 /* Info.plist */,
@@ -231,7 +228,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D653926B29DAD8FA000EE673 /* trakt_oauth_config.json in Resources */,
 				D6619D382C89D37A00D273E8 /* config-dev.json in Resources */,
 				D6619D3A2C89D37A00D273E9 /* config-prod.json in Resources */,
 				D60FA3B32DE8B2C500AB4DFA /* dev.yaml in Resources */,

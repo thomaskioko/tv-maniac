@@ -97,3 +97,8 @@ derived_data/
 
 #.junie/*
 /.junie/guidelines.md
+
+# Configuration files with secrets
+**/dev.yaml
+**/prod.yaml
+!**/*.yaml.template
