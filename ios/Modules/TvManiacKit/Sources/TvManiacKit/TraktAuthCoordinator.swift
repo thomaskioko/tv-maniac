@@ -7,9 +7,17 @@ import UIKit
 public class TraktAuthCoordinator: NSObject {
     private let oauthClient: TraktOAuthClient
     private let authRepository: TraktAuthRepository
+    private let logger: Logger
 
-    public init(authRepository: TraktAuthRepository, clientId: String, clientSecret: String, redirectURL: URL) {
+    public init(
+        authRepository: TraktAuthRepository,
+        logger: Logger,
+        clientId: String,
+        clientSecret: String,
+        redirectURL: URL
+    ) {
         self.authRepository = authRepository
+        self.logger = logger
 
         let oauthConfig = TraktAuthConfiguration.trakt(
             clientId: clientId,
@@ -38,19 +46,28 @@ public class TraktAuthCoordinator: NSObject {
                     presentingViewController: rootViewController
                 )
 
-                try? await authRepository.saveTokens(
+                try await authRepository.saveTokens(
                     accessToken: credential.accessToken,
                     refreshToken: credential.refreshToken,
                     expiresAtSeconds: credential.expiresAt.map { KotlinLong(value: Int64($0.timeIntervalSince1970)) }
                 )
 
             } catch let error as TraktAuthError {
-                let authError = mapToKMPError(error)
-                try? await authRepository.setAuthError(error: authError)
+                logger.error(tag: "TraktAuthCoordinator", message: "OAuth authorization failed: \(String(describing: error))")
+                await handleAuthError(mapToKMPError(error))
 
             } catch {
-                try? await authRepository.setAuthError(error: AuthError.Unknown())
+                logger.error(tag: "TraktAuthCoordinator", message: "Authorization or token save failed: \(error.localizedDescription)")
+                await handleAuthError(AuthError.Unknown())
             }
+        }
+    }
+
+    private func handleAuthError(_ error: AuthError) async {
+        do {
+            try await authRepository.setAuthError(error: error)
+        } catch {
+            logger.error(tag: "TraktAuthCoordinator", message: "Failed to persist auth error state: \(error.localizedDescription)")
         }
     }
 

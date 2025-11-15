@@ -32,7 +32,8 @@ public struct TabBarView: View {
                     case let .settings(screen):
                         SettingsTab(
                             presenter: screen.presenter,
-                            authRepository: appDelegate.traktAuthRepository
+                            authRepository: appDelegate.traktAuthRepository,
+                            logger: appDelegate.logger
                         )
                         .id(ObjectIdentifier(screen))
                     }

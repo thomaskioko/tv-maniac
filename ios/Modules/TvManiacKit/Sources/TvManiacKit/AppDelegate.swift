@@ -21,6 +21,7 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
     )
 
     public lazy var traktAuthRepository = appComponent.traktAuthRepository
+    public lazy var logger = appComponent.logger
 
     override public init() {
         super.init()
