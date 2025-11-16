@@ -15,7 +15,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/SDWebImage/SDWebImageSwiftUI.git", from: "3.1.3"),
+        .package(url: "https://github.com/SDWebImage/SDWebImageSwiftUI.git", from: "3.1.4"),
         .package(url: "https://github.com/SvenTiigi/YouTubePlayerKit.git", from: "2.0.4"),
         .package(name: "SnapshotTestingLib", path: "../SnapshotTestingLib"),
     ],
