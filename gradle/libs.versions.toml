@@ -25,8 +25,9 @@ androidx-material3 = "1.4.0"
 androidx-palette = "1.0.0"
 androidx-paging = "3.3.6"
 androidx-savedstate = "1.4.0"
+androidx-security-crypto = "1.1.0-alpha06"
 appauth = "0.11.1"
-app-gradle-plugins = "0.3.2"
+app-gradle-plugins = "0.4.0"
 atomicfu = "0.29.0"
 baselineprofile = "1.4.1"
 benchmarkMacroJunit4 = "1.4.1"
@@ -66,7 +67,6 @@ sqldelight = "2.1.0"
 spotless = "8.0.0"
 store5 = "5.0.0"
 turbine = "1.2.1"
-yamlkt = "0.13.0"
 youtubePlayer = "13.0.0"
 ktlint = "1.4.0"
 
@@ -100,6 +100,7 @@ androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", 
 androidx-paging-common = { group = "androidx.paging", name = "paging-common", version.ref = "androidx-paging" }
 androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
 androidx-savedstate = { group = "androidx.savedstate", name = "savedstate", version.ref = "androidx-savedstate" }
+androidx-security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "androidx-security-crypto" }
 androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junit" }
 androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileinstaller" }
@@ -171,7 +172,6 @@ store5 = { module = "org.mobilenativefoundation.store:store5", version.ref = "st
 
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
-yamlkt = { module = "net.mamoe.yamlkt:yamlkt", version.ref = "yamlkt" }
 youtubePlayer = { module = "com.pierfrancescosoffritti.androidyoutubeplayer:core", version.ref = "youtubePlayer" }
 
 [plugins]
@@ -196,6 +196,7 @@ spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 app-application = { id = "io.github.thomaskioko.gradle.plugins.app", version.ref = "app-gradle-plugins" }
 app-android = { id = "io.github.thomaskioko.gradle.plugins.android", version.ref = "app-gradle-plugins" }
 app-baseline-profile = { id = "io.github.thomaskioko.gradle.plugins.baseline.profile", version.ref = "app-gradle-plugins" }
+app-buildconfig = { id = "io.github.thomaskioko.gradle.plugins.buildconfig", version.ref = "app-gradle-plugins" }
 app-kmp = { id = "io.github.thomaskioko.gradle.plugins.multiplatform", version.ref = "app-gradle-plugins" }
 app-root = { id = "io.github.thomaskioko.gradle.plugins.root", version.ref = "app-gradle-plugins" }
 app-resource-generator = { id = "io.github.thomaskioko.gradle.plugins.resource.generator", version.ref = "app-gradle-plugins" }

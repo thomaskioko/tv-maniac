@@ -2,8 +2,8 @@ package com.thomaskioko.tvmaniac.traktauth.implementation
 
 import android.app.Application
 import androidx.core.net.toUri
+import com.thomaskioko.tvmaniac.buildconfig.api.BuildConfig
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
-import com.thomaskioko.tvmaniac.core.base.model.Configs
 import me.tatarka.inject.annotations.Provides
 import net.openid.appauth.AuthorizationRequest
 import net.openid.appauth.AuthorizationService
@@ -30,19 +30,18 @@ interface TraktAuthAndroidComponent {
     @SingleIn(ActivityScope::class)
     fun provideAuthRequest(
         configuration: AuthorizationServiceConfiguration,
-        configs: Configs,
     ): AuthorizationRequest = AuthorizationRequest.Builder(
         configuration,
-        configs.traktClientId,
+        BuildConfig.TRAKT_CLIENT_ID,
         ResponseTypeValues.CODE,
-        configs.traktRedirectUri.toUri(),
+        BuildConfig.TRAKT_REDIRECT_URI.toUri(),
     )
         .apply { setCodeVerifier(null) }
         .build()
 
     @Provides
-    fun provideClientAuth(configs: Configs): ClientAuthentication =
-        ClientSecretBasic(configs.traktClientSecret)
+    fun provideClientAuth(): ClientAuthentication =
+        ClientSecretBasic(BuildConfig.TRAKT_CLIENT_SECRET)
 
     @Provides
     @SingleIn(ActivityScope::class)

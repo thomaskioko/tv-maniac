@@ -15,6 +15,7 @@ scaffold {
             freeCompilerArgs += if (debuggable) "-Xadd-light-debug=enable" else ""
             freeCompilerArgs += listOf("-Xbinary=bundleId=Kotlin", "-Xexport-kdoc")
 
+            export(projects.core.buildconfig.api)
             export(projects.i18n.api)
             export(projects.core.logger.api)
             export(projects.navigation.api)
@@ -42,6 +43,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                api(projects.core.buildconfig.api)
                 api(projects.i18n.api)
                 api(projects.navigation.api)
                 api(projects.presenter.discover)
@@ -59,6 +61,7 @@ kotlin {
                 implementation(projects.api.trakt.api)
                 implementation(projects.api.trakt.implementation)
                 implementation(projects.core.base)
+                implementation(projects.core.buildconfig.implementation)
                 implementation(projects.core.locale.api)
                 implementation(projects.core.locale.implementation)
                 implementation(projects.core.logger.api)

@@ -9,12 +9,7 @@
 /* Begin PBXBuildFile section */
 		D60D952B2CDBE1160039884B /* TvManiacKit in Frameworks */ = {isa = PBXBuildFile; productRef = D60D952A2CDBE1160039884B /* TvManiacKit */; };
 		D60F8D272EC8060C00916042 /* TraktAuthKit in Frameworks */ = {isa = PBXBuildFile; productRef = D60F8D262EC8060C00916042 /* TraktAuthKit */; };
-		D60FA3B32DE8B2C500AB4DFA /* dev.yaml in Resources */ = {isa = PBXBuildFile; fileRef = D60FA3B12DE8B2C500AB4DFA /* dev.yaml */; };
-		D60FA3B42DE8B2C500AB4DFB /* production.yaml in Resources */ = {isa = PBXBuildFile; fileRef = D60FA3B22DE8B2C500AB4DFB /* production.yaml */; };
 		D636CE4D2B4487B1003F7876 /* MoreShowsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D636CE4C2B4487B1003F7876 /* MoreShowsView.swift */; };
-		D653925329DABCEA000EE673 /* ConfigLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653925229DABCEA000EE673 /* ConfigLoader.swift */; };
-		D653925529DABD04000EE673 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653925429DABD04000EE673 /* Config.swift */; };
-		D653925729DABD8F000EE673 /* ApplicationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653925629DABD8F000EE673 /* ApplicationError.swift */; };
 		D6619D372C89D37900D273E7 /* SwiftUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = D6619D362C89D37900D273E7 /* SwiftUIComponents */; };
 		D6619D382C89D37A00D273E8 /* config-dev.json in Resources */ = {isa = PBXBuildFile; fileRef = D6619D392C89D37A00D273E8 /* config-dev.json */; };
 		D6619D3A2C89D37A00D273E9 /* config-prod.json in Resources */ = {isa = PBXBuildFile; fileRef = D6619D3B2C89D37A00D273E9 /* config-prod.json */; };
@@ -37,14 +32,7 @@
 /* Begin PBXFileReference section */
 		7555FF7B242A565900829871 /* tv-maniac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "tv-maniac.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D60FA3B12DE8B2C500AB4DFA /* dev.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = dev.yaml; sourceTree = "<group>"; };
-		D60FA3B22DE8B2C500AB4DFB /* production.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = production.yaml; sourceTree = "<group>"; };
 		D636CE4C2B4487B1003F7876 /* MoreShowsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreShowsView.swift; sourceTree = "<group>"; };
-		D653925229DABCEA000EE673 /* ConfigLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigLoader.swift; sourceTree = "<group>"; };
-		D653925429DABD04000EE673 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
-		D653925629DABD8F000EE673 /* ApplicationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationError.swift; sourceTree = "<group>"; };
-		D653925929DABCF2000EE674 /* Development.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Development.xcconfig; sourceTree = "<group>"; };
-		D653925A29DABCF3000EE675 /* Production.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Production.xcconfig; sourceTree = "<group>"; };
 		D6619D392C89D37A00D273E8 /* config-dev.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "config-dev.json"; sourceTree = "<group>"; };
 		D6619D3B2C89D37A00D273E9 /* config-prod.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "config-prod.json"; sourceTree = "<group>"; };
 		E9AC834B26CEE00D00829A0D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -96,21 +84,10 @@
 				D6619D3B2C89D37A00D273E9 /* config-prod.json */,
 				7555FF8C242A565B00829871 /* Info.plist */,
 				D65009DC2CF644BE00394D67 /* App */,
-				D653925129DABCBA000EE673 /* Configuration */,
-				D628B5BE2A0C165400015E45 /* Resources */,
 				D6FE248E2D060E7200AB7700 /* UI */,
 				D68FFDDE2B21162A001EB447 /* View */,
 			);
 			path = ios;
-			sourceTree = "<group>";
-		};
-		D628B5BE2A0C165400015E45 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				D60FA3B12DE8B2C500AB4DFA /* dev.yaml */,
-				D60FA3B22DE8B2C500AB4DFB /* production.yaml */,
-			);
-			path = Resources;
 			sourceTree = "<group>";
 		};
 		D636CE4B2B44878F003F7876 /* MoreShows */ = {
@@ -119,26 +96,6 @@
 				D636CE4C2B4487B1003F7876 /* MoreShowsView.swift */,
 			);
 			path = MoreShows;
-			sourceTree = "<group>";
-		};
-		D653925129DABCBA000EE673 /* Configuration */ = {
-			isa = PBXGroup;
-			children = (
-				D653925229DABCEA000EE673 /* ConfigLoader.swift */,
-				D653925429DABD04000EE673 /* Config.swift */,
-				D653925629DABD8F000EE673 /* ApplicationError.swift */,
-				D653925B29DABCF4000EE676 /* XCConfig */,
-			);
-			path = Configuration;
-			sourceTree = "<group>";
-		};
-		D653925B29DABCF4000EE676 /* XCConfig */ = {
-			isa = PBXGroup;
-			children = (
-				D653925929DABCF2000EE674 /* Development.xcconfig */,
-				D653925A29DABCF3000EE675 /* Production.xcconfig */,
-			);
-			path = XCConfig;
 			sourceTree = "<group>";
 		};
 		D6619D2A2C8738F200D273E7 /* Frameworks */ = {
@@ -230,8 +187,6 @@
 			files = (
 				D6619D382C89D37A00D273E8 /* config-dev.json in Resources */,
 				D6619D3A2C89D37A00D273E9 /* config-prod.json in Resources */,
-				D60FA3B32DE8B2C500AB4DFA /* dev.yaml in Resources */,
-				D60FA3B42DE8B2C500AB4DFB /* production.yaml in Resources */,
 				E9AC834C26CEE00D00829A0D /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -263,10 +218,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D653925329DABCEA000EE673 /* ConfigLoader.swift in Sources */,
 				D636CE4D2B4487B1003F7876 /* MoreShowsView.swift in Sources */,
-				D653925529DABD04000EE673 /* Config.swift in Sources */,
-				D653925729DABD8F000EE673 /* ApplicationError.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,7 +227,6 @@
 /* Begin XCBuildConfiguration section */
 		7555FFA3242A565B00829871 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D653925929DABCF2000EE674 /* Development.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -353,7 +304,6 @@
 		};
 		7555FFA4242A565B00829871 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D653925A29DABCF3000EE675 /* Production.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -424,7 +374,6 @@
 		};
 		7555FFA6242A565B00829871 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D653925929DABCF2000EE674 /* Development.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(EMBEDDED_CONTENT_CONTAINS_SWIFT)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -471,7 +420,6 @@
 		};
 		7555FFA7242A565B00829871 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D653925A29DABCF3000EE675 /* Production.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(EMBEDDED_CONTENT_CONTAINS_SWIFT)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;

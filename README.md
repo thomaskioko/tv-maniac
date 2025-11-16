@@ -34,32 +34,17 @@ probably doing a couple of things wrong. So a lot is changing, but that shouldn'
 > - Set the **Redirect URI** to: `tvmaniac://callback`
 > - Copy your **Client ID** and **Client Secret**
 >
-> #### 3. Configuration Files
-> Each platform has separate configuration files for development and production builds:
+> #### 3. Add to local.properties
+> Create a `local.properties` file in the project root (if it doesn't exist) and add your credentials:
 >
-> **Android Development:**
-> ```bash
-> cp core/util/src/androidMain/resources/dev.yaml.template core/util/src/androidMain/resources/dev.yaml
+> ```properties
+> TMDB_API_KEY=your_tmdb_api_key_here
+> TRAKT_CLIENT_ID=your_trakt_client_id_here
+> TRAKT_CLIENT_SECRET=your_trakt_client_secret_here
+> TRAKT_REDIRECT_URI=tvmaniac://callback
 > ```
-> Then edit `core/util/src/androidMain/resources/dev.yaml` with your development credentials.
 >
-> **Android Production:**
-> ```bash
-> cp core/util/src/androidMain/resources/prod.yaml.template core/util/src/androidMain/resources/prod.yaml
-> ```
-> Then edit `core/util/src/androidMain/resources/prod.yaml` with your production credentials.
->
-> **iOS Development:**
-> ```bash
-> cp ios/ios/Resources/dev.yaml.template ios/ios/Resources/dev.yaml
-> ```
-> Then edit `ios/ios/Resources/dev.yaml` with your development credentials.
->
-> **iOS Production:**
-> ```bash
-> cp ios/ios/Resources/prod.yaml.template ios/ios/Resources/prod.yaml
-> ```
-> Then edit `ios/ios/Resources/prod.yaml` with your production credentials.
+> **For CI/CD:** Set these as environment variables with the same names.
 >
 
 ## 🖥 Project Setup & Environment
@@ -180,7 +165,7 @@ Shared
 - [ ] Fix paging
 - [x] Add test cases.
 - [ ] Improve error handling.
-- [ ] Improve YAML credential setup
+- [x] Migrate to BuildConfig for unified configuration
 
 ### References & Inspiration
 

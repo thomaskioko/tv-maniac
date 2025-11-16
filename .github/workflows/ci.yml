@@ -17,16 +17,15 @@ env:
     SPM_CACHE_PATH: |
         ~/Library/Caches/org.swift.swiftpm
         ~/Library/Developer/Xcode/DerivedData
+    TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+    TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
+    TRAKT_CLIENT_SECRET: ${{ secrets.TRAKT_CLIENT_SECRET }}
+    TRAKT_REDIRECT_URI: ${{ secrets.TRAKT_REDIRECT_URI }}
 
 jobs:
     build-android:
         runs-on: ubuntu-latest
         env:
-            TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
-            TMDB_API_URL: ${{ secrets.TMDB_API_URL }}
-            TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
-            TRAKT_CLIENT_SECRET: ${{ secrets.TRAKT_CLIENT_SECRET }}
-            TRAKT_REDIRECT_URI: ${{ secrets.TRAKT_REDIRECT_URI }}
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
         steps:
@@ -41,24 +40,6 @@ jobs:
 
             -   name: 🐘 Setup Gradle
                 uses: gradle/actions/setup-gradle@v5
-
-            -   name: Add App Secrets
-                run: |
-                    echo "TMDB_API_KEY=$TMDB_API_KEY" >> ./local.properties
-                    echo "TMDB_API_URL=$TMDB_API_URL" >> ./local.properties
-                    echo "TRAKT_CLIENT_ID=$TRAKT_CLIENT_ID" >> ./local.properties
-                    echo "TRAKT_CLIENT_SECRET=$TRAKT_CLIENT_SECRET" >> ./local.properties
-                    echo "TRAKT_REDIRECT_URI=$TRAKT_REDIRECT_URI" >> ./local.properties
-
-            -   name: 🔑 Create Android Configuration File
-                run: |
-                    cat > core/util/src/androidMain/resources/dev.yaml << EOF
-                    isDebug: true
-                    tmdbApiKey: "$TMDB_API_KEY"
-                    traktClientId: "$TRAKT_CLIENT_ID"
-                    traktClientSecret: "$TRAKT_CLIENT_SECRET"
-                    traktRedirectUri: "$TRAKT_REDIRECT_URI"
-                    EOF
 
             -   name: 🤖 Build Android App
                 run: |
@@ -156,11 +137,6 @@ jobs:
 
     common-ios-test:
         runs-on: macos-latest
-        env:
-            TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
-            TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
-            TRAKT_CLIENT_SECRET: ${{ secrets.TRAKT_CLIENT_SECRET }}
-            TRAKT_REDIRECT_URI: ${{ secrets.TRAKT_REDIRECT_URI }}
 
         steps:
             -   name: Checkout
@@ -174,26 +150,6 @@ jobs:
 
             -   name: 🐘 Setup Gradle
                 uses: gradle/actions/setup-gradle@v5
-
-            -   name: 🔑 Create iOS Configuration File
-                run: |
-                    cat > ios/ios/Resources/dev.yaml << EOF
-                    isDebug: true
-                    tmdbApiKey: "$TMDB_API_KEY"
-                    traktClientId: "$TRAKT_CLIENT_ID"
-                    traktClientSecret: "$TRAKT_CLIENT_SECRET"
-                    traktRedirectUri: "$TRAKT_REDIRECT_URI"
-                    EOF
-
-            -   name: 🔑 Create Android Configuration File
-                run: |
-                    cat > core/util/src/androidMain/resources/dev.yaml << EOF
-                    isDebug: true
-                    tmdbApiKey: "$TMDB_API_KEY"
-                    traktClientId: "$TRAKT_CLIENT_ID"
-                    traktClientSecret: "$TRAKT_CLIENT_SECRET"
-                    traktRedirectUri: "$TRAKT_REDIRECT_URI"
-                    EOF
 
             -   name: Run Common iOS Unit Tests
                 run: ./gradlew clean iosSimulatorArm64Test -Papp.enableIos=true -Papp.debugOnly=false
@@ -210,10 +166,6 @@ jobs:
         timeout-minutes: 60
         env:
             FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
-            TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
-            TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
-            TRAKT_CLIENT_SECRET: ${{ secrets.TRAKT_CLIENT_SECRET }}
-            TRAKT_REDIRECT_URI: ${{ secrets.TRAKT_REDIRECT_URI }}
 
         steps:
             -   name: 🚚 Checkout project
@@ -239,26 +191,6 @@ jobs:
 
             -   name: 🐘 Setup Gradle
                 uses: gradle/actions/setup-gradle@v5
-
-            -   name: 🔑 Create iOS Configuration File
-                run: |
-                    cat > ios/ios/Resources/dev.yaml << EOF
-                    isDebug: true
-                    tmdbApiKey: "$TMDB_API_KEY"
-                    traktClientId: "$TRAKT_CLIENT_ID"
-                    traktClientSecret: "$TRAKT_CLIENT_SECRET"
-                    traktRedirectUri: "$TRAKT_REDIRECT_URI"
-                    EOF
-
-            -   name: 🔑 Create Android Configuration File
-                run: |
-                    cat > core/util/src/androidMain/resources/dev.yaml << EOF
-                    isDebug: true
-                    tmdbApiKey: "$TMDB_API_KEY"
-                    traktClientId: "$TRAKT_CLIENT_ID"
-                    traktClientSecret: "$TRAKT_CLIENT_SECRET"
-                    traktRedirectUri: "$TRAKT_REDIRECT_URI"
-                    EOF
 
             -   name: 🧹 Clear Derived Data
                 run: bundle exec fastlane clear_derived_data_lane
@@ -307,10 +239,6 @@ jobs:
         timeout-minutes: 60
         env:
             FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
-            TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
-            TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
-            TRAKT_CLIENT_SECRET: ${{ secrets.TRAKT_CLIENT_SECRET }}
-            TRAKT_REDIRECT_URI: ${{ secrets.TRAKT_REDIRECT_URI }}
 
         steps:
             -   name: 🚚 Checkout project
@@ -339,26 +267,6 @@ jobs:
 
             -   name: 🐘 Setup Gradle
                 uses: gradle/actions/setup-gradle@v5
-
-            -   name: 🔑 Create iOS Configuration File
-                run: |
-                    cat > ios/ios/Resources/dev.yaml << EOF
-                    isDebug: true
-                    tmdbApiKey: "$TMDB_API_KEY"
-                    traktClientId: "$TRAKT_CLIENT_ID"
-                    traktClientSecret: "$TRAKT_CLIENT_SECRET"
-                    traktRedirectUri: "$TRAKT_REDIRECT_URI"
-                    EOF
-
-            -   name: 🔑 Create Android Configuration File
-                run: |
-                    cat > core/util/src/androidMain/resources/dev.yaml << EOF
-                    isDebug: true
-                    tmdbApiKey: "$TMDB_API_KEY"
-                    traktClientId: "$TRAKT_CLIENT_ID"
-                    traktClientSecret: "$TRAKT_CLIENT_SECRET"
-                    traktRedirectUri: "$TRAKT_REDIRECT_URI"
-                    EOF
 
             -   name: Install dependencies with Bundler
                 run: bundle install

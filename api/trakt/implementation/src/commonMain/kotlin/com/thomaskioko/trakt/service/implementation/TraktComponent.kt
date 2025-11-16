@@ -1,6 +1,6 @@
 package com.thomaskioko.trakt.service.implementation
 
-import com.thomaskioko.tvmaniac.core.base.model.Configs
+import com.thomaskioko.tvmaniac.buildconfig.api.BuildConfig
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import io.ktor.client.HttpClient
@@ -26,18 +26,16 @@ interface TraktComponent {
 
     @Provides
     fun provideHttpClient(
-        configs: Configs,
         json: TraktJson,
         httpClientEngine: TraktHttpClientEngine,
         logger: Logger,
         traktAuthRepository: TraktAuthRepository,
-    ): TraktHttpClient =
-        traktHttpClient(
-            isDebug = configs.isDebug,
-            traktClientId = configs.traktClientId,
-            json = json,
-            httpClientEngine = httpClientEngine,
-            kermitLogger = logger,
-            traktAuthRepository = { traktAuthRepository },
-        )
+    ): TraktHttpClient = traktHttpClient(
+        isDebug = BuildConfig.IS_DEBUG,
+        traktClientId = BuildConfig.TRAKT_CLIENT_ID,
+        json = json,
+        httpClientEngine = httpClientEngine,
+        kermitLogger = logger,
+        traktAuthRepository = { traktAuthRepository },
+    )
 }

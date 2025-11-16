@@ -1,7 +1,0 @@
-// Development.xcconfig
-// Configuration settings for the development environment
-
-// Required settings
-BUNDLE_ID = com.thomaskioko.tvmaniac.dev
-APP_NAME = TV Maniac Dev
-APPICON_NAME = AppIcon

@@ -1,7 +1,0 @@
-// Production.xcconfig
-// Configuration settings for the production environment
-
-// Required settings
-BUNDLE_ID = com.thomaskioko.tvmaniac
-APP_NAME = TV Maniac
-APPICON_NAME = AppIcon
