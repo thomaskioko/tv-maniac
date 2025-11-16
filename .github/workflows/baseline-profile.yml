@@ -4,6 +4,12 @@ on:
   schedule:
     - cron: '30 0 * * 0,3,5' #Every Sunday, Wednesday, and Friday at 12:30AM
 
+env:
+  TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+  TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
+  TRAKT_CLIENT_SECRET: ${{ secrets.TRAKT_CLIENT_SECRET }}
+  TRAKT_REDIRECT_URI: ${{ secrets.TRAKT_REDIRECT_URI }}
+
 jobs:
   baseline_profiles:
     name: "Generate Baseline Profiles"
@@ -24,16 +30,10 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      - name: Setup JDK
-        uses: actions/setup-java@v5
+      - name: Setup Gradle Environment
+        uses: ./.github/actions/setup-gradle
         with:
-          distribution: 'temurin'
-          java-version: 21
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
-        with:
-          cache-disabled: true
+          gradle-cache-disabled: 'true'
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
