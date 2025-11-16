@@ -10,7 +10,7 @@ java-target = "21"
 java-toolchain = "21"
 
 agp = "8.13.0"
-android-lint = "31.13.0"
+android-lint = "31.13.1"
 androidx-activity = "1.11.0"
 androidx-annotation = "1.9.1"
 androidx-browser = "1.9.0"
