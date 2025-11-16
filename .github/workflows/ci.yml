@@ -17,16 +17,15 @@ env:
     SPM_CACHE_PATH: |
         ~/Library/Caches/org.swift.swiftpm
         ~/Library/Developer/Xcode/DerivedData
+    TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+    TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
+    TRAKT_CLIENT_SECRET: ${{ secrets.TRAKT_CLIENT_SECRET }}
+    TRAKT_REDIRECT_URI: ${{ secrets.TRAKT_REDIRECT_URI }}
 
 jobs:
     build-android:
         runs-on: ubuntu-latest
         env:
-            TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
-            TMDB_API_URL: ${{ secrets.TMDB_API_URL }}
-            TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
-            TRAKT_CLIENT_SECRET: ${{ secrets.TRAKT_CLIENT_SECRET }}
-            TRAKT_REDIRECT_URI: ${{ secrets.TRAKT_REDIRECT_URI }}
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
         steps:
@@ -138,11 +137,6 @@ jobs:
 
     common-ios-test:
         runs-on: macos-latest
-        env:
-            TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
-            TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
-            TRAKT_CLIENT_SECRET: ${{ secrets.TRAKT_CLIENT_SECRET }}
-            TRAKT_REDIRECT_URI: ${{ secrets.TRAKT_REDIRECT_URI }}
 
         steps:
             -   name: Checkout
@@ -172,10 +166,6 @@ jobs:
         timeout-minutes: 60
         env:
             FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
-            TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
-            TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
-            TRAKT_CLIENT_SECRET: ${{ secrets.TRAKT_CLIENT_SECRET }}
-            TRAKT_REDIRECT_URI: ${{ secrets.TRAKT_REDIRECT_URI }}
 
         steps:
             -   name: 🚚 Checkout project
@@ -249,10 +239,6 @@ jobs:
         timeout-minutes: 60
         env:
             FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
-            TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
-            TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
-            TRAKT_CLIENT_SECRET: ${{ secrets.TRAKT_CLIENT_SECRET }}
-            TRAKT_REDIRECT_URI: ${{ secrets.TRAKT_REDIRECT_URI }}
 
         steps:
             -   name: 🚚 Checkout project
