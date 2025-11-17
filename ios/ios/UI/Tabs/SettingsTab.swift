@@ -20,17 +20,9 @@ struct SettingsTab: View {
     init(presenter: SettingsPresenter, authRepository: TraktAuthRepository, logger: Logger) {
         self.presenter = presenter
         _uiState = .init(presenter.state)
-
-        guard let redirectURL = URL(string: BuildConfig.shared.TRAKT_REDIRECT_URI) else {
-            fatalError("Invalid Trakt redirect URI in BuildConfig")
-        }
-
-        authCoordinator = TraktAuthCoordinator(
+        authCoordinator = AuthCoordinatorFactory.create(
             authRepository: authRepository,
-            logger: logger,
-            clientId: BuildConfig.shared.TRAKT_CLIENT_ID,
-            clientSecret: BuildConfig.shared.TRAKT_CLIENT_SECRET,
-            redirectURL: redirectURL
+            logger: logger
         )
     }
 
