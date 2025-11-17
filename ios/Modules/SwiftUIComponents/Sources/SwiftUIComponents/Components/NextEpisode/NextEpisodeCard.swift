@@ -46,12 +46,12 @@ public struct NextEpisodeCard: View {
                     .indicator(.activity)
                     .transition(.opacity)
                     .scaledToFill()
-                    .frame(width: 300, height: 200)
+                    .frame(width: DimensionConstants.imageWidth, height: DimensionConstants.imageHeight)
                     .clipped()
                 } else {
                     Rectangle()
                         .fill(Color.gray.opacity(0.3))
-                        .frame(width: 300, height: 200)
+                        .frame(width: DimensionConstants.imageWidth, height: DimensionConstants.imageHeight)
                         .overlay(
                             Image(systemName: "tv")
                                 .font(.title)
@@ -67,7 +67,7 @@ public struct NextEpisodeCard: View {
                     startPoint: .top,
                     endPoint: .bottom
                 )
-                .frame(width: 300, height: 200)
+                .frame(width: DimensionConstants.imageWidth, height: DimensionConstants.imageHeight)
 
                 if let runtime = episode.runtime {
                     VStack {
@@ -108,10 +108,15 @@ public struct NextEpisodeCard: View {
             }
         }
         .buttonStyle(PlainButtonStyle())
-        .frame(width: 300, height: 200)
+        .frame(width: DimensionConstants.imageWidth, height: DimensionConstants.imageHeight)
         .cornerRadius(8)
         .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)
     }
+}
+
+private enum DimensionConstants {
+    static let imageWidth: CGFloat = 300
+    static let imageHeight: CGFloat = 180
 }
 
 #Preview {
