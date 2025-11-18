@@ -10,7 +10,6 @@ interface SettingsPresenter {
     interface Factory {
         operator fun invoke(
             componentContext: ComponentContext,
-            launchWebView: () -> Unit,
         ): SettingsPresenter
     }
 }

@@ -15,15 +15,10 @@ struct SettingsTab: View {
     @Environment(\.openURL) var openURL
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject private var appDelegate: AppDelegate
-    private let authCoordinator: TraktAuthCoordinator
 
-    init(presenter: SettingsPresenter, authRepository: TraktAuthRepository, logger: Logger) {
+    init(presenter: SettingsPresenter) {
         self.presenter = presenter
         _uiState = .init(presenter.state)
-        authCoordinator = AuthCoordinatorFactory.create(
-            authRepository: authRepository,
-            logger: logger
-        )
     }
 
     @ViewBuilder
@@ -125,41 +120,37 @@ struct SettingsTab: View {
 
     @ViewBuilder
     private var traktSection: some View {
-        Section(String(\.label_settings_section_trakt_account)) {
-            HStack {
-                Button {
-                    showingAlert = true
-                } label: {
-                    settingsLabel(
-                        title: uiState.isAuthenticated ? String(\.logout) : String(\.label_settings_trakt_connect),
-                        icon: "person.fill",
-                        color: Color.accent
-                    )
-                }
-                .buttonStyle(.plain)
+        if uiState.isAuthenticated {
+            Section(String(\.label_settings_section_trakt_account)) {
+                HStack {
+                    Button {
+                        showingAlert = true
+                    } label: {
+                        HStack {
+                            ZStack {
+                                Rectangle()
+                                    .fill(Color.red)
+                                    .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                                Image(systemName: "person.fill")
+                                    .foregroundColor(.white)
+                            }
+                            .frame(width: 30, height: 30, alignment: .center)
+                            .padding(.trailing, 8)
+                            .accessibilityHidden(true)
 
-                if uiState.isLoading {
-                    Spacer()
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle())
+                            Text(String(\.logout))
+                                .foregroundColor(.red)
+                        }
+                        .padding(.vertical, 2)
+                    }
+                    .buttonStyle(.plain)
                 }
-            }
-            .alert(isPresented: $showingAlert) {
-                if uiState.isAuthenticated {
+                .alert(isPresented: $showingAlert) {
                     Alert(
                         title: Text(String(\.trakt_dialog_logout_title)),
                         message: Text(String(\.trakt_dialog_logout_message)),
                         primaryButton: .destructive(Text(String(\.logout))) {
                             presenter.dispatch(action: TraktLogoutClicked())
-                        },
-                        secondaryButton: .cancel()
-                    )
-                } else {
-                    Alert(
-                        title: Text(String(\.trakt_dialog_login_title)),
-                        message: Text(String(\.trakt_dialog_login_message)),
-                        primaryButton: .default(Text(String(\.login))) {
-                            authCoordinator.initiateAuthorization()
                         },
                         secondaryButton: .cancel()
                     )
@@ -223,8 +214,8 @@ struct SettingsTab: View {
         Form {
             themeSection
             behaviorSection
-            traktSection
             infoSection
+            traktSection
         }
         .scrollContentBackground(.hidden)
         .background(Color.backgroundColor)

@@ -19,8 +19,6 @@ data object DismissTraktDialog : SettingsActions()
 
 data object TraktLogoutClicked : SettingsActions()
 
-data object TraktLoginClicked : SettingsActions()
-
 data object ShowImageQualityDialog : SettingsActions()
 
 data object DismissImageQualityDialog : SettingsActions()
