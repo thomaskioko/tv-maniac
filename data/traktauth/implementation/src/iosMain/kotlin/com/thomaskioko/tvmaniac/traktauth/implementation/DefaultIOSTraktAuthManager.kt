@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.traktauth.implementation
 
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
-import kotlin.concurrent.Volatile
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
+import kotlin.concurrent.Volatile
 
 @Inject
 @SingleIn(AppScope::class)
