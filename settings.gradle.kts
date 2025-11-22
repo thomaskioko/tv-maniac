@@ -151,6 +151,7 @@ include(
     ":domain:discover",
     ":domain:episode",
     ":domain:genre",
+    ":domain:logout",
     ":domain:recommendedshows",
     ":domain:seasondetails",
     ":domain:showdetails",
