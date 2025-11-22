@@ -1,0 +1,22 @@
+-- Migration 7: Stats table schema overhaul and user table creation
+
+-- Drop old stats table with text-based columns (months, days, hours, collected_shows, episodes_watched)
+DROP TABLE IF EXISTS stats;
+
+-- Create new stats table with integer-based columns (shows_watched, episodes_watched, minutes_watched)
+CREATE TABLE stats(
+    slug TEXT NOT NULL PRIMARY KEY,
+    shows_watched INTEGER NOT NULL DEFAULT 0,
+    episodes_watched INTEGER NOT NULL DEFAULT 0,
+    minutes_watched INTEGER NOT NULL DEFAULT 0
+);
+
+-- Create user table for profile data (new table in this migration)
+CREATE TABLE IF NOT EXISTS user (
+    slug TEXT NOT NULL PRIMARY KEY,
+    user_name Text NOT NULL,
+    full_name TEXT,
+    profile_picture TEXT,
+    background_url TEXT,
+    is_me INTEGER AS Boolean NOT NULL DEFAULT 0
+);
