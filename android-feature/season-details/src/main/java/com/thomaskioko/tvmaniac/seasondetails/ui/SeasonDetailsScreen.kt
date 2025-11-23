@@ -64,6 +64,7 @@ import com.thomaskioko.tvmaniac.compose.components.SheetDragHandle
 import com.thomaskioko.tvmaniac.compose.components.ShowLinearProgressIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
+import com.thomaskioko.tvmaniac.compose.components.actionIconWhen
 import com.thomaskioko.tvmaniac.compose.extensions.contentBackgroundGradient
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
@@ -175,7 +176,7 @@ internal fun SeasonDetailsScreen(
                             tint = MaterialTheme.colorScheme.onBackground,
                         )
                     },
-                    actionIcon = {
+                    actionIcon = actionIconWhen(state.message != null) {
                         Icon(
                             imageVector = Icons.Default.Refresh,
                             contentDescription = null,
@@ -183,7 +184,6 @@ internal fun SeasonDetailsScreen(
                         )
                     },
                     isRefreshing = state.isUpdating,
-                    showActionIcon = state.message != null,
                     onNavIconClicked = { onAction(SeasonDetailsBackClicked) },
                     onActionIconClicked = { onAction(ReloadSeasonDetails) },
                 )

@@ -85,6 +85,7 @@ import com.thomaskioko.tvmaniac.compose.components.TextLoadingItem
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
 import com.thomaskioko.tvmaniac.compose.components.TvManiacChip
+import com.thomaskioko.tvmaniac.compose.components.actionIconWhen
 import com.thomaskioko.tvmaniac.compose.extensions.contentBackgroundGradient
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
@@ -218,7 +219,7 @@ internal fun ShowDetailsScreen(
                             tint = MaterialTheme.colorScheme.onBackground,
                         )
                     },
-                    actionIcon = {
+                    actionIcon = actionIconWhen(state.message == null) {
                         Icon(
                             imageVector = Icons.Default.Refresh,
                             contentDescription = null,
@@ -226,7 +227,6 @@ internal fun ShowDetailsScreen(
                         )
                     },
                     isRefreshing = state.isRefreshing,
-                    showActionIcon = state.message == null,
                     onNavIconClicked = { onAction(DetailBackClicked) },
                     onActionIconClicked = { onAction(ReloadShowDetails) },
                 )
