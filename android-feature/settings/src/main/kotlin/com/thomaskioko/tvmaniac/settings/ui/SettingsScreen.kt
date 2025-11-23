@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Person
@@ -54,6 +55,7 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
+import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_back
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_high
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_high_description
@@ -78,6 +80,7 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_dialog_logout_message
 import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_dialog_logout_title
 import com.thomaskioko.tvmaniac.i18n.resolve
+import com.thomaskioko.tvmaniac.settings.presenter.BackClicked
 import com.thomaskioko.tvmaniac.settings.presenter.ChangeThemeClicked
 import com.thomaskioko.tvmaniac.settings.presenter.DismissImageQualityDialog
 import com.thomaskioko.tvmaniac.settings.presenter.DismissThemeClicked
@@ -117,6 +120,16 @@ internal fun SettingsScreen(
     Scaffold(
         topBar = {
             TvManiacTopBar(
+                navigationIcon = {
+                    Icon(
+                        modifier = Modifier
+                            .clickable(onClick = { onAction(BackClicked) })
+                            .padding(16.dp),
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = cd_back.resolve(LocalContext.current),
+                        tint = MaterialTheme.colorScheme.onBackground,
+                    )
+                },
                 title = {
                     Text(
                         text = title_settings.resolve(LocalContext.current),
