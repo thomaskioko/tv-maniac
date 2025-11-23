@@ -17,7 +17,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 class FakeSettingsPresenterFactory : SettingsPresenter.Factory {
     override fun invoke(
         componentContext: ComponentContext,
-        launchWebView: () -> Unit,
+        backClicked: () -> Unit,
     ): SettingsPresenter = FakeSettingsPresenter()
 }
 
