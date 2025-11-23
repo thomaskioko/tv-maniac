@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.model.safeRequest
 import com.thomaskioko.tvmaniac.trakt.api.TraktUserRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktPersonalListsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserStatsResponse
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
@@ -29,6 +30,14 @@ class DefaultTraktUserRemoteDataSource(
                 method = HttpMethod.Get
                 path("users/$userId")
                 parameter("extended", "full")
+            }
+        }
+
+    override suspend fun getUserStats(userId: String): ApiResponse<TraktUserStatsResponse> =
+        httpClient.safeRequest {
+            url {
+                method = HttpMethod.Get
+                path("users/$userId/stats")
             }
         }
 
