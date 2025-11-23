@@ -156,6 +156,7 @@ include(
     ":domain:seasondetails",
     ":domain:showdetails",
     ":domain:similarshows",
+    ":domain:user",
     ":domain:watchlist",
     ":domain:watchproviders",
     ":i18n:api",

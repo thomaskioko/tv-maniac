@@ -18,4 +18,5 @@ enum class RequestTypeConfig(val requestId: Long, val duration: Duration) {
     GENRE_POSTER(12, 7.days),
     SHOWS_BY_GENRE(13, 3.days),
     WATCHLIST_METADATA(14, 1.days),
+    USER_PROFILE(15, 3.days),
 }
