@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.discover.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -24,14 +25,11 @@ import androidx.compose.material.DismissValue
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Movie
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberDismissState
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
@@ -52,14 +50,11 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
-import com.thomaskioko.tvmaniac.compose.components.RefreshButton
 import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
-import com.thomaskioko.tvmaniac.compose.components.ScrimButton
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.discover.presenter.AccountClicked
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowAction
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverViewState
@@ -232,44 +227,7 @@ private fun DiscoverContent(
                         .padding(start = 16.dp),
                 )
             },
-            actions = { showScrim ->
-                ScrimButton(
-                    show = showScrim,
-                    onClick = {
-                        onAction(AccountClicked)
-                    },
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onBackground,
-                    )
-                }
-
-                androidx.compose.animation.AnimatedVisibility(
-                    visible = state.isRefreshing,
-                ) {
-                    ScrimButton(
-                        show = showScrim,
-                        onClick = {
-                            onAction(RefreshData)
-                        },
-                    ) {
-                        RefreshButton(
-                            modifier = Modifier
-                                .size(20.dp),
-                            isRefreshing = state.isRefreshing,
-                            content = {
-                                Icon(
-                                    imageVector = Icons.Default.Refresh,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onBackground,
-                                )
-                            },
-                        )
-                    }
-                }
-            },
+            isRefreshing = state.isRefreshing,
         )
     }
 }
