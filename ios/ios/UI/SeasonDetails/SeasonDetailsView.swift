@@ -44,10 +44,24 @@ struct SeasonDetailsView: View {
         }
         .ignoresSafeArea()
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
         .navigationBarColor(backgroundColor: .clear)
         .overlay(
             VStack(spacing: 0) {
-                GlassToolbar(title: uiState.seasonName, opacity: showGlass)
+                GlassToolbar(
+                    title: uiState.seasonName,
+                    opacity: showGlass,
+                    leadingIcon: {
+                        Button(action: {
+                            presenter.dispatch(action: SeasonDetailsBackClicked())
+                        }) {
+                            Image(systemName: "chevron.left")
+                                .foregroundColor(.accent)
+                                .imageScale(.large)
+                                .opacity(1 - showGlass)
+                        }
+                    }
+                )
                 ProgressView(value: uiState.watchProgress, total: 1)
                     .progressViewStyle(RoundedRectProgressViewStyle())
                     .offset(y: progressViewOffset)

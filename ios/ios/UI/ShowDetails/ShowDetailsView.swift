@@ -47,18 +47,6 @@ struct ShowDetailsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarColor(backgroundColor: .clear)
         .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: {
-                    presenter.dispatch(action: DetailBackClicked())
-                }) {
-                    Image(systemName: "chevron.left")
-                        .foregroundColor(.accentBlue)
-                        .imageScale(.large)
-                        .opacity(1 - showGlass)
-                }
-            }
-        }
         .swipeBackGesture {
             presenter.dispatch(action: DetailBackClicked())
         }
@@ -66,7 +54,17 @@ struct ShowDetailsView: View {
             GlassToolbar(
                 title: uiState.showDetails.title,
                 opacity: showGlass,
-                isLoading: uiState.isRefreshing
+                isLoading: uiState.isRefreshing,
+                leadingIcon: {
+                    Button(action: {
+                        presenter.dispatch(action: DetailBackClicked())
+                    }) {
+                        Image(systemName: "chevron.left")
+                            .foregroundColor(.accent)
+                            .imageScale(.large)
+                            .opacity(1 - showGlass)
+                    }
+                }
             ),
             alignment: .top
         )
