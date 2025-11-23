@@ -11,12 +11,17 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.core.base)
             implementation(projects.core.buildconfig.testing)
+            implementation(projects.core.logger.api)
+            implementation(projects.core.logger.testing)
             implementation(projects.core.util)
             implementation(projects.navigation.api)
             implementation(projects.navigation.implementation)
+            implementation(projects.domain.logout)
+            implementation(projects.domain.user)
             implementation(projects.domain.watchlist)
             implementation(projects.presenter.home)
             implementation(projects.presenter.discover)
+            implementation(projects.presenter.profile)
             implementation(projects.presenter.search)
             implementation(projects.presenter.settings)
             implementation(projects.presenter.watchlist)
@@ -33,12 +38,13 @@ kotlin {
             implementation(projects.domain.seasondetails)
             implementation(projects.data.traktauth.api)
             implementation(projects.data.traktauth.testing)
+            implementation(projects.data.user.api)
+            implementation(projects.data.user.testing)
 
             api(libs.decompose.decompose)
             api(libs.kotlin.test)
             api(libs.kotest.assertions)
             api(libs.coroutines.test)
-            api(libs.kotlinInject.runtime)
         }
     }
 }

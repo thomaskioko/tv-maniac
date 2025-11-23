@@ -4,4 +4,6 @@ interface TraktAuthManager {
     fun launchWebView()
 
     fun registerResult()
+
+    fun setAuthCallback(callback: () -> Unit)
 }

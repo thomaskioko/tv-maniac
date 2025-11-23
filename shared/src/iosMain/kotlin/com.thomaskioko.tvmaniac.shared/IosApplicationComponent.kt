@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.shared
 
 import com.thomaskioko.tvmaniac.core.base.AppInitializers
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.MergeComponent
@@ -15,6 +16,7 @@ abstract class IosApplicationComponent : IosViewPresenterComponent.Factory {
     abstract val initializers: AppInitializers
     abstract val componentFactory: IosViewPresenterComponent.Factory
     abstract val traktAuthRepository: TraktAuthRepository
+    abstract val traktAuthManager: TraktAuthManager
     abstract val logger: Logger
 
     companion object {

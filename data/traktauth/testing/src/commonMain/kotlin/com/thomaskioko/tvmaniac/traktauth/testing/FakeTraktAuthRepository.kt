@@ -13,35 +13,15 @@ class FakeTraktAuthRepository : TraktAuthRepository {
     private val _state = MutableStateFlow(TraktAuthState.LOGGED_OUT)
     private var authState: AuthState? = null
     private var refreshAuthState: AuthState? = null
-    private var loginError: AuthError? = null
     private val _authError = MutableStateFlow<AuthError?>(null)
-    private val _isAuthenticating = MutableStateFlow(false)
-
-    override val state: Flow<TraktAuthState> = _state.asStateFlow()
-
-    override val authError: Flow<AuthError?> = _authError.asStateFlow()
-
-    override val isAuthenticating: Flow<Boolean> = _isAuthenticating.asStateFlow()
 
     suspend fun setState(traktAuthState: TraktAuthState) {
         _state.emit(traktAuthState)
     }
 
-    fun setAuthState(authState: AuthState?) {
-        this.authState = authState
-    }
+    override val state: Flow<TraktAuthState> = _state.asStateFlow()
 
-    fun setRefreshAuthState(authState: AuthState?) {
-        this.refreshAuthState = authState
-    }
-
-    fun setLoginError(error: AuthError?) {
-        this.loginError = error
-    }
-
-    suspend fun setIsAuthenticating(isAuthenticating: Boolean) {
-        _isAuthenticating.emit(isAuthenticating)
-    }
+    override val authError: Flow<AuthError?> = _authError.asStateFlow()
 
     override suspend fun getAuthState(): AuthState? = authState
 
@@ -57,7 +37,6 @@ class FakeTraktAuthRepository : TraktAuthRepository {
         refreshToken: String,
         expiresAtSeconds: Long?,
     ) {
-        // For testing, just update the state
         _state.emit(TraktAuthState.LOGGED_IN)
     }
 

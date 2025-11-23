@@ -341,20 +341,21 @@ class DiscoverShowsPresenterTest {
         )
     }.toImmutableList()
 
-    private fun nextEpisodeUiModelList(size: Int = LIST_SIZE) = createNextEpisodesList(size).map { episode ->
-        NextEpisodeUiModel(
-            showId = episode.showId,
-            showName = episode.showName,
-            showPoster = episode.showPoster,
-            episodeId = episode.episodeId,
-            episodeTitle = episode.episodeName,
-            episodeNumber = "S${episode.seasonNumber}E${episode.episodeNumber}",
-            runtime = episode.runtime?.let { "$it min" },
-            stillImage = episode.stillPath,
-            overview = episode.overview,
-            isNew = false,
-        )
-    }.toImmutableList()
+    private fun nextEpisodeUiModelList(size: Int = LIST_SIZE) =
+        createNextEpisodesList(size).map { episode ->
+            NextEpisodeUiModel(
+                showId = episode.showId,
+                showName = episode.showName,
+                showPoster = episode.showPoster,
+                episodeId = episode.episodeId,
+                episodeTitle = episode.episodeName,
+                episodeNumber = "S${episode.seasonNumber}E${episode.episodeNumber}",
+                runtime = episode.runtime?.let { "$it min" },
+                stillImage = episode.stillPath,
+                overview = episode.overview,
+                isNew = false,
+            )
+        }.toImmutableList()
 
     private fun createDiscoverShowList(size: Int = LIST_SIZE) = List(size) {
         ShowEntity(

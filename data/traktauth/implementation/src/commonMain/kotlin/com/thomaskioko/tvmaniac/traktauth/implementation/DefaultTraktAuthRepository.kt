@@ -58,8 +58,6 @@ class DefaultTraktAuthRepository(
 
     override val authError: Flow<AuthError?> = _authError
 
-    override val isAuthenticating: Flow<Boolean> = _isAuthenticating
-
     override suspend fun getAuthState(): AuthState? {
         val cached = authState.value
 

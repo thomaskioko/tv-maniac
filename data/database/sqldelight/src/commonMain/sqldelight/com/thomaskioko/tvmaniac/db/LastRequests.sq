@@ -34,6 +34,10 @@ delete:
 DELETE FROM last_requests
 WHERE entity_id = ? AND request_type = ?;
 
+deleteByType:
+DELETE FROM last_requests
+WHERE request_type = ?;
+
 deleteAll:
 DELETE FROM last_requests;
 

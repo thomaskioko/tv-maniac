@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import com.thomaskioko.tvmaniac.settings.ui.SettingsScreen
 import com.thomaskioko.tvmaniac.settings.ui.defaultState
+import com.thomaskioko.tvmaniac.settings.ui.loggedInState
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -30,6 +31,19 @@ class SettingsScreenshotTest {
             TvManiacBackground {
                 SettingsScreen(
                     state = defaultState,
+                    snackbarHostState = SnackbarHostState(),
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenLogInState() {
+        composeTestRule.captureMultiDevice("SettingsScreenLogInState") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = loggedInState,
                     snackbarHostState = SnackbarHostState(),
                     onAction = {},
                 )

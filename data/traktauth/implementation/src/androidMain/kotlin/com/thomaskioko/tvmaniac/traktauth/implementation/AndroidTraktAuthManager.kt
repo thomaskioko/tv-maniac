@@ -54,6 +54,10 @@ class AndroidTraktAuthManager(
         launcher.launch(Unit)
     }
 
+    override fun setAuthCallback(callback: () -> Unit) {
+        // Not used on Android - auth handled via ActivityResultLauncher
+    }
+
     private suspend fun onLoginResult(result: TraktActivityResultContract.Result) {
         val (response, error) = result
         when {
@@ -100,7 +104,7 @@ class AndroidTraktAuthManager(
                     expiresAtSeconds = expiresAtSeconds,
                 )
 
-                logger.debug("Token exchange successful")
+                logger.debug("TraktAuthManager", "Token exchange successful")
             } else {
                 logger.error("TokenExchangeError", Throwable("Token exchange returned null response"))
                 loginAction.setAuthError(AuthError.TokenExchangeFailed)

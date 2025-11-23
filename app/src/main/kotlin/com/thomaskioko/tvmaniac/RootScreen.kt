@@ -17,7 +17,9 @@ import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.thomaskioko.tvmaniac.home.ui.HomeScreen
 import com.thomaskioko.tvmaniac.moreshows.ui.MoreShowsScreen
 import com.thomaskioko.tvmaniac.navigation.RootPresenter
+import com.thomaskioko.tvmaniac.profile.ui.ProfileScreen
 import com.thomaskioko.tvmaniac.seasondetails.ui.SeasonDetailsScreen
+import com.thomaskioko.tvmaniac.settings.ui.SettingsScreen
 import com.thomaskioko.tvmaniac.showdetails.ui.ShowDetailsScreen
 import com.thomaskioko.tvmaniac.trailers.ui.TrailersScreen
 
@@ -46,6 +48,16 @@ private fun ChildrenContent(rootPresenter: RootPresenter, modifier: Modifier = M
         when (val screen = child.instance) {
             is RootPresenter.Child.Home ->
                 HomeScreen(presenter = screen.presenter, modifier = fillMaxSizeModifier)
+            is RootPresenter.Child.Profile ->
+                ProfileScreen(
+                    presenter = screen.presenter,
+                    modifier = fillMaxSizeModifier,
+                )
+            is RootPresenter.Child.Settings ->
+                SettingsScreen(
+                    presenter = screen.presenter,
+                    modifier = fillMaxSizeModifier,
+                )
             is RootPresenter.Child.ShowDetails -> {
                 ShowDetailsScreen(
                     presenter = screen.presenter,

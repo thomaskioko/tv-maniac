@@ -2,12 +2,20 @@ package com.thomaskioko.tvmaniac.testing.di
 
 import com.thomaskioko.tvmaniac.buildconfig.api.BuildConfigRepository
 import com.thomaskioko.tvmaniac.buildconfig.testing.FakeBuildConfigRepository
+import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
+import com.thomaskioko.tvmaniac.data.user.api.UserRepository
+import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
+import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
+import kotlinx.coroutines.Dispatchers
 import me.tatarka.inject.annotations.Provides
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
@@ -24,9 +32,31 @@ interface TestDataModule {
 
     @Provides
     @SingleIn(TestScope::class)
+    fun provideTraktAuthRepository(): TraktAuthRepository = FakeTraktAuthRepository()
+
+    @Provides
+    @SingleIn(TestScope::class)
+    fun provideLogger(): Logger = FakeLogger()
+
+    @Provides
+    @SingleIn(TestScope::class)
+    fun provideUserRepository(): UserRepository = FakeUserRepository()
+
+    @Provides
+    @SingleIn(TestScope::class)
     fun provideRequestManagerRepository(): RequestManagerRepository = FakeRequestManagerRepository()
 
     @Provides
     @SingleIn(TestScope::class)
     fun provideSecureConfigRepository(): BuildConfigRepository = FakeBuildConfigRepository()
+
+    @Provides
+    @SingleIn(TestScope::class)
+    fun provideAppCoroutineDispatchers(): AppCoroutineDispatchers = AppCoroutineDispatchers(
+        io = Dispatchers.Default,
+        computation = Dispatchers.Default,
+        databaseWrite = Dispatchers.Default,
+        databaseRead = Dispatchers.Default,
+        main = Dispatchers.Default,
+    )
 }

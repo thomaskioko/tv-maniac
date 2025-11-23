@@ -22,6 +22,7 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
 
     public lazy var traktAuthRepository = appComponent.traktAuthRepository
     public lazy var logger = appComponent.logger
+    public lazy var traktAuthManager = appComponent.traktAuthManager
 
     override public init() {
         super.init()
@@ -30,6 +31,10 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
         initializeApp()
 
         appComponent.initializers.initialize()
+    }
+
+    public func setupAuthBridge(authCallback: @escaping () -> Void) {
+        traktAuthManager.setAuthCallback(callback: authCallback)
     }
 
     deinit {

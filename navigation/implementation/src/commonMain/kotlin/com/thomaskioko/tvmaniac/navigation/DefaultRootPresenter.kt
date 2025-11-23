@@ -13,8 +13,10 @@ import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenter
 import com.thomaskioko.tvmaniac.presenter.trailers.TrailersPresenter
+import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonDetailsUiParam
+import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -30,6 +32,8 @@ class DefaultRootPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val navigator: RootNavigator,
     private val homePresenterFactory: HomePresenter.Factory,
+    private val profilePresenterFactory: ProfilePresenter.Factory,
+    private val settingsPresenterFactory: SettingsPresenter.Factory,
     private val moreShowsPresenterFactory: MoreShowsPresenter.Factory,
     private val showDetailsPresenterFactory: ShowDetailsPresenter.Factory,
     private val seasonDetailsPresenterFactory: SeasonDetailsPresenter.Factory,
@@ -66,6 +70,24 @@ class DefaultRootPresenter(
                         onShowClicked = { id -> navigator.pushNew(RootDestinationConfig.ShowDetails(id)) },
                         onMoreShowClicked = { id -> navigator.pushNew(RootDestinationConfig.MoreShows(id)) },
                         onShowGenreClicked = { id -> navigator.pushNew(RootDestinationConfig.GenreShows(id)) },
+                        onNavigateToProfile = { navigator.pushNew(RootDestinationConfig.Profile) },
+                        onSettingsClicked = { navigator.pushNew(RootDestinationConfig.Settings) },
+                    ),
+                )
+
+            is RootDestinationConfig.Profile ->
+                Child.Profile(
+                    presenter = profilePresenterFactory(
+                        componentContext = componentContext,
+                        navigateToSettings = { navigator.pushNew(RootDestinationConfig.Settings) },
+                    ),
+                )
+
+            is RootDestinationConfig.Settings ->
+                Child.Settings(
+                    presenter = settingsPresenterFactory(
+                        componentContext = componentContext,
+                        backClicked = navigator::pop,
                     ),
                 )
 
@@ -131,6 +153,8 @@ class DefaultRootPresenter(
     @ContributesBinding(ActivityScope::class, RootPresenter.Factory::class)
     class Factory(
         private val homePresenterFactory: HomePresenter.Factory,
+        private val profilePresenterFactory: ProfilePresenter.Factory,
+        private val settingsPresenterFactory: SettingsPresenter.Factory,
         private val moreShowsPresenterFactory: MoreShowsPresenter.Factory,
         private val showDetailsPresenterFactory: ShowDetailsPresenter.Factory,
         private val seasonDetailsPresenterFactory: SeasonDetailsPresenter.Factory,
@@ -144,6 +168,8 @@ class DefaultRootPresenter(
             componentContext = componentContext,
             navigator = navigator,
             homePresenterFactory = homePresenterFactory,
+            profilePresenterFactory = profilePresenterFactory,
+            settingsPresenterFactory = settingsPresenterFactory,
             moreShowsPresenterFactory = moreShowsPresenterFactory,
             showDetailsPresenterFactory = showDetailsPresenterFactory,
             seasonDetailsPresenterFactory = seasonDetailsPresenterFactory,

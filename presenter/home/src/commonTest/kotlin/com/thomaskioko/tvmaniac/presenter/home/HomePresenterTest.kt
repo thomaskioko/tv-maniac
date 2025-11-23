@@ -25,11 +25,13 @@ abstract class HomePresenterTest {
         Dispatchers.setMain(testDispatcher)
         lifecycle.resume()
 
-        presenter = homePresenterFactory.invoke(
+        presenter = homePresenterFactory(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             onShowClicked = {},
             onMoreShowClicked = {},
             onShowGenreClicked = {},
+            onNavigateToProfile = {},
+            onSettingsClicked = {},
         )
     }
 
@@ -61,12 +63,12 @@ abstract class HomePresenterTest {
     }
 
     @Test
-    fun `should return Settings as active instance when onSettingsClicked`() = runTest {
+    fun `should return Profile as active instance when onProfileClicked`() = runTest {
         presenter.homeChildStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Discover>()
-            presenter.onSettingsClicked()
+            presenter.onProfileClicked()
 
-            awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Settings>()
+            awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Profile>()
         }
     }
 }

@@ -279,6 +279,44 @@ fun OutlinedVerticalIconButton(
 }
 
 @Composable
+fun OutlinedVerticalIconButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    shape: Shape = MaterialTheme.shapes.small,
+    borderColor: Color = MaterialTheme.colorScheme.secondary,
+    text: @Composable (() -> Unit) = {},
+    leadingIcon: @Composable (() -> Unit) = {},
+) {
+    OutlinedButton(
+        onClick = onClick,
+        modifier = modifier.widthIn(min = 140.dp),
+        enabled = enabled,
+        shape = shape,
+        content = {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                leadingIcon()
+
+                text()
+            }
+        },
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = MaterialTheme.colorScheme.onSecondary,
+        ),
+        border = BorderStroke(
+            width = 1.dp,
+            color = when {
+                enabled -> borderColor
+                else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+            },
+        ),
+    )
+}
+
+@Composable
 fun ScrimButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,

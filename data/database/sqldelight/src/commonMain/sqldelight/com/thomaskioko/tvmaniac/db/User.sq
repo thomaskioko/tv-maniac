@@ -5,6 +5,7 @@ CREATE TABLE user (
     user_name Text NOT NULL,
     full_name TEXT,
     profile_picture TEXT,
+    background_url TEXT,
     is_me INTEGER AS Boolean NOT NULL DEFAULT 0
 );
 
@@ -14,9 +15,10 @@ INSERT OR REPLACE INTO user(
     user_name,
     full_name,
     profile_picture,
+    background_url,
     is_me
 )
-VALUES(?,?,?,?,? );
+VALUES(?,?,?,?,?,?);
 
 userBySlug:
 SELECT
@@ -34,6 +36,14 @@ FROM
 WHERE
     is_me != 0;
 
+observeCurrentUser:
+SELECT
+    *
+FROM
+    user
+WHERE
+    is_me != 0;
+
 delete:
 DELETE FROM
     user
@@ -41,3 +51,12 @@ WHERE slug = ?;
 
 deleteAll:
 DELETE FROM user;
+
+getRandomWatchlistBackdrop:
+SELECT
+    t.poster_path
+FROM watchlist w
+INNER JOIN tvshow t ON w.id = t.id
+WHERE t.poster_path IS NOT NULL
+ORDER BY RANDOM()
+LIMIT 1;

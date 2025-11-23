@@ -199,7 +199,7 @@ class SeasonPresenterTest {
 
         presenter.dispatch(SeasonDetailsBackClicked)
 
-        advanceUntilIdle() // Allow time for the coroutine to execute
+        advanceUntilIdle()
 
         backCalled shouldBe true
     }

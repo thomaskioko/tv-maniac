@@ -5,7 +5,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,12 +16,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -44,7 +42,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -52,14 +49,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.BasicDialog
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_profile_pic
+import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_back
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_high
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_high_description
@@ -68,12 +64,10 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_low
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_medium
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_medium_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_trakt_dialog_button_secondary
-import com.thomaskioko.tvmaniac.i18n.MR.strings.login
 import com.thomaskioko.tvmaniac.i18n.MR.strings.logout
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_about_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_theme_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_about
-import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_connect_trakt
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_disconnect_trakt
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_info
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_theme_dark
@@ -83,11 +77,10 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_trakt
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_ui
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_settings
 import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_description
-import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_dialog_login_message
-import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_dialog_login_title
 import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_dialog_logout_message
 import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_dialog_logout_title
 import com.thomaskioko.tvmaniac.i18n.resolve
+import com.thomaskioko.tvmaniac.settings.presenter.BackClicked
 import com.thomaskioko.tvmaniac.settings.presenter.ChangeThemeClicked
 import com.thomaskioko.tvmaniac.settings.presenter.DismissImageQualityDialog
 import com.thomaskioko.tvmaniac.settings.presenter.DismissThemeClicked
@@ -99,9 +92,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
 import com.thomaskioko.tvmaniac.settings.presenter.ShowImageQualityDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ShowTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
-import com.thomaskioko.tvmaniac.settings.presenter.TraktLoginClicked
 import com.thomaskioko.tvmaniac.settings.presenter.TraktLogoutClicked
-import com.thomaskioko.tvmaniac.settings.presenter.UserInfo
 
 @Composable
 fun SettingsScreen(
@@ -129,6 +120,16 @@ internal fun SettingsScreen(
     Scaffold(
         topBar = {
             TvManiacTopBar(
+                navigationIcon = {
+                    Icon(
+                        modifier = Modifier
+                            .clickable(onClick = { onAction(BackClicked) })
+                            .padding(16.dp),
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = cd_back.resolve(LocalContext.current),
+                        tint = MaterialTheme.colorScheme.onBackground,
+                    )
+                },
                 title = {
                     Text(
                         text = title_settings.resolve(LocalContext.current),
@@ -162,13 +163,11 @@ internal fun SettingsScreen(
             }
 
             SettingsScreen(
-                userInfo = state.userInfo,
                 appTheme = state.appTheme,
                 imageQuality = state.imageQuality,
                 showPopup = state.showthemePopup,
                 showImageQualityDialog = state.showImageQualityDialog,
                 showTraktDialog = state.showTraktDialog,
-                isLoading = state.isLoading,
                 isAuthenticated = state.isAuthenticated,
                 onAction = onAction,
                 modifier = Modifier
@@ -181,13 +180,11 @@ internal fun SettingsScreen(
 
 @Composable
 fun SettingsScreen(
-    userInfo: UserInfo?,
     appTheme: AppTheme,
     imageQuality: ImageQuality,
     showPopup: Boolean,
     showImageQualityDialog: Boolean,
     showTraktDialog: Boolean,
-    isLoading: Boolean,
     isAuthenticated: Boolean,
     onAction: (SettingsActions) -> Unit,
     modifier: Modifier = Modifier,
@@ -196,18 +193,6 @@ fun SettingsScreen(
         modifier = modifier,
     ) {
         item { Spacer(modifier = Modifier.height(16.dp)) }
-
-        item {
-            TraktProfileSettingsItem(
-                showTraktDialog = showTraktDialog,
-                isLoading = isLoading,
-                loggedIn = isAuthenticated,
-                traktUserName = userInfo?.userName,
-                traktFullName = userInfo?.fullName,
-                traktUserPicUrl = userInfo?.userPicUrl,
-                onAction = onAction,
-            )
-        }
 
         item {
             SettingsThemeItem(
@@ -232,28 +217,25 @@ fun SettingsScreen(
         item { Spacer(modifier = Modifier.height(16.dp)) }
 
         item { AboutSettingsItem() }
+
+        if (isAuthenticated) {
+            item { Spacer(modifier = Modifier.height(16.dp)) }
+
+            item {
+                TraktProfileSettingsItem(
+                    showTraktDialog = showTraktDialog,
+                    onAction = onAction,
+                )
+            }
+        }
     }
 }
 
 @Composable
 private fun TraktProfileSettingsItem(
-    isLoading: Boolean,
     showTraktDialog: Boolean,
-    loggedIn: Boolean,
-    traktUserName: String?,
-    traktFullName: String?,
-    traktUserPicUrl: String?,
     onAction: (SettingsActions) -> Unit,
 ) {
-    val titleId = if (loggedIn) {
-        stringResource(
-            settings_title_disconnect_trakt.resourceId,
-            traktUserName ?: traktFullName ?: "",
-        )
-    } else {
-        settings_title_connect_trakt.resolve(LocalContext.current)
-    }
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -270,48 +252,29 @@ private fun TraktProfileSettingsItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            if (isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .padding(end = 16.dp)
-                        .size(48.dp),
-                    color = MaterialTheme.colorScheme.secondary,
-                )
-            } else if (!traktUserPicUrl.isNullOrBlank()) {
-                AsyncImageComposable(
-                    model = traktUserPicUrl,
-                    contentDescription = stringResource(
-                        cd_profile_pic.resourceId,
-                        traktUserName ?: traktFullName ?: "",
-                    ),
-                    modifier = Modifier
-                        .padding(end = 16.dp)
-                        .size(48.dp)
-                        .clip(CircleShape)
-                        .border(2.dp, MaterialTheme.colorScheme.secondary, CircleShape),
-                )
-            } else {
-                Icon(
-                    imageVector = Icons.Filled.Person,
-                    tint = MaterialTheme.colorScheme.secondary,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(end = 16.dp)
-                        .size(48.dp),
-                )
-            }
+            Icon(
+                imageVector = Icons.Filled.Person,
+                tint = MaterialTheme.colorScheme.secondary,
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(end = 16.dp)
+                    .size(48.dp),
+            )
 
             Column(
                 modifier = Modifier.weight(1f),
             ) {
-                TitleItem(titleId)
+                TitleItem(
+                    stringResource(
+                        settings_title_disconnect_trakt.resourceId,
+                        "",
+                    ),
+                )
                 SettingDescription(trakt_description.resolve(LocalContext.current))
             }
 
-            TrackDialog(
-                loggedIn = loggedIn,
+            LogoutDialog(
                 isVisible = showTraktDialog,
-                onLoginClicked = { onAction(TraktLoginClicked) },
                 onLogoutClicked = { onAction(TraktLogoutClicked) },
                 onDismissDialog = { onAction(DismissTraktDialog) },
             )
@@ -324,43 +287,29 @@ private fun TraktProfileSettingsItem(
 }
 
 @Composable
-fun TrackDialog(
+fun LogoutDialog(
     isVisible: Boolean,
-    loggedIn: Boolean,
-    onLoginClicked: () -> Unit,
     onLogoutClicked: () -> Unit,
     onDismissDialog: () -> Unit,
 ) {
     val context = LocalContext.current
-    val title = if (loggedIn) {
-        trakt_dialog_logout_title.resolve(context)
-    } else {
-        trakt_dialog_login_title.resolve(context)
-    }
 
-    val message = if (loggedIn) {
-        trakt_dialog_logout_message.resolve(context)
-    } else {
-        trakt_dialog_login_message.resolve(context)
-    }
     AnimatedVisibility(
         visible = isVisible,
         enter = fadeIn(
             initialAlpha = 0.4f,
         ),
         exit = fadeOut(
-            // Overwrites the default animation with tween
             animationSpec = tween(durationMillis = 250),
         ),
     ) {
-        val context = LocalContext.current
         BasicDialog(
-            dialogTitle = title,
-            dialogMessage = message,
-            confirmButtonText = if (loggedIn) logout.resolve(context) else login.resolve(context),
+            dialogTitle = trakt_dialog_logout_title.resolve(context),
+            dialogMessage = trakt_dialog_logout_message.resolve(context),
+            confirmButtonText = logout.resolve(context),
             dismissButtonText = label_settings_trakt_dialog_button_secondary.resolve(context),
             onDismissDialog = onDismissDialog,
-            confirmButtonClicked = if (loggedIn) onLogoutClicked else onLoginClicked,
+            confirmButtonClicked = onLogoutClicked,
             dismissButtonClicked = onDismissDialog,
             enableConfirmButton = true,
             enableDismissButton = true,

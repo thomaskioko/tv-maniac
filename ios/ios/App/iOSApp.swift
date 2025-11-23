@@ -9,6 +9,8 @@ struct iOSApp: App {
     @Environment(\.scenePhase)
     var scenePhase: ScenePhase
 
+    @State private var authCoordinator: TraktAuthCoordinator?
+
     var body: some Scene {
         WindowGroup {
             RootNavigationView(
@@ -16,6 +18,18 @@ struct iOSApp: App {
                 rootNavigator: appDelegate.presenterComponent.rootNavigator
             )
             .environmentObject(appDelegate)
+            .onAppear {
+                if authCoordinator == nil {
+                    authCoordinator = AuthCoordinatorFactory.create(
+                        authRepository: appDelegate.traktAuthRepository,
+                        logger: appDelegate.logger
+                    )
+                }
+
+                appDelegate.setupAuthBridge { [weak authCoordinator] in
+                    authCoordinator?.initiateAuthorization()
+                }
+            }
             .onChange(of: scenePhase) { newPhase in
                 switch newPhase {
                 case .background:

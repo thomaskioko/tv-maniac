@@ -61,7 +61,11 @@ struct DiscoverTab: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarColor(backgroundColor: .clear)
         .overlay(
-            GlassToolbar(title: title, opacity: showGlass),
+            GlassToolbar(
+                title: title,
+                opacity: showGlass,
+                isLoading: state.isRefreshing
+            ),
             alignment: .top
         )
         .animation(.easeInOut(duration: 0.25), value: showGlass)
@@ -79,31 +83,28 @@ struct DiscoverTab: View {
             let items = shows.map {
                 $0.toSwift()
             }
-            ZStack(alignment: .top) {
-                CarouselView(
-                    items: items,
-                    currentIndex: $currentIndex,
-                    onItemScrolled: { item in
-                        selectedShow = item
-                        store.savedIndex = currentIndex
-                    },
-                    onItemTapped: { id in
-                        presenter.dispatch(action: ShowClicked(id: id))
-                    }
-                ) { index in
-                    CarouselItemView(item: items[index])
+            CarouselView(
+                items: items,
+                currentIndex: $currentIndex,
+                onItemScrolled: { item in
+                    selectedShow = item
+                    store.savedIndex = currentIndex
+                },
+                onItemTapped: { id in
+                    presenter.dispatch(action: ShowClicked(id: id))
                 }
-                .simultaneousGesture(
-                    DragGesture(minimumDistance: 5)
-                        .onChanged { _ in
-                            isDraggingCarousel = true
-                        }
-                        .onEnded { _ in
-                            isDraggingCarousel = false
-                        }
-                )
-                headerNavigationBar(shows: items)
+            ) { index in
+                CarouselItemView(item: items[index])
             }
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 5)
+                    .onChanged { _ in
+                        isDraggingCarousel = true
+                    }
+                    .onEnded { _ in
+                        isDraggingCarousel = false
+                    }
+            )
         }
     }
 
@@ -124,56 +125,6 @@ struct DiscoverTab: View {
                 }
             }
         }
-    }
-
-    // MARK: - Navigation Bar
-
-    @ViewBuilder
-    private func headerNavigationBar(shows: [SwiftShow]) -> some View {
-        let show = getShow(currentIndex: currentIndex, shows: shows)
-        HStack {
-            Spacer()
-
-            HStack(spacing: 8) {
-                Button(
-                    action: {
-                        // TODO: Invoke account navigation action.
-                    }
-                ) {
-                    Image(systemName: "person")
-                        .font(.avenirNext(size: 17))
-                        .foregroundColor(.white)
-                        .frame(width: 32, height: 32)
-                        .padding(2)
-                        .background(Color.black.opacity(0.3))
-                        .clipShape(Circle())
-                }
-
-                if uiState.isRefreshing {
-                    Button(
-                        action: { presenter.dispatch(action: RefreshData()) }
-                    ) {
-                        Image(systemName: "arrow.clockwise")
-                            .font(.avenirNext(size: 17))
-                            .foregroundColor(.white)
-                            .frame(width: 32, height: 32)
-                            .padding(2)
-                            .background(Color.black.opacity(0.3))
-                            .clipShape(Circle())
-                            .rotationEffect(.degrees(rotationAngle))
-                            .onAppear {
-                                withAnimation(.linear(duration: 1.0).repeatForever(autoreverses: false)) {
-                                    rotationAngle = 360
-                                }
-                            }
-                    }
-                }
-            }
-        }
-        .padding(.horizontal)
-        .padding(.top, 70)
-        .padding(.bottom, 8)
-        .foregroundColor(.white)
     }
 
     @ViewBuilder
@@ -200,14 +151,15 @@ struct DiscoverTab: View {
         .padding(.horizontal)
         .padding(.bottom, 20)
         .frame(maxWidth: .infinity, alignment: .leading)
+        .allowsHitTesting(false)
         .background(
             LinearGradient(
                 gradient: Gradient(
                     colors: [
                         .black,
                         .black.opacity(0.8),
-                        .black.opacity(0.6),
-                        .black.opacity(0.4),
+                        .black.opacity(0.8),
+                        .black.opacity(0.8),
                         .clear,
                     ]
                 ),

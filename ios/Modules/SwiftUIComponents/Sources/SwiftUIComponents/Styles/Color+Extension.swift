@@ -11,6 +11,7 @@ public extension Color {
     static let textColor = Color(.textColor)
     static let grey200 = Color(.grey200)
     static let textColorDark = Color(.textColorDark)
+    static let buttonColor = Color(.buttonColor)
 
     static var linearGradient = LinearGradient(
         gradient: Gradient(stops: [

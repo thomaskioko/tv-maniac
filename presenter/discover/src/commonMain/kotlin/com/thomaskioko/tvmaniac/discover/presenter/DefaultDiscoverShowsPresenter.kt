@@ -131,9 +131,6 @@ class DefaultDiscoverShowsPresenter(
                         )
                     }
                 }
-                AccountClicked -> {
-                    // TODO:: Add implementation.
-                }
                 is MessageShown -> {
                     clearMessage(action.id)
                 }

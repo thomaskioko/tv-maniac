@@ -1,22 +1,18 @@
 CREATE TABLE stats(
     slug TEXT NOT NULL PRIMARY KEY,
-    months Text NOT NULL,
-    days Text NOT NULL,
-    hours Text NOT NULL,
-    collected_shows Text NOT NULL,
-    episodes_watched Text NOT NULL
+    shows_watched INTEGER NOT NULL DEFAULT 0,
+    episodes_watched INTEGER NOT NULL DEFAULT 0,
+    minutes_watched INTEGER NOT NULL DEFAULT 0
 );
 
 insertOrReplace:
 INSERT OR REPLACE INTO stats(
     slug,
-    months,
-    days,
-    hours,
-    collected_shows,
-    episodes_watched
+    shows_watched,
+    episodes_watched,
+    minutes_watched
 )
-VALUES(?,?,?,?,?,?);
+VALUES(?,?,?,?);
 
 select:
 SELECT *

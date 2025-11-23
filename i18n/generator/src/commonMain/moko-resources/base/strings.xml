@@ -74,6 +74,8 @@
     <string name="cd_show_poster">Poster image</string>
     <string name="cd_show_poster_image">Poster image for %s</string>
     <string name="cd_navigate_back">Navigate Back</string>
+    <string name="cd_back">Back</string>
+    <string name="cd_settings">Settings</string>
     <string name="cd_clear">Clear search</string>
     <string name="cd_profile_pic">Profile picture for %s</string>
     <string name="cd_user_profile">User profile</string>
@@ -167,4 +169,28 @@
     <string name="logout">Logout</string>
     <string name="login">Login</string>
     <string name="unexpected_error_retry">An unexpected Error has occurred.</string>
+
+    <string name="profile_title">Profile</string>
+    <string name="profile_shows_watched">Shows Watched</string>
+    <string name="profile_episodes_watched">Episodes Watched</string>
+    <string name="profile_watch_time">Watch Time</string>
+    <string name="profile_stats_title">Stats</string>
+    <string name="profile_time_months">MONTHS</string>
+    <string name="profile_time_days">DAYS</string>
+    <string name="profile_time_hours">HOURS</string>
+    <string name="profile_edit_button">Edit</string>
+
+    <string name="profile_unauthenticated_title">Discover.\nTrack.\nWatchlist.\n&amp; More ...</string>
+    <string name="profile_feature_track_title">Track</string>
+    <string name="profile_feature_track_description">Check-in, mark watch and manage your all-time watch history.</string>
+    <string name="profile_feature_discover_title">Discover</string>
+    <string name="profile_feature_discover_description">Browse over one million movies and TV shows and see \"Where to Watch\" them.</string>
+    <string name="profile_feature_more_title">More</string>
+    <string name="profile_feature_more_description">More features coming soon.</string>
+    <string name="profile_feature_manage_title">Watchlist</string>
+    <string name="profile_feature_manage_description">Create custom list, personalize it just the way you like it.</string>
+    <string name="profile_feature_share_title">Share</string>
+    <string name="profile_feature_share_description">Comment, reply and rate TV shows, movies, seasons and episodes.</string>
+    <string name="profile_footer_description">* TvManiac is a Trakt client. Sign in to your Trakt account to track, discover and share with the community.</string>
+    <string name="profile_sign_in_button">Sign In to Trakt</string>
 </resources>

@@ -29,13 +29,9 @@ public struct TabBarView: View {
                     case let .watchlist(screen):
                         WatchlistTab(presenter: screen.presenter)
                             .id(ObjectIdentifier(screen))
-                    case let .settings(screen):
-                        SettingsTab(
-                            presenter: screen.presenter,
-                            authRepository: appDelegate.traktAuthRepository,
-                            logger: appDelegate.logger
-                        )
-                        .id(ObjectIdentifier(screen))
+                    case let .profile(screen):
+                        ProfileTab(presenter: screen.presenter)
+                            .id(ObjectIdentifier(screen))
                     }
                 }
             }
@@ -46,7 +42,7 @@ public struct TabBarView: View {
             case .discover: presenter.onDiscoverClicked()
             case .search: presenter.onSearchClicked()
             case .watchlist: presenter.onLibraryClicked()
-            case .settings: presenter.onSettingsClicked()
+            case .profile: presenter.onProfileClicked()
             }
         }
     }
@@ -56,7 +52,7 @@ public struct TabBarView: View {
         case .discover: .discover
         case .search: .search
         case .watchlist: .watchlist
-        case .settings: .settings
+        case .profile: .profile
         }
     }
 }
@@ -67,14 +63,14 @@ public enum NavigationTab: String, CaseIterable {
     case discover
     case search
     case watchlist
-    case settings
+    case profile
 
     var title: String {
         switch self {
         case .discover: String(\.label_tab_discover)
         case .search: String(\.label_tab_search)
         case .watchlist: String(\.label_tab_watchlist)
-        case .settings: String(\.label_tab_settings)
+        case .profile: String(\.menu_item_profile)
         }
     }
 
@@ -83,7 +79,7 @@ public enum NavigationTab: String, CaseIterable {
         case .discover: "tv"
         case .search: "magnifyingglass"
         case .watchlist: "square.stack"
-        case .settings: "gearshape"
+        case .profile: "person.crop.circle"
         }
     }
 }
