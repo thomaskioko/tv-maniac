@@ -50,6 +50,7 @@ include(
     ":android-feature:discover",
     ":android-feature:home",
     ":android-feature:more-shows",
+    ":android-feature:profile",
     ":android-feature:search",
     ":android-feature:season-details",
     ":android-feature:settings",

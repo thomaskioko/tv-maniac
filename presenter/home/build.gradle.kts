@@ -22,7 +22,7 @@ kotlin {
                 implementation(projects.domain.genre)
                 implementation(projects.presenter.discover)
                 implementation(projects.presenter.search)
-                implementation(projects.presenter.settings)
+                implementation(projects.presenter.profile)
                 implementation(projects.presenter.watchlist)
 
                 implementation(libs.decompose.decompose)

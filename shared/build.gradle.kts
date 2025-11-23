@@ -30,6 +30,7 @@ scaffold {
             export(projects.presenter.settings)
             export(projects.presenter.showDetails)
             export(projects.presenter.trailers)
+            export(projects.presenter.profile)
 
             export(libs.decompose.decompose)
             export(libs.essenty.lifecycle)
@@ -46,6 +47,7 @@ kotlin {
                 api(projects.core.buildconfig.api)
                 api(projects.i18n.api)
                 api(projects.navigation.api)
+                api(projects.data.traktauth.api)
                 api(projects.presenter.discover)
                 api(projects.presenter.watchlist)
                 api(projects.presenter.home)
@@ -55,6 +57,7 @@ kotlin {
                 api(projects.presenter.settings)
                 api(projects.presenter.showDetails)
                 api(projects.presenter.trailers)
+                api(projects.presenter.profile)
 
                 implementation(projects.api.tmdb.api)
                 implementation(projects.api.tmdb.implementation)
@@ -110,6 +113,9 @@ kotlin {
                 implementation(projects.data.datastore.implementation)
                 implementation(projects.data.traktauth.api)
                 implementation(projects.data.traktauth.implementation)
+                implementation(projects.data.user.api)
+                implementation(projects.data.user.implementation)
+                implementation(projects.domain.user)
                 implementation(projects.i18n.implementation)
 
                 implementation(projects.navigation.implementation)
