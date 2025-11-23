@@ -168,6 +168,7 @@ include(
     ":presenter:discover",
     ":presenter:home",
     ":presenter:more-shows",
+    ":presenter:profile",
     ":presenter:search",
     ":presenter:seasondetails",
     ":presenter:settings",
