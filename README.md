@@ -141,6 +141,7 @@ Android
 - [x] Implement Paging
 - [x] Implement Search
 - [ ] Add Episode detail screen
+- [ ] Create Design System
 
 iOS
 
@@ -162,10 +163,13 @@ Shared
 - [x] Use koin for injection
 - [x] Modularize `shared` module
 - [x] Try out [Flow-Redux](https://github.com/freeletics/FlowRedux)
-- [ ] Fix paging
 - [x] Add test cases.
-- [ ] Improve error handling.
 - [x] Migrate to BuildConfig for unified configuration
+- [ ] Implement Trakt tracking
+    - [ ] Track Shows
+    - [ ] Track Episodes
+- [ ] Fix paging
+- [ ] Improve error handling.
 
 ### References & Inspiration
 
