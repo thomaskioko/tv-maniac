@@ -9,6 +9,12 @@ sealed interface RootDestinationConfig {
     data object Home : RootDestinationConfig
 
     @Serializable
+    data object Profile : RootDestinationConfig
+
+    @Serializable
+    data object Settings : RootDestinationConfig
+
+    @Serializable
     data class ShowDetails(val id: Long) : RootDestinationConfig
 
     @Serializable
