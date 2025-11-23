@@ -70,12 +70,11 @@ fun TvManiacTopBar(
 fun RefreshCollapsableTopAppBar(
     listState: LazyListState,
     modifier: Modifier = Modifier,
-    showActionIcon: Boolean = true,
     isRefreshing: Boolean = false,
     scrollBehavior: TopAppBarScrollBehavior? = null,
     title: @Composable () -> Unit = {},
-    navigationIcon: @Composable () -> Unit = {},
-    actionIcon: @Composable () -> Unit = {},
+    navigationIcon: @Composable (() -> Unit)? = null,
+    actionIcon: @Composable (() -> Unit)? = null,
     onNavIconClicked: () -> Unit = {},
     onActionIconClicked: () -> Unit = {},
 ) {
@@ -108,7 +107,6 @@ fun RefreshCollapsableTopAppBar(
         scrollBehavior = scrollBehavior,
         onActionClicked = onActionIconClicked,
         onNavIconPressed = onNavIconClicked,
-        showActionIcon = showActionIcon,
         isRefreshing = isRefreshing,
     )
 }
@@ -119,7 +117,7 @@ fun RefreshCollapsableTopAppBar(
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior? = null,
     title: @Composable () -> Unit = {},
-    navigationIcon: @Composable () -> Unit = {},
+    navigationIcon: @Composable (() -> Unit)? = null,
     actions: @Composable RowScope.(Boolean) -> Unit = {},
 ) {
     var appBarHeight by remember { mutableIntStateOf(0) }
@@ -157,7 +155,7 @@ internal fun RefreshCollapsableTopAppBar(
     showAppBarBackground: Boolean,
     scrollBehavior: TopAppBarScrollBehavior?,
     title: @Composable () -> Unit,
-    navigationIcon: @Composable () -> Unit,
+    navigationIcon: @Composable (() -> Unit)?,
     actions: @Composable RowScope.(Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -188,7 +186,7 @@ internal fun RefreshCollapsableTopAppBar(
                 if (show) title()
             }
         },
-        navigationIcon = navigationIcon,
+        navigationIcon = navigationIcon ?: {},
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = backgroundColor,
         ),
@@ -202,12 +200,11 @@ internal fun RefreshCollapsableTopAppBar(
 internal fun RefreshCollapsableTopAppBar(
     showAppBarBackground: Boolean,
     isRefreshing: Boolean,
-    showActionIcon: Boolean,
     scrollBehavior: TopAppBarScrollBehavior?,
     onActionClicked: () -> Unit,
     title: @Composable () -> Unit,
-    navigationIcon: @Composable () -> Unit,
-    actionIcon: @Composable () -> Unit,
+    navigationIcon: @Composable (() -> Unit)?,
+    actionIcon: @Composable (() -> Unit)?,
     onNavIconPressed: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -240,18 +237,20 @@ internal fun RefreshCollapsableTopAppBar(
             }
         },
         navigationIcon = {
-            ScrimButton(
-                show = showAppBarBackground,
-                onClick = onNavIconPressed,
-            ) {
-                navigationIcon()
+            if (navigationIcon != null) {
+                ScrimButton(
+                    show = showAppBarBackground,
+                    onClick = onNavIconPressed,
+                ) {
+                    navigationIcon()
+                }
             }
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = backgroundColor,
         ),
         actions = {
-            if (showActionIcon) {
+            if (isRefreshing || actionIcon != null) {
                 ScrimButton(
                     show = showAppBarBackground,
                     onClick = onActionClicked,
@@ -261,7 +260,7 @@ internal fun RefreshCollapsableTopAppBar(
                             .size(20.dp)
                             .padding(2.dp),
                         isRefreshing = isRefreshing,
-                        content = actionIcon,
+                        content = actionIcon ?: {},
                     )
                 }
             }
@@ -307,6 +306,15 @@ private fun TopBarPreview() {
             },
         )
     }
+}
+
+inline fun actionIconWhen(
+    visible: Boolean,
+    crossinline content: @Composable () -> Unit,
+): (@Composable () -> Unit)? = if (visible) {
+    { content() }
+} else {
+    null
 }
 
 @ThemePreviews
