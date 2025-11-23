@@ -3,7 +3,7 @@ import SwiftUIComponents
 import TvManiac
 import TvManiacKit
 
-struct SettingsTab: View {
+struct SettingsView: View {
     private let presenter: SettingsPresenter
     @StateObject @KotlinStateFlow private var uiState: SettingsState
     @StateObject private var store = SettingsAppStorage.shared
