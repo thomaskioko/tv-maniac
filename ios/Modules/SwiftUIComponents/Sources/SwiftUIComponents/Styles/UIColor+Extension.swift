@@ -16,6 +16,7 @@ public extension UIColor {
     static let backgroundColor = UIColor(light: .systemGroupedBackground, dark: .backgroundDark)
     static let contentBackground = UIColor(light: .greyLight, dark: .greyDark)
     static let textColor = UIColor(light: .textColorDark, dark: .textColorLight)
+    static let buttonColor = UIColor(light: .accentBlue, dark: .textColorDark)
 
     /// Returns a color object that generates its color data dynamically based on the current user
     /// interface style.

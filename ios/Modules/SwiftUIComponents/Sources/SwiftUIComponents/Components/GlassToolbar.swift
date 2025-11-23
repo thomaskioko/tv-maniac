@@ -1,19 +1,63 @@
 import SwiftUI
 
-public struct GlassToolbar: View {
+public struct GlassToolbar<LeadingIcon: View, TrailingIcon: View>: View {
     private let title: String
     private let opacity: Double
     private let isLoading: Bool
+    private let leadingIcon: (() -> LeadingIcon)?
+    private let trailingIcon: (() -> TrailingIcon)?
     @Environment(\.colorScheme) private var colorScheme
 
     public init(
         title: String,
         opacity: Double,
-        isLoading: Bool = false
+        isLoading: Bool = false,
+        @ViewBuilder leadingIcon: @escaping () -> LeadingIcon,
+        @ViewBuilder trailingIcon: @escaping () -> TrailingIcon
     ) {
         self.title = title
         self.opacity = opacity
         self.isLoading = isLoading
+        self.leadingIcon = leadingIcon
+        self.trailingIcon = trailingIcon
+    }
+
+    public init(
+        title: String,
+        opacity: Double,
+        isLoading: Bool = false,
+        @ViewBuilder trailingIcon: @escaping () -> TrailingIcon
+    ) where LeadingIcon == EmptyView {
+        self.title = title
+        self.opacity = opacity
+        self.isLoading = isLoading
+        leadingIcon = nil
+        self.trailingIcon = trailingIcon
+    }
+
+    public init(
+        title: String,
+        opacity: Double,
+        isLoading: Bool = false,
+        @ViewBuilder leadingIcon: @escaping () -> LeadingIcon
+    ) where TrailingIcon == EmptyView {
+        self.title = title
+        self.opacity = opacity
+        self.isLoading = isLoading
+        self.leadingIcon = leadingIcon
+        trailingIcon = nil
+    }
+
+    public init(
+        title: String,
+        opacity: Double,
+        isLoading: Bool = false
+    ) where LeadingIcon == EmptyView, TrailingIcon == EmptyView {
+        self.title = title
+        self.opacity = opacity
+        self.isLoading = isLoading
+        leadingIcon = nil
+        trailingIcon = nil
     }
 
     public var body: some View {
@@ -26,12 +70,17 @@ public struct GlassToolbar: View {
                 .frame(height: toolbarHeight + topPadding)
                 .opacity(opacity)
                 .ignoresSafeArea()
+                .allowsHitTesting(false)
 
             HStack(spacing: 16) {
-                // Space for back button
-                Rectangle()
-                    .fill(Color.clear)
-                    .frame(width: 30)
+                // Leading icon
+                if let leadingIcon {
+                    leadingIcon()
+                } else {
+                    Rectangle()
+                        .fill(Color.clear)
+                        .frame(width: 30)
+                }
 
                 Text(title)
                     .font(.system(size: 18, weight: .bold))
@@ -46,6 +95,8 @@ public struct GlassToolbar: View {
                         .progressViewStyle(CircularProgressViewStyle(tint: colorScheme == .dark ? .white : .black))
                         .scaleEffect(0.8)
                         .frame(width: 30)
+                } else if let trailingIcon {
+                    trailingIcon()
                 } else {
                     Rectangle()
                         .fill(Color.clear)
