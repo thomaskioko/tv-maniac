@@ -70,6 +70,8 @@
     <string name="cd_show_poster">Posterbild</string>
     <string name="cd_show_poster_image">Posterbild für %s</string>
     <string name="cd_navigate_back">Zurück navigieren</string>
+    <string name="cd_back">Zurück</string>
+    <string name="cd_settings">Einstellungen</string>
     <string name="cd_clear">Suche löschen</string>
     <string name="cd_profile_pic">Profilbild für %s</string>
     <string name="cd_user_profile">Benutzerprofil</string>
@@ -180,4 +182,28 @@
     <string name="logout">Abmelden</string>
     <string name="login">Anmelden</string>
     <string name="unexpected_error_retry">Ein unerwarteter Fehler ist aufgetreten.</string>
+
+    <string name="profile_title">Profil</string>
+    <string name="profile_shows_watched">Gesehene Sendungen</string>
+    <string name="profile_episodes_watched">Gesehene Episoden</string>
+    <string name="profile_watch_time">Sehzeit</string>
+    <string name="profile_stats_title">Statistiken</string>
+    <string name="profile_time_months">MONATE</string>
+    <string name="profile_time_days">TAGE</string>
+    <string name="profile_time_hours">STUNDEN</string>
+    <string name="profile_edit_button">Bearbeiten</string>
+
+    <string name="profile_unauthenticated_title">Entdecken.\nVerfolgen.\nMerkliste.\n&amp; Mehr ...</string>
+    <string name="profile_feature_track_title">Verfolgen</string>
+    <string name="profile_feature_track_description">Einchecken, als gesehen markieren und Ihren gesamten Sehverlauf verwalten</string>
+    <string name="profile_feature_discover_title">Entdecken</string>
+    <string name="profile_feature_discover_description">Durchsuchen Sie über eine Million Filme und TV-Sendungen und sehen Sie \"Wo ansehen\"</string>
+    <string name="profile_feature_more_title">Mehr</string>
+    <string name="profile_feature_more_description">Weitere Funktionen kommen bald</string>
+    <string name="profile_feature_manage_title">Merkliste</string>
+    <string name="profile_feature_manage_description">Erstellen Sie benutzerdefinierte Listen, personalisieren Sie sie ganz nach Ihren Wünschen.</string>
+    <string name="profile_feature_share_title">Teilen</string>
+    <string name="profile_feature_share_description">Kommentieren, antworten und bewerten Sie TV-Sendungen, Filme, Staffeln und Episoden</string>
+    <string name="profile_footer_description">* TvManiac ist ein Trakt-Client. Melden Sie sich bei Ihrem Trakt-Konto an, um mit der Community zu verfolgen, zu entdecken und zu teilen.</string>
+    <string name="profile_sign_in_button">Bei Trakt anmelden</string>
 </resources>
