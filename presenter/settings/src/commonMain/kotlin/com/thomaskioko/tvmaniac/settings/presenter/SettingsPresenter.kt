@@ -10,6 +10,7 @@ interface SettingsPresenter {
     interface Factory {
         operator fun invoke(
             componentContext: ComponentContext,
+            backClicked: () -> Unit,
         ): SettingsPresenter
     }
 }

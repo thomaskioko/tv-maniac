@@ -53,6 +53,7 @@ class SettingsPresenterTest {
                 traktAuthRepository = traktAuthRepository,
                 userRepository = userRepository,
             ),
+            backClicked = {},
         )
     }
 

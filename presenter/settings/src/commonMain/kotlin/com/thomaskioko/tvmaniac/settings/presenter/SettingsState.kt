@@ -23,7 +23,7 @@ data class SettingsState(
             showthemePopup = false,
             showImageQualityDialog = false,
             errorMessage = null,
-            showLogoutDialog = true,
+            showLogoutDialog = false,
         )
     }
 }

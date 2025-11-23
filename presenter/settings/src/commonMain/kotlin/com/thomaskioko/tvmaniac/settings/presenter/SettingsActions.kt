@@ -3,26 +3,28 @@ package com.thomaskioko.tvmaniac.settings.presenter
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 
-sealed class SettingsActions
+sealed interface SettingsActions
 
 data class ThemeSelected(
     val appTheme: AppTheme,
-) : SettingsActions()
+) : SettingsActions
 
-data object ChangeThemeClicked : SettingsActions()
+data object ChangeThemeClicked : SettingsActions
 
-data object DismissThemeClicked : SettingsActions()
+data object BackClicked : SettingsActions
 
-data object ShowTraktDialog : SettingsActions()
+data object DismissThemeClicked : SettingsActions
 
-data object DismissTraktDialog : SettingsActions()
+data object ShowTraktDialog : SettingsActions
 
-data object TraktLogoutClicked : SettingsActions()
+data object DismissTraktDialog : SettingsActions
 
-data object ShowImageQualityDialog : SettingsActions()
+data object TraktLogoutClicked : SettingsActions
 
-data object DismissImageQualityDialog : SettingsActions()
+data object ShowImageQualityDialog : SettingsActions
+
+data object DismissImageQualityDialog : SettingsActions
 
 data class ImageQualitySelected(
     val quality: ImageQuality,
-) : SettingsActions()
+) : SettingsActions

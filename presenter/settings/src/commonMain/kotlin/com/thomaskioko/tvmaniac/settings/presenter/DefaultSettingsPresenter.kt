@@ -29,6 +29,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @ContributesBinding(ActivityScope::class, SettingsPresenter::class)
 class DefaultSettingsPresenter(
     @Assisted componentContext: ComponentContext,
+    @Assisted private val backClicked: () -> Unit,
     private val datastoreRepository: DatastoreRepository,
     private val logoutInteractor: LogoutInteractor,
     private val logger: Logger,
@@ -66,6 +67,7 @@ class DefaultSettingsPresenter(
             ChangeThemeClicked, DismissThemeClicked -> updateThemeDialogState()
             DismissTraktDialog, ShowTraktDialog -> updateTrackDialogState()
             ShowImageQualityDialog, DismissImageQualityDialog -> updateImageQualityDialogState()
+            BackClicked -> backClicked()
             TraktLogoutClicked -> {
                 coroutineScope.launch {
                     logoutInteractor(Unit)
@@ -107,9 +109,11 @@ class DefaultSettingsPresenter(
 class DefaultSettingsPresenterFactory(
     private val presenter: (
         componentContext: ComponentContext,
+        backClicked: () -> Unit,
     ) -> SettingsPresenter,
 ) : SettingsPresenter.Factory {
     override fun invoke(
         componentContext: ComponentContext,
-    ): SettingsPresenter = presenter(componentContext)
+        backClicked: () -> Unit,
+    ): SettingsPresenter = presenter(componentContext, backClicked)
 }
