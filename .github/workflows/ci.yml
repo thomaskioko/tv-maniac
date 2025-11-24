@@ -14,9 +14,7 @@ env:
     JDK_VERSION: 21
     DISTRIBUTION: 'temurin'
     XCODE_VERSION: 16.4
-    SPM_CACHE_PATH: |
-        ~/Library/Caches/org.swift.swiftpm
-        ~/Library/Developer/Xcode/DerivedData
+    SPM_CACHE_PATH: ios/SourcePackages
     TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
     TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
     TRAKT_CLIENT_SECRET: ${{ secrets.TRAKT_CLIENT_SECRET }}
@@ -185,7 +183,7 @@ jobs:
                 uses: actions/cache@v4
                 with:
                     path: ${{ env.SPM_CACHE_PATH }}
-                    key: ${{ runner.os }}-spm-${{ hashFiles('ios/Modules/*/Package.resolved', 'ios/tv-maniac.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
+                    key: ${{ runner.os }}-spm-${{ github.sha }}
                     restore-keys: |
                         ${{ runner.os }}-spm-
 
@@ -261,7 +259,7 @@ jobs:
                 uses: actions/cache@v4
                 with:
                     path: ${{ env.SPM_CACHE_PATH }}
-                    key: ${{ runner.os }}-spm-${{ hashFiles('ios/Modules/*/Package.resolved', 'ios/tv-maniac.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
+                    key: ${{ runner.os }}-spm-${{ github.sha }}
                     restore-keys: |
                         ${{ runner.os }}-spm-
 
