@@ -185,7 +185,7 @@ jobs:
                 uses: actions/cache@v4
                 with:
                     path: ${{ env.SPM_CACHE_PATH }}
-                    key: ${{ runner.os }}-spm-${{ hashFiles('ios/**/Package.resolved') }}
+                    key: ${{ runner.os }}-spm-${{ hashFiles('ios/Modules/*/Package.resolved', 'ios/tv-maniac.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
                     restore-keys: |
                         ${{ runner.os }}-spm-
 
@@ -261,7 +261,7 @@ jobs:
                 uses: actions/cache@v4
                 with:
                     path: ${{ env.SPM_CACHE_PATH }}
-                    key: ${{ runner.os }}-spm-${{ hashFiles('ios/**/Package.resolved') }}
+                    key: ${{ runner.os }}-spm-${{ hashFiles('ios/Modules/*/Package.resolved', 'ios/tv-maniac.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
                     restore-keys: |
                         ${{ runner.os }}-spm-
 
