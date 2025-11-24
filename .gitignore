@@ -90,7 +90,7 @@ fastlane/test_output
 fastlane/builds
 /ios/fastlane/report.xml
 ios/build
-
+ios/SourcePackages/
 
 derived_data/
 *.xcresult
