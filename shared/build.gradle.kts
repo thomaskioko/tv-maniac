@@ -5,7 +5,7 @@ plugins {
 scaffold {
 
     useKotlinInject()
-    useSkies()
+    useSkie()
 
     addIosTargetsWithXcFramework(
         frameworkName = "TvManiac",
