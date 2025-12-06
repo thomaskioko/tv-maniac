@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.traktauth.implementation
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.trakt.api.TraktTokenRemoteDataSource
 import com.thomaskioko.tvmaniac.traktauth.api.AuthState
-import com.thomaskioko.tvmaniac.traktauth.api.SimpleAuthState
 import com.thomaskioko.tvmaniac.traktauth.api.TraktRefreshTokenAction
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -37,12 +36,13 @@ class DefaultTraktRefreshTokenAction(
 
             val expiresAt = Clock.System.now() + expiresIn.seconds
 
-            logger.debug("TraktRefreshTokenAction: Token refresh successful")
-            SimpleAuthState(
+            logger.debug("TraktRefreshTokenAction: Token refresh successful, lifetime: ${expiresIn}s")
+            AuthState(
                 accessToken = accessToken,
                 refreshToken = refreshToken,
                 isAuthorized = true,
                 expiresAt = expiresAt,
+                tokenLifetimeSeconds = expiresIn,
             )
         } catch (e: Exception) {
             logger.error("TraktRefreshTokenAction: Token refresh failed", e)

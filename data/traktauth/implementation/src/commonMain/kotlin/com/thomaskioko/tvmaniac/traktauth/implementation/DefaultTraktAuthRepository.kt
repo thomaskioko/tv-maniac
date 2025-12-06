@@ -4,7 +4,6 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.traktauth.api.AuthError
 import com.thomaskioko.tvmaniac.traktauth.api.AuthState
 import com.thomaskioko.tvmaniac.traktauth.api.AuthStore
-import com.thomaskioko.tvmaniac.traktauth.api.SimpleAuthState
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.api.TraktRefreshTokenAction
@@ -93,7 +92,7 @@ class DefaultTraktAuthRepository(
             Instant.fromEpochSeconds(it)
         } ?: (Clock.System.now() + 24.hours)
 
-        val authState = SimpleAuthState(
+        val authState = AuthState(
             accessToken = accessToken,
             refreshToken = refreshToken,
             isAuthorized = true,
