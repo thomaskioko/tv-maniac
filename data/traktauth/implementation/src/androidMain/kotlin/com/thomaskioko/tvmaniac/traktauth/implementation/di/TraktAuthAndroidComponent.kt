@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.traktauth.implementation
+package com.thomaskioko.tvmaniac.traktauth.implementation.di
 
 import android.app.Application
 import androidx.core.net.toUri
