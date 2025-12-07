@@ -21,11 +21,12 @@ class DefaultSimilarShowsDao(
     private val dispatchers: AppCoroutineDispatchers,
 ) : SimilarShowsDao {
 
-    override fun upsert(showId: Long, similarShowId: Long) {
+    override fun upsert(showId: Long, similarShowId: Long, pageOrder: Int) {
         database.similarShowsQueries.transaction {
             database.similarShowsQueries.insertOrReplace(
                 id = Id(similarShowId),
                 similar_show_id = Id(showId),
+                page_order = pageOrder.toLong(),
             )
         }
     }

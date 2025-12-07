@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.db.TmdbId;
 CREATE TABLE similar_shows (
     id INTEGER AS Id<TmdbId>,
     similar_show_id INTEGER AS Id<SimilarShowId> NOT NULL,
+    page_order INTEGER NOT NULL DEFAULT 0,
     PRIMARY KEY (similar_show_id, id),
     FOREIGN KEY(similar_show_id) REFERENCES tvshow(id),
     FOREIGN KEY(id) REFERENCES tvshow(id)
@@ -13,9 +14,10 @@ CREATE TABLE similar_shows (
 insertOrReplace:
 INSERT OR REPLACE INTO similar_shows(
     id,
-    similar_show_id
+    similar_show_id,
+    page_order
 )
-VALUES(?,?);
+VALUES(?,?,?);
 
 similarShows:
 SELECT
@@ -31,7 +33,8 @@ JOIN
 LEFT OUTER JOIN
     watchlist ON tvshow.id = watchlist.id
 WHERE
-    similar_shows.similar_show_id = ?;
+    similar_shows.similar_show_id = ?
+ORDER BY similar_shows.page_order ASC;
 
 delete:
 DELETE FROM similar_shows WHERE similar_show_id = ?;

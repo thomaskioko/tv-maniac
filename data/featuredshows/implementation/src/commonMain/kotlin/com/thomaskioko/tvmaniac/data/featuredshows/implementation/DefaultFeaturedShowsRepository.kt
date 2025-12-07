@@ -15,12 +15,12 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class DefaultFeaturedShowsRepository(
+public class DefaultFeaturedShowsRepository(
     private val store: FeaturedShowsStore,
     private val dao: FeaturedShowsDao,
 ) : FeaturedShowsRepository {
 
-    companion object {
+    public companion object {
         private const val FEATURED_SHOWS_COUNT = 12
     }
 

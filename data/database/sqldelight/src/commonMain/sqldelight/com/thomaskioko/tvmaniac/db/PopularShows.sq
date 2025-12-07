@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS popular_shows(
     `page` INTEGER AS Id<PageId> NOT NULL,
     `name` TEXT,
     `poster_path` TEXT,
-    `overview` TEXT
+    `overview` TEXT,
+    `page_order` INTEGER NOT NULL DEFAULT 0
 );
 
 -- indices
@@ -22,13 +23,15 @@ INSERT OR REPLACE INTO popular_shows(
     `page`,
     `name`,
     `poster_path`,
-    `overview`
+    `overview`,
+    `page_order`
 ) VALUES (
     :id,
     :page,
     :name,
     :poster_path,
-    :overview
+    :overview,
+    :page_order
 );
 
 count:
@@ -46,7 +49,7 @@ FROM popular_shows
 LEFT OUTER JOIN watchlist ON popular_shows.id = watchlist.id
 WHERE popular_shows.page = :page
   AND popular_shows.name IS NOT NULL
-ORDER BY popular_shows.id ASC;
+ORDER BY popular_shows.page_order ASC;
 
 -- Query with show data - only used when show info is needed
 popularShows:
@@ -62,7 +65,7 @@ INNER JOIN
     tvshow ON tvshow.id = popular_shows.id
 LEFT OUTER JOIN
     watchlist ON tvshow.id = watchlist.id
-ORDER BY page ASC;
+ORDER BY popular_shows.page ASC, popular_shows.page_order ASC;
 
 pagedPopularShows:
 SELECT
@@ -78,7 +81,7 @@ INNER JOIN
 LEFT OUTER JOIN
     watchlist ON tvshow.id = watchlist.id
 ORDER BY
-    popular_shows.page ASC
+    popular_shows.page ASC, popular_shows.page_order ASC
 LIMIT
     :limit OFFSET :offset;
 

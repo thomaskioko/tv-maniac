@@ -74,6 +74,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
             name = "New Test Show",
             poster_path = "/new_test.jpg",
             overview = "New test overview",
+            page_order = 0,
         )
 
         // When
@@ -101,6 +102,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
             name = "Test Show 1 Updated",
             poster_path = "/test1_updated.jpg",
             overview = "Updated test overview",
+            page_order = 0,
         )
 
         // When
@@ -132,6 +134,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
                 name = "Test Show 1 Updated",
                 poster_path = "/test1_updated.jpg",
                 overview = "Updated test overview",
+                page_order = 0,
             )
             dao.upsert(updatedShow)
 
@@ -234,6 +237,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
             name = null,
             poster_path = "/test999.jpg",
             overview = "Test overview 999",
+            page_order = 0,
         )
 
         // When & Then
@@ -255,6 +259,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
             name = "Page 2 Show",
             poster_path = "/page2.jpg",
             overview = "Page 2 overview",
+            page_order = 0,
         )
 
         // When & Then
@@ -302,6 +307,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
                 name = "New Reactive Show",
                 poster_path = "/reactive.jpg",
                 overview = "Reactive overview",
+                page_order = 0,
             )
             dao.upsert(newShow)
 
@@ -323,6 +329,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
                 name = "",
                 poster_path = "/empty.jpg",
                 overview = "Empty name test",
+                page_order = 0,
             )
         }
 
@@ -377,6 +384,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
             name = "Test Show 1",
             poster_path = "/test1.jpg",
             overview = "Test overview 1",
+            page_order = 0,
         )
 
         popularShowsQueries.insert(
@@ -385,6 +393,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
             name = "Test Show 2",
             poster_path = "/test2.jpg",
             overview = "Test overview 2",
+            page_order = 0,
         )
     }
 }

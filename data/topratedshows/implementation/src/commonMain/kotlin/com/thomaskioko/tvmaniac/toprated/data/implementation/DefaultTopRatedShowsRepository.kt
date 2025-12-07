@@ -23,7 +23,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class DefaultTopRatedShowsRepository(
+public class DefaultTopRatedShowsRepository(
     private val store: TopRatedShowsStore,
     private val requestManagerRepository: RequestManagerRepository,
     private val dao: TopRatedShowsDao,
