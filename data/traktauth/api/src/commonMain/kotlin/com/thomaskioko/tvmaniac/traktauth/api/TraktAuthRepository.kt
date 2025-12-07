@@ -2,23 +2,23 @@ package com.thomaskioko.tvmaniac.traktauth.api
 
 import kotlinx.coroutines.flow.Flow
 
-interface TraktAuthRepository {
+public interface TraktAuthRepository {
 
-    val state: Flow<TraktAuthState>
+    public val state: Flow<TraktAuthState>
 
-    val authError: Flow<AuthError?>
+    public val authError: Flow<AuthError?>
 
-    suspend fun getAuthState(): AuthState?
+    public suspend fun getAuthState(): AuthState?
 
-    suspend fun refreshTokens(): AuthState?
+    public suspend fun refreshTokens(): AuthState?
 
-    suspend fun logout()
+    public suspend fun logout()
 
-    suspend fun saveTokens(
+    public suspend fun saveTokens(
         accessToken: String,
         refreshToken: String,
-        expiresAtSeconds: Long?,
+        expiresAtSeconds: Long,
     )
 
-    suspend fun setAuthError(error: AuthError?)
+    public suspend fun setAuthError(error: AuthError?)
 }

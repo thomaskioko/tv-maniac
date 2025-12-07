@@ -6,7 +6,6 @@ import com.russhwolf.settings.KeychainSettings
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.traktauth.api.AuthState
 import com.thomaskioko.tvmaniac.traktauth.api.AuthStore
-import com.thomaskioko.tvmaniac.traktauth.api.SimpleAuthState
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
@@ -27,7 +26,7 @@ import kotlin.time.Instant
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class IosAuthStore(
+public class IosAuthStore(
     private val dispatchers: AppCoroutineDispatchers,
 ) : AuthStore {
 
@@ -42,13 +41,15 @@ class IosAuthStore(
         val accessToken = settings.getStringOrNull(KEY_ACCESS_TOKEN)
         val refreshToken = settings.getStringOrNull(KEY_REFRESH_TOKEN)
         val expiresAt = settings.getLongOrNull(KEY_EXPIRES_AT)
+        val tokenLifetimeSeconds = settings.getLongOrNull(KEY_TOKEN_LIFETIME)
 
         if (accessToken != null && refreshToken != null) {
-            SimpleAuthState(
+            AuthState(
                 accessToken = accessToken,
                 refreshToken = refreshToken,
                 isAuthorized = true,
                 expiresAt = expiresAt?.let { Instant.fromEpochMilliseconds(it) },
+                tokenLifetimeSeconds = tokenLifetimeSeconds,
             )
         } else {
             null
@@ -60,6 +61,7 @@ class IosAuthStore(
             settings.putString(KEY_ACCESS_TOKEN, state.accessToken)
             settings.putString(KEY_REFRESH_TOKEN, state.refreshToken)
             state.expiresAt?.let { settings.putLong(KEY_EXPIRES_AT, it.toEpochMilliseconds()) }
+            state.tokenLifetimeSeconds?.let { settings.putLong(KEY_TOKEN_LIFETIME, it) }
         }
     }
 
@@ -68,12 +70,14 @@ class IosAuthStore(
             settings.remove(KEY_ACCESS_TOKEN)
             settings.remove(KEY_REFRESH_TOKEN)
             settings.remove(KEY_EXPIRES_AT)
+            settings.remove(KEY_TOKEN_LIFETIME)
         }
     }
 
-    companion object {
+    public companion object {
         private const val KEY_ACCESS_TOKEN = "trakt_access_token"
         private const val KEY_REFRESH_TOKEN = "trakt_refresh_token"
         private const val KEY_EXPIRES_AT = "trakt_expires_at"
+        private const val KEY_TOKEN_LIFETIME = "trakt_token_lifetime"
     }
 }

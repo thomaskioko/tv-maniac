@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.traktauth.implementation
+package com.thomaskioko.tvmaniac.traktauth.implementation.di
 
 import android.app.Application
 import androidx.core.net.toUri
@@ -15,11 +15,11 @@ import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @ContributesTo(ActivityScope::class)
-interface TraktAuthAndroidComponent {
+public interface TraktAuthAndroidComponent {
 
     @Provides
     @SingleIn(ActivityScope::class)
-    fun provideAuthConfig(): AuthorizationServiceConfiguration {
+    public fun provideAuthConfig(): AuthorizationServiceConfiguration {
         return AuthorizationServiceConfiguration(
             "https://trakt.tv/oauth/authorize".toUri(),
             "https://trakt.tv/oauth/token".toUri(),
@@ -28,7 +28,7 @@ interface TraktAuthAndroidComponent {
 
     @Provides
     @SingleIn(ActivityScope::class)
-    fun provideAuthRequest(
+    public fun provideAuthRequest(
         configuration: AuthorizationServiceConfiguration,
     ): AuthorizationRequest = AuthorizationRequest.Builder(
         configuration,
@@ -40,11 +40,11 @@ interface TraktAuthAndroidComponent {
         .build()
 
     @Provides
-    fun provideClientAuth(): ClientAuthentication =
+    public fun provideClientAuth(): ClientAuthentication =
         ClientSecretBasic(BuildConfig.TRAKT_CLIENT_SECRET)
 
     @Provides
     @SingleIn(ActivityScope::class)
-    fun provideAuthorizationService(application: Application): AuthorizationService =
+    public fun provideAuthorizationService(application: Application): AuthorizationService =
         AuthorizationService(application)
 }

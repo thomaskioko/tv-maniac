@@ -3,37 +3,29 @@ package com.thomaskioko.tvmaniac.traktauth.api
 import kotlin.time.Clock
 import kotlin.time.Instant
 
-interface AuthState {
-    val accessToken: String
-    val refreshToken: String
-    val isAuthorized: Boolean
-    val expiresAt: Instant?
-
-    fun isExpired(): Boolean {
+public data class AuthState(
+    val accessToken: String,
+    val refreshToken: String,
+    val isAuthorized: Boolean = true,
+    val expiresAt: Instant? = null,
+    val tokenLifetimeSeconds: Long? = null,
+) {
+    public fun isExpiringSoon(): Boolean {
         val expiresAt = this.expiresAt ?: return false
-        return Clock.System.now() >= expiresAt
-    }
-
-    fun isExpiringSoon(thresholdMinutes: Int = 60): Boolean {
-        val expiresAt = this.expiresAt ?: return false
-        val thresholdMs = thresholdMinutes * 60 * 1000
+        val lifetime = tokenLifetimeSeconds ?: DEFAULT_LIFETIME_SECONDS
+        val thresholdMs = (lifetime * 1000 * REFRESH_THRESHOLD_PERCENT).toLong()
         val now = Clock.System.now()
         return (expiresAt.toEpochMilliseconds() - now.toEpochMilliseconds()) <= thresholdMs
     }
 
-    companion object {
-        val Empty: AuthState = SimpleAuthState(
+    public companion object {
+        public const val DEFAULT_LIFETIME_SECONDS: Long = 86400L
+        public const val REFRESH_THRESHOLD_PERCENT: Double = 0.25
+
+        public val Empty: AuthState = AuthState(
             accessToken = "",
             refreshToken = "",
             isAuthorized = false,
-            expiresAt = null,
         )
     }
 }
-
-data class SimpleAuthState(
-    override val accessToken: String,
-    override val refreshToken: String,
-    override val isAuthorized: Boolean = true,
-    override val expiresAt: Instant? = null,
-) : AuthState

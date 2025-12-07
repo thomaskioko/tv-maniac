@@ -1,5 +1,5 @@
 package com.thomaskioko.tvmaniac.traktauth.api
 
-interface TraktRefreshTokenAction {
-    suspend operator fun invoke(currentState: AuthState): AuthState?
+public interface TraktRefreshTokenAction {
+    public suspend operator fun invoke(currentState: AuthState): RefreshTokenResult
 }

@@ -4,7 +4,7 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.traktauth.api.AuthError
 import com.thomaskioko.tvmaniac.traktauth.api.AuthState
 import com.thomaskioko.tvmaniac.traktauth.api.AuthStore
-import com.thomaskioko.tvmaniac.traktauth.api.SimpleAuthState
+import com.thomaskioko.tvmaniac.traktauth.api.RefreshTokenResult
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.api.TraktRefreshTokenAction
@@ -27,7 +27,7 @@ import kotlin.time.Instant
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class DefaultTraktAuthRepository(
+public class DefaultTraktAuthRepository(
     private val dispatchers: AppCoroutineDispatchers,
     private val authStore: AuthStore,
     private val refreshTokenAction: Lazy<TraktRefreshTokenAction>,
@@ -38,7 +38,6 @@ class DefaultTraktAuthRepository(
     private val scope = CoroutineScope(SupervisorJob() + dispatchers.io)
 
     private val _authError = MutableStateFlow<AuthError?>(null)
-    private val _isAuthenticating = MutableStateFlow(false)
 
     init {
         scope.launch {
@@ -71,13 +70,19 @@ class DefaultTraktAuthRepository(
     }
 
     override suspend fun refreshTokens(): AuthState? {
-        return getAuthState()
-            ?.let { currentState ->
-                refreshTokenAction.value.invoke(currentState)
+        val currentState = getAuthState() ?: return null
+
+        return when (val result = refreshTokenAction.value.invoke(currentState)) {
+            is RefreshTokenResult.Success -> {
+                updateAuthState(result.authState)
+                result.authState
             }
-            .also { newState ->
-                updateAuthState(newState ?: AuthState.Empty)
+            is RefreshTokenResult.TokenExpired -> {
+                updateAuthState(AuthState.Empty)
+                null
             }
+            is RefreshTokenResult.Failed -> null
+        }
     }
 
     override suspend fun logout() {
@@ -87,17 +92,13 @@ class DefaultTraktAuthRepository(
     override suspend fun saveTokens(
         accessToken: String,
         refreshToken: String,
-        expiresAtSeconds: Long?,
+        expiresAtSeconds: Long,
     ) {
-        val expiresAt = expiresAtSeconds?.let {
-            Instant.fromEpochSeconds(it)
-        } ?: (Clock.System.now() + 24.hours)
-
-        val authState = SimpleAuthState(
+        val authState = AuthState(
             accessToken = accessToken,
             refreshToken = refreshToken,
             isAuthorized = true,
-            expiresAt = expiresAt,
+            expiresAt = Instant.fromEpochSeconds(expiresAtSeconds),
         )
 
         updateAuthState(authState, persist = true)

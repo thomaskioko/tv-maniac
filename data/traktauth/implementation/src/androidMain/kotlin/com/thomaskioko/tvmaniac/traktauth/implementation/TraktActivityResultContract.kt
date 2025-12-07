@@ -10,7 +10,7 @@ import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationService
 
 @Inject
-class TraktActivityResultContract(
+public class TraktActivityResultContract(
     private val authService: AuthorizationService,
     private val request: AuthorizationRequest,
 ) : ActivityResultContract<Unit, TraktActivityResultContract.Result?>() {
@@ -26,7 +26,7 @@ class TraktActivityResultContract(
             )
         }
 
-    data class Result(
+    public data class Result(
         val response: AuthorizationResponse?,
         val exception: AuthorizationException?,
     )

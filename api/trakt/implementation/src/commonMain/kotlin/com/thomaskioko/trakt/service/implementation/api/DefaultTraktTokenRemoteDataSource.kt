@@ -2,14 +2,19 @@ package com.thomaskioko.trakt.service.implementation.api
 
 import com.thomaskioko.trakt.service.implementation.TraktHttpClient
 import com.thomaskioko.tvmaniac.buildconfig.api.BuildConfig
+import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.networkutil.model.safeRequest
 import com.thomaskioko.tvmaniac.trakt.api.TraktTokenRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.AccessTokenBody
 import com.thomaskioko.tvmaniac.trakt.api.model.RefreshAccessTokenBody
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAccessRefreshTokenResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAccessTokenResponse
-import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.HttpMethod
+import io.ktor.http.contentType
+import io.ktor.http.path
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
@@ -25,36 +30,42 @@ class DefaultTraktTokenRemoteDataSource(
     private val traktClientId: String = BuildConfig.TRAKT_CLIENT_ID
     private val traktClientSecret: String = BuildConfig.TRAKT_CLIENT_SECRET
 
-    override suspend fun getAccessToken(authCode: String): TraktAccessTokenResponse =
-        httpClient
-            .post("oauth/token") {
-                setBody(
-                    AccessTokenBody(
-                        code = authCode,
-                        clientId = traktClientId,
-                        clientSecret = traktClientSecret,
-                        redirectUri = BuildConfig.TRAKT_REDIRECT_URI,
-                        grantType = "authorization_code",
-                    ),
-                )
+    override suspend fun getAccessToken(authCode: String): ApiResponse<TraktAccessTokenResponse> =
+        httpClient.safeRequest {
+            url {
+                method = HttpMethod.Post
+                path("oauth/token")
             }
-            .body()
+            contentType(ContentType.Application.Json)
+            setBody(
+                AccessTokenBody(
+                    code = authCode,
+                    clientId = traktClientId,
+                    clientSecret = traktClientSecret,
+                    redirectUri = BuildConfig.TRAKT_REDIRECT_URI,
+                    grantType = "authorization_code",
+                ),
+            )
+        }
 
     override suspend fun getAccessRefreshToken(
         refreshToken: String,
-    ): TraktAccessRefreshTokenResponse =
-        httpClient
-            .post("oauth/token") {
-                setBody(
-                    RefreshAccessTokenBody(
-                        refreshToken = refreshToken,
-                        clientId = traktClientId,
-                        clientSecret = traktClientSecret,
-                        redirectUri = BuildConfig.TRAKT_REDIRECT_URI,
-                    ),
-                )
+    ): ApiResponse<TraktAccessRefreshTokenResponse> =
+        httpClient.safeRequest {
+            url {
+                method = HttpMethod.Post
+                path("oauth/token")
             }
-            .body()
+            contentType(ContentType.Application.Json)
+            setBody(
+                RefreshAccessTokenBody(
+                    refreshToken = refreshToken,
+                    clientId = traktClientId,
+                    clientSecret = traktClientSecret,
+                    redirectUri = BuildConfig.TRAKT_REDIRECT_URI,
+                ),
+            )
+        }
 
     override suspend fun revokeAccessToken(authCode: String) {
         httpClient.post("oauth/revoke") {

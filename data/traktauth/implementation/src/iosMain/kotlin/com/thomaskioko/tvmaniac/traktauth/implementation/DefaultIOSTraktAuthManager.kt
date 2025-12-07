@@ -10,7 +10,7 @@ import kotlin.concurrent.Volatile
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class DefaultIOSTraktAuthManager : TraktAuthManager {
+public class DefaultIOSTraktAuthManager : TraktAuthManager {
 
     @Volatile
     private var authCallback: (() -> Unit)? = null
