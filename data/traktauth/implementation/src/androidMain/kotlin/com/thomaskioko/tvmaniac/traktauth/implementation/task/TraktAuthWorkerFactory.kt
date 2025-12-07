@@ -18,9 +18,14 @@ public class TraktAuthWorkerFactory(
         appContext: Context,
         workerClassName: String,
         workerParameters: WorkerParameters,
-    ): ListenableWorker? = when (workerClassName) {
-        name<TokenRefreshWorker>() -> tokenRefreshWorker(appContext, workerParameters)
-        else -> null
+    ): ListenableWorker? {
+        val tokenRefreshWorkerName = name<TokenRefreshWorker>()
+            ?: error("TokenRefreshWorker qualifiedName should not be null")
+
+        return when (workerClassName) {
+            tokenRefreshWorkerName -> tokenRefreshWorker(appContext, workerParameters)
+            else -> null
+        }
     }
 
     private inline fun <reified C> name() = C::class.qualifiedName
