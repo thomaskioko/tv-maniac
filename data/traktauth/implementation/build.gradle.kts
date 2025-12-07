@@ -21,6 +21,7 @@ kotlin {
                 implementation(libs.androidx.browser)
                 implementation(libs.androidx.core.ktx)
                 implementation(libs.androidx.datastore.preference)
+                implementation(libs.androidx.work.runtime)
                 implementation(projects.data.datastore.api)
             }
         }
