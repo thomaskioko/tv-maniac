@@ -1,5 +1,6 @@
 import Foundation
 import SDWebImage
+import SDWebImageWebPCoder
 import UIKit
 
 /// Manages SDWebImage configuration and caching strategies
@@ -39,6 +40,9 @@ public enum ImageConfiguration {
 
     /// Configures SDWebImage with the specified quality settings and all optimizations
     public static func configure(quality: Quality = .medium) {
+        // Register WebP coder for encoding/decoding WebP images
+        SDImageCodersManager.shared.addCoder(SDImageWebPCoder.shared)
+
         // Configure cache settings based on quality
         configureCacheSettings(quality: quality)
 
