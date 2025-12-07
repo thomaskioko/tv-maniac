@@ -17,7 +17,7 @@ import kotlin.time.Instant
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class AndroidAuthStore(
+public class AndroidAuthStore(
     private val dataStore: DataStore<Preferences>,
 ) : AuthStore {
 
@@ -60,7 +60,7 @@ class AndroidAuthStore(
         }
     }
 
-    companion object {
+    public companion object {
         private val KEY_ACCESS_TOKEN = stringPreferencesKey("trakt_access_token")
         private val KEY_REFRESH_TOKEN = stringPreferencesKey("trakt_refresh_token")
         private val KEY_EXPIRES_AT = longPreferencesKey("trakt_expires_at")

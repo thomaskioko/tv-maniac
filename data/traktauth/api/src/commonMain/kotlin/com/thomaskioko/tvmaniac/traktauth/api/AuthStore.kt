@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.traktauth.api
 
-interface AuthStore {
-    suspend fun get(): AuthState?
-    suspend fun save(state: AuthState)
-    suspend fun clear()
+public interface AuthStore {
+    public suspend fun get(): AuthState?
+    public suspend fun save(state: AuthState)
+    public suspend fun clear()
 }

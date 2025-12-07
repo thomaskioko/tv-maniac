@@ -26,7 +26,7 @@ import kotlin.time.Instant
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class DefaultTraktAuthRepository(
+public class DefaultTraktAuthRepository(
     private val dispatchers: AppCoroutineDispatchers,
     private val authStore: AuthStore,
     private val refreshTokenAction: Lazy<TraktRefreshTokenAction>,
@@ -37,7 +37,6 @@ class DefaultTraktAuthRepository(
     private val scope = CoroutineScope(SupervisorJob() + dispatchers.io)
 
     private val _authError = MutableStateFlow<AuthError?>(null)
-    private val _isAuthenticating = MutableStateFlow(false)
 
     init {
         scope.launch {

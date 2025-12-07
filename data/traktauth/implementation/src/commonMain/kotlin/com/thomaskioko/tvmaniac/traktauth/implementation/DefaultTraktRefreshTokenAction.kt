@@ -14,7 +14,7 @@ import kotlin.time.Duration.Companion.seconds
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class DefaultTraktRefreshTokenAction(
+public class DefaultTraktRefreshTokenAction(
     private val traktTokenDataSource: TraktTokenRemoteDataSource,
     private val logger: Logger,
 ) : TraktRefreshTokenAction {

@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.traktauth.api
 
-enum class TraktAuthState {
+public enum class TraktAuthState {
     LOGGED_IN,
     LOGGED_OUT,
 }

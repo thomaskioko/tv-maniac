@@ -24,7 +24,7 @@ private const val TYPE_USER_CANCELED = 2
 @Inject
 @SingleIn(ActivityScope::class)
 @ContributesBinding(ActivityScope::class)
-class AndroidTraktAuthManager(
+public class AndroidTraktAuthManager(
     private val activity: ComponentActivity,
     private val traktActivityResultContract: TraktActivityResultContract,
     private val loginAction: TraktAuthRepository,

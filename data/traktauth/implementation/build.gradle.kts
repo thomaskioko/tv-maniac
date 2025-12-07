@@ -4,6 +4,7 @@ plugins {
 
 scaffold {
     addAndroidMultiplatformTarget()
+    explicitApi()
     useKotlinInject()
 }
 

@@ -26,7 +26,7 @@ import kotlin.time.Instant
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class IosAuthStore(
+public class IosAuthStore(
     private val dispatchers: AppCoroutineDispatchers,
 ) : AuthStore {
 
@@ -74,7 +74,7 @@ class IosAuthStore(
         }
     }
 
-    companion object {
+    public companion object {
         private const val KEY_ACCESS_TOKEN = "trakt_access_token"
         private const val KEY_REFRESH_TOKEN = "trakt_refresh_token"
         private const val KEY_EXPIRES_AT = "trakt_expires_at"
