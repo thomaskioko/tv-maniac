@@ -94,14 +94,17 @@ public class AndroidTraktAuthManager(
             }
 
             if (tokenResponse != null) {
-                val expiresAtSeconds = tokenResponse.accessTokenExpirationTime?.let {
-                    it / 1000
+                val expiresAtMillis = tokenResponse.accessTokenExpirationTime
+                if (expiresAtMillis == null) {
+                    logger.error("TokenExchangeError", Throwable("Token response missing expiration time"))
+                    loginAction.setAuthError(AuthError.TokenExchangeFailed)
+                    return
                 }
 
                 loginAction.saveTokens(
                     accessToken = tokenResponse.accessToken.orEmpty(),
                     refreshToken = tokenResponse.refreshToken.orEmpty(),
-                    expiresAtSeconds = expiresAtSeconds,
+                    expiresAtSeconds = expiresAtMillis / 1000,
                 )
 
                 logger.debug("TraktAuthManager", "Token exchange successful")

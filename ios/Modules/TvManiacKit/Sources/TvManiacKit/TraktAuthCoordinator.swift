@@ -46,10 +46,16 @@ public class TraktAuthCoordinator: NSObject {
                     presentingViewController: rootViewController
                 )
 
+                guard let expiresAt = credential.expiresAt else {
+                    logger.error(tag: "TraktAuthCoordinator", message: "Token response missing expiration time")
+                    await handleAuthError(AuthError.TokenExchangeFailed())
+                    return
+                }
+
                 try await authRepository.saveTokens(
                     accessToken: credential.accessToken,
                     refreshToken: credential.refreshToken,
-                    expiresAtSeconds: credential.expiresAt.map { KotlinLong(value: Int64($0.timeIntervalSince1970)) }
+                    expiresAtSeconds: Int64(expiresAt.timeIntervalSince1970)
                 )
 
             } catch let error as TraktAuthError {

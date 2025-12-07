@@ -35,7 +35,7 @@ class FakeTraktAuthRepository : TraktAuthRepository {
     override suspend fun saveTokens(
         accessToken: String,
         refreshToken: String,
-        expiresAtSeconds: Long?,
+        expiresAtSeconds: Long,
     ) {
         _state.emit(TraktAuthState.LOGGED_IN)
     }
