@@ -73,7 +73,7 @@ internal class DefaultTopRatedShowsDaoTest : BaseDatabaseTest() {
             name = "New Test Show",
             poster_path = "/new_test.jpg",
             overview = "New test overview",
-            page_order = 0
+            page_order = 0,
         )
 
         // When
@@ -122,7 +122,7 @@ internal class DefaultTopRatedShowsDaoTest : BaseDatabaseTest() {
             name = null,
             poster_path = "/test999.jpg",
             overview = "Test overview 999",
-            page_order = 0
+            page_order = 0,
         )
 
         dao.observeTopRatedShows(page = 1).test {
@@ -141,7 +141,7 @@ internal class DefaultTopRatedShowsDaoTest : BaseDatabaseTest() {
             name = "Page 2 Show",
             poster_path = "/page2.jpg",
             overview = "Page 2 overview",
-            page_order = 0
+            page_order = 0,
         )
 
         // When & Then
@@ -196,7 +196,7 @@ internal class DefaultTopRatedShowsDaoTest : BaseDatabaseTest() {
                 name = "New Reactive Show",
                 poster_path = "/reactive.jpg",
                 overview = "Reactive overview",
-                page_order = 0
+                page_order = 0,
             )
             dao.upsert(newShow)
 
@@ -254,7 +254,7 @@ internal class DefaultTopRatedShowsDaoTest : BaseDatabaseTest() {
             name = "Test Show 1",
             poster_path = "/test1.jpg",
             overview = "Test overview 1",
-            page_order = 0
+            page_order = 0,
         )
 
         topRatedShowsQueries.insert(
@@ -263,7 +263,7 @@ internal class DefaultTopRatedShowsDaoTest : BaseDatabaseTest() {
             name = "Test Show 2",
             poster_path = "/test2.jpg",
             overview = "Test overview 2",
-            page_order = 0
+            page_order = 0,
         )
     }
 }
