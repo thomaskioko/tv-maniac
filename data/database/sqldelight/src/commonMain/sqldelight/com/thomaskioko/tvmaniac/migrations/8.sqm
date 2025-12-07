@@ -1,0 +1,52 @@
+-- Migration 8: Add page_order column to show listing tables
+-- Uses temp table pattern to preserve existing cached data
+
+-- 1. FEATURED_SHOWS: Add page_order column
+CREATE TABLE featured_shows_new(
+    id INTEGER PRIMARY KEY NOT NULL,
+    name TEXT,
+    poster_path TEXT,
+    overview TEXT,
+    page_order INTEGER NOT NULL DEFAULT 0
+);
+
+INSERT INTO featured_shows_new (id, name, poster_path, overview, page_order)
+SELECT id, name, poster_path, overview, 0 FROM featured_shows;
+
+DROP TABLE featured_shows;
+ALTER TABLE featured_shows_new RENAME TO featured_shows;
+CREATE UNIQUE INDEX IF NOT EXISTS index_featured_shows_show_id ON featured_shows (id);
+
+-- 2. POPULAR_SHOWS: Add page_order column
+CREATE TABLE popular_shows_new(
+    id INTEGER PRIMARY KEY NOT NULL,
+    page INTEGER NOT NULL,
+    name TEXT,
+    poster_path TEXT,
+    overview TEXT,
+    page_order INTEGER NOT NULL DEFAULT 0
+);
+
+INSERT INTO popular_shows_new (id, page, name, poster_path, overview, page_order)
+SELECT id, page, name, poster_path, overview, 0 FROM popular_shows;
+
+DROP TABLE popular_shows;
+ALTER TABLE popular_shows_new RENAME TO popular_shows;
+CREATE UNIQUE INDEX IF NOT EXISTS index_popular_shows_show_id ON popular_shows (id);
+
+-- 3. TOPRATED_SHOWS: Add page_order column
+CREATE TABLE toprated_shows_new(
+    id INTEGER PRIMARY KEY NOT NULL,
+    page INTEGER NOT NULL,
+    name TEXT,
+    poster_path TEXT,
+    overview TEXT,
+    page_order INTEGER NOT NULL DEFAULT 0
+);
+
+INSERT INTO toprated_shows_new (id, page, name, poster_path, overview, page_order)
+SELECT id, page, name, poster_path, overview, 0 FROM toprated_shows;
+
+DROP TABLE toprated_shows;
+ALTER TABLE toprated_shows_new RENAME TO toprated_shows;
+CREATE UNIQUE INDEX IF NOT EXISTS index_toprated_shows_show_id ON toprated_shows (id);

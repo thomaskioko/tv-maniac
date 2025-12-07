@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS toprated_shows(
     `page` INTEGER AS Id<PageId> NOT NULL,
     `name` TEXT,
     `poster_path` TEXT,
-    `overview` TEXT
+    `overview` TEXT,
+    `page_order` INTEGER NOT NULL DEFAULT 0
 );
 
 -- indices
@@ -22,13 +23,15 @@ INSERT OR REPLACE INTO toprated_shows(
     `page`,
     `name`,
     `poster_path`,
-    `overview`
+    `overview`,
+    `page_order`
 ) VALUES (
     :id,
     :page,
     :name,
     :poster_path,
-    :overview
+    :overview,
+    :page_order
 );
 
 count:
@@ -46,7 +49,7 @@ FROM toprated_shows
 LEFT OUTER JOIN watchlist ON toprated_shows.id = watchlist.id
 WHERE toprated_shows.page = :page
   AND toprated_shows.name IS NOT NULL  -- Only return entries with show data
-ORDER BY toprated_shows.id ASC;
+ORDER BY toprated_shows.page_order ASC;
 
 topRatedShows:
 SELECT
@@ -62,7 +65,7 @@ INNER JOIN
 LEFT OUTER JOIN
     watchlist ON tvshow.id = watchlist.id
 ORDER BY
-    tvshow.popularity DESC;
+    toprated_shows.page ASC, toprated_shows.page_order ASC;
 
 topRatedShowByPage:
 SELECT
@@ -94,7 +97,7 @@ INNER JOIN
 LEFT OUTER JOIN
     watchlist ON tvshow.id = watchlist.id
 ORDER BY
-    toprated_shows.page ASC
+    toprated_shows.page ASC, toprated_shows.page_order ASC
 LIMIT
     :limit OFFSET :offset;
 

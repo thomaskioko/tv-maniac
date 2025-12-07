@@ -5,7 +5,8 @@ CREATE TABLE IF NOT EXISTS featured_shows (
     `id` INTEGER AS Id<TmdbId> PRIMARY KEY NOT NULL,
     `name` TEXT,
     `poster_path` TEXT,
-    `overview` TEXT
+    `overview` TEXT,
+    `page_order` INTEGER NOT NULL DEFAULT 0
 );
 
 -- indices
@@ -24,19 +25,21 @@ SELECT
 FROM featured_shows
 LEFT OUTER JOIN watchlist ON featured_shows.id = watchlist.id
 WHERE featured_shows.name IS NOT NULL
-ORDER BY featured_shows.id ASC;
+ORDER BY featured_shows.page_order ASC;
 
 insert:
 INSERT OR IGNORE INTO featured_shows(
     `id`,
     `name`,
     `poster_path`,
-    `overview`
+    `overview`,
+    `page_order`
 ) VALUES (
     :id,
     :name,
     :poster_path,
-    :overview
+    :overview,
+    :page_order
 );
 
 featuredShows:
