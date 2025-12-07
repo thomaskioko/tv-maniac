@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface SimilarShowsDao {
 
-    fun upsert(showId: Long, similarShowId: Long)
+    fun upsert(showId: Long, similarShowId: Long, pageOrder: Int = 0)
 
     fun observeSimilarShows(showId: Long): Flow<List<SimilarShows>>
 

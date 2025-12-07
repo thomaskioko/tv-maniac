@@ -3,6 +3,7 @@ plugins {
 }
 
 scaffold {
+    explicitApi()
     useKotlinInject()
 }
 
@@ -11,6 +12,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(projects.api.tmdb.api)
+                implementation(projects.api.trakt.api)
                 implementation(projects.core.base)
                 implementation(projects.core.paging)
                 implementation(projects.data.database.sqldelight)

@@ -17,7 +17,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class DefaultFeaturedShowsDao(
+public class DefaultFeaturedShowsDao(
     database: TvManiacDatabase,
     private val dispatchers: AppCoroutineDispatchers,
 ) : FeaturedShowsDao {
@@ -31,6 +31,7 @@ class DefaultFeaturedShowsDao(
                 name = show.name,
                 poster_path = show.poster_path,
                 overview = show.overview,
+                page_order = show.page_order,
             )
         }
     }
