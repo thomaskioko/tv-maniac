@@ -50,6 +50,6 @@ public class AndroidTraktAuthTasks(
 
     public companion object {
         private const val TAG = "AndroidTraktAuthTasks"
-        private const val REFRESH_INTERVAL_HOURS = 6L
+        private const val REFRESH_INTERVAL_HOURS = 120L // 5 days
     }
 }

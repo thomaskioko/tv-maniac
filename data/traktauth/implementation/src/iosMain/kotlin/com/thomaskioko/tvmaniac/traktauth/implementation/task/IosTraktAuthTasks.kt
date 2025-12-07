@@ -97,6 +97,6 @@ public class IosTraktAuthTasks(
     public companion object {
         private const val TAG = "IosTraktAuthTasks"
         private const val TASK_ID = "com.thomaskioko.tvmaniac.tokenrefresh"
-        private const val REFRESH_INTERVAL_SECONDS = 6.0 * 60.0 * 60.0
+        private const val REFRESH_INTERVAL_SECONDS = 5.0 * 24.0 * 60.0 * 60.0 // 5 days
     }
 }
