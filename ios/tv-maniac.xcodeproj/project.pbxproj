@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		D60D952B2CDBE1160039884B /* TvManiacKit in Frameworks */ = {isa = PBXBuildFile; productRef = D60D952A2CDBE1160039884B /* TvManiacKit */; };
 		D60F8D272EC8060C00916042 /* TraktAuthKit in Frameworks */ = {isa = PBXBuildFile; productRef = D60F8D262EC8060C00916042 /* TraktAuthKit */; };
-		D60F8E792EC9614600916042 /* AuthCoordinatorFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = D60F8E772EC9614600916042 /* AuthCoordinatorFactory.swift */; };
 		D636CE4D2B4487B1003F7876 /* MoreShowsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D636CE4C2B4487B1003F7876 /* MoreShowsView.swift */; };
 		D6619D372C89D37900D273E7 /* SwiftUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = D6619D362C89D37900D273E7 /* SwiftUIComponents */; };
 		D6619D382C89D37A00D273E8 /* config-dev.json in Resources */ = {isa = PBXBuildFile; fileRef = D6619D392C89D37A00D273E8 /* config-dev.json */; };
@@ -33,7 +32,6 @@
 /* Begin PBXFileReference section */
 		7555FF7B242A565900829871 /* tv-maniac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "tv-maniac.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D60F8E772EC9614600916042 /* AuthCoordinatorFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthCoordinatorFactory.swift; sourceTree = "<group>"; };
 		D636CE4C2B4487B1003F7876 /* MoreShowsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreShowsView.swift; sourceTree = "<group>"; };
 		D6619D392C89D37A00D273E8 /* config-dev.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "config-dev.json"; sourceTree = "<group>"; };
 		D6619D3B2C89D37A00D273E9 /* config-prod.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "config-prod.json"; sourceTree = "<group>"; };
@@ -86,19 +84,10 @@
 				D6619D3B2C89D37A00D273E9 /* config-prod.json */,
 				7555FF8C242A565B00829871 /* Info.plist */,
 				D65009DC2CF644BE00394D67 /* App */,
-				D60F8E782EC9614600916042 /* Configuration */,
 				D6FE248E2D060E7200AB7700 /* UI */,
 				D68FFDDE2B21162A001EB447 /* View */,
 			);
 			path = ios;
-			sourceTree = "<group>";
-		};
-		D60F8E782EC9614600916042 /* Configuration */ = {
-			isa = PBXGroup;
-			children = (
-				D60F8E772EC9614600916042 /* AuthCoordinatorFactory.swift */,
-			);
-			path = Configuration;
 			sourceTree = "<group>";
 		};
 		D636CE4B2B44878F003F7876 /* MoreShows */ = {
@@ -230,7 +219,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D636CE4D2B4487B1003F7876 /* MoreShowsView.swift in Sources */,
-				D60F8E792EC9614600916042 /* AuthCoordinatorFactory.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
