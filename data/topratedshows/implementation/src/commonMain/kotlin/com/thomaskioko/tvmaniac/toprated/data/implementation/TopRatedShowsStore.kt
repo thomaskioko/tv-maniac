@@ -42,7 +42,7 @@ public class TopRatedShowsStore(
 ) : Store<Long, List<ShowEntity>> by storeBuilder(
     fetcher = Fetcher.of { page: Long ->
         coroutineScope {
-            traktRemoteDataSource.getMostFavoritedShows(page = page.toInt(), limit = 20).getOrThrow()
+            traktRemoteDataSource.getFavoritedShows(page = page.toInt(), limit = 20).getOrThrow()
                 .filter { it.show.ids.tmdb != null }
                 .mapIndexed { index, traktResponse ->
                     async {

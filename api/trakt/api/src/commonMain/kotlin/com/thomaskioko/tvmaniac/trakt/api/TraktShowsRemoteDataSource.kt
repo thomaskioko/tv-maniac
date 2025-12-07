@@ -54,7 +54,7 @@ interface TraktShowsRemoteDataSource {
      * @return List of shows with engagement metrics (user count)
      * @see [Trakt Favorited Shows](https://trakt.docs.apiary.io/#reference/shows/favorited)
      */
-    suspend fun getMostFavoritedShows(
+    suspend fun getFavoritedShows(
         page: Int = 1,
         limit: Int = 20,
         period: TimePeriod = TimePeriod.WEEKLY,

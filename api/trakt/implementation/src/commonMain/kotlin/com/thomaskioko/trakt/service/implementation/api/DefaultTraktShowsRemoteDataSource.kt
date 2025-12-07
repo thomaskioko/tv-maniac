@@ -51,7 +51,7 @@ class DefaultTraktShowsRemoteDataSource(
             parameter("extended", "full")
         }
 
-    override suspend fun getMostFavoritedShows(
+    override suspend fun getFavoritedShows(
         page: Int,
         limit: Int,
         period: TimePeriod,
