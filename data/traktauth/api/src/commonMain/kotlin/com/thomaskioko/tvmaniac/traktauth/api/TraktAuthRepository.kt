@@ -17,7 +17,7 @@ public interface TraktAuthRepository {
     public suspend fun saveTokens(
         accessToken: String,
         refreshToken: String,
-        expiresAtSeconds: Long?,
+        expiresAtSeconds: Long,
     )
 
     public suspend fun setAuthError(error: AuthError?)

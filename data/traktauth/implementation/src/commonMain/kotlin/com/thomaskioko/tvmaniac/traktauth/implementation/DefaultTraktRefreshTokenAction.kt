@@ -1,8 +1,10 @@
 package com.thomaskioko.tvmaniac.traktauth.implementation
 
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.TraktTokenRemoteDataSource
 import com.thomaskioko.tvmaniac.traktauth.api.AuthState
+import com.thomaskioko.tvmaniac.traktauth.api.RefreshTokenResult
 import com.thomaskioko.tvmaniac.traktauth.api.TraktRefreshTokenAction
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -18,35 +20,54 @@ public class DefaultTraktRefreshTokenAction(
     private val traktTokenDataSource: TraktTokenRemoteDataSource,
     private val logger: Logger,
 ) : TraktRefreshTokenAction {
-    override suspend fun invoke(currentState: AuthState): AuthState? {
-        return try {
-            logger.debug("TraktRefreshTokenAction: Requesting token refresh")
-            val response = traktTokenDataSource.getAccessRefreshToken(
-                refreshToken = currentState.refreshToken,
-            )
+    override suspend fun invoke(currentState: AuthState): RefreshTokenResult {
+        logger.debug("TraktRefreshTokenAction", "Requesting token refresh")
 
-            val accessToken = response.accessToken
-            val refreshToken = response.refreshToken
-            val expiresIn = response.expiresIn
+        return when (val response = traktTokenDataSource.getAccessRefreshToken(currentState.refreshToken)) {
+            is ApiResponse.Success -> {
+                val accessToken = response.body.accessToken
+                val refreshToken = response.body.refreshToken
+                val expiresIn = response.body.expiresIn
 
-            if (accessToken == null || refreshToken == null || expiresIn == null) {
-                logger.error("TraktRefreshTokenAction", "Invalid response - missing tokens")
-                return null
+                if (accessToken == null || refreshToken == null || expiresIn == null) {
+                    logger.error("TraktRefreshTokenAction", "Invalid response - missing tokens")
+                    return RefreshTokenResult.Failed
+                }
+
+                val expiresAt = Clock.System.now() + expiresIn.seconds
+                logger.debug("TraktRefreshTokenAction", "Token refresh successful, lifetime: ${expiresIn}s")
+
+                RefreshTokenResult.Success(
+                    AuthState(
+                        accessToken = accessToken,
+                        refreshToken = refreshToken,
+                        isAuthorized = true,
+                        expiresAt = expiresAt,
+                        tokenLifetimeSeconds = expiresIn,
+                    ),
+                )
             }
-
-            val expiresAt = Clock.System.now() + expiresIn.seconds
-
-            logger.debug("TraktRefreshTokenAction: Token refresh successful, lifetime: ${expiresIn}s")
-            AuthState(
-                accessToken = accessToken,
-                refreshToken = refreshToken,
-                isAuthorized = true,
-                expiresAt = expiresAt,
-                tokenLifetimeSeconds = expiresIn,
-            )
-        } catch (e: Exception) {
-            logger.error("TraktRefreshTokenAction: Token refresh failed", e)
-            null
+            is ApiResponse.Error.HttpError -> {
+                if (response.code == HTTP_UNAUTHORIZED) {
+                    logger.error("TraktRefreshTokenAction", "Token expired (401) - user needs to re-authenticate")
+                    RefreshTokenResult.TokenExpired
+                } else {
+                    logger.error("TraktRefreshTokenAction", "HTTP error: ${response.code}")
+                    RefreshTokenResult.Failed
+                }
+            }
+            is ApiResponse.Error.SerializationError -> {
+                logger.error("TraktRefreshTokenAction", "Serialization error: ${response.message}")
+                RefreshTokenResult.Failed
+            }
+            is ApiResponse.Error.GenericError -> {
+                logger.error("TraktRefreshTokenAction", "Error: ${response.message}")
+                RefreshTokenResult.Failed
+            }
         }
+    }
+
+    private companion object {
+        const val HTTP_UNAUTHORIZED = 401
     }
 }
