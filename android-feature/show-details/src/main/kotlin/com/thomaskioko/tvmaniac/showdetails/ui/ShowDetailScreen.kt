@@ -388,13 +388,13 @@ private fun ShowInfoContent(
 
         CastContent(castsList = showDetails.castsList)
 
-        RecommendedShowsContent(
-            recommendedShows = showDetails.recommendedShows,
+        SimilarShowsContent(
+            similarShows = showDetails.similarShows,
             onShowClicked = { onAction(DetailShowClicked(it)) },
         )
 
-        SimilarShowsContent(
-            similarShows = showDetails.similarShows,
+        RecommendedShowsContent(
+            recommendedShows = showDetails.recommendedShows,
             onShowClicked = { onAction(DetailShowClicked(it)) },
         )
 
