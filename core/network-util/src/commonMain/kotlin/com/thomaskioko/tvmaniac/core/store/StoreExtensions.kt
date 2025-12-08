@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import org.mobilenativefoundation.store.store5.Fetcher
+import org.mobilenativefoundation.store.store5.FetcherResult
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.StoreBuilder
 
@@ -18,12 +19,12 @@ inline fun <Key : Any, Local : Any, Output : Any> storeBuilder(
 
 inline fun <Key : Any, reified Output : Any> apiFetcher(
     crossinline apiCall: suspend (Key) -> ApiResponse<Output>,
-): Fetcher<Key, Output> = Fetcher.of { key: Key ->
+): Fetcher<Key, Output> = Fetcher.ofResult { key: Key ->
     when (val response = apiCall(key)) {
-        is ApiResponse.Success -> response.body
-        is ApiResponse.Error.GenericError -> throw Throwable("API Error: ${response.message ?: response.errorMessage}")
-        is ApiResponse.Error.HttpError -> throw Throwable("HTTP Error ${response.code}: ${response.errorMessage}")
-        is ApiResponse.Error.SerializationError -> throw Throwable("Serialization Error: ${response.message ?: response.errorMessage}")
+        is ApiResponse.Success -> FetcherResult.Data(response.body)
+        is ApiResponse.Error.GenericError -> FetcherResult.Error.Message("API Error: ${response.message ?: response.errorMessage}")
+        is ApiResponse.Error.HttpError -> FetcherResult.Error.Message("HTTP Error ${response.code}: ${response.errorMessage}")
+        is ApiResponse.Error.SerializationError -> FetcherResult.Error.Message("Serialization Error: ${response.message ?: response.errorMessage}")
     }
 }
 
