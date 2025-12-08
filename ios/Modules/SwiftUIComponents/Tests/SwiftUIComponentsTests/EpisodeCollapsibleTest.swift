@@ -3,7 +3,7 @@ import SwiftUI
 import SwiftUIComponents
 import XCTest
 
-class EpisodeCollapsibleTest: XCTestCase {
+class EpisodeCollapsibleTest: SnapshotTestCase {
     func test_EpisodeCollapsibleTest() {
         EpisodeCollapsible(
             episodeCount: 25,
@@ -15,7 +15,7 @@ class EpisodeCollapsibleTest: XCTestCase {
             VStack {}
         }
         .padding()
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "EpisodeCollapsible")
     }
 }

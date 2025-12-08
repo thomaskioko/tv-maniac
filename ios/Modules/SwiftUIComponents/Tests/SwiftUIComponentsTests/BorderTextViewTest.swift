@@ -3,11 +3,11 @@ import SwiftUI
 import SwiftUIComponents
 import XCTest
 
-class BorderTextViewTest: XCTestCase {
+class BorderTextViewTest: SnapshotTestCase {
     func test_BorderTextView() {
         BorderTextView(text: "2024")
             .padding()
-            .background(Color.background)
+            .themedPreview()
             .assertSnapshot(testName: "BorderTextView")
     }
 
@@ -19,7 +19,7 @@ class BorderTextViewTest: XCTestCase {
             weight: .bold
         )
         .padding()
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "BorderTextView_Tinted")
     }
 }

@@ -3,7 +3,7 @@ import SwiftUI
 import SwiftUIComponents
 import XCTest
 
-class FullScreenViewTest: XCTestCase {
+class FullScreenViewTest: SnapshotTestCase {
     func test_FullScreenView() {
         FullScreenView(
             systemName: "exclamationmark.triangle.fill",
@@ -11,7 +11,7 @@ class FullScreenViewTest: XCTestCase {
             buttonText: "Retry"
         )
         .padding()
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "FullScreenView")
     }
 }

@@ -3,7 +3,7 @@ import SwiftUI
 import SwiftUIComponents
 import XCTest
 
-class EpisodeListViewTest: XCTestCase {
+class EpisodeListViewTest: SnapshotTestCase {
     func test_EpisodeListView() {
         EpisodeListView(
             showingAlert: false,
@@ -35,7 +35,7 @@ class EpisodeListViewTest: XCTestCase {
             onEpisodeHeaderClicked: {},
             onWatchedStateClicked: {}
         )
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "EpisodeListView")
     }
 }

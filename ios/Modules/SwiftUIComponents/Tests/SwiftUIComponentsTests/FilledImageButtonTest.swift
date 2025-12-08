@@ -3,14 +3,14 @@ import SwiftUI
 import SwiftUIComponents
 import XCTest
 
-class FilledImageButtonTest: XCTestCase {
+class FilledImageButtonTest: SnapshotTestCase {
     func test_FilledButton() {
         FilledImageButton(
             text: "Add To Library",
             action: {}
         )
         .padding()
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "FilledButton")
     }
 
@@ -21,7 +21,7 @@ class FilledImageButtonTest: XCTestCase {
             action: {}
         )
         .padding()
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "FilledImageButton")
     }
 }

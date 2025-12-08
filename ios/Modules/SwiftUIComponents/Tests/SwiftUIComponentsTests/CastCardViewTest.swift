@@ -3,7 +3,7 @@ import SwiftUI
 import SwiftUIComponents
 import XCTest
 
-class CastCardViewTest: XCTestCase {
+class CastCardViewTest: SnapshotTestCase {
     func test_CastCardViewWithImage() {
         CastCardView(
             profileUrl: "https://image.tmdb.org/t/p/w780/1mm7JGHIUX3GRRGXEV9QCzsI0ao.jpg",
@@ -11,7 +11,7 @@ class CastCardViewTest: XCTestCase {
             characterName: "Claire Temple"
         )
         .padding()
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "CastCardView")
     }
 }

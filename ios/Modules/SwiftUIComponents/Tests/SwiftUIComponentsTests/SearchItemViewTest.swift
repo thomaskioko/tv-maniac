@@ -3,7 +3,7 @@ import SwiftUI
 import SwiftUIComponents
 import XCTest
 
-class SearchItemViewTest: XCTestCase {
+class SearchItemViewTest: SnapshotTestCase {
     func test_SearchItemViewTest() {
         SearchItemView(
             title: "Arcane",
@@ -14,7 +14,7 @@ class SearchItemViewTest: XCTestCase {
             voteAverage: 5.4
         )
         .padding()
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "SearchItemView")
     }
 }

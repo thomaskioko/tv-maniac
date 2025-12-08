@@ -3,7 +3,7 @@ import SwiftUI
 import SwiftUIComponents
 import XCTest
 
-class NavigationTopBarTest: XCTestCase {
+class NavigationTopBarTest: SnapshotTestCase {
     func _test_NavigationTopBarTest() {
         NavigationTopBar(
             topBarTitle: "Upcoming",
@@ -11,7 +11,7 @@ class NavigationTopBarTest: XCTestCase {
             onBackClicked: {}
         )
         .padding()
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "NavigationTopBar")
     }
 }

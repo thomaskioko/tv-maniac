@@ -3,7 +3,7 @@ import SwiftUI
 import SwiftUIComponents
 import XCTest
 
-class CastListViewTest: XCTestCase {
+class CastListViewTest: SnapshotTestCase {
     func test_CastListView() {
         CastListView(
             casts: [
@@ -27,7 +27,7 @@ class CastListViewTest: XCTestCase {
                 ),
             ]
         )
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "CastListView")
     }
 }

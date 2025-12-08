@@ -3,14 +3,14 @@ import SwiftUI
 import SwiftUIComponents
 import XCTest
 
-class ShowContentItemViewTest: XCTestCase {
+class ShowContentItemViewTest: SnapshotTestCase {
     func test_ShowContentItemView() {
         ShowContentItemView(
             title: "The Penguin",
             imageUrl: ""
         )
         .padding()
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "ShowContentItemView")
     }
 }

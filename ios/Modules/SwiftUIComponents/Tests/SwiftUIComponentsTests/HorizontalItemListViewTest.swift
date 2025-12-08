@@ -3,7 +3,7 @@ import SwiftUI
 import SwiftUIComponents
 import XCTest
 
-class HorizontalItemListViewTest: XCTestCase {
+class HorizontalItemListViewTest: SnapshotTestCase {
     func test_HorizontalItemListViewTest() {
         HorizontalItemListView(
             title: "Coming Soon",
@@ -33,7 +33,7 @@ class HorizontalItemListViewTest: XCTestCase {
             onClick: { _ in },
             onMoreClicked: {}
         )
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "HorizontalItemListView")
     }
 }
