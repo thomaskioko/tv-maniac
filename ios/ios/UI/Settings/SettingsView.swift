@@ -56,15 +56,16 @@ struct SettingsView: View {
             label: settingsLabel(
                 title: String(\.label_settings_change_theme),
                 icon: "paintpalette",
-                color: theme.colors.accent
+                color: theme.colors.secondary
             )
         ) {
-            ForEach(DeveiceAppTheme.allCases, id: \.self) { theme in
-                Text(themeDropdownTitle(for: theme))
-                    .tag(theme)
+            ForEach(DeveiceAppTheme.allCases, id: \.self) { appTheme in
+                Text(themeDropdownTitle(for: appTheme))
+                    .tag(appTheme)
             }
         }
         .pickerStyle(.menu)
+        .tint(theme.colors.secondary)
     }
 
     @ViewBuilder
@@ -101,7 +102,7 @@ struct SettingsView: View {
             label: settingsLabel(
                 title: String(\.label_settings_image_quality),
                 icon: "photo",
-                color: theme.colors.accent
+                color: theme.colors.secondary
             )
         ) {
             ForEach(SwiftImageQuality.allCases, id: \.self) { quality in
@@ -110,6 +111,7 @@ struct SettingsView: View {
             }
         }
         .pickerStyle(.menu)
+        .tint(theme.colors.secondary)
     }
 
     @ViewBuilder
