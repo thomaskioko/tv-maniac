@@ -36,6 +36,7 @@
     <string name="label_settings_change_theme">Thema ändern</string>
     <string name="label_settings_section_trakt_account">Trakt-Konto</string>
     <string name="label_settings_section_app_theme">App-Thema</string>
+    <string name="label_settings_section_appearance">Darstellung</string>
     <string name="label_settings_section_behavior">Verhalten</string>
     <string name="label_settings_section_info">Info</string>
     <string name="label_settings_youtube">Trailer</string>
@@ -138,9 +139,22 @@
     <string name="settings_title_theme_dark">Dunkles Thema</string>
     <string name="settings_title_theme_light">Licht Thema</string>
     <string name="settings_title_theme_system">System Thema</string>
-    <string name="settings_theme_light">Licht</string>
+    <string name="settings_theme_light">Hell</string>
     <string name="settings_theme_dark">Dunkel</string>
     <string name="settings_theme_system">System</string>
+    <string name="settings_theme_terminal">Terminal</string>
+    <string name="settings_theme_autumn">Herbst</string>
+    <string name="settings_theme_aqua">Aqua</string>
+
+    <string name="settings_theme_system_description">Folgt Geräteeinstellungen</string>
+    <string name="settings_theme_light_description">Hell und klar</string>
+    <string name="settings_theme_dark_description">Angenehm für die Augen</string>
+    <string name="settings_theme_terminal_description">Klassische Terminal-Ästhetik</string>
+    <string name="settings_theme_autumn_description">Warme Herbstfarben</string>
+    <string name="settings_theme_aqua_description">Kühle Aquatöne</string>
+
+    <string name="settings_theme_selector_title">App-Design</string>
+    <string name="settings_theme_selector_subtitle">Wähle das Aussehen von TvManiac</string>
 
     <string name="trakt_sync">Synchronisieren Sie Sendungen, die Sie ansehen.</string>
     <string name="trakt_history">Sehen Sie sich den Verlauf an.</string>
@@ -159,9 +173,14 @@
     <string name="settings_theme_description">Wählen Sie zwischen hellen und dunklen Farbpaletten für Hintergründe,
         Überschriften und Text.
     </string>
-    <string name="settings_about_description">Tv-Maniac ist eine Multiplattform-App (Android &amp; iOS) zum Anzeigen von
-        TV-Shows von Trakt.
-    </string>
+    <string name="settings_about_description">TvManiac ist eine wunderschön gestaltete Kotlin Multiplatform App zum Entdecken und Verfolgen deiner Lieblingsserien. Durchstöbere trendige, beliebte und bestbewertete Serien, verwalte deine Watchlist, verfolge gesehene Episoden und synchronisiere alles mit deinem Trakt-Konto auf Android und iOS.</string>
+    <string name="settings_about_api_disclaimer">Dieses Produkt verwendet die TMDB- und Trakt-API, ist aber weder von TMDB noch von Trakt unterstützt oder zertifiziert.</string>
+    <string name="settings_about_app_name">TvManiac</string>
+    <string name="settings_about_version">Version %s</string>
+    <string name="settings_about_github">GitHub</string>
+    <string name="settings_about_source_code">Quellcode</string>
+    <string name="settings_about_website">Webseite</string>
+    <string name="settings_about_section_title">Über</string>
     <string name="trakt_description">Trakt ist eine Plattform, die viele Dinge tut, aber in erster Linie verfolgt,
         welche TV-Shows und Filme Sie ansehen.
     </string>

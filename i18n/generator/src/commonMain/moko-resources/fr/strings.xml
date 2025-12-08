@@ -35,6 +35,7 @@
     <string name="label_settings_change_theme">Changer de thème</string>
     <string name="label_settings_section_trakt_account">Compte Trakt</string>
     <string name="label_settings_section_app_theme">Thème de l\'application</string>
+    <string name="label_settings_section_appearance">Apparence</string>
     <string name="label_settings_section_behavior">Comportement</string>
     <string name="label_settings_section_info">Info</string>
     <string name="label_settings_youtube">Bandes-annonces</string>
@@ -133,12 +134,25 @@
     <string name="title_browse_by_genre">Parcourir par genre</string>
     <string name="status_connected">De nouveau en ligne !</string>
     <string name="status_no_connection">Pas de connexion Internet !</string>
-    <string name="settings_title_theme_dark">Sombre thème sombre</string>
-    <string name="settings_title_theme_light">Clair thème clair</string>
-    <string name="settings_title_theme_system">Système thème</string>
+    <string name="settings_title_theme_dark">Thème sombre</string>
+    <string name="settings_title_theme_light">Thème clair</string>
+    <string name="settings_title_theme_system">Thème système</string>
     <string name="settings_theme_light">Clair</string>
     <string name="settings_theme_dark">Sombre</string>
     <string name="settings_theme_system">Système</string>
+    <string name="settings_theme_terminal">Terminal</string>
+    <string name="settings_theme_autumn">Automne</string>
+    <string name="settings_theme_aqua">Aqua</string>
+
+    <string name="settings_theme_system_description">Suit les paramètres de l\'appareil</string>
+    <string name="settings_theme_light_description">Lumineux et propre</string>
+    <string name="settings_theme_dark_description">Agréable pour les yeux</string>
+    <string name="settings_theme_terminal_description">Esthétique terminal classique</string>
+    <string name="settings_theme_autumn_description">Couleurs d\'automne chaudes</string>
+    <string name="settings_theme_aqua_description">Tons aqua frais</string>
+
+    <string name="settings_theme_selector_title">Thème de l\'app</string>
+    <string name="settings_theme_selector_subtitle">Choisissez l\'apparence de TvManiac</string>
 
     <string name="trakt_sync">Synchronisez les émissions que vous regardez.</string>
     <string name="trakt_history">Consultez l'historique de visionnage.</string>
@@ -157,9 +171,14 @@
     <string name="settings_theme_description">Choisissez entre des palettes de couleurs claires et sombres pour les
         arrière-plans, les en-têtes et le texte.
     </string>
-    <string name="settings_about_description">Tv-Maniac est une application multiplateforme (Android et iOS) pour
-        visualiser les émissions de télévision de Trakt.
-    </string>
+    <string name="settings_about_description">TvManiac est une application Kotlin Multiplatform magnifiquement conçue pour découvrir et suivre vos séries préférées. Parcourez les séries tendances, populaires et les mieux notées, gérez votre liste de suivi, suivez les épisodes regardés et synchronisez tout avec votre compte Trakt sur Android et iOS.</string>
+    <string name="settings_about_api_disclaimer">Ce produit utilise les API TMDB et Trakt mais n\'est ni approuvé ni certifié par l\'un ou l\'autre.</string>
+    <string name="settings_about_app_name">TvManiac</string>
+    <string name="settings_about_version">Version %s</string>
+    <string name="settings_about_github">GitHub</string>
+    <string name="settings_about_source_code">Code source</string>
+    <string name="settings_about_website">Site web</string>
+    <string name="settings_about_section_title">À propos</string>
     <string name="trakt_description">Trakt est une plateforme qui fait beaucoup de choses, mais qui suit principalement
         les émissions de télévision et les films que vous regardez.
     </string>
