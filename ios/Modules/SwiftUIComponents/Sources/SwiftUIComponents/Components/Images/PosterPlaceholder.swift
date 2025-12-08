@@ -1,17 +1,19 @@
 import SwiftUI
 
 public struct PosterPlaceholder: View {
+    @Theme private var theme
+
     private let title: String?
     private let posterWidth: CGFloat
     private let posterHeight: CGFloat
-    private let posterRadius: CGFloat
+    private let posterRadius: CGFloat?
     private let shadowRadius: CGFloat
 
     public init(
         title: String? = nil,
         posterWidth: CGFloat = 160,
         posterHeight: CGFloat = 240,
-        posterRadius: CGFloat = 4,
+        posterRadius: CGFloat? = nil,
         shadowRadius: CGFloat = 8
     ) {
         self.title = title
@@ -26,24 +28,24 @@ public struct PosterPlaceholder: View {
             Rectangle().fill(.gray.gradient)
             VStack {
                 Image(systemName: "popcorn.fill")
-                    .font(.title)
+                    .textStyle(theme.typography.titleLarge)
                     .fontWidth(.expanded)
-                    .foregroundColor(.white.opacity(0.8))
-                    .padding()
+                    .foregroundColor(theme.colors.onPrimary.opacity(0.8))
+                    .padding(theme.spacing.medium)
 
                 if let title {
                     Text(title)
-                        .font(.callout)
-                        .foregroundColor(.white.opacity(0.8))
+                        .textStyle(theme.typography.bodyMedium)
+                        .foregroundColor(theme.colors.onPrimary.opacity(0.8))
                         .lineLimit(2)
                         .multilineTextAlignment(.center)
-                        .padding(.bottom)
-                        .padding(.horizontal, 4)
+                        .padding(.bottom, theme.spacing.medium)
+                        .padding(.horizontal, theme.spacing.xxSmall)
                 }
             }
         }
         .frame(width: posterWidth, height: posterHeight)
-        .clipShape(RoundedRectangle(cornerRadius: posterRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: posterRadius ?? theme.shapes.small, style: .continuous))
         .shadow(radius: shadowRadius)
     }
 }

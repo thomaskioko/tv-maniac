@@ -10,6 +10,8 @@ import SDWebImageSwiftUI
 import SwiftUI
 
 public struct TransparentImageBackground: View {
+    @Theme private var theme
+
     private let imageUrl: String?
 
     public init(imageUrl: String?) {
@@ -25,7 +27,7 @@ public struct TransparentImageBackground: View {
                     image.resizable()
                 } placeholder: {
                     Rectangle()
-                        .fill(.background)
+                        .fill(theme.colors.background)
                         .ignoresSafeArea()
                         .padding(.zero)
                 }

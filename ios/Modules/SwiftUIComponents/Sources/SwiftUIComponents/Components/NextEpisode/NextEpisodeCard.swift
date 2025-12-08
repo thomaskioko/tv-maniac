@@ -2,6 +2,8 @@ import SDWebImageSwiftUI
 import SwiftUI
 
 public struct NextEpisodeCard: View {
+    @Theme private var theme
+
     private let episode: SwiftNextEpisode
     private let onEpisodeClick: (Int64, Int64) -> Void
 
@@ -39,8 +41,8 @@ public struct NextEpisodeCard: View {
                             .fill(Color.gray.opacity(0.3))
                             .overlay(
                                 Image(systemName: "tv")
-                                    .font(.title)
-                                    .foregroundColor(.gray)
+                                    .textStyle(theme.typography.titleLarge)
+                                    .foregroundColor(theme.colors.onSurfaceVariant)
                             )
                     }
                     .indicator(.activity)
@@ -54,8 +56,8 @@ public struct NextEpisodeCard: View {
                         .frame(width: DimensionConstants.imageWidth, height: DimensionConstants.imageHeight)
                         .overlay(
                             Image(systemName: "tv")
-                                .font(.title)
-                                .foregroundColor(.gray)
+                                .textStyle(theme.typography.titleLarge)
+                                .foregroundColor(theme.colors.onSurfaceVariant)
                         )
                 }
 
@@ -74,14 +76,13 @@ public struct NextEpisodeCard: View {
                         HStack {
                             Spacer()
                             Text(runtime)
-                                .font(.caption2)
-                                .fontWeight(.medium)
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
+                                .textStyle(theme.typography.labelSmall)
+                                .foregroundColor(theme.colors.onPrimary)
+                                .padding(.horizontal, theme.spacing.xxSmall + 2)
+                                .padding(.vertical, theme.spacing.xxxSmall)
                                 .background(Color.black.opacity(0.6))
-                                .cornerRadius(4)
-                                .padding(8)
+                                .cornerRadius(theme.shapes.small)
+                                .padding(theme.spacing.xSmall)
                         }
                         Spacer()
                     }
@@ -90,27 +91,27 @@ public struct NextEpisodeCard: View {
                 VStack {
                     Spacer()
                     HStack {
-                        VStack(alignment: .leading, spacing: 4) {
+                        VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
                             Text(episode.showName)
-                                .font(.system(size: 16, weight: .medium))
-                                .foregroundColor(.white)
+                                .textStyle(theme.typography.titleMedium)
+                                .foregroundColor(theme.colors.onPrimary)
                                 .lineLimit(1)
 
                             Text(episode.episodeNumber)
-                                .font(.system(size: 14, weight: .regular))
-                                .foregroundColor(.white.opacity(0.8))
+                                .textStyle(theme.typography.bodyMedium)
+                                .foregroundColor(theme.colors.onPrimary.opacity(0.8))
                                 .lineLimit(1)
                         }
                         Spacer()
                     }
-                    .padding(12)
+                    .padding(theme.spacing.small)
                 }
             }
         }
         .buttonStyle(PlainButtonStyle())
         .frame(width: DimensionConstants.imageWidth, height: DimensionConstants.imageHeight)
-        .cornerRadius(8)
-        .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)
+        .cornerRadius(theme.shapes.medium)
+        .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
     }
 }
 

@@ -3,6 +3,8 @@ import SwiftUIComponents
 import TvManiacKit
 
 struct DiscoverTab: View {
+    @Theme private var theme
+
     private let presenter: DiscoverShowsPresenter
     @StateObject @KotlinStateFlow private var uiState: DiscoverViewState
     @StateObject private var store = SettingsAppStorage.shared
@@ -57,7 +59,7 @@ struct DiscoverTab: View {
                 }
             )
         }
-        .background(Color.background)
+        .background(theme.colors.background)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarColor(backgroundColor: .clear)
         .overlay(
@@ -131,21 +133,21 @@ struct DiscoverTab: View {
     private func showInfoOverlay(_ shows: [SwiftShow]) -> some View {
         VStack(alignment: .leading) {
             Text(selectedShow?.title ?? "")
-                .font(.system(size: 46, weight: .bold))
-                .foregroundColor(.white)
+                .textStyle(theme.typography.headlineLarge)
+                .foregroundColor(theme.colors.onPrimary)
                 .lineLimit(1)
                 .frame(maxWidth: .infinity, alignment: .center)
 
             if let overview = selectedShow?.overview {
                 Text(overview)
-                    .font(.avenirNext(size: 17))
-                    .foregroundColor(.white)
+                    .textStyle(theme.typography.bodyLarge)
+                    .foregroundColor(theme.colors.onPrimary)
                     .multilineTextAlignment(.leading)
-                    .lineLimit(2)
+                    .lineLimit(4)
             }
 
             customIndicator(shows)
-                .padding(.top, 8)
+                .padding(.top, theme.spacing.xSmall)
                 .frame(maxWidth: .infinity, alignment: .center)
         }
         .padding(.horizontal)
@@ -156,10 +158,10 @@ struct DiscoverTab: View {
             LinearGradient(
                 gradient: Gradient(
                     colors: [
-                        .black,
-                        .black.opacity(0.8),
-                        .black.opacity(0.8),
-                        .black.opacity(0.8),
+                        Color.black,
+                        Color.black.opacity(0.8),
+                        Color.black.opacity(0.8),
+                        Color.black.opacity(0.8),
                         .clear,
                     ]
                 ),
@@ -173,7 +175,6 @@ struct DiscoverTab: View {
 
     @ViewBuilder
     func customIndicator(_ shows: [SwiftShow]) -> some View {
-        // Use ZStack to completely isolate the indicator from any parent animations
         ZStack {
             Color.clear
                 .frame(height: 10)
@@ -245,9 +246,9 @@ struct DiscoverTab: View {
                 onMoreClicked: { presenter.dispatch(action: TopRatedClicked()) }
             )
         }
-        .padding(.top, 16)
+        .padding(.top, theme.spacing.medium)
         .padding(.bottom, 90)
-        .background(Color.background)
+        .background(theme.colors.background)
         .offset(y: -10)
     }
 
@@ -259,37 +260,39 @@ struct DiscoverTab: View {
             Image(systemName: "list.bullet.below.rectangle")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .foregroundColor(Color.accent)
-                .font(Font.title.weight(.thin))
+                .foregroundColor(theme.colors.accent)
+                .textStyle(theme.typography.displayMedium)
+                .fontWeight(.thin)
                 .frame(width: 160, height: 180)
 
             Text(String(\.generic_empty_content))
-                .titleSemiBoldFont(size: 18)
-                .padding(.top, 8)
+                .textStyle(theme.typography.titleMedium)
+                .fontWeight(.semibold)
+                .padding(.top, theme.spacing.xSmall)
 
             Text(String(\.missing_api_key))
-                .captionFont(size: 16)
+                .textStyle(theme.typography.bodySmall)
                 .padding(.top, 1)
-                .padding(.bottom, 16)
+                .padding(.bottom, theme.spacing.medium)
 
             Button(action: {
                 presenter.dispatch(action: RefreshData())
             }, label: {
                 Text(String(\.button_error_retry))
-                    .bodyMediumFont(size: 16)
-                    .foregroundColor(Color.accent)
+                    .textStyle(theme.typography.bodyMedium)
+                    .foregroundColor(theme.colors.accent)
             })
             .buttonStyle(BorderlessButtonStyle())
-            .padding(16)
+            .padding(theme.spacing.medium)
             .background(
-                RoundedRectangle(cornerRadius: 5)
-                    .stroke(Color.accent, lineWidth: 2)
+                RoundedRectangle(cornerRadius: theme.shapes.small)
+                    .stroke(theme.colors.accent, lineWidth: 2)
                     .background(.clear)
                     .cornerRadius(2)
             )
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding([.trailing, .leading], 16)
+        .padding([.trailing, .leading], theme.spacing.medium)
     }
 
     private func getShow(currentIndex: Int, shows: [SwiftShow]) -> SwiftShow? {

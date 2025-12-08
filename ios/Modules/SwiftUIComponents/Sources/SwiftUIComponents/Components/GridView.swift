@@ -1,9 +1,11 @@
 import SwiftUI
 
 public struct GridView: View {
+    @Theme private var theme
+
     private let posterWidth: CGFloat
     private let posterHeight: CGFloat
-    private let spacing: CGFloat
+    private let spacing: CGFloat?
     private let columns: [GridItem]
     private let items: [ShowPosterImage]
     private var onAction: (Int64) -> Void
@@ -12,7 +14,7 @@ public struct GridView: View {
         items: [ShowPosterImage],
         posterWidth: CGFloat = 130,
         posterHeight: CGFloat = 200,
-        spacing: CGFloat = 4,
+        spacing: CGFloat? = nil,
         columns: [GridItem] = [GridItem(.adaptive(minimum: 100), spacing: 4)],
         onAction: @escaping (Int64) -> Void
     ) {
@@ -26,7 +28,7 @@ public struct GridView: View {
 
     public var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
-            LazyVGrid(columns: columns, spacing: spacing) {
+            LazyVGrid(columns: columns, spacing: spacing ?? theme.spacing.xxSmall) {
                 ForEach(items, id: \.tmdbId) { item in
                     PosterItemView(
                         title: item.title,
@@ -39,7 +41,7 @@ public struct GridView: View {
                     .clipped()
                     .onTapGesture { onAction(item.tmdbId) }
                 }
-            }.padding(.all, 10)
+            }.padding(.all, theme.spacing.xSmall)
         }
     }
 }

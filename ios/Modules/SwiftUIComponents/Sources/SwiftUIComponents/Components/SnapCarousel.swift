@@ -10,17 +10,18 @@ import Foundation
 import SwiftUI
 
 public struct SnapCarousel<Content: View>: View {
+    @Theme private var theme
+
     var content: (SwiftShow) -> Content
     var list: [SwiftShow]
 
-    // Properties
-    private let spacing: CGFloat
+    private let spacing: CGFloat?
     private let trailingSpace: CGFloat
     private let additionalGesture: AnyGesture<DragGesture.Value>?
     @Binding private var index: Int
 
     public init(
-        spacing: CGFloat = 15,
+        spacing: CGFloat? = nil,
         trailingSpace: CGFloat = 100,
         index: Binding<Int>,
         items: [SwiftShow],
@@ -35,23 +36,26 @@ public struct SnapCarousel<Content: View>: View {
         self.additionalGesture = additionalGesture
     }
 
-    // Offset
     @GestureState var offset: CGFloat = 0
     @State var currentIndex: Int = 2
 
+    private var resolvedSpacing: CGFloat {
+        spacing ?? theme.spacing.medium
+    }
+
     public var body: some View {
         GeometryReader { proxy in
-            let width = proxy.size.width - (trailingSpace - spacing)
-            let adjustmentWidth = (trailingSpace / 2) - spacing
+            let width = proxy.size.width - (trailingSpace - resolvedSpacing)
+            let adjustmentWidth = (trailingSpace / 2) - resolvedSpacing
 
-            HStack(spacing: spacing) {
+            HStack(spacing: resolvedSpacing) {
                 ForEach(list, id: \.tmdbId) { item in
                     content(item)
                         .frame(width: proxy.size.width - trailingSpace)
-                        .padding(.leading, currentIndex == 0 ? 64 : 0)
+                        .padding(.leading, currentIndex == 0 ? theme.spacing.xxxLarge : 0)
                 }
             }
-            .padding(.horizontal, spacing)
+            .padding(.horizontal, resolvedSpacing)
             .offset(x: (CGFloat(currentIndex) * -width) + (currentIndex != 0 ? adjustmentWidth : 0) + offset)
             .gesture(
                 DragGesture()

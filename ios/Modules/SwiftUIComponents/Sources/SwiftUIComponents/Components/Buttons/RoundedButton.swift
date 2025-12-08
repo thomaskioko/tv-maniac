@@ -1,15 +1,17 @@
 import SwiftUI
 
 public struct RoundedButton: View {
+    @Theme private var theme
+
     private let imageName: String
     private let tintColor: Color
-    private let foregroundColor: Color
+    private let foregroundColor: Color?
     private let action: () -> Void
 
     public init(
         imageName: String,
         tintColor: Color,
-        foregroundColor: Color = .white,
+        foregroundColor: Color? = nil,
         action: @escaping () -> Void
     ) {
         self.imageName = imageName
@@ -23,9 +25,9 @@ public struct RoundedButton: View {
             Image(systemName: imageName)
                 .imageScale(.medium)
                 .fontWeight(.semibold)
-                .foregroundStyle(foregroundColor)
-                .padding(.horizontal, 4)
-                .padding(.vertical, 2)
+                .foregroundStyle(foregroundColor ?? theme.colors.onPrimary)
+                .padding(.horizontal, theme.spacing.xxSmall)
+                .padding(.vertical, theme.spacing.xxxSmall)
         }
         .buttonStyle(.borderedProminent)
         .contentShape(Circle())

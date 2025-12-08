@@ -1,6 +1,8 @@
 import SwiftUI
 
 public struct NavigationTopBar: View {
+    @Theme private var theme
+
     private let topBarTitle: String?
     private let imageName: String
     private let onBackClicked: () -> Void
@@ -27,8 +29,8 @@ public struct NavigationTopBar: View {
 
     public var body: some View {
         ZStack {
-            Color.background
-                .shadow(color: .grey200, radius: 10, x: 0, y: 5)
+            theme.colors.background
+                .shadow(color: theme.colors.surfaceVariant, radius: 10, x: 0, y: 5)
 
             VStack {
                 HStack {
@@ -45,27 +47,26 @@ public struct NavigationTopBar: View {
                         },
                         isPressed: isButtonPressed
                     )
-                    .padding(.leading, 16)
+                    .padding(.leading, theme.spacing.medium)
 
                     Spacer()
 
                     if let title = topBarTitle {
                         Text(title)
-                            .font(.title)
+                            .textStyle(theme.typography.titleLarge)
                             .bold()
-                            .foregroundColor(.textColor)
+                            .foregroundColor(theme.colors.onSurface)
 
                         Spacer()
                     }
 
-                    // Placeholder for a possible trailing button
                     Spacer()
                         .frame(width: 40)
                 }
-                .padding(.bottom, 10) // Adjust the bottom padding for desired height
+                .padding(.bottom, theme.spacing.xSmall)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .padding(.top, 60) // Adjust the top padding for status bar spacing
+            .padding(.top, 60)
         }
         .frame(height: 100)
         .edgesIgnoringSafeArea(.top)

@@ -9,6 +9,8 @@
 import SwiftUI
 
 public struct ImageGalleryContentView: View {
+    @Theme private var theme
+
     private let items: [ShowPosterImage]
     @Environment(\.presentationMode) private var presentationMode
 
@@ -27,7 +29,7 @@ public struct ImageGalleryContentView: View {
                 }
             }
         }
-        .background(Color.background)
+        .background(theme.colors.background)
     }
 
     private var closeButton: some View {
@@ -38,7 +40,7 @@ public struct ImageGalleryContentView: View {
                 .labelStyle(.iconOnly)
         }
         .pickerStyle(.navigationLink)
-        .buttonBorderShape(.roundedRectangle(radius: 16))
+        .buttonBorderShape(.roundedRectangle(radius: theme.shapes.medium))
         .buttonStyle(.bordered)
     }
 }

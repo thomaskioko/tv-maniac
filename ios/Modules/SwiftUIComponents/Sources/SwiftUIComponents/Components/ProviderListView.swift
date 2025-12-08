@@ -9,6 +9,8 @@
 import SwiftUI
 
 public struct ProviderListView: View {
+    @Theme private var theme
+
     private let items: [SwiftProviders]
 
     public init(items: [SwiftProviders]) {
@@ -28,8 +30,8 @@ public struct ProviderListView: View {
                         ProviderItemView(logoUrl: item.logoUrl)
                     }
                 }
-                .padding([.trailing, .leading], 16)
-                .padding(.bottom, 4)
+                .padding([.trailing, .leading], theme.spacing.medium)
+                .padding(.bottom, theme.spacing.xxSmall)
             }
         }
     }

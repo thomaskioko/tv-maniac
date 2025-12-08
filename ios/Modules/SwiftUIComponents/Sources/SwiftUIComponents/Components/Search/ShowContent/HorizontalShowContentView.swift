@@ -3,21 +3,23 @@ import SwiftUI
 // MARK: - Main View
 
 public struct HorizontalShowContentView: View {
+    @Theme private var theme
+
     private let title: String
     private let chevronStyle: ChevronStyle
     private let items: [SwiftShow]
     private let onClick: (Int64) -> Void
     private let onMoreClicked: () -> Void
-    private let spacing: CGFloat
-    private let edgeInsets: EdgeInsets
+    private let spacing: CGFloat?
+    private let edgeInsets: EdgeInsets?
     private let showEmptyState: Bool
 
     public init(
         title: String,
         chevronStyle: ChevronStyle = .none,
         items: [SwiftShow],
-        spacing: CGFloat = 12,
-        edgeInsets: EdgeInsets = EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16),
+        spacing: CGFloat? = nil,
+        edgeInsets: EdgeInsets? = nil,
         showEmptyState: Bool = false,
         onClick: @escaping (Int64) -> Void,
         onMoreClicked: @escaping () -> Void = {}
@@ -33,7 +35,7 @@ public struct HorizontalShowContentView: View {
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: theme.spacing.xSmall) {
             chevronView
             scrollContent
         }
@@ -48,14 +50,14 @@ public struct HorizontalShowContentView: View {
             chevronStyle: chevronStyle,
             action: onMoreClicked
         )
-        .padding(.vertical, 8)
+        .padding(.vertical, theme.spacing.xSmall)
         .accessibilityAddTraits(.isHeader)
     }
 
     @ViewBuilder
     private var scrollContent: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: spacing) {
+            HStack(spacing: spacing ?? theme.spacing.small) {
                 ForEach(items) { item in
                     ShowContentItemView(
                         title: item.title,
@@ -69,7 +71,7 @@ public struct HorizontalShowContentView: View {
                     .accessibilityLabel("\(item.title), tap to view details")
                 }
             }
-            .padding(edgeInsets)
+            .padding(edgeInsets ?? EdgeInsets(top: 0, leading: theme.spacing.medium, bottom: 0, trailing: theme.spacing.medium))
         }
     }
 }

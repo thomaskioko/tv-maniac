@@ -9,6 +9,8 @@
 import SwiftUI
 
 public struct CastListView: View {
+    @Theme private var theme
+
     private let casts: [SwiftCast]
 
     public init(casts: [SwiftCast]) {
@@ -28,11 +30,11 @@ public struct CastListView: View {
                                 name: cast.name,
                                 characterName: cast.characterName
                             )
-                            .padding([.leading, .trailing], 4)
-                            .padding(.leading, cast.id == casts.first?.id ? 16 : 0)
+                            .padding([.leading, .trailing], theme.spacing.xxSmall)
+                            .padding(.leading, cast.id == casts.first?.id ? theme.spacing.medium : 0)
                         }
                     }
-                    .padding([.bottom, .trailing])
+                    .padding([.bottom, .trailing], theme.spacing.medium)
                 }
             }
         }

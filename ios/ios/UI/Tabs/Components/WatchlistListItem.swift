@@ -3,6 +3,8 @@ import SwiftUIComponents
 import TvManiacKit
 
 struct WatchlistListItem: View {
+    @Theme private var theme
+
     let item: TvManiac.WatchlistItem
     let namespace: Namespace.ID
 
@@ -19,40 +21,40 @@ struct WatchlistListItem: View {
         }
         .frame(maxWidth: .infinity)
         .frame(height: WatchlistListItemConstants.height)
-        .background(Color.content_background)
-        .cornerRadius(6)
+        .background(theme.colors.surfaceVariant)
+        .cornerRadius(theme.shapes.medium)
         .matchedGeometryEffect(id: item.tmdbId, in: namespace)
     }
 
     @ViewBuilder
     private func watchlistItemDetails(item: TvManiac.WatchlistItem) -> some View {
         ZStack(alignment: .bottom) {
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
                 Text(item.title)
-                    .font(.avenirNext(size: 18))
+                    .textStyle(theme.typography.titleMedium)
                     .fontWeight(.semibold)
-                    .foregroundColor(.textColor)
+                    .foregroundColor(theme.colors.onSurface)
                     .lineLimit(1)
 
-                HStack(spacing: 4) {
+                HStack(spacing: theme.spacing.xxSmall) {
                     if item.seasonCount > 0 {
                         Text(String(\.season_count, quantity: Int(item.seasonCount)))
-                            .font(.caption)
-                            .foregroundColor(.gray)
+                            .textStyle(theme.typography.bodySmall)
+                            .foregroundColor(theme.colors.onSurfaceVariant)
                     }
 
                     if item.episodeCount > 0 {
                         Text("•")
-                            .font(.avenirNext(size: 8))
-                            .foregroundColor(.secondary)
+                            .textStyle(theme.typography.labelSmall)
+                            .foregroundColor(theme.colors.onSurfaceVariant)
 
                         Text(String(\.episode_count, quantity: Int(item.episodeCount)))
-                            .font(.caption)
-                            .foregroundColor(.gray)
+                            .textStyle(theme.typography.bodySmall)
+                            .foregroundColor(theme.colors.onSurfaceVariant)
                     }
                 }
 
-                HStack(spacing: 4) {
+                HStack(spacing: theme.spacing.xxSmall) {
                     if let status = item.status {
                         BorderTextView(
                             text: status,
@@ -62,23 +64,23 @@ struct WatchlistListItem: View {
                         )
 
                         Text("•")
-                            .font(.avenirNext(size: 8))
-                            .foregroundColor(.secondary)
+                            .textStyle(theme.typography.labelSmall)
+                            .foregroundColor(theme.colors.onSurfaceVariant)
                     }
 
                     if let year = item.year {
                         Text("\(year)")
-                            .font(.caption)
-                            .foregroundColor(.gray)
+                            .textStyle(theme.typography.bodySmall)
+                            .foregroundColor(theme.colors.onSurfaceVariant)
                     }
                 }
-                .padding(.top, 4)
+                .padding(.top, theme.spacing.xxSmall)
 
                 Spacer()
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.vertical)
-            .padding(.horizontal, 8)
+            .padding(.horizontal, theme.spacing.xSmall)
 
             ProgressView(value: 0, total: 1)
                 .progressViewStyle(RoundedRectProgressViewStyle())

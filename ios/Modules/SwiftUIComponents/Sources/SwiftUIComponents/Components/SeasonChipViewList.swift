@@ -9,6 +9,8 @@
 import SwiftUI
 
 public struct SeasonChipViewList: View {
+    @Theme private var theme
+
     private let items: [SwiftSeason]
     private let onClick: (Int) -> Void
 
@@ -35,7 +37,7 @@ public struct SeasonChipViewList: View {
                         )
                     }
                 }
-                .padding([.trailing, .leading], 16)
+                .padding([.trailing, .leading], theme.spacing.medium)
             }
         }
     }

@@ -1,10 +1,12 @@
 import SwiftUI
 
 public struct OverviewBoxView: View {
-    private let overview: String?
-    private let lineLimit: Int
+    @Theme private var theme
     @State private var showFullText = false
     @State private var isTruncated = false
+
+    private let overview: String?
+    private let lineLimit: Int
 
     public init(
         overview: String?,
@@ -20,29 +22,25 @@ public struct OverviewBoxView: View {
 
     public var body: some View {
         if let overview, !overview.isEmpty {
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: theme.spacing.xSmall) {
                 Text(overview)
-                    .font(.callout)
-                    .foregroundColor(.textColor)
+                    .textStyle(theme.typography.bodyMedium)
+                    .foregroundColor(theme.colors.onSurface)
                     .lineLimit(showFullText ? nil : lineLimit)
                     .lineSpacing(4)
                     .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .background(
-                        // Render the limited text and measure its size
                         Text(overview)
                             .lineLimit(lineLimit)
-                            .font(.callout)
+                            .textStyle(theme.typography.bodyMedium)
                             .lineSpacing(4)
                             .background(GeometryReader { displayedGeometry in
-                                // Create a ZStack with unbounded height to allow the inner Text as much
-                                // height as it likes, but no extra width.
                                 ZStack {
-                                    // Render the text without restrictions and measure its size
                                     Text(overview)
-                                        .font(.callout)
+                                        .textStyle(theme.typography.bodyMedium)
                                         .lineSpacing(4)
                                         .background(GeometryReader { fullGeometry in
-                                            // And compare the two
                                             Color.clear.onAppear {
                                                 isTruncated = fullGeometry.size.height > displayedGeometry.size.height
                                             }
@@ -50,7 +48,7 @@ public struct OverviewBoxView: View {
                                 }
                                 .frame(height: .greatestFiniteMagnitude)
                             })
-                            .hidden() // Hide the background
+                            .hidden()
                     )
 
                 if isTruncated {
@@ -64,8 +62,8 @@ public struct OverviewBoxView: View {
                         ) {
                             Text(showFullText ? "Show Less" : "Show More")
                                 .textCase(.uppercase)
-                                .font(.avenirNext(size: 12))
-                                .foregroundStyle(Color.accent)
+                                .textStyle(theme.typography.labelMedium)
+                                .foregroundStyle(theme.colors.accent)
                         }
                     }
                 }

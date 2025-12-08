@@ -1,13 +1,15 @@
 import SwiftUI
 
 public struct EpisodeCollapsible<Content: View>: View {
+    @Theme private var theme
+    @State private var collapsed: Bool = false
+
     private let episodeCount: Int64
     private let watchProgress: CGFloat
     private let isCollapsed: Bool
     private let onCollapseClicked: () -> Void
     private let onWatchedStateClicked: () -> Void
     private let content: Content
-    @State private var collapsed: Bool = false
 
     public init(
         episodeCount: Int64,
@@ -31,16 +33,14 @@ public struct EpisodeCollapsible<Content: View>: View {
                 VStack {
                     Spacer()
 
-                    // Expandable List Header
                     HStack {
                         HStack {
                             Image(systemName: collapsed ? "chevron.down" : "chevron.up")
                                 .aspectRatio(contentMode: .fit)
-                                .padding(.horizontal, 16)
+                                .padding(.horizontal, theme.spacing.medium)
 
                             Text("Episodes")
-                                .font(.title3)
-                                .fontWeight(.semibold)
+                                .textStyle(theme.typography.titleMedium)
 
                             Spacer()
                         }
@@ -53,22 +53,19 @@ public struct EpisodeCollapsible<Content: View>: View {
                         }
 
                         Text("\(episodeCount)")
-                            .font(.callout)
-                            .fontWeight(.semibold)
+                            .textStyle(theme.typography.bodyMedium)
                             .alignmentGuide(.view) { d in d[HorizontalAlignment.center] }
-                            .padding(.trailing, 8)
+                            .padding(.trailing, theme.spacing.xSmall)
 
                         Image(systemName: "checkmark.circle")
                             .resizable()
                             .frame(width: 28.0, height: 28.0)
-                            .font(.callout)
-                            .fontWeight(.regular)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(theme.colors.onBackground)
                             .alignmentGuide(.view) { d in d[HorizontalAlignment.trailing] }
-                            .padding(.trailing, 16)
+                            .padding(.trailing, theme.spacing.medium)
                             .onTapGesture { onWatchedStateClicked() }
                     }
-                    .padding(.bottom, 4)
+                    .padding(.bottom, theme.spacing.xxSmall)
 
                     Spacer()
 
@@ -79,12 +76,11 @@ public struct EpisodeCollapsible<Content: View>: View {
                         )
                 }
                 .frame(height: DimensionConstants.frameHeight)
-                .background(Color.content_background)
-                .cornerRadius(DimensionConstants.cornerRadius)
+                .background(theme.colors.surface)
+                .cornerRadius(theme.shapes.small)
             }
-            .padding(.horizontal)
+            .padding(.horizontal, theme.spacing.medium)
 
-            // Collapsed Content
             VStack {
                 content
             }
@@ -103,7 +99,6 @@ public struct EpisodeCollapsible<Content: View>: View {
 
 private enum DimensionConstants {
     static let frameHeight: CGFloat = 68
-    static let cornerRadius: CGFloat = 4
     static let progressIndicatorHeight: CGFloat = 4
 }
 
@@ -122,5 +117,5 @@ private enum DimensionConstants {
         }
         Spacer()
     }
-    .background(Color.background)
+    .themedPreview()
 }

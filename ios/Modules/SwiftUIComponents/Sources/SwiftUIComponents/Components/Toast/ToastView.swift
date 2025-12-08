@@ -1,6 +1,8 @@
 import SwiftUI
 
 public struct ToastView: View {
+    @Theme private var theme
+
     private let type: ToastStyle
     private let title: String
     private let message: String
@@ -26,24 +28,24 @@ public struct ToastView: View {
 
                 VStack(alignment: .leading) {
                     Text(title)
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(.textColorDark)
+                        .textStyle(theme.typography.bodyMedium)
+                        .foregroundColor(theme.colors.onSurface)
 
                     Text(message)
-                        .font(.system(size: 12))
-                        .foregroundColor(.textColorDark)
+                        .textStyle(theme.typography.bodySmall)
+                        .foregroundColor(theme.colors.onSurface)
                 }
 
-                Spacer(minLength: 10)
+                Spacer(minLength: theme.spacing.small - 2)
 
                 Button(action: onCancelTapped) {
                     Image(systemName: "xmark")
-                        .foregroundColor(.textColorDark)
+                        .foregroundColor(theme.colors.onSurface)
                 }
             }
-            .padding()
+            .padding(theme.spacing.medium)
         }
-        .background(Color.white)
+        .background(theme.colors.surface)
         .overlay(
             Rectangle()
                 .fill(type.themeColor)
@@ -52,9 +54,9 @@ public struct ToastView: View {
             alignment: .leading
         )
         .frame(minWidth: 0, maxWidth: .infinity)
-        .cornerRadius(8)
+        .cornerRadius(theme.shapes.medium)
         .shadow(color: Color.black.opacity(0.25), radius: 4, x: 0, y: 1)
-        .padding(.horizontal, 16)
+        .padding(.horizontal, theme.spacing.medium)
     }
 }
 

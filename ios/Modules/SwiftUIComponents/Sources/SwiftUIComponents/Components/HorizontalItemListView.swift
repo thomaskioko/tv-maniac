@@ -9,6 +9,8 @@
 import SwiftUI
 
 public struct HorizontalItemListView: View {
+    @Theme private var theme
+
     private let title: String
     private let subtitle: String
     private let chevronStyle: ChevronStyle
@@ -49,16 +51,16 @@ public struct HorizontalItemListView: View {
                                 posterUrl: item.posterUrl,
                                 isInLibrary: item.inLibrary
                             )
-                            .padding([.leading, .trailing], 2)
-                            .padding(.leading, item.tmdbId == items.first?.tmdbId ? 10 : 0)
-                            .padding(.trailing, item.tmdbId == items.last?.tmdbId ? 8 : 0)
+                            .padding([.leading, .trailing], theme.spacing.xxxSmall)
+                            .padding(.leading, item.tmdbId == items.first?.tmdbId ? theme.spacing.small - 2 : 0)
+                            .padding(.trailing, item.tmdbId == items.last?.tmdbId ? theme.spacing.xSmall : 0)
                             .onTapGesture { onClick(item.tmdbId) }
                         }
                     }
                 }
             }
         }
-        .padding(.bottom)
+        .padding(.bottom, theme.spacing.medium)
     }
 }
 

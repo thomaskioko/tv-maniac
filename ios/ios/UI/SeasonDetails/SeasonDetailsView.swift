@@ -11,6 +11,8 @@ import SwiftUIComponents
 import TvManiacKit
 
 struct SeasonDetailsView: View {
+    @Theme private var theme
+
     private let presenter: SeasonDetailsPresenter
 
     @Environment(\.presentationMode) var presentationMode
@@ -29,7 +31,7 @@ struct SeasonDetailsView: View {
 
     var body: some View {
         ZStack {
-            Color.background.edgesIgnoringSafeArea(.all)
+            theme.colors.background.edgesIgnoringSafeArea(.all)
 
             if uiState.message == nil {
                 SeasonDetailsContent(uiState)
@@ -56,7 +58,7 @@ struct SeasonDetailsView: View {
                             presenter.dispatch(action: SeasonDetailsBackClicked())
                         }) {
                             Image(systemName: "chevron.left")
-                                .foregroundColor(.accent)
+                                .foregroundColor(theme.colors.accent)
                                 .imageScale(.large)
                                 .opacity(1 - showGlass)
                         }
@@ -94,13 +96,13 @@ struct SeasonDetailsView: View {
                 )
             },
             content: {
-                if state.seasonOverview.isEmpty {
-                    Text(String(\.label_season_overview))
-                        .font(.title3)
-                        .fontWeight(.bold)
-                        .foregroundColor(.textColor)
+                if !state.seasonOverview.isEmpty {
+
+                    Text(String(\.title_season_overview))
+                        .textStyle(theme.typography.titleLarge)
+                        .foregroundColor(theme.colors.onSurface)
                         .lineLimit(1)
-                        .padding(.top, 24)
+                        .padding(.top, theme.spacing.large)
                         .padding(.horizontal)
                         .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -156,8 +158,8 @@ struct SeasonDetailsView: View {
                         .clear,
                         .clear,
                         .clear,
-                        Color.background.opacity(0.8),
-                        Color.background,
+                        theme.colors.background.opacity(0.8),
+                        theme.colors.background,
                     ]),
                     startPoint: .top,
                     endPoint: .bottom
@@ -173,16 +175,16 @@ struct SeasonDetailsView: View {
                             .resizable()
                             .frame(width: 28.0, height: 28.0)
                             .fontDesign(.rounded)
-                            .font(.callout)
+                            .textStyle(theme.typography.bodyMedium)
                             .fontWeight(.regular)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(theme.colors.onSurfaceVariant)
                             .alignmentGuide(.view) { d in
                                 d[HorizontalAlignment.leading]
                             }
 
                         Text(String(\.season_images_count, quantity: state.seasonImages.count))
-                            .bodyMediumFont(size: 16)
-                            .foregroundColor(.textColor)
+                            .textStyle(theme.typography.bodyMedium)
+                            .foregroundColor(theme.colors.onSurface)
                             .lineLimit(1)
                             .alignmentGuide(.view) { d in
                                 d[HorizontalAlignment.center]
@@ -190,7 +192,8 @@ struct SeasonDetailsView: View {
 
                         Spacer()
                     }
-                    .padding(16)
+                    .padding(.horizontal, theme.spacing.medium)
+                    .padding(.vertical, theme.spacing.xLarge)
                     .contentShape(Rectangle())
                     .onTapGesture {
                         presenter.dispatch(action: SeasonGalleryClicked())

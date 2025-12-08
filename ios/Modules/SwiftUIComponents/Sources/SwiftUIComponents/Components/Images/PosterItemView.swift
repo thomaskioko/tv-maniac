@@ -10,13 +10,15 @@ import SDWebImageSwiftUI
 import SwiftUI
 
 public struct PosterItemView: View {
+    @Theme private var theme
+
     private let title: String?
     private let posterUrl: String?
     private let libraryImageOverlay: String
     private let isInLibrary: Bool
     private let posterWidth: CGFloat
     private let posterHeight: CGFloat
-    private let posterRadius: CGFloat
+    private let posterRadius: CGFloat?
 
     public init(
         title: String?,
@@ -25,7 +27,7 @@ public struct PosterItemView: View {
         isInLibrary: Bool = false,
         posterWidth: CGFloat = 120,
         posterHeight: CGFloat = 180,
-        posterRadius: CGFloat = 4
+        posterRadius: CGFloat? = nil
     ) {
         self.title = title
         self.posterUrl = posterUrl
@@ -37,6 +39,8 @@ public struct PosterItemView: View {
     }
 
     public var body: some View {
+        let resolvedRadius = posterRadius ?? theme.shapes.small
+
         if let posterUrl {
             WebImage(
                 url: URL(string: posterUrl.transformedImageURL),
@@ -66,11 +70,11 @@ public struct PosterItemView: View {
             .indicator(.activity)
             .transition(.opacity)
             .scaledToFill()
-            .clipShape(RoundedRectangle(cornerRadius: posterRadius, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: resolvedRadius, style: .continuous))
             .frame(width: posterWidth, height: posterHeight)
             .overlay {
                 if isInLibrary {
-                    LibraryOverlay(libraryImageOverlay: libraryImageOverlay)
+                    LibraryOverlay(libraryImageOverlay: libraryImageOverlay, theme: theme)
                 }
             }
         } else {
@@ -78,40 +82,27 @@ public struct PosterItemView: View {
                 title: title,
                 posterWidth: posterWidth,
                 posterHeight: posterHeight,
-                posterRadius: posterRadius
+                posterRadius: resolvedRadius
             )
         }
     }
 }
 
 @ViewBuilder
-private func LibraryOverlay(libraryImageOverlay: String) -> some View {
+private func LibraryOverlay(libraryImageOverlay: String, theme: TvManiacTheme) -> some View {
     VStack {
         Spacer()
         HStack {
             Spacer()
             Image(systemName: libraryImageOverlay)
                 .imageScale(.medium)
-                .foregroundColor(.white.opacity(0.9))
+                .foregroundColor(theme.colors.onPrimary.opacity(0.9))
                 .padding([.vertical])
-                .padding(.trailing, 16)
-                .font(.caption)
+                .padding(.trailing, theme.spacing.medium)
+                .textStyle(theme.typography.labelSmall)
         }
         .background {
-            Color.black.opacity(0.6)
-                .mask {
-                    LinearGradient(
-                        colors: [
-                            Color.black,
-                            Color.black.opacity(0.924),
-                            Color.black.opacity(0.707),
-                            Color.black.opacity(0.383),
-                            Color.black.opacity(0),
-                        ],
-                        startPoint: .bottom,
-                        endPoint: .top
-                    )
-                }
+            theme.colors.imageGradient()
         }
     }
 }

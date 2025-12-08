@@ -1,6 +1,9 @@
 import SwiftUI
 
 public struct ShowInfoView: View {
+    @Theme private var theme
+    @State private var toast: Toast?
+
     private let isFollowed: Bool
     private let openTrailersInYoutube: Bool
     private let genreList: [SwiftGenres]
@@ -14,7 +17,6 @@ public struct ShowInfoView: View {
     private let onAddToLibrary: () -> Void
     private let onSeasonClicked: (Int, SwiftSeason) -> Void
     private let onShowClicked: (Int64) -> Void
-    @State private var toast: Toast?
 
     public init(
         isFollowed: Bool,
@@ -47,27 +49,22 @@ public struct ShowInfoView: View {
     }
 
     public var body: some View {
-        VStack {
+        VStack(spacing: theme.spacing.medium) {
             if !genreList.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(alignment: .center) {
+                    HStack(alignment: .center, spacing: theme.spacing.xSmall) {
                         ForEach(genreList, id: \.name) { item in
-                            BorderTextView(
-                                text: item.name,
-                                colorOpacity: 0.12,
-                                borderOpacity: 0.12
-                            )
+                            ChipView(label: item.name)
                         }
                     }
-                    .padding(.horizontal)
+                    .padding(.horizontal, theme.spacing.medium)
                 }
             }
 
-            HStack(alignment: .center, spacing: 8) {
+            HStack(alignment: .center, spacing: theme.spacing.xSmall) {
                 watchlistButton
                 listButton
             }
-            .padding(.top, 10)
 
             SeasonChipViewList(
                 items: seasonList,
@@ -94,14 +91,14 @@ public struct ShowInfoView: View {
             CastListView(casts: castsList)
 
             HorizontalItemListView(
-                title: "Recommendations",
-                items: recommendedShowList,
+                title: "Similar Shows",
+                items: similarShows,
                 onClick: { id in onShowClicked(id) }
             )
 
             HorizontalItemListView(
-                title: "Similar Shows",
-                items: similarShows,
+                title: "Recommendations",
+                items: recommendedShowList,
                 onClick: { id in onShowClicked(id) }
             )
         }
@@ -120,15 +117,15 @@ public struct ShowInfoView: View {
 
                 Text(isFollowed ? "Stop Tracking" : "Track")
                     .lineLimit(1)
-                    .padding(.top, 2)
-                    .font(.caption)
+                    .padding(.top, theme.spacing.xxxSmall)
+                    .textStyle(theme.typography.labelSmall)
             }
-            .padding(.vertical, 4)
+            .padding(.vertical, theme.spacing.xxSmall)
             .frame(width: DrawingConstants.buttonWidth, height: DrawingConstants.buttonHeight)
         }
         .buttonStyle(.borderedProminent)
         .controlSize(.small)
-        .tint(isFollowed ? .red.opacity(0.95) : Color.accent)
+        .tint(isFollowed ? .red.opacity(0.95) : theme.colors.accent)
         .buttonBorderShape(.roundedRectangle(radius: DrawingConstants.buttonRadius))
     }
 
@@ -137,11 +134,11 @@ public struct ShowInfoView: View {
             VStack {
                 Image(systemName: false ? "rectangle.on.rectangle.angled.fill" : "rectangle.on.rectangle.angled")
                 Text("Add To List")
-                    .padding(.top, 2)
-                    .font(.caption)
+                    .padding(.top, theme.spacing.xxxSmall)
+                    .textStyle(theme.typography.labelSmall)
                     .lineLimit(1)
             }
-            .padding(.vertical, 4)
+            .padding(.vertical, theme.spacing.xxSmall)
             .frame(width: DrawingConstants.buttonWidth, height: DrawingConstants.buttonHeight)
         }
         .controlSize(.small)
@@ -273,5 +270,5 @@ public struct ShowInfoView: View {
             onShowClicked: { _ in }
         )
     }
-    .background(Color.background)
+    .environment(\.tvManiacTheme, LightTheme())
 }

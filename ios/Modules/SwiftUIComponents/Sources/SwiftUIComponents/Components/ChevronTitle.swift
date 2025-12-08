@@ -1,6 +1,8 @@
 import SwiftUI
 
 public struct ChevronTitle: View {
+    @Theme private var theme
+
     private let title: String
     private let subtitle: String?
     private let chevronStyle: ChevronStyle
@@ -27,18 +29,17 @@ public struct ChevronTitle: View {
             chevronView
         }
         .accessibilityElement(children: .combine)
-        .padding([.leading, .trailing])
+        .padding(.horizontal, theme.spacing.medium)
     }
 
     private var titleSubtitleView: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(title)
-                .font(.avenirNext(size: 17))
-                .fontWeight(.semibold)
+                .textStyle(theme.typography.titleMedium)
 
             if let subtitle {
                 Text(subtitle)
-                    .font(.avenirNext(size: 12))
+                    .textStyle(theme.typography.labelMedium)
                     .foregroundColor(.secondary)
             }
         }
@@ -62,14 +63,14 @@ public struct ChevronTitle: View {
             HStack {
                 if let title {
                     Text(title)
-                        .font(.callout)
+                        .textStyle(theme.typography.bodyMedium)
                 }
 
                 Image(systemName: "chevron.right")
-                    .font(.callout)
+                    .textStyle(theme.typography.bodyMedium)
             }
         }
-        .foregroundColor(Color.accent.opacity(0.8))
+        .foregroundColor(theme.colors.accent.opacity(0.8))
     }
 }
 

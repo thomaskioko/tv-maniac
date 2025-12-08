@@ -2,13 +2,15 @@ import SDWebImageSwiftUI
 import SwiftUI
 
 public struct FeaturedContentPosterView: View {
+    @Theme private var theme
+
     private let showId: Int64
     private let title: String
     private let posterImageUrl: String?
     private let isInLibrary: Bool
     private let posterWidth: CGFloat
     private let posterHeight: CGFloat
-    private let posterRadius: CGFloat
+    private let posterRadius: CGFloat?
     private let onClick: (Int64) -> Void
 
     public init(
@@ -18,7 +20,7 @@ public struct FeaturedContentPosterView: View {
         isInLibrary: Bool,
         posterWidth: CGFloat = 260,
         posterHeight: CGFloat = 460,
-        posterRadius: CGFloat = 12,
+        posterRadius: CGFloat? = nil,
         onClick: @escaping (Int64) -> Void
     ) {
         self.showId = showId
@@ -31,6 +33,10 @@ public struct FeaturedContentPosterView: View {
         self.onClick = onClick
     }
 
+    private var resolvedRadius: CGFloat {
+        posterRadius ?? theme.shapes.large
+    }
+
     public var body: some View {
         if let posterUrl = posterImageUrl {
             WebImage(url: URL(string: posterUrl.transformedImageURL), options: .highPriority) { image in
@@ -40,7 +46,7 @@ public struct FeaturedContentPosterView: View {
                     title: title,
                     posterWidth: posterWidth,
                     posterHeight: posterHeight,
-                    posterRadius: posterRadius
+                    posterRadius: resolvedRadius
                 )
             }
             .aspectRatio(contentMode: .fill)
@@ -53,23 +59,13 @@ public struct FeaturedContentPosterView: View {
 
                             Image(systemName: "square.stack.fill")
                                 .imageScale(.large)
-                                .foregroundColor(.white.opacity(0.9))
+                                .foregroundColor(theme.colors.onPrimary.opacity(0.9))
                                 .padding([.vertical])
-                                .padding(.trailing, 16)
-                                .font(.caption)
+                                .padding(.trailing, theme.spacing.medium)
+                                .textStyle(theme.typography.bodySmall)
                         }
                         .background {
-                            Color.black.opacity(0.6)
-                                .mask {
-                                    LinearGradient(colors:
-                                        [Color.black,
-                                         Color.black.opacity(0.924),
-                                         Color.black.opacity(0.707),
-                                         Color.black.opacity(0.383),
-                                         Color.black.opacity(0)],
-                                        startPoint: .bottom,
-                                        endPoint: .top)
-                                }
+                            theme.colors.imageGradient()
                         }
                     }
                     .frame(width: posterWidth)
@@ -78,7 +74,7 @@ public struct FeaturedContentPosterView: View {
             .transition(.opacity)
             .frame(width: posterWidth, height: posterHeight)
             .clipShape(
-                RoundedRectangle(cornerRadius: posterRadius, style: .continuous)
+                RoundedRectangle(cornerRadius: resolvedRadius, style: .continuous)
             )
             .onTapGesture {
                 onClick(showId)
@@ -88,7 +84,7 @@ public struct FeaturedContentPosterView: View {
                 title: title,
                 posterWidth: posterWidth,
                 posterHeight: posterHeight,
-                posterRadius: posterRadius
+                posterRadius: resolvedRadius
             )
             .onTapGesture {
                 onClick(showId)

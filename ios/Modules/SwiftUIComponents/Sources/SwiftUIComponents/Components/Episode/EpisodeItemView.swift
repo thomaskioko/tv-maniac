@@ -9,6 +9,8 @@
 import SwiftUI
 
 public struct EpisodeItemView: View {
+    @Theme private var theme
+
     private let imageUrl: String?
     private let episodeTitle: String
     private let episodeOverView: String
@@ -53,32 +55,31 @@ public struct EpisodeItemView: View {
         }
         .frame(maxWidth: .infinity)
         .frame(height: episodeHeight)
-        .background(Color.content_background)
+        .background(theme.colors.surface)
         .cornerRadius(cornerRadius)
-        .padding(.horizontal)
+        .padding(.horizontal, theme.spacing.medium)
     }
 
     private var episodeDetails: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
             Text(episodeTitle)
-                .font(.title3)
-                .fontWeight(.semibold)
+                .textStyle(theme.typography.titleMedium)
                 .lineLimit(1)
-                .padding(.top, 8)
+                .padding(.top, theme.spacing.xSmall)
 
             Text(episodeOverView)
-                .font(.caption)
-                .foregroundColor(.textColor)
-                .lineSpacing(4)
+                .textStyle(theme.typography.bodySmall)
+                .foregroundColor(theme.colors.onSurfaceVariant)
+                .lineSpacing(theme.spacing.xxSmall)
                 .lineLimit(4)
                 .multilineTextAlignment(.leading)
-                .padding(.top, 2)
+                .padding(.top, theme.spacing.xxxSmall)
 
             Spacer()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.vertical)
-        .padding(.horizontal, 8)
+        .padding(.vertical, theme.spacing.medium)
+        .padding(.horizontal, theme.spacing.xSmall)
     }
 
     private var episodePlaceholder: some View {
@@ -89,7 +90,7 @@ public struct EpisodeItemView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 50, height: 50, alignment: .center)
-                    .foregroundColor(.white)
+                    .foregroundColor(theme.colors.onPrimary)
             }
             .frame(
                 width: episodeWidth,

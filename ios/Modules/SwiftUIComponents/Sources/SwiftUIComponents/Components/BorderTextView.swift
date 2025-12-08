@@ -8,21 +8,23 @@
 import SwiftUI
 
 public struct BorderTextView: View {
+    @Theme private var theme
+
     private let text: String
-    private let color: Color
+    private let color: Color?
     private let colorOpacity: CGFloat
     private let borderOpacity: CGFloat
     private let borderWidth: CGFloat
-    private let cornerRadius: CGFloat
+    private let cornerRadius: CGFloat?
     private let weight: Font.Weight
 
     public init(
         text: String,
-        color: Color = Color.accent,
+        color: Color? = nil,
         colorOpacity: CGFloat = 0,
         borderOpacity: CGFloat = 1,
         borderWidth: CGFloat = 1,
-        cornerRadius: CGFloat = 4,
+        cornerRadius: CGFloat? = nil,
         weight: Font.Weight = .light
     ) {
         self.text = text
@@ -35,19 +37,22 @@ public struct BorderTextView: View {
     }
 
     public var body: some View {
+        let resolvedColor = color ?? theme.colors.accent
+        let resolvedCornerRadius = cornerRadius ?? theme.shapes.small
+
         VStack {
             Text(text)
-                .padding(4)
-                .font(.avenirNext(size: 12))
+                .padding(theme.spacing.xxSmall)
+                .textStyle(theme.typography.labelMedium)
                 .fontWeight(weight)
-                .foregroundColor(color)
+                .foregroundColor(resolvedColor)
                 .background(
-                    RoundedRectangle(cornerRadius: cornerRadius)
-                        .fill(color.opacity(colorOpacity))
+                    RoundedRectangle(cornerRadius: resolvedCornerRadius)
+                        .fill(resolvedColor.opacity(colorOpacity))
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: cornerRadius)
-                        .stroke(color.opacity(borderOpacity), lineWidth: borderWidth)
+                    RoundedRectangle(cornerRadius: resolvedCornerRadius)
+                        .stroke(resolvedColor.opacity(borderOpacity), lineWidth: borderWidth)
                 )
         }
     }

@@ -3,6 +3,8 @@ import SwiftUIComponents
 import TvManiacKit
 
 struct ProfileTab: View {
+    @Theme private var theme
+
     private let presenter: ProfilePresenter
     @State private var showGlass: Double = 0
     @State private var progressViewOffset: CGFloat = 0
@@ -15,12 +17,12 @@ struct ProfileTab: View {
 
     var body: some View {
         ZStack {
-            Color.background
+            theme.colors.background
                 .edgesIgnoringSafeArea(.all)
 
             if uiState.isLoading, uiState.userProfile == nil {
                 ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: .accent))
+                    .progressViewStyle(CircularProgressViewStyle(tint: theme.colors.accent))
                     .scaleEffect(1.5)
             } else if let userProfile = uiState.userProfile {
                 profileContent(userProfile: userProfile)
@@ -42,8 +44,8 @@ struct ProfileTab: View {
                         }
                     ) {
                         Image(systemName: "gearshape")
-                            .font(.system(size: 24))
-                            .foregroundColor(.textColor)
+                            .textStyle(theme.typography.headlineSmall)
+                            .foregroundColor(theme.colors.accent)
                     }
                 }
             ),
@@ -113,9 +115,9 @@ struct ProfileTab: View {
                         .clear,
                         .clear,
                         .clear,
-                        .black.opacity(0.6),
-                        .black.opacity(0.8),
-                        .black,
+                        Color.black.opacity(0.6),
+                        Color.black.opacity(0.8),
+                        Color.black,
                     ]),
                     startPoint: .top,
                     endPoint: .bottom
@@ -132,37 +134,37 @@ struct ProfileTab: View {
                         AvatarView(
                             avatarUrl: userProfile.avatarUrl,
                             size: 80,
-                            borderColor: .accent,
+                            borderColor: theme.colors.accent,
                             borderWidth: 3
                         )
 
                         // Username and Edit button
-                        VStack(alignment: .leading, spacing: 8) {
+                        VStack(alignment: .leading, spacing: theme.spacing.xSmall) {
                             Text(userProfile.fullName ?? userProfile.username)
-                                .font(.avenirNext(size: 20))
+                                .textStyle(theme.typography.titleLarge)
                                 .fontWeight(.bold)
-                                .foregroundColor(.white)
+                                .foregroundColor(theme.colors.onPrimary)
 
                             Button(action: {
                                 // Edit action - empty for now
                             }) {
                                 Text(String(\.profile_edit_button))
-                                    .font(.avenirNext(size: 12))
+                                    .textStyle(theme.typography.labelMedium)
                                     .fontWeight(.semibold)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(theme.colors.onPrimary)
                                     .padding(.horizontal, 20)
-                                    .padding(.vertical, 8)
+                                    .padding(.vertical, theme.spacing.xSmall)
                                     .background(Color.clear)
                                     .overlay(
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .stroke(Color.white, lineWidth: 1)
+                                        RoundedRectangle(cornerRadius: theme.shapes.medium)
+                                            .stroke(theme.colors.onPrimary, lineWidth: 1)
                                     )
                             }
                         }
 
                         Spacer()
                     }
-                    .padding(16)
+                    .padding(theme.spacing.medium)
                 }
                 .frame(height: headerHeight)
             }
@@ -174,7 +176,7 @@ struct ProfileTab: View {
 
     @ViewBuilder
     private func statsSection(stats: ProfileStats) -> some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: theme.spacing.medium) {
             HStack {
                 ChevronTitle(
                     title: String(\.profile_stats_title),
@@ -182,16 +184,16 @@ struct ProfileTab: View {
                     action: {}
                 )
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, theme.spacing.medium)
 
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(alignment: .top, spacing: 12) {
+                HStack(alignment: .top, spacing: theme.spacing.small) {
                     // Watch Time Card
                     StatsCardItem(
                         systemImage: "calendar",
                         title: String(\.profile_watch_time)
                     ) {
-                        HStack(spacing: 24) {
+                        HStack(spacing: theme.spacing.large) {
                             statColumn(label: String(\.profile_time_months), value: stats.months)
                             statColumn(label: String(\.profile_time_days), value: stats.days)
                             statColumn(label: String(\.profile_time_hours), value: stats.hours)
@@ -205,31 +207,31 @@ struct ProfileTab: View {
                     ) {
                         VStack(spacing: 0) {
                             Text(formatNumber(stats.episodesWatched))
-                                .font(.avenirNext(size: 16))
+                                .textStyle(theme.typography.bodyMedium)
                                 .fontWeight(.medium)
-                                .foregroundColor(.textColor)
+                                .foregroundColor(theme.colors.onSurface)
                                 .frame(maxWidth: .infinity)
                         }
-                        .padding(10)
+                        .padding(theme.spacing.xSmall)
                     }
                 }
-                .padding(.horizontal, 16)
+                .padding(.horizontal, theme.spacing.medium)
             }
         }
     }
 
     @ViewBuilder
     private func statColumn(label: String, value: Int32) -> some View {
-        VStack(spacing: 4) {
+        VStack(spacing: theme.spacing.xxSmall) {
             Text("\(value)")
-                .font(.avenirNext(size: 18))
+                .textStyle(theme.typography.titleMedium)
                 .fontWeight(.medium)
-                .foregroundColor(.textColor)
+                .foregroundColor(theme.colors.onSurface)
 
             Text(label)
-                .font(.avenirNext(size: 12))
+                .textStyle(theme.typography.labelMedium)
                 .fontWeight(.medium)
-                .foregroundColor(.textColor)
+                .foregroundColor(theme.colors.onSurface)
         }
     }
 
@@ -243,17 +245,18 @@ struct ProfileTab: View {
     @ViewBuilder
     private func unauthenticatedContent() -> some View {
         ScrollView(.vertical, showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 24) {
+            VStack(alignment: .leading, spacing: theme.spacing.large) {
                 Spacer()
                     .frame(height: 84)
 
                 Text(String(\.profile_unauthenticated_title))
-                    .font(.system(size: 32, weight: .bold))
-                    .foregroundColor(.textColor)
-                    .lineSpacing(8)
+                    .textStyle(theme.typography.headlineLarge)
+                    .fontWeight(.bold)
+                    .foregroundColor(theme.colors.onSurface)
+                    .lineSpacing(theme.spacing.xSmall)
                     .padding(.horizontal, 28)
 
-                VStack(alignment: .leading, spacing: 24) {
+                VStack(alignment: .leading, spacing: theme.spacing.large) {
                     featureItem(
                         iconName: "magnifyingglass",
                         title: String(\.profile_feature_discover_title),
@@ -278,35 +281,35 @@ struct ProfileTab: View {
                         description: String(\.profile_feature_more_description)
                     )
                 }
-                .padding(.horizontal, 24)
+                .padding(.horizontal, theme.spacing.large)
 
                 Spacer()
-                    .frame(height: 8)
+                    .frame(height: theme.spacing.xSmall)
 
                 VStack(spacing: 20) {
                     Text(String(\.profile_footer_description))
-                        .font(.avenirNext(size: 16))
-                        .foregroundColor(.textColor)
-                        .lineSpacing(4)
-                        .padding(.horizontal, 24)
+                        .textStyle(theme.typography.bodyMedium)
+                        .foregroundColor(theme.colors.onSurface)
+                        .lineSpacing(theme.spacing.xxSmall)
+                        .padding(.horizontal, theme.spacing.large)
 
                     Button(action: {
                         presenter.dispatch(action: ProfileActionLoginClicked())
                     }) {
                         Text(String(\.profile_sign_in_button))
-                            .font(.avenirNext(size: 16))
+                            .textStyle(theme.typography.bodyMedium)
                             .fontWeight(.semibold)
-                            .foregroundColor(.white)
+                            .foregroundColor(theme.colors.onButtonBackground)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 16)
-                            .background(Color.buttonColor)
-                            .cornerRadius(25)
+                            .padding(.vertical, theme.spacing.medium)
+                            .background(theme.colors.buttonBackground)
+                            .cornerRadius(theme.shapes.extraLarge)
                     }
-                    .padding(.horizontal, 24)
+                    .padding(.horizontal, theme.spacing.large)
                 }
 
                 Spacer()
-                    .frame(height: 32)
+                    .frame(height: theme.spacing.xLarge)
             }
             .background(
                 GeometryReader { geometry in
@@ -327,21 +330,21 @@ struct ProfileTab: View {
 
     @ViewBuilder
     private func featureItem(iconName: String, title: String, description: String) -> some View {
-        HStack(alignment: .top, spacing: 16) {
+        HStack(alignment: .top, spacing: theme.spacing.medium) {
             Image(systemName: iconName)
-                .font(.system(size: 28))
-                .foregroundColor(.accent)
+                .textStyle(theme.typography.headlineMedium)
+                .foregroundColor(theme.colors.accent)
                 .frame(width: 44, height: 44)
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
                 Text(title)
-                    .font(.avenirNext(size: 18))
+                    .textStyle(theme.typography.titleMedium)
                     .fontWeight(.semibold)
-                    .foregroundColor(.textColor)
+                    .foregroundColor(theme.colors.onSurface)
 
                 Text(description)
-                    .font(.avenirNext(size: 15))
-                    .foregroundColor(.textColor)
+                    .textStyle(theme.typography.bodyMedium)
+                    .foregroundColor(theme.colors.onSurface)
                     .lineSpacing(2)
             }
 

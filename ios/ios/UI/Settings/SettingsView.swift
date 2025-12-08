@@ -4,6 +4,8 @@ import TvManiac
 import TvManiacKit
 
 struct SettingsView: View {
+    @Theme private var theme
+
     private let presenter: SettingsPresenter
     @StateObject @KotlinStateFlow private var uiState: SettingsState
     @StateObject private var store = SettingsAppStorage.shared
@@ -27,8 +29,8 @@ struct SettingsView: View {
             themePickerView
 
             Text(String(\.settings_theme_description))
-                .font(.caption)
-                .foregroundColor(.secondary)
+                .textStyle(theme.typography.labelSmall)
+                .foregroundColor(theme.colors.onSurfaceVariant)
                 .padding(.horizontal)
         }
     }
@@ -54,7 +56,7 @@ struct SettingsView: View {
             label: settingsLabel(
                 title: String(\.label_settings_change_theme),
                 icon: "paintpalette",
-                color: .blue
+                color: theme.colors.accent
             )
         ) {
             ForEach(DeveiceAppTheme.allCases, id: \.self) { theme in
@@ -80,7 +82,7 @@ struct SettingsView: View {
             settingsLabel(
                 title: String(\.label_settings_youtube),
                 icon: "tv",
-                color: .red
+                color: theme.colors.error
             )
         }
     }
@@ -99,7 +101,7 @@ struct SettingsView: View {
             label: settingsLabel(
                 title: String(\.label_settings_image_quality),
                 icon: "photo",
-                color: .blue
+                color: theme.colors.accent
             )
         ) {
             ForEach(SwiftImageQuality.allCases, id: \.self) { quality in
@@ -113,8 +115,8 @@ struct SettingsView: View {
     @ViewBuilder
     private var imageQualityDescription: some View {
         Text(imageQualityDescription(for: uiState.imageQuality.toSwift()))
-            .font(.caption)
-            .foregroundColor(.secondary)
+            .textStyle(theme.typography.labelSmall)
+            .foregroundColor(theme.colors.onSurfaceVariant)
             .padding(.horizontal)
     }
 
@@ -129,17 +131,17 @@ struct SettingsView: View {
                         HStack {
                             ZStack {
                                 Rectangle()
-                                    .fill(Color.red)
+                                    .fill(theme.colors.error)
                                     .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
                                 Image(systemName: "person.fill")
-                                    .foregroundColor(.white)
+                                    .foregroundColor(theme.colors.onError)
                             }
                             .frame(width: 30, height: 30, alignment: .center)
                             .padding(.trailing, 8)
                             .accessibilityHidden(true)
 
                             Text(String(\.logout))
-                                .foregroundColor(.red)
+                                .foregroundColor(theme.colors.error)
                         }
                         .padding(.vertical, 2)
                     }
@@ -175,7 +177,7 @@ struct SettingsView: View {
             settingsLabel(
                 title: String(\.label_settings_about),
                 icon: "info.circle",
-                color: .black
+                color: theme.colors.onSurface
             )
         }
         .buttonStyle(.plain)
@@ -196,7 +198,7 @@ struct SettingsView: View {
             settingsLabel(
                 title: String(\.label_settings_privacy_policy),
                 icon: "hand.raised",
-                color: .indigo
+                color: theme.colors.secondary
             )
         }
         .buttonStyle(.plain)
@@ -218,9 +220,27 @@ struct SettingsView: View {
             traktSection
         }
         .scrollContentBackground(.hidden)
-        .background(Color.backgroundColor)
+        .background(theme.colors.background)
         .navigationTitle(Text(String(\.label_settings_title)))
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
+        .swipeBackGesture {
+            presenter.dispatch(action: BackClicked())
+        }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    presenter.dispatch(action: BackClicked())
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .textStyle(theme.typography.titleMedium)
+                        .fontWeight(.semibold)
+                        .foregroundColor(theme.colors.accent)
+                }
+            }
+        }
+        .toolbarBackground(theme.colors.background, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
         .onChange(of: uiState.appTheme) { newTheme in
             store.appTheme = newTheme.toDeveiceAppTheme()
         }
@@ -249,7 +269,7 @@ struct SettingsView: View {
                     .fill(color)
                     .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
                 Image(systemName: icon)
-                    .foregroundColor(.white)
+                    .foregroundColor(theme.colors.onPrimary)
             }
             .frame(width: 30, height: 30, alignment: .center)
             .padding(.trailing, 8)

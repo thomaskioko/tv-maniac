@@ -1,6 +1,8 @@
 import SwiftUI
 
 public struct SearchResultListView: View {
+    @Theme private var theme
+
     private let items: [SwiftSearchShow]
     private let onClick: (Int64) -> Void
 
@@ -15,7 +17,7 @@ public struct SearchResultListView: View {
     public var body: some View {
         if !items.isEmpty {
             ScrollView(.vertical, showsIndicators: false) {
-                LazyVStack(spacing: 8) {
+                LazyVStack(spacing: theme.spacing.xSmall) {
                     ForEach(items, id: \.tmdbId) { item in
                         SearchItemView(
                             title: item.title,
@@ -25,7 +27,7 @@ public struct SearchResultListView: View {
                             year: item.year,
                             voteAverage: item.voteAverage
                         )
-                        .padding(.horizontal, 8)
+                        .padding(.horizontal, theme.spacing.xSmall)
                         .onTapGesture {
                             onClick(item.tmdbId)
                         }

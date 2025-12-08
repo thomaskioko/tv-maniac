@@ -1,7 +1,9 @@
 import SwiftUI
 
 public struct EpisodeListView: View {
+    @Theme private var theme
     @State private var showingAlert: Bool = false
+
     private let episodeCount: Int64
     private let watchProgress: Float
     private let expandEpisodeItems: Bool
@@ -60,14 +62,14 @@ public struct EpisodeListView: View {
                 )
             })
         }
-        .padding(.top, 16)
+        .padding(.top, theme.spacing.medium)
     }
 
     @ViewBuilder
     private var verticalEpisodeListView: some View {
         VStack {
             ScrollView(.vertical, showsIndicators: false) {
-                LazyVStack(spacing: 8) {
+                LazyVStack(spacing: theme.spacing.xSmall) {
                     ForEach(items, id: \.episodeId) { item in
                         EpisodeItemView(
                             imageUrl: item.imageUrl,

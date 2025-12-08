@@ -1,8 +1,10 @@
 import SwiftUI
 
 public struct LoadingIndicatorView: View {
-    private let style: StrokeStyle
+    @Theme private var theme
     @State private var animate: Bool
+
+    private let style: StrokeStyle
 
     public init(
         style: StrokeStyle = StrokeStyle(lineWidth: 3, lineCap: .round),
@@ -20,7 +22,7 @@ public struct LoadingIndicatorView: View {
                 .trim(from: 0, to: 0.2)
                 .stroke(
                     AngularGradient(
-                        gradient: .init(colors: [Color.accent]),
+                        gradient: .init(colors: [theme.colors.accent]),
                         center: .center
                     ),
                     style: style
@@ -33,7 +35,7 @@ public struct LoadingIndicatorView: View {
                 .trim(from: 0.5, to: 0.7)
                 .stroke(
                     AngularGradient(
-                        gradient: .init(colors: [Color.accent]),
+                        gradient: .init(colors: [theme.colors.accent]),
                         center: .center
                     ),
                     style: style
@@ -44,7 +46,7 @@ public struct LoadingIndicatorView: View {
 
             Spacer()
         }
-        .padding(16)
+        .padding(theme.spacing.medium)
         .edgesIgnoringSafeArea(.all)
         .onAppear {
             animate.toggle()
