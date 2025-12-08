@@ -63,4 +63,24 @@ class DatastoreRepositoryImplTest {
             awaitItem() shouldBe AppTheme.DARK_THEME
         }
     }
+
+    @IgnoreIos
+    @Test
+    fun `should emit terminal theme when updated`() = runTest {
+        repository.observeTheme().test {
+            repository.saveTheme(AppTheme.TERMINAL_THEME)
+            awaitItem() shouldBe AppTheme.SYSTEM_THEME
+            awaitItem() shouldBe AppTheme.TERMINAL_THEME
+        }
+    }
+
+    @IgnoreIos
+    @Test
+    fun `should emit aqua theme when updated`() = runTest {
+        repository.observeTheme().test {
+            repository.saveTheme(AppTheme.AQUA_THEME)
+            awaitItem() shouldBe AppTheme.SYSTEM_THEME
+            awaitItem() shouldBe AppTheme.AQUA_THEME
+        }
+    }
 }

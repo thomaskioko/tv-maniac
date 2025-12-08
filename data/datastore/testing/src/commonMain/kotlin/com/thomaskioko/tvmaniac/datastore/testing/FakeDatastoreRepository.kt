@@ -16,6 +16,7 @@ class FakeDatastoreRepository : DatastoreRepository {
     private val languageFlow: Channel<String> = Channel(Channel.UNLIMITED)
     private val listStyleFlow: Channel<ListStyle> = Channel(Channel.UNLIMITED)
     private val imageQualityFlow = MutableStateFlow(ImageQuality.MEDIUM)
+    private val openTrailersInYoutubeFlow = MutableStateFlow(false)
 
     suspend fun setTheme(appTheme: AppTheme) {
         appThemeFlow.value = appTheme
@@ -48,4 +49,10 @@ class FakeDatastoreRepository : DatastoreRepository {
     }
 
     override fun observeImageQuality(): Flow<ImageQuality> = imageQualityFlow.asStateFlow()
+
+    override suspend fun saveOpenTrailersInYoutube(enabled: Boolean) {
+        openTrailersInYoutubeFlow.value = enabled
+    }
+
+    override fun observeOpenTrailersInYoutube(): Flow<Boolean> = openTrailersInYoutubeFlow.asStateFlow()
 }

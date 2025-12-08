@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.datastore.implementation
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
@@ -36,6 +37,9 @@ class DefaultDatastoreRepository(
             when (preferences[KEY_THEME]) {
                 AppTheme.LIGHT_THEME.name -> AppTheme.LIGHT_THEME
                 AppTheme.DARK_THEME.name -> AppTheme.DARK_THEME
+                AppTheme.TERMINAL_THEME.name -> AppTheme.TERMINAL_THEME
+                AppTheme.AUTUMN_THEME.name -> AppTheme.AUTUMN_THEME
+                AppTheme.AQUA_THEME.name -> AppTheme.AQUA_THEME
                 else -> AppTheme.SYSTEM_THEME
             }
         }
@@ -75,9 +79,21 @@ class DefaultDatastoreRepository(
         dataStore.data.map { preferences ->
             when (preferences[KEY_IMAGE_QUALITY]) {
                 ImageQuality.HIGH.name -> ImageQuality.HIGH
+                ImageQuality.MEDIUM.name -> ImageQuality.MEDIUM
                 ImageQuality.LOW.name -> ImageQuality.LOW
-                else -> ImageQuality.HIGH
+                else -> ImageQuality.MEDIUM
             }
+        }
+
+    override suspend fun saveOpenTrailersInYoutube(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[KEY_OPEN_TRAILERS_IN_YOUTUBE] = enabled
+        }
+    }
+
+    override fun observeOpenTrailersInYoutube(): Flow<Boolean> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_OPEN_TRAILERS_IN_YOUTUBE] ?: false
         }
 
     companion object {
@@ -85,5 +101,6 @@ class DefaultDatastoreRepository(
         val KEY_LANGUAGE = stringPreferencesKey("app_language")
         val KEY_LIST_STYLE = stringPreferencesKey("list_style")
         val KEY_IMAGE_QUALITY = stringPreferencesKey("image_quality")
+        val KEY_OPEN_TRAILERS_IN_YOUTUBE = booleanPreferencesKey("open_trailers_in_youtube")
     }
 }
