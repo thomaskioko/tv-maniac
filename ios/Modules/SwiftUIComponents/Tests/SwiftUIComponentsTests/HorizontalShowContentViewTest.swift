@@ -3,7 +3,7 @@ import SwiftUI
 import SwiftUIComponents
 import XCTest
 
-class HorizontalShowContentViewViewTest: XCTestCase {
+class HorizontalShowContentViewViewTest: SnapshotTestCase {
     func test_HorizontalShowContentView() {
         HorizontalShowContentView(
             title: "Trending Today",
@@ -34,7 +34,7 @@ class HorizontalShowContentViewViewTest: XCTestCase {
             onMoreClicked: {}
         )
         .padding()
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "HorizontalShowContentView")
     }
 }

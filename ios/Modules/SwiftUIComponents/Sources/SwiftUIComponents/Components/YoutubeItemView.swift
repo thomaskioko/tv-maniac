@@ -3,14 +3,15 @@ import SwiftUI
 import YouTubePlayerKit
 
 public struct YoutubeItemView: View {
+    @Theme private var theme
+    @State private var isLoading = false
+
     private let openInYouTube: Bool
     private let key: String
     private let name: String
     private let thumbnailUrl: String
     private let player: YouTubePlayer
     private let onError: ((Error) -> Void)?
-
-    @State private var isLoading = false
 
     public init(
         openInYouTube: Bool,
@@ -63,7 +64,7 @@ public struct YoutubeItemView: View {
                 )
                 .clipShape(
                     RoundedRectangle(
-                        cornerRadius: DimensionConstants.imageRadius,
+                        cornerRadius: theme.shapes.medium,
                         style: .continuous
                     )
                 )
@@ -74,10 +75,10 @@ public struct YoutubeItemView: View {
 
                 HStack {
                     Text(name)
-                        .font(.avenirNext(size: 14))
-                        .foregroundColor(.secondary)
+                        .textStyle(theme.typography.bodyMedium)
+                        .foregroundColor(theme.colors.onSurfaceVariant)
                         .lineLimit(DimensionConstants.lineLimits)
-                        .padding([.trailing])
+                        .padding([.trailing], theme.spacing.medium)
 
                     Spacer()
                 }
@@ -92,9 +93,9 @@ public struct YoutubeItemView: View {
 
     private var placeholder: some View {
         ZStack {
-            Color.secondary
+            theme.colors.surfaceVariant
             Image(systemName: "play.fill")
-                .foregroundColor(.white)
+                .foregroundColor(theme.colors.onPrimary)
                 .imageScale(.medium)
         }
         .transition(.opacity)
@@ -104,7 +105,7 @@ public struct YoutubeItemView: View {
         )
         .clipShape(
             RoundedRectangle(
-                cornerRadius: DimensionConstants.imageRadius,
+                cornerRadius: theme.shapes.medium,
                 style: .continuous
             )
         )
@@ -115,13 +116,13 @@ public struct YoutubeItemView: View {
             Color.black.opacity(DimensionConstants.overlayOpacity)
             if isLoading {
                 ProgressView()
-                    .tint(.white)
+                    .tint(theme.colors.onPrimary)
                     .frame(
                         width: DimensionConstants.overlayWidth,
                         height: DimensionConstants.overlayHeight,
                         alignment: .center
                     )
-                    .padding()
+                    .padding(theme.spacing.medium)
                     .onAppear {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
                             withAnimation {
@@ -138,10 +139,10 @@ public struct YoutubeItemView: View {
                         alignment: .center
                     )
                     .symbolRenderingMode(.palette)
-                    .foregroundStyle(.white, Color.grey200.opacity(0.6))
+                    .foregroundStyle(theme.colors.onPrimary, theme.colors.surfaceVariant.opacity(0.6))
                     .scaledToFit()
                     .imageScale(.medium)
-                    .padding()
+                    .padding(theme.spacing.medium)
             }
         }
         .frame(
@@ -150,7 +151,7 @@ public struct YoutubeItemView: View {
         )
         .clipShape(
             RoundedRectangle(
-                cornerRadius: DimensionConstants.imageRadius,
+                cornerRadius: theme.shapes.medium,
                 style: .continuous
             )
         )

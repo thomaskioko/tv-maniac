@@ -3,7 +3,7 @@ import SwiftUI
 import SwiftUIComponents
 import XCTest
 
-class ShowInfoViewTest: XCTestCase {
+class ShowInfoViewTest: SnapshotTestCase {
     func test_ShowInfoView() {
         ShowInfoView(
             isFollowed: true,
@@ -116,7 +116,7 @@ class ShowInfoViewTest: XCTestCase {
             onSeasonClicked: { _, _ in },
             onShowClicked: { _ in }
         )
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "ShowInfoView")
     }
 }

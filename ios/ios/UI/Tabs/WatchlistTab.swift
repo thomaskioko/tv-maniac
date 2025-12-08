@@ -3,6 +3,8 @@ import SwiftUIComponents
 import TvManiacKit
 
 struct WatchlistTab: View {
+    @Theme private var theme
+
     private let presenter: WatchlistPresenter
     @StateObject @KotlinStateFlow private var uiState: WatchlistState
     @State private var showListSelection = false
@@ -30,12 +32,12 @@ struct WatchlistTab: View {
 
     var body: some View {
         ZStack {
-            Color.background
+            theme.colors.background
                 .ignoresSafeArea()
 
             VStack {
                 contentView
-                    .padding(.top, 16)
+                    .padding(.top, theme.spacing.medium)
             }
         }
         .navigationBarTitleDisplayMode(.inline)
@@ -56,8 +58,9 @@ struct WatchlistTab: View {
                         Label(String(\.label_watchlist_list_style), systemImage: image)
                             .labelStyle(.iconOnly)
                     }
-                    .buttonBorderShape(.roundedRectangle(radius: 16))
+                    .buttonBorderShape(.roundedRectangle(radius: theme.shapes.large))
                     .buttonStyle(.bordered)
+                    .tint(theme.colors.accent)
                 }
             }
             ToolbarItem(placement: .principal) {
@@ -92,9 +95,10 @@ struct WatchlistTab: View {
     private var titleView: some View {
         HStack {
             Text(String(\.label_tab_watchlist))
-                .fontWeight(Font.Weight.semibold)
+                .textStyle(theme.typography.titleMedium)
+                .fontWeight(.semibold)
                 .lineLimit(1)
-                .foregroundColor(.secondary)
+                .foregroundColor(theme.colors.onSurface)
             Button {
                 withAnimation {
                     showListSelection.toggle()
@@ -102,8 +106,8 @@ struct WatchlistTab: View {
             } label: {
                 Image(systemName: "chevron.down.circle.fill")
                     .fontWeight(.bold)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                    .textStyle(theme.typography.labelSmall)
+                    .foregroundColor(theme.colors.onSurfaceVariant)
                     .rotationEffect(.degrees(isRotating))
                     .task(id: showListSelection) {
                         withAnimation(.easeInOut) {
@@ -127,8 +131,9 @@ struct WatchlistTab: View {
             Label(String(\.label_watchlist_sort_list), systemImage: "line.3.horizontal.decrease.circle")
                 .labelStyle(.iconOnly)
         }
-        .buttonBorderShape(.roundedRectangle(radius: 16))
+        .buttonBorderShape(.roundedRectangle(radius: theme.shapes.large))
         .buttonStyle(.bordered)
+        .tint(theme.colors.accent)
     }
 
     @ViewBuilder
@@ -149,7 +154,7 @@ struct WatchlistTab: View {
 
     @ViewBuilder
     private func listViewContent(_ state: WatchlistState) -> some View {
-        LazyVStack(spacing: 8) {
+        LazyVStack(spacing: theme.spacing.xSmall) {
             ForEach(state.items, id: \.tmdbId) { item in
                 WatchlistListItem(item: item, namespace: animation)
                     .onTapGesture {
@@ -206,7 +211,7 @@ struct WatchlistTab: View {
                 systemName: "tray",
                 message: String(\.generic_empty_content),
                 subtitle: subtitle,
-                color: Color.secondary
+                color: theme.colors.onSurfaceVariant
             )
             .frame(maxWidth: .infinity)
         }

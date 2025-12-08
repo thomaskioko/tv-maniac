@@ -3,11 +3,11 @@ import SwiftUI
 import SwiftUIComponents
 import XCTest
 
-class CircularButtonTest: XCTestCase {
+class CircularButtonTest: SnapshotTestCase {
     func _test_CircularButton() {
         CircularButton(iconName: "arrow.backward", action: {})
             .padding()
-            .background(Color.background)
+            .themedPreview()
             .assertSnapshot(testName: "CircularButton")
     }
 }

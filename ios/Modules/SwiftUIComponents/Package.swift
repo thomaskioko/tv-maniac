@@ -28,9 +28,6 @@ let package = Package(
                 "SDWebImageWebPCoder",
                 "YouTubePlayerKit",
             ],
-            resources: [
-                .copy("Resources/Fonts"),
-            ]
         ),
         .testTarget(
             name: "SwiftUIComponentsTests",

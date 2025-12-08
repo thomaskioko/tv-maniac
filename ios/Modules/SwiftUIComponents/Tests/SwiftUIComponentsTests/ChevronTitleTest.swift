@@ -3,39 +3,39 @@ import SwiftUI
 import SwiftUIComponents
 import XCTest
 
-class ChevronTitleTest: XCTestCase {
+class ChevronTitleTest: SnapshotTestCase {
     func test_ChevronTitle() {
         ChevronTitle(title: "Coming Soon")
             .padding()
-            .background(Color.background)
+            .themedPreview()
             .assertSnapshot(testName: "ChevronTitle")
     }
 
     func test_ChevronTitleWithChevronOnly() {
         ChevronTitle(title: "Coming Soon", chevronStyle: .chevronOnly)
             .padding()
-            .background(Color.background)
+            .themedPreview()
             .assertSnapshot(testName: "ChevronTitleWithChevronOnly")
     }
 
     func test_ChevronTitleWithChevronTitle() {
         ChevronTitle(title: "Coming Soon", chevronStyle: .withTitle("More"))
             .padding()
-            .background(Color.background)
+            .themedPreview()
             .assertSnapshot(testName: "ChevronTitleWithChevronTitle")
     }
 
     func test_ChevronTitleWithSubTitle() {
         ChevronTitle(title: "Coming Soon", subtitle: "From Watchlist")
             .padding()
-            .background(Color.background)
+            .themedPreview()
             .assertSnapshot(testName: "ChevronTitleWithSubTitle")
     }
 
     func test_ChevronTitleWithSubTitleAndChevronOnly() {
         ChevronTitle(title: "Coming Soon", subtitle: "From Watchlist", chevronStyle: .chevronOnly)
             .padding()
-            .background(Color.background)
+            .themedPreview()
             .assertSnapshot(testName: "ChevronTitleWithSubTitleAndChevronOnly")
     }
 }

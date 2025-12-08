@@ -3,15 +3,15 @@ import SwiftUI
 import SwiftUIComponents
 import XCTest
 
-class EpisodeItemViewTest: XCTestCase {
+class EpisodeItemViewTest: SnapshotTestCase {
     func test_EpisodeItemView() {
         EpisodeItemView(
-            imageUrl: "https://image.tmdb.org/t/p/w780/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg",
+            imageUrl: "",
             episodeTitle: "E01 • Glorious Purpose",
             episodeOverView: "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority."
         )
         .padding()
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "EpisodeItemView")
     }
 }

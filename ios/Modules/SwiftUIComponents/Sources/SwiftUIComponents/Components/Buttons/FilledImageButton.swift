@@ -1,23 +1,25 @@
 import SwiftUI
 
 public struct FilledImageButton: View {
+    @Theme private var theme
+
     private let text: String
     private let systemImageName: String?
-    private let color: Color
-    private let textColor: Color
-    private let borderColor: Color
-    private let cornerRadius: CGFloat
-    private let verticalPadding: CGFloat
+    private let color: Color?
+    private let textColor: Color?
+    private let borderColor: Color?
+    private let cornerRadius: CGFloat?
+    private let verticalPadding: CGFloat?
     private let action: () -> Void
 
     public init(
         text: String,
         systemImageName: String? = nil,
-        color: Color = .accent,
-        textColor: Color = .white,
-        borderColor: Color = .accent,
-        cornerRadius: CGFloat = 5,
-        verticalPadding: CGFloat = 16,
+        color: Color? = nil,
+        textColor: Color? = nil,
+        borderColor: Color? = nil,
+        cornerRadius: CGFloat? = nil,
+        verticalPadding: CGFloat? = nil,
         action: @escaping () -> Void
     ) {
         self.text = text
@@ -31,18 +33,22 @@ public struct FilledImageButton: View {
     }
 
     public var body: some View {
+        let resolvedColor = color ?? theme.colors.accent
+        let resolvedBorderColor = borderColor ?? theme.colors.accent
+        let resolvedCornerRadius = cornerRadius ?? theme.shapes.small
+
         TvManiacButton(
             text: text,
-            color: color,
-            textColor: .white,
-            borderColor: borderColor,
+            color: resolvedColor,
+            textColor: theme.colors.onPrimary,
+            borderColor: resolvedBorderColor,
             systemImageName: systemImageName,
-            verticalPadding: verticalPadding,
+            verticalPadding: verticalPadding ?? theme.spacing.medium,
             action: action
         )
         .background(
-            RoundedRectangle(cornerRadius: cornerRadius)
-                .foregroundColor(color)
+            RoundedRectangle(cornerRadius: resolvedCornerRadius)
+                .foregroundColor(resolvedColor)
         )
     }
 }

@@ -18,8 +18,8 @@ extension ToastStyle {
     var themeColor: Color {
         switch self {
         case .error: Color.red
-        case .warning: Color.yellow
-        case .info: Color.accentBlue
+        case .warning: Color.orange
+        case .info: Color.blue
         case .success: Color.green
         }
     }

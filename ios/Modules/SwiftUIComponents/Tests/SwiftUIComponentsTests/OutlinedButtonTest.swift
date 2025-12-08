@@ -3,14 +3,14 @@ import SwiftUI
 import SwiftUIComponents
 import XCTest
 
-class OutlinedButtonTest: XCTestCase {
+class OutlinedButtonTest: SnapshotTestCase {
     func test_OutlinedButton() {
         OutlinedButton(
             text: "Watch Trailer",
             action: {}
         )
         .padding()
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "OutlinedButton")
     }
 
@@ -21,7 +21,7 @@ class OutlinedButtonTest: XCTestCase {
             action: {}
         )
         .padding()
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "OutlinedImageButton")
     }
 }

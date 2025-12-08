@@ -3,7 +3,7 @@ import SwiftUI
 import SwiftUIComponents
 import XCTest
 
-class HeaderViewTest: XCTestCase {
+class HeaderViewTest: SnapshotTestCase {
     func test_HeaderView() {
         HeaderView(
             title: "Arcane",
@@ -15,7 +15,7 @@ class HeaderViewTest: XCTestCase {
             rating: 4.8,
             progress: 0
         )
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "HeaderView")
     }
 }

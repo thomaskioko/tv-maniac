@@ -3,7 +3,7 @@ import SwiftUI
 import SwiftUIComponents
 import XCTest
 
-class ProviderListViewTest: XCTestCase {
+class ProviderListViewTest: SnapshotTestCase {
     func test_ProviderListView() {
         ProviderListView(
             items: [
@@ -21,7 +21,7 @@ class ProviderListViewTest: XCTestCase {
                 ),
             ]
         )
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "ProviderList")
     }
 }

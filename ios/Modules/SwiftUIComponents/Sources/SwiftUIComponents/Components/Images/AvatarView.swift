@@ -2,15 +2,17 @@ import SDWebImageSwiftUI
 import SwiftUI
 
 public struct AvatarView: View {
+    @Theme private var theme
+
     private let avatarUrl: String?
     private let size: CGFloat
-    private let borderColor: Color
+    private let borderColor: Color?
     private let borderWidth: CGFloat
 
     public init(
         avatarUrl: String?,
         size: CGFloat = 32,
-        borderColor: Color = .white,
+        borderColor: Color? = nil,
         borderWidth: CGFloat = 2
     ) {
         self.avatarUrl = avatarUrl
@@ -20,6 +22,8 @@ public struct AvatarView: View {
     }
 
     public var body: some View {
+        let resolvedBorderColor = borderColor ?? theme.colors.onPrimary
+
         Group {
             if let avatarUrl, !avatarUrl.isEmpty, let url = URL(string: avatarUrl) {
                 WebImage(url: url) { image in
@@ -27,7 +31,7 @@ public struct AvatarView: View {
                         .resizable()
                         .scaledToFill()
                 } placeholder: {
-                    placeholderView
+                    placeholderView(resolvedBorderColor)
                 }
                 .indicator(.activity)
                 .transition(.fade(duration: 0.3))
@@ -35,20 +39,20 @@ public struct AvatarView: View {
                 .clipShape(Circle())
                 .overlay(
                     Circle()
-                        .stroke(borderColor, lineWidth: borderWidth)
+                        .stroke(resolvedBorderColor, lineWidth: borderWidth)
                 )
             } else {
-                placeholderView
+                placeholderView(resolvedBorderColor)
             }
         }
     }
 
-    private var placeholderView: some View {
+    private func placeholderView(_ borderColor: Color) -> some View {
         Image(systemName: "person")
             .font(.system(size: size * 0.5))
             .foregroundColor(borderColor)
             .frame(width: size, height: size)
-            .background(Color.gray.opacity(0.3))
+            .background(theme.colors.surfaceVariant.opacity(0.3))
             .clipShape(Circle())
             .overlay(
                 Circle()

@@ -3,6 +3,8 @@ import SwiftUIComponents
 import TvManiacKit
 
 struct SearchTab: View {
+    @Theme private var theme
+
     private let presenter: SearchShowsPresenter
     @StateObject @KotlinStateFlow private var uiState: SearchShowState
     @FocusState private var isSearchFocused: Bool
@@ -31,7 +33,7 @@ struct SearchTab: View {
 
     var body: some View {
         ZStack {
-            Color.background
+            theme.colors.background
                 .ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
@@ -51,7 +53,7 @@ struct SearchTab: View {
         .scrollContentBackground(.hidden)
         .toolbarBackground(.visible, for: .navigationBar)
         .toolbarBackground(
-            Color.background.opacity(0.9),
+            theme.colors.background.opacity(0.9),
             for: .navigationBar
         )
     }
@@ -116,7 +118,7 @@ struct SearchTab: View {
         } header: {
             HStack {
                 Text(String(\.label_search_by_genre))
-                    .font(.title3)
+                    .textStyle(theme.typography.titleLarge)
                     .fontWeight(.medium)
                 Spacer()
             }

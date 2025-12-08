@@ -3,6 +3,8 @@ import SwiftUIComponents
 import TvManiacKit
 
 struct ShowDetailsView: View {
+    @Theme private var theme
+
     private let presenter: ShowDetailsPresenter
     @StateObject @KotlinStateFlow private var uiState: ShowDetailsContent
     @State private var showGlass: Double = 0
@@ -43,7 +45,7 @@ struct ShowDetailsView: View {
                 showGlass = max(0, min(1, normalizedOpacity))
             }
         )
-        .background(Color.background)
+        .background(theme.colors.background)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarColor(backgroundColor: .clear)
         .navigationBarBackButtonHidden(true)
@@ -60,7 +62,7 @@ struct ShowDetailsView: View {
                         presenter.dispatch(action: DetailBackClicked())
                     }) {
                         Image(systemName: "chevron.left")
-                            .foregroundColor(.accent)
+                            .foregroundColor(theme.colors.accent)
                             .imageScale(.large)
                             .opacity(1 - showGlass)
                     }

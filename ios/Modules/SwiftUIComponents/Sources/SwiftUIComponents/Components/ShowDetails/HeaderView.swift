@@ -1,6 +1,8 @@
 import SwiftUI
 
 public struct HeaderView: View {
+    @Theme private var theme
+
     private let title: String
     private let overview: String
     private let backdropImageUrl: String?
@@ -45,11 +47,11 @@ public struct HeaderView: View {
                     gradient: Gradient(colors: [
                         .clear,
                         .clear,
-                        Color.background.opacity(0.1),
-                        Color.background.opacity(0.3),
-                        Color.background.opacity(0.6),
-                        Color.background.opacity(0.9),
-                        Color.background,
+                        theme.colors.background.opacity(0.1),
+                        theme.colors.background.opacity(0.3),
+                        theme.colors.background.opacity(0.6),
+                        theme.colors.background.opacity(0.9),
+                        theme.colors.background,
                     ]),
                     startPoint: .top,
                     endPoint: .bottom
@@ -69,7 +71,7 @@ public struct HeaderView: View {
                     rating: rating
                 )
                 .opacity(1 - progress)
-                .padding(.bottom, 2)
+                .padding(.bottom, theme.spacing.xxxSmall)
             }
             .frame(height: headerHeight)
         }

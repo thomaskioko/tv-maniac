@@ -9,6 +9,7 @@
 import SwiftUI
 
 public struct ChipView: View {
+    @Theme private var theme
     private let label: String
     private let action: () -> Void
 
@@ -21,16 +22,14 @@ public struct ChipView: View {
     }
 
     public var body: some View {
-        Button(
-            action: action
-        ) {
+        Button(action: action) {
             Text(label)
-                .bodyMediumFont(size: 16)
-                .foregroundColor(.accent)
-                .padding([.leading, .trailing], 2)
-                .padding(10)
-                .background(Color.accent.opacity(0.12))
-                .cornerRadius(5)
+                .textStyle(theme.typography.bodyMedium)
+                .foregroundColor(theme.colors.secondary)
+                .padding(.horizontal, theme.spacing.small)
+                .padding(.vertical, theme.spacing.xSmall)
+                .background(theme.colors.secondary.opacity(0.08))
+                .cornerRadius(theme.shapes.small)
         }
     }
 }

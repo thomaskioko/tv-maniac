@@ -9,6 +9,8 @@
 import SwiftUI
 
 public struct EmptyUIView: View {
+    @Theme private var theme
+
     private let title: String
     private let subtitle: String?
 
@@ -25,23 +27,23 @@ public struct EmptyUIView: View {
             Spacer()
 
             Text("🚧")
-                .titleBoldFont(size: 78)
-                .padding(16)
+                .font(.system(size: 78))
+                .padding(theme.spacing.medium)
 
             Text(title)
-                .bodyFont(size: 28)
+                .textStyle(theme.typography.headlineMedium)
                 .frame(maxWidth: .infinity)
 
             if let text = subtitle {
                 Text(text)
-                    .font(.callout)
+                    .textStyle(theme.typography.bodyMedium)
                     .frame(maxWidth: .infinity)
             }
 
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(.horizontal)
+        .padding(.horizontal, theme.spacing.medium)
     }
 }
 

@@ -2,6 +2,8 @@ import SDWebImageSwiftUI
 import SwiftUI
 
 public struct CastCardView: View {
+    @Theme private var theme
+
     private let profileUrl: String?
     private let name: String
     private let characterName: String
@@ -15,8 +17,8 @@ public struct CastCardView: View {
     public var body: some View {
         profileImage
             .overlay(nameOverlay)
-            .clipShape(RoundedRectangle(cornerRadius: DimensionConstants.cornerRadius, style: .continuous))
-            .shadow(color: Color.grey200.opacity(0.3), radius: DimensionConstants.shadowRadius, x: 0, y: 2)
+            .clipShape(RoundedRectangle(cornerRadius: theme.shapes.small, style: .continuous))
+            .shadow(color: theme.colors.outline.opacity(0.3), radius: 2.5, x: 0, y: 2)
     }
 
     private var profileImage: some View {
@@ -33,7 +35,7 @@ public struct CastCardView: View {
             }
         }
         .aspectRatio(contentMode: .fill)
-        .frame(width: DimensionConstants.profileWidth, height: DimensionConstants.profileHeight)
+        .frame(width: 120, height: 160)
     }
 
     private var profilePlaceholder: some View {
@@ -71,27 +73,18 @@ public struct CastCardView: View {
     }
 
     private var nameView: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
             Text(name)
-                .font(.callout)
-                .fontWeight(.semibold)
+                .textStyle(theme.typography.bodyMedium)
             Text(characterName)
-                .font(.caption)
+                .textStyle(theme.typography.labelSmall)
         }
         .foregroundColor(.white)
-        .lineLimit(DimensionConstants.lineLimit)
+        .lineLimit(1)
         .padding(.horizontal, 6)
-        .padding(.bottom)
+        .padding(.bottom, theme.spacing.medium)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
-}
-
-private enum DimensionConstants {
-    static let profileWidth: CGFloat = 120
-    static let profileHeight: CGFloat = 160
-    static let shadowRadius: CGFloat = 2.5
-    static let cornerRadius: CGFloat = 4
-    static let lineLimit: Int = 1
 }
 
 #Preview {

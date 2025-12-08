@@ -1,13 +1,15 @@
 import SwiftUI
 
 public struct ShowContentItemView: View {
+    @Theme private var theme
+
     private let title: String
     private let imageUrl: String?
     private let imageWidth: CGFloat
     private let imageHeight: CGFloat
     private let shadowRadius: CGFloat
-    private let cornerRadius: CGFloat
-    private let imageRadius: CGFloat
+    private let cornerRadius: CGFloat?
+    private let imageRadius: CGFloat?
 
     public init(
         title: String,
@@ -15,8 +17,8 @@ public struct ShowContentItemView: View {
         imageWidth: CGFloat = 260,
         imageHeight: CGFloat = 200,
         shadowRadius: CGFloat = 2.5,
-        cornerRadius: CGFloat = 4,
-        imageRadius: CGFloat = 2.5
+        cornerRadius: CGFloat? = nil,
+        imageRadius: CGFloat? = nil
     ) {
         self.imageUrl = imageUrl
         self.title = title
@@ -33,17 +35,17 @@ public struct ShowContentItemView: View {
             posterUrl: imageUrl,
             posterWidth: imageWidth,
             posterHeight: imageHeight,
-            posterRadius: imageRadius
+            posterRadius: imageRadius ?? theme.shapes.small
         )
         .overlay(nameOverlay)
-        .clipShape(RoundedRectangle(cornerRadius: DimensionConstants.cornerRadius, style: .continuous))
-        .shadow(color: Color.grey200.opacity(0.3), radius: DimensionConstants.shadowRadius, x: 0, y: 2)
+        .clipShape(RoundedRectangle(cornerRadius: cornerRadius ?? theme.shapes.small, style: .continuous))
+        .shadow(color: theme.colors.surfaceVariant.opacity(0.3), radius: shadowRadius, x: 0, y: 2)
     }
 
     private var nameOverlay: some View {
         ZStack(alignment: .bottom) {
             LinearGradient(
-                colors: [.clear, .black.opacity(0.2)], startPoint: .top, endPoint: .bottom
+                colors: [.clear, Color.black.opacity(0.2)], startPoint: .top, endPoint: .bottom
             )
             Rectangle()
                 .fill(.ultraThinMaterial)
@@ -57,7 +59,7 @@ public struct ShowContentItemView: View {
     private var overlayMask: some View {
         VStack(spacing: 0) {
             LinearGradient(
-                colors: [.clear, .black], startPoint: .top, endPoint: .bottom
+                colors: [.clear, Color.black], startPoint: .top, endPoint: .bottom
             )
             .frame(height: 40)
             Rectangle()
@@ -66,12 +68,13 @@ public struct ShowContentItemView: View {
 }
 
 private struct MetallicTitleView: View {
+    @Theme private var theme
     let title: String
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
-                .font(.headline)
+                .textStyle(theme.typography.titleSmall)
                 .lineLimit(DimensionConstants.lineLimit)
                 .fontWeight(.semibold)
                 .foregroundStyle(
@@ -86,17 +89,16 @@ private struct MetallicTitleView: View {
                         endPoint: .bottomTrailing
                     )
                 )
-                .shadow(color: .black.opacity(0.4), radius: 1, x: 0.5, y: 0.5)
-                // Add shine effect
+                .shadow(color: Color.black.opacity(0.4), radius: 1, x: 0.5, y: 0.5)
                 .overlay {
                     Text(title)
-                        .font(.headline)
+                        .textStyle(theme.typography.titleSmall)
                         .lineLimit(DimensionConstants.lineLimit)
                         .fontWeight(.semibold)
                         .foregroundStyle(
                             .linearGradient(
                                 colors: [
-                                    .white.opacity(0.7),
+                                    Color.white.opacity(0.7),
                                     .clear,
                                 ],
                                 startPoint: .topLeading,

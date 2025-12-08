@@ -10,6 +10,8 @@ import SDWebImageSwiftUI
 import SwiftUI
 
 public struct HeaderCoverArtWorkView: View {
+    @Theme private var theme
+
     private let imageUrl: String?
     private let posterHeight: CGFloat
     private let cornerRadius: CGFloat
@@ -47,9 +49,9 @@ public struct HeaderCoverArtWorkView: View {
             Rectangle().fill(.gray.gradient)
             VStack {
                 Image(systemName: "popcorn.fill")
-                    .font(.title)
+                    .textStyle(theme.typography.titleLarge)
                     .fontWidth(.expanded)
-                    .foregroundColor(.white.opacity(0.8))
+                    .foregroundColor(theme.colors.onPrimary.opacity(0.8))
                     .frame(width: 120, height: 120)
                     .padding()
             }

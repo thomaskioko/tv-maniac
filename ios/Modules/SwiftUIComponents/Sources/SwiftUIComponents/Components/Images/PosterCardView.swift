@@ -2,12 +2,14 @@ import SDWebImageSwiftUI
 import SwiftUI
 
 public struct PosterCardView: View {
+    @Theme private var theme
+
     private let title: String
     private let posterUrl: String?
     private let isInLibrary: Bool
     private let posterWidth: CGFloat
     private let posterHeight: CGFloat
-    private let posterRadius: CGFloat
+    private let posterRadius: CGFloat?
 
     public init(
         title: String,
@@ -15,7 +17,7 @@ public struct PosterCardView: View {
         isInLibrary: Bool = false,
         posterWidth: CGFloat = 120,
         posterHeight: CGFloat = 180,
-        posterRadius: CGFloat = 4
+        posterRadius: CGFloat? = nil
     ) {
         self.title = title
         self.posterUrl = posterUrl
@@ -32,26 +34,25 @@ public struct PosterCardView: View {
             isInLibrary: isInLibrary,
             posterWidth: posterWidth,
             posterHeight: posterHeight,
-            posterRadius: posterRadius
+            posterRadius: posterRadius ?? theme.shapes.small
         )
         .overlay {
             ZStack {
-                Rectangle().fill(.black.opacity(0.5))
+                Rectangle().fill(Color.black.opacity(0.5))
                 VStack {
                     Spacer()
                     HStack {
                         Text(title)
-                            .foregroundColor(.white)
-                            .font(.avenirNext(size: 18))
-                            .fontWeight(.semibold)
+                            .foregroundColor(Color.white)
+                            .textStyle(theme.typography.titleMedium)
                             .multilineTextAlignment(.center)
                             .lineLimit(3)
                             .frame(maxWidth: .infinity, alignment: .center)
 
                         Spacer()
                     }
-                    .padding(.horizontal)
-                    .padding(.bottom, 8)
+                    .padding(.horizontal, theme.spacing.medium)
+                    .padding(.bottom, theme.spacing.xSmall)
                 }
             }
             .frame(width: posterWidth, height: posterHeight, alignment: .center)

@@ -9,11 +9,13 @@
 import SwiftUI
 
 public struct FullScreenView: View {
+    @Theme private var theme
+
     private let systemName: String
     private let message: String
     private let subtitle: String?
     private let buttonText: String?
-    private let color: Color
+    private let color: Color?
     private let action: () -> Void
 
     public init(
@@ -22,7 +24,7 @@ public struct FullScreenView: View {
         subtitle: String? = nil,
         buttonText: String? = nil,
         action: @escaping () -> Void = {},
-        color: Color = .accent
+        color: Color? = nil
     ) {
         self.systemName = systemName
         self.message = message
@@ -37,33 +39,34 @@ public struct FullScreenView: View {
             Image(systemName: systemName)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .foregroundColor(color)
-                .font(Font.title.weight(.light))
+                .foregroundColor(color ?? theme.colors.accent)
+                .textStyle(theme.typography.titleLarge)
+                .fontWeight(.light)
                 .frame(width: 120, height: 120)
-                .padding(16)
+                .padding(theme.spacing.medium)
 
             Text(message)
-                .font(.avenirNext(size: 22))
+                .textStyle(theme.typography.titleLarge)
                 .fontWeight(.bold)
-                .foregroundColor(.textColor)
+                .foregroundColor(theme.colors.onSurface)
                 .multilineTextAlignment(.center)
-                .padding([.horizontal], 8)
+                .padding([.horizontal], theme.spacing.xSmall)
 
             if let subtitle {
                 Text(subtitle)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                    .textStyle(theme.typography.bodySmall)
+                    .foregroundColor(theme.colors.onSurfaceVariant)
             }
 
             if let buttonText {
                 FilledImageButton(
                     text: buttonText,
-                    verticalPadding: 8,
+                    verticalPadding: theme.spacing.xSmall,
                     action: action
                 )
-                .background(Color.accent)
-                .cornerRadius(5)
-                .padding([.top], 4)
+                .background(theme.colors.accent)
+                .cornerRadius(theme.shapes.small)
+                .padding([.top], theme.spacing.xxSmall)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

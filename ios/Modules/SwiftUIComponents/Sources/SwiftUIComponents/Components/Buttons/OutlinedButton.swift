@@ -1,19 +1,21 @@
 import SwiftUI
 
 public struct OutlinedButton: View {
+    @Theme private var theme
+
     private let text: String
     private let systemImageName: String?
-    private let color: Color
-    private let textColor: Color
-    private let borderColor: Color
+    private let color: Color?
+    private let textColor: Color?
+    private let borderColor: Color?
     private let action: () -> Void
 
     public init(
         text: String,
         systemImageName: String? = nil,
-        color: Color = .accent,
-        textColor: Color = .white,
-        borderColor: Color = .accent,
+        color: Color? = nil,
+        textColor: Color? = nil,
+        borderColor: Color? = nil,
         action: @escaping () -> Void
     ) {
         self.text = text
@@ -25,17 +27,20 @@ public struct OutlinedButton: View {
     }
 
     public var body: some View {
+        let resolvedColor = color ?? theme.colors.accent
+        let resolvedBorderColor = borderColor ?? theme.colors.accent
+
         TvManiacButton(
             text: text,
-            color: color,
-            textColor: color,
-            borderColor: borderColor,
+            color: resolvedColor,
+            textColor: resolvedColor,
+            borderColor: resolvedBorderColor,
             systemImageName: systemImageName,
             action: action
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 5)
-                .stroke(borderColor, lineWidth: 2)
+            RoundedRectangle(cornerRadius: theme.shapes.small)
+                .stroke(resolvedBorderColor, lineWidth: 2)
         )
     }
 }

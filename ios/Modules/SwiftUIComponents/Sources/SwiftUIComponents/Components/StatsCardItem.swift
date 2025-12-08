@@ -1,6 +1,8 @@
 import SwiftUI
 
 public struct StatsCardItem<Content: View>: View {
+    @Theme private var theme
+
     private let systemImage: String
     private let title: String
     private let content: () -> Content
@@ -19,33 +21,30 @@ public struct StatsCardItem<Content: View>: View {
         VStack(spacing: 0) {
             Spacer().frame(height: 18)
 
-            HStack(spacing: 8) {
+            HStack(spacing: theme.spacing.xSmall) {
                 Spacer()
 
                 Image(systemName: systemImage)
-                    .font(.system(size: 18))
-                    .foregroundColor(.accent)
+                    .textStyle(theme.typography.bodyLarge)
+                    .foregroundColor(theme.colors.accent)
 
                 Text(title)
-                    .font(.avenirNext(size: 14))
-                    .fontWeight(.medium)
-                    .foregroundColor(.textColor)
+                    .textStyle(theme.typography.bodyMedium)
+                    .foregroundColor(theme.colors.onSurface)
 
                 Spacer()
             }
             .frame(maxWidth: .infinity)
-            .padding(.top, 16)
+            .padding(.top, theme.spacing.medium)
 
-            Spacer().frame(height: 12)
+            Spacer().frame(height: theme.spacing.small)
 
             Rectangle()
-                .fill(Color.textColor)
+                .fill(theme.colors.onSurface)
                 .frame(height: 1)
-                .foregroundColor(.background)
 
-            Spacer().frame(height: 8)
+            Spacer().frame(height: theme.spacing.xSmall)
 
-            // --- User-provided content (slot) ---
             VStack {
                 Spacer()
 
@@ -54,77 +53,77 @@ public struct StatsCardItem<Content: View>: View {
 
                 Spacer()
             }
-            .padding(.horizontal, 24)
-            .padding(.bottom, 16)
+            .padding(.horizontal, theme.spacing.large)
+            .padding(.bottom, theme.spacing.medium)
         }
         .frame(height: 120)
-        .background(Color.backgroundColor)
+        .background(theme.colors.surface)
         .overlay(
-            RoundedRectangle(cornerRadius: 4)
-                .stroke(Color.textColor, lineWidth: 2)
+            RoundedRectangle(cornerRadius: theme.shapes.small)
+                .stroke(theme.colors.onSurface, lineWidth: 2)
         )
-        .cornerRadius(4)
+        .cornerRadius(theme.shapes.small)
     }
 }
 
 #Preview {
+    let theme = LightTheme()
     ScrollView(.horizontal, showsIndicators: false) {
-        HStack(alignment: .top, spacing: 12) {
+        HStack(alignment: .top, spacing: theme.spacing.small) {
             StatsCardItem(
                 systemImage: "calendar",
                 title: "Watch Time"
             ) {
-                HStack(spacing: 24) {
-                    VStack(spacing: 4) {
+                HStack(spacing: theme.spacing.large) {
+                    VStack(spacing: theme.spacing.xxSmall) {
                         Text("14")
-                            .font(.avenirNext(size: 18))
+                            .textStyle(theme.typography.titleMedium)
                             .fontWeight(.semibold)
-                            .foregroundColor(.textColor)
+                            .foregroundColor(theme.colors.onSurface)
 
                         Text("MONTHS")
-                            .font(.avenirNext(size: 12))
+                            .textStyle(theme.typography.labelMedium)
                             .fontWeight(.medium)
-                            .foregroundColor(.textColor)
+                            .foregroundColor(theme.colors.onSurface)
                     }
-                    VStack(spacing: 4) {
+                    VStack(spacing: theme.spacing.xxSmall) {
                         Text("45")
-                            .font(.avenirNext(size: 18))
+                            .textStyle(theme.typography.titleMedium)
                             .fontWeight(.semibold)
-                            .foregroundColor(.textColor)
+                            .foregroundColor(theme.colors.onSurface)
 
                         Text("DAYS")
-                            .font(.avenirNext(size: 12))
+                            .textStyle(theme.typography.labelMedium)
                             .fontWeight(.medium)
-                            .foregroundColor(.textColor)
+                            .foregroundColor(theme.colors.onSurface)
                     }
-                    VStack(spacing: 4) {
+                    VStack(spacing: theme.spacing.xxSmall) {
                         Text("12")
-                            .font(.avenirNext(size: 18))
+                            .textStyle(theme.typography.titleMedium)
                             .fontWeight(.semibold)
-                            .foregroundColor(.textColor)
+                            .foregroundColor(theme.colors.onSurface)
 
                         Text("HOURS")
-                            .font(.avenirNext(size: 12))
+                            .textStyle(theme.typography.labelMedium)
                             .fontWeight(.medium)
-                            .foregroundColor(.textColor)
+                            .foregroundColor(theme.colors.onSurface)
                     }
                 }
             }
 
-            // Episodes Watched Card
             StatsCardItem(
                 systemImage: "tv",
                 title: "Episodes Watched"
             ) {
                 VStack(spacing: 0) {
                     Text("5,123")
-                        .font(.avenirNext(size: 18))
+                        .textStyle(theme.typography.titleMedium)
                         .fontWeight(.semibold)
-                        .foregroundColor(.textColor)
+                        .foregroundColor(theme.colors.onSurface)
                         .frame(maxWidth: .infinity)
-                }.padding(10)
+                }.padding(theme.spacing.xSmall)
             }
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal, theme.spacing.medium)
     }
 }

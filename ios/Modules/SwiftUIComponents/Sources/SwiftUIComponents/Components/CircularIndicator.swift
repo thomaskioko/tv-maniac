@@ -9,6 +9,8 @@ import SwiftUI
 // MARK: - Apple TV Style Indicator
 
 public struct CircularIndicator: View {
+    @Theme private var theme
+
     let totalItems: Int
     let currentIndex: Int
     let isDragging: Bool
@@ -113,10 +115,10 @@ public struct CircularIndicator: View {
     @ViewBuilder
     private func indicatorDot(for _: Int, isActive: Bool) -> some View {
         if isActive {
-            ProgressIndicatorBar(progress: indicatorProgress)
+            ProgressIndicatorBar(progress: indicatorProgress, activeColor: theme.colors.onPrimary)
         } else {
             Circle()
-                .fill(.gray.opacity(0.5))
+                .fill(theme.colors.surfaceVariant.opacity(0.5))
                 .frame(width: 6, height: 6)
         }
     }
@@ -162,6 +164,7 @@ public struct CircularIndicator: View {
 
 struct ProgressIndicatorBar: View {
     let progress: CGFloat
+    var activeColor: Color = .white
 
     var body: some View {
         Canvas { context, _ in
@@ -176,7 +179,7 @@ struct ProgressIndicatorBar: View {
                 let progressRect = CGRect(x: 0, y: 0, width: progressWidth, height: 8)
                 context.fill(
                     RoundedRectangle(cornerRadius: 4).path(in: progressRect),
-                    with: .color(.white)
+                    with: .color(activeColor)
                 )
             }
         }

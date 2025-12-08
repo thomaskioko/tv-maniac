@@ -1,7 +1,10 @@
 import SwiftUI
+import SwiftUIComponents
 import TvManiacKit
 
 public struct TabBarView: View {
+    @Theme private var theme
+
     private let presenter: HomePresenter
     @StateObject @KotlinStateFlow private var stack: ChildStack<AnyObject, HomePresenterChild>
     @State private var selectedTab: NavigationTab = .discover
@@ -36,6 +39,7 @@ public struct TabBarView: View {
                 }
             }
         }
+        .tint(theme.colors.accent)
         .appTheme()
         .onChange(of: selectedTab) { newTab in
             switch newTab {

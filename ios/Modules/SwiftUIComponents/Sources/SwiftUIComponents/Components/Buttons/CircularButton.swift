@@ -1,13 +1,14 @@
 import SwiftUI
 
 public struct CircularButton: View {
+    @Theme private var theme
+    @Environment(\.colorScheme) private var colorScheme
+    @State private var isPressed = false
+
     private let iconName: String
     private let width: CGFloat
     private let height: CGFloat
     private let action: () -> Void
-
-    @Environment(\.colorScheme) private var colorScheme
-    @State private var isPressed = false
 
     public init(
         iconName: String,
@@ -33,14 +34,14 @@ public struct CircularButton: View {
         }) {
             ZStack {
                 Circle()
-                    .fill(colorScheme == .dark ? Color.white : .gray.opacity(0.8))
+                    .fill(colorScheme == .dark ? theme.colors.onPrimary : theme.colors.surfaceVariant.opacity(0.8))
                     .overlay(
                         Image(systemName: iconName)
                             .resizable()
                             .scaledToFit()
-                            .foregroundColor(colorScheme == .dark ? Color.black : Color.white)
+                            .foregroundColor(colorScheme == .dark ? theme.colors.primary : theme.colors.onPrimary)
                             .font(.system(size: 20, weight: .bold))
-                            .padding(12)
+                            .padding(theme.spacing.small)
                     )
                     .frame(width: width, height: height)
                     .buttonElevationEffect(isPressed: $isPressed)

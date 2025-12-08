@@ -1,25 +1,34 @@
 import SwiftUI
 
 public struct RoundedRectProgressViewStyle: ProgressViewStyle {
-    private let progressIndicatorHeight: CGFloat
+    @Theme private var theme
 
-    public init(progressIndicatorHeight: CGFloat = 8) {
+    private let progressIndicatorHeight: CGFloat
+    private let accentColor: Color?
+
+    public init(
+        progressIndicatorHeight: CGFloat = 8,
+        accentColor: Color? = nil
+    ) {
         self.progressIndicatorHeight = progressIndicatorHeight
+        self.accentColor = accentColor
     }
 
     public func makeBody(configuration: Configuration) -> some View {
+        let resolvedColor = accentColor ?? theme.colors.accent
+
         ZStack(alignment: .leading) {
             Rectangle()
                 .frame(height: progressIndicatorHeight)
-                .foregroundColor(.accent.opacity(0.2))
-                .overlay(Color.accent.opacity(0.2))
+                .foregroundColor(resolvedColor.opacity(0.2))
+                .overlay(resolvedColor.opacity(0.2))
 
             Rectangle()
                 .frame(
                     width: CGFloat(configuration.fractionCompleted ?? 0) * DimensionConstants.screenWidth,
                     height: progressIndicatorHeight
                 )
-                .foregroundColor(.accent)
+                .foregroundColor(resolvedColor)
         }
     }
 }

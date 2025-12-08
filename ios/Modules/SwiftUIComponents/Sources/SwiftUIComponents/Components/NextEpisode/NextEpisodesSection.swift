@@ -1,6 +1,8 @@
 import SwiftUI
 
 public struct NextEpisodesSection: View {
+    @Theme private var theme
+
     private let title: String
     private let episodes: [SwiftNextEpisode]
     private let chevronStyle: ChevronStyle
@@ -37,14 +39,14 @@ public struct NextEpisodesSection: View {
                                 episode: episode,
                                 onEpisodeClick: onEpisodeClick
                             )
-                            .padding([.leading, .trailing], 6)
-                            .padding(.leading, episode.episodeId == episodes.first?.episodeId ? 10 : 0)
-                            .padding(.trailing, episode.episodeId == episodes.last?.episodeId ? 8 : 0)
+                            .padding([.leading, .trailing], theme.spacing.xxSmall + 2)
+                            .padding(.leading, episode.episodeId == episodes.first?.episodeId ? theme.spacing.small - 2 : 0)
+                            .padding(.trailing, episode.episodeId == episodes.last?.episodeId ? theme.spacing.xSmall : 0)
                         }
                     }
                 }
             }
-            .padding(.bottom)
+            .padding(.bottom, theme.spacing.medium)
         }
     }
 }

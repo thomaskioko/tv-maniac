@@ -9,6 +9,12 @@
 import SwiftUI
 
 public struct TopBar: View {
+    @Theme private var theme
+    @Environment(\.colorScheme) private var colorScheme
+    @State private var isBackButtonPressed = false
+    @State private var isRefreshButtonPressed = false
+    @State private var rotation: Angle = .degrees(0)
+
     private let progress: CGFloat
     private let title: String?
     private let isRefreshing: Bool
@@ -16,11 +22,6 @@ public struct TopBar: View {
     private let onRefreshClicked: () -> Void
     private let width: CGFloat
     private let height: CGFloat
-
-    @Environment(\.colorScheme) private var colorScheme
-    @State private var isBackButtonPressed = false
-    @State private var isRefreshButtonPressed = false
-    @State private var rotation: Angle = .degrees(0)
 
     public init(
         progress: CGFloat,
@@ -49,30 +50,27 @@ public struct TopBar: View {
     public var body: some View {
         VStack {
             HStack {
-                // Back Button
                 CircularButton(
                     iconName: "arrow.backward",
                     width: width,
                     height: height,
                     action: onBackClicked
                 )
-                .padding(.leading, 16)
+                .padding(.leading, theme.spacing.medium)
 
                 if let title {
                     Text(title)
-                        .bodyFont(size: 24)
-                        .fontWeight(.semibold)
+                        .textStyle(theme.typography.headlineSmall)
                         .lineLimit(1)
-                        .padding(.leading, 4)
+                        .padding(.leading, theme.spacing.xxSmall)
                         .opacity(progress)
                         .opacity(max(0, min(1, (progress - 0.75) * 4.0)))
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.bottom, 4)
+                        .padding(.bottom, theme.spacing.xxSmall)
                 } else {
                     Spacer()
                 }
 
-                // Refresh Button
                 CircularButton(
                     iconName: "arrow.clockwise",
                     width: width,
@@ -80,7 +78,7 @@ public struct TopBar: View {
                     action: onRefreshClicked
                 )
                 .rotationEffect(rotation)
-                .padding(.trailing, 16)
+                .padding(.trailing, theme.spacing.medium)
             }
             .frame(height: height)
             .padding(.top, 60)

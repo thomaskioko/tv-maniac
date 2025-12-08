@@ -3,7 +3,7 @@ import SwiftUI
 import SwiftUIComponents
 import XCTest
 
-class TrailerListViewTest: XCTestCase {
+class TrailerListViewTest: SnapshotTestCase {
     func test_TrailerListView() {
         TrailerListView(
             trailers: [
@@ -22,7 +22,7 @@ class TrailerListViewTest: XCTestCase {
             ],
             openInYouTube: false
         )
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "TrailerListView")
     }
 }

@@ -3,7 +3,7 @@ import SwiftUI
 import SwiftUIComponents
 import XCTest
 
-class NextEpisodesSectionTest: XCTestCase {
+class NextEpisodesSectionTest: SnapshotTestCase {
     func test_NextEpisodesSectionEmpty() {
         NextEpisodesSection(
             title: "Up Next",
@@ -11,7 +11,7 @@ class NextEpisodesSectionTest: XCTestCase {
             onEpisodeClick: { _, _ in }
         )
         .padding()
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "NextEpisodesSectionEmpty")
     }
 
@@ -35,7 +35,7 @@ class NextEpisodesSectionTest: XCTestCase {
             onEpisodeClick: { _, _ in }
         )
         .padding()
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "NextEpisodesSectionSingleEpisode")
     }
 
@@ -83,7 +83,7 @@ class NextEpisodesSectionTest: XCTestCase {
             onEpisodeClick: { _, _ in }
         )
         .padding()
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "NextEpisodesSectionMultipleEpisodes")
     }
 
@@ -120,7 +120,7 @@ class NextEpisodesSectionTest: XCTestCase {
             onEpisodeClick: { _, _ in }
         )
         .padding()
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "NextEpisodesSectionWithChevronOnly")
     }
 
@@ -145,7 +145,7 @@ class NextEpisodesSectionTest: XCTestCase {
             onEpisodeClick: { _, _ in }
         )
         .padding()
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "NextEpisodesSectionWithChevronTitle")
     }
 }

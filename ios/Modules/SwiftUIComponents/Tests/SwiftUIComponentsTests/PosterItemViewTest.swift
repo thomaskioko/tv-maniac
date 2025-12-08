@@ -3,25 +3,25 @@ import SwiftUI
 import SwiftUIComponents
 import XCTest
 
-class PosterItemViewTest: XCTestCase {
+class PosterItemViewTest: SnapshotTestCase {
     func test_PosterItemView() {
         PosterItemView(
             title: "Arcane",
-            posterUrl: "https://image.tmdb.org/t/p/w780/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg"
+            posterUrl: ""
         )
         .padding()
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "PosterItemView")
     }
 
     func test_PosterItemView_inLibrary() {
         PosterItemView(
             title: "Arcane",
-            posterUrl: "https://image.tmdb.org/t/p/w780/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg",
+            posterUrl: "",
             isInLibrary: true
         )
         .padding()
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "PosterItemView_inLibrary")
     }
 }

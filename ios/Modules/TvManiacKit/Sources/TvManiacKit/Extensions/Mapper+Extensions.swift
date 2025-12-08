@@ -149,7 +149,7 @@ public extension TvManiac.TvShow {
 
 public extension TvManiac.EpisodeDetailsModel {
     func toSwift() -> SwiftEpisode {
-        .init(episodeId: id, title: episodeTitle, overview: overview, imageUrl: imageUrl)
+        .init(episodeId: id, title: episodeNumberTitle, overview: overview, imageUrl: imageUrl)
     }
 }
 

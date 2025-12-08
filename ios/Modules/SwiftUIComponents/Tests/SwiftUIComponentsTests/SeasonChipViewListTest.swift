@@ -3,7 +3,7 @@ import SwiftUI
 import SwiftUIComponents
 import XCTest
 
-class SeasonChipViewListTest: XCTestCase {
+class SeasonChipViewListTest: SnapshotTestCase {
     func test_SeasonChipViewList() {
         SeasonChipViewList(
             items: [
@@ -13,7 +13,7 @@ class SeasonChipViewListTest: XCTestCase {
             onClick: { _ in }
         )
         .padding()
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "SeasonChipViewList")
     }
 }

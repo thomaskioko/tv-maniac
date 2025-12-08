@@ -1,6 +1,8 @@
 import SwiftUI
 
 public struct ShowHeaderInfoView: View {
+    @Theme private var theme
+
     private let title: String
     private let overview: String
     private let status: String?
@@ -27,19 +29,19 @@ public struct ShowHeaderInfoView: View {
     public var body: some View {
         VStack(spacing: 0) {
             Text(title)
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .foregroundColor(.textColor)
+                .textStyle(theme.typography.headlineLarge)
+                .foregroundColor(theme.colors.onSurface)
                 .lineLimit(1)
-                .padding(.horizontal)
+                .padding(.horizontal, theme.spacing.medium)
                 .frame(maxWidth: .infinity, alignment: .center)
 
             showDetailMetadata
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
+                .padding(.horizontal, theme.spacing.medium)
+                .padding(.vertical, theme.spacing.xSmall)
 
             OverviewBoxView(overview: overview)
-                .padding(.horizontal, 16)
+                .padding(.horizontal, theme.spacing.medium)
+                .padding(.bottom, theme.spacing.small)
         }
     }
 
@@ -54,40 +56,37 @@ public struct ShowHeaderInfoView: View {
                 )
 
                 Text("•")
-                    .font(.avenirNext(size: 8))
-                    .foregroundColor(.accent)
+                    .textStyle(theme.typography.labelSmall)
+                    .foregroundColor(theme.colors.accent)
             }
 
             Text(year)
-                .font(.avenirNext(size: 14))
-                .fontWeight(.semibold)
+                .textStyle(theme.typography.bodyMedium)
 
             if let language {
                 Text("•")
-                    .font(.avenirNext(size: 8))
-                    .foregroundColor(.accent)
+                    .textStyle(theme.typography.labelSmall)
+                    .foregroundColor(theme.colors.accent)
 
                 Text(language)
-                    .font(.avenirNext(size: 14))
-                    .fontWeight(.semibold)
+                    .textStyle(theme.typography.bodyMedium)
             }
 
             Text("•")
-                .font(.avenirNext(size: 8))
-                .foregroundColor(.accent)
+                .textStyle(theme.typography.labelSmall)
+                .foregroundColor(theme.colors.accent)
 
             Image(systemName: "star.fill")
                 .resizable()
                 .frame(width: 14, height: 14)
-                .foregroundColor(.accent)
+                .foregroundColor(theme.colors.accent)
 
             Text(String(format: "%.1f", rating))
-                .font(.avenirNext(size: 14))
-                .fontWeight(.semibold)
+                .textStyle(theme.typography.bodyMedium)
 
             Text("•")
-                .font(.avenirNext(size: 8))
-                .foregroundColor(.accent)
+                .textStyle(theme.typography.labelSmall)
+                .foregroundColor(theme.colors.accent)
         }
         .frame(maxWidth: .infinity, alignment: .center)
     }
@@ -104,5 +103,5 @@ public struct ShowHeaderInfoView: View {
             rating: 4.8
         )
     }
-    .background(Color.background)
+    .themedPreview()
 }

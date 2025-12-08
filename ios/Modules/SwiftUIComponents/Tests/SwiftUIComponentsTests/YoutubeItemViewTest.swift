@@ -3,7 +3,7 @@ import SwiftUI
 import SwiftUIComponents
 import XCTest
 
-class YoutubeItemViewTest: XCTestCase {
+class YoutubeItemViewTest: SnapshotTestCase {
     func test_TrailerItemView() {
         YoutubeItemView(
             openInYouTube: false,
@@ -12,7 +12,7 @@ class YoutubeItemViewTest: XCTestCase {
             thumbnailUrl: ""
         )
         .padding()
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "YoutubeItemView")
     }
 }

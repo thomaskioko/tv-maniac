@@ -3,7 +3,7 @@ import SwiftUI
 import SwiftUIComponents
 import XCTest
 
-class ToastViewTest: XCTestCase {
+class ToastViewTest: SnapshotTestCase {
     func test_ToastView_Info() {
         ToastView(
             type: .info,
@@ -12,7 +12,7 @@ class ToastViewTest: XCTestCase {
             onCancelTapped: {}
         )
         .padding()
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "ToastView_Info")
     }
 
@@ -24,7 +24,7 @@ class ToastViewTest: XCTestCase {
             onCancelTapped: {}
         )
         .padding()
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "ToastView_Success")
     }
 
@@ -36,7 +36,7 @@ class ToastViewTest: XCTestCase {
             onCancelTapped: {}
         )
         .padding()
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "ToastView_Warning")
     }
 
@@ -48,7 +48,7 @@ class ToastViewTest: XCTestCase {
             onCancelTapped: {}
         )
         .padding()
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "ToastView_Error")
     }
 }

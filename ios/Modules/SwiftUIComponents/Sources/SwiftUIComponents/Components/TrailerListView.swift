@@ -1,6 +1,8 @@
 import SwiftUI
 
 public struct TrailerListView: View {
+    @Theme private var theme
+
     private let trailers: [SwiftTrailer]
     private let openInYouTube: Bool
     private let onError: ((Error) -> Void)?
@@ -30,9 +32,9 @@ public struct TrailerListView: View {
                                 thumbnailUrl: trailer.youtubeThumbnailUrl,
                                 onError: onError
                             )
-                            .padding(.horizontal, 4)
-                            .padding(.leading, trailer.key == trailers.first?.key ? 16 : 0)
-                            .padding(.trailing, trailer.key == trailers.last?.key ? 16 : 0)
+                            .padding(.horizontal, theme.spacing.xxSmall)
+                            .padding(.leading, trailer.key == trailers.first?.key ? theme.spacing.medium : 0)
+                            .padding(.trailing, trailer.key == trailers.last?.key ? theme.spacing.medium : 0)
                         }
                     }
                 }

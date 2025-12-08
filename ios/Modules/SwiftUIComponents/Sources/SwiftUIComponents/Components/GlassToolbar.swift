@@ -1,12 +1,14 @@
 import SwiftUI
 
 public struct GlassToolbar<LeadingIcon: View, TrailingIcon: View>: View {
+    @Theme private var theme
+    @Environment(\.colorScheme) private var colorScheme
+
     private let title: String
     private let opacity: Double
     private let isLoading: Bool
     private let leadingIcon: (() -> LeadingIcon)?
     private let trailingIcon: (() -> TrailingIcon)?
-    @Environment(\.colorScheme) private var colorScheme
 
     public init(
         title: String,
@@ -66,14 +68,13 @@ public struct GlassToolbar<LeadingIcon: View, TrailingIcon: View>: View {
             .top ?? 0
 
         ZStack(alignment: .top) {
-            VisualEffectView(effect: UIBlurEffect(style: colorScheme == .dark ? .dark : .light))
+            VisualEffectView(effect: UIBlurEffect(style: .systemThinMaterial))
                 .frame(height: toolbarHeight + topPadding)
                 .opacity(opacity)
                 .ignoresSafeArea()
                 .allowsHitTesting(false)
 
-            HStack(spacing: 16) {
-                // Leading icon
+            HStack(spacing: theme.spacing.medium) {
                 if let leadingIcon {
                     leadingIcon()
                 } else {
@@ -83,16 +84,16 @@ public struct GlassToolbar<LeadingIcon: View, TrailingIcon: View>: View {
                 }
 
                 Text(title)
-                    .font(.system(size: 18, weight: .bold))
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .textStyle(theme.typography.titleMedium)
+                    .foregroundColor(theme.colors.onSurface)
                     .opacity(opacity)
                     .lineLimit(1)
-                    .padding(.bottom, 8)
+                    .padding(.bottom, theme.spacing.xSmall)
                     .frame(maxWidth: .infinity, alignment: .center)
 
                 if isLoading {
                     ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: colorScheme == .dark ? .white : .black))
+                        .progressViewStyle(CircularProgressViewStyle(tint: theme.colors.onSurface))
                         .scaleEffect(0.8)
                         .frame(width: 30)
                 } else if let trailingIcon {
@@ -103,7 +104,7 @@ public struct GlassToolbar<LeadingIcon: View, TrailingIcon: View>: View {
                         .frame(width: 30)
                 }
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, theme.spacing.medium)
             .frame(height: toolbarHeight)
             .padding(.top, topPadding)
         }
@@ -132,18 +133,16 @@ public struct NavigationBarModifier: ViewModifier {
         appearance.configureWithTransparentBackground()
         appearance.backgroundColor = backgroundColor
 
-        // Remove back button text
         appearance.backButtonAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.clear]
 
-        // Change back button color
         let backImage = UIImage(systemName: "chevron.left")?
-            .withTintColor(.accentBlue, renderingMode: .alwaysOriginal)
+            .withTintColor(.tintColor, renderingMode: .alwaysOriginal)
         appearance.setBackIndicatorImage(backImage, transitionMaskImage: backImage)
 
         UINavigationBar.appearance().standardAppearance = appearance
         UINavigationBar.appearance().compactAppearance = appearance
         UINavigationBar.appearance().scrollEdgeAppearance = appearance
-        UINavigationBar.appearance().tintColor = .accentBlue
+        UINavigationBar.appearance().tintColor = .tintColor
 
         self.backgroundColor = backgroundColor
     }

@@ -3,7 +3,7 @@ import SwiftUI
 import SwiftUIComponents
 import XCTest
 
-class GridViewTest: XCTestCase {
+class GridViewTest: SnapshotTestCase {
     func test_GridViewTest() {
         GridView(
             items: [
@@ -46,7 +46,7 @@ class GridViewTest: XCTestCase {
             ],
             onAction: { _ in }
         )
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "GridView")
     }
 }

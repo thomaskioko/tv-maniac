@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftUIComponents
 
 public struct WatchlistSelector: View {
+    @Theme private var theme
     @Binding var showView: Bool
     private let title: String
     private let posterUrl: String?
@@ -26,14 +27,14 @@ public struct WatchlistSelector: View {
                                 posterHeight: 220
                             )
                             .frame(width: 150, height: 220)
-                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                            .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 10)
+                            .clipShape(RoundedRectangle(cornerRadius: theme.shapes.large, style: .continuous))
+                            .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 10)
                         }
                         .frame(maxWidth: .infinity)
 
                         Text(title)
                             .fontWeight(.semibold)
-                            .font(.title3)
+                            .textStyle(theme.typography.titleMedium)
                             .multilineTextAlignment(.center)
                     }
                 }
@@ -60,7 +61,7 @@ public struct WatchlistSelector: View {
                 ToolbarItem(placement: .topBarLeading) {
                     RoundedButton(
                         imageName: "xmark",
-                        tintColor: .accentBlue,
+                        tintColor: theme.colors.accent,
                         action: { showView.toggle() }
                     )
                 }
@@ -75,21 +76,21 @@ public struct WatchlistSelector: View {
         .appTheme()
         .presentationDetents([.large])
         .presentationDragIndicator(.visible)
-        .presentationCornerRadius(12)
+        .presentationCornerRadius(theme.shapes.large)
     }
 
     private var emptyList: some View {
         Section {
             VStack {
                 Text(String(\.label_watchlist_create_custom_list))
-                    .font(.avenirNext(size: 22))
+                    .textStyle(theme.typography.titleLarge)
                     .fontWeight(.bold)
-                    .foregroundColor(.textColor)
+                    .foregroundColor(theme.colors.onSurface)
                     .multilineTextAlignment(.center)
-                    .padding([.horizontal], 8)
+                    .padding([.horizontal], theme.spacing.xSmall)
 
                 Text(String(\.label_watchlist_empty_list))
-                    .font(.caption)
+                    .textStyle(theme.typography.bodySmall)
 
                 Button(action: {}) {
                     VStack {
@@ -99,16 +100,16 @@ public struct WatchlistSelector: View {
                             .frame(height: 24)
 
                         Text(String(\.label_watchlist_create))
-                            .font(.caption)
+                            .textStyle(theme.typography.bodySmall)
                     }
-                    .padding(.vertical, 4)
+                    .padding(.vertical, theme.spacing.xxSmall)
                     .frame(width: 120, height: 45)
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.small)
-                .tint(Color.accent)
-                .buttonBorderShape(.roundedRectangle(radius: 12))
-                .padding(.top, 8)
+                .tint(theme.colors.accent)
+                .buttonBorderShape(.roundedRectangle(radius: theme.shapes.large))
+                .padding(.top, theme.spacing.xSmall)
             }
             .frame(maxWidth: .infinity)
         }

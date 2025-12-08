@@ -1,21 +1,22 @@
 import SwiftUI
 
 struct TvManiacButton: View {
+    @Theme private var theme
     private let text: String
-    private let color: Color
-    private let textColor: Color
-    private let borderColor: Color
+    private let color: Color?
+    private let textColor: Color?
+    private let borderColor: Color?
     private let systemImageName: String?
-    private let verticalPadding: CGFloat
+    private let verticalPadding: CGFloat?
     private let action: () -> Void
 
     init(
         text: String,
-        color: Color = .accent,
-        textColor: Color,
-        borderColor: Color = .textColor,
+        color: Color? = nil,
+        textColor: Color? = nil,
+        borderColor: Color? = nil,
         systemImageName: String?,
-        verticalPadding: CGFloat = 16,
+        verticalPadding: CGFloat? = nil,
         action: @escaping () -> Void
     ) {
         self.text = text
@@ -29,21 +30,21 @@ struct TvManiacButton: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 10) {
+            HStack(spacing: theme.spacing.small) {
                 if let image = systemImageName {
                     Image(systemName: image)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(height: 24)
+                        .frame(height: theme.spacing.large)
                 }
 
                 Text(text)
-                    .bodyMediumFont(size: 16)
-                    .foregroundColor(textColor)
+                    .textStyle(theme.typography.bodyMedium)
+                    .foregroundColor(textColor ?? theme.colors.onSurface)
             }
-            .foregroundColor(textColor)
-            .padding(.vertical, verticalPadding)
-            .padding(.horizontal, 20)
+            .foregroundColor(textColor ?? theme.colors.onSurface)
+            .padding(.vertical, verticalPadding ?? theme.spacing.medium)
+            .padding(.horizontal, theme.spacing.large)
         }
     }
 }

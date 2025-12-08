@@ -3,7 +3,7 @@ import SwiftUI
 import SwiftUIComponents
 import XCTest
 
-class TopBarTest: XCTestCase {
+class TopBarTest: SnapshotTestCase {
     func _test_TopBar() {
         TopBar(
             progress: 0,
@@ -13,7 +13,7 @@ class TopBarTest: XCTestCase {
             onRefreshClicked: {}
         )
         .padding()
-        .background(Color.background)
+        .themedPreview()
         .assertSnapshot(testName: "TopBar")
     }
 }
