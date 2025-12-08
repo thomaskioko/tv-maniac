@@ -44,8 +44,6 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
     // MARK: - App Initialization
 
     private func initializeApp() {
-        FontRegistration.registerFonts()
-
         configureImageSystem()
 
         startImageQualityObserver()

@@ -1,10 +1,15 @@
 import SwiftUI
+import SwiftUIComponents
 import TvManiacKit
 
 @main
 struct iOSApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self)
     var appDelegate: AppDelegate
+
+    init() {
+        TvManiacTypographyScheme.configureMoko()
+    }
 
     @Environment(\.scenePhase)
     var scenePhase: ScenePhase

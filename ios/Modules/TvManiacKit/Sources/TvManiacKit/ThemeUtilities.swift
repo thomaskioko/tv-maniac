@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import SwiftUIComponents
 import TvManiac
 
 public enum DeveiceAppTheme: String, CaseIterable {
@@ -36,6 +37,17 @@ public enum DeveiceAppTheme: String, CaseIterable {
             NSLocalizedString("Dark", comment: "")
         }
     }
+
+    public var designSystemTheme: TvManiacTheme {
+        switch self {
+        case .dark:
+            return DarkTheme()
+        case .light:
+            return LightTheme()
+        case .system:
+            return LightTheme()
+        }
+    }
 }
 
 public extension AppTheme {
@@ -55,11 +67,11 @@ public extension DeveiceAppTheme {
     func toAppThemeColor() -> Color {
         switch self {
         case .dark:
-            Color(.backgroundDark)
+            TvManiacColorScheme.dark.background
         case .light:
-            Color(.systemGroupedBackground)
+            TvManiacColorScheme.light.background
         default:
-            .background
+            TvManiacColorScheme.light.background
         }
     }
 }
