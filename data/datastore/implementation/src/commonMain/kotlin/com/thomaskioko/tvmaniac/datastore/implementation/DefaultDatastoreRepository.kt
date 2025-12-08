@@ -76,7 +76,7 @@ class DefaultDatastoreRepository(
             when (preferences[KEY_IMAGE_QUALITY]) {
                 ImageQuality.HIGH.name -> ImageQuality.HIGH
                 ImageQuality.LOW.name -> ImageQuality.LOW
-                else -> ImageQuality.MEDIUM // Default
+                else -> ImageQuality.HIGH
             }
         }
 
