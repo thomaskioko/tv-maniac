@@ -4,8 +4,6 @@ import TvManiacKit
 
 public struct TabBarView: View {
     @Theme private var theme
-    @Environment(\.colorScheme) private var colorScheme
-    @AppStorage("app.theme") private var appTheme: DeviceAppTheme = .light
 
     private let presenter: HomePresenter
     @StateObject @KotlinStateFlow private var stack: ChildStack<AnyObject, HomePresenterChild>
@@ -41,15 +39,9 @@ public struct TabBarView: View {
                 }
             }
         }
-        .id(appTheme)
         .tint(theme.colors.accent)
-        .appTheme()
-        .onAppear {
-            configureTabBarAppearance()
-        }
-        .onChange(of: appTheme) { _ in
-            configureTabBarAppearance()
-        }
+        .toolbarBackground(theme.colors.surface, for: .tabBar)
+        .toolbarBackground(.visible, for: .tabBar)
         .onChange(of: selectedTab) { newTab in
             switch newTab {
             case .discover: presenter.onDiscoverClicked()
@@ -57,43 +49,6 @@ public struct TabBarView: View {
             case .watchlist: presenter.onLibraryClicked()
             case .profile: presenter.onProfileClicked()
             }
-        }
-    }
-
-    private func configureTabBarAppearance() {
-        let resolvedTheme = resolveTheme(for: appTheme)
-
-        let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = UIColor(resolvedTheme.colors.surface)
-
-        appearance.stackedLayoutAppearance.normal.iconColor = UIColor(resolvedTheme.colors.onSurfaceVariant)
-        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
-            .foregroundColor: UIColor(resolvedTheme.colors.onSurfaceVariant),
-        ]
-        appearance.stackedLayoutAppearance.selected.iconColor = UIColor(resolvedTheme.colors.accent)
-        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
-            .foregroundColor: UIColor(resolvedTheme.colors.accent),
-        ]
-
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
-
-    private func resolveTheme(for theme: DeviceAppTheme) -> TvManiacTheme {
-        switch theme {
-        case .system:
-            colorScheme == .dark ? DarkTheme() : LightTheme()
-        case .light:
-            LightTheme()
-        case .dark:
-            DarkTheme()
-        case .terminal:
-            TerminalTheme()
-        case .autumn:
-            AutumnTheme()
-        case .aqua:
-            AquaTheme()
         }
     }
 

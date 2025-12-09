@@ -110,15 +110,18 @@ public struct ShowInfoView: View {
             VStack {
                 if #available(iOS 17.0, *) {
                     Image(systemName: isFollowed ? "minus.circle.fill" : "plus.circle.fill")
+                        .foregroundColor(theme.colors.onButtonBackground)
                         .symbolEffect(isFollowed ? .bounce.down : .bounce.up, value: isFollowed)
                 } else {
                     Image(systemName: isFollowed ? "minus.circle.fill" : "plus.circle.fill")
+                        .foregroundColor(theme.colors.onButtonBackground)
                 }
 
                 Text(isFollowed ? "Stop Tracking" : "Track")
                     .lineLimit(1)
                     .padding(.top, theme.spacing.xxxSmall)
                     .textStyle(theme.typography.labelSmall)
+                    .foregroundColor(theme.colors.onButtonBackground)
             }
             .padding(.vertical, theme.spacing.xxSmall)
             .frame(width: DrawingConstants.buttonWidth, height: DrawingConstants.buttonHeight)

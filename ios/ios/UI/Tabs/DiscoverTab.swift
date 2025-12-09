@@ -151,7 +151,7 @@ struct DiscoverTab: View {
                 .frame(maxWidth: .infinity, alignment: .center)
         }
         .padding(.horizontal)
-        .padding(.bottom, 20)
+        .padding(.bottom, theme.spacing.medium)
         .frame(maxWidth: .infinity, alignment: .leading)
         .allowsHitTesting(false)
         .background(

@@ -129,7 +129,7 @@ internal fun CircularIndicator(
                                 .fillMaxHeight()
                                 .fillMaxWidth(indicatorProgress)
                                 .clip(RoundedCornerShape(4.dp))
-                                .background(MaterialTheme.colorScheme.onSecondary),
+                                .background(MaterialTheme.colorScheme.onSurface),
                         )
                     }
                 } else {
