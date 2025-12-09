@@ -16,6 +16,7 @@ import com.github.takahirom.roborazzi.RoborazziOptions.CompareOptions
 import com.github.takahirom.roborazzi.RoborazziOptions.RecordOptions
 import com.github.takahirom.roborazzi.captureRoboImage
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import org.robolectric.RuntimeEnvironment
 
 val DefaultRoborazziOptions = RoborazziOptions(
@@ -51,31 +52,34 @@ fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.c
     // Set qualifiers from specs
     RuntimeEnvironment.setQualifiers(deviceSpec)
 
-    val darkModeValues = if (shouldCompareDarkMode) listOf(true, false) else listOf(false)
+    val themes = if (shouldCompareDarkMode) {
+        listOf(AppTheme.DARK_THEME to "dark", AppTheme.LIGHT_THEME to "light")
+    } else {
+        listOf(AppTheme.LIGHT_THEME to "light")
+    }
 
-    var darkMode by mutableStateOf(true)
+    var appTheme by mutableStateOf(AppTheme.DARK_THEME)
 
     this.setContent {
         CompositionLocalProvider(
             LocalInspectionMode provides true,
         ) {
             TvManiacTheme(
-                darkTheme = darkMode,
+                appTheme = appTheme,
             ) {
                 content()
             }
         }
     }
 
-    darkModeValues.forEach { isDarkMode ->
-        darkMode = isDarkMode
-        val darkModeDesc = if (isDarkMode) "dark" else "light"
+    themes.forEach { (theme, themeDesc) ->
+        appTheme = theme
 
         val filename = overrideFileName ?: name
 
         this.onRoot()
             .captureRoboImage(
-                "src/test/screenshots/" + filename + "_$darkModeDesc" + ".png",
+                "src/test/screenshots/" + filename + "_$themeDesc" + ".png",
                 roborazziOptions = DefaultRoborazziOptions,
             )
     }

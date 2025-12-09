@@ -21,7 +21,6 @@ import com.thomaskioko.tvmaniac.RootScreen
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.inject.ActivityComponent
-import com.thomaskioko.tvmaniac.navigation.ThemeState
 
 class MainActivity : ComponentActivity() {
     private lateinit var component: ActivityComponent
@@ -56,43 +55,39 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val themeState by component.rootPresenter.themeState.collectAsState()
-            val darkTheme = shouldUseDarkTheme(themeState)
+            val appTheme = themeState.appTheme
+            val useDarkTheme = shouldUseDarkTheme(appTheme)
 
             splashScreen.setKeepOnScreenCondition { themeState.isFetching }
 
-            DisposableEffect(darkTheme) {
+            DisposableEffect(useDarkTheme) {
                 enableEdgeToEdge(
                     statusBarStyle = SystemBarStyle.Companion.auto(
                         Color.TRANSPARENT,
                         Color.TRANSPARENT,
                     ) {
-                        darkTheme
+                        useDarkTheme
                     },
                     navigationBarStyle = SystemBarStyle.Companion.auto(
                         lightScrim,
                         darkScrim,
                     ) {
-                        darkTheme
+                        useDarkTheme
                     },
                 )
                 onDispose {}
             }
 
-            TvManiacTheme(darkTheme = darkTheme) { RootScreen(rootPresenter = component.rootPresenter) }
+            TvManiacTheme(appTheme = appTheme) { RootScreen(rootPresenter = component.rootPresenter) }
         }
     }
 }
 
-/**
- * Returns `true` if dark theme should be used, as a function of the [uiState] and the current
- * system context.
- */
 @Composable
-private fun shouldUseDarkTheme(uiState: ThemeState): Boolean {
-    return when (uiState.appTheme) {
-        AppTheme.LIGHT_THEME -> false
-        AppTheme.DARK_THEME -> true
+private fun shouldUseDarkTheme(appTheme: AppTheme): Boolean {
+    return when (appTheme) {
         AppTheme.SYSTEM_THEME -> isSystemInDarkTheme()
+        else -> appTheme.isDark
     }
 }
 

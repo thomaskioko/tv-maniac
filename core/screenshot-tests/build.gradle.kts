@@ -11,6 +11,7 @@ scaffold {
 
 dependencies {
     implementation(projects.androidDesignsystem)
+    implementation(projects.data.datastore.api)
 
     implementation(libs.androidx.compose.ui.test)
     implementation(libs.robolectric)
