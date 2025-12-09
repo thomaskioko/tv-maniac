@@ -40,6 +40,9 @@ class DefaultDatastoreRepository(
                 AppTheme.TERMINAL_THEME.name -> AppTheme.TERMINAL_THEME
                 AppTheme.AUTUMN_THEME.name -> AppTheme.AUTUMN_THEME
                 AppTheme.AQUA_THEME.name -> AppTheme.AQUA_THEME
+                AppTheme.AMBER_THEME.name -> AppTheme.AMBER_THEME
+                AppTheme.SNOW_THEME.name -> AppTheme.SNOW_THEME
+                AppTheme.CRIMSON_THEME.name -> AppTheme.CRIMSON_THEME
                 else -> AppTheme.SYSTEM_THEME
             }
         }

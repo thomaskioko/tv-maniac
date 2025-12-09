@@ -145,6 +145,9 @@
     <string name="settings_theme_terminal">Terminal</string>
     <string name="settings_theme_autumn">Autumn</string>
     <string name="settings_theme_aqua">Aqua</string>
+    <string name="settings_theme_amber">Amber</string>
+    <string name="settings_theme_snow">Snow</string>
+    <string name="settings_theme_crimson">Crimson</string>
 
     <string name="settings_theme_system_description">Follows device settings</string>
     <string name="settings_theme_light_description">Bright and clean</string>
@@ -152,6 +155,9 @@
     <string name="settings_theme_terminal_description">Classic terminal aesthetic</string>
     <string name="settings_theme_autumn_description">Warm autumn colors</string>
     <string name="settings_theme_aqua_description">Cool aqua tones</string>
+    <string name="settings_theme_amber_description">Classic amber CRT</string>
+    <string name="settings_theme_snow_description">Monochrome white display</string>
+    <string name="settings_theme_crimson_description">Rare red phosphor</string>
 
     <string name="settings_theme_selector_title">App Theme</string>
     <string name="settings_theme_selector_subtitle">Choose how TvManiac looks to you</string>

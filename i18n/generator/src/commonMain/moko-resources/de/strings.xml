@@ -145,6 +145,9 @@
     <string name="settings_theme_terminal">Terminal</string>
     <string name="settings_theme_autumn">Herbst</string>
     <string name="settings_theme_aqua">Aqua</string>
+    <string name="settings_theme_amber">Bernstein</string>
+    <string name="settings_theme_snow">Schnee</string>
+    <string name="settings_theme_crimson">Karmesin</string>
 
     <string name="settings_theme_system_description">Folgt Geräteeinstellungen</string>
     <string name="settings_theme_light_description">Hell und klar</string>
@@ -152,6 +155,9 @@
     <string name="settings_theme_terminal_description">Klassische Terminal-Ästhetik</string>
     <string name="settings_theme_autumn_description">Warme Herbstfarben</string>
     <string name="settings_theme_aqua_description">Kühle Aquatöne</string>
+    <string name="settings_theme_amber_description">Klassischer Bernstein-CRT</string>
+    <string name="settings_theme_snow_description">Monochromes weißes Display</string>
+    <string name="settings_theme_crimson_description">Seltener roter Phosphor</string>
 
     <string name="settings_theme_selector_title">App-Design</string>
     <string name="settings_theme_selector_subtitle">Wähle das Aussehen von TvManiac</string>

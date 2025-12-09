@@ -30,18 +30,36 @@ enum class AppTheme(
         displayNameKey = StringResourceKey.SettingsThemeTerminal,
         descriptionKey = StringResourceKey.SettingsThemeTerminalDescription,
         isDark = true,
-        displayOrder = 3,
+        displayOrder = 7,
     ),
     AUTUMN_THEME(
         displayNameKey = StringResourceKey.SettingsThemeAutumn,
         descriptionKey = StringResourceKey.SettingsThemeAutumnDescription,
         isDark = false,
-        displayOrder = 4,
+        displayOrder = 3,
     ),
     AQUA_THEME(
         displayNameKey = StringResourceKey.SettingsThemeAqua,
         descriptionKey = StringResourceKey.SettingsThemeAquaDescription,
         isDark = true,
+        displayOrder = 4,
+    ),
+    AMBER_THEME(
+        displayNameKey = StringResourceKey.SettingsThemeAmber,
+        descriptionKey = StringResourceKey.SettingsThemeAmberDescription,
+        isDark = true,
         displayOrder = 5,
+    ),
+    SNOW_THEME(
+        displayNameKey = StringResourceKey.SettingsThemeSnow,
+        descriptionKey = StringResourceKey.SettingsThemeSnowDescription,
+        isDark = true,
+        displayOrder = 6,
+    ),
+    CRIMSON_THEME(
+        displayNameKey = StringResourceKey.SettingsThemeCrimson,
+        descriptionKey = StringResourceKey.SettingsThemeCrimsonDescription,
+        isDark = true,
+        displayOrder = 8,
     ),
 }
