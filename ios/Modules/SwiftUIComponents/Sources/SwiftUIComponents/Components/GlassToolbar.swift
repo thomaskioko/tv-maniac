@@ -66,11 +66,18 @@ public struct GlassToolbar<LeadingIcon: View, TrailingIcon: View>: View {
         let toolbarHeight: CGFloat = 44
         let topPadding = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first?.safeAreaInsets
             .top ?? 0
+        let blurStyle: UIBlurEffect.Style = colorScheme == .dark ? .systemThinMaterialDark : .systemThinMaterialLight
 
         ZStack(alignment: .top) {
-            VisualEffectView(effect: UIBlurEffect(style: .systemThinMaterial))
+            theme.colors.surface
                 .frame(height: toolbarHeight + topPadding)
                 .opacity(opacity)
+                .ignoresSafeArea()
+                .allowsHitTesting(false)
+
+            VisualEffectView(effect: UIBlurEffect(style: blurStyle))
+                .frame(height: toolbarHeight + topPadding)
+                .opacity(opacity * 0.8)
                 .ignoresSafeArea()
                 .allowsHitTesting(false)
 

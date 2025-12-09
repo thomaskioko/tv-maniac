@@ -116,7 +116,6 @@ fun PosterBackdropCard(
     textAlign: TextAlign = TextAlign.Start,
     contentScale: ContentScale = ContentScale.Crop,
     imageWidth: Dp = 120.dp,
-    darkTheme: Boolean = true,
     shape: Shape = MaterialTheme.shapes.small,
     onClick: () -> Unit,
 ) {
@@ -126,43 +125,41 @@ fun PosterBackdropCard(
         imageWidth = imageWidth,
         onClick = onClick,
         content = {
-            TvManiacTheme(darkTheme = darkTheme) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    PlaceholderContent(
-                        modifier = Modifier.align(Alignment.Center),
-                        imageUrl = imageUrl,
-                        imageSize = 84.dp,
-                    )
+            Box(modifier = Modifier.fillMaxSize()) {
+                PlaceholderContent(
+                    modifier = Modifier.align(Alignment.Center),
+                    imageUrl = imageUrl,
+                    imageSize = 84.dp,
+                )
 
-                    AsyncImageComposable(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .aspectRatio(2 / 3f),
-                        model = imageUrl,
-                        contentScale = contentScale,
-                        contentDescription = stringResource(cd_show_poster.resourceId, title),
-                        alignment = Alignment.Center,
-                    )
+                AsyncImageComposable(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .aspectRatio(2 / 3f),
+                    model = imageUrl,
+                    contentScale = contentScale,
+                    contentDescription = stringResource(cd_show_poster.resourceId, title),
+                    alignment = Alignment.Center,
+                )
 
-                    Spacer(
-                        Modifier
-                            .matchParentSize()
-                            .drawForegroundGradientScrim(MaterialTheme.colorScheme.background),
-                    )
+                Spacer(
+                    Modifier
+                        .matchParentSize()
+                        .drawForegroundGradientScrim(MaterialTheme.colorScheme.background),
+                )
 
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        textAlign = textAlign,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                            .align(Alignment.BottomStart),
-                    )
-                }
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = textAlign,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .align(Alignment.BottomStart),
+                )
             }
         },
     )

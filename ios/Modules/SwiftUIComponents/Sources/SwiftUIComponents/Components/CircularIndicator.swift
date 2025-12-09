@@ -105,7 +105,7 @@ public struct CircularIndicator: View {
 
         if isEdgeIndicator {
             Circle()
-                .fill(Color.gray.opacity(0.3))
+                .fill(theme.colors.onSurfaceVariant.opacity(0.4))
                 .frame(width: 4, height: 4)
         } else {
             indicatorDot(for: actualIndex, isActive: isActive)
@@ -118,7 +118,7 @@ public struct CircularIndicator: View {
             ProgressIndicatorBar(progress: indicatorProgress, activeColor: theme.colors.onPrimary)
         } else {
             Circle()
-                .fill(theme.colors.surfaceVariant.opacity(0.5))
+                .fill(theme.colors.onSurfaceVariant.opacity(0.4))
                 .frame(width: 6, height: 6)
         }
     }
@@ -185,4 +185,64 @@ struct ProgressIndicatorBar: View {
         }
         .frame(width: 25, height: 8)
     }
+}
+
+#Preview("Few Items") {
+    VStack(spacing: 20) {
+        CircularIndicator(
+            totalItems: 5,
+            currentIndex: 2,
+            isDragging: false
+        )
+
+        CircularIndicator(
+            totalItems: 5,
+            currentIndex: 0,
+            isDragging: false
+        )
+
+        CircularIndicator(
+            totalItems: 5,
+            currentIndex: 4,
+            isDragging: false
+        )
+    }
+    .padding()
+    .background(Color.black.opacity(0.8))
+}
+
+#Preview("Many Items") {
+    VStack(spacing: 20) {
+        CircularIndicator(
+            totalItems: 15,
+            currentIndex: 0,
+            isDragging: false
+        )
+
+        CircularIndicator(
+            totalItems: 15,
+            currentIndex: 7,
+            isDragging: false
+        )
+
+        CircularIndicator(
+            totalItems: 15,
+            currentIndex: 14,
+            isDragging: false
+        )
+    }
+    .padding()
+    .background(Color.black.opacity(0.8))
+}
+
+#Preview("Progress Bar") {
+    VStack(spacing: 20) {
+        ProgressIndicatorBar(progress: 0.0)
+        ProgressIndicatorBar(progress: 0.25)
+        ProgressIndicatorBar(progress: 0.5)
+        ProgressIndicatorBar(progress: 0.75)
+        ProgressIndicatorBar(progress: 1.0)
+    }
+    .padding()
+    .background(Color.black.opacity(0.8))
 }

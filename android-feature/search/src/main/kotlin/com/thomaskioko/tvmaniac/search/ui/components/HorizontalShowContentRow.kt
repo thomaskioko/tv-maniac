@@ -47,7 +47,6 @@ fun HorizontalShowContentRow(
                 Spacer(modifier = Modifier.width(value.dp))
 
                 PosterBackdropCard(
-                    darkTheme = true,
                     imageUrl = tvShow.posterImageUrl,
                     title = tvShow.title,
                     modifier = Modifier
