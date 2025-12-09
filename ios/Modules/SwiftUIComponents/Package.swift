@@ -27,7 +27,7 @@ let package = Package(
                 "SDWebImageSwiftUI",
                 "SDWebImageWebPCoder",
                 "YouTubePlayerKit",
-            ],
+            ]
         ),
         .testTarget(
             name: "SwiftUIComponentsTests",

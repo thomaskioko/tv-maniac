@@ -54,9 +54,12 @@ public struct WatchlistSelector: View {
                 }
             }
             .scrollBounceBehavior(.basedOnSize, axes: .vertical)
-            .scrollContentBackground(.visible)
+            .scrollContentBackground(.hidden)
+            .background(theme.colors.background)
             .navigationTitle(Text(String(\.label_watchlist_title)))
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(theme.colors.surface, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     RoundedButton(
@@ -70,7 +73,7 @@ public struct WatchlistSelector: View {
                     // TODO: Custom list
                 }
             }
-            .background(TransparentBlurView(style: .systemThinMaterial))
+            .background(theme.colors.background)
         }
         .appTint()
         .appTheme()

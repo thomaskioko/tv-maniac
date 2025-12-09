@@ -79,7 +79,7 @@ struct WatchlistTab: View {
         )
         .disableAutocorrection(true)
         .textInputAutocapitalization(.never)
-        .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
+        .toolbarBackground(theme.colors.surface, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
     }
 

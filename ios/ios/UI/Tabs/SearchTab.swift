@@ -52,10 +52,7 @@ struct SearchTab: View {
         .textInputAutocapitalization(.never)
         .scrollContentBackground(.hidden)
         .toolbarBackground(.visible, for: .navigationBar)
-        .toolbarBackground(
-            theme.colors.background.opacity(0.9),
-            for: .navigationBar
-        )
+        .toolbarBackground(theme.colors.surface, for: .navigationBar)
     }
 
     @ViewBuilder
