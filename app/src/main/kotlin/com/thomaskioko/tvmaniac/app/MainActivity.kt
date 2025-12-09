@@ -1,7 +1,10 @@
 package com.thomaskioko.tvmaniac.app
 
+import android.animation.ObjectAnimator
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -11,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import com.thomaskioko.tvmaniac.RootScreen
@@ -32,6 +36,23 @@ class MainActivity : ComponentActivity() {
         component.traktAuthManager.registerResult()
 
         enableEdgeToEdge()
+
+        splashScreen.setOnExitAnimationListener { splashScreenView ->
+            val scaleX = ObjectAnimator.ofFloat(splashScreenView.iconView, View.SCALE_X, 1f, 0f)
+            val scaleY = ObjectAnimator.ofFloat(splashScreenView.iconView, View.SCALE_Y, 1f, 0f)
+            val alpha = ObjectAnimator.ofFloat(splashScreenView.view, View.ALPHA, 1f, 0f)
+
+            listOf(scaleX, scaleY, alpha).forEach { animator ->
+                animator.interpolator = AccelerateDecelerateInterpolator()
+                animator.duration = 300L
+            }
+
+            alpha.doOnEnd { splashScreenView.remove() }
+
+            scaleX.start()
+            scaleY.start()
+            alpha.start()
+        }
 
         setContent {
             val themeState by component.rootPresenter.themeState.collectAsState()
