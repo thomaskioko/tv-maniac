@@ -5,21 +5,20 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
-import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.settings.presenter.ChangeThemeClicked
 import com.thomaskioko.tvmaniac.settings.presenter.DefaultSettingsPresenter
-import com.thomaskioko.tvmaniac.settings.presenter.DismissImageQualityDialog
 import com.thomaskioko.tvmaniac.settings.presenter.DismissThemeClicked
 import com.thomaskioko.tvmaniac.settings.presenter.DismissTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState.Companion.DEFAULT_STATE
-import com.thomaskioko.tvmaniac.settings.presenter.ShowImageQualityDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ShowTraktDialog
+import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
+import com.thomaskioko.tvmaniac.settings.presenter.toAppTheme
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
@@ -78,18 +77,18 @@ class SettingsPresenterTest {
                     showthemePopup = true,
                 )
 
-            datastoreRepository.setTheme(AppTheme.DARK_THEME)
-            presenter.dispatch(ThemeSelected(AppTheme.DARK_THEME))
+            datastoreRepository.setTheme(ThemeModel.DARK.toAppTheme())
+            presenter.dispatch(ThemeSelected(ThemeModel.DARK))
 
             awaitItem() shouldBe
                 DEFAULT_STATE.copy(
                     showthemePopup = true,
-                    appTheme = AppTheme.DARK_THEME,
+                    theme = ThemeModel.DARK,
                 )
             awaitItem() shouldBe
                 DEFAULT_STATE.copy(
                     showthemePopup = false,
-                    appTheme = AppTheme.DARK_THEME,
+                    theme = ThemeModel.DARK,
                 )
         }
     }
@@ -134,25 +133,6 @@ class SettingsPresenterTest {
     }
 
     @Test
-    fun `should hide image quality dialog when dismissed`() = runTest {
-        presenter.state.test {
-            awaitItem() shouldBe DEFAULT_STATE
-
-            presenter.dispatch(ShowImageQualityDialog)
-
-            awaitItem() shouldBe DEFAULT_STATE.copy(
-                showImageQualityDialog = true,
-            )
-
-            presenter.dispatch(DismissImageQualityDialog)
-
-            awaitItem() shouldBe DEFAULT_STATE.copy(
-                showImageQualityDialog = false,
-            )
-        }
-    }
-
-    @Test
     fun `should update image quality when quality is selected`() = runTest {
         presenter.state.test {
             awaitItem() shouldBe DEFAULT_STATE
@@ -161,40 +141,12 @@ class SettingsPresenterTest {
 
             awaitItem() shouldBe DEFAULT_STATE.copy(
                 imageQuality = ImageQuality.HIGH,
-                showImageQualityDialog = true,
             )
 
             presenter.dispatch(ImageQualitySelected(ImageQuality.LOW))
 
             awaitItem() shouldBe DEFAULT_STATE.copy(
                 imageQuality = ImageQuality.LOW,
-                showImageQualityDialog = true,
-            )
-
-            awaitItem() shouldBe DEFAULT_STATE.copy(
-                imageQuality = ImageQuality.LOW,
-                showImageQualityDialog = false,
-            )
-        }
-    }
-
-    @Test
-    fun `should persist selected image quality when dialog is reopened`() = runTest {
-        presenter.state.test {
-            awaitItem() shouldBe DEFAULT_STATE
-
-            presenter.dispatch(ImageQualitySelected(ImageQuality.HIGH))
-
-            awaitItem() shouldBe DEFAULT_STATE.copy(
-                imageQuality = ImageQuality.HIGH,
-                showImageQualityDialog = true,
-            )
-
-            presenter.dispatch(ShowImageQualityDialog)
-
-            awaitItem() shouldBe DEFAULT_STATE.copy(
-                showImageQualityDialog = false,
-                imageQuality = ImageQuality.HIGH,
             )
         }
     }
