@@ -85,9 +85,11 @@ class RecommendedShowsStore(
             writeDispatcher = dispatchers.databaseWrite,
         ),
 ).validator(
-    Validator.by {
+    Validator.by { cachedData ->
         withContext(dispatchers.io) {
-            requestManagerRepository.isRequestValid(
+            val showId = cachedData.firstOrNull()?.show_id?.id ?: return@withContext false
+            !requestManagerRepository.isRequestExpired(
+                entityId = showId,
                 requestType = RECOMMENDED_SHOWS.name,
                 threshold = RECOMMENDED_SHOWS.duration,
             )

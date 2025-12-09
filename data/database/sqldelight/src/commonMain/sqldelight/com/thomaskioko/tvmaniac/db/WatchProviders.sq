@@ -29,7 +29,8 @@ watchProviders:
 SELECT
     watch_providers.id,
     watch_providers.name,
-    watch_providers.logo_path
+    watch_providers.logo_path,
+    watch_providers.tmdb_id
 FROM
     watch_providers
 WHERE

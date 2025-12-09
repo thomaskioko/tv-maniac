@@ -99,9 +99,11 @@ class SimilarShowStore(
         writeDispatcher = dispatchers.databaseWrite,
     ),
 ).validator(
-    Validator.by {
+    Validator.by { cachedData ->
         withContext(dispatchers.io) {
-            requestManagerRepository.isRequestValid(
+            val showId = cachedData.firstOrNull()?.show_id?.id ?: return@withContext false
+            !requestManagerRepository.isRequestExpired(
+                entityId = showId,
                 requestType = SIMILAR_SHOWS.name,
                 threshold = SIMILAR_SHOWS.duration,
             )

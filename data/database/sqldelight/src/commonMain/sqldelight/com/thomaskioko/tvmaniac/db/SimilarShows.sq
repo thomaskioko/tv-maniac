@@ -25,6 +25,7 @@ SELECT
    tvshow.name,
    tvshow.poster_path,
    tvshow.backdrop_path,
+   similar_shows.similar_show_id AS show_id,
    CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     tvshow
