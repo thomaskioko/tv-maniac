@@ -55,7 +55,7 @@ struct RootNavigationView: View {
         }
         .appTheme()
         .onChange(of: themeState.appTheme) { newTheme in
-            store.appTheme = newTheme.toDeveiceAppTheme()
+            store.appTheme = newTheme.toDeviceAppTheme()
         }
     }
 }
