@@ -97,7 +97,6 @@ struct SeasonDetailsView: View {
             },
             content: {
                 if !state.seasonOverview.isEmpty {
-
                     Text(String(\.title_season_overview))
                         .textStyle(theme.typography.titleLarge)
                         .foregroundColor(theme.colors.onSurface)

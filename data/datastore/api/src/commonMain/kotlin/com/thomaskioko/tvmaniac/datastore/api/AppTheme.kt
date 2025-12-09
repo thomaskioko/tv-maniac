@@ -44,5 +44,4 @@ enum class AppTheme(
         isDark = true,
         displayOrder = 5,
     ),
-    ;
 }
