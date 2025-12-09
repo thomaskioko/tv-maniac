@@ -658,7 +658,7 @@ fun ShowDetailButtons(
             shape = MaterialTheme.shapes.medium,
             text = btn_add_to_list.resolve(context),
             imageVector = Icons.Outlined.AutoAwesomeMotion,
-            containerColor = Color.Gray,
+            containerColor = MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.labelMedium,
             onClick = onAddToList,
         )

@@ -136,18 +136,22 @@ public struct ShowInfoView: View {
         Button(action: onAddToCustomList) {
             VStack {
                 Image(systemName: false ? "rectangle.on.rectangle.angled.fill" : "rectangle.on.rectangle.angled")
+                    .foregroundColor(theme.colors.onButtonBackground)
+
                 Text("Add To List")
                     .padding(.top, theme.spacing.xxxSmall)
                     .textStyle(theme.typography.labelSmall)
+                    .foregroundColor(theme.colors.onButtonBackground)
                     .lineLimit(1)
             }
             .padding(.vertical, theme.spacing.xxSmall)
             .frame(width: DrawingConstants.buttonWidth, height: DrawingConstants.buttonHeight)
         }
+        .buttonStyle(.borderedProminent)
         .controlSize(.small)
-        .buttonStyle(.bordered)
+        .tint(theme.colors.accent)
         .buttonBorderShape(.roundedRectangle(radius: DrawingConstants.buttonRadius))
-        .tint(.primary)
+
     }
 
     private enum DrawingConstants {
