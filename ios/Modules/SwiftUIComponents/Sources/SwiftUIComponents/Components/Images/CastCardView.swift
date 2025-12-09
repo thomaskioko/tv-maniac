@@ -1,4 +1,3 @@
-import SDWebImageSwiftUI
 import SwiftUI
 
 public struct CastCardView: View {
@@ -22,17 +21,10 @@ public struct CastCardView: View {
     }
 
     private var profileImage: some View {
-        Group {
-            if let profileUrl, let url = URL(string: profileUrl) {
-                WebImage(url: url) { image in
-                    image.resizable()
-                } placeholder: {
-                    profilePlaceholder
-                }
-                .transition(.opacity)
-            } else {
-                profilePlaceholder
-            }
+        CachedAsyncImage(url: profileUrl) { image in
+            image.resizable()
+        } placeholder: {
+            profilePlaceholder
         }
         .aspectRatio(contentMode: .fill)
         .frame(width: 120, height: 160)

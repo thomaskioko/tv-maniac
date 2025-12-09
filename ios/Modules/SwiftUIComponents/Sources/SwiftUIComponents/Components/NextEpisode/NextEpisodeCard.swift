@@ -1,4 +1,3 @@
-import SDWebImageSwiftUI
 import SwiftUI
 
 public struct NextEpisodeCard: View {
@@ -20,46 +19,26 @@ public struct NextEpisodeCard: View {
             onEpisodeClick(episode.showId, episode.episodeId)
         }) {
             ZStack {
-                if let imageUrl = episode.stillImage ?? episode.showPoster {
-                    WebImage(
-                        url: URL(string: imageUrl.transformedImageURL),
-                        options: [
-                            .retryFailed,
-                            .highPriority,
-                            .scaleDownLargeImages,
-                        ],
-                        context: [
-                            .imageThumbnailPixelSize: CGSize(width: 600, height: 400),
-                            .imageForceDecodePolicy: SDImageForceDecodePolicy.never.rawValue,
-                        ]
-                    ) { image in
-                        image
-                            .resizable()
-                            .scaledToFill()
-                    } placeholder: {
-                        Rectangle()
-                            .fill(Color.gray.opacity(0.3))
-                            .overlay(
-                                Image(systemName: "tv")
-                                    .textStyle(theme.typography.titleLarge)
-                                    .foregroundColor(theme.colors.onSurfaceVariant)
-                            )
-                    }
-                    .indicator(.activity)
-                    .transition(.opacity)
-                    .scaledToFill()
-                    .frame(width: DimensionConstants.imageWidth, height: DimensionConstants.imageHeight)
-                    .clipped()
-                } else {
+                CachedAsyncImage(
+                    url: episode.stillImage ?? episode.showPoster,
+                    priority: .high,
+                    showIndicator: true
+                ) { image in
+                    image
+                        .resizable()
+                        .scaledToFill()
+                } placeholder: {
                     Rectangle()
                         .fill(Color.gray.opacity(0.3))
-                        .frame(width: DimensionConstants.imageWidth, height: DimensionConstants.imageHeight)
                         .overlay(
                             Image(systemName: "tv")
                                 .textStyle(theme.typography.titleLarge)
                                 .foregroundColor(theme.colors.onSurfaceVariant)
                         )
                 }
+                .scaledToFill()
+                .frame(width: DimensionConstants.imageWidth, height: DimensionConstants.imageHeight)
+                .clipped()
 
                 LinearGradient(
                     gradient: Gradient(colors: [

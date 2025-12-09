@@ -1,4 +1,3 @@
-import SDWebImageSwiftUI
 import SwiftUI
 import YouTubePlayerKit
 
@@ -51,13 +50,12 @@ public struct YoutubeItemView: View {
                 .opacity(0)
 
             VStack {
-                WebImage(url: URL(string: thumbnailUrl)) { image in
+                CachedAsyncImage(url: thumbnailUrl) { image in
                     image.resizable()
                 } placeholder: {
                     placeholder
                 }
                 .aspectRatio(contentMode: .fill)
-                .transition(.opacity)
                 .frame(
                     width: DimensionConstants.imageWidth,
                     height: DimensionConstants.imageHeight

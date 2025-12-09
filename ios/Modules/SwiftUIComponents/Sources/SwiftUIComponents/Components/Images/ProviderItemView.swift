@@ -1,4 +1,3 @@
-import SDWebImageSwiftUI
 import SwiftUI
 
 public struct ProviderItemView: View {
@@ -30,22 +29,20 @@ public struct ProviderItemView: View {
 
     public var body: some View {
         VStack(alignment: .leading) {
-            if let providerUrl = logoUrl {
-                WebImage(url: URL(string: providerUrl)) { image in
-                    image.resizable()
-                        .padding(.horizontal, theme.spacing.xxSmall)
-                } placeholder: { providerPlaceholder }
-                    .aspectRatio(contentMode: .fill)
-                    .frame(
-                        width: imageWidth,
-                        height: imageHeight
-                    )
-                    .clipped()
-                    .cornerRadius(resolvedRadius)
-                    .shadow(color: theme.colors.surfaceVariant.opacity(0.3), radius: shadowRadius, x: 0, y: 2)
-            } else {
+            CachedAsyncImage(url: logoUrl) { image in
+                image.resizable()
+                    .padding(.horizontal, theme.spacing.xxSmall)
+            } placeholder: {
                 providerPlaceholder
             }
+            .aspectRatio(contentMode: .fill)
+            .frame(
+                width: imageWidth,
+                height: imageHeight
+            )
+            .clipped()
+            .cornerRadius(resolvedRadius)
+            .shadow(color: theme.colors.surfaceVariant.opacity(0.3), radius: shadowRadius, x: 0, y: 2)
         }
     }
 

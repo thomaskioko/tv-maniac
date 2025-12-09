@@ -6,7 +6,6 @@
 //  Copyright © 2023 orgName. All rights reserved.
 //
 
-import SDWebImageSwiftUI
 import SwiftUI
 
 public struct PosterItemView: View {
@@ -41,49 +40,29 @@ public struct PosterItemView: View {
     public var body: some View {
         let resolvedRadius = posterRadius ?? theme.shapes.small
 
-        if let posterUrl {
-            WebImage(
-                url: URL(string: posterUrl.transformedImageURL),
-                options: [
-                    .retryFailed,
-                    .highPriority,
-                    .scaleDownLargeImages,
-                ],
-                context: [
-                    .imageThumbnailPixelSize: CGSize(
-                        width: posterWidth * 2,
-                        height: posterHeight * 2
-                    ),
-                    .imageForceDecodePolicy: SDImageForceDecodePolicy.never.rawValue,
-                ]
-            ) { image in
-                image
-                    .resizable()
-                    .scaledToFill()
-            } placeholder: {
-                PosterPlaceholder(
-                    title: title,
-                    posterWidth: posterWidth,
-                    posterHeight: posterHeight
-                )
-            }
-            .indicator(.activity)
-            .transition(.opacity)
-            .scaledToFill()
-            .clipShape(RoundedRectangle(cornerRadius: resolvedRadius, style: .continuous))
-            .frame(width: posterWidth, height: posterHeight)
-            .overlay {
-                if isInLibrary {
-                    LibraryOverlay(libraryImageOverlay: libraryImageOverlay, theme: theme)
-                }
-            }
-        } else {
+        CachedAsyncImage(
+            url: posterUrl,
+            priority: .normal,
+            showIndicator: true
+        ) { image in
+            image
+                .resizable()
+                .scaledToFill()
+        } placeholder: {
             PosterPlaceholder(
                 title: title,
                 posterWidth: posterWidth,
                 posterHeight: posterHeight,
                 posterRadius: resolvedRadius
             )
+        }
+        .scaledToFill()
+        .clipShape(RoundedRectangle(cornerRadius: resolvedRadius, style: .continuous))
+        .frame(width: posterWidth, height: posterHeight)
+        .overlay {
+            if isInLibrary {
+                LibraryOverlay(libraryImageOverlay: libraryImageOverlay, theme: theme)
+            }
         }
     }
 }

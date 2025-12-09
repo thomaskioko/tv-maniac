@@ -1,4 +1,3 @@
-import SDWebImageSwiftUI
 import SwiftUI
 
 public struct FeaturedContentPosterView: View {
@@ -38,57 +37,47 @@ public struct FeaturedContentPosterView: View {
     }
 
     public var body: some View {
-        if let posterUrl = posterImageUrl {
-            WebImage(url: URL(string: posterUrl.transformedImageURL), options: .highPriority) { image in
-                image.resizable()
-            } placeholder: {
-                PosterPlaceholder(
-                    title: title,
-                    posterWidth: posterWidth,
-                    posterHeight: posterHeight,
-                    posterRadius: resolvedRadius
-                )
-            }
-            .aspectRatio(contentMode: .fill)
-            .overlay {
-                if isInLibrary {
-                    VStack {
-                        Spacer()
-                        HStack {
-                            Spacer()
-
-                            Image(systemName: "square.stack.fill")
-                                .imageScale(.large)
-                                .foregroundColor(theme.colors.onPrimary.opacity(0.9))
-                                .padding([.vertical])
-                                .padding(.trailing, theme.spacing.medium)
-                                .textStyle(theme.typography.bodySmall)
-                        }
-                        .background {
-                            theme.colors.imageGradient()
-                        }
-                    }
-                    .frame(width: posterWidth)
-                }
-            }
-            .transition(.opacity)
-            .frame(width: posterWidth, height: posterHeight)
-            .clipShape(
-                RoundedRectangle(cornerRadius: resolvedRadius, style: .continuous)
-            )
-            .onTapGesture {
-                onClick(showId)
-            }
-        } else {
+        CachedAsyncImage(
+            url: posterImageUrl,
+            priority: .high
+        ) { image in
+            image.resizable()
+        } placeholder: {
             PosterPlaceholder(
                 title: title,
                 posterWidth: posterWidth,
                 posterHeight: posterHeight,
                 posterRadius: resolvedRadius
             )
-            .onTapGesture {
-                onClick(showId)
+        }
+        .aspectRatio(contentMode: .fill)
+        .overlay {
+            if isInLibrary {
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+
+                        Image(systemName: "square.stack.fill")
+                            .imageScale(.large)
+                            .foregroundColor(theme.colors.onPrimary.opacity(0.9))
+                            .padding([.vertical])
+                            .padding(.trailing, theme.spacing.medium)
+                            .textStyle(theme.typography.bodySmall)
+                    }
+                    .background {
+                        theme.colors.imageGradient()
+                    }
+                }
+                .frame(width: posterWidth)
             }
+        }
+        .frame(width: posterWidth, height: posterHeight)
+        .clipShape(
+            RoundedRectangle(cornerRadius: resolvedRadius, style: .continuous)
+        )
+        .onTapGesture {
+            onClick(showId)
         }
     }
 }
