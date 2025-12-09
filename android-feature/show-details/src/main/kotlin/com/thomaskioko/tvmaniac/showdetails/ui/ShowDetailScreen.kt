@@ -349,7 +349,7 @@ fun LazyColumnContent(
         }
 
         item {
-            if (!detailsContent.isRefreshing && detailsContent.message != null) {
+            if (!detailsContent.isRefreshing && detailsContent.showDetails == ShowDetailsModel.Empty && detailsContent.message != null) {
                 ErrorUi(
                     modifier = Modifier
                         .fillMaxSize()
