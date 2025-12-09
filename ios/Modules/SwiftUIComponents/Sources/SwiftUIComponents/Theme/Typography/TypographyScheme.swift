@@ -9,10 +9,10 @@ public struct TvManiacTypographyScheme {
                 return shared
             }
             #if DEBUG
-            _shared = .preview
-            return _shared!
+                _shared = .preview
+                return _shared!
             #else
-            fatalError("TvManiacTypographyScheme.configure() must be called before accessing typography")
+                fatalError("TvManiacTypographyScheme.configure() must be called before accessing typography")
             #endif
         }
         set {
@@ -96,10 +96,10 @@ public extension View {
 }
 
 #if DEBUG
-public extension TvManiacTypographyScheme {
-    static func configureForTesting() {
-        guard _shared == nil else { return }
-        _shared = .preview
+    public extension TvManiacTypographyScheme {
+        static func configureForTesting() {
+            guard _shared == nil else { return }
+            _shared = .preview
+        }
     }
-}
 #endif

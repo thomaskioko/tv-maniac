@@ -15,6 +15,7 @@ dependencies {
     api(libs.androidx.compose.material.icons)
     api(libs.androidx.compose.runtime)
 
+    implementation(projects.data.datastore.api) // TODO:: RE-evaluate this dependency
     implementation(projects.i18n.generator)
 
     implementation(libs.androidx.annotation)

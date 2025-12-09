@@ -1,10 +1,11 @@
 package com.thomaskioko.tvmaniac.settings.ui
 
+import android.content.Context
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,26 +16,34 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material.icons.filled.Security
+import androidx.compose.material.icons.filled.Tv
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonDefaults
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -42,18 +51,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import com.thomaskioko.tvmaniac.compose.components.BasicDialog
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_back
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality
@@ -63,39 +71,41 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_low
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_low_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_medium
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_medium_description
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_privacy_policy
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_section_appearance
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_trakt_dialog_button_secondary
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_youtube
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_youtube_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.logout
-import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_about_description
-import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_theme_description
+import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_about_section_title
+import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_theme_selector_subtitle
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_about
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_disconnect_trakt
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_info
-import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_theme_dark
-import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_theme_light
-import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_theme_system
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_trakt
-import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_ui
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_settings
 import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_dialog_logout_message
 import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_dialog_logout_title
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.settings.presenter.BackClicked
-import com.thomaskioko.tvmaniac.settings.presenter.ChangeThemeClicked
-import com.thomaskioko.tvmaniac.settings.presenter.DismissImageQualityDialog
-import com.thomaskioko.tvmaniac.settings.presenter.DismissThemeClicked
+import com.thomaskioko.tvmaniac.settings.presenter.DismissAboutDialog
 import com.thomaskioko.tvmaniac.settings.presenter.DismissTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsActions
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
-import com.thomaskioko.tvmaniac.settings.presenter.ShowImageQualityDialog
+import com.thomaskioko.tvmaniac.settings.presenter.ShowAboutDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ShowTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
 import com.thomaskioko.tvmaniac.settings.presenter.TraktLogoutClicked
+import com.thomaskioko.tvmaniac.settings.presenter.YoutubeToggled
+
+private const val GITHUB_URL = "https://github.com/c0de-wizard/tv-maniac"
+private const val PRIVACY_POLICY_URL = "https://github.com/c0de-wizard/tv-maniac"
 
 @Composable
-fun SettingsScreen(
+public fun SettingsScreen(
     presenter: SettingsPresenter,
     modifier: Modifier = Modifier,
 ) {
@@ -110,6 +120,7 @@ fun SettingsScreen(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SettingsScreen(
     state: SettingsState,
@@ -117,6 +128,8 @@ internal fun SettingsScreen(
     onAction: (SettingsActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+
     Scaffold(
         topBar = {
             TvManiacTopBar(
@@ -126,13 +139,13 @@ internal fun SettingsScreen(
                             .clickable(onClick = { onAction(BackClicked) })
                             .padding(16.dp),
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = cd_back.resolve(LocalContext.current),
+                        contentDescription = cd_back.resolve(context),
                         tint = MaterialTheme.colorScheme.onBackground,
                     )
                 },
                 title = {
                     Text(
-                        text = title_settings.resolve(LocalContext.current),
+                        text = title_settings.resolve(context),
                         style = MaterialTheme.typography.titleLarge.copy(
                             color = MaterialTheme.colorScheme.onSurface,
                         ),
@@ -162,13 +175,8 @@ internal fun SettingsScreen(
                 }
             }
 
-            SettingsScreen(
-                appTheme = state.appTheme,
-                imageQuality = state.imageQuality,
-                showPopup = state.showthemePopup,
-                showImageQualityDialog = state.showImageQualityDialog,
-                showTraktDialog = state.showTraktDialog,
-                isAuthenticated = state.isAuthenticated,
+            SettingsContent(
+                state = state,
                 onAction = onAction,
                 modifier = Modifier
                     .fillMaxSize()
@@ -176,118 +184,403 @@ internal fun SettingsScreen(
             )
         },
     )
+
+    if (state.showAboutDialog) {
+        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+        ModalBottomSheet(
+            onDismissRequest = { onAction(DismissAboutDialog) },
+            sheetState = sheetState,
+            containerColor = MaterialTheme.colorScheme.surface,
+        ) {
+            AboutSheetContent(
+                onGitHubClick = { openInCustomTab(context, GITHUB_URL) },
+            )
+        }
+    }
 }
 
 @Composable
-fun SettingsScreen(
-    appTheme: AppTheme,
-    imageQuality: ImageQuality,
-    showPopup: Boolean,
-    showImageQualityDialog: Boolean,
-    showTraktDialog: Boolean,
-    isAuthenticated: Boolean,
+private fun SettingsContent(
+    state: SettingsState,
     onAction: (SettingsActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    LazyColumn(
-        modifier = modifier,
-    ) {
+    val context = LocalContext.current
+
+    LazyColumn(modifier = modifier) {
         item { Spacer(modifier = Modifier.height(16.dp)) }
 
         item {
-            SettingsThemeItem(
-                showPopup = showPopup,
-                appTheme = appTheme,
+            SectionHeader(
+                title = label_settings_section_appearance.resolve(context),
+                icon = Icons.Filled.Palette,
+                subtitle = settings_theme_selector_subtitle.resolve(context),
+            )
+        }
+
+        item { Spacer(modifier = Modifier.height(16.dp)) }
+
+        item {
+            ThemeSelectorSection(
+                selectedTheme = state.theme,
                 onThemeSelected = { onAction(ThemeSelected(it)) },
-                onThemeClicked = { onAction(ChangeThemeClicked) },
-                onDismissTheme = { onAction(DismissThemeClicked) },
             )
         }
 
+        item { Spacer(modifier = Modifier.height(24.dp)) }
+
         item {
-            ImageQualitySettingsItem(
-                imageQuality = imageQuality,
-                showDialog = showImageQualityDialog,
-                onImageQualityClicked = { onAction(ShowImageQualityDialog) },
-                onImageQualitySelected = { onAction(ImageQualitySelected(it)) },
-                onDismissDialog = { onAction(DismissImageQualityDialog) },
+            ImageQualitySection(
+                imageQuality = state.imageQuality,
+                onQualitySelected = { onAction(ImageQualitySelected(it)) },
             )
         }
 
         item { Spacer(modifier = Modifier.height(16.dp)) }
 
-        item { AboutSettingsItem() }
+        item {
+            SettingsToggleItem(
+                icon = Icons.Filled.Tv,
+                title = label_settings_youtube.resolve(context),
+                subtitle = label_settings_youtube_description.resolve(context),
+                checked = state.openTrailersInYoutube,
+                onCheckedChange = { onAction(YoutubeToggled(it)) },
+            )
+        }
 
-        if (isAuthenticated) {
+        item { Spacer(modifier = Modifier.height(24.dp)) }
+
+        item {
+            SectionHeader(title = settings_title_info.resolve(context))
+        }
+
+        item { Spacer(modifier = Modifier.height(16.dp)) }
+
+        item {
+            SettingsClickableItem(
+                icon = Icons.Filled.Info,
+                title = settings_about_section_title.resolve(context),
+                subtitle = settings_title_about.resolve(context),
+                onClick = { onAction(ShowAboutDialog) },
+            )
+        }
+
+        item { Spacer(modifier = Modifier.height(8.dp)) }
+
+        item {
+            SettingsClickableItem(
+                icon = Icons.Filled.Security,
+                title = label_settings_privacy_policy.resolve(context),
+                onClick = { openInCustomTab(context, PRIVACY_POLICY_URL) },
+            )
+        }
+
+        if (state.isAuthenticated) {
+            item { Spacer(modifier = Modifier.height(24.dp)) }
+
+            item {
+                SectionHeader(title = settings_title_trakt.resolve(context))
+            }
+
             item { Spacer(modifier = Modifier.height(16.dp)) }
 
             item {
-                TraktProfileSettingsItem(
-                    showTraktDialog = showTraktDialog,
+                TraktAccountSection(
+                    showTraktDialog = state.showTraktDialog,
                     onAction = onAction,
                 )
             }
         }
+
+        item { Spacer(modifier = Modifier.height(32.dp)) }
     }
 }
 
 @Composable
-private fun TraktProfileSettingsItem(
-    showTraktDialog: Boolean,
-    onAction: (SettingsActions) -> Unit,
+private fun SectionHeader(
+    title: String,
+    modifier: Modifier = Modifier,
+    icon: ImageVector? = null,
+    subtitle: String? = null,
 ) {
-    Column(
-        modifier = Modifier
+    Row(
+        modifier = modifier
             .fillMaxWidth()
-            .clickable { onAction(ShowTraktDialog) }
-            .padding(start = 16.dp, end = 16.dp),
+            .padding(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Spacer(modifier = Modifier.height(8.dp))
+        if (icon != null) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier.size(24.dp),
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+        }
+        Column {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+            )
+            if (subtitle != null) {
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+    }
+}
 
-        SettingHeaderTitle(title = settings_title_trakt.resolve(LocalContext.current))
+@Composable
+private fun ImageQualitySection(
+    imageQuality: ImageQuality,
+    onQualitySelected: (ImageQuality) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val context = LocalContext.current
 
-        Spacer(modifier = Modifier.height(8.dp))
-
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+    ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Icon(
-                imageVector = Icons.Filled.Person,
+                imageVector = Icons.Filled.Image,
                 tint = MaterialTheme.colorScheme.secondary,
                 contentDescription = null,
-                modifier = Modifier
-                    .padding(end = 16.dp)
-                    .size(48.dp),
+                modifier = Modifier.size(24.dp),
             )
 
-            Column(
-                modifier = Modifier.weight(1f),
-            ) {
-                TitleItem(
-                    stringResource(
-                        settings_title_disconnect_trakt.resourceId,
-                        "",
-                    ),
-                )
-                SettingDescription(trakt_description.resolve(LocalContext.current))
-            }
+            Spacer(modifier = Modifier.width(16.dp))
 
-            LogoutDialog(
-                isVisible = showTraktDialog,
-                onLogoutClicked = { onAction(TraktLogoutClicked) },
-                onDismissDialog = { onAction(DismissTraktDialog) },
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = label_settings_image_quality.resolve(context),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Text(
+                    text = getQualityDescriptionString(imageQuality, context),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.padding(start = 40.dp),
+        ) {
+            ImageQualityChip(
+                label = label_settings_image_quality_high.resolve(context),
+                isSelected = imageQuality == ImageQuality.HIGH,
+                onClick = { onQualitySelected(ImageQuality.HIGH) },
+            )
+            ImageQualityChip(
+                label = label_settings_image_quality_medium.resolve(context),
+                isSelected = imageQuality == ImageQuality.MEDIUM,
+                onClick = { onQualitySelected(ImageQuality.MEDIUM) },
+            )
+            ImageQualityChip(
+                label = label_settings_image_quality_low.resolve(context),
+                isSelected = imageQuality == ImageQuality.LOW,
+                onClick = { onQualitySelected(ImageQuality.LOW) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun ImageQualityChip(
+    label: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+) {
+    FilterChip(
+        selected = isSelected,
+        onClick = onClick,
+        label = {
+            Text(
+                text = label,
+                color = if (isSelected) {
+                    MaterialTheme.colorScheme.onSecondary
+                } else {
+                    MaterialTheme.colorScheme.onSurface
+                },
+            )
+        },
+        colors = FilterChipDefaults.filterChipColors(
+            selectedContainerColor = MaterialTheme.colorScheme.secondary,
+            containerColor = MaterialTheme.colorScheme.surface,
+        ),
+        border = FilterChipDefaults.filterChipBorder(
+            borderColor = MaterialTheme.colorScheme.outline,
+            selectedBorderColor = MaterialTheme.colorScheme.secondary,
+            enabled = true,
+            selected = isSelected,
+        ),
+        shape = RoundedCornerShape(20.dp),
+    )
+}
+
+@Composable
+private fun SettingsToggleItem(
+    icon: ImageVector,
+    title: String,
+    subtitle: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onCheckedChange(!checked) }
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            imageVector = icon,
+            tint = MaterialTheme.colorScheme.secondary,
+            contentDescription = null,
+            modifier = Modifier.size(24.dp),
+        )
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+            )
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.width(8.dp))
 
-        ListDivider()
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = MaterialTheme.colorScheme.secondary,
+                checkedTrackColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f),
+                uncheckedThumbColor = MaterialTheme.colorScheme.onSurface,
+                uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+                uncheckedBorderColor = MaterialTheme.colorScheme.outline,
+            ),
+        )
     }
 }
 
 @Composable
-fun LogoutDialog(
+private fun SettingsClickableItem(
+    icon: ImageVector,
+    title: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    subtitle: String? = null,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            imageVector = icon,
+            tint = MaterialTheme.colorScheme.secondary,
+            contentDescription = null,
+            modifier = Modifier.size(24.dp),
+        )
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+            )
+            if (subtitle != null) {
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+@Composable
+private fun TraktAccountSection(
+    showTraktDialog: Boolean,
+    onAction: (SettingsActions) -> Unit,
+) {
+    val context = LocalContext.current
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onAction(ShowTraktDialog) }
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            imageVector = Icons.Filled.Person,
+            tint = MaterialTheme.colorScheme.secondary,
+            contentDescription = null,
+            modifier = Modifier.size(24.dp),
+        )
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = stringResource(settings_title_disconnect_trakt.resourceId, ""),
+                style = MaterialTheme.typography.titleMedium,
+            )
+            Text(
+                text = trakt_description.resolve(context),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+
+    LogoutDialog(
+        isVisible = showTraktDialog,
+        onLogoutClicked = { onAction(TraktLogoutClicked) },
+        onDismissDialog = { onAction(DismissTraktDialog) },
+    )
+}
+
+@Composable
+private fun LogoutDialog(
     isVisible: Boolean,
     onLogoutClicked: () -> Unit,
     onDismissDialog: () -> Unit,
@@ -296,12 +589,8 @@ fun LogoutDialog(
 
     AnimatedVisibility(
         visible = isVisible,
-        enter = fadeIn(
-            initialAlpha = 0.4f,
-        ),
-        exit = fadeOut(
-            animationSpec = tween(durationMillis = 250),
-        ),
+        enter = fadeIn(initialAlpha = 0.4f),
+        exit = fadeOut(animationSpec = tween(durationMillis = 250)),
     ) {
         BasicDialog(
             dialogTitle = trakt_dialog_logout_title.resolve(context),
@@ -317,385 +606,17 @@ fun LogoutDialog(
     }
 }
 
-@Composable
-private fun SettingsThemeItem(
-    appTheme: AppTheme,
-    showPopup: Boolean,
-    onThemeSelected: (AppTheme) -> Unit,
-    onThemeClicked: () -> Unit,
-    onDismissTheme: () -> Unit,
-) {
-    val context = LocalContext.current
-    val appThemeTitle = when (appTheme) {
-        AppTheme.LIGHT_THEME -> settings_title_theme_dark.resolve(context)
-        AppTheme.DARK_THEME -> settings_title_theme_light.resolve(context)
-        AppTheme.SYSTEM_THEME -> settings_title_theme_system.resolve(context)
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onThemeClicked() }
-            .padding(start = 16.dp, end = 16.dp),
-    ) {
-        Spacer(modifier = Modifier.height(8.dp))
-
-        SettingHeaderTitle(
-            title = settings_title_ui.resolve(LocalContext.current),
-            modifier = Modifier,
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Palette,
-                tint = MaterialTheme.colorScheme.secondary,
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(end = 16.dp)
-                    .size(48.dp),
-            )
-
-            Column(
-                modifier = Modifier
-                    .padding(end = 8.dp, bottom = 8.dp)
-                    .weight(1f),
-            ) {
-                TitleItem(appThemeTitle)
-                SettingDescription(settings_theme_description.resolve(LocalContext.current))
-            }
-
-            ThemeMenu(
-                isVisible = showPopup,
-                selectedAppTheme = appTheme,
-                onDismissTheme = onDismissTheme,
-                onThemeSelected = onThemeSelected,
-            )
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        ListDivider()
-    }
+private fun openInCustomTab(context: Context, url: String) {
+    val customTabsIntent = CustomTabsIntent.Builder().build()
+    customTabsIntent.launchUrl(context, url.toUri())
 }
 
-@Composable
-private fun ThemeMenu(
-    isVisible: Boolean,
-    selectedAppTheme: AppTheme,
-    onDismissTheme: () -> Unit,
-    onThemeSelected: (AppTheme) -> Unit,
-) {
-    AnimatedVisibility(
-        visible = isVisible,
-        enter = fadeIn(
-            // Overwrites the initial value of alpha to 0.4f for fade in, 0 by default
-            initialAlpha = 0.4f,
-        ),
-        exit = fadeOut(
-            // Overwrites the default animation with tween
-            animationSpec = tween(durationMillis = 250),
-        ),
-    ) {
-        DropdownMenu(
-            expanded = isVisible,
-            onDismissRequest = { onDismissTheme() },
-            offset = DpOffset(16.dp, 32.dp),
-            modifier = Modifier.background(MaterialTheme.colorScheme.surface),
-        ) {
-            ThemeMenuItem(
-                appTheme = AppTheme.LIGHT_THEME,
-                selectedAppTheme = selectedAppTheme,
-                onThemeSelected = onThemeSelected,
-                onDismissTheme = onDismissTheme,
-            )
-
-            ThemeMenuItem(
-                appTheme = AppTheme.DARK_THEME,
-                selectedAppTheme = selectedAppTheme,
-                onThemeSelected = onThemeSelected,
-                onDismissTheme = onDismissTheme,
-            )
-
-            ThemeMenuItem(
-                appTheme = AppTheme.SYSTEM_THEME,
-                selectedAppTheme = selectedAppTheme,
-                onThemeSelected = onThemeSelected,
-                onDismissTheme = onDismissTheme,
-            )
-        }
-    }
-}
-
-@Composable
-private fun ThemeMenuItem(
-    appTheme: AppTheme,
-    selectedAppTheme: AppTheme,
-    onThemeSelected: (AppTheme) -> Unit,
-    onDismissTheme: () -> Unit,
-) {
-    val appThemeTitle = when (appTheme) {
-        AppTheme.LIGHT_THEME -> "Light Theme"
-        AppTheme.DARK_THEME -> "Dark Theme"
-        AppTheme.SYSTEM_THEME -> "System Theme"
-    }
-    DropdownMenuItem(
-        onClick = {
-            onThemeSelected(appTheme)
-            onDismissTheme()
-        },
-        text = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Text(
-                    text = appThemeTitle,
-                    modifier = Modifier.weight(1f),
-                )
-
-                RadioButton(
-                    selected = selectedAppTheme == appTheme,
-                    colors = RadioButtonDefaults.colors(
-                        selectedColor = MaterialTheme.colorScheme.secondary,
-                    ),
-                    onClick = {
-                        onThemeSelected(appTheme)
-                        onDismissTheme()
-                    },
-                )
-            }
-        },
-    )
-}
-
-@Composable
-private fun ImageQualitySettingsItem(
-    imageQuality: ImageQuality,
-    showDialog: Boolean,
-    onImageQualityClicked: () -> Unit,
-    onImageQualitySelected: (ImageQuality) -> Unit,
-    onDismissDialog: () -> Unit,
-) {
-    val context = LocalContext.current
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onImageQualityClicked() }
-            .padding(start = 16.dp, end = 16.dp),
-    ) {
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Image,
-                tint = MaterialTheme.colorScheme.secondary,
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(end = 16.dp)
-                    .size(48.dp),
-            )
-
-            Column(
-                modifier = Modifier
-                    .padding(end = 8.dp, bottom = 8.dp)
-                    .weight(1f),
-            ) {
-                TitleItem(label_settings_image_quality.resolve(context))
-                SettingDescription(getQualityDescriptionString(imageQuality, context))
-            }
-
-            ImageQualityMenu(
-                isVisible = showDialog,
-                selectedQuality = imageQuality,
-                onDismissDialog = onDismissDialog,
-                onQualitySelected = onImageQualitySelected,
-            )
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        ListDivider()
-    }
-}
-
-@Composable
-private fun ImageQualityMenu(
-    isVisible: Boolean,
-    selectedQuality: ImageQuality,
-    onDismissDialog: () -> Unit,
-    onQualitySelected: (ImageQuality) -> Unit,
-) {
-    AnimatedVisibility(
-        visible = isVisible,
-        enter = fadeIn(initialAlpha = 0.4f),
-        exit = fadeOut(animationSpec = tween(durationMillis = 250)),
-    ) {
-        DropdownMenu(
-            expanded = isVisible,
-            onDismissRequest = { onDismissDialog() },
-            offset = DpOffset(16.dp, 32.dp),
-            modifier = Modifier.background(MaterialTheme.colorScheme.surface),
-        ) {
-            ImageQualityMenuItem(
-                quality = ImageQuality.HIGH,
-                selectedQuality = selectedQuality,
-                onQualitySelected = onQualitySelected,
-            )
-
-            ImageQualityMenuItem(
-                quality = ImageQuality.MEDIUM,
-                selectedQuality = selectedQuality,
-                onQualitySelected = onQualitySelected,
-            )
-
-            ImageQualityMenuItem(
-                quality = ImageQuality.LOW,
-                selectedQuality = selectedQuality,
-                onQualitySelected = onQualitySelected,
-            )
-        }
-    }
-}
-
-@Composable
-private fun ImageQualityMenuItem(
-    quality: ImageQuality,
-    selectedQuality: ImageQuality,
-    onQualitySelected: (ImageQuality) -> Unit,
-) {
-    val context = LocalContext.current
-    val qualityTitle = when (quality) {
-        ImageQuality.HIGH -> label_settings_image_quality_high.resolve(context)
-        ImageQuality.MEDIUM -> label_settings_image_quality_medium.resolve(context)
-        ImageQuality.LOW -> label_settings_image_quality_low.resolve(context)
-    }
-
-    DropdownMenuItem(
-        onClick = { onQualitySelected(quality) },
-        text = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Column(
-                    modifier = Modifier.weight(1f),
-                ) {
-                    Text(
-                        text = qualityTitle,
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                    Text(
-                        text = getQualityDescriptionString(quality, context),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-
-                RadioButton(
-                    selected = selectedQuality == quality,
-                    colors = RadioButtonDefaults.colors(
-                        selectedColor = MaterialTheme.colorScheme.secondary,
-                    ),
-                    onClick = {
-                        onQualitySelected(quality)
-                    },
-                )
-            }
-        },
-    )
-}
-
-@Composable
-private fun getQualityDescriptionString(quality: ImageQuality, context: android.content.Context): String {
+private fun getQualityDescriptionString(quality: ImageQuality, context: Context): String {
     return when (quality) {
         ImageQuality.HIGH -> label_settings_image_quality_high_description.resolve(context)
         ImageQuality.MEDIUM -> label_settings_image_quality_medium_description.resolve(context)
         ImageQuality.LOW -> label_settings_image_quality_low_description.resolve(context)
     }
-}
-
-@Composable
-private fun AboutSettingsItem() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .clickable {}
-            .padding(start = 16.dp, end = 16.dp),
-    ) {
-        val context = LocalContext.current
-        SettingHeaderTitle(title = settings_title_info.resolve(context))
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        TitleItem(title = settings_title_about.resolve(context))
-
-        Text(
-            text = settings_about_description.resolve(context),
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Normal,
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        ListDivider()
-    }
-}
-
-@Composable
-fun SettingHeaderTitle(title: String, modifier: Modifier = Modifier) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.bodyMedium.copy(
-            color = MaterialTheme.colorScheme.secondary,
-        ),
-        modifier = modifier.fillMaxWidth(),
-    )
-}
-
-@Composable
-fun TitleItem(
-    title: String,
-    modifier: Modifier = Modifier,
-) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.titleMedium,
-        modifier = modifier,
-    )
-}
-
-@Composable
-fun SettingDescription(
-    description: String,
-    modifier: Modifier = Modifier,
-) {
-    Text(
-        text = description,
-        style = MaterialTheme.typography.bodyMedium,
-        modifier = modifier,
-        fontWeight = FontWeight.Normal,
-    )
-}
-
-/** Full-width divider with padding for settings items */
-@Composable
-private fun ListDivider() {
-    HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
 }
 
 @ThemePreviews

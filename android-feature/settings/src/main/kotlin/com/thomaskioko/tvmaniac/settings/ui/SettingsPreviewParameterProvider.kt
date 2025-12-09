@@ -1,33 +1,35 @@
 package com.thomaskioko.tvmaniac.settings.ui
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
+import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 
-val defaultState = SettingsState(
-    appTheme = AppTheme.DARK_THEME,
+internal val defaultState = SettingsState(
+    theme = ThemeModel.DARK,
     imageQuality = ImageQuality.HIGH,
     showthemePopup = false,
-    showImageQualityDialog = false,
     showTraktDialog = false,
+    showAboutDialog = false,
     errorMessage = null,
     showLogoutDialog = false,
     isAuthenticated = false,
+    openTrailersInYoutube = false,
 )
 
-val loggedInState = SettingsState(
-    appTheme = AppTheme.DARK_THEME,
+internal val loggedInState = SettingsState(
+    theme = ThemeModel.DARK,
     imageQuality = ImageQuality.MEDIUM,
     showthemePopup = false,
-    showImageQualityDialog = false,
     showTraktDialog = false,
+    showAboutDialog = false,
     errorMessage = null,
     showLogoutDialog = false,
     isAuthenticated = true,
+    openTrailersInYoutube = true,
 )
 
-class SettingsPreviewParameterProvider : PreviewParameterProvider<SettingsState> {
+internal class SettingsPreviewParameterProvider : PreviewParameterProvider<SettingsState> {
     override val values: Sequence<SettingsState>
         get() {
             return sequenceOf(

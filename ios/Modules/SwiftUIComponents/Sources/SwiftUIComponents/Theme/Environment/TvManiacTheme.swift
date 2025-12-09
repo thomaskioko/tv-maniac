@@ -24,3 +24,30 @@ public struct DarkTheme: TvManiacTheme {
 
     public init() {}
 }
+
+public struct TerminalTheme: TvManiacTheme {
+    public let colors = TvManiacColorScheme.terminal
+    public var typography: TvManiacTypographyScheme { .shared }
+    public let spacing = TvManiacSpacingScheme.default
+    public let shapes = TvManiacShapeScheme.default
+
+    public init() {}
+}
+
+public struct AutumnTheme: TvManiacTheme {
+    public let colors = TvManiacColorScheme.autumn
+    public var typography: TvManiacTypographyScheme { .shared }
+    public let spacing = TvManiacSpacingScheme.default
+    public let shapes = TvManiacShapeScheme.default
+
+    public init() {}
+}
+
+public struct AquaTheme: TvManiacTheme {
+    public let colors = TvManiacColorScheme.aqua
+    public var typography: TvManiacTypographyScheme { .shared }
+    public let spacing = TvManiacSpacingScheme.default
+    public let shapes = TvManiacShapeScheme.default
+
+    public init() {}
+}

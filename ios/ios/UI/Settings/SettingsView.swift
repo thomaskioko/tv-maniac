@@ -9,11 +9,10 @@ struct SettingsView: View {
     private let presenter: SettingsPresenter
     @StateObject @KotlinStateFlow private var uiState: SettingsState
     @StateObject private var store = SettingsAppStorage.shared
-    @State private var showingAlert: Bool = false
+    @State private var showingLogoutAlert: Bool = false
     @State private var showingErrorAlert: Bool = false
-    @State private var openInYouTube: Bool = false
     @State private var showPolicy = false
-    @State private var aboutPage = false
+    @State private var showAboutSheet = false
     @Environment(\.openURL) var openURL
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject private var appDelegate: AppDelegate
@@ -23,203 +22,46 @@ struct SettingsView: View {
         _uiState = .init(presenter.state)
     }
 
-    @ViewBuilder
-    private var themeSection: some View {
-        Section(String(\.label_settings_section_app_theme)) {
-            themePickerView
-
-            Text(String(\.settings_theme_description))
-                .textStyle(theme.typography.labelSmall)
-                .foregroundColor(theme.colors.onSurfaceVariant)
-                .padding(.horizontal)
-        }
-    }
-
-    @ViewBuilder
-    private var themePickerView: some View {
-        Picker(
-            selection: Binding(
-                get: { store.appTheme },
-                set: { theme in
-                    store.appTheme = theme
-                    let appTheme: AppTheme = switch theme {
-                    case .light:
-                        .lightTheme
-                    case .dark:
-                        .darkTheme
-                    case .system:
-                        .systemTheme
-                    }
-                    presenter.dispatch(action: ThemeSelected(appTheme: appTheme))
-                }
-            ),
-            label: settingsLabel(
-                title: String(\.label_settings_change_theme),
-                icon: "paintpalette",
-                color: theme.colors.secondary
-            )
-        ) {
-            ForEach(DeveiceAppTheme.allCases, id: \.self) { appTheme in
-                Text(themeDropdownTitle(for: appTheme))
-                    .tag(appTheme)
-            }
-        }
-        .pickerStyle(.menu)
-        .tint(theme.colors.secondary)
-    }
-
-    @ViewBuilder
-    private var behaviorSection: some View {
-        Section(String(\.label_settings_section_behavior)) {
-            youtubeToggle
-            imageQualityPicker
-            imageQualityDescription
-        }
-    }
-
-    @ViewBuilder
-    private var youtubeToggle: some View {
-        Toggle(isOn: $openInYouTube) {
-            settingsLabel(
-                title: String(\.label_settings_youtube),
-                icon: "tv",
-                color: theme.colors.error
-            )
-        }
-    }
-
-    @ViewBuilder
-    private var imageQualityPicker: some View {
-        Picker(
-            selection: Binding(
-                get: { uiState.imageQuality.toSwift() },
-                set: { swiftQuality in
-                    let quality = TvManiac.ImageQuality.fromSwift(swiftQuality)
-                    presenter.dispatch(action: ImageQualitySelected(quality: quality))
-                    store.imageQuality = swiftQuality
-                }
-            ),
-            label: settingsLabel(
-                title: String(\.label_settings_image_quality),
-                icon: "photo",
-                color: theme.colors.secondary
-            )
-        ) {
-            ForEach(SwiftImageQuality.allCases, id: \.self) { quality in
-                Text(imageQualityTitle(for: quality))
-                    .tag(quality)
-            }
-        }
-        .pickerStyle(.menu)
-        .tint(theme.colors.secondary)
-    }
-
-    @ViewBuilder
-    private var imageQualityDescription: some View {
-        Text(imageQualityDescription(for: uiState.imageQuality.toSwift()))
-            .textStyle(theme.typography.labelSmall)
-            .foregroundColor(theme.colors.onSurfaceVariant)
-            .padding(.horizontal)
-    }
-
-    @ViewBuilder
-    private var traktSection: some View {
-        if uiState.isAuthenticated {
-            Section(String(\.label_settings_section_trakt_account)) {
-                HStack {
-                    Button {
-                        showingAlert = true
-                    } label: {
-                        HStack {
-                            ZStack {
-                                Rectangle()
-                                    .fill(theme.colors.error)
-                                    .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
-                                Image(systemName: "person.fill")
-                                    .foregroundColor(theme.colors.onError)
-                            }
-                            .frame(width: 30, height: 30, alignment: .center)
-                            .padding(.trailing, 8)
-                            .accessibilityHidden(true)
-
-                            Text(String(\.logout))
-                                .foregroundColor(theme.colors.error)
-                        }
-                        .padding(.vertical, 2)
-                    }
-                    .buttonStyle(.plain)
-                }
-                .alert(isPresented: $showingAlert) {
-                    Alert(
-                        title: Text(String(\.trakt_dialog_logout_title)),
-                        message: Text(String(\.trakt_dialog_logout_message)),
-                        primaryButton: .destructive(Text(String(\.logout))) {
-                            presenter.dispatch(action: TraktLogoutClicked())
-                        },
-                        secondaryButton: .cancel()
-                    )
-                }
-            }
-        }
-    }
-
-    @ViewBuilder
-    private var infoSection: some View {
-        Section(String(\.label_settings_section_info)) {
-            aboutButton
-            privacyButton
-        }
-    }
-
-    @ViewBuilder
-    private var aboutButton: some View {
-        Button {
-            aboutPage.toggle()
-        } label: {
-            settingsLabel(
-                title: String(\.label_settings_about),
-                icon: "info.circle",
-                color: theme.colors.onSurface
-            )
-        }
-        .buttonStyle(.plain)
-        .sheet(isPresented: $aboutPage) {
-            if let url = URL(string: "https://github.com/c0de-wizard/tv-maniac") {
-                SFSafariViewWrapper(url: url)
-                    .appTint()
-                    .appTheme()
-            }
-        }
-    }
-
-    @ViewBuilder
-    private var privacyButton: some View {
-        Button {
-            showPolicy.toggle()
-        } label: {
-            settingsLabel(
-                title: String(\.label_settings_privacy_policy),
-                icon: "hand.raised",
-                color: theme.colors.secondary
-            )
-        }
-        .buttonStyle(.plain)
-        .sheet(isPresented: $showPolicy) {
-            // TODO: Add Privacy Policy
-            if let url = URL(string: "https://github.com/c0de-wizard/tv-maniac") {
-                SFSafariViewWrapper(url: url)
-                    .appTint()
-                    .appTheme()
-            }
-        }
-    }
-
     var body: some View {
-        Form {
-            themeSection
-            behaviorSection
-            infoSection
-            traktSection
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                sectionHeader(
+                    String(\.label_settings_section_appearance),
+                    icon: "paintpalette",
+                    subtitle: String(\.settings_theme_selector_subtitle)
+                )
+                .padding(.top, theme.spacing.medium)
+
+                themeSection
+                    .padding(.top, theme.spacing.medium)
+
+                imageQualitySection
+                    .padding(.top, theme.spacing.large)
+
+                youtubeToggleRow
+                    .padding(.top, theme.spacing.medium)
+
+                sectionHeader(String(\.settings_title_info))
+                    .padding(.top, theme.spacing.xLarge)
+
+                aboutRow
+                    .padding(.top, theme.spacing.medium)
+
+                privacyRow
+                    .padding(.top, theme.spacing.xSmall)
+
+                if uiState.isAuthenticated {
+                    sectionHeader(String(\.settings_title_trakt))
+                        .padding(.top, theme.spacing.xLarge)
+
+                    traktLogoutRow
+                        .padding(.top, theme.spacing.medium)
+                }
+
+                Spacer()
+                    .frame(height: theme.spacing.xLarge)
+            }
+            .padding(.horizontal, theme.spacing.medium)
         }
         .scrollContentBackground(.hidden)
         .background(theme.colors.background)
@@ -241,10 +83,10 @@ struct SettingsView: View {
                 }
             }
         }
-        .toolbarBackground(theme.colors.background, for: .navigationBar)
+        .toolbarBackground(theme.colors.surface, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
-        .onChange(of: uiState.appTheme) { newTheme in
-            store.appTheme = newTheme.toDeveiceAppTheme()
+        .onChange(of: uiState.theme) { newTheme in
+            store.appTheme = newTheme.toDeviceAppTheme()
         }
         .onChange(of: uiState.imageQuality) { imageQuality in
             store.imageQuality = imageQuality.toSwift()
@@ -259,49 +101,297 @@ struct SettingsView: View {
                 dismissButton: .default(Text("OK"))
             )
         }
+        .alert(isPresented: $showingLogoutAlert) {
+            Alert(
+                title: Text(String(\.trakt_dialog_logout_title)),
+                message: Text(String(\.trakt_dialog_logout_message)),
+                primaryButton: .destructive(Text(String(\.logout))) {
+                    presenter.dispatch(action: TraktLogoutClicked())
+                },
+                secondaryButton: .cancel()
+            )
+        }
+        .sheet(isPresented: $showAboutSheet) {
+            AboutSheet()
+        }
+        .sheet(isPresented: $showPolicy) {
+            if let url = URL(string: "https://github.com/c0de-wizard/tv-maniac") {
+                SFSafariViewWrapper(url: url)
+                    .appTint()
+                    .appTheme()
+            }
+        }
         .onAppear {
             store.imageQuality = uiState.imageQuality.toSwift()
         }
     }
 
-    private func settingsLabel(title: String, icon: String, color: Color) -> some View {
-        HStack {
-            ZStack {
-                Rectangle()
-                    .fill(color)
-                    .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+    @ViewBuilder
+    private func sectionHeader(
+        _ title: String,
+        icon: String? = nil,
+        subtitle: String? = nil
+    ) -> some View {
+        HStack(spacing: theme.spacing.medium) {
+            if let icon {
                 Image(systemName: icon)
-                    .foregroundColor(theme.colors.onPrimary)
+                    .foregroundColor(theme.colors.secondary)
+                    .frame(width: theme.spacing.large, height: theme.spacing.large)
             }
-            .frame(width: 30, height: 30, alignment: .center)
-            .padding(.trailing, 8)
-            .accessibilityHidden(true)
-
-            Text(title)
-        }
-        .padding(.vertical, 2)
-    }
-
-    private func themeTitle(for theme: DeveiceAppTheme) -> String {
-        switch theme {
-        case .light:
-            String(\.settings_title_theme_light)
-        case .dark:
-            String(\.settings_title_theme_dark)
-        case .system:
-            String(\.settings_title_theme_system)
+            VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
+                Text(title)
+                    .textStyle(theme.typography.titleMedium)
+                    .foregroundColor(theme.colors.onSurface)
+                if let subtitle {
+                    Text(subtitle)
+                        .textStyle(theme.typography.bodySmall)
+                        .foregroundColor(theme.colors.onSurfaceVariant)
+                }
+            }
         }
     }
 
-    private func themeDropdownTitle(for theme: DeveiceAppTheme) -> String {
-        switch theme {
-        case .light:
-            String(\.settings_theme_light)
-        case .dark:
-            String(\.settings_theme_dark)
-        case .system:
-            String(\.settings_theme_system)
+    @ViewBuilder
+    private var themeSection: some View {
+        ThemeSelectorView(
+            themes: DeviceAppTheme.sortedThemes,
+            selectedTheme: store.appTheme,
+            onThemeSelected: { selectedTheme in
+                store.appTheme = selectedTheme
+                let appTheme = selectedTheme.toAppTheme()
+                presenter.dispatch(action: ThemeSelected(theme: appTheme.toThemeModel()))
+            }
+        )
+    }
+
+    @ViewBuilder
+    private var imageQualitySection: some View {
+        VStack(alignment: .leading, spacing: theme.spacing.small) {
+            HStack(spacing: theme.spacing.medium) {
+                settingsIcon("photo", color: theme.colors.secondary)
+
+                VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
+                    Text(String(\.label_settings_image_quality))
+                        .textStyle(theme.typography.titleMedium)
+                        .foregroundColor(theme.colors.onSurface)
+                    Text(imageQualityDescription(for: uiState.imageQuality.toSwift()))
+                        .textStyle(theme.typography.bodySmall)
+                        .foregroundColor(theme.colors.onSurfaceVariant)
+                }
+            }
+
+            HStack(spacing: theme.spacing.small) {
+                ForEach(SwiftImageQuality.allCases, id: \.self) { quality in
+                    SelectionChip(
+                        label: imageQualityTitle(for: quality),
+                        isSelected: uiState.imageQuality.toSwift() == quality,
+                        action: {
+                            let kmpQuality = TvManiac.ImageQuality.fromSwift(quality)
+                            presenter.dispatch(action: ImageQualitySelected(quality: kmpQuality))
+                            store.imageQuality = quality
+                        }
+                    )
+                }
+            }
+            .padding(.leading, 40)
         }
+    }
+
+    @ViewBuilder
+    private var youtubeToggleRow: some View {
+        HStack(spacing: theme.spacing.medium) {
+            settingsIcon("tv", color: theme.colors.secondary)
+
+            VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
+                Text(String(\.label_settings_youtube))
+                    .textStyle(theme.typography.titleMedium)
+                    .foregroundColor(theme.colors.onSurface)
+                Text(String(\.label_settings_youtube_description))
+                    .textStyle(theme.typography.bodySmall)
+                    .foregroundColor(theme.colors.onSurfaceVariant)
+            }
+
+            Spacer()
+
+            Toggle("", isOn: Binding(
+                get: { uiState.openTrailersInYoutube },
+                set: { newValue in
+                    presenter.dispatch(action: YoutubeToggled(enabled: newValue))
+                }
+            ))
+            .labelsHidden()
+            .tint(theme.colors.secondary)
+        }
+    }
+
+    @ViewBuilder
+    private var aboutRow: some View {
+        Button {
+            showAboutSheet = true
+        } label: {
+            HStack(spacing: theme.spacing.medium) {
+                settingsIcon("info.circle", color: theme.colors.secondary)
+
+                VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
+                    Text(String(\.settings_about_section_title))
+                        .textStyle(theme.typography.titleMedium)
+                        .foregroundColor(theme.colors.onSurface)
+                    Text(String(\.settings_title_about))
+                        .textStyle(theme.typography.bodySmall)
+                        .foregroundColor(theme.colors.onSurfaceVariant)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .foregroundColor(theme.colors.onSurfaceVariant)
+            }
+            .padding(.vertical, theme.spacing.small)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+
+    @ViewBuilder
+    private var privacyRow: some View {
+        Button {
+            showPolicy = true
+        } label: {
+            HStack(spacing: theme.spacing.medium) {
+                settingsIcon("hand.raised", color: theme.colors.secondary)
+
+                Text(String(\.label_settings_privacy_policy))
+                    .textStyle(theme.typography.titleMedium)
+                    .foregroundColor(theme.colors.onSurface)
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .foregroundColor(theme.colors.onSurfaceVariant)
+            }
+            .padding(.vertical, theme.spacing.small)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+
+    @ViewBuilder
+    private var traktLogoutRow: some View {
+        Button {
+            showingLogoutAlert = true
+        } label: {
+            HStack(spacing: theme.spacing.medium) {
+                settingsIcon("person.fill", color: theme.colors.secondary)
+
+                VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
+                    Text(String(\.logout))
+                        .textStyle(theme.typography.titleMedium)
+                        .foregroundColor(theme.colors.onSurface)
+                    Text(String(\.trakt_description))
+                        .textStyle(theme.typography.bodySmall)
+                        .foregroundColor(theme.colors.onSurfaceVariant)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .foregroundColor(theme.colors.onSurfaceVariant)
+            }
+            .padding(.vertical, theme.spacing.small)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+
+    @ViewBuilder
+    private func settingsIcon(_ systemName: String, color: Color) -> some View {
+        Image(systemName: systemName)
+            .foregroundColor(color)
+            .frame(width: theme.spacing.large, height: theme.spacing.large)
+    }
+
+    @ViewBuilder
+    private func AboutSheet() -> some View {
+        ZStack(alignment: .bottom) {
+            ScrollView {
+                VStack(spacing: 0) {
+                    VStack(spacing: theme.spacing.medium) {
+                        Image("TvManiacIcon")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 72, height: 72)
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+
+                        Text("TvManiac")
+                            .textStyle(theme.typography.headlineLarge)
+                            .foregroundColor(theme.colors.onSurface)
+
+                        Text("Version 1.0.0")
+                            .textStyle(theme.typography.bodyLarge)
+                            .foregroundColor(theme.colors.secondary)
+                    }
+                    .padding(.vertical, theme.spacing.xLarge)
+
+                    Divider()
+                        .overlay(theme.colors.outline)
+
+                    VStack(alignment: .leading, spacing: theme.spacing.xSmall) {
+                        Text(String(\.settings_about_section_title))
+                            .textStyle(theme.typography.titleMedium)
+                            .foregroundColor(theme.colors.onSurface)
+
+                        Text(String(\.settings_about_description))
+                            .textStyle(theme.typography.bodyMedium)
+                            .foregroundColor(theme.colors.onSurfaceVariant)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, theme.spacing.medium)
+                    .padding(.vertical, theme.spacing.medium)
+
+                    Divider()
+                        .overlay(theme.colors.outline)
+
+                    Button {
+                        if let url = URL(string: "https://github.com/c0de-wizard/tv-maniac") {
+                            openURL(url)
+                        }
+                    } label: {
+                        HStack {
+                            Text(String(\.settings_about_source_code))
+                                .textStyle(theme.typography.bodyLarge)
+                                .foregroundColor(theme.colors.onSurface)
+
+                            Spacer()
+
+                            Text(String(\.settings_about_github))
+                                .textStyle(theme.typography.bodyLarge)
+                                .foregroundColor(theme.colors.secondary)
+                        }
+                        .padding(.horizontal, theme.spacing.medium)
+                        .padding(.vertical, theme.spacing.medium)
+                    }
+                    .buttonStyle(.plain)
+
+                    Divider()
+                        .overlay(theme.colors.outline)
+
+                    Spacer()
+                        .frame(height: 80)
+                }
+            }
+
+            Text(String(\.settings_about_api_disclaimer))
+                .textStyle(theme.typography.bodySmall)
+                .foregroundColor(theme.colors.onSurfaceVariant)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, theme.spacing.large)
+                .padding(.vertical, theme.spacing.large)
+                .frame(maxWidth: .infinity)
+                .background(theme.colors.surface)
+        }
+        .frame(maxWidth: .infinity)
+        .background(theme.colors.surface)
+        .presentationDetents([.large])
     }
 
     private func imageQualityTitle(for quality: SwiftImageQuality) -> String {
