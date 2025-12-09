@@ -1,11 +1,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-  <style name="NightAdjusted.Theme.TvManiac" parent="android:Theme.Material.Light.NoActionBar" />
+  <style name="NightAdjusted.Theme.TvManiac" parent="android:Theme.Material.Light.NoActionBar">
+    <item name="android:windowBackground">@color/splash_background</item>
+  </style>
 
   <!-- The final theme we use -->
   <style name="Theme.TvManiac" parent="NightAdjusted.Theme.TvManiac" />
 
   <style name="NightAdjusted.Theme.Splash" parent="Theme.SplashScreen">
+    <item name="windowSplashScreenBackground">@color/splash_background</item>
     <item name="android:windowLightStatusBar">true</item>
     <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
   </style>
