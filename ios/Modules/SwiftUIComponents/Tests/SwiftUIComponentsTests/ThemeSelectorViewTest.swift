@@ -49,6 +49,27 @@ class ThemeSelectorViewTest: SnapshotTestCase {
                 accentColor: TvManiacColorScheme.aqua.secondary,
                 onAccentColor: TvManiacColorScheme.aqua.onSecondary
             ),
+            ThemeItemModel(
+                id: "amber",
+                displayName: "Amber",
+                backgroundColor: TvManiacColorScheme.amber.background,
+                accentColor: TvManiacColorScheme.amber.secondary,
+                onAccentColor: TvManiacColorScheme.amber.onSecondary
+            ),
+            ThemeItemModel(
+                id: "snow",
+                displayName: "Snow",
+                backgroundColor: TvManiacColorScheme.snow.background,
+                accentColor: TvManiacColorScheme.snow.secondary,
+                onAccentColor: TvManiacColorScheme.snow.onSecondary
+            ),
+            ThemeItemModel(
+                id: "crimson",
+                displayName: "Crimson",
+                backgroundColor: TvManiacColorScheme.crimson.background,
+                accentColor: TvManiacColorScheme.crimson.secondary,
+                onAccentColor: TvManiacColorScheme.crimson.onSecondary
+            ),
         ]
 
         ThemeSelectorView(

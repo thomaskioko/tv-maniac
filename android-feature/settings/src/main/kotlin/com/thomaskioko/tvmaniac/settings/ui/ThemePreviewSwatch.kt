@@ -30,10 +30,13 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.theme.AmberColorScheme
 import com.thomaskioko.tvmaniac.compose.theme.AquaColorScheme
 import com.thomaskioko.tvmaniac.compose.theme.AutumnColorScheme
+import com.thomaskioko.tvmaniac.compose.theme.CrimsonColorScheme
 import com.thomaskioko.tvmaniac.compose.theme.DarkColorScheme
 import com.thomaskioko.tvmaniac.compose.theme.LightColorScheme
+import com.thomaskioko.tvmaniac.compose.theme.SnowColorScheme
 import com.thomaskioko.tvmaniac.compose.theme.TerminalColorScheme
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 
@@ -225,6 +228,21 @@ private fun ThemeModel.getPreviewColors(): ThemePreviewColors {
             accent = AquaColorScheme.secondary,
             onAccent = AquaColorScheme.onSecondary,
         )
+        ThemeModel.AMBER -> ThemePreviewColors(
+            background = AmberColorScheme.background,
+            accent = AmberColorScheme.secondary,
+            onAccent = AmberColorScheme.onSecondary,
+        )
+        ThemeModel.SNOW -> ThemePreviewColors(
+            background = SnowColorScheme.background,
+            accent = SnowColorScheme.secondary,
+            onAccent = SnowColorScheme.onSecondary,
+        )
+        ThemeModel.CRIMSON -> ThemePreviewColors(
+            background = CrimsonColorScheme.background,
+            accent = CrimsonColorScheme.secondary,
+            onAccent = CrimsonColorScheme.onSecondary,
+        )
     }
 }
 
@@ -243,6 +261,12 @@ private class ThemeSwatchPreviewProvider : PreviewParameterProvider<Pair<ThemeMo
             ThemeModel.AUTUMN to true,
             ThemeModel.AQUA to false,
             ThemeModel.AQUA to true,
+            ThemeModel.AMBER to false,
+            ThemeModel.AMBER to true,
+            ThemeModel.SNOW to false,
+            ThemeModel.SNOW to true,
+            ThemeModel.CRIMSON to false,
+            ThemeModel.CRIMSON to true,
         )
 }
 

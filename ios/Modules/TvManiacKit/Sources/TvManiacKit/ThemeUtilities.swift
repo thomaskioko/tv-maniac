@@ -16,7 +16,7 @@ public enum DeviceAppTheme: String, CaseIterable, ThemeItem {
         rawValue
     }
 
-    case system, light, dark, terminal, autumn, aqua
+    case system, light, dark, terminal, autumn, aqua, amber, snow, crimson
 
     public var overrideTheme: ColorScheme? {
         switch self {
@@ -24,7 +24,7 @@ public enum DeviceAppTheme: String, CaseIterable, ThemeItem {
             nil
         case .light, .autumn:
             .light
-        case .dark, .terminal, .aqua:
+        case .dark, .terminal, .aqua, .amber, .snow, .crimson:
             .dark
         }
     }
@@ -43,6 +43,12 @@ public enum DeviceAppTheme: String, CaseIterable, ThemeItem {
             AutumnTheme()
         case .aqua:
             AquaTheme()
+        case .amber:
+            AmberTheme()
+        case .snow:
+            SnowTheme()
+        case .crimson:
+            CrimsonTheme()
         }
     }
 
@@ -60,6 +66,12 @@ public enum DeviceAppTheme: String, CaseIterable, ThemeItem {
             String(\.settings_theme_autumn)
         case .aqua:
             String(\.settings_theme_aqua)
+        case .amber:
+            String(\.settings_theme_amber)
+        case .snow:
+            String(\.settings_theme_snow)
+        case .crimson:
+            String(\.settings_theme_crimson)
         }
     }
 
@@ -93,6 +105,12 @@ public enum DeviceAppTheme: String, CaseIterable, ThemeItem {
             TvManiacColorScheme.autumn
         case .aqua:
             TvManiacColorScheme.aqua
+        case .amber:
+            TvManiacColorScheme.amber
+        case .snow:
+            TvManiacColorScheme.snow
+        case .crimson:
+            TvManiacColorScheme.crimson
         }
     }
 
@@ -109,7 +127,7 @@ public enum DeviceAppTheme: String, CaseIterable, ThemeItem {
     }
 
     public static var sortedThemes: [DeviceAppTheme] {
-        [.system, .light, .dark, .terminal, .autumn, .aqua]
+        [.system, .light, .dark, .autumn, .aqua, .amber, .snow, .terminal, .crimson]
     }
 }
 
@@ -126,6 +144,12 @@ public extension AppTheme {
             .autumn
         case .aquaTheme:
             .aqua
+        case .amberTheme:
+            .amber
+        case .snowTheme:
+            .snow
+        case .crimsonTheme:
+            .crimson
         case .systemTheme:
             .system
         default:
@@ -147,6 +171,12 @@ public extension ThemeModel {
             .autumn
         case .aqua:
             .aqua
+        case .amber:
+            .amber
+        case .snow:
+            .snow
+        case .crimson:
+            .crimson
         case .system:
             .system
         default:
@@ -170,6 +200,12 @@ public extension DeviceAppTheme {
             TvManiacColorScheme.autumn.background
         case .aqua:
             TvManiacColorScheme.aqua.background
+        case .amber:
+            TvManiacColorScheme.amber.background
+        case .snow:
+            TvManiacColorScheme.snow.background
+        case .crimson:
+            TvManiacColorScheme.crimson.background
         }
     }
 
@@ -187,6 +223,12 @@ public extension DeviceAppTheme {
             .autumnTheme
         case .aqua:
             .aquaTheme
+        case .amber:
+            .amberTheme
+        case .snow:
+            .snowTheme
+        case .crimson:
+            .crimsonTheme
         }
     }
 
@@ -204,6 +246,12 @@ public extension DeviceAppTheme {
             .autumn
         case .aqua:
             .aqua
+        case .amber:
+            .amber
+        case .snow:
+            .snow
+        case .crimson:
+            .crimson
         }
     }
 }

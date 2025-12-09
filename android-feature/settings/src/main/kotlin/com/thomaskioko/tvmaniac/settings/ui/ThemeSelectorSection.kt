@@ -30,7 +30,7 @@ internal fun ThemeSelectorSection(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .height(200.dp),
+            .height(300.dp),
     ) {
         items(
             items = ThemeModel.sortedByDisplayOrder,
