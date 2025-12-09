@@ -34,6 +34,7 @@ kotlin {
                 implementation(projects.data.traktauth.testing)
                 implementation(projects.data.user.testing)
                 implementation(projects.core.logger.testing)
+                implementation(projects.i18n.testing)
 
                 implementation(libs.bundles.unittest)
             }

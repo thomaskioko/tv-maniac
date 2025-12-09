@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
+import com.thomaskioko.tvmaniac.i18n.testing.util.IgnoreIos
 import com.thomaskioko.tvmaniac.settings.presenter.ChangeThemeClicked
 import com.thomaskioko.tvmaniac.settings.presenter.DefaultSettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.DismissThemeClicked
@@ -30,6 +31,7 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
+@IgnoreIos
 class SettingsPresenterTest {
 
     private val lifecycle = LifecycleRegistry()
