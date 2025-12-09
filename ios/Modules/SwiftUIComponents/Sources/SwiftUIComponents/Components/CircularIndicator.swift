@@ -115,7 +115,7 @@ public struct CircularIndicator: View {
     @ViewBuilder
     private func indicatorDot(for _: Int, isActive: Bool) -> some View {
         if isActive {
-            ProgressIndicatorBar(progress: indicatorProgress, activeColor: theme.colors.onPrimary)
+            ProgressIndicatorBar(progress: indicatorProgress, activeColor: theme.colors.onSurface)
         } else {
             Circle()
                 .fill(theme.colors.onSurfaceVariant.opacity(0.4))

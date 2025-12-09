@@ -134,14 +134,14 @@ struct DiscoverTab: View {
         VStack(alignment: .leading) {
             Text(selectedShow?.title ?? "")
                 .textStyle(theme.typography.headlineLarge)
-                .foregroundColor(theme.colors.onPrimary)
+                .foregroundColor(theme.colors.onSurface)
                 .lineLimit(1)
                 .frame(maxWidth: .infinity, alignment: .center)
 
             if let overview = selectedShow?.overview {
                 Text(overview)
                     .textStyle(theme.typography.bodyLarge)
-                    .foregroundColor(theme.colors.onPrimary)
+                    .foregroundColor(theme.colors.onSurface.opacity(0.9))
                     .multilineTextAlignment(.leading)
                     .lineLimit(4)
             }
@@ -158,17 +158,19 @@ struct DiscoverTab: View {
             LinearGradient(
                 gradient: Gradient(
                     colors: [
-                        Color.black,
-                        Color.black.opacity(0.8),
-                        Color.black.opacity(0.8),
-                        Color.black.opacity(0.8),
+                        theme.colors.background,
+                        theme.colors.background,
+                        theme.colors.background,
+                        theme.colors.background.opacity(0.9),
+                        theme.colors.background.opacity(0.7),
+                        theme.colors.background.opacity(0.4),
                         .clear,
                     ]
                 ),
                 startPoint: .bottom,
                 endPoint: .top
             )
-            .frame(height: 550)
+            .frame(height: 280)
             .allowsHitTesting(false)
         )
     }
