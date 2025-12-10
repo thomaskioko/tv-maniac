@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.presenter.showdetails.model
 
-data class ShowModel(
+public data class ShowModel(
     val tmdbId: Long,
     val title: String,
     val posterImageUrl: String?,
