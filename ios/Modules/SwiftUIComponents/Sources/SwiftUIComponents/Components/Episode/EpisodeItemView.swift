@@ -69,7 +69,7 @@ public struct EpisodeItemView: View {
 
             Text(episodeOverView)
                 .textStyle(theme.typography.bodySmall)
-                .foregroundColor(theme.colors.onSurfaceVariant)
+                .foregroundColor(theme.colors.onSurface)
                 .lineSpacing(theme.spacing.xxSmall)
                 .lineLimit(4)
                 .multilineTextAlignment(.leading)

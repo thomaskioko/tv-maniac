@@ -114,7 +114,7 @@ internal fun UnauthenticatedContent(
                 shape = ButtonDefaults.shape,
                 buttonColors = ButtonDefaults.buttonColors(
                     contentColor = MaterialTheme.colorScheme.onSecondary,
-                    containerColor = MaterialTheme.colorScheme.primary,
+                    containerColor = MaterialTheme.colorScheme.secondary,
                 ),
                 content = {
                     Text(text = profile_sign_in_button.resolve(LocalContext.current))

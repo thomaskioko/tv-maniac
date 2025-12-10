@@ -1,7 +1,10 @@
 package com.thomaskioko.tvmaniac.app
 
+import android.animation.ObjectAnimator
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -11,13 +14,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import com.thomaskioko.tvmaniac.RootScreen
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.inject.ActivityComponent
-import com.thomaskioko.tvmaniac.navigation.ThemeState
 
 class MainActivity : ComponentActivity() {
     private lateinit var component: ActivityComponent
@@ -33,45 +36,58 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
 
+        splashScreen.setOnExitAnimationListener { splashScreenView ->
+            val scaleX = ObjectAnimator.ofFloat(splashScreenView.iconView, View.SCALE_X, 1f, 0f)
+            val scaleY = ObjectAnimator.ofFloat(splashScreenView.iconView, View.SCALE_Y, 1f, 0f)
+            val alpha = ObjectAnimator.ofFloat(splashScreenView.view, View.ALPHA, 1f, 0f)
+
+            listOf(scaleX, scaleY, alpha).forEach { animator ->
+                animator.interpolator = AccelerateDecelerateInterpolator()
+                animator.duration = 300L
+            }
+
+            alpha.doOnEnd { splashScreenView.remove() }
+
+            scaleX.start()
+            scaleY.start()
+            alpha.start()
+        }
+
         setContent {
             val themeState by component.rootPresenter.themeState.collectAsState()
-            val darkTheme = shouldUseDarkTheme(themeState)
+            val appTheme = themeState.appTheme
+            val useDarkTheme = shouldUseDarkTheme(appTheme)
 
             splashScreen.setKeepOnScreenCondition { themeState.isFetching }
 
-            DisposableEffect(darkTheme) {
+            DisposableEffect(useDarkTheme) {
                 enableEdgeToEdge(
                     statusBarStyle = SystemBarStyle.Companion.auto(
                         Color.TRANSPARENT,
                         Color.TRANSPARENT,
                     ) {
-                        darkTheme
+                        useDarkTheme
                     },
                     navigationBarStyle = SystemBarStyle.Companion.auto(
                         lightScrim,
                         darkScrim,
                     ) {
-                        darkTheme
+                        useDarkTheme
                     },
                 )
                 onDispose {}
             }
 
-            TvManiacTheme(darkTheme = darkTheme) { RootScreen(rootPresenter = component.rootPresenter) }
+            TvManiacTheme(appTheme = appTheme) { RootScreen(rootPresenter = component.rootPresenter) }
         }
     }
 }
 
-/**
- * Returns `true` if dark theme should be used, as a function of the [uiState] and the current
- * system context.
- */
 @Composable
-private fun shouldUseDarkTheme(uiState: ThemeState): Boolean {
-    return when (uiState.appTheme) {
-        AppTheme.LIGHT_THEME -> false
-        AppTheme.DARK_THEME -> true
+private fun shouldUseDarkTheme(appTheme: AppTheme): Boolean {
+    return when (appTheme) {
         AppTheme.SYSTEM_THEME -> isSystemInDarkTheme()
+        else -> appTheme.isDark
     }
 }
 

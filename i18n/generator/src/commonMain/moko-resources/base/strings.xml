@@ -39,6 +39,7 @@
     <string name="label_settings_change_theme">Change Theme</string>
     <string name="label_settings_section_trakt_account">Trakt Account</string>
     <string name="label_settings_section_app_theme">App Theme</string>
+    <string name="label_settings_section_appearance">Appearance</string>
     <string name="label_settings_section_behavior">Behavior</string>
     <string name="label_settings_section_info">Info</string>
     <string name="label_settings_youtube">Trailers</string>
@@ -141,6 +142,25 @@
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_dark">Dark</string>
     <string name="settings_theme_system">System</string>
+    <string name="settings_theme_terminal">Terminal</string>
+    <string name="settings_theme_autumn">Autumn</string>
+    <string name="settings_theme_aqua">Aqua</string>
+    <string name="settings_theme_amber">Amber</string>
+    <string name="settings_theme_snow">Snow</string>
+    <string name="settings_theme_crimson">Crimson</string>
+
+    <string name="settings_theme_system_description">Follows device settings</string>
+    <string name="settings_theme_light_description">Bright and clean</string>
+    <string name="settings_theme_dark_description">Easy on the eyes</string>
+    <string name="settings_theme_terminal_description">Classic terminal aesthetic</string>
+    <string name="settings_theme_autumn_description">Warm autumn colors</string>
+    <string name="settings_theme_aqua_description">Cool aqua tones</string>
+    <string name="settings_theme_amber_description">Classic amber CRT</string>
+    <string name="settings_theme_snow_description">Monochrome white display</string>
+    <string name="settings_theme_crimson_description">Rare red phosphor</string>
+
+    <string name="settings_theme_selector_title">App Theme</string>
+    <string name="settings_theme_selector_subtitle">Choose how TvManiac looks to you</string>
 
 
     <string name="trakt_sync">Sync shows that you are watching.</string>
@@ -154,7 +174,14 @@
     <string name="trakt_dialog_logout_message">Are you sure you want to logout? Don\'t worry, you will still have your content stored on your device.</string>
 
     <string name="settings_theme_description">Choose between light and dark color palettes for backgrounds, headers and text.</string>
-    <string name="settings_about_description">Tv-Maniac is a Multiplatform app (Android &amp; iOS) for viewing TV Shows from Trakt.</string>
+    <string name="settings_about_description">TvManiac is a beautifully crafted Kotlin Multiplatform app for discovering and tracking your favorite TV shows. Browse trending, popular, and top-rated shows, manage your watchlist, track episodes you\'ve watched, and sync everything with your Trakt account across Android and iOS.</string>
+    <string name="settings_about_api_disclaimer">This product uses the TMDB and Trakt API but is not endorsed or certified by either.</string>
+    <string name="settings_about_app_name">TvManiac</string>
+    <string name="settings_about_version">Version %s</string>
+    <string name="settings_about_github">GitHub</string>
+    <string name="settings_about_source_code">Source Code</string>
+    <string name="settings_about_website">Website</string>
+    <string name="settings_about_section_title">About</string>
     <string name="trakt_description">Trakt is a platform that does many things, but primarily keeps track of TV shows and movies you watch.</string>
     <string name="settings_trakt_detail_description">You are about to be redirected to your browser and outside of TvManiac app, where you will be taken to the Trakt website. From there, you will need to authorise TvManiac access to your Trakt account in order to make use of the Trakt functionality around the app. After you authorize, you will return to the app and you can continue with business as usual.</string>
 

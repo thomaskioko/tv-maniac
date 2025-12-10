@@ -7,9 +7,7 @@ import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
-import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
-import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
@@ -47,13 +45,13 @@ class DefaultSettingsPresenter(
         _state,
         datastoreRepository.observeImageQuality(),
         datastoreRepository.observeTheme(),
+        datastoreRepository.observeOpenTrailersInYoutube(),
         traktAuthRepository.state,
-        logoutState.observable,
-    ) { currentState: SettingsState, imageQuality: ImageQuality, theme: AppTheme, authState: TraktAuthState, _: Boolean ->
-
+    ) { currentState, imageQuality, appTheme, openInYoutube, authState ->
         currentState.copy(
             imageQuality = imageQuality,
-            appTheme = theme,
+            theme = appTheme.toThemeModel(),
+            openTrailersInYoutube = openInYoutube,
             isAuthenticated = authState == TraktAuthState.LOGGED_IN,
         )
     }.stateIn(
@@ -66,7 +64,7 @@ class DefaultSettingsPresenter(
         when (action) {
             ChangeThemeClicked, DismissThemeClicked -> updateThemeDialogState()
             DismissTraktDialog, ShowTraktDialog -> updateTrackDialogState()
-            ShowImageQualityDialog, DismissImageQualityDialog -> updateImageQualityDialogState()
+            ShowAboutDialog, DismissAboutDialog -> updateAboutDialogState()
             BackClicked -> backClicked()
             TraktLogoutClicked -> {
                 coroutineScope.launch {
@@ -77,14 +75,19 @@ class DefaultSettingsPresenter(
             }
 
             is ThemeSelected -> {
-                datastoreRepository.saveTheme(action.appTheme)
+                datastoreRepository.saveTheme(action.theme.toAppTheme())
                 updateThemeDialogState()
             }
 
             is ImageQualitySelected -> {
                 coroutineScope.launch {
                     datastoreRepository.saveImageQuality(action.quality)
-                    updateImageQualityDialogState()
+                }
+            }
+
+            is YoutubeToggled -> {
+                coroutineScope.launch {
+                    datastoreRepository.saveOpenTrailersInYoutube(action.enabled)
                 }
             }
         }
@@ -98,8 +101,8 @@ class DefaultSettingsPresenter(
         coroutineScope.launch { _state.update { state -> state.copy(showTraktDialog = !state.showTraktDialog) } }
     }
 
-    private fun updateImageQualityDialogState() {
-        coroutineScope.launch { _state.update { state -> state.copy(showImageQualityDialog = !state.showImageQualityDialog) } }
+    private fun updateAboutDialogState() {
+        coroutineScope.launch { _state.update { state -> state.copy(showAboutDialog = !state.showAboutDialog) } }
     }
 }
 

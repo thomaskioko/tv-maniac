@@ -79,7 +79,7 @@ struct WatchlistTab: View {
         )
         .disableAutocorrection(true)
         .textInputAutocapitalization(.never)
-        .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
+        .toolbarBackground(theme.colors.surface, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
     }
 
@@ -96,7 +96,6 @@ struct WatchlistTab: View {
         HStack {
             Text(String(\.label_tab_watchlist))
                 .textStyle(theme.typography.titleMedium)
-                .fontWeight(.semibold)
                 .lineLimit(1)
                 .foregroundColor(theme.colors.onSurface)
             Button {
@@ -105,7 +104,6 @@ struct WatchlistTab: View {
                 }
             } label: {
                 Image(systemName: "chevron.down.circle.fill")
-                    .fontWeight(.bold)
                     .textStyle(theme.typography.labelSmall)
                     .foregroundColor(theme.colors.onSurfaceVariant)
                     .rotationEffect(.degrees(isRotating))

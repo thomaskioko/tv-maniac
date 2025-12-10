@@ -34,6 +34,7 @@ val similarShowList = listOf(
         poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         backdrop_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         in_library = 0,
+        show_id = Id(18495),
     ),
 )
 
@@ -70,6 +71,7 @@ val recommendedShowList = listOf(
         poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         backdrop_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         in_library = 0,
+        show_id = Id(18495),
     ),
 )
 
@@ -78,5 +80,6 @@ val watchProviderList = listOf(
         id = Id(184958),
         name = "Netflix",
         logo_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+        tmdb_id = Id(18495),
     ),
 )

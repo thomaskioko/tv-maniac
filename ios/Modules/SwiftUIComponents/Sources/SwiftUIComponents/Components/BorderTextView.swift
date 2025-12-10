@@ -44,7 +44,6 @@ public struct BorderTextView: View {
             Text(text)
                 .padding(theme.spacing.xxSmall)
                 .textStyle(theme.typography.labelMedium)
-                .fontWeight(weight)
                 .foregroundColor(resolvedColor)
                 .background(
                     RoundedRectangle(cornerRadius: resolvedCornerRadius)

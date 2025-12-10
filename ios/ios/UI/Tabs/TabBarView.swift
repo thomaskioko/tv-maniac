@@ -40,7 +40,8 @@ public struct TabBarView: View {
             }
         }
         .tint(theme.colors.accent)
-        .appTheme()
+        .toolbarBackground(theme.colors.surface, for: .tabBar)
+        .toolbarBackground(.visible, for: .tabBar)
         .onChange(of: selectedTab) { newTab in
             switch newTab {
             case .discover: presenter.onDiscoverClicked()

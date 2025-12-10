@@ -29,7 +29,7 @@ public struct StatsCardItem<Content: View>: View {
                     .foregroundColor(theme.colors.accent)
 
                 Text(title)
-                    .textStyle(theme.typography.bodyMedium)
+                    .textStyle(theme.typography.titleMedium)
                     .foregroundColor(theme.colors.onSurface)
 
                 Spacer()
@@ -78,34 +78,28 @@ public struct StatsCardItem<Content: View>: View {
                     VStack(spacing: theme.spacing.xxSmall) {
                         Text("14")
                             .textStyle(theme.typography.titleMedium)
-                            .fontWeight(.semibold)
                             .foregroundColor(theme.colors.onSurface)
 
                         Text("MONTHS")
-                            .textStyle(theme.typography.labelMedium)
-                            .fontWeight(.medium)
+                            .textStyle(theme.typography.bodySmall)
                             .foregroundColor(theme.colors.onSurface)
                     }
                     VStack(spacing: theme.spacing.xxSmall) {
                         Text("45")
                             .textStyle(theme.typography.titleMedium)
-                            .fontWeight(.semibold)
                             .foregroundColor(theme.colors.onSurface)
 
                         Text("DAYS")
-                            .textStyle(theme.typography.labelMedium)
-                            .fontWeight(.medium)
+                            .textStyle(theme.typography.bodySmall)
                             .foregroundColor(theme.colors.onSurface)
                     }
                     VStack(spacing: theme.spacing.xxSmall) {
                         Text("12")
                             .textStyle(theme.typography.titleMedium)
-                            .fontWeight(.semibold)
                             .foregroundColor(theme.colors.onSurface)
 
                         Text("HOURS")
-                            .textStyle(theme.typography.labelMedium)
-                            .fontWeight(.medium)
+                            .textStyle(theme.typography.bodySmall)
                             .foregroundColor(theme.colors.onSurface)
                     }
                 }
@@ -118,7 +112,6 @@ public struct StatsCardItem<Content: View>: View {
                 VStack(spacing: 0) {
                     Text("5,123")
                         .textStyle(theme.typography.titleMedium)
-                        .fontWeight(.semibold)
                         .foregroundColor(theme.colors.onSurface)
                         .frame(maxWidth: .infinity)
                 }.padding(theme.spacing.xSmall)

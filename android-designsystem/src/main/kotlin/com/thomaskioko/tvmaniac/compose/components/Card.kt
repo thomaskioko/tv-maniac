@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.compose.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +22,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
@@ -116,53 +118,61 @@ fun PosterBackdropCard(
     textAlign: TextAlign = TextAlign.Start,
     contentScale: ContentScale = ContentScale.Crop,
     imageWidth: Dp = 120.dp,
-    darkTheme: Boolean = true,
     shape: Shape = MaterialTheme.shapes.small,
     onClick: () -> Unit,
 ) {
+    val surface = MaterialTheme.colorScheme.surface
+    val overlayGradient = listOf(
+        Color.Transparent,
+        surface.copy(alpha = 0.4f),
+        surface.copy(alpha = 0.7f),
+        surface.copy(alpha = 0.9f),
+        surface,
+    )
+
     PosterCard(
         modifier = modifier,
         shape = shape,
         imageWidth = imageWidth,
         onClick = onClick,
         content = {
-            TvManiacTheme(darkTheme = darkTheme) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    PlaceholderContent(
-                        modifier = Modifier.align(Alignment.Center),
-                        imageUrl = imageUrl,
-                        imageSize = 84.dp,
-                    )
+            Box(modifier = Modifier.fillMaxSize()) {
+                PlaceholderContent(
+                    modifier = Modifier.align(Alignment.Center),
+                    imageUrl = imageUrl,
+                    imageSize = 84.dp,
+                )
 
-                    AsyncImageComposable(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .aspectRatio(2 / 3f),
-                        model = imageUrl,
-                        contentScale = contentScale,
-                        contentDescription = stringResource(cd_show_poster.resourceId, title),
-                        alignment = Alignment.Center,
-                    )
+                AsyncImageComposable(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .aspectRatio(2 / 3f),
+                    model = imageUrl,
+                    contentScale = contentScale,
+                    contentDescription = stringResource(cd_show_poster.resourceId, title),
+                    alignment = Alignment.Center,
+                )
 
-                    Spacer(
-                        Modifier
-                            .matchParentSize()
-                            .drawForegroundGradientScrim(MaterialTheme.colorScheme.background),
-                    )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(80.dp)
+                        .align(Alignment.BottomCenter)
+                        .background(Brush.verticalGradient(overlayGradient)),
+                )
 
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        textAlign = textAlign,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                            .align(Alignment.BottomStart),
-                    )
-                }
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = textAlign,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .align(Alignment.BottomStart),
+                )
             }
         },
     )

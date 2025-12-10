@@ -6,7 +6,6 @@
 //  Copyright © 2023 orgName. All rights reserved.
 //
 
-import SDWebImageSwiftUI
 import SwiftUI
 
 public struct TransparentImageBackground: View {
@@ -19,24 +18,17 @@ public struct TransparentImageBackground: View {
     }
 
     public var body: some View {
-        if let imageUrl {
-            ZStack {
-                WebImage(
-                    url: URL(string: imageUrl.transformedImageURL)
-                ) { image in
-                    image.resizable()
-                } placeholder: {
-                    Rectangle()
-                        .fill(theme.colors.background)
-                        .ignoresSafeArea()
-                        .padding(.zero)
-                }
-                .aspectRatio(contentMode: .fill)
+        CachedAsyncImage(url: imageUrl) { image in
+            image.resizable()
+        } placeholder: {
+            Rectangle()
+                .fill(theme.colors.background)
                 .ignoresSafeArea()
                 .padding(.zero)
-                .transition(.opacity)
-            }
         }
+        .aspectRatio(contentMode: .fill)
+        .ignoresSafeArea()
+        .padding(.zero)
     }
 }
 

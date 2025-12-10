@@ -79,9 +79,11 @@ class WatchProvidersStore(
         writeDispatcher = dispatchers.databaseWrite,
     ),
 ).validator(
-    Validator.by {
+    Validator.by { cachedData ->
         withContext(dispatchers.io) {
-            requestManagerRepository.isRequestValid(
+            val showId = cachedData.firstOrNull()?.tmdb_id?.id ?: return@withContext false
+            !requestManagerRepository.isRequestExpired(
+                entityId = showId,
                 requestType = WATCH_PROVIDERS.name,
                 threshold = WATCH_PROVIDERS.duration,
             )

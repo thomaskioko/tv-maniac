@@ -32,7 +32,6 @@ struct WatchlistListItem: View {
             VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
                 Text(item.title)
                     .textStyle(theme.typography.titleMedium)
-                    .fontWeight(.semibold)
                     .foregroundColor(theme.colors.onSurface)
                     .lineLimit(1)
 

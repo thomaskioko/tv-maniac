@@ -1,4 +1,3 @@
-import SDWebImageSwiftUI
 import SwiftUI
 
 public struct AvatarView: View {
@@ -24,27 +23,22 @@ public struct AvatarView: View {
     public var body: some View {
         let resolvedBorderColor = borderColor ?? theme.colors.onPrimary
 
-        Group {
-            if let avatarUrl, !avatarUrl.isEmpty, let url = URL(string: avatarUrl) {
-                WebImage(url: url) { image in
-                    image
-                        .resizable()
-                        .scaledToFill()
-                } placeholder: {
-                    placeholderView(resolvedBorderColor)
-                }
-                .indicator(.activity)
-                .transition(.fade(duration: 0.3))
-                .frame(width: size, height: size)
-                .clipShape(Circle())
-                .overlay(
-                    Circle()
-                        .stroke(resolvedBorderColor, lineWidth: borderWidth)
-                )
-            } else {
-                placeholderView(resolvedBorderColor)
-            }
+        CachedAsyncImage(
+            url: avatarUrl,
+            showIndicator: true
+        ) { image in
+            image
+                .resizable()
+                .scaledToFill()
+        } placeholder: {
+            placeholderView(resolvedBorderColor)
         }
+        .frame(width: size, height: size)
+        .clipShape(Circle())
+        .overlay(
+            Circle()
+                .stroke(resolvedBorderColor, lineWidth: borderWidth)
+        )
     }
 
     private func placeholderView(_ borderColor: Color) -> some View {

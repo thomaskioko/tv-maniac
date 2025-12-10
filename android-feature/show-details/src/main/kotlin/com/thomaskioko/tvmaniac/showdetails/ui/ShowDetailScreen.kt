@@ -61,8 +61,9 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -348,7 +349,7 @@ fun LazyColumnContent(
         }
 
         item {
-            if (!detailsContent.isRefreshing && detailsContent.message != null) {
+            if (!detailsContent.isRefreshing && detailsContent.showDetails == ShowDetailsModel.Empty && detailsContent.message != null) {
                 ErrorUi(
                     modifier = Modifier
                         .fillMaxSize()
@@ -408,8 +409,11 @@ private fun HeaderContent(
     onUpdateFavoriteClicked: (Boolean) -> Unit,
     onAddToListClicked: () -> Unit,
 ) {
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
-    val headerHeight = screenHeight / 1.5f
+    val density = LocalDensity.current
+    val containerHeight = with(density) {
+        LocalWindowInfo.current.containerSize.height.toDp()
+    }
+    val headerHeight = containerHeight / 1.5f
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -654,7 +658,7 @@ fun ShowDetailButtons(
             shape = MaterialTheme.shapes.medium,
             text = btn_add_to_list.resolve(context),
             imageVector = Icons.Outlined.AutoAwesomeMotion,
-            containerColor = Color.Gray,
+            containerColor = MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.labelMedium,
             onClick = onAddToList,
         )

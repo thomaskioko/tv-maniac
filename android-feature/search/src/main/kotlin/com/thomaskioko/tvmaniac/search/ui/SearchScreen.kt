@@ -311,7 +311,6 @@ private fun GenreContent(
             items(genres) { showGenre ->
 
                 PosterBackdropCard(
-                    darkTheme = true,
                     textAlign = TextAlign.Center,
                     imageUrl = showGenre.posterUrl,
                     title = showGenre.name,

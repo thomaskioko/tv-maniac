@@ -52,10 +52,7 @@ struct SearchTab: View {
         .textInputAutocapitalization(.never)
         .scrollContentBackground(.hidden)
         .toolbarBackground(.visible, for: .navigationBar)
-        .toolbarBackground(
-            theme.colors.background.opacity(0.9),
-            for: .navigationBar
-        )
+        .toolbarBackground(theme.colors.surface, for: .navigationBar)
     }
 
     @ViewBuilder
@@ -119,7 +116,6 @@ struct SearchTab: View {
             HStack {
                 Text(String(\.label_search_by_genre))
                     .textStyle(theme.typography.titleLarge)
-                    .fontWeight(.medium)
                 Spacer()
             }
         }

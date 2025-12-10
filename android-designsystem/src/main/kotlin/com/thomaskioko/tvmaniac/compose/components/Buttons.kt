@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.extensions.iconButtonBackgroundScrim
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 
 @Composable
 fun FilledTextButton(
@@ -326,10 +327,21 @@ fun ScrimButton(
     content: @Composable () -> Unit,
 ) {
     val isLight = color.luminance() > 0.5
-    TvManiacTheme(darkTheme = if (!show) isLight else !isLight) {
+    val scrimEnabled = !show
+    if (scrimEnabled) {
+        val appTheme = if (isLight) AppTheme.LIGHT_THEME else AppTheme.DARK_THEME
+        TvManiacTheme(appTheme = appTheme) {
+            IconButton(
+                onClick = onClick,
+                modifier = modifier.iconButtonBackgroundScrim(enabled = true, alpha = alpha),
+            ) {
+                content()
+            }
+        }
+    } else {
         IconButton(
             onClick = onClick,
-            modifier = modifier.iconButtonBackgroundScrim(enabled = !show, alpha = alpha),
+            modifier = modifier.iconButtonBackgroundScrim(enabled = false, alpha = alpha),
         ) {
             content()
         }

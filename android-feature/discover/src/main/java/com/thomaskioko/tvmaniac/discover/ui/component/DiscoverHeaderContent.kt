@@ -29,8 +29,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
@@ -72,8 +73,11 @@ internal fun PosterCardsPager(
     val memoizedOnClick = remember(onClick) { onClick }
     if (list.isEmpty()) return
 
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
-    val pagerHeight = screenHeight / 1.5f
+    val density = LocalDensity.current
+    val containerHeight = with(density) {
+        LocalWindowInfo.current.containerSize.height.toDp()
+    }
+    val pagerHeight = containerHeight / 1.5f
     Box {
         HorizontalPager(
             modifier = modifier
@@ -137,20 +141,29 @@ private fun ShowCardOverlay(
     title: String,
     overview: String?,
 ) {
+    val background = MaterialTheme.colorScheme.background
+    val overlayGradient = listOf(
+        Color.Transparent,
+        background.copy(alpha = 0.4f),
+        background.copy(alpha = 0.7f),
+        background.copy(alpha = 0.8f),
+        background.copy(alpha = 0.9f),
+        background,
+    )
+
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    listOf(Color.Transparent, Color.Black.copy(alpha = 0.8f)),
-                    startY = 500f,
-                    endY = 1000f,
-                ),
-            ),
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.BottomCenter,
     ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(220.dp)
+                .background(Brush.verticalGradient(overlayGradient)),
+        )
+
         Column(
             modifier = Modifier
-                .align(Alignment.BottomCenter)
                 .offset(y = -(20).dp)
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -158,7 +171,7 @@ private fun ShowCardOverlay(
             Text(
                 text = title,
                 style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.onSecondary,
+                color = MaterialTheme.colorScheme.onSurface,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
             )
@@ -169,7 +182,7 @@ private fun ShowCardOverlay(
                 ExpandingText(
                     text = overview,
                     textStyle = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onSecondary,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f),
                 )
             }
         }

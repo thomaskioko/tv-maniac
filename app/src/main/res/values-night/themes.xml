@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-  <style name="NightAdjusted.Theme.TvManiac" parent="android:Theme.Material.NoActionBar" />
+  <style name="NightAdjusted.Theme.TvManiac" parent="android:Theme.Material.NoActionBar">
+    <item name="android:windowBackground">@color/splash_background</item>
+  </style>
 
   <style name="NightAdjusted.Theme.Splash" parent="Theme.SplashScreen">
+    <item name="windowSplashScreenBackground">@color/splash_background</item>
     <item name="android:windowLightStatusBar">false</item>
     <item name="android:windowLightNavigationBar" tools:targetApi="27">false</item>
+  </style>
+
+  <style name="Theme.TvManiac.Splash" parent="NightAdjusted.Theme.Splash">
+    <item name="windowSplashScreenAnimatedIcon">@drawable/ic_app_launcher</item>
+    <item name="postSplashScreenTheme">@style/Theme.TvManiac</item>
   </style>
 
 </resources>

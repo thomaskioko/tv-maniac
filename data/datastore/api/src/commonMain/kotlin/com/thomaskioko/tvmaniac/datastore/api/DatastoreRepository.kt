@@ -58,4 +58,18 @@ interface DatastoreRepository {
      * @return A Flow of the current [ImageQuality], defaulting to MEDIUM.
      */
     fun observeImageQuality(): Flow<ImageQuality>
+
+    /**
+     * Saves the user's preference for opening trailers in the YouTube app.
+     *
+     * @param enabled Whether trailers should open in the YouTube app.
+     */
+    suspend fun saveOpenTrailersInYoutube(enabled: Boolean)
+
+    /**
+     * Observes the user's preference for opening trailers in the YouTube app.
+     *
+     * @return A Flow of Boolean, true if trailers should open in YouTube app, false otherwise.
+     */
+    fun observeOpenTrailersInYoutube(): Flow<Boolean>
 }

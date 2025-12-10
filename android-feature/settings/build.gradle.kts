@@ -4,6 +4,9 @@ plugins {
 
 scaffold {
     android {
+        explicitApi()
+        enableAndroidResources()
+
         useCompose()
         useRoborazzi()
     }
@@ -20,6 +23,8 @@ dependencies {
     implementation(projects.androidDesignsystem)
     implementation(projects.i18n.generator)
 
+    implementation(libs.androidx.browser)
+    implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.runtime)

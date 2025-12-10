@@ -6,7 +6,6 @@
 //  Copyright © 2023 orgName. All rights reserved.
 //
 
-import SDWebImageSwiftUI
 import SwiftUI
 
 public struct HeaderCoverArtWorkView: View {
@@ -27,20 +26,16 @@ public struct HeaderCoverArtWorkView: View {
     }
 
     public var body: some View {
-        if let imageUrl {
-            WebImage(
-                url: URL(string: imageUrl.transformedImageURL), options: .highPriority
-            ) { image in
-                image.resizable()
-            } placeholder: {
-                headerPosterPlaceholder
-            }
-            .aspectRatio(contentMode: .fill)
-            .transition(.opacity)
-            .frame(width: DimensionConstants.posterWidth, height: posterHeight)
-        } else {
+        CachedAsyncImage(
+            url: imageUrl,
+            priority: .high
+        ) { image in
+            image.resizable()
+        } placeholder: {
             headerPosterPlaceholder
         }
+        .aspectRatio(contentMode: .fill)
+        .frame(width: DimensionConstants.posterWidth, height: posterHeight)
     }
 
     @ViewBuilder

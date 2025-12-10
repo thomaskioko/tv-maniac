@@ -4,25 +4,36 @@ import TvManiac
 
 struct AppThemeModifier: ViewModifier {
     @Environment(\.colorScheme) private var colorScheme
-    @AppStorage("app.theme") private var appTheme: DeveiceAppTheme = .light
+    @ObservedObject private var store = SettingsAppStorage.shared
+
+    private var appTheme: DeviceAppTheme { store.appTheme }
 
     private var resolvedTheme: TvManiacTheme {
-        let effectiveScheme = appTheme.overrideTheme ?? colorScheme
-        return effectiveScheme == .dark ? DarkTheme() : LightTheme()
+        appTheme.designSystemTheme
     }
 
     func body(content: Content) -> some View {
         content
             .environment(\.colorScheme, appTheme.overrideTheme ?? colorScheme)
             .environment(\.tvManiacTheme, resolvedTheme)
+            .overlay(
+                ScanlineOverlay(
+                    color: resolvedTheme.scanlineConfig.color,
+                    lineHeight: resolvedTheme.scanlineConfig.lineHeight,
+                    opacity: resolvedTheme.scanlineConfig.opacity
+                )
+                .opacity(resolvedTheme.scanlineConfig.enabled ? 1 : 0)
+                .allowsHitTesting(false)
+                .ignoresSafeArea()
+            )
     }
 }
 
 struct AppTintModifier: ViewModifier {
-    @AppStorage("app.theme") private var appTheme: DeveiceAppTheme = .light
+    @ObservedObject private var store = SettingsAppStorage.shared
 
     func body(content: Content) -> some View {
         content
-            .tint(appTheme.toAppThemeColor())
+            .tint(store.appTheme.toAppThemeColor())
     }
 }
