@@ -33,7 +33,6 @@ public struct WatchlistSelector: View {
                         .frame(maxWidth: .infinity)
 
                         Text(title)
-                            .fontWeight(.semibold)
                             .textStyle(theme.typography.titleMedium)
                             .multilineTextAlignment(.center)
                     }
@@ -87,7 +86,6 @@ public struct WatchlistSelector: View {
             VStack {
                 Text(String(\.label_watchlist_create_custom_list))
                     .textStyle(theme.typography.titleLarge)
-                    .fontWeight(.bold)
                     .foregroundColor(theme.colors.onSurface)
                     .multilineTextAlignment(.center)
                     .padding([.horizontal], theme.spacing.xSmall)

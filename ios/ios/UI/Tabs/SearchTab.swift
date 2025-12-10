@@ -116,7 +116,6 @@ struct SearchTab: View {
             HStack {
                 Text(String(\.label_search_by_genre))
                     .textStyle(theme.typography.titleLarge)
-                    .fontWeight(.medium)
                 Spacer()
             }
         }

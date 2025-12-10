@@ -142,7 +142,6 @@ struct ProfileTab: View {
                         VStack(alignment: .leading, spacing: theme.spacing.xSmall) {
                             Text(userProfile.fullName ?? userProfile.username)
                                 .textStyle(theme.typography.titleLarge)
-                                .fontWeight(.bold)
                                 .foregroundColor(theme.colors.onPrimary)
 
                             Button(action: {
@@ -150,7 +149,6 @@ struct ProfileTab: View {
                             }) {
                                 Text(String(\.profile_edit_button))
                                     .textStyle(theme.typography.labelMedium)
-                                    .fontWeight(.semibold)
                                     .foregroundColor(theme.colors.onPrimary)
                                     .padding(.horizontal, 20)
                                     .padding(.vertical, theme.spacing.xSmall)
@@ -208,7 +206,6 @@ struct ProfileTab: View {
                         VStack(spacing: 0) {
                             Text(formatNumber(stats.episodesWatched))
                                 .textStyle(theme.typography.bodyMedium)
-                                .fontWeight(.medium)
                                 .foregroundColor(theme.colors.onSurface)
                                 .frame(maxWidth: .infinity)
                         }
@@ -225,12 +222,10 @@ struct ProfileTab: View {
         VStack(spacing: theme.spacing.xxSmall) {
             Text("\(value)")
                 .textStyle(theme.typography.titleMedium)
-                .fontWeight(.medium)
                 .foregroundColor(theme.colors.onSurface)
 
             Text(label)
-                .textStyle(theme.typography.labelMedium)
-                .fontWeight(.medium)
+                .textStyle(theme.typography.bodySmall)
                 .foregroundColor(theme.colors.onSurface)
         }
     }
@@ -251,7 +246,6 @@ struct ProfileTab: View {
 
                 Text(String(\.profile_unauthenticated_title))
                     .textStyle(theme.typography.headlineLarge)
-                    .fontWeight(.bold)
                     .foregroundColor(theme.colors.onSurface)
                     .lineSpacing(theme.spacing.xSmall)
                     .padding(.horizontal, 28)
@@ -298,7 +292,6 @@ struct ProfileTab: View {
                     }) {
                         Text(String(\.profile_sign_in_button))
                             .textStyle(theme.typography.bodyMedium)
-                            .fontWeight(.semibold)
                             .foregroundColor(theme.colors.onButtonBackground)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, theme.spacing.medium)
@@ -339,7 +332,6 @@ struct ProfileTab: View {
             VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
                 Text(title)
                     .textStyle(theme.typography.titleMedium)
-                    .fontWeight(.semibold)
                     .foregroundColor(theme.colors.onSurface)
 
                 Text(description)
