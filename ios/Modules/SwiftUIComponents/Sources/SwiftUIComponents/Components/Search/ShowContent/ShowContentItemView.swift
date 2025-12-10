@@ -76,7 +76,6 @@ private struct MetallicTitleView: View {
             Text(title)
                 .textStyle(theme.typography.titleSmall)
                 .lineLimit(DimensionConstants.lineLimit)
-                .fontWeight(.semibold)
                 .foregroundStyle(
                     .linearGradient(
                         colors: [
@@ -94,7 +93,6 @@ private struct MetallicTitleView: View {
                     Text(title)
                         .textStyle(theme.typography.titleSmall)
                         .lineLimit(DimensionConstants.lineLimit)
-                        .fontWeight(.semibold)
                         .foregroundStyle(
                             .linearGradient(
                                 colors: [

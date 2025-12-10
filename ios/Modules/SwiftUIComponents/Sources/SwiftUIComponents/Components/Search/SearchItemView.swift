@@ -39,7 +39,6 @@ public struct SearchItemView: View {
             VStack(alignment: .leading, spacing: theme.spacing.xxxSmall) {
                 Text(title)
                     .textStyle(theme.typography.titleMedium)
-                    .fontWeight(.medium)
                     .foregroundColor(theme.colors.onSurface)
                     .lineLimit(1)
                     .padding(.top, theme.spacing.xSmall)
@@ -74,7 +73,6 @@ public struct SearchItemView: View {
                     if let status, !status.isEmpty {
                         Text(status)
                             .textStyle(theme.typography.labelMedium)
-                            .fontWeight(.regular)
                             .foregroundColor(theme.colors.secondary)
                             .padding(.horizontal, theme.spacing.xxxSmall)
                             .background(theme.colors.secondary.opacity(0.08))
@@ -85,7 +83,6 @@ public struct SearchItemView: View {
                 if let overview, !overview.isEmpty {
                     Text(overview)
                         .textStyle(theme.typography.labelSmall)
-                        .fontWeight(.regular)
                         .foregroundColor(theme.colors.onSurface)
                         .lineLimit(2)
                         .padding(.vertical, theme.spacing.xxxSmall)

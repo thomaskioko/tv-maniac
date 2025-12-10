@@ -41,13 +41,11 @@ public struct FullScreenView: View {
                 .aspectRatio(contentMode: .fit)
                 .foregroundColor(color ?? theme.colors.accent)
                 .textStyle(theme.typography.titleLarge)
-                .fontWeight(.light)
                 .frame(width: 120, height: 120)
                 .padding(theme.spacing.medium)
 
             Text(message)
                 .textStyle(theme.typography.titleLarge)
-                .fontWeight(.bold)
                 .foregroundColor(theme.colors.onSurface)
                 .multilineTextAlignment(.center)
                 .padding([.horizontal], theme.spacing.xSmall)
