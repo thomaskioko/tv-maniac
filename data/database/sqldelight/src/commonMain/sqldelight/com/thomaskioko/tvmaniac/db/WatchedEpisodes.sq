@@ -179,3 +179,27 @@ INSERT OR REPLACE INTO watched_episodes(
 
 getByTraktId:
 SELECT * FROM watched_episodes WHERE trakt_id = ?;
+
+getEarliestUnwatchedEpisode:
+SELECT
+    tvshow.id AS show_id,
+    episode.id AS episode_id,
+    episode.title AS episode_name,
+    season.id AS season_id,
+    season.season_number,
+    episode.episode_number,
+    episode.runtime,
+    episode.image_url AS still_path,
+    episode.overview,
+    tvshow.name AS show_name,
+    tvshow.poster_path AS show_poster
+FROM episode
+INNER JOIN season ON episode.season_id = season.id
+INNER JOIN tvshow ON episode.show_id = tvshow.id
+LEFT JOIN watched_episodes AS we ON we.show_id = tvshow.id AND we.episode_id = episode.id
+WHERE episode.show_id = :show_id
+  AND we.episode_id IS NULL
+  AND (episode.air_date IS NULL OR episode.air_date <= date('now'))
+  AND (:include_specials = 1 OR season.season_number > 0)
+ORDER BY season.season_number ASC, episode.episode_number ASC
+LIMIT 1;

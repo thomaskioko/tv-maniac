@@ -21,6 +21,13 @@ INSERT OR REPLACE INTO watchlist(
 )
 VALUES( ?, ?);
 
+upsertIfNotExists:
+INSERT OR IGNORE INTO watchlist(
+    id,
+    created_at
+)
+VALUES(?, ?);
+
 watchlists:
 SELECT
     tvshow.id,
