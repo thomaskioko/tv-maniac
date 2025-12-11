@@ -72,4 +72,18 @@ interface DatastoreRepository {
      * @return A Flow of Boolean, true if trailers should open in YouTube app, false otherwise.
      */
     fun observeOpenTrailersInYoutube(): Flow<Boolean>
+
+    /**
+     * Saves the user's preference for including Season 0 (Specials) when marking seasons as watched.
+     *
+     * @param includeSpecials Whether to include Specials episodes when marking seasons.
+     */
+    suspend fun saveIncludeSpecials(includeSpecials: Boolean)
+
+    /**
+     * Observes the user's preference for including Specials when marking seasons as watched.
+     *
+     * @return A Flow of Boolean, true if Specials should be included, false otherwise. Defaults to false.
+     */
+    fun observeIncludeSpecials(): Flow<Boolean>
 }
