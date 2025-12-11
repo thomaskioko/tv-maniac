@@ -96,7 +96,7 @@
     <string name="btn_add_to_list">Ajouter à la liste</string>
     <string name="title_recommended">Recommandations</string>
     <string name="title_similar">Émissions similaires</string>
-    <string name="title_seasons">Parcourir les saisons</string>
+    <string name="title_seasons">Toutes saisons</string>
     <string name="title_season_overview">Aperçu</string>
     <string name="title_trailer">Bandes-annonces</string>
     <string name="title_release">Sortie récente</string>
@@ -131,6 +131,7 @@
     <string name="title_all_episodes">Tous les épisodes</string>
     <string name="title_episodes">Épisodes</string>
     <string name="title_watch_next">Regarder ensuite</string>
+    <string name="title_continue_tracking">Continuer à suivre</string>
     <string name="title_browse_by_genre">Parcourir par genre</string>
     <string name="status_connected">De nouveau en ligne !</string>
     <string name="status_no_connection">Pas de connexion Internet !</string>

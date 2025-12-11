@@ -28,6 +28,10 @@
         <item quantity="one">%d jour</item>
         <item quantity="other">%d jours</item>
     </plurals>
+    <plurals name="day_label">
+        <item quantity="one">jour</item>
+        <item quantity="other">jours</item>
+    </plurals>
     <plurals name="hour_count">
         <item quantity="one">%d heure</item>
         <item quantity="other">%d heures</item>

@@ -94,12 +94,30 @@
     <string name="dialog_message_unwatched">Are you sure you want to mark the entire season as unwatched?</string>
     <string name="dialog_message_watched">Are you sure you want to mark the entire season as watched?</string>
 
+    <string name="dialog_title_mark_previous">Mark Previous Episodes?</string>
+    <string name="dialog_button_mark_all">Mark All</string>
+    <string name="dialog_button_just_this">Just This One</string>
+
+    <string name="dialog_title_episode_unwatched">Mark Episode as Unwatched?</string>
+    <string name="dialog_message_episode_unwatched">Are you sure you want to mark this episode as unwatched?</string>
+
+    <string name="dialog_title_mark_previous_seasons">Mark Previous Seasons?</string>
+    <string name="dialog_button_mark_all_seasons">Mark All Seasons</string>
+    <string name="dialog_button_just_this_season">Just This Season</string>
+
+    <string name="menu_mark_watched">Mark as Watched</string>
+    <string name="menu_unfollow_show">Unfollow Show</string>
+    <string name="menu_open_season">Open Season</string>
+
+    <string name="label_settings_include_specials">Include Special Seasons</string>
+    <string name="label_settings_include_specials_description">Show and include Special Seasons (Season 0) throughout the app</string>
+
     <string name="following">Track</string>
     <string name="unfollow">Stop Tracking</string>
     <string name="btn_add_to_list">Add To List</string>
     <string name="title_recommended">Recommendations</string>
     <string name="title_similar">Similar Shows</string>
-    <string name="title_seasons">Browse Seasons</string>
+    <string name="title_seasons">All Seasons</string>
     <string name="title_season_overview">Overview</string>
     <string name="title_trailer">Trailers</string>
     <string name="title_release">Recent Release</string>
@@ -132,6 +150,7 @@
     <string name="title_all_episodes">All Episodes</string>
     <string name="title_episodes">Episodes</string>
     <string name="title_watch_next">Watch Next</string>
+    <string name="title_continue_tracking">Continue tracking</string>
     <string name="title_browse_by_genre">Browse by Genre</string>
     <string name="status_connected">Back Online!</string>
     <string name="status_no_connection">No Internet Connection!</string>

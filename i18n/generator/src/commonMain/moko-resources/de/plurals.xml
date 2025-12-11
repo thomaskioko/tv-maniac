@@ -24,6 +24,10 @@
         <item quantity="one">%d Tag</item>
         <item quantity="other">%d Tage</item>
     </plurals>
+    <plurals name="day_label">
+        <item quantity="one">Tag</item>
+        <item quantity="other">Tage</item>
+    </plurals>
     <plurals name="hour_count">
         <item quantity="one">%d Stunde</item>
         <item quantity="other">%d Stunden</item>
@@ -31,5 +35,13 @@
     <plurals name="minute_count">
         <item quantity="one">%d Minute</item>
         <item quantity="other">%d Minuten</item>
+    </plurals>
+    <plurals name="dialog_message_mark_previous">
+        <item quantity="one">Es gibt %d ungesehene Folge vor dieser. Möchten Sie sie als gesehen markieren?</item>
+        <item quantity="other">Es gibt %d ungesehene Folgen vor dieser. Möchten Sie alle als gesehen markieren?</item>
+    </plurals>
+    <plurals name="dialog_message_mark_previous_seasons">
+        <item quantity="one">Es gibt %d ungesehene Folge in vorherigen Staffeln. Möchten Sie sie als gesehen markieren?</item>
+        <item quantity="other">Es gibt %d ungesehene Folgen in vorherigen Staffeln. Möchten Sie alle als gesehen markieren?</item>
     </plurals>
 </resources>

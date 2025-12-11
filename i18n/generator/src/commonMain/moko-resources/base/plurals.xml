@@ -24,6 +24,10 @@
         <item quantity="one">%d day</item>
         <item quantity="other">%d days</item>
     </plurals>
+    <plurals name="day_label">
+        <item quantity="one">day</item>
+        <item quantity="other">days</item>
+    </plurals>
     <plurals name="hour_count">
         <item quantity="one">%d hour</item>
         <item quantity="other">%d hours</item>
@@ -31,5 +35,13 @@
     <plurals name="minute_count">
         <item quantity="one">%d minute</item>
         <item quantity="other">%d minutes</item>
+    </plurals>
+    <plurals name="dialog_message_mark_previous">
+        <item quantity="one">There is %d unwatched episode before this one. Would you like to mark it as watched?</item>
+        <item quantity="other">There are %d unwatched episodes before this one. Would you like to mark them all as watched?</item>
+    </plurals>
+    <plurals name="dialog_message_mark_previous_seasons">
+        <item quantity="one">There is %d unwatched episode in previous seasons. Would you like to mark it as watched?</item>
+        <item quantity="other">There are %d unwatched episodes in previous seasons. Would you like to mark them all as watched?</item>
     </plurals>
 </resources>
