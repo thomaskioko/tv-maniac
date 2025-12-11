@@ -30,7 +30,9 @@ SELECT
     watchlist.created_at,
     show_metadata.season_count,
     show_metadata.episode_count,
-    show_metadata.status
+    show_metadata.status,
+    (SELECT COUNT(*) FROM watched_episodes WHERE watched_episodes.show_id = tvshow.id) AS watched_count,
+    (SELECT COUNT(*) FROM episode WHERE episode.show_id = tvshow.id) AS total_episode_count
 FROM
     tvshow
 JOIN
@@ -50,7 +52,9 @@ SELECT
     watchlist.created_at,
     show_metadata.season_count,
     show_metadata.episode_count,
-    show_metadata.status
+    show_metadata.status,
+    (SELECT COUNT(*) FROM watched_episodes WHERE watched_episodes.show_id = tvshow.id) AS watched_count,
+    (SELECT COUNT(*) FROM episode WHERE episode.show_id = tvshow.id) AS total_episode_count
 FROM
     tvshow
 JOIN
@@ -92,3 +96,6 @@ DELETE FROM
     watchlist
 WHERE
     id = ?;
+
+isShowInLibrary:
+SELECT COUNT(*) > 0 FROM watchlist WHERE id = ?;

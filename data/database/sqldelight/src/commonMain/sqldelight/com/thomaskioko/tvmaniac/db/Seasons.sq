@@ -36,9 +36,13 @@ FROM
 JOIN
     season ON tvshow.id = season.show_id
 WHERE
-    tvshow.id = ?
+    tvshow.id = :showId
+    AND (
+        :includeSpecials = 1
+        OR (season.season_number > 0 OR season.title != 'Specials')
+    )
 ORDER BY
-    season.season_number ASC       ;
+    season.season_number ASC;
 
 seasonDetails:
 SELECT
@@ -57,17 +61,21 @@ SELECT
     episode.runtime,
     episode.vote_average,
     episode.vote_count,
-    episode.image_url AS episode_image_url
+    episode.image_url AS episode_image_url,
+    episode.air_date AS episode_air_date,
+    CASE WHEN watched_episodes.id IS NOT NULL THEN 1 ELSE 0 END AS is_watched
 FROM
     tvshow
 INNER JOIN
     season ON season.show_id = tvshow.id
 LEFT OUTER JOIN
     episode ON episode.season_id = season.id
+LEFT OUTER JOIN
+    watched_episodes ON watched_episodes.episode_id = episode.id AND watched_episodes.show_id = tvshow.id
 WHERE
     tvshow.id = :showId AND season.season_number = :seasonNumber
 ORDER BY
-    episode_number ASC;
+    episode.episode_number ASC;
 
 delete:
 DELETE FROM season WHERE show_id = ?;
