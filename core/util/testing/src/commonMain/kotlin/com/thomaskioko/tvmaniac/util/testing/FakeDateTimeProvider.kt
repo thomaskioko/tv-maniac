@@ -13,4 +13,12 @@ public class FakeDateTimeProvider(
     override fun now(): Instant = currentTime
     override fun today(timeZone: TimeZone): LocalDate = currentTime.toLocalDateTime(timeZone).date
     override fun calculateDaysUntilAir(airDateStr: String?, timeZone: TimeZone): Int? = null
+
+    public fun setCurrentTime(instant: Instant) {
+        currentTime = instant
+    }
+
+    public fun setCurrentTimeMillis(millis: Long) {
+        currentTime = Instant.fromEpochMilliseconds(millis)
+    }
 }
