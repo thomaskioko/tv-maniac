@@ -11,6 +11,7 @@ kotlin {
                 implementation(projects.data.seasondetails.api)
 
                 api(libs.coroutines.core)
+                api(libs.kotlinx.collections)
 
                 implementation(libs.kotlinInject.runtime)
             }
