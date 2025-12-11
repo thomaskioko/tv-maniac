@@ -43,12 +43,18 @@ class DefaultSeasonsDao(
         entityList.forEach { upsert(it) }
     }
 
-    override fun observeSeasonsByShowId(id: Long): Flow<List<ShowSeasons>> {
-        return database.seasonsQueries.showSeasons(Id(id)).asFlow().mapToList(dispatcher.io)
+    override fun observeSeasonsByShowId(id: Long, includeSpecials: Boolean): Flow<List<ShowSeasons>> {
+        return database.seasonsQueries.showSeasons(
+            showId = Id(id),
+            includeSpecials = if (includeSpecials) 1L else 0L,
+        ).asFlow().mapToList(dispatcher.io)
     }
 
-    override fun fetchShowSeasons(id: Long): List<ShowSeasons> =
-        database.seasonsQueries.showSeasons(id = Id(id)).executeAsList()
+    override fun fetchShowSeasons(id: Long, includeSpecials: Boolean): List<ShowSeasons> =
+        database.seasonsQueries.showSeasons(
+            showId = Id(id),
+            includeSpecials = if (includeSpecials) 1L else 0L,
+        ).executeAsList()
 
     override fun delete(id: Long) {
         seasonQueries.delete(Id(id))

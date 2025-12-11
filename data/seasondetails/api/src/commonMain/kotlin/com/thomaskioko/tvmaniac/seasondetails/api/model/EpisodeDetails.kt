@@ -11,5 +11,7 @@ data class EpisodeDetails(
     val voteAverage: Double,
     val voteCount: Long,
     val stillPath: String?,
+    val airDate: String?,
     val isWatched: Boolean,
+    val daysUntilAir: Int?,
 )

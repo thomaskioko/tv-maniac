@@ -5,9 +5,9 @@ import com.thomaskioko.tvmaniac.seasondetails.api.model.SeasonDetailsWithEpisode
 import kotlinx.coroutines.flow.Flow
 
 interface SeasonDetailsDao {
-    fun fetchSeasonDetails(showId: Long, seasonNumber: Long): SeasonDetailsWithEpisodes
+    fun fetchSeasonDetails(showId: Long, seasonNumber: Long): SeasonDetailsWithEpisodes?
 
-    fun observeSeasonEpisodeDetails(showId: Long, seasonNumber: Long): Flow<SeasonDetailsWithEpisodes>
+    fun observeSeasonEpisodeDetails(showId: Long, seasonNumber: Long): Flow<SeasonDetailsWithEpisodes?>
 
     fun delete(id: Long)
 

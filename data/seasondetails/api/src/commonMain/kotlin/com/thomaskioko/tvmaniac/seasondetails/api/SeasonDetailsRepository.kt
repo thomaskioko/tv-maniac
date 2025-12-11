@@ -12,7 +12,7 @@ interface SeasonDetailsRepository {
 
     fun observeSeasonDetails(
         param: SeasonDetailsParam,
-    ): Flow<SeasonDetailsWithEpisodes>
+    ): Flow<SeasonDetailsWithEpisodes?>
 
     fun observeSeasonImages(id: Long): Flow<List<Season_images>>
 }
