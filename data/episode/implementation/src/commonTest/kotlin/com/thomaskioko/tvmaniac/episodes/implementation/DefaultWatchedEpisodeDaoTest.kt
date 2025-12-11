@@ -63,7 +63,6 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
         closeDb()
     }
 
-
     @Test
     fun `should persist episode with correct metadata when marked as watched`() = runTest {
         val timestamp = Clock.System.now().toEpochMilliseconds()

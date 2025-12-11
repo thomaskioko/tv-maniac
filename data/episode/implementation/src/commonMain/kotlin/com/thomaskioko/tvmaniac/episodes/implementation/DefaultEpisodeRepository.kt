@@ -210,7 +210,7 @@ public class DefaultEpisodeRepository(
         seasonNumber: Long,
     ): Long {
         val includeSpecials = datastoreRepository.observeIncludeSpecials().first()
-        val seasons = seasonsRepository.observeSeasonsByShowId(showId).first()
+        val seasons = seasonsRepository.observeSeasonsByShowId(showId, includeSpecials).first()
         val startSeasonNumber = if (includeSpecials) 0L else 1L
         val previousSeasons = seasons.filter {
             it.season_number in startSeasonNumber..<seasonNumber
@@ -231,18 +231,20 @@ public class DefaultEpisodeRepository(
     override fun observeContinueTrackingEpisodes(showId: Long): Flow<ContinueTrackingResult?> {
         return combine(
             watchlistDao.observeIsShowInLibrary(showId),
-            seasonsRepository.observeSeasonsByShowId(showId),
+            datastoreRepository.observeIncludeSpecials(),
             observeLastWatchedEpisode(showId),
-        ) { isInLibrary, seasons, lastWatched ->
-            Triple(isInLibrary, seasons, lastWatched)
-        }.mapLatest { (isInLibrary, seasons, lastWatched) ->
-            if (!isInLibrary || seasons.isEmpty()) return@mapLatest null
+        ) { isInLibrary, includeSpecials, lastWatched ->
+            Triple(isInLibrary, includeSpecials, lastWatched)
+        }.mapLatest { (isInLibrary, includeSpecials, lastWatched) ->
+            if (!isInLibrary) return@mapLatest null
 
-            val activeSeasonIndex = determineActiveSeasonIndex(seasons, lastWatched)
+            val seasons = seasonsRepository.observeSeasonsByShowId(showId, includeSpecials).first()
+            if (seasons.isEmpty()) return@mapLatest null
+
             findFirstSeasonWithUnwatchedEpisodes(
                 showId = showId,
                 seasons = seasons,
-                startIndex = activeSeasonIndex,
+                startIndex = determineActiveSeasonIndex(seasons, lastWatched),
             )
         }
     }
