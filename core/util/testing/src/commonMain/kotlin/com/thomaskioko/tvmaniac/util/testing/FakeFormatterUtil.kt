@@ -1,8 +1,8 @@
-package com.thomakioko.tvmaniac.util.testing
+package com.thomaskioko.tvmaniac.util.testing
 
 import com.thomaskioko.tvmaniac.util.FormatterUtil
 
-class FakeFormatterUtil : FormatterUtil {
+public class FakeFormatterUtil : FormatterUtil {
     override fun formatTmdbPosterPath(imageUrl: String): String = ""
 
     override fun formatDouble(number: Double?, scale: Int): Double {

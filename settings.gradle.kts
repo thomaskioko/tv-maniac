@@ -79,6 +79,7 @@ include(
     ":core:paging",
     ":core:screenshot-tests",
     ":core:util",
+    ":core:util:api",
     ":core:util:testing",
     ":core:testing:di",
     ":core:view",
