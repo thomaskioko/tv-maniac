@@ -13,7 +13,7 @@ kotlin {
                 api(projects.data.shows.api)
 
                 implementation(projects.core.base)
-                implementation(projects.core.util)
+                implementation(projects.core.util.api)
                 implementation(projects.core.networkUtil)
                 implementation(projects.data.episode.api)
                 implementation(projects.data.watchlist.api)

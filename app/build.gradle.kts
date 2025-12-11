@@ -32,6 +32,7 @@ dependencies {
     implementation(projects.api.trakt.api)
     implementation(projects.api.trakt.implementation)
     implementation(projects.core.base)
+    implementation(projects.core.util.api)
     implementation(projects.core.util)
     implementation(projects.core.imageloading.implementation)
     implementation(projects.core.locale.implementation)

@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.util.testing
 
-import com.thomaskioko.tvmaniac.util.FormatterUtil
+import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 
 public class FakeFormatterUtil : FormatterUtil {
     override fun formatTmdbPosterPath(imageUrl: String): String = ""

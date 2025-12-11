@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.util
 
 import android.app.Application
 import android.content.pm.PackageManager
+import com.thomaskioko.tvmaniac.util.api.AppUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import me.tatarka.inject.annotations.Inject

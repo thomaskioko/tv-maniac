@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.util
 
+import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 import me.tatarka.inject.annotations.Inject
 import platform.Foundation.NSNumber
 import platform.Foundation.NSNumberFormatter

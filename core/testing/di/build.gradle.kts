@@ -13,7 +13,7 @@ kotlin {
             implementation(projects.core.buildconfig.testing)
             implementation(projects.core.logger.api)
             implementation(projects.core.logger.testing)
-            implementation(projects.core.util)
+            implementation(projects.core.util.api)
             implementation(projects.navigation.api)
             implementation(projects.navigation.implementation)
             implementation(projects.domain.logout)

@@ -20,7 +20,7 @@ kotlin {
                 implementation(projects.core.paging)
                 implementation(projects.data.database.sqldelight)
                 implementation(projects.data.trendingshows.api)
-                implementation(projects.core.util)
+                implementation(projects.core.util.api)
                 implementation(projects.data.requestManager.api)
 
                 api(libs.coroutines.core)

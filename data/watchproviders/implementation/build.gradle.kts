@@ -13,7 +13,7 @@ kotlin {
                 implementation(projects.api.tmdb.api)
                 implementation(projects.core.base)
                 implementation(projects.data.database.sqldelight)
-                implementation(projects.core.util)
+                implementation(projects.core.util.api)
                 implementation(projects.data.watchproviders.api)
                 implementation(projects.data.requestManager.api)
 

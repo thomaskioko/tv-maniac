@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.util
 
+import com.thomaskioko.tvmaniac.util.api.AppUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import me.tatarka.inject.annotations.Inject
