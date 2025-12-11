@@ -1,191 +1,215 @@
 package com.thomaskioko.tvmaniac.episodes.testing
 
-import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.Watched_episodes
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
+import com.thomaskioko.tvmaniac.episodes.api.model.ContinueTrackingResult
+import com.thomaskioko.tvmaniac.episodes.api.model.EpisodeWatchParams
 import com.thomaskioko.tvmaniac.episodes.api.model.LastWatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
+import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
+import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
+import com.thomaskioko.tvmaniac.episodes.api.model.UnwatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.WatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.WatchProgressContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.datetime.DatePeriod
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.atStartOfDayIn
-import kotlinx.datetime.plus
+import kotlinx.coroutines.flow.asStateFlow
+import kotlin.time.Instant
+
+data class MarkEpisodeWatchedCall(
+    val showId: Long,
+    val episodeId: Long,
+    val seasonNumber: Long,
+    val episodeNumber: Long,
+    val markPreviousEpisodes: Boolean = false,
+)
+
+data class MarkSeasonWatchedCall(
+    val showId: Long,
+    val seasonNumber: Long,
+    val markPreviousSeasons: Boolean,
+)
+
+data class MarkEpisodeUnwatchedCall(
+    val showId: Long,
+    val episodeId: Long,
+)
 
 class FakeEpisodeRepository : EpisodeRepository {
     private val nextEpisodesForWatchlist = MutableStateFlow<List<NextEpisodeWithShow>>(emptyList())
-    private val nextEpisodeForShow = mutableMapOf<Long, MutableStateFlow<NextEpisodeWithShow?>>()
-    private val watchedEpisodes = mutableMapOf<Long, MutableStateFlow<List<Watched_episodes>>>()
-    private val watchProgress = mutableMapOf<Long, MutableStateFlow<WatchProgress>>()
-    private val lastWatchedEpisode = mutableMapOf<Long, Watched_episodes?>()
-    private val episodeWatchedStatus = mutableMapOf<String, Boolean>()
+    private val watchProgressMap = mutableMapOf<Long, MutableStateFlow<WatchProgress>>()
+    private val seasonWatchProgressFlow = MutableStateFlow(SeasonWatchProgress(0, 0, 0, 0))
+    private val showWatchProgressFlow = MutableStateFlow(ShowWatchProgress(0, 0, 0))
+    private val continueTrackingFlow = MutableStateFlow<ContinueTrackingResult?>(null)
 
-    private var currentDate = LocalDate(2024, 1, 1) // Jan 1, 2024
+    var lastMarkEpisodeWatchedCall: MarkEpisodeWatchedCall? = null
+        private set
 
-    fun setCurrentDate(date: LocalDate) {
-        currentDate = date
+    var lastMarkSeasonWatchedCall: MarkSeasonWatchedCall? = null
+        private set
+
+    var lastMarkEpisodeUnwatchedCall: MarkEpisodeUnwatchedCall? = null
+        private set
+
+    private var unwatchedEpisodesBeforeResult: List<UnwatchedEpisode> = emptyList()
+    private var unwatchedCountAfterFetchingPreviousSeasonsResult: Long = 0L
+    private var earliestUnwatchedEpisodeResult: NextEpisodeWithShow? = null
+
+    fun setUnwatchedEpisodesBefore(episodes: List<UnwatchedEpisode>) {
+        unwatchedEpisodesBeforeResult = episodes
     }
 
-    private fun getNextTimestamp(): Long {
-        // Get epoch seconds for current date at start of day in UTC
-        val timestamp = currentDate.atStartOfDayIn(TimeZone.UTC).epochSeconds
-        // Increment to next day for next episode using the proper API
-        currentDate = currentDate.plus(DatePeriod(days = 1))
-        return timestamp
+    fun setUnwatchedCountAfterFetchingPreviousSeasons(count: Long) {
+        unwatchedCountAfterFetchingPreviousSeasonsResult = count
+    }
+
+    fun setEarliestUnwatchedEpisode(episode: NextEpisodeWithShow?) {
+        earliestUnwatchedEpisodeResult = episode
     }
 
     fun setNextEpisodesForWatchlist(episodes: List<NextEpisodeWithShow>) {
         nextEpisodesForWatchlist.value = episodes
     }
 
-    fun setNextEpisodeForShow(showId: Long, episode: NextEpisodeWithShow?) {
-        nextEpisodeForShow.getOrPut(showId) { MutableStateFlow(episode) }.value = episode
-    }
-
-    fun setWatchedEpisodes(showId: Long, episodes: List<Watched_episodes>) {
-        watchedEpisodes.getOrPut(showId) { MutableStateFlow(emptyList()) }.value = episodes
-    }
-
     fun setWatchProgress(showId: Long, progress: WatchProgress) {
-        watchProgress.getOrPut(showId) { MutableStateFlow(createDefaultWatchProgress(showId)) }.value =
-            progress
+        watchProgressMap.getOrPut(showId) {
+            MutableStateFlow(WatchProgress(showId, 0, null, null, null))
+        }.value = progress
     }
 
-    fun setLastWatchedEpisode(showId: Long, episode: Watched_episodes?) {
-        lastWatchedEpisode[showId] = episode
+    fun setSeasonWatchProgress(progress: SeasonWatchProgress) {
+        seasonWatchProgressFlow.value = progress
     }
 
-    fun setEpisodeWatchedStatus(
-        showId: Long,
-        seasonNumber: Long,
-        episodeNumber: Long,
-        isWatched: Boolean,
-    ) {
-        episodeWatchedStatus["$showId:$seasonNumber:$episodeNumber"] = isWatched
+    fun setShowWatchProgress(progress: ShowWatchProgress) {
+        showWatchProgressFlow.value = progress
     }
 
-    override fun observeNextEpisodesForWatchlist(): Flow<List<NextEpisodeWithShow>> {
-        return nextEpisodesForWatchlist
+    fun setContinueTrackingResult(result: ContinueTrackingResult?) {
+        continueTrackingFlow.value = result
     }
 
-    override fun observeNextEpisodeForShow(showId: Long): Flow<NextEpisodeWithShow?> {
-        return nextEpisodeForShow.getOrPut(showId) { MutableStateFlow(null) }
-    }
+    override fun observeNextEpisodesForWatchlist(): Flow<List<NextEpisodeWithShow>> =
+        nextEpisodesForWatchlist.asStateFlow()
+
+    override fun observeNextEpisodeForShow(showId: Long): Flow<NextEpisodeWithShow?> =
+        MutableStateFlow(null)
 
     override suspend fun markEpisodeAsWatched(
         showId: Long,
         episodeId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
+        watchedAt: Instant?,
     ) {
-        val key = "$showId:$seasonNumber:$episodeNumber"
-        episodeWatchedStatus[key] = true
-
-        val currentList = watchedEpisodes[showId]?.value ?: emptyList()
-
-        val newEpisode = Watched_episodes(
-            id = currentList.size.toLong() + 1,
-            show_id = Id(showId),
-            episode_id = Id(episodeId),
-            season_number = seasonNumber,
-            episode_number = episodeNumber,
-            watched_at = getNextTimestamp(), // Each episode gets next day timestamp
-        )
-        watchedEpisodes.getOrPut(showId) { MutableStateFlow(emptyList()) }.value =
-            currentList + newEpisode
-        lastWatchedEpisode[showId] = newEpisode
+        lastMarkEpisodeWatchedCall = MarkEpisodeWatchedCall(showId, episodeId, seasonNumber, episodeNumber)
     }
 
     override suspend fun markEpisodeAsUnwatched(showId: Long, episodeId: Long) {
-        val currentList = watchedEpisodes[showId]?.value ?: emptyList()
-        watchedEpisodes[showId]?.value = currentList.filter { it.episode_id.id != episodeId }
+        lastMarkEpisodeUnwatchedCall = MarkEpisodeUnwatchedCall(showId, episodeId)
+    }
 
-        currentList.find { it.episode_id.id == episodeId }?.let { episode ->
-            val key = "$showId:${episode.season_number}:${episode.episode_number}"
-            episodeWatchedStatus[key] = false
+    override fun observeWatchedEpisodes(showId: Long): Flow<List<Watched_episodes>> =
+        MutableStateFlow(emptyList())
+
+    override fun observeWatchProgress(showId: Long): Flow<WatchProgress> =
+        watchProgressMap.getOrPut(showId) {
+            MutableStateFlow(WatchProgress(showId, 0, null, null, null))
         }
-    }
 
-    override fun observeWatchedEpisodes(showId: Long): Flow<List<Watched_episodes>> {
-        return watchedEpisodes.getOrPut(showId) { MutableStateFlow(emptyList()) }
-    }
-
-    override fun observeWatchProgress(showId: Long): Flow<WatchProgress> {
-        return watchProgress.getOrPut(showId) { MutableStateFlow(createDefaultWatchProgress(showId)) }
-    }
-
-    override suspend fun getLastWatchedEpisode(showId: Long): Watched_episodes? {
-        return lastWatchedEpisode[showId]
-    }
+    override suspend fun getLastWatchedEpisode(showId: Long): Watched_episodes? = null
 
     override suspend fun isEpisodeWatched(
         showId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
-    ): Boolean {
-        val key = "$showId:$seasonNumber:$episodeNumber"
-        return episodeWatchedStatus[key] ?: false
-    }
+    ): Boolean = false
 
-    override suspend fun clearWatchHistoryForShow(showId: Long) {
-        watchedEpisodes[showId]?.value = emptyList()
-        lastWatchedEpisode.remove(showId)
+    override suspend fun clearCachedWatchHistoryForShow(showId: Long) {}
 
-        episodeWatchedStatus.keys.filter { it.startsWith("$showId:") }.forEach {
-            episodeWatchedStatus.remove(it)
-        }
-    }
-
-    private fun createDefaultWatchProgress(showId: Long): WatchProgress {
-        return WatchProgress(
-            showId = showId,
-            totalEpisodesWatched = 0,
-            lastSeasonWatched = null,
-            lastEpisodeWatched = null,
-            nextEpisode = null,
-        )
-    }
-
-    override suspend fun getWatchProgressContext(showId: Long): WatchProgressContext {
-        return WatchProgressContext(
+    override suspend fun getWatchProgressContext(showId: Long): WatchProgressContext =
+        WatchProgressContext(
             showId = showId,
             totalEpisodes = 0,
-            watchedEpisodes = watchedEpisodes[showId]?.value?.size ?: 0,
-            lastWatchedSeasonNumber = lastWatchedEpisode[showId]?.season_number?.toInt(),
-            lastWatchedEpisodeNumber = lastWatchedEpisode[showId]?.episode_number?.toInt(),
-            nextEpisode = nextEpisodeForShow[showId]?.value,
+            watchedEpisodes = 0,
+            lastWatchedSeasonNumber = null,
+            lastWatchedEpisodeNumber = null,
             isWatchingOutOfOrder = false,
             hasUnwatchedEarlierEpisodes = false,
             progressPercentage = 0f,
         )
-    }
 
-    override suspend fun hasUnwatchedEarlierEpisodes(showId: Long): Boolean {
-        return false
-    }
+    override suspend fun hasUnwatchedEarlierEpisodes(showId: Long): Boolean = false
 
-    override suspend fun findEarliestUnwatchedEpisode(showId: Long): NextEpisodeWithShow? {
-        return nextEpisodeForShow[showId]?.value
-    }
+    override suspend fun findEarliestUnwatchedEpisode(showId: Long): NextEpisodeWithShow? =
+        earliestUnwatchedEpisodeResult
 
-    override suspend fun isWatchingOutOfOrder(showId: Long): Boolean {
-        return false
-    }
+    override suspend fun isWatchingOutOfOrder(showId: Long): Boolean = false
 
-    override fun observeLastWatchedEpisode(showId: Long): Flow<LastWatchedEpisode?> {
-        return MutableStateFlow(
-            lastWatchedEpisode[showId]?.let { episode ->
-                LastWatchedEpisode(
-                    showId = episode.show_id.id,
-                    episodeId = episode.episode_id.id,
-                    seasonNumber = episode.season_number.toInt(),
-                    episodeNumber = episode.episode_number.toInt(),
-                    watchedAt = episode.watched_at,
-                )
-            },
+    override fun observeLastWatchedEpisode(showId: Long): Flow<LastWatchedEpisode?> =
+        MutableStateFlow(null)
+
+    override fun observeSeasonWatchProgress(showId: Long, seasonNumber: Long): Flow<SeasonWatchProgress> =
+        seasonWatchProgressFlow.asStateFlow()
+
+    override fun observeShowWatchProgress(showId: Long): Flow<ShowWatchProgress> =
+        showWatchProgressFlow.asStateFlow()
+
+    override suspend fun markSeasonWatched(showId: Long, seasonNumber: Long, watchedAt: Instant?) {}
+
+    override suspend fun markEpisodeAndPreviousEpisodesWatched(
+        showId: Long,
+        episodeId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+        watchedAt: Instant?,
+    ) {
+        lastMarkEpisodeWatchedCall = MarkEpisodeWatchedCall(
+            showId,
+            episodeId,
+            seasonNumber,
+            episodeNumber,
+            markPreviousEpisodes = true,
         )
     }
+
+    override suspend fun markSeasonAndPreviousSeasonsWatched(
+        showId: Long,
+        seasonNumber: Long,
+        watchedAt: Instant?,
+    ) {
+        lastMarkSeasonWatchedCall = MarkSeasonWatchedCall(showId, seasonNumber, markPreviousSeasons = true)
+    }
+
+    override suspend fun markSeasonUnwatched(showId: Long, seasonNumber: Long) {}
+
+    override suspend fun getUnwatchedEpisodesBefore(
+        showId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+    ): List<UnwatchedEpisode> = unwatchedEpisodesBeforeResult
+
+    override suspend fun markMultipleEpisodesWatched(
+        showId: Long,
+        episodes: List<EpisodeWatchParams>,
+        watchedAt: Instant?,
+    ) {}
+
+    override suspend fun getUnwatchedEpisodesInPreviousSeasons(
+        showId: Long,
+        seasonNumber: Long,
+    ): List<UnwatchedEpisode> = emptyList()
+
+    override suspend fun getUnwatchedEpisodeCountInPreviousSeasons(
+        showId: Long,
+        seasonNumber: Long,
+    ): Long = 0L
+
+    override suspend fun getUnwatchedCountAfterFetchingPreviousSeasons(
+        showId: Long,
+        seasonNumber: Long,
+    ): Long = unwatchedCountAfterFetchingPreviousSeasonsResult
+
+    override fun observeContinueTrackingEpisodes(showId: Long): Flow<ContinueTrackingResult?> =
+        continueTrackingFlow.asStateFlow()
 }

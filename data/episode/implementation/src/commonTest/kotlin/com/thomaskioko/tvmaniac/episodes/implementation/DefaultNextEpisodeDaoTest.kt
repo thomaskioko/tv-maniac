@@ -294,6 +294,8 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             image_url = "/ep1.jpg",
             vote_average = 8.0,
             vote_count = 100L,
+            air_date = "2023-01-01",
+            trakt_id = null,
         )
 
         database.episodesQueries.upsert(
@@ -307,6 +309,8 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             image_url = "/ep2.jpg",
             vote_average = 8.2,
             vote_count = 110L,
+            air_date = "2023-01-08",
+            trakt_id = null,
         )
 
         database.episodesQueries.upsert(
@@ -320,6 +324,8 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             image_url = "/ep3.jpg",
             vote_average = 8.5,
             vote_count = 120L,
+            air_date = "2023-01-15",
+            trakt_id = null,
         )
 
         // Insert season for show 2
@@ -345,6 +351,8 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             image_url = "/show2ep1.jpg",
             vote_average = 7.5,
             vote_count = 80L,
+            air_date = "2023-02-01",
+            trakt_id = null,
         )
 
         database.episodesQueries.upsert(
@@ -358,6 +366,8 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             image_url = "/show2ep2.jpg",
             vote_average = 7.8,
             vote_count = 85L,
+            air_date = "2023-02-08",
+            trakt_id = null,
         )
     }
 
@@ -402,6 +412,8 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             image_url = "/s1e1.jpg",
             vote_average = 8.0,
             vote_count = 100L,
+            air_date = "2022-01-01",
+            trakt_id = null,
         )
 
         database.episodesQueries.upsert(
@@ -415,6 +427,8 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             image_url = "/s1e2.jpg",
             vote_average = 8.2,
             vote_count = 110L,
+            air_date = "2022-01-08",
+            trakt_id = null,
         )
 
         // Season 2
@@ -439,6 +453,8 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             image_url = "/s2e1.jpg",
             vote_average = 8.5,
             vote_count = 120L,
+            air_date = "2022-02-01",
+            trakt_id = null,
         )
     }
 
@@ -483,6 +499,8 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             image_url = "/special.jpg",
             vote_average = 7.0,
             vote_count = 50L,
+            air_date = "2022-12-25",
+            trakt_id = null,
         )
 
         // Season 1
@@ -507,6 +525,8 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             image_url = "/reg1.jpg",
             vote_average = 8.0,
             vote_count = 100L,
+            air_date = "2023-01-01",
+            trakt_id = null,
         )
     }
 
@@ -584,6 +604,8 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             image_url = "/bb-special.jpg",
             vote_average = 7.0,
             vote_count = 100L,
+            air_date = "2008-01-10",
+            trakt_id = null,
         )
 
         // Season 1 (Regular) - should be included
@@ -608,6 +630,8 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             image_url = "/bb-pilot.jpg",
             vote_average = 9.0,
             vote_count = 1000L,
+            air_date = "2008-01-20",
+            trakt_id = null,
         )
 
         database.episodesQueries.upsert(
@@ -621,6 +645,8 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             image_url = "/bb-ep2.jpg",
             vote_average = 8.8,
             vote_count = 950L,
+            air_date = "2008-01-27",
+            trakt_id = null,
         )
 
         // Create Game of Thrones (show 6) with Specials
@@ -664,6 +690,8 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             image_url = "/got-making.jpg",
             vote_average = 8.0,
             vote_count = 200L,
+            air_date = "2011-04-01",
+            trakt_id = null,
         )
 
         database.episodesQueries.upsert(
@@ -677,6 +705,8 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             image_url = "/got-interviews.jpg",
             vote_average = 7.5,
             vote_count = 150L,
+            air_date = "2011-04-10",
+            trakt_id = null,
         )
 
         // Season 1 (Regular) - should be included
@@ -701,6 +731,8 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             image_url = "/got-winter.jpg",
             vote_average = 9.0,
             vote_count = 2000L,
+            air_date = "2011-04-17",
+            trakt_id = null,
         )
 
         database.episodesQueries.upsert(
@@ -714,6 +746,8 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             image_url = "/got-kingsroad.jpg",
             vote_average = 8.7,
             vote_count = 1800L,
+            air_date = "2011-04-24",
+            trakt_id = null,
         )
 
         // Now simulate the user scenario:

@@ -1,11 +1,17 @@
 package com.thomaskioko.tvmaniac.episodes.api
 
 import com.thomaskioko.tvmaniac.db.Watched_episodes
+import com.thomaskioko.tvmaniac.episodes.api.model.ContinueTrackingResult
+import com.thomaskioko.tvmaniac.episodes.api.model.EpisodeWatchParams
 import com.thomaskioko.tvmaniac.episodes.api.model.LastWatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
+import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
+import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
+import com.thomaskioko.tvmaniac.episodes.api.model.UnwatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.WatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.WatchProgressContext
 import kotlinx.coroutines.flow.Flow
+import kotlin.time.Instant
 
 public interface EpisodeRepository {
 
@@ -19,16 +25,30 @@ public interface EpisodeRepository {
      */
     public fun observeNextEpisodeForShow(showId: Long): Flow<NextEpisodeWithShow?>
 
-    // ===== Watched Episode Functions =====
-
     /**
      * Mark an episode as watched. The SQL view automatically updates next episode calculations.
+     * Automatically adds the show to the library if not already there.
+     * @param watchedAt Optional timestamp for when the episode was watched. Defaults to current time.
      */
     public suspend fun markEpisodeAsWatched(
         showId: Long,
         episodeId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
+        watchedAt: Instant? = null,
+    )
+
+    /**
+     * Mark an episode as watched along with all previous unwatched episodes.
+     * Automatically adds the show to the library if not already there.
+     * @param watchedAt Optional timestamp for when the episodes were watched. Defaults to current time.
+     */
+    public suspend fun markEpisodeAndPreviousEpisodesWatched(
+        showId: Long,
+        episodeId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+        watchedAt: Instant? = null,
     )
 
     /**
@@ -61,9 +81,9 @@ public interface EpisodeRepository {
     ): Boolean
 
     /**
-     * Clear all watch history for a specific show.
+     * Clear all cached watch history for a specific show.
      */
-    public suspend fun clearWatchHistoryForShow(showId: Long)
+    public suspend fun clearCachedWatchHistoryForShow(showId: Long)
 
     /**
      * Get comprehensive watch progress context with out-of-order watching detection.
@@ -93,4 +113,93 @@ public interface EpisodeRepository {
      * Provides absolute episode numbering context for progression tracking.
      */
     public fun observeLastWatchedEpisode(showId: Long): Flow<LastWatchedEpisode?>
+
+    /**
+     * Observe watch progress for a specific season.
+     */
+    public fun observeSeasonWatchProgress(showId: Long, seasonNumber: Long): Flow<SeasonWatchProgress>
+
+    /**
+     * Observe watch progress for an entire show (across all seasons).
+     */
+    public fun observeShowWatchProgress(showId: Long): Flow<ShowWatchProgress>
+
+    /**
+     * Mark all episodes in a season as watched.
+     * Automatically adds the show to the library if not already there.
+     * @param watchedAt Optional timestamp for when the episodes were watched. Defaults to current time.
+     */
+    public suspend fun markSeasonWatched(showId: Long, seasonNumber: Long, watchedAt: Instant? = null)
+
+    /**
+     * Mark all episodes in a season as watched along with all previous seasons.
+     * Automatically adds the show to the library if not already there.
+     * @param watchedAt Optional timestamp for when the episodes were watched. Defaults to current time.
+     */
+    public suspend fun markSeasonAndPreviousSeasonsWatched(
+        showId: Long,
+        seasonNumber: Long,
+        watchedAt: Instant? = null,
+    )
+
+    /**
+     * Mark all episodes in a season as unwatched.
+     */
+    public suspend fun markSeasonUnwatched(showId: Long, seasonNumber: Long)
+
+    /**
+     * Get unwatched episodes that come before a specific episode.
+     * Used to prompt the user when marking episodes out of order.
+     */
+    public suspend fun getUnwatchedEpisodesBefore(
+        showId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+    ): List<UnwatchedEpisode>
+
+    /**
+     * Mark multiple episodes as watched in a batch operation.
+     * @param watchedAt Optional base timestamp for when the episodes were watched. Defaults to current time.
+     */
+    public suspend fun markMultipleEpisodesWatched(
+        showId: Long,
+        episodes: List<EpisodeWatchParams>,
+        watchedAt: Instant? = null,
+    )
+
+    /**
+     * Get unwatched episodes in seasons before the specified season number.
+     * Used for "Mark all previous episodes?" prompt when marking a season as watched.
+     */
+    public suspend fun getUnwatchedEpisodesInPreviousSeasons(
+        showId: Long,
+        seasonNumber: Long,
+    ): List<UnwatchedEpisode>
+
+    /**
+     * Get count of unwatched episodes in seasons before the specified season number.
+     */
+    public suspend fun getUnwatchedEpisodeCountInPreviousSeasons(
+        showId: Long,
+        seasonNumber: Long,
+    ): Long
+
+    /**
+     * Get count of unwatched episodes in seasons before the specified season number,
+     * ensuring that previous seasons' episode data is fetched first.
+     * Use this when the previous seasons may not have been loaded yet.
+     */
+    public suspend fun getUnwatchedCountAfterFetchingPreviousSeasons(
+        showId: Long,
+        seasonNumber: Long,
+    ): Long
+
+    /**
+     * Observe episodes for continue tracking feature.
+     * Automatically selects the appropriate season based on watch progress:
+     * - Starts from the last watched season, or Season 1 if no history
+     * - Auto-progresses to next season when all episodes in current season are watched
+     * - Returns null when no unwatched episodes remain across all seasons
+     */
+    public fun observeContinueTrackingEpisodes(showId: Long): Flow<ContinueTrackingResult?>
 }

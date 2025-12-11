@@ -6,6 +6,7 @@ public data class NextEpisodeWithShow(
     val showPoster: String?,
     val episodeId: Long,
     val episodeName: String,
+    val seasonId: Long,
     val seasonNumber: Long,
     val episodeNumber: Long,
     val runtime: Long?,

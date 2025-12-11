@@ -78,6 +78,8 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
             show_id = show_id,
             vote_count = vote_count,
             image_url = image_url,
+            air_date = air_date,
+            trakt_id = trakt_id,
         )
     }
 
@@ -93,6 +95,8 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
             runtime = 45,
             episode_number = 1,
             image_url = "/yDWJYRAwMNKbIYT8ZB33qy84uzO.jpg",
+            air_date = "2021-06-09",
+            trakt_id = null,
         ),
         Episode(
             id = Id(2927202),
@@ -105,6 +109,8 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
             runtime = 45,
             episode_number = 1,
             image_url = "/yDWJYRAwMNKbIYT8ZB33qy84uzO.jpg",
+            air_date = "2021-06-16",
+            trakt_id = null,
         ),
     )
 }
