@@ -27,4 +27,12 @@ interface WatchlistRepository {
      * @param isGridMode Boolean indicating if grid mode is preferred (true for grid, false for list).
      */
     suspend fun saveListStyle(isGridMode: Boolean)
+
+    /**
+     * Checks if a show is currently in the user's library (watchlist).
+     *
+     * @param showId The ID of the show to check.
+     * @return True if the show is in the library, false otherwise.
+     */
+    suspend fun isShowInLibrary(showId: Long): Boolean
 }

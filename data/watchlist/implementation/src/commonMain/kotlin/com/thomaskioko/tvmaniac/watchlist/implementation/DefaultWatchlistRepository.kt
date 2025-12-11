@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import com.thomaskioko.tvmaniac.db.SearchWatchlist
 import com.thomaskioko.tvmaniac.db.Watchlists
+import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
@@ -12,6 +13,7 @@ import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -30,29 +32,28 @@ class DefaultWatchlistRepository(
     private val datastoreRepository: DatastoreRepository,
     private val seasonDetailsRepository: SeasonDetailsRepository,
     private val seasonsRepository: SeasonsRepository,
+    private val episodeRepository: EpisodeRepository,
 ) : WatchlistRepository {
 
     override suspend fun updateLibrary(id: Long, addToLibrary: Boolean) {
         when {
             addToLibrary -> {
-                // Add to watchlist
                 watchlistDao.upsert(id)
 
-                // Fetch season details for all seasons to populate episode data
-                seasonsRepository.observeSeasonsByShowId(id).collect { seasonList ->
-                    seasonList.forEach { season ->
-                        seasonDetailsRepository.fetchSeasonDetails(
-                            SeasonDetailsParam(
-                                showId = id,
-                                seasonId = season.season_id.id,
-                                seasonNumber = season.season_number,
-                            ),
-                        )
-                    }
+                val seasonList = seasonsRepository.observeSeasonsByShowId(id).first()
+                seasonList.forEach { season ->
+                    seasonDetailsRepository.fetchSeasonDetails(
+                        SeasonDetailsParam(
+                            showId = id,
+                            seasonId = season.season_id.id,
+                            seasonNumber = season.season_number,
+                        ),
+                    )
                 }
             }
             else -> {
-                // Remove from watchlist
+                // Clear local episode watch history when removing a show from the library
+                episodeRepository.clearCachedWatchHistoryForShow(id)
                 watchlistDao.delete(id)
             }
         }
@@ -85,5 +86,9 @@ class DefaultWatchlistRepository(
     override suspend fun saveListStyle(isGridMode: Boolean) {
         val listStyle = if (isGridMode) ListStyle.GRID else ListStyle.LIST
         datastoreRepository.saveListStyle(listStyle)
+    }
+
+    override suspend fun isShowInLibrary(showId: Long): Boolean {
+        return watchlistDao.isShowInLibrary(showId)
     }
 }

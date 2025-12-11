@@ -24,4 +24,8 @@ interface WatchlistDao {
     fun delete(id: Long)
 
     fun upsert(entity: Show_metadata)
+
+    suspend fun isShowInLibrary(showId: Long): Boolean
+
+    fun observeIsShowInLibrary(showId: Long): Flow<Boolean>
 }
