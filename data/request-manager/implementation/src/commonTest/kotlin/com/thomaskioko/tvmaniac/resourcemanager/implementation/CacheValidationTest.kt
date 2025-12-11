@@ -2,21 +2,22 @@ package com.thomaskioko.tvmaniac.resourcemanager.implementation
 
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig
+import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.shouldBe
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 
 class CacheValidationTest : BaseDatabaseTest() {
     private lateinit var repository: DefaultRequestManagerRepository
+    private val fakeDateTimeProvider = FakeDateTimeProvider()
 
     @BeforeTest
     fun setup() {
-        repository = DefaultRequestManagerRepository(database)
+        repository = DefaultRequestManagerRepository(database, fakeDateTimeProvider)
     }
 
     @AfterTest
@@ -39,7 +40,7 @@ class CacheValidationTest : BaseDatabaseTest() {
     fun `isRequestExpired should return true when request is older than threshold`() {
         val entityId = 123L
         val requestType = "SHOW_DETAILS"
-        val twoDaysAgo = Clock.System.now() - 2.days
+        val twoDaysAgo = fakeDateTimeProvider.now() - 2.days
 
         repository.upsert(entityId, requestType, twoDaysAgo)
 
@@ -56,7 +57,7 @@ class CacheValidationTest : BaseDatabaseTest() {
     fun `isRequestExpired should return false when request is newer than threshold`() {
         val entityId = 123L
         val requestType = "SHOW_DETAILS"
-        val thirtyMinutesAgo = Clock.System.now() - 30.minutes
+        val thirtyMinutesAgo = fakeDateTimeProvider.now() - 30.minutes
 
         repository.upsert(entityId, requestType, thirtyMinutesAgo)
 
@@ -83,7 +84,7 @@ class CacheValidationTest : BaseDatabaseTest() {
     fun `isRequestValid should return false when global request is expired`() {
         val requestType = "TRENDING_SHOWS_TODAY"
         val requestConfig = RequestTypeConfig.valueOf(requestType)
-        val twoDaysAgo = Clock.System.now() - 2.days
+        val twoDaysAgo = fakeDateTimeProvider.now() - 2.days
 
         repository.upsert(requestConfig.requestId, requestType, twoDaysAgo)
 
@@ -99,7 +100,7 @@ class CacheValidationTest : BaseDatabaseTest() {
     fun `isRequestValid should return true when global request is valid`() {
         val requestType = "TRENDING_SHOWS_TODAY"
         val requestConfig = RequestTypeConfig.valueOf(requestType)
-        val thirtyMinutesAgo = Clock.System.now() - 30.minutes
+        val thirtyMinutesAgo = fakeDateTimeProvider.now() - 30.minutes
 
         repository.upsert(requestConfig.requestId, requestType, thirtyMinutesAgo)
 
@@ -115,7 +116,7 @@ class CacheValidationTest : BaseDatabaseTest() {
     fun `isRequestExpired should handle edge case at exact threshold boundary`() {
         val entityId = 123L
         val requestType = "SHOW_DETAILS"
-        val exactlyOneDayAgo = Clock.System.now() - 1.days
+        val exactlyOneDayAgo = fakeDateTimeProvider.now() - 1.days
 
         repository.upsert(entityId, requestType, exactlyOneDayAgo)
 
@@ -132,7 +133,7 @@ class CacheValidationTest : BaseDatabaseTest() {
     @Test
     fun `should handle multiple entities with same request type`() {
         val requestType = "SHOW_DETAILS"
-        val now = Clock.System.now()
+        val now = fakeDateTimeProvider.now()
 
         // Add requests for different entities
         repository.upsert(1L, requestType, now - 30.minutes)
@@ -148,7 +149,7 @@ class CacheValidationTest : BaseDatabaseTest() {
     @Test
     fun `should handle multiple request types for same entity`() {
         val entityId = 123L
-        val now = Clock.System.now()
+        val now = fakeDateTimeProvider.now()
 
         // Add different request types for same entity
         repository.upsert(entityId, "SHOW_DETAILS", now - 30.minutes)
@@ -165,7 +166,7 @@ class CacheValidationTest : BaseDatabaseTest() {
     fun `delete should remove specific entityId and requestType combination`() {
         val entityId = 123L
         val requestType = "SHOW_DETAILS"
-        val now = Clock.System.now()
+        val now = fakeDateTimeProvider.now()
 
         repository.upsert(entityId, requestType, now)
         repository.upsert(entityId, "DIFFERENT_TYPE", now)
@@ -181,13 +182,17 @@ class CacheValidationTest : BaseDatabaseTest() {
 
         // Verify only the specific combination was deleted
         repository.isRequestExpired(entityId, requestType, 1.hours) shouldBe true // Deleted
-        repository.isRequestExpired(entityId, "DIFFERENT_TYPE", 1.hours) shouldBe false // Still exists
+        repository.isRequestExpired(
+            entityId,
+            "DIFFERENT_TYPE",
+            1.hours,
+        ) shouldBe false // Still exists
         repository.isRequestExpired(456L, requestType, 1.hours) shouldBe false // Still exists
     }
 
     @Test
     fun `deleteAll should remove all cached requests`() {
-        val now = Clock.System.now()
+        val now = fakeDateTimeProvider.now()
 
         // Add multiple requests
         repository.upsert(1L, "SHOW_DETAILS", now)
@@ -210,7 +215,7 @@ class CacheValidationTest : BaseDatabaseTest() {
 
     @Test
     fun `should validate with RequestTypeConfig durations`() {
-        val now = Clock.System.now()
+        val now = fakeDateTimeProvider.now()
 
         RequestTypeConfig.entries.forEach { config ->
             // Insert request that should be valid

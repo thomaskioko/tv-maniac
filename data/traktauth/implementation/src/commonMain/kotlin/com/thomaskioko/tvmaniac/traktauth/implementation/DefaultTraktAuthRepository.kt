@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.traktauth.api.RefreshTokenResult
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.api.TraktRefreshTokenAction
+import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
@@ -20,7 +21,6 @@ import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Instant
 
@@ -31,6 +31,7 @@ public class DefaultTraktAuthRepository(
     private val dispatchers: AppCoroutineDispatchers,
     private val authStore: AuthStore,
     private val refreshTokenAction: Lazy<TraktRefreshTokenAction>,
+    private val dateTimeProvider: DateTimeProvider,
 ) : TraktAuthRepository {
 
     private val authState = MutableStateFlow<AuthState?>(null)
@@ -60,7 +61,7 @@ public class DefaultTraktAuthRepository(
     override suspend fun getAuthState(): AuthState? {
         val cached = authState.value
 
-        if (cached != null && cached.isAuthorized && Clock.System.now() < authStateExpiry) {
+        if (cached != null && cached.isAuthorized && dateTimeProvider.now() < authStateExpiry) {
             return cached
         }
 
@@ -111,7 +112,7 @@ public class DefaultTraktAuthRepository(
     private fun cacheAuthState(authState: AuthState) {
         this.authState.update { authState }
         authStateExpiry = when {
-            authState.isAuthorized -> Clock.System.now() + 1.hours
+            authState.isAuthorized -> dateTimeProvider.now() + 1.hours
             else -> Instant.DISTANT_PAST
         }
     }
