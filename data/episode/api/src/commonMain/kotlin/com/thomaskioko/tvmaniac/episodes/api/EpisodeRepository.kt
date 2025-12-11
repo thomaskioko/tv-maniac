@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.episodes.api
 
 import com.thomaskioko.tvmaniac.db.Watched_episodes
 import com.thomaskioko.tvmaniac.episodes.api.model.ContinueTrackingResult
-import com.thomaskioko.tvmaniac.episodes.api.model.EpisodeWatchParams
 import com.thomaskioko.tvmaniac.episodes.api.model.LastWatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
@@ -67,11 +66,6 @@ public interface EpisodeRepository {
     public fun observeWatchProgress(showId: Long): Flow<WatchProgress>
 
     /**
-     * Get the last watched episode for a specific show.
-     */
-    public suspend fun getLastWatchedEpisode(showId: Long): Watched_episodes?
-
-    /**
      * Check if a specific episode is watched.
      */
     public suspend fun isEpisodeWatched(
@@ -95,18 +89,6 @@ public interface EpisodeRepository {
      * Used to detect out-of-order watching patterns.
      */
     public suspend fun hasUnwatchedEarlierEpisodes(showId: Long): Boolean
-
-    /**
-     * Find the earliest unwatched episode for a show.
-     * Used when user is watching out of order to show the next logical episode.
-     */
-    public suspend fun findEarliestUnwatchedEpisode(showId: Long): NextEpisodeWithShow?
-
-    /**
-     * Detect if the user is watching episodes out of chronological order.
-     * Compares watch timestamps with episode air order.
-     */
-    public suspend fun isWatchingOutOfOrder(showId: Long): Boolean
 
     /**
      * Observe the last watched episode using the shows_last_watched view.
@@ -151,38 +133,11 @@ public interface EpisodeRepository {
      * Get unwatched episodes that come before a specific episode.
      * Used to prompt the user when marking episodes out of order.
      */
-    public suspend fun getUnwatchedEpisodesBefore(
+    public suspend fun getPreviousUnwatchedEpisodes(
         showId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
     ): List<UnwatchedEpisode>
-
-    /**
-     * Mark multiple episodes as watched in a batch operation.
-     * @param watchedAt Optional base timestamp for when the episodes were watched. Defaults to current time.
-     */
-    public suspend fun markMultipleEpisodesWatched(
-        showId: Long,
-        episodes: List<EpisodeWatchParams>,
-        watchedAt: Instant? = null,
-    )
-
-    /**
-     * Get unwatched episodes in seasons before the specified season number.
-     * Used for "Mark all previous episodes?" prompt when marking a season as watched.
-     */
-    public suspend fun getUnwatchedEpisodesInPreviousSeasons(
-        showId: Long,
-        seasonNumber: Long,
-    ): List<UnwatchedEpisode>
-
-    /**
-     * Get count of unwatched episodes in seasons before the specified season number.
-     */
-    public suspend fun getUnwatchedEpisodeCountInPreviousSeasons(
-        showId: Long,
-        seasonNumber: Long,
-    ): Long
 
     /**
      * Get count of unwatched episodes in seasons before the specified season number,

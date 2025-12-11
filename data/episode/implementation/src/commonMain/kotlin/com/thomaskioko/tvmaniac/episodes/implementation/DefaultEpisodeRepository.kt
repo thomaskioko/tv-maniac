@@ -11,7 +11,6 @@ import com.thomaskioko.tvmaniac.db.Watched_episodes
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.api.model.ContinueTrackingResult
-import com.thomaskioko.tvmaniac.episodes.api.model.EpisodeWatchParams
 import com.thomaskioko.tvmaniac.episodes.api.model.LastWatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
@@ -100,9 +99,6 @@ public class DefaultEpisodeRepository(
     override fun observeWatchProgress(showId: Long): Flow<WatchProgress> =
         watchedEpisodeDao.observeWatchProgress(showId)
 
-    override suspend fun getLastWatchedEpisode(showId: Long): Watched_episodes? =
-        watchedEpisodeDao.getLastWatchedEpisode(showId)
-
     override suspend fun isEpisodeWatched(
         showId: Long,
         seasonNumber: Long,
@@ -119,14 +115,6 @@ public class DefaultEpisodeRepository(
 
     override suspend fun hasUnwatchedEarlierEpisodes(showId: Long): Boolean =
         watchAnalyticsHelper.hasUnwatchedEarlierEpisodes(showId)
-
-    override suspend fun findEarliestUnwatchedEpisode(showId: Long): NextEpisodeWithShow? {
-        val includeSpecials = datastoreRepository.observeIncludeSpecials().first()
-        return watchedEpisodeDao.getEarliestUnwatchedEpisode(showId, includeSpecials)
-    }
-
-    override suspend fun isWatchingOutOfOrder(showId: Long): Boolean =
-        watchAnalyticsHelper.isWatchingOutOfOrder(showId)
 
     override fun observeLastWatchedEpisode(showId: Long): Flow<LastWatchedEpisode?> {
         return database.showsLastWatchedQueries
@@ -161,7 +149,12 @@ public class DefaultEpisodeRepository(
     override suspend fun markSeasonWatched(showId: Long, seasonNumber: Long, watchedAt: Instant?) {
         val timestamp = watchedAt?.toEpochMilliseconds() ?: dateTimeProvider.nowMillis()
         val episodes = watchedEpisodeDao.getEpisodesForSeason(showId, seasonNumber)
-        watchedEpisodeDao.markSeasonAsWatched(showId, seasonNumber, episodes, timestamp)
+        watchedEpisodeDao.markSeasonAsWatched(
+            showId = showId,
+            seasonNumber = seasonNumber,
+            episodes = episodes,
+            timestamp = timestamp,
+        )
     }
 
     override suspend fun markSeasonAndPreviousSeasonsWatched(
@@ -170,40 +163,26 @@ public class DefaultEpisodeRepository(
         watchedAt: Instant?,
     ) {
         val timestamp = watchedAt?.toEpochMilliseconds() ?: dateTimeProvider.nowMillis()
-        watchedEpisodeDao.markSeasonAndPreviousAsWatched(showId, seasonNumber, timestamp)
+        watchedEpisodeDao.markSeasonAndPreviousAsWatched(
+            showId = showId,
+            seasonNumber = seasonNumber,
+            timestamp = timestamp,
+        )
     }
 
     override suspend fun markSeasonUnwatched(showId: Long, seasonNumber: Long) {
         watchedEpisodeDao.markSeasonAsUnwatched(showId, seasonNumber)
     }
 
-    override suspend fun getUnwatchedEpisodesBefore(
+    override suspend fun getPreviousUnwatchedEpisodes(
         showId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
-    ): List<UnwatchedEpisode> =
-        watchedEpisodeDao.getUnwatchedEpisodesBefore(showId, seasonNumber, episodeNumber)
-
-    override suspend fun markMultipleEpisodesWatched(
-        showId: Long,
-        episodes: List<EpisodeWatchParams>,
-        watchedAt: Instant?,
-    ) {
-        val timestamp = watchedAt?.toEpochMilliseconds() ?: dateTimeProvider.nowMillis()
-        watchedEpisodeDao.markMultipleAsWatched(showId, episodes, timestamp)
-    }
-
-    override suspend fun getUnwatchedEpisodesInPreviousSeasons(
-        showId: Long,
-        seasonNumber: Long,
-    ): List<UnwatchedEpisode> =
-        watchedEpisodeDao.getUnwatchedEpisodesInPreviousSeasons(showId, seasonNumber)
-
-    override suspend fun getUnwatchedEpisodeCountInPreviousSeasons(
-        showId: Long,
-        seasonNumber: Long,
-    ): Long =
-        watchedEpisodeDao.getUnwatchedEpisodeCountInPreviousSeasons(showId, seasonNumber)
+    ): List<UnwatchedEpisode> = watchedEpisodeDao.getUnwatchedEpisodesBefore(
+        showId = showId,
+        seasonNumber = seasonNumber,
+        episodeNumber = episodeNumber,
+    )
 
     override suspend fun getUnwatchedCountAfterFetchingPreviousSeasons(
         showId: Long,

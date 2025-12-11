@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.episodes.testing
 import com.thomaskioko.tvmaniac.db.Watched_episodes
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.api.model.ContinueTrackingResult
-import com.thomaskioko.tvmaniac.episodes.api.model.EpisodeWatchParams
 import com.thomaskioko.tvmaniac.episodes.api.model.LastWatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
@@ -53,7 +52,6 @@ class FakeEpisodeRepository : EpisodeRepository {
 
     private var unwatchedEpisodesBeforeResult: List<UnwatchedEpisode> = emptyList()
     private var unwatchedCountAfterFetchingPreviousSeasonsResult: Long = 0L
-    private var earliestUnwatchedEpisodeResult: NextEpisodeWithShow? = null
 
     fun setUnwatchedEpisodesBefore(episodes: List<UnwatchedEpisode>) {
         unwatchedEpisodesBeforeResult = episodes
@@ -61,10 +59,6 @@ class FakeEpisodeRepository : EpisodeRepository {
 
     fun setUnwatchedCountAfterFetchingPreviousSeasons(count: Long) {
         unwatchedCountAfterFetchingPreviousSeasonsResult = count
-    }
-
-    fun setEarliestUnwatchedEpisode(episode: NextEpisodeWithShow?) {
-        earliestUnwatchedEpisodeResult = episode
     }
 
     fun setNextEpisodesForWatchlist(episodes: List<NextEpisodeWithShow>) {
@@ -117,8 +111,6 @@ class FakeEpisodeRepository : EpisodeRepository {
             MutableStateFlow(WatchProgress(showId, 0, null, null, null))
         }
 
-    override suspend fun getLastWatchedEpisode(showId: Long): Watched_episodes? = null
-
     override suspend fun isEpisodeWatched(
         showId: Long,
         seasonNumber: Long,
@@ -141,11 +133,6 @@ class FakeEpisodeRepository : EpisodeRepository {
 
     override suspend fun hasUnwatchedEarlierEpisodes(showId: Long): Boolean = false
 
-    override suspend fun findEarliestUnwatchedEpisode(showId: Long): NextEpisodeWithShow? =
-        earliestUnwatchedEpisodeResult
-
-    override suspend fun isWatchingOutOfOrder(showId: Long): Boolean = false
-
     override fun observeLastWatchedEpisode(showId: Long): Flow<LastWatchedEpisode?> =
         MutableStateFlow(null)
 
@@ -155,7 +142,9 @@ class FakeEpisodeRepository : EpisodeRepository {
     override fun observeShowWatchProgress(showId: Long): Flow<ShowWatchProgress> =
         showWatchProgressFlow.asStateFlow()
 
-    override suspend fun markSeasonWatched(showId: Long, seasonNumber: Long, watchedAt: Instant?) {}
+    override suspend fun markSeasonWatched(showId: Long, seasonNumber: Long, watchedAt: Instant?) {
+        lastMarkSeasonWatchedCall = MarkSeasonWatchedCall(showId, seasonNumber, markPreviousSeasons = false)
+    }
 
     override suspend fun markEpisodeAndPreviousEpisodesWatched(
         showId: Long,
@@ -183,27 +172,11 @@ class FakeEpisodeRepository : EpisodeRepository {
 
     override suspend fun markSeasonUnwatched(showId: Long, seasonNumber: Long) {}
 
-    override suspend fun getUnwatchedEpisodesBefore(
+    override suspend fun getPreviousUnwatchedEpisodes(
         showId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
     ): List<UnwatchedEpisode> = unwatchedEpisodesBeforeResult
-
-    override suspend fun markMultipleEpisodesWatched(
-        showId: Long,
-        episodes: List<EpisodeWatchParams>,
-        watchedAt: Instant?,
-    ) {}
-
-    override suspend fun getUnwatchedEpisodesInPreviousSeasons(
-        showId: Long,
-        seasonNumber: Long,
-    ): List<UnwatchedEpisode> = emptyList()
-
-    override suspend fun getUnwatchedEpisodeCountInPreviousSeasons(
-        showId: Long,
-        seasonNumber: Long,
-    ): Long = 0L
 
     override suspend fun getUnwatchedCountAfterFetchingPreviousSeasons(
         showId: Long,

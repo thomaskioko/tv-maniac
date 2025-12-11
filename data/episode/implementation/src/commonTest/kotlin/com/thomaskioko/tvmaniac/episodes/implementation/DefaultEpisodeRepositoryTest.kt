@@ -10,10 +10,6 @@ import com.thomaskioko.tvmaniac.db.Show_metadata
 import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.db.Watchlists
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
-import com.thomaskioko.tvmaniac.episodes.api.model.EpisodeWatchParams
-import com.thomaskioko.tvmaniac.episodes.implementation.MockData.SEASON_0_EPISODE_COUNT
-import com.thomaskioko.tvmaniac.episodes.implementation.MockData.SEASON_0_ID
-import com.thomaskioko.tvmaniac.episodes.implementation.MockData.SEASON_0_NUMBER
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.SEASON_1_EPISODE_COUNT
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.SEASON_1_ID
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.SEASON_1_NUMBER
@@ -44,7 +40,6 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.time.Clock
-import kotlin.time.Instant
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
@@ -262,35 +257,6 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should get last watched episode`() = runTest {
-        episodeRepository.getLastWatchedEpisode(showId = TEST_SHOW_ID).shouldBeNull()
-
-        episodeRepository.markEpisodeAsWatched(
-            showId = TEST_SHOW_ID,
-            episodeId = 101L,
-            seasonNumber = SEASON_1_NUMBER,
-            episodeNumber = 1L,
-        )
-
-        val lastWatched = episodeRepository.getLastWatchedEpisode(showId = TEST_SHOW_ID)
-        lastWatched.shouldNotBeNull()
-        lastWatched.episode_id shouldBe Id(101L)
-
-        episodeRepository.markEpisodeAsWatched(
-            showId = TEST_SHOW_ID,
-            episodeId = 103L,
-            seasonNumber = SEASON_1_NUMBER,
-            episodeNumber = 3L,
-        )
-
-        val newLastWatched = episodeRepository.getLastWatchedEpisode(TEST_SHOW_ID)
-        newLastWatched.shouldNotBeNull()
-        newLastWatched.episode_id shouldBe Id(103L)
-        newLastWatched.season_number shouldBe 1L
-        newLastWatched.episode_number shouldBe 3L
-    }
-
-    @Test
     fun `should check if episode is watched`() = runTest {
         episodeRepository.isEpisodeWatched(
             showId = TEST_SHOW_ID,
@@ -316,32 +282,6 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
             seasonNumber = SEASON_1_NUMBER,
             episodeNumber = 2L,
         ) shouldBe false
-    }
-
-    @Test
-    fun `should track watch progress correctly`() = runTest {
-        episodeRepository.observeWatchedEpisodes(showId = TEST_SHOW_ID).test {
-            awaitItem().shouldBeEmpty()
-
-            episodeRepository.markEpisodeAsWatched(
-                showId = TEST_SHOW_ID,
-                episodeId = 101L,
-                seasonNumber = SEASON_1_NUMBER,
-                episodeNumber = 1L,
-            )
-
-            val watchedEpisodes = awaitItem()
-            watchedEpisodes shouldHaveSize 1
-            watchedEpisodes.first().episode_id shouldBe Id(101L)
-            watchedEpisodes.first().season_number shouldBe 1L
-            watchedEpisodes.first().episode_number shouldBe 1L
-
-            val lastWatched = episodeRepository.getLastWatchedEpisode(showId = TEST_SHOW_ID)
-            lastWatched.shouldNotBeNull()
-            lastWatched.episode_id shouldBe Id(101L)
-            lastWatched.season_number shouldBe 1L
-            lastWatched.episode_number shouldBe 1L
-        }
     }
 
     @Test
@@ -478,31 +418,6 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should detect out of order watching pattern`() = runTest {
-        // Watch episode 3 first with an earlier timestamp
-        episodeRepository.markEpisodeAsWatched(
-            showId = TEST_SHOW_ID,
-            episodeId = 103L,
-            seasonNumber = SEASON_1_NUMBER,
-            episodeNumber = 3L,
-            watchedAt = Instant.fromEpochMilliseconds(1000),
-        )
-
-        // Then watch episode 1 (out of order) with a later timestamp
-        episodeRepository.markEpisodeAsWatched(
-            showId = TEST_SHOW_ID,
-            episodeId = 101L,
-            seasonNumber = SEASON_1_NUMBER,
-            episodeNumber = 1L,
-            watchedAt = Instant.fromEpochMilliseconds(2000),
-        )
-
-        val isOutOfOrder = episodeRepository.isWatchingOutOfOrder(showId = TEST_SHOW_ID)
-
-        isOutOfOrder shouldBe true
-    }
-
-    @Test
     fun `should detect catching up watching pattern`() = runTest {
         episodeRepository.markEpisodeAsWatched(
             showId = TEST_SHOW_ID,
@@ -521,177 +436,6 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
             episodeRepository.hasUnwatchedEarlierEpisodes(showId = TEST_SHOW_ID)
 
         hasEarlierUnwatched shouldBe true
-    }
-
-    @Test
-    fun `should find earliest unwatched episode`() = runTest {
-        episodeRepository.markEpisodeAsWatched(
-            showId = TEST_SHOW_ID,
-            episodeId = 101L,
-            seasonNumber = SEASON_1_NUMBER,
-            episodeNumber = 1L,
-        )
-        episodeRepository.markEpisodeAsWatched(
-            showId = TEST_SHOW_ID,
-            episodeId = 103L,
-            seasonNumber = SEASON_1_NUMBER,
-            episodeNumber = 3L,
-        )
-
-        val earliestUnwatched =
-            episodeRepository.findEarliestUnwatchedEpisode(showId = TEST_SHOW_ID)
-
-        earliestUnwatched.shouldNotBeNull()
-        earliestUnwatched.episodeId shouldBe 102L
-        earliestUnwatched.seasonNumber shouldBe 1L
-        earliestUnwatched.episodeNumber shouldBe 2L
-        earliestUnwatched.episodeName shouldBe "Episode 2"
-    }
-
-    @Test
-    fun `should return null when no unwatched episodes exist`() = runTest {
-        repeat(SEASON_1_EPISODE_COUNT) { episodeIndex ->
-            val episodeNumber = episodeIndex + 1
-            val episodeId = 100L + episodeNumber
-            episodeRepository.markEpisodeAsWatched(
-                showId = TEST_SHOW_ID,
-                episodeId = episodeId,
-                seasonNumber = SEASON_1_NUMBER,
-                episodeNumber = episodeNumber.toLong(),
-            )
-        }
-
-        repeat(SEASON_2_EPISODE_COUNT) { episodeIndex ->
-            val episodeNumber = episodeIndex + 1
-            val episodeId = 200L + episodeNumber
-            episodeRepository.markEpisodeAsWatched(
-                showId = TEST_SHOW_ID,
-                episodeId = episodeId,
-                seasonNumber = SEASON_2_NUMBER,
-                episodeNumber = episodeNumber.toLong(),
-            )
-        }
-
-        val earliestUnwatched =
-            episodeRepository.findEarliestUnwatchedEpisode(showId = TEST_SHOW_ID)
-        earliestUnwatched.shouldBeNull()
-    }
-
-    @Test
-    fun `should exclude specials when includeSpecials is false`() = runTest {
-        insertSeason0Data()
-        fakeDatastoreRepository.saveIncludeSpecials(false)
-
-        val earliestUnwatched =
-            episodeRepository.findEarliestUnwatchedEpisode(showId = TEST_SHOW_ID)
-
-        earliestUnwatched.shouldNotBeNull()
-        earliestUnwatched.seasonNumber shouldBe SEASON_1_NUMBER
-        earliestUnwatched.episodeNumber shouldBe 1L
-        earliestUnwatched.episodeId shouldBe 101L
-    }
-
-    @Test
-    fun `should include specials when includeSpecials is true`() = runTest {
-        insertSeason0Data()
-        fakeDatastoreRepository.saveIncludeSpecials(true)
-
-        val earliestUnwatched =
-            episodeRepository.findEarliestUnwatchedEpisode(showId = TEST_SHOW_ID)
-
-        earliestUnwatched.shouldNotBeNull()
-        earliestUnwatched.seasonNumber shouldBe SEASON_0_NUMBER
-        earliestUnwatched.episodeNumber shouldBe 1L
-        earliestUnwatched.episodeId shouldBe 1L
-    }
-
-    @Test
-    fun `should find cross-season earliest unwatched episode`() = runTest {
-        repeat(SEASON_1_EPISODE_COUNT) { episodeIndex ->
-            val episodeNumber = episodeIndex + 1
-            val episodeId = 100L + episodeNumber
-            episodeRepository.markEpisodeAsWatched(
-                showId = TEST_SHOW_ID,
-                episodeId = episodeId,
-                seasonNumber = SEASON_1_NUMBER,
-                episodeNumber = episodeNumber.toLong(),
-            )
-        }
-
-        val earliestUnwatched =
-            episodeRepository.findEarliestUnwatchedEpisode(showId = TEST_SHOW_ID)
-
-        earliestUnwatched.shouldNotBeNull()
-        earliestUnwatched.seasonNumber shouldBe SEASON_2_NUMBER
-        earliestUnwatched.episodeNumber shouldBe 1L
-        earliestUnwatched.episodeId shouldBe 201L
-    }
-
-    @Test
-    fun `should exclude future episodes from earliest unwatched`() = runTest {
-        repeat(SEASON_1_EPISODE_COUNT) { episodeIndex ->
-            val episodeNumber = episodeIndex + 1
-            val episodeId = 100L + episodeNumber
-            episodeRepository.markEpisodeAsWatched(
-                showId = TEST_SHOW_ID,
-                episodeId = episodeId,
-                seasonNumber = SEASON_1_NUMBER,
-                episodeNumber = episodeNumber.toLong(),
-            )
-        }
-
-        database.episodesQueries.upsert(
-            id = Id(201L),
-            season_id = Id(SEASON_2_ID),
-            show_id = Id(TEST_SHOW_ID),
-            title = "Future Episode 1",
-            overview = "Future episode overview",
-            episode_number = 1L,
-            runtime = 45L,
-            image_url = "/future1.jpg",
-            vote_average = 0.0,
-            vote_count = 0L,
-            air_date = "2099-12-31",
-            trakt_id = null,
-        )
-
-        val earliestUnwatched =
-            episodeRepository.findEarliestUnwatchedEpisode(showId = TEST_SHOW_ID)
-
-        if (earliestUnwatched != null) {
-            earliestUnwatched.episodeId shouldBe 202L
-        }
-    }
-
-    private fun insertSeason0Data() {
-        database.seasonsQueries.upsert(
-            id = Id(SEASON_0_ID),
-            show_id = Id(TEST_SHOW_ID),
-            season_number = SEASON_0_NUMBER,
-            title = "Specials",
-            overview = "Specials",
-            episode_count = SEASON_0_EPISODE_COUNT.toLong(),
-            image_url = "/specials.jpg",
-        )
-
-        repeat(SEASON_0_EPISODE_COUNT) { episodeIndex ->
-            val episodeNumber = episodeIndex + 1
-            val episodeId = episodeNumber.toLong()
-            database.episodesQueries.upsert(
-                id = Id(episodeId),
-                season_id = Id(SEASON_0_ID),
-                show_id = Id(TEST_SHOW_ID),
-                title = "Special $episodeNumber",
-                overview = "Special $episodeNumber overview",
-                episode_number = episodeNumber.toLong(),
-                runtime = 30L,
-                image_url = "/special$episodeNumber.jpg",
-                vote_average = 7.0,
-                vote_count = 25L,
-                air_date = "2022-12-0$episodeNumber",
-                trakt_id = null,
-            )
-        }
     }
 
     @Test
@@ -728,35 +472,6 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
             afterSecond.seasonNumber shouldBe 1
             afterSecond.episodeNumber shouldBe 5
         }
-    }
-
-    @Test
-    fun `should handle linear watching pattern correctly`() = runTest {
-        episodeRepository.markEpisodeAsWatched(
-            showId = TEST_SHOW_ID,
-            episodeId = 101L,
-            seasonNumber = SEASON_1_NUMBER,
-            episodeNumber = 1L,
-        )
-        episodeRepository.markEpisodeAsWatched(
-            showId = TEST_SHOW_ID,
-            episodeId = 102L,
-            seasonNumber = SEASON_1_NUMBER,
-            episodeNumber = 2L,
-        )
-        episodeRepository.markEpisodeAsWatched(
-            showId = TEST_SHOW_ID,
-            episodeId = 103L,
-            seasonNumber = SEASON_1_NUMBER,
-            episodeNumber = 3L,
-        )
-
-        val isOutOfOrder = episodeRepository.isWatchingOutOfOrder(showId = TEST_SHOW_ID)
-        val hasEarlierUnwatched =
-            episodeRepository.hasUnwatchedEarlierEpisodes(showId = TEST_SHOW_ID)
-
-        isOutOfOrder shouldBe false
-        hasEarlierUnwatched shouldBe false
     }
 
     @Test
@@ -805,44 +520,6 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
             val watchedEpisodes = awaitItem()
             watchedEpisodes shouldHaveSize SEASON_1_EPISODE_COUNT
             watchedEpisodes.all { it.season_number == SEASON_1_NUMBER } shouldBe true
-        }
-    }
-
-    @Test
-    fun `should get unwatched episodes in previous seasons`() = runTest {
-        val unwatchedEpisodes = episodeRepository.getUnwatchedEpisodesInPreviousSeasons(
-            showId = TEST_SHOW_ID,
-            seasonNumber = SEASON_2_NUMBER,
-        )
-
-        unwatchedEpisodes shouldHaveSize SEASON_1_EPISODE_COUNT
-        unwatchedEpisodes.all { it.seasonNumber == SEASON_1_NUMBER } shouldBe true
-    }
-
-    @Test
-    fun `should mark multiple episodes watched for previous seasons`() = runTest {
-        val unwatchedEpisodes = episodeRepository.getUnwatchedEpisodesInPreviousSeasons(
-            showId = TEST_SHOW_ID,
-            seasonNumber = SEASON_2_NUMBER,
-        )
-
-        val episodesToMark = unwatchedEpisodes.map { unwatched ->
-            EpisodeWatchParams(
-                episodeId = unwatched.episodeId,
-                seasonNumber = unwatched.seasonNumber,
-                episodeNumber = unwatched.episodeNumber,
-            )
-        }
-
-        episodeRepository.markMultipleEpisodesWatched(
-            showId = TEST_SHOW_ID,
-            episodes = episodesToMark,
-        )
-        episodeRepository.markSeasonWatched(showId = TEST_SHOW_ID, seasonNumber = SEASON_2_NUMBER)
-
-        episodeRepository.observeWatchedEpisodes(showId = TEST_SHOW_ID).test {
-            val watchedEpisodes = awaitItem()
-            watchedEpisodes shouldHaveSize (SEASON_1_EPISODE_COUNT + SEASON_2_EPISODE_COUNT)
         }
     }
 

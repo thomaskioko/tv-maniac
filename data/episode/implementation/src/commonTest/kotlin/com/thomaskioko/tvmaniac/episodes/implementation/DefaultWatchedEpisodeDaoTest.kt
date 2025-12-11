@@ -242,17 +242,6 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should return all unwatched episodes from earlier seasons`() = runTest {
-        val unwatched = watchedEpisodeDao.getUnwatchedEpisodesInPreviousSeasons(
-            showId = TEST_SHOW_ID,
-            seasonNumber = SEASON_2_NUMBER,
-        )
-
-        unwatched shouldHaveSize SEASON_1_EPISODE_COUNT
-        unwatched.all { it.seasonNumber == SEASON_1_NUMBER } shouldBe true
-    }
-
-    @Test
     fun `should count all unwatched episodes in previous seasons`() = runTest {
         val count = watchedEpisodeDao.getUnwatchedEpisodeCountInPreviousSeasons(
             showId = TEST_SHOW_ID,

@@ -9,7 +9,6 @@ import com.thomaskioko.tvmaniac.db.Watched_episodes
 import com.thomaskioko.tvmaniac.episodes.api.NextEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.api.model.EpisodeWatchParams
-import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.UnwatchedEpisode
@@ -173,31 +172,6 @@ public class DefaultWatchedEpisodeDao(
             )
         }.catch {
             emit(ShowWatchProgress(showId, 0, 0))
-        }
-    }
-
-    override suspend fun markMultipleAsWatched(
-        showId: Long,
-        episodes: List<EpisodeWatchParams>,
-        baseTimestamp: Long,
-    ) {
-        withContext(dispatchers.databaseWrite) {
-            database.transaction {
-                database.watchlistQueries.upsertIfNotExists(
-                    id = Id(showId),
-                    created_at = baseTimestamp,
-                )
-                episodes.forEach { episode ->
-                    val timestamp = episode.watchedAt ?: baseTimestamp
-                    database.watchedEpisodesQueries.markAsWatched(
-                        show_id = Id(showId),
-                        episode_id = Id(episode.episodeId),
-                        season_number = episode.seasonNumber,
-                        episode_number = episode.episodeNumber,
-                        watched_at = timestamp,
-                    )
-                }
-            }
         }
     }
 
@@ -410,25 +384,6 @@ public class DefaultWatchedEpisodeDao(
         }
     }
 
-    override suspend fun getUnwatchedEpisodesInPreviousSeasons(
-        showId: Long,
-        seasonNumber: Long,
-    ): List<UnwatchedEpisode> {
-        return withContext(dispatchers.databaseRead) {
-            database.watchedEpisodesQueries
-                .getUnwatchedEpisodesInPreviousSeasons(Id(showId), seasonNumber)
-                .executeAsList()
-                .map { result ->
-                    UnwatchedEpisode(
-                        episodeId = result.episode_id.id,
-                        seasonNumber = result.season_number,
-                        episodeNumber = result.episode_number,
-                        seasonId = result.season_id.id,
-                    )
-                }
-        }
-    }
-
     override suspend fun getUnwatchedEpisodeCountInPreviousSeasons(
         showId: Long,
         seasonNumber: Long,
@@ -437,35 +392,6 @@ public class DefaultWatchedEpisodeDao(
             database.watchedEpisodesQueries
                 .getUnwatchedEpisodeCountInPreviousSeasons(Id(showId), seasonNumber)
                 .executeAsOne()
-        }
-    }
-
-    override suspend fun getEarliestUnwatchedEpisode(
-        showId: Long,
-        includeSpecials: Boolean,
-    ): NextEpisodeWithShow? {
-        return withContext(dispatchers.databaseRead) {
-            database.watchedEpisodesQueries
-                .getEarliestUnwatchedEpisode(
-                    show_id = Id(showId),
-                    include_specials = if (includeSpecials) 1L else 0L,
-                )
-                .executeAsOneOrNull()
-                ?.let { result ->
-                    NextEpisodeWithShow(
-                        showId = result.show_id.id,
-                        episodeId = result.episode_id.id,
-                        episodeName = result.episode_name,
-                        seasonId = result.season_id.id,
-                        seasonNumber = result.season_number,
-                        episodeNumber = result.episode_number,
-                        runtime = result.runtime,
-                        stillPath = result.still_path,
-                        overview = result.overview,
-                        showName = result.show_name,
-                        showPoster = result.show_poster,
-                    )
-                }
         }
     }
 

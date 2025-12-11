@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.episodes.api
 
 import com.thomaskioko.tvmaniac.db.Watched_episodes
 import com.thomaskioko.tvmaniac.episodes.api.model.EpisodeWatchParams
-import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.UnwatchedEpisode
@@ -30,12 +29,6 @@ public interface WatchedEpisodeDao {
     public suspend fun markAsUnwatched(
         showId: Long,
         episodeId: Long,
-    )
-
-    public suspend fun markMultipleAsWatched(
-        showId: Long,
-        episodes: List<EpisodeWatchParams>,
-        baseTimestamp: Long,
     )
 
     public suspend fun markSeasonAsWatched(
@@ -103,20 +96,10 @@ public interface WatchedEpisodeDao {
 
     public suspend fun deleteAllForShow(showId: Long)
 
-    public suspend fun getUnwatchedEpisodesInPreviousSeasons(
-        showId: Long,
-        seasonNumber: Long,
-    ): List<UnwatchedEpisode>
-
     public suspend fun getUnwatchedEpisodeCountInPreviousSeasons(
         showId: Long,
         seasonNumber: Long,
     ): Long
-
-    public suspend fun getEarliestUnwatchedEpisode(
-        showId: Long,
-        includeSpecials: Boolean,
-    ): NextEpisodeWithShow?
 
     public fun observeUnsyncedEpisodes(): Flow<List<Watched_episodes>>
 
