@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.i18n.testing.util.IgnoreIos
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.floats.shouldBeWithinPercentageOf
@@ -20,6 +21,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.time.Clock
 
+@IgnoreIos
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
 

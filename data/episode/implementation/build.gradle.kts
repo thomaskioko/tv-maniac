@@ -43,6 +43,7 @@ kotlin {
                 implementation(projects.data.datastore.testing)
                 implementation(projects.data.seasons.testing)
                 implementation(projects.data.seasondetails.testing)
+                implementation(projects.i18n.testing)
             }
         }
     }
