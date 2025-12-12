@@ -18,7 +18,7 @@ import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.api.model.SeasonDetailsWithEpisodes
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbSeasonDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbSeasonDetailsResponse
-import com.thomaskioko.tvmaniac.util.FormatterUtil
+import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.SourceOfTruth
@@ -52,15 +52,17 @@ class SeasonDetailsStore(
                     episodesDao.insert(
                         Episode(
                             id = Id(episode.id.toLong()),
+                            season_id = Id(params.seasonId),
                             show_id = Id(params.showId),
                             episode_number = episode.episodeNumber.toLong(),
                             title = episode.name,
                             overview = episode.overview,
-                            image_url = episode.stillPath?.let { formatterUtil.formatTmdbPosterPath(it) },
-                            vote_average = episode.voteAverage,
-                            vote_count = episode.voteCount.toLong(),
                             runtime = episode.runtime?.toLong(),
-                            season_id = Id(params.seasonId),
+                            vote_count = episode.voteCount.toLong(),
+                            vote_average = episode.voteAverage,
+                            image_url = episode.stillPath?.let { formatterUtil.formatTmdbPosterPath(it) },
+                            air_date = episode.airDate,
+                            trakt_id = null,
                         ),
                     )
                 }

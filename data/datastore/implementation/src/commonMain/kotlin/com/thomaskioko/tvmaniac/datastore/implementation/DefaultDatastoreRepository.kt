@@ -99,11 +99,23 @@ class DefaultDatastoreRepository(
             preferences[KEY_OPEN_TRAILERS_IN_YOUTUBE] ?: false
         }
 
+    override suspend fun saveIncludeSpecials(includeSpecials: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[KEY_INCLUDE_SPECIALS] = includeSpecials
+        }
+    }
+
+    override fun observeIncludeSpecials(): Flow<Boolean> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_INCLUDE_SPECIALS] ?: false
+        }
+
     companion object {
         val KEY_THEME = stringPreferencesKey("app_theme")
         val KEY_LANGUAGE = stringPreferencesKey("app_language")
         val KEY_LIST_STYLE = stringPreferencesKey("list_style")
         val KEY_IMAGE_QUALITY = stringPreferencesKey("image_quality")
         val KEY_OPEN_TRAILERS_IN_YOUTUBE = booleanPreferencesKey("open_trailers_in_youtube")
+        val KEY_INCLUDE_SPECIALS = booleanPreferencesKey("include_specials")
     }
 }

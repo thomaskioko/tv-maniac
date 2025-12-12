@@ -3,21 +3,22 @@ package com.thomaskioko.tvmaniac.resourcemanager.implementation
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.LastRequestsQueries
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig
+import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.shouldBe
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 
 class DefaultRequestManagerRepositoryTest : BaseDatabaseTest() {
     private val lastRequestsQueries: LastRequestsQueries = database.lastRequestsQueries
+    private val fakeDateTimeProvider = FakeDateTimeProvider()
     private lateinit var repository: DefaultRequestManagerRepository
 
     @BeforeTest
     fun setup() {
-        repository = DefaultRequestManagerRepository(database)
+        repository = DefaultRequestManagerRepository(database, fakeDateTimeProvider)
     }
 
     @AfterTest
@@ -27,7 +28,7 @@ class DefaultRequestManagerRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should return last insert row id when upsert is called`() {
-        val result = repository.upsert(1L, "TEST", Clock.System.now())
+        val result = repository.upsert(1L, "TEST", fakeDateTimeProvider.now())
         val expectedRowId = lastRequestsQueries.lastInsertRowId().executeAsOne()
 
         result shouldBe expectedRowId
@@ -37,8 +38,8 @@ class DefaultRequestManagerRepositoryTest : BaseDatabaseTest() {
     fun `should update existing record for same entityId and requestType`() {
         val entityId = 1L
         val requestType = "TEST"
-        val initialTimestamp = Clock.System.now() - 1.hours
-        val updatedTimestamp = Clock.System.now()
+        val initialTimestamp = fakeDateTimeProvider.now() - 1.hours
+        val updatedTimestamp = fakeDateTimeProvider.now()
 
         // Perform the initial insert
         repository.upsert(entityId, requestType, initialTimestamp)
@@ -99,7 +100,7 @@ class DefaultRequestManagerRepositoryTest : BaseDatabaseTest() {
         val entityId = 1L
         val requestType = "TEST"
         val threshold = 1.hours
-        val oldTimestamp = Clock.System.now() - 2.hours
+        val oldTimestamp = fakeDateTimeProvider.now() - 2.hours
 
         repository.upsert(entityId, requestType, oldTimestamp)
 
@@ -115,7 +116,7 @@ class DefaultRequestManagerRepositoryTest : BaseDatabaseTest() {
         val entityId = 1L
         val requestType = "TEST"
         val threshold = 1.hours
-        val timestamp = Clock.System.now() - 30.minutes
+        val timestamp = fakeDateTimeProvider.now() - 30.minutes
 
         repository.upsert(entityId, requestType, timestamp)
 
@@ -140,7 +141,7 @@ class DefaultRequestManagerRepositoryTest : BaseDatabaseTest() {
         val requestType = RequestTypeConfig.TOP_RATED_SHOWS.name
         val entityId = RequestTypeConfig.TOP_RATED_SHOWS.requestId
         val threshold = 1.hours
-        val oldTimestamp = Clock.System.now() - 2.hours
+        val oldTimestamp = fakeDateTimeProvider.now() - 2.hours
 
         repository.upsert(entityId, requestType, oldTimestamp)
 
@@ -154,7 +155,7 @@ class DefaultRequestManagerRepositoryTest : BaseDatabaseTest() {
         val requestType = RequestTypeConfig.TOP_RATED_SHOWS.name
         val entityId = RequestTypeConfig.TOP_RATED_SHOWS.requestId
         val threshold = 1.hours
-        val recentTimestamp = Clock.System.now() - 30.minutes
+        val recentTimestamp = fakeDateTimeProvider.now() - 30.minutes
 
         repository.upsert(entityId, requestType, recentTimestamp)
 
@@ -170,10 +171,10 @@ class DefaultRequestManagerRepositoryTest : BaseDatabaseTest() {
         val differentEntityId = 999L
         val threshold = 1.hours
 
-        val oldTimestamp = Clock.System.now() - 2.hours
+        val oldTimestamp = fakeDateTimeProvider.now() - 2.hours
         repository.upsert(correctEntityId, requestType, oldTimestamp)
 
-        val recentTimestamp = Clock.System.now() - 30.minutes
+        val recentTimestamp = fakeDateTimeProvider.now() - 30.minutes
         repository.upsert(differentEntityId, requestType, recentTimestamp)
 
         val result = repository.isRequestValid(requestType, threshold)
@@ -196,14 +197,14 @@ class DefaultRequestManagerRepositoryTest : BaseDatabaseTest() {
         val entityId = 1L
         val requestType = "TEST"
         val threshold = 1.hours
-        val oldTimestamp = Clock.System.now() - 2.hours
+        val oldTimestamp = fakeDateTimeProvider.now() - 2.hours
 
         repository.upsert(entityId, requestType, oldTimestamp)
 
         val initialResult = repository.isRequestExpired(entityId, requestType, threshold)
         initialResult shouldBe true
 
-        val currentTimestamp = Clock.System.now()
+        val currentTimestamp = fakeDateTimeProvider.now()
         repository.upsert(entityId, requestType, currentTimestamp)
 
         val updatedResult = repository.isRequestExpired(entityId, requestType, threshold)

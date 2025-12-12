@@ -20,7 +20,7 @@ kotlin {
                 implementation(projects.core.base)
                 implementation(projects.core.logger.api)
                 implementation(projects.core.networkUtil)
-                implementation(projects.core.util)
+                implementation(projects.core.util.api)
                 implementation(projects.data.database.sqldelight)
                 implementation(projects.data.requestManager.api)
                 implementation(projects.domain.genre)

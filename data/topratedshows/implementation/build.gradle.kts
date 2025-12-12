@@ -24,7 +24,7 @@ kotlin {
                 implementation(projects.data.database.sqldelight)
                 implementation(projects.data.topratedshows.api)
                 implementation(projects.data.shows.api)
-                implementation(projects.core.util)
+                implementation(projects.core.util.api)
                 implementation(projects.data.requestManager.api)
 
                 api(libs.coroutines.core)

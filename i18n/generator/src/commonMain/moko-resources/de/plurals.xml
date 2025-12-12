@@ -24,6 +24,10 @@
         <item quantity="one">%d Tag</item>
         <item quantity="other">%d Tage</item>
     </plurals>
+    <plurals name="day_label">
+        <item quantity="one">Tag</item>
+        <item quantity="other">Tage</item>
+    </plurals>
     <plurals name="hour_count">
         <item quantity="one">%d Stunde</item>
         <item quantity="other">%d Stunden</item>

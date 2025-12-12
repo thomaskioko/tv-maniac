@@ -15,6 +15,8 @@ val cachedResult = mutableListOf(
         created_at = 0,
         season_count = null,
         episode_count = null,
+        watched_count = 0,
+        total_episode_count = 0,
     ),
 )
 
@@ -28,6 +30,8 @@ val updatedData = listOf(
         created_at = 0,
         season_count = null,
         episode_count = null,
+        watched_count = 0,
+        total_episode_count = 0,
     ),
     Watchlists(
         id = Id(1232),
@@ -38,6 +42,8 @@ val updatedData = listOf(
         created_at = 0,
         season_count = null,
         episode_count = null,
+        watched_count = 0,
+        total_episode_count = 0,
     ),
 )
 

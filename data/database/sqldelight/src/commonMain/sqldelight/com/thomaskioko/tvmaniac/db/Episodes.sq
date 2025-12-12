@@ -14,8 +14,12 @@ CREATE TABLE episode (
     vote_count INTEGER NOT NULL,
     vote_average REAL NOT NULL,
     image_url TEXT DEFAULT NULL,
+    air_date TEXT DEFAULT NULL,
+    trakt_id INTEGER DEFAULT NULL,
     FOREIGN KEY(season_id) REFERENCES season(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
+
+CREATE INDEX IF NOT EXISTS idx_episode_trakt_id ON episode(trakt_id);
 
 upsert:
 INSERT OR REPLACE INTO episode(
@@ -28,9 +32,11 @@ INSERT OR REPLACE INTO episode(
     vote_count,
     vote_average,
     episode_number,
-    image_url
+    image_url,
+    air_date,
+    trakt_id
 )
-VALUES(?,?,?,?,?,?,?,?,?,?);
+VALUES(?,?,?,?,?,?,?,?,?,?,?,?);
 
 episodeDetails:
 SELECT
@@ -56,4 +62,17 @@ DELETE FROM episode WHERE id = ?;
 
 deleteAll:
 DELETE FROM episode;
+
+getEpisodeByTraktId:
+SELECT * FROM episode WHERE trakt_id = ?;
+
+countEpisodesForShow:
+SELECT COUNT(*)
+FROM episode
+INNER JOIN season ON episode.season_id = season.id
+WHERE episode.show_id = :showId
+AND (
+    :includeSpecials = 1
+    OR (season.season_number > 0 OR season.title != 'Specials')
+);
 

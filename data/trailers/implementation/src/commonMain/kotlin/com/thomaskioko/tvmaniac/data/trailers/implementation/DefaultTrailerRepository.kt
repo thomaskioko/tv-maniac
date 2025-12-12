@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.data.trailers.implementation
 
 import com.thomaskioko.tvmaniac.db.Trailers
-import com.thomaskioko.tvmaniac.util.AppUtils
+import com.thomaskioko.tvmaniac.util.api.AppUtils
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope

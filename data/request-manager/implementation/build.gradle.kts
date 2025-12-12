@@ -11,6 +11,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(projects.core.base)
+                implementation(projects.core.util.api)
                 implementation(projects.data.database.sqldelight)
                 implementation(projects.data.requestManager.api)
 
@@ -21,6 +22,7 @@ kotlin {
 
         commonTest {
             dependencies {
+                implementation(projects.core.util.testing)
                 implementation(projects.data.database.testing)
 
                 implementation(libs.kotlin.test)

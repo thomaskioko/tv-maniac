@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsDao
 import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
 import com.thomaskioko.tvmaniac.seasondetails.api.model.SeasonDetailsWithEpisodes
+import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
@@ -23,28 +24,30 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 class DefaultSeasonDetailsDao(
     private val database: TvManiacDatabase,
     private val dispatcher: AppCoroutineDispatchers,
+    private val dateTimeProvider: DateTimeProvider,
 ) : SeasonDetailsDao {
 
     private val seasonQueries
         get() = database.seasonsQueries
 
-    override fun fetchSeasonDetails(showId: Long, seasonNumber: Long): SeasonDetailsWithEpisodes {
+    override fun fetchSeasonDetails(showId: Long, seasonNumber: Long): SeasonDetailsWithEpisodes? {
         val queryResult = database.seasonsQueries
             .seasonDetails(
                 showId = Id(showId),
                 seasonNumber = seasonNumber,
             )
             .executeAsList()
-        return mapSeasonDetails(queryResult)
+        return if (queryResult.isEmpty()) null else mapSeasonDetails(queryResult)
     }
 
     override fun observeSeasonEpisodeDetails(
         showId: Long,
         seasonNumber: Long,
-    ): Flow<SeasonDetailsWithEpisodes> =
-        seasonQueries.seasonDetails(showId = Id(showId), seasonNumber = seasonNumber).asFlow().map {
-            mapSeasonDetails(it.executeAsList())
-        }
+    ): Flow<SeasonDetailsWithEpisodes?> =
+        seasonQueries.seasonDetails(showId = Id(showId), seasonNumber = seasonNumber)
+            .asFlow()
+            .map { it.executeAsList() }
+            .map { if (it.isEmpty()) null else mapSeasonDetails(it) }
 
     override fun delete(id: Long) {
         seasonQueries.delete(Id(id))
@@ -99,8 +102,10 @@ class DefaultSeasonDetailsDao(
                     voteAverage = seasonDetails.vote_average ?: 0.0,
                     voteCount = seasonDetails.vote_count ?: 0,
                     stillPath = seasonDetails.episode_image_url,
+                    airDate = seasonDetails.episode_air_date,
                     runtime = seasonDetails.runtime ?: 0,
-                    isWatched = false,
+                    isWatched = seasonDetails.is_watched == 1L,
+                    daysUntilAir = dateTimeProvider.calculateDaysUntilAir(seasonDetails.episode_air_date),
                 )
             }
         }

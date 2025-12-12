@@ -12,7 +12,7 @@ kotlin {
             dependencies {
                 implementation(projects.api.tmdb.api)
                 implementation(projects.core.base)
-                implementation(projects.core.util)
+                implementation(projects.core.util.api)
                 implementation(projects.core.networkUtil)
                 implementation(projects.data.requestManager.api)
                 implementation(projects.data.shows.api)

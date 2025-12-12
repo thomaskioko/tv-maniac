@@ -1,0 +1,23 @@
+package com.thomaskioko.tvmaniac.domain.episode
+
+import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
+import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
+import me.tatarka.inject.annotations.Inject
+
+@Inject
+class MarkSeasonUnwatchedInteractor(
+    private val episodeRepository: EpisodeRepository,
+) : Interactor<MarkSeasonUnwatchedParams>() {
+
+    override suspend fun doWork(params: MarkSeasonUnwatchedParams) {
+        episodeRepository.markSeasonUnwatched(
+            showId = params.showId,
+            seasonNumber = params.seasonNumber,
+        )
+    }
+}
+
+data class MarkSeasonUnwatchedParams(
+    val showId: Long,
+    val seasonNumber: Long,
+)

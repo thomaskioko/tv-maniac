@@ -18,7 +18,7 @@ kotlin {
                 api(projects.data.watchproviders.api)
 
                 implementation(projects.core.base)
-                implementation(projects.core.util)
+                implementation(projects.core.util.api)
 
                 implementation(libs.coroutines.core)
                 implementation(libs.kotlinInject.runtime)

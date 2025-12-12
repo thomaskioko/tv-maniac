@@ -6,7 +6,6 @@ public data class WatchProgressContext(
     val watchedEpisodes: Int,
     val lastWatchedSeasonNumber: Int?,
     val lastWatchedEpisodeNumber: Int?,
-    val nextEpisode: NextEpisodeWithShow?,
     val isWatchingOutOfOrder: Boolean,
     val hasUnwatchedEarlierEpisodes: Boolean,
     val progressPercentage: Float,

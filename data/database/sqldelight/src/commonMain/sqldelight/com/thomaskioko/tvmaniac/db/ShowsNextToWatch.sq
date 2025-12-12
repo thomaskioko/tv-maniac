@@ -9,6 +9,7 @@ SELECT
     tvshow.id AS show_id,
     episode.id AS episode_id,
     episode.title AS episode_name,
+    season.id AS season_id,
     season.season_number,
     episode.episode_number,
     episode.runtime,
@@ -31,6 +32,7 @@ WHERE (season.season_number > 0 OR (season.season_number = 0 AND season.title !=
       lw.last_watched_abs_number IS NULL OR  -- No watch history, start from beginning
       ((1000 * season.season_number) + episode.episode_number) > lw.last_watched_abs_number  -- Normal progression
   )
+  AND (episode.air_date IS NULL OR episode.air_date <= date('now'))  -- Only include aired episodes
 ORDER BY tvshow.id, season.season_number, episode.episode_number;
 
 -- Get next episode for a specific show
@@ -39,6 +41,7 @@ SELECT
     show_id,
     episode_id,
     episode_name,
+    season_id,
     season_number,
     episode_number,
     runtime,
@@ -57,6 +60,7 @@ SELECT
     snw.show_id,
     snw.episode_id,
     snw.episode_name,
+    snw.season_id,
     snw.season_number,
     snw.episode_number,
     snw.runtime,

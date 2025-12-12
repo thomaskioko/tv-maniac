@@ -17,6 +17,7 @@ class FakeDatastoreRepository : DatastoreRepository {
     private val listStyleFlow: Channel<ListStyle> = Channel(Channel.UNLIMITED)
     private val imageQualityFlow = MutableStateFlow(ImageQuality.MEDIUM)
     private val openTrailersInYoutubeFlow = MutableStateFlow(false)
+    private val includeSpecialsFlow = MutableStateFlow(false)
 
     suspend fun setTheme(appTheme: AppTheme) {
         appThemeFlow.value = appTheme
@@ -55,4 +56,10 @@ class FakeDatastoreRepository : DatastoreRepository {
     }
 
     override fun observeOpenTrailersInYoutube(): Flow<Boolean> = openTrailersInYoutubeFlow.asStateFlow()
+
+    override suspend fun saveIncludeSpecials(includeSpecials: Boolean) {
+        includeSpecialsFlow.value = includeSpecials
+    }
+
+    override fun observeIncludeSpecials(): Flow<Boolean> = includeSpecialsFlow.asStateFlow()
 }

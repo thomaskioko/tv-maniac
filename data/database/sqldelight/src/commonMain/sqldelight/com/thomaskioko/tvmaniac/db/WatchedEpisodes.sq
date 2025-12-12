@@ -10,6 +10,10 @@ CREATE TABLE watched_episodes (
     season_number INTEGER NOT NULL,
     episode_number INTEGER NOT NULL,
     watched_at INTEGER NOT NULL,
+    trakt_id INTEGER DEFAULT NULL,
+    synced_at INTEGER DEFAULT NULL,
+    sync_status TEXT DEFAULT 'pending',
+    source TEXT DEFAULT 'local',
     FOREIGN KEY(show_id) REFERENCES tvshow(id) ON DELETE CASCADE,
     FOREIGN KEY(episode_id) REFERENCES episode(id) ON DELETE CASCADE,
     UNIQUE(show_id, season_number, episode_number)
@@ -18,6 +22,8 @@ CREATE TABLE watched_episodes (
 -- Indices for performance
 CREATE INDEX IF NOT EXISTS idx_watched_episodes_show_id ON watched_episodes(show_id);
 CREATE INDEX IF NOT EXISTS idx_watched_episodes_show_season ON watched_episodes(show_id, season_number);
+CREATE INDEX IF NOT EXISTS idx_watched_episodes_sync ON watched_episodes(sync_status);
+CREATE INDEX IF NOT EXISTS idx_watched_episodes_trakt ON watched_episodes(trakt_id);
 
 -- Queries
 
@@ -74,3 +80,126 @@ WHERE show_id = ?;
 isEpisodeWatched:
 SELECT COUNT(*) > 0 FROM watched_episodes
 WHERE show_id = ? AND season_number = ? AND episode_number = ?;
+
+deleteForSeason:
+DELETE FROM watched_episodes
+WHERE show_id = ? AND season_number = ?;
+
+getWatchedCountForSeason:
+SELECT COUNT(*) FROM watched_episodes
+WHERE show_id = ? AND season_number = ?;
+
+getTotalEpisodesForSeason:
+SELECT COUNT(*) FROM episode e
+INNER JOIN season s ON e.season_id = s.id
+WHERE e.show_id = ? AND s.season_number = ?
+  AND (e.air_date IS NULL OR e.air_date <= date('now'));
+
+getUnwatchedEpisodesBefore:
+SELECT
+    e.id AS episode_id,
+    s.season_number,
+    e.episode_number,
+    e.season_id
+FROM episode e
+INNER JOIN season s ON e.season_id = s.id
+LEFT JOIN watched_episodes we ON e.id = we.episode_id AND we.show_id = :show_id
+WHERE e.show_id = :show_id
+  AND (
+    (s.season_number < :season_number)
+    OR (s.season_number = :season_number AND e.episode_number < :episode_number)
+  )
+  AND we.id IS NULL
+  AND (e.air_date IS NULL OR e.air_date <= date('now'))
+ORDER BY s.season_number, e.episode_number;
+
+getEpisodesForSeason:
+SELECT
+    e.id AS episode_id,
+    s.season_number,
+    e.episode_number,
+    e.season_id
+FROM episode e
+INNER JOIN season s ON e.season_id = s.id
+WHERE e.show_id = ? AND s.season_number = ?
+  AND (e.air_date IS NULL OR e.air_date <= date('now'))
+ORDER BY e.episode_number;
+
+getTotalEpisodesForShow:
+SELECT COUNT(*) FROM episode
+WHERE show_id = ?
+  AND (air_date IS NULL OR air_date <= date('now'));
+
+getWatchedEpisodesCountForShow:
+SELECT COUNT(*) FROM watched_episodes
+WHERE show_id = ?;
+
+getUnwatchedEpisodesInPreviousSeasons:
+SELECT
+    e.id AS episode_id,
+    s.season_number,
+    e.episode_number,
+    e.season_id
+FROM episode e
+INNER JOIN season s ON e.season_id = s.id
+LEFT JOIN watched_episodes we ON e.id = we.episode_id AND we.show_id = :show_id
+WHERE e.show_id = :show_id
+  AND s.season_number < :season_number
+  AND s.season_number > 0
+  AND we.id IS NULL
+  AND (e.air_date IS NULL OR e.air_date <= date('now'))
+ORDER BY s.season_number, e.episode_number;
+
+getUnwatchedEpisodeCountInPreviousSeasons:
+SELECT COUNT(*) FROM episode e
+INNER JOIN season s ON e.season_id = s.id
+LEFT JOIN watched_episodes we ON e.id = we.episode_id AND we.show_id = :show_id
+WHERE e.show_id = :show_id
+  AND s.season_number < :season_number
+  AND s.season_number > 0
+  AND we.id IS NULL
+  AND (e.air_date IS NULL OR e.air_date <= date('now'));
+
+-- Trakt Sync Queries
+
+getUnsyncedEpisodes:
+SELECT * FROM watched_episodes
+WHERE sync_status = 'pending'
+ORDER BY watched_at;
+
+updateSyncStatus:
+UPDATE watched_episodes
+SET sync_status = ?, synced_at = ?
+WHERE id = ?;
+
+upsertFromTrakt:
+INSERT OR REPLACE INTO watched_episodes(
+    show_id, episode_id, season_number, episode_number, watched_at, trakt_id, synced_at, sync_status, source
+) VALUES (?, ?, ?, ?, ?, ?, ?, 'synced', 'trakt');
+
+getByTraktId:
+SELECT * FROM watched_episodes WHERE trakt_id = ?;
+
+getEarliestUnwatchedEpisode:
+SELECT
+    tvshow.id AS show_id,
+    episode.id AS episode_id,
+    episode.title AS episode_name,
+    season.id AS season_id,
+    season.season_number,
+    episode.episode_number,
+    episode.runtime,
+    episode.image_url AS still_path,
+    episode.overview,
+    tvshow.name AS show_name,
+    tvshow.poster_path AS show_poster
+FROM episode
+INNER JOIN season ON episode.season_id = season.id
+INNER JOIN tvshow ON episode.show_id = tvshow.id
+LEFT JOIN watched_episodes AS we ON we.show_id = tvshow.id AND we.episode_id = episode.id
+WHERE episode.show_id = :show_id
+  AND we.episode_id IS NULL
+  AND (episode.air_date IS NULL OR episode.air_date <= date('now'))
+  AND (:include_specials = 1 OR season.season_number > 0)
+ORDER BY season.season_number ASC, episode.episode_number ASC
+LIMIT 1;

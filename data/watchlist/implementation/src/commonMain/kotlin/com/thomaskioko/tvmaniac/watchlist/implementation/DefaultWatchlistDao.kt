@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.watchlist.implementation
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import app.cash.sqldelight.coroutines.mapToOne
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.SearchWatchlist
@@ -12,6 +13,7 @@ import com.thomaskioko.tvmaniac.db.Watchlists
 import com.thomaskioko.tvmaniac.shows.api.WatchlistDao
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
@@ -83,5 +85,17 @@ class DefaultWatchlistDao(
             episode_count = entity.episode_count,
             status = entity.status,
         )
+    }
+
+    override suspend fun isShowInLibrary(showId: Long): Boolean {
+        return withContext(dispatchers.io) {
+            database.watchlistQueries.isShowInLibrary(Id(showId)).executeAsOne()
+        }
+    }
+
+    override fun observeIsShowInLibrary(showId: Long): Flow<Boolean> {
+        return database.watchlistQueries.isShowInLibrary(Id(showId))
+            .asFlow()
+            .mapToOne(dispatchers.io)
     }
 }

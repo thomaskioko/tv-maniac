@@ -18,6 +18,7 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.core.base)
             implementation(projects.core.logger.api)
+            implementation(projects.core.util.api)
             implementation(libs.coroutines.core)
             implementation(libs.kermit)
             implementation(libs.kotlinx.datetime)

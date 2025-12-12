@@ -4,11 +4,11 @@ import com.thomaskioko.tvmaniac.db.Last_requests
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig
+import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
-import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Instant
 
@@ -17,6 +17,7 @@ import kotlin.time.Instant
 @ContributesBinding(AppScope::class)
 class DefaultRequestManagerRepository(
     private val database: TvManiacDatabase,
+    private val dateTimeProvider: DateTimeProvider,
 ) : RequestManagerRepository {
 
     override fun upsert(entityId: Long, requestType: String, timestamp: Instant): Long {
@@ -37,7 +38,7 @@ class DefaultRequestManagerRepository(
     }
 
     override fun isRequestExpired(entityId: Long, requestType: String, threshold: Duration): Boolean =
-        isRequestBefore(entityId, requestType, Clock.System.now() - threshold)
+        isRequestBefore(entityId, requestType, dateTimeProvider.now() - threshold)
 
     override fun isRequestValid(requestType: String, threshold: Duration): Boolean {
         val requestTypeConfig = RequestTypeConfig.valueOf(requestType)

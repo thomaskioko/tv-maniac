@@ -24,6 +24,10 @@
         <item quantity="one">%d day</item>
         <item quantity="other">%d days</item>
     </plurals>
+    <plurals name="day_label">
+        <item quantity="one">day</item>
+        <item quantity="other">days</item>
+    </plurals>
     <plurals name="hour_count">
         <item quantity="one">%d hour</item>
         <item quantity="other">%d hours</item>

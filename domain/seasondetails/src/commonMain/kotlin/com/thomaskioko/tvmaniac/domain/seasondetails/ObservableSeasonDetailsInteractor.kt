@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.mapNotNull
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -22,18 +23,20 @@ class ObservableSeasonDetailsInteractor(
             seasonDetailsRepository.observeSeasonDetails(params),
             castRepository.observeSeasonCast(params.seasonId),
         ) { images, seasonDetails, cast ->
-            SeasonDetailsResult(
-                seasonDetails = seasonDetails,
-                images = images.map { SeasonImages(it.id, it.image_url) },
-                cast = cast.map {
-                    SeasonCast(
-                        id = it.id.id,
-                        name = it.name,
-                        profilePath = it.profile_path,
-                        characterName = it.character_name,
-                    )
-                },
-            )
-        }
+            seasonDetails?.let { details ->
+                SeasonDetailsResult(
+                    seasonDetails = details,
+                    images = images.map { image -> SeasonImages(image.id, image.image_url) },
+                    cast = cast.map { castMember ->
+                        SeasonCast(
+                            id = castMember.id.id,
+                            name = castMember.name,
+                            profilePath = castMember.profile_path,
+                            characterName = castMember.character_name,
+                        )
+                    },
+                )
+            }
+        }.mapNotNull { it }
     }
 }

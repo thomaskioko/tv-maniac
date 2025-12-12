@@ -15,7 +15,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(projects.core.base)
-                implementation(projects.core.util)
+                implementation(projects.core.util.api)
                 implementation(projects.data.featuredshows.api)
                 implementation(projects.data.trendingshows.api)
                 implementation(projects.data.upcomingshows.api)

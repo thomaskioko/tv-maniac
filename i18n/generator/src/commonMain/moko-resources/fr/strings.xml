@@ -91,12 +91,15 @@
     <string name="dialog_message_unwatched">Êtes-vous sûr de vouloir marquer toute la saison comme non vue ?</string>
     <string name="dialog_message_watched">Êtes-vous sûr de vouloir marquer toute la saison comme vue ?</string>
 
+    <string name="dialog_message_mark_previous">Voulez-vous marquer tous les épisodes précédents comme vus ?</string>
+    <string name="dialog_message_mark_previous_seasons">Voulez-vous marquer toutes les saisons précédentes comme vues ?</string>
+
     <string name="following">Suivre</string>
     <string name="unfollow">Ne plus suivre</string>
     <string name="btn_add_to_list">Ajouter à la liste</string>
     <string name="title_recommended">Recommandations</string>
     <string name="title_similar">Émissions similaires</string>
-    <string name="title_seasons">Parcourir les saisons</string>
+    <string name="title_seasons">Toutes saisons</string>
     <string name="title_season_overview">Aperçu</string>
     <string name="title_trailer">Bandes-annonces</string>
     <string name="title_release">Sortie récente</string>
@@ -131,6 +134,7 @@
     <string name="title_all_episodes">Tous les épisodes</string>
     <string name="title_episodes">Épisodes</string>
     <string name="title_watch_next">Regarder ensuite</string>
+    <string name="title_continue_tracking">Continuer à Suivre</string>
     <string name="title_browse_by_genre">Parcourir par genre</string>
     <string name="status_connected">De nouveau en ligne !</string>
     <string name="status_no_connection">Pas de connexion Internet !</string>

@@ -11,7 +11,13 @@ class FakeWatchlistRepository : WatchlistRepository {
 
     private val watchlistResult = MutableStateFlow<List<Watchlists>>(emptyList())
     private val searchlistResult = MutableStateFlow<List<SearchWatchlist>>(emptyList())
-    private val listStyleFlow = MutableStateFlow(true) // Default to grid mode (true)
+    private val listStyleFlow = MutableStateFlow(true)
+    private val showsInLibrary = mutableSetOf<Long>()
+
+    var lastUpdateLibraryId: Long? = null
+        private set
+    var lastUpdateLibraryAddToLibrary: Boolean? = null
+        private set
 
     fun setSearchResult(result: List<SearchWatchlist>) {
         searchlistResult.value = result
@@ -27,7 +33,10 @@ class FakeWatchlistRepository : WatchlistRepository {
     override fun searchWatchlistByQuery(query: String): Flow<List<SearchWatchlist>> =
         searchlistResult
 
-    override suspend fun updateLibrary(id: Long, addToLibrary: Boolean) {}
+    override suspend fun updateLibrary(id: Long, addToLibrary: Boolean) {
+        lastUpdateLibraryId = id
+        lastUpdateLibraryAddToLibrary = addToLibrary
+    }
 
     override fun observeUnSyncedItems(): Flow<Unit> = flowOf(Unit)
 
@@ -35,5 +44,9 @@ class FakeWatchlistRepository : WatchlistRepository {
 
     override suspend fun saveListStyle(isGridMode: Boolean) {
         listStyleFlow.value = isGridMode
+    }
+
+    override suspend fun isShowInLibrary(showId: Long): Boolean {
+        return showId in showsInLibrary
     }
 }

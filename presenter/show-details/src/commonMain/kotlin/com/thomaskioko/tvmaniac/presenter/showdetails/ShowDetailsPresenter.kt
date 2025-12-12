@@ -4,13 +4,13 @@ import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowSeasonDetailsParam
 import kotlinx.coroutines.flow.StateFlow
 
-interface ShowDetailsPresenter {
+public interface ShowDetailsPresenter {
 
-    val state: StateFlow<ShowDetailsContent>
-    fun dispatch(action: ShowDetailsAction)
+    public val state: StateFlow<ShowDetailsContent>
+    public fun dispatch(action: ShowDetailsAction)
 
-    interface Factory {
-        operator fun invoke(
+    public interface Factory {
+        public operator fun invoke(
             componentContext: ComponentContext,
             id: Long,
             onBack: () -> Unit,

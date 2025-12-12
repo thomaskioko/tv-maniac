@@ -10,9 +10,9 @@ interface SeasonsDao {
 
     fun upsert(entityList: List<Season>)
 
-    fun fetchShowSeasons(id: Long): List<ShowSeasons>
+    fun fetchShowSeasons(id: Long, includeSpecials: Boolean = true): List<ShowSeasons>
 
-    fun observeSeasonsByShowId(id: Long): Flow<List<ShowSeasons>>
+    fun observeSeasonsByShowId(id: Long, includeSpecials: Boolean = true): Flow<List<ShowSeasons>>
 
     fun delete(id: Long)
 

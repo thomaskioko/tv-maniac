@@ -10,12 +10,21 @@ class MarkEpisodeWatchedInteractor(
 ) : Interactor<MarkEpisodeWatchedParams>() {
 
     override suspend fun doWork(params: MarkEpisodeWatchedParams) {
-        episodeRepository.markEpisodeAsWatched(
-            showId = params.showId,
-            episodeId = params.episodeId,
-            seasonNumber = params.seasonNumber,
-            episodeNumber = params.episodeNumber,
-        )
+        if (params.markPreviousEpisodes) {
+            episodeRepository.markEpisodeAndPreviousEpisodesWatched(
+                showId = params.showId,
+                episodeId = params.episodeId,
+                seasonNumber = params.seasonNumber,
+                episodeNumber = params.episodeNumber,
+            )
+        } else {
+            episodeRepository.markEpisodeAsWatched(
+                showId = params.showId,
+                episodeId = params.episodeId,
+                seasonNumber = params.seasonNumber,
+                episodeNumber = params.episodeNumber,
+            )
+        }
     }
 }
 
@@ -24,4 +33,5 @@ data class MarkEpisodeWatchedParams(
     val episodeId: Long,
     val seasonNumber: Long,
     val episodeNumber: Long,
+    val markPreviousEpisodes: Boolean = false,
 )

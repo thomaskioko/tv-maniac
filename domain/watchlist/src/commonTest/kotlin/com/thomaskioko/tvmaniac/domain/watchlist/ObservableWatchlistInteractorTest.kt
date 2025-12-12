@@ -128,6 +128,8 @@ class ObservableWatchlistInteractorTest {
                 created_at = 0,
                 season_count = 2,
                 episode_count = 20,
+                watched_count = 0,
+                total_episode_count = 10,
             ),
         )
 
@@ -190,6 +192,8 @@ class ObservableWatchlistInteractorTest {
             created_at = 0,
             season_count = 2,
             episode_count = 12,
+            watched_count = 0,
+            total_episode_count = 10,
         ),
         Watchlists(
             id = Id(1232),
@@ -200,6 +204,8 @@ class ObservableWatchlistInteractorTest {
             created_at = 0,
             season_count = 1,
             episode_count = 8,
+            watched_count = 0,
+            total_episode_count = 10,
         ),
     )
 }
