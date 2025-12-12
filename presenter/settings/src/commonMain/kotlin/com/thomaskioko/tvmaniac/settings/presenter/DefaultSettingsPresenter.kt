@@ -25,7 +25,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
 @ContributesBinding(ActivityScope::class, SettingsPresenter::class)
-class DefaultSettingsPresenter(
+public class DefaultSettingsPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val backClicked: () -> Unit,
     private val datastoreRepository: DatastoreRepository,
@@ -46,12 +46,20 @@ class DefaultSettingsPresenter(
         datastoreRepository.observeImageQuality(),
         datastoreRepository.observeTheme(),
         datastoreRepository.observeOpenTrailersInYoutube(),
+        datastoreRepository.observeIncludeSpecials(),
         traktAuthRepository.state,
-    ) { currentState, imageQuality, appTheme, openInYoutube, authState ->
+    ) { flows ->
+        val currentState = flows[0] as SettingsState
+        val imageQuality = flows[1] as com.thomaskioko.tvmaniac.datastore.api.ImageQuality
+        val appTheme = flows[2] as com.thomaskioko.tvmaniac.datastore.api.AppTheme
+        val openInYoutube = flows[3] as Boolean
+        val includeSpecials = flows[4] as Boolean
+        val authState = flows[5] as TraktAuthState
         currentState.copy(
             imageQuality = imageQuality,
             theme = appTheme.toThemeModel(),
             openTrailersInYoutube = openInYoutube,
+            includeSpecials = includeSpecials,
             isAuthenticated = authState == TraktAuthState.LOGGED_IN,
         )
     }.stateIn(
@@ -90,6 +98,12 @@ class DefaultSettingsPresenter(
                     datastoreRepository.saveOpenTrailersInYoutube(action.enabled)
                 }
             }
+
+            is IncludeSpecialsToggled -> {
+                coroutineScope.launch {
+                    datastoreRepository.saveIncludeSpecials(action.enabled)
+                }
+            }
         }
     }
 
@@ -109,7 +123,7 @@ class DefaultSettingsPresenter(
 @Inject
 @SingleIn(ActivityScope::class)
 @ContributesBinding(ActivityScope::class, SettingsPresenter.Factory::class)
-class DefaultSettingsPresenterFactory(
+public class DefaultSettingsPresenterFactory(
     private val presenter: (
         componentContext: ComponentContext,
         backClicked: () -> Unit,

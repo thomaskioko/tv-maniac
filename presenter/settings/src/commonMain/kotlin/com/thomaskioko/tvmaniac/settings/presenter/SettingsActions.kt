@@ -31,3 +31,7 @@ public data class YoutubeToggled(
 public data object ShowAboutDialog : SettingsActions
 
 public data object DismissAboutDialog : SettingsActions
+
+public data class IncludeSpecialsToggled(
+    val enabled: Boolean,
+) : SettingsActions
