@@ -91,6 +91,9 @@
     <string name="dialog_message_unwatched">Êtes-vous sûr de vouloir marquer toute la saison comme non vue ?</string>
     <string name="dialog_message_watched">Êtes-vous sûr de vouloir marquer toute la saison comme vue ?</string>
 
+    <string name="dialog_message_mark_previous">Voulez-vous marquer tous les épisodes précédents comme vus ?</string>
+    <string name="dialog_message_mark_previous_seasons">Voulez-vous marquer toutes les saisons précédentes comme vues ?</string>
+
     <string name="following">Suivre</string>
     <string name="unfollow">Ne plus suivre</string>
     <string name="btn_add_to_list">Ajouter à la liste</string>

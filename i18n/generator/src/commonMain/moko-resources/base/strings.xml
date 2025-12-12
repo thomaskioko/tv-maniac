@@ -102,6 +102,8 @@
     <string name="dialog_message_episode_unwatched">Are you sure you want to mark this episode as unwatched?</string>
 
     <string name="dialog_title_mark_previous_seasons">Mark Previous Seasons?</string>
+    <string name="dialog_message_mark_previous">Would you like to mark all previous episodes as watched?</string>
+    <string name="dialog_message_mark_previous_seasons">Would you like to mark all previous seasons as watched?</string>
     <string name="dialog_button_mark_all_seasons">Mark All Seasons</string>
     <string name="dialog_button_just_this_season">Just This Season</string>
 
