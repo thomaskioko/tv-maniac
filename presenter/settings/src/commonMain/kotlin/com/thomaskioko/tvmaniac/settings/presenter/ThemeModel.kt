@@ -1,8 +1,9 @@
 package com.thomaskioko.tvmaniac.settings.presenter
 
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 
-enum class ThemeModel(val appTheme: AppTheme) {
+public enum class ThemeModel(public val appTheme: AppTheme) {
     SYSTEM(AppTheme.SYSTEM_THEME),
     LIGHT(AppTheme.LIGHT_THEME),
     DARK(AppTheme.DARK_THEME),
@@ -14,15 +15,17 @@ enum class ThemeModel(val appTheme: AppTheme) {
     CRIMSON(AppTheme.CRIMSON_THEME),
     ;
 
-    val displayNameKey get() = appTheme.displayNameKey
-    val displayOrder get() = appTheme.displayOrder
+    public val displayNameKey: StringResourceKey
+        get() = appTheme.displayNameKey
+    public val displayOrder: Int
+        get() = appTheme.displayOrder
 
-    companion object {
-        val sortedByDisplayOrder: List<ThemeModel> = entries.sortedBy { it.displayOrder }
+    public companion object {
+        public val sortedByDisplayOrder: List<ThemeModel> = entries.sortedBy { it.displayOrder }
     }
 }
 
-fun AppTheme.toThemeModel(): ThemeModel =
+public fun AppTheme.toThemeModel(): ThemeModel =
     ThemeModel.entries.first { it.appTheme == this }
 
-fun ThemeModel.toAppTheme(): AppTheme = appTheme
+public fun ThemeModel.toAppTheme(): AppTheme = appTheme
