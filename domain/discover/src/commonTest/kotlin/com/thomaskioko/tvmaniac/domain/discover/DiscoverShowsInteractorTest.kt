@@ -135,6 +135,7 @@ class DiscoverShowsInteractorTest {
             runtime = 45L,
             stillPath = "/test-still-$index.jpg",
             overview = "Test episode overview $index",
+            seasonId = 1234,
         )
     }
 

@@ -333,6 +333,7 @@ class DiscoverShowsPresenterTest {
             showPoster = "/test-poster-$index.jpg",
             episodeId = 1000L + index,
             episodeName = "Test Episode $index",
+            seasonId = 2000L + index,
             seasonNumber = 1L,
             episodeNumber = index.toLong() + 1,
             runtime = 45L,

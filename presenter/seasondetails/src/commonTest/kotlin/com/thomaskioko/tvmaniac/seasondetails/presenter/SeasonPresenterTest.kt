@@ -77,6 +77,8 @@ class SeasonPresenterTest {
                     voteAverage = 8.0,
                     voteCount = 4958,
                     isWatched = false,
+                    airDate = null,
+                    daysUntilAir = null,
                 ),
             ),
         )
@@ -124,6 +126,8 @@ class SeasonPresenterTest {
                     isWatched = false,
                     seasonNumber = 1,
                     stillPath = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+                    airDate = null,
+                    daysUntilAir = null,
                 ),
             ),
         )
