@@ -101,6 +101,17 @@ public interface WatchedEpisodeDao {
         seasonNumber: Long,
     ): Long
 
+    public fun observeUnwatchedCountBefore(
+        showId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+    ): Flow<Int>
+
+    public fun observeUnwatchedCountInPreviousSeasons(
+        showId: Long,
+        seasonNumber: Long,
+    ): Flow<Long>
+
     public fun observeUnsyncedEpisodes(): Flow<List<Watched_episodes>>
 
     public suspend fun updateSyncStatus(

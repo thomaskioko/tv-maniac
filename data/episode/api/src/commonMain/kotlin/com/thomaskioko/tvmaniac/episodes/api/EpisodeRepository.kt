@@ -20,11 +20,6 @@ public interface EpisodeRepository {
     public fun observeNextEpisodesForWatchlist(): Flow<List<NextEpisodeWithShow>>
 
     /**
-     * Observe the next episode for a specific show using the shows_next_to_watch view.
-     */
-    public fun observeNextEpisodeForShow(showId: Long): Flow<NextEpisodeWithShow?>
-
-    /**
      * Mark an episode as watched. The SQL view automatically updates next episode calculations.
      * Automatically adds the show to the library if not already there.
      * @param watchedAt Optional timestamp for when the episode was watched. Defaults to current time.
@@ -148,6 +143,25 @@ public interface EpisodeRepository {
         showId: Long,
         seasonNumber: Long,
     ): Long
+
+    /**
+     * Observe count of unwatched episodes before a specific episode.
+     * Used for reactive UI to determine if confirmation dialog should be shown.
+     */
+    public fun observeUnwatchedCountBefore(
+        showId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+    ): Flow<Int>
+
+    /**
+     * Observe count of unwatched episodes in seasons before the specified season number.
+     * Used for reactive UI to determine if previous seasons dialog should be shown.
+     */
+    public fun observeUnwatchedCountInPreviousSeasons(
+        showId: Long,
+        seasonNumber: Long,
+    ): Flow<Long>
 
     /**
      * Observe episodes for continue tracking feature.

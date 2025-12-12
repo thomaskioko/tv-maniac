@@ -58,9 +58,6 @@ public class DefaultEpisodeRepository(
     override fun observeNextEpisodesForWatchlist(): Flow<List<NextEpisodeWithShow>> =
         nextEpisodeDao.observeNextEpisodesForWatchlist()
 
-    override fun observeNextEpisodeForShow(showId: Long): Flow<NextEpisodeWithShow?> =
-        nextEpisodeDao.observeNextEpisode(showId)
-
     override suspend fun markEpisodeAsWatched(
         showId: Long,
         episodeId: Long,
@@ -205,6 +202,17 @@ public class DefaultEpisodeRepository(
         }
         return watchedEpisodeDao.getUnwatchedEpisodeCountInPreviousSeasons(showId, seasonNumber)
     }
+
+    override fun observeUnwatchedCountBefore(
+        showId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+    ): Flow<Int> = watchedEpisodeDao.observeUnwatchedCountBefore(showId, seasonNumber, episodeNumber)
+
+    override fun observeUnwatchedCountInPreviousSeasons(
+        showId: Long,
+        seasonNumber: Long,
+    ): Flow<Long> = watchedEpisodeDao.observeUnwatchedCountInPreviousSeasons(showId, seasonNumber)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun observeContinueTrackingEpisodes(showId: Long): Flow<ContinueTrackingResult?> {

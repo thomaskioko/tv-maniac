@@ -40,6 +40,8 @@ class FakeEpisodeRepository : EpisodeRepository {
     private val seasonWatchProgressFlow = MutableStateFlow(SeasonWatchProgress(0, 0, 0, 0))
     private val showWatchProgressFlow = MutableStateFlow(ShowWatchProgress(0, 0, 0))
     private val continueTrackingFlow = MutableStateFlow<ContinueTrackingResult?>(null)
+    private val unwatchedCountBeforeFlow = MutableStateFlow(0)
+    private val unwatchedCountInPreviousSeasonsFlow = MutableStateFlow(0L)
 
     var lastMarkEpisodeWatchedCall: MarkEpisodeWatchedCall? = null
         private set
@@ -49,17 +51,6 @@ class FakeEpisodeRepository : EpisodeRepository {
 
     var lastMarkEpisodeUnwatchedCall: MarkEpisodeUnwatchedCall? = null
         private set
-
-    private var unwatchedEpisodesBeforeResult: List<UnwatchedEpisode> = emptyList()
-    private var unwatchedCountAfterFetchingPreviousSeasonsResult: Long = 0L
-
-    fun setUnwatchedEpisodesBefore(episodes: List<UnwatchedEpisode>) {
-        unwatchedEpisodesBeforeResult = episodes
-    }
-
-    fun setUnwatchedCountAfterFetchingPreviousSeasons(count: Long) {
-        unwatchedCountAfterFetchingPreviousSeasonsResult = count
-    }
 
     fun setNextEpisodesForWatchlist(episodes: List<NextEpisodeWithShow>) {
         nextEpisodesForWatchlist.value = episodes
@@ -83,11 +74,16 @@ class FakeEpisodeRepository : EpisodeRepository {
         continueTrackingFlow.value = result
     }
 
+    fun setUnwatchedCountBefore(count: Int) {
+        unwatchedCountBeforeFlow.value = count
+    }
+
+    fun setUnwatchedCountInPreviousSeasons(count: Long) {
+        unwatchedCountInPreviousSeasonsFlow.value = count
+    }
+
     override fun observeNextEpisodesForWatchlist(): Flow<List<NextEpisodeWithShow>> =
         nextEpisodesForWatchlist.asStateFlow()
-
-    override fun observeNextEpisodeForShow(showId: Long): Flow<NextEpisodeWithShow?> =
-        MutableStateFlow(null)
 
     override suspend fun markEpisodeAsWatched(
         showId: Long,
@@ -176,13 +172,24 @@ class FakeEpisodeRepository : EpisodeRepository {
         showId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
-    ): List<UnwatchedEpisode> = unwatchedEpisodesBeforeResult
+    ): List<UnwatchedEpisode> = emptyList()
 
     override suspend fun getUnwatchedCountAfterFetchingPreviousSeasons(
         showId: Long,
         seasonNumber: Long,
-    ): Long = unwatchedCountAfterFetchingPreviousSeasonsResult
+    ): Long = unwatchedCountInPreviousSeasonsFlow.value
 
     override fun observeContinueTrackingEpisodes(showId: Long): Flow<ContinueTrackingResult?> =
         continueTrackingFlow.asStateFlow()
+
+    override fun observeUnwatchedCountBefore(
+        showId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+    ): Flow<Int> = unwatchedCountBeforeFlow.asStateFlow()
+
+    override fun observeUnwatchedCountInPreviousSeasons(
+        showId: Long,
+        seasonNumber: Long,
+    ): Flow<Long> = unwatchedCountInPreviousSeasonsFlow.asStateFlow()
 }

@@ -395,6 +395,30 @@ public class DefaultWatchedEpisodeDao(
         }
     }
 
+    override fun observeUnwatchedCountBefore(
+        showId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+    ): Flow<Int> {
+        return database.watchedEpisodesQueries
+            .getUnwatchedEpisodesBefore(Id(showId), seasonNumber, episodeNumber)
+            .asFlow()
+            .mapToList(dispatchers.databaseRead)
+            .map { it.size }
+            .catch { emit(0) }
+    }
+
+    override fun observeUnwatchedCountInPreviousSeasons(
+        showId: Long,
+        seasonNumber: Long,
+    ): Flow<Long> {
+        return database.watchedEpisodesQueries
+            .getUnwatchedEpisodeCountInPreviousSeasons(Id(showId), seasonNumber)
+            .asFlow()
+            .map { it.executeAsOne() }
+            .catch { emit(0L) }
+    }
+
     override fun observeUnsyncedEpisodes(): Flow<List<Watched_episodes>> {
         return database.watchedEpisodesQueries
             .getUnsyncedEpisodes()

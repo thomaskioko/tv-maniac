@@ -97,37 +97,6 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should observe next episode for show with no watched episodes`() = runTest {
-        episodeRepository.observeNextEpisodeForShow(showId = TEST_SHOW_ID).test {
-            val nextEpisode = awaitItem()
-            nextEpisode.shouldNotBeNull()
-            nextEpisode.episodeId shouldBe 101L
-            nextEpisode.seasonNumber shouldBe 1L
-            nextEpisode.episodeNumber shouldBe 1L
-            nextEpisode.episodeName shouldBe "Episode 1"
-        }
-    }
-
-    @Test
-    fun `should observe next episode after marking episodes watched`() = runTest {
-        episodeRepository.markEpisodeAsWatched(
-            showId = TEST_SHOW_ID,
-            episodeId = 101L,
-            seasonNumber = SEASON_1_NUMBER,
-            episodeNumber = 1L,
-        )
-
-        episodeRepository.observeNextEpisodeForShow(showId = TEST_SHOW_ID).test {
-            val nextEpisode = awaitItem()
-            nextEpisode.shouldNotBeNull()
-            nextEpisode.episodeId shouldBe 102L
-            nextEpisode.seasonNumber shouldBe 1L
-            nextEpisode.episodeNumber shouldBe 2L
-            nextEpisode.episodeName shouldBe "Episode 2"
-        }
-    }
-
-    @Test
     fun `should return next season first episode after season complete`() = runTest {
         repeat(SEASON_1_EPISODE_COUNT) { episodeIndex ->
             val episodeNumber = episodeIndex + 1
@@ -138,15 +107,6 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
                 seasonNumber = SEASON_1_NUMBER,
                 episodeNumber = episodeNumber.toLong(),
             )
-        }
-
-        episodeRepository.observeNextEpisodeForShow(showId = TEST_SHOW_ID).test {
-            val nextEpisode = awaitItem()
-            nextEpisode.shouldNotBeNull()
-            nextEpisode.episodeId shouldBe 201L
-            nextEpisode.seasonNumber shouldBe 2L
-            nextEpisode.episodeNumber shouldBe 1L
-            nextEpisode.episodeName shouldBe "Episode 1"
         }
     }
 
@@ -172,11 +132,6 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
                 seasonNumber = SEASON_2_NUMBER,
                 episodeNumber = episodeNumber.toLong(),
             )
-        }
-
-        episodeRepository.observeNextEpisodeForShow(showId = TEST_SHOW_ID).test {
-            val nextEpisode = awaitItem()
-            nextEpisode.shouldBeNull()
         }
     }
 
@@ -317,74 +272,6 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
 
             val watchedEpisodes = awaitItem()
             watchedEpisodes.shouldBeEmpty()
-        }
-
-        episodeRepository.observeNextEpisodeForShow(showId = TEST_SHOW_ID).test {
-            val nextEpisode = awaitItem()
-            nextEpisode.shouldNotBeNull()
-            nextEpisode.episodeId shouldBe 101L
-            nextEpisode.seasonNumber shouldBe 1L
-            nextEpisode.episodeNumber shouldBe 1L
-        }
-    }
-
-    @Test
-    fun `should handle cross-season episode progression`() = runTest {
-        episodeRepository.observeNextEpisodeForShow(showId = TEST_SHOW_ID).test {
-            var nextEpisode = awaitItem()
-            nextEpisode?.episodeId shouldBe 101L
-
-            repeat(6) { episodeIndex ->
-                val episodeNumber = episodeIndex + 1
-                val episodeId = 100L + episodeNumber
-                episodeRepository.markEpisodeAsWatched(
-                    TEST_SHOW_ID,
-                    episodeId,
-                    SEASON_1_NUMBER,
-                    episodeNumber.toLong(),
-                )
-
-                nextEpisode = awaitItem()
-                nextEpisode?.episodeNumber shouldBe (episodeNumber + 1).toLong()
-            }
-
-            episodeRepository.markEpisodeAsWatched(
-                showId = TEST_SHOW_ID,
-                episodeId = 107L,
-                seasonNumber = SEASON_1_NUMBER,
-                episodeNumber = 7L,
-            )
-
-            nextEpisode = awaitItem()
-            nextEpisode.shouldNotBeNull()
-
-            nextEpisode.episodeId shouldBe 201L
-            nextEpisode.seasonNumber shouldBe 2L
-            nextEpisode.episodeNumber shouldBe 1L
-        }
-    }
-
-    @Test
-    fun `should handle partial watch progress`() = runTest {
-        episodeRepository.markEpisodeAsWatched(
-            showId = TEST_SHOW_ID,
-            episodeId = 103L,
-            seasonNumber = SEASON_1_NUMBER,
-            episodeNumber = 3L,
-        )
-
-        episodeRepository.observeNextEpisodeForShow(showId = TEST_SHOW_ID).test {
-            val nextEpisode = awaitItem()
-            nextEpisode.shouldNotBeNull()
-            nextEpisode.episodeId shouldBe 104L
-            nextEpisode.episodeNumber shouldBe 4L
-        }
-
-        episodeRepository.observeWatchProgress(showId = TEST_SHOW_ID).test {
-            val progress = awaitItem()
-            progress.totalEpisodesWatched shouldBe 1
-            progress.lastSeasonWatched shouldBe 1L
-            progress.lastEpisodeWatched shouldBe 3L
         }
     }
 
