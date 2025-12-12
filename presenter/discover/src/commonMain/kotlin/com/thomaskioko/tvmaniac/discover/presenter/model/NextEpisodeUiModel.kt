@@ -6,7 +6,10 @@ data class NextEpisodeUiModel(
     val showPoster: String?,
     val episodeId: Long,
     val episodeTitle: String,
-    val episodeNumber: String, // "S1E5"
+    val episodeNumberFormatted: String, // "S1E5"
+    val seasonId: Long,
+    val seasonNumber: Long,
+    val episodeNumber: Long,
     val runtime: String?, // "45 min"
     val stillImage: String?,
     val overview: String,

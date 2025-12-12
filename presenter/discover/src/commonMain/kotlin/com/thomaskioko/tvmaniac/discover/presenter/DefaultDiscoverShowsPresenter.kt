@@ -16,6 +16,8 @@ import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsInteractor
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsInteractor
 import com.thomaskioko.tvmaniac.discover.presenter.model.NextEpisodeUiModel
 import com.thomaskioko.tvmaniac.domain.discover.DiscoverShowsInteractor
+import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
+import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
 import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
@@ -40,6 +42,7 @@ class DefaultDiscoverShowsPresenter(
     @Assisted private val onNavigateToShowDetails: (Long) -> Unit,
     @Assisted private val onNavigateToMore: (Long) -> Unit,
     @Assisted private val onNavigateToEpisode: (showId: Long, episodeId: Long) -> Unit,
+    @Assisted private val onNavigateToSeason: (showId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
     private val discoverShowsInteractor: DiscoverShowsInteractor,
     private val watchlistRepository: WatchlistRepository,
     private val featuredShowsInteractor: FeaturedShowsInteractor,
@@ -48,6 +51,7 @@ class DefaultDiscoverShowsPresenter(
     private val trendingShowsInteractor: TrendingShowsInteractor,
     private val upcomingShowsInteractor: UpcomingShowsInteractor,
     private val genreShowsInteractor: GenreShowsInteractor,
+    private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val logger: Logger,
     private val coroutineScope: CoroutineScope = componentContext.coroutineScope(),
 ) : DiscoverShowsPresenter, ComponentContext by componentContext {
@@ -72,10 +76,12 @@ class DefaultDiscoverShowsPresenter(
         private val trendingLoadingState = ObservableLoadingCounter()
         private val upcomingLoadingState = ObservableLoadingCounter()
         private val genreState = ObservableLoadingCounter()
+        private val upNextActionLoadingState = ObservableLoadingCounter()
         private val uiMessageManager = UiMessageManager()
 
         private val _state: MutableStateFlow<DiscoverViewState> = MutableStateFlow(DiscoverViewState.Empty)
         val state: StateFlow<DiscoverViewState> = combine(
+            upNextActionLoadingState.observable,
             featuredLoadingState.observable,
             topRatedLoadingState.observable,
             popularLoadingState.observable,
@@ -85,7 +91,7 @@ class DefaultDiscoverShowsPresenter(
             uiMessageManager.message,
             _state,
         ) {
-                featuredShowsIsUpdating, topRatedShowsIsUpdating, popularShowsIsUpdating,
+                upNextUpdating, featuredShowsIsUpdating, topRatedShowsIsUpdating, popularShowsIsUpdating,
                 trendingShowsIsUpdating, upComingIsUpdating,
                 showData, message, currentState,
             ->
@@ -97,6 +103,7 @@ class DefaultDiscoverShowsPresenter(
                 popularRefreshing = popularShowsIsUpdating,
                 trendingRefreshing = trendingShowsIsUpdating,
                 upcomingRefreshing = upComingIsUpdating,
+                upNextRefreshing = upNextUpdating,
                 featuredShows = showData.featuredShows.toShowList(),
                 topRatedShows = showData.topRatedShows.toShowList(),
                 popularShows = showData.popularShows.toShowList(),
@@ -135,6 +142,29 @@ class DefaultDiscoverShowsPresenter(
                     clearMessage(action.id)
                 }
                 is NextEpisodeClicked -> onNavigateToEpisode(action.showId, action.episodeId)
+                is MarkNextEpisodeWatched -> {
+                    coroutineScope.launch {
+                        markEpisodeWatchedInteractor(
+                            MarkEpisodeWatchedParams(
+                                showId = action.showId,
+                                episodeId = action.episodeId,
+                                seasonNumber = action.seasonNumber,
+                                episodeNumber = action.episodeNumber,
+                            ),
+                        ).collectStatus(upNextActionLoadingState, logger, uiMessageManager)
+                    }
+                }
+                is UnfollowShowFromUpNext -> {
+                    coroutineScope.launch {
+                        watchlistRepository.updateLibrary(
+                            id = action.showId,
+                            addToLibrary = false,
+                        )
+                    }
+                }
+                is OpenSeasonFromUpNext -> {
+                    onNavigateToSeason(action.showId, action.seasonId, action.seasonNumber)
+                }
             }
         }
 
@@ -189,6 +219,7 @@ class DefaultDiscoverPresenterFactory(
         onNavigateToShowDetails: (id: Long) -> Unit,
         onNavigateToMore: (categoryId: Long) -> Unit,
         onNavigateToEpisode: (showId: Long, episodeId: Long) -> Unit,
+        onNavigateToSeason: (showId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
     ) -> DiscoverShowsPresenter,
 ) : DiscoverShowsPresenter.Factory {
     override fun invoke(
@@ -196,7 +227,8 @@ class DefaultDiscoverPresenterFactory(
         onNavigateToShowDetails: (id: Long) -> Unit,
         onNavigateToMore: (categoryId: Long) -> Unit,
         onNavigateToEpisode: (showId: Long, episodeId: Long) -> Unit,
-    ): DiscoverShowsPresenter = presenter(componentContext, onNavigateToShowDetails, onNavigateToMore, onNavigateToEpisode)
+        onNavigateToSeason: (showId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
+    ): DiscoverShowsPresenter = presenter(componentContext, onNavigateToShowDetails, onNavigateToMore, onNavigateToEpisode, onNavigateToSeason)
 }
 
 private fun NextEpisodeWithShow.toUiModel(): NextEpisodeUiModel {
@@ -206,10 +238,13 @@ private fun NextEpisodeWithShow.toUiModel(): NextEpisodeUiModel {
         showPoster = showPoster,
         episodeId = episodeId,
         episodeTitle = episodeName,
-        episodeNumber = "S${seasonNumber}E$episodeNumber",
+        episodeNumberFormatted = "S${seasonNumber}E$episodeNumber",
+        seasonId = seasonId,
+        seasonNumber = seasonNumber,
+        episodeNumber = episodeNumber,
         runtime = runtime?.let { "$it min" },
         stillImage = stillPath,
         overview = overview,
-        isNew = false, // Will be calculated with actual air dates
+        isNew = false,
     )
 }

@@ -13,6 +13,7 @@ data class DiscoverViewState(
     val upcomingRefreshing: Boolean = false,
     val popularRefreshing: Boolean = false,
     val nextEpisodesRefreshing: Boolean = false,
+    val upNextRefreshing: Boolean = false,
     val featuredShows: ImmutableList<DiscoverShow> = persistentListOf(),
     val topRatedShows: ImmutableList<DiscoverShow> = persistentListOf(),
     val popularShows: ImmutableList<DiscoverShow> = persistentListOf(),
@@ -23,7 +24,7 @@ data class DiscoverViewState(
 ) {
     val isRefreshing: Boolean
         get() = featuredRefreshing || topRatedRefreshing || trendingRefreshing ||
-            popularRefreshing || upcomingRefreshing || nextEpisodesRefreshing
+            popularRefreshing || upcomingRefreshing || nextEpisodesRefreshing || upNextRefreshing
 
     val isEmpty: Boolean
         get() = !isRefreshing && isEmpty(featuredShows, topRatedShows, popularShows, upcomingShows, trendingToday)
