@@ -2,11 +2,16 @@ package com.thomaskioko.tvmaniac.presenter.showdetails
 
 import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
+import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
+import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
+import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
+import com.thomaskioko.tvmaniac.domain.episode.ObserveContinueTrackingInteractor
+import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
 import com.thomaskioko.tvmaniac.domain.recommendedshows.RecommendedShowsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
@@ -17,7 +22,6 @@ import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -28,7 +32,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
 @ContributesBinding(ActivityScope::class, boundType = ShowDetailsPresenter::class)
-class DefaultShowDetailsPresenter(
+public class DefaultShowDetailsPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val showId: Long,
     @Assisted private val onBack: () -> Unit,
@@ -40,7 +44,10 @@ class DefaultShowDetailsPresenter(
     private val showDetailsInteractor: ShowDetailsInteractor,
     private val similarShowsInteractor: SimilarShowsInteractor,
     private val watchProvidersInteractor: WatchProvidersInteractor,
+    private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     observableShowDetailsInteractor: ObservableShowDetailsInteractor,
+    observeShowWatchProgressInteractor: ObserveShowWatchProgressInteractor,
+    observeContinueTrackingInteractor: ObserveContinueTrackingInteractor,
     private val logger: Logger,
 ) : ShowDetailsPresenter, ComponentContext by componentContext {
 
@@ -48,6 +55,7 @@ class DefaultShowDetailsPresenter(
     private val showDetailsLoadingState = ObservableLoadingCounter()
     private val similarShowsLoadingState = ObservableLoadingCounter()
     private val watchProvidersLoadingState = ObservableLoadingCounter()
+    private val episodeActionLoadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
 
     private val coroutineScope = coroutineScope()
@@ -55,7 +63,8 @@ class DefaultShowDetailsPresenter(
 
     init {
         observableShowDetailsInteractor(showId)
-
+        observeShowWatchProgressInteractor(showId)
+        observeContinueTrackingInteractor(showId)
         coroutineScope.launch { observeShowDetails() }
     }
 
@@ -65,17 +74,25 @@ class DefaultShowDetailsPresenter(
         similarShowsLoadingState.observable,
         watchProvidersLoadingState.observable,
         observableShowDetailsInteractor.flow,
-    ) { recommendedShowsUpdating, showDetailsUpdating, similarShowsUpdating, watchProvidersUpdating, showDetails ->
-        ShowDetailsContent(
-            showDetails = showDetails.toShowDetails(),
+        observeShowWatchProgressInteractor.flow,
+        observeContinueTrackingInteractor.flow,
+        _state,
+    ) { recommendedShowsUpdating, showDetailsUpdating, similarShowsUpdating, watchProvidersUpdating, showDetails, watchProgress, continueTrackingResult, currentState ->
+        currentState.copy(
+            showDetails = showDetails.toShowDetails(
+                watchedEpisodesCount = watchProgress.watchedCount,
+                watchProgress = watchProgress.progressPercentage,
+            ),
             recommendedShowsRefreshing = recommendedShowsUpdating,
             showDetailsRefreshing = showDetailsUpdating,
             similarShowsRefreshing = similarShowsUpdating,
             watchProvidersRefreshing = watchProvidersUpdating,
+            continueTrackingEpisodes = mapContinueTrackingEpisodes(continueTrackingResult, showId),
+            continueTrackingScrollIndex = continueTrackingResult?.firstUnwatchedIndex ?: 0,
         )
     }.stateIn(
         scope = coroutineScope,
-        started = SharingStarted.WhileSubscribed(5000),
+        started = SharingStarted.Eagerly,
         initialValue = _state.value,
     )
 
@@ -107,6 +124,20 @@ class DefaultShowDetailsPresenter(
             CreateCustomList -> {
                 // TODO:: Add implementation
             }
+
+            is MarkEpisodeWatched -> {
+                coroutineScope.launch {
+                    markEpisodeWatchedInteractor(
+                        MarkEpisodeWatchedParams(
+                            showId = action.showId,
+                            episodeId = action.episodeId,
+                            seasonNumber = action.seasonNumber,
+                            episodeNumber = action.episodeNumber,
+                            markPreviousEpisodes = false,
+                        ),
+                    ).collectStatus(episodeActionLoadingState, logger, uiMessageManager)
+                }
+            }
         }
     }
 
@@ -136,7 +167,7 @@ class DefaultShowDetailsPresenter(
 @Inject
 @SingleIn(ActivityScope::class)
 @ContributesBinding(ActivityScope::class, ShowDetailsPresenter.Factory::class)
-class DefaultShowDetailsPresenterFactory(
+public class DefaultShowDetailsPresenterFactory(
     private val presenter: (
         componentContext: ComponentContext,
         id: Long,

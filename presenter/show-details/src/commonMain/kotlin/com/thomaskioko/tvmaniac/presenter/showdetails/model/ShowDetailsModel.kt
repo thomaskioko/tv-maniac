@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.presenter.showdetails.model
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-data class ShowDetailsModel(
+public data class ShowDetailsModel(
     val tmdbId: Long,
     val title: String,
     val overview: String,
@@ -18,6 +18,8 @@ data class ShowDetailsModel(
     val rating: Double,
     val isInLibrary: Boolean,
     val hasWebViewInstalled: Boolean,
+    val watchedEpisodesCount: Int = 0,
+    val watchProgress: Float = 0f,
     val genres: ImmutableList<String>,
     val providers: ImmutableList<ProviderModel>,
     val castsList: ImmutableList<CastModel>,
@@ -27,8 +29,8 @@ data class ShowDetailsModel(
     val trailersList: ImmutableList<TrailerModel>,
     val selectedSeasonIndex: Int = 0,
 ) {
-    companion object {
-        val Empty = ShowDetailsModel(
+    public companion object {
+        public val Empty: ShowDetailsModel = ShowDetailsModel(
             tmdbId = 0,
             title = "",
             overview = "",

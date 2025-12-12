@@ -1,22 +1,27 @@
 package com.thomaskioko.tvmaniac.presenter.showdetails
 
 import com.thomaskioko.tvmaniac.core.view.UiMessage
+import com.thomaskioko.tvmaniac.presenter.showdetails.model.ContinueTrackingEpisodeModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
-data class ShowDetailsContent(
+public data class ShowDetailsContent(
     val recommendedShowsRefreshing: Boolean = false,
     val showDetailsRefreshing: Boolean = false,
     val similarShowsRefreshing: Boolean = false,
     val watchProvidersRefreshing: Boolean = false,
     val showListSheet: Boolean = false,
     val showDetails: ShowDetailsModel = ShowDetailsModel.Empty,
-    val selectedSeasonIndex: Int = 0,
+    val selectedSeasonIndex: Int = -1,
+    val continueTrackingEpisodes: ImmutableList<ContinueTrackingEpisodeModel> = persistentListOf(),
+    val continueTrackingScrollIndex: Int = 0,
     val message: UiMessage? = null,
 ) {
-    val isRefreshing: Boolean
+    public val isRefreshing: Boolean
         get() = recommendedShowsRefreshing || showDetailsRefreshing || similarShowsRefreshing || watchProvidersRefreshing
 
-    companion object {
-        val Empty = ShowDetailsContent()
+    public companion object {
+        public val Empty: ShowDetailsContent = ShowDetailsContent(showDetailsRefreshing = true)
     }
 }
