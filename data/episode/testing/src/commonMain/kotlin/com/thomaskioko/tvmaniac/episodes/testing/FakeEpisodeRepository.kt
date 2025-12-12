@@ -56,11 +56,6 @@ class FakeEpisodeRepository : EpisodeRepository {
         nextEpisodesForWatchlist.value = episodes
     }
 
-    fun setWatchProgress(showId: Long, progress: WatchProgress) {
-        watchProgressMap.getOrPut(showId) {
-            MutableStateFlow(WatchProgress(showId, 0, null, null, null))
-        }.value = progress
-    }
 
     fun setSeasonWatchProgress(progress: SeasonWatchProgress) {
         seasonWatchProgressFlow.value = progress
@@ -72,10 +67,6 @@ class FakeEpisodeRepository : EpisodeRepository {
 
     fun setContinueTrackingResult(result: ContinueTrackingResult?) {
         continueTrackingFlow.value = result
-    }
-
-    fun setUnwatchedCountBefore(count: Int) {
-        unwatchedCountBeforeFlow.value = count
     }
 
     fun setUnwatchedCountInPreviousSeasons(count: Long) {
@@ -172,7 +163,14 @@ class FakeEpisodeRepository : EpisodeRepository {
         showId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
-    ): List<UnwatchedEpisode> = emptyList()
+    ): List<UnwatchedEpisode> = List(unwatchedCountBeforeFlow.value) {
+        UnwatchedEpisode(
+            episodeId = it.toLong(),
+            seasonNumber = seasonNumber,
+            episodeNumber = it.toLong() + 1,
+            seasonId = seasonNumber,
+        )
+    }
 
     override suspend fun getUnwatchedCountAfterFetchingPreviousSeasons(
         showId: Long,
