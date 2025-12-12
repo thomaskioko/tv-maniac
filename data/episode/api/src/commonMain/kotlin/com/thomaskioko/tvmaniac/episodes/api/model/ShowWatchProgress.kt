@@ -13,8 +13,4 @@ public data class ShowWatchProgress(
 
     val isShowWatched: Boolean get() = watchedCount == totalCount && totalCount > 0
     val progressPercentage: Float get() = if (totalCount > 0) watchedCount.toFloat() / totalCount else 0f
-
-    public companion object {
-        public val EMPTY: ShowWatchProgress = ShowWatchProgress(showId = 0, watchedCount = 0, totalCount = 0)
-    }
 }

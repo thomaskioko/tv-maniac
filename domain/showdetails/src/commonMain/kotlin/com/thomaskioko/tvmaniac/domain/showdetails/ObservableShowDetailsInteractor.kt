@@ -11,7 +11,7 @@ import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderRepository
 import com.thomaskioko.tvmaniac.domain.showdetails.model.ShowDetails
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
-import com.thomaskioko.tvmaniac.util.FormatterUtil
+import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject

@@ -56,7 +56,6 @@ class FakeEpisodeRepository : EpisodeRepository {
         nextEpisodesForWatchlist.value = episodes
     }
 
-
     fun setSeasonWatchProgress(progress: SeasonWatchProgress) {
         seasonWatchProgressFlow.value = progress
     }
