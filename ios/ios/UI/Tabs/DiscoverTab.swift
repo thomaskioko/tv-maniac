@@ -205,6 +205,24 @@ struct DiscoverTab: View {
                 chevronStyle: .chevronOnly,
                 onEpisodeClick: { showId, episodeId in
                     presenter.dispatch(action: NextEpisodeClicked(showId: showId, episodeId: episodeId))
+                },
+                onMarkWatched: { episode in
+                    presenter.dispatch(action: MarkNextEpisodeWatched(
+                        showId: episode.showId,
+                        episodeId: episode.episodeId,
+                        seasonNumber: episode.seasonNumber,
+                        episodeNumber: episode.episodeNumberValue
+                    ))
+                },
+                onUnfollowShow: { episode in
+                    presenter.dispatch(action: UnfollowShowFromUpNext(showId: episode.showId))
+                },
+                onOpenSeason: { episode in
+                    presenter.dispatch(action: OpenSeasonFromUpNext(
+                        showId: episode.showId,
+                        seasonId: episode.seasonId,
+                        seasonNumber: episode.seasonNumber
+                    ))
                 }
             )
 

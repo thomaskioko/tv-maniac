@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -58,13 +59,16 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowAction
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverViewState
+import com.thomaskioko.tvmaniac.discover.presenter.MarkNextEpisodeWatched
 import com.thomaskioko.tvmaniac.discover.presenter.MessageShown
 import com.thomaskioko.tvmaniac.discover.presenter.NextEpisodeClicked
+import com.thomaskioko.tvmaniac.discover.presenter.OpenSeasonFromUpNext
 import com.thomaskioko.tvmaniac.discover.presenter.PopularClicked
 import com.thomaskioko.tvmaniac.discover.presenter.RefreshData
 import com.thomaskioko.tvmaniac.discover.presenter.ShowClicked
 import com.thomaskioko.tvmaniac.discover.presenter.TopRatedClicked
 import com.thomaskioko.tvmaniac.discover.presenter.TrendingClicked
+import com.thomaskioko.tvmaniac.discover.presenter.UnfollowShowFromUpNext
 import com.thomaskioko.tvmaniac.discover.presenter.UpComingClicked
 import com.thomaskioko.tvmaniac.discover.ui.component.DiscoverHeaderContent
 import com.thomaskioko.tvmaniac.discover.ui.component.HorizontalRowContent
@@ -269,6 +273,22 @@ private fun LazyColumnContent(
                 onEpisodeClick = { showId, episodeId ->
                     onAction(NextEpisodeClicked(showId, episodeId))
                 },
+                onMarkWatched = { episode ->
+                    onAction(
+                        MarkNextEpisodeWatched(
+                            showId = episode.showId,
+                            episodeId = episode.episodeId,
+                            seasonNumber = episode.seasonNumber,
+                            episodeNumber = episode.episodeNumber,
+                        ),
+                    )
+                },
+                onUnfollowShow = { showId ->
+                    onAction(UnfollowShowFromUpNext(showId))
+                },
+                onOpenSeason = { showId, seasonId, seasonNumber ->
+                    onAction(OpenSeasonFromUpNext(showId, seasonId, seasonNumber))
+                },
             )
         }
 
@@ -306,6 +326,10 @@ private fun LazyColumnContent(
                 onItemClicked = { onAction(ShowClicked(it)) },
                 onMoreClicked = { onAction(TopRatedClicked) },
             )
+        }
+
+        item {
+            Spacer(modifier = Modifier.navigationBarsPadding())
         }
     }
 }
