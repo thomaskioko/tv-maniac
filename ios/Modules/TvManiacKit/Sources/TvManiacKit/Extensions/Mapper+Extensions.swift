@@ -167,7 +167,7 @@ public extension TvManiac.NextEpisodeUiModel {
             showPoster: showPoster,
             episodeId: episodeId,
             episodeTitle: episodeTitle,
-            episodeNumber: episodeNumber,
+            episodeNumber: "",
             runtime: runtime,
             stillImage: stillImage,
             overview: overview,

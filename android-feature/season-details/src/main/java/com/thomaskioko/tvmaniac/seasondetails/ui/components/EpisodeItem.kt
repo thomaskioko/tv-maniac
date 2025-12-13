@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.seasondetails.presenter.UpdateEpisodeStatus
 import com.thomaskioko.tvmaniac.seasondetails.ui.episodeDetailsModel
 
 @Composable
@@ -29,7 +28,7 @@ fun EpisodeItem(
     imageUrl: String?,
     title: String,
     episodeOverview: String,
-    onAction: (UpdateEpisodeStatus) -> Unit,
+    onAction: () -> Unit,
     modifier: Modifier = Modifier,
     shape: Shape = MaterialTheme.shapes.small,
     onEpisodeClicked: () -> Unit = {},
