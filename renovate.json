@@ -5,6 +5,7 @@
     ":disableRateLimiting",
     ":semanticCommitsDisabled"
   ],
+  "labels": ["renovate"],
   "platformCommit": true,
   "rebaseWhen": "conflicted",
   "gitAuthor": "Renovate Bot <renovate-bot@github.com>",
