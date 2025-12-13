@@ -9,7 +9,9 @@ import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonImagesModel
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
 
-internal fun List<EpisodeDetails>.toEpisodes(): PersistentList<EpisodeDetailsModel> {
+internal fun List<EpisodeDetails>.toEpisodes(
+    updatingEpisodesId: Set<Long> = emptySet(),
+): PersistentList<EpisodeDetailsModel> {
     val sortedEpisodes = this.sortedBy { it.episodeNumber }
     return sortedEpisodes.mapIndexed { index, episode ->
         val hasPreviousUnwatched = sortedEpisodes.take(index).any { !it.isWatched }
@@ -33,6 +35,7 @@ internal fun List<EpisodeDetails>.toEpisodes(): PersistentList<EpisodeDetailsMod
             isWatched = episode.isWatched,
             daysUntilAir = episode.daysUntilAir,
             hasPreviousUnwatched = hasPreviousUnwatched,
+            isEpisodeUpdating = episode.id in updatingEpisodesId,
         )
     }.toPersistentList()
 }

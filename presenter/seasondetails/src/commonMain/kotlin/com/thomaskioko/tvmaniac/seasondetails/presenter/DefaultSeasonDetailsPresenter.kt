@@ -26,14 +26,13 @@ import com.thomaskioko.tvmaniac.domain.seasondetails.ObservableSeasonDetailsInte
 import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsInteractor
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonDetailsUiParam
+import kotlinx.collections.immutable.toPersistentSet
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
@@ -68,7 +67,6 @@ class DefaultSeasonDetailsPresenter(
     private val checkingPreviousSeasonsLoadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
     private val coroutineScope = coroutineScope()
-    private val toggleMutex = Mutex()
     private val _state: MutableStateFlow<SeasonDetailsModel> = MutableStateFlow(SeasonDetailsModel.Empty)
 
     override val state: StateFlow<SeasonDetailsModel> = combine(
@@ -90,7 +88,9 @@ class DefaultSeasonDetailsPresenter(
             seasonOverview = detailsResult.seasonDetails.seasonOverview,
             episodeCount = detailsResult.seasonDetails.episodeCount,
             imageUrl = detailsResult.seasonDetails.imageUrl,
-            episodeDetailsList = detailsResult.seasonDetails.episodes.toEpisodes(),
+            episodeDetailsList = detailsResult.seasonDetails.episodes.toEpisodes(
+                updatingEpisodesId = currentState.updatingEpisodeIds,
+            ),
             seasonImages = detailsResult.images.toImageList(),
             seasonCast = detailsResult.cast.toCastList(),
             watchProgress = watchProgress.progressPercentage,
@@ -197,37 +197,50 @@ class DefaultSeasonDetailsPresenter(
     }
 
     private suspend fun handleToggleEpisodeWatched(episodeId: Long) {
-        toggleMutex.withLock {
-            val episode = state.value.episodeDetailsList.find { it.id == episodeId } ?: return@withLock
-            if (episode.isWatched) {
-                updateState {
-                    copy(
-                        dialogState = SeasonDialogState.UnwatchEpisodeConfirmation(
-                            primaryOperation = WatchOperation.MarkEpisodeUnwatched(param.showId, episodeId),
-                        ),
-                    )
-                }
-            } else {
-                handleMarkEpisodeWatched(
-                    MarkEpisodeWatched(
-                        episodeId = episodeId,
-                        seasonNumber = episode.seasonNumber,
-                        episodeNumber = episode.episodeNumber,
-                        hasPreviousUnwatched = episode.hasPreviousUnwatched,
+        if (episodeId in state.value.updatingEpisodeIds) return
+
+        updateState { copy(updatingEpisodeIds = (updatingEpisodeIds + episodeId).toPersistentSet()) }
+
+        val episode = state.value.episodeDetailsList.find { it.id == episodeId }
+        if (episode == null) {
+            updateState { copy(updatingEpisodeIds = (updatingEpisodeIds - episodeId).toPersistentSet()) }
+            return
+        }
+
+        if (episode.isWatched) {
+            updateState {
+                copy(
+                    updatingEpisodeIds = (updatingEpisodeIds - episodeId).toPersistentSet(),
+                    dialogState = SeasonDialogState.UnwatchEpisodeConfirmation(
+                        primaryOperation = WatchOperation.MarkEpisodeUnwatched(param.showId, episodeId),
                     ),
                 )
             }
+        } else {
+            updateState { copy(updatingEpisodeIds = (updatingEpisodeIds - episodeId).toPersistentSet()) }
+            handleMarkEpisodeWatched(
+                MarkEpisodeWatched(
+                    episodeId = episodeId,
+                    seasonNumber = episode.seasonNumber,
+                    episodeNumber = episode.episodeNumber,
+                    hasPreviousUnwatched = episode.hasPreviousUnwatched,
+                ),
+            )
         }
     }
 
     private suspend fun handleToggleSeasonWatched() {
-        toggleMutex.withLock {
-            if (state.value.isSeasonWatched) {
-                handleMarkSeasonAsUnwatched()
-            } else {
-                handleMarkSeasonAsWatched(state.value.hasUnwatchedInPreviousSeasons)
-            }
+        if (state.value.isSeasonUpdatingProcessing) return
+
+        updateState { copy(isSeasonUpdatingProcessing = true) }
+
+        if (state.value.isSeasonWatched) {
+            handleMarkSeasonAsUnwatched()
+        } else {
+            handleMarkSeasonAsWatched(state.value.hasUnwatchedInPreviousSeasons)
         }
+
+        updateState { copy(isSeasonUpdatingProcessing = false) }
     }
 
     private suspend fun handleConfirmDialogAction() {

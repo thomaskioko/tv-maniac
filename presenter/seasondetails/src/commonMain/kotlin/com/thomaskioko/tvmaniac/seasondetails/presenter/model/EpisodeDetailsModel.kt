@@ -15,4 +15,5 @@ data class EpisodeDetailsModel(
     val isWatched: Boolean,
     val daysUntilAir: Int?,
     val hasPreviousUnwatched: Boolean,
+    val isEpisodeUpdating: Boolean = false,
 )

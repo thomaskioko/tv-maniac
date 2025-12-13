@@ -6,7 +6,9 @@ import com.thomaskioko.tvmaniac.seasondetails.presenter.model.Cast
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.EpisodeDetailsModel
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonImagesModel
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentSetOf
 
 sealed interface WatchOperation {
     data class MarkEpisodeWatched(val params: MarkEpisodeWatchedParams) : WatchOperation
@@ -57,6 +59,8 @@ data class SeasonDetailsModel(
     val watchedEpisodeCount: Int = 0,
     val hasUnwatchedInPreviousSeasons: Boolean = false,
     val isEpisodeUpdating: Boolean = false,
+    val updatingEpisodeIds: ImmutableSet<Long> = persistentSetOf(),
+    val isSeasonUpdatingProcessing: Boolean = false,
     val episodeCount: Long,
     val seasonImages: ImmutableList<SeasonImagesModel>,
     val seasonId: Long,
@@ -87,6 +91,8 @@ data class SeasonDetailsModel(
             isSeasonWatched = false,
             watchedEpisodeCount = 0,
             hasUnwatchedInPreviousSeasons = false,
+            updatingEpisodeIds = persistentSetOf(),
+            isSeasonUpdatingProcessing = false,
             seasonId = 0,
             seasonName = "",
             seasonOverview = "",
