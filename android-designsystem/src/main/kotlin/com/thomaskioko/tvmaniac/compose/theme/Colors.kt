@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 val green = Color(0xFF00b300)
+val grey = Color(0xFF808080)
 
 val md_theme_light_primary = Color(0xFF0049c7)
 val md_theme_light_primaryContainer = Color(0xFFdbe8f8)
