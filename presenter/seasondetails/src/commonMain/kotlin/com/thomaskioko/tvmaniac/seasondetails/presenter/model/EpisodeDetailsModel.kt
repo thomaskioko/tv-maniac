@@ -9,6 +9,10 @@ data class EpisodeDetailsModel(
     val imageUrl: String?,
     val runtime: Long,
     val voteCount: Long,
-    val episodeNumber: String,
+    val episodeNumber: Long,
+    val seasonNumber: Long,
     val seasonEpisodeNumber: String,
+    val isWatched: Boolean,
+    val daysUntilAir: Int?,
+    val hasPreviousUnwatched: Boolean,
 )

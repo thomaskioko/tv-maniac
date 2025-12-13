@@ -167,7 +167,7 @@ class SeasonPresenterTest {
             castRepository.setSeasonCast(updatedCast)
 
             awaitItem() shouldBe SeasonDetailsModel(
-                isUpdating = false,
+                isSeasonDetailsUpdating = false,
                 dialogState = SeasonDialogState.Hidden,
                 seasonImages = persistentListOf(),
                 expandEpisodeItems = false,
