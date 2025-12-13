@@ -6,6 +6,10 @@ public struct ShowInfoView: View {
 
     private let isFollowed: Bool
     private let openTrailersInYoutube: Bool
+    private let selectedSeasonIndex: Int
+    private let status: String?
+    private let watchedEpisodesCount: Int32
+    private let totalEpisodesCount: Int32
     private let genreList: [SwiftGenres]
     private let seasonList: [SwiftSeason]
     private let providerList: [SwiftProviders]
@@ -13,14 +17,34 @@ public struct ShowInfoView: View {
     private let castsList: [SwiftCast]
     private let recommendedShowList: [SwiftShow]
     private let similarShows: [SwiftShow]
+    private let continueTrackingEpisodes: [SwiftContinueTrackingEpisode]
+    private let continueTrackingScrollIndex: Int
+    private let continueTrackingTitle: String
+    private let dayLabelFormat: (_ count: Int) -> String
+    private let trackLabel: String
+    private let stopTrackingLabel: String
+    private let addToListLabel: String
+    private let similarShowsTitle: String
+    private let recommendationsTitle: String
+    private let seasonDetailsTitle: String
+    private let showSeasonDetailsHeader: Bool
+    private let seasonCountFormat: (_ count: Int32) -> String
+    private let episodesWatchedFormat: (_ watched: Int32, _ total: Int32) -> String
+    private let episodesLeftFormat: (_ count: Int32) -> String
+    private let upToDateLabel: String
     private let onAddToCustomList: () -> Void
     private let onAddToLibrary: () -> Void
     private let onSeasonClicked: (Int, SwiftSeason) -> Void
     private let onShowClicked: (Int64) -> Void
+    private let onMarkEpisodeWatched: (SwiftContinueTrackingEpisode) -> Void
 
     public init(
         isFollowed: Bool,
         openTrailersInYoutube: Bool,
+        selectedSeasonIndex: Int = 0,
+        status: String?,
+        watchedEpisodesCount: Int32,
+        totalEpisodesCount: Int32,
         genreList: [SwiftGenres],
         seasonList: [SwiftSeason],
         providerList: [SwiftProviders],
@@ -28,13 +52,33 @@ public struct ShowInfoView: View {
         castsList: [SwiftCast],
         recommendedShowList: [SwiftShow],
         similarShows: [SwiftShow],
+        continueTrackingEpisodes: [SwiftContinueTrackingEpisode] = [],
+        continueTrackingScrollIndex: Int = 0,
+        continueTrackingTitle: String,
+        dayLabelFormat: @escaping (_ count: Int) -> String,
+        trackLabel: String,
+        stopTrackingLabel: String,
+        addToListLabel: String,
+        similarShowsTitle: String,
+        recommendationsTitle: String,
+        seasonDetailsTitle: String,
+        showSeasonDetailsHeader: Bool = true,
+        seasonCountFormat: @escaping (_ count: Int32) -> String,
+        episodesWatchedFormat: @escaping (_ watched: Int32, _ total: Int32) -> String,
+        episodesLeftFormat: @escaping (_ count: Int32) -> String,
+        upToDateLabel: String,
         onAddToCustomList: @escaping () -> Void,
         onAddToLibrary: @escaping () -> Void,
         onSeasonClicked: @escaping (Int, SwiftSeason) -> Void,
-        onShowClicked: @escaping (Int64) -> Void
+        onShowClicked: @escaping (Int64) -> Void,
+        onMarkEpisodeWatched: @escaping (SwiftContinueTrackingEpisode) -> Void = { _ in }
     ) {
         self.isFollowed = isFollowed
         self.openTrailersInYoutube = openTrailersInYoutube
+        self.selectedSeasonIndex = selectedSeasonIndex
+        self.status = status
+        self.watchedEpisodesCount = watchedEpisodesCount
+        self.totalEpisodesCount = totalEpisodesCount
         self.genreList = genreList
         self.seasonList = seasonList
         self.providerList = providerList
@@ -42,10 +86,26 @@ public struct ShowInfoView: View {
         self.castsList = castsList
         self.recommendedShowList = recommendedShowList
         self.similarShows = similarShows
+        self.continueTrackingEpisodes = continueTrackingEpisodes
+        self.continueTrackingScrollIndex = continueTrackingScrollIndex
+        self.continueTrackingTitle = continueTrackingTitle
+        self.dayLabelFormat = dayLabelFormat
+        self.trackLabel = trackLabel
+        self.stopTrackingLabel = stopTrackingLabel
+        self.addToListLabel = addToListLabel
+        self.similarShowsTitle = similarShowsTitle
+        self.recommendationsTitle = recommendationsTitle
+        self.seasonDetailsTitle = seasonDetailsTitle
+        self.showSeasonDetailsHeader = showSeasonDetailsHeader
+        self.seasonCountFormat = seasonCountFormat
+        self.episodesWatchedFormat = episodesWatchedFormat
+        self.episodesLeftFormat = episodesLeftFormat
+        self.upToDateLabel = upToDateLabel
         self.onAddToCustomList = onAddToCustomList
         self.onAddToLibrary = onAddToLibrary
         self.onSeasonClicked = onSeasonClicked
         self.onShowClicked = onShowClicked
+        self.onMarkEpisodeWatched = onMarkEpisodeWatched
     }
 
     public var body: some View {
@@ -66,11 +126,27 @@ public struct ShowInfoView: View {
                 listButton
             }
 
-            SeasonChipViewList(
-                items: seasonList,
-                onClick: { index in
-                    onSeasonClicked(index, seasonList[index])
-                }
+            ContinueTrackingSection(
+                title: continueTrackingTitle,
+                episodes: continueTrackingEpisodes,
+                scrollIndex: continueTrackingScrollIndex,
+                dayLabelFormat: dayLabelFormat,
+                onMarkWatched: onMarkEpisodeWatched
+            )
+
+            SeasonProgressSection(
+                title: seasonDetailsTitle,
+                showHeader: showSeasonDetailsHeader,
+                status: status,
+                watchedEpisodesCount: watchedEpisodesCount,
+                totalEpisodesCount: totalEpisodesCount,
+                seasonsList: seasonList,
+                selectedSeasonIndex: selectedSeasonIndex,
+                seasonCountFormat: seasonCountFormat,
+                episodesWatchedFormat: episodesWatchedFormat,
+                episodesLeftFormat: episodesLeftFormat,
+                upToDateLabel: upToDateLabel,
+                onSeasonClicked: onSeasonClicked
             )
 
             ProviderListView(items: providerList)
@@ -91,13 +167,13 @@ public struct ShowInfoView: View {
             CastListView(casts: castsList)
 
             HorizontalItemListView(
-                title: "Similar Shows",
+                title: similarShowsTitle,
                 items: similarShows,
                 onClick: { id in onShowClicked(id) }
             )
 
             HorizontalItemListView(
-                title: "Recommendations",
+                title: recommendationsTitle,
                 items: recommendedShowList,
                 onClick: { id in onShowClicked(id) }
             )
@@ -117,7 +193,7 @@ public struct ShowInfoView: View {
                         .foregroundColor(theme.colors.onButtonBackground)
                 }
 
-                Text(isFollowed ? "Stop Tracking" : "Track")
+                Text(isFollowed ? stopTrackingLabel : trackLabel)
                     .lineLimit(1)
                     .padding(.top, theme.spacing.xxxSmall)
                     .textStyle(theme.typography.labelSmall)
@@ -138,7 +214,7 @@ public struct ShowInfoView: View {
                 Image(systemName: false ? "rectangle.on.rectangle.angled.fill" : "rectangle.on.rectangle.angled")
                     .foregroundColor(theme.colors.onButtonBackground)
 
-                Text("Add To List")
+                Text(addToListLabel)
                     .padding(.top, theme.spacing.xxxSmall)
                     .textStyle(theme.typography.labelSmall)
                     .foregroundColor(theme.colors.onButtonBackground)
@@ -167,14 +243,17 @@ public struct ShowInfoView: View {
         ShowInfoView(
             isFollowed: true,
             openTrailersInYoutube: false,
+            status: "Ended",
+            watchedEpisodesCount: 7,
+            totalEpisodesCount: 12,
             genreList: [
                 .init(name: "Sci-Fi"),
                 .init(name: "Horror"),
                 .init(name: "Action"),
             ],
             seasonList: [
-                .init(tvShowId: 23, seasonId: 23, seasonNumber: 1, name: "Season 1"),
-                .init(tvShowId: 123, seasonId: 123, seasonNumber: 2, name: "Season 2"),
+                .init(tvShowId: 23, seasonId: 23, seasonNumber: 1, name: "Season 1", watchedCount: 6, totalCount: 6, progressPercentage: 1.0),
+                .init(tvShowId: 123, seasonId: 123, seasonNumber: 2, name: "Season 2", watchedCount: 1, totalCount: 6, progressPercentage: 0.17),
             ],
             providerList: [
                 .init(
@@ -270,6 +349,18 @@ public struct ShowInfoView: View {
                     inLibrary: false
                 ),
             ],
+            continueTrackingTitle: "Continue tracking",
+            dayLabelFormat: { count in count == 1 ? "day" : "days" },
+            trackLabel: "Track",
+            stopTrackingLabel: "Stop Tracking",
+            addToListLabel: "Add To List",
+            similarShowsTitle: "Similar Shows",
+            recommendationsTitle: "Recommendations",
+            seasonDetailsTitle: "Season Details",
+            seasonCountFormat: { count in count == 1 ? "\(count) Season" : "\(count) Seasons" },
+            episodesWatchedFormat: { watched, total in "\(watched) of \(total) episodes watched" },
+            episodesLeftFormat: { count in count == 1 ? "\(count) episode left to watch" : "\(count) episodes left to watch" },
+            upToDateLabel: "You're up-to-date",
             onAddToCustomList: {},
             onAddToLibrary: {},
             onSeasonClicked: { _, _ in },

@@ -237,5 +237,8 @@
     <string name="profile_footer_description">* TvManiac ist ein Trakt-Client. Melden Sie sich bei Ihrem Trakt-Konto an, um mit der Community zu verfolgen, zu entdecken und zu teilen.</string>
     <string name="profile_sign_in_button">Bei Trakt anmelden</string>
 
+    <string name="label_settings_include_specials">Spezialstaffeln</string>
+    <string name="label_settings_include_specials_description">Specials und Bonusstaffeln anzeigen</string>
+
     <string name="label_up_to_date">Alles gesehen</string>
 </resources>

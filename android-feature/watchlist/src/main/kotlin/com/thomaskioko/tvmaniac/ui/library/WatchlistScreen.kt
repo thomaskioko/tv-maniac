@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.material.icons.outlined.Inbox
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -242,23 +243,30 @@ private fun WatchlistGridContent(
             .padding(horizontal = 4.dp),
     ) {
         items(list) { show ->
-            Box(
-                modifier = Modifier.animateItem(),
-                contentAlignment = Alignment.BottomCenter,
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(160.dp),
+                shape = RectangleShape,
             ) {
-                PosterCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    imageUrl = show.posterImageUrl,
-                    title = show.title,
-                    onClick = { onItemClicked(show.tmdbId) },
-                    shape = RectangleShape,
-                )
-                ShowLinearProgressIndicator(
-                    progress = show.watchProgress,
-                    modifier = Modifier
-                        .height(8.dp)
-                        .fillMaxWidth(),
-                )
+                Box(
+                    modifier = Modifier.animateItem(),
+                    contentAlignment = Alignment.BottomCenter,
+                ) {
+                    PosterCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        imageUrl = show.posterImageUrl,
+                        title = show.title,
+                        onClick = { onItemClicked(show.tmdbId) },
+                        shape = RectangleShape,
+                    )
+                    ShowLinearProgressIndicator(
+                        progress = show.watchProgress,
+                        modifier = Modifier
+                            .height(8.dp)
+                            .fillMaxWidth(),
+                    )
+                }
             }
         }
     }

@@ -8,6 +8,9 @@ class NextEpisodesSectionTest: SnapshotTestCase {
         NextEpisodesSection(
             title: "Up Next",
             episodes: [],
+            markWatchedLabel: "Mark as Watched",
+            unfollowShowLabel: "Unfollow Show",
+            openSeasonLabel: "Open Season",
             onEpisodeClick: { _, _ in }
         )
         .padding()
@@ -32,6 +35,9 @@ class NextEpisodesSectionTest: SnapshotTestCase {
                     isNew: true
                 ),
             ],
+            markWatchedLabel: "Mark as Watched",
+            unfollowShowLabel: "Unfollow Show",
+            openSeasonLabel: "Open Season",
             onEpisodeClick: { _, _ in }
         )
         .padding()
@@ -80,6 +86,9 @@ class NextEpisodesSectionTest: SnapshotTestCase {
                     isNew: true
                 ),
             ],
+            markWatchedLabel: "Mark as Watched",
+            unfollowShowLabel: "Unfollow Show",
+            openSeasonLabel: "Open Season",
             onEpisodeClick: { _, _ in }
         )
         .padding()
@@ -117,6 +126,9 @@ class NextEpisodesSectionTest: SnapshotTestCase {
                 ),
             ],
             chevronStyle: .chevronOnly,
+            markWatchedLabel: "Mark as Watched",
+            unfollowShowLabel: "Unfollow Show",
+            openSeasonLabel: "Open Season",
             onEpisodeClick: { _, _ in }
         )
         .padding()
@@ -142,6 +154,9 @@ class NextEpisodesSectionTest: SnapshotTestCase {
                 ),
             ],
             chevronStyle: .withTitle("See All"),
+            markWatchedLabel: "Mark as Watched",
+            unfollowShowLabel: "Unfollow Show",
+            openSeasonLabel: "Open Season",
             onEpisodeClick: { _, _ in }
         )
         .padding()

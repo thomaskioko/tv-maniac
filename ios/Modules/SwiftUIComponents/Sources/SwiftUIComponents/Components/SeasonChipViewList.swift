@@ -12,32 +12,44 @@ public struct SeasonChipViewList: View {
     @Theme private var theme
 
     private let items: [SwiftSeason]
+    private let selectedIndex: Int
     private let onClick: (Int) -> Void
 
     public init(
         items: [SwiftSeason],
+        selectedIndex: Int = 0,
         onClick: @escaping (Int) -> Void
     ) {
         self.items = items
+        self.selectedIndex = selectedIndex
         self.onClick = onClick
     }
 
     public var body: some View {
         if !items.isEmpty {
-            ChevronTitle(title: "Browse Seasons")
+            ChevronTitle(title: "All Seasons")
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
-                    ForEach(items.indices, id: \.self) { index in
-                        let season = items[index]
+            ScrollViewReader { proxy in
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        ForEach(items.indices, id: \.self) { index in
+                            let season = items[index]
 
-                        ChipView(
-                            label: season.name,
-                            action: { onClick(index) }
-                        )
+                            ChipView(
+                                label: season.name,
+                                isSelected: index == selectedIndex,
+                                action: { onClick(index) }
+                            )
+                            .id(index)
+                        }
+                    }
+                    .padding([.trailing, .leading], theme.spacing.medium)
+                }
+                .onAppear {
+                    if selectedIndex > 0, selectedIndex < items.count {
+                        proxy.scrollTo(selectedIndex, anchor: .center)
                     }
                 }
-                .padding([.trailing, .leading], theme.spacing.medium)
             }
         }
     }

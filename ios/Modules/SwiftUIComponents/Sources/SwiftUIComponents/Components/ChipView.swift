@@ -11,13 +11,16 @@ import SwiftUI
 public struct ChipView: View {
     @Theme private var theme
     private let label: String
+    private let isSelected: Bool
     private let action: () -> Void
 
     public init(
         label: String,
+        isSelected: Bool = false,
         action: @escaping () -> Void = {}
     ) {
         self.label = label
+        self.isSelected = isSelected
         self.action = action
     }
 
@@ -28,7 +31,7 @@ public struct ChipView: View {
                 .foregroundColor(theme.colors.secondary)
                 .padding(.horizontal, theme.spacing.small)
                 .padding(.vertical, theme.spacing.xSmall)
-                .background(theme.colors.secondary.opacity(0.08))
+                .background(theme.colors.secondary.opacity(isSelected ? 0.24 : 0.08))
                 .cornerRadius(theme.shapes.small)
         }
     }

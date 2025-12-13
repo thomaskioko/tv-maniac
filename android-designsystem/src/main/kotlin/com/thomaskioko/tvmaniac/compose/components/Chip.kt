@@ -40,10 +40,10 @@ fun TvManiacChip(
         border = null,
         shape = RoundedCornerShape(4.dp),
         colors = FilterChipDefaults.filterChipColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            selectedContainerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f),
-            selectedLabelColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            containerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f),
+            labelColor = MaterialTheme.colorScheme.secondary,
+            selectedContainerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.24f),
+            selectedLabelColor = MaterialTheme.colorScheme.secondary,
         ),
     )
 }

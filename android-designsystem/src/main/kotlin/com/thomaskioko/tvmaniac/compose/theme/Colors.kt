@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 val green = Color(0xFF00b300)
+val grey = Color(0xFF808080)
 
 val md_theme_light_primary = Color(0xFF0049c7)
 val md_theme_light_primaryContainer = Color(0xFFdbe8f8)
@@ -91,7 +92,7 @@ val md_theme_snow_primaryContainer = Color(0xFF1A1A1A)
 val md_theme_snow_onPrimary = Color(0xFFF0F0F0)
 val md_theme_snow_secondary = Color(0xFFFFFFFF)
 val md_theme_snow_onSecondary = Color(0xFF0A0A0A)
-val md_theme_snow_error = Color(0xFFFF6B6B)
+val md_theme_snow_error = Color(0xFFBA1A1A)
 val md_theme_snow_background = Color(0xFF0A0A0A)
 val md_theme_snow_onBackground = Color(0xFFF0F0F0)
 val md_theme_snow_surface = Color(0xFF1A1A1A)

@@ -19,6 +19,8 @@ public struct TvManiacColorScheme {
     public let onAccent: Color
     public let buttonBackground: Color
     public let onButtonBackground: Color
+    public let success: Color
+    public let grey: Color
 
     public init(
         primary: Color,
@@ -38,7 +40,9 @@ public struct TvManiacColorScheme {
         accent: Color,
         onAccent: Color,
         buttonBackground: Color,
-        onButtonBackground: Color
+        onButtonBackground: Color,
+        success: Color = Color(hex: "00B300"),
+        grey: Color = Color(hex: "808080")
     ) {
         self.primary = primary
         self.primaryContainer = primaryContainer
@@ -58,6 +62,8 @@ public struct TvManiacColorScheme {
         self.onAccent = onAccent
         self.buttonBackground = buttonBackground
         self.onButtonBackground = onButtonBackground
+        self.success = success
+        self.grey = grey
     }
 }
 

@@ -28,6 +28,7 @@ import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Tv
+import androidx.compose.material.icons.filled.VideoLibrary
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -71,14 +72,18 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_low
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_low_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_medium
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_medium_description
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_include_specials
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_include_specials_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_privacy_policy
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_section_appearance
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_section_behavior
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_trakt_dialog_button_secondary
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_youtube
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_youtube_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.logout
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_about_section_title
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_theme_selector_subtitle
+import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_theme_selector_title
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_about
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_disconnect_trakt
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_info
@@ -92,11 +97,13 @@ import com.thomaskioko.tvmaniac.settings.presenter.BackClicked
 import com.thomaskioko.tvmaniac.settings.presenter.DismissAboutDialog
 import com.thomaskioko.tvmaniac.settings.presenter.DismissTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
+import com.thomaskioko.tvmaniac.settings.presenter.IncludeSpecialsToggled
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsActions
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
 import com.thomaskioko.tvmaniac.settings.presenter.ShowAboutDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ShowTraktDialog
+import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
 import com.thomaskioko.tvmaniac.settings.presenter.TraktLogoutClicked
 import com.thomaskioko.tvmaniac.settings.presenter.YoutubeToggled
@@ -212,17 +219,13 @@ private fun SettingsContent(
         item { Spacer(modifier = Modifier.height(16.dp)) }
 
         item {
-            SectionHeader(
-                title = label_settings_section_appearance.resolve(context),
-                icon = Icons.Filled.Palette,
-                subtitle = settings_theme_selector_subtitle.resolve(context),
-            )
+            SectionHeader(title = label_settings_section_appearance.resolve(context))
         }
 
         item { Spacer(modifier = Modifier.height(16.dp)) }
 
         item {
-            ThemeSelectorSection(
+            ThemeTitleSection(
                 selectedTheme = state.theme,
                 onThemeSelected = { onAction(ThemeSelected(it)) },
             )
@@ -237,6 +240,12 @@ private fun SettingsContent(
             )
         }
 
+        item { Spacer(modifier = Modifier.height(24.dp)) }
+
+        item {
+            SectionHeader(title = label_settings_section_behavior.resolve(context))
+        }
+
         item { Spacer(modifier = Modifier.height(16.dp)) }
 
         item {
@@ -246,6 +255,18 @@ private fun SettingsContent(
                 subtitle = label_settings_youtube_description.resolve(context),
                 checked = state.openTrailersInYoutube,
                 onCheckedChange = { onAction(YoutubeToggled(it)) },
+            )
+        }
+
+        item { Spacer(modifier = Modifier.height(8.dp)) }
+
+        item {
+            SettingsToggleItem(
+                icon = Icons.Filled.VideoLibrary,
+                title = label_settings_include_specials.resolve(context),
+                subtitle = label_settings_include_specials_description.resolve(context),
+                checked = state.includeSpecials,
+                onCheckedChange = { onAction(IncludeSpecialsToggled(it)) },
             )
         }
 
@@ -332,6 +353,53 @@ private fun SectionHeader(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun ThemeTitleSection(
+    selectedTheme: ThemeModel,
+    onThemeSelected: (ThemeModel) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val context = LocalContext.current
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Palette,
+                tint = MaterialTheme.colorScheme.secondary,
+                contentDescription = null,
+                modifier = Modifier.size(24.dp),
+            )
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = settings_theme_selector_title.resolve(context),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Text(
+                    text = settings_theme_selector_subtitle.resolve(context),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        ThemeSelectorSection(
+            selectedTheme = selectedTheme,
+            onThemeSelected = onThemeSelected,
+        )
     }
 }
 

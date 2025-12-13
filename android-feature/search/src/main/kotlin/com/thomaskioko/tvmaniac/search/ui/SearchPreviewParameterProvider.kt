@@ -30,7 +30,7 @@ internal fun createDiscoverShowList(size: Int = 5) = List(size) { discoverShow }
 internal val discoverShow = ShowItem(
     tmdbId = 84958,
     title = "Loki",
-    posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+    posterImageUrl = null,
     overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” an ",
     status = "Ended",
     inLibrary = false,
@@ -40,6 +40,6 @@ internal fun createGenreShowList(size: Int = 5) = List(size) {
     ShowGenre(
         id = 84958,
         name = "Horror",
-        posterUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+        posterUrl = null,
     )
 }.toImmutableList()

@@ -27,4 +27,5 @@ dependencies {
     implementation(libs.kenburns)
     implementation(libs.androidx.palette)
     implementation(libs.coroutines.jvm)
+    implementation(libs.kotlinx.collections)
 }

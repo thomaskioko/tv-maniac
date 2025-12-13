@@ -15,6 +15,7 @@ internal val defaultState = SettingsState(
     showLogoutDialog = false,
     isAuthenticated = false,
     openTrailersInYoutube = false,
+    includeSpecials = false,
 )
 
 internal val loggedInState = SettingsState(
@@ -27,6 +28,7 @@ internal val loggedInState = SettingsState(
     showLogoutDialog = false,
     isAuthenticated = true,
     openTrailersInYoutube = true,
+    includeSpecials = true,
 )
 
 internal class SettingsPreviewParameterProvider : PreviewParameterProvider<SettingsState> {

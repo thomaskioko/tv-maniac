@@ -73,6 +73,7 @@ fun FilledVerticalIconButton(
     shape: Shape = RectangleShape,
     style: TextStyle = MaterialTheme.typography.bodyMedium,
     containerColor: Color = MaterialTheme.colorScheme.secondary,
+    contentColor: Color = MaterialTheme.colorScheme.onSecondary,
 ) {
     TextButtonContent(
         onClick = onClick,
@@ -90,7 +91,7 @@ fun FilledVerticalIconButton(
                     imageVector = imageVector,
                     contentDescription = null,
                     tint = when {
-                        enabled -> MaterialTheme.colorScheme.onSecondary
+                        enabled -> contentColor
                         else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
                     },
                 )
@@ -100,7 +101,7 @@ fun FilledVerticalIconButton(
                     text = text,
                     style = style,
                     color = when {
-                        enabled -> MaterialTheme.colorScheme.onSecondary
+                        enabled -> contentColor
                         else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
                     },
                 )

@@ -28,6 +28,26 @@ public extension String {
             ).localized()
         )
     }
+
+    init(_ resourceKey: KeyPath<MR.plurals, PluralsResource>, quantity: Int, _ args: Any...) {
+        let argsArray = args.map { arg -> Any in
+            if let intVal = arg as? Int {
+                return Int32(intVal)
+            } else if let int32Val = arg as? Int32 {
+                return int32Val
+            }
+            return arg
+        }
+        self.init(
+            ResourcesKt.getPluralFormatted(
+                pluralResource: MR.plurals()[keyPath: resourceKey],
+                quantity: Int32(quantity),
+                args: KotlinArray(size: Int32(argsArray.count)) { index in
+                    argsArray[Int(truncating: index)] as AnyObject
+                }
+            ).localized()
+        )
+    }
 }
 
 public extension Font {

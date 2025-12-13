@@ -125,7 +125,10 @@ public extension TvManiac.SeasonModel {
             tvShowId: tvShowId,
             seasonId: seasonId,
             seasonNumber: seasonNumber,
-            name: name
+            name: name,
+            watchedCount: watchedCount,
+            totalCount: totalCount,
+            progressPercentage: progressPercentage
         )
     }
 }
@@ -149,7 +152,18 @@ public extension TvManiac.TvShow {
 
 public extension TvManiac.EpisodeDetailsModel {
     func toSwift() -> SwiftEpisode {
-        .init(episodeId: id, title: episodeNumberTitle, overview: overview, imageUrl: imageUrl)
+        .init(
+            episodeId: id,
+            title: episodeNumberTitle,
+            overview: overview,
+            imageUrl: imageUrl,
+            seasonNumber: seasonNumber,
+            episodeNumber: Int64(episodeNumber),
+            isWatched: isWatched,
+            isEpisodeUpdating: isEpisodeUpdating,
+            daysUntilAir: daysUntilAir?.int64Value,
+            hasPreviousUnwatched: hasPreviousUnwatched
+        )
     }
 }
 
@@ -167,7 +181,10 @@ public extension TvManiac.NextEpisodeUiModel {
             showPoster: showPoster,
             episodeId: episodeId,
             episodeTitle: episodeTitle,
-            episodeNumber: "",
+            episodeNumber: episodeNumberFormatted,
+            seasonId: seasonId,
+            seasonNumber: seasonNumber,
+            episodeNumberValue: episodeNumber,
             runtime: runtime,
             stillImage: stillImage,
             overview: overview,
@@ -196,6 +213,23 @@ public extension TvManiac.ShowItem {
             imageUrl: posterImageUrl,
             year: year,
             voteAverage: voteAverage?.doubleValue
+        )
+    }
+}
+
+public extension TvManiac.ContinueTrackingEpisodeModel {
+    func toSwift() -> SwiftContinueTrackingEpisode {
+        .init(
+            episodeId: episodeId,
+            seasonId: seasonId,
+            showId: showId,
+            episodeNumber: episodeNumber,
+            seasonNumber: seasonNumber,
+            episodeNumberFormatted: episodeNumberFormatted,
+            episodeTitle: episodeTitle,
+            imageUrl: imageUrl,
+            isWatched: isWatched,
+            daysUntilAir: daysUntilAir?.int64Value
         )
     }
 }
