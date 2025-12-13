@@ -203,6 +203,9 @@ struct DiscoverTab: View {
                 title: String(\.label_discover_up_next),
                 episodes: state.nextEpisodes.map { $0.toSwift() },
                 chevronStyle: .chevronOnly,
+                markWatchedLabel: String(\.menu_mark_watched),
+                unfollowShowLabel: String(\.menu_unfollow_show),
+                openSeasonLabel: String(\.menu_open_season),
                 onEpisodeClick: { showId, episodeId in
                     presenter.dispatch(action: NextEpisodeClicked(showId: showId, episodeId: episodeId))
                 },
