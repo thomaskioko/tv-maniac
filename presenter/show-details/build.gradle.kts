@@ -43,6 +43,7 @@ kotlin {
                 implementation(projects.core.util.testing)
                 implementation(projects.data.cast.testing)
                 implementation(projects.data.episode.testing)
+                implementation(projects.data.seasondetails.testing)
                 implementation(projects.data.watchlist.testing)
                 implementation(projects.data.recommendedshows.testing)
                 implementation(projects.data.seasons.testing)

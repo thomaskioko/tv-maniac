@@ -21,6 +21,7 @@ import com.thomaskioko.tvmaniac.domain.showdetails.model.Trailer as DomainTraile
 
 public fun DomainShowDetails.toShowDetails(
     watchedEpisodesCount: Int = 0,
+    totalEpisodesCount: Int = 0,
     watchProgress: Float = 0f,
 ): ShowDetailsModel = ShowDetailsModel(
     tmdbId = tmdbId,
@@ -35,8 +36,9 @@ public fun DomainShowDetails.toShowDetails(
     status = status,
     isInLibrary = isInLibrary,
     hasWebViewInstalled = hasWebViewInstalled,
-    numberOfSeasons = numberOfSeasons,
+    numberOfSeasons = numberOfSeasons ?: 0,
     watchedEpisodesCount = watchedEpisodesCount,
+    totalEpisodesCount = totalEpisodesCount,
     watchProgress = watchProgress,
     genres = genres.toImmutableList(),
     seasonsList = seasonsList.toSeasonsList(),
@@ -84,6 +86,8 @@ internal fun List<DomainSeason>.toSeasonsList(): ImmutableList<SeasonModel> =
             tvShowId = it.tvShowId,
             name = it.name,
             seasonNumber = it.seasonNumber,
+            watchedCount = it.watchedCount,
+            totalCount = it.totalCount,
         )
     }.toImmutableList()
 

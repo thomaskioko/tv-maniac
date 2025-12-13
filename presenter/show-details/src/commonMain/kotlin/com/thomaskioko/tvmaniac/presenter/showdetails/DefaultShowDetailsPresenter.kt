@@ -77,10 +77,13 @@ public class DefaultShowDetailsPresenter(
         observeShowWatchProgressInteractor.flow,
         observeContinueTrackingInteractor.flow,
         _state,
-    ) { recommendedShowsUpdating, showDetailsUpdating, similarShowsUpdating, watchProvidersUpdating, showDetails, watchProgress, continueTrackingResult, currentState ->
+    ) { recommendedShowsUpdating, showDetailsUpdating, similarShowsUpdating, watchProvidersUpdating,
+        showDetails, watchProgress, continueTrackingResult, currentState,
+        ->
         currentState.copy(
             showDetails = showDetails.toShowDetails(
                 watchedEpisodesCount = watchProgress.watchedCount,
+                totalEpisodesCount = watchProgress.totalCount,
                 watchProgress = watchProgress.progressPercentage,
             ),
             recommendedShowsRefreshing = recommendedShowsUpdating,

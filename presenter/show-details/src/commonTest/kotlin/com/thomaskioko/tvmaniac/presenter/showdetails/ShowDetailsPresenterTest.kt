@@ -32,6 +32,7 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.TrailerModel
+import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
@@ -52,6 +53,7 @@ import kotlin.test.Test
 class ShowDetailsPresenterTest {
 
     private val seasonsRepository = FakeSeasonsRepository()
+    private val seasonDetailsRepository = FakeSeasonDetailsRepository()
     private val trailerRepository = FakeTrailerRepository()
     private val similarShowsRepository = FakeSimilarShowsRepository()
     private val watchlistRepository = FakeWatchlistRepository()
@@ -375,6 +377,125 @@ class ShowDetailsPresenterTest {
         }
     }
 
+    @Test
+    fun `should display season progress when seasons have watched episodes`() = runTest {
+        buildMockData(seasonResult = testSeasonsWithProgress)
+        episodeRepository.setAllSeasonsWatchProgress(testSeasonWatchProgress)
+
+        val presenter = buildShowDetailsPresenter()
+
+        presenter.state.test {
+            awaitItem()
+
+            val emission = awaitUntil { it.showDetails.seasonsList.isNotEmpty() }
+            val seasonsList = emission.showDetails.seasonsList
+
+            seasonsList.size shouldBe 2
+
+            val season1 = seasonsList.first { it.seasonNumber == 1L }
+            season1.watchedCount shouldBe 8
+            season1.totalCount shouldBe 10
+            season1.progressPercentage shouldBe 0.8f
+            season1.isSeasonWatched shouldBe false
+
+            val season2 = seasonsList.first { it.seasonNumber == 2L }
+            season2.watchedCount shouldBe 3
+            season2.totalCount shouldBe 12
+            season2.progressPercentage shouldBe 0.25f
+            season2.isSeasonWatched shouldBe false
+        }
+    }
+
+    @Test
+    fun `should mark season as watched when all episodes are watched`() = runTest {
+        buildMockData(seasonResult = testSeasonsWithProgress)
+        episodeRepository.setAllSeasonsWatchProgress(testCompletedSeasonProgress)
+
+        val presenter = buildShowDetailsPresenter()
+
+        presenter.state.test {
+            awaitItem()
+
+            val emission = awaitUntil { it.showDetails.seasonsList.isNotEmpty() }
+            val season1 = emission.showDetails.seasonsList.first { it.seasonNumber == 1L }
+
+            season1.watchedCount shouldBe 10
+            season1.totalCount shouldBe 10
+            season1.progressPercentage shouldBe 1f
+            season1.isSeasonWatched shouldBe true
+        }
+    }
+
+    @Test
+    fun `should display total episodes count in ShowDetailsModel`() = runTest {
+        buildMockData()
+        episodeRepository.setShowWatchProgress(
+            testShowWatchProgress.copy(watchedCount = 12, totalCount = 38),
+        )
+
+        val presenter = buildShowDetailsPresenter()
+
+        presenter.state.test {
+            awaitItem()
+
+            val emission = awaitUntil { it.showDetails.totalEpisodesCount > 0 }
+            emission.showDetails.watchedEpisodesCount shouldBe 12
+            emission.showDetails.totalEpisodesCount shouldBe 38
+        }
+    }
+
+    @Test
+    fun `should update season progress when episode is marked as watched`() = runTest {
+        buildMockData(seasonResult = testSeasonsWithProgress)
+        episodeRepository.setAllSeasonsWatchProgress(testPartialSeasonProgress)
+
+        val presenter = buildShowDetailsPresenter()
+
+        presenter.state.test {
+            awaitItem()
+
+            val initialState = awaitUntil { it.showDetails.seasonsList.isNotEmpty() }
+            val season1Initial = initialState.showDetails.seasonsList.first { it.seasonNumber == 1L }
+            season1Initial.watchedCount shouldBe 5
+            season1Initial.progressPercentage shouldBe 0.5f
+
+            episodeRepository.setAllSeasonsWatchProgress(
+                listOf(
+                    testPartialSeasonProgress.first().copy(watchedCount = 6),
+                ),
+            )
+
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            val updatedState = awaitUntil {
+                it.showDetails.seasonsList.firstOrNull { s -> s.seasonNumber == 1L }?.watchedCount == 6
+            }
+            val season1Updated = updatedState.showDetails.seasonsList.first { it.seasonNumber == 1L }
+            season1Updated.watchedCount shouldBe 6
+            season1Updated.progressPercentage shouldBe 0.6f
+        }
+    }
+
+    @Test
+    fun `should display zero progress when no episodes are watched`() = runTest {
+        buildMockData(seasonResult = testSeasonsWithProgress)
+        episodeRepository.setAllSeasonsWatchProgress(emptyList())
+
+        val presenter = buildShowDetailsPresenter()
+
+        presenter.state.test {
+            awaitItem()
+
+            val emission = awaitUntil { it.showDetails.seasonsList.isNotEmpty() }
+            val season1 = emission.showDetails.seasonsList.first { it.seasonNumber == 1L }
+
+            season1.watchedCount shouldBe 0
+            season1.totalCount shouldBe 0
+            season1.progressPercentage shouldBe 0f
+            season1.isSeasonWatched shouldBe false
+        }
+    }
+
     private suspend fun buildMockData(
         isYoutubeInstalled: Boolean = false,
         castList: List<ShowCast> = emptyList(),
@@ -415,6 +536,8 @@ class ShowDetailsPresenterTest {
             ),
             showDetailsInteractor = ShowDetailsInteractor(
                 showDetailsRepository = showDetailsRepository,
+                seasonsRepository = seasonsRepository,
+                seasonDetailsRepository = seasonDetailsRepository,
                 dispatchers = coroutineDispatcher,
             ),
             similarShowsInteractor = SimilarShowsInteractor(
@@ -427,6 +550,7 @@ class ShowDetailsPresenterTest {
             ),
             observableShowDetailsInteractor = ObservableShowDetailsInteractor(
                 castRepository = castRepository,
+                episodeRepository = episodeRepository,
                 recommendedShowsRepository = recommendedShowsRepository,
                 seasonsRepository = seasonsRepository,
                 showDetailsRepository = showDetailsRepository,

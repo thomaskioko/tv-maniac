@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.db.SimilarShows
 import com.thomaskioko.tvmaniac.db.TvshowDetails
 import com.thomaskioko.tvmaniac.db.WatchProviders
 import com.thomaskioko.tvmaniac.episodes.api.model.ContinueTrackingResult
+import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsModel
 import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
@@ -119,4 +120,52 @@ val testShowWatchProgress = ShowWatchProgress(
     showId = 84958L,
     watchedCount = 5,
     totalCount = 10,
+)
+
+val testSeasonsWithProgress = listOf(
+    ShowSeasons(
+        season_id = Id(101),
+        show_id = Id(84958),
+        season_title = "Season 1",
+        season_number = 1,
+    ),
+    ShowSeasons(
+        season_id = Id(102),
+        show_id = Id(84958),
+        season_title = "Season 2",
+        season_number = 2,
+    ),
+)
+
+val testSeasonWatchProgress = listOf(
+    SeasonWatchProgress(
+        showId = 84958L,
+        seasonNumber = 1L,
+        watchedCount = 8,
+        totalCount = 10,
+    ),
+    SeasonWatchProgress(
+        showId = 84958L,
+        seasonNumber = 2L,
+        watchedCount = 3,
+        totalCount = 12,
+    ),
+)
+
+val testPartialSeasonProgress = listOf(
+    SeasonWatchProgress(
+        showId = 84958L,
+        seasonNumber = 1L,
+        watchedCount = 5,
+        totalCount = 10,
+    ),
+)
+
+val testCompletedSeasonProgress = listOf(
+    SeasonWatchProgress(
+        showId = 84958L,
+        seasonNumber = 1L,
+        watchedCount = 10,
+        totalCount = 10,
+    ),
 )
