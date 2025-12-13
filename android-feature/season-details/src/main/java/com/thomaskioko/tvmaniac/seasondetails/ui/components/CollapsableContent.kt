@@ -45,7 +45,7 @@ import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.seasondetails.presenter.EpisodeClicked
 import com.thomaskioko.tvmaniac.seasondetails.presenter.OnEpisodeHeaderClicked
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsAction
-import com.thomaskioko.tvmaniac.seasondetails.presenter.ShowMarkSeasonDialog
+import com.thomaskioko.tvmaniac.seasondetails.presenter.ToggleSeasonWatched
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.EpisodeDetailsModel
 import com.thomaskioko.tvmaniac.seasondetails.ui.seasonDetailsLoaded
 import kotlinx.collections.immutable.ImmutableList
@@ -87,7 +87,7 @@ fun CollapsableContent(
                     title = episode.episodeNumberTitle,
                     episodeOverview = episode.overview,
                     onEpisodeClicked = { EpisodeClicked(episode.id) },
-                    onAction = onAction,
+                    onAction = {},
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -177,7 +177,7 @@ private fun SeasonTitleHeader(
             )
 
             IconButton(
-                onClick = { onAction(ShowMarkSeasonDialog) },
+                onClick = { onAction(ToggleSeasonWatched) },
                 modifier = Modifier.constrainAs(watchedStatusIcon) {
                     centerVerticallyTo(parent)
                     end.linkTo(parent.end, 8.dp)

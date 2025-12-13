@@ -42,7 +42,12 @@ data class Season(
     val tvShowId: Long,
     val name: String,
     val seasonNumber: Long,
-)
+    val watchedCount: Int = 0,
+    val totalCount: Int = 0,
+) {
+    val progressPercentage: Float
+        get() = if (totalCount > 0) watchedCount.toFloat() / totalCount else 0f
+}
 
 data class Show(
     val tmdbId: Long,

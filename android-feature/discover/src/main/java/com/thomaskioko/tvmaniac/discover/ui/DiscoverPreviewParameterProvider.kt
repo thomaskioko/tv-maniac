@@ -20,7 +20,10 @@ internal val nextEpisodeUiModel = NextEpisodeUiModel(
     showPoster = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
     episodeId = 123L,
     episodeTitle = "L'âme Perdue",
-    episodeNumber = "S02E01",
+    episodeNumberFormatted = "S02E01",
+    seasonId = 1L,
+    seasonNumber = 2,
+    episodeNumber = 1,
     runtime = "45 min",
     stillImage = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
     overview = "Daryl washes ashore in France and struggles to piece together how he got there and why.",
@@ -46,7 +49,10 @@ private fun createNextEpisodesList(size: Int = 3) = List(size) { index ->
             1 -> "Wednesday"
             else -> "House of the Dragon"
         },
-        episodeNumber = "S0${index + 2}E0${index + 1}",
+        episodeNumberFormatted = "S0${index + 2}E0${index + 1}",
+        seasonId = (index + 1).toLong(),
+        seasonNumber = (index + 2).toLong(),
+        episodeNumber = (index + 1).toLong(),
         episodeTitle = when (index) {
             0 -> "L'âme Perdue"
             1 -> "Wednesday's Child Is Full of Woe"

@@ -1,12 +1,16 @@
 package com.thomaskioko.tvmaniac.presenter.showdetails
 
+import com.thomaskioko.tvmaniac.episodes.api.model.ContinueTrackingResult
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.CastModel
+import com.thomaskioko.tvmaniac.presenter.showdetails.model.ContinueTrackingEpisodeModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ProviderModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.SeasonModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.TrailerModel
+import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import com.thomaskioko.tvmaniac.domain.showdetails.model.Casts as DomainCasts
 import com.thomaskioko.tvmaniac.domain.showdetails.model.Providers as DomainProviders
@@ -15,7 +19,11 @@ import com.thomaskioko.tvmaniac.domain.showdetails.model.Show as DomainShow
 import com.thomaskioko.tvmaniac.domain.showdetails.model.ShowDetails as DomainShowDetails
 import com.thomaskioko.tvmaniac.domain.showdetails.model.Trailer as DomainTrailer
 
-fun DomainShowDetails.toShowDetails(): ShowDetailsModel = ShowDetailsModel(
+public fun DomainShowDetails.toShowDetails(
+    watchedEpisodesCount: Int = 0,
+    totalEpisodesCount: Int = 0,
+    watchProgress: Float = 0f,
+): ShowDetailsModel = ShowDetailsModel(
     tmdbId = tmdbId,
     title = title,
     overview = overview,
@@ -28,7 +36,10 @@ fun DomainShowDetails.toShowDetails(): ShowDetailsModel = ShowDetailsModel(
     status = status,
     isInLibrary = isInLibrary,
     hasWebViewInstalled = hasWebViewInstalled,
-    numberOfSeasons = numberOfSeasons,
+    numberOfSeasons = numberOfSeasons ?: 0,
+    watchedEpisodesCount = watchedEpisodesCount,
+    totalEpisodesCount = totalEpisodesCount,
+    watchProgress = watchProgress,
     genres = genres.toImmutableList(),
     seasonsList = seasonsList.toSeasonsList(),
     providers = providers.toWatchProviderList(),
@@ -75,6 +86,8 @@ internal fun List<DomainSeason>.toSeasonsList(): ImmutableList<SeasonModel> =
             tvShowId = it.tvShowId,
             name = it.name,
             seasonNumber = it.seasonNumber,
+            watchedCount = it.watchedCount,
+            totalCount = it.totalCount,
         )
     }.toImmutableList()
 
@@ -87,3 +100,30 @@ internal fun List<DomainTrailer>.toTrailerList(): ImmutableList<TrailerModel> =
             youtubeThumbnailUrl = it.youtubeThumbnailUrl,
         )
     }.toImmutableList()
+
+internal fun EpisodeDetails.toContinueTrackingModel(showId: Long): ContinueTrackingEpisodeModel {
+    val seasonStr = "S${seasonNumber.toString().padStart(2, '0')}"
+    val episodeStr = "E${episodeNumber.toString().padStart(2, '0')}"
+    return ContinueTrackingEpisodeModel(
+        episodeId = id,
+        seasonId = seasonId,
+        showId = showId,
+        episodeNumber = episodeNumber,
+        seasonNumber = seasonNumber,
+        episodeNumberFormatted = "$seasonStr | $episodeStr",
+        episodeTitle = name,
+        imageUrl = stillPath,
+        isWatched = isWatched,
+        daysUntilAir = daysUntilAir,
+    )
+}
+
+internal fun mapContinueTrackingEpisodes(
+    result: ContinueTrackingResult?,
+    showId: Long,
+): ImmutableList<ContinueTrackingEpisodeModel> {
+    if (result == null) return persistentListOf()
+    return result.episodes
+        .map { it.toContinueTrackingModel(showId) }
+        .toImmutableList()
+}

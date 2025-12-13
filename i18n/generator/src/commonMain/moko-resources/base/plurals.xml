@@ -36,4 +36,16 @@
         <item quantity="one">%d minute</item>
         <item quantity="other">%d minutes</item>
     </plurals>
+    <plurals name="aired_count">
+        <item quantity="one">%d episode aired</item>
+        <item quantity="other">%d episodes aired</item>
+    </plurals>
+    <plurals name="episodes_watched">
+        <item quantity="one">%1$d of %2$d episode watched</item>
+        <item quantity="other">%1$d of %2$d episodes watched</item>
+    </plurals>
+    <plurals name="episodes_left">
+        <item quantity="one">%d episode left to watch</item>
+        <item quantity="other">%d episodes left to watch</item>
+    </plurals>
 </resources>

@@ -9,27 +9,36 @@ import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonImagesModel
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
 
-internal fun List<EpisodeDetails>.toEpisodes(): PersistentList<EpisodeDetailsModel> =
-    map {
+internal fun List<EpisodeDetails>.toEpisodes(
+    updatingEpisodesId: Set<Long> = emptySet(),
+): PersistentList<EpisodeDetailsModel> {
+    val sortedEpisodes = this.sortedBy { it.episodeNumber }
+    return sortedEpisodes.mapIndexed { index, episode ->
+        val hasPreviousUnwatched = sortedEpisodes.take(index).any { !it.isWatched }
         EpisodeDetailsModel(
-            id = it.id,
-            seasonId = it.seasonId,
-            episodeTitle = it.name,
-            episodeNumberTitle = "E${it.episodeNumber} • ${it.name}",
-            overview = it.overview,
-            imageUrl = it.stillPath,
-            runtime = it.runtime,
-            voteCount = it.voteCount,
-            episodeNumber = it.episodeNumber.toString(),
+            id = episode.id,
+            seasonId = episode.seasonId,
+            episodeTitle = episode.name,
+            episodeNumberTitle = "E${episode.episodeNumber} • ${episode.name}",
+            overview = episode.overview,
+            imageUrl = episode.stillPath,
+            runtime = episode.runtime,
+            voteCount = episode.voteCount,
+            episodeNumber = episode.episodeNumber,
+            seasonNumber = episode.seasonNumber,
             seasonEpisodeNumber =
             "S${
-                it.seasonNumber
+                episode.seasonNumber
                     .toString()
                     .padStart(2, '0')
-            } | E${it.episodeNumber}",
+            } | E${episode.episodeNumber}",
+            isWatched = episode.isWatched,
+            daysUntilAir = episode.daysUntilAir,
+            hasPreviousUnwatched = hasPreviousUnwatched,
+            isEpisodeUpdating = episode.id in updatingEpisodesId,
         )
-    }
-        .toPersistentList()
+    }.toPersistentList()
+}
 
 internal fun List<SeasonImages>.toImageList(): PersistentList<SeasonImagesModel> =
     map {

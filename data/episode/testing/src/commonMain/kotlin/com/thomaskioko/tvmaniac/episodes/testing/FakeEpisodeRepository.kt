@@ -39,6 +39,7 @@ class FakeEpisodeRepository : EpisodeRepository {
     private val watchProgressMap = mutableMapOf<Long, MutableStateFlow<WatchProgress>>()
     private val seasonWatchProgressFlow = MutableStateFlow(SeasonWatchProgress(0, 0, 0, 0))
     private val showWatchProgressFlow = MutableStateFlow(ShowWatchProgress(0, 0, 0))
+    private val allSeasonsWatchProgressFlow = MutableStateFlow<List<SeasonWatchProgress>>(emptyList())
     private val continueTrackingFlow = MutableStateFlow<ContinueTrackingResult?>(null)
     private val unwatchedCountBeforeFlow = MutableStateFlow(0)
     private val unwatchedCountInPreviousSeasonsFlow = MutableStateFlow(0L)
@@ -62,6 +63,10 @@ class FakeEpisodeRepository : EpisodeRepository {
 
     fun setShowWatchProgress(progress: ShowWatchProgress) {
         showWatchProgressFlow.value = progress
+    }
+
+    fun setAllSeasonsWatchProgress(progressList: List<SeasonWatchProgress>) {
+        allSeasonsWatchProgressFlow.value = progressList
     }
 
     fun setContinueTrackingResult(result: ContinueTrackingResult?) {
@@ -127,6 +132,9 @@ class FakeEpisodeRepository : EpisodeRepository {
 
     override fun observeShowWatchProgress(showId: Long): Flow<ShowWatchProgress> =
         showWatchProgressFlow.asStateFlow()
+
+    override fun observeAllSeasonsWatchProgress(showId: Long): Flow<List<SeasonWatchProgress>> =
+        allSeasonsWatchProgressFlow.asStateFlow()
 
     override suspend fun markSeasonWatched(showId: Long, seasonNumber: Long, watchedAt: Instant?) {
         lastMarkSeasonWatchedCall = MarkSeasonWatchedCall(showId, seasonNumber, markPreviousSeasons = false)

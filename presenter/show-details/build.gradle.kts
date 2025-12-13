@@ -3,6 +3,7 @@ plugins {
 }
 
 scaffold {
+    explicitApi()
     useKotlinInject()
     useSerialization()
 
@@ -16,11 +17,15 @@ kotlin {
                 api(projects.core.view)
                 implementation(projects.core.base)
                 implementation(projects.core.logger.api)
-                implementation(projects.core.util)
+                implementation(projects.core.util.api)
+                implementation(projects.data.episode.api)
+                implementation(projects.domain.episode)
                 implementation(projects.domain.recommendedshows)
+                implementation(projects.domain.seasondetails)
                 implementation(projects.domain.showdetails)
                 implementation(projects.domain.similarshows)
                 implementation(projects.domain.watchproviders)
+                implementation(projects.data.seasondetails.api)
                 implementation(projects.data.watchlist.api)
 
                 api(libs.decompose.decompose)
@@ -28,6 +33,7 @@ kotlin {
                 api(libs.kotlinx.collections)
 
                 implementation(libs.kotlinInject.runtime)
+                implementation(libs.kotlinx.datetime)
             }
         }
 
@@ -36,6 +42,8 @@ kotlin {
                 implementation(projects.core.logger.testing)
                 implementation(projects.core.util.testing)
                 implementation(projects.data.cast.testing)
+                implementation(projects.data.episode.testing)
+                implementation(projects.data.seasondetails.testing)
                 implementation(projects.data.watchlist.testing)
                 implementation(projects.data.recommendedshows.testing)
                 implementation(projects.data.seasons.testing)

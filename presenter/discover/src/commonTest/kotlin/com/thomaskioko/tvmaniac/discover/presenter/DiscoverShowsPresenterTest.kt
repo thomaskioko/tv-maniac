@@ -18,6 +18,7 @@ import com.thomaskioko.tvmaniac.discover.api.TrendingShowsInteractor
 import com.thomaskioko.tvmaniac.discover.presenter.model.DiscoverShow
 import com.thomaskioko.tvmaniac.discover.presenter.model.NextEpisodeUiModel
 import com.thomaskioko.tvmaniac.domain.discover.DiscoverShowsInteractor
+import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
 import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
@@ -269,6 +270,7 @@ class DiscoverShowsPresenterTest {
                 navigatedShowId = showId
                 navigatedEpisodeId = episodeId
             },
+            onNavigateToSeason = { _, _, _ -> },
             discoverShowsInteractor = DiscoverShowsInteractor(
                 featuredShowsRepository = featuredShowsRepository,
                 topRatedShowsRepository = topRatedShowsRepository,
@@ -303,6 +305,9 @@ class DiscoverShowsPresenterTest {
             genreShowsInteractor = GenreShowsInteractor(
                 repository = genreRepository,
                 dispatchers = coroutineDispatcher,
+            ),
+            markEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(
+                episodeRepository = episodeRepository,
             ),
             logger = FakeLogger(),
         )
@@ -350,7 +355,10 @@ class DiscoverShowsPresenterTest {
                 showPoster = episode.showPoster,
                 episodeId = episode.episodeId,
                 episodeTitle = episode.episodeName,
-                episodeNumber = "S${episode.seasonNumber}E${episode.episodeNumber}",
+                episodeNumberFormatted = "S${episode.seasonNumber}E${episode.episodeNumber}",
+                seasonId = episode.seasonId,
+                seasonNumber = episode.seasonNumber,
+                episodeNumber = episode.episodeNumber,
                 runtime = episode.runtime?.let { "$it min" },
                 stillImage = episode.stillPath,
                 overview = episode.overview,
@@ -388,6 +396,7 @@ class DiscoverShowsPresenterTest {
         onNavigateToShowDetails = {},
         onNavigateToMore = {},
         onNavigateToEpisode = { _, _ -> },
+        onNavigateToSeason = { _, _, _ -> },
         discoverShowsInteractor = DiscoverShowsInteractor(
             featuredShowsRepository = featuredShowsRepository,
             topRatedShowsRepository = topRatedShowsRepository,
@@ -422,6 +431,9 @@ class DiscoverShowsPresenterTest {
         genreShowsInteractor = GenreShowsInteractor(
             repository = genreRepository,
             dispatchers = coroutineDispatcher,
+        ),
+        markEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(
+            episodeRepository = episodeRepository,
         ),
         logger = FakeLogger(),
     ).also { lifecycle.resume() }

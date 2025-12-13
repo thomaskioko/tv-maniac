@@ -151,7 +151,6 @@ public struct ShowInfoView: View {
         .controlSize(.small)
         .tint(theme.colors.accent)
         .buttonBorderShape(.roundedRectangle(radius: DrawingConstants.buttonRadius))
-
     }
 
     private enum DrawingConstants {

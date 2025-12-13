@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderRepository
 import com.thomaskioko.tvmaniac.domain.showdetails.model.ShowDetails
+import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
@@ -19,6 +20,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class ObservableShowDetailsInteractor(
     private val castRepository: CastRepository,
+    private val episodeRepository: EpisodeRepository,
     private val recommendedShowsRepository: RecommendedShowsRepository,
     private val seasonsRepository: SeasonsRepository,
     private val showDetailsRepository: ShowDetailsRepository,
@@ -38,7 +40,9 @@ class ObservableShowDetailsInteractor(
             similarShowsRepository.observeSimilarShows(params),
             trailerRepository.observeTrailers(params),
             trailerRepository.isYoutubePlayerInstalled(),
-        ) { showDetails, recommendedShows, seasonsList, castList, watchProviders, similarShows, trailers, isWebViewInstalled ->
+            episodeRepository.observeAllSeasonsWatchProgress(params),
+        ) { showDetails, recommendedShows, seasonsList, castList, watchProviders, similarShows, trailers, isWebViewInstalled, seasonsProgress ->
+            val progressMap = seasonsProgress.associateBy { it.seasonNumber }
             ShowDetails(
                 tmdbId = showDetails.id.id,
                 title = showDetails.name,
@@ -55,11 +59,11 @@ class ObservableShowDetailsInteractor(
                 genres = showDetails.genre_list.toGenreList(),
                 providers = watchProviders.toWatchProviderList(),
                 castsList = castList.toCastList(),
-                seasonsList = seasonsList.toSeasonsList(),
+                seasonsList = seasonsList.toSeasonsList(progressMap),
                 similarShows = similarShows.toSimilarShowList(),
                 recommendedShows = recommendedShows.toRecommendedShowList(),
                 trailersList = trailers.toTrailerList(),
             )
-        }.flowOn(dispatchers.io.limitedParallelism(7))
+        }.flowOn(dispatchers.io.limitedParallelism(8))
     }
 }

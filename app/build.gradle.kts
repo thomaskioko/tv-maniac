@@ -87,6 +87,7 @@ dependencies {
     implementation(projects.data.datastore.api)
     implementation(projects.data.datastore.implementation)
     implementation(projects.domain.discover)
+    implementation(projects.domain.episode)
     implementation(projects.domain.genre)
     implementation(projects.domain.recommendedshows)
     implementation(projects.domain.seasondetails)

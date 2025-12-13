@@ -115,13 +115,15 @@ struct SeasonDetailsView: View {
                     episodeCount: state.episodeCount,
                     watchProgress: state.watchProgress,
                     expandEpisodeItems: state.expandEpisodeItems,
-                    showSeasonWatchStateDialog: state.showSeasonWatchStateDialog,
+                    showSeasonWatchStateDialog: false,
                     isSeasonWatched: state.isSeasonWatched,
                     items: state.episodeDetailsList.map {
                         $0.toSwift()
                     },
                     onEpisodeHeaderClicked: { presenter.dispatch(action: OnEpisodeHeaderClicked()) },
-                    onWatchedStateClicked: { presenter.dispatch(action: UpdateSeasonWatchedState()) }
+                    onWatchedStateClicked: {
+//                        presenter.dispatch(action: UpdateSeasonWatchedState())
+                    }
                 )
 
                 CastListView(casts: toCastsList(state.seasonCast))
@@ -137,7 +139,7 @@ struct SeasonDetailsView: View {
             }
         )
         .onAppear {
-            showModal = state.showSeasonWatchStateDialog
+            showModal = false
         }
     }
 
@@ -195,7 +197,7 @@ struct SeasonDetailsView: View {
                     .padding(.vertical, theme.spacing.xLarge)
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        presenter.dispatch(action: SeasonGalleryClicked())
+//                        presenter.dispatch(action: SeasonGalleryClicked())
                         showModal.toggle()
                     }
                 }

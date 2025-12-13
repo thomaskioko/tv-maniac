@@ -143,6 +143,10 @@ public class DefaultEpisodeRepository(
         watchedEpisodeDao.observeShowWatchProgress(showId)
             .distinctUntilChanged()
 
+    override fun observeAllSeasonsWatchProgress(showId: Long): Flow<List<SeasonWatchProgress>> =
+        watchedEpisodeDao.observeAllSeasonsWatchProgress(showId)
+            .distinctUntilChanged()
+
     override suspend fun markSeasonWatched(showId: Long, seasonNumber: Long, watchedAt: Instant?) {
         val timestamp = watchedAt?.toEpochMilliseconds() ?: dateTimeProvider.nowMillis()
         val episodes = watchedEpisodeDao.getEpisodesForSeason(showId, seasonNumber)

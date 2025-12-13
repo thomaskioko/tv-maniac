@@ -69,7 +69,6 @@ internal fun NextEpisodeCard(
                     ),
             )
 
-            // Episode info overlay
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
@@ -85,7 +84,7 @@ internal fun NextEpisodeCard(
                 )
 
                 Text(
-                    text = episode.episodeNumber,
+                    text = episode.episodeNumberFormatted,
                     style = MaterialTheme.typography.labelLarge,
                     color = Color.White.copy(alpha = 0.8f),
                     maxLines = 1,
@@ -125,7 +124,10 @@ private fun NextEpisodeCardPreview() {
                 showPoster = "/poster.jpg",
                 episodeId = 123L,
                 episodeTitle = "L'âme Perdue",
-                episodeNumber = "S02E01",
+                episodeNumberFormatted = "S02E01",
+                seasonId = 1L,
+                seasonNumber = 2,
+                episodeNumber = 1,
                 runtime = "45 min",
                 stillImage = "/still.jpg",
                 overview = "Daryl washes ashore in France and struggles to piece together how he got there and why.",

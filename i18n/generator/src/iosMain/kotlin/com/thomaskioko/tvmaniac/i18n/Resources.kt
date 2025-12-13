@@ -20,3 +20,7 @@ public fun getString(stringResource: StringResource, parameter: Any): StringDesc
 public fun getPluralFormatted(pluralResource: PluralsResource, quantity: Int): StringDesc {
     return StringDesc.PluralFormatted(pluralResource, quantity, quantity)
 }
+
+public fun getPluralFormatted(pluralResource: PluralsResource, quantity: Int, vararg args: Any): StringDesc {
+    return StringDesc.PluralFormatted(pluralResource, quantity, *args)
+}

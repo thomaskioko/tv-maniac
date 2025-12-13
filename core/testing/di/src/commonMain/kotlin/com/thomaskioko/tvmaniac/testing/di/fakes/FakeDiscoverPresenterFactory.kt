@@ -18,9 +18,10 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 class FakeDiscoverPresenterFactory : DiscoverShowsPresenter.Factory {
     override fun invoke(
         componentContext: ComponentContext,
-        onNavigateToShowDetails: (Long) -> Unit,
-        onNavigateToMore: (Long) -> Unit,
-        onNavigateToEpisode: (Long, Long) -> Unit,
+        onNavigateToShowDetails: (id: Long) -> Unit,
+        onNavigateToMore: (categoryId: Long) -> Unit,
+        onNavigateToEpisode: (showId: Long, episodeId: Long) -> Unit,
+        onNavigateToSeason: (showId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
     ): DiscoverShowsPresenter = FakeDiscoverShowsPresenter()
 }
 
