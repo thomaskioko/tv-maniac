@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.outlined.Movie
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -24,7 +25,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -42,7 +45,9 @@ fun PosterCard(
     imageWidth: Dp = 120.dp,
     aspectRatio: Float = 2 / 3f,
     contentScale: ContentScale = ContentScale.Crop,
-    shape: Shape = MaterialTheme.shapes.small,
+    shape: Shape = RectangleShape,
+    isInLibrary: Boolean = false,
+    libraryImageOverlay: ImageVector = Icons.Filled.Bookmarks,
     onClick: () -> Unit = {},
 ) {
     PosterCard(
@@ -69,6 +74,10 @@ fun PosterCard(
                         .fillMaxSize()
                         .aspectRatio(aspectRatio),
                 )
+
+                if (isInLibrary) {
+                    LibraryOverlay(libraryImageOverlay = libraryImageOverlay)
+                }
             }
         },
     )
@@ -84,7 +93,7 @@ private fun PlaceholderContent(
     Column(
         modifier = modifier,
     ) {
-        imageUrl?.let {
+        if (imageUrl.isNullOrEmpty()) {
             Icon(
                 modifier = Modifier
                     .size(imageSize)
@@ -111,6 +120,26 @@ private fun PlaceholderContent(
 }
 
 @Composable
+private fun LibraryOverlay(
+    libraryImageOverlay: ImageVector,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.TopEnd,
+    ) {
+        Icon(
+            imageVector = libraryImageOverlay,
+            contentDescription = null,
+            tint = Color.White,
+            modifier = Modifier
+                .padding(8.dp)
+                .size(20.dp),
+        )
+    }
+}
+
+@Composable
 fun PosterBackdropCard(
     title: String,
     imageUrl: String?,
@@ -118,7 +147,7 @@ fun PosterBackdropCard(
     textAlign: TextAlign = TextAlign.Start,
     contentScale: ContentScale = ContentScale.Crop,
     imageWidth: Dp = 120.dp,
-    shape: Shape = MaterialTheme.shapes.small,
+    shape: Shape = RectangleShape,
     onClick: () -> Unit,
 ) {
     val surface = MaterialTheme.colorScheme.surface
@@ -181,9 +210,9 @@ fun PosterBackdropCard(
 @Composable
 internal fun PosterCard(
     modifier: Modifier = Modifier,
-    imageWidth: Dp = 120.dp,
-    shape: Shape = MaterialTheme.shapes.small,
-    onClick: () -> Unit = {},
+    imageWidth: Dp,
+    shape: Shape,
+    onClick: () -> Unit,
     content: @Composable () -> Unit,
 ) {
     Card(
@@ -208,6 +237,24 @@ private fun PosterCardPreview() {
             PosterCard(
                 imageUrl = "",
                 title = "Loki",
+                onClick = {},
+                modifier = Modifier
+                    .width(100.dp)
+                    .aspectRatio(0.8f),
+            )
+        }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun PosterCardWithLibraryOverlayPreview() {
+    TvManiacTheme {
+        Surface {
+            PosterCard(
+                imageUrl = "",
+                title = "Loki",
+                isInLibrary = true,
                 onClick = {},
                 modifier = Modifier
                     .width(100.dp)
