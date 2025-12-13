@@ -135,6 +135,7 @@
     <string name="title_episodes">Épisodes</string>
     <string name="title_watch_next">Regarder ensuite</string>
     <string name="title_continue_tracking">Continuer à Suivre</string>
+    <string name="title_season_details">Détails de la saison</string>
     <string name="title_browse_by_genre">Parcourir par genre</string>
     <string name="status_connected">De nouveau en ligne !</string>
     <string name="status_no_connection">Pas de connexion Internet !</string>
@@ -233,4 +234,6 @@
     <string name="profile_feature_share_description">Commentez, répondez et évaluez les émissions de télévision, les films, les saisons et les épisodes</string>
     <string name="profile_footer_description">* TvManiac est un client Trakt. Connectez-vous à votre compte Trakt pour suivre, découvrir et partager avec la communauté.</string>
     <string name="profile_sign_in_button">Se connecter à Trakt</string>
+
+    <string name="label_up_to_date">Tout vu</string>
 </resources>
