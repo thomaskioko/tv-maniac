@@ -175,6 +175,24 @@ public class DefaultWatchedEpisodeDao(
         }
     }
 
+    override fun observeAllSeasonsWatchProgress(showId: Long): Flow<List<SeasonWatchProgress>> {
+        return database.watchedEpisodesQueries
+            .getAllSeasonsWatchProgress(Id(showId))
+            .asFlow()
+            .mapToList(dispatchers.databaseRead)
+            .map { results ->
+                results.map { result ->
+                    SeasonWatchProgress(
+                        showId = showId,
+                        seasonNumber = result.season_number,
+                        watchedCount = result.watched_count.toInt(),
+                        totalCount = result.total_count.toInt(),
+                    )
+                }
+            }
+            .catch { emit(emptyList()) }
+    }
+
     override suspend fun markSeasonAsWatched(
         showId: Long,
         seasonNumber: Long,

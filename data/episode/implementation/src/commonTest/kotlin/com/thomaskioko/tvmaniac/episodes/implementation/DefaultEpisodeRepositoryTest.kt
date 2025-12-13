@@ -656,6 +656,66 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
         }
     }
 
+    @Test
+    fun `should observe all seasons watch progress with correct counts`() = runTest {
+        episodeRepository.markEpisodeAsWatched(TEST_SHOW_ID, 101L, SEASON_1_NUMBER, 1L)
+        episodeRepository.markEpisodeAsWatched(TEST_SHOW_ID, 102L, SEASON_1_NUMBER, 2L)
+        episodeRepository.markEpisodeAsWatched(TEST_SHOW_ID, 103L, SEASON_1_NUMBER, 3L)
+        episodeRepository.markEpisodeAsWatched(TEST_SHOW_ID, 201L, SEASON_2_NUMBER, 1L)
+
+        episodeRepository.observeAllSeasonsWatchProgress(TEST_SHOW_ID).test {
+            val progress = awaitItem()
+            progress shouldHaveSize 2
+
+            val season1Progress = progress.first { it.seasonNumber == SEASON_1_NUMBER }
+            season1Progress.watchedCount shouldBe 3
+            season1Progress.totalCount shouldBe SEASON_1_EPISODE_COUNT
+            season1Progress.progressPercentage shouldBe (3f / SEASON_1_EPISODE_COUNT)
+
+            val season2Progress = progress.first { it.seasonNumber == SEASON_2_NUMBER }
+            season2Progress.watchedCount shouldBe 1
+            season2Progress.totalCount shouldBe SEASON_2_EPISODE_COUNT
+        }
+    }
+
+    @Test
+    fun `should return empty progress for non-existent show`() = runTest {
+        episodeRepository.observeAllSeasonsWatchProgress(999L).test {
+            val progress = awaitItem()
+            progress.shouldBeEmpty()
+        }
+    }
+
+    @Test
+    fun `should update all seasons progress when episode marked watched`() = runTest {
+        episodeRepository.observeAllSeasonsWatchProgress(TEST_SHOW_ID).test {
+            val initialProgress = awaitItem()
+            initialProgress.first { it.seasonNumber == SEASON_1_NUMBER }.watchedCount shouldBe 0
+
+            episodeRepository.markEpisodeAsWatched(TEST_SHOW_ID, 101L, SEASON_1_NUMBER, 1L)
+
+            val updatedProgress = awaitItem()
+            updatedProgress.first { it.seasonNumber == SEASON_1_NUMBER }.watchedCount shouldBe 1
+        }
+    }
+
+    @Test
+    fun `should return full progress percentage when season complete`() = runTest {
+        repeat(SEASON_1_EPISODE_COUNT) { episodeIndex ->
+            val episodeNumber = episodeIndex + 1
+            val episodeId = 100L + episodeNumber
+            episodeRepository.markEpisodeAsWatched(TEST_SHOW_ID, episodeId, SEASON_1_NUMBER, episodeNumber.toLong())
+        }
+
+        episodeRepository.observeAllSeasonsWatchProgress(TEST_SHOW_ID).test {
+            val progress = awaitItem()
+            val season1Progress = progress.first { it.seasonNumber == SEASON_1_NUMBER }
+            season1Progress.watchedCount shouldBe SEASON_1_EPISODE_COUNT
+            season1Progress.totalCount shouldBe SEASON_1_EPISODE_COUNT
+            season1Progress.progressPercentage shouldBe 1f
+        }
+    }
+
     private fun insertTestData() {
         database.tvShowQueries.upsert(
             id = Id(TEST_SHOW_ID),

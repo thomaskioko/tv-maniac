@@ -203,3 +203,12 @@ WHERE episode.show_id = :show_id
   AND (:include_specials = 1 OR season.season_number > 0)
 ORDER BY season.season_number ASC, episode.episode_number ASC
 LIMIT 1;
+
+getAllSeasonsWatchProgress:
+SELECT
+    s.season_number,
+    (SELECT COUNT(*) FROM watched_episodes we WHERE we.show_id = :show_id AND we.season_number = s.season_number) AS watched_count,
+    (SELECT COUNT(*) FROM episode e WHERE e.show_id = :show_id AND e.season_id = s.id AND (e.air_date IS NULL OR e.air_date <= date('now'))) AS total_count
+FROM season s
+WHERE s.show_id = :show_id
+ORDER BY s.season_number;

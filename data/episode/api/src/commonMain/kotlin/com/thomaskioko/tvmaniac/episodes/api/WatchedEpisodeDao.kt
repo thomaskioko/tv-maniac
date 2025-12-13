@@ -18,6 +18,8 @@ public interface WatchedEpisodeDao {
 
     public fun observeShowWatchProgress(showId: Long): Flow<ShowWatchProgress>
 
+    public fun observeAllSeasonsWatchProgress(showId: Long): Flow<List<SeasonWatchProgress>>
+
     public suspend fun markAsWatched(
         showId: Long,
         episodeId: Long,
