@@ -90,31 +90,44 @@ private fun PlaceholderContent(
     imageSize: Dp = 52.dp,
     title: String? = null,
 ) {
-    Column(
-        modifier = modifier,
-    ) {
-        if (imageUrl.isNullOrEmpty()) {
-            Icon(
-                modifier = Modifier
-                    .size(imageSize)
-                    .padding(4.dp)
-                    .align(Alignment.CenterHorizontally),
-                imageVector = Icons.Outlined.Movie,
-                contentDescription = title,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-            )
-        }
+    if (imageUrl.isNullOrEmpty()) {
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color.Gray.copy(alpha = 0.8f),
+                            Color.Gray,
+                        ),
+                    ),
+                ),
+            contentAlignment = Alignment.Center,
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .size(imageSize)
+                        .padding(8.dp),
+                    imageVector = Icons.Outlined.Movie,
+                    contentDescription = title,
+                    tint = Color.White.copy(alpha = 0.8f),
+                )
 
-        title?.let {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                textAlign = TextAlign.Center,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 2,
-                modifier = Modifier.fillMaxWidth(),
-            )
+                title?.let {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.White.copy(alpha = 0.8f),
+                        textAlign = TextAlign.Center,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 2,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+            }
         }
     }
 }

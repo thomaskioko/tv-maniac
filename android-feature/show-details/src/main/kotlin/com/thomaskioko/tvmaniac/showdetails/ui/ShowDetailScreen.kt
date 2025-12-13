@@ -27,11 +27,12 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material.icons.filled.LibraryAdd
 import androidx.compose.material.icons.filled.LibraryAddCheck
 import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.AutoAwesomeMotion
 import androidx.compose.material3.ButtonDefaults
@@ -680,8 +681,8 @@ fun ShowDetailButtons(
         FilledVerticalIconButton(
             shape = MaterialTheme.shapes.medium,
             text = if (isFollowed) unfollow.resolve(context) else following.resolve(context),
-            imageVector = if (isFollowed) Icons.Filled.LibraryAddCheck else Icons.Filled.LibraryAdd,
-            containerColor = if (!isFollowed) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error,
+            imageVector = if (isFollowed) Icons.Filled.RemoveCircle else Icons.Filled.AddCircle,
+            containerColor = if (isFollowed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.labelMedium,
             onClick = { onTrackShowClicked(isFollowed) },
         )

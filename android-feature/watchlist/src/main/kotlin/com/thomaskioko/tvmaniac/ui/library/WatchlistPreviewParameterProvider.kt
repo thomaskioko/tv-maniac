@@ -11,7 +11,7 @@ internal val watchlistItems = List(6) {
     WatchlistItem(
         tmdbId = 84958,
         title = "Loki",
-        posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+        posterImageUrl = null,
         year = "2021",
         status = "Canceled",
         seasonCount = 6,
