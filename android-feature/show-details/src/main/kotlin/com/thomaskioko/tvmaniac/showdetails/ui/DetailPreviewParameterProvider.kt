@@ -4,6 +4,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsContent
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.CastModel
+import com.thomaskioko.tvmaniac.presenter.showdetails.model.ContinueTrackingEpisodeModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ProviderModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.SeasonModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsModel
@@ -76,7 +77,45 @@ val showDetailsContent = ShowDetailsContent(
             CastModel(id = 1L, name = "Character", profileUrl = null, characterName = "Starring"),
         ),
         hasWebViewInstalled = false,
-        isInLibrary = false,
+        isInLibrary = true,
+    ),
+    continueTrackingEpisodes = persistentListOf(
+        ContinueTrackingEpisodeModel(
+            episodeId = 121L,
+            seasonId = 1L,
+            showId = 1L,
+            episodeNumber = 1,
+            seasonNumber = 2,
+            episodeNumberFormatted = "S01 | E01",
+            episodeTitle = "Season Premiere",
+            imageUrl = null,
+            isWatched = false,
+            daysUntilAir = null,
+        ),
+        ContinueTrackingEpisodeModel(
+            episodeId = 122L,
+            seasonId = 1L,
+            showId = 1L,
+            episodeNumber = 2,
+            seasonNumber = 2,
+            episodeNumberFormatted = "S01 | E02",
+            episodeTitle = "The Aftermath",
+            imageUrl = null,
+            isWatched = false,
+            daysUntilAir = null,
+        ),
+        ContinueTrackingEpisodeModel(
+            episodeId = 123L,
+            seasonId = 1L,
+            showId = 1L,
+            episodeNumber = 3,
+            seasonNumber = 2,
+            episodeNumberFormatted = "S01 | E03",
+            episodeTitle = "Upcoming Episode",
+            imageUrl = null,
+            isWatched = false,
+            daysUntilAir = 5,
+        ),
     ),
     message = null,
 )

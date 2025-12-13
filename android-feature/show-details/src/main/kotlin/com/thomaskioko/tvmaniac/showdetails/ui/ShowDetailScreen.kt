@@ -39,19 +39,16 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -85,7 +82,6 @@ import com.thomaskioko.tvmaniac.compose.components.SheetDragHandle
 import com.thomaskioko.tvmaniac.compose.components.TextLoadingItem
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
-import com.thomaskioko.tvmaniac.compose.components.TvManiacChip
 import com.thomaskioko.tvmaniac.compose.components.actionIconWhen
 import com.thomaskioko.tvmaniac.compose.extensions.contentBackgroundGradient
 import com.thomaskioko.tvmaniac.compose.extensions.copy
@@ -101,7 +97,6 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.title_casts
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_providers
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_providers_label
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_recommended
-import com.thomaskioko.tvmaniac.i18n.MR.strings.title_seasons
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_similar
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_trailer
 import com.thomaskioko.tvmaniac.i18n.MR.strings.unfollow
@@ -111,6 +106,7 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.DetailShowClicked
 import com.thomaskioko.tvmaniac.presenter.showdetails.DismissErrorSnackbar
 import com.thomaskioko.tvmaniac.presenter.showdetails.DismissShowsListSheet
 import com.thomaskioko.tvmaniac.presenter.showdetails.FollowShowClicked
+import com.thomaskioko.tvmaniac.presenter.showdetails.MarkEpisodeWatched
 import com.thomaskioko.tvmaniac.presenter.showdetails.ReloadShowDetails
 import com.thomaskioko.tvmaniac.presenter.showdetails.SeasonClicked
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsAction
@@ -119,12 +115,14 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowShowsListSheet
 import com.thomaskioko.tvmaniac.presenter.showdetails.WatchTrailerClicked
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.CastModel
+import com.thomaskioko.tvmaniac.presenter.showdetails.model.ContinueTrackingEpisodeModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ProviderModel
-import com.thomaskioko.tvmaniac.presenter.showdetails.model.SeasonModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.TrailerModel
+import com.thomaskioko.tvmaniac.showdetails.ui.components.ContinueTrackingSection
+import com.thomaskioko.tvmaniac.showdetails.ui.components.WatchProgressSection
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.collections.immutable.ImmutableList
 
@@ -271,8 +269,6 @@ private fun ShowListSheetContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // TODO:: Add check for empty list and display list
-
         EmptyListContent(title, onAction)
     }
 }
@@ -360,6 +356,9 @@ fun LazyColumnContent(
             } else {
                 ShowInfoContent(
                     showDetails = detailsContent.showDetails,
+                    selectedSeasonIndex = detailsContent.selectedSeasonIndex,
+                    continueTrackingEpisodes = detailsContent.continueTrackingEpisodes,
+                    continueTrackingScrollIndex = detailsContent.continueTrackingScrollIndex,
                     onAction = onAction,
                 )
             }
@@ -370,14 +369,47 @@ fun LazyColumnContent(
 @Composable
 private fun ShowInfoContent(
     showDetails: ShowDetailsModel,
+    selectedSeasonIndex: Int,
+    continueTrackingEpisodes: ImmutableList<ContinueTrackingEpisodeModel>,
+    continueTrackingScrollIndex: Int,
     onAction: (ShowDetailsAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
-        SeasonsContent(
+        ContinueTrackingSection(
+            episodes = continueTrackingEpisodes,
+            scrollIndex = continueTrackingScrollIndex,
+            onMarkWatched = { episode ->
+                onAction(
+                    MarkEpisodeWatched(
+                        showId = episode.showId,
+                        episodeId = episode.episodeId,
+                        seasonNumber = episode.seasonNumber,
+                        episodeNumber = episode.episodeNumber,
+                    ),
+                )
+            },
+        )
+
+        WatchProgressSection(
+            status = showDetails.status,
+            watchedEpisodesCount = showDetails.watchedEpisodesCount,
+            totalEpisodesCount = showDetails.totalEpisodesCount,
             seasonsList = showDetails.seasonsList,
-            selectedSeasonIndex = showDetails.selectedSeasonIndex,
-            onAction = onAction,
+            selectedSeasonIndex = selectedSeasonIndex,
+            showHeader = continueTrackingEpisodes.isEmpty(),
+            onSeasonClicked = { index, season ->
+                onAction(
+                    SeasonClicked(
+                        ShowSeasonDetailsParam(
+                            season.tvShowId,
+                            season.seasonId,
+                            season.seasonNumber,
+                            selectedSeasonIndex = index,
+                        ),
+                    ),
+                )
+            },
         )
 
         WatchProvider(list = showDetails.providers)
@@ -427,7 +459,7 @@ private fun HeaderContent(
         )
 
         if (show != null) {
-            Body(
+            ShowBody(
                 show = show,
                 onUpdateFavoriteClicked = onUpdateFavoriteClicked,
                 onAddToListClicked = onAddToListClicked,
@@ -437,7 +469,7 @@ private fun HeaderContent(
 }
 
 @Composable
-private fun Body(
+private fun ShowBody(
     show: ShowDetailsModel,
     onUpdateFavoriteClicked: (Boolean) -> Unit,
     onAddToListClicked: () -> Unit,
@@ -470,7 +502,7 @@ private fun Body(
             ShowMetadata(
                 releaseYear = show.year,
                 status = show.status,
-                seasonNumber = show.numberOfSeasons,
+                seasonNumber = show.seasonsList.size,
                 language = show.language,
                 rating = show.rating,
             )
@@ -502,13 +534,15 @@ private fun Body(
 fun ShowMetadata(
     releaseYear: String,
     status: String?,
-    seasonNumber: Int?,
+    seasonNumber: Int,
     language: String?,
     rating: Double,
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.padding(vertical = 8.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -549,12 +583,10 @@ fun ShowMetadata(
 
             withStyle(tagStyle) { append(releaseYear) }
 
-            AnimatedVisibility(visible = seasonNumber != null) {
-                seasonNumber?.let {
-                    append(divider)
-                    withStyle(tagStyle) {
-                        append(resources.getQuantityString(MR.plurals.season_count.resourceId, it, it))
-                    }
+            AnimatedVisibility(visible = seasonNumber > 0) {
+                append(divider)
+                withStyle(tagStyle) {
+                    append(resources.getQuantityString(MR.plurals.season_count.resourceId, seasonNumber, seasonNumber))
                 }
             }
 
@@ -662,55 +694,6 @@ fun ShowDetailButtons(
             style = MaterialTheme.typography.labelMedium,
             onClick = onAddToList,
         )
-    }
-}
-
-@Composable
-private fun SeasonsContent(
-    seasonsList: ImmutableList<SeasonModel>,
-    selectedSeasonIndex: Int,
-    onAction: (ShowDetailsAction) -> Unit,
-) {
-    if (seasonsList.isEmpty()) return
-
-    Spacer(modifier = Modifier.height(16.dp))
-
-    TextLoadingItem(title = title_seasons.resolve(LocalContext.current)) {
-        val selectedIndex by remember { mutableIntStateOf(selectedSeasonIndex) }
-
-        ScrollableTabRow(
-            selectedTabIndex = selectedIndex,
-            divider = {}, /* Disable the built-in divider */
-            indicator = {},
-            edgePadding = 0.dp,
-            containerColor = Color.Transparent,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            seasonsList.forEachIndexed { index, season ->
-                val value = if (index == 0) 16 else 4
-                Tab(
-                    modifier = Modifier.padding(start = value.dp, end = 4.dp),
-                    selected = index == selectedIndex,
-                    onClick = {},
-                ) {
-                    TvManiacChip(
-                        text = season.name,
-                        onClick = {
-                            onAction(
-                                SeasonClicked(
-                                    ShowSeasonDetailsParam(
-                                        season.tvShowId,
-                                        season.seasonId,
-                                        season.seasonNumber,
-                                        selectedSeasonIndex = index,
-                                    ),
-                                ),
-                            )
-                        },
-                    )
-                }
-            }
-        }
     }
 }
 
