@@ -8,14 +8,17 @@ class ShowInfoViewTest: SnapshotTestCase {
         ShowInfoView(
             isFollowed: true,
             openTrailersInYoutube: false,
+            status: "Ended",
+            watchedEpisodesCount: 7,
+            totalEpisodesCount: 12,
             genreList: [
                 .init(name: "Sci-Fi"),
                 .init(name: "Horror"),
                 .init(name: "Action"),
             ],
             seasonList: [
-                .init(tvShowId: 23, seasonId: 23, seasonNumber: 1, name: "Season 1"),
-                .init(tvShowId: 123, seasonId: 123, seasonNumber: 2, name: "Season 2"),
+                .init(tvShowId: 23, seasonId: 23, seasonNumber: 1, name: "Season 1", watchedCount: 6, totalCount: 6, progressPercentage: 1.0),
+                .init(tvShowId: 123, seasonId: 123, seasonNumber: 2, name: "Season 2", watchedCount: 1, totalCount: 6, progressPercentage: 0.17),
             ],
             providerList: [
                 .init(
@@ -111,6 +114,18 @@ class ShowInfoViewTest: SnapshotTestCase {
                     inLibrary: false
                 ),
             ],
+            continueTrackingTitle: "Continue tracking",
+            dayLabelFormat: { count in count == 1 ? "day" : "days" },
+            trackLabel: "Track",
+            stopTrackingLabel: "Stop Tracking",
+            addToListLabel: "Add To List",
+            similarShowsTitle: "Similar Shows",
+            recommendationsTitle: "Recommendations",
+            seasonDetailsTitle: "Season Details",
+            seasonCountFormat: { count in count == 1 ? "\(count) Season" : "\(count) Seasons" },
+            episodesWatchedFormat: { watched, total in "\(watched) of \(total) episodes watched" },
+            episodesLeftFormat: { count in count == 1 ? "\(count) episode left to watch" : "\(count) episodes left to watch" },
+            upToDateLabel: "You're up-to-date",
             onAddToCustomList: {},
             onAddToLibrary: {},
             onSeasonClicked: { _, _ in },

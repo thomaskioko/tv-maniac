@@ -13,6 +13,8 @@ class HeaderViewTest: SnapshotTestCase {
             year: "2024",
             language: "EN",
             rating: 4.8,
+            seasonCount: 2,
+            seasonCountFormat: { count in count == 1 ? "\(count) Season" : "\(count) Seasons" },
             progress: 0
         )
         .themedPreview()

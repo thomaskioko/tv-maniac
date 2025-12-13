@@ -5,7 +5,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-
 /**
  * Calculates the scroll offset needed to make the next item in a lazy list partially visible.
  *

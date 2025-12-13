@@ -6,21 +6,39 @@ public struct NextEpisodesSection: View {
     private let title: String
     private let episodes: [SwiftNextEpisode]
     private let chevronStyle: ChevronStyle
+    private let markWatchedLabel: String
+    private let unfollowShowLabel: String
+    private let openSeasonLabel: String
     private let onEpisodeClick: (Int64, Int64) -> Void
     private let onSeeAllClick: () -> Void
+    private let onMarkWatched: (SwiftNextEpisode) -> Void
+    private let onUnfollowShow: (SwiftNextEpisode) -> Void
+    private let onOpenSeason: (SwiftNextEpisode) -> Void
 
     public init(
         title: String,
         episodes: [SwiftNextEpisode],
         chevronStyle: ChevronStyle = .none,
+        markWatchedLabel: String,
+        unfollowShowLabel: String,
+        openSeasonLabel: String,
         onEpisodeClick: @escaping (Int64, Int64) -> Void,
-        onSeeAllClick: @escaping () -> Void = {}
+        onSeeAllClick: @escaping () -> Void = {},
+        onMarkWatched: @escaping (SwiftNextEpisode) -> Void = { _ in },
+        onUnfollowShow: @escaping (SwiftNextEpisode) -> Void = { _ in },
+        onOpenSeason: @escaping (SwiftNextEpisode) -> Void = { _ in }
     ) {
         self.title = title
         self.episodes = episodes
         self.chevronStyle = chevronStyle
+        self.markWatchedLabel = markWatchedLabel
+        self.unfollowShowLabel = unfollowShowLabel
+        self.openSeasonLabel = openSeasonLabel
         self.onEpisodeClick = onEpisodeClick
         self.onSeeAllClick = onSeeAllClick
+        self.onMarkWatched = onMarkWatched
+        self.onUnfollowShow = onUnfollowShow
+        self.onOpenSeason = onOpenSeason
     }
 
     public var body: some View {
@@ -37,7 +55,13 @@ public struct NextEpisodesSection: View {
                         ForEach(episodes, id: \.episodeId) { episode in
                             NextEpisodeCard(
                                 episode: episode,
-                                onEpisodeClick: onEpisodeClick
+                                markWatchedLabel: markWatchedLabel,
+                                unfollowShowLabel: unfollowShowLabel,
+                                openSeasonLabel: openSeasonLabel,
+                                onEpisodeClick: onEpisodeClick,
+                                onMarkWatched: { onMarkWatched(episode) },
+                                onUnfollowShow: { onUnfollowShow(episode) },
+                                onOpenSeason: { onOpenSeason(episode) }
                             )
                             .padding([.leading, .trailing], theme.spacing.xxSmall + 2)
                             .padding(.leading, episode.episodeId == episodes.first?.episodeId ? theme.spacing.small - 2 : 0)
@@ -94,6 +118,9 @@ public struct NextEpisodesSection: View {
                 ),
             ],
             chevronStyle: .chevronOnly,
+            markWatchedLabel: "Mark as Watched",
+            unfollowShowLabel: "Unfollow Show",
+            openSeasonLabel: "Open Season",
             onEpisodeClick: { _, _ in }
         )
     }
