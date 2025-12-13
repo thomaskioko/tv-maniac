@@ -71,10 +71,20 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.i18n.MR.plurals.season_images_count
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_navigate_back
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_show_images
+import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_button_just_this
+import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_button_just_this_season
+import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_button_mark_all
+import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_button_mark_all_seasons
 import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_button_no
 import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_button_yes
+import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_message_episode_unwatched
+import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_message_mark_previous
+import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_message_mark_previous_seasons
 import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_message_unwatched
 import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_message_watched
+import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_title_episode_unwatched
+import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_title_mark_previous
+import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_title_mark_previous_seasons
 import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_title_unwatched
 import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_title_watched
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_casts
@@ -88,6 +98,7 @@ import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsBackClicked
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsModel
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDialogState
+import com.thomaskioko.tvmaniac.seasondetails.presenter.SecondaryDialogAction
 import com.thomaskioko.tvmaniac.seasondetails.presenter.ShowGallery
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.Cast
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonImagesModel
@@ -237,8 +248,29 @@ fun LazyColumnContent(
                 onAction = onAction,
             )
         }
-
-        else -> {}
+        is SeasonDialogState.MarkPreviousEpisodesConfirmation -> {
+            MarkPreviousEpisodesDialog(
+                onMarkAll = { onAction(ConfirmDialogAction) },
+                onMarkJustThis = { onAction(SecondaryDialogAction) },
+                onDismiss = { onAction(DismissDialog) },
+            )
+        }
+        is SeasonDialogState.UnwatchEpisodeConfirmation -> {
+            MarkEpisodeUnwatchedDialog(
+                onConfirm = { onAction(ConfirmDialogAction) },
+                onDismiss = { onAction(DismissDialog) },
+            )
+        }
+        is SeasonDialogState.MarkPreviousSeasonsConfirmation -> {
+            MarkPreviousSeasonsDialog(
+                onMarkAll = { onAction(ConfirmDialogAction) },
+                onMarkJustThis = { onAction(SecondaryDialogAction) },
+                onDismiss = { onAction(DismissDialog) },
+            )
+        }
+        SeasonDialogState.Hidden,
+        SeasonDialogState.Gallery,
+        -> { }
     }
 }
 
@@ -528,6 +560,62 @@ private fun SeasonsWatchDialog(
         onDismissDialog = { onAction(DismissDialog) },
         confirmButtonClicked = { onAction(ConfirmDialogAction) },
         dismissButtonClicked = { onAction(DismissDialog) },
+    )
+}
+
+@Composable
+private fun MarkPreviousEpisodesDialog(
+    onMarkAll: () -> Unit,
+    onMarkJustThis: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val context = LocalContext.current
+
+    BasicDialog(
+        dialogTitle = dialog_title_mark_previous.resolve(context),
+        dialogMessage = dialog_message_mark_previous.resolve(context),
+        confirmButtonText = dialog_button_mark_all.resolve(context),
+        dismissButtonText = dialog_button_just_this.resolve(context),
+        onDismissDialog = onDismiss,
+        confirmButtonClicked = onMarkAll,
+        dismissButtonClicked = onMarkJustThis,
+    )
+}
+
+@Composable
+private fun MarkEpisodeUnwatchedDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val context = LocalContext.current
+
+    BasicDialog(
+        dialogTitle = dialog_title_episode_unwatched.resolve(context),
+        dialogMessage = dialog_message_episode_unwatched.resolve(context),
+        confirmButtonText = dialog_button_yes.resolve(context),
+        dismissButtonText = dialog_button_no.resolve(context),
+        onDismissDialog = onDismiss,
+        confirmButtonClicked = onConfirm,
+        dismissButtonClicked = onDismiss,
+    )
+}
+
+@Composable
+private fun MarkPreviousSeasonsDialog(
+    onMarkAll: () -> Unit,
+    onMarkJustThis: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val context = LocalContext.current
+
+    BasicDialog(
+        dialogTitle = dialog_title_mark_previous_seasons.resolve(context),
+        dialogMessage = dialog_message_mark_previous_seasons.resolve(context),
+        confirmButtonText = dialog_button_mark_all_seasons.resolve(context),
+        dismissButtonText = dialog_button_just_this_season.resolve(context),
+        onDismissDialog = onDismiss,
+        confirmButtonClicked = onMarkAll,
+        dismissButtonClicked = onMarkJustThis,
     )
 }
 
