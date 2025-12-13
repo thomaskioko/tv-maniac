@@ -17,24 +17,22 @@ public struct RoundedRectProgressViewStyle: ProgressViewStyle {
     public func makeBody(configuration: Configuration) -> some View {
         let resolvedColor = accentColor ?? theme.colors.accent
 
-        ZStack(alignment: .leading) {
-            Rectangle()
-                .frame(height: progressIndicatorHeight)
-                .foregroundColor(resolvedColor.opacity(0.2))
-                .overlay(resolvedColor.opacity(0.2))
+        GeometryReader { geometry in
+            ZStack(alignment: .leading) {
+                Rectangle()
+                    .frame(height: progressIndicatorHeight)
+                    .foregroundColor(resolvedColor.opacity(0.2))
 
-            Rectangle()
-                .frame(
-                    width: CGFloat(configuration.fractionCompleted ?? 0) * DimensionConstants.screenWidth,
-                    height: progressIndicatorHeight
-                )
-                .foregroundColor(resolvedColor)
+                Rectangle()
+                    .frame(
+                        width: CGFloat(configuration.fractionCompleted ?? 0) * geometry.size.width,
+                        height: progressIndicatorHeight
+                    )
+                    .foregroundColor(resolvedColor)
+            }
         }
+        .frame(height: progressIndicatorHeight)
     }
-}
-
-private enum DimensionConstants {
-    static let screenWidth = UIScreen.main.bounds.size.width
 }
 
 #Preview {
