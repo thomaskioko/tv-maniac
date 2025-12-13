@@ -111,8 +111,8 @@
     <string name="menu_unfollow_show">Unfollow Show</string>
     <string name="menu_open_season">Open Season</string>
 
-    <string name="label_settings_include_specials">Include Special Seasons</string>
-    <string name="label_settings_include_specials_description">Show and include Special Seasons (Season 0) throughout the app</string>
+    <string name="label_settings_include_specials">Special Seasons</string>
+    <string name="label_settings_include_specials_description">Display Specials and bonus seasons</string>
 
     <string name="following">Track</string>
     <string name="unfollow">Stop Tracking</string>

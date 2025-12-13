@@ -25,20 +25,22 @@ struct SettingsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                sectionHeader(
-                    String(\.label_settings_section_appearance),
-                    icon: "paintpalette",
-                    subtitle: String(\.settings_theme_selector_subtitle)
-                )
-                .padding(.top, theme.spacing.medium)
+                sectionHeader(String(\.label_settings_section_appearance))
+                    .padding(.top, theme.spacing.medium)
 
-                themeSection
+                themeTitleSection
                     .padding(.top, theme.spacing.medium)
 
                 imageQualitySection
                     .padding(.top, theme.spacing.large)
 
+                sectionHeader(String(\.label_settings_section_behavior))
+                    .padding(.top, theme.spacing.xLarge)
+
                 youtubeToggleRow
+                    .padding(.top, theme.spacing.medium)
+
+                includeSpecialsToggleRow
                     .padding(.top, theme.spacing.medium)
 
                 sectionHeader(String(\.settings_title_info))
@@ -78,7 +80,6 @@ struct SettingsView: View {
                 } label: {
                     Image(systemName: "chevron.left")
                         .textStyle(theme.typography.titleMedium)
-                        .fontWeight(.semibold)
                         .foregroundColor(theme.colors.accent)
                 }
             }
@@ -152,16 +153,31 @@ struct SettingsView: View {
     }
 
     @ViewBuilder
-    private var themeSection: some View {
-        ThemeSelectorView(
-            themes: DeviceAppTheme.sortedThemes,
-            selectedTheme: store.appTheme,
-            onThemeSelected: { selectedTheme in
-                store.appTheme = selectedTheme
-                let appTheme = selectedTheme.toAppTheme()
-                presenter.dispatch(action: ThemeSelected(theme: appTheme.toThemeModel()))
+    private var themeTitleSection: some View {
+        VStack(alignment: .leading, spacing: theme.spacing.small) {
+            HStack(spacing: theme.spacing.medium) {
+                settingsIcon("paintpalette", color: theme.colors.secondary)
+
+                VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
+                    Text(String(\.settings_theme_selector_title))
+                        .textStyle(theme.typography.titleMedium)
+                        .foregroundColor(theme.colors.onSurface)
+                    Text(String(\.settings_theme_selector_subtitle))
+                        .textStyle(theme.typography.bodySmall)
+                        .foregroundColor(theme.colors.onSurfaceVariant)
+                }
             }
-        )
+
+            ThemeSelectorView(
+                themes: DeviceAppTheme.sortedThemes,
+                selectedTheme: store.appTheme,
+                onThemeSelected: { selectedTheme in
+                    store.appTheme = selectedTheme
+                    let appTheme = selectedTheme.toAppTheme()
+                    presenter.dispatch(action: ThemeSelected(theme: appTheme.toThemeModel()))
+                }
+            )
+        }
     }
 
     @ViewBuilder
@@ -217,6 +233,33 @@ struct SettingsView: View {
                 get: { uiState.openTrailersInYoutube },
                 set: { newValue in
                     presenter.dispatch(action: YoutubeToggled(enabled: newValue))
+                }
+            ))
+            .labelsHidden()
+            .tint(theme.colors.secondary)
+        }
+    }
+
+    @ViewBuilder
+    private var includeSpecialsToggleRow: some View {
+        HStack(spacing: theme.spacing.medium) {
+            settingsIcon("film.stack", color: theme.colors.secondary)
+
+            VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
+                Text(String(\.label_settings_include_specials))
+                    .textStyle(theme.typography.titleMedium)
+                    .foregroundColor(theme.colors.onSurface)
+                Text(String(\.label_settings_include_specials_description))
+                    .textStyle(theme.typography.bodySmall)
+                    .foregroundColor(theme.colors.onSurfaceVariant)
+            }
+
+            Spacer()
+
+            Toggle("", isOn: Binding(
+                get: { uiState.includeSpecials },
+                set: { newValue in
+                    presenter.dispatch(action: IncludeSpecialsToggled(enabled: newValue))
                 }
             ))
             .labelsHidden()
