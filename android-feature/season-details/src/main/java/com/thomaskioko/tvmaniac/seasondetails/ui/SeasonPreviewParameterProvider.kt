@@ -30,7 +30,7 @@ val seasonDetailsLoaded = SeasonDetailsModel(
     seasonName = "Specials",
     episodeCount = 8,
     watchProgress = 0.4f,
-    imageUrl = "https://image.tmdb.org/t/p/w500/path/to/image.jpg",
+    imageUrl = null,
     episodeDetailsList = List(8) { episodeDetailsModel }.toPersistentList(),
     seasonImages = persistentListOf(
         SeasonImagesModel(
