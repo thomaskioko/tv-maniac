@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.domain.showdetails.model.Providers
 import com.thomaskioko.tvmaniac.domain.showdetails.model.Season
 import com.thomaskioko.tvmaniac.domain.showdetails.model.Show
 import com.thomaskioko.tvmaniac.domain.showdetails.model.Trailer
+import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 
 internal fun List<ShowCast>.toCastList(): List<Casts> =
     map {
@@ -53,13 +54,18 @@ internal fun List<WatchProviders>.toWatchProviderList(): List<Providers> =
         )
     }
 
-internal fun List<ShowSeasons>.toSeasonsList(): List<Season> =
-    map {
+internal fun List<ShowSeasons>.toSeasonsList(
+    progressMap: Map<Long, SeasonWatchProgress> = emptyMap(),
+): List<Season> =
+    map { season ->
+        val progress = progressMap[season.season_number]
         Season(
-            seasonId = it.season_id.id,
-            tvShowId = it.show_id.id,
-            name = it.season_title,
-            seasonNumber = it.season_number,
+            seasonId = season.season_id.id,
+            tvShowId = season.show_id.id,
+            name = season.season_title,
+            seasonNumber = season.season_number,
+            watchedCount = progress?.watchedCount ?: 0,
+            totalCount = progress?.totalCount ?: 0,
         )
     }
 

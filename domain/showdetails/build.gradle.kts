@@ -8,7 +8,9 @@ kotlin {
             dependencies {
 
                 api(projects.data.cast.api)
+                api(projects.data.episode.api)
                 api(projects.data.recommendedshows.api)
+                api(projects.data.seasondetails.api)
                 api(projects.data.seasons.api)
                 api(projects.data.showdetails.api)
                 api(projects.data.shows.api)
