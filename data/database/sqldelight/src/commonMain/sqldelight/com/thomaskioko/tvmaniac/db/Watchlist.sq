@@ -46,6 +46,10 @@ JOIN
     watchlist ON tvshow.id = watchlist.id
 LEFT JOIN
     show_metadata ON tvshow.id = show_metadata.show_id
+WHERE
+    (SELECT COUNT(*) FROM watched_episodes WHERE watched_episodes.show_id = tvshow.id)
+    < (SELECT COUNT(*) FROM episode WHERE episode.show_id = tvshow.id)
+    OR (SELECT COUNT(*) FROM episode WHERE episode.show_id = tvshow.id) = 0
 ORDER BY
     watchlist.created_at DESC;
 
@@ -69,20 +73,23 @@ JOIN
 LEFT JOIN
     show_metadata ON tvshow.id = show_metadata.show_id
 WHERE
-    -- First try exact match on name start (most efficient, can use index)
-    name LIKE ? || '%'
-    -- Then try case-insensitive match on name start
-    OR LOWER(name) LIKE LOWER(?) || '%'
-    -- Then try contains match (less efficient)
-    OR name LIKE '%' || ? || '%'
-    -- Finally try case-insensitive contains match (least efficient)
-    OR LOWER(name) LIKE '%' || LOWER(?) || '%'
+    (
+        (SELECT COUNT(*) FROM watched_episodes WHERE watched_episodes.show_id = tvshow.id)
+        < (SELECT COUNT(*) FROM episode WHERE episode.show_id = tvshow.id)
+        OR (SELECT COUNT(*) FROM episode WHERE episode.show_id = tvshow.id) = 0
+    )
+    AND (
+        name LIKE ? || '%'
+        OR LOWER(name) LIKE LOWER(?) || '%'
+        OR name LIKE '%' || ? || '%'
+        OR LOWER(name) LIKE '%' || LOWER(?) || '%'
+    )
 ORDER BY
     CASE
-        WHEN name LIKE ? || '%' THEN 1  -- Exact start match
-        WHEN LOWER(name) LIKE LOWER(?) || '%' THEN 2  -- Case-insensitive start match
-        WHEN name LIKE '% ' || ? || '%' THEN 3  -- Word start match
-        ELSE 4  -- Contains match
+        WHEN name LIKE ? || '%' THEN 1
+        WHEN LOWER(name) LIKE LOWER(?) || '%' THEN 2
+        WHEN name LIKE '% ' || ? || '%' THEN 3
+        ELSE 4
     END,
     watchlist.created_at DESC;
 
