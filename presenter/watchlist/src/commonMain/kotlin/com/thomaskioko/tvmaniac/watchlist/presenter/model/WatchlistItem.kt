@@ -11,4 +11,5 @@ data class WatchlistItem(
     val episodesWatched: Long = 0,
     val totalEpisodesTracked: Long = 0,
     val watchProgress: Float = 0F,
+    val lastWatchedAt: Long? = null,
 )
