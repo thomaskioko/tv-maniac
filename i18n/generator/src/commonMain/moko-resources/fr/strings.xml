@@ -28,6 +28,7 @@
     <string name="label_watchlist_search_hint">Entrez un titre d'émission pour rechercher une émission</string>
     <string name="label_watchlist_sort_list">Trier la liste</string>
     <string name="label_watchlist_empty_result">%s introuvable dans votre liste de surveillance.</string>
+    <string name="label_followed_shows">Séries suivies</string>
 
     <string name="label_tab_settings">Paramètres</string>
 
@@ -134,7 +135,10 @@
     <string name="title_all_episodes">Tous les épisodes</string>
     <string name="title_episodes">Épisodes</string>
     <string name="title_watch_next">Regarder ensuite</string>
+    <string name="title_not_watched_for_while">Pas regardé depuis longtemps</string>
     <string name="title_continue_tracking">Continuer à Suivre</string>
+    <string name="badge_premiere">PREMIÈRE</string>
+    <string name="badge_new">NOUVEAU</string>
     <string name="title_season_details">Détails de la saison</string>
     <string name="title_browse_by_genre">Parcourir par genre</string>
     <string name="status_connected">De nouveau en ligne !</string>

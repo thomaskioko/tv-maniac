@@ -29,6 +29,7 @@
     </string>
     <string name="label_watchlist_sort_list">Liste sortieren</string>
     <string name="label_watchlist_empty_result">%s nicht in Ihrer Beobachtungsliste gefunden.</string>
+    <string name="label_followed_shows">Verfolgte Sendungen</string>
 
     <string name="label_tab_settings">Einstellungen</string>
 
@@ -136,7 +137,10 @@
     <string name="title_all_episodes">Alle Episoden</string>
     <string name="title_episodes">Episoden</string>
     <string name="title_watch_next">Als nächstes ansehen</string>
+    <string name="title_not_watched_for_while">Lange nicht gesehen</string>
     <string name="title_continue_tracking">Weiterschauen</string>
+    <string name="badge_premiere">PREMIERE</string>
+    <string name="badge_new">NEU</string>
     <string name="title_season_details">Staffeldetails</string>
     <string name="title_browse_by_genre">Nach Genre durchsuchen</string>
     <string name="status_connected">Wieder online!</string>
