@@ -82,5 +82,7 @@ private fun NextEpisodesForWatchlist.toNextEpisodeWithShow(): NextEpisodeWithSho
         showName = show_name,
         showPoster = show_poster,
         followedAt = followed_at,
+        airDate = air_date,
+        lastWatchedAt = last_watched_at,
     )
 }

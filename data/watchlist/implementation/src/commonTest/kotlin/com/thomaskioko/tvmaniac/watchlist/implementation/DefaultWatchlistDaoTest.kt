@@ -17,6 +17,7 @@ import kotlinx.coroutines.test.setMain
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.time.Clock
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class DefaultWatchlistDaoTest : BaseDatabaseTest() {
@@ -31,9 +32,6 @@ internal class DefaultWatchlistDaoTest : BaseDatabaseTest() {
     )
 
     private lateinit var dao: WatchlistDao
-
-    private val watchlistQueries
-        get() = database.watchlistQueries
 
     private val showMetadataQueries
         get() = database.showMetadataQueries
@@ -247,8 +245,102 @@ internal class DefaultWatchlistDaoTest : BaseDatabaseTest() {
         }
     }
 
+    @Test
+    fun `should filter out fully watched shows from watchlist`() = runTest {
+        dao.upsert(1L)
+        insertEpisodesForShow(showId = 1L, count = 3)
+        markAllEpisodesAsWatched(showId = 1L, episodeCount = 3)
+
+        dao.observeShowsInWatchlist().test {
+            val watchlistItems = awaitItem()
+            watchlistItems.size shouldBe 0
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should include shows with unwatched episodes`() = runTest {
+        dao.upsert(1L)
+        insertEpisodesForShow(showId = 1L, count = 5)
+        markEpisodesAsWatched(showId = 1L, count = 3)
+
+        dao.observeShowsInWatchlist().test {
+            val watchlistItems = awaitItem()
+            watchlistItems.size shouldBe 1
+            watchlistItems.first().id.id shouldBe 1L
+            watchlistItems.first().watched_count shouldBe 3L
+            watchlistItems.first().total_episode_count shouldBe 5L
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should include shows with no episodes tracked`() = runTest {
+        dao.upsert(1L)
+
+        dao.observeShowsInWatchlist().test {
+            val watchlistItems = awaitItem()
+            watchlistItems.size shouldBe 1
+            watchlistItems.first().id.id shouldBe 1L
+            watchlistItems.first().total_episode_count shouldBe 0L
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should show completed show when new episodes added`() = runTest {
+        dao.upsert(1L)
+        insertEpisodesForShow(showId = 1L, count = 3)
+        markAllEpisodesAsWatched(showId = 1L, episodeCount = 3)
+
+        dao.observeShowsInWatchlist().test {
+            awaitItem().size shouldBe 0
+
+            addMoreEpisodes(showId = 1L, startFrom = 4, count = 2)
+
+            val updatedList = awaitItem()
+            updatedList.size shouldBe 1
+            updatedList.first().watched_count shouldBe 3L
+            updatedList.first().total_episode_count shouldBe 5L
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `searchWatchlist should also filter completed shows`() = runTest {
+        dao.upsert(1L)
+        dao.upsert(2L)
+        insertEpisodesForShow(showId = 1L, count = 3)
+        insertEpisodesForShow(showId = 2L, count = 3)
+        markAllEpisodesAsWatched(showId = 1L, episodeCount = 3)
+
+        dao.observeWatchlistByQuery("Test").test {
+            val searchResults = awaitItem()
+            searchResults.size shouldBe 1
+            searchResults.first().id.id shouldBe 2L
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should show mix of partially watched and unwatched shows`() = runTest {
+        dao.upsert(1L)
+        dao.upsert(2L)
+        insertEpisodesForShow(showId = 1L, count = 5)
+        insertEpisodesForShow(showId = 2L, count = 3)
+        markAllEpisodesAsWatched(showId = 1L, episodeCount = 5)
+
+        dao.observeShowsInWatchlist().test {
+            val watchlistItems = awaitItem()
+            watchlistItems.size shouldBe 1
+            watchlistItems.first().id.id shouldBe 2L
+            watchlistItems.first().watched_count shouldBe 0L
+            watchlistItems.first().total_episode_count shouldBe 3L
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
     private fun insertTestShows() {
-        // Insert test TV shows first
         database.tvShowQueries.upsert(
             id = Id(1),
             name = "Test Show 1",
@@ -284,5 +376,71 @@ internal class DefaultWatchlistDaoTest : BaseDatabaseTest() {
             poster_path = "/test2.jpg",
             backdrop_path = "/backdrop2.jpg",
         )
+    }
+
+    private fun insertEpisodesForShow(showId: Long, count: Int) {
+        val seasonId = showId * 100
+        database.seasonsQueries.upsert(
+            id = Id(seasonId),
+            show_id = Id(showId),
+            season_number = 1,
+            episode_count = count.toLong(),
+            title = "Season 1",
+            overview = "Season overview",
+            image_url = null,
+        )
+        for (i in 1..count) {
+            database.episodesQueries.upsert(
+                id = Id(seasonId + i),
+                season_id = Id(seasonId),
+                show_id = Id(showId),
+                title = "Episode $i",
+                overview = "Episode $i overview",
+                runtime = 45,
+                vote_count = 100,
+                vote_average = 8.0,
+                episode_number = i.toLong(),
+                image_url = null,
+                air_date = "2023-01-0$i",
+                trakt_id = null,
+            )
+        }
+    }
+
+    private fun markEpisodesAsWatched(showId: Long, count: Int) {
+        val seasonId = showId * 100
+        for (i in 1..count) {
+            database.watchedEpisodesQueries.markAsWatched(
+                show_id = Id(showId),
+                episode_id = Id(seasonId + i),
+                season_number = 1,
+                episode_number = i.toLong(),
+                watched_at = Clock.System.now().toEpochMilliseconds(),
+            )
+        }
+    }
+
+    private fun markAllEpisodesAsWatched(showId: Long, episodeCount: Int) {
+        markEpisodesAsWatched(showId, episodeCount)
+    }
+
+    private fun addMoreEpisodes(showId: Long, startFrom: Int, count: Int) {
+        val seasonId = showId * 100
+        for (i in startFrom until startFrom + count) {
+            database.episodesQueries.upsert(
+                id = Id(seasonId + i),
+                season_id = Id(seasonId),
+                show_id = Id(showId),
+                title = "Episode $i",
+                overview = "Episode $i overview",
+                runtime = 45,
+                vote_count = 100,
+                vote_average = 8.0,
+                episode_number = i.toLong(),
+                image_url = null,
+                air_date = "2023-02-0${i - startFrom + 1}",
+                trakt_id = null,
+            )
+        }
     }
 }
