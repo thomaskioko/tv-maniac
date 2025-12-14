@@ -15,6 +15,7 @@ kotlin {
                 implementation(projects.core.base)
                 implementation(projects.core.util.api)
                 implementation(projects.core.networkUtil)
+                implementation(projects.data.episode.api)
                 implementation(projects.data.watchlist.api)
 
                 implementation(libs.coroutines.core)
@@ -25,6 +26,8 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)
+                implementation(projects.core.util.testing)
+                implementation(projects.data.episode.testing)
                 implementation(projects.data.watchlist.testing)
             }
         }

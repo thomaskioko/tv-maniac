@@ -18,6 +18,7 @@ class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
     override fun invoke(
         componentContext: ComponentContext,
         navigateToShowDetails: (showDetails: Long) -> Unit,
+        navigateToSeason: (showId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
     ): WatchlistPresenter = FakeWatchlistPresenter()
 }
 
