@@ -37,7 +37,6 @@ struct WatchlistTab: View {
 
             VStack {
                 contentView
-                    .padding(.top, theme.spacing.medium)
             }
         }
         .navigationBarTitleDisplayMode(.inline)
@@ -85,10 +84,25 @@ struct WatchlistTab: View {
 
     @ViewBuilder
     private var contentView: some View {
-        if uiState.items.isEmpty {
-            emptyView
+        let hasNoItems = uiState.watchNextItems.isEmpty && uiState.staleItems.isEmpty
+        let hasNoEpisodes = uiState.watchNextEpisodes.isEmpty && uiState.staleEpisodes.isEmpty
+
+        if uiState.isLoading {
+            CenteredFullScreenView {
+                LoadingIndicatorView()
+            }
+        } else if uiState.isGridMode {
+            if hasNoItems {
+                gridEmptyView
+            } else {
+                sectionedGridContent
+            }
         } else {
-            watchlistContent(uiState)
+            if hasNoEpisodes {
+                upNextEmptyView
+            } else {
+                sectionedListContent
+            }
         }
     }
 
@@ -135,50 +149,109 @@ struct WatchlistTab: View {
     }
 
     @ViewBuilder
-    private func watchlistContent(_ content: WatchlistState) -> some View {
-        if !content.items.isEmpty {
-            ScrollView(showsIndicators: false) {
-                if !uiState.isGridMode {
-                    listViewContent(content)
-                } else {
-                    gridViewContent(content)
+    private var sectionedListContent: some View {
+        ScrollView(showsIndicators: false) {
+            LazyVStack(spacing: theme.spacing.xSmall, pinnedViews: [.sectionHeaders]) {
+                if !uiState.watchNextEpisodes.isEmpty {
+                    Section {
+                        ForEach(uiState.watchNextEpisodes.map { $0.toSwift() }, id: \.episodeId) { episode in
+                            UpNextListItemView(
+                                episode: episode,
+                                premiereLabel: String(\.badge_premiere),
+                                newLabel: String(\.badge_new),
+                                onItemClicked: { showId, episodeId in
+                                    presenter.dispatch(action: UpNextEpisodeClicked(showId: showId, episodeId: episodeId))
+                                },
+                                onShowTitleClicked: { showId in
+                                    presenter.dispatch(action: ShowTitleClicked(showId: showId))
+                                },
+                                onMarkWatched: {
+                                    presenter.dispatch(action: MarkUpNextEpisodeWatched(
+                                        showId: episode.showId,
+                                        episodeId: episode.episodeId,
+                                        seasonNumber: episode.seasonNumber,
+                                        episodeNumber: episode.episodeNumberValue
+                                    ))
+                                }
+                            )
+                            .transition(
+                                .asymmetric(
+                                    insertion: .scale(scale: 0.9).combined(with: .opacity),
+                                    removal: .scale(scale: 1.1).combined(with: .opacity)
+                                )
+                            )
+                        }
+                    } header: {
+                        SectionHeaderView(title: String(\.label_discover_up_next))
+                    }
+                }
+
+                if !uiState.staleEpisodes.isEmpty {
+                    Section {
+                        ForEach(uiState.staleEpisodes.map { $0.toSwift() }, id: \.episodeId) { episode in
+                            UpNextListItemView(
+                                episode: episode,
+                                premiereLabel: String(\.badge_premiere),
+                                newLabel: String(\.badge_new),
+                                onItemClicked: { showId, episodeId in
+                                    presenter.dispatch(action: UpNextEpisodeClicked(showId: showId, episodeId: episodeId))
+                                },
+                                onShowTitleClicked: { showId in
+                                    presenter.dispatch(action: ShowTitleClicked(showId: showId))
+                                },
+                                onMarkWatched: {
+                                    presenter.dispatch(action: MarkUpNextEpisodeWatched(
+                                        showId: episode.showId,
+                                        episodeId: episode.episodeId,
+                                        seasonNumber: episode.seasonNumber,
+                                        episodeNumber: episode.episodeNumberValue
+                                    ))
+                                }
+                            )
+                            .transition(
+                                .asymmetric(
+                                    insertion: .scale(scale: 0.9).combined(with: .opacity),
+                                    removal: .scale(scale: 1.1).combined(with: .opacity)
+                                )
+                            )
+                        }
+                    } header: {
+                        SectionHeaderView(title: String(\.title_not_watched_for_while))
+                    }
                 }
             }
-            .animation(.spring(response: 0.4, dampingFraction: 0.8), value: uiState.isGridMode)
-        } else {
-            emptyView
         }
+        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: uiState.isGridMode)
     }
 
     @ViewBuilder
-    private func listViewContent(_ state: WatchlistState) -> some View {
-        LazyVStack(spacing: theme.spacing.xSmall) {
-            ForEach(state.items, id: \.tmdbId) { item in
-                WatchlistListItem(item: item, namespace: animation)
-                    .onTapGesture {
-                        presenter.dispatch(action: WatchlistShowClicked(id: item.tmdbId))
+    private var sectionedGridContent: some View {
+        ScrollView(showsIndicators: false) {
+            LazyVStack(spacing: theme.spacing.small, pinnedViews: [.sectionHeaders]) {
+                if !uiState.watchNextItems.isEmpty {
+                    Section {
+                        gridItemsView(items: Array(uiState.watchNextItems))
+                    } header: {
+                        SectionHeaderView(title: String(\.label_discover_up_next))
                     }
-                    .transition(
-                        .asymmetric(
-                            insertion: .scale(scale: 0.9).combined(with: .opacity),
-                            removal: .scale(scale: 1.1).combined(with: .opacity)
-                        )
-                    )
+                }
+
+                if !uiState.staleItems.isEmpty {
+                    Section {
+                        gridItemsView(items: Array(uiState.staleItems))
+                    } header: {
+                        SectionHeaderView(title: String(\.title_not_watched_for_while))
+                    }
+                }
             }
         }
-        .padding(.horizontal)
-        .transition(
-            .asymmetric(
-                insertion: .scale(scale: 0.8).combined(with: .opacity),
-                removal: .scale(scale: 1.2).combined(with: .opacity)
-            )
-        )
+        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: uiState.isGridMode)
     }
 
     @ViewBuilder
-    private func gridViewContent(_ state: WatchlistState) -> some View {
+    private func gridItemsView(items: [WatchlistItem]) -> some View {
         LazyVGrid(columns: WatchlistConstants.columns, spacing: WatchlistConstants.spacing) {
-            ForEach(state.items, id: \.tmdbId) { item in
+            ForEach(items, id: \.tmdbId) { item in
                 ZStack(alignment: .bottom) {
                     PosterItemView(
                         title: item.title,
@@ -201,7 +274,7 @@ struct WatchlistTab: View {
     }
 
     @ViewBuilder
-    private var emptyView: some View {
+    private var gridEmptyView: some View {
         let subtitle = uiState.query.isEmpty ? nil : String(\.label_watchlist_empty_result, parameter: uiState.query)
 
         CenteredFullScreenView {
@@ -209,6 +282,18 @@ struct WatchlistTab: View {
                 systemName: "tray",
                 message: String(\.generic_empty_content),
                 subtitle: subtitle,
+                color: theme.colors.onSurfaceVariant
+            )
+            .frame(maxWidth: .infinity)
+        }
+    }
+
+    @ViewBuilder
+    private var upNextEmptyView: some View {
+        CenteredFullScreenView {
+            FullScreenView(
+                systemName: "checkmark.circle",
+                message: String(\.label_up_to_date),
                 color: theme.colors.onSurfaceVariant
             )
             .frame(maxWidth: .infinity)

@@ -188,7 +188,7 @@ public extension TvManiac.NextEpisodeUiModel {
             runtime: runtime,
             stillImage: stillImage,
             overview: overview,
-            isNew: isNew
+            badge: isNew ? .new : .none
         )
     }
 }
@@ -231,5 +231,39 @@ public extension TvManiac.ContinueTrackingEpisodeModel {
             isWatched: isWatched,
             daysUntilAir: daysUntilAir?.int64Value
         )
+    }
+}
+
+public extension TvManiac.UpNextEpisodeItem {
+    func toSwift() -> SwiftNextEpisode {
+        .init(
+            showId: showId,
+            showName: showName,
+            showPoster: showPoster,
+            episodeId: episodeId,
+            episodeTitle: episodeTitle,
+            episodeNumber: episodeNumberFormatted,
+            seasonId: seasonId,
+            seasonNumber: seasonNumber,
+            episodeNumberValue: episodeNumber,
+            runtime: runtime,
+            stillImage: stillImage,
+            overview: overview,
+            badge: badge.toSwift(),
+            remainingEpisodes: remainingEpisodes
+        )
+    }
+}
+
+public extension TvManiac.EpisodeBadge {
+    func toSwift() -> SwiftEpisodeBadge {
+        switch self {
+        case .premiere:
+            .premiere
+            case .theNew:
+            .new
+            case .none:
+            .none
+        }
     }
 }
