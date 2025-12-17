@@ -20,7 +20,7 @@ struct ProfileTab: View {
             theme.colors.background
                 .edgesIgnoringSafeArea(.all)
 
-            if uiState.isLoading, uiState.userProfile == nil {
+            if uiState.showLoading {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle(tint: theme.colors.accent))
                     .scaleEffect(1.5)

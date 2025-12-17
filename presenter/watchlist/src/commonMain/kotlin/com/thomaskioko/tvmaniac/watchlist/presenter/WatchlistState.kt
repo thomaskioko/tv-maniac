@@ -10,10 +10,18 @@ data class WatchlistState(
     val query: String = "",
     val isSearchActive: Boolean = false,
     val isGridMode: Boolean = true,
-    val isLoading: Boolean = true,
+    val isRefreshing: Boolean = true,
+    val isSyncing: Boolean = false,
     val watchNextItems: ImmutableList<WatchlistItem> = persistentListOf(),
     val staleItems: ImmutableList<WatchlistItem> = persistentListOf(),
     val watchNextEpisodes: ImmutableList<UpNextEpisodeItem> = persistentListOf(),
     val staleEpisodes: ImmutableList<UpNextEpisodeItem> = persistentListOf(),
     val message: UiMessage? = null,
-)
+) {
+    val isEmpty: Boolean
+        get() = watchNextItems.isEmpty() && staleItems.isEmpty() &&
+            watchNextEpisodes.isEmpty() && staleEpisodes.isEmpty()
+
+    val showLoading: Boolean
+        get() = isRefreshing && isEmpty
+}

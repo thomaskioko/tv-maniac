@@ -79,7 +79,9 @@ class DefaultDiscoverShowsPresenter(
         private val upNextActionLoadingState = ObservableLoadingCounter()
         private val uiMessageManager = UiMessageManager()
 
-        private val _state: MutableStateFlow<DiscoverViewState> = MutableStateFlow(DiscoverViewState.Empty)
+        private val _state: MutableStateFlow<DiscoverViewState> = MutableStateFlow(
+            DiscoverViewState.Empty.copy(featuredRefreshing = true),
+        )
         val state: StateFlow<DiscoverViewState> = combine(
             upNextActionLoadingState.observable,
             featuredLoadingState.observable,

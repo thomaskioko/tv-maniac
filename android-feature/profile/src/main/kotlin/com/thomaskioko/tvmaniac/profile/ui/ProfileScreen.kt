@@ -125,7 +125,7 @@ internal fun ProfileScreen(
         content = { contentPadding ->
             Box(Modifier.fillMaxSize()) {
                 ProfileContent(
-                    isLoading = state.isLoading,
+                    showLoading = state.showLoading,
                     userProfile = state.userProfile,
                     onLoginClicked = { onAction(LoginClicked) },
                     listState = listState,
@@ -152,7 +152,7 @@ internal fun ProfileScreen(
                             tint = MaterialTheme.colorScheme.onBackground,
                         )
                     },
-                    isRefreshing = state.isRefreshing,
+                    isRefreshing = state.isLoading,
                     onActionIconClicked = { onAction(SettingsClicked) },
                 )
 
@@ -169,7 +169,7 @@ internal fun ProfileScreen(
 
 @Composable
 private fun ProfileContent(
-    isLoading: Boolean,
+    showLoading: Boolean,
     userProfile: ProfileInfo?,
     onLoginClicked: () -> Unit,
     listState: LazyListState,
@@ -179,15 +179,7 @@ private fun ProfileContent(
     val scrollState = rememberScrollState()
 
     when {
-        userProfile == null && !isLoading -> {
-            UnauthenticatedContent(
-                onLoginClicked = onLoginClicked,
-                modifier = modifier,
-                contentPadding = contentPadding,
-            )
-        }
-
-        userProfile == null && isLoading -> {
+        showLoading -> {
             Box(
                 modifier = modifier,
                 contentAlignment = Alignment.Center,
@@ -231,6 +223,14 @@ private fun ProfileContent(
                     Spacer(modifier = Modifier.height(32.dp))
                 }
             }
+        }
+
+        else -> {
+            UnauthenticatedContent(
+                onLoginClicked = onLoginClicked,
+                modifier = modifier,
+                contentPadding = contentPadding,
+            )
         }
     }
 }
@@ -455,7 +455,7 @@ private fun ProfileScreenLoadingPreview() {
             ProfileScreen(
                 state = ProfileState(
                     isLoading = true,
-                    isRefreshing = true,
+                    isAuthenticating = false,
                     userProfile = null,
                     errorMessage = null,
                     authenticated = false,

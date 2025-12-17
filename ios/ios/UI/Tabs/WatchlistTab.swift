@@ -87,7 +87,7 @@ struct WatchlistTab: View {
         let hasNoItems = uiState.watchNextItems.isEmpty && uiState.staleItems.isEmpty
         let hasNoEpisodes = uiState.watchNextEpisodes.isEmpty && uiState.staleEpisodes.isEmpty
 
-        if uiState.isLoading {
+        if uiState.showLoading {
             CenteredFullScreenView {
                 LoadingIndicatorView()
             }

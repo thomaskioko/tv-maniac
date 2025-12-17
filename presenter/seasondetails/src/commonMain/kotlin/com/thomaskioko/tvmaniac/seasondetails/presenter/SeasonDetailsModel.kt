@@ -74,6 +74,12 @@ data class SeasonDetailsModel(
     val isRefreshing: Boolean
         get() = isSeasonDetailsUpdating || isCheckingPreviousSeasons || isEpisodeUpdating
 
+    val hasContent: Boolean
+        get() = episodeDetailsList.isNotEmpty() || seasonOverview.isNotEmpty()
+
+    val showError: Boolean
+        get() = message != null && !hasContent && !isRefreshing
+
     val isDialogVisible: Boolean
         get() = dialogState !is SeasonDialogState.Hidden
 

@@ -94,7 +94,7 @@ class WatchlistPreviewParameterProvider : PreviewParameterProvider<WatchlistStat
         get() {
             return sequenceOf(
                 WatchlistState(
-                    isLoading = false,
+                    isRefreshing = false,
                     isGridMode = false,
                     watchNextItems = watchlistItems,
                     staleItems = staleWatchlistItems,
@@ -102,7 +102,7 @@ class WatchlistPreviewParameterProvider : PreviewParameterProvider<WatchlistStat
                     staleEpisodes = staleEpisodes,
                 ),
                 WatchlistState(
-                    isLoading = false,
+                    isRefreshing = false,
                     isGridMode = true,
                     watchNextItems = watchlistItems,
                     staleItems = staleWatchlistItems,
@@ -110,7 +110,7 @@ class WatchlistPreviewParameterProvider : PreviewParameterProvider<WatchlistStat
                     staleEpisodes = staleEpisodes,
                 ),
                 WatchlistState(
-                    isLoading = false,
+                    isRefreshing = false,
                     watchNextItems = watchlistItems,
                     staleItems = staleWatchlistItems,
                     watchNextEpisodes = watchNextEpisodes,

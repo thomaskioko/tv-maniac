@@ -97,7 +97,7 @@ class DiscoverShowsPresenterTest {
         presenter.state.test {
             setList(emptyList())
 
-            awaitItem() shouldBe DiscoverViewState.Empty
+            awaitItem() shouldBe DiscoverViewState.Empty.copy(featuredRefreshing = true)
         }
     }
 
@@ -107,7 +107,7 @@ class DiscoverShowsPresenterTest {
             setList(emptyList())
             setNextEpisodes(emptyList())
 
-            awaitItem() shouldBe DiscoverViewState.Empty
+            awaitItem() shouldBe DiscoverViewState.Empty.copy(featuredRefreshing = true)
 
             setList(createDiscoverShowList())
             setNextEpisodes(createNextEpisodesList())
@@ -129,7 +129,7 @@ class DiscoverShowsPresenterTest {
             setList(createDiscoverShowList())
             setNextEpisodes(createNextEpisodesList())
 
-            awaitItem() shouldBe DiscoverViewState.Empty
+            awaitItem() shouldBe DiscoverViewState.Empty.copy(featuredRefreshing = true)
             awaitItem() shouldBe DiscoverViewState(
                 featuredShows = uiModelList(),
                 topRatedShows = uiModelList(),
@@ -146,7 +146,7 @@ class DiscoverShowsPresenterTest {
         presenter.state.test {
             setList(emptyList())
 
-            awaitItem() shouldBe DiscoverViewState.Empty
+            awaitItem() shouldBe DiscoverViewState.Empty.copy(featuredRefreshing = true)
 
             presenter.dispatch(RefreshData)
 
@@ -180,7 +180,7 @@ class DiscoverShowsPresenterTest {
                 nextEpisodes = nextEpisodeUiModelList(),
             )
 
-            awaitItem() shouldBe DiscoverViewState.Empty
+            awaitItem() shouldBe DiscoverViewState.Empty.copy(featuredRefreshing = true)
             awaitItem() shouldBe expectedResult
 
             presenter.dispatch(RefreshData)
@@ -214,7 +214,7 @@ class DiscoverShowsPresenterTest {
         setNextEpisodes(createNextEpisodesList())
 
         presenter.state.test {
-            awaitItem() shouldBe DiscoverViewState.Empty
+            awaitItem() shouldBe DiscoverViewState.Empty.copy(featuredRefreshing = true)
 
             val expectedList = uiModelList()
             val expectedResult = DiscoverViewState(
