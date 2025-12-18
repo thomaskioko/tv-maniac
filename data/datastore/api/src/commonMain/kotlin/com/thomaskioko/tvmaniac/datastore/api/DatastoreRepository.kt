@@ -86,4 +86,19 @@ interface DatastoreRepository {
      * @return A Flow of Boolean, true if Specials should be included, false otherwise. Defaults to false.
      */
     fun observeIncludeSpecials(): Flow<Boolean>
+
+    /**
+     * Saves the last logged-in Trakt user ID (slug).
+     * Used to detect user switches on re-login and prevent data leakage between accounts.
+     *
+     * @param userId The Trakt user slug, or null to clear.
+     */
+    suspend fun saveLastTraktUserId(userId: String?)
+
+    /**
+     * Gets the last logged-in Trakt user ID (slug).
+     *
+     * @return The stored user slug, or null if none.
+     */
+    suspend fun getLastTraktUserId(): String?
 }

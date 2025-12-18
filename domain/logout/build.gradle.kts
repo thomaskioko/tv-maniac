@@ -19,6 +19,7 @@ kotlin {
                 api(projects.core.util)
 
                 implementation(projects.core.base)
+                implementation(projects.data.datastore.api)
 
                 implementation(libs.coroutines.core)
                 implementation(libs.kotlinInject.runtime)
@@ -27,6 +28,7 @@ kotlin {
 
         commonTest {
             dependencies {
+                implementation(projects.data.datastore.testing)
                 implementation(projects.data.user.testing)
                 implementation(projects.data.traktauth.testing)
 

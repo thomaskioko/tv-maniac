@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
@@ -110,6 +111,20 @@ class DefaultDatastoreRepository(
             preferences[KEY_INCLUDE_SPECIALS] ?: false
         }
 
+    override suspend fun saveLastTraktUserId(userId: String?) {
+        dataStore.edit { preferences ->
+            if (userId != null) {
+                preferences[KEY_LAST_TRAKT_USER_ID] = userId
+            } else {
+                preferences.remove(KEY_LAST_TRAKT_USER_ID)
+            }
+        }
+    }
+
+    override suspend fun getLastTraktUserId(): String? {
+        return dataStore.data.first()[KEY_LAST_TRAKT_USER_ID]
+    }
+
     companion object {
         val KEY_THEME = stringPreferencesKey("app_theme")
         val KEY_LANGUAGE = stringPreferencesKey("app_language")
@@ -117,5 +132,6 @@ class DefaultDatastoreRepository(
         val KEY_IMAGE_QUALITY = stringPreferencesKey("image_quality")
         val KEY_OPEN_TRAILERS_IN_YOUTUBE = booleanPreferencesKey("open_trailers_in_youtube")
         val KEY_INCLUDE_SPECIALS = booleanPreferencesKey("include_specials")
+        val KEY_LAST_TRAKT_USER_ID = stringPreferencesKey("last_trakt_user_id")
     }
 }
