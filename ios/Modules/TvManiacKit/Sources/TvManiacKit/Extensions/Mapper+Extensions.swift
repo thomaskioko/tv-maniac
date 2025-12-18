@@ -260,9 +260,9 @@ public extension TvManiac.EpisodeBadge {
         switch self {
         case .premiere:
             .premiere
-            case .theNew:
+        case .theNew:
             .new
-            case .none:
+        case .none:
             .none
         }
     }
