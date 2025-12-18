@@ -111,8 +111,8 @@
     <string name="menu_unfollow_show">Unfollow Show</string>
     <string name="menu_open_season">Open Season</string>
 
-    <string name="label_settings_include_specials">Include Special Seasons</string>
-    <string name="label_settings_include_specials_description">Show and include Special Seasons (Season 0) throughout the app</string>
+    <string name="label_settings_include_specials">Special Seasons</string>
+    <string name="label_settings_include_specials_description">Display Specials and bonus seasons</string>
 
     <string name="following">Track</string>
     <string name="unfollow">Stop Tracking</string>
@@ -120,6 +120,7 @@
     <string name="title_recommended">Recommendations</string>
     <string name="title_similar">Similar Shows</string>
     <string name="title_seasons">All Seasons</string>
+    <string name="title_season_details">Season Details</string>
     <string name="title_season_overview">Overview</string>
     <string name="title_trailer">Trailers</string>
     <string name="title_release">Recent Release</string>
@@ -241,4 +242,6 @@
     <string name="profile_feature_share_description">Comment, reply and rate TV shows, movies, seasons and episodes.</string>
     <string name="profile_footer_description">* TvManiac is a Trakt client. Sign in to your Trakt account to track, discover and share with the community.</string>
     <string name="profile_sign_in_button">Sign In to Trakt</string>
+
+    <string name="label_up_to_date">All caught up</string>
 </resources>

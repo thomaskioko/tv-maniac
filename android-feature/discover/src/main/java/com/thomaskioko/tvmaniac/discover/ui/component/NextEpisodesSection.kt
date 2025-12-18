@@ -29,6 +29,9 @@ internal fun NextEpisodesSection(
     modifier: Modifier = Modifier,
     nextEpisodes: ImmutableList<NextEpisodeUiModel>,
     onEpisodeClick: (Long, Long) -> Unit,
+    onMarkWatched: (NextEpisodeUiModel) -> Unit,
+    onUnfollowShow: (Long) -> Unit,
+    onOpenSeason: (Long, Long, Long) -> Unit,
     onSeeAllClick: () -> Unit = {},
 ) {
     AnimatedVisibility(
@@ -60,6 +63,9 @@ internal fun NextEpisodesSection(
                     NextEpisodeCard(
                         episode = episode,
                         onEpisodeClick = onEpisodeClick,
+                        onMarkWatched = { onMarkWatched(episode) },
+                        onUnfollowShow = { onUnfollowShow(episode.showId) },
+                        onOpenSeason = { onOpenSeason(episode.showId, episode.seasonId, episode.seasonNumber) },
                     )
                 }
             }
@@ -80,7 +86,10 @@ private fun NextEpisodesSectionPreview() {
                     showPoster = "/poster1.jpg",
                     episodeId = 123L,
                     episodeTitle = "L'âme Perdue",
-                    episodeNumber = "S02E01",
+                    episodeNumberFormatted = "S02E01",
+                    seasonId = 1L,
+                    seasonNumber = 2,
+                    episodeNumber = 1,
                     runtime = "45 min",
                     stillImage = "/still1.jpg",
                     overview = "Daryl washes ashore in France and struggles to piece together how he got there and why.",
@@ -92,7 +101,10 @@ private fun NextEpisodesSectionPreview() {
                     showPoster = "/poster2.jpg",
                     episodeId = 124L,
                     episodeTitle = "Wednesday's Child Is Full of Woe",
-                    episodeNumber = "S02E02",
+                    episodeNumberFormatted = "S02E02",
+                    seasonId = 2L,
+                    seasonNumber = 2,
+                    episodeNumber = 2,
                     runtime = "50 min",
                     stillImage = "/still2.jpg",
                     overview = "Wednesday arrives at Nevermore Academy and immediately gets off on the wrong foot.",
@@ -104,7 +116,10 @@ private fun NextEpisodesSectionPreview() {
                     showPoster = "/poster3.jpg",
                     episodeId = 125L,
                     episodeTitle = "The Heirs of the Dragon",
-                    episodeNumber = "S03E01",
+                    episodeNumberFormatted = "S03E01",
+                    seasonId = 3L,
+                    seasonNumber = 3,
+                    episodeNumber = 1,
                     runtime = "66 min",
                     stillImage = "/still3.jpg",
                     overview = "King Viserys hosts a tournament to celebrate the birth of his second child.",
@@ -112,6 +127,9 @@ private fun NextEpisodesSectionPreview() {
                 ),
             ),
             onEpisodeClick = { _, _ -> },
+            onMarkWatched = {},
+            onUnfollowShow = {},
+            onOpenSeason = { _, _, _ -> },
         )
     }
 }

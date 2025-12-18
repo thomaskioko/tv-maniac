@@ -8,6 +8,9 @@ public struct SwiftNextEpisode: Identifiable {
     public let episodeId: Int64
     public let episodeTitle: String
     public let episodeNumber: String
+    public let seasonId: Int64
+    public let seasonNumber: Int64
+    public let episodeNumberValue: Int64
     public let runtime: String?
     public let stillImage: String?
     public let overview: String
@@ -20,6 +23,9 @@ public struct SwiftNextEpisode: Identifiable {
         episodeId: Int64,
         episodeTitle: String,
         episodeNumber: String,
+        seasonId: Int64 = 0,
+        seasonNumber: Int64 = 0,
+        episodeNumberValue: Int64 = 0,
         runtime: String?,
         stillImage: String?,
         overview: String,
@@ -31,6 +37,9 @@ public struct SwiftNextEpisode: Identifiable {
         self.episodeId = episodeId
         self.episodeTitle = episodeTitle
         self.episodeNumber = episodeNumber
+        self.seasonId = seasonId
+        self.seasonNumber = seasonNumber
+        self.episodeNumberValue = episodeNumberValue
         self.runtime = runtime
         self.stillImage = stillImage
         self.overview = overview

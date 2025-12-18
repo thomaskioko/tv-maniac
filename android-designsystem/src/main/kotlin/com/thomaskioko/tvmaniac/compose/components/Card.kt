@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.outlined.Movie
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -24,7 +25,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -42,7 +45,9 @@ fun PosterCard(
     imageWidth: Dp = 120.dp,
     aspectRatio: Float = 2 / 3f,
     contentScale: ContentScale = ContentScale.Crop,
-    shape: Shape = MaterialTheme.shapes.small,
+    shape: Shape = RectangleShape,
+    isInLibrary: Boolean = false,
+    libraryImageOverlay: ImageVector = Icons.Filled.Bookmarks,
     onClick: () -> Unit = {},
 ) {
     PosterCard(
@@ -69,6 +74,10 @@ fun PosterCard(
                         .fillMaxSize()
                         .aspectRatio(aspectRatio),
                 )
+
+                if (isInLibrary) {
+                    LibraryOverlay(libraryImageOverlay = libraryImageOverlay)
+                }
             }
         },
     )
@@ -81,32 +90,65 @@ private fun PlaceholderContent(
     imageSize: Dp = 52.dp,
     title: String? = null,
 ) {
-    Column(
-        modifier = modifier,
-    ) {
-        imageUrl?.let {
-            Icon(
-                modifier = Modifier
-                    .size(imageSize)
-                    .padding(4.dp)
-                    .align(Alignment.CenterHorizontally),
-                imageVector = Icons.Outlined.Movie,
-                contentDescription = title,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-            )
-        }
+    if (imageUrl.isNullOrEmpty()) {
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color.Gray.copy(alpha = 0.8f),
+                            Color.Gray,
+                        ),
+                    ),
+                ),
+            contentAlignment = Alignment.Center,
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .size(imageSize)
+                        .padding(8.dp),
+                    imageVector = Icons.Outlined.Movie,
+                    contentDescription = title,
+                    tint = Color.White.copy(alpha = 0.8f),
+                )
 
-        title?.let {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                textAlign = TextAlign.Center,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 2,
-                modifier = Modifier.fillMaxWidth(),
-            )
+                title?.let {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.White.copy(alpha = 0.8f),
+                        textAlign = TextAlign.Center,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 2,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+            }
         }
+    }
+}
+
+@Composable
+private fun LibraryOverlay(
+    libraryImageOverlay: ImageVector,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.TopEnd,
+    ) {
+        Icon(
+            imageVector = libraryImageOverlay,
+            contentDescription = null,
+            tint = Color.White,
+            modifier = Modifier
+                .padding(8.dp)
+                .size(20.dp),
+        )
     }
 }
 
@@ -118,7 +160,7 @@ fun PosterBackdropCard(
     textAlign: TextAlign = TextAlign.Start,
     contentScale: ContentScale = ContentScale.Crop,
     imageWidth: Dp = 120.dp,
-    shape: Shape = MaterialTheme.shapes.small,
+    shape: Shape = RectangleShape,
     onClick: () -> Unit,
 ) {
     val surface = MaterialTheme.colorScheme.surface
@@ -181,9 +223,9 @@ fun PosterBackdropCard(
 @Composable
 internal fun PosterCard(
     modifier: Modifier = Modifier,
-    imageWidth: Dp = 120.dp,
-    shape: Shape = MaterialTheme.shapes.small,
-    onClick: () -> Unit = {},
+    imageWidth: Dp,
+    shape: Shape,
+    onClick: () -> Unit,
     content: @Composable () -> Unit,
 ) {
     Card(
@@ -208,6 +250,24 @@ private fun PosterCardPreview() {
             PosterCard(
                 imageUrl = "",
                 title = "Loki",
+                onClick = {},
+                modifier = Modifier
+                    .width(100.dp)
+                    .aspectRatio(0.8f),
+            )
+        }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun PosterCardWithLibraryOverlayPreview() {
+    TvManiacTheme {
+        Surface {
+            PosterCard(
+                imageUrl = "",
+                title = "Loki",
+                isInLibrary = true,
                 onClick = {},
                 modifier = Modifier
                     .width(100.dp)

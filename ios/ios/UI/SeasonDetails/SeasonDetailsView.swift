@@ -23,6 +23,10 @@ struct SeasonDetailsView: View {
     @State private var showModal = false
     @State private var showGlass: Double = 0
     @State private var progressViewOffset: CGFloat = 0
+    @State private var showMarkPreviousAlert = false
+    @State private var showUnwatchedConfirmAlert = false
+    @State private var showMarkPreviousSeasonsAlert = false
+    @State private var showSeasonUnwatchAlert = false
 
     init(presenter: SeasonDetailsPresenter) {
         self.presenter = presenter
@@ -53,6 +57,7 @@ struct SeasonDetailsView: View {
                 GlassToolbar(
                     title: uiState.seasonName,
                     opacity: showGlass,
+                    isLoading: uiState.isRefreshing,
                     leadingIcon: {
                         Button(action: {
                             presenter.dispatch(action: SeasonDetailsBackClicked())
@@ -76,6 +81,53 @@ struct SeasonDetailsView: View {
             ImageGalleryContentView(items: uiState.seasonImages.map {
                 $0.toSwift()
             })
+        }
+        .onChange(of: uiState.isDialogVisible) { _ in
+            let dialogState = uiState.dialogState
+            showMarkPreviousAlert = dialogState is SeasonDialogStateMarkPreviousEpisodesConfirmation
+            showUnwatchedConfirmAlert = dialogState is SeasonDialogStateUnwatchEpisodeConfirmation
+            showMarkPreviousSeasonsAlert = dialogState is SeasonDialogStateMarkPreviousSeasonsConfirmation
+            showSeasonUnwatchAlert = dialogState is SeasonDialogStateUnwatchSeasonConfirmation
+        }
+        .alert(String(\.dialog_title_unwatched), isPresented: $showSeasonUnwatchAlert) {
+            Button(String(\.dialog_button_yes)) {
+                presenter.dispatch(action: ConfirmDialogAction())
+            }
+            Button(String(\.dialog_button_no), role: .cancel) {
+                presenter.dispatch(action: DismissDialog())
+            }
+        } message: {
+            Text(String(\.dialog_message_unwatched))
+        }
+        .alert(String(\.dialog_title_mark_previous), isPresented: $showMarkPreviousAlert) {
+            Button(String(\.dialog_button_mark_all)) {
+                presenter.dispatch(action: ConfirmDialogAction())
+            }
+            Button(String(\.dialog_button_just_this), role: .cancel) {
+                presenter.dispatch(action: SecondaryDialogAction())
+            }
+        } message: {
+            Text(String(\.dialog_message_mark_previous))
+        }
+        .alert(String(\.dialog_title_episode_unwatched), isPresented: $showUnwatchedConfirmAlert) {
+            Button(String(\.dialog_button_yes)) {
+                presenter.dispatch(action: ConfirmDialogAction())
+            }
+            Button(String(\.dialog_button_no), role: .cancel) {
+                presenter.dispatch(action: DismissDialog())
+            }
+        } message: {
+            Text(String(\.dialog_message_episode_unwatched))
+        }
+        .alert(String(\.dialog_title_mark_previous_seasons), isPresented: $showMarkPreviousSeasonsAlert) {
+            Button(String(\.dialog_button_mark_all_seasons)) {
+                presenter.dispatch(action: ConfirmDialogAction())
+            }
+            Button(String(\.dialog_button_just_this_season), role: .cancel) {
+                presenter.dispatch(action: SecondaryDialogAction())
+            }
+        } message: {
+            Text(String(\.dialog_message_mark_previous_seasons))
         }
     }
 
@@ -112,17 +164,26 @@ struct SeasonDetailsView: View {
                 }
 
                 EpisodeListView(
+                    title: String(\.title_episodes),
                     episodeCount: state.episodeCount,
                     watchProgress: state.watchProgress,
                     expandEpisodeItems: state.expandEpisodeItems,
-                    showSeasonWatchStateDialog: state.showSeasonWatchStateDialog,
+                    showSeasonWatchStateDialog: state.dialogState is SeasonDialogStateUnwatchSeasonConfirmation,
                     isSeasonWatched: state.isSeasonWatched,
                     items: state.episodeDetailsList.map {
                         $0.toSwift()
                     },
+                    dayLabelFormat: { count in String(\.day_label, quantity: count) },
                     onEpisodeHeaderClicked: { presenter.dispatch(action: OnEpisodeHeaderClicked()) },
-                    onWatchedStateClicked: { presenter.dispatch(action: UpdateSeasonWatchedState()) }
+                    onWatchedStateClicked: {
+                        presenter.dispatch(action: ToggleSeasonWatched())
+                    },
+                    onEpisodeWatchToggle: { episode in
+                        presenter.dispatch(action: ToggleEpisodeWatched(episodeId: episode.episodeId))
+                    }
                 )
+
+                Spacer().frame(height: theme.spacing.large)
 
                 CastListView(casts: toCastsList(state.seasonCast))
             },
@@ -137,7 +198,7 @@ struct SeasonDetailsView: View {
             }
         )
         .onAppear {
-            showModal = state.showSeasonWatchStateDialog
+            showModal = state.isGalleryVisible
         }
     }
 
@@ -175,7 +236,6 @@ struct SeasonDetailsView: View {
                             .frame(width: 28.0, height: 28.0)
                             .fontDesign(.rounded)
                             .textStyle(theme.typography.bodyMedium)
-                            .fontWeight(.regular)
                             .foregroundColor(theme.colors.onSurfaceVariant)
                             .alignmentGuide(.view) { d in
                                 d[HorizontalAlignment.leading]
@@ -195,7 +255,7 @@ struct SeasonDetailsView: View {
                     .padding(.vertical, theme.spacing.xLarge)
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        presenter.dispatch(action: SeasonGalleryClicked())
+                        presenter.dispatch(action: ShowGallery())
                         showModal.toggle()
                     }
                 }

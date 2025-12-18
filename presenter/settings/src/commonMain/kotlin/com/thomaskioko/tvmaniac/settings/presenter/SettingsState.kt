@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.settings.presenter
 
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 
-data class SettingsState(
+public data class SettingsState(
     val isAuthenticated: Boolean,
     val theme: ThemeModel,
     val imageQuality: ImageQuality,
@@ -12,9 +12,10 @@ data class SettingsState(
     val errorMessage: String?,
     val showLogoutDialog: Boolean,
     val openTrailersInYoutube: Boolean = false,
+    val includeSpecials: Boolean = false,
 ) {
-    companion object {
-        val DEFAULT_STATE = SettingsState(
+    public companion object {
+        public val DEFAULT_STATE: SettingsState = SettingsState(
             isAuthenticated = false,
             theme = ThemeModel.SYSTEM,
             imageQuality = ImageQuality.MEDIUM,
@@ -23,6 +24,7 @@ data class SettingsState(
             showAboutDialog = false,
             errorMessage = null,
             showLogoutDialog = false,
+            includeSpecials = false,
         )
     }
 }

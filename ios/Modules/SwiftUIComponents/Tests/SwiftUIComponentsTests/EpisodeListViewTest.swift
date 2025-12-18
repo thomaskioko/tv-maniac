@@ -6,7 +6,7 @@ import XCTest
 class EpisodeListViewTest: SnapshotTestCase {
     func test_EpisodeListView() {
         EpisodeListView(
-            showingAlert: false,
+            title: "Episodes",
             episodeCount: 3,
             watchProgress: 0.4,
             expandEpisodeItems: false,

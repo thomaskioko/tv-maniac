@@ -9,6 +9,8 @@ public struct ShowHeaderInfoView: View {
     private let year: String
     private let language: String?
     private let rating: Double
+    private let seasonCount: Int
+    private let seasonCountFormat: (_ count: Int) -> String
 
     public init(
         title: String,
@@ -16,7 +18,9 @@ public struct ShowHeaderInfoView: View {
         status: String?,
         year: String,
         language: String?,
-        rating: Double
+        rating: Double,
+        seasonCount: Int,
+        seasonCountFormat: @escaping (_ count: Int) -> String
     ) {
         self.title = title
         self.overview = overview
@@ -24,6 +28,8 @@ public struct ShowHeaderInfoView: View {
         self.year = year
         self.language = language
         self.rating = rating
+        self.seasonCount = seasonCount
+        self.seasonCountFormat = seasonCountFormat
     }
 
     public var body: some View {
@@ -63,6 +69,15 @@ public struct ShowHeaderInfoView: View {
             Text(year)
                 .textStyle(theme.typography.bodyMedium)
 
+            if seasonCount > 0 {
+                Text("•")
+                    .textStyle(theme.typography.labelSmall)
+                    .foregroundColor(theme.colors.accent)
+
+                Text(seasonCountFormat(seasonCount))
+                    .textStyle(theme.typography.bodyMedium)
+            }
+
             if let language {
                 Text("•")
                     .textStyle(theme.typography.labelSmall)
@@ -83,9 +98,6 @@ public struct ShowHeaderInfoView: View {
 
             Text(String(format: "%.1f", rating))
                 .textStyle(theme.typography.bodyMedium)
-
-            Text("•")
-                .textStyle(theme.typography.labelSmall)
                 .foregroundColor(theme.colors.accent)
         }
         .frame(maxWidth: .infinity, alignment: .center)
@@ -100,7 +112,9 @@ public struct ShowHeaderInfoView: View {
             status: "Ended",
             year: "2024",
             language: "EN",
-            rating: 4.8
+            rating: 4.8,
+            seasonCount: 2,
+            seasonCountFormat: { count in count == 1 ? "\(count) Season" : "\(count) Seasons" }
         )
     }
     .themedPreview()

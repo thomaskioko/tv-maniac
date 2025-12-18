@@ -61,28 +61,23 @@ public struct PosterItemView: View {
         .frame(width: posterWidth, height: posterHeight)
         .overlay {
             if isInLibrary {
-                LibraryOverlay(libraryImageOverlay: libraryImageOverlay, theme: theme)
+                LibraryOverlay(libraryImageOverlay: libraryImageOverlay)
             }
         }
     }
 }
 
 @ViewBuilder
-private func LibraryOverlay(libraryImageOverlay: String, theme: TvManiacTheme) -> some View {
+private func LibraryOverlay(libraryImageOverlay: String) -> some View {
     VStack {
-        Spacer()
         HStack {
             Spacer()
             Image(systemName: libraryImageOverlay)
                 .imageScale(.medium)
-                .foregroundColor(theme.colors.onPrimary.opacity(0.9))
-                .padding([.vertical])
-                .padding(.trailing, theme.spacing.medium)
-                .textStyle(theme.typography.labelSmall)
+                .foregroundColor(.white)
+                .padding(8)
         }
-        .background {
-            theme.colors.imageGradient()
-        }
+        Spacer()
     }
 }
 

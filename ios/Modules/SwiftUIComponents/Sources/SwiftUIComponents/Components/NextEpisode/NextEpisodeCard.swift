@@ -4,14 +4,32 @@ public struct NextEpisodeCard: View {
     @Theme private var theme
 
     private let episode: SwiftNextEpisode
+    private let markWatchedLabel: String
+    private let unfollowShowLabel: String
+    private let openSeasonLabel: String
     private let onEpisodeClick: (Int64, Int64) -> Void
+    private let onMarkWatched: () -> Void
+    private let onUnfollowShow: () -> Void
+    private let onOpenSeason: () -> Void
 
     public init(
         episode: SwiftNextEpisode,
-        onEpisodeClick: @escaping (Int64, Int64) -> Void
+        markWatchedLabel: String,
+        unfollowShowLabel: String,
+        openSeasonLabel: String,
+        onEpisodeClick: @escaping (Int64, Int64) -> Void,
+        onMarkWatched: @escaping () -> Void = {},
+        onUnfollowShow: @escaping () -> Void = {},
+        onOpenSeason: @escaping () -> Void = {}
     ) {
         self.episode = episode
+        self.markWatchedLabel = markWatchedLabel
+        self.unfollowShowLabel = unfollowShowLabel
+        self.openSeasonLabel = openSeasonLabel
         self.onEpisodeClick = onEpisodeClick
+        self.onMarkWatched = onMarkWatched
+        self.onUnfollowShow = onUnfollowShow
+        self.onOpenSeason = onOpenSeason
     }
 
     public var body: some View {
@@ -91,12 +109,31 @@ public struct NextEpisodeCard: View {
         .frame(width: DimensionConstants.imageWidth, height: DimensionConstants.imageHeight)
         .cornerRadius(theme.shapes.medium)
         .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
+        .contextMenu {
+            Button {
+                onMarkWatched()
+            } label: {
+                Label(markWatchedLabel, systemImage: "checkmark.circle")
+            }
+
+            Button {
+                onUnfollowShow()
+            } label: {
+                Label(unfollowShowLabel, systemImage: "minus.circle")
+            }
+
+            Button {
+                onOpenSeason()
+            } label: {
+                Label(openSeasonLabel, systemImage: "list.bullet")
+            }
+        }
     }
 }
 
 private enum DimensionConstants {
     static let imageWidth: CGFloat = 300
-    static let imageHeight: CGFloat = 180
+    static let imageHeight: CGFloat = 160
 }
 
 #Preview {
@@ -114,6 +151,9 @@ private enum DimensionConstants {
                 overview: "Daryl washes ashore in France and struggles to piece together how he got there and why.",
                 isNew: true
             ),
+            markWatchedLabel: "Mark as Watched",
+            unfollowShowLabel: "Unfollow Show",
+            openSeasonLabel: "Open Season",
             onEpisodeClick: { _, _ in }
         )
         .padding()

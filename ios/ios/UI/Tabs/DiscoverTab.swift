@@ -41,7 +41,7 @@ struct DiscoverTab: View {
     private func discoverLoadedContent(state: DiscoverViewState) -> some View {
         ZStack(alignment: .bottom) {
             ParallaxView(
-                imageHeight: 550,
+                imageHeight: 520,
                 collapsedImageHeight: 120,
                 header: { _ in
                     ZStack(alignment: .bottom) {
@@ -203,8 +203,29 @@ struct DiscoverTab: View {
                 title: String(\.label_discover_up_next),
                 episodes: state.nextEpisodes.map { $0.toSwift() },
                 chevronStyle: .chevronOnly,
+                markWatchedLabel: String(\.menu_mark_watched),
+                unfollowShowLabel: String(\.menu_unfollow_show),
+                openSeasonLabel: String(\.menu_open_season),
                 onEpisodeClick: { showId, episodeId in
                     presenter.dispatch(action: NextEpisodeClicked(showId: showId, episodeId: episodeId))
+                },
+                onMarkWatched: { episode in
+                    presenter.dispatch(action: MarkNextEpisodeWatched(
+                        showId: episode.showId,
+                        episodeId: episode.episodeId,
+                        seasonNumber: episode.seasonNumber,
+                        episodeNumber: episode.episodeNumberValue
+                    ))
+                },
+                onUnfollowShow: { episode in
+                    presenter.dispatch(action: UnfollowShowFromUpNext(showId: episode.showId))
+                },
+                onOpenSeason: { episode in
+                    presenter.dispatch(action: OpenSeasonFromUpNext(
+                        showId: episode.showId,
+                        seasonId: episode.seasonId,
+                        seasonNumber: episode.seasonNumber
+                    ))
                 }
             )
 
@@ -264,12 +285,10 @@ struct DiscoverTab: View {
                 .aspectRatio(contentMode: .fit)
                 .foregroundColor(theme.colors.accent)
                 .textStyle(theme.typography.displayMedium)
-                .fontWeight(.thin)
                 .frame(width: 160, height: 180)
 
             Text(String(\.generic_empty_content))
                 .textStyle(theme.typography.titleMedium)
-                .fontWeight(.semibold)
                 .padding(.top, theme.spacing.xSmall)
 
             Text(String(\.missing_api_key))

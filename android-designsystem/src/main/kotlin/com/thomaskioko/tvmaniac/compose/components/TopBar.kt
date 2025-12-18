@@ -50,7 +50,7 @@ import kotlin.math.roundToInt
 fun TvManiacTopBar(
     modifier: Modifier = Modifier,
     elevation: Dp = 0.dp,
-    colors: TopAppBarColors = TopAppBarDefaults.centerAlignedTopAppBarColors(),
+    colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
     scrollBehavior: TopAppBarScrollBehavior? = null,
     title: @Composable () -> Unit = {},
     navigationIcon: @Composable () -> Unit = {},
@@ -187,7 +187,7 @@ internal fun RefreshCollapsableTopAppBar(
             }
         },
         navigationIcon = navigationIcon ?: {},
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+        colors = TopAppBarDefaults.topAppBarColors(
             containerColor = backgroundColor,
         ),
         actions = { actions(showAppBarBackground) },
@@ -246,7 +246,7 @@ internal fun RefreshCollapsableTopAppBar(
                 }
             }
         },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+        colors = TopAppBarDefaults.topAppBarColors(
             containerColor = backgroundColor,
         ),
         actions = {

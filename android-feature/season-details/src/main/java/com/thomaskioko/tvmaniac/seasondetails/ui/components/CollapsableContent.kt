@@ -5,7 +5,9 @@ import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.rememberTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
@@ -13,20 +15,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material.icons.rounded.CheckCircle
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.ExpandLess
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Shape
@@ -39,13 +41,15 @@ import androidx.constraintlayout.compose.Dimension
 import com.thomaskioko.tvmaniac.compose.components.ShowLinearProgressIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_navigate_back
+import com.thomaskioko.tvmaniac.compose.theme.green
+import com.thomaskioko.tvmaniac.compose.theme.grey
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_episodes
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.seasondetails.presenter.EpisodeClicked
 import com.thomaskioko.tvmaniac.seasondetails.presenter.OnEpisodeHeaderClicked
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsAction
-import com.thomaskioko.tvmaniac.seasondetails.presenter.ShowMarkSeasonDialog
+import com.thomaskioko.tvmaniac.seasondetails.presenter.ToggleEpisodeWatched
+import com.thomaskioko.tvmaniac.seasondetails.presenter.ToggleSeasonWatched
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.EpisodeDetailsModel
 import com.thomaskioko.tvmaniac.seasondetails.ui.seasonDetailsLoaded
 import kotlinx.collections.immutable.ImmutableList
@@ -86,8 +90,11 @@ fun CollapsableContent(
                     imageUrl = episode.imageUrl,
                     title = episode.episodeNumberTitle,
                     episodeOverview = episode.overview,
-                    onEpisodeClicked = { EpisodeClicked(episode.id) },
-                    onAction = onAction,
+                    isWatched = episode.isWatched,
+                    isProcessing = episode.isEpisodeUpdating,
+                    daysUntilAir = episode.daysUntilAir,
+                    onWatchedToggle = { onAction(ToggleEpisodeWatched(episode.id)) },
+                    onEpisodeClicked = { onAction(EpisodeClicked(episode.id)) },
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -176,18 +183,27 @@ private fun SeasonTitleHeader(
                 },
             )
 
-            IconButton(
-                onClick = { onAction(ShowMarkSeasonDialog) },
-                modifier = Modifier.constrainAs(watchedStatusIcon) {
-                    centerVerticallyTo(parent)
-                    end.linkTo(parent.end, 8.dp)
-                },
+            Box(
+                modifier = Modifier
+                    .size(28.dp)
+                    .constrainAs(watchedStatusIcon) {
+                        start.linkTo(parent.end)
+                        end.linkTo(count.start)
+                        top.linkTo(image.top)
+                        bottom.linkTo(image.bottom)
+                    }
+                    .background(
+                        color = if (isSeasonWatched) green else grey,
+                        shape = CircleShape,
+                    )
+                    .clickable { onAction(ToggleSeasonWatched) },
+                contentAlignment = Alignment.Center,
             ) {
                 Icon(
-                    modifier = Modifier.size(28.dp),
-                    imageVector = if (isSeasonWatched) Icons.Rounded.CheckCircle else Icons.Outlined.CheckCircle,
-                    contentDescription = cd_navigate_back.resolve(LocalContext.current),
-                    tint = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.size(16.dp),
+                    imageVector = Icons.Rounded.Check,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimary,
                 )
             }
 

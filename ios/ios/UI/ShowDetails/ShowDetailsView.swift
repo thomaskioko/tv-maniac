@@ -28,6 +28,8 @@ struct ShowDetailsView: View {
                     year: uiState.showDetails.year,
                     language: uiState.showDetails.language,
                     rating: uiState.showDetails.rating,
+                    seasonCount: Int(uiState.showDetails.seasonsList.count),
+                    seasonCountFormat: { count in String(\.season_count, quantity: count) },
                     progress: proxy.getTitleOpacity(
                         geometry: proxy,
                         imageHeight: DimensionConstants.imageHeight,
@@ -87,6 +89,10 @@ struct ShowDetailsView: View {
         ShowInfoView(
             isFollowed: uiState.showDetails.isInLibrary,
             openTrailersInYoutube: uiState.showDetails.hasWebViewInstalled,
+            selectedSeasonIndex: Int(uiState.selectedSeasonIndex),
+            status: uiState.showDetails.status,
+            watchedEpisodesCount: uiState.showDetails.watchedEpisodesCount,
+            totalEpisodesCount: uiState.showDetails.totalEpisodesCount,
             genreList: uiState.showDetails.genres.map {
                 $0.toSwift()
             },
@@ -108,6 +114,23 @@ struct ShowDetailsView: View {
             similarShows: uiState.showDetails.similarShows.map {
                 $0.toSwift()
             },
+            continueTrackingEpisodes: uiState.continueTrackingEpisodes.map {
+                $0.toSwift()
+            },
+            continueTrackingScrollIndex: Int(uiState.continueTrackingScrollIndex),
+            continueTrackingTitle: String(\.title_continue_tracking),
+            dayLabelFormat: { count in String(\.day_label, quantity: count) },
+            trackLabel: String(\.following),
+            stopTrackingLabel: String(\.unfollow),
+            addToListLabel: String(\.btn_add_to_list),
+            similarShowsTitle: String(\.title_similar),
+            recommendationsTitle: String(\.title_recommended),
+            seasonDetailsTitle: String(\.title_season_details),
+            showSeasonDetailsHeader: uiState.continueTrackingEpisodes.isEmpty,
+            seasonCountFormat: { count in String(\.season_count, quantity: Int(count)) },
+            episodesWatchedFormat: { watched, total in String(\.episodes_watched, quantity: Int(total), Int(watched), Int(total)) },
+            episodesLeftFormat: { count in String(\.episodes_left, quantity: Int(count), Int(count)) },
+            upToDateLabel: String(\.label_up_to_date),
             onAddToCustomList: {
                 showCustomList.toggle()
             },
@@ -126,6 +149,14 @@ struct ShowDetailsView: View {
             },
             onShowClicked: { id in
                 presenter.dispatch(action: DetailShowClicked(id: id))
+            },
+            onMarkEpisodeWatched: { episode in
+                presenter.dispatch(action: MarkEpisodeWatched(
+                    showId: episode.showId,
+                    episodeId: episode.episodeId,
+                    seasonNumber: episode.seasonNumber,
+                    episodeNumber: episode.episodeNumber
+                ))
             }
         )
     }
@@ -136,6 +167,6 @@ struct ShowDetailsView: View {
 }
 
 private enum DimensionConstants {
-    static let imageHeight: CGFloat = 550
+    static let imageHeight: CGFloat = 500
     static let collapsedImageHeight: CGFloat = 120.0
 }

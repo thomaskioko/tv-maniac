@@ -62,6 +62,7 @@ internal fun HorizontalRowContent(
                         imageUrl = tvShow.posterImageUrl,
                         title = tvShow.title,
                         onClick = { onItemClicked(tvShow.tmdbId) },
+                        isInLibrary = tvShow.inLibrary,
                     )
                 }
             }

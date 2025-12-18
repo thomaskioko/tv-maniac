@@ -6,8 +6,13 @@ import com.thomaskioko.tvmaniac.db.ShowSeasons
 import com.thomaskioko.tvmaniac.db.SimilarShows
 import com.thomaskioko.tvmaniac.db.TvshowDetails
 import com.thomaskioko.tvmaniac.db.WatchProviders
+import com.thomaskioko.tvmaniac.episodes.api.model.ContinueTrackingResult
+import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
+import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsModel
+import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 
 val showDetailsContent = ShowDetailsContent(
     showDetails = ShowDetailsModel.Empty.copy(
@@ -81,5 +86,86 @@ val watchProviderList = listOf(
         name = "Netflix",
         logo_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         tmdb_id = Id(18495),
+    ),
+)
+
+val testEpisodeDetails = EpisodeDetails(
+    id = 1001L,
+    seasonId = 101L,
+    name = "Pilot",
+    seasonNumber = 1L,
+    episodeNumber = 1L,
+    runtime = 45L,
+    overview = "The first episode",
+    voteAverage = 8.5,
+    voteCount = 100L,
+    stillPath = "/episode1.jpg",
+    airDate = "2023-01-01",
+    isWatched = false,
+    daysUntilAir = null,
+)
+
+val testContinueTrackingResult = ContinueTrackingResult(
+    episodes = listOf(
+        testEpisodeDetails,
+        testEpisodeDetails.copy(id = 1002L, episodeNumber = 2L, name = "Episode 2"),
+        testEpisodeDetails.copy(id = 1003L, episodeNumber = 3L, name = "Episode 3"),
+    ).toImmutableList(),
+    firstUnwatchedIndex = 0,
+    currentSeasonNumber = 1L,
+    currentSeasonId = 101L,
+)
+
+val testShowWatchProgress = ShowWatchProgress(
+    showId = 84958L,
+    watchedCount = 5,
+    totalCount = 10,
+)
+
+val testSeasonsWithProgress = listOf(
+    ShowSeasons(
+        season_id = Id(101),
+        show_id = Id(84958),
+        season_title = "Season 1",
+        season_number = 1,
+    ),
+    ShowSeasons(
+        season_id = Id(102),
+        show_id = Id(84958),
+        season_title = "Season 2",
+        season_number = 2,
+    ),
+)
+
+val testSeasonWatchProgress = listOf(
+    SeasonWatchProgress(
+        showId = 84958L,
+        seasonNumber = 1L,
+        watchedCount = 8,
+        totalCount = 10,
+    ),
+    SeasonWatchProgress(
+        showId = 84958L,
+        seasonNumber = 2L,
+        watchedCount = 3,
+        totalCount = 12,
+    ),
+)
+
+val testPartialSeasonProgress = listOf(
+    SeasonWatchProgress(
+        showId = 84958L,
+        seasonNumber = 1L,
+        watchedCount = 5,
+        totalCount = 10,
+    ),
+)
+
+val testCompletedSeasonProgress = listOf(
+    SeasonWatchProgress(
+        showId = 84958L,
+        seasonNumber = 1L,
+        watchedCount = 10,
+        totalCount = 10,
     ),
 )

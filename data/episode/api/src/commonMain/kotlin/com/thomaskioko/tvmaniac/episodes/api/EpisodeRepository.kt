@@ -102,6 +102,12 @@ public interface EpisodeRepository {
     public fun observeShowWatchProgress(showId: Long): Flow<ShowWatchProgress>
 
     /**
+     * Observe watch progress for all seasons of a show.
+     * Returns a list of SeasonWatchProgress, one per season.
+     */
+    public fun observeAllSeasonsWatchProgress(showId: Long): Flow<List<SeasonWatchProgress>>
+
+    /**
      * Mark all episodes in a season as watched.
      * Automatically adds the show to the library if not already there.
      * @param watchedAt Optional timestamp for when the episodes were watched. Defaults to current time.

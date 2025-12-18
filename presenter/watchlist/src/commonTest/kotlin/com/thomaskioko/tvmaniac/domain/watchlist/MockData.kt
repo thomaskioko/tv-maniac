@@ -51,6 +51,9 @@ internal fun expectedUiResult(
     result: List<Watchlists> = updatedData,
 ) = result
     .map {
+        val watched = it.watched_count
+        val total = it.total_episode_count
+        val progress = if (total > 0) watched.toFloat() / total else 0f
         WatchlistItem(
             tmdbId = it.id.id,
             title = it.name,
@@ -59,6 +62,9 @@ internal fun expectedUiResult(
             year = it.first_air_date,
             seasonCount = it.season_count ?: 0,
             episodeCount = it.episode_count ?: 0,
+            episodesWatched = watched,
+            totalEpisodesTracked = total,
+            watchProgress = progress,
         )
     }
     .toPersistentList()

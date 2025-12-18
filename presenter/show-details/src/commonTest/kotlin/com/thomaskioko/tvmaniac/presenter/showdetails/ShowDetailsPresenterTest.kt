@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.presenter.showdetails
 
+import app.cash.turbine.ReceiveTurbine
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
@@ -16,15 +17,22 @@ import com.thomaskioko.tvmaniac.db.SimilarShows
 import com.thomaskioko.tvmaniac.db.Trailers
 import com.thomaskioko.tvmaniac.db.TvshowDetails
 import com.thomaskioko.tvmaniac.db.WatchProviders
+import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
+import com.thomaskioko.tvmaniac.domain.episode.ObserveContinueTrackingInteractor
+import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
 import com.thomaskioko.tvmaniac.domain.recommendedshows.RecommendedShowsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
 import com.thomaskioko.tvmaniac.domain.watchproviders.WatchProvidersInteractor
+import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
+import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ProviderModel
+import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.TrailerModel
+import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
@@ -45,6 +53,7 @@ import kotlin.test.Test
 class ShowDetailsPresenterTest {
 
     private val seasonsRepository = FakeSeasonsRepository()
+    private val seasonDetailsRepository = FakeSeasonDetailsRepository()
     private val trailerRepository = FakeTrailerRepository()
     private val similarShowsRepository = FakeSimilarShowsRepository()
     private val watchlistRepository = FakeWatchlistRepository()
@@ -52,6 +61,7 @@ class ShowDetailsPresenterTest {
     private val castRepository = FakeCastRepository()
     private val recommendedShowsRepository = FakeRecommendedShowsRepository()
     private val showDetailsRepository = FakeShowDetailsRepository()
+    private val episodeRepository = FakeEpisodeRepository()
     private val fakeFormatterUtil = FakeFormatterUtil()
     private val testDispatcher = StandardTestDispatcher()
     private val coroutineDispatcher = AppCoroutineDispatchers(
@@ -62,12 +72,9 @@ class ShowDetailsPresenterTest {
         databaseRead = testDispatcher,
     )
 
-    private lateinit var presenter: ShowDetailsPresenter
-
     @BeforeTest
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        presenter = buildShowDetailsPresenter()
     }
 
     @AfterTest
@@ -85,10 +92,14 @@ class ShowDetailsPresenterTest {
             trailersResult = trailers,
         )
 
-        presenter.state.test {
-            awaitItem() shouldBe ShowDetailsContent.Empty
+        val presenter = buildShowDetailsPresenter()
 
-            val emission = awaitItem()
+        presenter.state.test {
+            val initialState = awaitItem()
+            initialState.isRefreshing shouldBe true
+            initialState.showDetails shouldBe ShowDetailsModel.Empty
+
+            val emission = awaitUntil { it.showDetails.tmdbId != 0L }
             emission.showDetails shouldBe showDetailsContent.showDetails.copy(
                 recommendedShows = persistentListOf(
                     ShowModel(
@@ -133,10 +144,14 @@ class ShowDetailsPresenterTest {
     fun `should update state to Loaded when ReloadShowDetails and new data is available`() = runTest {
         buildMockData()
 
-        presenter.state.test {
-            awaitItem() shouldBe ShowDetailsContent.Empty
+        val presenter = buildShowDetailsPresenter()
 
-            val emission = awaitItem()
+        presenter.state.test {
+            val initialState = awaitItem()
+            initialState.isRefreshing shouldBe true
+            initialState.showDetails shouldBe ShowDetailsModel.Empty
+
+            val emission = awaitUntil { it.showDetails.tmdbId != 0L }
             emission.showDetails shouldBe showDetailsContent.showDetails
             emission.isRefreshing shouldBe false
             emission.message shouldBe null
@@ -149,7 +164,7 @@ class ShowDetailsPresenterTest {
 
             presenter.dispatch(ReloadShowDetails)
 
-            val updatedState = awaitItem().showDetails
+            val updatedState = awaitUntil { it.showDetails.seasonsList.isNotEmpty() }.showDetails
             updatedState.seasonsList.size shouldBe 1
             updatedState.similarShows.size shouldBe 1
             updatedState.providers.size shouldBe 1
@@ -161,10 +176,14 @@ class ShowDetailsPresenterTest {
         runTest {
             buildMockData()
 
-            presenter.state.test {
-                awaitItem() shouldBe ShowDetailsContent.Empty
+            val presenter = buildShowDetailsPresenter()
 
-                val emission = awaitItem()
+            presenter.state.test {
+                val initialState = awaitItem()
+                initialState.isRefreshing shouldBe true
+                initialState.showDetails shouldBe ShowDetailsModel.Empty
+
+                val emission = awaitUntil { it.showDetails.tmdbId != 0L }
                 emission.showDetails shouldBe showDetailsContent.showDetails
                 emission.isRefreshing shouldBe false
                 emission.message shouldBe null
@@ -176,7 +195,7 @@ class ShowDetailsPresenterTest {
 
                 presenter.dispatch(ReloadShowDetails)
 
-                val updatedState = awaitItem().showDetails
+                val updatedState = awaitUntil { it.showDetails.similarShows.isNotEmpty() }.showDetails
                 updatedState.seasonsList.size shouldBe 0
                 updatedState.similarShows.size shouldBe 1
                 updatedState.providers.size shouldBe 1
@@ -202,6 +221,279 @@ class ShowDetailsPresenterTest {
         )
 
         navigatedToSeason shouldBe true
+    }
+
+    @Test
+    fun `should display continue tracking episodes when available`() = runTest {
+        buildMockData()
+        episodeRepository.setContinueTrackingResult(testContinueTrackingResult)
+
+        val presenter = buildShowDetailsPresenter()
+
+        presenter.state.test {
+            awaitItem()
+
+            val emission = awaitUntil { it.continueTrackingEpisodes.isNotEmpty() }
+            emission.continueTrackingEpisodes.size shouldBe 3
+            emission.continueTrackingScrollIndex shouldBe 0
+        }
+    }
+
+    @Test
+    fun `should display watch progress when show is in library`() = runTest {
+        buildMockData()
+        episodeRepository.setShowWatchProgress(testShowWatchProgress)
+
+        val presenter = buildShowDetailsPresenter()
+
+        presenter.state.test {
+            awaitItem()
+
+            val emission = awaitUntil { it.showDetails.watchProgress > 0f }
+            emission.showDetails.watchProgress shouldBe 0.5f
+        }
+    }
+
+    @Test
+    fun `should show completed status when all episodes watched`() = runTest {
+        buildMockData()
+        episodeRepository.setShowWatchProgress(
+            testShowWatchProgress.copy(watchedCount = 10, totalCount = 10),
+        )
+
+        val presenter = buildShowDetailsPresenter()
+
+        presenter.state.test {
+            awaitItem()
+
+            val emission = awaitUntil { it.showDetails.watchProgress == 1f }
+            emission.showDetails.watchProgress shouldBe 1f
+        }
+    }
+
+    @Test
+    fun `should mark episode as watched when MarkEpisodeWatchedFromTracking is dispatched`() = runTest {
+        buildMockData()
+
+        val presenter = buildShowDetailsPresenter()
+
+        presenter.state.test {
+            awaitItem()
+            awaitUntil { it.showDetails.tmdbId != 0L }
+
+            presenter.dispatch(
+                MarkEpisodeWatched(
+                    showId = 84958,
+                    episodeId = 1001,
+                    seasonNumber = 1,
+                    episodeNumber = 1,
+                ),
+            )
+
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            episodeRepository.lastMarkEpisodeWatchedCall shouldBe MarkEpisodeWatchedCall(
+                showId = 84958,
+                episodeId = 1001,
+                seasonNumber = 1,
+                episodeNumber = 1,
+            )
+        }
+    }
+
+    @Test
+    fun `should update library when FollowShowClicked is dispatched`() = runTest {
+        buildMockData()
+
+        val presenter = buildShowDetailsPresenter()
+
+        presenter.state.test {
+            awaitItem()
+            awaitUntil { it.showDetails.tmdbId != 0L }
+
+            presenter.dispatch(FollowShowClicked(addToLibrary = false))
+
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            watchlistRepository.lastUpdateLibraryId shouldBe 84958
+            watchlistRepository.lastUpdateLibraryAddToLibrary shouldBe true
+        }
+    }
+
+    @Test
+    fun `should update continue tracking list when episode is marked as watched`() = runTest {
+        buildMockData()
+        episodeRepository.setContinueTrackingResult(testContinueTrackingResult)
+
+        val presenter = buildShowDetailsPresenter()
+
+        presenter.state.test {
+            awaitItem()
+
+            val initialState = awaitUntil { it.continueTrackingEpisodes.isNotEmpty() }
+            initialState.continueTrackingEpisodes.size shouldBe 3
+            initialState.continueTrackingScrollIndex shouldBe 0
+
+            val updatedTrackingResult = testContinueTrackingResult.copy(
+                firstUnwatchedIndex = 1,
+            )
+            episodeRepository.setContinueTrackingResult(updatedTrackingResult)
+
+            presenter.dispatch(
+                MarkEpisodeWatched(
+                    showId = 84958,
+                    episodeId = 1001,
+                    seasonNumber = 1,
+                    episodeNumber = 1,
+                ),
+            )
+
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            val updatedState = awaitUntil { it.continueTrackingScrollIndex == 1 }
+            updatedState.continueTrackingScrollIndex shouldBe 1
+        }
+    }
+
+    @Test
+    fun `should clear continue tracking list when show is removed from library`() = runTest {
+        buildMockData()
+        episodeRepository.setContinueTrackingResult(testContinueTrackingResult)
+
+        val presenter = buildShowDetailsPresenter()
+
+        presenter.state.test {
+            awaitItem()
+
+            val initialState = awaitUntil { it.continueTrackingEpisodes.isNotEmpty() }
+            initialState.continueTrackingEpisodes.size shouldBe 3
+
+            episodeRepository.setContinueTrackingResult(null)
+
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            val updatedState = awaitUntil { it.continueTrackingEpisodes.isEmpty() }
+            updatedState.continueTrackingEpisodes.size shouldBe 0
+        }
+    }
+
+    @Test
+    fun `should display season progress when seasons have watched episodes`() = runTest {
+        buildMockData(seasonResult = testSeasonsWithProgress)
+        episodeRepository.setAllSeasonsWatchProgress(testSeasonWatchProgress)
+
+        val presenter = buildShowDetailsPresenter()
+
+        presenter.state.test {
+            awaitItem()
+
+            val emission = awaitUntil { it.showDetails.seasonsList.isNotEmpty() }
+            val seasonsList = emission.showDetails.seasonsList
+
+            seasonsList.size shouldBe 2
+
+            val season1 = seasonsList.first { it.seasonNumber == 1L }
+            season1.watchedCount shouldBe 8
+            season1.totalCount shouldBe 10
+            season1.progressPercentage shouldBe 0.8f
+            season1.isSeasonWatched shouldBe false
+
+            val season2 = seasonsList.first { it.seasonNumber == 2L }
+            season2.watchedCount shouldBe 3
+            season2.totalCount shouldBe 12
+            season2.progressPercentage shouldBe 0.25f
+            season2.isSeasonWatched shouldBe false
+        }
+    }
+
+    @Test
+    fun `should mark season as watched when all episodes are watched`() = runTest {
+        buildMockData(seasonResult = testSeasonsWithProgress)
+        episodeRepository.setAllSeasonsWatchProgress(testCompletedSeasonProgress)
+
+        val presenter = buildShowDetailsPresenter()
+
+        presenter.state.test {
+            awaitItem()
+
+            val emission = awaitUntil { it.showDetails.seasonsList.isNotEmpty() }
+            val season1 = emission.showDetails.seasonsList.first { it.seasonNumber == 1L }
+
+            season1.watchedCount shouldBe 10
+            season1.totalCount shouldBe 10
+            season1.progressPercentage shouldBe 1f
+            season1.isSeasonWatched shouldBe true
+        }
+    }
+
+    @Test
+    fun `should display total episodes count in ShowDetailsModel`() = runTest {
+        buildMockData()
+        episodeRepository.setShowWatchProgress(
+            testShowWatchProgress.copy(watchedCount = 12, totalCount = 38),
+        )
+
+        val presenter = buildShowDetailsPresenter()
+
+        presenter.state.test {
+            awaitItem()
+
+            val emission = awaitUntil { it.showDetails.totalEpisodesCount > 0 }
+            emission.showDetails.watchedEpisodesCount shouldBe 12
+            emission.showDetails.totalEpisodesCount shouldBe 38
+        }
+    }
+
+    @Test
+    fun `should update season progress when episode is marked as watched`() = runTest {
+        buildMockData(seasonResult = testSeasonsWithProgress)
+        episodeRepository.setAllSeasonsWatchProgress(testPartialSeasonProgress)
+
+        val presenter = buildShowDetailsPresenter()
+
+        presenter.state.test {
+            awaitItem()
+
+            val initialState = awaitUntil { it.showDetails.seasonsList.isNotEmpty() }
+            val season1Initial = initialState.showDetails.seasonsList.first { it.seasonNumber == 1L }
+            season1Initial.watchedCount shouldBe 5
+            season1Initial.progressPercentage shouldBe 0.5f
+
+            episodeRepository.setAllSeasonsWatchProgress(
+                listOf(
+                    testPartialSeasonProgress.first().copy(watchedCount = 6),
+                ),
+            )
+
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            val updatedState = awaitUntil {
+                it.showDetails.seasonsList.firstOrNull { s -> s.seasonNumber == 1L }?.watchedCount == 6
+            }
+            val season1Updated = updatedState.showDetails.seasonsList.first { it.seasonNumber == 1L }
+            season1Updated.watchedCount shouldBe 6
+            season1Updated.progressPercentage shouldBe 0.6f
+        }
+    }
+
+    @Test
+    fun `should display zero progress when no episodes are watched`() = runTest {
+        buildMockData(seasonResult = testSeasonsWithProgress)
+        episodeRepository.setAllSeasonsWatchProgress(emptyList())
+
+        val presenter = buildShowDetailsPresenter()
+
+        presenter.state.test {
+            awaitItem()
+
+            val emission = awaitUntil { it.showDetails.seasonsList.isNotEmpty() }
+            val season1 = emission.showDetails.seasonsList.first { it.seasonNumber == 1L }
+
+            season1.watchedCount shouldBe 0
+            season1.totalCount shouldBe 0
+            season1.progressPercentage shouldBe 0f
+            season1.isSeasonWatched shouldBe false
+        }
     }
 
     private suspend fun buildMockData(
@@ -244,6 +536,8 @@ class ShowDetailsPresenterTest {
             ),
             showDetailsInteractor = ShowDetailsInteractor(
                 showDetailsRepository = showDetailsRepository,
+                seasonsRepository = seasonsRepository,
+                seasonDetailsRepository = seasonDetailsRepository,
                 dispatchers = coroutineDispatcher,
             ),
             similarShowsInteractor = SimilarShowsInteractor(
@@ -256,6 +550,7 @@ class ShowDetailsPresenterTest {
             ),
             observableShowDetailsInteractor = ObservableShowDetailsInteractor(
                 castRepository = castRepository,
+                episodeRepository = episodeRepository,
                 recommendedShowsRepository = recommendedShowsRepository,
                 seasonsRepository = seasonsRepository,
                 showDetailsRepository = showDetailsRepository,
@@ -265,7 +560,27 @@ class ShowDetailsPresenterTest {
                 formatterUtil = fakeFormatterUtil,
                 dispatchers = coroutineDispatcher,
             ),
+            markEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(
+                episodeRepository = episodeRepository,
+            ),
+            observeShowWatchProgressInteractor = ObserveShowWatchProgressInteractor(
+                episodeRepository = episodeRepository,
+            ),
+            observeContinueTrackingInteractor = ObserveContinueTrackingInteractor(
+                episodeRepository = episodeRepository,
+            ),
             logger = FakeLogger(),
         )
+    }
+
+    private suspend fun <T> ReceiveTurbine<T>.awaitUntil(
+        maxAttempts: Int = 10,
+        predicate: (T) -> Boolean,
+    ): T {
+        repeat(maxAttempts) {
+            val item = awaitItem()
+            if (predicate(item)) return item
+        }
+        throw AssertionError("Condition not met after $maxAttempts attempts")
     }
 }

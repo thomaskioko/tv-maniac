@@ -10,6 +10,8 @@ public struct HeaderView: View {
     private let year: String
     private let language: String?
     private let rating: Double
+    private let seasonCount: Int
+    private let seasonCountFormat: (_ count: Int) -> String
     private let progress: CGFloat
     private let headerHeight: CGFloat
 
@@ -21,6 +23,8 @@ public struct HeaderView: View {
         year: String,
         language: String?,
         rating: Double,
+        seasonCount: Int,
+        seasonCountFormat: @escaping (_ count: Int) -> String,
         progress: CGFloat,
         headerHeight: CGFloat = 460
     ) {
@@ -31,6 +35,8 @@ public struct HeaderView: View {
         self.year = year
         self.language = language
         self.rating = rating
+        self.seasonCount = seasonCount
+        self.seasonCountFormat = seasonCountFormat
         self.progress = progress
         self.headerHeight = headerHeight
     }
@@ -68,7 +74,9 @@ public struct HeaderView: View {
                     status: status,
                     year: year,
                     language: language,
-                    rating: rating
+                    rating: rating,
+                    seasonCount: seasonCount,
+                    seasonCountFormat: seasonCountFormat
                 )
                 .opacity(1 - progress)
                 .padding(.bottom, theme.spacing.xxxSmall)
@@ -90,6 +98,8 @@ public struct HeaderView: View {
             year: "2024",
             language: "EN",
             rating: 4.8,
+            seasonCount: 2,
+            seasonCountFormat: { count in count == 1 ? "\(count) Season" : "\(count) Seasons" },
             progress: 0
         )
 
