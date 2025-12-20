@@ -68,7 +68,7 @@ class DefaultWatchlistPresenter(
             query = query,
             isSearchActive = query.isNotBlank(),
             isGridMode = isGridMode,
-            isLoading = isLoading || upNextLoading,
+            isRefreshing = isLoading || upNextLoading,
             watchNextItems = sectionedItems.watchNext,
             staleItems = sectionedItems.stale,
             watchNextEpisodes = sectionedEpisodes.watchNext,
