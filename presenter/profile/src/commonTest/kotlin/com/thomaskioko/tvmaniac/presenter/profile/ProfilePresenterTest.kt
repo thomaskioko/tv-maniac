@@ -160,7 +160,7 @@ internal class ProfilePresenterTest {
             loadedState.userProfile shouldBe createExpectedProfileInfo(testProfile)
             loadedState.authenticated shouldBe true
             loadedState.isLoading shouldBe false
-            loadedState.isRefreshing shouldBe false
+            loadedState.isAuthenticating shouldBe false
         }
     }
 
@@ -188,6 +188,7 @@ internal class ProfilePresenterTest {
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             onSettings = { },
             traktAuthManager = traktAuthManager,
+            traktAuthRepository = traktAuthRepository,
             updateUserProfileData = updateUserProfileData,
             logger = logger,
             observeUserProfileInteractor = observeUserProfileInteractor,

@@ -53,6 +53,7 @@ class SettingsPresenterTest {
             logoutInteractor = LogoutInteractor(
                 traktAuthRepository = traktAuthRepository,
                 userRepository = userRepository,
+                datastoreRepository = datastoreRepository,
             ),
             backClicked = {},
         )
