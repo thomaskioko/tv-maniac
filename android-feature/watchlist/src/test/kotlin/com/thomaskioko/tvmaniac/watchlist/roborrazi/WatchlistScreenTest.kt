@@ -35,7 +35,7 @@ class WatchlistScreenTest {
                     state = WatchlistState(
                         isRefreshing = false,
                         watchNextItems = watchlistItems,
-                        staleItems = watchlistItems
+                        staleItems = watchlistItems,
                     ),
                     onAction = {},
                 )
@@ -52,7 +52,7 @@ class WatchlistScreenTest {
                         isGridMode = false,
                         isRefreshing = false,
                         watchNextEpisodes = watchNextEpisodes,
-                        staleEpisodes = watchNextEpisodes
+                        staleEpisodes = watchNextEpisodes,
                     ),
                     onAction = {},
                 )

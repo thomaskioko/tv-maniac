@@ -18,7 +18,7 @@ class FakeDatastoreRepository : DatastoreRepository {
     private val imageQualityFlow = MutableStateFlow(ImageQuality.MEDIUM)
     private val openTrailersInYoutubeFlow = MutableStateFlow(false)
     private val includeSpecialsFlow = MutableStateFlow(false)
-    private val lastTraktUserId : MutableStateFlow<String?> = MutableStateFlow(null)
+    private val lastTraktUserId: MutableStateFlow<String?> = MutableStateFlow(null)
 
     suspend fun setTheme(appTheme: AppTheme) {
         appThemeFlow.value = appTheme
