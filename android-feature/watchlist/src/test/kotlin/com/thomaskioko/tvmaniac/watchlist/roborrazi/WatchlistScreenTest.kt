@@ -28,11 +28,12 @@ class WatchlistScreenTest {
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
     @Test
-    fun libraryScreenLoadedState() {
+    fun watchlistListGridViewState() {
         composeTestRule.captureMultiDevice("WatchlistListGridView") {
             TvManiacBackground {
                 WatchlistScreen(
                     state = WatchlistState(
+                        isRefreshing = false,
                         watchNextItems = watchlistItems,
                         staleItems = watchlistItems
                     ),
@@ -43,7 +44,7 @@ class WatchlistScreenTest {
     }
 
     @Test
-    fun libraryScreenListView() {
+    fun watchlistListViewListView() {
         composeTestRule.captureMultiDevice("WatchlistListView") {
             TvManiacBackground {
                 WatchlistScreen(

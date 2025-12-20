@@ -259,7 +259,7 @@ private fun TopBar(
                         LoadingIndicator(
                             modifier = Modifier
                                 .size(24.dp)
-                                .padding(8.dp),
+                                .padding(end = 16.dp),
                         )
                     }
                 }
