@@ -9,7 +9,7 @@ android-target = "36"
 java-target = "21"
 java-toolchain = "21"
 
-agp = "8.13.1"
+agp = "8.13.2"
 android-lint = "31.13.2"
 androidx-activity = "1.12.2"
 androidx-annotation = "1.9.1"
