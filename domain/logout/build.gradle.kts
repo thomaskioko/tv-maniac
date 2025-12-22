@@ -19,18 +19,10 @@ kotlin {
                 api(projects.core.util)
 
                 implementation(projects.core.base)
+                implementation(projects.data.datastore.api)
 
                 implementation(libs.coroutines.core)
                 implementation(libs.kotlinInject.runtime)
-            }
-        }
-
-        commonTest {
-            dependencies {
-                implementation(projects.data.user.testing)
-                implementation(projects.data.traktauth.testing)
-
-                implementation(libs.bundles.unittest)
             }
         }
     }

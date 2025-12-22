@@ -18,7 +18,9 @@ import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileInfo
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileState
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileStats
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -35,6 +37,7 @@ public class DefaultProfilePresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val onSettings: () -> Unit,
     private val traktAuthManager: TraktAuthManager,
+    private val traktAuthRepository: TraktAuthRepository,
     private val updateUserProfileData: UpdateUserProfileData,
     private val logger: Logger,
     observeUserProfileInteractor: ObserveUserProfileInteractor,
@@ -43,23 +46,32 @@ public class DefaultProfilePresenter(
     private val profileLoadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
     private val coroutineScope = coroutineScope()
+    private val isAuthenticating = MutableStateFlow(false)
 
     init {
         observeUserProfileInteractor(Unit)
+        coroutineScope.launch {
+            observeUserProfileInteractor.flow.collect { profile ->
+                if (profile != null && profile.authState == TraktAuthState.LOGGED_IN) {
+                    isAuthenticating.value = false
+                }
+            }
+        }
     }
 
     override val state: StateFlow<ProfileState> = combine(
         observeUserProfileInteractor.flow,
+        traktAuthRepository.state,
         profileLoadingState.observable,
+        isAuthenticating,
         uiMessageManager.message,
-    ) { userProfile, isLoading, errorMessage ->
-
-        val authenticated = userProfile?.authState == TraktAuthState.LOGGED_IN
+    ) { userProfile, authState, isLoading, authenticating, errorMessage ->
+        val authenticated = authState == TraktAuthState.LOGGED_IN
 
         ProfileState(
             userProfile = userProfile?.toPresentation(),
             isLoading = isLoading,
-            isRefreshing = false,
+            isAuthenticating = authenticating,
             errorMessage = errorMessage,
             authenticated = authenticated,
         )
@@ -73,6 +85,7 @@ public class DefaultProfilePresenter(
         when (action) {
             LoginClicked -> {
                 coroutineScope.launch {
+                    isAuthenticating.value = true
                     traktAuthManager.launchWebView()
                 }
             }

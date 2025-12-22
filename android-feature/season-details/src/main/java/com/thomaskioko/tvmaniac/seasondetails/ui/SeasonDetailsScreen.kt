@@ -143,15 +143,7 @@ internal fun SeasonDetailsScreen(
         },
         content = { contentPadding ->
             Box(Modifier.fillMaxSize()) {
-                if (state.message == null) {
-                    LazyColumnContent(
-                        seasonDetailsModel = state,
-                        isLoading = state.isRefreshing,
-                        contentPadding = contentPadding,
-                        onAction = onAction,
-                        listState = listState,
-                    )
-                } else {
+                if (state.showError) {
                     ErrorUi(
                         errorIcon = {
                             Image(
@@ -164,6 +156,14 @@ internal fun SeasonDetailsScreen(
                         modifier = Modifier.fillMaxSize(),
                         errorMessage = state.message?.message,
                         onRetry = { onAction(ReloadSeasonDetails) },
+                    )
+                } else {
+                    LazyColumnContent(
+                        seasonDetailsModel = state,
+                        isLoading = state.isRefreshing,
+                        contentPadding = contentPadding,
+                        onAction = onAction,
+                        listState = listState,
                     )
                 }
 

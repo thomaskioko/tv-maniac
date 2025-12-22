@@ -1,5 +1,11 @@
 import SwiftUI
 
+public enum SwiftEpisodeBadge {
+    case premiere
+    case new
+    case none
+}
+
 public struct SwiftNextEpisode: Identifiable {
     public let id: UUID = .init()
     public let showId: Int64
@@ -14,7 +20,8 @@ public struct SwiftNextEpisode: Identifiable {
     public let runtime: String?
     public let stillImage: String?
     public let overview: String
-    public let isNew: Bool
+    public let badge: SwiftEpisodeBadge
+    public let remainingEpisodes: Int32
 
     public init(
         showId: Int64,
@@ -29,7 +36,8 @@ public struct SwiftNextEpisode: Identifiable {
         runtime: String?,
         stillImage: String?,
         overview: String,
-        isNew: Bool
+        badge: SwiftEpisodeBadge = .none,
+        remainingEpisodes: Int32 = 0
     ) {
         self.showId = showId
         self.showName = showName
@@ -43,6 +51,7 @@ public struct SwiftNextEpisode: Identifiable {
         self.runtime = runtime
         self.stillImage = stillImage
         self.overview = overview
-        self.isNew = isNew
+        self.badge = badge
+        self.remainingEpisodes = remainingEpisodes
     }
 }

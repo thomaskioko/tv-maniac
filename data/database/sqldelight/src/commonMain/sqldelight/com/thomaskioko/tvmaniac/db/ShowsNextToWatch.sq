@@ -17,7 +17,9 @@ SELECT
     episode.overview,
     tvshow.name AS show_name,
     tvshow.poster_path AS show_poster,
-    ((1000 * season.season_number) + episode.episode_number) AS next_ep_abs_number
+    ((1000 * season.season_number) + episode.episode_number) AS next_ep_abs_number,
+    episode.air_date,
+    lw.last_watched_at
 FROM tvshow
 INNER JOIN season ON tvshow.id = season.show_id
 INNER JOIN episode ON episode.season_id = season.id AND episode.show_id = tvshow.id
@@ -69,7 +71,9 @@ SELECT
     snw.show_name,
     snw.show_poster,
     snw.next_ep_abs_number,
-    w.created_at AS followed_at
+    w.created_at AS followed_at,
+    snw.air_date,
+    snw.last_watched_at
 FROM shows_next_to_watch snw
 INNER JOIN watchlist w ON snw.show_id = w.id
 ORDER BY w.created_at DESC, snw.season_number, snw.episode_number;

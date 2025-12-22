@@ -1,0 +1,36 @@
+-- Migration 10: Add air_date and last_watched_at to shows_next_to_watch view for sectioned watchlist
+
+DROP VIEW IF EXISTS shows_next_to_watch;
+
+CREATE VIEW shows_next_to_watch AS
+SELECT
+    tvshow.id AS show_id,
+    episode.id AS episode_id,
+    episode.title AS episode_name,
+    season.id AS season_id,
+    season.season_number,
+    episode.episode_number,
+    episode.runtime,
+    episode.image_url AS still_path,
+    episode.overview,
+    tvshow.name AS show_name,
+    tvshow.poster_path AS show_poster,
+    ((1000 * season.season_number) + episode.episode_number) AS next_ep_abs_number,
+    episode.air_date,
+    lw.last_watched_at
+FROM tvshow
+INNER JOIN season ON tvshow.id = season.show_id
+INNER JOIN episode ON episode.season_id = season.id AND episode.show_id = tvshow.id
+LEFT JOIN watched_episodes AS we ON (
+    we.show_id = tvshow.id
+    AND we.episode_id = episode.id
+)
+LEFT JOIN shows_last_watched AS lw ON lw.show_id = tvshow.id
+WHERE (season.season_number > 0 OR (season.season_number = 0 AND season.title != 'Specials'))
+  AND we.episode_id IS NULL
+  AND (
+      lw.last_watched_abs_number IS NULL OR
+      ((1000 * season.season_number) + episode.episode_number) > lw.last_watched_abs_number
+  )
+  AND (episode.air_date IS NULL OR episode.air_date <= date('now'))
+ORDER BY tvshow.id, season.season_number, episode.episode_number;

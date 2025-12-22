@@ -103,6 +103,9 @@ class DefaultHomePresenter private constructor(
                         navigateToShowDetails = { id ->
                             onShowClicked(id)
                         },
+                        navigateToSeason = { showId, seasonId, seasonNumber ->
+                            // TODO:: Add Navigation to season detail
+                        },
                     ),
                 )
             }

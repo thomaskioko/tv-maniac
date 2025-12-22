@@ -33,6 +33,7 @@
     <string name="label_watchlist_search_hint">Enter a show title to search for Show</string>
     <string name="label_watchlist_sort_list">Sort List</string>
     <string name="label_watchlist_empty_result">%s not found in your watchlist.</string>
+    <string name="label_followed_shows">Followed Shows</string>
 
 
     <string name="label_settings_title">Settings</string>
@@ -153,7 +154,10 @@
     <string name="title_all_episodes">All Episodes</string>
     <string name="title_episodes">Episodes</string>
     <string name="title_watch_next">Watch Next</string>
+    <string name="title_not_watched_for_while">Haven\'t Watched For A While</string>
     <string name="title_continue_tracking">Continue Tracking</string>
+    <string name="badge_premiere">PREMIERE</string>
+    <string name="badge_new">NEW</string>
     <string name="title_browse_by_genre">Browse by Genre</string>
     <string name="status_connected">Back Online!</string>
     <string name="status_no_connection">No Internet Connection!</string>

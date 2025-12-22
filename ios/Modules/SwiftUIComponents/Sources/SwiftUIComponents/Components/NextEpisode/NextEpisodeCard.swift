@@ -149,7 +149,7 @@ private enum DimensionConstants {
                 runtime: "45 min",
                 stillImage: "/still.jpg",
                 overview: "Daryl washes ashore in France and struggles to piece together how he got there and why.",
-                isNew: true
+                badge: .new
             ),
             markWatchedLabel: "Mark as Watched",
             unfollowShowLabel: "Unfollow Show",

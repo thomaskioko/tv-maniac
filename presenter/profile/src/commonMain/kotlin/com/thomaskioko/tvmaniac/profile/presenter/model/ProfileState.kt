@@ -4,15 +4,18 @@ import com.thomaskioko.tvmaniac.core.view.UiMessage
 
 public data class ProfileState(
     val isLoading: Boolean,
-    val isRefreshing: Boolean = false,
+    val isAuthenticating: Boolean = false,
     val userProfile: ProfileInfo?,
     val errorMessage: UiMessage? = null,
     val authenticated: Boolean,
 ) {
+    val showLoading: Boolean
+        get() = userProfile == null && (isLoading || isAuthenticating || authenticated)
+
     public companion object {
         public val DEFAULT_STATE: ProfileState = ProfileState(
-            isLoading = false,
-            isRefreshing = false,
+            isLoading = true,
+            isAuthenticating = false,
             userProfile = null,
             errorMessage = null,
             authenticated = false,

@@ -90,7 +90,7 @@ public struct NextEpisodesSection: View {
                     runtime: "45 min",
                     stillImage: "https://image.tmdb.org/t/p/w780/ydlY3iPfeOAvu8gVqrxPoMvzNCn.jpg",
                     overview: "Daryl washes ashore in France and struggles to piece together how he got there and why.",
-                    isNew: true
+                    badge: .premiere
                 ),
                 SwiftNextEpisode(
                     showId: 124,
@@ -102,7 +102,7 @@ public struct NextEpisodesSection: View {
                     runtime: "50 min",
                     stillImage: "https://image.tmdb.org/t/p/w780/dC0oTEMAPnBzM0RU15qArHoqnH5.jpg",
                     overview: "Wednesday arrives at Nevermore Academy.",
-                    isNew: false
+                    badge: .new
                 ),
                 SwiftNextEpisode(
                     showId: 125,
@@ -114,7 +114,7 @@ public struct NextEpisodesSection: View {
                     runtime: "66 min",
                     stillImage: "https://image.tmdb.org/t/p/w780/dragon-still.jpg",
                     overview: "King Viserys hosts a tournament.",
-                    isNew: true
+                    badge: .new
                 ),
             ],
             chevronStyle: .chevronOnly,

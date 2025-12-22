@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import com.thomaskioko.tvmaniac.ui.library.WatchlistScreen
+import com.thomaskioko.tvmaniac.ui.library.watchNextEpisodes
 import com.thomaskioko.tvmaniac.ui.library.watchlistItems
 import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistState
 import kotlinx.collections.immutable.persistentListOf
@@ -27,11 +28,15 @@ class WatchlistScreenTest {
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
     @Test
-    fun libraryScreenLoadedState() {
+    fun watchlistListGridViewState() {
         composeTestRule.captureMultiDevice("WatchlistListGridView") {
             TvManiacBackground {
                 WatchlistScreen(
-                    state = WatchlistState(items = watchlistItems),
+                    state = WatchlistState(
+                        isRefreshing = false,
+                        watchNextItems = watchlistItems,
+                        staleItems = watchlistItems,
+                    ),
                     onAction = {},
                 )
             }
@@ -39,14 +44,15 @@ class WatchlistScreenTest {
     }
 
     @Test
-    fun libraryScreenListView() {
+    fun watchlistListViewListView() {
         composeTestRule.captureMultiDevice("WatchlistListView") {
             TvManiacBackground {
                 WatchlistScreen(
                     state = WatchlistState(
                         isGridMode = false,
-                        items = watchlistItems,
-                        message = UiMessage(message = "Something went Wrong"),
+                        isRefreshing = false,
+                        watchNextEpisodes = watchNextEpisodes,
+                        staleEpisodes = watchNextEpisodes,
                     ),
                     onAction = {},
                 )
@@ -61,7 +67,8 @@ class WatchlistScreenTest {
                 WatchlistScreen(
                     state = WatchlistState(
                         isGridMode = false,
-                        items = persistentListOf(),
+                        isRefreshing = false,
+                        watchNextItems = persistentListOf(),
                         query = "Show title",
                         message = UiMessage(message = "Something went Wrong"),
                     ),
@@ -78,7 +85,8 @@ class WatchlistScreenTest {
                 WatchlistScreen(
                     state = WatchlistState(
                         isGridMode = false,
-                        items = persistentListOf(),
+                        isRefreshing = false,
+                        watchNextItems = persistentListOf(),
                         message = UiMessage(message = "Something went Wrong"),
                     ),
                     onAction = {},

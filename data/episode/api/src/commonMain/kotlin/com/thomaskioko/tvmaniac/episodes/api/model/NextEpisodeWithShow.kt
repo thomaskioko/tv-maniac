@@ -13,4 +13,6 @@ public data class NextEpisodeWithShow(
     val stillPath: String?,
     val overview: String,
     val followedAt: Long? = null,
+    val airDate: String? = null,
+    val lastWatchedAt: Long? = null,
 )

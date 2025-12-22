@@ -37,15 +37,15 @@ struct SeasonDetailsView: View {
         ZStack {
             theme.colors.background.edgesIgnoringSafeArea(.all)
 
-            if uiState.message == nil {
-                SeasonDetailsContent(uiState)
-            } else {
+            if uiState.showError {
                 FullScreenView(
                     systemName: "exclamationmark.triangle.fill",
                     message: String(\.generic_error_message),
                     buttonText: String(\.button_error_retry),
                     action: { presenter.dispatch(action: ReloadSeasonDetails()) }
                 )
+            } else {
+                SeasonDetailsContent(uiState)
             }
         }
         .ignoresSafeArea()

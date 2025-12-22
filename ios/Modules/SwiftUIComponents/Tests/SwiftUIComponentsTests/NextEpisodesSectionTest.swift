@@ -32,7 +32,6 @@ class NextEpisodesSectionTest: SnapshotTestCase {
                     runtime: "45 min",
                     stillImage: "/still1.jpg",
                     overview: "Daryl washes ashore in France and struggles to piece together how he got there and why.",
-                    isNew: true
                 ),
             ],
             markWatchedLabel: "Mark as Watched",
@@ -58,8 +57,7 @@ class NextEpisodesSectionTest: SnapshotTestCase {
                     episodeNumber: "S02E01",
                     runtime: "45 min",
                     stillImage: "/still1.jpg",
-                    overview: "Daryl washes ashore in France and struggles to piece together how he got there and why.",
-                    isNew: true
+                    overview: "Daryl washes ashore in France and struggles to piece together how he got there and why."
                 ),
                 SwiftNextEpisode(
                     showId: 124,
@@ -70,8 +68,7 @@ class NextEpisodesSectionTest: SnapshotTestCase {
                     episodeNumber: "S02E02",
                     runtime: "50 min",
                     stillImage: "/still2.jpg",
-                    overview: "Wednesday arrives at Nevermore Academy and immediately gets off on the wrong foot.",
-                    isNew: false
+                    overview: "Wednesday arrives at Nevermore Academy and immediately gets off on the wrong foot."
                 ),
                 SwiftNextEpisode(
                     showId: 125,
@@ -82,8 +79,7 @@ class NextEpisodesSectionTest: SnapshotTestCase {
                     episodeNumber: "S03E01",
                     runtime: "66 min",
                     stillImage: "/still3.jpg",
-                    overview: "King Viserys hosts a tournament to celebrate the birth of his second child.",
-                    isNew: true
+                    overview: "King Viserys hosts a tournament to celebrate the birth of his second child."
                 ),
             ],
             markWatchedLabel: "Mark as Watched",
@@ -109,8 +105,7 @@ class NextEpisodesSectionTest: SnapshotTestCase {
                     episodeNumber: "S02E01",
                     runtime: "45 min",
                     stillImage: "/still1.jpg",
-                    overview: "Daryl washes ashore in France and struggles to piece together how he got there and why.",
-                    isNew: true
+                    overview: "Daryl washes ashore in France and struggles to piece together how he got there and why."
                 ),
                 SwiftNextEpisode(
                     showId: 124,
@@ -121,8 +116,7 @@ class NextEpisodesSectionTest: SnapshotTestCase {
                     episodeNumber: "S02E02",
                     runtime: "50 min",
                     stillImage: "/still2.jpg",
-                    overview: "Wednesday arrives at Nevermore Academy and immediately gets off on the wrong foot.",
-                    isNew: false
+                    overview: "Wednesday arrives at Nevermore Academy and immediately gets off on the wrong foot."
                 ),
             ],
             chevronStyle: .chevronOnly,
@@ -149,8 +143,7 @@ class NextEpisodesSectionTest: SnapshotTestCase {
                     episodeNumber: "S02E01",
                     runtime: "45 min",
                     stillImage: "/still1.jpg",
-                    overview: "Daryl washes ashore in France and struggles to piece together how he got there and why.",
-                    isNew: true
+                    overview: "Daryl washes ashore in France and struggles to piece together how he got there and why."
                 ),
             ],
             chevronStyle: .withTitle("See All"),
