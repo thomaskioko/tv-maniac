@@ -25,15 +25,5 @@ kotlin {
                 implementation(libs.kotlinInject.runtime)
             }
         }
-
-        commonTest {
-            dependencies {
-                implementation(projects.data.datastore.testing)
-                implementation(projects.data.user.testing)
-                implementation(projects.data.traktauth.testing)
-
-                implementation(libs.bundles.unittest)
-            }
-        }
     }
 }
