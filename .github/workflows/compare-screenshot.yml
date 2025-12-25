@@ -40,7 +40,7 @@ jobs:
           BASE_SHA=$(git merge-base origin/${{ github.event.pull_request.base.ref }} HEAD)
           echo "base_sha=$BASE_SHA" >> "$GITHUB_OUTPUT"
 
-      - uses: dawidd6/action-download-artifact@v11
+      - uses: dawidd6/action-download-artifact@v12
         continue-on-error: true
         with:
           name: screenshot
