@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 public interface WatchlistDao {
 
-    public fun upsert(id: Long)
+    public fun upsertWithPendingUpload(id: Long)
 
     public fun getShowsInWatchlist(): List<Watchlists>
 
@@ -17,13 +17,15 @@ public interface WatchlistDao {
 
     public fun observeShowsInWatchlist(): Flow<List<Watchlists>>
 
+    public fun observeShowsInWatchlistFiltered(includeSpecials: Boolean): Flow<List<Watchlists>>
+
     public fun observeWatchlistByQuery(query: String): Flow<List<SearchWatchlist>>
 
     public fun observeUnSyncedWatchlist(): Flow<List<Id<TmdbId>>>
 
     public fun delete(id: Long)
 
-    public fun upsert(entity: Show_metadata)
+    public fun markForDeletion(id: Long)
 
     public suspend fun isShowInLibrary(showId: Long): Boolean
 

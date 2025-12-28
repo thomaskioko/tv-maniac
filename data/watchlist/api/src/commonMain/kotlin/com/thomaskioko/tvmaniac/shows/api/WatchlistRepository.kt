@@ -8,9 +8,12 @@ public interface WatchlistRepository {
 
     public fun observeWatchlist(): Flow<List<Watchlists>>
 
-    public fun searchWatchlistByQuery(query: String): Flow<List<SearchWatchlist>>
+    public fun observeWatchlistFiltered(includeSpecials: Boolean): Flow<List<Watchlists>>
 
     public fun observeUnSyncedItems(): Flow<Unit>
+    public fun searchWatchlistByQuery(query: String): Flow<List<SearchWatchlist>>
+
+    public suspend fun updateLibrary(id: Long, addToLibrary: Boolean)
 
     /**
      * Observes the user's preferred list style for the watchlist.
