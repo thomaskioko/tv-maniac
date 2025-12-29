@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.app
 
 import android.app.Application
+import android.os.Build
+import android.os.StrictMode
 import androidx.work.Configuration
 import androidx.work.WorkerFactory
 import com.thomaskioko.tvmaniac.core.base.extensions.unsafeLazy
@@ -18,6 +20,8 @@ public class TvManicApplication : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
+        setupStrictMode()
+
         workerFactory = component.workerFactory
         component.initializers.initialize()
     }
@@ -28,4 +32,31 @@ public class TvManicApplication : Application(), Configuration.Provider {
             .build()
 
     internal fun getApplicationComponent() = component
+}
+
+private fun setupStrictMode() {
+    StrictMode.setThreadPolicy(
+        StrictMode.ThreadPolicy.Builder()
+            .detectAll()
+            .penaltyLog()
+            .build(),
+    )
+
+    StrictMode.setVmPolicy(
+        StrictMode.VmPolicy.Builder()
+            .detectLeakedSqlLiteObjects()
+            .detectActivityLeaks()
+            .detectLeakedClosableObjects()
+            .detectLeakedRegistrationObjects()
+            .detectFileUriExposure()
+            .detectCleartextNetwork()
+            .apply {
+                if (Build.VERSION.SDK_INT >= 31) {
+                    detectIncorrectContextUse()
+                    detectUnsafeIntentLaunch()
+                }
+            }
+            .penaltyLog()
+            .build(),
+    )
 }
