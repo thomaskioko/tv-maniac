@@ -86,7 +86,7 @@ import kotlinx.collections.immutable.ImmutableList
 import java.util.Locale
 
 @Composable
-fun WatchlistScreen(
+public fun WatchlistScreen(
     presenter: WatchlistPresenter,
     modifier: Modifier = Modifier,
 ) {

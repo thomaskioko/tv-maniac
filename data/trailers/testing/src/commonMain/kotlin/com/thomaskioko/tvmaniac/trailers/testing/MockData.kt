@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.trailers.testing
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.Trailers
 
-val trailers = listOf(
+public val trailers: List<Trailers> = listOf(
     Trailers(
         id = "1231",
         show_id = Id(84958),

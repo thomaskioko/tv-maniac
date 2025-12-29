@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TmdbShowResult(
+public data class TmdbShowResult(
     @SerialName("page") var page: Int,
     @SerialName("total_pages") var totalPages: Int,
     @SerialName("total_results") var totalResults: Int,
@@ -12,7 +12,7 @@ data class TmdbShowResult(
 )
 
 @Serializable
-data class TmdbShowResponse(
+public data class TmdbShowResponse(
     @SerialName("id") var id: Int,
     @SerialName("name") var name: String,
     @SerialName("overview") var overview: String,

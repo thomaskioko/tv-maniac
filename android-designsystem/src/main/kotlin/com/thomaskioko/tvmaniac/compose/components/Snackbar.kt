@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 
 @Composable
-fun SnackBarErrorRetry(
+public fun SnackBarErrorRetry(
     snackBarHostState: SnackbarHostState,
     errorMessage: String?,
     actionLabel: String?,

@@ -13,7 +13,7 @@ import com.thomaskioko.tvmaniac.compose.components.ScanlineOverlay
 import com.thomaskioko.tvmaniac.compose.components.toScanlineConfiguration
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 
-val LightColorScheme = lightColorScheme(
+public val LightColorScheme: ColorScheme = lightColorScheme(
     primary = md_theme_light_primary,
     onPrimary = md_theme_light_onPrimary,
     primaryContainer = md_theme_light_primaryContainer,
@@ -27,7 +27,7 @@ val LightColorScheme = lightColorScheme(
     outline = md_theme_light_outline,
 )
 
-val DarkColorScheme = darkColorScheme(
+public val DarkColorScheme: ColorScheme = darkColorScheme(
     primary = md_theme_dark_primary,
     onPrimary = md_theme_dark_onPrimary,
     primaryContainer = md_theme_dark_primaryContainer,
@@ -41,7 +41,7 @@ val DarkColorScheme = darkColorScheme(
     outline = md_theme_dark_outline,
 )
 
-val TerminalColorScheme = darkColorScheme(
+public val TerminalColorScheme: ColorScheme = darkColorScheme(
     primary = md_theme_terminal_primary,
     onPrimary = md_theme_terminal_onPrimary,
     primaryContainer = md_theme_terminal_primaryContainer,
@@ -56,7 +56,7 @@ val TerminalColorScheme = darkColorScheme(
     outline = md_theme_terminal_outline,
 )
 
-val AutumnColorScheme = lightColorScheme(
+public val AutumnColorScheme: ColorScheme = lightColorScheme(
     primary = md_theme_autumn_primary,
     onPrimary = md_theme_autumn_onPrimary,
     primaryContainer = md_theme_autumn_primaryContainer,
@@ -70,7 +70,7 @@ val AutumnColorScheme = lightColorScheme(
     outline = md_theme_autumn_outline,
 )
 
-val AquaColorScheme = darkColorScheme(
+public val AquaColorScheme: ColorScheme = darkColorScheme(
     primary = md_theme_aqua_primary,
     onPrimary = md_theme_aqua_onPrimary,
     primaryContainer = md_theme_aqua_primaryContainer,
@@ -86,7 +86,7 @@ val AquaColorScheme = darkColorScheme(
     outline = md_theme_aqua_outline,
 )
 
-val AmberColorScheme = darkColorScheme(
+public val AmberColorScheme: ColorScheme = darkColorScheme(
     primary = md_theme_amber_primary,
     onPrimary = md_theme_amber_onPrimary,
     primaryContainer = md_theme_amber_primaryContainer,
@@ -102,7 +102,7 @@ val AmberColorScheme = darkColorScheme(
     outline = md_theme_amber_outline,
 )
 
-val SnowColorScheme = darkColorScheme(
+public val SnowColorScheme: ColorScheme = darkColorScheme(
     primary = md_theme_snow_primary,
     onPrimary = md_theme_snow_onPrimary,
     primaryContainer = md_theme_snow_primaryContainer,
@@ -118,7 +118,7 @@ val SnowColorScheme = darkColorScheme(
     outline = md_theme_snow_outline,
 )
 
-val CrimsonColorScheme = darkColorScheme(
+public val CrimsonColorScheme: ColorScheme = darkColorScheme(
     primary = md_theme_crimson_primary,
     onPrimary = md_theme_crimson_onPrimary,
     primaryContainer = md_theme_crimson_primaryContainer,
@@ -134,7 +134,7 @@ val CrimsonColorScheme = darkColorScheme(
     outline = md_theme_crimson_outline,
 )
 
-fun AppTheme.toColorScheme(isSystemInDarkTheme: Boolean): ColorScheme = when (this) {
+internal fun AppTheme.toColorScheme(isSystemInDarkTheme: Boolean): ColorScheme = when (this) {
     AppTheme.LIGHT_THEME -> LightColorScheme
     AppTheme.DARK_THEME -> DarkColorScheme
     AppTheme.TERMINAL_THEME -> TerminalColorScheme
@@ -147,7 +147,7 @@ fun AppTheme.toColorScheme(isSystemInDarkTheme: Boolean): ColorScheme = when (th
 }
 
 @Composable
-fun TvManiacTheme(
+public fun TvManiacTheme(
     appTheme: AppTheme = AppTheme.SYSTEM_THEME,
     content: @Composable () -> Unit,
 ) {

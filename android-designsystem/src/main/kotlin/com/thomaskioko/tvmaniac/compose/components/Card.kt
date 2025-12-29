@@ -38,7 +38,7 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_show_poster
 
 @Composable
-fun PosterCard(
+public fun PosterCard(
     imageUrl: String?,
     modifier: Modifier = Modifier,
     title: String? = null,
@@ -153,7 +153,7 @@ private fun LibraryOverlay(
 }
 
 @Composable
-fun PosterBackdropCard(
+public fun PosterBackdropCard(
     title: String,
     imageUrl: String?,
     modifier: Modifier = Modifier,

@@ -10,7 +10,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 
 @Inject
 @ContributesBinding(AppScope::class, multibinding = true)
-class GenrePosterInitializer(
+public class GenrePosterInitializer(
     private val genreRepository: GenreRepository,
     private val dispatchers: AppCoroutineDispatchers,
 ) : AppInitializer {

@@ -8,7 +8,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 
 @Inject
 @ContributesBinding(AppScope::class, multibinding = true)
-class LoggingInitializer(
+public class LoggingInitializer(
     private val logger: Logger,
 ) : AppInitializer {
 

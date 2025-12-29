@@ -7,23 +7,23 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 
-class FakeWatchlistRepository : WatchlistRepository {
+public class FakeWatchlistRepository : WatchlistRepository {
 
     private val watchlistResult = MutableStateFlow<List<Watchlists>>(emptyList())
     private val searchlistResult = MutableStateFlow<List<SearchWatchlist>>(emptyList())
     private val listStyleFlow = MutableStateFlow(true)
     private val showsInLibrary = mutableSetOf<Long>()
 
-    var lastUpdateLibraryId: Long? = null
+    public var lastUpdateLibraryId: Long? = null
         private set
-    var lastUpdateLibraryAddToLibrary: Boolean? = null
+    public var lastUpdateLibraryAddToLibrary: Boolean? = null
         private set
 
-    fun setSearchResult(result: List<SearchWatchlist>) {
+    public fun setSearchResult(result: List<SearchWatchlist>) {
         searchlistResult.value = result
     }
 
-    fun setObserveResult(result: List<Watchlists>) {
+    public fun setObserveResult(result: List<Watchlists>) {
         watchlistResult.value = result
     }
 

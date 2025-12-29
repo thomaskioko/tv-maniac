@@ -30,7 +30,7 @@ import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.Validator
 
 @Inject
-class ShowDetailsStore(
+public class ShowDetailsStore(
     private val remoteDataSource: TmdbShowDetailsNetworkDataSource,
     private val castDao: CastDao,
     private val tvShowsDao: TvShowsDao,

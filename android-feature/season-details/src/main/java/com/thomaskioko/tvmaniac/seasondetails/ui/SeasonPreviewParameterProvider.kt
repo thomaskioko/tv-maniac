@@ -8,7 +8,7 @@ import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonImagesModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 
-val episodeDetailsModel = EpisodeDetailsModel(
+internal val episodeDetailsModel = EpisodeDetailsModel(
     id = 2534997,
     episodeNumberTitle = "E01 • Glorious Purpose",
     overview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
@@ -25,7 +25,7 @@ val episodeDetailsModel = EpisodeDetailsModel(
     hasPreviousUnwatched = false,
 )
 
-val seasonDetailsLoaded = SeasonDetailsModel(
+internal val seasonDetailsLoaded = SeasonDetailsModel(
     seasonId = 1,
     seasonName = "Specials",
     episodeCount = 8,
@@ -48,7 +48,7 @@ val seasonDetailsLoaded = SeasonDetailsModel(
     seasonCast = persistentListOf(),
 )
 
-class SeasonPreviewParameterProvider : PreviewParameterProvider<SeasonDetailsModel> {
+internal class SeasonPreviewParameterProvider : PreviewParameterProvider<SeasonDetailsModel> {
     override val values: Sequence<SeasonDetailsModel>
         get() {
             return sequenceOf(

@@ -12,7 +12,7 @@ import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class ShowDetailsInteractor(
+public class ShowDetailsInteractor(
     private val showDetailsRepository: ShowDetailsRepository,
     private val seasonsRepository: SeasonsRepository,
     private val seasonDetailsRepository: SeasonDetailsRepository,
@@ -39,5 +39,5 @@ class ShowDetailsInteractor(
         )
     }
 
-    data class Param(val id: Long, val forceRefresh: Boolean = false)
+    public data class Param(val id: Long, val forceRefresh: Boolean = false)
 }

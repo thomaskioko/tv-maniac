@@ -13,7 +13,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class DefaultCastRepository(
+public class DefaultCastRepository(
     private val dao: CastDao,
 ) : CastRepository {
 

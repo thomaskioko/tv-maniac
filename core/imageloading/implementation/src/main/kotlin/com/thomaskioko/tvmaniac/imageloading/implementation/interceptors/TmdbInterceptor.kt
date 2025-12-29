@@ -10,11 +10,11 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
 @SingleIn(AppScope::class)
-class TmdbInterceptor(
+public class TmdbInterceptor(
     private val imageQualityProvider: ImageQualityProvider,
 ) : Interceptor {
 
-    companion object Companion {
+    public companion object Companion {
         private const val SIZE_W185 = "w185"
         private const val SIZE_W500 = "w500"
         private const val SIZE_W780 = "w780"

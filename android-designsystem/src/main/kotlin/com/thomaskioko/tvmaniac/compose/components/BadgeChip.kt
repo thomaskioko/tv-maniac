@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 
 @Composable
-fun PremiereBadge(
+public fun PremiereBadge(
     text: String,
     modifier: Modifier = Modifier,
 ) {
@@ -30,7 +30,7 @@ fun PremiereBadge(
 }
 
 @Composable
-fun NewBadge(
+public fun NewBadge(
     text: String,
     modifier: Modifier = Modifier,
 ) {

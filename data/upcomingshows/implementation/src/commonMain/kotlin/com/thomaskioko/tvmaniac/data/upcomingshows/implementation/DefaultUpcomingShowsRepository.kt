@@ -9,10 +9,10 @@ import com.thomaskioko.tvmaniac.core.paging.FetchResult
 import com.thomaskioko.tvmaniac.core.paging.PaginatedRemoteMediator
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsDao
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsRepository
+import com.thomaskioko.tvmaniac.data.upcomingshows.implementation.model.UpcomingParams
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.UPCOMING_SHOWS
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
-import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_SORT_ORDER
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import com.thomaskioko.tvmaniac.util.startOfDay
 import kotlinx.coroutines.CancellationException
@@ -31,7 +31,7 @@ import kotlin.time.Duration.Companion.days
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class DefaultUpcomingShowsRepository(
+public class DefaultUpcomingShowsRepository(
     private val dateFormatter: PlatformDateFormatter,
     private val store: UpcomingShowsStore,
     private val dao: UpcomingShowsDao,
@@ -94,10 +94,3 @@ class DefaultUpcomingShowsRepository(
         requestManagerRepository.upsert(entityId = page, requestType = UPCOMING_SHOWS.name)
     }
 }
-
-data class UpcomingParams(
-    val startDate: String,
-    val endDate: String,
-    val page: Long,
-    val sortBy: String = DEFAULT_SORT_ORDER,
-)

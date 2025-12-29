@@ -30,7 +30,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
 @ContributesBinding(ActivityScope::class, SearchShowsPresenter::class)
-class DefaultSearchShowsPresenter(
+public class DefaultSearchShowsPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val onNavigateToShowDetails: (Long) -> Unit,
     @Assisted private val onNavigateToGenre: (Long) -> Unit,
@@ -173,7 +173,7 @@ class DefaultSearchShowsPresenter(
 @Inject
 @SingleIn(ActivityScope::class)
 @ContributesBinding(ActivityScope::class, SearchShowsPresenter.Factory::class)
-class DefaultSearchPresenterFactory(
+public class DefaultSearchPresenterFactory(
     private val presenter: (
         componentContext: ComponentContext,
         onNavigateToShowDetails: (id: Long) -> Unit,

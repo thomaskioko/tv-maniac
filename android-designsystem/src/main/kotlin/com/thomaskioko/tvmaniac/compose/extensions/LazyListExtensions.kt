@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
  *   to position the list correctly.
  */
 @Composable
-fun calculateScrollOffset(
+public fun calculateScrollOffset(
     itemWidth: Dp,
     itemSpacing: Dp = 0.dp,
     visibleFraction: Float = 0.1f,

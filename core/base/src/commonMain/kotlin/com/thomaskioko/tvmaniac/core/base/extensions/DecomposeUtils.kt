@@ -22,7 +22,7 @@ import kotlin.coroutines.CoroutineContext
  * This helper implementation in from Cofetti Kmp App See
  * https://github.com/joreilly/Confetti/blob/fb832c2131b2f3e5276a1a3a30666aa571e1e17e/shared/src/commonMain/kotlin/dev/johnoreilly/confetti/decompose/DecomposeUtils.kt#L27
  */
-fun LifecycleOwner.coroutineScope(
+public fun LifecycleOwner.coroutineScope(
     context: CoroutineContext = Dispatchers.Main.immediate,
 ): CoroutineScope {
     val scope = CoroutineScope(context + SupervisorJob())
@@ -34,7 +34,7 @@ fun LifecycleOwner.coroutineScope(
 /**
  * Creates a Main [CoroutineScope] instance tied to the lifecycle of this [ComponentContext].
  */
-fun LifecycleOwner.componentCoroutineScope(): CoroutineScope =
+public fun LifecycleOwner.componentCoroutineScope(): CoroutineScope =
     MainScope().also { coroutineScope ->
         lifecycle.doOnDestroy { coroutineScope.cancel() }
     }
@@ -42,7 +42,7 @@ fun LifecycleOwner.componentCoroutineScope(): CoroutineScope =
 /**
  * Converts this Decompose [Value] to Kotlin [StateFlow].
  */
-fun <T : Any> Value<T>.asStateFlow(coroutineScope: CoroutineScope): StateFlow<T> = asFlow()
+public fun <T : Any> Value<T>.asStateFlow(coroutineScope: CoroutineScope): StateFlow<T> = asFlow()
     .stateIn(
         scope = coroutineScope,
         started = SharingStarted.Lazily,
@@ -52,7 +52,7 @@ fun <T : Any> Value<T>.asStateFlow(coroutineScope: CoroutineScope): StateFlow<T>
 /**
  * Converts this Decompose [Value] to Kotlin [Flow].
  */
-fun <T : Any> Value<T>.asFlow(): Flow<T> = callbackFlow {
+public fun <T : Any> Value<T>.asFlow(): Flow<T> = callbackFlow {
     val cancellation = subscribe { value ->
         trySendBlocking(value)
     }

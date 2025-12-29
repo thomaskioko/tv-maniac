@@ -6,10 +6,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 
-class FakeShowDetailsRepository : ShowDetailsRepository {
+public class FakeShowDetailsRepository : ShowDetailsRepository {
     private val showDetails = MutableStateFlow<TvshowDetails?>(null)
 
-    fun setShowDetailsResult(result: TvshowDetails) {
+    public fun setShowDetailsResult(result: TvshowDetails) {
         showDetails.value = result
     }
 

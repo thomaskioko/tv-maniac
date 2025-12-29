@@ -12,15 +12,15 @@ import kotlin.reflect.KClass
 
 @MergeComponent(AppScope::class)
 @SingleIn(AppScope::class)
-abstract class IosApplicationComponent : IosViewPresenterComponent.Factory {
-    abstract val initializers: AppInitializers
-    abstract val componentFactory: IosViewPresenterComponent.Factory
-    abstract val traktAuthRepository: TraktAuthRepository
-    abstract val traktAuthManager: TraktAuthManager
-    abstract val logger: Logger
+public abstract class IosApplicationComponent : IosViewPresenterComponent.Factory {
+    public abstract val initializers: AppInitializers
+    public abstract val componentFactory: IosViewPresenterComponent.Factory
+    public abstract val traktAuthRepository: TraktAuthRepository
+    public abstract val traktAuthManager: TraktAuthManager
+    public abstract val logger: Logger
 
-    companion object {
-        fun create() = IosApplicationComponent::class.createComponent()
+    public companion object {
+        public fun create(): IosApplicationComponent = IosApplicationComponent::class.createComponent()
     }
 }
 
@@ -29,4 +29,4 @@ abstract class IosApplicationComponent : IosViewPresenterComponent.Factory {
  * details.
  */
 @CreateComponent
-expect fun KClass<IosApplicationComponent>.createComponent(): IosApplicationComponent
+public expect fun KClass<IosApplicationComponent>.createComponent(): IosApplicationComponent

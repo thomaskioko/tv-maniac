@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 
 @Composable
-fun SheetDragHandle(
+public fun SheetDragHandle(
     onClick: () -> Unit,
     imageVector: ImageVector,
     modifier: Modifier = Modifier,

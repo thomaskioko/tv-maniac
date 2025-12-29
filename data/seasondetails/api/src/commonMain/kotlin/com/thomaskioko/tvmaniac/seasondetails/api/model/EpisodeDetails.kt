@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.seasondetails.api.model
 
-data class EpisodeDetails(
+public data class EpisodeDetails(
     val id: Long,
     val seasonId: Long,
     val name: String,

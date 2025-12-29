@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class ObserveSeasonWatchProgressInteractor(
+public class ObserveSeasonWatchProgressInteractor(
     private val episodeRepository: EpisodeRepository,
 ) : SubjectInteractor<ObserveSeasonWatchProgressParams, SeasonWatchProgress>() {
 
@@ -19,7 +19,7 @@ class ObserveSeasonWatchProgressInteractor(
     }
 }
 
-data class ObserveSeasonWatchProgressParams(
+public data class ObserveSeasonWatchProgressParams(
     val showId: Long,
     val seasonNumber: Long,
 )

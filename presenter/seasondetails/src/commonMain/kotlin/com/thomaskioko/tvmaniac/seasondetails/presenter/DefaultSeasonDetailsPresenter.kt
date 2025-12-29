@@ -40,7 +40,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
 @ContributesBinding(ActivityScope::class, boundType = SeasonDetailsPresenter::class)
-class DefaultSeasonDetailsPresenter(
+public class DefaultSeasonDetailsPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val param: SeasonDetailsUiParam,
     @Assisted private val onBack: () -> Unit,
@@ -301,7 +301,7 @@ class DefaultSeasonDetailsPresenter(
 @Inject
 @SingleIn(ActivityScope::class)
 @ContributesBinding(ActivityScope::class, SeasonDetailsPresenter.Factory::class)
-class DefaultSeasonDetailsPresenterFactory(
+public class DefaultSeasonDetailsPresenterFactory(
     private val presenter: (
         componentContext: ComponentContext,
         param: SeasonDetailsUiParam,

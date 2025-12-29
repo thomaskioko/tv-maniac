@@ -79,7 +79,7 @@ import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
-fun SearchScreen(
+public fun SearchScreen(
     presenter: SearchShowsPresenter,
     modifier: Modifier = Modifier,
 ) {

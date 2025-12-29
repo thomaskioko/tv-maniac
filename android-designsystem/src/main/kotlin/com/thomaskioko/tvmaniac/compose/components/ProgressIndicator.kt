@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.Color
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 
 @Composable
-fun LoadingIndicator(
+public fun LoadingIndicator(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.secondary,
 ) {

@@ -15,7 +15,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Inject
 @SingleIn(TestScope::class)
 @ContributesBinding(TestScope::class, TrailersPresenter.Factory::class)
-class FakeTrailersPresenterFactory : TrailersPresenter.Factory {
+public class FakeTrailersPresenterFactory : TrailersPresenter.Factory {
     override fun invoke(
         componentContext: ComponentContext,
         traktShowId: Long,

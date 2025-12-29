@@ -26,7 +26,7 @@ import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.Validator
 
 @Inject
-class SeasonDetailsStore(
+public class SeasonDetailsStore(
     private val remoteDataSource: TmdbSeasonDetailsNetworkDataSource,
     private val castDao: CastDao,
     private val episodesDao: EpisodesDao,

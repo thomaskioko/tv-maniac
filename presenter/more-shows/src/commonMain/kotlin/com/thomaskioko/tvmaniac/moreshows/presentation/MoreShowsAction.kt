@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.moreshows.presentation
 
-sealed interface MoreShowsActions
+public sealed interface MoreShowsActions
 
-data object MoreBackClicked : MoreShowsActions
+public data object MoreBackClicked : MoreShowsActions
 
-data object RefreshMoreShows : MoreShowsActions
+public data object RefreshMoreShows : MoreShowsActions
 
-data class MoreShowClicked(val showId: Long) : MoreShowsActions
+public data class MoreShowClicked(val showId: Long) : MoreShowsActions

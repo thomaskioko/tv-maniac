@@ -4,16 +4,16 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TraktAddShowRequest(
+public data class TraktAddShowRequest(
     @SerialName("shows") val shows: List<TraktShow>,
 )
 
 @Serializable
-data class TraktShow(
+public data class TraktShow(
     @SerialName("ids") val ids: TraktShowIds,
 )
 
 @Serializable
-data class TraktShowIds(
+public data class TraktShowIds(
     @SerialName("trakt") val traktId: Int,
 )

@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.genre
 
-data class ShowGenresEntity(
-    val id: Long,
-    val name: String,
-    val posterUrl: String?,
+public data class ShowGenresEntity(
+    public val id: Long,
+    public val name: String,
+    public val posterUrl: String?,
 )

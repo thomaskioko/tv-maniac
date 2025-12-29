@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class MarkEpisodeUnwatchedInteractor(
+public class MarkEpisodeUnwatchedInteractor(
     private val episodeRepository: EpisodeRepository,
 ) : Interactor<MarkEpisodeUnwatchedParams>() {
 
@@ -17,7 +17,7 @@ class MarkEpisodeUnwatchedInteractor(
     }
 }
 
-data class MarkEpisodeUnwatchedParams(
+public data class MarkEpisodeUnwatchedParams(
     val showId: Long,
     val episodeId: Long,
 )

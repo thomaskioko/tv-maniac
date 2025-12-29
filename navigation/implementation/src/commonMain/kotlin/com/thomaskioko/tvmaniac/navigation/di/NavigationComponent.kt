@@ -9,11 +9,11 @@ import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @ContributesTo(ActivityScope::class)
-interface NavigationComponent {
+public interface NavigationComponent {
 
     @Provides
     @SingleIn(ActivityScope::class)
-    fun provideRootPresenter(
+    public fun provideRootPresenter(
         componentContext: ComponentContext,
         factory: RootPresenter.Factory,
         navigator: RootNavigator,

@@ -26,7 +26,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class DefaultWatchlistRepository(
+public class DefaultWatchlistRepository(
     private val watchlistDao: WatchlistDao,
     private val watchlistMetadataStore: WatchlistMetadataStore,
     private val datastoreRepository: DatastoreRepository,

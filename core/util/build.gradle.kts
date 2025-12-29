@@ -4,6 +4,7 @@ plugins {
 
 scaffold {
     addAndroidMultiplatformTarget(withDeviceTestBuilder = true)
+    explicitApi()
     useKotlinInject()
     useSerialization()
 

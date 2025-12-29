@@ -36,7 +36,7 @@ import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.seasondetails.ui.episodeDetailsModel
 
 @Composable
-fun EpisodeItem(
+internal fun EpisodeItem(
     imageUrl: String?,
     title: String,
     episodeOverview: String,

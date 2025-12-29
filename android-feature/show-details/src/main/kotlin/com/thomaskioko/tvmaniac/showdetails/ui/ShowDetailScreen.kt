@@ -84,10 +84,10 @@ import com.thomaskioko.tvmaniac.compose.components.TextLoadingItem
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
 import com.thomaskioko.tvmaniac.compose.components.actionIconWhen
+import com.thomaskioko.tvmaniac.compose.extensions.backgroundGradient
 import com.thomaskioko.tvmaniac.compose.extensions.contentBackgroundGradient
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.compose.theme.backgroundGradient
 import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.i18n.MR.strings.btn_add_to_list
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_navigate_back
@@ -128,7 +128,7 @@ import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
-fun ShowDetailsScreen(
+public fun ShowDetailsScreen(
     presenter: ShowDetailsPresenter,
     modifier: Modifier = Modifier,
 ) {
@@ -325,7 +325,7 @@ private fun EmptyListContent(
 }
 
 @Composable
-fun LazyColumnContent(
+internal fun LazyColumnContent(
     detailsContent: ShowDetailsContent,
     listState: LazyListState,
     contentPadding: PaddingValues,
@@ -532,7 +532,7 @@ private fun ShowBody(
 }
 
 @Composable
-fun ShowMetadata(
+internal fun ShowMetadata(
     releaseYear: String,
     status: String?,
     seasonNumber: Int,
@@ -667,7 +667,7 @@ private fun GenreText(
 }
 
 @Composable
-fun ShowDetailButtons(
+internal fun ShowDetailButtons(
     isFollowed: Boolean,
     onTrackShowClicked: (Boolean) -> Unit,
     onAddToList: () -> Unit,
@@ -699,7 +699,7 @@ fun ShowDetailButtons(
 }
 
 @Composable
-fun WatchProvider(
+internal fun WatchProvider(
     list: ImmutableList<ProviderModel>,
     modifier: Modifier = Modifier,
 ) {
@@ -916,7 +916,7 @@ private fun TrailersContent(
 }
 
 @Composable
-fun RecommendedShowsContent(
+internal fun RecommendedShowsContent(
     recommendedShows: ImmutableList<ShowModel>,
     modifier: Modifier = Modifier,
     onShowClicked: (Long) -> Unit = {},
@@ -934,7 +934,7 @@ fun RecommendedShowsContent(
 }
 
 @Composable
-fun SimilarShowsContent(
+internal fun SimilarShowsContent(
     similarShows: ImmutableList<ShowModel>,
     modifier: Modifier = Modifier,
     onShowClicked: (Long) -> Unit = {},

@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TraktUserResponse(
+public data class TraktUserResponse(
     @SerialName("username") val userName: String,
     @SerialName("name") val name: String,
     @SerialName("images") val images: ProfileImages,
@@ -12,16 +12,16 @@ data class TraktUserResponse(
 )
 
 @Serializable
-data class Ids(
+public data class Ids(
     @SerialName("slug") val slug: String,
 )
 
 @Serializable
-data class ProfileImages(
+public data class ProfileImages(
     @SerialName("avatar") val avatar: Avatar,
 ) {
     @Serializable
-    data class Avatar(
+    public data class Avatar(
         @SerialName("full") val full: String,
     )
 }

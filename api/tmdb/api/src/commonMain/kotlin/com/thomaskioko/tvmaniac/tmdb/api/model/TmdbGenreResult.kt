@@ -4,6 +4,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TmdbGenreResult(
+public data class TmdbGenreResult(
     @SerialName("genres") var genres: ArrayList<GenreResponse>,
 )

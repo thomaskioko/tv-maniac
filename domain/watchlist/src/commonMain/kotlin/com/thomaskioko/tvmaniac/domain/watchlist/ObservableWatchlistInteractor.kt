@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class ObservableWatchlistInteractor(
+public class ObservableWatchlistInteractor(
     private val watchlistRepository: WatchlistRepository,
     private val dispatchers: AppCoroutineDispatchers,
 ) : SubjectInteractor<ObservableWatchlistInteractor.Param, WatchlistData>() {
@@ -28,12 +28,12 @@ class ObservableWatchlistInteractor(
         }.flowOn(dispatchers.io)
     }
 
-    data class Param(
+    public data class Param(
         val query: String = "",
     )
 }
 
-data class WatchlistData(
+public data class WatchlistData(
     val watchlist: List<Watchlists>,
     val isGridMode: Boolean,
     val query: String,

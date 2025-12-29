@@ -19,7 +19,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
-fun SegmentedProgressBar(
+public fun SegmentedProgressBar(
     segmentProgress: ImmutableList<Float>,
     modifier: Modifier = Modifier,
     height: Dp = 6.dp,

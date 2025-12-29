@@ -16,8 +16,8 @@ import kotlinx.coroutines.withTimeout
 import kotlin.time.Duration.Companion.minutes
 
 // https://github.com/chrisbanes/tivi/blob/main/domain/src/commonMain/kotlin/app/tivi/domain/Interactor.kt
-abstract class Interactor<in P> {
-    operator fun invoke(
+public abstract class Interactor<in P> {
+    public operator fun invoke(
         params: P,
         timeoutMs: Long = defaultTimeoutMs,
     ): Flow<InvokeStatus> = flow {
@@ -32,18 +32,18 @@ abstract class Interactor<in P> {
         }
     }.catch { t -> emit(InvokeError(t)) }
 
-    suspend fun executeSync(params: P) = doWork(params)
+    public suspend fun executeSync(params: P): Unit = doWork(params)
 
     protected abstract suspend fun doWork(params: P)
 
-    companion object {
+    public companion object {
         private val defaultTimeoutMs = 5.minutes.inWholeMilliseconds
     }
 }
 
-suspend inline fun Interactor<Unit>.executeSync() = executeSync(Unit)
+public suspend inline fun Interactor<Unit>.executeSync(): Unit = executeSync(Unit)
 
-abstract class SubjectInteractor<P : Any, T> {
+public abstract class SubjectInteractor<P : Any, T> {
     // Ideally this would be buffer = 0, since we use flatMapLatest below, BUT invoke is not
     // suspending. This means that we can't suspend while flatMapLatest cancels any
     // existing flows. The buffer of 1 means that we can use tryEmit() and buffer the value
@@ -54,12 +54,12 @@ abstract class SubjectInteractor<P : Any, T> {
         onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
 
-    val flow: Flow<T> = paramState
+    public val flow: Flow<T> = paramState
         .distinctUntilChanged()
         .flatMapLatest { createObservable(it) }
         .distinctUntilChanged()
 
-    operator fun invoke(params: P) {
+    public operator fun invoke(params: P) {
         paramState.tryEmit(params)
     }
 

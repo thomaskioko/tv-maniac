@@ -89,7 +89,7 @@ internal val staleEpisodes = listOf(
     ),
 ).toPersistentList()
 
-class WatchlistPreviewParameterProvider : PreviewParameterProvider<WatchlistState> {
+internal class WatchlistPreviewParameterProvider : PreviewParameterProvider<WatchlistState> {
     override val values: Sequence<WatchlistState>
         get() {
             return sequenceOf(

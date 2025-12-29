@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.traktauth.testing
 
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 
-class FakeTraktAuthManager : TraktAuthManager {
+public class FakeTraktAuthManager : TraktAuthManager {
     override fun launchWebView() {
     }
 

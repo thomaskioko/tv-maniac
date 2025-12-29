@@ -40,7 +40,7 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.unexpected_error_retry
 import com.thomaskioko.tvmaniac.i18n.resolve
 
 @Composable
-fun ConnectionStatus(
+public fun ConnectionStatus(
     isConnected: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -85,7 +85,7 @@ fun ConnectionStatus(
 }
 
 @Composable
-fun ErrorUi(
+public fun ErrorUi(
     errorMessage: String?,
     modifier: Modifier = Modifier,
     errorIcon: @Composable () -> Unit = {},
@@ -123,7 +123,7 @@ fun ErrorUi(
 }
 
 @Composable
-fun RowError(
+public fun RowError(
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
     errorMessage: String = unexpected_error_retry.resolve(LocalContext.current),
@@ -149,7 +149,7 @@ fun RowError(
 }
 
 @Composable
-fun EmptyScreen(
+public fun EmptyScreen(
     icon: @Composable () -> Unit,
     text: @Composable () -> Unit,
     modifier: Modifier = Modifier,

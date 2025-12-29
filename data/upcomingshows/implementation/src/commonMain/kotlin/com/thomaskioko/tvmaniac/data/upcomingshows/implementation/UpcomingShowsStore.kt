@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.core.store.apiFetcher
 import com.thomaskioko.tvmaniac.core.store.storeBuilder
 import com.thomaskioko.tvmaniac.core.store.usingDispatchers
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsDao
+import com.thomaskioko.tvmaniac.data.upcomingshows.implementation.model.UpcomingParams
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.Upcoming_shows
@@ -24,7 +25,7 @@ import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.Validator
 
 @Inject
-class UpcomingShowsStore(
+public class UpcomingShowsStore(
     private val tmdbRemoteDataSource: TmdbShowsNetworkDataSource,
     private val requestManagerRepository: RequestManagerRepository,
     private val upcomingShowsDao: UpcomingShowsDao,

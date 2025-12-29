@@ -11,33 +11,33 @@ import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import kotlinx.coroutines.flow.StateFlow
 
-interface RootPresenter {
-    interface Factory {
-        operator fun invoke(
+public interface RootPresenter {
+    public interface Factory {
+        public operator fun invoke(
             componentContext: ComponentContext,
             navigator: RootNavigator,
         ): RootPresenter
     }
 
-    val childStack: StateFlow<ChildStack<*, Child>>
+    public val childStack: StateFlow<ChildStack<*, Child>>
 
-    val themeState: StateFlow<ThemeState>
+    public val themeState: StateFlow<ThemeState>
 
-    sealed interface Child {
-        class Home(val presenter: HomePresenter) : Child
+    public sealed interface Child {
+        public class Home(public val presenter: HomePresenter) : Child
 
-        class Profile(val presenter: ProfilePresenter) : Child
+        public class Profile(public val presenter: ProfilePresenter) : Child
 
-        class Settings(val presenter: SettingsPresenter) : Child
+        public class Settings(public val presenter: SettingsPresenter) : Child
 
-        class ShowDetails(val presenter: ShowDetailsPresenter) : Child
+        public class ShowDetails(public val presenter: ShowDetailsPresenter) : Child
 
-        class SeasonDetails(val presenter: SeasonDetailsPresenter) : Child
+        public class SeasonDetails(public val presenter: SeasonDetailsPresenter) : Child
 
-        class MoreShows(val presenter: MoreShowsPresenter) : Child
+        public class MoreShows(public val presenter: MoreShowsPresenter) : Child
 
-        class Trailers(val presenter: TrailersPresenter) : Child
+        public class Trailers(public val presenter: TrailersPresenter) : Child
 
-        data object GenreShows : Child
+        public data object GenreShows : Child
     }
 }

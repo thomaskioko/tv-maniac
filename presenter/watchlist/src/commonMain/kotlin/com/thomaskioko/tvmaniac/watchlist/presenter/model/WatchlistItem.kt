@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.watchlist.presenter.model
 
-data class WatchlistItem(
+public data class WatchlistItem(
     val tmdbId: Long,
     val title: String,
     val posterImageUrl: String? = null,

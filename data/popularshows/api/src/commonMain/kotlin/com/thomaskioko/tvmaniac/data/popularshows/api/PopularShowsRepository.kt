@@ -4,17 +4,17 @@ import androidx.paging.PagingData
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import kotlinx.coroutines.flow.Flow
 
-const val DEFAULT_API_PAGE: Long = 1
+public const val DEFAULT_API_PAGE: Long = 1
 
-interface PopularShowsRepository {
+public interface PopularShowsRepository {
 
-    suspend fun fetchPopularShows(
+    public suspend fun fetchPopularShows(
         forceRefresh: Boolean = false,
     )
 
-    fun observePopularShows(
+    public fun observePopularShows(
         page: Long = DEFAULT_API_PAGE,
     ): Flow<List<ShowEntity>>
 
-    fun getPagedPopularShows(forceRefresh: Boolean = false): Flow<PagingData<ShowEntity>>
+    public fun getPagedPopularShows(forceRefresh: Boolean = false): Flow<PagingData<ShowEntity>>
 }

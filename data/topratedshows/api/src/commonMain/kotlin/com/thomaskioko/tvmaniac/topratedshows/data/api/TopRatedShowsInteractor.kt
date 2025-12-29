@@ -6,7 +6,7 @@ import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class TopRatedShowsInteractor(
+public class TopRatedShowsInteractor(
     private val topRatedShowsRepository: TopRatedShowsRepository,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Boolean>() {

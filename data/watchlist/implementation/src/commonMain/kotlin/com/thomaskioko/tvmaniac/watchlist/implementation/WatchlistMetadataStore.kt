@@ -21,7 +21,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
 @SingleIn(AppScope::class)
-class WatchlistMetadataStore(
+public class WatchlistMetadataStore(
     private val watchlistDao: WatchlistDao,
     private val tmdbRemoteDataSource: TmdbShowDetailsNetworkDataSource,
     private val transactionRunner: DatabaseTransactionRunner,

@@ -4,13 +4,13 @@ import com.thomaskioko.tvmaniac.presenter.trailers.model.Trailer
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-interface TrailersState
+public interface TrailersState
 
-data object LoadingTrailers : TrailersState
+public data object LoadingTrailers : TrailersState
 
-data class TrailersContent(
+public data class TrailersContent(
     val selectedVideoKey: String? = null,
     val trailersList: ImmutableList<Trailer> = persistentListOf(),
 ) : TrailersState
 
-data class TrailerError(val errorMessage: String?) : TrailersState
+public data class TrailerError(val errorMessage: String?) : TrailersState

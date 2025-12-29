@@ -15,7 +15,7 @@ import kotlin.time.Instant
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class DefaultRequestManagerRepository(
+public class DefaultRequestManagerRepository(
     private val database: TvManiacDatabase,
     private val dateTimeProvider: DateTimeProvider,
 ) : RequestManagerRepository {

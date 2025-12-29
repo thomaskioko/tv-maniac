@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TraktCreateListResponse(
+public data class TraktCreateListResponse(
     @SerialName("name") val name: String,
     @SerialName("description") val description: String,
     @SerialName("privacy") val privacy: String,
@@ -12,7 +12,7 @@ data class TraktCreateListResponse(
 )
 
 @Serializable
-data class ListIds(
+public data class ListIds(
     @SerialName("trakt") val trakt: Int,
     @SerialName("slug") val slug: String,
 )

@@ -10,10 +10,10 @@ import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
 
 @ContributesTo(AppScope::class)
-interface BaseIosComponent {
+public interface BaseIosComponent {
 
     @Provides
-    fun provideAppCoroutineScope(dispatchers: AppCoroutineDispatchers): AppCoroutineScope {
+    public fun provideAppCoroutineScope(dispatchers: AppCoroutineDispatchers): AppCoroutineScope {
         return AppCoroutineScope(
             default = CoroutineScope(Job() + dispatchers.computation),
             io = CoroutineScope(Job() + dispatchers.io),
@@ -22,7 +22,7 @@ interface BaseIosComponent {
     }
 
     @Provides
-    fun provideCoroutineScope(appCoroutineScope: AppCoroutineScope): CoroutineScope {
+    public fun provideCoroutineScope(appCoroutineScope: AppCoroutineScope): CoroutineScope {
         return appCoroutineScope.main
     }
 }

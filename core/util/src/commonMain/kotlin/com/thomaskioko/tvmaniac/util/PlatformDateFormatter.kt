@@ -4,18 +4,19 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
+import kotlin.time.Instant
 
-const val DATE_YYYY_MM_DD_PATTERN = "yyyy-MM-dd"
+public const val DATE_YYYY_MM_DD_PATTERN: String = "yyyy-MM-dd"
 
-val startOfDay: kotlin.time.Instant = Clock.System.now().toLocalDateTime(TimeZone.UTC).date.atStartOfDayIn(TimeZone.UTC)
+public val startOfDay: Instant = Clock.System.now().toLocalDateTime(TimeZone.UTC).date.atStartOfDayIn(TimeZone.UTC)
 
-expect class PlatformDateFormatter() {
+public expect class PlatformDateFormatter() {
     /**
      * Returns the current time in milliseconds
      *
      * @return timestamp
      */
-    fun getTimestampMilliseconds(): Long
+    public fun getTimestampMilliseconds(): Long
 
     /**
      * Returns the formatted date string "2023-01-12"
@@ -23,12 +24,12 @@ expect class PlatformDateFormatter() {
      * @param epochMillis epoch time in milliseconds
      * @return String formatted date
      */
-    fun formatDate(epochMillis: Long): String
+    public fun formatDate(epochMillis: Long): String
 
     /**
      * Returns the formatted date string "2023"
      *
      * @param dateString date string to be formatted
      */
-    fun getYear(dateString: String): String
+    public fun getYear(dateString: String): String
 }

@@ -6,7 +6,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
-fun List<ShowEntity>?.toShowList(): ImmutableList<DiscoverShow> =
+internal fun List<ShowEntity>?.toShowList(): ImmutableList<DiscoverShow> =
     this?.map {
         DiscoverShow(
             tmdbId = it.id,

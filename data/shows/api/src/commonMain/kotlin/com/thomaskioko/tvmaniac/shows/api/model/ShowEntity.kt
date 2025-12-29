@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.shows.api.model
 
-data class ShowEntity(
+public data class ShowEntity(
     val id: Long,
     val inLibrary: Boolean,
     val posterPath: String?,

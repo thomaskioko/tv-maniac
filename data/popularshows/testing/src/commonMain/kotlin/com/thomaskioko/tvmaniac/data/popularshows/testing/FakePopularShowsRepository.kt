@@ -7,11 +7,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class FakePopularShowsRepository : PopularShowsRepository {
+public class FakePopularShowsRepository : PopularShowsRepository {
     private val _shows = MutableStateFlow<List<ShowEntity>>(emptyList())
     private val _pagedShows = MutableStateFlow<PagingData<ShowEntity>>(PagingData.empty())
 
-    fun setPopularShows(result: List<ShowEntity>) {
+    public fun setPopularShows(result: List<ShowEntity>) {
         _shows.value = result
     }
 

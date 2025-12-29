@@ -20,7 +20,7 @@ import kotlin.math.pow
  * the higher visual quality at the cost of draw performance. Defaults to `16`.
  */
 @SuppressLint("ComposeModifierComposed")
-fun Modifier.drawForegroundGradientScrim(
+public fun Modifier.drawForegroundGradientScrim(
     color: Color,
     decay: Float = 3.0f,
     numStops: Int = 16,

@@ -68,7 +68,7 @@ import com.thomaskioko.tvmaniac.presenter.trailers.model.Trailer
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
-fun TrailersScreen(
+public fun TrailersScreen(
     presenter: TrailersPresenter,
     modifier: Modifier = Modifier,
 ) {

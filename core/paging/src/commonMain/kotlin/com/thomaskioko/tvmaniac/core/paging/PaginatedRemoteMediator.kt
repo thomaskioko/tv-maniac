@@ -13,7 +13,7 @@ import kotlinx.coroutines.CancellationException
  * @param fetch Executes the remote fetch.
  * @param EM Entity model.
  */
-class PaginatedRemoteMediator<EM : Any>(private val fetch: suspend (page: Long) -> FetchResult) :
+public class PaginatedRemoteMediator<EM : Any>(private val fetch: suspend (page: Long) -> FetchResult) :
     RemoteMediator<Int, EM>() {
 
     override suspend fun load(loadType: LoadType, state: PagingState<Int, EM>): MediatorResult {
@@ -51,10 +51,10 @@ class PaginatedRemoteMediator<EM : Any>(private val fetch: suspend (page: Long) 
     }
 }
 
-sealed class FetchResult {
-    data class Success(val endOfPaginationReached: Boolean) : FetchResult()
+public sealed class FetchResult {
+    public data class Success(val endOfPaginationReached: Boolean) : FetchResult()
 
-    data class Error(val error: Throwable) : FetchResult()
+    public data class Error(val error: Throwable) : FetchResult()
 
-    data object NoFetch : FetchResult()
+    public data object NoFetch : FetchResult()
 }

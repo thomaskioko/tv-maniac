@@ -29,7 +29,7 @@ import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.Validator
 
 @Inject
-class SimilarShowStore(
+public class SimilarShowStore(
     private val traktRemoteDataSource: TraktShowsRemoteDataSource,
     private val tmdbDataSource: TmdbShowDetailsNetworkDataSource,
     private val tvShowsDao: TvShowsDao,

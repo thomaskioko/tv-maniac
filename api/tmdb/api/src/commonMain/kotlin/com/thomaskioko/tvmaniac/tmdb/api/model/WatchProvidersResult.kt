@@ -4,18 +4,18 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class WatchProvidersResult(
+public data class WatchProvidersResult(
     @SerialName("id") var id: Int,
     @SerialName("results") var results: Results,
 )
 
 @Serializable
-data class Results(
+public data class Results(
     @SerialName("US") var US: US? = US(),
 )
 
 @Serializable
-data class US(
+public data class US(
     @SerialName("link") var link: String? = null,
     @SerialName("flatrate") var flatrate: ArrayList<FlatRate> = arrayListOf(),
     @SerialName("ads") var ads: ArrayList<Ads> = arrayListOf(),
@@ -23,7 +23,7 @@ data class US(
 )
 
 @Serializable
-data class FlatRate(
+public data class FlatRate(
     @SerialName("logo_path") var logoPath: String? = null,
     @SerialName("provider_id") var providerId: Int,
     @SerialName("provider_name") var providerName: String,
@@ -31,7 +31,7 @@ data class FlatRate(
 )
 
 @Serializable
-data class Ads(
+public data class Ads(
     @SerialName("logo_path") var logoPath: String? = null,
     @SerialName("provider_id") var providerId: Int,
     @SerialName("provider_name") var providerName: String,
@@ -39,7 +39,7 @@ data class Ads(
 )
 
 @Serializable
-data class Free(
+public data class Free(
     @SerialName("logo_path") var logoPath: String? = null,
     @SerialName("provider_id") var providerId: Int,
     @SerialName("provider_name") var providerName: String,

@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.collect
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class WatchlistInteractor(
+public class WatchlistInteractor(
     private val watchlistRepository: WatchlistRepository,
 ) : Interactor<Unit>() {
 

@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.search.presenter
 
-sealed interface SearchShowAction
+public sealed interface SearchShowAction
 
-data object ClearQuery : SearchShowAction
-data object DismissSnackBar : SearchShowAction
-data object ReloadShowContent : SearchShowAction
-data object LoadDiscoverShows : SearchShowAction
-data class QueryChanged(val query: String) : SearchShowAction
-data class SearchShowClicked(val id: Long) : SearchShowAction
-data class GenreCategoryClicked(val id: Long) : SearchShowAction
+public data object ClearQuery : SearchShowAction
+public data object DismissSnackBar : SearchShowAction
+public data object ReloadShowContent : SearchShowAction
+public data object LoadDiscoverShows : SearchShowAction
+public data class QueryChanged(val query: String) : SearchShowAction
+public data class SearchShowClicked(val id: Long) : SearchShowAction
+public data class GenreCategoryClicked(val id: Long) : SearchShowAction

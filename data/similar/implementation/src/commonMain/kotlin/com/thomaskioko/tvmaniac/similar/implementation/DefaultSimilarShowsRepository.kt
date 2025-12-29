@@ -19,7 +19,7 @@ private const val DEFAULT_API_PAGE = 1L
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class DefaultSimilarShowsRepository(
+public class DefaultSimilarShowsRepository(
     private val store: SimilarShowStore,
     private val dao: SimilarShowsDao,
     private val requestManagerRepository: RequestManagerRepository,

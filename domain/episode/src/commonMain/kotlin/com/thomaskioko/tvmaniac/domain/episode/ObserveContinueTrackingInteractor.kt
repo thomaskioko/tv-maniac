@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class ObserveContinueTrackingInteractor(
+public class ObserveContinueTrackingInteractor(
     private val episodeRepository: EpisodeRepository,
 ) : SubjectInteractor<Long, ContinueTrackingResult?>() {
 

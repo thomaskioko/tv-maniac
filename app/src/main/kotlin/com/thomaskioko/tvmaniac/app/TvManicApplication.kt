@@ -7,7 +7,7 @@ import com.thomaskioko.tvmaniac.core.base.extensions.unsafeLazy
 import com.thomaskioko.tvmaniac.inject.ApplicationComponent
 import com.thomaskioko.tvmaniac.inject.create
 
-class TvManicApplication : Application(), Configuration.Provider {
+public class TvManicApplication : Application(), Configuration.Provider {
     private val component: ApplicationComponent by unsafeLazy {
         ApplicationComponent::class.create(
             this,
@@ -27,5 +27,5 @@ class TvManicApplication : Application(), Configuration.Provider {
             .setWorkerFactory(workerFactory)
             .build()
 
-    fun getApplicationComponent() = component
+    internal fun getApplicationComponent() = component
 }

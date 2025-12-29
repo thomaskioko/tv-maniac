@@ -19,7 +19,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
 @SingleIn(AppScope::class)
-class GenrePosterStore(
+public class GenrePosterStore(
     private val genreDao: GenreDao,
     private val tmdbRemoteDataSource: TmdbShowsNetworkDataSource,
     private val formatterUtil: FormatterUtil,

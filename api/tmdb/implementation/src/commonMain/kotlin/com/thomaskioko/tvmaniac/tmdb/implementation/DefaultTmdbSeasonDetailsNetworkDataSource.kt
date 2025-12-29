@@ -15,7 +15,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class DefaultTmdbSeasonDetailsNetworkDataSource(
+public class DefaultTmdbSeasonDetailsNetworkDataSource(
     private val httpClient: TmdbHttpClient,
 ) : TmdbSeasonDetailsNetworkDataSource {
 

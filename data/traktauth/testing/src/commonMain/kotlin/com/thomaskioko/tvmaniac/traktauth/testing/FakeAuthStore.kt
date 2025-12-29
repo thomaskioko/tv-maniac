@@ -3,9 +3,9 @@ package com.thomaskioko.tvmaniac.traktauth.testing
 import com.thomaskioko.tvmaniac.traktauth.api.AuthState
 import com.thomaskioko.tvmaniac.traktauth.api.AuthStore
 
-class FakeAuthStore : AuthStore {
+public class FakeAuthStore : AuthStore {
     private var savedState: AuthState? = null
-    var getCallCount = 0
+    public var getCallCount: Int = 0
         private set
 
     override suspend fun get(): AuthState? {
@@ -21,7 +21,7 @@ class FakeAuthStore : AuthStore {
         savedState = null
     }
 
-    fun reset() {
+    public fun reset() {
         savedState = null
         getCallCount = 0
     }

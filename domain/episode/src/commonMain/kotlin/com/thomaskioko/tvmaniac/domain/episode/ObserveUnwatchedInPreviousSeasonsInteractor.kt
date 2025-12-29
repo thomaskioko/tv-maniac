@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class ObserveUnwatchedInPreviousSeasonsInteractor(
+public class ObserveUnwatchedInPreviousSeasonsInteractor(
     private val episodeRepository: EpisodeRepository,
 ) : SubjectInteractor<ObserveUnwatchedInPreviousSeasonsParams, Boolean>() {
 
@@ -20,7 +20,7 @@ class ObserveUnwatchedInPreviousSeasonsInteractor(
     }
 }
 
-data class ObserveUnwatchedInPreviousSeasonsParams(
+public data class ObserveUnwatchedInPreviousSeasonsParams(
     val showId: Long,
     val seasonNumber: Long,
 )

@@ -8,23 +8,23 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktFollowedShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktPersonalListsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
 
-interface TraktListRemoteDataSource {
+public interface TraktListRemoteDataSource {
 
-    suspend fun getUser(userId: String): ApiResponse<TraktUserResponse>
+    public suspend fun getUser(userId: String): ApiResponse<TraktUserResponse>
 
-    suspend fun getUserList(userId: String): List<TraktPersonalListsResponse>
+    public suspend fun getUserList(userId: String): List<TraktPersonalListsResponse>
 
-    suspend fun createFollowingList(userSlug: String): TraktCreateListResponse
+    public suspend fun createFollowingList(userSlug: String): TraktCreateListResponse
 
-    suspend fun getFollowedList(listId: Long, userSlug: String): List<TraktFollowedShowResponse>
+    public suspend fun getFollowedList(listId: Long, userSlug: String): List<TraktFollowedShowResponse>
 
-    suspend fun getWatchList(): List<TraktFollowedShowResponse>
+    public suspend fun getWatchList(): List<TraktFollowedShowResponse>
 
-    suspend fun addShowToWatchList(showId: Long): TraktAddShowToListResponse
+    public suspend fun addShowToWatchList(showId: Long): TraktAddShowToListResponse
 
-    suspend fun removeShowFromWatchList(showId: Long): TraktAddRemoveShowFromListResponse
+    public suspend fun removeShowFromWatchList(showId: Long): TraktAddRemoveShowFromListResponse
 
-    suspend fun addShowToList(
+    public suspend fun addShowToList(
         userSlug: String,
         listId: Long,
         traktShowId: Long,

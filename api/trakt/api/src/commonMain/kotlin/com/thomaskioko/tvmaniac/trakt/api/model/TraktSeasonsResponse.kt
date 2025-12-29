@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TraktSeasonsResponse(
+public data class TraktSeasonsResponse(
     @SerialName("number") val number: Int,
     @SerialName("ids") val ids: SeasonIds,
     @SerialName("votes") val votes: Int,
@@ -17,7 +17,7 @@ data class TraktSeasonsResponse(
 )
 
 @Serializable
-data class SeasonIds(
+public data class SeasonIds(
     @SerialName("trakt") val trakt: Int,
     @SerialName("tmdb") val tmdb: Int?,
 )

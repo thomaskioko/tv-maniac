@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TraktAccessTokenResponse(
+public data class TraktAccessTokenResponse(
     @SerialName("scope") val scope: String?,
     @SerialName("access_token") val accessToken: String?,
     @SerialName("created_at") val createdAt: Long?,

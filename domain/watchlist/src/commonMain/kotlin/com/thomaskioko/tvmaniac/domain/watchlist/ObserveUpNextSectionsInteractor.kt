@@ -14,7 +14,7 @@ import me.tatarka.inject.annotations.Inject
 private const val SEVEN_DAYS_MILLIS = 7 * 24 * 60 * 60 * 1000L
 
 @Inject
-class ObserveUpNextSectionsInteractor(
+public class ObserveUpNextSectionsInteractor(
     private val watchlistRepository: WatchlistRepository,
     private val episodeRepository: EpisodeRepository,
     private val dateTimeProvider: DateTimeProvider,

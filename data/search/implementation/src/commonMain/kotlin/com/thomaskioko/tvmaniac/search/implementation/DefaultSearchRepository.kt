@@ -17,7 +17,7 @@ private const val MIN_SHOW_COUNT = 10
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class DefaultSearchRepository(
+public class DefaultSearchRepository(
     private val tvShowsDao: TvShowsDao,
     private val store: SearchShowStore,
 ) : SearchRepository {

@@ -11,7 +11,7 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.green
 
 @Composable
-fun ShowLinearProgressIndicator(
+public fun ShowLinearProgressIndicator(
     progress: Float,
     modifier: Modifier = Modifier,
 ) {

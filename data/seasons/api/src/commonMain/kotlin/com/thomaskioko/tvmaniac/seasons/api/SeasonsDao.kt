@@ -4,17 +4,17 @@ import com.thomaskioko.tvmaniac.db.Season
 import com.thomaskioko.tvmaniac.db.ShowSeasons
 import kotlinx.coroutines.flow.Flow
 
-interface SeasonsDao {
+public interface SeasonsDao {
 
-    fun upsert(season: Season)
+    public fun upsert(season: Season)
 
-    fun upsert(entityList: List<Season>)
+    public fun upsert(entityList: List<Season>)
 
-    fun fetchShowSeasons(id: Long, includeSpecials: Boolean = true): List<ShowSeasons>
+    public fun fetchShowSeasons(id: Long, includeSpecials: Boolean = true): List<ShowSeasons>
 
-    fun observeSeasonsByShowId(id: Long, includeSpecials: Boolean = true): Flow<List<ShowSeasons>>
+    public fun observeSeasonsByShowId(id: Long, includeSpecials: Boolean = true): Flow<List<ShowSeasons>>
 
-    fun delete(id: Long)
+    public fun delete(id: Long)
 
-    fun deleteAll()
+    public fun deleteAll()
 }

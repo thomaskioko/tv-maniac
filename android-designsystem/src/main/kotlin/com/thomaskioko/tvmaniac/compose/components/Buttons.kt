@@ -45,7 +45,7 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 
 @Composable
-fun FilledTextButton(
+public fun FilledTextButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -64,7 +64,7 @@ fun FilledTextButton(
 }
 
 @Composable
-fun FilledVerticalIconButton(
+public fun FilledVerticalIconButton(
     text: String,
     onClick: () -> Unit,
     imageVector: ImageVector,
@@ -111,7 +111,7 @@ fun FilledVerticalIconButton(
 }
 
 @Composable
-fun FilledHorizontalIconButton(
+public fun FilledHorizontalIconButton(
     text: String,
     onClick: () -> Unit,
     imageVector: ImageVector,
@@ -182,7 +182,7 @@ private fun TextButtonContent(
 }
 
 @Composable
-fun HorizontalOutlinedButton(
+public fun HorizontalOutlinedButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -235,7 +235,7 @@ fun HorizontalOutlinedButton(
 }
 
 @Composable
-fun OutlinedVerticalIconButton(
+public fun OutlinedVerticalIconButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -281,7 +281,7 @@ fun OutlinedVerticalIconButton(
 }
 
 @Composable
-fun OutlinedVerticalIconButton(
+public fun OutlinedVerticalIconButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -319,7 +319,7 @@ fun OutlinedVerticalIconButton(
 }
 
 @Composable
-fun ScrimButton(
+public fun ScrimButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     show: Boolean = false,
@@ -350,7 +350,7 @@ fun ScrimButton(
 }
 
 @Composable
-fun RefreshButton(
+public fun RefreshButton(
     isRefreshing: Boolean,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,

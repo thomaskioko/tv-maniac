@@ -3,6 +3,7 @@ plugins {
 }
 
 scaffold {
+    explicitApi()
     android {
         useCompose()
     }

@@ -47,7 +47,7 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import kotlin.math.roundToInt
 
 @Composable
-fun TvManiacTopBar(
+public fun TvManiacTopBar(
     modifier: Modifier = Modifier,
     elevation: Dp = 0.dp,
     colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
@@ -67,7 +67,7 @@ fun TvManiacTopBar(
 }
 
 @Composable
-fun RefreshCollapsableTopAppBar(
+public fun RefreshCollapsableTopAppBar(
     listState: LazyListState,
     modifier: Modifier = Modifier,
     isRefreshing: Boolean = false,
@@ -112,7 +112,7 @@ fun RefreshCollapsableTopAppBar(
 }
 
 @Composable
-fun RefreshCollapsableTopAppBar(
+public fun RefreshCollapsableTopAppBar(
     listState: LazyListState,
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior? = null,
@@ -271,7 +271,7 @@ internal fun RefreshCollapsableTopAppBar(
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
-fun AutoSizedCircularProgressIndicator(
+internal fun AutoSizedCircularProgressIndicator(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.onBackground,
 ) {
@@ -308,7 +308,7 @@ private fun TopBarPreview() {
     }
 }
 
-inline fun actionIconWhen(
+public inline fun actionIconWhen(
     visible: Boolean,
     crossinline content: @Composable () -> Unit,
 ): (@Composable () -> Unit)? = if (visible) {

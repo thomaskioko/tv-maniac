@@ -5,7 +5,7 @@ package com.thomaskioko.tvmaniac.core.base.extensions
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 
-fun <T1, T2, T3, T4, T5, T6, R> combine(
+public fun <T1, T2, T3, T4, T5, T6, R> combine(
     flow: Flow<T1>,
     flow2: Flow<T2>,
     flow3: Flow<T3>,
@@ -24,7 +24,7 @@ fun <T1, T2, T3, T4, T5, T6, R> combine(
     )
 }
 
-fun <T1, T2, T3, T4, T5, T6, T7, R> combine(
+public fun <T1, T2, T3, T4, T5, T6, T7, R> combine(
     flow: Flow<T1>,
     flow2: Flow<T2>,
     flow3: Flow<T3>,
@@ -45,7 +45,7 @@ fun <T1, T2, T3, T4, T5, T6, T7, R> combine(
     )
 }
 
-fun <T1, T2, T3, T4, T5, T6, T7, T8, R> combine(
+public fun <T1, T2, T3, T4, T5, T6, T7, T8, R> combine(
     flow: Flow<T1>,
     flow2: Flow<T2>,
     flow3: Flow<T3>,
@@ -68,7 +68,7 @@ fun <T1, T2, T3, T4, T5, T6, T7, T8, R> combine(
     )
 }
 
-fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, R> combine(
+public fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, R> combine(
     flow: Flow<T1>,
     flow2: Flow<T2>,
     flow3: Flow<T3>,

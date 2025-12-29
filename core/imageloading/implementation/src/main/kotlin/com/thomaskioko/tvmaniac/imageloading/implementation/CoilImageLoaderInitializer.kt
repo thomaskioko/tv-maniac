@@ -8,7 +8,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 
 @Inject
 @ContributesBinding(AppScope::class, multibinding = true)
-class CoilImageLoaderInitializer(
+public class CoilImageLoaderInitializer(
     private val imageLoaderFactory: CoilImageLoaderFactory,
 ) : AppInitializer {
     override fun init() {

@@ -31,7 +31,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 
 @Inject
 @ContributesBinding(ActivityScope::class, MoreShowsPresenter::class)
-class DefaultMoreShowsPresenter(
+public class DefaultMoreShowsPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val categoryId: Long,
     @Assisted private val onBack: () -> Unit,
@@ -161,7 +161,7 @@ class DefaultMoreShowsPresenter(
 
 @Inject
 @ContributesBinding(ActivityScope::class, MoreShowsPresenter.Factory::class)
-class DefaultMoreShowsPresenterFactory(
+public class DefaultMoreShowsPresenterFactory(
     private val presenter: (
         componentContext: ComponentContext,
         id: Long,

@@ -17,7 +17,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class DefaultSeasonDetailsRepository(
+public class DefaultSeasonDetailsRepository(
     private val store: SeasonDetailsStore,
     private val dao: SeasonDetailsDao,
 ) : SeasonDetailsRepository {

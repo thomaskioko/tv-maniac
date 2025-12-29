@@ -1,5 +1,5 @@
 package com.thomaskioko.tvmaniac.core.base
 
-fun interface AppInitializer {
-    fun init()
+public fun interface AppInitializer {
+    public fun init()
 }

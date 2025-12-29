@@ -11,15 +11,15 @@ import kotlin.reflect.KClass
 
 @SingleIn(TestScope::class)
 @MergeComponent(TestScope::class)
-abstract class TestIosComponent {
-    abstract val datastoreRepository: DatastoreRepository
-    abstract val traktAuthManager: TraktAuthManager
+public abstract class TestIosComponent {
+    public abstract val datastoreRepository: DatastoreRepository
+    public abstract val traktAuthManager: TraktAuthManager
 
-    abstract val rootPresenterFactory: RootPresenter.Factory
-    abstract val homePresenterFactory: HomePresenter.Factory
+    public abstract val rootPresenterFactory: RootPresenter.Factory
+    public abstract val homePresenterFactory: HomePresenter.Factory
 
-    companion object {
-        fun create() = TestIosComponent::class.createComponent()
+    public companion object {
+        public fun create(): TestIosComponent = TestIosComponent::class.createComponent()
     }
 }
 
@@ -27,4 +27,4 @@ abstract class TestIosComponent {
  * The `actual fun` will be generated for each iOS specific target. TestIosComponentMerged is not being generated
  */
 @CreateComponent
-expect fun KClass<TestIosComponent>.createComponent(): TestIosComponent
+public expect fun KClass<TestIosComponent>.createComponent(): TestIosComponent

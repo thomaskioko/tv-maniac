@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TraktUserStatsResponse(
+public data class TraktUserStatsResponse(
     @SerialName("movies") val movies: Movies,
     @SerialName("shows") val shows: Shows,
     @SerialName("seasons") val seasons: Seasons,
@@ -12,7 +12,7 @@ data class TraktUserStatsResponse(
 )
 
 @Serializable
-data class Movies(
+public data class Movies(
     @SerialName("plays") val plays: Int,
     @SerialName("watched") val watched: Int,
     @SerialName("minutes") val minutes: Int,
@@ -20,18 +20,18 @@ data class Movies(
 )
 
 @Serializable
-data class Shows(
+public data class Shows(
     @SerialName("watched") val watched: Int,
     @SerialName("collected") val collected: Int,
 )
 
 @Serializable
-data class Seasons(
+public data class Seasons(
     @SerialName("ratings") val ratings: Int,
 )
 
 @Serializable
-data class Episodes(
+public data class Episodes(
     @SerialName("plays") val plays: Int,
     @SerialName("watched") val watched: Int,
     @SerialName("minutes") val minutes: Int,

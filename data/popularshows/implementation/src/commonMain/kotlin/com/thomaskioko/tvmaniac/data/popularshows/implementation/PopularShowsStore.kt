@@ -30,7 +30,7 @@ import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.Validator
 
 @Inject
-class PopularShowsStore(
+public class PopularShowsStore(
     private val traktRemoteDataSource: TraktShowsRemoteDataSource,
     private val tmdbDetailsDataSource: TmdbShowDetailsNetworkDataSource,
     private val requestManagerRepository: RequestManagerRepository,

@@ -39,7 +39,7 @@ import com.thomaskioko.tvmaniac.i18n.resolve
 import kotlinx.coroutines.launch
 
 @Composable
-fun SearchTextContainer(
+public fun SearchTextContainer(
     query: String,
     hint: String,
     lazyListState: LazyListState,

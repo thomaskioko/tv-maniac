@@ -5,30 +5,30 @@ import com.thomaskioko.tvmaniac.search.presenter.model.ShowItem
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-sealed interface SearchShowState {
-    val query: String?
-    val isUpdating: Boolean
+public sealed interface SearchShowState {
+    public val query: String?
+    public val isUpdating: Boolean
 }
 
-data class InitialSearchState(
+public data class InitialSearchState(
     override val query: String? = null,
     override val isUpdating: Boolean = true,
 ) : SearchShowState
 
-data class EmptySearchResult(
+public data class EmptySearchResult(
     override val query: String? = null,
     override val isUpdating: Boolean = false,
     val errorMessage: String? = null,
 ) : SearchShowState
 
-data class SearchResultAvailable(
+public data class SearchResultAvailable(
     override val query: String? = null,
     override val isUpdating: Boolean = false,
     val errorMessage: String? = null,
     val results: ImmutableList<ShowItem> = persistentListOf(),
 ) : SearchShowState
 
-data class ShowContentAvailable(
+public data class ShowContentAvailable(
     override val query: String? = null,
     override val isUpdating: Boolean = false,
     val errorMessage: String? = null,

@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flowOf
 
-class FakeSeasonDetailsRepository : SeasonDetailsRepository {
+public class FakeSeasonDetailsRepository : SeasonDetailsRepository {
 
     private val seasonsResult = MutableStateFlow<SeasonDetailsWithEpisodes?>(
         SeasonDetailsWithEpisodes(
@@ -25,7 +25,7 @@ class FakeSeasonDetailsRepository : SeasonDetailsRepository {
         ),
     )
 
-    suspend fun setSeasonsResult(result: SeasonDetailsWithEpisodes?) {
+    public suspend fun setSeasonsResult(result: SeasonDetailsWithEpisodes?) {
         seasonsResult.emit(result)
     }
 

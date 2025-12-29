@@ -15,7 +15,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Inject
 @SingleIn(TestScope::class)
 @ContributesBinding(TestScope::class, SearchShowsPresenter.Factory::class)
-class FakeSearchPresenterFactory : SearchShowsPresenter.Factory {
+public class FakeSearchPresenterFactory : SearchShowsPresenter.Factory {
     override fun invoke(
         componentContext: ComponentContext,
         onNavigateToShowDetails: (id: Long) -> Unit,

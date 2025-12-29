@@ -16,7 +16,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 
 @Composable
-fun BasicDialog(
+public fun BasicDialog(
     dialogTitle: String,
     dialogMessage: String,
     confirmButtonText: String,

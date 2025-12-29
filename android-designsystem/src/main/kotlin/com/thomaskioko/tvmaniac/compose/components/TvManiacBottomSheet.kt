@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun TvManiacBottomSheetScaffold(
+public fun TvManiacBottomSheetScaffold(
     sheetContent: @Composable ColumnScope.() -> Unit,
     content: @Composable (PaddingValues) -> Unit,
     onDismissBottomSheet: () -> Unit,

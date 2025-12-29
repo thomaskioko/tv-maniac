@@ -12,16 +12,16 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 import java.util.concurrent.TimeUnit
 
 @ContributesTo(AppScope::class)
-interface ImageLoadingModule {
+public interface ImageLoadingModule {
 
-    companion object {
+    public companion object {
         private const val HTTP_RESPONSE_CACHE = (10 * 1024 * 1024).toLong()
         private const val HTTP_TIMEOUT_S = 30
     }
 
     @Provides
     @SingleIn(AppScope::class)
-    fun provideCache(context: Context): Cache {
+    public fun provideCache(context: Context): Cache {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             throw IllegalStateException("Cache initialized on main thread.")
         }
@@ -30,7 +30,7 @@ interface ImageLoadingModule {
 
     @Provides
     @SingleIn(AppScope::class)
-    fun provideOkHttpClient(
+    public fun provideOkHttpClient(
         cache: Cache,
         interceptors: Set<Interceptor> = emptySet(),
     ): OkHttpClient {

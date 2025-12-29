@@ -4,10 +4,10 @@ import com.thomaskioko.tvmaniac.traktauth.api.AuthState
 import com.thomaskioko.tvmaniac.traktauth.api.RefreshTokenResult
 import com.thomaskioko.tvmaniac.traktauth.api.TraktRefreshTokenAction
 
-class FakeTraktRefreshTokenAction : TraktRefreshTokenAction {
+public class FakeTraktRefreshTokenAction : TraktRefreshTokenAction {
     private var result: RefreshTokenResult = RefreshTokenResult.TokenExpired
 
-    fun setResult(authState: RefreshTokenResult) {
+    public fun setResult(authState: RefreshTokenResult) {
         result = authState
     }
 

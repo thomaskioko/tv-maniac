@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SeasonsResponse(
+public data class SeasonsResponse(
     @SerialName("air_date") var airDate: String? = null,
     @SerialName("episode_count") var episodeCount: Int,
     @SerialName("id") var id: Int,

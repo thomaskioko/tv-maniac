@@ -17,7 +17,7 @@ import kotlin.jvm.JvmName
 private const val SEVEN_DAYS_MILLIS = 7 * 24 * 60 * 60 * 1000L
 
 @Inject
-class ObserveWatchlistSectionsInteractor(
+public class ObserveWatchlistSectionsInteractor(
     private val watchlistRepository: WatchlistRepository,
     private val episodeRepository: EpisodeRepository,
     private val dateTimeProvider: DateTimeProvider,

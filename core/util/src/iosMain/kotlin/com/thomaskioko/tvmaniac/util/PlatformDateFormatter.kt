@@ -10,11 +10,11 @@ import platform.Foundation.dateWithTimeIntervalSince1970
 import kotlin.time.Clock
 
 @Inject
-actual class PlatformDateFormatter {
+public actual class PlatformDateFormatter {
 
-    actual fun getTimestampMilliseconds(): Long = Clock.System.now().toEpochMilliseconds()
+    public actual fun getTimestampMilliseconds(): Long = Clock.System.now().toEpochMilliseconds()
 
-    actual fun formatDate(epochMillis: Long): String {
+    public actual fun formatDate(epochMillis: Long): String {
         val date = NSDate.dateWithTimeIntervalSince1970(epochMillis / 1000.0)
         val dateFormatter = NSDateFormatter().apply {
             dateFormat = DATE_YYYY_MM_DD_PATTERN
@@ -23,7 +23,7 @@ actual class PlatformDateFormatter {
         return dateFormatter.stringFromDate(date)
     }
 
-    actual fun getYear(dateString: String): String {
+    public actual fun getYear(dateString: String): String {
         if (dateString.isEmpty()) return "--"
         return try {
             val localDate = LocalDate.parse(dateString)

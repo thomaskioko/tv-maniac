@@ -6,10 +6,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class FakeWatchProviderRepository : WatchProviderRepository {
+public class FakeWatchProviderRepository : WatchProviderRepository {
     private var watchProvidersResult = MutableStateFlow<List<WatchProviders>>(emptyList())
 
-    suspend fun setWatchProvidersResult(result: List<WatchProviders>) {
+    public suspend fun setWatchProvidersResult(result: List<WatchProviders>) {
         watchProvidersResult.emit(result)
     }
 

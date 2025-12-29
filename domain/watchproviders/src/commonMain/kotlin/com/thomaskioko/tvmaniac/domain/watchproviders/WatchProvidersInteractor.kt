@@ -8,7 +8,7 @@ import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class WatchProvidersInteractor(
+public class WatchProvidersInteractor(
     private val repository: WatchProviderRepository,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Param>() {
@@ -18,5 +18,5 @@ class WatchProvidersInteractor(
         }
     }
 
-    data class Param(val id: Long, val forceRefresh: Boolean = false)
+    public data class Param(val id: Long, val forceRefresh: Boolean = false)
 }

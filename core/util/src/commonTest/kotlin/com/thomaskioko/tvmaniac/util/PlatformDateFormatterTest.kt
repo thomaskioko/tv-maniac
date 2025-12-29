@@ -7,7 +7,7 @@ import kotlinx.datetime.atStartOfDayIn
 import kotlin.test.Test
 import kotlin.time.Duration.Companion.days
 
-class PlatformDateFormatterTest {
+internal class PlatformDateFormatterTest {
 
     private val underTest = PlatformDateFormatter()
 

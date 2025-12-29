@@ -60,7 +60,7 @@ import com.thomaskioko.tvmaniac.moreshows.presentation.RefreshMoreShows
 import com.thomaskioko.tvmaniac.moreshows.presentation.TvShow
 
 @Composable
-fun MoreShowsScreen(
+public fun MoreShowsScreen(
     presenter: MoreShowsPresenter,
     modifier: Modifier = Modifier,
 ) {
@@ -139,7 +139,7 @@ internal fun MoreShowsScreen(
 
 @ExperimentalFoundationApi
 @Composable
-fun GridContent(
+internal fun GridContent(
     lazyPagingItems: LazyPagingItems<TvShow>,
     scrollBehavior: TopAppBarScrollBehavior,
     snackBarHostState: SnackbarHostState,

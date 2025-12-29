@@ -1,35 +1,35 @@
 package com.thomaskioko.tvmaniac.discover.presenter
 
-sealed interface DiscoverShowAction
+public sealed interface DiscoverShowAction
 
-data object UpComingClicked : DiscoverShowAction
+public data object UpComingClicked : DiscoverShowAction
 
-data object TrendingClicked : DiscoverShowAction
+public data object TrendingClicked : DiscoverShowAction
 
-data object PopularClicked : DiscoverShowAction
+public data object PopularClicked : DiscoverShowAction
 
-data object TopRatedClicked : DiscoverShowAction
+public data object TopRatedClicked : DiscoverShowAction
 
-data object RefreshData : DiscoverShowAction
+public data object RefreshData : DiscoverShowAction
 
-data class ShowClicked(val id: Long) : DiscoverShowAction
+public data class ShowClicked(val id: Long) : DiscoverShowAction
 
-data class MessageShown(val id: Long) : DiscoverShowAction
+public data class MessageShown(val id: Long) : DiscoverShowAction
 
-data class UpdateShowInLibrary(val id: Long, val inLibrary: Boolean) : DiscoverShowAction
+public data class UpdateShowInLibrary(val id: Long, val inLibrary: Boolean) : DiscoverShowAction
 
-data class NextEpisodeClicked(val showId: Long, val episodeId: Long) : DiscoverShowAction
+public data class NextEpisodeClicked(val showId: Long, val episodeId: Long) : DiscoverShowAction
 
-data class MarkNextEpisodeWatched(
+public data class MarkNextEpisodeWatched(
     val showId: Long,
     val episodeId: Long,
     val seasonNumber: Long,
     val episodeNumber: Long,
 ) : DiscoverShowAction
 
-data class UnfollowShowFromUpNext(val showId: Long) : DiscoverShowAction
+public data class UnfollowShowFromUpNext(val showId: Long) : DiscoverShowAction
 
-data class OpenSeasonFromUpNext(
+public data class OpenSeasonFromUpNext(
     val showId: Long,
     val seasonId: Long,
     val seasonNumber: Long,

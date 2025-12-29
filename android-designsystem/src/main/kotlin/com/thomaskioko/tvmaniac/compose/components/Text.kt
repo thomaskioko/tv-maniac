@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 
 @Composable
-fun BoxTextItems(
+public fun BoxTextItems(
     title: String,
     modifier: Modifier = Modifier,
     label: String? = null,
@@ -59,7 +59,7 @@ fun BoxTextItems(
 }
 
 @Composable
-fun TextLoadingItem(
+public fun TextLoadingItem(
     title: String,
     modifier: Modifier = Modifier,
     subTitle: String? = null,
@@ -99,7 +99,7 @@ fun TextLoadingItem(
 }
 
 @Composable
-fun ExpandingText(
+public fun ExpandingText(
     text: String,
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
@@ -154,6 +154,7 @@ private fun BoxTextItemsPreview() {
     TvManiacTheme {
         Surface {
             BoxTextItems(
+                modifier = Modifier.fillMaxWidth(),
                 title = "Being Watched",
                 label = "More",
             )

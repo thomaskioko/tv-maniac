@@ -29,7 +29,7 @@ import com.flaviofaria.kenburnsview.KenBurnsView
 import kotlin.math.absoluteValue
 
 @Composable
-fun AsyncImageComposable(
+public fun AsyncImageComposable(
     model: Any?,
     contentDescription: String?,
     modifier: Modifier = Modifier,
@@ -64,7 +64,7 @@ fun AsyncImageComposable(
 }
 
 @Composable
-fun KenBurnsViewImage(
+public fun KenBurnsViewImage(
     imageUrl: String?,
     modifier: Modifier = Modifier,
 ) {
@@ -75,7 +75,7 @@ fun KenBurnsViewImage(
 }
 
 @Composable
-fun ParallaxCarouselImage(
+public fun ParallaxCarouselImage(
     state: PagerState,
     currentPage: Int,
     imageUrl: String?,

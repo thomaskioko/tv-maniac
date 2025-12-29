@@ -17,7 +17,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class DefaultImageQualityProvider(
+public class DefaultImageQualityProvider(
     coroutineScope: AppCoroutineScope,
     private val datastoreRepository: DatastoreRepository,
 ) : ImageQualityProvider {

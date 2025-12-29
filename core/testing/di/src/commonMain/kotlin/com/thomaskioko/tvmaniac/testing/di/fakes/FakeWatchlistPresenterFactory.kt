@@ -14,7 +14,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Inject
 @SingleIn(TestScope::class)
 @ContributesBinding(TestScope::class, WatchlistPresenter.Factory::class)
-class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
+public class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
     override fun invoke(
         componentContext: ComponentContext,
         navigateToShowDetails: (showDetails: Long) -> Unit,

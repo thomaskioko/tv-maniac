@@ -17,9 +17,9 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import com.thomaskioko.tvmaniac.core.logger.Logger as KermitLogger
 
-const val TIMEOUT_DURATION: Long = 60_000
+internal const val TIMEOUT_DURATION: Long = 60_000
 
-fun tmdbHttpClient(
+internal fun tmdbHttpClient(
     isDebug: Boolean = false,
     tmdbApiKey: String,
     json: Json,

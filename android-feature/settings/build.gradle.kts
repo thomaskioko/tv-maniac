@@ -3,8 +3,9 @@ plugins {
 }
 
 scaffold {
+    explicitApi()
+
     android {
-        explicitApi()
         enableAndroidResources()
 
         useCompose()
