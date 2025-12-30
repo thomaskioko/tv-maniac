@@ -9,7 +9,7 @@ import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class SeasonDetailsInteractor(
+public class SeasonDetailsInteractor(
     private val seasonDetailsRepository: SeasonDetailsRepository,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Param>() {
@@ -22,5 +22,5 @@ class SeasonDetailsInteractor(
         }
     }
 
-    data class Param(val seasonDetails: SeasonDetailsParam, val forceRefresh: Boolean = false)
+    public data class Param(val seasonDetails: SeasonDetailsParam, val forceRefresh: Boolean = false)
 }

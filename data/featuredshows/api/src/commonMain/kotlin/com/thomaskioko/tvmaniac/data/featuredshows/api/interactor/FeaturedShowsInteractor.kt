@@ -7,7 +7,7 @@ import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class FeaturedShowsInteractor(
+public class FeaturedShowsInteractor(
     private val featuredShowsRepository: FeaturedShowsRepository,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Boolean>() {

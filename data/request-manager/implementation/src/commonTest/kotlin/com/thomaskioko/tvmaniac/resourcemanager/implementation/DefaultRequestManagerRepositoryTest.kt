@@ -11,7 +11,7 @@ import kotlin.test.Test
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 
-class DefaultRequestManagerRepositoryTest : BaseDatabaseTest() {
+internal class DefaultRequestManagerRepositoryTest : BaseDatabaseTest() {
     private val lastRequestsQueries: LastRequestsQueries = database.lastRequestsQueries
     private val fakeDateTimeProvider = FakeDateTimeProvider()
     private lateinit var repository: DefaultRequestManagerRepository

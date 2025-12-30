@@ -16,7 +16,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class DefaultShowDetailsDao(
+public class DefaultShowDetailsDao(
     database: TvManiacDatabase,
     private val dispatchers: AppCoroutineDispatchers,
 ) : ShowDetailsDao {

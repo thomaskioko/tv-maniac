@@ -7,25 +7,25 @@ import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.db.Watchlists
 import kotlinx.coroutines.flow.Flow
 
-interface WatchlistDao {
+public interface WatchlistDao {
 
-    fun upsert(id: Long)
+    public fun upsert(id: Long)
 
-    fun getShowsInWatchlist(): List<Watchlists>
+    public fun getShowsInWatchlist(): List<Watchlists>
 
-    fun updateSyncState(id: Id<TmdbId>)
+    public fun updateSyncState(id: Id<TmdbId>)
 
-    fun observeShowsInWatchlist(): Flow<List<Watchlists>>
+    public fun observeShowsInWatchlist(): Flow<List<Watchlists>>
 
-    fun observeWatchlistByQuery(query: String): Flow<List<SearchWatchlist>>
+    public fun observeWatchlistByQuery(query: String): Flow<List<SearchWatchlist>>
 
-    fun observeUnSyncedWatchlist(): Flow<List<Id<TmdbId>>>
+    public fun observeUnSyncedWatchlist(): Flow<List<Id<TmdbId>>>
 
-    fun delete(id: Long)
+    public fun delete(id: Long)
 
-    fun upsert(entity: Show_metadata)
+    public fun upsert(entity: Show_metadata)
 
-    suspend fun isShowInLibrary(showId: Long): Boolean
+    public suspend fun isShowInLibrary(showId: Long): Boolean
 
-    fun observeIsShowInLibrary(showId: Long): Flow<Boolean>
+    public fun observeIsShowInLibrary(showId: Long): Flow<Boolean>
 }

@@ -1,44 +1,44 @@
 package com.thomaskioko.tvmaniac.seasondetails.presenter
 
-sealed interface SeasonDetailsAction
+public sealed interface SeasonDetailsAction
 
-data object SeasonDetailsBackClicked : SeasonDetailsAction
+public data object SeasonDetailsBackClicked : SeasonDetailsAction
 
-data object OnEpisodeHeaderClicked : SeasonDetailsAction
+public data object OnEpisodeHeaderClicked : SeasonDetailsAction
 
-data object ShowGallery : SeasonDetailsAction
+public data object ShowGallery : SeasonDetailsAction
 
-data class MarkSeasonAsWatched(
+public data class MarkSeasonAsWatched(
     val hasUnwatchedInPreviousSeasons: Boolean,
 ) : SeasonDetailsAction
 
-data object MarkSeasonAsUnwatched : SeasonDetailsAction
+public data object MarkSeasonAsUnwatched : SeasonDetailsAction
 
-data object DismissDialog : SeasonDetailsAction
+public data object DismissDialog : SeasonDetailsAction
 
-data object ConfirmDialogAction : SeasonDetailsAction
+public data object ConfirmDialogAction : SeasonDetailsAction
 
-data object SecondaryDialogAction : SeasonDetailsAction
+public data object SecondaryDialogAction : SeasonDetailsAction
 
-data object ReloadSeasonDetails : SeasonDetailsAction
+public data object ReloadSeasonDetails : SeasonDetailsAction
 
-data class MarkEpisodeWatched(
+public data class MarkEpisodeWatched(
     val episodeId: Long,
     val seasonNumber: Long,
     val episodeNumber: Long,
     val hasPreviousUnwatched: Boolean,
 ) : SeasonDetailsAction
 
-data class MarkEpisodeUnwatched(
+public data class MarkEpisodeUnwatched(
     val episodeId: Long,
 ) : SeasonDetailsAction
 
-data class ToggleEpisodeWatched(
+public data class ToggleEpisodeWatched(
     val episodeId: Long,
 ) : SeasonDetailsAction
 
-data object ToggleSeasonWatched : SeasonDetailsAction
+public data object ToggleSeasonWatched : SeasonDetailsAction
 
-data class EpisodeClicked(
+public data class EpisodeClicked(
     val id: Long,
 ) : SeasonDetailsAction

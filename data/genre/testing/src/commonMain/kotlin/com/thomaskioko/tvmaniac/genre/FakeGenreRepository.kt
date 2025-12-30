@@ -5,15 +5,15 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class FakeGenreRepository : GenreRepository {
+public class FakeGenreRepository : GenreRepository {
     private var entityListResult = MutableStateFlow<List<ShowGenresEntity>>(emptyList())
     private var showListResult = MutableStateFlow<List<Tvshow>>(emptyList())
 
-    suspend fun setGenreResult(result: List<ShowGenresEntity>) {
+    public suspend fun setGenreResult(result: List<ShowGenresEntity>) {
         entityListResult.emit(result)
     }
 
-    suspend fun setShowResult(result: List<Tvshow>) {
+    public suspend fun setShowResult(result: List<Tvshow>) {
         showListResult.emit(result)
     }
 

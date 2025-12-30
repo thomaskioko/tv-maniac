@@ -6,10 +6,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class FakeSearchRepository : SearchRepository {
+public class FakeSearchRepository : SearchRepository {
     private var stateFlow = MutableStateFlow<List<ShowEntity>>(emptyList())
 
-    suspend fun setSearchResult(result: List<ShowEntity>) {
+    public suspend fun setSearchResult(result: List<ShowEntity>) {
         stateFlow.emit(result)
     }
 

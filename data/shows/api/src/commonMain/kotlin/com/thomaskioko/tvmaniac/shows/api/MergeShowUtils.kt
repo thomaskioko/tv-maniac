@@ -7,7 +7,7 @@ import com.thomaskioko.tvmaniac.db.Tvshow
  * Create a minimal placeholder show for category list entries.
  * This ensures we have a valid reference without triggering unnecessary updates.
  */
-fun createShowPlaceholder(
+public fun createShowPlaceholder(
     id: Long,
     name: String = "",
     overview: String = "",

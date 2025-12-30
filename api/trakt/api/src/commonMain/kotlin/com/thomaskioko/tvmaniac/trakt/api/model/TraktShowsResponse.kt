@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TraktShowsResponse(
+public data class TraktShowsResponse(
     @SerialName("watchers") val watchers: Int? = null,
     @SerialName("watcher_count") val watcherCount: Int? = null,
     @SerialName("play_count") val playCount: Int? = null,
@@ -15,7 +15,7 @@ data class TraktShowsResponse(
 )
 
 @Serializable
-data class TraktShowResponse(
+public data class TraktShowResponse(
     @SerialName("title") val title: String,
     @SerialName("year") val year: Int? = null,
     @SerialName("ids") val ids: ShowIds,
@@ -39,7 +39,7 @@ data class TraktShowResponse(
 )
 
 @Serializable
-data class ShowIds(
+public data class ShowIds(
     @SerialName("trakt") val trakt: Int,
     @SerialName("slug") val slug: String = "",
     @SerialName("imdb") val imdb: String? = null,
@@ -48,14 +48,14 @@ data class ShowIds(
 )
 
 @Serializable
-data class Airs(
+public data class Airs(
     @SerialName("day") val day: String? = null,
     @SerialName("time") val time: String? = null,
     @SerialName("timezone") val timezone: String? = null,
 )
 
 @Serializable
-data class TraktImages(
+public data class TraktImages(
     @SerialName("fanart") val fanart: List<String> = emptyList(),
     @SerialName("poster") val poster: List<String> = emptyList(),
     @SerialName("logo") val logo: List<String> = emptyList(),
@@ -65,7 +65,7 @@ data class TraktImages(
 )
 
 @Serializable
-data class TraktSearchResult(
+public data class TraktSearchResult(
     @SerialName("type") val type: String,
     @SerialName("score") val score: Double? = null,
     @SerialName("show") val show: TraktShowResponse? = null,

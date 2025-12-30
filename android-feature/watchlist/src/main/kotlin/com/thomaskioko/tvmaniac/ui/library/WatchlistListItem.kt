@@ -180,7 +180,7 @@ internal fun WatchlistListItem(
 
 @ThemePreviews
 @Composable
-fun WatchlistListItemPreview() {
+private fun WatchlistListItemPreview() {
     TvManiacTheme {
         Surface {
             WatchlistListItem(

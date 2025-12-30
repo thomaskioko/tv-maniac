@@ -14,24 +14,24 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @ContributesSubcomponent(ActivityScope::class)
 @SingleIn(ActivityScope::class)
-interface ActivityComponent {
-    val traktAuthManager: TraktAuthManager
-    val rootPresenter: RootPresenter
+public interface ActivityComponent {
+    public val traktAuthManager: TraktAuthManager
+    public val rootPresenter: RootPresenter
 
     @Provides
-    fun provideComponentContext(
+    public fun provideComponentContext(
         activity: ComponentActivity,
     ): ComponentContext = activity.defaultComponentContext()
 
     @ContributesSubcomponent.Factory(AppScope::class)
-    interface Factory {
-        fun createComponent(
+    public interface Factory {
+        public fun createComponent(
             activity: ComponentActivity,
         ): ActivityComponent
     }
 
-    companion object {
-        fun create(activity: ComponentActivity): ActivityComponent =
+    public companion object {
+        public fun create(activity: ComponentActivity): ActivityComponent =
             (activity.application as TvManicApplication)
                 .getApplicationComponent()
                 .activityComponentFactory

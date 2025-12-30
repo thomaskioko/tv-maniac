@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.domain.watchlist.model
 
-data class UpNextSections(
+public data class UpNextSections(
     val watchNext: List<UpNextEpisodeInfo>,
     val stale: List<UpNextEpisodeInfo>,
 )
 
-data class UpNextEpisodeInfo(
+public data class UpNextEpisodeInfo(
     val showId: Long,
     val showName: String,
     val showPoster: String?,

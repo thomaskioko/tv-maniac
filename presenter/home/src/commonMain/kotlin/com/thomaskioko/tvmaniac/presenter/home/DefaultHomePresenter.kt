@@ -22,7 +22,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
 @SingleIn(ActivityScope::class)
-class DefaultHomePresenter private constructor(
+public class DefaultHomePresenter private constructor(
     @Assisted componentContext: ComponentContext,
     @Assisted private val onShowClicked: (id: Long) -> Unit,
     @Assisted private val onMoreShowClicked: (id: Long) -> Unit,
@@ -133,7 +133,7 @@ class DefaultHomePresenter private constructor(
     @Inject
     @SingleIn(ActivityScope::class)
     @ContributesBinding(ActivityScope::class, HomePresenter.Factory::class)
-    class Factory(
+    public class Factory(
         private val discoverPresenterFactory: DiscoverShowsPresenter.Factory,
         private val watchlistPresenterFactory: WatchlistPresenter.Factory,
         private val searchPresenterFactory: SearchShowsPresenter.Factory,

@@ -16,7 +16,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class DefaultGenreDao(
+public class DefaultGenreDao(
     private val database: TvManiacDatabase,
     private val dispatchers: AppCoroutineDispatchers,
 ) : GenreDao {

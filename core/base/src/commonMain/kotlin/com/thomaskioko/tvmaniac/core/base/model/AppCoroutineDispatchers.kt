@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.core.base.model
 
 import kotlinx.coroutines.CoroutineDispatcher
 
-data class AppCoroutineDispatchers(
+public data class AppCoroutineDispatchers(
     val io: CoroutineDispatcher,
     val computation: CoroutineDispatcher,
     val databaseWrite: CoroutineDispatcher,

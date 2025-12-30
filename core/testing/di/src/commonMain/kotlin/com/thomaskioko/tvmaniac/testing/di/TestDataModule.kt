@@ -21,38 +21,38 @@ import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @ContributesTo(TestScope::class)
-interface TestDataModule {
+public interface TestDataModule {
     @Provides
     @SingleIn(TestScope::class)
-    fun provideDatastoreRepository(): DatastoreRepository = FakeDatastoreRepository()
+    public fun provideDatastoreRepository(): DatastoreRepository = FakeDatastoreRepository()
 
     @Provides
     @SingleIn(TestScope::class)
-    fun provideTraktAuthManager(): TraktAuthManager = FakeTraktAuthManager()
+    public fun provideTraktAuthManager(): TraktAuthManager = FakeTraktAuthManager()
 
     @Provides
     @SingleIn(TestScope::class)
-    fun provideTraktAuthRepository(): TraktAuthRepository = FakeTraktAuthRepository()
+    public fun provideTraktAuthRepository(): TraktAuthRepository = FakeTraktAuthRepository()
 
     @Provides
     @SingleIn(TestScope::class)
-    fun provideLogger(): Logger = FakeLogger()
+    public fun provideLogger(): Logger = FakeLogger()
 
     @Provides
     @SingleIn(TestScope::class)
-    fun provideUserRepository(): UserRepository = FakeUserRepository()
+    public fun provideUserRepository(): UserRepository = FakeUserRepository()
 
     @Provides
     @SingleIn(TestScope::class)
-    fun provideRequestManagerRepository(): RequestManagerRepository = FakeRequestManagerRepository()
+    public fun provideRequestManagerRepository(): RequestManagerRepository = FakeRequestManagerRepository()
 
     @Provides
     @SingleIn(TestScope::class)
-    fun provideSecureConfigRepository(): BuildConfigRepository = FakeBuildConfigRepository()
+    public fun provideSecureConfigRepository(): BuildConfigRepository = FakeBuildConfigRepository()
 
     @Provides
     @SingleIn(TestScope::class)
-    fun provideAppCoroutineDispatchers(): AppCoroutineDispatchers = AppCoroutineDispatchers(
+    public fun provideAppCoroutineDispatchers(): AppCoroutineDispatchers = AppCoroutineDispatchers(
         io = Dispatchers.Default,
         computation = Dispatchers.Default,
         databaseWrite = Dispatchers.Default,

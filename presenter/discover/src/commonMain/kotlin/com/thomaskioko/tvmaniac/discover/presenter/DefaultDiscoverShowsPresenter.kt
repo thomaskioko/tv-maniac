@@ -37,7 +37,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 
 @Inject
 @ContributesBinding(ActivityScope::class, DiscoverShowsPresenter::class)
-class DefaultDiscoverShowsPresenter(
+public class DefaultDiscoverShowsPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val onNavigateToShowDetails: (Long) -> Unit,
     @Assisted private val onNavigateToMore: (Long) -> Unit,
@@ -68,7 +68,7 @@ class DefaultDiscoverShowsPresenter(
         presenterInstance.dispatch(action)
     }
 
-    inner class PresenterInstance : InstanceKeeper.Instance {
+    public inner class PresenterInstance : InstanceKeeper.Instance {
 
         private val featuredLoadingState = ObservableLoadingCounter()
         private val topRatedLoadingState = ObservableLoadingCounter()
@@ -82,7 +82,7 @@ class DefaultDiscoverShowsPresenter(
         private val _state: MutableStateFlow<DiscoverViewState> = MutableStateFlow(
             DiscoverViewState.Empty.copy(featuredRefreshing = true),
         )
-        val state: StateFlow<DiscoverViewState> = combine(
+        public val state: StateFlow<DiscoverViewState> = combine(
             upNextActionLoadingState.observable,
             featuredLoadingState.observable,
             topRatedLoadingState.observable,
@@ -119,12 +119,12 @@ class DefaultDiscoverShowsPresenter(
             initialValue = _state.value,
         )
 
-        fun init() {
+        public fun init() {
             discoverShowsInteractor(Unit)
             observeShowData()
         }
 
-        fun dispatch(action: DiscoverShowAction) {
+        public fun dispatch(action: DiscoverShowAction) {
             when (action) {
                 is ShowClicked -> onNavigateToShowDetails(action.id)
                 PopularClicked -> onNavigateToMore(Category.POPULAR.id)
@@ -170,7 +170,7 @@ class DefaultDiscoverShowsPresenter(
             }
         }
 
-        fun clearMessage(id: Long) {
+        internal fun clearMessage(id: Long) {
             coroutineScope.launch {
                 uiMessageManager.clearMessage(id)
             }
@@ -215,7 +215,7 @@ class DefaultDiscoverShowsPresenter(
 
 @Inject
 @ContributesBinding(ActivityScope::class, DiscoverShowsPresenter.Factory::class)
-class DefaultDiscoverPresenterFactory(
+public class DefaultDiscoverPresenterFactory(
     private val presenter: (
         componentContext: ComponentContext,
         onNavigateToShowDetails: (id: Long) -> Unit,

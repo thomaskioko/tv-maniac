@@ -10,7 +10,7 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
  *
  * @see [Trakt API Documentation](https://trakt.docs.apiary.io/)
  */
-interface TraktShowsRemoteDataSource {
+public interface TraktShowsRemoteDataSource {
 
     /**
      * Fetches currently trending shows.
@@ -23,7 +23,7 @@ interface TraktShowsRemoteDataSource {
      * @return List of shows with engagement metrics (watchers count)
      * @see [Trakt Trending Shows](https://trakt.docs.apiary.io/#reference/shows/trending)
      */
-    suspend fun getTrendingShows(
+    public suspend fun getTrendingShows(
         page: Int = 1,
         limit: Int = 20,
     ): ApiResponse<List<TraktShowsResponse>>
@@ -38,7 +38,7 @@ interface TraktShowsRemoteDataSource {
      * @return List of popular shows ordered by popularity score
      * @see [Trakt Popular Shows](https://trakt.docs.apiary.io/#reference/shows/popular)
      */
-    suspend fun getPopularShows(
+    public suspend fun getPopularShows(
         page: Int = 1,
         limit: Int = 20,
     ): ApiResponse<List<TraktShowResponse>>
@@ -54,7 +54,7 @@ interface TraktShowsRemoteDataSource {
      * @return List of shows with engagement metrics (user count)
      * @see [Trakt Favorited Shows](https://trakt.docs.apiary.io/#reference/shows/favorited)
      */
-    suspend fun getFavoritedShows(
+    public suspend fun getFavoritedShows(
         page: Int = 1,
         limit: Int = 20,
         period: TimePeriod = TimePeriod.WEEKLY,
@@ -71,7 +71,7 @@ interface TraktShowsRemoteDataSource {
      * @return List of shows with engagement metrics (play count)
      * @see [Trakt Watched Shows](https://trakt.docs.apiary.io/#reference/shows/watched)
      */
-    suspend fun getMostWatchedShows(
+    public suspend fun getMostWatchedShows(
         page: Int = 1,
         limit: Int = 20,
         period: TimePeriod = TimePeriod.WEEKLY,
@@ -89,7 +89,7 @@ interface TraktShowsRemoteDataSource {
      * @return List of related shows
      * @see [Trakt Related Shows](https://trakt.docs.apiary.io/#reference/shows/related)
      */
-    suspend fun getRelatedShows(
+    public suspend fun getRelatedShows(
         traktId: Long,
         page: Int = 1,
         limit: Int = 20,
@@ -106,7 +106,7 @@ interface TraktShowsRemoteDataSource {
      *         `results.firstOrNull { it.type == "show" }?.show`
      * @see [Trakt ID Lookup](https://trakt.docs.apiary.io/#reference/search/id-lookup)
      */
-    suspend fun getShowByTmdbId(tmdbId: Long): ApiResponse<List<TraktSearchResult>>
+    public suspend fun getShowByTmdbId(tmdbId: Long): ApiResponse<List<TraktSearchResult>>
 }
 
 /**
@@ -114,7 +114,7 @@ interface TraktShowsRemoteDataSource {
  *
  * @property value The API parameter value sent to Trakt
  */
-enum class TimePeriod(val value: String) {
+public enum class TimePeriod(public val value: String) {
     DAILY("daily"),
     WEEKLY("weekly"),
     MONTHLY("monthly"),

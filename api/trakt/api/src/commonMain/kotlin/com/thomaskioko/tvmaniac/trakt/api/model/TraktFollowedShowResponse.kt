@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TraktFollowedShowResponse(
+public data class TraktFollowedShowResponse(
     @SerialName("rank") var rank: Int,
     @SerialName("id") var id: Int,
     @SerialName("listed_at") var listedAt: String,
@@ -14,14 +14,14 @@ data class TraktFollowedShowResponse(
 )
 
 @Serializable
-data class ShowResponse(
+public data class ShowResponse(
     @SerialName("title") var title: String,
     @SerialName("year") var year: Int? = null,
     @SerialName("ids") var ids: IdsResponse,
 )
 
 @Serializable
-data class IdsResponse(
+public data class IdsResponse(
     @SerialName("slug") var slug: String,
     @SerialName("trakt") var trakt: Int,
     @SerialName("tvdb") var tvdb: Int,

@@ -107,7 +107,7 @@ import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
-fun SeasonDetailsScreen(
+public fun SeasonDetailsScreen(
     presenter: SeasonDetailsPresenter,
     modifier: Modifier = Modifier,
 ) {
@@ -203,7 +203,7 @@ internal fun SeasonDetailsScreen(
 }
 
 @Composable
-fun LazyColumnContent(
+internal fun LazyColumnContent(
     listState: LazyListState,
     isLoading: Boolean,
     seasonDetailsModel: SeasonDetailsModel,
@@ -275,7 +275,7 @@ fun LazyColumnContent(
 }
 
 @Composable
-fun ImageGalleryContent(
+internal fun ImageGalleryContent(
     imageList: ImmutableList<SeasonImagesModel>,
     modifier: Modifier = Modifier,
 ) {

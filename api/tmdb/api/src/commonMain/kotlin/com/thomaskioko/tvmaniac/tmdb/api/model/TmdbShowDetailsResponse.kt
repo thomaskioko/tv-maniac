@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TmdbShowDetailsResponse(
+public data class TmdbShowDetailsResponse(
     @SerialName("adult") var adult: Boolean,
     @SerialName("backdrop_path") var backdropPath: String? = null,
     @SerialName("episode_run_time") var episodeRunTime: ArrayList<Int> = arrayListOf(),

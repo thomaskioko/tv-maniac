@@ -28,7 +28,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
-class DefaultRootPresenter(
+public class DefaultRootPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val navigator: RootNavigator,
     private val homePresenterFactory: HomePresenter.Factory,
@@ -151,7 +151,7 @@ class DefaultRootPresenter(
     @Inject
     @SingleIn(ActivityScope::class)
     @ContributesBinding(ActivityScope::class, RootPresenter.Factory::class)
-    class Factory(
+    public class Factory(
         private val homePresenterFactory: HomePresenter.Factory,
         private val profilePresenterFactory: ProfilePresenter.Factory,
         private val settingsPresenterFactory: SettingsPresenter.Factory,

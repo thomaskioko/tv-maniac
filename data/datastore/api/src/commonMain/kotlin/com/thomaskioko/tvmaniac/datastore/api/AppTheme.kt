@@ -2,11 +2,11 @@ package com.thomaskioko.tvmaniac.datastore.api
 
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 
-enum class AppTheme(
-    val displayNameKey: StringResourceKey,
-    val descriptionKey: StringResourceKey,
-    val isDark: Boolean,
-    val displayOrder: Int,
+public enum class AppTheme(
+    public val displayNameKey: StringResourceKey,
+    public val descriptionKey: StringResourceKey,
+    public val isDark: Boolean,
+    public val displayOrder: Int,
 ) {
     SYSTEM_THEME(
         displayNameKey = StringResourceKey.SettingsThemeSystem,

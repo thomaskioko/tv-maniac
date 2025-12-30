@@ -20,7 +20,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Inject
 @SingleIn(TestScope::class)
 @ContributesBinding(TestScope::class, RootPresenter.Factory::class)
-class FakeRootPresenterFactory(
+public class FakeRootPresenterFactory(
     private val homePresenterFactory: HomePresenter.Factory,
     private val profilePresenterFactory: ProfilePresenter.Factory,
     private val settingsPresenterFactory: SettingsPresenter.Factory,

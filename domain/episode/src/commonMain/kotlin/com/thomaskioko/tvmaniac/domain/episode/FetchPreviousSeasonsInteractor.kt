@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class FetchPreviousSeasonsInteractor(
+public class FetchPreviousSeasonsInteractor(
     private val episodeRepository: EpisodeRepository,
 ) : Interactor<FetchPreviousSeasonsParams>() {
     override suspend fun doWork(params: FetchPreviousSeasonsParams) {
@@ -16,7 +16,7 @@ class FetchPreviousSeasonsInteractor(
     }
 }
 
-data class FetchPreviousSeasonsParams(
+public data class FetchPreviousSeasonsParams(
     val showId: Long,
     val seasonNumber: Long,
 )

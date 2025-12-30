@@ -55,7 +55,7 @@ import com.thomaskioko.tvmaniac.seasondetails.ui.seasonDetailsLoaded
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
-fun CollapsableContent(
+internal fun CollapsableContent(
     episodesCount: Long,
     watchProgress: Float,
     episodeDetailsModelList: ImmutableList<EpisodeDetailsModel>,
@@ -257,4 +257,4 @@ private fun CollapsableContentPreview() {
     }
 }
 
-const val EXPANSION_TRANSITION_DURATION = 450
+internal const val EXPANSION_TRANSITION_DURATION = 450

@@ -17,13 +17,13 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
 @SingleIn(AppScope::class)
-class CoilImageLoaderFactory(
+public class CoilImageLoaderFactory(
     private val context: Context,
     private val okHttpClient: Lazy<OkHttpClient>,
     private val imageQualityProvider: ImageQualityProvider,
     private val tmdbInterceptor: TmdbInterceptor,
 ) {
-    fun create(): ImageLoader {
+    public fun create(): ImageLoader {
         return ImageLoader.Builder(context)
             .callFactory { request -> okHttpClient.value.newCall(request) }
             .components {

@@ -5,7 +5,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 
-class NsQueueCoroutineScope : CoroutineScope {
+public class NsQueueCoroutineScope : CoroutineScope {
 
     private val coroutineDispatcher: CoroutineDispatcher = applicationNsQueueDispatcher
     private val job = Job()

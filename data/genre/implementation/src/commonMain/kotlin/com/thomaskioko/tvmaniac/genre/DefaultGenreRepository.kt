@@ -13,7 +13,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class DefaultGenreRepository(
+public class DefaultGenreRepository(
     private val store: GenreStore,
     private val genrePosterStore: GenrePosterStore,
     private val showsByGenreIdStore: ShowsByGenreIdStore,

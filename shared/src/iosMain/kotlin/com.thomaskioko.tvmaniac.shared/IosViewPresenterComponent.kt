@@ -10,13 +10,13 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @ContributesSubcomponent(ActivityScope::class)
 @SingleIn(ActivityScope::class)
-interface IosViewPresenterComponent {
-    val rootPresenter: RootPresenter
-    val rootNavigator: RootNavigator
+public interface IosViewPresenterComponent {
+    public val rootPresenter: RootPresenter
+    public val rootNavigator: RootNavigator
 
     @ContributesSubcomponent.Factory(AppScope::class)
-    interface Factory {
-        fun createComponent(
+    public interface Factory {
+        public fun createComponent(
             componentContext: ComponentContext,
         ): IosViewPresenterComponent
     }

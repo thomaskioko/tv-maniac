@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.domain.watchlist.model
 
-data class WatchlistSections(
+public data class WatchlistSections(
     val watchNext: List<WatchlistShowInfo>,
     val stale: List<WatchlistShowInfo>,
 )
 
-data class WatchlistShowInfo(
+public data class WatchlistShowInfo(
     val tmdbId: Long,
     val title: String,
     val posterImageUrl: String?,

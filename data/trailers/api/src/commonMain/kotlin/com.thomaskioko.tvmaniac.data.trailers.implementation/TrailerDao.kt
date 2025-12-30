@@ -3,17 +3,17 @@ package com.thomaskioko.tvmaniac.data.trailers.implementation
 import com.thomaskioko.tvmaniac.db.Trailers
 import kotlinx.coroutines.flow.Flow
 
-interface TrailerDao {
+public interface TrailerDao {
 
-    fun upsert(trailer: Trailers)
+    public fun upsert(trailer: Trailers)
 
-    fun upsert(trailerList: List<Trailers>)
+    public fun upsert(trailerList: List<Trailers>)
 
-    fun observeTrailersById(showId: Long): Flow<List<Trailers>>
+    public fun observeTrailersById(showId: Long): Flow<List<Trailers>>
 
-    fun getTrailersById(showId: Long): List<Trailers>
+    public fun getTrailersById(showId: Long): List<Trailers>
 
-    fun delete(id: Long)
+    public fun delete(id: Long)
 
-    fun deleteAll()
+    public fun deleteAll()
 }

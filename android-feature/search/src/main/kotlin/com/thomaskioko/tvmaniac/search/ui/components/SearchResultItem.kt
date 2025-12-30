@@ -35,7 +35,7 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_clear_text
 import com.thomaskioko.tvmaniac.i18n.resolve
 
 @Composable
-fun SearchResultItem(
+internal fun SearchResultItem(
     imageUrl: String?,
     title: String,
     year: String?,

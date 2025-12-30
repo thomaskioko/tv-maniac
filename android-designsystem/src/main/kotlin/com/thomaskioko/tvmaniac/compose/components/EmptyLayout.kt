@@ -23,7 +23,7 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_empty_content
 import com.thomaskioko.tvmaniac.i18n.resolve
 
 @Composable
-fun EmptyContent(
+public fun EmptyContent(
     imageVector: ImageVector,
     modifier: Modifier = Modifier,
     message: String? = null,

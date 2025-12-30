@@ -10,22 +10,22 @@ import me.tatarka.inject.annotations.Provides
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
 
-typealias TraktHttpClient = HttpClient
-typealias TraktHttpClientEngine = HttpClientEngine
-typealias TraktJson = Json
+public typealias TraktHttpClient = HttpClient
+public typealias TraktHttpClientEngine = HttpClientEngine
+public typealias TraktJson = Json
 
 @ContributesTo(AppScope::class)
-interface TraktComponent {
+public interface TraktComponent {
 
     @Provides
-    fun provideJson(): TraktJson = Json {
+    public fun provideJson(): TraktJson = Json {
         ignoreUnknownKeys = true
         prettyPrint = true
         encodeDefaults = true
     }
 
     @Provides
-    fun provideHttpClient(
+    public fun provideHttpClient(
         json: TraktJson,
         httpClientEngine: TraktHttpClientEngine,
         logger: Logger,

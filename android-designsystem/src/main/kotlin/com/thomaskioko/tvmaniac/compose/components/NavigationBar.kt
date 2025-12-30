@@ -28,7 +28,7 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_settings
 import com.thomaskioko.tvmaniac.i18n.resolve
 
 @Composable
-fun TvManiacNavigationBar(
+public fun TvManiacNavigationBar(
     modifier: Modifier = Modifier,
     content: @Composable RowScope.() -> Unit,
 ) {
@@ -42,7 +42,7 @@ fun TvManiacNavigationBar(
 }
 
 @Composable
-fun RowScope.TvManiacBottomNavigationItem(
+public fun RowScope.TvManiacBottomNavigationItem(
     imageVector: ImageVector,
     title: String,
     selected: Boolean,
@@ -71,12 +71,12 @@ fun RowScope.TvManiacBottomNavigationItem(
     )
 }
 
-object NavigationDefaultColors {
+internal object NavigationDefaultColors {
     @Composable
-    fun navigationContentColor() = MaterialTheme.colorScheme.onSurfaceVariant
+    internal fun navigationContentColor(): Color = MaterialTheme.colorScheme.onSurfaceVariant
 
     @Composable
-    fun navigationSelectedItemColor() = MaterialTheme.colorScheme.secondary
+    internal fun navigationSelectedItemColor(): Color = MaterialTheme.colorScheme.secondary
 }
 
 @ThemePreviews

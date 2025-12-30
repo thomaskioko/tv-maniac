@@ -6,11 +6,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class FakeSimilarShowsRepository : SimilarShowsRepository {
+public class FakeSimilarShowsRepository : SimilarShowsRepository {
 
     private val similarShows = MutableStateFlow<List<SimilarShows>>(emptyList())
 
-    suspend fun setSimilarShowsResult(result: List<SimilarShows>) {
+    public suspend fun setSimilarShowsResult(result: List<SimilarShows>) {
         similarShows.emit(result)
     }
 

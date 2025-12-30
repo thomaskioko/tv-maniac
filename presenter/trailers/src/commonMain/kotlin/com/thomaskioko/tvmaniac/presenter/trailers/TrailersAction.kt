@@ -1,13 +1,13 @@
 package com.thomaskioko.tvmaniac.presenter.trailers
 
-sealed interface TrailersAction
+public sealed interface TrailersAction
 
-data object ReloadTrailers : TrailersAction
+public data object ReloadTrailers : TrailersAction
 
-data class TrailerSelected(
+public data class TrailerSelected(
     val trailerKey: String,
 ) : TrailersAction
 
-data class VideoPlayerError(
+public data class VideoPlayerError(
     val errorMessage: String,
 ) : TrailersAction

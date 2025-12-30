@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class DiscoverShowsInteractor(
+public class DiscoverShowsInteractor(
     private val featuredShowsRepository: FeaturedShowsRepository,
     private val topRatedShowsRepository: TopRatedShowsRepository,
     private val popularShowsRepository: PopularShowsRepository,
@@ -48,7 +48,7 @@ class DiscoverShowsInteractor(
     }.flowOn(dispatchers.io.limitedParallelism(6))
 }
 
-data class DiscoverShowsData(
+public data class DiscoverShowsData(
     val featuredShows: List<ShowEntity>,
     val topRatedShows: List<ShowEntity>,
     val popularShows: List<ShowEntity>,

@@ -6,8 +6,8 @@ import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
 
 @ContributesTo(AppScope::class)
-interface TraktPlatformComponent {
+public interface TraktPlatformComponent {
 
     @Provides
-    fun provideTraktHttpClientEngine(): TraktHttpClientEngine = Darwin.create()
+    public fun provideTraktHttpClientEngine(): TraktHttpClientEngine = Darwin.create()
 }

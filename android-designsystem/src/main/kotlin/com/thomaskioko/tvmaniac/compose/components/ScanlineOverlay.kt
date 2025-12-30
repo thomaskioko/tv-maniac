@@ -11,34 +11,35 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 
-data class ScanlineConfiguration(
+public data class ScanlineConfiguration(
     val enabled: Boolean,
     val color: Color,
     val lineHeight: Dp = 2.dp,
     val opacity: Float = 0.15f,
 ) {
-    companion object {
-        val Disabled = ScanlineConfiguration(enabled = false, color = Color.Transparent)
+    internal companion object {
+        internal val Disabled: ScanlineConfiguration =
+            ScanlineConfiguration(enabled = false, color = Color.Transparent)
 
-        fun terminal() = ScanlineConfiguration(
+        internal fun terminal(): ScanlineConfiguration = ScanlineConfiguration(
             enabled = true,
             color = Color(0xFF20C020),
             opacity = 0.12f,
         )
 
-        fun amber() = ScanlineConfiguration(
+        internal fun amber(): ScanlineConfiguration = ScanlineConfiguration(
             enabled = true,
             color = Color(0xFFFF8C00),
             opacity = 0.12f,
         )
 
-        fun snow() = ScanlineConfiguration(
+        internal fun snow(): ScanlineConfiguration = ScanlineConfiguration(
             enabled = true,
             color = Color(0xFFFFFFFF),
             opacity = 0.08f,
         )
 
-        fun crimson() = ScanlineConfiguration(
+        internal fun crimson(): ScanlineConfiguration = ScanlineConfiguration(
             enabled = true,
             color = Color(0xFFFF4D6A),
             opacity = 0.12f,
@@ -46,7 +47,7 @@ data class ScanlineConfiguration(
     }
 }
 
-fun AppTheme.toScanlineConfiguration(): ScanlineConfiguration = when (this) {
+internal fun AppTheme.toScanlineConfiguration(): ScanlineConfiguration = when (this) {
     AppTheme.TERMINAL_THEME -> ScanlineConfiguration.terminal()
     AppTheme.AMBER_THEME -> ScanlineConfiguration.amber()
     AppTheme.SNOW_THEME -> ScanlineConfiguration.snow()
@@ -55,7 +56,7 @@ fun AppTheme.toScanlineConfiguration(): ScanlineConfiguration = when (this) {
 }
 
 @Composable
-fun ScanlineOverlay(
+public fun ScanlineOverlay(
     configuration: ScanlineConfiguration,
     modifier: Modifier = Modifier,
 ) {

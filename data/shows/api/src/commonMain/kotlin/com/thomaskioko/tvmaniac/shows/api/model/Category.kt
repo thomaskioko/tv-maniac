@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.shows.api.model
 
-enum class Category(
-    val id: Long,
-    val title: String,
+public enum class Category(
+    public val id: Long,
+    public val title: String,
 ) {
     TOP_RATED(1, "Top Rated"),
     POPULAR(2, "Popular"),

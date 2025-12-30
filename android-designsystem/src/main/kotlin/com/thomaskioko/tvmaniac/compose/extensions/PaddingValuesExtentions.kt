@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun PaddingValues.copy(
+public fun PaddingValues.copy(
     copyStart: Boolean = true,
     copyTop: Boolean = true,
     copyEnd: Boolean = true,

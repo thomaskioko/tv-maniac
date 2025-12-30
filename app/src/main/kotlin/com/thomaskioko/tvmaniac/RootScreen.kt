@@ -24,7 +24,7 @@ import com.thomaskioko.tvmaniac.showdetails.ui.ShowDetailsScreen
 import com.thomaskioko.tvmaniac.trailers.ui.TrailersScreen
 
 @Composable
-fun RootScreen(rootPresenter: RootPresenter, modifier: Modifier = Modifier) {
+public fun RootScreen(rootPresenter: RootPresenter, modifier: Modifier = Modifier) {
     Surface(modifier = modifier, color = MaterialTheme.colorScheme.background) {
         Column(
             modifier = Modifier

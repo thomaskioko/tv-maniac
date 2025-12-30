@@ -16,7 +16,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class DefaultShowDetailsRepository(
+public class DefaultShowDetailsRepository(
     private val showStore: ShowDetailsStore,
     private val dao: ShowDetailsDao,
     private val requestManagerRepository: RequestManagerRepository,

@@ -4,11 +4,11 @@ import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAccessRefreshTokenResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAccessTokenResponse
 
-interface TraktTokenRemoteDataSource {
+public interface TraktTokenRemoteDataSource {
 
-    suspend fun getAccessToken(authCode: String): ApiResponse<TraktAccessTokenResponse>
+    public suspend fun getAccessToken(authCode: String): ApiResponse<TraktAccessTokenResponse>
 
-    suspend fun getAccessRefreshToken(refreshToken: String): ApiResponse<TraktAccessRefreshTokenResponse>
+    public suspend fun getAccessRefreshToken(refreshToken: String): ApiResponse<TraktAccessRefreshTokenResponse>
 
-    suspend fun revokeAccessToken(authCode: String)
+    public suspend fun revokeAccessToken(authCode: String)
 }

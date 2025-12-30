@@ -16,7 +16,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Inject
 @SingleIn(TestScope::class)
 @ContributesBinding(TestScope::class, SeasonDetailsPresenter.Factory::class)
-class FakeSeasonDetailsPresenterFactory : SeasonDetailsPresenter.Factory {
+public class FakeSeasonDetailsPresenterFactory : SeasonDetailsPresenter.Factory {
     override fun invoke(
         componentContext: ComponentContext,
         param: SeasonDetailsUiParam,

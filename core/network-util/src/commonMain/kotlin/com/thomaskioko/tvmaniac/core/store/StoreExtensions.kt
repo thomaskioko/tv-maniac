@@ -12,12 +12,12 @@ import org.mobilenativefoundation.store.store5.FetcherResult
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.StoreBuilder
 
-inline fun <Key : Any, Local : Any, Output : Any> storeBuilder(
+public inline fun <Key : Any, Local : Any, Output : Any> storeBuilder(
     fetcher: Fetcher<Key, Local>,
     sourceOfTruth: SourceOfTruth<Key, Local, Output>,
 ): StoreBuilder<Key, Output> = StoreBuilder.from(fetcher, sourceOfTruth)
 
-inline fun <Key : Any, reified Output : Any> apiFetcher(
+public inline fun <Key : Any, reified Output : Any> apiFetcher(
     crossinline apiCall: suspend (Key) -> ApiResponse<Output>,
 ): Fetcher<Key, Output> = Fetcher.ofResult { key: Key ->
     when (val response = apiCall(key)) {
@@ -28,7 +28,7 @@ inline fun <Key : Any, reified Output : Any> apiFetcher(
     }
 }
 
-fun <Key : Any, Local : Any, Output : Any> SourceOfTruth<Key, Local, Output>.usingDispatchers(
+public fun <Key : Any, Local : Any, Output : Any> SourceOfTruth<Key, Local, Output>.usingDispatchers(
     readDispatcher: CoroutineDispatcher,
     writeDispatcher: CoroutineDispatcher,
 ): SourceOfTruth<Key, Local, Output> {

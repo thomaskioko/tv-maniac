@@ -22,7 +22,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class DefaultWatchlistDao(
+public class DefaultWatchlistDao(
     private val database: TvManiacDatabase,
     private val dateFormatter: PlatformDateFormatter,
     private val dispatchers: AppCoroutineDispatchers,

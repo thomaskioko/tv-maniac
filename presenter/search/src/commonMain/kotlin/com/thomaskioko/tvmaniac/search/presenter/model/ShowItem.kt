@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.search.presenter.model
 
-data class ShowItem(
+public data class ShowItem(
     val tmdbId: Long = 0,
     val title: String = "",
     val status: String? = null,

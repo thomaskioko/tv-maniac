@@ -9,23 +9,23 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 
-class ObservableLoadingCounter {
+public class ObservableLoadingCounter {
     private val count = atomic(0)
     private val loadingState = MutableStateFlow(count.value)
 
-    val observable: Flow<Boolean>
+    public val observable: Flow<Boolean>
         get() = loadingState.map { it > 0 }.distinctUntilChanged()
 
-    fun addLoader() {
+    public fun addLoader() {
         loadingState.value = count.incrementAndGet()
     }
 
-    fun removeLoader() {
+    public fun removeLoader() {
         loadingState.value = count.decrementAndGet()
     }
 }
 
-fun Flow<InvokeStatus>.onEachStatus(
+public fun Flow<InvokeStatus>.onEachStatus(
     counter: ObservableLoadingCounter,
     logger: Logger? = null,
     uiMessageManager: UiMessageManager? = null,
@@ -42,7 +42,7 @@ fun Flow<InvokeStatus>.onEachStatus(
     }
 }
 
-suspend inline fun Flow<InvokeStatus>.collectStatus(
+public suspend inline fun Flow<InvokeStatus>.collectStatus(
     counter: ObservableLoadingCounter,
     logger: Logger? = null,
     uiMessageManager: UiMessageManager? = null,

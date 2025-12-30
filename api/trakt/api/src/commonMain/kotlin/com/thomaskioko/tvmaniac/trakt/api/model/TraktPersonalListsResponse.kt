@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TraktPersonalListsResponse(
+public data class TraktPersonalListsResponse(
     @SerialName("allow_comments") val allowComments: Boolean,
     @SerialName("comment_count") val commentCount: Int,
     @SerialName("created_at") val createdAt: String,

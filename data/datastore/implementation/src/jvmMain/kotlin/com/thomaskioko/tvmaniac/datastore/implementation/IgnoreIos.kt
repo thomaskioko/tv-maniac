@@ -1,4 +1,4 @@
 package com.thomaskioko.tvmaniac.datastore.implementation
 
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
-actual annotation class IgnoreIos()
+public actual annotation class IgnoreIos()

@@ -15,7 +15,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Inject
 @SingleIn(TestScope::class)
 @ContributesBinding(TestScope::class, HomePresenter.Factory::class)
-class FakeHomePresenterFactory(
+public class FakeHomePresenterFactory(
     private val discoverPresenterFactory: DiscoverShowsPresenter.Factory,
     private val watchlistPresenterFactory: WatchlistPresenter.Factory,
     private val searchPresenterFactory: SearchShowsPresenter.Factory,

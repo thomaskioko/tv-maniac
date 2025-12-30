@@ -1,4 +1,4 @@
 package com.thomaskioko.tvmaniac.benchmark
 
-const val TARGET_PACKAGE = "com.thomaskioko.tvmaniac"
-const val DEFAULT_ITERATIONS = 5
+internal const val TARGET_PACKAGE: String = "com.thomaskioko.tvmaniac"
+internal const val DEFAULT_ITERATIONS: Int = 5

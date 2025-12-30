@@ -20,7 +20,7 @@ import okio.Path.Companion.toPath
 import kotlin.test.AfterTest
 import kotlin.test.Test
 
-class DatastoreRepositoryImplTest {
+internal class DatastoreRepositoryImplTest {
 
     private val testDispatcher = UnconfinedTestDispatcher()
     private var preferencesScope: CoroutineScope = CoroutineScope(testDispatcher + Job())

@@ -31,7 +31,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class DefaultTraktListRemoteDataSource(
+public class DefaultTraktListRemoteDataSource(
     private val httpClient: TraktHttpClient,
 ) : TraktListRemoteDataSource {
 

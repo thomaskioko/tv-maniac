@@ -13,7 +13,7 @@ import platform.darwin.dispatch_queue_t
 import platform.darwin.dispatch_time
 import kotlin.coroutines.CoroutineContext
 
-val applicationNsQueueDispatcher: CoroutineDispatcher = NsQueueDispatcher(dispatch_get_main_queue())
+public val applicationNsQueueDispatcher: CoroutineDispatcher = NsQueueDispatcher(dispatch_get_main_queue())
 
 internal class NsQueueDispatcher(private val dispatchQueue: dispatch_queue_t) :
     CoroutineDispatcher(), Delay {

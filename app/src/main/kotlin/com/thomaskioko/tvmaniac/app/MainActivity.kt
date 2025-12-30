@@ -22,7 +22,7 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.inject.ActivityComponent
 
-class MainActivity : ComponentActivity() {
+public class MainActivity : ComponentActivity() {
     private lateinit var component: ActivityComponent
 
     override fun onCreate(savedInstanceState: Bundle?) {

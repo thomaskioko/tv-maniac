@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.shows.api
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.Tvshow
 
-object MockData {
+internal object MockData {
 
     fun getShow() = Tvshow(
         id = Id(84958),

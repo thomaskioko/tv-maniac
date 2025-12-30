@@ -17,8 +17,10 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.unit.times
 import androidx.compose.ui.util.lerp
 import androidx.compose.ui.viewinterop.AndroidView
 import coil.compose.AsyncImage
@@ -29,7 +31,7 @@ import com.flaviofaria.kenburnsview.KenBurnsView
 import kotlin.math.absoluteValue
 
 @Composable
-fun AsyncImageComposable(
+public fun AsyncImageComposable(
     model: Any?,
     contentDescription: String?,
     modifier: Modifier = Modifier,
@@ -64,7 +66,7 @@ fun AsyncImageComposable(
 }
 
 @Composable
-fun KenBurnsViewImage(
+public fun KenBurnsViewImage(
     imageUrl: String?,
     modifier: Modifier = Modifier,
 ) {
@@ -75,7 +77,7 @@ fun KenBurnsViewImage(
 }
 
 @Composable
-fun ParallaxCarouselImage(
+public fun ParallaxCarouselImage(
     state: PagerState,
     currentPage: Int,
     imageUrl: String?,
@@ -86,7 +88,10 @@ fun ParallaxCarouselImage(
     val currentPageOffset = calculatePageOffset(state, currentPage)
     val cardTranslationX = lerp(100f, 0f, 1f - currentPageOffset)
     val cardScaleX = lerp(0.8f, 1f, 1f - currentPageOffset.absoluteValue.coerceIn(0f, 1f))
-    val screenWidth = LocalConfiguration.current.screenWidthDp
+    val density = LocalDensity.current
+    val screenWidth = with(density) {
+        LocalWindowInfo.current.containerSize.width.toDp()
+    }
     val parallaxOffset = currentPageOffset * screenWidth * 2f
 
     Box(
@@ -102,7 +107,7 @@ fun ParallaxCarouselImage(
                 .fillMaxSize()
                 .clip(shape)
                 .graphicsLayer {
-                    translationX = lerp(10f, 0f, 1f - currentPageOffset) + parallaxOffset
+                    translationX = lerp(10f, 0f, 1f - currentPageOffset) + parallaxOffset.value
                 },
             model = imageUrl,
             contentDescription = null,

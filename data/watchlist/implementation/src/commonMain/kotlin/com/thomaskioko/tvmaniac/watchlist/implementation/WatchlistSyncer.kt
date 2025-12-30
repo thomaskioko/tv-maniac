@@ -11,7 +11,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 
 @Inject
 @ContributesBinding(AppScope::class, multibinding = true)
-class WatchlistSyncer(
+public class WatchlistSyncer(
     private val watchlistRepository: WatchlistRepository,
     private val coroutineScope: AppCoroutineScope,
 ) : AppInitializer {

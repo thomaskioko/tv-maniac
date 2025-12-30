@@ -28,7 +28,7 @@ private const val COVER_IMAGE_SIZE = 240
 private const val MAC_COLOR_COUNT = 8
 
 @Composable
-fun rememberDominantColorState(
+public fun rememberDominantColorState(
     context: Context = LocalContext.current,
     defaultColor: Color = MaterialTheme.colorScheme.primary,
     defaultOnColor: Color = MaterialTheme.colorScheme.onPrimary,
@@ -43,7 +43,7 @@ fun rememberDominantColorState(
  * from an image.
  */
 @Composable
-fun DynamicThemePrimaryColorsFromImage(
+public fun DynamicThemePrimaryColorsFromImage(
     dominantColorState: DominantColorState = rememberDominantColorState(),
     content: @Composable () -> Unit,
 ) {
@@ -77,17 +77,17 @@ fun DynamicThemePrimaryColorsFromImage(
  * @param isColorValid A lambda which allows filtering of the calculated image colors.
  */
 @Stable
-class DominantColorState(
+public class DominantColorState(
     private val context: Context,
     private val defaultColor: Color,
     private val defaultOnColor: Color,
     cacheSize: Int = 12,
     private val isColorValid: (Color) -> Boolean = { true },
 ) {
-    var color by mutableStateOf(defaultColor)
+    public var color: Color by mutableStateOf(defaultColor)
         private set
 
-    var onColor by mutableStateOf(defaultOnColor)
+    public var onColor: Color by mutableStateOf(defaultOnColor)
         private set
 
     private val cache = when {
@@ -95,7 +95,7 @@ class DominantColorState(
         else -> null
     }
 
-    suspend fun updateColorsFromImageUrl(url: String) {
+    public suspend fun updateColorsFromImageUrl(url: String) {
         val result = calculateDominantColor(url)
         color = result?.color ?: defaultColor
         onColor = result?.onColor ?: defaultOnColor
@@ -121,7 +121,7 @@ class DominantColorState(
     }
 
     /** Reset the color values to [defaultColor]. */
-    fun reset() {
+    public fun reset() {
         color = defaultColor
         onColor = defaultColor
     }

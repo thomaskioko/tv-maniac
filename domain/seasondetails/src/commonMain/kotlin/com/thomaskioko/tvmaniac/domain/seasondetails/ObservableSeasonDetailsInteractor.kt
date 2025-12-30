@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.mapNotNull
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class ObservableSeasonDetailsInteractor(
+public class ObservableSeasonDetailsInteractor(
     private val seasonDetailsRepository: SeasonDetailsRepository,
     private val castRepository: CastRepository,
 ) : SubjectInteractor<SeasonDetailsParam, SeasonDetailsResult>() {

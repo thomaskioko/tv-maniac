@@ -23,9 +23,9 @@ import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
 import com.thomaskioko.tvmaniac.core.logger.Logger as KermitLogger
 
-const val TIMEOUT_DURATION: Long = 60_000
+internal const val TIMEOUT_DURATION: Long = 60_000
 
-fun traktHttpClient(
+internal fun traktHttpClient(
     isDebug: Boolean = false,
     traktClientId: String,
     json: TraktJson,

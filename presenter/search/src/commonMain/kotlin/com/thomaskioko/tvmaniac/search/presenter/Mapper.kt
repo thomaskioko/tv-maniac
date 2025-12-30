@@ -10,11 +10,11 @@ import kotlinx.collections.immutable.toImmutableList
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class Mapper(
+public class Mapper(
     private val formatterUtil: FormatterUtil,
 ) {
 
-    fun toShowList(items: List<ShowEntity>): ImmutableList<ShowItem> =
+    public fun toShowList(items: List<ShowEntity>): ImmutableList<ShowItem> =
         items.map {
             ShowItem(
                 tmdbId = it.id,
@@ -28,7 +28,7 @@ class Mapper(
             )
         }.toImmutableList()
 
-    fun toGenreList(entities: List<ShowGenresEntity>): ImmutableList<ShowGenre> {
+    public fun toGenreList(entities: List<ShowGenresEntity>): ImmutableList<ShowGenre> {
         return entities.map {
             ShowGenre(
                 id = it.id,

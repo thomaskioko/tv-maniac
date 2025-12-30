@@ -6,7 +6,7 @@ import com.thomaskioko.tvmaniac.watchlist.presenter.model.WatchlistItem
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-data class WatchlistState(
+public data class WatchlistState(
     val query: String = "",
     val isSearchActive: Boolean = false,
     val isGridMode: Boolean = true,

@@ -1,26 +1,26 @@
 package com.thomaskioko.tvmaniac.core.logger
 
-interface Logger {
+public interface Logger {
 
-    fun setup(debugMode: Boolean)
+    public fun setup(debugMode: Boolean)
 
-    fun debug(message: String)
+    public fun debug(message: String)
 
-    fun debug(tag: String, message: String)
+    public fun debug(tag: String, message: String)
 
-    fun error(message: String, throwable: Throwable)
+    public fun error(message: String, throwable: Throwable)
 
-    fun error(tag: String, message: String)
+    public fun error(tag: String, message: String)
 
-    fun info(message: String, throwable: Throwable)
+    public fun info(message: String, throwable: Throwable)
 
-    fun info(tag: String, message: String)
+    public fun info(tag: String, message: String)
 
-    fun warning(message: String)
+    public fun warning(message: String)
 
-    fun warning(tag: String, message: String)
+    public fun warning(tag: String, message: String)
 
-    fun verbose(message: String)
+    public fun verbose(message: String)
 
-    fun verbose(tag: String, message: String)
+    public fun verbose(tag: String, message: String)
 }

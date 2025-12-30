@@ -15,9 +15,9 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
 
-private const val SEVEN_DAYS_MILLIS = 7 * 24 * 60 * 60 * 1000L
+private const val SEVEN_DAYS_MILLIS: Long = 7 * 24 * 60 * 60 * 1000L
 
-fun List<Watchlists>.entityToWatchlistShowList(
+public fun List<Watchlists>.entityToWatchlistShowList(
     lastWatchedMap: Map<Long, Long?> = emptyMap(),
 ): PersistentList<WatchlistItem> {
     return this.map {
@@ -41,7 +41,7 @@ fun List<Watchlists>.entityToWatchlistShowList(
         .toPersistentList()
 }
 
-fun List<SearchWatchlist>.entityToWatchlistShowList(
+public fun List<SearchWatchlist>.entityToWatchlistShowList(
     lastWatchedMap: Map<Long, Long?> = emptyMap(),
 ): ImmutableList<WatchlistItem> {
     return this.map {
@@ -65,7 +65,7 @@ fun List<SearchWatchlist>.entityToWatchlistShowList(
         .toPersistentList()
 }
 
-fun NextEpisodeWithShow.toUpNextEpisodeItem(
+public fun NextEpisodeWithShow.toUpNextEpisodeItem(
     currentTimeMillis: Long,
     remainingEpisodes: Int = 0,
 ): UpNextEpisodeItem {
@@ -138,12 +138,12 @@ private fun calculateDaysSinceEpoch(year: Int, month: Int, day: Int): Long {
     return (era * 146097L + doe - 719468)
 }
 
-data class SectionedEpisodes(
+public data class SectionedEpisodes(
     val watchNext: ImmutableList<UpNextEpisodeItem>,
     val stale: ImmutableList<UpNextEpisodeItem>,
 )
 
-fun List<UpNextEpisodeItem>.groupBySections(currentTimeMillis: Long): SectionedEpisodes {
+public fun List<UpNextEpisodeItem>.groupBySections(currentTimeMillis: Long): SectionedEpisodes {
     val sevenDaysAgo = currentTimeMillis - SEVEN_DAYS_MILLIS
 
     val watchNext = mutableListOf<UpNextEpisodeItem>()
@@ -164,12 +164,12 @@ fun List<UpNextEpisodeItem>.groupBySections(currentTimeMillis: Long): SectionedE
     )
 }
 
-data class SectionedItems(
+public data class SectionedItems(
     val watchNext: ImmutableList<WatchlistItem>,
     val stale: ImmutableList<WatchlistItem>,
 )
 
-fun List<WatchlistItem>.groupItemsBySections(currentTimeMillis: Long): SectionedItems {
+public fun List<WatchlistItem>.groupItemsBySections(currentTimeMillis: Long): SectionedItems {
     val sevenDaysAgo = currentTimeMillis - SEVEN_DAYS_MILLIS
 
     val watchNext = mutableListOf<WatchlistItem>()
@@ -190,12 +190,12 @@ fun List<WatchlistItem>.groupItemsBySections(currentTimeMillis: Long): Sectioned
     )
 }
 
-fun WatchlistSections.toPresenter(): SectionedItems = SectionedItems(
+public fun WatchlistSections.toPresenter(): SectionedItems = SectionedItems(
     watchNext = watchNext.map { it.toPresenter() }.toImmutableList(),
     stale = stale.map { it.toPresenter() }.toImmutableList(),
 )
 
-fun WatchlistShowInfo.toPresenter(): WatchlistItem = WatchlistItem(
+public fun WatchlistShowInfo.toPresenter(): WatchlistItem = WatchlistItem(
     tmdbId = tmdbId,
     title = title,
     posterImageUrl = posterImageUrl,
@@ -209,12 +209,12 @@ fun WatchlistShowInfo.toPresenter(): WatchlistItem = WatchlistItem(
     lastWatchedAt = lastWatchedAt,
 )
 
-fun UpNextSections.toPresenter(currentTimeMillis: Long): SectionedEpisodes = SectionedEpisodes(
+public fun UpNextSections.toPresenter(currentTimeMillis: Long): SectionedEpisodes = SectionedEpisodes(
     watchNext = watchNext.map { it.toPresenter(currentTimeMillis) }.toImmutableList(),
     stale = stale.map { it.toPresenter(currentTimeMillis) }.toImmutableList(),
 )
 
-fun UpNextEpisodeInfo.toPresenter(currentTimeMillis: Long): UpNextEpisodeItem {
+public fun UpNextEpisodeInfo.toPresenter(currentTimeMillis: Long): UpNextEpisodeItem {
     val badge = calculateBadge(episodeNumber, airDate, currentTimeMillis)
     return UpNextEpisodeItem(
         showId = showId,

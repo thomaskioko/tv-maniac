@@ -9,7 +9,7 @@ import com.thomaskioko.tvmaniac.search.presenter.model.ShowGenre
 import com.thomaskioko.tvmaniac.search.presenter.model.ShowItem
 import kotlinx.collections.immutable.toImmutableList
 
-class SearchPreviewParameterProvider : PreviewParameterProvider<SearchShowState> {
+internal class SearchPreviewParameterProvider : PreviewParameterProvider<SearchShowState> {
     override val values: Sequence<SearchShowState>
         get() {
             return sequenceOf(

@@ -17,7 +17,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class DefaultWatchProviderDao(
+public class DefaultWatchProviderDao(
     private val database: TvManiacDatabase,
     private val dispatcher: AppCoroutineDispatchers,
 ) : WatchProviderDao {

@@ -4,12 +4,12 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ImagesResponse(
+public data class ImagesResponse(
     @SerialName("posters") var posters: ArrayList<Posters>,
 )
 
 @Serializable
-data class Posters(
+public data class Posters(
     @SerialName("aspect_ratio") var aspectRatio: Double,
     @SerialName("height") var height: Int,
     @SerialName("file_path") var filePath: String,

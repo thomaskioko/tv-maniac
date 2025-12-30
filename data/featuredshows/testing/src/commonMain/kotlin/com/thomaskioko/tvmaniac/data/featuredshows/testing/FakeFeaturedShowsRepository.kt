@@ -6,11 +6,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class FakeFeaturedShowsRepository : FeaturedShowsRepository {
+public class FakeFeaturedShowsRepository : FeaturedShowsRepository {
 
     private val shows = MutableStateFlow<List<ShowEntity>>(emptyList())
 
-    fun setFeaturedShows(result: List<ShowEntity>) {
+    public fun setFeaturedShows(result: List<ShowEntity>) {
         shows.value = result
     }
 

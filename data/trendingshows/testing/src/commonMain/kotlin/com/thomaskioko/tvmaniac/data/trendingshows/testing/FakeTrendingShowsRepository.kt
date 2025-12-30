@@ -7,16 +7,16 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class FakeTrendingShowsRepository : TrendingShowsRepository {
+public class FakeTrendingShowsRepository : TrendingShowsRepository {
 
     private val shows = MutableStateFlow<List<ShowEntity>>(emptyList())
     private val pagedShows = MutableStateFlow<PagingData<ShowEntity>>(PagingData.empty())
 
-    fun setTrendingShows(result: List<ShowEntity>) {
+    public fun setTrendingShows(result: List<ShowEntity>) {
         shows.value = result
     }
 
-    fun setPagedData(result: PagingData<ShowEntity>) {
+    public fun setPagedData(result: PagingData<ShowEntity>) {
         pagedShows.value = result
     }
 

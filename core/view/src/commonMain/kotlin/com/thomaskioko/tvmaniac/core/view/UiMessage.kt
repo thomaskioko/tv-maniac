@@ -8,13 +8,13 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlin.uuid.Uuid
 
-data class UiMessage(
+public data class UiMessage(
     val message: String,
     val id: Long = Uuid.random().getMostSignificantBitsFromBytes(),
     val sourceId: String? = null,
 )
 
-fun UiMessage(
+public fun UiMessage(
     t: Throwable,
     id: Long = Uuid.random().getMostSignificantBitsFromBytes(),
     sourceId: String? = null,
@@ -31,14 +31,14 @@ internal fun Uuid.getMostSignificantBitsFromBytes(): Long {
     }
 }
 
-class UiMessageManager {
+public class UiMessageManager {
     private val mutex = Mutex()
 
     private val _messages = MutableStateFlow(emptyList<UiMessage>())
 
-    val message: Flow<UiMessage?> = _messages.map { it.firstOrNull() }.distinctUntilChanged()
+    public val message: Flow<UiMessage?> = _messages.map { it.firstOrNull() }.distinctUntilChanged()
 
-    suspend fun emitMessageCombined(throwable: Throwable, sourceId: String? = null) {
+    public suspend fun emitMessageCombined(throwable: Throwable, sourceId: String? = null) {
         mutex.withLock {
             val errorMessage = throwable.message ?: "Error occurred: $throwable"
 
@@ -83,7 +83,7 @@ class UiMessageManager {
         }
     }
 
-    suspend fun clearMessage(id: Long) {
+    public suspend fun clearMessage(id: Long) {
         mutex.withLock {
             _messages.value = _messages.value.filterNot { it.id == id }
         }

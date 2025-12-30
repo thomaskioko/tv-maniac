@@ -21,7 +21,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
 @SingleIn(AppScope::class)
-class GenreStore(
+public class GenreStore(
     private val genreDao: GenreDao,
     private val tmdbRemoteDataSource: TmdbShowsNetworkDataSource,
     private val requestManagerRepository: RequestManagerRepository,

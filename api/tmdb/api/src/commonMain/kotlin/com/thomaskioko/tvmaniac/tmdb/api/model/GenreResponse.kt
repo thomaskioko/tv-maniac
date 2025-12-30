@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class GenreResponse(
+public data class GenreResponse(
     @SerialName("id") var id: Int,
     @SerialName("name") var name: String,
 )

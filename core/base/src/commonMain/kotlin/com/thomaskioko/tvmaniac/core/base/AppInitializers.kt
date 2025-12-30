@@ -6,10 +6,10 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
 @SingleIn(AppScope::class)
-class AppInitializers(
+public class AppInitializers(
     private val initializers: Set<AppInitializer>,
 ) {
-    fun initialize() {
+    public fun initialize() {
         for (initializer in initializers) {
             initializer.init()
         }

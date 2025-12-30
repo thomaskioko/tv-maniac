@@ -6,11 +6,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class FakeRecommendedShowsRepository : RecommendedShowsRepository {
+public class FakeRecommendedShowsRepository : RecommendedShowsRepository {
 
     private val entityListResult = MutableStateFlow<List<RecommendedShows>>(emptyList())
 
-    suspend fun setObserveRecommendedShows(result: List<RecommendedShows>) {
+    public suspend fun setObserveRecommendedShows(result: List<RecommendedShows>) {
         entityListResult.emit(result)
     }
 

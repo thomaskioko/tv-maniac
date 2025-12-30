@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TmdbSeasonDetailsResponse(
+public data class TmdbSeasonDetailsResponse(
     @SerialName("air_date") var airDate: String? = null,
     @SerialName("episodes") var episodes: ArrayList<EpisodesResponse>,
     @SerialName("name") var name: String,

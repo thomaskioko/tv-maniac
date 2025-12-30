@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 
 @Composable
-fun TvManiacChip(
+public fun TvManiacChip(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,

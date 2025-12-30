@@ -25,7 +25,7 @@ private const val DEFAULT_API_PAGE = 1L
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class DefaultPopularShowsRepository(
+public class DefaultPopularShowsRepository(
     private val store: PopularShowsStore,
     private val popularShowsDao: PopularShowsDao,
     private val requestManagerRepository: RequestManagerRepository,

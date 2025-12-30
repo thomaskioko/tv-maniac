@@ -3,6 +3,7 @@ plugins {
 }
 
 scaffold {
+    explicitApi()
     useKotlinInject()
     optIn(
         "kotlinx.coroutines.ExperimentalCoroutinesApi",

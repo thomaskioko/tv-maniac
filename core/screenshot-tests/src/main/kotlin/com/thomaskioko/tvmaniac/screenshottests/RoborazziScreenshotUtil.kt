@@ -19,16 +19,16 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import org.robolectric.RuntimeEnvironment
 
-val DefaultRoborazziOptions = RoborazziOptions(
+internal val DefaultRoborazziOptions: RoborazziOptions = RoborazziOptions(
     compareOptions = CompareOptions(changeThreshold = 0.01f),
     recordOptions = RecordOptions(resizeScale = 0.5),
 )
 
-enum class DefaultTestDevices(val spec: String) {
+internal enum class DefaultTestDevices(val spec: String) {
     Pixel7(RobolectricDeviceQualifiers.Pixel7),
 }
 
-fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.captureMultiDevice(
+public fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.captureMultiDevice(
     name: String,
     content: @Composable () -> Unit,
 ) {
@@ -42,7 +42,7 @@ fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.c
 }
 
 /** Takes two screenshots combining light/dark themes. */
-fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.captureMultiTheme(
+internal fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.captureMultiTheme(
     name: String,
     deviceSpec: String,
     overrideFileName: String? = null,

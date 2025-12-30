@@ -9,9 +9,9 @@ import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistPresenter
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.Serializable
 
-interface HomePresenter {
-    interface Factory {
-        operator fun invoke(
+public interface HomePresenter {
+    public interface Factory {
+        public operator fun invoke(
             componentContext: ComponentContext,
             onShowClicked: (id: Long) -> Unit,
             onMoreShowClicked: (id: Long) -> Unit,
@@ -21,36 +21,36 @@ interface HomePresenter {
         ): HomePresenter
     }
 
-    val homeChildStack: StateFlow<ChildStack<*, Child>>
+    public val homeChildStack: StateFlow<ChildStack<*, Child>>
 
-    fun onDiscoverClicked()
-    fun onLibraryClicked()
-    fun onSearchClicked()
-    fun onProfileClicked()
-    fun onTabClicked(config: HomeConfig)
+    public fun onDiscoverClicked()
+    public fun onLibraryClicked()
+    public fun onSearchClicked()
+    public fun onProfileClicked()
+    public fun onTabClicked(config: HomeConfig)
 
-    sealed interface Child {
-        class Discover(val presenter: DiscoverShowsPresenter) : Child
+    public sealed interface Child {
+        public class Discover(public val presenter: DiscoverShowsPresenter) : Child
 
-        class Watchlist(val presenter: WatchlistPresenter) : Child
+        public class Watchlist(public val presenter: WatchlistPresenter) : Child
 
-        class Search(val presenter: SearchShowsPresenter) : Child
+        public class Search(public val presenter: SearchShowsPresenter) : Child
 
-        class Profile(val presenter: ProfilePresenter) : Child
+        public class Profile(public val presenter: ProfilePresenter) : Child
     }
 
     @Serializable
-    sealed interface HomeConfig {
+    public sealed interface HomeConfig {
         @Serializable
-        data object Discover : HomeConfig
+        public data object Discover : HomeConfig
 
         @Serializable
-        data object Library : HomeConfig
+        public data object Library : HomeConfig
 
         @Serializable
-        data object Search : HomeConfig
+        public data object Search : HomeConfig
 
         @Serializable
-        data object Profile : HomeConfig
+        public data object Profile : HomeConfig
     }
 }

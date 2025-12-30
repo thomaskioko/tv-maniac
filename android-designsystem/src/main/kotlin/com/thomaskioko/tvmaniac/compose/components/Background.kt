@@ -23,7 +23,7 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
  * @param content The background content.
  */
 @Composable
-fun TvManiacBackground(
+public fun TvManiacBackground(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
@@ -41,7 +41,7 @@ fun TvManiacBackground(
 
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, name = "Light Theme", showBackground = true)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, name = "Dark Theme", showBackground = true)
-annotation class ThemePreviews
+public annotation class ThemePreviews
 
 @ThemePreviews
 @Composable

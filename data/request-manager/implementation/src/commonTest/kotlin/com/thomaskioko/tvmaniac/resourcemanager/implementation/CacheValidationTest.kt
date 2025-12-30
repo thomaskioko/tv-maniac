@@ -11,7 +11,7 @@ import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 
-class CacheValidationTest : BaseDatabaseTest() {
+internal class CacheValidationTest : BaseDatabaseTest() {
     private lateinit var repository: DefaultRequestManagerRepository
     private val fakeDateTimeProvider = FakeDateTimeProvider()
 

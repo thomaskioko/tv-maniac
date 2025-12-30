@@ -32,7 +32,7 @@ import com.thomaskioko.tvmaniac.search.ui.SearchScreen
 import com.thomaskioko.tvmaniac.ui.library.WatchlistScreen
 
 @Composable
-fun HomeScreen(
+public fun HomeScreen(
     presenter: HomePresenter,
     modifier: Modifier = Modifier,
 ) {

@@ -17,7 +17,7 @@ import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
 
 @Inject
-class SearchShowStore(
+public class SearchShowStore(
     private val tvShowsDao: TvShowsDao,
     private val tmdbRemoteDataSource: TmdbShowsNetworkDataSource,
     private val formatterUtil: FormatterUtil,

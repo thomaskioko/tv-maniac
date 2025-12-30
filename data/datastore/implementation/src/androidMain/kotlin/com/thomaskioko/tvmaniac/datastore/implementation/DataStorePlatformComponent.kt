@@ -10,11 +10,11 @@ import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @ContributesTo(AppScope::class)
-interface DataStorePlatformComponent {
+public interface DataStorePlatformComponent {
 
     @Provides
     @SingleIn(AppScope::class)
-    fun provideDataStore(context: Application, scope: AppCoroutineScope): DataStore<Preferences> =
+    public fun provideDataStore(context: Application, scope: AppCoroutineScope): DataStore<Preferences> =
         createDataStore(
             coroutineScope = scope.io,
             produceFile = { context.filesDir.resolve(DATA_STORE_FILE_NAME).absolutePath },

@@ -11,12 +11,12 @@ import kotlin.math.floor
 import kotlin.math.log10
 import kotlin.math.pow
 
-const val POSTER_PATH = "https://image.tmdb.org/t/p/original%s"
+public const val POSTER_PATH: String = "https://image.tmdb.org/t/p/original%s"
 
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class AndroidFormatterUtil : FormatterUtil {
+public class AndroidFormatterUtil : FormatterUtil {
 
     override fun formatTmdbPosterPath(imageUrl: String): String = String.format(POSTER_PATH, imageUrl)
 

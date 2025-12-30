@@ -6,7 +6,7 @@ import com.thomaskioko.tvmaniac.discover.presenter.model.NextEpisodeUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-data class DiscoverViewState(
+public data class DiscoverViewState(
     val featuredRefreshing: Boolean = false,
     val topRatedRefreshing: Boolean = false,
     val trendingRefreshing: Boolean = false,
@@ -39,7 +39,7 @@ data class DiscoverViewState(
         return responses.all { it.isNullOrEmpty() }
     }
 
-    companion object {
-        val Empty = DiscoverViewState()
+    public companion object {
+        public val Empty: DiscoverViewState = DiscoverViewState()
     }
 }

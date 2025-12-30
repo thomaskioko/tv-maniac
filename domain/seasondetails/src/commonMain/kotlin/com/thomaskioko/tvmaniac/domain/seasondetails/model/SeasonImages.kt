@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.domain.seasondetails.model
 
-data class SeasonImages(
+public data class SeasonImages(
     val id: Long,
     val imageUrl: String?,
 )

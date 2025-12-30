@@ -26,7 +26,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
 @SingleIn(AppScope::class)
-class RecommendedShowsStore(
+public class RecommendedShowsStore(
     private val networkDataSource: TmdbShowDetailsNetworkDataSource,
     private val tvShowsDao: TvShowsDao,
     private val recommendedShowsDao: RecommendedShowsDao,

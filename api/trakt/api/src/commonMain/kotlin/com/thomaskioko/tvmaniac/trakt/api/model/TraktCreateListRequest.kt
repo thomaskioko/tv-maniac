@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TraktCreateListRequest(
+public data class TraktCreateListRequest(
     @SerialName("name") val name: String = "Following",
     @SerialName("privacy") val privacy: String = "private",
     @SerialName("sort_by") val sortBy: String = "added",

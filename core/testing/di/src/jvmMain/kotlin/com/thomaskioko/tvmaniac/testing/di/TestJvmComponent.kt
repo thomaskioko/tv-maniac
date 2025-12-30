@@ -11,10 +11,10 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Component
 @SingleIn(TestScope::class)
 @MergeComponent(TestScope::class)
-abstract class TestJvmComponent : TestJvmComponentMerged {
-    abstract val datastoreRepository: DatastoreRepository
-    abstract val traktAuthManager: TraktAuthManager
+public abstract class TestJvmComponent : TestJvmComponentMerged {
+    public abstract val datastoreRepository: DatastoreRepository
+    public abstract val traktAuthManager: TraktAuthManager
 
-    abstract val rootPresenterFactory: RootPresenter.Factory
-    abstract val homePresenterFactory: HomePresenter.Factory
+    public abstract val rootPresenterFactory: RootPresenter.Factory
+    public abstract val homePresenterFactory: HomePresenter.Factory
 }

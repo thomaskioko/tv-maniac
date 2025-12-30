@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.domain.showdetails.model
 
-data class ShowDetails(
+public data class ShowDetails(
     val tmdbId: Long,
     val title: String,
     val overview: String,
@@ -24,20 +24,20 @@ data class ShowDetails(
     val trailersList: List<Trailer>,
 )
 
-data class Casts(
+public data class Casts(
     val id: Long,
     val name: String,
     val profileUrl: String? = null,
     val characterName: String,
 )
 
-data class Providers(
+public data class Providers(
     val id: Long,
     val logoUrl: String?,
     val name: String,
 )
 
-data class Season(
+public data class Season(
     val seasonId: Long,
     val tvShowId: Long,
     val name: String,
@@ -49,7 +49,7 @@ data class Season(
         get() = if (totalCount > 0) watchedCount.toFloat() / totalCount else 0f
 }
 
-data class Show(
+public data class Show(
     val tmdbId: Long,
     val title: String,
     val posterImageUrl: String?,
@@ -57,7 +57,7 @@ data class Show(
     val isInLibrary: Boolean,
 )
 
-data class Trailer(
+public data class Trailer(
     val showId: Long,
     val key: String,
     val name: String,

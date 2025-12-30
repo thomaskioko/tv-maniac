@@ -8,14 +8,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class FakeTraktAuthRepository : TraktAuthRepository {
+public class FakeTraktAuthRepository : TraktAuthRepository {
 
     private val _state = MutableStateFlow(TraktAuthState.LOGGED_OUT)
     private var authState: AuthState? = null
     private var refreshAuthState: AuthState? = null
     private val _authError = MutableStateFlow<AuthError?>(null)
 
-    suspend fun setState(traktAuthState: TraktAuthState) {
+    public suspend fun setState(traktAuthState: TraktAuthState) {
         _state.emit(traktAuthState)
     }
 

@@ -12,7 +12,7 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.TrailerModel
 import kotlinx.collections.immutable.persistentListOf
 
-val showDetailsContent = ShowDetailsContent(
+internal val showDetailsContent = ShowDetailsContent(
     showDetails = ShowDetailsModel(
         tmdbId = 849583,
         title = "Loki",
@@ -120,15 +120,15 @@ val showDetailsContent = ShowDetailsContent(
     message = null,
 )
 
-val showDetailsContentWithEmptyInfo = showDetailsContent.copy(showDetails = ShowDetailsModel.Empty)
+internal val showDetailsContentWithEmptyInfo = showDetailsContent.copy(showDetails = ShowDetailsModel.Empty)
 
-val showDetailsContentWithError = showDetailsContent.copy(
+internal val showDetailsContentWithError = showDetailsContent.copy(
     message = UiMessage(
         message = "Opps! Something went wrong",
     ),
 )
 
-class DetailPreviewParameterProvider : PreviewParameterProvider<ShowDetailsContent> {
+internal class DetailPreviewParameterProvider : PreviewParameterProvider<ShowDetailsContent> {
     override val values: Sequence<ShowDetailsContent>
         get() {
             return sequenceOf(

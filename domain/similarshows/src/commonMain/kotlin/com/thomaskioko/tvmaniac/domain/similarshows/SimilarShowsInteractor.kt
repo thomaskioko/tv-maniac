@@ -8,7 +8,7 @@ import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class SimilarShowsInteractor(
+public class SimilarShowsInteractor(
     private val similarShowsRepository: SimilarShowsRepository,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Param>() {
@@ -18,5 +18,5 @@ class SimilarShowsInteractor(
         }
     }
 
-    data class Param(val id: Long, val forceRefresh: Boolean = false)
+    public data class Param(val id: Long, val forceRefresh: Boolean = false)
 }

@@ -10,13 +10,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 
 @Composable
-fun BasicDialog(
+public fun BasicDialog(
     dialogTitle: String,
     dialogMessage: String,
     confirmButtonText: String,
@@ -28,11 +29,14 @@ fun BasicDialog(
     confirmButtonClicked: () -> Unit = {},
     dismissButtonClicked: () -> Unit = {},
 ) {
-    val configuration = LocalConfiguration.current
+    val density = LocalDensity.current
+    val containerWidth = with(density) {
+        LocalWindowInfo.current.containerSize.width.toDp()
+    }
 
     AlertDialog(
         properties = DialogProperties(usePlatformDefaultWidth = false),
-        modifier = Modifier.widthIn(max = configuration.screenWidthDp.dp - 80.dp),
+        modifier = Modifier.widthIn(max = containerWidth - 80.dp),
         shape = shape,
         onDismissRequest = { onDismissDialog() },
         title = {

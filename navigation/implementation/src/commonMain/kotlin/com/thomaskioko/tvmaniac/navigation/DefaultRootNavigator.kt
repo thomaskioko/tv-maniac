@@ -14,7 +14,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Inject
 @SingleIn(ActivityScope::class)
 @ContributesBinding(ActivityScope::class, RootNavigator::class)
-class DefaultRootNavigator : RootNavigator {
+public class DefaultRootNavigator : RootNavigator {
     private val navigation = StackNavigation<RootDestinationConfig>()
 
     override fun bringToFront(config: RootDestinationConfig) {

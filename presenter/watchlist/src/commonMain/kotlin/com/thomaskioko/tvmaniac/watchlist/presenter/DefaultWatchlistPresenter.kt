@@ -28,7 +28,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
 @ContributesBinding(ActivityScope::class, WatchlistPresenter::class)
-class DefaultWatchlistPresenter(
+public class DefaultWatchlistPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val navigateToShowDetails: (id: Long) -> Unit,
     @Assisted private val navigateToSeason: (showId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
@@ -158,7 +158,7 @@ class DefaultWatchlistPresenter(
 @Inject
 @SingleIn(ActivityScope::class)
 @ContributesBinding(ActivityScope::class, WatchlistPresenter.Factory::class)
-class DefaultWatchlistPresenterFactory(
+public class DefaultWatchlistPresenterFactory(
     private val presenter: (
         componentContext: ComponentContext,
         navigateToShowDetails: (showDetails: Long) -> Unit,

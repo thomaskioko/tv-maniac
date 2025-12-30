@@ -10,9 +10,9 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
 @SingleIn(AppScope::class)
-class DatabaseFactory(private val sqlDriver: SqlDriver) {
+public class DatabaseFactory(private val sqlDriver: SqlDriver) {
 
-    fun createDatabase(): TvManiacDatabase = TvManiacDatabase(
+    public fun createDatabase(): TvManiacDatabase = TvManiacDatabase(
         driver = sqlDriver,
         last_requestsAdapter = Last_requests.Adapter(
             timestampAdapter = InstantColumnAdapter,

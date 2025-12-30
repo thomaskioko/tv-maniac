@@ -17,7 +17,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
 @ContributesBinding(ActivityScope::class, TrailersPresenter::class)
-class DefaultTrailersPresenter(
+public class DefaultTrailersPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val traktShowId: Long,
     private val repository: TrailerRepository,
@@ -60,7 +60,7 @@ class DefaultTrailersPresenter(
 @Inject
 @SingleIn(ActivityScope::class)
 @ContributesBinding(ActivityScope::class, TrailersPresenter.Factory::class)
-class DefaultTrailersPresenterFactory(
+public class DefaultTrailersPresenterFactory(
     private val presenter: (
         componentContext: ComponentContext,
         traktShowId: Long,

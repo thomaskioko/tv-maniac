@@ -4,28 +4,28 @@ import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonDetailsUiPar
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed interface RootDestinationConfig {
+public sealed interface RootDestinationConfig {
     @Serializable
-    data object Home : RootDestinationConfig
+    public data object Home : RootDestinationConfig
 
     @Serializable
-    data object Profile : RootDestinationConfig
+    public data object Profile : RootDestinationConfig
 
     @Serializable
-    data object Settings : RootDestinationConfig
+    public data object Settings : RootDestinationConfig
 
     @Serializable
-    data class ShowDetails(val id: Long) : RootDestinationConfig
+    public data class ShowDetails(val id: Long) : RootDestinationConfig
 
     @Serializable
-    data class SeasonDetails(val param: SeasonDetailsUiParam) : RootDestinationConfig
+    public data class SeasonDetails(val param: SeasonDetailsUiParam) : RootDestinationConfig
 
     @Serializable
-    data class MoreShows(val id: Long) : RootDestinationConfig
+    public data class MoreShows(val id: Long) : RootDestinationConfig
 
     @Serializable
-    data class Trailers(val id: Long) : RootDestinationConfig
+    public data class Trailers(val id: Long) : RootDestinationConfig
 
     @Serializable
-    data class GenreShows(val id: Long) : RootDestinationConfig
+    public data class GenreShows(val id: Long) : RootDestinationConfig
 }

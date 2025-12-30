@@ -22,7 +22,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
-fun HorizontalShowContentRow(
+internal fun HorizontalShowContentRow(
     title: String,
     tvShows: ImmutableList<ShowItem>?,
     modifier: Modifier = Modifier,

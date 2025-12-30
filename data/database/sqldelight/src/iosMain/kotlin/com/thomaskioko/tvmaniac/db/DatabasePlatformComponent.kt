@@ -13,17 +13,17 @@ import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @ContributesTo(AppScope::class)
-interface DatabasePlatformComponent {
+public interface DatabasePlatformComponent {
 
     @Provides
     @SingleIn(AppScope::class)
-    fun provideSqlDriver(): SqlDriver = createNativeSqliteDriver(
+    public fun provideSqlDriver(): SqlDriver = createNativeSqliteDriver(
         schema = TvManiacDatabase.Schema,
         name = "tvShows.db",
     )
 }
 
-fun createNativeSqliteDriver(
+public fun createNativeSqliteDriver(
     schema: SqlSchema<QueryResult.Value<Unit>>,
     name: String,
     inMemory: Boolean = false,

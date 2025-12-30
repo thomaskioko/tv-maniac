@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 
-class FakeDatastoreRepository : DatastoreRepository {
+public class FakeDatastoreRepository : DatastoreRepository {
 
     private val appThemeFlow = MutableStateFlow(AppTheme.SYSTEM_THEME)
     private val languageFlow: Channel<String> = Channel(Channel.UNLIMITED)
@@ -20,15 +20,15 @@ class FakeDatastoreRepository : DatastoreRepository {
     private val includeSpecialsFlow = MutableStateFlow(false)
     private val lastTraktUserId: MutableStateFlow<String?> = MutableStateFlow(null)
 
-    suspend fun setTheme(appTheme: AppTheme) {
+    public suspend fun setTheme(appTheme: AppTheme) {
         appThemeFlow.value = appTheme
     }
 
-    suspend fun setLastTraktUserId(userId: String?) {
+    public suspend fun setLastTraktUserId(userId: String?) {
         lastTraktUserId.value = userId
     }
 
-    suspend fun setLanguage(languageCode: String) {
+    public suspend fun setLanguage(languageCode: String) {
         languageFlow.send(languageCode)
     }
 

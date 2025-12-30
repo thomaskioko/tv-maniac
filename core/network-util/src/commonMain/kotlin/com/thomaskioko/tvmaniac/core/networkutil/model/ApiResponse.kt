@@ -9,7 +9,7 @@ import io.ktor.client.request.request
 import io.ktor.client.statement.HttpResponse
 import kotlinx.serialization.SerializationException
 
-suspend inline fun <reified T> HttpClient.safeRequest(
+public suspend inline fun <reified T> HttpClient.safeRequest(
     block: HttpRequestBuilder.() -> Unit,
 ): ApiResponse<T> =
     try {
@@ -39,11 +39,11 @@ suspend inline fun <reified T> HttpClient.safeRequest(
         )
     }
 
-sealed class ApiResponse<out T> {
+public sealed class ApiResponse<out T> {
     /** Represents successful network responses (2xx). */
-    data class Success<T>(val body: T) : ApiResponse<T>()
+    public data class Success<T>(val body: T) : ApiResponse<T>()
 
-    sealed class Error<E> : ApiResponse<E>() {
+    public sealed class Error<E> : ApiResponse<E>() {
         /**
          * Represents server errors.
          *
@@ -51,7 +51,7 @@ sealed class ApiResponse<out T> {
          * @param errorBody Response body
          * @param errorMessage Custom error message
          */
-        data class HttpError<E>(
+        public data class HttpError<E>(
             val code: Int,
             val errorBody: String?,
             val errorMessage: String?,
@@ -63,7 +63,7 @@ sealed class ApiResponse<out T> {
          * @param message Detail exception message
          * @param errorMessage Formatted error message
          */
-        data class SerializationError(
+        public data class SerializationError(
             val message: String?,
             val errorMessage: String?,
         ) : Error<Nothing>()
@@ -74,14 +74,14 @@ sealed class ApiResponse<out T> {
          * @param message Detail exception message
          * @param errorMessage Formatted error message
          */
-        data class GenericError(
+        public data class GenericError(
             val message: String?,
             val errorMessage: String?,
         ) : Error<Nothing>()
     }
 }
 
-class HttpExceptions(
+public class HttpExceptions(
     response: HttpResponse,
     failureReason: String?,
     cachedResponseText: String,
@@ -89,7 +89,7 @@ class HttpExceptions(
     override val message: String = "Status: ${response.status}" + " Failure: $failureReason"
 }
 
-fun <T> ApiResponse<T>.getOrThrow(): T = when (this) {
+public fun <T> ApiResponse<T>.getOrThrow(): T = when (this) {
     is ApiResponse.Success -> body
     is ApiResponse.Error.HttpError -> throw Throwable("HTTP $code: $errorMessage")
     is ApiResponse.Error.SerializationError -> throw Throwable("Serialization error: $message")

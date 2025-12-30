@@ -25,7 +25,7 @@ import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.Validator
 
 @Inject
-class TrendingShowsStore(
+public class TrendingShowsStore(
     private val tmdbRemoteDataSource: TmdbShowsNetworkDataSource,
     private val requestManagerRepository: RequestManagerRepository,
     private val trendingShowsDao: TrendingShowsDao,

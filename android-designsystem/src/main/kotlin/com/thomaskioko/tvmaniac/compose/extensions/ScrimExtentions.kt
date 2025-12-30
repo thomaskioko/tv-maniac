@@ -31,7 +31,7 @@ import kotlin.math.pow
  *   higher visual quality at the cost of draw performance. Defaults to `16`.
  */
 @SuppressLint("ComposeModifierComposed")
-fun Modifier.verticalGradientScrim(
+public fun Modifier.verticalGradientScrim(
     color: Color,
     @FloatRange(from = 0.0, to = 1.0) startYPercentage: Float = 0f,
     @FloatRange(from = 0.0, to = 1.0) endYPercentage: Float = 1f,
@@ -70,7 +70,7 @@ fun Modifier.verticalGradientScrim(
 }
 
 @SuppressLint("ComposeModifierComposed")
-fun Modifier.iconButtonBackgroundScrim(
+internal fun Modifier.iconButtonBackgroundScrim(
     enabled: Boolean,
     shape: Shape = CircleShape,
     @FloatRange(from = 0.0, to = 1.0) alpha: Float,

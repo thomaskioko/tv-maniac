@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class NextEpisodeToAirResponse(
+public data class NextEpisodeToAirResponse(
     @SerialName("id") var id: Int,
     @SerialName("name") var name: String,
     @SerialName("overview") var overview: String,

@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class ObservableShowDetailsInteractor(
+public class ObservableShowDetailsInteractor(
     private val castRepository: CastRepository,
     private val episodeRepository: EpisodeRepository,
     private val recommendedShowsRepository: RecommendedShowsRepository,

@@ -22,7 +22,7 @@ import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.Validator
 
 @Inject
-class WatchProvidersStore(
+public class WatchProvidersStore(
     private val remoteDataSource: TmdbShowDetailsNetworkDataSource,
     private val dao: WatchProviderDao,
     private val formatterUtil: FormatterUtil,

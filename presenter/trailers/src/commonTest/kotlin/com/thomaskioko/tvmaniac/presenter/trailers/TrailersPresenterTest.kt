@@ -18,7 +18,7 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-class TrailersPresenterTest {
+internal class TrailersPresenterTest {
 
     private val lifecycle = LifecycleRegistry()
     private val repository = FakeTrailerRepository()

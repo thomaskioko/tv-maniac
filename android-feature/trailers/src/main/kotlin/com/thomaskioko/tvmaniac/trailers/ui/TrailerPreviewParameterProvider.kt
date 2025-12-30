@@ -17,7 +17,7 @@ private val trailersList = List(4) {
 }
     .toPersistentList()
 
-class TrailerPreviewParameterProvider : PreviewParameterProvider<TrailersState> {
+internal class TrailerPreviewParameterProvider : PreviewParameterProvider<TrailersState> {
     override val values: Sequence<TrailersState>
         get() {
             return sequenceOf(

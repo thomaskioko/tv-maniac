@@ -26,4 +26,4 @@ internal fun createDataStore(produceFile: () -> String, coroutineScope: Coroutin
         }
     }
 
-const val DATA_STORE_FILE_NAME = "tvmainac.preferences_pb"
+public const val DATA_STORE_FILE_NAME: String = "tvmainac.preferences_pb"

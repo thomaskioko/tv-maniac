@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.core.logger.fixture
 
 import com.thomaskioko.tvmaniac.core.logger.Logger
 
-class FakeLogger : Logger {
+public class FakeLogger : Logger {
     override fun setup(debugMode: Boolean) {}
 
     override fun debug(message: String) {}

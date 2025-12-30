@@ -3,16 +3,16 @@ package com.thomaskioko.tvmaniac.moreshows.presentation
 import com.arkivanov.decompose.ComponentContext
 import kotlinx.coroutines.flow.StateFlow
 
-interface MoreShowsPresenter {
+public interface MoreShowsPresenter {
 
-    val state: StateFlow<MoreShowsState>
+    public val state: StateFlow<MoreShowsState>
 
-    fun dispatch(action: MoreShowsActions)
+    public fun dispatch(action: MoreShowsActions)
 
-    fun getElement(index: Int): TvShow?
+    public fun getElement(index: Int): TvShow?
 
-    interface Factory {
-        operator fun invoke(
+    public interface Factory {
+        public operator fun invoke(
             componentContext: ComponentContext,
             id: Long,
             onBack: () -> Unit,

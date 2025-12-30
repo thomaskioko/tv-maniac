@@ -3,6 +3,7 @@ plugins {
 }
 
 scaffold {
+    explicitApi()
     android {
         useCompose()
     }
@@ -18,7 +19,6 @@ dependencies {
     implementation(projects.androidFeature.watchlist)
     implementation(projects.androidFeature.profile)
     implementation(projects.androidFeature.search)
-    implementation(projects.androidFeature.settings)
 
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.runtime)

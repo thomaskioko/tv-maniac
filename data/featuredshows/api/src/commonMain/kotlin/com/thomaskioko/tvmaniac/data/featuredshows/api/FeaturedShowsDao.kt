@@ -4,12 +4,12 @@ import com.thomaskioko.tvmaniac.db.Featured_shows
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import kotlinx.coroutines.flow.Flow
 
-interface FeaturedShowsDao {
-    fun upsert(show: Featured_shows)
+public interface FeaturedShowsDao {
+    public fun upsert(show: Featured_shows)
 
-    fun observeFeaturedShows(page: Long): Flow<List<ShowEntity>>
+    public fun observeFeaturedShows(page: Long): Flow<List<ShowEntity>>
 
-    fun deleteFeaturedShows(id: Long)
+    public fun deleteFeaturedShows(id: Long)
 
-    fun deleteFeaturedShows()
+    public fun deleteFeaturedShows()
 }

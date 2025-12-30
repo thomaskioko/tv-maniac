@@ -10,18 +10,18 @@ import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
-typealias TmdbHttpClient = HttpClient
+public typealias TmdbHttpClient = HttpClient
 
-typealias TmdbHttpClientEngine = HttpClientEngine
+public typealias TmdbHttpClientEngine = HttpClientEngine
 
-typealias TmdbJson = Json
+public typealias TmdbJson = Json
 
 @ContributesTo(AppScope::class)
-interface TmdbComponent {
+public interface TmdbComponent {
 
     @Provides
     @SingleIn(AppScope::class)
-    fun provideTmdbJson(): TmdbJson = Json {
+    public fun provideTmdbJson(): TmdbJson = Json {
         isLenient = true
         ignoreUnknownKeys = true
         useAlternativeNames = false
@@ -30,7 +30,7 @@ interface TmdbComponent {
 
     @Provides
     @SingleIn(AppScope::class)
-    fun provideTmdbHttpClient(
+    public fun provideTmdbHttpClient(
         json: TmdbJson,
         httpClientEngine: TmdbHttpClientEngine,
         logger: Logger,

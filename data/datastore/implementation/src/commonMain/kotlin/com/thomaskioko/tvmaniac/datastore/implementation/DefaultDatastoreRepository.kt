@@ -22,7 +22,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class DefaultDatastoreRepository(
+public class DefaultDatastoreRepository(
     private val coroutineScope: AppCoroutineScope,
     private val dataStore: DataStore<Preferences>,
 ) : DatastoreRepository {
@@ -125,13 +125,13 @@ class DefaultDatastoreRepository(
         return dataStore.data.first()[KEY_LAST_TRAKT_USER_ID]
     }
 
-    companion object {
-        val KEY_THEME = stringPreferencesKey("app_theme")
-        val KEY_LANGUAGE = stringPreferencesKey("app_language")
-        val KEY_LIST_STYLE = stringPreferencesKey("list_style")
-        val KEY_IMAGE_QUALITY = stringPreferencesKey("image_quality")
-        val KEY_OPEN_TRAILERS_IN_YOUTUBE = booleanPreferencesKey("open_trailers_in_youtube")
-        val KEY_INCLUDE_SPECIALS = booleanPreferencesKey("include_specials")
-        val KEY_LAST_TRAKT_USER_ID = stringPreferencesKey("last_trakt_user_id")
+    public companion object {
+        public val KEY_THEME: Preferences.Key<String> = stringPreferencesKey("app_theme")
+        public val KEY_LANGUAGE: Preferences.Key<String> = stringPreferencesKey("app_language")
+        public val KEY_LIST_STYLE: Preferences.Key<String> = stringPreferencesKey("list_style")
+        public val KEY_IMAGE_QUALITY: Preferences.Key<String> = stringPreferencesKey("image_quality")
+        public val KEY_OPEN_TRAILERS_IN_YOUTUBE: Preferences.Key<Boolean> = booleanPreferencesKey("open_trailers_in_youtube")
+        public val KEY_INCLUDE_SPECIALS: Preferences.Key<Boolean> = booleanPreferencesKey("include_specials")
+        public val KEY_LAST_TRAKT_USER_ID: Preferences.Key<String> = stringPreferencesKey("last_trakt_user_id")
     }
 }

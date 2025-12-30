@@ -48,7 +48,7 @@ internal abstract class QueryPagingSource<Key : Any, RowType : Any> :
 @Suppress("FunctionName")
 @JvmName("QueryPagingSourceInt")
 @JvmOverloads
-fun <RowType : Any> QueryPagingSource(
+public fun <RowType : Any> QueryPagingSource(
     countQuery: Query<Int>,
     transacter: TransacterBase,
     context: CoroutineContext,
@@ -74,7 +74,7 @@ fun <RowType : Any> QueryPagingSource(
 @Suppress("FunctionName")
 @JvmName("QueryPagingSourceLong")
 @JvmOverloads
-fun <RowType : Any> QueryPagingSource(
+public fun <RowType : Any> QueryPagingSource(
     countQuery: Query<Long>,
     transacter: TransacterBase,
     context: CoroutineContext,
@@ -156,7 +156,7 @@ private fun Query<Long>.toInt(): Query<Int> = object : Query<Int>({ cursor -> ma
  * based [QueryPagingSource] function.
  */
 @Suppress("FunctionName")
-fun <Key : Any, RowType : Any> QueryPagingSource(
+public fun <Key : Any, RowType : Any> QueryPagingSource(
     transacter: TransacterBase,
     context: CoroutineContext,
     pageBoundariesProvider: (anchor: Key?, limit: Long) -> Query<Key>,

@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.seasondetails.presenter.model
 
-data class Cast(
+public data class Cast(
     val id: Long,
     val name: String,
     val profileUrl: String? = null,
