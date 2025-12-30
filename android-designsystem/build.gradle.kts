@@ -22,6 +22,7 @@ dependencies {
     implementation(libs.androidx.collections)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.constraintlayout)
     implementation(libs.coil.coil)
     implementation(libs.coil.compose)
     implementation(libs.kenburns)
