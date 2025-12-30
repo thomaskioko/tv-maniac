@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.db.adapters
 
 import app.cash.sqldelight.ColumnAdapter
 
-val intColumnAdapter = object : ColumnAdapter<List<Int>, String> {
+public val intColumnAdapter: ColumnAdapter<List<Int>, String> = object : ColumnAdapter<List<Int>, String> {
 
     override fun encode(value: List<Int>) = value.joinToString(separator = ",")
 

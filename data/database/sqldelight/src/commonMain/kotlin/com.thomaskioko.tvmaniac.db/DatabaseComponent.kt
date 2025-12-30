@@ -5,10 +5,10 @@ import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
 
 @ContributesTo(AppScope::class)
-interface DatabaseComponent {
+public interface DatabaseComponent {
 
     @Provides
-    fun provideTvManiacDatabase(
+    public fun provideTvManiacDatabase(
         factory: DatabaseFactory,
     ): TvManiacDatabase = factory.createDatabase()
 }
