@@ -75,7 +75,7 @@ internal fun HorizontalRowContent(
 internal fun HorizontalRowContentPreview() {
     TvManiacTheme {
         HorizontalRowContent(
-            modifier = Modifier.height(240.dp),
+            modifier = Modifier.height(220.dp),
             category = "Trending",
             tvShows = discoverContentSuccess.topRatedShows,
             onItemClicked = {},
