@@ -63,17 +63,15 @@ internal fun traktHttpClient(
         }
 
         install(DefaultRequest) {
-            apply {
-                url {
-                    protocol = URLProtocol.HTTPS
-                    host = "api.trakt.tv"
-                }
+            url {
+                protocol = URLProtocol.HTTPS
+                host = "api.trakt.tv"
+            }
 
-                headers {
-                    append(HttpHeaders.ContentType, "application/json")
-                    append("trakt-api-version", "2")
-                    append("trakt-api-key", traktClientId)
-                }
+            headers {
+                append(HttpHeaders.ContentType, "application/json")
+                append("trakt-api-version", "2")
+                append("trakt-api-key", traktClientId)
             }
         }
 

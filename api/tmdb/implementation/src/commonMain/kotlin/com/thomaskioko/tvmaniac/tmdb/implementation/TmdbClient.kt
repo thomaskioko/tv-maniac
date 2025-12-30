@@ -30,17 +30,15 @@ internal fun tmdbHttpClient(
         install(ContentNegotiation) { json(json = json) }
 
         install(DefaultRequest) {
-            apply {
-                url {
-                    protocol = URLProtocol.HTTPS
-                    host = "api.themoviedb.org"
+            url {
+                protocol = URLProtocol.HTTPS
+                host = "api.themoviedb.org"
 
-                    parameters.append("api_key", tmdbApiKey)
+                parameters.append("api_key", tmdbApiKey)
 
-                    headers {
-                        append(HttpHeaders.Accept, "application/vnd.api+json")
-                        append(HttpHeaders.ContentType, "application/vnd.api+json")
-                    }
+                headers {
+                    append(HttpHeaders.Accept, "application/vnd.api+json")
+                    append(HttpHeaders.ContentType, "application/vnd.api+json")
                 }
             }
         }
