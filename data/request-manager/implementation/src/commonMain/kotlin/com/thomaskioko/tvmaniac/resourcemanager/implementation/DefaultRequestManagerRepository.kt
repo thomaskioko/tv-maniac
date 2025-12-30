@@ -20,21 +20,20 @@ public class DefaultRequestManagerRepository(
     private val dateTimeProvider: DateTimeProvider,
 ) : RequestManagerRepository {
 
-    override fun upsert(entityId: Long, requestType: String, timestamp: Instant): Long {
-        database.lastRequestsQueries.upsert(
+    override fun upsert(entityId: Long, requestType: String, timestamp: Instant) {
+        val _ = database.lastRequestsQueries.upsert(
             entity_id = entityId,
             request_type = requestType,
             timestamp = timestamp,
         )
-        return database.lastRequestsQueries.lastInsertRowId().executeAsOne()
     }
 
     override fun delete(entityId: Long, requestType: String) {
-        database.lastRequestsQueries.delete(entityId, requestType)
+        val _ = database.lastRequestsQueries.delete(entityId, requestType)
     }
 
     override fun deleteAll() {
-        database.lastRequestsQueries.deleteAll()
+        val _ = database.lastRequestsQueries.deleteAll()
     }
 
     override fun isRequestExpired(entityId: Long, requestType: String, threshold: Duration): Boolean =

@@ -9,7 +9,7 @@ public class FetchPreviousSeasonsInteractor(
     private val episodeRepository: EpisodeRepository,
 ) : Interactor<FetchPreviousSeasonsParams>() {
     override suspend fun doWork(params: FetchPreviousSeasonsParams) {
-        episodeRepository.getUnwatchedCountAfterFetchingPreviousSeasons(
+        val _ = episodeRepository.getUnwatchedCountAfterFetchingPreviousSeasons(
             showId = params.showId,
             seasonNumber = params.seasonNumber,
         )

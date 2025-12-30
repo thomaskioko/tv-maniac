@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlin.time.Instant
 
-data class MarkEpisodeWatchedCall(
+public data class MarkEpisodeWatchedCall(
     val showId: Long,
     val episodeId: Long,
     val seasonNumber: Long,
@@ -23,18 +23,18 @@ data class MarkEpisodeWatchedCall(
     val markPreviousEpisodes: Boolean = false,
 )
 
-data class MarkSeasonWatchedCall(
+public data class MarkSeasonWatchedCall(
     val showId: Long,
     val seasonNumber: Long,
     val markPreviousSeasons: Boolean,
 )
 
-data class MarkEpisodeUnwatchedCall(
+public data class MarkEpisodeUnwatchedCall(
     val showId: Long,
     val episodeId: Long,
 )
 
-class FakeEpisodeRepository : EpisodeRepository {
+public class FakeEpisodeRepository : EpisodeRepository {
     private val nextEpisodesForWatchlist = MutableStateFlow<List<NextEpisodeWithShow>>(emptyList())
     private val watchProgressMap = mutableMapOf<Long, MutableStateFlow<WatchProgress>>()
     private val seasonWatchProgressFlow = MutableStateFlow(SeasonWatchProgress(0, 0, 0, 0))
@@ -44,36 +44,36 @@ class FakeEpisodeRepository : EpisodeRepository {
     private val unwatchedCountBeforeFlow = MutableStateFlow(0)
     private val unwatchedCountInPreviousSeasonsFlow = MutableStateFlow(0L)
 
-    var lastMarkEpisodeWatchedCall: MarkEpisodeWatchedCall? = null
+    public var lastMarkEpisodeWatchedCall: MarkEpisodeWatchedCall? = null
         private set
 
-    var lastMarkSeasonWatchedCall: MarkSeasonWatchedCall? = null
+    public var lastMarkSeasonWatchedCall: MarkSeasonWatchedCall? = null
         private set
 
-    var lastMarkEpisodeUnwatchedCall: MarkEpisodeUnwatchedCall? = null
+    public var lastMarkEpisodeUnwatchedCall: MarkEpisodeUnwatchedCall? = null
         private set
 
-    fun setNextEpisodesForWatchlist(episodes: List<NextEpisodeWithShow>) {
+    public fun setNextEpisodesForWatchlist(episodes: List<NextEpisodeWithShow>) {
         nextEpisodesForWatchlist.value = episodes
     }
 
-    fun setSeasonWatchProgress(progress: SeasonWatchProgress) {
+    public fun setSeasonWatchProgress(progress: SeasonWatchProgress) {
         seasonWatchProgressFlow.value = progress
     }
 
-    fun setShowWatchProgress(progress: ShowWatchProgress) {
+    public fun setShowWatchProgress(progress: ShowWatchProgress) {
         showWatchProgressFlow.value = progress
     }
 
-    fun setAllSeasonsWatchProgress(progressList: List<SeasonWatchProgress>) {
+    public fun setAllSeasonsWatchProgress(progressList: List<SeasonWatchProgress>) {
         allSeasonsWatchProgressFlow.value = progressList
     }
 
-    fun setContinueTrackingResult(result: ContinueTrackingResult?) {
+    public fun setContinueTrackingResult(result: ContinueTrackingResult?) {
         continueTrackingFlow.value = result
     }
 
-    fun setUnwatchedCountInPreviousSeasons(count: Long) {
+    public fun setUnwatchedCountInPreviousSeasons(count: Long) {
         unwatchedCountInPreviousSeasonsFlow.value = count
     }
 

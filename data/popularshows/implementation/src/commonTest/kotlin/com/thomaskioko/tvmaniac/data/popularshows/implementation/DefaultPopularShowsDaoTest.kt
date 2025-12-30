@@ -50,7 +50,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
     @Test
     fun `should insert popular shows`() = runTest {
         // Given - first insert a show into tvshow table
-        database.tvShowQueries.upsert(
+        val _ = database.tvShowQueries.upsert(
             id = Id(999),
             name = "New Test Show",
             overview = "New test overview",
@@ -231,7 +231,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
     @Test
     fun `stable query should not return shows with null names`() = runTest {
         // Given - insert a show without name (simulating pre-migration data)
-        popularShowsQueries.insert(
+        val _ = popularShowsQueries.insert(
             id = Id(999),
             page = Id(1),
             name = null,
@@ -253,7 +253,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
     @Test
     fun `stable query should filter by page correctly`() = runTest {
         // Given - add shows to different pages
-        popularShowsQueries.insert(
+        val _ = popularShowsQueries.insert(
             id = Id(999),
             page = Id(2),
             name = "Page 2 Show",
@@ -323,7 +323,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
     @Test
     fun `should handle COALESCE for empty names correctly`() = runTest {
         database.popularShowsQueries.transaction {
-            database.popularShowsQueries.insert(
+            val _ = database.popularShowsQueries.insert(
                 id = Id(888),
                 page = Id(1),
                 name = "",
@@ -342,7 +342,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
     }
 
     private fun insertTestShows() {
-        database.tvShowQueries.upsert(
+        val _ = database.tvShowQueries.upsert(
             id = Id(1),
             name = "Test Show 1",
             overview = "Test overview 1",
@@ -360,7 +360,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
             backdrop_path = "/backdrop1.jpg",
         )
 
-        database.tvShowQueries.upsert(
+        val _ = database.tvShowQueries.upsert(
             id = Id(2),
             name = "Test Show 2",
             overview = "Test overview 2",
@@ -378,7 +378,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
             backdrop_path = "/backdrop2.jpg",
         )
 
-        popularShowsQueries.insert(
+        val _ = popularShowsQueries.insert(
             id = Id(1),
             page = Id(1),
             name = "Test Show 1",
@@ -387,7 +387,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
             page_order = 0,
         )
 
-        popularShowsQueries.insert(
+        val _ = popularShowsQueries.insert(
             id = Id(2),
             page = Id(1),
             name = "Test Show 2",

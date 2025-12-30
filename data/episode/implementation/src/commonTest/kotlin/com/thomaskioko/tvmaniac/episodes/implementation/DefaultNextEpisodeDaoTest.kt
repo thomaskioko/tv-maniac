@@ -65,14 +65,14 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should observe next episode after marking episodes as watched`() = runTest {
-        database.watchedEpisodesQueries.upsert(
+        val _ = database.watchedEpisodesQueries.upsert(
             show_id = Id(1L),
             episode_id = Id(101L),
             season_number = 1L,
             episode_number = 1L,
             watched_at = watchDate,
         )
-        database.watchedEpisodesQueries.upsert(
+        val _ = database.watchedEpisodesQueries.upsert(
             show_id = Id(1L),
             episode_id = Id(102L),
             season_number = 1L,
@@ -91,21 +91,21 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should return null when all episodes are watched`() = runTest {
-        database.watchedEpisodesQueries.upsert(
+        val _ = database.watchedEpisodesQueries.upsert(
             show_id = Id(1L),
             episode_id = Id(101L),
             season_number = 1L,
             episode_number = 1L,
             watched_at = watchDate,
         )
-        database.watchedEpisodesQueries.upsert(
+        val _ = database.watchedEpisodesQueries.upsert(
             show_id = Id(1L),
             episode_id = Id(102L),
             season_number = 1L,
             episode_number = 2L,
             watched_at = watchDate,
         )
-        database.watchedEpisodesQueries.upsert(
+        val _ = database.watchedEpisodesQueries.upsert(
             show_id = Id(1L),
             episode_id = Id(103L),
             season_number = 1L,
@@ -121,16 +121,16 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should observe next episodes for watchlist`() = runTest {
-        database.watchlistQueries.upsert(
+        val _ = database.watchlistQueries.upsert(
             id = Id(1L),
             created_at = watchDate,
         )
-        database.watchlistQueries.upsert(
+        val _ = database.watchlistQueries.upsert(
             id = Id(2L),
             created_at = watchDate + 1000,
         )
 
-        database.watchedEpisodesQueries.upsert(
+        val _ = database.watchedEpisodesQueries.upsert(
             show_id = Id(1L),
             episode_id = Id(101L),
             season_number = 1L,
@@ -168,14 +168,14 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         insertShow3WithMultipleSeasons()
 
         // Mark all of season 1 as watched
-        database.watchedEpisodesQueries.upsert(
+        val _ = database.watchedEpisodesQueries.upsert(
             show_id = Id(3L),
             episode_id = Id(301L),
             season_number = 1L,
             episode_number = 1L,
             watched_at = watchDate,
         )
-        database.watchedEpisodesQueries.upsert(
+        val _ = database.watchedEpisodesQueries.upsert(
             show_id = Id(3L),
             episode_id = Id(302L),
             season_number = 1L,
@@ -211,14 +211,14 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     @Test
     fun `should handle non-sequential watch progress`() = runTest {
         // Given - watch episodes out of order (e.g., watched E1 and E3, but not E2)
-        database.watchedEpisodesQueries.upsert(
+        val _ = database.watchedEpisodesQueries.upsert(
             show_id = Id(1L),
             episode_id = Id(101L),
             season_number = 1L,
             episode_number = 1L,
             watched_at = watchDate,
         )
-        database.watchedEpisodesQueries.upsert(
+        val _ = database.watchedEpisodesQueries.upsert(
             show_id = Id(1L),
             episode_id = Id(103L),
             season_number = 1L,
@@ -235,7 +235,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
 
     private fun insertTestData() {
         // Insert test TV shows
-        database.tvShowQueries.upsert(
+        val _ = database.tvShowQueries.upsert(
             id = Id(1),
             name = "Test Show 1",
             overview = "Test overview 1",
@@ -253,7 +253,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             backdrop_path = "/backdrop1.jpg",
         )
 
-        database.tvShowQueries.upsert(
+        val _ = database.tvShowQueries.upsert(
             id = Id(2),
             name = "Test Show 2",
             overview = "Test overview 2",
@@ -272,7 +272,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         )
 
         // Insert seasons for show 1
-        database.seasonsQueries.upsert(
+        val _ = database.seasonsQueries.upsert(
             id = Id(11L),
             show_id = Id(1L),
             season_number = 1L,
@@ -283,7 +283,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         )
 
         // Insert episodes for show 1
-        database.episodesQueries.upsert(
+        val _ = database.episodesQueries.upsert(
             id = Id(101L),
             season_id = Id(11L),
             show_id = Id(1L),
@@ -298,7 +298,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             trakt_id = null,
         )
 
-        database.episodesQueries.upsert(
+        val _ = database.episodesQueries.upsert(
             id = Id(102L),
             season_id = Id(11L),
             show_id = Id(1L),
@@ -313,7 +313,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             trakt_id = null,
         )
 
-        database.episodesQueries.upsert(
+        val _ = database.episodesQueries.upsert(
             id = Id(103L),
             season_id = Id(11L),
             show_id = Id(1L),
@@ -329,7 +329,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         )
 
         // Insert season for show 2
-        database.seasonsQueries.upsert(
+        val _ = database.seasonsQueries.upsert(
             id = Id(21L),
             show_id = Id(2L),
             season_number = 1L,
@@ -340,7 +340,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         )
 
         // Insert episodes for show 2
-        database.episodesQueries.upsert(
+        val _ = database.episodesQueries.upsert(
             id = Id(201L),
             season_id = Id(21L),
             show_id = Id(2L),
@@ -355,7 +355,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             trakt_id = null,
         )
 
-        database.episodesQueries.upsert(
+        val _ = database.episodesQueries.upsert(
             id = Id(202L),
             season_id = Id(21L),
             show_id = Id(2L),
@@ -372,7 +372,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     private fun insertShow3WithMultipleSeasons() {
-        database.tvShowQueries.upsert(
+        val _ = database.tvShowQueries.upsert(
             id = Id(3),
             name = "Multi-Season Show",
             overview = "Show with multiple seasons",
@@ -391,7 +391,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         )
 
         // Season 1
-        database.seasonsQueries.upsert(
+        val _ = database.seasonsQueries.upsert(
             id = Id(31L),
             show_id = Id(3L),
             season_number = 1L,
@@ -401,7 +401,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             image_url = "/s1.jpg",
         )
 
-        database.episodesQueries.upsert(
+        val _ = database.episodesQueries.upsert(
             id = Id(301L),
             season_id = Id(31L),
             show_id = Id(3L),
@@ -416,7 +416,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             trakt_id = null,
         )
 
-        database.episodesQueries.upsert(
+        val _ = database.episodesQueries.upsert(
             id = Id(302L),
             season_id = Id(31L),
             show_id = Id(3L),
@@ -432,7 +432,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         )
 
         // Season 2
-        database.seasonsQueries.upsert(
+        val _ = database.seasonsQueries.upsert(
             id = Id(32L),
             show_id = Id(3L),
             season_number = 2L,
@@ -442,7 +442,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             image_url = "/s2.jpg",
         )
 
-        database.episodesQueries.upsert(
+        val _ = database.episodesQueries.upsert(
             id = Id(303L),
             season_id = Id(32L),
             show_id = Id(3L),
@@ -459,7 +459,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     private fun insertShow4WithSpecials() {
-        database.tvShowQueries.upsert(
+        val _ = database.tvShowQueries.upsert(
             id = Id(4),
             name = "Show with Specials",
             overview = "Show with season 0",
@@ -478,7 +478,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         )
 
         // Season 0 (Specials)
-        database.seasonsQueries.upsert(
+        val _ = database.seasonsQueries.upsert(
             id = Id(40L),
             show_id = Id(4L),
             season_number = 0L,
@@ -488,7 +488,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             image_url = "/s0.jpg",
         )
 
-        database.episodesQueries.upsert(
+        val _ = database.episodesQueries.upsert(
             id = Id(400L),
             season_id = Id(40L),
             show_id = Id(4L),
@@ -504,7 +504,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         )
 
         // Season 1
-        database.seasonsQueries.upsert(
+        val _ = database.seasonsQueries.upsert(
             id = Id(41L),
             show_id = Id(4L),
             season_number = 1L,
@@ -514,7 +514,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             image_url = "/s1.jpg",
         )
 
-        database.episodesQueries.upsert(
+        val _ = database.episodesQueries.upsert(
             id = Id(401L),
             season_id = Id(41L),
             show_id = Id(4L),
@@ -533,7 +533,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     @Test
     fun `should maintain shows in watchlist when tracking sequentially`() = runTest {
         //  Track Breaking Bad (show 1)
-        database.watchlistQueries.upsert(
+        val _ = database.watchlistQueries.upsert(
             id = Id(1L),
             created_at = watchDate,
         )
@@ -546,7 +546,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             episodes1[0].showName shouldBe "Test Show 1"
 
             // Step 2: Track Game of Thrones (show 2) - this should ADD to the list, not replace
-            database.watchlistQueries.upsert(
+            val _ = database.watchlistQueries.upsert(
                 id = Id(2L),
                 created_at = watchDate + 1000,
             )
@@ -564,7 +564,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should handle shows with Specials seasons correctly`() = runTest {
-        database.tvShowQueries.upsert(
+        val _ = database.tvShowQueries.upsert(
             id = Id(5L),
             name = "Breaking Bad",
             overview = "Chemistry teacher turns to cooking meth",
@@ -583,7 +583,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         )
 
         // Season 0 (Specials) - should be excluded
-        database.seasonsQueries.upsert(
+        val _ = database.seasonsQueries.upsert(
             id = Id(50L),
             show_id = Id(5L),
             season_number = 0L,
@@ -593,7 +593,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             image_url = "/bb-specials.jpg",
         )
 
-        database.episodesQueries.upsert(
+        val _ = database.episodesQueries.upsert(
             id = Id(500L),
             season_id = Id(50L),
             show_id = Id(5L),
@@ -609,7 +609,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         )
 
         // Season 1 (Regular) - should be included
-        database.seasonsQueries.upsert(
+        val _ = database.seasonsQueries.upsert(
             id = Id(51L),
             show_id = Id(5L),
             season_number = 1L,
@@ -619,7 +619,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             image_url = "/bb-s1.jpg",
         )
 
-        database.episodesQueries.upsert(
+        val _ = database.episodesQueries.upsert(
             id = Id(501L),
             season_id = Id(51L),
             show_id = Id(5L),
@@ -634,7 +634,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             trakt_id = null,
         )
 
-        database.episodesQueries.upsert(
+        val _ = database.episodesQueries.upsert(
             id = Id(502L),
             season_id = Id(51L),
             show_id = Id(5L),
@@ -650,7 +650,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         )
 
         // Create Game of Thrones (show 6) with Specials
-        database.tvShowQueries.upsert(
+        val _ = database.tvShowQueries.upsert(
             id = Id(6L),
             name = "Game of Thrones",
             overview = "Power struggles in Westeros",
@@ -669,7 +669,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         )
 
         // Season 0 (Specials) - should be excluded
-        database.seasonsQueries.upsert(
+        val _ = database.seasonsQueries.upsert(
             id = Id(60L),
             show_id = Id(6L),
             season_number = 0L,
@@ -679,7 +679,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             image_url = "/got-specials.jpg",
         )
 
-        database.episodesQueries.upsert(
+        val _ = database.episodesQueries.upsert(
             id = Id(600L),
             season_id = Id(60L),
             show_id = Id(6L),
@@ -694,7 +694,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             trakt_id = null,
         )
 
-        database.episodesQueries.upsert(
+        val _ = database.episodesQueries.upsert(
             id = Id(601L),
             season_id = Id(60L),
             show_id = Id(6L),
@@ -710,7 +710,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         )
 
         // Season 1 (Regular) - should be included
-        database.seasonsQueries.upsert(
+        val _ = database.seasonsQueries.upsert(
             id = Id(61L),
             show_id = Id(6L),
             season_number = 1L,
@@ -720,7 +720,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             image_url = "/got-s1.jpg",
         )
 
-        database.episodesQueries.upsert(
+        val _ = database.episodesQueries.upsert(
             id = Id(610L),
             season_id = Id(61L),
             show_id = Id(6L),
@@ -735,7 +735,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             trakt_id = null,
         )
 
-        database.episodesQueries.upsert(
+        val _ = database.episodesQueries.upsert(
             id = Id(611L),
             season_id = Id(61L),
             show_id = Id(6L),
@@ -752,7 +752,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
 
         // Now simulate the user scenario:
         // 1. Track Breaking Bad
-        database.watchlistQueries.upsert(
+        val _ = database.watchlistQueries.upsert(
             id = Id(5L), // Breaking Bad
             created_at = watchDate,
         )
@@ -768,7 +768,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             episodes1[0].episodeNumber shouldBe 1
 
             // 2. Track Game of Thrones - this should ADD, not replace
-            database.watchlistQueries.upsert(
+            val _ = database.watchlistQueries.upsert(
                 id = Id(6L), // Game of Thrones
                 created_at = watchDate + 1000,
             )

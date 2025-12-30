@@ -35,7 +35,7 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
     }
 
     private fun insertShow() {
-        database.tvShowQueries.upsert(
+        val _ = database.tvShowQueries.upsert(
             id = Id(123232),
             name = "Loki",
             overview = "After stealing the Tesseract, Loki is brought to the Time Variance Authority.",
@@ -55,7 +55,7 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
     }
 
     private fun insertSeason() {
-        database.seasonsQueries.upsert(
+        val _ = database.seasonsQueries.upsert(
             id = Id(114355),
             show_id = Id(123232),
             season_number = 1,
@@ -67,7 +67,7 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
     }
 
     private fun Episode.insertEpisodeEntityQuery() {
-        episodeQueries.upsert(
+        val _ = episodeQueries.upsert(
             id = id,
             season_id = season_id,
             title = title,

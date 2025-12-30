@@ -5,7 +5,7 @@ import kotlin.time.Duration
 import kotlin.time.Instant
 
 public class FakeRequestManagerRepository : RequestManagerRepository {
-    override fun upsert(entityId: Long, requestType: String, timestamp: Instant): Long = 0L
+    override fun upsert(entityId: Long, requestType: String, timestamp: Instant) { }
 
     override fun isRequestExpired(entityId: Long, requestType: String, threshold: Duration): Boolean = false
 

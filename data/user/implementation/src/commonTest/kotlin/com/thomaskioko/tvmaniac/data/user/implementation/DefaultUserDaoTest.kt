@@ -138,7 +138,7 @@ internal class DefaultUserDaoTest : BaseDatabaseTest() {
             val initial = awaitItem()
             initial?.username shouldBe "testuser"
 
-            database.userQueries.insertOrReplace(
+            val _ = database.userQueries.insertOrReplace(
                 slug = "test-user",
                 user_name = "updated-user",
                 full_name = "Updated User",
@@ -210,7 +210,7 @@ internal class DefaultUserDaoTest : BaseDatabaseTest() {
         backgroundUrl: String? = null,
         isMe: Boolean = true,
     ) {
-        database.userQueries.insertOrReplace(
+        val _ = database.userQueries.insertOrReplace(
             slug = slug,
             user_name = username,
             full_name = fullName,
@@ -221,7 +221,7 @@ internal class DefaultUserDaoTest : BaseDatabaseTest() {
     }
 
     private fun insertTestShowWithWatchlist() {
-        database.tvShowQueries.upsert(
+        val _ = database.tvShowQueries.upsert(
             id = Id(1),
             name = "Test Show",
             overview = "Test overview",
@@ -239,7 +239,7 @@ internal class DefaultUserDaoTest : BaseDatabaseTest() {
             backdrop_path = "/backdrop.jpg",
         )
 
-        database.watchlistQueries.upsert(
+        val _ = database.watchlistQueries.upsert(
             id = Id(1),
             created_at = Clock.System.now().toEpochMilliseconds(),
         )

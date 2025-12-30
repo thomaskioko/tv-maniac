@@ -279,7 +279,7 @@ class ShowDetailsPresenterTest {
 
         presenter.state.test {
             awaitItem()
-            awaitUntil { it.showDetails.tmdbId != 0L }
+            val _ = awaitUntil { it.showDetails.tmdbId != 0L }
 
             presenter.dispatch(
                 MarkEpisodeWatched(
@@ -309,7 +309,7 @@ class ShowDetailsPresenterTest {
 
         presenter.state.test {
             awaitItem()
-            awaitUntil { it.showDetails.tmdbId != 0L }
+            val _ = awaitUntil { it.showDetails.tmdbId != 0L }
 
             presenter.dispatch(FollowShowClicked(addToLibrary = false))
 

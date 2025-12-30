@@ -717,7 +717,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
     }
 
     private fun insertTestData() {
-        database.tvShowQueries.upsert(
+        val _ = database.tvShowQueries.upsert(
             id = Id(TEST_SHOW_ID),
             name = TEST_SHOW_NAME,
             overview = TEST_SHOW_OVERVIEW,
@@ -735,7 +735,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
             backdrop_path = "/backdrop1.jpg",
         )
 
-        database.seasonsQueries.upsert(
+        val _ = database.seasonsQueries.upsert(
             id = Id(SEASON_1_ID),
             show_id = Id(TEST_SHOW_ID),
             season_number = SEASON_1_NUMBER,
@@ -745,7 +745,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
             image_url = "/season1.jpg",
         )
 
-        database.seasonsQueries.upsert(
+        val _ = database.seasonsQueries.upsert(
             id = Id(SEASON_2_ID),
             show_id = Id(TEST_SHOW_ID),
             season_number = SEASON_2_NUMBER,
@@ -758,7 +758,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
         repeat(SEASON_1_EPISODE_COUNT) { episodeIndex ->
             val episodeNumber = episodeIndex + 1
             val episodeId = 100L + episodeNumber
-            database.episodesQueries.upsert(
+            val _ = database.episodesQueries.upsert(
                 id = Id(episodeId),
                 season_id = Id(SEASON_1_ID),
                 show_id = Id(TEST_SHOW_ID),
@@ -777,7 +777,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
         repeat(SEASON_2_EPISODE_COUNT) { episodeIndex ->
             val episodeNumber = episodeIndex + 1
             val episodeId = 200L + episodeNumber
-            database.episodesQueries.upsert(
+            val _ = database.episodesQueries.upsert(
                 id = Id(episodeId),
                 season_id = Id(SEASON_2_ID),
                 show_id = Id(TEST_SHOW_ID),
@@ -793,7 +793,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
             )
         }
 
-        database.watchlistQueries.upsert(
+        val _ = database.watchlistQueries.upsert(
             id = Id(TEST_SHOW_ID),
             created_at = Clock.System.now().toEpochMilliseconds(),
         )
