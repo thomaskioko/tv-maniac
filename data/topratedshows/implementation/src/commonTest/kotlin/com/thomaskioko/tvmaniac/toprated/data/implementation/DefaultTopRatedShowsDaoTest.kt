@@ -49,7 +49,7 @@ internal class DefaultTopRatedShowsDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should insert top rated shows`() = runTest {
-        database.tvShowQueries.upsert(
+        val _ = database.tvShowQueries.upsert(
             id = Id(999),
             name = "New Test Show",
             overview = "New test overview",
@@ -116,7 +116,7 @@ internal class DefaultTopRatedShowsDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `stable query should not return shows with null names`() = runTest {
-        topRatedShowsQueries.insert(
+        val _ = topRatedShowsQueries.insert(
             id = Id(999),
             page = Id(1),
             name = null,
@@ -135,7 +135,7 @@ internal class DefaultTopRatedShowsDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `stable query should filter by page correctly`() = runTest {
-        topRatedShowsQueries.insert(
+        val _ = topRatedShowsQueries.insert(
             id = Id(999),
             page = Id(2),
             name = "Page 2 Show",
@@ -211,7 +211,7 @@ internal class DefaultTopRatedShowsDaoTest : BaseDatabaseTest() {
 
     private fun insertTestShows() {
         // Insert test TV shows first
-        database.tvShowQueries.upsert(
+        val _ = database.tvShowQueries.upsert(
             id = Id(1),
             name = "Test Show 1",
             overview = "Test overview 1",
@@ -229,7 +229,7 @@ internal class DefaultTopRatedShowsDaoTest : BaseDatabaseTest() {
             backdrop_path = "/backdrop1.jpg",
         )
 
-        database.tvShowQueries.upsert(
+        val _ = database.tvShowQueries.upsert(
             id = Id(2),
             name = "Test Show 2",
             overview = "Test overview 2",
@@ -248,7 +248,7 @@ internal class DefaultTopRatedShowsDaoTest : BaseDatabaseTest() {
         )
 
         // Insert top rated shows with show data
-        topRatedShowsQueries.insert(
+        val _ = topRatedShowsQueries.insert(
             id = Id(1),
             page = Id(1),
             name = "Test Show 1",
@@ -257,7 +257,7 @@ internal class DefaultTopRatedShowsDaoTest : BaseDatabaseTest() {
             page_order = 0,
         )
 
-        topRatedShowsQueries.insert(
+        val _ = topRatedShowsQueries.insert(
             id = Id(2),
             page = Id(1),
             name = "Test Show 2",

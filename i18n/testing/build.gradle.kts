@@ -4,7 +4,6 @@ plugins {
 
 scaffold {
     addAndroidTarget()
-    explicitApi()
 }
 
 kotlin {

@@ -74,10 +74,9 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
         ).executeAsList()
 
         results shouldHaveSize 1
-        with(results.first()) {
-            name shouldBe "Breaking Bad"
-            overview shouldBe "A high school chemistry teacher turned meth dealer"
-        }
+        val show = results.first()
+        show.name shouldBe "Breaking Bad"
+        show.overview shouldBe "A high school chemistry teacher turned meth dealer"
     }
 
     @Test
@@ -160,11 +159,9 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
         ).executeAsList()
 
         results shouldHaveSize 3
-        with(results) {
-            get(0).name shouldBe "The Walking Dead"
-            get(1).name shouldBe "Theory of Everything"
-            get(2).name shouldBe "In the Dark"
-        }
+        results.get(0).name shouldBe "The Walking Dead"
+        results.get(1).name shouldBe "Theory of Everything"
+        results.get(2).name shouldBe "In the Dark"
     }
 
     private fun insertTestShows() {
@@ -194,7 +191,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
                 popularity = 88.0,
             ),
         ).forEach { show ->
-            tvShowQueries.upsert(
+            val _ = tvShowQueries.upsert(
                 id = Id(show.id),
                 name = show.name,
                 overview = show.overview,
@@ -222,7 +219,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
     )
 
     private fun Tvshow.insertTvShowQuery() {
-        tvShowQueries.upsert(
+        val _ = tvShowQueries.upsert(
             id = id,
             name = name,
             overview = overview,
@@ -242,7 +239,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
     }
 
     private fun Trending_shows.insert() {
-        trendingShowsQueries.insert(
+        val _ = trendingShowsQueries.insert(
             id = id,
             page = page,
             poster_path = poster_path,

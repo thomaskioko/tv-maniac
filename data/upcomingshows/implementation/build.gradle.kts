@@ -3,7 +3,6 @@ plugins {
 }
 
 scaffold {
-    explicitApi()
     useKotlinInject()
 
     optIn("androidx.paging.ExperimentalPagingApi", "kotlin.time.ExperimentalTime")

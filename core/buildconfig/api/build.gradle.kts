@@ -20,7 +20,6 @@ buildConfig {
 
 scaffold {
     addAndroidMultiplatformTarget(withJava = true)
-    explicitApi()
 }
 
 kotlin {

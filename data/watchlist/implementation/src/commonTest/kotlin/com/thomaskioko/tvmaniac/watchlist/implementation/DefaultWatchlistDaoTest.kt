@@ -341,7 +341,7 @@ internal class DefaultWatchlistDaoTest : BaseDatabaseTest() {
     }
 
     private fun insertTestShows() {
-        database.tvShowQueries.upsert(
+        val _ = database.tvShowQueries.upsert(
             id = Id(1),
             name = "Test Show 1",
             overview = "Test overview 1",
@@ -359,7 +359,7 @@ internal class DefaultWatchlistDaoTest : BaseDatabaseTest() {
             backdrop_path = "/backdrop1.jpg",
         )
 
-        database.tvShowQueries.upsert(
+        val _ = database.tvShowQueries.upsert(
             id = Id(2),
             name = "Test Show 2",
             overview = "Test overview 2",
@@ -380,7 +380,7 @@ internal class DefaultWatchlistDaoTest : BaseDatabaseTest() {
 
     private fun insertEpisodesForShow(showId: Long, count: Int) {
         val seasonId = showId * 100
-        database.seasonsQueries.upsert(
+        val _ = database.seasonsQueries.upsert(
             id = Id(seasonId),
             show_id = Id(showId),
             season_number = 1,
@@ -390,7 +390,7 @@ internal class DefaultWatchlistDaoTest : BaseDatabaseTest() {
             image_url = null,
         )
         for (i in 1..count) {
-            database.episodesQueries.upsert(
+            val _ = database.episodesQueries.upsert(
                 id = Id(seasonId + i),
                 season_id = Id(seasonId),
                 show_id = Id(showId),
@@ -410,7 +410,7 @@ internal class DefaultWatchlistDaoTest : BaseDatabaseTest() {
     private fun markEpisodesAsWatched(showId: Long, count: Int) {
         val seasonId = showId * 100
         for (i in 1..count) {
-            database.watchedEpisodesQueries.markAsWatched(
+            val _ = database.watchedEpisodesQueries.markAsWatched(
                 show_id = Id(showId),
                 episode_id = Id(seasonId + i),
                 season_number = 1,
@@ -427,7 +427,7 @@ internal class DefaultWatchlistDaoTest : BaseDatabaseTest() {
     private fun addMoreEpisodes(showId: Long, startFrom: Int, count: Int) {
         val seasonId = showId * 100
         for (i in startFrom until startFrom + count) {
-            database.episodesQueries.upsert(
+            val _ = database.episodesQueries.upsert(
                 id = Id(seasonId + i),
                 season_id = Id(seasonId),
                 show_id = Id(showId),

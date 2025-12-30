@@ -49,7 +49,7 @@ internal class DefaultFeaturedShowsDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should insert featured shows`() = runTest {
-        database.tvShowQueries.upsert(
+        val _ = database.tvShowQueries.upsert(
             id = Id(999),
             name = "New Test Show",
             overview = "New test overview",
@@ -109,7 +109,7 @@ internal class DefaultFeaturedShowsDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should not return shows with null names`() = runTest {
-        featuredShowsQueries.insert(
+        val _ = featuredShowsQueries.insert(
             id = Id(999),
             name = null,
             poster_path = "/test999.jpg",
@@ -191,7 +191,7 @@ internal class DefaultFeaturedShowsDaoTest : BaseDatabaseTest() {
     }
 
     private fun insertTestShows() {
-        database.tvShowQueries.upsert(
+        val _ = database.tvShowQueries.upsert(
             id = Id(1),
             name = "Test Show 1",
             overview = "Test overview 1",
@@ -209,7 +209,7 @@ internal class DefaultFeaturedShowsDaoTest : BaseDatabaseTest() {
             backdrop_path = "/backdrop1.jpg",
         )
 
-        database.tvShowQueries.upsert(
+        val _ = database.tvShowQueries.upsert(
             id = Id(2),
             name = "Test Show 2",
             overview = "Test overview 2",
@@ -227,7 +227,7 @@ internal class DefaultFeaturedShowsDaoTest : BaseDatabaseTest() {
             backdrop_path = "/backdrop2.jpg",
         )
 
-        featuredShowsQueries.insert(
+        val _ = featuredShowsQueries.insert(
             id = Id(1),
             name = "Test Show 1",
             poster_path = "/test1.jpg",
@@ -235,7 +235,7 @@ internal class DefaultFeaturedShowsDaoTest : BaseDatabaseTest() {
             page_order = 0,
         )
 
-        featuredShowsQueries.insert(
+        val _ = featuredShowsQueries.insert(
             id = Id(2),
             name = "Test Show 2",
             poster_path = "/test2.jpg",

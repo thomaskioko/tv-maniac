@@ -27,14 +27,6 @@ internal class DefaultRequestManagerRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should return last insert row id when upsert is called`() {
-        val result = repository.upsert(1L, "TEST", fakeDateTimeProvider.now())
-        val expectedRowId = lastRequestsQueries.lastInsertRowId().executeAsOne()
-
-        result shouldBe expectedRowId
-    }
-
-    @Test
     fun `should update existing record for same entityId and requestType`() {
         val entityId = 1L
         val requestType = "TEST"
@@ -104,7 +96,7 @@ internal class DefaultRequestManagerRepositoryTest : BaseDatabaseTest() {
 
         repository.upsert(entityId, requestType, oldTimestamp)
 
-        lastRequestsQueries.getLastRequestForId(requestType, entityId)
+        val _ = lastRequestsQueries.getLastRequestForId(requestType, entityId)
 
         val result = repository.isRequestExpired(entityId, requestType, threshold)
 

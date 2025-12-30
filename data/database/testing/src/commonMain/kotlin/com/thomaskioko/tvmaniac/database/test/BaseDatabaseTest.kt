@@ -7,7 +7,7 @@ import kotlin.uuid.Uuid
 
 internal expect fun createTestSqlDriver(name: String): SqlDriver
 
-abstract class BaseDatabaseTest {
+public abstract class BaseDatabaseTest {
 
     private val sqlDriver: SqlDriver by lazy {
         createTestSqlDriver("${this@BaseDatabaseTest::class.simpleName}_${Uuid.random()}")
@@ -15,7 +15,7 @@ abstract class BaseDatabaseTest {
 
     protected val database: TvManiacDatabase by lazy { DatabaseFactory(sqlDriver).createDatabase() }
 
-    fun closeDb() {
+    public fun closeDb() {
         sqlDriver.close()
     }
 }

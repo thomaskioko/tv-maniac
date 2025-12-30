@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.compose.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,6 +33,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_show_poster
 
@@ -56,12 +57,12 @@ public fun PosterCard(
         imageWidth = imageWidth,
         onClick = onClick,
         content = {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-            ) {
+            Box {
                 PlaceholderContent(
-                    modifier = Modifier.align(Alignment.Center),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .aspectRatio(aspectRatio)
+                        .align(Alignment.Center),
                     imageUrl = imageUrl,
                     title = title,
                 )
@@ -69,7 +70,12 @@ public fun PosterCard(
                 AsyncImageComposable(
                     model = imageUrl,
                     contentScale = contentScale,
-                    contentDescription = title?.let { stringResource(cd_show_poster.resourceId, title) },
+                    contentDescription = title?.let {
+                        stringResource(
+                            cd_show_poster.resourceId,
+                            title,
+                        )
+                    },
                     modifier = Modifier
                         .fillMaxSize()
                         .aspectRatio(aspectRatio),
@@ -91,42 +97,48 @@ private fun PlaceholderContent(
     title: String? = null,
 ) {
     if (imageUrl.isNullOrEmpty()) {
-        Box(
+        ConstraintLayout(
             modifier = modifier
                 .fillMaxSize()
                 .background(
-                    brush = Brush.verticalGradient(
+                    Brush.verticalGradient(
                         colors = listOf(
                             Color.Gray.copy(alpha = 0.8f),
                             Color.Gray,
                         ),
                     ),
                 ),
-            contentAlignment = Alignment.Center,
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .size(imageSize)
-                        .padding(8.dp),
-                    imageVector = Icons.Outlined.Movie,
-                    contentDescription = title,
-                    tint = Color.White.copy(alpha = 0.8f),
-                )
+            val (icon, text) = createRefs()
 
-                title?.let {
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color.White.copy(alpha = 0.8f),
-                        textAlign = TextAlign.Center,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 2,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                }
+            Icon(
+                modifier = Modifier
+                    .size(imageSize)
+                    .constrainAs(icon) {
+                        centerTo(parent)
+                    },
+                imageVector = Icons.Outlined.Movie,
+                contentDescription = title,
+                tint = Color.White.copy(alpha = 0.8f),
+            )
+
+            title?.let {
+                Text(
+                    text = it,
+                    modifier = Modifier
+                        .padding(horizontal = 4.dp)
+                        .constrainAs(text) {
+                            top.linkTo(icon.bottom)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            width = Dimension.fillToConstraints
+                        },
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.White.copy(alpha = 0.8f),
+                    textAlign = TextAlign.Center,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
             }
         }
     }

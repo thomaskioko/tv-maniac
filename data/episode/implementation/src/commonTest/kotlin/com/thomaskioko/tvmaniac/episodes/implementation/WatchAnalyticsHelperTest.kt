@@ -59,7 +59,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
     }
 
     private fun insertTestData() {
-        database.tvShowQueries.upsert(
+        val _ = database.tvShowQueries.upsert(
             id = Id(1),
             name = "Test Show",
             overview = "Test overview",
@@ -77,7 +77,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
             backdrop_path = "/backdrop.jpg",
         )
 
-        database.seasonsQueries.upsert(
+        val _ = database.seasonsQueries.upsert(
             id = Id(11L),
             show_id = Id(1L),
             season_number = 1L,
@@ -87,7 +87,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
             image_url = "/season1.jpg",
         )
 
-        database.seasonsQueries.upsert(
+        val _ = database.seasonsQueries.upsert(
             id = Id(12L),
             show_id = Id(1L),
             season_number = 2L,
@@ -100,7 +100,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
         repeat(5) { episodeIndex ->
             val episodeNumber = episodeIndex + 1
             val episodeId = 100L + episodeNumber
-            database.episodesQueries.upsert(
+            val _ = database.episodesQueries.upsert(
                 id = Id(episodeId),
                 season_id = Id(11L),
                 show_id = Id(1L),
@@ -119,7 +119,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
         repeat(5) { episodeIndex ->
             val episodeNumber = episodeIndex + 1
             val episodeId = 200L + episodeNumber
-            database.episodesQueries.upsert(
+            val _ = database.episodesQueries.upsert(
                 id = Id(episodeId),
                 season_id = Id(12L),
                 show_id = Id(1L),
@@ -135,7 +135,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
             )
         }
 
-        database.watchlistQueries.upsert(
+        val _ = database.watchlistQueries.upsert(
             id = Id(1L),
             created_at = Clock.System.now().toEpochMilliseconds(),
         )
@@ -149,7 +149,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
         watchedAtOffset: Long = 0L,
     ) {
         val watchedAt = Clock.System.now().toEpochMilliseconds() + watchedAtOffset
-        database.watchedEpisodesQueries.upsert(
+        val _ = database.watchedEpisodesQueries.upsert(
             show_id = Id(showId),
             episode_id = Id(episodeId),
             season_number = seasonNumber,
@@ -383,7 +383,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
 
     @Test
     fun `should handle show with specials season correctly`() = runTest {
-        database.seasonsQueries.upsert(
+        val _ = database.seasonsQueries.upsert(
             id = Id(10L),
             show_id = Id(1L),
             season_number = 0L,
@@ -393,7 +393,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
             image_url = "/specials.jpg",
         )
 
-        database.episodesQueries.upsert(
+        val _ = database.episodesQueries.upsert(
             id = Id(1L),
             season_id = Id(10L),
             show_id = Id(1L),
@@ -420,7 +420,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
 
     @Test
     fun `should include specials when preference is enabled`() = runTest {
-        database.seasonsQueries.upsert(
+        val _ = database.seasonsQueries.upsert(
             id = Id(10L),
             show_id = Id(1L),
             season_number = 0L,
@@ -430,7 +430,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
             image_url = "/specials.jpg",
         )
 
-        database.episodesQueries.upsert(
+        val _ = database.episodesQueries.upsert(
             id = Id(1L),
             season_id = Id(10L),
             show_id = Id(1L),
@@ -484,7 +484,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
 
     @Test
     fun `should handle multiple shows independently`() = runTest {
-        database.tvShowQueries.upsert(
+        val _ = database.tvShowQueries.upsert(
             id = Id(2),
             name = "Test Show 2",
             overview = "Second test show",
@@ -502,7 +502,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
             backdrop_path = "/backdrop2.jpg",
         )
 
-        database.seasonsQueries.upsert(
+        val _ = database.seasonsQueries.upsert(
             id = Id(21L),
             show_id = Id(2L),
             season_number = 1L,
@@ -513,7 +513,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
         )
 
         repeat(3) { i ->
-            database.episodesQueries.upsert(
+            val _ = database.episodesQueries.upsert(
                 id = Id(301L + i),
                 season_id = Id(21L),
                 show_id = Id(2L),

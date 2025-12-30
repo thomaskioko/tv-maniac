@@ -50,7 +50,7 @@ public fun AsyncImageComposable(
                 is ImageRequest -> model.newBuilder()
                 else -> ImageRequest.Builder(LocalContext.current).data(model)
             }
-                .apply { this.builder() }
+                .builder()
                 .build()
         } ?: model,
         contentDescription = contentDescription,

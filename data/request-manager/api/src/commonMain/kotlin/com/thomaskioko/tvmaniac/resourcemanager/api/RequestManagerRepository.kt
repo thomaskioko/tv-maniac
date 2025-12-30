@@ -6,7 +6,7 @@ import kotlin.time.Instant
 
 public interface RequestManagerRepository {
 
-    public fun upsert(entityId: Long, requestType: String, timestamp: Instant = Clock.System.now()): Long
+    public fun upsert(entityId: Long, requestType: String, timestamp: Instant = Clock.System.now())
 
     public fun isRequestExpired(entityId: Long, requestType: String, threshold: Duration): Boolean
 
