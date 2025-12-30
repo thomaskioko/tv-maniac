@@ -3,8 +3,6 @@ plugins {
 }
 
 scaffold {
-    explicitApi()
-
     android {
         enableAndroidResources()
 

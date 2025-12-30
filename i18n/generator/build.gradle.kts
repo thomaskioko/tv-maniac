@@ -5,8 +5,6 @@ plugins {
 }
 
 scaffold {
-    explicitApi()
-
     addAndroidTarget(
         configure = {
             enableAndroidResources()

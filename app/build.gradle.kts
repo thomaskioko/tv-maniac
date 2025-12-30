@@ -3,8 +3,6 @@ plugins {
 }
 
 scaffold {
-    explicitApi()
-
     app {
         applicationId("com.thomaskioko.tvmaniac")
         minify(

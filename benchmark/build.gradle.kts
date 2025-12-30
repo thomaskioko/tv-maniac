@@ -3,8 +3,6 @@ plugins {
 }
 
 scaffold {
-    explicitApi()
-
     benchmark {
         minSdkVersion(28)
         useManagedDevices()

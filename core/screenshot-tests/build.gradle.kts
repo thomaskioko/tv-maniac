@@ -1,7 +1,6 @@
 plugins { alias(libs.plugins.app.android) }
 
 scaffold {
-    explicitApi()
     android {
         useCompose()
     }
