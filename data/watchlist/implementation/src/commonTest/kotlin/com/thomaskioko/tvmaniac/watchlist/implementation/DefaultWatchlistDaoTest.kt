@@ -6,7 +6,7 @@ import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.Show_metadata
 import com.thomaskioko.tvmaniac.shows.api.WatchlistDao
-import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
+import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -39,7 +39,7 @@ internal class DefaultWatchlistDaoTest : BaseDatabaseTest() {
     @BeforeTest
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        dao = DefaultWatchlistDao(database, PlatformDateFormatter(), coroutineDispatcher)
+        dao = DefaultWatchlistDao(database, FakeDateTimeProvider(), coroutineDispatcher)
         insertTestShows()
     }
 
