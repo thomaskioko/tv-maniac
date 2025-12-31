@@ -25,9 +25,14 @@ opt_in_rules:
 
 # Files & Folder not to check
 excluded:
+    - .build
+    - "**/build"
     - "**/.build"
+    - "**/checkouts"
+    - "**/SourcePackages"
     - derived_data
-    - ios/Modules
+    - DerivedData
+    - ios/Modules/SnapshotTestingLib
     - ios/build
     - vendor/bundle
     - shared/build
