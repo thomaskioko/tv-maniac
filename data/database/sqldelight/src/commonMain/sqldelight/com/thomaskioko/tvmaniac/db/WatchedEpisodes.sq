@@ -212,3 +212,40 @@ SELECT
 FROM season s
 WHERE s.show_id = :show_id
 ORDER BY s.season_number;
+
+getLastWatchedWithAbsoluteNumber:
+SELECT
+    episode_id,
+    season_number,
+    episode_number,
+    watched_at,
+    (season_number * 1000) + episode_number AS absolute_number
+FROM watched_episodes
+WHERE show_id = :show_id
+  AND (:include_specials = 1 OR season_number > 0)
+ORDER BY (season_number * 1000) + episode_number DESC
+LIMIT 1;
+
+hasUnwatchedEarlierEpisodes:
+SELECT EXISTS(
+    SELECT 1
+    FROM episode e
+    INNER JOIN season s ON e.season_id = s.id
+    LEFT JOIN watched_episodes we ON we.episode_id = e.id AND we.show_id = :show_id
+    WHERE e.show_id = :show_id
+      AND (:include_specials = 1 OR s.season_number > 0)
+      AND we.episode_id IS NULL
+      AND (e.air_date IS NULL OR e.air_date <= date('now'))
+      AND ((s.season_number * 1000) + e.episode_number) < :last_watched_absolute_number
+) AS has_earlier_unwatched;
+
+getWatchedEpisodesWithAbsoluteNumbers:
+SELECT
+    season_number,
+    episode_number,
+    (season_number * 1000) + episode_number AS absolute_number,
+    watched_at
+FROM watched_episodes
+WHERE show_id = :show_id
+  AND (:include_specials = 1 OR season_number > 0)
+ORDER BY watched_at ASC;
