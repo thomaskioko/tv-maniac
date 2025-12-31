@@ -1,7 +1,5 @@
 package com.thomaskioko.tvmaniac.testing.di
 
-import com.thomaskioko.tvmaniac.buildconfig.api.BuildConfigRepository
-import com.thomaskioko.tvmaniac.buildconfig.testing.FakeBuildConfigRepository
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
@@ -45,10 +43,6 @@ public interface TestDataModule {
     @Provides
     @SingleIn(TestScope::class)
     public fun provideRequestManagerRepository(): RequestManagerRepository = FakeRequestManagerRepository()
-
-    @Provides
-    @SingleIn(TestScope::class)
-    public fun provideSecureConfigRepository(): BuildConfigRepository = FakeBuildConfigRepository()
 
     @Provides
     @SingleIn(TestScope::class)

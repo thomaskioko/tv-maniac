@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.tmdb.implementation
 
-import com.thomaskioko.tvmaniac.buildconfig.api.BuildConfig
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.util.api.BuildConfig
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import kotlinx.serialization.json.Json
