@@ -51,7 +51,7 @@ public class DefaultEpisodeRepository(
     private val seasonsRepository: SeasonsRepository,
     private val seasonDetailsRepository: SeasonDetailsRepository,
     private val watchlistDao: WatchlistDao,
-    private val watchAnalyticsHelper: WatchAnalyticsHelper,
+    private val showWatchProgressAnalyzer: ShowWatchProgressAnalyzer,
     private val dateTimeProvider: DateTimeProvider,
 ) : EpisodeRepository {
 
@@ -108,10 +108,10 @@ public class DefaultEpisodeRepository(
     }
 
     override suspend fun getWatchProgressContext(showId: Long): WatchProgressContext =
-        watchAnalyticsHelper.getWatchProgressContext(showId)
+        showWatchProgressAnalyzer.getWatchProgressContext(showId)
 
     override suspend fun hasUnwatchedEarlierEpisodes(showId: Long): Boolean =
-        watchAnalyticsHelper.hasUnwatchedEarlierEpisodes(showId)
+        showWatchProgressAnalyzer.hasUnwatchedEarlierEpisodes(showId)
 
     override fun observeLastWatchedEpisode(showId: Long): Flow<LastWatchedEpisode?> {
         return database.showsLastWatchedQueries
