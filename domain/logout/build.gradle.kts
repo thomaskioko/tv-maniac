@@ -15,7 +15,7 @@ kotlin {
                 api(projects.data.user.api)
                 api(projects.data.traktauth.api)
                 api(projects.data.requestManager.api)
-                api(projects.core.util)
+                api(projects.core.util.api)
 
                 implementation(projects.core.base)
                 implementation(projects.data.datastore.api)
