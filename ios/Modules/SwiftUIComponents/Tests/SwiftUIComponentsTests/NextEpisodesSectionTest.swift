@@ -31,7 +31,7 @@ class NextEpisodesSectionTest: SnapshotTestCase {
                     episodeNumber: "S02E01",
                     runtime: "45 min",
                     stillImage: "/still1.jpg",
-                    overview: "Daryl washes ashore in France and struggles to piece together how he got there and why.",
+                    overview: "Daryl washes ashore in France and struggles to piece together how he got there and why."
                 ),
             ],
             markWatchedLabel: "Mark as Watched",
