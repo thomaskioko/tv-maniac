@@ -23,7 +23,7 @@ import kotlin.time.Clock
 
 @IgnoreIos
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
+internal class ShowWatchProgressAnalyzerTest : BaseDatabaseTest() {
 
     private val testDispatcher = StandardTestDispatcher()
     private val coroutineDispatcher = AppCoroutineDispatchers(
@@ -34,7 +34,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
         databaseRead = testDispatcher,
     )
 
-    private lateinit var watchAnalyticsHelper: WatchAnalyticsHelper
+    private lateinit var showWatchProgressAnalyzer: ShowWatchProgressAnalyzer
     private lateinit var fakeDatastoreRepository: FakeDatastoreRepository
 
     @BeforeTest
@@ -43,7 +43,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
 
         fakeDatastoreRepository = FakeDatastoreRepository()
 
-        watchAnalyticsHelper = WatchAnalyticsHelper(
+        showWatchProgressAnalyzer = ShowWatchProgressAnalyzer(
             database = database,
             datastoreRepository = fakeDatastoreRepository,
             dispatchers = coroutineDispatcher,
@@ -160,7 +160,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
 
     @Test
     fun `should return zero progress when no episodes watched`() = runTest {
-        val context = watchAnalyticsHelper.getWatchProgressContext(showId = 1L)
+        val context = showWatchProgressAnalyzer.getWatchProgressContext(showId = 1L)
 
         context.showId shouldBe 1L
         context.totalEpisodes shouldBe 10
@@ -177,7 +177,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
         markEpisodeWatched(1L, 101L, 1L, 1L)
         markEpisodeWatched(1L, 102L, 1L, 2L, watchedAtOffset = 1000L)
 
-        val context = watchAnalyticsHelper.getWatchProgressContext(showId = 1L)
+        val context = showWatchProgressAnalyzer.getWatchProgressContext(showId = 1L)
 
         context.totalEpisodes shouldBe 10
         context.watchedEpisodes shouldBe 2
@@ -193,7 +193,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
             markEpisodeWatched(1L, 201L + i, 2L, (i + 1).toLong(), watchedAtOffset = (5 + i) * 1000L)
         }
 
-        val context = watchAnalyticsHelper.getWatchProgressContext(showId = 1L)
+        val context = showWatchProgressAnalyzer.getWatchProgressContext(showId = 1L)
 
         context.totalEpisodes shouldBe 10
         context.watchedEpisodes shouldBe 10
@@ -206,7 +206,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
         markEpisodeWatched(1L, 102L, 1L, 2L, watchedAtOffset = 1000L)
         markEpisodeWatched(1L, 103L, 1L, 3L, watchedAtOffset = 2000L)
 
-        val context = watchAnalyticsHelper.getWatchProgressContext(showId = 1L)
+        val context = showWatchProgressAnalyzer.getWatchProgressContext(showId = 1L)
 
         context.lastWatchedSeasonNumber shouldBe 1
         context.lastWatchedEpisodeNumber shouldBe 3
@@ -217,7 +217,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
         markEpisodeWatched(1L, 103L, 1L, 3L, watchedAtOffset = 0L)
         markEpisodeWatched(1L, 101L, 1L, 1L, watchedAtOffset = 1000L)
 
-        val context = watchAnalyticsHelper.getWatchProgressContext(showId = 1L)
+        val context = showWatchProgressAnalyzer.getWatchProgressContext(showId = 1L)
 
         context.isWatchingOutOfOrder.shouldBeTrue()
     }
@@ -227,14 +227,14 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
         markEpisodeWatched(1L, 101L, 1L, 1L)
         markEpisodeWatched(1L, 103L, 1L, 3L, watchedAtOffset = 1000L)
 
-        val context = watchAnalyticsHelper.getWatchProgressContext(showId = 1L)
+        val context = showWatchProgressAnalyzer.getWatchProgressContext(showId = 1L)
 
         context.hasUnwatchedEarlierEpisodes.shouldBeTrue()
     }
 
     @Test
     fun `should return zero progress for nonexistent show`() = runTest {
-        val context = watchAnalyticsHelper.getWatchProgressContext(showId = 999L)
+        val context = showWatchProgressAnalyzer.getWatchProgressContext(showId = 999L)
 
         context.showId shouldBe 999L
         context.totalEpisodes shouldBe 0
@@ -244,7 +244,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
 
     @Test
     fun `should not detect out of order with no watched episodes`() = runTest {
-        val result = watchAnalyticsHelper.isWatchingOutOfOrder(showId = 1L)
+        val result = showWatchProgressAnalyzer.isWatchingOutOfOrder(showId = 1L)
 
         result.shouldBeFalse()
     }
@@ -253,7 +253,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
     fun `should not detect out of order with only one watched episode`() = runTest {
         markEpisodeWatched(1L, 101L, 1L, 1L)
 
-        val result = watchAnalyticsHelper.isWatchingOutOfOrder(showId = 1L)
+        val result = showWatchProgressAnalyzer.isWatchingOutOfOrder(showId = 1L)
 
         result.shouldBeFalse()
     }
@@ -264,7 +264,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
         markEpisodeWatched(1L, 102L, 1L, 2L, watchedAtOffset = 1000L)
         markEpisodeWatched(1L, 103L, 1L, 3L, watchedAtOffset = 2000L)
 
-        val result = watchAnalyticsHelper.isWatchingOutOfOrder(showId = 1L)
+        val result = showWatchProgressAnalyzer.isWatchingOutOfOrder(showId = 1L)
 
         result.shouldBeFalse()
     }
@@ -274,7 +274,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
         markEpisodeWatched(1L, 103L, 1L, 3L, watchedAtOffset = 0L)
         markEpisodeWatched(1L, 101L, 1L, 1L, watchedAtOffset = 1000L)
 
-        val result = watchAnalyticsHelper.isWatchingOutOfOrder(showId = 1L)
+        val result = showWatchProgressAnalyzer.isWatchingOutOfOrder(showId = 1L)
 
         result.shouldBeTrue()
     }
@@ -284,7 +284,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
         markEpisodeWatched(1L, 201L, 2L, 1L, watchedAtOffset = 0L)
         markEpisodeWatched(1L, 101L, 1L, 1L, watchedAtOffset = 1000L)
 
-        val result = watchAnalyticsHelper.isWatchingOutOfOrder(showId = 1L)
+        val result = showWatchProgressAnalyzer.isWatchingOutOfOrder(showId = 1L)
 
         result.shouldBeTrue()
     }
@@ -296,14 +296,14 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
         markEpisodeWatched(1L, 101L, 1L, 1L, watchedAtOffset = 2000L)
         markEpisodeWatched(1L, 103L, 1L, 3L, watchedAtOffset = 3000L)
 
-        val result = watchAnalyticsHelper.isWatchingOutOfOrder(showId = 1L)
+        val result = showWatchProgressAnalyzer.isWatchingOutOfOrder(showId = 1L)
 
         result.shouldBeTrue()
     }
 
     @Test
     fun `should not detect earlier unwatched with no watched episodes`() = runTest {
-        val result = watchAnalyticsHelper.hasUnwatchedEarlierEpisodes(showId = 1L)
+        val result = showWatchProgressAnalyzer.hasUnwatchedEarlierEpisodes(showId = 1L)
 
         result.shouldBeFalse()
     }
@@ -312,7 +312,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
     fun `should not detect earlier unwatched when starting from episode 1`() = runTest {
         markEpisodeWatched(1L, 101L, 1L, 1L)
 
-        val result = watchAnalyticsHelper.hasUnwatchedEarlierEpisodes(showId = 1L)
+        val result = showWatchProgressAnalyzer.hasUnwatchedEarlierEpisodes(showId = 1L)
 
         result.shouldBeFalse()
     }
@@ -323,7 +323,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
         markEpisodeWatched(1L, 102L, 1L, 2L, watchedAtOffset = 1000L)
         markEpisodeWatched(1L, 103L, 1L, 3L, watchedAtOffset = 2000L)
 
-        val result = watchAnalyticsHelper.hasUnwatchedEarlierEpisodes(showId = 1L)
+        val result = showWatchProgressAnalyzer.hasUnwatchedEarlierEpisodes(showId = 1L)
 
         result.shouldBeFalse()
     }
@@ -333,7 +333,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
         markEpisodeWatched(1L, 101L, 1L, 1L)
         markEpisodeWatched(1L, 103L, 1L, 3L, watchedAtOffset = 1000L)
 
-        val result = watchAnalyticsHelper.hasUnwatchedEarlierEpisodes(showId = 1L)
+        val result = showWatchProgressAnalyzer.hasUnwatchedEarlierEpisodes(showId = 1L)
 
         result.shouldBeTrue()
     }
@@ -342,7 +342,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
     fun `should detect earlier unwatched when skipping season 1`() = runTest {
         markEpisodeWatched(1L, 201L, 2L, 1L)
 
-        val result = watchAnalyticsHelper.hasUnwatchedEarlierEpisodes(showId = 1L)
+        val result = showWatchProgressAnalyzer.hasUnwatchedEarlierEpisodes(showId = 1L)
 
         result.shouldBeTrue()
     }
@@ -352,7 +352,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
         markEpisodeWatched(1L, 101L, 1L, 1L)
         markEpisodeWatched(1L, 105L, 1L, 5L, watchedAtOffset = 1000L)
 
-        val result = watchAnalyticsHelper.hasUnwatchedEarlierEpisodes(showId = 1L)
+        val result = showWatchProgressAnalyzer.hasUnwatchedEarlierEpisodes(showId = 1L)
 
         result.shouldBeTrue()
     }
@@ -364,7 +364,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
         markEpisodeWatched(1L, 103L, 1L, 3L, watchedAtOffset = 2000L)
         markEpisodeWatched(1L, 104L, 1L, 4L, watchedAtOffset = 3000L)
 
-        val result = watchAnalyticsHelper.hasUnwatchedEarlierEpisodes(showId = 1L)
+        val result = showWatchProgressAnalyzer.hasUnwatchedEarlierEpisodes(showId = 1L)
 
         result.shouldBeFalse()
     }
@@ -376,7 +376,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
         }
         markEpisodeWatched(1L, 201L, 2L, 1L, watchedAtOffset = 5000L)
 
-        val result = watchAnalyticsHelper.hasUnwatchedEarlierEpisodes(showId = 1L)
+        val result = showWatchProgressAnalyzer.hasUnwatchedEarlierEpisodes(showId = 1L)
 
         result.shouldBeTrue()
     }
@@ -412,7 +412,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
 
         markEpisodeWatched(1L, 101L, 1L, 1L)
 
-        val context = watchAnalyticsHelper.getWatchProgressContext(showId = 1L)
+        val context = showWatchProgressAnalyzer.getWatchProgressContext(showId = 1L)
 
         context.totalEpisodes shouldBe 10
         context.hasUnwatchedEarlierEpisodes.shouldBeFalse()
@@ -447,7 +447,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
 
         fakeDatastoreRepository.saveIncludeSpecials(true)
 
-        val context = watchAnalyticsHelper.getWatchProgressContext(showId = 1L)
+        val context = showWatchProgressAnalyzer.getWatchProgressContext(showId = 1L)
 
         context.totalEpisodes shouldBe 11
     }
@@ -460,7 +460,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
         markEpisodeWatched(1L, 201L, 2L, 1L, watchedAtOffset = 5000L)
         markEpisodeWatched(1L, 202L, 2L, 2L, watchedAtOffset = 6000L)
 
-        val context = watchAnalyticsHelper.getWatchProgressContext(showId = 1L)
+        val context = showWatchProgressAnalyzer.getWatchProgressContext(showId = 1L)
 
         context.watchedEpisodes shouldBe 7
         context.progressPercentage.shouldBeWithinPercentageOf(70f, 0.1)
@@ -476,7 +476,7 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
         markEpisodeWatched(1L, 101L, 1L, 1L, watchedAtOffset = 1000L)
         markEpisodeWatched(1L, 102L, 1L, 2L, watchedAtOffset = 2000L)
 
-        val context = watchAnalyticsHelper.getWatchProgressContext(showId = 1L)
+        val context = showWatchProgressAnalyzer.getWatchProgressContext(showId = 1L)
 
         context.isWatchingOutOfOrder.shouldBeTrue()
         context.hasUnwatchedEarlierEpisodes.shouldBeFalse()
@@ -534,8 +534,8 @@ internal class WatchAnalyticsHelperTest : BaseDatabaseTest() {
 
         markEpisodeWatched(2L, 303L, 1L, 3L)
 
-        val context1 = watchAnalyticsHelper.getWatchProgressContext(showId = 1L)
-        val context2 = watchAnalyticsHelper.getWatchProgressContext(showId = 2L)
+        val context1 = showWatchProgressAnalyzer.getWatchProgressContext(showId = 1L)
+        val context2 = showWatchProgressAnalyzer.getWatchProgressContext(showId = 2L)
 
         context1.watchedEpisodes shouldBe 2
         context1.hasUnwatchedEarlierEpisodes.shouldBeFalse()

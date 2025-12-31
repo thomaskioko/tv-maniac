@@ -65,7 +65,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
         nextEpisodeDao = nextEpisodeDao,
         dispatchers = coroutineDispatcher,
     )
-    private val watchAnalyticsHelper = WatchAnalyticsHelper(
+    private val showWatchProgressAnalyzer = ShowWatchProgressAnalyzer(
         database = database,
         datastoreRepository = fakeDatastoreRepository,
         dispatchers = coroutineDispatcher,
@@ -85,7 +85,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
             seasonsRepository = fakeSeasonsRepository,
             seasonDetailsRepository = fakeSeasonDetailsRepository,
             watchlistDao = fakeWatchlistDao,
-            watchAnalyticsHelper = watchAnalyticsHelper,
+            showWatchProgressAnalyzer = showWatchProgressAnalyzer,
             dateTimeProvider = fakeDateTimeProvider,
         )
 
