@@ -80,6 +80,7 @@ include(
     ":core:screenshot-tests",
     ":core:util",
     ":core:util:api",
+    ":core:util:implementation",
     ":core:util:testing",
     ":core:testing:di",
     ":core:view",
