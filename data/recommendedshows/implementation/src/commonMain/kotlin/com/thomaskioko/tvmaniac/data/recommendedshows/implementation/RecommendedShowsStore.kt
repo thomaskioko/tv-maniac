@@ -14,7 +14,7 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.RECOMMENDE
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResult
-import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
+import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
@@ -32,7 +32,7 @@ public class RecommendedShowsStore(
     private val recommendedShowsDao: RecommendedShowsDao,
     private val requestManagerRepository: RequestManagerRepository,
     private val formatterUtil: FormatterUtil,
-    private val dateFormatter: PlatformDateFormatter,
+    private val dateTimeProvider: DateTimeProvider,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<RecommendedShowsParams, List<RecommendedShows>> by storeBuilder(
     fetcher = apiFetcher { param: RecommendedShowsParams ->
@@ -53,7 +53,7 @@ public class RecommendedShowsStore(
                         overview = show.overview,
                         language = show.originalLanguage,
                         status = null,
-                        first_air_date = show.firstAirDate?.let { dateFormatter.getYear(it) },
+                        first_air_date = show.firstAirDate?.let { dateTimeProvider.getYear(it) },
                         popularity = show.popularity,
                         episode_numbers = null,
                         last_air_date = null,

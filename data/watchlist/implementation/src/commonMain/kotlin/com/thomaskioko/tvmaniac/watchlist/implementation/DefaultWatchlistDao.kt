@@ -11,7 +11,7 @@ import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.db.Watchlists
 import com.thomaskioko.tvmaniac.shows.api.WatchlistDao
-import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
+import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
@@ -24,7 +24,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @ContributesBinding(AppScope::class)
 public class DefaultWatchlistDao(
     private val database: TvManiacDatabase,
-    private val dateFormatter: PlatformDateFormatter,
+    private val dateTimeProvider: DateTimeProvider,
     private val dispatchers: AppCoroutineDispatchers,
 ) : WatchlistDao {
 
@@ -32,7 +32,7 @@ public class DefaultWatchlistDao(
         database.transaction {
             database.watchlistQueries.upsert(
                 id = Id(id),
-                created_at = dateFormatter.getTimestampMilliseconds(),
+                created_at = dateTimeProvider.nowMillis(),
             )
         }
     }
