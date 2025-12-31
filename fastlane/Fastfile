@@ -96,11 +96,11 @@ platform :ios do
 
   desc "Format Swift code with SwiftFormat"
   lane :format_swift_code do
-    sh "cd ../ios && swiftformat . --config ../.swiftformat --swiftversion 5.9 --exclude derived_data"
+    sh "cd .. && swiftformat ios --config .swiftformat --swiftversion 5.9"
   end
 
   desc "Check Swift code formatting with SwiftFormat"
   lane :check_swift_format do
-    sh "cd ../ios && swiftformat . --config ../.swiftformat --lint --swiftversion 5.9 --exclude derived_data"
+    sh "cd .. && swiftformat ios --config .swiftformat --lint --swiftversion 5.9"
   end
 end
