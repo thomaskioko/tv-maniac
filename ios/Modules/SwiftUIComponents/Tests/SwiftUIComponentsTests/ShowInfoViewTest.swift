@@ -39,29 +39,29 @@ class ShowInfoViewTest: SnapshotTestCase {
         .assertSnapshot(testName: "ShowInfoView")
     }
 
-    private var genreList: [GenreModel] {
+    private var genreList: [SwiftGenres] {
         [.init(name: "Sci-Fi"), .init(name: "Horror"), .init(name: "Action")]
     }
 
-    private var seasonList: [SeasonModel] {
+    private var seasonList: [SwiftSeason] {
         [
             .init(tvShowId: 23, seasonId: 23, seasonNumber: 1, name: "Season 1", watchedCount: 6, totalCount: 6, progressPercentage: 1.0),
             .init(tvShowId: 123, seasonId: 123, seasonNumber: 2, name: "Season 2", watchedCount: 1, totalCount: 6, progressPercentage: 0.17),
         ]
     }
 
-    private var providerList: [ProviderModel] {
+    private var providerList: [SwiftProviders] {
         [.init(providerId: 123, logoUrl: ""), .init(providerId: 1233, logoUrl: ""), .init(providerId: 23, logoUrl: "")]
     }
 
-    private var trailerList: [TrailerModel] {
+    private var trailerList: [SwiftTrailer] {
         [
             .init(showId: 123, key: "XZ8daibM3AE", name: "Series Trailer", youtubeThumbnailUrl: ""),
             .init(showId: 1234, key: "XZ8daibM3AE", name: "Series Trailer", youtubeThumbnailUrl: ""),
         ]
     }
 
-    private var castsList: [CastModel] {
+    private var castsList: [SwiftCast] {
         [
             .init(castId: 123, name: "Rosario Dawson", characterName: "Claire Temple", profileUrl: ""),
             .init(castId: 1234, name: "Hailee Steinfeld", characterName: "Hailee Steinfeld", profileUrl: ""),
@@ -69,7 +69,7 @@ class ShowInfoViewTest: SnapshotTestCase {
         ]
     }
 
-    private var showList: [ShowModel] {
+    private var showList: [SwiftShow] {
         [
             .init(tmdbId: 1234, title: "Arcane", posterUrl: "", backdropUrl: nil, inLibrary: false),
             .init(tmdbId: 123, title: "The Lord of the Rings: The Rings of Power", posterUrl: "", backdropUrl: nil, inLibrary: false),
