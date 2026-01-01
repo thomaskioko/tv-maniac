@@ -1,46 +1,15 @@
-import com.thomaskioko.tvmaniac.db.Id;
-import com.thomaskioko.tvmaniac.db.TmdbId;
-import com.thomaskioko.tvmaniac.db.EpisodeId;
-
--- View definition for shows_last_watched
--- This view calculates the last watched episode for each show
 CREATE VIEW shows_last_watched AS
 SELECT
-    current_episode.show_id,
-    current_season.id AS season_id,
-    current_episode.episode_id,
-    (1000 * current_episode.season_number) + current_episode.episode_number AS last_watched_abs_number,
-    current_episode.season_number AS last_watched_season,
-    current_episode.episode_number AS last_watched_episode,
-    current_episode.watched_at AS last_watched_at
-FROM watched_episodes current_episode
-INNER JOIN season current_season ON current_season.show_id = current_episode.show_id
-                                 AND current_season.season_number = current_episode.season_number
-WHERE (current_episode.season_number > 0 OR current_season.title != 'Specials')
-  AND current_episode.watched_at = (
-    SELECT MAX(latest_time.watched_at)
-    FROM watched_episodes latest_time
-    INNER JOIN season latest_season ON latest_season.show_id = latest_time.show_id
-                                    AND latest_season.season_number = latest_time.season_number
-    WHERE latest_time.show_id = current_episode.show_id
-      AND (latest_time.season_number > 0 OR latest_season.title != 'Specials')
-  )
-  AND (1000 * current_episode.season_number) + current_episode.episode_number = (
-    SELECT MAX((1000 * highest_episode.season_number) + highest_episode.episode_number)
-    FROM watched_episodes highest_episode
-    INNER JOIN season highest_season ON highest_season.show_id = highest_episode.show_id
-                                     AND highest_season.season_number = highest_episode.season_number
-    WHERE highest_episode.show_id = current_episode.show_id
-      AND (highest_episode.season_number > 0 OR highest_season.title != 'Specials')
-      AND highest_episode.watched_at = (
-        SELECT MAX(max_time.watched_at)
-        FROM watched_episodes max_time
-        INNER JOIN season max_season ON max_season.show_id = max_time.show_id
-                                     AND max_season.season_number = max_time.season_number
-        WHERE max_time.show_id = current_episode.show_id
-          AND (max_time.season_number > 0 OR max_season.title != 'Specials')
-      )
-  );
+    sm.show_id,
+    s.id AS season_id,
+    sm.last_watched_episode_id AS episode_id,
+    (1000 * sm.last_watched_season_number) + sm.last_watched_episode_number AS last_watched_abs_number,
+    sm.last_watched_season_number AS last_watched_season,
+    sm.last_watched_episode_number AS last_watched_episode,
+    sm.last_watched_at
+FROM show_metadata sm
+INNER JOIN season s ON s.show_id = sm.show_id AND s.season_number = sm.last_watched_season_number
+WHERE sm.last_watched_episode_id IS NOT NULL;
 
 -- Get last watched episode for a specific show
 lastWatchedEpisodeForShow:

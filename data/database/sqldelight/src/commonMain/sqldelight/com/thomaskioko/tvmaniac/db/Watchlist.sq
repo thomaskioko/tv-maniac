@@ -1,16 +1,16 @@
 import com.thomaskioko.tvmaniac.db.Id;
 import com.thomaskioko.tvmaniac.db.TmdbId;
-import kotlin.Boolean;
 
 CREATE TABLE watchlist(
     id INTEGER AS Id<TmdbId> PRIMARY KEY,
     created_at INTEGER NOT NULL,
-   `is_synced` INTEGER AS Boolean DEFAULT 0
+    FOREIGN KEY(id) REFERENCES tvshow(id) ON DELETE CASCADE
 );
 
 -- indices
 
 CREATE UNIQUE INDEX IF NOT EXISTS `index_watchlists_watchlist_id` ON `watchlist` (`id`);
+CREATE INDEX IF NOT EXISTS idx_watchlist_created_at ON watchlist(created_at);
 
 -- queries
 
@@ -38,8 +38,8 @@ SELECT
     show_metadata.season_count,
     show_metadata.episode_count,
     show_metadata.status,
-    (SELECT COUNT(*) FROM watched_episodes WHERE watched_episodes.show_id = tvshow.id) AS watched_count,
-    (SELECT COUNT(*) FROM episode WHERE episode.show_id = tvshow.id) AS total_episode_count
+    COALESCE(show_metadata.cached_watched_count, 0) AS watched_count,
+    COALESCE(show_metadata.cached_total_count, 0) AS total_episode_count
 FROM
     tvshow
 JOIN
@@ -47,9 +47,53 @@ JOIN
 LEFT JOIN
     show_metadata ON tvshow.id = show_metadata.show_id
 WHERE
-    (SELECT COUNT(*) FROM watched_episodes WHERE watched_episodes.show_id = tvshow.id)
-    < (SELECT COUNT(*) FROM episode WHERE episode.show_id = tvshow.id)
-    OR (SELECT COUNT(*) FROM episode WHERE episode.show_id = tvshow.id) = 0
+    COALESCE(show_metadata.cached_watched_count, 0) < COALESCE(show_metadata.cached_total_count, 0)
+    OR COALESCE(show_metadata.cached_total_count, 0) = 0
+ORDER BY
+    watchlist.created_at DESC;
+
+watchlistsFiltered:
+SELECT
+    tvshow.id,
+    tvshow.name,
+    tvshow.poster_path,
+    tvshow.first_air_date,
+    watchlist.created_at,
+    show_metadata.season_count,
+    show_metadata.episode_count,
+    show_metadata.status,
+    COALESCE((
+        SELECT COUNT(*) FROM watched_episodes we
+        INNER JOIN season s ON s.show_id = we.show_id AND s.season_number = we.season_number
+        WHERE we.show_id = tvshow.id
+        AND (:includeSpecials = 1 OR (s.season_number > 0 OR s.title != 'Specials'))
+    ), 0) AS watched_count,
+    COALESCE((
+        SELECT COUNT(*) FROM episode e
+        INNER JOIN season s ON s.id = e.season_id
+        WHERE e.show_id = tvshow.id
+        AND (:includeSpecials = 1 OR (s.season_number > 0 OR s.title != 'Specials'))
+    ), 0) AS total_episode_count
+FROM
+    tvshow
+JOIN
+    watchlist ON tvshow.id = watchlist.id
+LEFT JOIN
+    show_metadata ON tvshow.id = show_metadata.show_id
+WHERE
+    (SELECT COUNT(*) FROM watched_episodes we
+     INNER JOIN season s ON s.show_id = we.show_id AND s.season_number = we.season_number
+     WHERE we.show_id = tvshow.id
+     AND (:includeSpecials = 1 OR (s.season_number > 0 OR s.title != 'Specials')))
+    <
+    (SELECT COUNT(*) FROM episode e
+     INNER JOIN season s ON s.id = e.season_id
+     WHERE e.show_id = tvshow.id
+     AND (:includeSpecials = 1 OR (s.season_number > 0 OR s.title != 'Specials')))
+    OR (SELECT COUNT(*) FROM episode e
+        INNER JOIN season s ON s.id = e.season_id
+        WHERE e.show_id = tvshow.id
+        AND (:includeSpecials = 1 OR (s.season_number > 0 OR s.title != 'Specials'))) = 0
 ORDER BY
     watchlist.created_at DESC;
 
@@ -64,8 +108,8 @@ SELECT
     show_metadata.season_count,
     show_metadata.episode_count,
     show_metadata.status,
-    (SELECT COUNT(*) FROM watched_episodes WHERE watched_episodes.show_id = tvshow.id) AS watched_count,
-    (SELECT COUNT(*) FROM episode WHERE episode.show_id = tvshow.id) AS total_episode_count
+    COALESCE(show_metadata.cached_watched_count, 0) AS watched_count,
+    COALESCE(show_metadata.cached_total_count, 0) AS total_episode_count
 FROM
     tvshow
 JOIN
@@ -74,36 +118,17 @@ LEFT JOIN
     show_metadata ON tvshow.id = show_metadata.show_id
 WHERE
     (
-        (SELECT COUNT(*) FROM watched_episodes WHERE watched_episodes.show_id = tvshow.id)
-        < (SELECT COUNT(*) FROM episode WHERE episode.show_id = tvshow.id)
-        OR (SELECT COUNT(*) FROM episode WHERE episode.show_id = tvshow.id) = 0
+        COALESCE(show_metadata.cached_watched_count, 0) < COALESCE(show_metadata.cached_total_count, 0)
+        OR COALESCE(show_metadata.cached_total_count, 0) = 0
     )
-    AND (
-        name LIKE ? || '%'
-        OR LOWER(name) LIKE LOWER(?) || '%'
-        OR name LIKE '%' || ? || '%'
-        OR LOWER(name) LIKE '%' || LOWER(?) || '%'
-    )
+    AND tvshow.name LIKE '%' || :query || '%' COLLATE NOCASE
 ORDER BY
     CASE
-        WHEN name LIKE ? || '%' THEN 1
-        WHEN LOWER(name) LIKE LOWER(?) || '%' THEN 2
-        WHEN name LIKE '% ' || ? || '%' THEN 3
-        ELSE 4
+        WHEN tvshow.name LIKE :query || '%' COLLATE NOCASE THEN 1
+        WHEN tvshow.name LIKE '% ' || :query || '%' COLLATE NOCASE THEN 2
+        ELSE 3
     END,
     watchlist.created_at DESC;
-
-updateWatchlist:
-UPDATE watchlist SET
-is_synced = :isSynced
-WHERE id = ?;
-
-unsyncedWatchlist:
-SELECT
-    watchlist.id
-FROM
-    watchlist
-WHERE is_synced = 0;
 
 delete:
 DELETE FROM

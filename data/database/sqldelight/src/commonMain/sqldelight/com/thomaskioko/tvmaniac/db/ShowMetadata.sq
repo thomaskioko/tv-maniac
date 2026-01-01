@@ -1,11 +1,18 @@
 import com.thomaskioko.tvmaniac.db.Id;
 import com.thomaskioko.tvmaniac.db.TmdbId;
+import com.thomaskioko.tvmaniac.db.EpisodeId;
 
 CREATE TABLE show_metadata (
     show_id INTEGER AS Id<TmdbId> PRIMARY KEY NOT NULL,
     season_count INTEGER NOT NULL DEFAULT 0,
     episode_count INTEGER NOT NULL DEFAULT 0,
     status TEXT DEFAULT NULL,
+    cached_watched_count INTEGER NOT NULL DEFAULT 0,
+    cached_total_count INTEGER NOT NULL DEFAULT 0,
+    last_watched_episode_id INTEGER AS Id<EpisodeId> DEFAULT NULL,
+    last_watched_season_number INTEGER DEFAULT NULL,
+    last_watched_episode_number INTEGER DEFAULT NULL,
+    last_watched_at INTEGER DEFAULT NULL,
     FOREIGN KEY(show_id) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
@@ -29,3 +36,99 @@ WHERE show_id = ?;
 delete:
 DELETE FROM show_metadata
 WHERE show_id = ?;
+
+updateWatchedCount:
+UPDATE show_metadata
+SET cached_watched_count = (
+    SELECT COUNT(*) FROM watched_episodes
+    WHERE watched_episodes.show_id = :show_id
+)
+WHERE show_id = :show_id;
+
+updateTotalEpisodeCount:
+UPDATE show_metadata
+SET cached_total_count = (
+    SELECT COUNT(*) FROM episode
+    WHERE episode.show_id = :show_id
+)
+WHERE show_id = :show_id;
+
+updateBothCounts:
+UPDATE show_metadata
+SET
+    cached_watched_count = (
+        SELECT COUNT(*) FROM watched_episodes
+        WHERE watched_episodes.show_id = :show_id
+    ),
+    cached_total_count = (
+        SELECT COUNT(*) FROM episode
+        WHERE episode.show_id = :show_id
+    )
+WHERE show_id = :show_id;
+
+refreshAllCounts:
+UPDATE show_metadata SET
+    cached_watched_count = (
+        SELECT COUNT(*) FROM watched_episodes
+        WHERE watched_episodes.show_id = show_metadata.show_id
+    ),
+    cached_total_count = (
+        SELECT COUNT(*) FROM episode
+        WHERE episode.show_id = show_metadata.show_id
+    );
+
+updateLastWatched:
+UPDATE show_metadata SET
+    last_watched_episode_id = :episode_id,
+    last_watched_season_number = :season_number,
+    last_watched_episode_number = :episode_number,
+    last_watched_at = :watched_at
+WHERE show_id = :show_id;
+
+recalculateLastWatched:
+UPDATE show_metadata SET
+    last_watched_episode_id = (
+        SELECT we.episode_id
+        FROM watched_episodes we
+        INNER JOIN season s ON s.show_id = we.show_id AND s.season_number = we.season_number
+        WHERE we.show_id = :show_id
+          AND (we.season_number > 0 OR s.title != 'Specials')
+        ORDER BY we.watched_at DESC, (1000 * we.season_number) + we.episode_number DESC
+        LIMIT 1
+    ),
+    last_watched_season_number = (
+        SELECT we.season_number
+        FROM watched_episodes we
+        INNER JOIN season s ON s.show_id = we.show_id AND s.season_number = we.season_number
+        WHERE we.show_id = :show_id
+          AND (we.season_number > 0 OR s.title != 'Specials')
+        ORDER BY we.watched_at DESC, (1000 * we.season_number) + we.episode_number DESC
+        LIMIT 1
+    ),
+    last_watched_episode_number = (
+        SELECT we.episode_number
+        FROM watched_episodes we
+        INNER JOIN season s ON s.show_id = we.show_id AND s.season_number = we.season_number
+        WHERE we.show_id = :show_id
+          AND (we.season_number > 0 OR s.title != 'Specials')
+        ORDER BY we.watched_at DESC, (1000 * we.season_number) + we.episode_number DESC
+        LIMIT 1
+    ),
+    last_watched_at = (
+        SELECT we.watched_at
+        FROM watched_episodes we
+        INNER JOIN season s ON s.show_id = we.show_id AND s.season_number = we.season_number
+        WHERE we.show_id = :show_id
+          AND (we.season_number > 0 OR s.title != 'Specials')
+        ORDER BY we.watched_at DESC, (1000 * we.season_number) + we.episode_number DESC
+        LIMIT 1
+    )
+WHERE show_id = :show_id;
+
+clearLastWatched:
+UPDATE show_metadata SET
+    last_watched_episode_id = NULL,
+    last_watched_season_number = NULL,
+    last_watched_episode_number = NULL,
+    last_watched_at = NULL
+WHERE show_id = :show_id;
