@@ -89,6 +89,7 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
         ),
         show_metadataAdapter = Show_metadata.Adapter(
             show_idAdapter = IdAdapter(),
+            last_watched_episode_idAdapter = IdAdapter(),
         ),
         cast_appearanceAdapter = Cast_appearance.Adapter(
             cast_idAdapter = IdAdapter(),
