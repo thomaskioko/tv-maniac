@@ -58,47 +58,46 @@ public class DefaultTraktListRemoteDataSource(
             .get("users/$userSlug/lists/$listId/items/shows") { parameter("sort_by", "added") }
             .body()
 
-    override suspend fun getWatchList(): List<TraktFollowedShowResponse> =
-        httpClient.get("sync/watchlist/shows") { parameter("sort_by", "added") }.body()
-
-    override suspend fun addShowToWatchList(showId: Long): TraktAddShowToListResponse =
-        httpClient
-            .post("sync/watchlist") {
-                setBody(
-                    TraktAddShowRequest(
-                        shows =
-                        listOf(
-                            TraktShow(
-                                ids =
-                                TraktShowIds(
-                                    traktId = showId.toInt(),
-                                ),
-                            ),
-                        ),
-                    ),
-                )
+    override suspend fun getWatchList(): ApiResponse<List<TraktFollowedShowResponse>> =
+        httpClient.safeRequest {
+            url {
+                method = HttpMethod.Get
+                path("sync/watchlist/shows")
+                parameter("sort_by", "added")
             }
-            .body()
+        }
 
-    override suspend fun removeShowFromWatchList(showId: Long): TraktAddRemoveShowFromListResponse =
-        httpClient
-            .post("sync/watchlist/remove") {
-                contentType(ContentType.Application.Json)
-                setBody(
-                    TraktAddShowRequest(
-                        shows =
-                        listOf(
-                            TraktShow(
-                                ids =
-                                TraktShowIds(
-                                    traktId = showId.toInt(),
-                                ),
-                            ),
-                        ),
-                    ),
-                )
+    override suspend fun addShowToWatchListByTmdbId(
+        tmdbId: Long,
+    ): ApiResponse<TraktAddShowToListResponse> =
+        httpClient.safeRequest {
+            url {
+                method = HttpMethod.Post
+                path("sync/watchlist")
             }
-            .body()
+            contentType(ContentType.Application.Json)
+            setBody(
+                TraktAddShowRequest(
+                    shows = listOf(TraktShow(ids = TraktShowIds(tmdbId = tmdbId.toInt()))),
+                ),
+            )
+        }
+
+    override suspend fun removeShowFromWatchListByTmdbId(
+        tmdbId: Long,
+    ): ApiResponse<TraktAddRemoveShowFromListResponse> =
+        httpClient.safeRequest {
+            url {
+                method = HttpMethod.Post
+                path("sync/watchlist/remove")
+            }
+            contentType(ContentType.Application.Json)
+            setBody(
+                TraktAddShowRequest(
+                    shows = listOf(TraktShow(ids = TraktShowIds(tmdbId = tmdbId.toInt()))),
+                ),
+            )
+        }
 
     override suspend fun addShowToList(
         userSlug: String,
