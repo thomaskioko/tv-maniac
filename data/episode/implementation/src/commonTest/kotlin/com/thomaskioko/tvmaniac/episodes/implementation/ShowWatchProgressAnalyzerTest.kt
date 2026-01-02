@@ -135,9 +135,12 @@ internal class ShowWatchProgressAnalyzerTest : BaseDatabaseTest() {
             )
         }
 
-        val _ = database.watchlistQueries.upsert(
-            id = Id(1L),
-            created_at = Clock.System.now().toEpochMilliseconds(),
+        val _ = database.followedShowsQueries.upsert(
+            id = null,
+            tmdbId = 1L,
+            followedAt = Clock.System.now().toEpochMilliseconds(),
+            pendingAction = "NOTHING",
+            traktId = null,
         )
     }
 

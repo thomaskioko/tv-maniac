@@ -2,8 +2,8 @@ package com.thomaskioko.tvmaniac.watchlist.implementation
 
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.ListStyle
-import com.thomaskioko.tvmaniac.db.SearchWatchlist
-import com.thomaskioko.tvmaniac.db.Watchlists
+import com.thomaskioko.tvmaniac.db.FollowedShows
+import com.thomaskioko.tvmaniac.db.SearchFollowedShows
 import com.thomaskioko.tvmaniac.shows.api.WatchlistDao
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
 import kotlinx.coroutines.flow.Flow
@@ -22,10 +22,10 @@ public class DefaultWatchlistRepository(
     private val datastoreRepository: DatastoreRepository,
 ) : WatchlistRepository {
 
-    override fun observeWatchlist(): Flow<List<Watchlists>> =
+    override fun observeWatchlist(): Flow<List<FollowedShows>> =
         watchlistDao.observeShowsInWatchlist().distinctUntilChanged()
 
-    override fun searchWatchlistByQuery(query: String): Flow<List<SearchWatchlist>> {
+    override fun searchWatchlistByQuery(query: String): Flow<List<SearchFollowedShows>> {
         return watchlistDao.observeWatchlistByQuery(query)
     }
 

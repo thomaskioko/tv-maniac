@@ -786,9 +786,12 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
             )
         }
 
-        val _ = database.watchlistQueries.upsert(
-            id = Id(TEST_SHOW_ID),
-            created_at = Clock.System.now().toEpochMilliseconds(),
+        val _ = database.followedShowsQueries.upsert(
+            id = null,
+            tmdbId = TEST_SHOW_ID,
+            followedAt = Clock.System.now().toEpochMilliseconds(),
+            pendingAction = "NOTHING",
+            traktId = null,
         )
 
         val _ = database.showMetadataQueries.upsert(

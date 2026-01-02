@@ -239,9 +239,12 @@ internal class DefaultUserDaoTest : BaseDatabaseTest() {
             backdrop_path = "/backdrop.jpg",
         )
 
-        val _ = database.watchlistQueries.upsert(
-            id = Id(1),
-            created_at = Clock.System.now().toEpochMilliseconds(),
+        val _ = database.followedShowsQueries.upsert(
+            id = null,
+            tmdbId = 1L,
+            followedAt = Clock.System.now().toEpochMilliseconds(),
+            pendingAction = "NOTHING",
+            traktId = null,
         )
     }
 }

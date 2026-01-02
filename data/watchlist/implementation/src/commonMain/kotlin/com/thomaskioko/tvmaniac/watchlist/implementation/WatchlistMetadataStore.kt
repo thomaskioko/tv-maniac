@@ -5,10 +5,10 @@ import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.store.storeBuilder
 import com.thomaskioko.tvmaniac.core.store.usingDispatchers
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
+import com.thomaskioko.tvmaniac.db.FollowedShows
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
-import com.thomaskioko.tvmaniac.db.Watchlists
 import com.thomaskioko.tvmaniac.shows.api.WatchlistDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowDetailsResponse
@@ -27,7 +27,7 @@ public class WatchlistMetadataStore(
     private val tmdbRemoteDataSource: TmdbShowDetailsNetworkDataSource,
     private val transactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
-) : Store<Id<TmdbId>, List<Watchlists>> by storeBuilder(
+) : Store<Id<TmdbId>, List<FollowedShows>> by storeBuilder(
     fetcher = Fetcher.of { showId: Id<TmdbId> ->
         when (val response = tmdbRemoteDataSource.getShowDetails(showId.id)) {
             is ApiResponse.Success -> response.body
@@ -36,7 +36,7 @@ public class WatchlistMetadataStore(
             is ApiResponse.Error.SerializationError -> throw Throwable(response.errorMessage)
         }
     },
-    sourceOfTruth = SourceOfTruth.of<Id<TmdbId>, TmdbShowDetailsResponse, List<Watchlists>>(
+    sourceOfTruth = SourceOfTruth.of<Id<TmdbId>, TmdbShowDetailsResponse, List<FollowedShows>>(
         reader = { _ -> watchlistDao.observeShowsInWatchlist() },
         writer = { showId, response ->
             transactionRunner {

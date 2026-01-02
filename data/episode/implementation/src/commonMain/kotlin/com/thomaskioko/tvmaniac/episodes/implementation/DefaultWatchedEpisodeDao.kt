@@ -67,9 +67,9 @@ public class DefaultWatchedEpisodeDao(
     ) {
         withContext(dispatchers.databaseWrite) {
             database.transaction {
-                database.watchlistQueries.upsertIfNotExists(
-                    id = Id(showId),
-                    created_at = watchedAt,
+                database.followedShowsQueries.upsertIfNotExists(
+                    tmdbId = showId,
+                    followedAt = watchedAt,
                 )
                 database.watchedEpisodesQueries.markAsWatched(
                     show_id = Id(showId),
@@ -204,9 +204,9 @@ public class DefaultWatchedEpisodeDao(
     ) {
         withContext(dispatchers.databaseWrite) {
             database.transaction {
-                database.watchlistQueries.upsertIfNotExists(
-                    id = Id(showId),
-                    created_at = timestamp,
+                database.followedShowsQueries.upsertIfNotExists(
+                    tmdbId = showId,
+                    followedAt = timestamp,
                 )
                 episodes.forEach { episode ->
                     require(episode.seasonNumber == seasonNumber) {
@@ -285,9 +285,9 @@ public class DefaultWatchedEpisodeDao(
                     .getEpisodesForSeason(Id(showId), seasonNumber)
                     .executeAsList()
 
-                database.watchlistQueries.upsertIfNotExists(
-                    id = Id(showId),
-                    created_at = timestamp,
+                database.followedShowsQueries.upsertIfNotExists(
+                    tmdbId = showId,
+                    followedAt = timestamp,
                 )
 
                 currentSeasonEpisodes.forEach { episode ->
@@ -353,9 +353,9 @@ public class DefaultWatchedEpisodeDao(
                     )
                 }
 
-                database.watchlistQueries.upsertIfNotExists(
-                    id = Id(showId),
-                    created_at = timestamp,
+                database.followedShowsQueries.upsertIfNotExists(
+                    tmdbId = showId,
+                    followedAt = timestamp,
                 )
                 database.watchedEpisodesQueries.markAsWatched(
                     show_id = Id(showId),
@@ -473,9 +473,9 @@ public class DefaultWatchedEpisodeDao(
     ) {
         withContext(dispatchers.databaseWrite) {
             database.transaction {
-                database.watchlistQueries.upsertIfNotExists(
-                    id = Id(showId),
-                    created_at = watchedAt,
+                database.followedShowsQueries.upsertIfNotExists(
+                    tmdbId = showId,
+                    followedAt = watchedAt,
                 )
                 database.watchedEpisodesQueries.upsertFromTrakt(
                     show_id = Id(showId),
