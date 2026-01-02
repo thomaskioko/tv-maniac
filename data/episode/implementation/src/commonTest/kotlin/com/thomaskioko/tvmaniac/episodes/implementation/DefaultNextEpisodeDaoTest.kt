@@ -225,12 +225,17 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             episode_number = 3L,
             watched_at = watchDate,
         )
+        updateLastWatched(1L)
 
         // Since the test data only has 3 episodes and E3 is the last watched, there are no more episodes to progress to
         nextEpisodeDao.observeNextEpisode(1L).test {
             val nextEpisode = awaitItem()
             nextEpisode.shouldBeNull()
         }
+    }
+
+    private fun updateLastWatched(showId: Long) {
+        database.showMetadataQueries.recalculateLastWatched(Id(showId))
     }
 
     private fun insertTestData() {
@@ -269,6 +274,20 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             season_numbers = null,
             poster_path = "/test2.jpg",
             backdrop_path = "/backdrop2.jpg",
+        )
+
+        val _ = database.showMetadataQueries.upsert(
+            show_id = Id(1),
+            season_count = 1,
+            episode_count = 3,
+            status = "Returning Series",
+        )
+
+        val _ = database.showMetadataQueries.upsert(
+            show_id = Id(2),
+            season_count = 1,
+            episode_count = 2,
+            status = "Ended",
         )
 
         // Insert seasons for show 1

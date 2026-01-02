@@ -5,10 +5,6 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.db.SearchWatchlist
-import com.thomaskioko.tvmaniac.db.Show_metadata
-import com.thomaskioko.tvmaniac.db.TmdbId
-import com.thomaskioko.tvmaniac.db.Watchlists
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.SEASON_1_EPISODE_COUNT
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.SEASON_1_ID
@@ -22,7 +18,6 @@ import com.thomaskioko.tvmaniac.episodes.implementation.MockData.TEST_SHOW_OVERV
 import com.thomaskioko.tvmaniac.i18n.testing.util.IgnoreIos
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
-import com.thomaskioko.tvmaniac.shows.api.WatchlistDao
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
@@ -31,8 +26,6 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -797,26 +790,12 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
             id = Id(TEST_SHOW_ID),
             created_at = Clock.System.now().toEpochMilliseconds(),
         )
+
+        val _ = database.showMetadataQueries.upsert(
+            show_id = Id(TEST_SHOW_ID),
+            season_count = 2,
+            episode_count = (SEASON_1_EPISODE_COUNT + SEASON_2_EPISODE_COUNT).toLong(),
+            status = "Returning Series",
+        )
     }
-}
-
-private class FakeWatchlistDao : WatchlistDao {
-    private val isInLibraryFlow = MutableStateFlow(true)
-
-    fun setIsInLibrary(inLibrary: Boolean) {
-        isInLibraryFlow.value = inLibrary
-    }
-
-    override fun upsert(id: Long) {}
-    override fun getShowsInWatchlist(): List<Watchlists> = emptyList()
-    override fun updateSyncState(id: Id<TmdbId>) {}
-    override fun observeShowsInWatchlist(): Flow<List<Watchlists>> = MutableStateFlow(emptyList())
-    override fun observeWatchlistByQuery(query: String): Flow<List<SearchWatchlist>> =
-        MutableStateFlow(emptyList())
-
-    override fun observeUnSyncedWatchlist(): Flow<List<Id<TmdbId>>> = MutableStateFlow(emptyList())
-    override fun delete(id: Long) {}
-    override fun upsert(entity: Show_metadata) {}
-    override suspend fun isShowInLibrary(showId: Long): Boolean = isInLibraryFlow.value
-    override fun observeIsShowInLibrary(showId: Long): Flow<Boolean> = isInLibraryFlow
 }

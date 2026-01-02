@@ -120,12 +120,15 @@ public class DefaultEpisodeRepository(
             .mapToOneOrNull(dispatchers.databaseRead)
             .map { result ->
                 result?.let {
+                    val seasonNumber = it.last_watched_season ?: return@let null
+                    val episodeNumber = it.last_watched_episode ?: return@let null
+                    val watchedAt = it.last_watched_at ?: return@let null
                     LastWatchedEpisode(
                         showId = it.show_id.id,
                         episodeId = it.episode_id.id,
-                        seasonNumber = it.last_watched_season.toInt(),
-                        episodeNumber = it.last_watched_episode.toInt(),
-                        watchedAt = it.last_watched_at,
+                        seasonNumber = seasonNumber.toInt(),
+                        episodeNumber = episodeNumber.toInt(),
+                        watchedAt = watchedAt,
                     )
                 }
             }
