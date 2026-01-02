@@ -44,9 +44,9 @@ SELECT
     COALESCE(trending_shows.name, '') AS name,
     trending_shows.poster_path,
     trending_shows.overview,
-    CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+    CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM trending_shows
-LEFT OUTER JOIN watchlist ON trending_shows.id = watchlist.id
+LEFT OUTER JOIN followed_shows ON trending_shows.id = followed_shows.tmdb_id AND followed_shows.pending_action != 'DELETE'
 WHERE trending_shows.page = :page
 AND trending_shows.name IS NOT NULL
 ORDER BY trending_shows.position ASC;
@@ -57,13 +57,13 @@ SELECT
     trending_shows.page,
     tvshow.name,
     tvshow.poster_path,
-    CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+    CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     trending_shows
 INNER JOIN
     tvshow ON tvshow.id = trending_shows.id
 LEFT OUTER JOIN
-    watchlist ON tvshow.id = watchlist.id
+    followed_shows ON tvshow.id = followed_shows.tmdb_id AND followed_shows.pending_action != 'DELETE'
 WHERE
     trending_shows.page = :page
     AND tvshow.vote_average >= 6.0
@@ -77,13 +77,13 @@ SELECT
     trending_shows.page,
     tvshow.name,
     tvshow.poster_path,
-    CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+    CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     trending_shows
 INNER JOIN
     tvshow ON tvshow.id = trending_shows.id
 LEFT OUTER JOIN
-    watchlist ON tvshow.id = watchlist.id
+    followed_shows ON tvshow.id = followed_shows.tmdb_id AND followed_shows.pending_action != 'DELETE'
 WHERE
     tvshow.vote_average >= 6.0
     AND tvshow.vote_count >= 50
