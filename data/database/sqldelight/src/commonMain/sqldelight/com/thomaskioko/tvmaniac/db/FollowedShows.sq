@@ -1,0 +1,52 @@
+CREATE TABLE IF NOT EXISTS followed_shows(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    tmdb_id INTEGER NOT NULL UNIQUE,
+    followed_at INTEGER NOT NULL,
+    pending_action TEXT NOT NULL DEFAULT 'NOTHING'
+        CHECK(pending_action IN ('NOTHING', 'UPLOAD', 'DELETE')),
+    trakt_id INTEGER
+);
+
+CREATE INDEX IF NOT EXISTS idx_followed_shows_tmdb_id ON followed_shows(tmdb_id);
+CREATE INDEX IF NOT EXISTS idx_followed_shows_pending_action ON followed_shows(pending_action);
+
+entries:
+SELECT * FROM followed_shows;
+
+entryWithTmdbId:
+SELECT * FROM followed_shows WHERE tmdb_id = ?;
+
+entriesWithNoPendingAction:
+SELECT * FROM followed_shows WHERE pending_action = 'NOTHING';
+
+entriesWithUploadPendingAction:
+SELECT * FROM followed_shows WHERE pending_action = 'UPLOAD';
+
+entriesWithDeletePendingAction:
+SELECT * FROM followed_shows WHERE pending_action = 'DELETE';
+
+upsert:
+INSERT OR REPLACE INTO followed_shows(id, tmdb_id, followed_at, pending_action, trakt_id)
+VALUES(:id, :tmdbId, :followedAt, :pendingAction, :traktId);
+
+insert:
+INSERT INTO followed_shows(tmdb_id, followed_at, pending_action, trakt_id)
+VALUES(:tmdbId, :followedAt, :pendingAction, :traktId);
+
+updatePendingAction:
+UPDATE followed_shows SET pending_action = :pendingAction WHERE id = :id;
+
+updatePendingActionForTmdbId:
+UPDATE followed_shows SET pending_action = :pendingAction WHERE tmdb_id = :tmdbId;
+
+deleteById:
+DELETE FROM followed_shows WHERE id = ?;
+
+deleteByTmdbId:
+DELETE FROM followed_shows WHERE tmdb_id = ?;
+
+countEntries:
+SELECT COUNT(*) FROM followed_shows;
+
+countEntriesWithPendingAction:
+SELECT COUNT(*) FROM followed_shows WHERE pending_action != 'NOTHING';
