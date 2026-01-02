@@ -129,17 +129,9 @@ CREATE TABLE followed_shows(
 CREATE INDEX idx_followed_shows_tmdb_id ON followed_shows(tmdb_id);
 CREATE INDEX idx_followed_shows_pending_action ON followed_shows(pending_action);
 
-CREATE TABLE tmp_watchlist(
-    id INTEGER PRIMARY KEY,
-    created_at INTEGER NOT NULL,
-    FOREIGN KEY(id) REFERENCES tvshow(id) ON DELETE CASCADE
-);
+-- Migrate watchlist data to followed_shows
+INSERT OR IGNORE INTO followed_shows (tmdb_id, followed_at, pending_action)
+SELECT id, created_at, 'NOTHING' FROM watchlist;
 
-INSERT INTO tmp_watchlist (id, created_at) SELECT id, created_at FROM watchlist;
-
-DROP TABLE watchlist;
-
-ALTER TABLE tmp_watchlist RENAME TO watchlist;
-
-CREATE UNIQUE INDEX IF NOT EXISTS `index_watchlists_watchlist_id` ON `watchlist` (`id`);
-CREATE INDEX IF NOT EXISTS idx_watchlist_created_at ON watchlist(created_at);
+-- Drop watchlist table (no longer needed - using followed_shows as single source of truth)
+DROP TABLE IF EXISTS watchlist;

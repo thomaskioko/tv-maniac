@@ -48,10 +48,12 @@ WHERE show_id = ?
 ORDER BY season_number, episode_number
 LIMIT 1;
 
--- Get all next episodes for shows in the watchlist
+-- Get all next episodes for followed shows
+-- Uses followed_shows as base table with LEFT JOIN to shows_next_to_watch
+-- This ensures all followed shows appear, even if episodes aren't loaded yet
 nextEpisodesForWatchlist:
 SELECT
-    snw.show_id,
+    fs.tmdb_id AS show_id,
     snw.episode_id,
     snw.episode_name,
     snw.season_id,
@@ -60,12 +62,19 @@ SELECT
     snw.runtime,
     snw.still_path,
     snw.overview,
-    snw.show_name,
-    snw.show_poster,
+    tvshow.name AS show_name,
+    tvshow.poster_path AS show_poster,
     snw.next_ep_abs_number,
-    w.created_at AS followed_at,
+    fs.followed_at,
     snw.air_date,
     snw.last_watched_at
-FROM shows_next_to_watch snw
-INNER JOIN watchlist w ON snw.show_id = w.id
-ORDER BY w.created_at DESC, snw.season_number, snw.episode_number;
+FROM followed_shows fs
+INNER JOIN tvshow ON fs.tmdb_id = tvshow.id
+LEFT JOIN shows_next_to_watch snw ON fs.tmdb_id = snw.show_id
+    AND snw.next_ep_abs_number = (
+        SELECT MIN(snw2.next_ep_abs_number)
+        FROM shows_next_to_watch snw2
+        WHERE snw2.show_id = fs.tmdb_id
+    )
+WHERE fs.pending_action != 'DELETE'
+ORDER BY fs.followed_at DESC, snw.season_number, snw.episode_number;

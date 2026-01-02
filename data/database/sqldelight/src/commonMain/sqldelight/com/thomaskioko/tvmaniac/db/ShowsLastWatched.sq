@@ -24,7 +24,7 @@ SELECT
 FROM shows_last_watched
 WHERE show_id = ?;
 
--- Get last watched episodes for all shows in watchlist
+-- Get last watched episodes for all followed shows
 lastWatchedEpisodesForWatchlist:
 SELECT
     lw.*,
@@ -32,5 +32,6 @@ SELECT
     t.poster_path AS show_poster
 FROM shows_last_watched lw
 INNER JOIN tvshow t ON lw.show_id = t.id
-INNER JOIN watchlist w ON lw.show_id = w.id
+INNER JOIN followed_shows fs ON lw.show_id = fs.tmdb_id
+WHERE fs.pending_action != 'DELETE'
 ORDER BY lw.last_watched_at DESC;

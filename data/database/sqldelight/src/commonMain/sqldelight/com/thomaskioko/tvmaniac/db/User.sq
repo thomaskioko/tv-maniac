@@ -55,8 +55,9 @@ DELETE FROM user;
 getRandomWatchlistBackdrop:
 SELECT
     t.poster_path
-FROM watchlist w
-INNER JOIN tvshow t ON w.id = t.id
+FROM followed_shows fs
+INNER JOIN tvshow t ON fs.tmdb_id = t.id
 WHERE t.poster_path IS NOT NULL
+  AND fs.pending_action != 'DELETE'
 ORDER BY RANDOM()
 LIMIT 1;
