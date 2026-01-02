@@ -8,5 +8,7 @@ public interface ShowDetailsDao {
 
     public fun getTvShow(id: Long): TvshowDetails
 
+    public fun getTvShowOrNull(id: Long): TvshowDetails?
+
     public fun deleteTvShow(id: Long)
 }

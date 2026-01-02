@@ -28,6 +28,9 @@ public class DefaultShowDetailsDao(
     override fun getTvShow(id: Long): TvshowDetails =
         tvShowQueries.tvshowDetails(Id(id)).executeAsOne()
 
+    override fun getTvShowOrNull(id: Long): TvshowDetails? =
+        tvShowQueries.tvshowDetails(Id(id)).executeAsOneOrNull()
+
     override fun deleteTvShow(id: Long) {
         tvShowQueries.delete(Id(id))
     }
