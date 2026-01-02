@@ -6,13 +6,11 @@ import app.cash.sqldelight.coroutines.mapToOne
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.SearchWatchlist
-import com.thomaskioko.tvmaniac.db.Show_metadata
-import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.db.Watchlists
 import com.thomaskioko.tvmaniac.shows.api.WatchlistDao
-import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -24,53 +22,41 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @ContributesBinding(AppScope::class)
 public class DefaultWatchlistDao(
     private val database: TvManiacDatabase,
-    private val dateTimeProvider: DateTimeProvider,
     private val dispatchers: AppCoroutineDispatchers,
 ) : WatchlistDao {
 
-    override fun upsert(id: Long) {
-        database.transaction {
-            database.watchlistQueries.upsert(
-                id = Id(id),
-                created_at = dateTimeProvider.nowMillis(),
-            )
-        }
-    }
-
     override fun getShowsInWatchlist(): List<Watchlists> =
         database.watchlistQueries.watchlists().executeAsList()
-
-    override fun updateSyncState(id: Id<TmdbId>) {
-        database.watchlistQueries.updateWatchlist(
-            isSynced = true,
-            id = id,
-        )
-    }
 
     override fun observeShowsInWatchlist(): Flow<List<Watchlists>> =
         database.watchlistQueries.watchlists()
             .asFlow()
             .mapToList(dispatchers.io)
 
-    override fun observeWatchlistByQuery(query: String): Flow<List<SearchWatchlist>> {
-        return database.watchlistQueries
-            .searchWatchlist(
-                // Parameters for WHERE clause
-                query,
-                query,
-                query,
-                query,
-                // Parameters for ORDER BY clause
-                query,
-                query,
-                query,
-            )
+    override fun observeShowsInWatchlistFiltered(includeSpecials: Boolean): Flow<List<Watchlists>> =
+        database.watchlistQueries.watchlistsFiltered(includeSpecials = if (includeSpecials) 1L else 0L)
             .asFlow()
             .mapToList(dispatchers.io)
-    }
+            .map { list ->
+                list.map { row ->
+                    Watchlists(
+                        id = row.id,
+                        name = row.name,
+                        poster_path = row.poster_path,
+                        first_air_date = row.first_air_date,
+                        created_at = row.created_at,
+                        season_count = row.season_count,
+                        episode_count = row.episode_count,
+                        status = row.status,
+                        watched_count = row.watched_count,
+                        total_episode_count = row.total_episode_count,
+                    )
+                }
+            }
 
-    override fun observeUnSyncedWatchlist(): Flow<List<Id<TmdbId>>> =
-        database.watchlistQueries.unsyncedWatchlist()
+    override fun observeWatchlistByQuery(query: String): Flow<List<SearchWatchlist>> =
+        database.watchlistQueries
+            .searchWatchlist(query = query)
             .asFlow()
             .mapToList(dispatchers.io)
 
@@ -78,24 +64,13 @@ public class DefaultWatchlistDao(
         database.watchlistQueries.delete(Id(id))
     }
 
-    override fun upsert(entity: Show_metadata) {
-        database.showMetadataQueries.upsert(
-            show_id = entity.show_id,
-            season_count = entity.season_count,
-            episode_count = entity.episode_count,
-            status = entity.status,
-        )
-    }
-
-    override suspend fun isShowInLibrary(showId: Long): Boolean {
-        return withContext(dispatchers.io) {
+    override suspend fun isShowInLibrary(showId: Long): Boolean =
+        withContext(dispatchers.io) {
             database.watchlistQueries.isShowInLibrary(Id(showId)).executeAsOne()
         }
-    }
 
-    override fun observeIsShowInLibrary(showId: Long): Flow<Boolean> {
-        return database.watchlistQueries.isShowInLibrary(Id(showId))
+    override fun observeIsShowInLibrary(showId: Long): Flow<Boolean> =
+        database.watchlistQueries.isShowInLibrary(Id(showId))
             .asFlow()
             .mapToOne(dispatchers.io)
-    }
 }

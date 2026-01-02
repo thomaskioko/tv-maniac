@@ -20,10 +20,7 @@ kotlin {
                 implementation(projects.core.util.api)
                 implementation(projects.data.database.sqldelight)
                 implementation(projects.data.datastore.api)
-                implementation(projects.data.episode.api)
                 implementation(projects.data.watchlist.api)
-                implementation(projects.data.seasons.api)
-                implementation(projects.data.seasondetails.api)
 
                 implementation(libs.sqldelight.extensions)
                 implementation(libs.store5)
