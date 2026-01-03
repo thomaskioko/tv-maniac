@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.domain.watchlist
 
 import com.thomaskioko.tvmaniac.core.base.interactor.SubjectInteractor
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.db.Watchlists
+import com.thomaskioko.tvmaniac.db.FollowedShows
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -34,7 +34,7 @@ public class ObservableWatchlistInteractor(
 }
 
 public data class WatchlistData(
-    val watchlist: List<Watchlists>,
+    val watchlist: List<FollowedShows>,
     val isGridMode: Boolean,
     val query: String,
 )

@@ -40,7 +40,10 @@ public class DefaultNextEpisodeDao(
             .nextEpisodesForWatchlist()
             .asFlow()
             .mapToList(dispatchers.databaseRead)
-            .map { list -> list.map { it.toNextEpisodeWithShow() } }
+            .map { list ->
+                list.filter { it.episode_id != null }
+                    .map { it.toNextEpisodeWithShow() }
+            }
             .catch { emit(emptyList()) }
     }
 }
@@ -64,11 +67,11 @@ private fun NextEpisodeForShow.toNextEpisodeWithShow(): NextEpisodeWithShow {
 private fun NextEpisodesForWatchlist.toNextEpisodeWithShow(): NextEpisodeWithShow {
     return NextEpisodeWithShow(
         showId = show_id,
-        episodeId = episode_id?.id,
+        episodeId = episode_id!!.id,
         episodeName = episode_name,
-        seasonId = season_id?.id,
-        seasonNumber = season_number,
-        episodeNumber = episode_number,
+        seasonId = season_id!!.id,
+        seasonNumber = season_number!!,
+        episodeNumber = episode_number!!,
         runtime = runtime,
         stillPath = still_path,
         overview = overview,

@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.domain.watchlist
 
 import app.cash.turbine.test
+import com.thomaskioko.tvmaniac.db.FollowedShows
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.db.SearchWatchlist
-import com.thomaskioko.tvmaniac.db.Watchlists
+import com.thomaskioko.tvmaniac.db.SearchFollowedShows
 import com.thomaskioko.tvmaniac.domain.watchlist.model.WatchlistSections
 import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
@@ -81,7 +81,7 @@ class ObserveWatchlistSectionsInteractorTest {
     @Test
     fun `should group stale items when lastWatched is over 7 days ago`() = runTest {
         val currentTime = 1000000000000L
-        val eightDaysAgo = currentTime - (8 * 24 * 60 * 60 * 1000L)
+        val twentyTwoDaysAgo = currentTime - (22 * 24 * 60 * 60 * 1000L)
 
         dateTimeProvider.setCurrentTimeMillis(currentTime)
 
@@ -89,7 +89,7 @@ class ObserveWatchlistSectionsInteractorTest {
         watchlistRepository.setObserveResult(watchlist)
         episodeRepository.setNextEpisodesForWatchlist(
             listOf(
-                createNextEpisode(showId = 84958, showName = "Loki", lastWatchedAt = eightDaysAgo),
+                createNextEpisode(showId = 84958, showName = "Loki", lastWatchedAt = twentyTwoDaysAgo),
             ),
         )
 
@@ -108,7 +108,7 @@ class ObserveWatchlistSectionsInteractorTest {
     @Test
     fun `should filter watchlist by query using search`() = runTest {
         val searchResults = listOf(
-            SearchWatchlist(
+            SearchFollowedShows(
                 id = Id(84958),
                 name = "Loki",
                 poster_path = "/poster.jpg",
@@ -117,7 +117,7 @@ class ObserveWatchlistSectionsInteractorTest {
                 created_at = 0,
                 season_count = 2,
                 episode_count = 12,
-                status_ = "Ended",
+                metadata_status = "Ended",
                 watched_count = 0,
                 total_episode_count = 10,
             ),
@@ -138,7 +138,7 @@ class ObserveWatchlistSectionsInteractorTest {
     @Test
     fun `should calculate watch progress correctly`() = runTest {
         val watchlist = listOf(
-            Watchlists(
+            FollowedShows(
                 id = Id(1),
                 name = "Show with Progress",
                 poster_path = "/poster.jpg",
@@ -167,7 +167,7 @@ class ObserveWatchlistSectionsInteractorTest {
     }
 
     private fun createTestWatchlist() = listOf(
-        Watchlists(
+        FollowedShows(
             id = Id(84958),
             name = "Loki",
             poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
@@ -179,7 +179,7 @@ class ObserveWatchlistSectionsInteractorTest {
             watched_count = 0,
             total_episode_count = 10,
         ),
-        Watchlists(
+        FollowedShows(
             id = Id(1232),
             name = "The Lazarus Project",
             poster_path = "/lazarus_poster.jpg",
