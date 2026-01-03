@@ -58,6 +58,10 @@ kotlin {
                 api(projects.presenter.trailers)
                 api(projects.presenter.profile)
 
+                api(projects.domain.followedshows)
+                api(projects.data.followedshows.api)
+                api(projects.data.followedshows.implementation)
+
                 implementation(projects.api.tmdb.api)
                 implementation(projects.api.tmdb.implementation)
                 implementation(projects.api.trakt.api)
