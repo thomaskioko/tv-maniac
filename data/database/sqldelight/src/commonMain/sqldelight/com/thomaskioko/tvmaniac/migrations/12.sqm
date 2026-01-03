@@ -1,0 +1,40 @@
+-- Migration 12: Replace sync_status with pending_action for bidirectional episode sync
+-- Also makes episode_id nullable to support Trakt sync before local episode data is fetched
+-- Uses temp table pattern to preserve existing data
+
+CREATE TABLE watched_episodes_new (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    show_id INTEGER NOT NULL,
+    episode_id INTEGER DEFAULT NULL,
+    season_number INTEGER NOT NULL,
+    episode_number INTEGER NOT NULL,
+    watched_at INTEGER NOT NULL,
+    trakt_id INTEGER DEFAULT NULL,
+    synced_at INTEGER DEFAULT NULL,
+    pending_action TEXT NOT NULL DEFAULT 'UPLOAD'
+        CHECK(pending_action IN ('NOTHING', 'UPLOAD', 'DELETE')),
+    source TEXT DEFAULT 'local',
+    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON DELETE CASCADE,
+    FOREIGN KEY(episode_id) REFERENCES episode(id) ON DELETE CASCADE,
+    UNIQUE(show_id, season_number, episode_number)
+);
+
+INSERT INTO watched_episodes_new (
+    id, show_id, episode_id, season_number, episode_number, watched_at,
+    trakt_id, synced_at, pending_action, source
+)
+SELECT
+    id, show_id, episode_id, season_number, episode_number, watched_at,
+    trakt_id, synced_at,
+    CASE WHEN sync_status = 'synced' THEN 'NOTHING' ELSE 'UPLOAD' END,
+    source
+FROM watched_episodes;
+
+DROP TABLE watched_episodes;
+
+ALTER TABLE watched_episodes_new RENAME TO watched_episodes;
+
+CREATE INDEX IF NOT EXISTS idx_watched_episodes_show_id ON watched_episodes(show_id);
+CREATE INDEX IF NOT EXISTS idx_watched_episodes_show_season ON watched_episodes(show_id, season_number);
+CREATE INDEX IF NOT EXISTS idx_watched_episodes_pending_action ON watched_episodes(pending_action);
+CREATE INDEX IF NOT EXISTS idx_watched_episodes_trakt ON watched_episodes(trakt_id);

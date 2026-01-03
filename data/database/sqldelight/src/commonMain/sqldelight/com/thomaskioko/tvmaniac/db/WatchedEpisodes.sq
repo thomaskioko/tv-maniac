@@ -6,23 +6,23 @@ import kotlin.Boolean;
 CREATE TABLE watched_episodes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     show_id INTEGER AS Id<TmdbId> NOT NULL,
-    episode_id INTEGER AS Id<EpisodeId> NOT NULL,
+    episode_id INTEGER AS Id<EpisodeId> DEFAULT NULL,
     season_number INTEGER NOT NULL,
     episode_number INTEGER NOT NULL,
     watched_at INTEGER NOT NULL,
     trakt_id INTEGER DEFAULT NULL,
     synced_at INTEGER DEFAULT NULL,
-    sync_status TEXT DEFAULT 'pending',
+    pending_action TEXT NOT NULL DEFAULT 'UPLOAD'
+        CHECK(pending_action IN ('NOTHING', 'UPLOAD', 'DELETE')),
     source TEXT DEFAULT 'local',
     FOREIGN KEY(show_id) REFERENCES tvshow(id) ON DELETE CASCADE,
     FOREIGN KEY(episode_id) REFERENCES episode(id) ON DELETE CASCADE,
     UNIQUE(show_id, season_number, episode_number)
 );
 
--- Indices for performance
 CREATE INDEX IF NOT EXISTS idx_watched_episodes_show_id ON watched_episodes(show_id);
 CREATE INDEX IF NOT EXISTS idx_watched_episodes_show_season ON watched_episodes(show_id, season_number);
-CREATE INDEX IF NOT EXISTS idx_watched_episodes_sync ON watched_episodes(sync_status);
+CREATE INDEX IF NOT EXISTS idx_watched_episodes_pending_action ON watched_episodes(pending_action);
 CREATE INDEX IF NOT EXISTS idx_watched_episodes_trakt ON watched_episodes(trakt_id);
 
 -- Queries
@@ -162,23 +162,59 @@ WHERE e.show_id = :show_id
 
 -- Trakt Sync Queries
 
-getUnsyncedEpisodes:
+getEntriesWithUploadPendingAction:
 SELECT * FROM watched_episodes
-WHERE sync_status = 'pending'
+WHERE pending_action = 'UPLOAD'
 ORDER BY watched_at;
 
-updateSyncStatus:
+getEntriesWithDeletePendingAction:
+SELECT * FROM watched_episodes
+WHERE pending_action = 'DELETE'
+ORDER BY watched_at;
+
+getEntriesWithNoPendingAction:
+SELECT * FROM watched_episodes
+WHERE pending_action = 'NOTHING'
+ORDER BY watched_at;
+
+getEntriesForShowWithNoPendingAction:
+SELECT * FROM watched_episodes
+WHERE show_id = ? AND pending_action = 'NOTHING'
+ORDER BY season_number, episode_number;
+
+updatePendingAction:
 UPDATE watched_episodes
-SET sync_status = ?, synced_at = ?
+SET pending_action = ?
 WHERE id = ?;
+
+updatePendingActionByEpisodeId:
+UPDATE watched_episodes
+SET pending_action = ?
+WHERE show_id = ? AND episode_id = ?;
+
+markForDelete:
+UPDATE watched_episodes
+SET pending_action = 'DELETE'
+WHERE show_id = ? AND episode_id = ?;
+
+hardDeleteById:
+DELETE FROM watched_episodes WHERE id = ?;
+
+getEntryByShowAndEpisode:
+SELECT * FROM watched_episodes
+WHERE show_id = ? AND episode_id = ?;
 
 upsertFromTrakt:
 INSERT OR REPLACE INTO watched_episodes(
-    show_id, episode_id, season_number, episode_number, watched_at, trakt_id, synced_at, sync_status, source
-) VALUES (?, ?, ?, ?, ?, ?, ?, 'synced', 'trakt');
+    show_id, episode_id, season_number, episode_number, watched_at, trakt_id, synced_at, pending_action, source
+) VALUES (?, ?, ?, ?, ?, ?, ?, 'NOTHING', 'trakt');
 
 getByTraktId:
 SELECT * FROM watched_episodes WHERE trakt_id = ?;
+
+countPendingSync:
+SELECT COUNT(*) FROM watched_episodes
+WHERE pending_action IN ('UPLOAD', 'DELETE');
 
 getEarliestUnwatchedEpisode:
 SELECT

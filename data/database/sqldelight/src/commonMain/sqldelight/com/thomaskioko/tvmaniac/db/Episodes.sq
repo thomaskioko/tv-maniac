@@ -78,3 +78,12 @@ AND (
     OR (season.season_number > 0 OR season.title != 'Specials')
 );
 
+getEpisodeByShowSeasonEpisodeNumber:
+SELECT episode.*
+FROM episode
+INNER JOIN season ON episode.season_id = season.id
+WHERE episode.show_id = :showId
+  AND season.season_number = :seasonNumber
+  AND episode.episode_number = :episodeNumber
+LIMIT 1;
+
