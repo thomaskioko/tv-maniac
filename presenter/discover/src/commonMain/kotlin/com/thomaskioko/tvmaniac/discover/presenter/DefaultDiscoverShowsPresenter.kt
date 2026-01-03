@@ -20,7 +20,7 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
 import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
-import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
+import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import com.thomaskioko.tvmaniac.shows.api.model.Category
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsInteractor
 import kotlinx.collections.immutable.toImmutableList
@@ -44,7 +44,7 @@ public class DefaultDiscoverShowsPresenter(
     @Assisted private val onNavigateToEpisode: (showId: Long, episodeId: Long) -> Unit,
     @Assisted private val onNavigateToSeason: (showId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
     private val discoverShowsInteractor: DiscoverShowsInteractor,
-    private val watchlistRepository: WatchlistRepository,
+    private val followedShowsRepository: FollowedShowsRepository,
     private val featuredShowsInteractor: FeaturedShowsInteractor,
     private val topRatedShowsInteractor: TopRatedShowsInteractor,
     private val popularShowsInteractor: PopularShowsInteractor,
@@ -111,7 +111,9 @@ public class DefaultDiscoverShowsPresenter(
                 popularShows = showData.popularShows.toShowList(),
                 trendingToday = showData.trendingShows.toShowList(),
                 upcomingShows = showData.upcomingShows.toShowList(),
-                nextEpisodes = showData.nextEpisodes.map { it.toUiModel() }.toImmutableList(),
+                nextEpisodes = showData.nextEpisodes
+                    .map { it.toUiModel() }
+                    .toImmutableList(),
             )
         }.stateIn(
             scope = coroutineScope,
@@ -134,10 +136,11 @@ public class DefaultDiscoverShowsPresenter(
                 RefreshData -> observeShowData(forceRefresh = true)
                 is UpdateShowInLibrary -> {
                     coroutineScope.launch {
-                        watchlistRepository.updateLibrary(
-                            id = action.id,
-                            addToLibrary = !action.inLibrary,
-                        )
+                        if (action.inLibrary) {
+                            followedShowsRepository.removeFollowedShow(action.id)
+                        } else {
+                            followedShowsRepository.addFollowedShow(action.id)
+                        }
                     }
                 }
                 is MessageShown -> {
@@ -158,10 +161,7 @@ public class DefaultDiscoverShowsPresenter(
                 }
                 is UnfollowShowFromUpNext -> {
                     coroutineScope.launch {
-                        watchlistRepository.updateLibrary(
-                            id = action.showId,
-                            addToLibrary = false,
-                        )
+                        followedShowsRepository.removeFollowedShow(action.showId)
                     }
                 }
                 is OpenSeasonFromUpNext -> {
@@ -239,14 +239,14 @@ private fun NextEpisodeWithShow.toUiModel(): NextEpisodeUiModel {
         showName = showName,
         showPoster = showPoster,
         episodeId = episodeId,
-        episodeTitle = episodeName,
+        episodeTitle = episodeName ?: "",
         episodeNumberFormatted = "S${seasonNumber}E$episodeNumber",
         seasonId = seasonId,
         seasonNumber = seasonNumber,
         episodeNumber = episodeNumber,
         runtime = runtime?.let { "$it min" },
         stillImage = stillPath,
-        overview = overview,
+        overview = overview ?: "",
         isNew = false,
     )
 }

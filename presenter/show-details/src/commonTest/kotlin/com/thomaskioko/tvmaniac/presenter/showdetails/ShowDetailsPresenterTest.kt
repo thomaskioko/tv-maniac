@@ -27,6 +27,7 @@ import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
 import com.thomaskioko.tvmaniac.domain.watchproviders.WatchProvidersInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall
+import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ProviderModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowModel
@@ -38,7 +39,6 @@ import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
-import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
 import io.kotest.matchers.shouldBe
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
@@ -56,7 +56,7 @@ class ShowDetailsPresenterTest {
     private val seasonDetailsRepository = FakeSeasonDetailsRepository()
     private val trailerRepository = FakeTrailerRepository()
     private val similarShowsRepository = FakeSimilarShowsRepository()
-    private val watchlistRepository = FakeWatchlistRepository()
+    private val followedShowsRepository = FakeFollowedShowsRepository()
     private val watchProvidersRepository = FakeWatchProviderRepository()
     private val castRepository = FakeCastRepository()
     private val recommendedShowsRepository = FakeRecommendedShowsRepository()
@@ -315,8 +315,7 @@ class ShowDetailsPresenterTest {
 
             testDispatcher.scheduler.advanceUntilIdle()
 
-            watchlistRepository.lastUpdateLibraryId shouldBe 84958
-            watchlistRepository.lastUpdateLibraryAddToLibrary shouldBe true
+            followedShowsRepository.addedShowIds shouldBe listOf(84958L)
         }
     }
 
@@ -529,7 +528,7 @@ class ShowDetailsPresenterTest {
             onNavigateToSeason = onNavigateToSeason,
             onNavigateToShow = onNavigateToShow,
             onNavigateToTrailer = onNavigateToTrailer,
-            watchlistRepository = watchlistRepository,
+            followedShowsRepository = followedShowsRepository,
             recommendedShowsInteractor = RecommendedShowsInteractor(
                 recommendedShowsRepository = recommendedShowsRepository,
                 dispatchers = coroutineDispatcher,
