@@ -16,6 +16,7 @@ kotlin {
                 implementation(projects.core.logger.api)
                 implementation(projects.core.util.api)
                 implementation(projects.data.episode.api)
+                implementation(projects.data.followedshows.api)
                 implementation(projects.data.watchlist.api)
                 implementation(projects.domain.episode)
                 implementation(projects.domain.watchlist)
@@ -33,6 +34,7 @@ kotlin {
                 implementation(projects.core.logger.testing)
                 implementation(projects.core.util.testing)
                 implementation(projects.data.episode.testing)
+                implementation(projects.data.followedshows.testing)
                 implementation(projects.data.watchlist.testing)
 
                 implementation(libs.bundles.unittest)

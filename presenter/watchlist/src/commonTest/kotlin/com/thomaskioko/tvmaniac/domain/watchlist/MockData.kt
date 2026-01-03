@@ -1,12 +1,12 @@
 package com.thomaskioko.tvmaniac.domain.watchlist
 
+import com.thomaskioko.tvmaniac.db.FollowedShows
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.db.Watchlists
 import com.thomaskioko.tvmaniac.watchlist.presenter.model.WatchlistItem
 import kotlinx.collections.immutable.toPersistentList
 
 val cachedResult = mutableListOf(
-    Watchlists(
+    FollowedShows(
         id = Id(84958),
         name = "Loki",
         poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
@@ -21,7 +21,7 @@ val cachedResult = mutableListOf(
 )
 
 val updatedData = listOf(
-    Watchlists(
+    FollowedShows(
         id = Id(84958),
         name = "Loki",
         poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
@@ -33,7 +33,7 @@ val updatedData = listOf(
         watched_count = 0,
         total_episode_count = 0,
     ),
-    Watchlists(
+    FollowedShows(
         id = Id(1232),
         name = "The Lazarus Project",
         poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
@@ -48,7 +48,7 @@ val updatedData = listOf(
 )
 
 internal fun expectedUiResult(
-    result: List<Watchlists> = updatedData,
+    result: List<FollowedShows> = updatedData,
 ) = result
     .map {
         val watched = it.watched_count
