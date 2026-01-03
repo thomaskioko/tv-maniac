@@ -34,7 +34,7 @@ UPDATE show_metadata SET
         SELECT we.episode_id
         FROM watched_episodes we
         WHERE we.show_id = :show_id
-          AND we.season_number > 0
+          AND (:include_specials = 1 OR we.season_number > 0)
         ORDER BY we.watched_at DESC, (1000 * we.season_number) + we.episode_number DESC
         LIMIT 1
     ),
@@ -42,7 +42,7 @@ UPDATE show_metadata SET
         SELECT we.season_number
         FROM watched_episodes we
         WHERE we.show_id = :show_id
-          AND we.season_number > 0
+          AND (:include_specials = 1 OR we.season_number > 0)
         ORDER BY we.watched_at DESC, (1000 * we.season_number) + we.episode_number DESC
         LIMIT 1
     ),
@@ -50,7 +50,7 @@ UPDATE show_metadata SET
         SELECT we.episode_number
         FROM watched_episodes we
         WHERE we.show_id = :show_id
-          AND we.season_number > 0
+          AND (:include_specials = 1 OR we.season_number > 0)
         ORDER BY we.watched_at DESC, (1000 * we.season_number) + we.episode_number DESC
         LIMIT 1
     ),
@@ -58,7 +58,7 @@ UPDATE show_metadata SET
         SELECT we.watched_at
         FROM watched_episodes we
         WHERE we.show_id = :show_id
-          AND we.season_number > 0
+          AND (:include_specials = 1 OR we.season_number > 0)
         ORDER BY we.watched_at DESC, (1000 * we.season_number) + we.episode_number DESC
         LIMIT 1
     )

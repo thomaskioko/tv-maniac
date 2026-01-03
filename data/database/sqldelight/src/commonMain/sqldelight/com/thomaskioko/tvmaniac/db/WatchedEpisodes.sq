@@ -105,6 +105,7 @@ FROM episode e
 INNER JOIN season s ON e.season_id = s.id
 LEFT JOIN watched_episodes we ON e.id = we.episode_id AND we.show_id = :show_id
 WHERE e.show_id = :show_id
+  AND (:include_specials = 1 OR (s.season_number > 0 OR s.title != 'Specials'))
   AND (
     (s.season_number < :season_number)
     OR (s.season_number = :season_number AND e.episode_number < :episode_number)
@@ -145,7 +146,7 @@ INNER JOIN season s ON e.season_id = s.id
 LEFT JOIN watched_episodes we ON e.id = we.episode_id AND we.show_id = :show_id
 WHERE e.show_id = :show_id
   AND s.season_number < :season_number
-  AND s.season_number > 0
+  AND (:include_specials = 1 OR (s.season_number > 0 OR s.title != 'Specials'))
   AND we.id IS NULL
   AND (e.air_date IS NULL OR e.air_date <= date('now'))
 ORDER BY s.season_number, e.episode_number;
@@ -156,7 +157,7 @@ INNER JOIN season s ON e.season_id = s.id
 LEFT JOIN watched_episodes we ON e.id = we.episode_id AND we.show_id = :show_id
 WHERE e.show_id = :show_id
   AND s.season_number < :season_number
-  AND s.season_number > 0
+  AND (:include_specials = 1 OR (s.season_number > 0 OR s.title != 'Specials'))
   AND we.id IS NULL
   AND (e.air_date IS NULL OR e.air_date <= date('now'));
 
