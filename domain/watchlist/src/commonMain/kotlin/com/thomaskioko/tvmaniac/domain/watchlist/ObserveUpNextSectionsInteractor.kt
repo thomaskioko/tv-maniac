@@ -36,10 +36,11 @@ public class ObserveUpNextSectionsInteractor(
                 episodes
             }
 
-            filteredEpisodes.map { episode ->
-                val remaining = watchlistMap[episode.showId] ?: 0
-                episode.toUpNextEpisodeInfo(remaining)
-            }.groupBySections(currentTime)
+            filteredEpisodes
+                .map { episode ->
+                    val remaining = watchlistMap[episode.showId] ?: 0
+                    episode.toUpNextEpisodeInfo(remaining)
+                }.groupBySections(currentTime)
         }
     }
 }

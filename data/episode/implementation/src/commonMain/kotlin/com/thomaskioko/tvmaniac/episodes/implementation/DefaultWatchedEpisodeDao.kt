@@ -67,9 +67,9 @@ public class DefaultWatchedEpisodeDao(
     ) {
         withContext(dispatchers.databaseWrite) {
             database.transaction {
-                database.watchlistQueries.upsertIfNotExists(
-                    id = Id(showId),
-                    created_at = watchedAt,
+                database.followedShowsQueries.upsertIfNotExists(
+                    tmdbId = showId,
+                    followedAt = watchedAt,
                 )
                 database.watchedEpisodesQueries.markAsWatched(
                     show_id = Id(showId),
@@ -78,6 +78,7 @@ public class DefaultWatchedEpisodeDao(
                     episode_number = episodeNumber,
                     watched_at = watchedAt,
                 )
+                database.showMetadataQueries.recalculateLastWatched(Id(showId))
             }
         }
     }
@@ -89,6 +90,7 @@ public class DefaultWatchedEpisodeDao(
                     show_id = Id(showId),
                     episode_id = Id(episodeId),
                 )
+                database.showMetadataQueries.recalculateLastWatched(Id(showId))
             }
         }
     }
@@ -128,6 +130,7 @@ public class DefaultWatchedEpisodeDao(
         withContext(dispatchers.databaseWrite) {
             database.transaction {
                 database.watchedEpisodesQueries.deleteAllForShow(Id(showId))
+                database.showMetadataQueries.clearLastWatched(Id(showId))
             }
         }
     }
@@ -201,9 +204,9 @@ public class DefaultWatchedEpisodeDao(
     ) {
         withContext(dispatchers.databaseWrite) {
             database.transaction {
-                database.watchlistQueries.upsertIfNotExists(
-                    id = Id(showId),
-                    created_at = timestamp,
+                database.followedShowsQueries.upsertIfNotExists(
+                    tmdbId = showId,
+                    followedAt = timestamp,
                 )
                 episodes.forEach { episode ->
                     require(episode.seasonNumber == seasonNumber) {
@@ -218,6 +221,7 @@ public class DefaultWatchedEpisodeDao(
                         watched_at = episodeTimestamp,
                     )
                 }
+                database.showMetadataQueries.recalculateLastWatched(Id(showId))
             }
         }
     }
@@ -226,6 +230,7 @@ public class DefaultWatchedEpisodeDao(
         withContext(dispatchers.databaseWrite) {
             database.transaction {
                 database.watchedEpisodesQueries.deleteForSeason(Id(showId), seasonNumber)
+                database.showMetadataQueries.recalculateLastWatched(Id(showId))
             }
         }
     }
@@ -250,6 +255,7 @@ public class DefaultWatchedEpisodeDao(
                         watched_at = timestamp,
                     )
                 }
+                database.showMetadataQueries.recalculateLastWatched(Id(showId))
             }
         }
     }
@@ -279,9 +285,9 @@ public class DefaultWatchedEpisodeDao(
                     .getEpisodesForSeason(Id(showId), seasonNumber)
                     .executeAsList()
 
-                database.watchlistQueries.upsertIfNotExists(
-                    id = Id(showId),
-                    created_at = timestamp,
+                database.followedShowsQueries.upsertIfNotExists(
+                    tmdbId = showId,
+                    followedAt = timestamp,
                 )
 
                 currentSeasonEpisodes.forEach { episode ->
@@ -293,6 +299,7 @@ public class DefaultWatchedEpisodeDao(
                         watched_at = timestamp,
                     )
                 }
+                database.showMetadataQueries.recalculateLastWatched(Id(showId))
             }
         }
     }
@@ -318,6 +325,7 @@ public class DefaultWatchedEpisodeDao(
                         watched_at = timestamp,
                     )
                 }
+                database.showMetadataQueries.recalculateLastWatched(Id(showId))
             }
         }
     }
@@ -345,9 +353,9 @@ public class DefaultWatchedEpisodeDao(
                     )
                 }
 
-                database.watchlistQueries.upsertIfNotExists(
-                    id = Id(showId),
-                    created_at = timestamp,
+                database.followedShowsQueries.upsertIfNotExists(
+                    tmdbId = showId,
+                    followedAt = timestamp,
                 )
                 database.watchedEpisodesQueries.markAsWatched(
                     show_id = Id(showId),
@@ -356,6 +364,7 @@ public class DefaultWatchedEpisodeDao(
                     episode_number = episodeNumber,
                     watched_at = timestamp,
                 )
+                database.showMetadataQueries.recalculateLastWatched(Id(showId))
             }
         }
     }
@@ -464,9 +473,9 @@ public class DefaultWatchedEpisodeDao(
     ) {
         withContext(dispatchers.databaseWrite) {
             database.transaction {
-                database.watchlistQueries.upsertIfNotExists(
-                    id = Id(showId),
-                    created_at = watchedAt,
+                database.followedShowsQueries.upsertIfNotExists(
+                    tmdbId = showId,
+                    followedAt = watchedAt,
                 )
                 database.watchedEpisodesQueries.upsertFromTrakt(
                     show_id = Id(showId),
@@ -477,6 +486,7 @@ public class DefaultWatchedEpisodeDao(
                     trakt_id = traktId,
                     synced_at = syncedAt,
                 )
+                database.showMetadataQueries.recalculateLastWatched(Id(showId))
             }
         }
     }

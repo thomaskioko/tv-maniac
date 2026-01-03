@@ -1,9 +1,3 @@
-import com.thomaskioko.tvmaniac.db.Id;
-import com.thomaskioko.tvmaniac.db.TmdbId;
-import com.thomaskioko.tvmaniac.db.EpisodeId;
-
--- View definition for shows_next_to_watch
--- This view finds the next episode to watch based on viewing progress
 CREATE VIEW shows_next_to_watch AS
 SELECT
     tvshow.id AS show_id,
@@ -19,22 +13,20 @@ SELECT
     tvshow.poster_path AS show_poster,
     ((1000 * season.season_number) + episode.episode_number) AS next_ep_abs_number,
     episode.air_date,
-    lw.last_watched_at
+    sm.last_watched_at
 FROM tvshow
 INNER JOIN season ON tvshow.id = season.show_id
 INNER JOIN episode ON episode.season_id = season.id AND episode.show_id = tvshow.id
-LEFT JOIN watched_episodes AS we ON (
-    we.show_id = tvshow.id
-    AND we.episode_id = episode.id
-)
-LEFT JOIN shows_last_watched AS lw ON lw.show_id = tvshow.id
-WHERE (season.season_number > 0 OR (season.season_number = 0 AND season.title != 'Specials'))  -- Only exclude season 0 if titled exactly "Specials"
-  AND we.episode_id IS NULL     -- Episode not watched
+LEFT JOIN watched_episodes AS we ON we.show_id = tvshow.id AND we.episode_id = episode.id
+LEFT JOIN show_metadata AS sm ON sm.show_id = tvshow.id
+WHERE (season.season_number > 0 OR (season.season_number = 0 AND season.title != 'Specials'))
+  AND we.episode_id IS NULL
   AND (
-      lw.last_watched_abs_number IS NULL OR  -- No watch history, start from beginning
-      ((1000 * season.season_number) + episode.episode_number) > lw.last_watched_abs_number  -- Normal progression
+      sm.last_watched_episode_id IS NULL
+      OR ((1000 * season.season_number) + episode.episode_number) >
+         ((1000 * COALESCE(sm.last_watched_season_number, 0)) + COALESCE(sm.last_watched_episode_number, 0))
   )
-  AND (episode.air_date IS NULL OR episode.air_date <= date('now'))  -- Only include aired episodes
+  AND (episode.air_date IS NULL OR episode.air_date <= date('now'))
 ORDER BY tvshow.id, season.season_number, episode.episode_number;
 
 -- Get next episode for a specific show
@@ -56,10 +48,12 @@ WHERE show_id = ?
 ORDER BY season_number, episode_number
 LIMIT 1;
 
--- Get all next episodes for shows in the watchlist
+-- Get all next episodes for followed shows
+-- Uses followed_shows as base table with LEFT JOIN to shows_next_to_watch
+-- This ensures all followed shows appear, even if episodes aren't loaded yet
 nextEpisodesForWatchlist:
 SELECT
-    snw.show_id,
+    fs.tmdb_id AS show_id,
     snw.episode_id,
     snw.episode_name,
     snw.season_id,
@@ -68,12 +62,19 @@ SELECT
     snw.runtime,
     snw.still_path,
     snw.overview,
-    snw.show_name,
-    snw.show_poster,
+    tvshow.name AS show_name,
+    tvshow.poster_path AS show_poster,
     snw.next_ep_abs_number,
-    w.created_at AS followed_at,
+    fs.followed_at,
     snw.air_date,
     snw.last_watched_at
-FROM shows_next_to_watch snw
-INNER JOIN watchlist w ON snw.show_id = w.id
-ORDER BY w.created_at DESC, snw.season_number, snw.episode_number;
+FROM followed_shows fs
+INNER JOIN tvshow ON fs.tmdb_id = tvshow.id
+LEFT JOIN shows_next_to_watch snw ON fs.tmdb_id = snw.show_id
+    AND snw.next_ep_abs_number = (
+        SELECT MIN(snw2.next_ep_abs_number)
+        FROM shows_next_to_watch snw2
+        WHERE snw2.show_id = fs.tmdb_id
+    )
+WHERE fs.pending_action != 'DELETE'
+ORDER BY fs.followed_at DESC, snw.season_number, snw.episode_number;

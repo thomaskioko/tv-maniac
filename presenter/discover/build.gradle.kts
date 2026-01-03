@@ -17,8 +17,8 @@ kotlin {
                 implementation(projects.domain.discover)
                 implementation(projects.domain.episode)
                 implementation(projects.domain.genre)
-                implementation(projects.data.watchlist.api)
                 implementation(projects.data.episode.api)
+                implementation(projects.data.followedshows.api)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
@@ -39,7 +39,7 @@ kotlin {
                 implementation(projects.data.topratedshows.testing)
                 implementation(projects.data.trendingshows.testing)
                 implementation(projects.data.upcomingshows.testing)
-                implementation(projects.data.watchlist.testing)
+                implementation(projects.data.followedshows.testing)
 
                 implementation(libs.bundles.unittest)
             }

@@ -41,11 +41,7 @@ public class DefaultNextEpisodeDao(
             .asFlow()
             .mapToList(dispatchers.databaseRead)
             .map { list ->
-                // Group by show and take the first (earliest) episode per show
-                list.groupBy { it.show_id }
-                    .map { (_, episodes) ->
-                        episodes.minByOrNull { it.season_number * 1000 + it.episode_number }!!
-                    }
+                list.filter { it.episode_id != null }
                     .map { it.toNextEpisodeWithShow() }
             }
             .catch { emit(emptyList()) }
@@ -70,12 +66,12 @@ private fun NextEpisodeForShow.toNextEpisodeWithShow(): NextEpisodeWithShow {
 
 private fun NextEpisodesForWatchlist.toNextEpisodeWithShow(): NextEpisodeWithShow {
     return NextEpisodeWithShow(
-        showId = show_id.id,
-        episodeId = episode_id.id,
+        showId = show_id,
+        episodeId = episode_id!!.id,
         episodeName = episode_name,
-        seasonId = season_id.id,
-        seasonNumber = season_number,
-        episodeNumber = episode_number,
+        seasonId = season_id!!.id,
+        seasonNumber = season_number!!,
+        episodeNumber = episode_number!!,
         runtime = runtime,
         stillPath = still_path,
         overview = overview,

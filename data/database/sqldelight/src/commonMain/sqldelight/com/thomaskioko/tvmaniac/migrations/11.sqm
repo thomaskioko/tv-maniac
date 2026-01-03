@@ -1,0 +1,137 @@
+-- Migration 11: Add followed_shows table for Trakt sync and optimize queries
+
+-- Add episode indexes for faster COUNT queries
+CREATE INDEX IF NOT EXISTS idx_episode_show_id ON episode(show_id);
+CREATE INDEX IF NOT EXISTS idx_episode_show_season ON episode(show_id, season_id);
+
+-- Add cached counts to show_metadata for O(1) lookups
+ALTER TABLE show_metadata ADD COLUMN cached_watched_count INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE show_metadata ADD COLUMN cached_total_count INTEGER NOT NULL DEFAULT 0;
+
+-- Backfill cached counts from existing data
+UPDATE show_metadata SET
+    cached_watched_count = (
+        SELECT COUNT(*) FROM watched_episodes
+        WHERE watched_episodes.show_id = show_metadata.show_id
+    ),
+    cached_total_count = (
+        SELECT COUNT(*) FROM episode
+        WHERE episode.show_id = show_metadata.show_id
+    );
+
+-- Add last watched tracking columns to show_metadata
+ALTER TABLE show_metadata ADD COLUMN last_watched_episode_id INTEGER DEFAULT NULL;
+ALTER TABLE show_metadata ADD COLUMN last_watched_season_number INTEGER DEFAULT NULL;
+ALTER TABLE show_metadata ADD COLUMN last_watched_episode_number INTEGER DEFAULT NULL;
+ALTER TABLE show_metadata ADD COLUMN last_watched_at INTEGER DEFAULT NULL;
+
+-- Backfill last watched data from watched_episodes
+UPDATE show_metadata SET
+    last_watched_episode_id = (
+        SELECT we.episode_id
+        FROM watched_episodes we
+        INNER JOIN season s ON s.show_id = we.show_id AND s.season_number = we.season_number
+        WHERE we.show_id = show_metadata.show_id
+          AND (we.season_number > 0 OR s.title != 'Specials')
+        ORDER BY we.watched_at DESC, (1000 * we.season_number) + we.episode_number DESC
+        LIMIT 1
+    ),
+    last_watched_season_number = (
+        SELECT we.season_number
+        FROM watched_episodes we
+        INNER JOIN season s ON s.show_id = we.show_id AND s.season_number = we.season_number
+        WHERE we.show_id = show_metadata.show_id
+          AND (we.season_number > 0 OR s.title != 'Specials')
+        ORDER BY we.watched_at DESC, (1000 * we.season_number) + we.episode_number DESC
+        LIMIT 1
+    ),
+    last_watched_episode_number = (
+        SELECT we.episode_number
+        FROM watched_episodes we
+        INNER JOIN season s ON s.show_id = we.show_id AND s.season_number = we.season_number
+        WHERE we.show_id = show_metadata.show_id
+          AND (we.season_number > 0 OR s.title != 'Specials')
+        ORDER BY we.watched_at DESC, (1000 * we.season_number) + we.episode_number DESC
+        LIMIT 1
+    ),
+    last_watched_at = (
+        SELECT we.watched_at
+        FROM watched_episodes we
+        INNER JOIN season s ON s.show_id = we.show_id AND s.season_number = we.season_number
+        WHERE we.show_id = show_metadata.show_id
+          AND (we.season_number > 0 OR s.title != 'Specials')
+        ORDER BY we.watched_at DESC, (1000 * we.season_number) + we.episode_number DESC
+        LIMIT 1
+    );
+
+-- Recreate shows_last_watched view using denormalized columns
+DROP VIEW IF EXISTS shows_last_watched;
+
+CREATE VIEW shows_last_watched AS
+SELECT
+    sm.show_id,
+    s.id AS season_id,
+    sm.last_watched_episode_id AS episode_id,
+    (1000 * sm.last_watched_season_number) + sm.last_watched_episode_number AS last_watched_abs_number,
+    sm.last_watched_season_number AS last_watched_season,
+    sm.last_watched_episode_number AS last_watched_episode,
+    sm.last_watched_at
+FROM show_metadata sm
+INNER JOIN season s ON s.show_id = sm.show_id AND s.season_number = sm.last_watched_season_number
+WHERE sm.last_watched_episode_id IS NOT NULL;
+
+-- Recreate shows_next_to_watch view using denormalized columns
+DROP VIEW IF EXISTS shows_next_to_watch;
+
+CREATE VIEW shows_next_to_watch AS
+SELECT
+    tvshow.id AS show_id,
+    episode.id AS episode_id,
+    episode.title AS episode_name,
+    season.id AS season_id,
+    season.season_number,
+    episode.episode_number,
+    episode.runtime,
+    episode.image_url AS still_path,
+    episode.overview,
+    tvshow.name AS show_name,
+    tvshow.poster_path AS show_poster,
+    ((1000 * season.season_number) + episode.episode_number) AS next_ep_abs_number,
+    episode.air_date,
+    sm.last_watched_at
+FROM tvshow
+INNER JOIN season ON tvshow.id = season.show_id
+INNER JOIN episode ON episode.season_id = season.id AND episode.show_id = tvshow.id
+LEFT JOIN watched_episodes AS we ON we.show_id = tvshow.id AND we.episode_id = episode.id
+LEFT JOIN show_metadata AS sm ON sm.show_id = tvshow.id
+WHERE (season.season_number > 0 OR (season.season_number = 0 AND season.title != 'Specials'))
+  AND we.episode_id IS NULL
+  AND (
+      sm.last_watched_episode_id IS NULL
+      OR ((1000 * season.season_number) + episode.episode_number) >
+         ((1000 * COALESCE(sm.last_watched_season_number, 0)) + COALESCE(sm.last_watched_episode_number, 0))
+  )
+  AND (episode.air_date IS NULL OR episode.air_date <= date('now'))
+ORDER BY tvshow.id, season.season_number, episode.episode_number;
+
+-- Create followed_shows table for Tivi-style Trakt sync pattern
+-- No foreign key to tvshow because we need to store followed shows from Trakt
+-- even before fetching their details
+CREATE TABLE followed_shows(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    tmdb_id INTEGER NOT NULL UNIQUE,
+    followed_at INTEGER NOT NULL,
+    pending_action TEXT NOT NULL DEFAULT 'NOTHING'
+        CHECK(pending_action IN ('NOTHING', 'UPLOAD', 'DELETE')),
+    trakt_id INTEGER
+);
+
+CREATE INDEX idx_followed_shows_tmdb_id ON followed_shows(tmdb_id);
+CREATE INDEX idx_followed_shows_pending_action ON followed_shows(pending_action);
+
+-- Migrate watchlist data to followed_shows
+INSERT OR IGNORE INTO followed_shows (tmdb_id, followed_at, pending_action)
+SELECT id, created_at, 'NOTHING' FROM watchlist;
+
+-- Drop watchlist table (no longer needed - using followed_shows as single source of truth)
+DROP TABLE IF EXISTS watchlist;

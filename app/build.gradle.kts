@@ -106,6 +106,7 @@ dependencies {
     implementation(projects.presenter.settings)
     implementation(projects.presenter.showDetails)
     implementation(projects.presenter.trailers)
+    implementation(projects.shared)
 
     implementation(libs.androidx.compose.activity)
     implementation(libs.androidx.core.core)

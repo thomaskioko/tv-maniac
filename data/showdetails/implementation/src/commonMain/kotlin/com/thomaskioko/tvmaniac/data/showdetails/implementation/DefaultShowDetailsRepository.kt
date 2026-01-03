@@ -23,7 +23,8 @@ public class DefaultShowDetailsRepository(
 ) : ShowDetailsRepository {
 
     override suspend fun fetchShowDetails(id: Long, forceRefresh: Boolean) {
-        val statusIsNull = dao.getTvShow(id).status.isNullOrBlank()
+        val existingShow = dao.getTvShowOrNull(id)
+        val statusIsNull = existingShow?.status.isNullOrBlank()
         val isExpired = requestManagerRepository.isRequestExpired(
             entityId = id,
             requestType = SHOW_DETAILS.name,
@@ -31,7 +32,7 @@ public class DefaultShowDetailsRepository(
         )
 
         when {
-            forceRefresh || statusIsNull || isExpired -> showStore.fresh(id)
+            forceRefresh || existingShow == null || statusIsNull || isExpired -> showStore.fresh(id)
             else -> showStore.get(id)
         }
     }

@@ -17,8 +17,8 @@ import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteract
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
 import com.thomaskioko.tvmaniac.domain.watchproviders.WatchProvidersInteractor
+import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowSeasonDetailsParam
-import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -39,7 +39,7 @@ public class DefaultShowDetailsPresenter(
     @Assisted private val onNavigateToShow: (id: Long) -> Unit,
     @Assisted private val onNavigateToSeason: (param: ShowSeasonDetailsParam) -> Unit,
     @Assisted private val onNavigateToTrailer: (id: Long) -> Unit,
-    private val watchlistRepository: WatchlistRepository,
+    private val followedShowsRepository: FollowedShowsRepository,
     private val recommendedShowsInteractor: RecommendedShowsInteractor,
     private val showDetailsInteractor: ShowDetailsInteractor,
     private val similarShowsInteractor: SimilarShowsInteractor,
@@ -112,10 +112,11 @@ public class DefaultShowDetailsPresenter(
             is WatchTrailerClicked -> onNavigateToTrailer(action.id)
             is FollowShowClicked -> {
                 coroutineScope.launch {
-                    watchlistRepository.updateLibrary(
-                        id = showId,
-                        addToLibrary = !action.addToLibrary,
-                    )
+                    if (action.addToLibrary) {
+                        followedShowsRepository.removeFollowedShow(showId)
+                    } else {
+                        followedShowsRepository.addFollowedShow(showId)
+                    }
                 }
             }
 

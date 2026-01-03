@@ -44,11 +44,11 @@ SELECT
     COALESCE(toprated_shows.name, '') AS name,
     toprated_shows.poster_path,
     toprated_shows.overview,
-    CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+    CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM toprated_shows
-LEFT OUTER JOIN watchlist ON toprated_shows.id = watchlist.id
+LEFT OUTER JOIN followed_shows ON toprated_shows.id = followed_shows.tmdb_id AND followed_shows.pending_action != 'DELETE'
 WHERE toprated_shows.page = :page
-  AND toprated_shows.name IS NOT NULL  -- Only return entries with show data
+  AND toprated_shows.name IS NOT NULL
 ORDER BY toprated_shows.page_order ASC;
 
 topRatedShows:
@@ -57,13 +57,13 @@ SELECT
     toprated_shows.page,
     tvshow.name,
     tvshow.poster_path,
-    CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+    CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     toprated_shows
 INNER JOIN
     tvshow ON tvshow.id = toprated_shows.id
 LEFT OUTER JOIN
-    watchlist ON tvshow.id = watchlist.id
+    followed_shows ON tvshow.id = followed_shows.tmdb_id AND followed_shows.pending_action != 'DELETE'
 ORDER BY
     toprated_shows.page ASC, toprated_shows.page_order ASC;
 
@@ -73,13 +73,13 @@ SELECT
     toprated_shows.page,
     tvshow.name,
     tvshow.poster_path,
-    CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+    CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     toprated_shows
 INNER JOIN
     tvshow ON tvshow.id = toprated_shows.id
 LEFT OUTER JOIN
-    watchlist ON tvshow.id = watchlist.id
+    followed_shows ON tvshow.id = followed_shows.tmdb_id AND followed_shows.pending_action != 'DELETE'
 WHERE
     toprated_shows.page = :page;
 
@@ -89,13 +89,13 @@ SELECT
     toprated_shows.page,
     tvshow.name,
     tvshow.poster_path,
-    CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+    CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     toprated_shows
 INNER JOIN
     tvshow ON tvshow.id = toprated_shows.id
 LEFT OUTER JOIN
-    watchlist ON tvshow.id = watchlist.id
+    followed_shows ON tvshow.id = followed_shows.tmdb_id AND followed_shows.pending_action != 'DELETE'
 ORDER BY
     toprated_shows.page ASC, toprated_shows.page_order ASC
 LIMIT

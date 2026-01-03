@@ -20,6 +20,8 @@ CREATE TABLE episode (
 );
 
 CREATE INDEX IF NOT EXISTS idx_episode_trakt_id ON episode(trakt_id);
+CREATE INDEX IF NOT EXISTS idx_episode_show_id ON episode(show_id);
+CREATE INDEX IF NOT EXISTS idx_episode_show_season ON episode(show_id, season_id);
 
 upsert:
 INSERT OR REPLACE INTO episode(

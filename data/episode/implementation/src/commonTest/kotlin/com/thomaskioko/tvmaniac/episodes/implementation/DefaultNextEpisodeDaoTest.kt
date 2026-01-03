@@ -121,13 +121,19 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should observe next episodes for watchlist`() = runTest {
-        val _ = database.watchlistQueries.upsert(
-            id = Id(1L),
-            created_at = watchDate,
+        val _ = database.followedShowsQueries.upsert(
+            id = null,
+            tmdbId = 1L,
+            followedAt = watchDate,
+            pendingAction = "NOTHING",
+            traktId = null,
         )
-        val _ = database.watchlistQueries.upsert(
-            id = Id(2L),
-            created_at = watchDate + 1000,
+        val _ = database.followedShowsQueries.upsert(
+            id = null,
+            tmdbId = 2L,
+            followedAt = watchDate + 1000,
+            pendingAction = "NOTHING",
+            traktId = null,
         )
 
         val _ = database.watchedEpisodesQueries.upsert(
@@ -225,12 +231,17 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             episode_number = 3L,
             watched_at = watchDate,
         )
+        updateLastWatched(1L)
 
         // Since the test data only has 3 episodes and E3 is the last watched, there are no more episodes to progress to
         nextEpisodeDao.observeNextEpisode(1L).test {
             val nextEpisode = awaitItem()
             nextEpisode.shouldBeNull()
         }
+    }
+
+    private fun updateLastWatched(showId: Long) {
+        database.showMetadataQueries.recalculateLastWatched(Id(showId))
     }
 
     private fun insertTestData() {
@@ -269,6 +280,20 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             season_numbers = null,
             poster_path = "/test2.jpg",
             backdrop_path = "/backdrop2.jpg",
+        )
+
+        val _ = database.showMetadataQueries.upsert(
+            show_id = Id(1),
+            season_count = 1,
+            episode_count = 3,
+            status = "Returning Series",
+        )
+
+        val _ = database.showMetadataQueries.upsert(
+            show_id = Id(2),
+            season_count = 1,
+            episode_count = 2,
+            status = "Ended",
         )
 
         // Insert seasons for show 1
@@ -533,9 +558,12 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     @Test
     fun `should maintain shows in watchlist when tracking sequentially`() = runTest {
         //  Track Breaking Bad (show 1)
-        val _ = database.watchlistQueries.upsert(
-            id = Id(1L),
-            created_at = watchDate,
+        val _ = database.followedShowsQueries.upsert(
+            id = null,
+            tmdbId = 1L,
+            followedAt = watchDate,
+            pendingAction = "NOTHING",
+            traktId = null,
         )
 
         // Verify Breaking Bad episode appears
@@ -546,9 +574,12 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             episodes1[0].showName shouldBe "Test Show 1"
 
             // Step 2: Track Game of Thrones (show 2) - this should ADD to the list, not replace
-            val _ = database.watchlistQueries.upsert(
-                id = Id(2L),
-                created_at = watchDate + 1000,
+            val _ = database.followedShowsQueries.upsert(
+                id = null,
+                tmdbId = 2L,
+                followedAt = watchDate + 1000,
+                pendingAction = "NOTHING",
+                traktId = null,
             )
 
             val episodes2 = awaitItem()
@@ -752,9 +783,12 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
 
         // Now simulate the user scenario:
         // 1. Track Breaking Bad
-        val _ = database.watchlistQueries.upsert(
-            id = Id(5L), // Breaking Bad
-            created_at = watchDate,
+        val _ = database.followedShowsQueries.upsert(
+            id = null,
+            tmdbId = 5L, // Breaking Bad
+            followedAt = watchDate,
+            pendingAction = "NOTHING",
+            traktId = null,
         )
 
         nextEpisodeDao.observeNextEpisodesForWatchlist().test {
@@ -768,9 +802,12 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             episodes1[0].episodeNumber shouldBe 1
 
             // 2. Track Game of Thrones - this should ADD, not replace
-            val _ = database.watchlistQueries.upsert(
-                id = Id(6L), // Game of Thrones
-                created_at = watchDate + 1000,
+            val _ = database.followedShowsQueries.upsert(
+                id = null,
+                tmdbId = 6L, // Game of Thrones
+                followedAt = watchDate + 1000,
+                pendingAction = "NOTHING",
+                traktId = null,
             )
 
             // Should show BOTH shows (GOT first due to being more recent)
