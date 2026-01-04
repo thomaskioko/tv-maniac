@@ -1,14 +1,10 @@
 package com.thomaskioko.tvmaniac.episodes.api
 
-import com.thomaskioko.tvmaniac.db.Watched_episodes
 import com.thomaskioko.tvmaniac.episodes.api.model.ContinueTrackingResult
 import com.thomaskioko.tvmaniac.episodes.api.model.LastWatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
-import com.thomaskioko.tvmaniac.episodes.api.model.UnwatchedEpisode
-import com.thomaskioko.tvmaniac.episodes.api.model.WatchProgress
-import com.thomaskioko.tvmaniac.episodes.api.model.WatchProgressContext
 import kotlinx.coroutines.flow.Flow
 import kotlin.time.Instant
 
@@ -49,41 +45,6 @@ public interface EpisodeRepository {
      * Mark an episode as unwatched. The SQL view automatically updates next episode calculations.
      */
     public suspend fun markEpisodeAsUnwatched(showId: Long, episodeId: Long)
-
-    /**
-     * Observe all watched episodes for a specific show.
-     */
-    public fun observeWatchedEpisodes(showId: Long): Flow<List<Watched_episodes>>
-
-    /**
-     * Observe watch progress for a specific show (watched/total episodes ratio).
-     */
-    public fun observeWatchProgress(showId: Long): Flow<WatchProgress>
-
-    /**
-     * Check if a specific episode is watched.
-     */
-    public suspend fun isEpisodeWatched(
-        showId: Long,
-        seasonNumber: Long,
-        episodeNumber: Long,
-    ): Boolean
-
-    /**
-     * Clear all cached watch history for a specific show.
-     */
-    public suspend fun clearCachedWatchHistoryForShow(showId: Long)
-
-    /**
-     * Get comprehensive watch progress context with out-of-order watching detection.
-     */
-    public suspend fun getWatchProgressContext(showId: Long): WatchProgressContext
-
-    /**
-     * Check if the user has unwatched episodes before their last watched episode.
-     * Used to detect out-of-order watching patterns.
-     */
-    public suspend fun hasUnwatchedEarlierEpisodes(showId: Long): Boolean
 
     /**
      * Observe the last watched episode using the shows_last_watched view.
@@ -131,16 +92,6 @@ public interface EpisodeRepository {
     public suspend fun markSeasonUnwatched(showId: Long, seasonNumber: Long)
 
     /**
-     * Get unwatched episodes that come before a specific episode.
-     * Used to prompt the user when marking episodes out of order.
-     */
-    public suspend fun getPreviousUnwatchedEpisodes(
-        showId: Long,
-        seasonNumber: Long,
-        episodeNumber: Long,
-    ): List<UnwatchedEpisode>
-
-    /**
      * Get count of unwatched episodes in seasons before the specified season number,
      * ensuring that previous seasons' episode data is fetched first.
      * Use this when the previous seasons may not have been loaded yet.
@@ -149,16 +100,6 @@ public interface EpisodeRepository {
         showId: Long,
         seasonNumber: Long,
     ): Long
-
-    /**
-     * Observe count of unwatched episodes before a specific episode.
-     * Used for reactive UI to determine if confirmation dialog should be shown.
-     */
-    public fun observeUnwatchedCountBefore(
-        showId: Long,
-        seasonNumber: Long,
-        episodeNumber: Long,
-    ): Flow<Int>
 
     /**
      * Observe count of unwatched episodes in seasons before the specified season number.
