@@ -21,7 +21,6 @@ import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
@@ -68,24 +67,16 @@ public class TopRatedShowsStore(
         }
     },
     sourceOfTruth = SourceOfTruth.of<Long, List<TopRatedShowWithImages>, List<ShowEntity>>(
-        reader = { page ->
-            topRatedShowsDao.observeTopRatedShows(page).map { shows ->
-                when {
-                    shows.isEmpty() -> null
-                    !requestManagerRepository.isRequestValid(
-                        requestType = TOP_RATED_SHOWS.name,
-                        threshold = TOP_RATED_SHOWS.duration,
-                    ) -> null
-
-                    else -> shows
-                }
-            }
-        },
+        reader = { page -> topRatedShowsDao.observeTopRatedShows(page) },
         writer = { page, response ->
             withContext(dispatchers.databaseWrite) {
                 databaseTransactionRunner {
                     if (page == 1L) {
                         topRatedShowsDao.deleteTrendingShows()
+                        requestManagerRepository.upsert(
+                            entityId = TOP_RATED_SHOWS.requestId,
+                            requestType = TOP_RATED_SHOWS.name,
+                        )
                     }
 
                     response.forEach { showWithImages ->
@@ -114,11 +105,6 @@ public class TopRatedShowsStore(
                         )
                     }
                 }
-
-                requestManagerRepository.upsert(
-                    entityId = TOP_RATED_SHOWS.requestId,
-                    requestType = TOP_RATED_SHOWS.name,
-                )
             }
         },
         delete = topRatedShowsDao::deleteTrendingShows,
