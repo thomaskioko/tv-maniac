@@ -22,10 +22,13 @@ import com.thomaskioko.tvmaniac.domain.episode.ObserveContinueTrackingInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
 import com.thomaskioko.tvmaniac.domain.recommendedshows.RecommendedShowsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.PrefetchFirstSeasonInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
 import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
 import com.thomaskioko.tvmaniac.domain.watchproviders.WatchProvidersInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
+import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ProviderModel
@@ -62,6 +65,7 @@ class ShowDetailsPresenterTest {
     private val recommendedShowsRepository = FakeRecommendedShowsRepository()
     private val showDetailsRepository = FakeShowDetailsRepository()
     private val episodeRepository = FakeEpisodeRepository()
+    private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
     private val fakeFormatterUtil = FakeFormatterUtil()
     private val testDispatcher = StandardTestDispatcher()
     private val coroutineDispatcher = AppCoroutineDispatchers(
@@ -311,7 +315,7 @@ class ShowDetailsPresenterTest {
             awaitItem()
             val _ = awaitUntil { it.showDetails.tmdbId != 0L }
 
-            presenter.dispatch(FollowShowClicked(addToLibrary = false))
+            presenter.dispatch(FollowShowClicked(isInLibrary = false))
 
             testDispatcher.scheduler.advanceUntilIdle()
 
@@ -535,6 +539,9 @@ class ShowDetailsPresenterTest {
             ),
             showDetailsInteractor = ShowDetailsInteractor(
                 showDetailsRepository = showDetailsRepository,
+                dispatchers = coroutineDispatcher,
+            ),
+            prefetchFirstSeasonInteractor = PrefetchFirstSeasonInteractor(
                 seasonsRepository = seasonsRepository,
                 seasonDetailsRepository = seasonDetailsRepository,
                 dispatchers = coroutineDispatcher,
@@ -567,6 +574,14 @@ class ShowDetailsPresenterTest {
             ),
             observeContinueTrackingInteractor = ObserveContinueTrackingInteractor(
                 episodeRepository = episodeRepository,
+            ),
+            showContentSyncInteractor = ShowContentSyncInteractor(
+                showDetailsRepository = showDetailsRepository,
+                seasonsRepository = seasonsRepository,
+                seasonDetailsRepository = seasonDetailsRepository,
+                watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
+                dispatchers = coroutineDispatcher,
+                logger = FakeLogger(),
             ),
             logger = FakeLogger(),
         )

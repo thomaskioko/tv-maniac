@@ -14,7 +14,9 @@ import com.thomaskioko.tvmaniac.domain.episode.ObserveContinueTrackingInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
 import com.thomaskioko.tvmaniac.domain.recommendedshows.RecommendedShowsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.PrefetchFirstSeasonInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
 import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
 import com.thomaskioko.tvmaniac.domain.watchproviders.WatchProvidersInteractor
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
@@ -42,9 +44,11 @@ public class DefaultShowDetailsPresenter(
     private val followedShowsRepository: FollowedShowsRepository,
     private val recommendedShowsInteractor: RecommendedShowsInteractor,
     private val showDetailsInteractor: ShowDetailsInteractor,
+    private val prefetchFirstSeasonInteractor: PrefetchFirstSeasonInteractor,
     private val similarShowsInteractor: SimilarShowsInteractor,
     private val watchProvidersInteractor: WatchProvidersInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
+    private val showContentSyncInteractor: ShowContentSyncInteractor,
     observableShowDetailsInteractor: ObservableShowDetailsInteractor,
     observeShowWatchProgressInteractor: ObserveShowWatchProgressInteractor,
     observeContinueTrackingInteractor: ObserveContinueTrackingInteractor,
@@ -112,11 +116,14 @@ public class DefaultShowDetailsPresenter(
             is WatchTrailerClicked -> onNavigateToTrailer(action.id)
             is FollowShowClicked -> {
                 coroutineScope.launch {
-                    if (action.addToLibrary) {
+                    if (action.isInLibrary) {
                         followedShowsRepository.removeFollowedShow(showId)
                     } else {
                         followedShowsRepository.addFollowedShow(showId)
                     }
+                    showContentSyncInteractor(
+                        ShowContentSyncInteractor.Param(showId = showId, isUserInitiated = true),
+                    ).collectStatus(episodeActionLoadingState, logger, uiMessageManager)
                 }
             }
 
@@ -153,6 +160,11 @@ public class DefaultShowDetailsPresenter(
 
         coroutineScope.launch {
             showDetailsInteractor(ShowDetailsInteractor.Param(showId, forceReload))
+                .collectStatus(showDetailsLoadingState, logger, uiMessageManager)
+        }
+
+        coroutineScope.launch {
+            prefetchFirstSeasonInteractor(PrefetchFirstSeasonInteractor.Param(showId, forceReload))
                 .collectStatus(showDetailsLoadingState, logger, uiMessageManager)
         }
 
