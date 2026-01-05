@@ -28,9 +28,10 @@ public class TraktEpisodeWatchesDataSource(
     override suspend fun getShowEpisodeWatches(showTraktId: Long): List<WatchedEpisodeEntry> {
         return when (val response = remoteDataSource.getShowEpisodeWatches(showTraktId)) {
             is ApiResponse.Success -> {
-                response.body.map { entry ->
+                response.body.mapNotNull { entry ->
+                    val showId = entry.show.ids.tmdbId ?: return@mapNotNull null
                     WatchedEpisodeEntry(
-                        showId = entry.show.ids.tmdbId ?: 0L,
+                        showId = showId,
                         episodeId = 0L,
                         seasonNumber = entry.episode.season.toLong(),
                         episodeNumber = entry.episode.number.toLong(),
