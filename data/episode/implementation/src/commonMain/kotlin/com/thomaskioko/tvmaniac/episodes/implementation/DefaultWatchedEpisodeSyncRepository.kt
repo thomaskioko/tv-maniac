@@ -15,7 +15,6 @@ import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsDao
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -62,14 +61,12 @@ public class DefaultWatchedEpisodeSyncRepository(
         }
     }
 
-    override fun observePendingSyncCount(): Flow<Long> = dao.observePendingSyncCount()
-
     private suspend fun isLoggedIn(): Boolean {
         return traktAuthRepository.state.first() == TraktAuthState.LOGGED_IN
     }
 
     private suspend fun processPendingUploads() {
-        val pending = dao.entriesWithUploadPendingAction()
+        val pending = dao.entriesByPendingAction(PendingAction.UPLOAD)
 
         if (pending.isEmpty()) return
 
@@ -98,7 +95,7 @@ public class DefaultWatchedEpisodeSyncRepository(
     }
 
     private suspend fun processPendingDeletes() {
-        val pending = dao.entriesWithDeletePendingAction()
+        val pending = dao.entriesByPendingAction(PendingAction.DELETE)
 
         if (pending.isEmpty()) return
 
@@ -110,7 +107,7 @@ public class DefaultWatchedEpisodeSyncRepository(
         }
 
         pending.forEach { episode ->
-            dao.hardDeleteById(episode.id)
+            dao.deleteById(episode.id)
         }
 
         logger.debug(TAG, "Successfully deleted ${pending.size} episodes")
@@ -147,6 +144,7 @@ public class DefaultWatchedEpisodeSyncRepository(
                 watchedAt = remoteEntry.watchedAt.toEpochMilliseconds(),
                 traktId = remoteEntry.traktId ?: 0L,
                 syncedAt = kotlin.time.Clock.System.now().toEpochMilliseconds(),
+                pendingAction = PendingAction.NOTHING.value,
                 includeSpecials = includeSpecials,
             )
         }

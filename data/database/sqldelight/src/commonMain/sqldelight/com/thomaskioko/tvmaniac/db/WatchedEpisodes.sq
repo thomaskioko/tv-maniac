@@ -12,9 +12,7 @@ CREATE TABLE watched_episodes (
     watched_at INTEGER NOT NULL,
     trakt_id INTEGER DEFAULT NULL,
     synced_at INTEGER DEFAULT NULL,
-    pending_action TEXT NOT NULL DEFAULT 'UPLOAD'
-        CHECK(pending_action IN ('NOTHING', 'UPLOAD', 'DELETE')),
-    source TEXT DEFAULT 'local',
+    pending_action TEXT NOT NULL,
     FOREIGN KEY(show_id) REFERENCES tvshow(id) ON DELETE CASCADE,
     FOREIGN KEY(episode_id) REFERENCES episode(id) ON DELETE CASCADE,
     UNIQUE(show_id, season_number, episode_number)
@@ -33,43 +31,26 @@ INSERT OR REPLACE INTO watched_episodes(
     episode_id,
     season_number,
     episode_number,
-    watched_at
-) VALUES (?, ?, ?, ?, ?);
+    watched_at,
+    pending_action
+) VALUES (?, ?, ?, ?, ?, ?);
 
 getWatchedEpisodes:
 SELECT * FROM watched_episodes
 WHERE show_id = ?
 ORDER BY season_number, episode_number;
 
-getLastWatchedEpisode:
-SELECT * FROM watched_episodes
-WHERE show_id = ?
-ORDER BY season_number DESC, episode_number DESC
-LIMIT 1;
-
 getWatchedEpisodesForSeason:
 SELECT * FROM watched_episodes
 WHERE show_id = ? AND season_number = ?
 ORDER BY episode_number;
 
-getWatchProgressCount:
-SELECT
-    COUNT(*) AS watched_count,
-    MAX(season_number) AS last_season,
-    MAX(episode_number) AS last_episode
-FROM watched_episodes
-WHERE show_id = ?;
-
 markAsWatched:
 INSERT OR REPLACE INTO watched_episodes(
-    show_id, episode_id, season_number, episode_number, watched_at
-) VALUES (?, ?, ?, ?, ?);
+    show_id, episode_id, season_number, episode_number, watched_at, pending_action
+) VALUES (?, ?, ?, ?, ?, ?);
 
 markAsUnwatched:
-DELETE FROM watched_episodes
-WHERE show_id = ? AND episode_id = ?;
-
-deleteWatchedEpisode:
 DELETE FROM watched_episodes
 WHERE show_id = ? AND episode_id = ?;
 
@@ -77,17 +58,10 @@ deleteAllForShow:
 DELETE FROM watched_episodes
 WHERE show_id = ?;
 
-isEpisodeWatched:
-SELECT COUNT(*) > 0 FROM watched_episodes
-WHERE show_id = ? AND season_number = ? AND episode_number = ?;
-
 deleteForSeason:
 DELETE FROM watched_episodes
 WHERE show_id = ? AND season_number = ?;
 
-getWatchedCountForSeason:
-SELECT COUNT(*) FROM watched_episodes
-WHERE show_id = ? AND season_number = ?;
 
 getTotalEpisodesForSeason:
 SELECT COUNT(*) FROM episode e
@@ -95,7 +69,7 @@ INNER JOIN season s ON e.season_id = s.id
 WHERE e.show_id = ? AND s.season_number = ?
   AND (e.air_date IS NULL OR e.air_date <= date('now'));
 
-getUnwatchedEpisodesBefore:
+getPreviousUnwatchedEpisodes:
 SELECT
     e.id AS episode_id,
     s.season_number,
@@ -163,42 +137,22 @@ WHERE e.show_id = :show_id
 
 -- Trakt Sync Queries
 
-getEntriesWithUploadPendingAction:
+getEntriesByPendingAction:
 SELECT * FROM watched_episodes
-WHERE pending_action = 'UPLOAD'
+WHERE pending_action = ?
 ORDER BY watched_at;
-
-getEntriesWithDeletePendingAction:
-SELECT * FROM watched_episodes
-WHERE pending_action = 'DELETE'
-ORDER BY watched_at;
-
-getEntriesWithNoPendingAction:
-SELECT * FROM watched_episodes
-WHERE pending_action = 'NOTHING'
-ORDER BY watched_at;
-
-getEntriesForShowWithNoPendingAction:
-SELECT * FROM watched_episodes
-WHERE show_id = ? AND pending_action = 'NOTHING'
-ORDER BY season_number, episode_number;
 
 updatePendingAction:
 UPDATE watched_episodes
 SET pending_action = ?
 WHERE id = ?;
 
-updatePendingActionByEpisodeId:
+updatePendingActionByShowAndEpisode:
 UPDATE watched_episodes
 SET pending_action = ?
 WHERE show_id = ? AND episode_id = ?;
 
-markForDelete:
-UPDATE watched_episodes
-SET pending_action = 'DELETE'
-WHERE show_id = ? AND episode_id = ?;
-
-hardDeleteById:
+deleteById:
 DELETE FROM watched_episodes WHERE id = ?;
 
 getEntryByShowAndEpisode:
@@ -207,39 +161,8 @@ WHERE show_id = ? AND episode_id = ?;
 
 upsertFromTrakt:
 INSERT OR REPLACE INTO watched_episodes(
-    show_id, episode_id, season_number, episode_number, watched_at, trakt_id, synced_at, pending_action, source
-) VALUES (?, ?, ?, ?, ?, ?, ?, 'NOTHING', 'trakt');
-
-getByTraktId:
-SELECT * FROM watched_episodes WHERE trakt_id = ?;
-
-countPendingSync:
-SELECT COUNT(*) FROM watched_episodes
-WHERE pending_action IN ('UPLOAD', 'DELETE');
-
-getEarliestUnwatchedEpisode:
-SELECT
-    tvshow.id AS show_id,
-    episode.id AS episode_id,
-    episode.title AS episode_name,
-    season.id AS season_id,
-    season.season_number,
-    episode.episode_number,
-    episode.runtime,
-    episode.image_url AS still_path,
-    episode.overview,
-    tvshow.name AS show_name,
-    tvshow.poster_path AS show_poster
-FROM episode
-INNER JOIN season ON episode.season_id = season.id
-INNER JOIN tvshow ON episode.show_id = tvshow.id
-LEFT JOIN watched_episodes AS we ON we.show_id = tvshow.id AND we.episode_id = episode.id
-WHERE episode.show_id = :show_id
-  AND we.episode_id IS NULL
-  AND (episode.air_date IS NULL OR episode.air_date <= date('now'))
-  AND (:include_specials = 1 OR season.season_number > 0)
-ORDER BY season.season_number ASC, episode.episode_number ASC
-LIMIT 1;
+    show_id, episode_id, season_number, episode_number, watched_at, trakt_id, synced_at, pending_action
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
 
 getAllSeasonsWatchProgress:
 SELECT
@@ -249,40 +172,3 @@ SELECT
 FROM season s
 WHERE s.show_id = :show_id
 ORDER BY s.season_number;
-
-getLastWatchedWithAbsoluteNumber:
-SELECT
-    episode_id,
-    season_number,
-    episode_number,
-    watched_at,
-    (season_number * 1000) + episode_number AS absolute_number
-FROM watched_episodes
-WHERE show_id = :show_id
-  AND (:include_specials = 1 OR season_number > 0)
-ORDER BY (season_number * 1000) + episode_number DESC
-LIMIT 1;
-
-hasUnwatchedEarlierEpisodes:
-SELECT EXISTS(
-    SELECT 1
-    FROM episode e
-    INNER JOIN season s ON e.season_id = s.id
-    LEFT JOIN watched_episodes we ON we.episode_id = e.id AND we.show_id = :show_id
-    WHERE e.show_id = :show_id
-      AND (:include_specials = 1 OR s.season_number > 0)
-      AND we.episode_id IS NULL
-      AND (e.air_date IS NULL OR e.air_date <= date('now'))
-      AND ((s.season_number * 1000) + e.episode_number) < :last_watched_absolute_number
-) AS has_earlier_unwatched;
-
-getWatchedEpisodesWithAbsoluteNumbers:
-SELECT
-    season_number,
-    episode_number,
-    (season_number * 1000) + episode_number AS absolute_number,
-    watched_at
-FROM watched_episodes
-WHERE show_id = :show_id
-  AND (:include_specials = 1 OR season_number > 0)
-ORDER BY watched_at ASC;

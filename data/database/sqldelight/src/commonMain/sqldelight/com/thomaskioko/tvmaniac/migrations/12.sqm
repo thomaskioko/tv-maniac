@@ -11,9 +11,7 @@ CREATE TABLE watched_episodes_new (
     watched_at INTEGER NOT NULL,
     trakt_id INTEGER DEFAULT NULL,
     synced_at INTEGER DEFAULT NULL,
-    pending_action TEXT NOT NULL DEFAULT 'UPLOAD'
-        CHECK(pending_action IN ('NOTHING', 'UPLOAD', 'DELETE')),
-    source TEXT DEFAULT 'local',
+    pending_action TEXT NOT NULL,
     FOREIGN KEY(show_id) REFERENCES tvshow(id) ON DELETE CASCADE,
     FOREIGN KEY(episode_id) REFERENCES episode(id) ON DELETE CASCADE,
     UNIQUE(show_id, season_number, episode_number)
@@ -21,13 +19,12 @@ CREATE TABLE watched_episodes_new (
 
 INSERT INTO watched_episodes_new (
     id, show_id, episode_id, season_number, episode_number, watched_at,
-    trakt_id, synced_at, pending_action, source
+    trakt_id, synced_at, pending_action
 )
 SELECT
     id, show_id, episode_id, season_number, episode_number, watched_at,
     trakt_id, synced_at,
-    CASE WHEN sync_status = 'synced' THEN 'NOTHING' ELSE 'UPLOAD' END,
-    source
+    CASE WHEN sync_status = 'synced' THEN 'NOTHING' ELSE 'UPLOAD' END
 FROM watched_episodes;
 
 DROP TABLE watched_episodes;

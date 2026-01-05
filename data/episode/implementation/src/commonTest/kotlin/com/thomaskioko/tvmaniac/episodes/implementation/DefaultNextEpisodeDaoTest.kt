@@ -277,6 +277,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             season_number = seasonNumber,
             episode_number = episodeNumber,
             watched_at = watchedAt,
+            pending_action = "NOTHING",
         )
     }
 

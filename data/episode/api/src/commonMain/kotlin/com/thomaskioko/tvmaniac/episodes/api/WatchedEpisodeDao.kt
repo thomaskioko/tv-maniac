@@ -78,13 +78,6 @@ public interface WatchedEpisodeDao {
         includeSpecials: Boolean,
     )
 
-    public suspend fun getUnwatchedEpisodesBefore(
-        showId: Long,
-        seasonNumber: Long,
-        episodeNumber: Long,
-        includeSpecials: Boolean,
-    ): List<UnwatchedEpisode>
-
     public suspend fun getEpisodesForSeason(
         showId: Long,
         seasonNumber: Long,
@@ -98,32 +91,17 @@ public interface WatchedEpisodeDao {
         includeSpecials: Boolean,
     ): Long
 
-    public fun observeUnwatchedCountBefore(
-        showId: Long,
-        seasonNumber: Long,
-        episodeNumber: Long,
-        includeSpecials: Boolean,
-    ): Flow<Int>
-
     public fun observeUnwatchedCountInPreviousSeasons(
         showId: Long,
         seasonNumber: Long,
         includeSpecials: Boolean,
     ): Flow<Long>
 
-    public suspend fun entriesWithUploadPendingAction(): List<Watched_episodes>
-
-    public suspend fun entriesWithDeletePendingAction(): List<Watched_episodes>
-
-    public suspend fun entriesForShowWithNoPendingAction(showId: Long): List<Watched_episodes>
+    public suspend fun entriesByPendingAction(action: PendingAction): List<Watched_episodes>
 
     public suspend fun updatePendingAction(id: Long, action: PendingAction)
 
-    public suspend fun getEntryByShowAndEpisode(showId: Long, episodeId: Long): Watched_episodes?
-
-    public suspend fun hardDeleteById(id: Long)
-
-    public fun observePendingSyncCount(): Flow<Long>
+    public suspend fun deleteById(id: Long)
 
     public suspend fun upsertFromTrakt(
         showId: Long,
@@ -133,6 +111,7 @@ public interface WatchedEpisodeDao {
         watchedAt: Long,
         traktId: Long,
         syncedAt: Long,
+        pendingAction: String,
         includeSpecials: Boolean,
     )
 

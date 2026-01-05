@@ -61,37 +61,6 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should return only skipped episodes when watching out of order`() = runTest {
-        val timestamp = Clock.System.now().toEpochMilliseconds()
-        watchedEpisodeDao.markAsWatched(
-            showId = TEST_SHOW_ID,
-            episodeId = 101L,
-            seasonNumber = SEASON_1_NUMBER,
-            episodeNumber = 1L,
-            watchedAt = timestamp,
-            includeSpecials = false,
-        )
-        watchedEpisodeDao.markAsWatched(
-            showId = TEST_SHOW_ID,
-            episodeId = 103L,
-            seasonNumber = SEASON_1_NUMBER,
-            episodeNumber = 3L,
-            watchedAt = timestamp,
-            includeSpecials = false,
-        )
-
-        val unwatched = watchedEpisodeDao.getUnwatchedEpisodesBefore(
-            showId = TEST_SHOW_ID,
-            seasonNumber = SEASON_1_NUMBER,
-            episodeNumber = 5L,
-            includeSpecials = false,
-        )
-
-        unwatched shouldHaveSize 2
-        unwatched.map { it.episodeNumber }.sorted() shouldBe listOf(2L, 4L)
-    }
-
-    @Test
     fun `should count all unwatched episodes in previous seasons`() = runTest {
         val count = watchedEpisodeDao.getUnwatchedEpisodeCountInPreviousSeasons(
             showId = TEST_SHOW_ID,
