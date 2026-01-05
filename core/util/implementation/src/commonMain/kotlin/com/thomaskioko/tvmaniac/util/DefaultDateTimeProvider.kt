@@ -48,6 +48,15 @@ public class DefaultDateTimeProvider : DateTimeProvider {
         return localDate.toString()
     }
 
+    override fun formatDateTime(epochMillis: Long, timeZone: TimeZone): String {
+        val instant = Instant.fromEpochMilliseconds(epochMillis)
+        val localDateTime = instant.toLocalDateTime(timeZone)
+        val date = localDateTime.date
+        val hour = localDateTime.hour.toString().padStart(2, '0')
+        val minute = localDateTime.minute.toString().padStart(2, '0')
+        return "$date $hour:$minute"
+    }
+
     override fun getYear(dateString: String): String {
         if (dateString.isEmpty()) return "--"
         return try {

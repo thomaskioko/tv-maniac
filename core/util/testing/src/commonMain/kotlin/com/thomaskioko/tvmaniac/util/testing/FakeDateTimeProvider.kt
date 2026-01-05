@@ -12,6 +12,7 @@ public class FakeDateTimeProvider(
     private var currentTime: Instant = Clock.System.now(),
 ) : DateTimeProvider {
     public var formatDateResult: String = "2024-01-01"
+    public var formatDateTimeResult: String = "2024-01-01 12:00"
     public var getYearResult: String = "2024"
 
     override fun now(): Instant = currentTime
@@ -21,6 +22,7 @@ public class FakeDateTimeProvider(
         currentTime.toLocalDateTime(timeZone).date.atStartOfDayIn(timeZone)
 
     override fun formatDate(epochMillis: Long, timeZone: TimeZone): String = formatDateResult
+    override fun formatDateTime(epochMillis: Long, timeZone: TimeZone): String = formatDateTimeResult
     override fun getYear(dateString: String): String = getYearResult
 
     public fun setCurrentTime(instant: Instant) {
