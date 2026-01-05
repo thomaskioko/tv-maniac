@@ -4,7 +4,6 @@ import com.thomaskioko.tvmaniac.db.Watched_episodes
 import com.thomaskioko.tvmaniac.episodes.api.model.EpisodeWatchParams
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
-import com.thomaskioko.tvmaniac.episodes.api.model.UnwatchedEpisode
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import kotlinx.coroutines.flow.Flow
 

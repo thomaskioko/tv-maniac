@@ -316,7 +316,7 @@ public class DefaultWatchedEpisodeDao(
                     showId = showId,
                     seasonNumber = seasonNumber,
                     episodeNumber = episodeNumber,
-                    includeSpecials = includeSpecials
+                    includeSpecials = includeSpecials,
                 )
 
                 unwatchedEpisodes.forEach { episode ->
@@ -351,7 +351,7 @@ public class DefaultWatchedEpisodeDao(
                     showId = showId,
                     seasonNumber = seasonNumber,
                     episodeNumber = episodeNumber,
-                    includeSpecials = includeSpecials
+                    includeSpecials = includeSpecials,
                 )
 
                 unwatchedEpisodes.forEach { episode ->
