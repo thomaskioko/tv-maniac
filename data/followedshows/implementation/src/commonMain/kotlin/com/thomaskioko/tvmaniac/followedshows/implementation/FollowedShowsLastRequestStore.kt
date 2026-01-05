@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.followedshows.implementation
 
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.hours
 
 @Inject
 @SingleIn(AppScope::class)
@@ -24,8 +24,8 @@ public class FollowedShowsLastRequestStore(
         !isRequestValid(expiry)
 
     public companion object {
-        private const val REQUEST_TYPE = "FOLLOWED_SHOWS_SYNC"
-        private const val ENTITY_ID = 0L
-        public val DEFAULT_EXPIRY: Duration = 3.hours
+        private val REQUEST_TYPE = RequestTypeConfig.FOLLOWED_SHOWS_SYNC.name
+        private val ENTITY_ID = RequestTypeConfig.FOLLOWED_SHOWS_SYNC.requestId
+        public val DEFAULT_EXPIRY: Duration = RequestTypeConfig.FOLLOWED_SHOWS_SYNC.duration
     }
 }

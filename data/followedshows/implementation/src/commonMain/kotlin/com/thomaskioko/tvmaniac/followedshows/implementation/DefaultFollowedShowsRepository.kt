@@ -44,22 +44,19 @@ public class DefaultFollowedShowsRepository(
         },
     )
 
-    override suspend fun syncFollowedShows() {
+    override suspend fun syncFollowedShows(forceRefresh: Boolean) {
         val authState = traktAuthRepository.state.first()
-        if (authState != TraktAuthState.LOGGED_IN) {
-            logger.debug(TAG, "Skipping sync - not logged in")
-            return
-        }
+        if (authState != TraktAuthState.LOGGED_IN) return
 
-        try {
-            processPendingAdditions()
-            processPendingDeletes()
-            pullRemoteWatchlist()
+        processPendingUploadActions()
+        processPendingDeleteActions()
+
+        if (forceRefresh || lastRequestStore.isRequestExpired()) {
+            fetchRemoteWatchlist()
             lastRequestStore.updateLastRequest()
-            logger.debug(TAG, "Sync completed")
-        } catch (e: Exception) {
-            logger.error("$TAG: Sync failed", e)
-            throw e
+            logger.debug(TAG, "Sync completed (pulled remote)")
+        } else {
+            logger.debug(TAG, "Sync skipped (cache valid)")
         }
     }
 
@@ -107,13 +104,13 @@ public class DefaultFollowedShowsRepository(
     override suspend fun needsSync(expiry: Duration): Boolean =
         lastRequestStore.isRequestExpired(expiry)
 
-    private suspend fun processPendingAdditions() {
+    private suspend fun processPendingUploadActions() {
         val pending = withContext(dispatchers.io) {
             followedShowsDao.entriesWithUploadPendingAction()
         }
         if (pending.isEmpty()) return
 
-        logger.debug(TAG, "Processing ${pending.size} pending additions")
+        logger.debug(TAG, "Processing ${pending.size} pending shows")
 
         dataSource.addShowsToWatchlist(pending.map { it.tmdbId })
 
@@ -126,7 +123,7 @@ public class DefaultFollowedShowsRepository(
         }
     }
 
-    private suspend fun processPendingDeletes() {
+    private suspend fun processPendingDeleteActions() {
         val pending = withContext(dispatchers.io) {
             followedShowsDao.entriesWithDeletePendingAction()
         }
@@ -145,7 +142,7 @@ public class DefaultFollowedShowsRepository(
         }
     }
 
-    private suspend fun pullRemoteWatchlist() {
+    private suspend fun fetchRemoteWatchlist() {
         val remoteEntries = dataSource.getFollowedShows()
 
         withContext(dispatchers.io) {
