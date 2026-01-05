@@ -5,14 +5,12 @@ import com.thomaskioko.tvmaniac.episodes.api.model.EpisodeWatchParams
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.UnwatchedEpisode
-import com.thomaskioko.tvmaniac.episodes.api.model.WatchProgress
+import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import kotlinx.coroutines.flow.Flow
 
 public interface WatchedEpisodeDao {
 
     public fun observeWatchedEpisodes(showId: Long): Flow<List<Watched_episodes>>
-
-    public fun observeWatchProgress(showId: Long): Flow<WatchProgress>
 
     public fun observeSeasonWatchProgress(showId: Long, seasonNumber: Long): Flow<SeasonWatchProgress>
 
@@ -26,11 +24,13 @@ public interface WatchedEpisodeDao {
         seasonNumber: Long,
         episodeNumber: Long,
         watchedAt: Long,
+        includeSpecials: Boolean,
     )
 
     public suspend fun markAsUnwatched(
         showId: Long,
         episodeId: Long,
+        includeSpecials: Boolean,
     )
 
     public suspend fun markSeasonAsWatched(
@@ -38,23 +38,27 @@ public interface WatchedEpisodeDao {
         seasonNumber: Long,
         episodes: List<EpisodeWatchParams>,
         timestamp: Long,
+        includeSpecials: Boolean,
     )
 
     public suspend fun markSeasonAsUnwatched(
         showId: Long,
         seasonNumber: Long,
+        includeSpecials: Boolean,
     )
 
     public suspend fun markPreviousSeasonsAsWatched(
         showId: Long,
         seasonNumber: Long,
         timestamp: Long,
+        includeSpecials: Boolean,
     )
 
     public suspend fun markSeasonAndPreviousAsWatched(
         showId: Long,
         seasonNumber: Long,
         timestamp: Long,
+        includeSpecials: Boolean,
     )
 
     public suspend fun markPreviousEpisodesAsWatched(
@@ -62,6 +66,7 @@ public interface WatchedEpisodeDao {
         seasonNumber: Long,
         episodeNumber: Long,
         timestamp: Long,
+        includeSpecials: Boolean,
     )
 
     public suspend fun markEpisodeAndPreviousAsWatched(
@@ -70,25 +75,14 @@ public interface WatchedEpisodeDao {
         seasonNumber: Long,
         episodeNumber: Long,
         timestamp: Long,
+        includeSpecials: Boolean,
     )
-
-    public suspend fun getLastWatchedEpisode(showId: Long): Watched_episodes?
-
-    public suspend fun getWatchedEpisodesForSeason(
-        showId: Long,
-        seasonNumber: Long,
-    ): List<Watched_episodes>
-
-    public suspend fun isEpisodeWatched(
-        showId: Long,
-        seasonNumber: Long,
-        episodeNumber: Long,
-    ): Boolean
 
     public suspend fun getUnwatchedEpisodesBefore(
         showId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
+        includeSpecials: Boolean,
     ): List<UnwatchedEpisode>
 
     public suspend fun getEpisodesForSeason(
@@ -101,34 +95,46 @@ public interface WatchedEpisodeDao {
     public suspend fun getUnwatchedEpisodeCountInPreviousSeasons(
         showId: Long,
         seasonNumber: Long,
+        includeSpecials: Boolean,
     ): Long
 
     public fun observeUnwatchedCountBefore(
         showId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
+        includeSpecials: Boolean,
     ): Flow<Int>
 
     public fun observeUnwatchedCountInPreviousSeasons(
         showId: Long,
         seasonNumber: Long,
+        includeSpecials: Boolean,
     ): Flow<Long>
 
-    public fun observeUnsyncedEpisodes(): Flow<List<Watched_episodes>>
+    public suspend fun entriesWithUploadPendingAction(): List<Watched_episodes>
 
-    public suspend fun updateSyncStatus(
-        id: Long,
-        status: String,
-        syncedAt: Long,
-    )
+    public suspend fun entriesWithDeletePendingAction(): List<Watched_episodes>
+
+    public suspend fun entriesForShowWithNoPendingAction(showId: Long): List<Watched_episodes>
+
+    public suspend fun updatePendingAction(id: Long, action: PendingAction)
+
+    public suspend fun getEntryByShowAndEpisode(showId: Long, episodeId: Long): Watched_episodes?
+
+    public suspend fun hardDeleteById(id: Long)
+
+    public fun observePendingSyncCount(): Flow<Long>
 
     public suspend fun upsertFromTrakt(
         showId: Long,
-        episodeId: Long,
+        episodeId: Long?,
         seasonNumber: Long,
         episodeNumber: Long,
         watchedAt: Long,
         traktId: Long,
         syncedAt: Long,
+        includeSpecials: Boolean,
     )
+
+    public suspend fun upsert(entry: Watched_episodes, includeSpecials: Boolean)
 }

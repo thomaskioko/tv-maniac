@@ -11,4 +11,10 @@ public interface EpisodesDao {
     public fun delete(id: Long)
 
     public fun deleteAll()
+
+    public suspend fun getEpisodeByShowSeasonEpisodeNumber(
+        showId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+    ): EpisodeCache?
 }
