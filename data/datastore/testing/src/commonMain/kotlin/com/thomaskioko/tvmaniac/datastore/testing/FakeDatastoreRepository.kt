@@ -19,6 +19,8 @@ public class FakeDatastoreRepository : DatastoreRepository {
     private val openTrailersInYoutubeFlow = MutableStateFlow(false)
     private val includeSpecialsFlow = MutableStateFlow(false)
     private val lastTraktUserId: MutableStateFlow<String?> = MutableStateFlow(null)
+    private val backgroundSyncEnabledFlow = MutableStateFlow(true)
+    private val lastSyncTimestampFlow: MutableStateFlow<Long?> = MutableStateFlow(null)
 
     public suspend fun setTheme(appTheme: AppTheme) {
         appThemeFlow.value = appTheme
@@ -72,4 +74,16 @@ public class FakeDatastoreRepository : DatastoreRepository {
     }
 
     override suspend fun getLastTraktUserId(): String? = lastTraktUserId.value
+
+    override suspend fun setBackgroundSyncEnabled(enabled: Boolean) {
+        backgroundSyncEnabledFlow.value = enabled
+    }
+
+    override fun observeBackgroundSyncEnabled(): Flow<Boolean> = backgroundSyncEnabledFlow.asStateFlow()
+
+    override suspend fun setLastSyncTimestamp(timestamp: Long) {
+        lastSyncTimestampFlow.value = timestamp
+    }
+
+    override fun observeLastSyncTimestamp(): Flow<Long?> = lastSyncTimestampFlow.asStateFlow()
 }
