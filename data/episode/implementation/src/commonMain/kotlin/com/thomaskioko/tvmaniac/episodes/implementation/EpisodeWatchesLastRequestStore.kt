@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.followedshows.implementation
+package com.thomaskioko.tvmaniac.episodes.implementation
 
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig
@@ -9,7 +9,7 @@ import kotlin.time.Duration
 
 @Inject
 @SingleIn(AppScope::class)
-public class FollowedShowsLastRequestStore(
+public class EpisodeWatchesLastRequestStore(
     private val requestManagerRepository: RequestManagerRepository,
 ) {
 
@@ -23,9 +23,17 @@ public class FollowedShowsLastRequestStore(
     public fun isRequestExpired(expiry: Duration = DEFAULT_EXPIRY): Boolean =
         !isRequestValid(expiry)
 
-    public companion object {
-        private val REQUEST_TYPE = RequestTypeConfig.FOLLOWED_SHOWS_SYNC.name
-        private val ENTITY_ID = RequestTypeConfig.FOLLOWED_SHOWS_SYNC.requestId
-        public val DEFAULT_EXPIRY: Duration = RequestTypeConfig.FOLLOWED_SHOWS_SYNC.duration
+    public fun isShowRequestExpired(showId: Long, expiry: Duration = DEFAULT_EXPIRY): Boolean =
+        requestManagerRepository.isRequestExpired(showId, SHOW_REQUEST_TYPE, expiry)
+
+    public fun updateShowLastRequest(showId: Long) {
+        requestManagerRepository.upsert(showId, SHOW_REQUEST_TYPE)
+    }
+
+    private companion object {
+        const val SHOW_REQUEST_TYPE = "SHOW_EPISODE_WATCHES_SYNC"
+        val REQUEST_TYPE = RequestTypeConfig.EPISODE_WATCHES_SYNC.name
+        val ENTITY_ID = RequestTypeConfig.EPISODE_WATCHES_SYNC.requestId
+        val DEFAULT_EXPIRY: Duration = RequestTypeConfig.EPISODE_WATCHES_SYNC.duration
     }
 }

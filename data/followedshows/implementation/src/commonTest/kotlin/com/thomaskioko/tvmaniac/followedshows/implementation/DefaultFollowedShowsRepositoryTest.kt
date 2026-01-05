@@ -241,6 +241,7 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
     @Test
     fun `should pull remote watchlist during sync`() = runTest {
         fakeAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        fakeRequestManagerRepository.requestValid = false
         fakeDataSource.followedShows = listOf(
             FollowedShowEntry(
                 tmdbId = 1L,
@@ -268,6 +269,7 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
     @Test
     fun `should sync remote additions and deletions`() = runTest {
         fakeAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        fakeRequestManagerRepository.requestValid = false
         val _ = dao.upsert(
             FollowedShowEntry(
                 tmdbId = 1L,
@@ -310,6 +312,7 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
     @Test
     fun `should preserve pending upload entries after sync processes them`() = runTest {
         fakeAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        fakeRequestManagerRepository.requestValid = false
         val _ = dao.upsert(
             FollowedShowEntry(
                 tmdbId = 1L,

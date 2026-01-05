@@ -6,12 +6,8 @@ import kotlinx.coroutines.flow.Flow
 public interface NextEpisodeDao {
 
     /**
-     * Observe the next episode for a specific show using the shows_next_to_watch view.
+     * Observe next episodes for all shows in the watchlist.
+     * @param includeSpecials Whether to include specials (Season 0) in the calculation
      */
-    public fun observeNextEpisode(showId: Long): Flow<NextEpisodeWithShow?>
-
-    /**
-     * Observe next episodes for all shows in the watchlist using the shows_next_to_watch view.
-     */
-    public fun observeNextEpisodesForWatchlist(): Flow<List<NextEpisodeWithShow>>
+    public fun observeNextEpisodesForWatchlist(includeSpecials: Boolean): Flow<List<NextEpisodeWithShow>>
 }

@@ -14,6 +14,8 @@ public interface SeasonsDao {
 
     public fun observeSeasonsByShowId(id: Long, includeSpecials: Boolean = true): Flow<List<ShowSeasons>>
 
+    public suspend fun getSeasonByShowAndNumber(showId: Long, seasonNumber: Long): Season?
+
     public fun delete(id: Long)
 
     public fun deleteAll()

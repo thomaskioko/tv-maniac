@@ -17,7 +17,8 @@ public class FakeFollowedShowsRepository : FollowedShowsRepository {
     public val removedShowIds: List<Long> get() = _removedShowIds
     public var needsSyncResult: Boolean = true
 
-    override suspend fun syncFollowedShows() { }
+    override suspend fun syncFollowedShows(forceRefresh: Boolean) {
+    }
 
     override fun observeFollowedShows(): Flow<List<FollowedShowEntry>> = entries
 
@@ -36,15 +37,9 @@ public class FakeFollowedShowsRepository : FollowedShowsRepository {
         entries.value = entries.value.filter { it.tmdbId != tmdbId }
     }
 
-    override suspend fun needsSync(expiry: Duration): Boolean = needsSyncResult
+    override suspend fun needsSync(expiry: Duration): Boolean = false
 
     public fun setEntries(newEntries: List<FollowedShowEntry>) {
         entries.value = newEntries
-    }
-
-    public fun reset() {
-        _addedShowIds.clear()
-        _removedShowIds.clear()
-        entries.value = emptyList()
     }
 }

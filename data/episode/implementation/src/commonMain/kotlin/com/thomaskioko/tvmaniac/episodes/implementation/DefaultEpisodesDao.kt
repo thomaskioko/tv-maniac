@@ -1,8 +1,10 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
+import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
+import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
@@ -14,6 +16,7 @@ import com.thomaskioko.tvmaniac.db.Episode as EpisodeCache
 @ContributesBinding(AppScope::class)
 public class DefaultEpisodesDao(
     private val database: TvManiacDatabase,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : EpisodesDao {
 
     private val episodeQueries
@@ -48,5 +51,17 @@ public class DefaultEpisodesDao(
 
     override fun deleteAll() {
         database.transaction { episodeQueries.deleteAll() }
+    }
+
+    override suspend fun getEpisodeByShowSeasonEpisodeNumber(
+        showId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+    ): EpisodeCache? = withContext(dispatchers.databaseRead) {
+        episodeQueries.getEpisodeByShowSeasonEpisodeNumber(
+            showId = Id(showId),
+            seasonNumber = seasonNumber,
+            episodeNumber = episodeNumber,
+        ).executeAsOneOrNull()
     }
 }

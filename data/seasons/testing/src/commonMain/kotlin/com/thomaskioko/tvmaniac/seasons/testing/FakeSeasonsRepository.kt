@@ -14,5 +14,5 @@ public class FakeSeasonsRepository : SeasonsRepository {
         seasonsResult.emit(result)
     }
 
-    override fun observeSeasonsByShowId(id: Long, includeSpecials: Boolean): Flow<List<ShowSeasons>> = seasonsResult.asStateFlow()
+    override fun observeSeasonsByShowId(id: Long): Flow<List<ShowSeasons>> = seasonsResult.asStateFlow()
 }

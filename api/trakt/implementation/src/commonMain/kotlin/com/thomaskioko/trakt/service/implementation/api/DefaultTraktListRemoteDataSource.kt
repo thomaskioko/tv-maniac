@@ -78,7 +78,7 @@ public class DefaultTraktListRemoteDataSource(
             contentType(ContentType.Application.Json)
             setBody(
                 TraktAddShowRequest(
-                    shows = listOf(TraktShow(ids = TraktShowIds(tmdbId = tmdbId.toInt()))),
+                    shows = listOf(TraktShow(ids = TraktShowIds(tmdbId = tmdbId))),
                 ),
             )
         }
@@ -94,7 +94,7 @@ public class DefaultTraktListRemoteDataSource(
             contentType(ContentType.Application.Json)
             setBody(
                 TraktAddShowRequest(
-                    shows = listOf(TraktShow(ids = TraktShowIds(tmdbId = tmdbId.toInt()))),
+                    shows = listOf(TraktShow(ids = TraktShowIds(tmdbId = tmdbId))),
                 ),
             )
         }
@@ -113,7 +113,7 @@ public class DefaultTraktListRemoteDataSource(
                             TraktShow(
                                 ids =
                                 TraktShowIds(
-                                    traktId = traktShowId.toInt(),
+                                    traktId = traktShowId,
                                 ),
                             ),
                         ),

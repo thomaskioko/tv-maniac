@@ -15,6 +15,7 @@ kotlin {
                 api(libs.coroutines.core)
 
                 implementation(projects.api.tmdb.api)
+                implementation(projects.api.trakt.api)
                 implementation(projects.core.base)
                 implementation(projects.core.logger.api)
                 implementation(projects.core.networkUtil)
@@ -22,9 +23,11 @@ kotlin {
                 implementation(projects.data.database.sqldelight)
                 implementation(projects.data.datastore.api)
                 implementation(projects.data.episode.api)
+                implementation(projects.data.followedshows.api)
                 implementation(projects.data.requestManager.api)
                 implementation(projects.data.seasons.api)
                 implementation(projects.data.seasondetails.api)
+                implementation(projects.data.traktauth.api)
                 implementation(projects.data.watchlist.api)
 
                 implementation(libs.kotlinx.datetime)
@@ -39,6 +42,7 @@ kotlin {
                 implementation(projects.core.util.testing)
                 implementation(projects.data.database.testing)
                 implementation(projects.data.datastore.testing)
+                implementation(projects.data.episode.testing)
                 implementation(projects.data.seasons.testing)
                 implementation(projects.data.seasondetails.testing)
                 implementation(projects.i18n.testing)

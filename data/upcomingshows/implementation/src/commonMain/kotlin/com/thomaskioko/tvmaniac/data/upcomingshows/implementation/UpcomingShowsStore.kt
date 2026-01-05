@@ -39,27 +39,10 @@ public class UpcomingShowsStore(
             page = params.page,
             firstAirDate = params.startDate,
             lastAirDate = params.endDate,
-        ).also {
-            // Update timestamp BEFORE writing to database to ensure reader validation sees fresh timestamp
-            requestManagerRepository.upsert(
-                entityId = UPCOMING_SHOWS.requestId,
-                requestType = UPCOMING_SHOWS.name,
-            )
-        }
+        )
     },
     sourceOfTruth = SourceOfTruth.of(
-        reader = { param ->
-            upcomingShowsDao.observeUpcomingShows(param.page).map { shows ->
-                when {
-                    shows.isEmpty() -> null // No data, force fetch
-                    !requestManagerRepository.isRequestValid(
-                        requestType = UPCOMING_SHOWS.name,
-                        threshold = UPCOMING_SHOWS.duration,
-                    ) -> null // Stale data, force fetch
-                    else -> shows // Return show data directly from upcoming_shows table - completely stable!
-                }
-            }
-        },
+        reader = { param -> upcomingShowsDao.observeUpcomingShows(param.page) },
         writer = { _: UpcomingParams, upcomingShows: TmdbShowResult ->
             databaseTransactionRunner {
                 // Store show data directly in upcoming_shows table for complete stability
@@ -94,6 +77,10 @@ public class UpcomingShowsStore(
                 // Clear existing entries for page 1 to maintain consistency
                 if (upcomingShows.page == 1) {
                     upcomingShowsDao.deleteUpcomingShows()
+                    requestManagerRepository.upsert(
+                        entityId = UPCOMING_SHOWS.requestId,
+                        requestType = UPCOMING_SHOWS.name,
+                    )
                 }
 
                 // Insert the new entries

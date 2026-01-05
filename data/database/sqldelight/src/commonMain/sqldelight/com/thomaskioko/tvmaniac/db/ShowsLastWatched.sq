@@ -1,37 +1,25 @@
 CREATE VIEW shows_last_watched AS
 SELECT
-    sm.show_id,
-    s.id AS season_id,
-    sm.last_watched_episode_id AS episode_id,
-    (1000 * sm.last_watched_season_number) + sm.last_watched_episode_number AS last_watched_abs_number,
-    sm.last_watched_season_number AS last_watched_season,
-    sm.last_watched_episode_number AS last_watched_episode,
-    sm.last_watched_at
-FROM show_metadata sm
-INNER JOIN season s ON s.show_id = sm.show_id AND s.season_number = sm.last_watched_season_number
-WHERE sm.last_watched_episode_id IS NOT NULL;
+    tvshow.id AS show_id,
+    MAX((1000 * season.season_number) + episode.episode_number) AS last_watched_abs_number,
+    MAX(watched_episode.watched_at) AS last_watched_at
+FROM tvshow
+INNER JOIN season ON tvshow.id = season.show_id
+INNER JOIN episode ON episode.season_id = season.id AND episode.show_id = tvshow.id
+INNER JOIN watched_episodes AS watched_episode ON watched_episode.show_id = tvshow.id AND watched_episode.episode_id = episode.id
+WHERE season.season_number > 0 OR season.title != 'Specials'
+GROUP BY tvshow.id;
 
--- Get last watched episode for a specific show
 lastWatchedEpisodeForShow:
 SELECT
-    show_id,
-    season_id,
-    episode_id,
-    last_watched_abs_number,
-    last_watched_season,
-    last_watched_episode,
-    last_watched_at
-FROM shows_last_watched
-WHERE show_id = ?;
-
--- Get last watched episodes for all followed shows
-lastWatchedEpisodesForWatchlist:
-SELECT
-    lw.*,
-    t.name AS show_name,
-    t.poster_path AS show_poster
-FROM shows_last_watched lw
-INNER JOIN tvshow t ON lw.show_id = t.id
-INNER JOIN followed_shows fs ON lw.show_id = fs.tmdb_id
-WHERE fs.pending_action != 'DELETE'
-ORDER BY lw.last_watched_at DESC;
+    last_watched.show_id,
+    episode.id AS episode_id,
+    season.season_number AS last_watched_season,
+    episode.episode_number AS last_watched_episode,
+    last_watched.last_watched_at
+FROM shows_last_watched AS last_watched
+INNER JOIN season ON season.show_id = last_watched.show_id
+INNER JOIN episode ON episode.season_id = season.id AND episode.show_id = last_watched.show_id
+WHERE last_watched.show_id = ?
+  AND ((1000 * season.season_number) + episode.episode_number) = last_watched.last_watched_abs_number
+LIMIT 1;

@@ -41,6 +41,7 @@ kotlin {
                 implementation(projects.core.logger.testing)
                 implementation(projects.core.util.testing)
                 implementation(projects.data.cast.testing)
+                implementation(projects.data.datastore.testing)
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.seasondetails.testing)
                 implementation(projects.data.followedshows.testing)
@@ -49,6 +50,7 @@ kotlin {
                 implementation(projects.data.showdetails.testing)
                 implementation(projects.data.similar.testing)
                 implementation(projects.data.trailers.testing)
+                implementation(projects.data.traktauth.api)
                 implementation(projects.data.watchproviders.testing)
 
                 implementation(libs.bundles.unittest)

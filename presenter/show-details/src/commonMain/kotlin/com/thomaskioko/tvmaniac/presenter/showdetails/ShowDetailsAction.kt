@@ -22,7 +22,7 @@ public data class DetailShowClicked(val id: Long) : ShowDetailsAction
 
 public data class WatchTrailerClicked(val id: Long) : ShowDetailsAction
 
-public data class FollowShowClicked(val addToLibrary: Boolean) : ShowDetailsAction
+public data class FollowShowClicked(val isInLibrary: Boolean) : ShowDetailsAction
 
 public data class MarkEpisodeWatched(
     val showId: Long,

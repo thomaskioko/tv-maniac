@@ -77,6 +77,11 @@ WHERE
 ORDER BY
     episode.episode_number ASC;
 
+getSeasonByShowAndNumber:
+SELECT * FROM season
+WHERE show_id = :showId AND season_number = :seasonNumber
+LIMIT 1;
+
 delete:
 DELETE FROM season WHERE show_id = ?;
 

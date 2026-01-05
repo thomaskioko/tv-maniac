@@ -120,6 +120,11 @@ private fun List<WatchlistShowInfo>.groupBySections(currentTimeMillis: Long): Wa
     val stale = mutableListOf<WatchlistShowInfo>()
 
     forEach { item ->
+        val allEpisodesWatched = item.totalEpisodesTracked > 0 &&
+            item.episodesWatched >= item.totalEpisodesTracked
+        val isCompleted = item.nextEpisode == null && allEpisodesWatched
+        if (isCompleted) return@forEach
+
         val lastWatched = item.lastWatchedAt ?: 0L
         if (lastWatched in 1..<threeWeeksAgo) {
             stale.add(item)
