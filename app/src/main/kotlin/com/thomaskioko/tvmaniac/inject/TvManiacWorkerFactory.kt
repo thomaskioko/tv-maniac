@@ -1,16 +1,17 @@
-package com.thomaskioko.tvmaniac.traktauth.implementation.task
+package com.thomaskioko.tvmaniac.inject
 
 import android.content.Context
 import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
+import com.thomaskioko.tvmaniac.traktauth.implementation.task.TokenRefreshWorker
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
 @SingleIn(AppScope::class)
-public class TraktAuthWorkerFactory(
+public class TvManiacWorkerFactory(
     private val tokenRefreshWorker: (Context, WorkerParameters) -> TokenRefreshWorker,
 ) : WorkerFactory() {
 
