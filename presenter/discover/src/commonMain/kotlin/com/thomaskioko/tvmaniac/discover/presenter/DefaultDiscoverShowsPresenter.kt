@@ -23,12 +23,16 @@ import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import com.thomaskioko.tvmaniac.shows.api.model.Category
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsInteractor
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
@@ -52,6 +56,7 @@ public class DefaultDiscoverShowsPresenter(
     private val upcomingShowsInteractor: UpcomingShowsInteractor,
     private val genreShowsInteractor: GenreShowsInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
+    private val traktAuthRepository: TraktAuthRepository,
     private val logger: Logger,
     private val coroutineScope: CoroutineScope = componentContext.coroutineScope(),
 ) : DiscoverShowsPresenter, ComponentContext by componentContext {
@@ -124,6 +129,16 @@ public class DefaultDiscoverShowsPresenter(
         public fun init() {
             discoverShowsInteractor(Unit)
             observeShowData()
+            observeAuthState()
+        }
+
+        private fun observeAuthState() {
+            coroutineScope.launch {
+                traktAuthRepository.state
+                    .distinctUntilChanged()
+                    .filter { it == TraktAuthState.LOGGED_IN }
+                    .collect { observeShowData() }
+            }
         }
 
         public fun dispatch(action: DiscoverShowAction) {

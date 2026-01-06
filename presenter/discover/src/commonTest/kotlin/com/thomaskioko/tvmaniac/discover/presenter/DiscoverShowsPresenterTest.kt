@@ -26,6 +26,7 @@ import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepositor
 import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsInteractor
+import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldNotBeSameInstanceAs
@@ -51,6 +52,7 @@ class DiscoverShowsPresenterTest {
     private val genreRepository = FakeGenreRepository()
     private val episodeRepository = FakeEpisodeRepository()
     private val followedShowsRepository = FakeFollowedShowsRepository()
+    private val traktAuthRepository = FakeTraktAuthRepository()
     private val coroutineDispatcher = AppCoroutineDispatchers(
         main = testDispatcher,
         io = testDispatcher,
@@ -309,6 +311,7 @@ class DiscoverShowsPresenterTest {
             markEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(
                 episodeRepository = episodeRepository,
             ),
+            traktAuthRepository = traktAuthRepository,
             logger = FakeLogger(),
         )
 
@@ -435,6 +438,7 @@ class DiscoverShowsPresenterTest {
         markEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(
             episodeRepository = episodeRepository,
         ),
+        traktAuthRepository = traktAuthRepository,
         logger = FakeLogger(),
     ).also { lifecycle.resume() }
 }

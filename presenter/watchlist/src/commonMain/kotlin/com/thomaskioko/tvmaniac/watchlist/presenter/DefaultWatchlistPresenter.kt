@@ -10,14 +10,19 @@ import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
+import com.thomaskioko.tvmaniac.domain.followedshows.FollowedShowsSyncInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.ObserveUpNextSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.ObserveWatchlistSectionsInteractor
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -37,6 +42,8 @@ public class DefaultWatchlistPresenter(
     private val observeWatchlistSectionsInteractor: ObserveWatchlistSectionsInteractor,
     private val observeUpNextSectionsInteractor: ObserveUpNextSectionsInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
+    private val followedShowsSyncInteractor: FollowedShowsSyncInteractor,
+    private val traktAuthRepository: TraktAuthRepository,
     private val dateTimeProvider: DateTimeProvider,
     private val logger: Logger,
 ) : WatchlistPresenter, ComponentContext by componentContext {
@@ -50,6 +57,19 @@ public class DefaultWatchlistPresenter(
     init {
         observeWatchlistSectionsInteractor(queryFlow.value)
         observeUpNextSectionsInteractor(queryFlow.value)
+        observeAuthState()
+    }
+
+    private fun observeAuthState() {
+        coroutineScope.launch {
+            traktAuthRepository.state
+                .distinctUntilChanged()
+                .filter { it == TraktAuthState.LOGGED_IN }
+                .collect {
+                    followedShowsSyncInteractor(FollowedShowsSyncInteractor.Param())
+                        .collectStatus(watchlistLoadingState, logger, uiMessageManager)
+                }
+        }
     }
 
     override val state: StateFlow<WatchlistState> = combine(
