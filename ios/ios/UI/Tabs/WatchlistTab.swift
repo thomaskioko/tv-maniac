@@ -89,7 +89,9 @@ struct WatchlistTab: View {
 
         if uiState.showLoading {
             CenteredFullScreenView {
-                LoadingIndicatorView()
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: theme.colors.accent))
+                    .scaleEffect(1.5)
             }
         } else if uiState.isGridMode {
             if hasNoItems {
