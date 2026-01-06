@@ -49,9 +49,6 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
         startImageQualityObserver()
 
         configureAppearance()
-
-        let quality = SettingsAppStorage.shared.imageQuality
-        print("App initialized with image quality: \(quality.rawValue)")
     }
 
     private func configureImageSystem() {
