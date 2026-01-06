@@ -81,4 +81,4 @@ LEFT JOIN shows_next_to_watch AS next_episode
     ON next_episode.show_id = followed_show.tmdb_id
     AND next_episode.next_ep_abs_number = min_next_episode.min_abs_number
 WHERE followed_show.pending_action != 'DELETE'
-ORDER BY followed_show.followed_at DESC, next_episode.season_number, next_episode.episode_number;
+ORDER BY COALESCE(next_episode.last_watched_at, followed_show.followed_at) DESC, next_episode.season_number, next_episode.episode_number;
