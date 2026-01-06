@@ -13,6 +13,9 @@ public data class SettingsState(
     val showLogoutDialog: Boolean,
     val openTrailersInYoutube: Boolean = false,
     val includeSpecials: Boolean = false,
+    val backgroundSyncEnabled: Boolean = true,
+    val lastSyncDate: String? = null,
+    val showLastSyncDate: Boolean = false,
 ) {
     public companion object {
         public val DEFAULT_STATE: SettingsState = SettingsState(
@@ -25,6 +28,9 @@ public data class SettingsState(
             errorMessage = null,
             showLogoutDialog = false,
             includeSpecials = false,
+            backgroundSyncEnabled = true,
+            lastSyncDate = null,
+            showLastSyncDate = false,
         )
     }
 }
