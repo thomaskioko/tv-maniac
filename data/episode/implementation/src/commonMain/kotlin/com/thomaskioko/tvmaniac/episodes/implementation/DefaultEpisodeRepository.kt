@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.episodes.implementation
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToOneOrNull
+import com.thomaskioko.tvmaniac.core.base.extensions.parallelForEach
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.db.Id
@@ -23,6 +24,8 @@ import com.thomaskioko.tvmaniac.shows.api.WatchlistDao
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
@@ -181,7 +184,8 @@ public class DefaultEpisodeRepository(
         val includeSpecials = datastoreRepository.observeIncludeSpecials().first()
         val seasons = seasonsRepository.observeSeasonsByShowId(showId).first()
         val previousSeasons = seasons.filter { it.season_number in 1..<seasonNumber }
-        previousSeasons.forEach { season ->
+        previousSeasons.parallelForEach { season ->
+            currentCoroutineContext().ensureActive()
             seasonDetailsRepository.fetchSeasonDetails(
                 SeasonDetailsParam(
                     showId = showId,

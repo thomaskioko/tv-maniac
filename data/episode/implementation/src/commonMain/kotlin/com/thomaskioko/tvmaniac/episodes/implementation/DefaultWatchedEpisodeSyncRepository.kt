@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
+import com.thomaskioko.tvmaniac.core.base.extensions.parallelForEach
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeWatchesDataSource
@@ -15,6 +16,8 @@ import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsDao
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.first
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -55,9 +58,6 @@ public class DefaultWatchedEpisodeSyncRepository(
 
             syncShowWatches(showId, traktId)
             lastRequestStore.updateShowLastRequest(showId)
-            logger.debug(TAG, "Show $showId sync completed (pulled remote)")
-        } else {
-            logger.debug(TAG, "Show $showId sync skipped (cache valid)")
         }
     }
 
@@ -124,7 +124,8 @@ public class DefaultWatchedEpisodeSyncRepository(
         logger.debug(TAG, "Found ${remoteWatches.size} remote watches for show $tmdbId")
 
         val uniqueSeasons = remoteWatches.map { it.seasonNumber }.distinct()
-        for (seasonNumber in uniqueSeasons) {
+        uniqueSeasons.parallelForEach { seasonNumber ->
+            currentCoroutineContext().ensureActive()
             ensureSeasonDetailsExist(tmdbId, seasonNumber)
         }
 

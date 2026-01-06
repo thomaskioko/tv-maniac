@@ -2,6 +2,11 @@ plugins {
     alias(libs.plugins.app.kmp)
 }
 
+scaffold {
+    optIn("kotlinx.coroutines.FlowPreview")
+    optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
+}
+
 kotlin {
     sourceSets {
         commonMain {
@@ -20,7 +25,6 @@ kotlin {
                 api(projects.data.watchproviders.api)
 
                 implementation(projects.core.base)
-                implementation(projects.core.logger.api)
                 implementation(projects.core.util.api)
 
                 implementation(libs.coroutines.core)
