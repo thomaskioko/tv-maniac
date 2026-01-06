@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.domain.followedshows
 import com.thomaskioko.tvmaniac.core.base.AppInitializer
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.domain.followedshows.FollowedShowsSyncInteractor.Param
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -28,7 +29,7 @@ public class FollowedShowsSyncInitializer(
                 .filter { it == TraktAuthState.LOGGED_IN }
                 .collect {
                     logger.debug(TAG, "Auth state changed to LOGGED_IN, syncing followed shows...")
-                    followedShowsSyncInteractor.executeSync(Unit)
+                    followedShowsSyncInteractor.executeSync(Param())
                 }
         }
     }
