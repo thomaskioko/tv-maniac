@@ -120,7 +120,7 @@ class ObservableWatchlistInteractorTest {
         val initialWatchlist = createTestWatchlist()
         val updatedWatchlist = createTestWatchlist().plus(
             FollowedShows(
-                id = Id(999),
+                show_id = Id(999),
                 name = "New Show",
                 poster_path = "/new_poster.jpg",
                 status = "Ongoing",
@@ -184,7 +184,7 @@ class ObservableWatchlistInteractorTest {
 
     private fun createTestWatchlist() = listOf(
         FollowedShows(
-            id = Id(84958),
+            show_id = Id(84958),
             name = "Loki",
             poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
             status = "Ended",
@@ -196,7 +196,7 @@ class ObservableWatchlistInteractorTest {
             total_episode_count = 10,
         ),
         FollowedShows(
-            id = Id(1232),
+            show_id = Id(1232),
             name = "The Lazarus Project",
             poster_path = "/lazarus_poster.jpg",
             status = "Ongoing",

@@ -7,7 +7,7 @@ import kotlinx.collections.immutable.toPersistentList
 
 val cachedResult = mutableListOf(
     FollowedShows(
-        id = Id(84958),
+        show_id = Id(84958),
         name = "Loki",
         poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         status = "Ended",
@@ -22,7 +22,7 @@ val cachedResult = mutableListOf(
 
 val updatedData = listOf(
     FollowedShows(
-        id = Id(84958),
+        show_id = Id(84958),
         name = "Loki",
         poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         status = "Ended",
@@ -34,7 +34,7 @@ val updatedData = listOf(
         total_episode_count = 0,
     ),
     FollowedShows(
-        id = Id(1232),
+        show_id = Id(1232),
         name = "The Lazarus Project",
         poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         status = "Ended",

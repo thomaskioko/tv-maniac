@@ -130,7 +130,7 @@ class ObserveUpNextSectionsInteractorTest {
     fun `should calculate remaining episodes from watchlist`() = runTest {
         val watchlist = listOf(
             FollowedShows(
-                id = Id(1),
+                show_id = Id(1),
                 name = "Loki",
                 poster_path = "/poster.jpg",
                 status = "Ongoing",
@@ -220,7 +220,7 @@ class ObserveUpNextSectionsInteractorTest {
 
     private fun createWatchlist() = listOf(
         FollowedShows(
-            id = Id(1),
+            show_id = Id(1),
             name = "Loki",
             poster_path = "/poster.jpg",
             status = "Ended",
@@ -232,7 +232,7 @@ class ObserveUpNextSectionsInteractorTest {
             total_episode_count = 10,
         ),
         FollowedShows(
-            id = Id(2),
+            show_id = Id(2),
             name = "Wednesday",
             poster_path = "/poster2.jpg",
             status = "Ongoing",

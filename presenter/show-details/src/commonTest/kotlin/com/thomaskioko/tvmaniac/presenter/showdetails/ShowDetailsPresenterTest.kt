@@ -11,10 +11,10 @@ import com.thomaskioko.tvmaniac.data.recommendedshows.testing.FakeRecommendedSho
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.db.RecommendedShows
+import com.thomaskioko.tvmaniac.db.SelectByShowId
 import com.thomaskioko.tvmaniac.db.ShowCast
 import com.thomaskioko.tvmaniac.db.ShowSeasons
 import com.thomaskioko.tvmaniac.db.SimilarShows
-import com.thomaskioko.tvmaniac.db.Trailers
 import com.thomaskioko.tvmaniac.db.TvshowDetails
 import com.thomaskioko.tvmaniac.db.WatchProviders
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
@@ -507,7 +507,7 @@ class ShowDetailsPresenterTest {
         watchProviderResult: List<WatchProviders> = emptyList(),
         similarShowResult: List<SimilarShows> = emptyList(),
         recommendedShowResult: List<RecommendedShows> = emptyList(),
-        trailersResult: List<Trailers> = emptyList(),
+        trailersResult: List<SelectByShowId> = emptyList(),
     ) {
         showDetailsRepository.setShowDetailsResult(showDetailResult)
         trailerRepository.setYoutubePlayerInstalled(isYoutubeInstalled)

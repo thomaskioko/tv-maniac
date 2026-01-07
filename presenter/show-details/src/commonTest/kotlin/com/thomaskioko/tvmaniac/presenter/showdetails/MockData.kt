@@ -34,7 +34,7 @@ val showDetailsContent = ShowDetailsContent(
 
 val similarShowList = listOf(
     SimilarShows(
-        id = Id(184958),
+        tmdb_id = Id(184958),
         name = "Loki",
         poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         backdrop_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
@@ -53,7 +53,7 @@ val seasons = listOf(
 )
 
 val tvShowDetails = TvshowDetails(
-    id = Id(849583),
+    show_id = Id(849583),
     name = "Loki",
     overview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
     language = "en",
@@ -71,7 +71,7 @@ val tvShowDetails = TvshowDetails(
 
 val recommendedShowList = listOf(
     RecommendedShows(
-        id = Id(184958),
+        tmdb_id = Id(184958),
         name = "Loki",
         poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         backdrop_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
@@ -82,7 +82,7 @@ val recommendedShowList = listOf(
 
 val watchProviderList = listOf(
     WatchProviders(
-        id = Id(184958),
+        provider_id = Id(184958),
         name = "Netflix",
         logo_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         tmdb_id = Id(18495),
