@@ -15,8 +15,6 @@ import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 import kotlin.time.Instant
-import com.thomaskioko.tvmaniac.db.Followed_shows as DbFollowedShow
-
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
@@ -31,38 +29,38 @@ public class DefaultFollowedShowsDao(
     override fun entries(): List<FollowedShowEntry> {
         return queries.entries()
             .executeAsList()
-            .map { it.toEntry() }
+            .map { toEntry(it.followed_id, it.tmdb_id, it.followed_at, it.pending_action, it.trakt_id) }
     }
 
     override fun entriesObservable(): Flow<List<FollowedShowEntry>> {
         return queries.entries()
             .asFlow()
             .mapToList(dispatchers.io)
-            .map { list -> list.map { it.toEntry() } }
+            .map { list -> list.map { toEntry(it.followed_id, it.tmdb_id, it.followed_at, it.pending_action, it.trakt_id) } }
     }
 
     override fun entryWithTmdbId(tmdbId: Long): FollowedShowEntry? {
         return queries.entryWithTmdbId(tmdbId)
             .executeAsOneOrNull()
-            ?.toEntry()
+            ?.let { toEntry(it.followed_id, it.tmdb_id, it.followed_at, it.pending_action, it.trakt_id) }
     }
 
     override fun entriesWithNoPendingAction(): List<FollowedShowEntry> {
         return queries.entriesWithNoPendingAction()
             .executeAsList()
-            .map { it.toEntry() }
+            .map { toEntry(it.followed_id, it.tmdb_id, it.followed_at, it.pending_action, it.trakt_id) }
     }
 
     override fun entriesWithUploadPendingAction(): List<FollowedShowEntry> {
         return queries.entriesWithUploadPendingAction()
             .executeAsList()
-            .map { it.toEntry() }
+            .map { toEntry(it.followed_id, it.tmdb_id, it.followed_at, it.pending_action, it.trakt_id) }
     }
 
     override fun entriesWithDeletePendingAction(): List<FollowedShowEntry> {
         return queries.entriesWithDeletePendingAction()
             .executeAsList()
-            .map { it.toEntry() }
+            .map { toEntry(it.followed_id, it.tmdb_id, it.followed_at, it.pending_action, it.trakt_id) }
     }
 
     override fun upsert(entry: FollowedShowEntry): Long {
@@ -73,7 +71,7 @@ public class DefaultFollowedShowsDao(
             pendingAction = entry.pendingAction.value,
             traktId = entry.traktId,
         )
-        return queries.entryWithTmdbId(entry.tmdbId).executeAsOneOrNull()?.id ?: 0
+        return queries.entryWithTmdbId(entry.tmdbId).executeAsOneOrNull()?.followed_id ?: 0
     }
 
     override fun updatePendingAction(id: Long, action: PendingAction) {
@@ -88,11 +86,17 @@ public class DefaultFollowedShowsDao(
         val _ = queries.deleteByTmdbId(tmdbId)
     }
 
-    private fun DbFollowedShow.toEntry(): FollowedShowEntry = FollowedShowEntry(
-        id = id,
-        tmdbId = tmdb_id,
-        followedAt = Instant.fromEpochMilliseconds(followed_at),
-        pendingAction = PendingAction.fromValue(pending_action),
-        traktId = trakt_id,
+    private fun toEntry(
+        followedId: Long,
+        tmdbId: Long,
+        followedAt: Long,
+        pendingAction: String,
+        traktId: Long?,
+    ): FollowedShowEntry = FollowedShowEntry(
+        id = followedId,
+        tmdbId = tmdbId,
+        followedAt = Instant.fromEpochMilliseconds(followedAt),
+        pendingAction = PendingAction.fromValue(pendingAction),
+        traktId = traktId,
     )
 }

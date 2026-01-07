@@ -64,9 +64,9 @@ private fun FollowedShows.toWatchlistShowInfo(nextEpisodeMap: Map<Long, NextEpis
     val watched = watched_count
     val total = total_episode_count
     val progress = if (total > 0) watched.toFloat() / total else 0f
-    val nextEp = nextEpisodeMap[id.id]
+    val nextEp = nextEpisodeMap[show_id.id]
     return WatchlistShowInfo(
-        tmdbId = id.id,
+        tmdbId = show_id.id,
         title = name,
         posterImageUrl = poster_path,
         status = status,
@@ -85,9 +85,9 @@ private fun SearchFollowedShows.toWatchlistShowInfo(nextEpisodeMap: Map<Long, Ne
     val watched = watched_count
     val total = total_episode_count
     val progress = if (total > 0) watched.toFloat() / total else 0f
-    val nextEp = nextEpisodeMap[id.id]
+    val nextEp = nextEpisodeMap[show_id.id]
     return WatchlistShowInfo(
-        tmdbId = id.id,
+        tmdbId = show_id.id,
         title = name,
         posterImageUrl = poster_path,
         status = status,

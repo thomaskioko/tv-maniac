@@ -22,7 +22,7 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
 
         val queryResult = episodeQueries.episodeDetails(Id(2534997)).executeAsOne()
 
-        queryResult.id.id shouldBe entity.id.id
+        queryResult.episode_id.id shouldBe entity.id.id
         queryResult.season_id shouldBe entity.season_id
         queryResult.title shouldBe entity.title
         queryResult.overview shouldBe entity.overview

@@ -1,10 +1,10 @@
 package com.thomaskioko.tvmaniac.domain.showdetails
 
 import com.thomaskioko.tvmaniac.db.RecommendedShows
+import com.thomaskioko.tvmaniac.db.SelectByShowId
 import com.thomaskioko.tvmaniac.db.ShowCast
 import com.thomaskioko.tvmaniac.db.ShowSeasons
 import com.thomaskioko.tvmaniac.db.SimilarShows
-import com.thomaskioko.tvmaniac.db.Trailers
 import com.thomaskioko.tvmaniac.db.WatchProviders
 import com.thomaskioko.tvmaniac.domain.showdetails.model.Casts
 import com.thomaskioko.tvmaniac.domain.showdetails.model.Providers
@@ -16,7 +16,7 @@ import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 internal fun List<ShowCast>.toCastList(): List<Casts> =
     map {
         Casts(
-            id = it.id.id,
+            id = it.cast_id.id,
             name = it.name,
             profileUrl = it.profile_path,
             characterName = it.character_name,
@@ -26,7 +26,7 @@ internal fun List<ShowCast>.toCastList(): List<Casts> =
 internal fun List<SimilarShows>.toSimilarShowList(): List<Show> =
     map {
         Show(
-            tmdbId = it.id.id,
+            tmdbId = it.tmdb_id.id,
             title = it.name,
             posterImageUrl = it.poster_path,
             backdropImageUrl = it.backdrop_path,
@@ -37,7 +37,7 @@ internal fun List<SimilarShows>.toSimilarShowList(): List<Show> =
 internal fun List<RecommendedShows>.toRecommendedShowList(): List<Show> =
     map {
         Show(
-            tmdbId = it.id.id,
+            tmdbId = it.tmdb_id.id,
             title = it.name,
             posterImageUrl = it.poster_path,
             backdropImageUrl = it.backdrop_path,
@@ -48,7 +48,7 @@ internal fun List<RecommendedShows>.toRecommendedShowList(): List<Show> =
 internal fun List<WatchProviders>.toWatchProviderList(): List<Providers> =
     map {
         Providers(
-            id = it.id.id,
+            id = it.provider_id.id,
             name = it.name ?: "",
             logoUrl = it.logo_path,
         )
@@ -69,7 +69,7 @@ internal fun List<ShowSeasons>.toSeasonsList(
         )
     }
 
-internal fun List<Trailers>.toTrailerList(): List<Trailer> =
+internal fun List<SelectByShowId>.toTrailerList(): List<Trailer> =
     map {
         Trailer(
             showId = it.show_id.id,

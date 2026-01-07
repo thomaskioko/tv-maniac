@@ -55,7 +55,7 @@ internal fun expectedUiResult(
         val total = it.total_episode_count
         val progress = if (total > 0) watched.toFloat() / total else 0f
         WatchlistItem(
-            tmdbId = it.id.id,
+            tmdbId = it.show_id.id,
             title = it.name,
             posterImageUrl = it.poster_path,
             status = it.status,

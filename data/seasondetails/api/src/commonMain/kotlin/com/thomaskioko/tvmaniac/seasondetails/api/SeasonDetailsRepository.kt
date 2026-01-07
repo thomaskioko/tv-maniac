@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.seasondetails.api
 
-import com.thomaskioko.tvmaniac.db.Season_images
+import com.thomaskioko.tvmaniac.db.SeasonImages
 import com.thomaskioko.tvmaniac.seasondetails.api.model.SeasonDetailsWithEpisodes
 import kotlinx.coroutines.flow.Flow
 
@@ -14,5 +14,5 @@ public interface SeasonDetailsRepository {
         param: SeasonDetailsParam,
     ): Flow<SeasonDetailsWithEpisodes?>
 
-    public fun observeSeasonImages(id: Long): Flow<List<Season_images>>
+    public fun observeSeasonImages(id: Long): Flow<List<SeasonImages>>
 }

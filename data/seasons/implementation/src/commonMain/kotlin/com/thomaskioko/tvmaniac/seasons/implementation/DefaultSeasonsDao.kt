@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.seasons.implementation
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.db.GetSeasonByShowAndNumber
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.Season
 import com.thomaskioko.tvmaniac.db.ShowSeasons
@@ -57,7 +58,7 @@ public class DefaultSeasonsDao(
             includeSpecials = if (includeSpecials) 1L else 0L,
         ).executeAsList()
 
-    override suspend fun getSeasonByShowAndNumber(showId: Long, seasonNumber: Long): Season? =
+    override suspend fun getSeasonByShowAndNumber(showId: Long, seasonNumber: Long): GetSeasonByShowAndNumber? =
         withContext(dispatcher.databaseRead) {
             seasonQueries.getSeasonByShowAndNumber(
                 showId = Id(showId),
