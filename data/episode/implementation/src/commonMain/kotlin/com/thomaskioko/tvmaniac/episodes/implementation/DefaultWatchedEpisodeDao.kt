@@ -3,7 +3,9 @@ package com.thomaskioko.tvmaniac.episodes.implementation
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.db.GetEntriesByPendingAction
 import com.thomaskioko.tvmaniac.db.GetPreviousUnwatchedEpisodes
+import com.thomaskioko.tvmaniac.db.GetWatchedEpisodes
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.db.Watched_episodes
@@ -30,7 +32,7 @@ public class DefaultWatchedEpisodeDao(
     private val dispatchers: AppCoroutineDispatchers,
 ) : WatchedEpisodeDao {
 
-    override fun observeWatchedEpisodes(showId: Long): Flow<List<Watched_episodes>> {
+    override fun observeWatchedEpisodes(showId: Long): Flow<List<GetWatchedEpisodes>> {
         return database.watchedEpisodesQueries
             .getWatchedEpisodes(Id(showId))
             .asFlow()
@@ -452,7 +454,7 @@ public class DefaultWatchedEpisodeDao(
             .catch { emit(0L) }
     }
 
-    override suspend fun entriesByPendingAction(action: PendingAction): List<Watched_episodes> {
+    override suspend fun entriesByPendingAction(action: PendingAction): List<GetEntriesByPendingAction> {
         return withContext(dispatchers.databaseRead) {
             database.watchedEpisodesQueries
                 .getEntriesByPendingAction(action.value)

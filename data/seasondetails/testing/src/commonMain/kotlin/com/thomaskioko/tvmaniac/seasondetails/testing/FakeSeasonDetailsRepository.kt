@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.seasondetails.testing
 
-import com.thomaskioko.tvmaniac.db.Season_images
+import com.thomaskioko.tvmaniac.db.SeasonImages
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.model.SeasonDetailsWithEpisodes
@@ -37,5 +37,5 @@ public class FakeSeasonDetailsRepository : SeasonDetailsRepository {
 
     override fun observeSeasonDetails(param: SeasonDetailsParam): Flow<SeasonDetailsWithEpisodes?> = seasonsResult.asStateFlow()
 
-    override fun observeSeasonImages(id: Long): Flow<List<Season_images>> = flowOf(emptyList())
+    override fun observeSeasonImages(id: Long): Flow<List<SeasonImages>> = flowOf(emptyList())
 }

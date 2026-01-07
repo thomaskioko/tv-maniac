@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.db.GetEpisodeByShowSeasonEpisodeNumber
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
@@ -57,7 +58,7 @@ public class DefaultEpisodesDao(
         showId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
-    ): EpisodeCache? = withContext(dispatchers.databaseRead) {
+    ): GetEpisodeByShowSeasonEpisodeNumber? = withContext(dispatchers.databaseRead) {
         episodeQueries.getEpisodeByShowSeasonEpisodeNumber(
             showId = Id(showId),
             seasonNumber = seasonNumber,

@@ -39,7 +39,7 @@ SELECT count(*) FROM toprated_shows;
 
 entriesInPage:
 SELECT
-    toprated_shows.id,
+    toprated_shows.id AS show_id,
     toprated_shows.page,
     COALESCE(toprated_shows.name, '') AS name,
     toprated_shows.poster_path,
@@ -53,7 +53,7 @@ ORDER BY toprated_shows.page_order ASC;
 
 topRatedShows:
 SELECT
-    toprated_shows.id,
+    toprated_shows.id AS show_id,
     toprated_shows.page,
     tvshow.name,
     tvshow.poster_path,
@@ -69,7 +69,7 @@ ORDER BY
 
 topRatedShowByPage:
 SELECT
-    toprated_shows.id,
+    toprated_shows.id AS show_id,
     toprated_shows.page,
     tvshow.name,
     tvshow.poster_path,
@@ -85,7 +85,7 @@ WHERE
 
 pagedTopRatedShows:
 SELECT
-    toprated_shows.id,
+    toprated_shows.id AS show_id,
     toprated_shows.page,
     tvshow.name,
     tvshow.poster_path,

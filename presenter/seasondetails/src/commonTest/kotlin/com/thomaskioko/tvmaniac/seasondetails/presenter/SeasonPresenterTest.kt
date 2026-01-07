@@ -151,7 +151,7 @@ class SeasonPresenterTest {
         )
         val updatedCast = listOf(
             SeasonCast(
-                id = Id(1L),
+                cast_id = Id(1L),
                 name = "Updated Actor",
                 character_name = "Updated Character",
                 profile_path = "updated_profile_path",

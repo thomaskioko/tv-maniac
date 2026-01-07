@@ -27,7 +27,7 @@ public class ObserveUpNextSectionsInteractor(
         ) { episodes, watchlist ->
             val currentTime = dateTimeProvider.nowMillis()
             val watchlistMap = watchlist.associate {
-                it.id.id to (it.total_episode_count - it.watched_count).toInt()
+                it.show_id.id to (it.total_episode_count - it.watched_count).toInt()
             }
 
             val filteredEpisodes = if (params.isNotBlank()) {

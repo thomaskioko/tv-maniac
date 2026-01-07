@@ -109,7 +109,7 @@ class ObserveWatchlistSectionsInteractorTest {
     fun `should filter watchlist by query using search`() = runTest {
         val searchResults = listOf(
             SearchFollowedShows(
-                id = Id(84958),
+                show_id = Id(84958),
                 name = "Loki",
                 poster_path = "/poster.jpg",
                 status = "Ended",
@@ -139,7 +139,7 @@ class ObserveWatchlistSectionsInteractorTest {
     fun `should calculate watch progress correctly`() = runTest {
         val watchlist = listOf(
             FollowedShows(
-                id = Id(1),
+                show_id = Id(1),
                 name = "Show with Progress",
                 poster_path = "/poster.jpg",
                 status = "Ongoing",
@@ -168,7 +168,7 @@ class ObserveWatchlistSectionsInteractorTest {
 
     private fun createTestWatchlist() = listOf(
         FollowedShows(
-            id = Id(84958),
+            show_id = Id(84958),
             name = "Loki",
             poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
             status = "Ended",
@@ -180,7 +180,7 @@ class ObserveWatchlistSectionsInteractorTest {
             total_episode_count = 10,
         ),
         FollowedShows(
-            id = Id(1232),
+            show_id = Id(1232),
             name = "The Lazarus Project",
             poster_path = "/lazarus_poster.jpg",
             status = "Ongoing",

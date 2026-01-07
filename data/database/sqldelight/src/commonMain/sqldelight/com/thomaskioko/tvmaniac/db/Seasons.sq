@@ -78,7 +78,15 @@ ORDER BY
     episode.episode_number ASC;
 
 getSeasonByShowAndNumber:
-SELECT * FROM season
+SELECT
+    season.id AS season_id,
+    season.show_id,
+    season.season_number,
+    season.title,
+    season.episode_count,
+    season.overview,
+    season.image_url
+FROM season
 WHERE show_id = :showId AND season_number = :seasonNumber
 LIMIT 1;
 

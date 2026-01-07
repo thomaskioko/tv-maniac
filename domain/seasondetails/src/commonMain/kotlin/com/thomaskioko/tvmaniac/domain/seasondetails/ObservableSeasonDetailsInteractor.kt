@@ -26,10 +26,10 @@ public class ObservableSeasonDetailsInteractor(
             seasonDetails?.let { details ->
                 SeasonDetailsResult(
                     seasonDetails = details,
-                    images = images.map { image -> SeasonImages(image.id, image.image_url) },
+                    images = images.map { image -> SeasonImages(image.image_id, image.image_url) },
                     cast = cast.map { castMember ->
                         SeasonCast(
-                            id = castMember.id.id,
+                            id = castMember.cast_id.id,
                             name = castMember.name,
                             profilePath = castMember.profile_path,
                             characterName = castMember.character_name,

@@ -74,7 +74,7 @@ public class DefaultWatchedEpisodeSyncRepository(
 
         val entries = pending.map { episode ->
             WatchedEpisodeEntry(
-                id = episode.id,
+                id = episode.watched_id,
                 showId = episode.show_id.id,
                 episodeId = episode.episode_id?.id,
                 seasonNumber = episode.season_number,
@@ -88,7 +88,7 @@ public class DefaultWatchedEpisodeSyncRepository(
         dataSource.addEpisodeWatches(entries)
 
         pending.forEach { episode ->
-            dao.updatePendingAction(episode.id, PendingAction.NOTHING)
+            dao.updatePendingAction(episode.watched_id, PendingAction.NOTHING)
         }
 
         logger.debug(TAG, "Successfully uploaded ${pending.size} episodes")
@@ -107,7 +107,7 @@ public class DefaultWatchedEpisodeSyncRepository(
         }
 
         pending.forEach { episode ->
-            dao.deleteById(episode.id)
+            dao.deleteById(episode.watched_id)
         }
 
         logger.debug(TAG, "Successfully deleted ${pending.size} episodes")
@@ -138,7 +138,7 @@ public class DefaultWatchedEpisodeSyncRepository(
 
             dao.upsertFromTrakt(
                 showId = tmdbId,
-                episodeId = episode?.id?.id,
+                episodeId = episode?.episode_id?.id,
                 seasonNumber = remoteEntry.seasonNumber,
                 episodeNumber = remoteEntry.episodeNumber,
                 watchedAt = remoteEntry.watchedAt.toEpochMilliseconds(),
@@ -164,7 +164,7 @@ public class DefaultWatchedEpisodeSyncRepository(
             seasonDetailsRepository.fetchSeasonDetails(
                 param = SeasonDetailsParam(
                     showId = showId,
-                    seasonId = season.id.id,
+                    seasonId = season.season_id.id,
                     seasonNumber = seasonNumber,
                 ),
                 forceRefresh = false,

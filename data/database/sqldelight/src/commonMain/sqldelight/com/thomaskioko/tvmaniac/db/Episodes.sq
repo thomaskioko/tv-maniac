@@ -42,9 +42,9 @@ VALUES(?,?,?,?,?,?,?,?,?,?,?,?);
 
 episodeDetails:
 SELECT
-    episode.id AS id,
-    episode.season_id AS season_id,
-    episode.show_id AS show_id,
+    episode.id AS episode_id,
+    episode.season_id,
+    episode.show_id,
     episode.title,
     episode.overview,
     episode.runtime,
@@ -66,7 +66,20 @@ deleteAll:
 DELETE FROM episode;
 
 getEpisodeByTraktId:
-SELECT * FROM episode WHERE trakt_id = ?;
+SELECT
+    episode.id AS episode_id,
+    episode.season_id,
+    episode.show_id,
+    episode.episode_number,
+    episode.title,
+    episode.overview,
+    episode.runtime,
+    episode.vote_count,
+    episode.vote_average,
+    episode.image_url,
+    episode.air_date,
+    episode.trakt_id
+FROM episode WHERE trakt_id = ?;
 
 countEpisodesForShow:
 SELECT COUNT(*)
@@ -79,7 +92,19 @@ AND (
 );
 
 getEpisodeByShowSeasonEpisodeNumber:
-SELECT episode.*
+SELECT
+    episode.id AS episode_id,
+    episode.season_id,
+    episode.show_id,
+    episode.episode_number,
+    episode.title,
+    episode.overview,
+    episode.runtime,
+    episode.vote_count,
+    episode.vote_average,
+    episode.image_url,
+    episode.air_date,
+    episode.trakt_id
 FROM episode
 INNER JOIN season ON episode.season_id = season.id
 WHERE episode.show_id = :showId

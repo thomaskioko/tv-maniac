@@ -36,12 +36,32 @@ INSERT OR REPLACE INTO watched_episodes(
 ) VALUES (?, ?, ?, ?, ?, ?);
 
 getWatchedEpisodes:
-SELECT * FROM watched_episodes
+SELECT
+    watched_episodes.id AS watched_id,
+    watched_episodes.show_id,
+    watched_episodes.episode_id,
+    watched_episodes.season_number,
+    watched_episodes.episode_number,
+    watched_episodes.watched_at,
+    watched_episodes.trakt_id,
+    watched_episodes.synced_at,
+    watched_episodes.pending_action
+FROM watched_episodes
 WHERE show_id = ?
 ORDER BY season_number, episode_number;
 
 getWatchedEpisodesForSeason:
-SELECT * FROM watched_episodes
+SELECT
+    watched_episodes.id AS watched_id,
+    watched_episodes.show_id,
+    watched_episodes.episode_id,
+    watched_episodes.season_number,
+    watched_episodes.episode_number,
+    watched_episodes.watched_at,
+    watched_episodes.trakt_id,
+    watched_episodes.synced_at,
+    watched_episodes.pending_action
+FROM watched_episodes
 WHERE show_id = ? AND season_number = ?
 ORDER BY episode_number;
 
@@ -138,7 +158,17 @@ WHERE e.show_id = :show_id
 -- Trakt Sync Queries
 
 getEntriesByPendingAction:
-SELECT * FROM watched_episodes
+SELECT
+    watched_episodes.id AS watched_id,
+    watched_episodes.show_id,
+    watched_episodes.episode_id,
+    watched_episodes.season_number,
+    watched_episodes.episode_number,
+    watched_episodes.watched_at,
+    watched_episodes.trakt_id,
+    watched_episodes.synced_at,
+    watched_episodes.pending_action
+FROM watched_episodes
 WHERE pending_action = ?
 ORDER BY watched_at;
 
@@ -156,7 +186,17 @@ deleteById:
 DELETE FROM watched_episodes WHERE id = ?;
 
 getEntryByShowAndEpisode:
-SELECT * FROM watched_episodes
+SELECT
+    watched_episodes.id AS watched_id,
+    watched_episodes.show_id,
+    watched_episodes.episode_id,
+    watched_episodes.season_number,
+    watched_episodes.episode_number,
+    watched_episodes.watched_at,
+    watched_episodes.trakt_id,
+    watched_episodes.synced_at,
+    watched_episodes.pending_action
+FROM watched_episodes
 WHERE show_id = ? AND episode_id = ?;
 
 upsertFromTrakt:

@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.episodes.api
 
+import com.thomaskioko.tvmaniac.db.GetEntriesByPendingAction
+import com.thomaskioko.tvmaniac.db.GetWatchedEpisodes
 import com.thomaskioko.tvmaniac.db.Watched_episodes
 import com.thomaskioko.tvmaniac.episodes.api.model.EpisodeWatchParams
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
@@ -9,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 
 public interface WatchedEpisodeDao {
 
-    public fun observeWatchedEpisodes(showId: Long): Flow<List<Watched_episodes>>
+    public fun observeWatchedEpisodes(showId: Long): Flow<List<GetWatchedEpisodes>>
 
     public fun observeSeasonWatchProgress(showId: Long, seasonNumber: Long): Flow<SeasonWatchProgress>
 
@@ -96,7 +98,7 @@ public interface WatchedEpisodeDao {
         includeSpecials: Boolean,
     ): Flow<Long>
 
-    public suspend fun entriesByPendingAction(action: PendingAction): List<Watched_episodes>
+    public suspend fun entriesByPendingAction(action: PendingAction): List<GetEntriesByPendingAction>
 
     public suspend fun updatePendingAction(id: Long, action: PendingAction)
 

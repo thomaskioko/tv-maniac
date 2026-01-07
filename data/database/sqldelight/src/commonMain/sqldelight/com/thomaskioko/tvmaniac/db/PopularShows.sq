@@ -39,7 +39,7 @@ SELECT count(*) FROM popular_shows;
 
 entriesInPage:
 SELECT
-    popular_shows.id,
+    popular_shows.id AS show_id,
     popular_shows.page,
     COALESCE(popular_shows.name, '') AS name,
     popular_shows.poster_path,
@@ -53,7 +53,7 @@ ORDER BY popular_shows.page_order ASC;
 
 popularShows:
 SELECT
-    popular_shows.id,
+    popular_shows.id AS show_id,
     popular_shows.page,
     tvshow.name,
     tvshow.poster_path,
@@ -68,7 +68,7 @@ ORDER BY popular_shows.page ASC, popular_shows.page_order ASC;
 
 pagedPopularShows:
 SELECT
-    popular_shows.id,
+    popular_shows.id AS show_id,
     popular_shows.page,
     tvshow.name,
     tvshow.poster_path,

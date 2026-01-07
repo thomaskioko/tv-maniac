@@ -21,7 +21,7 @@ VALUES(?,?,?);
 
 similarShows:
 SELECT
-   tvshow.id,
+   tvshow.id AS tmdb_id,
    tvshow.name,
    tvshow.poster_path,
    tvshow.backdrop_path,

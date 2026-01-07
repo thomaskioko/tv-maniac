@@ -39,7 +39,7 @@ SELECT count(*) FROM trending_shows;
 
 entriesInPage:
 SELECT
-    trending_shows.id,
+    trending_shows.id AS show_id,
     trending_shows.page,
     COALESCE(trending_shows.name, '') AS name,
     trending_shows.poster_path,
@@ -53,7 +53,7 @@ ORDER BY trending_shows.position ASC;
 
 trendingShowsByPage:
 SELECT
-    trending_shows.id,
+    trending_shows.id AS show_id,
     trending_shows.page,
     tvshow.name,
     tvshow.poster_path,
@@ -73,7 +73,7 @@ ORDER BY
 
 pagedTrendingShows:
 SELECT
-    trending_shows.id,
+    trending_shows.id AS show_id,
     trending_shows.page,
     tvshow.name,
     tvshow.poster_path,

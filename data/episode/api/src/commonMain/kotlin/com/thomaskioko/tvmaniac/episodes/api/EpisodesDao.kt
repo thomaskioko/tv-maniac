@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.episodes.api
 
+import com.thomaskioko.tvmaniac.db.GetEpisodeByShowSeasonEpisodeNumber
 import com.thomaskioko.tvmaniac.db.Episode as EpisodeCache
 
 public interface EpisodesDao {
@@ -16,5 +17,5 @@ public interface EpisodesDao {
         showId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
-    ): EpisodeCache?
+    ): GetEpisodeByShowSeasonEpisodeNumber?
 }

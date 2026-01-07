@@ -11,19 +11,49 @@ CREATE INDEX IF NOT EXISTS idx_followed_shows_tmdb_id ON followed_shows(tmdb_id)
 CREATE INDEX IF NOT EXISTS idx_followed_shows_pending_action ON followed_shows(pending_action);
 
 entries:
-SELECT * FROM followed_shows;
+SELECT
+    followed_shows.id AS followed_id,
+    followed_shows.tmdb_id,
+    followed_shows.followed_at,
+    followed_shows.pending_action,
+    followed_shows.trakt_id
+FROM followed_shows;
 
 entryWithTmdbId:
-SELECT * FROM followed_shows WHERE tmdb_id = ?;
+SELECT
+    followed_shows.id AS followed_id,
+    followed_shows.tmdb_id,
+    followed_shows.followed_at,
+    followed_shows.pending_action,
+    followed_shows.trakt_id
+FROM followed_shows WHERE tmdb_id = ?;
 
 entriesWithNoPendingAction:
-SELECT * FROM followed_shows WHERE pending_action = 'NOTHING';
+SELECT
+    followed_shows.id AS followed_id,
+    followed_shows.tmdb_id,
+    followed_shows.followed_at,
+    followed_shows.pending_action,
+    followed_shows.trakt_id
+FROM followed_shows WHERE pending_action = 'NOTHING';
 
 entriesWithUploadPendingAction:
-SELECT * FROM followed_shows WHERE pending_action = 'UPLOAD';
+SELECT
+    followed_shows.id AS followed_id,
+    followed_shows.tmdb_id,
+    followed_shows.followed_at,
+    followed_shows.pending_action,
+    followed_shows.trakt_id
+FROM followed_shows WHERE pending_action = 'UPLOAD';
 
 entriesWithDeletePendingAction:
-SELECT * FROM followed_shows WHERE pending_action = 'DELETE';
+SELECT
+    followed_shows.id AS followed_id,
+    followed_shows.tmdb_id,
+    followed_shows.followed_at,
+    followed_shows.pending_action,
+    followed_shows.trakt_id
+FROM followed_shows WHERE pending_action = 'DELETE';
 
 upsert:
 INSERT OR REPLACE INTO followed_shows(id, tmdb_id, followed_at, pending_action, trakt_id)
@@ -60,7 +90,7 @@ SELECT COUNT(*) > 0 FROM followed_shows WHERE tmdb_id = ? AND pending_action != 
 
 followedShows:
 SELECT
-    tvshow.id,
+    tvshow.id AS show_id,
     tvshow.name,
     tvshow.poster_path,
     tvshow.first_air_date,
@@ -83,7 +113,7 @@ ORDER BY followed_shows.followed_at DESC;
 
 searchFollowedShows:
 SELECT
-    tvshow.id,
+    tvshow.id AS show_id,
     tvshow.name,
     tvshow.poster_path,
     tvshow.status,
