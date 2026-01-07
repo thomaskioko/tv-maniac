@@ -17,7 +17,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS `index_featured_shows_show_id` ON `featured_sh
 
 entriesInPage:
 SELECT
-    featured_shows.id,
+    featured_shows.id AS show_id,
     COALESCE(featured_shows.name, '') AS name,
     featured_shows.poster_path,
     featured_shows.overview,
@@ -44,7 +44,7 @@ INSERT OR IGNORE INTO featured_shows(
 
 featuredShows:
 SELECT
-    featured_shows.id,
+    featured_shows.id AS show_id,
     tvshow.name,
     tvshow.poster_path,
     tvshow.overview,

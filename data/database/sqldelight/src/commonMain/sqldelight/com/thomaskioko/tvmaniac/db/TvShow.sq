@@ -46,7 +46,7 @@ VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?, ?,?);
 
 tvshowDetails:
 SELECT
-    tvshow.id,
+    tvshow.id AS show_id,
     tvshow.name,
     tvshow.overview,
     tvshow.language,
@@ -74,7 +74,7 @@ GROUP BY tvshow.id;
 
 searchShows:
 SELECT
-    tvshow.id,
+    tvshow.id AS show_id,
     tvshow.name,
     tvshow.poster_path,
     tvshow.overview,
@@ -133,7 +133,7 @@ SELECT EXISTS(
 
 showsByIds:
 SELECT
-    tvshow.id,
+    tvshow.id AS show_id,
     tvshow.name,
     tvshow.poster_path,
     tvshow.overview,
@@ -146,7 +146,7 @@ WHERE tvshow.id IN ?;
 
 showsByIdsStable:
 SELECT
-    tvshow.id,
+    tvshow.id AS show_id,
     tvshow.name,
     tvshow.poster_path,
     tvshow.overview,

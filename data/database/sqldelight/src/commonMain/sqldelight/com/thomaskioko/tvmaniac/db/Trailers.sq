@@ -25,7 +25,14 @@ INSERT OR REPLACE INTO trailers(
 VALUES(?,?,?,?,?,?,?);
 
 selectByShowId:
-SELECT *
+SELECT
+    trailers.id AS trailer_id,
+    trailers.show_id,
+    trailers.key,
+    trailers.name,
+    trailers.site,
+    trailers.size,
+    trailers.type
 FROM trailers
 WHERE show_id = ?;
 

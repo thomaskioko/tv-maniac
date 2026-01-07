@@ -33,7 +33,7 @@ INSERT OR REPLACE INTO upcoming_shows(
 
 entriesInPage:
 SELECT
-    upcoming_shows.id,
+    upcoming_shows.id AS show_id,
     upcoming_shows.page,
     COALESCE(upcoming_shows.name, '') AS name,
     upcoming_shows.poster_path,
@@ -47,7 +47,7 @@ ORDER BY upcoming_shows.id ASC;
 
 upcomingShowsByPage:
 SELECT
-    upcoming_shows.id,
+    upcoming_shows.id AS show_id,
     upcoming_shows.page,
     tvshow.name,
     tvshow.poster_path,
@@ -63,7 +63,7 @@ WHERE
 
 pagedUpcomingShows:
 SELECT
-    upcoming_shows.id,
+    upcoming_shows.id AS show_id,
     upcoming_shows.page,
     tvshow.name,
     tvshow.poster_path,

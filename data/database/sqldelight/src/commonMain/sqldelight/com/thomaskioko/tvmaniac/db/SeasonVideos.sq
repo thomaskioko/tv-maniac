@@ -26,7 +26,20 @@ VALUES(?,?,?,?,?,?,?);
 
 seasonVideo:
 SELECT
-    *
+    season_videos.id AS video_id,
+    season_videos.season_id,
+    season_videos.key,
+    season_videos.name,
+    season_videos.site,
+    season_videos.size,
+    season_videos.type,
+    season.id AS season_primary_id,
+    season.show_id,
+    season.season_number,
+    season.title,
+    season.episode_count,
+    season.overview,
+    season.image_url
 FROM
     season_videos
 JOIN
