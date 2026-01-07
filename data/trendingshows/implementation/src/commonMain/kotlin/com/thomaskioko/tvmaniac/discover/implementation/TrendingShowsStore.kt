@@ -17,7 +17,6 @@ import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResult
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.SourceOfTruth
@@ -35,31 +34,19 @@ public class TrendingShowsStore(
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<TrendingShowsParams, List<ShowEntity>> by storeBuilder(
     fetcher = apiFetcher { params: TrendingShowsParams ->
-        tmdbRemoteDataSource.getTrendingShows(params.timeWindow).also {
-            requestManagerRepository.upsert(
-                entityId = TRENDING_SHOWS_TODAY.requestId,
-                requestType = TRENDING_SHOWS_TODAY.name,
-            )
-        }
+        tmdbRemoteDataSource.getTrendingShows(params.timeWindow)
     },
     sourceOfTruth = SourceOfTruth.of<TrendingShowsParams, TmdbShowResult, List<ShowEntity>>(
-        reader = { param: TrendingShowsParams ->
-            trendingShowsDao.observeTrendingShows(param.page).map { shows ->
-                when {
-                    shows.isEmpty() -> null
-                    !requestManagerRepository.isRequestValid(
-                        requestType = TRENDING_SHOWS_TODAY.name,
-                        threshold = TRENDING_SHOWS_TODAY.duration,
-                    ) -> null
-                    else -> shows
-                }
-            }
-        },
+        reader = { param -> trendingShowsDao.observeTrendingShows(param.page) },
         writer = { _: TrendingShowsParams, trendingShows ->
             withContext(dispatchers.databaseWrite) {
                 databaseTransactionRunner {
                     if (trendingShows.page == 1) {
                         trendingShowsDao.deleteTrendingShows()
+                        requestManagerRepository.upsert(
+                            entityId = TRENDING_SHOWS_TODAY.requestId,
+                            requestType = TRENDING_SHOWS_TODAY.name,
+                        )
                     }
 
                     val showsToInsert = mutableListOf<com.thomaskioko.tvmaniac.db.Tvshow>()

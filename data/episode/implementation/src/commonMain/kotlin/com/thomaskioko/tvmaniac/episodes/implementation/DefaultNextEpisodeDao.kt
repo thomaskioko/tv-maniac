@@ -2,10 +2,7 @@ package com.thomaskioko.tvmaniac.episodes.implementation
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.db.NextEpisodeForShow
 import com.thomaskioko.tvmaniac.db.NextEpisodesForWatchlist
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.episodes.api.NextEpisodeDao
@@ -26,56 +23,27 @@ public class DefaultNextEpisodeDao(
     private val dispatchers: AppCoroutineDispatchers,
 ) : NextEpisodeDao {
 
-    override fun observeNextEpisode(showId: Long): Flow<NextEpisodeWithShow?> {
+    override fun observeNextEpisodesForWatchlist(includeSpecials: Boolean): Flow<List<NextEpisodeWithShow>> {
         return database.showsNextToWatchQueries
-            .nextEpisodeForShow(Id(showId))
-            .asFlow()
-            .mapToOneOrNull(dispatchers.databaseRead)
-            .map { it?.toNextEpisodeWithShow() }
-            .catch { emit(null) }
-    }
-
-    override fun observeNextEpisodesForWatchlist(): Flow<List<NextEpisodeWithShow>> {
-        return database.showsNextToWatchQueries
-            .nextEpisodesForWatchlist()
+            .nextEpisodesForWatchlist(includeSpecials = if (includeSpecials) 1L else 0L)
             .asFlow()
             .mapToList(dispatchers.databaseRead)
             .map { list ->
-                // Group by show and take the first (earliest) episode per show
-                list.groupBy { it.show_id }
-                    .map { (_, episodes) ->
-                        episodes.minByOrNull { it.season_number * 1000 + it.episode_number }!!
-                    }
+                list.filter { it.episode_id != null }
                     .map { it.toNextEpisodeWithShow() }
             }
             .catch { emit(emptyList()) }
     }
 }
 
-private fun NextEpisodeForShow.toNextEpisodeWithShow(): NextEpisodeWithShow {
-    return NextEpisodeWithShow(
-        showId = show_id.id,
-        episodeId = episode_id.id,
-        episodeName = episode_name,
-        seasonId = season_id.id,
-        seasonNumber = season_number,
-        episodeNumber = episode_number,
-        runtime = runtime,
-        stillPath = still_path,
-        overview = overview,
-        showName = show_name,
-        showPoster = show_poster,
-    )
-}
-
 private fun NextEpisodesForWatchlist.toNextEpisodeWithShow(): NextEpisodeWithShow {
     return NextEpisodeWithShow(
-        showId = show_id.id,
-        episodeId = episode_id.id,
+        showId = show_id,
+        episodeId = episode_id!!.id,
         episodeName = episode_name,
-        seasonId = season_id.id,
-        seasonNumber = season_number,
-        episodeNumber = episode_number,
+        seasonId = season_id!!.id,
+        seasonNumber = season_number!!,
+        episodeNumber = episode_number!!,
         runtime = runtime,
         stillPath = still_path,
         overview = overview,

@@ -33,47 +33,47 @@ INSERT OR REPLACE INTO upcoming_shows(
 
 entriesInPage:
 SELECT
-    upcoming_shows.id,
+    upcoming_shows.id AS show_id,
     upcoming_shows.page,
     COALESCE(upcoming_shows.name, '') AS name,
     upcoming_shows.poster_path,
     upcoming_shows.overview,
-    CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+    CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM upcoming_shows
-LEFT OUTER JOIN watchlist ON upcoming_shows.id = watchlist.id
+LEFT OUTER JOIN followed_shows ON upcoming_shows.id = followed_shows.tmdb_id AND followed_shows.pending_action != 'DELETE'
 WHERE upcoming_shows.page = :page
-  AND upcoming_shows.name IS NOT NULL  -- Only return entries with show data
+  AND upcoming_shows.name IS NOT NULL
 ORDER BY upcoming_shows.id ASC;
 
 upcomingShowsByPage:
 SELECT
-    upcoming_shows.id,
+    upcoming_shows.id AS show_id,
     upcoming_shows.page,
     tvshow.name,
     tvshow.poster_path,
-    CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+    CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     upcoming_shows
 INNER JOIN
     tvshow ON tvshow.id = upcoming_shows.id
 LEFT OUTER JOIN
-    watchlist ON tvshow.id = watchlist.id
+    followed_shows ON tvshow.id = followed_shows.tmdb_id AND followed_shows.pending_action != 'DELETE'
 WHERE
     upcoming_shows.page = :page;
 
 pagedUpcomingShows:
 SELECT
-    upcoming_shows.id,
+    upcoming_shows.id AS show_id,
     upcoming_shows.page,
     tvshow.name,
     tvshow.poster_path,
-    CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+    CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     upcoming_shows
 INNER JOIN
     tvshow ON tvshow.id = upcoming_shows.id
 LEFT OUTER JOIN
-    watchlist ON tvshow.id = watchlist.id
+    followed_shows ON tvshow.id = followed_shows.tmdb_id AND followed_shows.pending_action != 'DELETE'
 ORDER BY
     upcoming_shows.page ASC
 LIMIT

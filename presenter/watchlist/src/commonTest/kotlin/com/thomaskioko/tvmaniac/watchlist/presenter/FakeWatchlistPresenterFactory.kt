@@ -5,8 +5,8 @@ import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.ObserveUpNextSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.ObserveWatchlistSectionsInteractor
-import com.thomaskioko.tvmaniac.domain.watchlist.WatchlistInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
+import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -18,9 +18,7 @@ class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
 
     val testDispatcher = UnconfinedTestDispatcher()
 
-    private val fakeRefreshWatchlistInteractor = WatchlistInteractor(
-        repository,
-    )
+    private val fakeFollowedShowsRepository = FakeFollowedShowsRepository()
 
     private val fakeMarkEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(
         episodeRepository = episodeRepository,
@@ -49,7 +47,7 @@ class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
         repository = repository,
         observeWatchlistSectionsInteractor = observeWatchlistSectionsInteractor,
         observeUpNextSectionsInteractor = observeUpNextSectionsInteractor,
-        refreshWatchlistInteractor = fakeRefreshWatchlistInteractor,
+        followedShowsRepository = fakeFollowedShowsRepository,
         markEpisodeWatchedInteractor = fakeMarkEpisodeWatchedInteractor,
         dateTimeProvider = dateTimeProvider,
         logger = FakeLogger(),

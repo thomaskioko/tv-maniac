@@ -46,7 +46,7 @@ VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?, ?,?);
 
 tvshowDetails:
 SELECT
-    tvshow.id,
+    tvshow.id AS show_id,
     tvshow.name,
     tvshow.overview,
     tvshow.language,
@@ -59,11 +59,11 @@ SELECT
     tvshow.poster_path,
     tvshow.backdrop_path,
     GROUP_CONCAT(genres.name, ', ') AS genre_list,
-    CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+    CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     tvshow
 LEFT OUTER JOIN
-    watchlist ON tvshow.id = watchlist.id
+    followed_shows ON tvshow.id = followed_shows.tmdb_id AND followed_shows.pending_action != 'DELETE'
 LEFT OUTER JOIN
     show_genres ON tvshow.id = show_genres.show_id
 LEFT OUTER JOIN
@@ -74,18 +74,18 @@ GROUP BY tvshow.id;
 
 searchShows:
 SELECT
-    tvshow.id,
+    tvshow.id AS show_id,
     tvshow.name,
     tvshow.poster_path,
     tvshow.overview,
     tvshow.status,
     tvshow.vote_average,
     tvshow.first_air_date,
-    CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+    CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     tvshow
 LEFT OUTER JOIN
-    watchlist ON tvshow.id = watchlist.id
+    followed_shows ON tvshow.id = followed_shows.tmdb_id AND followed_shows.pending_action != 'DELETE'
 WHERE
     -- First try exact match on name start (most efficient, can use index)
     name LIKE ? || '%'
@@ -133,20 +133,20 @@ SELECT EXISTS(
 
 showsByIds:
 SELECT
-    tvshow.id,
+    tvshow.id AS show_id,
     tvshow.name,
     tvshow.poster_path,
     tvshow.overview,
-    CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+    CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     tvshow
 LEFT OUTER JOIN
-    watchlist ON tvshow.id = watchlist.id
+    followed_shows ON tvshow.id = followed_shows.tmdb_id AND followed_shows.pending_action != 'DELETE'
 WHERE tvshow.id IN ?;
 
 showsByIdsStable:
 SELECT
-    tvshow.id,
+    tvshow.id AS show_id,
     tvshow.name,
     tvshow.poster_path,
     tvshow.overview,

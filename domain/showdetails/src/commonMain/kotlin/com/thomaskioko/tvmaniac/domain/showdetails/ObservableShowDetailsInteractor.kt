@@ -44,7 +44,7 @@ public class ObservableShowDetailsInteractor(
         ) { showDetails, recommendedShows, seasonsList, castList, watchProviders, similarShows, trailers, isWebViewInstalled, seasonsProgress ->
             val progressMap = seasonsProgress.associateBy { it.seasonNumber }
             ShowDetails(
-                tmdbId = showDetails.id.id,
+                tmdbId = showDetails.show_id.id,
                 title = showDetails.name,
                 overview = showDetails.overview,
                 language = showDetails.language,

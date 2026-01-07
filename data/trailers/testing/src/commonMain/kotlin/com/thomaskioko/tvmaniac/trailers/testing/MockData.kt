@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.trailers.testing
 
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.db.Trailers
+import com.thomaskioko.tvmaniac.db.SelectByShowId
 
-public val trailers: List<Trailers> = listOf(
-    Trailers(
-        id = "1231",
+public val trailers: List<SelectByShowId> = listOf(
+    SelectByShowId(
+        trailer_id = "1231",
         show_id = Id(84958),
         key = "Fd43V",
         name = "Some title",

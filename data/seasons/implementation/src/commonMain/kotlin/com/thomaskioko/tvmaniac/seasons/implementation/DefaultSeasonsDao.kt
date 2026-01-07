@@ -3,12 +3,14 @@ package com.thomaskioko.tvmaniac.seasons.implementation
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.db.GetSeasonByShowAndNumber
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.Season
 import com.thomaskioko.tvmaniac.db.ShowSeasons
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsDao
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
@@ -55,6 +57,14 @@ public class DefaultSeasonsDao(
             showId = Id(id),
             includeSpecials = if (includeSpecials) 1L else 0L,
         ).executeAsList()
+
+    override suspend fun getSeasonByShowAndNumber(showId: Long, seasonNumber: Long): GetSeasonByShowAndNumber? =
+        withContext(dispatcher.databaseRead) {
+            seasonQueries.getSeasonByShowAndNumber(
+                showId = Id(showId),
+                seasonNumber = seasonNumber,
+            ).executeAsOneOrNull()
+        }
 
     override fun delete(id: Long) {
         seasonQueries.delete(Id(id))

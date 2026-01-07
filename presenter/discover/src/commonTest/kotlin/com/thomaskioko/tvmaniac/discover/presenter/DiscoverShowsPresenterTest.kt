@@ -22,10 +22,10 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
 import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
+import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsInteractor
-import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldNotBeSameInstanceAs
@@ -48,9 +48,9 @@ class DiscoverShowsPresenterTest {
     private val upcomingShowsRepository = FakeUpcomingShowsRepository()
     private val topRatedShowsRepository = FakeTopRatedShowsRepository()
     private val popularShowsRepository = FakePopularShowsRepository()
-    private val watchlistRepository = FakeWatchlistRepository()
     private val genreRepository = FakeGenreRepository()
     private val episodeRepository = FakeEpisodeRepository()
+    private val followedShowsRepository = FakeFollowedShowsRepository()
     private val coroutineDispatcher = AppCoroutineDispatchers(
         main = testDispatcher,
         io = testDispatcher,
@@ -281,7 +281,7 @@ class DiscoverShowsPresenterTest {
                 episodeRepository = episodeRepository,
                 dispatchers = coroutineDispatcher,
             ),
-            watchlistRepository = watchlistRepository,
+            followedShowsRepository = followedShowsRepository,
             featuredShowsInteractor = FeaturedShowsInteractor(
                 featuredShowsRepository = featuredShowsRepository,
                 dispatchers = coroutineDispatcher,
@@ -354,14 +354,14 @@ class DiscoverShowsPresenterTest {
                 showName = episode.showName,
                 showPoster = episode.showPoster,
                 episodeId = episode.episodeId,
-                episodeTitle = episode.episodeName,
+                episodeTitle = episode.episodeName ?: "",
                 episodeNumberFormatted = "S${episode.seasonNumber}E${episode.episodeNumber}",
                 seasonId = episode.seasonId,
                 seasonNumber = episode.seasonNumber,
                 episodeNumber = episode.episodeNumber,
                 runtime = episode.runtime?.let { "$it min" },
                 stillImage = episode.stillPath,
-                overview = episode.overview,
+                overview = episode.overview ?: "",
                 isNew = false,
             )
         }.toImmutableList()
@@ -407,7 +407,7 @@ class DiscoverShowsPresenterTest {
             episodeRepository = episodeRepository,
             dispatchers = coroutineDispatcher,
         ),
-        watchlistRepository = watchlistRepository,
+        followedShowsRepository = followedShowsRepository,
         featuredShowsInteractor = FeaturedShowsInteractor(
             featuredShowsRepository = featuredShowsRepository,
             dispatchers = coroutineDispatcher,

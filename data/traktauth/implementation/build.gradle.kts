@@ -14,7 +14,7 @@ kotlin {
                 implementation(libs.appauth)
                 implementation(libs.coroutines.core)
                 implementation(projects.data.traktauth.api)
-                implementation(projects.core.buildconfig.api)
+                implementation(projects.core.util.api)
 
                 implementation(libs.androidx.activity)
                 implementation(libs.androidx.browser)

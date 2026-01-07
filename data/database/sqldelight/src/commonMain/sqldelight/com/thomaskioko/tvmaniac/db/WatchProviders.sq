@@ -27,7 +27,7 @@ INSERT OR REPLACE INTO watch_providers (
 
 watchProviders:
 SELECT
-    watch_providers.id,
+    watch_providers.id AS provider_id,
     watch_providers.name,
     watch_providers.logo_path,
     watch_providers.tmdb_id

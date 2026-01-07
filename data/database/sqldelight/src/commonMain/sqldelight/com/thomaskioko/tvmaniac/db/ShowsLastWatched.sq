@@ -1,67 +1,25 @@
-import com.thomaskioko.tvmaniac.db.Id;
-import com.thomaskioko.tvmaniac.db.TmdbId;
-import com.thomaskioko.tvmaniac.db.EpisodeId;
-
--- View definition for shows_last_watched
--- This view calculates the last watched episode for each show
 CREATE VIEW shows_last_watched AS
 SELECT
-    current_episode.show_id,
-    current_season.id AS season_id,
-    current_episode.episode_id,
-    (1000 * current_episode.season_number) + current_episode.episode_number AS last_watched_abs_number,
-    current_episode.season_number AS last_watched_season,
-    current_episode.episode_number AS last_watched_episode,
-    current_episode.watched_at AS last_watched_at
-FROM watched_episodes current_episode
-INNER JOIN season current_season ON current_season.show_id = current_episode.show_id
-                                 AND current_season.season_number = current_episode.season_number
-WHERE (current_episode.season_number > 0 OR current_season.title != 'Specials')
-  AND current_episode.watched_at = (
-    SELECT MAX(latest_time.watched_at)
-    FROM watched_episodes latest_time
-    INNER JOIN season latest_season ON latest_season.show_id = latest_time.show_id
-                                    AND latest_season.season_number = latest_time.season_number
-    WHERE latest_time.show_id = current_episode.show_id
-      AND (latest_time.season_number > 0 OR latest_season.title != 'Specials')
-  )
-  AND (1000 * current_episode.season_number) + current_episode.episode_number = (
-    SELECT MAX((1000 * highest_episode.season_number) + highest_episode.episode_number)
-    FROM watched_episodes highest_episode
-    INNER JOIN season highest_season ON highest_season.show_id = highest_episode.show_id
-                                     AND highest_season.season_number = highest_episode.season_number
-    WHERE highest_episode.show_id = current_episode.show_id
-      AND (highest_episode.season_number > 0 OR highest_season.title != 'Specials')
-      AND highest_episode.watched_at = (
-        SELECT MAX(max_time.watched_at)
-        FROM watched_episodes max_time
-        INNER JOIN season max_season ON max_season.show_id = max_time.show_id
-                                     AND max_season.season_number = max_time.season_number
-        WHERE max_time.show_id = current_episode.show_id
-          AND (max_time.season_number > 0 OR max_season.title != 'Specials')
-      )
-  );
+    tvshow.id AS show_id,
+    MAX((1000 * season.season_number) + episode.episode_number) AS last_watched_abs_number,
+    MAX(watched_episode.watched_at) AS last_watched_at
+FROM tvshow
+INNER JOIN season ON tvshow.id = season.show_id
+INNER JOIN episode ON episode.season_id = season.id AND episode.show_id = tvshow.id
+INNER JOIN watched_episodes AS watched_episode ON watched_episode.show_id = tvshow.id AND watched_episode.episode_id = episode.id
+WHERE season.season_number > 0 OR season.title != 'Specials'
+GROUP BY tvshow.id;
 
--- Get last watched episode for a specific show
 lastWatchedEpisodeForShow:
 SELECT
-    show_id,
-    season_id,
-    episode_id,
-    last_watched_abs_number,
-    last_watched_season,
-    last_watched_episode,
-    last_watched_at
-FROM shows_last_watched
-WHERE show_id = ?;
-
--- Get last watched episodes for all shows in watchlist
-lastWatchedEpisodesForWatchlist:
-SELECT
-    lw.*,
-    t.name AS show_name,
-    t.poster_path AS show_poster
-FROM shows_last_watched lw
-INNER JOIN tvshow t ON lw.show_id = t.id
-INNER JOIN watchlist w ON lw.show_id = w.id
-ORDER BY lw.last_watched_at DESC;
+    last_watched.show_id,
+    episode.id AS episode_id,
+    season.season_number AS last_watched_season,
+    episode.episode_number AS last_watched_episode,
+    last_watched.last_watched_at
+FROM shows_last_watched AS last_watched
+INNER JOIN season ON season.show_id = last_watched.show_id
+INNER JOIN episode ON episode.season_id = season.id AND episode.show_id = last_watched.show_id
+WHERE last_watched.show_id = ?
+  AND ((1000 * season.season_number) + episode.episode_number) = last_watched.last_watched_abs_number
+LIMIT 1;

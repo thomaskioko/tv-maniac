@@ -28,7 +28,7 @@ VALUES( ?, ?, ?);
 
 showCast:
 SELECT
-    cm.id,
+    cm.id AS cast_id,
     cm.name,
     cm.profile_path,
     cm.character_name,
@@ -39,7 +39,7 @@ WHERE ca.show_id = ?;
 
 seasonCast:
 SELECT
-    cm.id,
+    cm.id AS cast_id,
     cm.name,
     cm.profile_path,
     cm.character_name

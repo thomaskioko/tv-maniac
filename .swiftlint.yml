@@ -18,6 +18,7 @@ disabled_rules:
     - line_length
     - opening_brace
     - leading_whitespace
+    - void_function_in_ternary
 
 opt_in_rules:
     - sorted_imports
@@ -25,9 +26,14 @@ opt_in_rules:
 
 # Files & Folder not to check
 excluded:
+    - .build
+    - "**/build"
     - "**/.build"
+    - "**/checkouts"
+    - "**/SourcePackages"
     - derived_data
-    - ios/Modules
+    - DerivedData
+    - ios/Modules/SnapshotTestingLib
     - ios/build
     - vendor/bundle
     - shared/build

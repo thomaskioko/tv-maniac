@@ -2,8 +2,8 @@ package com.thomaskioko.tvmaniac.traktauth.implementation.di
 
 import android.app.Application
 import androidx.core.net.toUri
-import com.thomaskioko.tvmaniac.buildconfig.api.BuildConfig
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
+import com.thomaskioko.tvmaniac.util.api.BuildConfig
 import me.tatarka.inject.annotations.Provides
 import net.openid.appauth.AuthorizationRequest
 import net.openid.appauth.AuthorizationService

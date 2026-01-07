@@ -12,7 +12,7 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.watchlist.ObserveUpNextSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.ObserveWatchlistSectionsInteractor
-import com.thomaskioko.tvmaniac.domain.watchlist.WatchlistInteractor
+import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,9 +33,9 @@ public class DefaultWatchlistPresenter(
     @Assisted private val navigateToShowDetails: (id: Long) -> Unit,
     @Assisted private val navigateToSeason: (showId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
     private val repository: WatchlistRepository,
+    private val followedShowsRepository: FollowedShowsRepository,
     private val observeWatchlistSectionsInteractor: ObserveWatchlistSectionsInteractor,
     private val observeUpNextSectionsInteractor: ObserveUpNextSectionsInteractor,
-    private val refreshWatchlistInteractor: WatchlistInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val dateTimeProvider: DateTimeProvider,
     private val logger: Logger,
@@ -83,7 +83,6 @@ public class DefaultWatchlistPresenter(
 
     override fun dispatch(action: WatchlistAction) {
         when (action) {
-            is ReloadWatchlist -> refreshWatchlist()
             is WatchlistShowClicked -> navigateToShowDetails(action.id)
             is WatchlistQueryChanged -> updateQuery(action.query)
             is ClearWatchlistQuery -> clearQuery()
@@ -94,13 +93,6 @@ public class DefaultWatchlistPresenter(
             is MarkUpNextEpisodeWatched -> markEpisodeWatched(action)
             is UnfollowShowFromUpNext -> unfollowShow(action.showId)
             is OpenSeasonFromUpNext -> navigateToSeason(action.showId, action.seasonId, action.seasonNumber)
-        }
-    }
-
-    private fun refreshWatchlist() {
-        coroutineScope.launch {
-            refreshWatchlistInteractor(Unit)
-                .collectStatus(watchlistLoadingState, logger, uiMessageManager)
         }
     }
 
@@ -119,7 +111,7 @@ public class DefaultWatchlistPresenter(
 
     private fun unfollowShow(showId: Long) {
         coroutineScope.launch {
-            repository.updateLibrary(id = showId, addToLibrary = false)
+            followedShowsRepository.removeFollowedShow(showId)
         }
     }
 

@@ -13,8 +13,7 @@ import com.thomaskioko.tvmaniac.data.upcomingshows.implementation.model.Upcoming
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.UPCOMING_SHOWS
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
-import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
-import com.thomaskioko.tvmaniac.util.startOfDay
+import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.DateTimePeriod
@@ -32,20 +31,22 @@ import kotlin.time.Duration.Companion.days
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class DefaultUpcomingShowsRepository(
-    private val dateFormatter: PlatformDateFormatter,
+    private val dateTimeProvider: DateTimeProvider,
     private val store: UpcomingShowsStore,
     private val dao: UpcomingShowsDao,
     private val requestManagerRepository: RequestManagerRepository,
     private val logger: Logger,
 ) : UpcomingShowsRepository {
 
-    private val duration = dateFormatter.formatDate(startOfDay.plus(DateTimePeriod(days = 122), TimeZone.currentSystemDefault()).toEpochMilliseconds())
+    private val startOfDay get() = dateTimeProvider.startOfDay()
+
+    private val duration get() = dateTimeProvider.formatDate(startOfDay.plus(DateTimePeriod(days = 122), TimeZone.currentSystemDefault()).toEpochMilliseconds())
 
     override suspend fun fetchUpcomingShows(forceRefresh: Boolean) {
         val page = 1L // Always fetch first page for non-paginated requests
         // TODO:: Load this from duration repository. Default range is 4 months
         val params = UpcomingParams(
-            startDate = dateFormatter.formatDate(startOfDay.toEpochMilliseconds()),
+            startDate = dateTimeProvider.formatDate(startOfDay.toEpochMilliseconds()),
             endDate = duration,
             page = page,
         )
@@ -72,7 +73,7 @@ public class DefaultUpcomingShowsRepository(
             try {
                 val result = store.fresh(
                     UpcomingParams(
-                        startDate = dateFormatter.formatDate(startOfDay.toEpochMilliseconds()),
+                        startDate = dateTimeProvider.formatDate(startOfDay.toEpochMilliseconds()),
                         endDate = duration,
                         page = page,
                     ),

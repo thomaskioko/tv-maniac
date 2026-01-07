@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.domain.watchlist
 
 import app.cash.turbine.test
+import com.thomaskioko.tvmaniac.db.FollowedShows
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.db.Watchlists
 import com.thomaskioko.tvmaniac.domain.watchlist.model.UpNextSections
 import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
@@ -129,8 +129,8 @@ class ObserveUpNextSectionsInteractorTest {
     @Test
     fun `should calculate remaining episodes from watchlist`() = runTest {
         val watchlist = listOf(
-            Watchlists(
-                id = Id(1),
+            FollowedShows(
+                show_id = Id(1),
                 name = "Loki",
                 poster_path = "/poster.jpg",
                 status = "Ongoing",
@@ -219,8 +219,8 @@ class ObserveUpNextSectionsInteractorTest {
     }
 
     private fun createWatchlist() = listOf(
-        Watchlists(
-            id = Id(1),
+        FollowedShows(
+            show_id = Id(1),
             name = "Loki",
             poster_path = "/poster.jpg",
             status = "Ended",
@@ -231,8 +231,8 @@ class ObserveUpNextSectionsInteractorTest {
             watched_count = 0,
             total_episode_count = 10,
         ),
-        Watchlists(
-            id = Id(2),
+        FollowedShows(
+            show_id = Id(2),
             name = "Wednesday",
             poster_path = "/poster2.jpg",
             status = "Ongoing",

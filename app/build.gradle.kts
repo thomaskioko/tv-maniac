@@ -33,7 +33,7 @@ dependencies {
     implementation(projects.api.trakt.implementation)
     implementation(projects.core.base)
     implementation(projects.core.util.api)
-    implementation(projects.core.util)
+    implementation(projects.core.util.implementation)
     implementation(projects.core.imageloading.implementation)
     implementation(projects.core.locale.implementation)
     implementation(projects.navigation.api)
@@ -106,6 +106,7 @@ dependencies {
     implementation(projects.presenter.settings)
     implementation(projects.presenter.showDetails)
     implementation(projects.presenter.trailers)
+    implementation(projects.shared)
 
     implementation(libs.androidx.compose.activity)
     implementation(libs.androidx.core.core)

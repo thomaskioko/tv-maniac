@@ -135,7 +135,7 @@ struct ShowDetailsView: View {
                 showCustomList.toggle()
             },
             onAddToLibrary: {
-                presenter.dispatch(action: FollowShowClicked(addToLibrary: uiState.showDetails.isInLibrary))
+                presenter.dispatch(action: FollowShowClicked(isInLibrary: uiState.showDetails.isInLibrary))
             },
             onSeasonClicked: { index, season in
                 let params = ShowSeasonDetailsParam(

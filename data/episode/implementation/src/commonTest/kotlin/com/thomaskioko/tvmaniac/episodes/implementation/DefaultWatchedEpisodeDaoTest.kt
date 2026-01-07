@@ -16,8 +16,6 @@ import com.thomaskioko.tvmaniac.episodes.implementation.MockData.TEST_SHOW_NAME
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.TEST_SHOW_OVERVIEW
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
-import io.kotest.matchers.nulls.shouldBeNull
-import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -48,10 +46,8 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
 
-        val nextEpisodeDao = DefaultNextEpisodeDao(database, coroutineDispatcher)
         watchedEpisodeDao = DefaultWatchedEpisodeDao(
             database = database,
-            nextEpisodeDao = nextEpisodeDao,
             dispatchers = coroutineDispatcher,
         )
 
@@ -65,212 +61,51 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should persist episode with correct metadata when marked as watched`() = runTest {
-        val timestamp = Clock.System.now().toEpochMilliseconds()
-
-        watchedEpisodeDao.markAsWatched(
-            showId = TEST_SHOW_ID,
-            episodeId = 101L,
-            seasonNumber = SEASON_1_NUMBER,
-            episodeNumber = 1L,
-            watchedAt = timestamp,
-        )
-
-        val lastWatched = watchedEpisodeDao.getLastWatchedEpisode(TEST_SHOW_ID)
-        lastWatched.shouldNotBeNull()
-        lastWatched.episode_id shouldBe Id(101L)
-        lastWatched.season_number shouldBe SEASON_1_NUMBER
-        lastWatched.episode_number shouldBe 1L
-    }
-
-    @Test
-    fun `should remove episode from watch history when unmarked`() = runTest {
-        val timestamp = Clock.System.now().toEpochMilliseconds()
-
-        watchedEpisodeDao.markAsWatched(TEST_SHOW_ID, 101L, SEASON_1_NUMBER, 1L, timestamp)
-        watchedEpisodeDao.markAsUnwatched(TEST_SHOW_ID, 101L)
-
-        val lastWatched = watchedEpisodeDao.getLastWatchedEpisode(TEST_SHOW_ID)
-        lastWatched.shouldBeNull()
-    }
-
-    @Test
-    fun `should mark all episodes from 1 to target when catching up`() = runTest {
-        val timestamp = Clock.System.now().toEpochMilliseconds()
-
-        watchedEpisodeDao.markEpisodeAndPreviousAsWatched(
-            showId = TEST_SHOW_ID,
-            episodeId = 105L,
-            seasonNumber = SEASON_1_NUMBER,
-            episodeNumber = 5L,
-            timestamp = timestamp,
-        )
-
-        val watchedEpisodes = watchedEpisodeDao.getWatchedEpisodesForSeason(TEST_SHOW_ID, SEASON_1_NUMBER)
-        watchedEpisodes shouldHaveSize 5
-        watchedEpisodes.map { it.episode_number }.sorted() shouldBe listOf(1L, 2L, 3L, 4L, 5L)
-        watchedEpisodes.all { it.watched_at == timestamp } shouldBe true
-    }
-
-    @Test
-    fun `should mark all previous seasons when catching up to later season`() = runTest {
-        val timestamp = Clock.System.now().toEpochMilliseconds()
-
-        watchedEpisodeDao.markEpisodeAndPreviousAsWatched(
-            showId = TEST_SHOW_ID,
-            episodeId = 202L,
-            seasonNumber = SEASON_2_NUMBER,
-            episodeNumber = 2L,
-            timestamp = timestamp,
-        )
-
-        val season1Watched = watchedEpisodeDao.getWatchedEpisodesForSeason(TEST_SHOW_ID, SEASON_1_NUMBER)
-        season1Watched shouldHaveSize SEASON_1_EPISODE_COUNT
-
-        val season2Watched = watchedEpisodeDao.getWatchedEpisodesForSeason(TEST_SHOW_ID, SEASON_2_NUMBER)
-        season2Watched shouldHaveSize 2
-        season2Watched.map { it.episode_number }.sorted() shouldBe listOf(1L, 2L)
-    }
-
-    @Test
-    fun `should not duplicate already watched episodes when catching up`() = runTest {
-        val timestamp = Clock.System.now().toEpochMilliseconds()
-
-        watchedEpisodeDao.markAsWatched(TEST_SHOW_ID, 101L, SEASON_1_NUMBER, 1L, timestamp)
-        watchedEpisodeDao.markAsWatched(TEST_SHOW_ID, 103L, SEASON_1_NUMBER, 3L, timestamp)
-
-        watchedEpisodeDao.markEpisodeAndPreviousAsWatched(
-            showId = TEST_SHOW_ID,
-            episodeId = 105L,
-            seasonNumber = SEASON_1_NUMBER,
-            episodeNumber = 5L,
-            timestamp = timestamp,
-        )
-
-        val watchedEpisodes = watchedEpisodeDao.getWatchedEpisodesForSeason(TEST_SHOW_ID, SEASON_1_NUMBER)
-        watchedEpisodes shouldHaveSize 5
-    }
-
-    @Test
-    fun `should mark current and all previous seasons when completing season`() = runTest {
-        val timestamp = Clock.System.now().toEpochMilliseconds()
-
-        watchedEpisodeDao.markSeasonAndPreviousAsWatched(
-            showId = TEST_SHOW_ID,
-            seasonNumber = SEASON_2_NUMBER,
-            timestamp = timestamp,
-        )
-
-        val season1Watched = watchedEpisodeDao.getWatchedEpisodesForSeason(TEST_SHOW_ID, SEASON_1_NUMBER)
-        season1Watched shouldHaveSize SEASON_1_EPISODE_COUNT
-
-        val season2Watched = watchedEpisodeDao.getWatchedEpisodesForSeason(TEST_SHOW_ID, SEASON_2_NUMBER)
-        season2Watched shouldHaveSize SEASON_2_EPISODE_COUNT
-    }
-
-    @Test
-    fun `should not affect later seasons when completing an earlier season`() = runTest {
-        val timestamp = Clock.System.now().toEpochMilliseconds()
-
-        watchedEpisodeDao.markSeasonAndPreviousAsWatched(
-            showId = TEST_SHOW_ID,
-            seasonNumber = SEASON_1_NUMBER,
-            timestamp = timestamp,
-        )
-
-        val season1Watched = watchedEpisodeDao.getWatchedEpisodesForSeason(TEST_SHOW_ID, SEASON_1_NUMBER)
-        season1Watched shouldHaveSize SEASON_1_EPISODE_COUNT
-
-        val season2Watched = watchedEpisodeDao.getWatchedEpisodesForSeason(TEST_SHOW_ID, SEASON_2_NUMBER)
-        season2Watched.shouldBeEmpty()
-    }
-
-    @Test
-    fun `should apply same timestamp to all episodes when marking season watched`() = runTest {
-        val timestamp = Clock.System.now().toEpochMilliseconds()
-        val episodes = watchedEpisodeDao.getEpisodesForSeason(TEST_SHOW_ID, SEASON_1_NUMBER)
-
-        watchedEpisodeDao.markSeasonAsWatched(
-            showId = TEST_SHOW_ID,
-            seasonNumber = SEASON_1_NUMBER,
-            episodes = episodes,
-            timestamp = timestamp,
-        )
-
-        val watchedEpisodes = watchedEpisodeDao.getWatchedEpisodesForSeason(TEST_SHOW_ID, SEASON_1_NUMBER)
-        watchedEpisodes shouldHaveSize SEASON_1_EPISODE_COUNT
-        watchedEpisodes.all { it.watched_at == timestamp } shouldBe true
-    }
-
-    @Test
-    fun `should remove only episodes from specified season when unmarking`() = runTest {
-        val timestamp = Clock.System.now().toEpochMilliseconds()
-        val episodes = watchedEpisodeDao.getEpisodesForSeason(TEST_SHOW_ID, SEASON_1_NUMBER)
-        watchedEpisodeDao.markSeasonAsWatched(TEST_SHOW_ID, SEASON_1_NUMBER, episodes, timestamp)
-
-        watchedEpisodeDao.markSeasonAsUnwatched(TEST_SHOW_ID, SEASON_1_NUMBER)
-
-        val watchedEpisodes = watchedEpisodeDao.getWatchedEpisodesForSeason(TEST_SHOW_ID, SEASON_1_NUMBER)
-        watchedEpisodes.shouldBeEmpty()
-    }
-
-    @Test
-    fun `should return true for watched and false for unwatched episode`() = runTest {
-        val timestamp = Clock.System.now().toEpochMilliseconds()
-
-        watchedEpisodeDao.isEpisodeWatched(TEST_SHOW_ID, SEASON_1_NUMBER, 1L) shouldBe false
-
-        watchedEpisodeDao.markAsWatched(TEST_SHOW_ID, 101L, SEASON_1_NUMBER, 1L, timestamp)
-
-        watchedEpisodeDao.isEpisodeWatched(TEST_SHOW_ID, SEASON_1_NUMBER, 1L) shouldBe true
-        watchedEpisodeDao.isEpisodeWatched(TEST_SHOW_ID, SEASON_1_NUMBER, 2L) shouldBe false
-    }
-
-    @Test
-    fun `should return only skipped episodes when watching out of order`() = runTest {
-        val timestamp = Clock.System.now().toEpochMilliseconds()
-        watchedEpisodeDao.markAsWatched(TEST_SHOW_ID, 101L, SEASON_1_NUMBER, 1L, timestamp)
-        watchedEpisodeDao.markAsWatched(TEST_SHOW_ID, 103L, SEASON_1_NUMBER, 3L, timestamp)
-
-        val unwatched = watchedEpisodeDao.getUnwatchedEpisodesBefore(
-            showId = TEST_SHOW_ID,
-            seasonNumber = SEASON_1_NUMBER,
-            episodeNumber = 5L,
-        )
-
-        unwatched shouldHaveSize 2
-        unwatched.map { it.episodeNumber }.sorted() shouldBe listOf(2L, 4L)
-    }
-
-    @Test
     fun `should count all unwatched episodes in previous seasons`() = runTest {
         val count = watchedEpisodeDao.getUnwatchedEpisodeCountInPreviousSeasons(
             showId = TEST_SHOW_ID,
             seasonNumber = SEASON_2_NUMBER,
+            includeSpecials = false,
         )
 
         count shouldBe SEASON_1_EPISODE_COUNT.toLong()
     }
 
     @Test
-    fun `should clear entire watch history when show is deleted`() = runTest {
-        val timestamp = Clock.System.now().toEpochMilliseconds()
-        watchedEpisodeDao.markAsWatched(TEST_SHOW_ID, 101L, SEASON_1_NUMBER, 1L, timestamp)
-        watchedEpisodeDao.markAsWatched(TEST_SHOW_ID, 102L, SEASON_1_NUMBER, 2L, timestamp)
-        watchedEpisodeDao.markAsWatched(TEST_SHOW_ID, 201L, SEASON_2_NUMBER, 1L, timestamp)
-
-        watchedEpisodeDao.deleteAllForShow(TEST_SHOW_ID)
-
-        watchedEpisodeDao.getLastWatchedEpisode(TEST_SHOW_ID).shouldBeNull()
-    }
-
-    @Test
     fun `should return all seasons watch progress with correct counts`() = runTest {
         val timestamp = Clock.System.now().toEpochMilliseconds()
-        watchedEpisodeDao.markAsWatched(TEST_SHOW_ID, 101L, SEASON_1_NUMBER, 1L, timestamp)
-        watchedEpisodeDao.markAsWatched(TEST_SHOW_ID, 102L, SEASON_1_NUMBER, 2L, timestamp)
-        watchedEpisodeDao.markAsWatched(TEST_SHOW_ID, 103L, SEASON_1_NUMBER, 3L, timestamp)
-        watchedEpisodeDao.markAsWatched(TEST_SHOW_ID, 201L, SEASON_2_NUMBER, 1L, timestamp)
+        watchedEpisodeDao.markAsWatched(
+            showId = TEST_SHOW_ID,
+            episodeId = 101L,
+            seasonNumber = SEASON_1_NUMBER,
+            episodeNumber = 1L,
+            watchedAt = timestamp,
+            includeSpecials = false,
+        )
+        watchedEpisodeDao.markAsWatched(
+            showId = TEST_SHOW_ID,
+            episodeId = 102L,
+            seasonNumber = SEASON_1_NUMBER,
+            episodeNumber = 2L,
+            watchedAt = timestamp,
+            includeSpecials = false,
+        )
+        watchedEpisodeDao.markAsWatched(
+            showId = TEST_SHOW_ID,
+            episodeId = 103L,
+            seasonNumber = SEASON_1_NUMBER,
+            episodeNumber = 3L,
+            watchedAt = timestamp,
+            includeSpecials = false,
+        )
+        watchedEpisodeDao.markAsWatched(
+            showId = TEST_SHOW_ID,
+            episodeId = 201L,
+            seasonNumber = SEASON_2_NUMBER,
+            episodeNumber = 1L,
+            watchedAt = timestamp,
+            includeSpecials = false,
+        )
 
         watchedEpisodeDao.observeAllSeasonsWatchProgress(TEST_SHOW_ID).test {
             val progress = awaitItem()
@@ -320,7 +155,14 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
         repeat(SEASON_1_EPISODE_COUNT) { episodeIndex ->
             val episodeNumber = episodeIndex + 1
             val episodeId = 100L + episodeNumber
-            watchedEpisodeDao.markAsWatched(TEST_SHOW_ID, episodeId, SEASON_1_NUMBER, episodeNumber.toLong(), timestamp)
+            watchedEpisodeDao.markAsWatched(
+                showId = TEST_SHOW_ID,
+                episodeId = episodeId,
+                seasonNumber = SEASON_1_NUMBER,
+                episodeNumber = episodeNumber.toLong(),
+                watchedAt = timestamp,
+                includeSpecials = false,
+            )
         }
 
         watchedEpisodeDao.observeAllSeasonsWatchProgress(TEST_SHOW_ID).test {
@@ -340,7 +182,14 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             val initialProgress = awaitItem()
             initialProgress.first { it.seasonNumber == SEASON_1_NUMBER }.watchedCount shouldBe 0
 
-            watchedEpisodeDao.markAsWatched(TEST_SHOW_ID, 101L, SEASON_1_NUMBER, 1L, timestamp)
+            watchedEpisodeDao.markAsWatched(
+                showId = TEST_SHOW_ID,
+                episodeId = 101L,
+                seasonNumber = SEASON_1_NUMBER,
+                episodeNumber = 1L,
+                watchedAt = timestamp,
+                includeSpecials = false,
+            )
 
             val updatedProgress = awaitItem()
             updatedProgress.first { it.seasonNumber == SEASON_1_NUMBER }.watchedCount shouldBe 1
@@ -424,9 +273,12 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             )
         }
 
-        val _ = database.watchlistQueries.upsert(
-            id = Id(TEST_SHOW_ID),
-            created_at = Clock.System.now().toEpochMilliseconds(),
+        val _ = database.followedShowsQueries.upsert(
+            id = null,
+            tmdbId = TEST_SHOW_ID,
+            followedAt = Clock.System.now().toEpochMilliseconds(),
+            pendingAction = "NOTHING",
+            traktId = null,
         )
     }
 }

@@ -21,7 +21,7 @@ VALUES(?,?, ?, ?,?);
 
 cast:
 SELECT
-    casts.id,
+    casts.id AS cast_id,
     casts.name,
     casts.character_name,
     casts.profile_path,

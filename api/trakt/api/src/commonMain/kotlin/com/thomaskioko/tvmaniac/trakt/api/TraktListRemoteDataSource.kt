@@ -18,11 +18,11 @@ public interface TraktListRemoteDataSource {
 
     public suspend fun getFollowedList(listId: Long, userSlug: String): List<TraktFollowedShowResponse>
 
-    public suspend fun getWatchList(): List<TraktFollowedShowResponse>
+    public suspend fun getWatchList(): ApiResponse<List<TraktFollowedShowResponse>>
 
-    public suspend fun addShowToWatchList(showId: Long): TraktAddShowToListResponse
+    public suspend fun addShowToWatchListByTmdbId(tmdbId: Long): ApiResponse<TraktAddShowToListResponse>
 
-    public suspend fun removeShowFromWatchList(showId: Long): TraktAddRemoveShowFromListResponse
+    public suspend fun removeShowFromWatchListByTmdbId(tmdbId: Long): ApiResponse<TraktAddRemoveShowFromListResponse>
 
     public suspend fun addShowToList(
         userSlug: String,

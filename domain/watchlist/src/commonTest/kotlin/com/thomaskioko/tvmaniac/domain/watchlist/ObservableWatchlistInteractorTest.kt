@@ -2,8 +2,8 @@ package com.thomaskioko.tvmaniac.domain.watchlist
 
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.db.FollowedShows
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.db.Watchlists
 import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
@@ -119,8 +119,8 @@ class ObservableWatchlistInteractorTest {
     fun `should emit new data when repository data changes`() = runTest {
         val initialWatchlist = createTestWatchlist()
         val updatedWatchlist = createTestWatchlist().plus(
-            Watchlists(
-                id = Id(999),
+            FollowedShows(
+                show_id = Id(999),
                 name = "New Show",
                 poster_path = "/new_poster.jpg",
                 status = "Ongoing",
@@ -183,8 +183,8 @@ class ObservableWatchlistInteractorTest {
     }
 
     private fun createTestWatchlist() = listOf(
-        Watchlists(
-            id = Id(84958),
+        FollowedShows(
+            show_id = Id(84958),
             name = "Loki",
             poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
             status = "Ended",
@@ -195,8 +195,8 @@ class ObservableWatchlistInteractorTest {
             watched_count = 0,
             total_episode_count = 10,
         ),
-        Watchlists(
-            id = Id(1232),
+        FollowedShows(
+            show_id = Id(1232),
             name = "The Lazarus Project",
             poster_path = "/lazarus_poster.jpg",
             status = "Ongoing",

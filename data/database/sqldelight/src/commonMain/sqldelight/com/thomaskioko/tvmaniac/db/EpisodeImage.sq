@@ -20,9 +20,9 @@ VALUES(?,?,?);
 
 episodeImage:
 SELECT
-    tvshow.id,
+    tvshow.id AS show_id,
     season.season_number,
-    episode.id,
+    episode.id AS episode_id,
     episode.episode_number,
     episode_image.image_url
 FROM

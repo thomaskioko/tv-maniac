@@ -15,7 +15,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(projects.core.base)
-                implementation(projects.core.buildconfig.api)
+                implementation(projects.core.util.api)
                 implementation(projects.core.logger.api)
                 implementation(projects.api.tmdb.api)
 

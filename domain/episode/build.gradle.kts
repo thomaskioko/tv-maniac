@@ -4,6 +4,7 @@ plugins {
 
 scaffold {
     optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
+    useKotlinInject()
 }
 
 kotlin {
@@ -13,9 +14,11 @@ kotlin {
                 api(projects.data.shows.api)
 
                 implementation(projects.core.base)
+                implementation(projects.core.logger.api)
                 implementation(projects.core.util.api)
                 implementation(projects.core.networkUtil)
                 implementation(projects.data.episode.api)
+                implementation(projects.data.traktauth.api)
                 implementation(projects.data.watchlist.api)
 
                 implementation(libs.coroutines.core)

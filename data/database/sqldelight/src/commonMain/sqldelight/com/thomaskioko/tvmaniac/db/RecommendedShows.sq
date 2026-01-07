@@ -19,18 +19,18 @@ VALUES(?,?);
 
 recommendedShows:
 SELECT
-   tvshow.id,
+   tvshow.id AS tmdb_id,
    tvshow.name,
    tvshow.poster_path,
    tvshow.backdrop_path,
    recommended_shows.recommended_show_id AS show_id,
-   CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+   CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     tvshow
 JOIN
     recommended_shows ON recommended_shows.id = tvshow.id
 LEFT OUTER JOIN
-    watchlist ON tvshow.id = watchlist.id
+    followed_shows ON tvshow.id = followed_shows.tmdb_id AND followed_shows.pending_action != 'DELETE'
 WHERE
     recommended_shows.recommended_show_id = ?;
 

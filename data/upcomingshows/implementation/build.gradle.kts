@@ -18,7 +18,6 @@ kotlin {
                 implementation(projects.core.paging)
                 implementation(projects.data.database.sqldelight)
                 implementation(projects.core.util.api)
-                implementation(projects.core.util)
                 implementation(projects.data.upcomingshows.api)
                 implementation(projects.data.requestManager.api)
 

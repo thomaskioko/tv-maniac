@@ -1,0 +1,143 @@
+CREATE TABLE IF NOT EXISTS followed_shows(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    tmdb_id INTEGER NOT NULL UNIQUE,
+    followed_at INTEGER NOT NULL,
+    pending_action TEXT NOT NULL DEFAULT 'NOTHING'
+        CHECK(pending_action IN ('NOTHING', 'UPLOAD', 'DELETE')),
+    trakt_id INTEGER
+);
+
+CREATE INDEX IF NOT EXISTS idx_followed_shows_tmdb_id ON followed_shows(tmdb_id);
+CREATE INDEX IF NOT EXISTS idx_followed_shows_pending_action ON followed_shows(pending_action);
+
+entries:
+SELECT
+    followed_shows.id AS followed_id,
+    followed_shows.tmdb_id,
+    followed_shows.followed_at,
+    followed_shows.pending_action,
+    followed_shows.trakt_id
+FROM followed_shows;
+
+entryWithTmdbId:
+SELECT
+    followed_shows.id AS followed_id,
+    followed_shows.tmdb_id,
+    followed_shows.followed_at,
+    followed_shows.pending_action,
+    followed_shows.trakt_id
+FROM followed_shows WHERE tmdb_id = ?;
+
+entriesWithNoPendingAction:
+SELECT
+    followed_shows.id AS followed_id,
+    followed_shows.tmdb_id,
+    followed_shows.followed_at,
+    followed_shows.pending_action,
+    followed_shows.trakt_id
+FROM followed_shows WHERE pending_action = 'NOTHING';
+
+entriesWithUploadPendingAction:
+SELECT
+    followed_shows.id AS followed_id,
+    followed_shows.tmdb_id,
+    followed_shows.followed_at,
+    followed_shows.pending_action,
+    followed_shows.trakt_id
+FROM followed_shows WHERE pending_action = 'UPLOAD';
+
+entriesWithDeletePendingAction:
+SELECT
+    followed_shows.id AS followed_id,
+    followed_shows.tmdb_id,
+    followed_shows.followed_at,
+    followed_shows.pending_action,
+    followed_shows.trakt_id
+FROM followed_shows WHERE pending_action = 'DELETE';
+
+upsert:
+INSERT OR REPLACE INTO followed_shows(id, tmdb_id, followed_at, pending_action, trakt_id)
+VALUES(:id, :tmdbId, :followedAt, :pendingAction, :traktId);
+
+insert:
+INSERT INTO followed_shows(tmdb_id, followed_at, pending_action, trakt_id)
+VALUES(:tmdbId, :followedAt, :pendingAction, :traktId);
+
+updatePendingAction:
+UPDATE followed_shows SET pending_action = :pendingAction WHERE id = :id;
+
+updatePendingActionForTmdbId:
+UPDATE followed_shows SET pending_action = :pendingAction WHERE tmdb_id = :tmdbId;
+
+deleteById:
+DELETE FROM followed_shows WHERE id = ?;
+
+deleteByTmdbId:
+DELETE FROM followed_shows WHERE tmdb_id = ?;
+
+countEntries:
+SELECT COUNT(*) FROM followed_shows;
+
+countEntriesWithPendingAction:
+SELECT COUNT(*) FROM followed_shows WHERE pending_action != 'NOTHING';
+
+upsertIfNotExists:
+INSERT OR IGNORE INTO followed_shows(tmdb_id, followed_at, pending_action)
+VALUES(:tmdbId, :followedAt, 'UPLOAD');
+
+isShowFollowed:
+SELECT COUNT(*) > 0 FROM followed_shows WHERE tmdb_id = ? AND pending_action != 'DELETE';
+
+followedShows:
+SELECT
+    tvshow.id AS show_id,
+    tvshow.name,
+    tvshow.poster_path,
+    tvshow.first_air_date,
+    followed_shows.followed_at AS created_at,
+    show_metadata.season_count,
+    show_metadata.episode_count,
+    show_metadata.status,
+    (SELECT COUNT(*) FROM watched_episodes WHERE watched_episodes.show_id = tvshow.id) AS watched_count,
+    (SELECT COUNT(*) FROM episode WHERE episode.show_id = tvshow.id AND (episode.air_date IS NULL OR episode.air_date <= date('now'))) AS total_episode_count
+FROM followed_shows
+INNER JOIN tvshow ON followed_shows.tmdb_id = tvshow.id
+LEFT JOIN show_metadata ON tvshow.id = show_metadata.show_id
+WHERE followed_shows.pending_action != 'DELETE'
+  AND (
+    (SELECT COUNT(*) FROM watched_episodes WHERE watched_episodes.show_id = tvshow.id) <
+    (SELECT COUNT(*) FROM episode WHERE episode.show_id = tvshow.id AND (episode.air_date IS NULL OR episode.air_date <= date('now')))
+    OR (SELECT COUNT(*) FROM episode WHERE episode.show_id = tvshow.id AND (episode.air_date IS NULL OR episode.air_date <= date('now'))) = 0
+  )
+ORDER BY followed_shows.followed_at DESC;
+
+searchFollowedShows:
+SELECT
+    tvshow.id AS show_id,
+    tvshow.name,
+    tvshow.poster_path,
+    tvshow.status,
+    tvshow.first_air_date,
+    followed_shows.followed_at AS created_at,
+    show_metadata.season_count,
+    show_metadata.episode_count,
+    show_metadata.status AS metadata_status,
+    (SELECT COUNT(*) FROM watched_episodes WHERE watched_episodes.show_id = tvshow.id) AS watched_count,
+    (SELECT COUNT(*) FROM episode WHERE episode.show_id = tvshow.id AND (episode.air_date IS NULL OR episode.air_date <= date('now'))) AS total_episode_count
+FROM followed_shows
+INNER JOIN tvshow ON followed_shows.tmdb_id = tvshow.id
+LEFT JOIN show_metadata ON tvshow.id = show_metadata.show_id
+WHERE followed_shows.pending_action != 'DELETE'
+  AND (
+    (SELECT COUNT(*) FROM watched_episodes WHERE watched_episodes.show_id = tvshow.id) <
+    (SELECT COUNT(*) FROM episode WHERE episode.show_id = tvshow.id AND (episode.air_date IS NULL OR episode.air_date <= date('now')))
+    OR (SELECT COUNT(*) FROM episode WHERE episode.show_id = tvshow.id AND (episode.air_date IS NULL OR episode.air_date <= date('now'))) = 0
+  )
+  AND tvshow.name LIKE '%' || :query || '%' COLLATE NOCASE
+ORDER BY
+  CASE
+    WHEN tvshow.name LIKE :query || '%' COLLATE NOCASE THEN 1
+    WHEN tvshow.name LIKE '% ' || :query || '%' COLLATE NOCASE THEN 2
+    ELSE 3
+  END,
+  followed_shows.followed_at DESC;

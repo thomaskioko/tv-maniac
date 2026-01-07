@@ -5,7 +5,7 @@ import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.SeasonDetails
-import com.thomaskioko.tvmaniac.db.Season_images
+import com.thomaskioko.tvmaniac.db.SeasonImages
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsDao
 import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
@@ -66,10 +66,10 @@ public class DefaultSeasonDetailsDao(
         }
     }
 
-    override fun fetchSeasonImages(id: Long): List<Season_images> =
+    override fun fetchSeasonImages(id: Long): List<SeasonImages> =
         database.seasonImagesQueries.seasonImages(Id(id)).executeAsList()
 
-    override fun observeSeasonImages(id: Long): Flow<List<Season_images>> =
+    override fun observeSeasonImages(id: Long): Flow<List<SeasonImages>> =
         database.seasonImagesQueries.seasonImages(Id(id)).asFlow().mapToList(dispatcher.io)
 
     private fun mapSeasonDetails(resultItem: List<SeasonDetails>): SeasonDetailsWithEpisodes {

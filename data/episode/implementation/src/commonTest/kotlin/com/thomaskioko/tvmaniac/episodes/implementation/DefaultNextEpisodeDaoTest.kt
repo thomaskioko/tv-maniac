@@ -5,7 +5,6 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.episodes.api.NextEpisodeDao
-import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
@@ -51,98 +50,15 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should observe next episode for show with no watched episodes`() = runTest {
-        nextEpisodeDao.observeNextEpisode(1L).test {
-            val nextEpisode = awaitItem()
-            nextEpisode.shouldNotBeNull()
-            nextEpisode.showId shouldBe 1L
-            nextEpisode.showName shouldBe "Test Show 1"
-            nextEpisode.episodeName shouldBe "Episode 1"
-            nextEpisode.seasonNumber shouldBe 1
-            nextEpisode.episodeNumber shouldBe 1
-        }
-    }
-
-    @Test
-    fun `should observe next episode after marking episodes as watched`() = runTest {
-        val _ = database.watchedEpisodesQueries.upsert(
-            show_id = Id(1L),
-            episode_id = Id(101L),
-            season_number = 1L,
-            episode_number = 1L,
-            watched_at = watchDate,
-        )
-        val _ = database.watchedEpisodesQueries.upsert(
-            show_id = Id(1L),
-            episode_id = Id(102L),
-            season_number = 1L,
-            episode_number = 2L,
-            watched_at = watchDate,
-        )
-
-        nextEpisodeDao.observeNextEpisode(1L).test {
-            val nextEpisode = awaitItem()
-            nextEpisode.shouldNotBeNull()
-            nextEpisode.episodeName shouldBe "Episode 3"
-            nextEpisode.seasonNumber shouldBe 1
-            nextEpisode.episodeNumber shouldBe 3
-        }
-    }
-
-    @Test
-    fun `should return null when all episodes are watched`() = runTest {
-        val _ = database.watchedEpisodesQueries.upsert(
-            show_id = Id(1L),
-            episode_id = Id(101L),
-            season_number = 1L,
-            episode_number = 1L,
-            watched_at = watchDate,
-        )
-        val _ = database.watchedEpisodesQueries.upsert(
-            show_id = Id(1L),
-            episode_id = Id(102L),
-            season_number = 1L,
-            episode_number = 2L,
-            watched_at = watchDate,
-        )
-        val _ = database.watchedEpisodesQueries.upsert(
-            show_id = Id(1L),
-            episode_id = Id(103L),
-            season_number = 1L,
-            episode_number = 3L,
-            watched_at = watchDate,
-        )
-
-        nextEpisodeDao.observeNextEpisode(1L).test {
-            val nextEpisode = awaitItem()
-            nextEpisode.shouldBeNull()
-        }
-    }
-
-    @Test
     fun `should observe next episodes for watchlist`() = runTest {
-        val _ = database.watchlistQueries.upsert(
-            id = Id(1L),
-            created_at = watchDate,
-        )
-        val _ = database.watchlistQueries.upsert(
-            id = Id(2L),
-            created_at = watchDate + 1000,
-        )
+        followShow(showId = 1L, followedAt = watchDate)
+        followShow(showId = 2L, followedAt = watchDate + 1000)
+        markEpisodeWatched(showId = 1L, episodeId = 101L, seasonNumber = 1L, episodeNumber = 1L)
 
-        val _ = database.watchedEpisodesQueries.upsert(
-            show_id = Id(1L),
-            episode_id = Id(101L),
-            season_number = 1L,
-            episode_number = 1L,
-            watched_at = watchDate,
-        )
-
-        nextEpisodeDao.observeNextEpisodesForWatchlist().test {
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
             val watchlistEpisodes = awaitItem()
             watchlistEpisodes.size shouldBe 2
 
-            // Show 2 should be first (more recently added to watchlist)
             val show2Episode = watchlistEpisodes[0]
             show2Episode.showId shouldBe 2L
             show2Episode.showName shouldBe "Test Show 2"
@@ -151,7 +67,6 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             show2Episode.episodeNumber shouldBe 1
             show2Episode.followedAt.shouldNotBeNull()
 
-            // Show 1 should have episode 2 as next (episode 1 is watched)
             val show1Episode = watchlistEpisodes[1]
             show1Episode.showId shouldBe 1L
             show1Episode.showName shouldBe "Test Show 1"
@@ -163,30 +78,67 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should handle cross-season progression`() = runTest {
-        // Given - show with multiple seasons
+    fun `should return first episode given show with no watched episodes`() = runTest {
+        followShow(showId = 1L, followedAt = watchDate)
+
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
+            val episodes = awaitItem()
+            episodes.size shouldBe 1
+
+            val nextEpisode = episodes[0]
+            nextEpisode.showId shouldBe 1L
+            nextEpisode.showName shouldBe "Test Show 1"
+            nextEpisode.episodeName shouldBe "Episode 1"
+            nextEpisode.seasonNumber shouldBe 1
+            nextEpisode.episodeNumber shouldBe 1
+        }
+    }
+
+    @Test
+    fun `should return next unwatched episode given some episodes watched`() = runTest {
+        followShow(showId = 1L, followedAt = watchDate)
+        markEpisodeWatched(showId = 1L, episodeId = 101L, seasonNumber = 1L, episodeNumber = 1L)
+        markEpisodeWatched(showId = 1L, episodeId = 102L, seasonNumber = 1L, episodeNumber = 2L)
+
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
+            val episodes = awaitItem()
+            episodes.size shouldBe 1
+
+            val nextEpisode = episodes[0]
+            nextEpisode.episodeName shouldBe "Episode 3"
+            nextEpisode.seasonNumber shouldBe 1
+            nextEpisode.episodeNumber shouldBe 3
+        }
+    }
+
+    @Test
+    fun `should exclude show given all episodes watched`() = runTest {
+        followShow(showId = 1L, followedAt = watchDate)
+        followShow(showId = 2L, followedAt = watchDate + 1000)
+        markEpisodeWatched(showId = 1L, episodeId = 101L, seasonNumber = 1L, episodeNumber = 1L)
+        markEpisodeWatched(showId = 1L, episodeId = 102L, seasonNumber = 1L, episodeNumber = 2L)
+        markEpisodeWatched(showId = 1L, episodeId = 103L, seasonNumber = 1L, episodeNumber = 3L)
+
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
+            val episodes = awaitItem()
+            episodes.size shouldBe 1
+            episodes[0].showId shouldBe 2L
+            episodes[0].showName shouldBe "Test Show 2"
+        }
+    }
+
+    @Test
+    fun `should return first episode of next season given all season episodes watched`() = runTest {
         insertShow3WithMultipleSeasons()
+        followShow(showId = 3L, followedAt = watchDate)
+        markEpisodeWatched(showId = 3L, episodeId = 301L, seasonNumber = 1L, episodeNumber = 1L)
+        markEpisodeWatched(showId = 3L, episodeId = 302L, seasonNumber = 1L, episodeNumber = 2L)
 
-        // Mark all of season 1 as watched
-        val _ = database.watchedEpisodesQueries.upsert(
-            show_id = Id(3L),
-            episode_id = Id(301L),
-            season_number = 1L,
-            episode_number = 1L,
-            watched_at = watchDate,
-        )
-        val _ = database.watchedEpisodesQueries.upsert(
-            show_id = Id(3L),
-            episode_id = Id(302L),
-            season_number = 1L,
-            episode_number = 2L,
-            watched_at = watchDate,
-        )
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
+            val episodes = awaitItem()
+            episodes.size shouldBe 1
 
-        // When & Then - should return first episode of season 2
-        nextEpisodeDao.observeNextEpisode(3L).test {
-            val nextEpisode = awaitItem()
-            nextEpisode.shouldNotBeNull()
+            val nextEpisode = episodes[0]
             nextEpisode.episodeName shouldBe "S2E1"
             nextEpisode.seasonNumber shouldBe 2
             nextEpisode.episodeNumber shouldBe 1
@@ -194,14 +146,15 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should skip season 0 episodes`() = runTest {
-        // Given - show with season 0 (specials) and season 1
+    fun `should skip season 0 episodes given includeSpecials is false`() = runTest {
         insertShow4WithSpecials()
+        followShow(showId = 4L, followedAt = watchDate)
 
-        // When & Then - should return first episode of season 1, not season 0
-        nextEpisodeDao.observeNextEpisode(4L).test {
-            val nextEpisode = awaitItem()
-            nextEpisode.shouldNotBeNull()
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
+            val episodes = awaitItem()
+            episodes.size shouldBe 1
+
+            val nextEpisode = episodes[0]
             nextEpisode.episodeName shouldBe "Regular Episode 1"
             nextEpisode.seasonNumber shouldBe 1
             nextEpisode.episodeNumber shouldBe 1
@@ -209,347 +162,16 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should handle non-sequential watch progress`() = runTest {
-        // Given - watch episodes out of order (e.g., watched E1 and E3, but not E2)
-        val _ = database.watchedEpisodesQueries.upsert(
-            show_id = Id(1L),
-            episode_id = Id(101L),
-            season_number = 1L,
-            episode_number = 1L,
-            watched_at = watchDate,
-        )
-        val _ = database.watchedEpisodesQueries.upsert(
-            show_id = Id(1L),
-            episode_id = Id(103L),
-            season_number = 1L,
-            episode_number = 3L,
-            watched_at = watchDate,
-        )
-
-        // Since the test data only has 3 episodes and E3 is the last watched, there are no more episodes to progress to
-        nextEpisodeDao.observeNextEpisode(1L).test {
-            val nextEpisode = awaitItem()
-            nextEpisode.shouldBeNull()
-        }
-    }
-
-    private fun insertTestData() {
-        // Insert test TV shows
-        val _ = database.tvShowQueries.upsert(
-            id = Id(1),
-            name = "Test Show 1",
-            overview = "Test overview 1",
-            language = "en",
-            first_air_date = "2023-01-01",
-            vote_average = 8.0,
-            vote_count = 100,
-            popularity = 95.0,
-            genre_ids = listOf(1, 2),
-            status = "Returning Series",
-            episode_numbers = null,
-            last_air_date = null,
-            season_numbers = null,
-            poster_path = "/test1.jpg",
-            backdrop_path = "/backdrop1.jpg",
-        )
-
-        val _ = database.tvShowQueries.upsert(
-            id = Id(2),
-            name = "Test Show 2",
-            overview = "Test overview 2",
-            language = "en",
-            first_air_date = "2023-02-01",
-            vote_average = 7.5,
-            vote_count = 200,
-            popularity = 85.0,
-            genre_ids = listOf(2, 3),
-            status = "Ended",
-            episode_numbers = null,
-            last_air_date = null,
-            season_numbers = null,
-            poster_path = "/test2.jpg",
-            backdrop_path = "/backdrop2.jpg",
-        )
-
-        // Insert seasons for show 1
-        val _ = database.seasonsQueries.upsert(
-            id = Id(11L),
-            show_id = Id(1L),
-            season_number = 1L,
-            title = "Season 1",
-            overview = "First season",
-            episode_count = 3L,
-            image_url = "/season1.jpg",
-        )
-
-        // Insert episodes for show 1
-        val _ = database.episodesQueries.upsert(
-            id = Id(101L),
-            season_id = Id(11L),
-            show_id = Id(1L),
-            title = "Episode 1",
-            overview = "First episode",
-            episode_number = 1L,
-            runtime = 45L,
-            image_url = "/ep1.jpg",
-            vote_average = 8.0,
-            vote_count = 100L,
-            air_date = "2023-01-01",
-            trakt_id = null,
-        )
-
-        val _ = database.episodesQueries.upsert(
-            id = Id(102L),
-            season_id = Id(11L),
-            show_id = Id(1L),
-            title = "Episode 2",
-            overview = "Second episode",
-            episode_number = 2L,
-            runtime = 45L,
-            image_url = "/ep2.jpg",
-            vote_average = 8.2,
-            vote_count = 110L,
-            air_date = "2023-01-08",
-            trakt_id = null,
-        )
-
-        val _ = database.episodesQueries.upsert(
-            id = Id(103L),
-            season_id = Id(11L),
-            show_id = Id(1L),
-            title = "Episode 3",
-            overview = "Third episode",
-            episode_number = 3L,
-            runtime = 45L,
-            image_url = "/ep3.jpg",
-            vote_average = 8.5,
-            vote_count = 120L,
-            air_date = "2023-01-15",
-            trakt_id = null,
-        )
-
-        // Insert season for show 2
-        val _ = database.seasonsQueries.upsert(
-            id = Id(21L),
-            show_id = Id(2L),
-            season_number = 1L,
-            title = "Season 1",
-            overview = "First season of show 2",
-            episode_count = 2L,
-            image_url = "/show2season1.jpg",
-        )
-
-        // Insert episodes for show 2
-        val _ = database.episodesQueries.upsert(
-            id = Id(201L),
-            season_id = Id(21L),
-            show_id = Id(2L),
-            title = "Show 2 Episode 1",
-            overview = "First episode of show 2",
-            episode_number = 1L,
-            runtime = 50L,
-            image_url = "/show2ep1.jpg",
-            vote_average = 7.5,
-            vote_count = 80L,
-            air_date = "2023-02-01",
-            trakt_id = null,
-        )
-
-        val _ = database.episodesQueries.upsert(
-            id = Id(202L),
-            season_id = Id(21L),
-            show_id = Id(2L),
-            title = "Show 2 Episode 2",
-            overview = "Second episode of show 2",
-            episode_number = 2L,
-            runtime = 50L,
-            image_url = "/show2ep2.jpg",
-            vote_average = 7.8,
-            vote_count = 85L,
-            air_date = "2023-02-08",
-            trakt_id = null,
-        )
-    }
-
-    private fun insertShow3WithMultipleSeasons() {
-        val _ = database.tvShowQueries.upsert(
-            id = Id(3),
-            name = "Multi-Season Show",
-            overview = "Show with multiple seasons",
-            language = "en",
-            first_air_date = "2022-01-01",
-            vote_average = 8.5,
-            vote_count = 500,
-            popularity = 100.0,
-            genre_ids = listOf(1),
-            status = "Returning Series",
-            episode_numbers = null,
-            last_air_date = null,
-            season_numbers = null,
-            poster_path = "/multi.jpg",
-            backdrop_path = "/multi-back.jpg",
-        )
-
-        // Season 1
-        val _ = database.seasonsQueries.upsert(
-            id = Id(31L),
-            show_id = Id(3L),
-            season_number = 1L,
-            title = "Season 1",
-            overview = "First season",
-            episode_count = 2L,
-            image_url = "/s1.jpg",
-        )
-
-        val _ = database.episodesQueries.upsert(
-            id = Id(301L),
-            season_id = Id(31L),
-            show_id = Id(3L),
-            title = "S1E1",
-            overview = "Season 1 Episode 1",
-            episode_number = 1L,
-            runtime = 45L,
-            image_url = "/s1e1.jpg",
-            vote_average = 8.0,
-            vote_count = 100L,
-            air_date = "2022-01-01",
-            trakt_id = null,
-        )
-
-        val _ = database.episodesQueries.upsert(
-            id = Id(302L),
-            season_id = Id(31L),
-            show_id = Id(3L),
-            title = "S1E2",
-            overview = "Season 1 Episode 2",
-            episode_number = 2L,
-            runtime = 45L,
-            image_url = "/s1e2.jpg",
-            vote_average = 8.2,
-            vote_count = 110L,
-            air_date = "2022-01-08",
-            trakt_id = null,
-        )
-
-        // Season 2
-        val _ = database.seasonsQueries.upsert(
-            id = Id(32L),
-            show_id = Id(3L),
-            season_number = 2L,
-            title = "Season 2",
-            overview = "Second season",
-            episode_count = 2L,
-            image_url = "/s2.jpg",
-        )
-
-        val _ = database.episodesQueries.upsert(
-            id = Id(303L),
-            season_id = Id(32L),
-            show_id = Id(3L),
-            title = "S2E1",
-            overview = "Season 2 Episode 1",
-            episode_number = 1L,
-            runtime = 45L,
-            image_url = "/s2e1.jpg",
-            vote_average = 8.5,
-            vote_count = 120L,
-            air_date = "2022-02-01",
-            trakt_id = null,
-        )
-    }
-
-    private fun insertShow4WithSpecials() {
-        val _ = database.tvShowQueries.upsert(
-            id = Id(4),
-            name = "Show with Specials",
-            overview = "Show with season 0",
-            language = "en",
-            first_air_date = "2023-01-01",
-            vote_average = 7.5,
-            vote_count = 100,
-            popularity = 80.0,
-            genre_ids = listOf(1),
-            status = "Returning Series",
-            episode_numbers = null,
-            last_air_date = null,
-            season_numbers = null,
-            poster_path = "/specials.jpg",
-            backdrop_path = "/specials-back.jpg",
-        )
-
-        // Season 0 (Specials)
-        val _ = database.seasonsQueries.upsert(
-            id = Id(40L),
-            show_id = Id(4L),
-            season_number = 0L,
-            title = "Specials",
-            overview = "Special episodes",
-            episode_count = 1L,
-            image_url = "/s0.jpg",
-        )
-
-        val _ = database.episodesQueries.upsert(
-            id = Id(400L),
-            season_id = Id(40L),
-            show_id = Id(4L),
-            title = "Christmas Special",
-            overview = "Special episode",
-            episode_number = 1L,
-            runtime = 60L,
-            image_url = "/special.jpg",
-            vote_average = 7.0,
-            vote_count = 50L,
-            air_date = "2022-12-25",
-            trakt_id = null,
-        )
-
-        // Season 1
-        val _ = database.seasonsQueries.upsert(
-            id = Id(41L),
-            show_id = Id(4L),
-            season_number = 1L,
-            title = "Season 1",
-            overview = "Regular season",
-            episode_count = 1L,
-            image_url = "/s1.jpg",
-        )
-
-        val _ = database.episodesQueries.upsert(
-            id = Id(401L),
-            season_id = Id(41L),
-            show_id = Id(4L),
-            title = "Regular Episode 1",
-            overview = "First regular episode",
-            episode_number = 1L,
-            runtime = 45L,
-            image_url = "/reg1.jpg",
-            vote_average = 8.0,
-            vote_count = 100L,
-            air_date = "2023-01-01",
-            trakt_id = null,
-        )
-    }
-
-    @Test
     fun `should maintain shows in watchlist when tracking sequentially`() = runTest {
-        //  Track Breaking Bad (show 1)
-        val _ = database.watchlistQueries.upsert(
-            id = Id(1L),
-            created_at = watchDate,
-        )
+        followShow(showId = 1L, followedAt = watchDate)
 
-        // Verify Breaking Bad episode appears
-        nextEpisodeDao.observeNextEpisodesForWatchlist().test {
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
             val episodes1 = awaitItem()
             episodes1.size shouldBe 1
             episodes1[0].showId shouldBe 1L
             episodes1[0].showName shouldBe "Test Show 1"
 
-            // Step 2: Track Game of Thrones (show 2) - this should ADD to the list, not replace
-            val _ = database.watchlistQueries.upsert(
-                id = Id(2L),
-                created_at = watchDate + 1000,
-            )
+            followShow(showId = 2L, followedAt = watchDate + 1000)
 
             val episodes2 = awaitItem()
             episodes2.size shouldBe 2
@@ -564,201 +186,26 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should handle shows with Specials seasons correctly`() = runTest {
-        val _ = database.tvShowQueries.upsert(
-            id = Id(5L),
-            name = "Breaking Bad",
-            overview = "Chemistry teacher turns to cooking meth",
-            language = "en",
-            first_air_date = "2008-01-20",
-            vote_average = 9.3,
-            vote_count = 5000,
-            popularity = 95.0,
-            genre_ids = listOf(1, 2),
-            status = "Ended",
-            episode_numbers = null,
-            last_air_date = null,
-            season_numbers = null,
-            poster_path = "/bb.jpg",
-            backdrop_path = "/bb-back.jpg",
+        insertShowWithSpecials(
+            showId = 5L,
+            showName = "Breaking Bad",
+            specialsSeasonId = 50L,
+            regularSeasonId = 51L,
+            specialEpisodeId = 500L,
+            regularEpisodeIds = listOf(501L to "Pilot", 502L to "Cat's in the Bag..."),
+        )
+        insertShowWithSpecials(
+            showId = 6L,
+            showName = "Game of Thrones",
+            specialsSeasonId = 60L,
+            regularSeasonId = 61L,
+            specialEpisodeId = 600L,
+            regularEpisodeIds = listOf(610L to "Winter Is Coming", 611L to "The Kingsroad"),
         )
 
-        // Season 0 (Specials) - should be excluded
-        val _ = database.seasonsQueries.upsert(
-            id = Id(50L),
-            show_id = Id(5L),
-            season_number = 0L,
-            title = "Specials",
-            overview = "Special episodes",
-            episode_count = 1L,
-            image_url = "/bb-specials.jpg",
-        )
+        followShow(showId = 5L, followedAt = watchDate)
 
-        val _ = database.episodesQueries.upsert(
-            id = Id(500L),
-            season_id = Id(50L),
-            show_id = Id(5L),
-            title = "BB Special Episode",
-            overview = "Behind the scenes",
-            episode_number = 1L,
-            runtime = 30L,
-            image_url = "/bb-special.jpg",
-            vote_average = 7.0,
-            vote_count = 100L,
-            air_date = "2008-01-10",
-            trakt_id = null,
-        )
-
-        // Season 1 (Regular) - should be included
-        val _ = database.seasonsQueries.upsert(
-            id = Id(51L),
-            show_id = Id(5L),
-            season_number = 1L,
-            title = "Season 1",
-            overview = "First season",
-            episode_count = 2L,
-            image_url = "/bb-s1.jpg",
-        )
-
-        val _ = database.episodesQueries.upsert(
-            id = Id(501L),
-            season_id = Id(51L),
-            show_id = Id(5L),
-            title = "Pilot",
-            overview = "Walter White starts cooking",
-            episode_number = 1L,
-            runtime = 58L,
-            image_url = "/bb-pilot.jpg",
-            vote_average = 9.0,
-            vote_count = 1000L,
-            air_date = "2008-01-20",
-            trakt_id = null,
-        )
-
-        val _ = database.episodesQueries.upsert(
-            id = Id(502L),
-            season_id = Id(51L),
-            show_id = Id(5L),
-            title = "Cat's in the Bag...",
-            overview = "Walter and Jesse dispose of evidence",
-            episode_number = 2L,
-            runtime = 48L,
-            image_url = "/bb-ep2.jpg",
-            vote_average = 8.8,
-            vote_count = 950L,
-            air_date = "2008-01-27",
-            trakt_id = null,
-        )
-
-        // Create Game of Thrones (show 6) with Specials
-        val _ = database.tvShowQueries.upsert(
-            id = Id(6L),
-            name = "Game of Thrones",
-            overview = "Power struggles in Westeros",
-            language = "en",
-            first_air_date = "2011-04-17",
-            vote_average = 9.3,
-            vote_count = 8000,
-            popularity = 98.0,
-            genre_ids = listOf(3, 4),
-            status = "Ended",
-            episode_numbers = null,
-            last_air_date = null,
-            season_numbers = null,
-            poster_path = "/got.jpg",
-            backdrop_path = "/got-back.jpg",
-        )
-
-        // Season 0 (Specials) - should be excluded
-        val _ = database.seasonsQueries.upsert(
-            id = Id(60L),
-            show_id = Id(6L),
-            season_number = 0L,
-            title = "Specials",
-            overview = "Behind the scenes and extras",
-            episode_count = 2L,
-            image_url = "/got-specials.jpg",
-        )
-
-        val _ = database.episodesQueries.upsert(
-            id = Id(600L),
-            season_id = Id(60L),
-            show_id = Id(6L),
-            title = "Making of GOT",
-            overview = "Documentary",
-            episode_number = 1L,
-            runtime = 45L,
-            image_url = "/got-making.jpg",
-            vote_average = 8.0,
-            vote_count = 200L,
-            air_date = "2011-04-01",
-            trakt_id = null,
-        )
-
-        val _ = database.episodesQueries.upsert(
-            id = Id(601L),
-            season_id = Id(60L),
-            show_id = Id(6L),
-            title = "GOT Interviews",
-            overview = "Cast interviews",
-            episode_number = 2L,
-            runtime = 60L,
-            image_url = "/got-interviews.jpg",
-            vote_average = 7.5,
-            vote_count = 150L,
-            air_date = "2011-04-10",
-            trakt_id = null,
-        )
-
-        // Season 1 (Regular) - should be included
-        val _ = database.seasonsQueries.upsert(
-            id = Id(61L),
-            show_id = Id(6L),
-            season_number = 1L,
-            title = "Season 1",
-            overview = "First season of GOT",
-            episode_count = 2L,
-            image_url = "/got-s1.jpg",
-        )
-
-        val _ = database.episodesQueries.upsert(
-            id = Id(610L),
-            season_id = Id(61L),
-            show_id = Id(6L),
-            title = "Winter Is Coming",
-            overview = "The Starks receive troubling news",
-            episode_number = 1L,
-            runtime = 62L,
-            image_url = "/got-winter.jpg",
-            vote_average = 9.0,
-            vote_count = 2000L,
-            air_date = "2011-04-17",
-            trakt_id = null,
-        )
-
-        val _ = database.episodesQueries.upsert(
-            id = Id(611L),
-            season_id = Id(61L),
-            show_id = Id(6L),
-            title = "The Kingsroad",
-            overview = "Ned travels to King's Landing",
-            episode_number = 2L,
-            runtime = 56L,
-            image_url = "/got-kingsroad.jpg",
-            vote_average = 8.7,
-            vote_count = 1800L,
-            air_date = "2011-04-24",
-            trakt_id = null,
-        )
-
-        // Now simulate the user scenario:
-        // 1. Track Breaking Bad
-        val _ = database.watchlistQueries.upsert(
-            id = Id(5L), // Breaking Bad
-            created_at = watchDate,
-        )
-
-        nextEpisodeDao.observeNextEpisodesForWatchlist().test {
-            // Should show Breaking Bad S1E1 (Specials should be excluded)
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
             val episodes1 = awaitItem()
             episodes1.size shouldBe 1
             episodes1[0].showId shouldBe 5L
@@ -767,29 +214,225 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             episodes1[0].seasonNumber shouldBe 1
             episodes1[0].episodeNumber shouldBe 1
 
-            // 2. Track Game of Thrones - this should ADD, not replace
-            val _ = database.watchlistQueries.upsert(
-                id = Id(6L), // Game of Thrones
-                created_at = watchDate + 1000,
-            )
+            followShow(showId = 6L, followedAt = watchDate + 1000)
 
-            // Should show BOTH shows (GOT first due to being more recent)
             val episodes2 = awaitItem()
-            episodes2.size shouldBe 2 // KEY: This might fail if the bug exists
+            episodes2.size shouldBe 2
 
-            // GOT should be first (more recently added)
             episodes2[0].showId shouldBe 6L
             episodes2[0].showName shouldBe "Game of Thrones"
             episodes2[0].episodeName shouldBe "Winter Is Coming"
             episodes2[0].seasonNumber shouldBe 1
             episodes2[0].episodeNumber shouldBe 1
 
-            // Breaking Bad should still be there (not replaced due to Specials issue)
             episodes2[1].showId shouldBe 5L
             episodes2[1].showName shouldBe "Breaking Bad"
             episodes2[1].episodeName shouldBe "Pilot"
             episodes2[1].seasonNumber shouldBe 1
             episodes2[1].episodeNumber shouldBe 1
         }
+    }
+
+    @Test
+    fun `should return empty list given no shows in watchlist`() = runTest {
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
+            val episodes = awaitItem()
+            episodes.size shouldBe 0
+        }
+    }
+
+    @Test
+    fun `should order by followed_at descending`() = runTest {
+        followShow(showId = 1L, followedAt = watchDate)
+        followShow(showId = 2L, followedAt = watchDate + 2000)
+
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
+            val episodes = awaitItem()
+            episodes.size shouldBe 2
+            episodes[0].showId shouldBe 2L
+            episodes[1].showId shouldBe 1L
+        }
+    }
+
+    private fun followShow(showId: Long, followedAt: Long) {
+        val _ = database.followedShowsQueries.upsert(
+            id = null,
+            tmdbId = showId,
+            followedAt = followedAt,
+            pendingAction = "NOTHING",
+            traktId = null,
+        )
+    }
+
+    private fun markEpisodeWatched(
+        showId: Long,
+        episodeId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+        watchedAt: Long = watchDate,
+    ) {
+        val _ = database.watchedEpisodesQueries.upsert(
+            show_id = Id(showId),
+            episode_id = Id(episodeId),
+            season_number = seasonNumber,
+            episode_number = episodeNumber,
+            watched_at = watchedAt,
+            pending_action = "NOTHING",
+        )
+    }
+
+    private fun insertShow(
+        id: Long,
+        name: String,
+        overview: String = "Overview for $name",
+        status: String = "Returning Series",
+    ) {
+        val _ = database.tvShowQueries.upsert(
+            id = Id(id),
+            name = name,
+            overview = overview,
+            language = "en",
+            first_air_date = "2023-01-01",
+            vote_average = 8.0,
+            vote_count = 100,
+            popularity = 95.0,
+            genre_ids = listOf(1, 2),
+            status = status,
+            episode_numbers = null,
+            last_air_date = null,
+            season_numbers = null,
+            poster_path = "/$id.jpg",
+            backdrop_path = "/$id-back.jpg",
+        )
+    }
+
+    private fun insertSeason(
+        seasonId: Long,
+        showId: Long,
+        seasonNumber: Long,
+        title: String = "Season $seasonNumber",
+        episodeCount: Long = 2L,
+    ) {
+        val _ = database.seasonsQueries.upsert(
+            id = Id(seasonId),
+            show_id = Id(showId),
+            season_number = seasonNumber,
+            title = title,
+            overview = "Overview for $title",
+            episode_count = episodeCount,
+            image_url = "/s$seasonNumber.jpg",
+        )
+    }
+
+    private fun insertEpisode(
+        episodeId: Long,
+        seasonId: Long,
+        showId: Long,
+        episodeNumber: Long,
+        title: String,
+        airDate: String = "2023-01-01",
+    ) {
+        val _ = database.episodesQueries.upsert(
+            id = Id(episodeId),
+            season_id = Id(seasonId),
+            show_id = Id(showId),
+            title = title,
+            overview = "Overview for $title",
+            episode_number = episodeNumber,
+            runtime = 45L,
+            image_url = "/ep$episodeId.jpg",
+            vote_average = 8.0,
+            vote_count = 100L,
+            air_date = airDate,
+            trakt_id = null,
+        )
+    }
+
+    private fun insertShowWithSpecials(
+        showId: Long,
+        showName: String,
+        specialsSeasonId: Long,
+        regularSeasonId: Long,
+        specialEpisodeId: Long,
+        regularEpisodeIds: List<Pair<Long, String>>,
+    ) {
+        insertShow(id = showId, name = showName, status = "Ended")
+        insertSeason(
+            seasonId = specialsSeasonId,
+            showId = showId,
+            seasonNumber = 0L,
+            title = "Specials",
+            episodeCount = 1L,
+        )
+        insertEpisode(
+            episodeId = specialEpisodeId,
+            seasonId = specialsSeasonId,
+            showId = showId,
+            episodeNumber = 1L,
+            title = "Special Episode",
+        )
+        insertSeason(
+            seasonId = regularSeasonId,
+            showId = showId,
+            seasonNumber = 1L,
+            episodeCount = regularEpisodeIds.size.toLong(),
+        )
+        regularEpisodeIds.forEachIndexed { index, (episodeId, title) ->
+            insertEpisode(
+                episodeId = episodeId,
+                seasonId = regularSeasonId,
+                showId = showId,
+                episodeNumber = (index + 1).toLong(),
+                title = title,
+            )
+        }
+    }
+
+    private fun insertTestData() {
+        insertShow(id = 1, name = "Test Show 1")
+        insertShow(id = 2, name = "Test Show 2", status = "Ended")
+
+        val _ = database.showMetadataQueries.upsert(
+            show_id = Id(1),
+            season_count = 1,
+            episode_count = 3,
+            status = "Returning Series",
+        )
+        val _ = database.showMetadataQueries.upsert(
+            show_id = Id(2),
+            season_count = 1,
+            episode_count = 2,
+            status = "Ended",
+        )
+
+        insertSeason(seasonId = 11L, showId = 1L, seasonNumber = 1L, episodeCount = 3L)
+        insertEpisode(episodeId = 101L, seasonId = 11L, showId = 1L, episodeNumber = 1L, title = "Episode 1")
+        insertEpisode(episodeId = 102L, seasonId = 11L, showId = 1L, episodeNumber = 2L, title = "Episode 2")
+        insertEpisode(episodeId = 103L, seasonId = 11L, showId = 1L, episodeNumber = 3L, title = "Episode 3")
+
+        insertSeason(seasonId = 21L, showId = 2L, seasonNumber = 1L, episodeCount = 2L)
+        insertEpisode(episodeId = 201L, seasonId = 21L, showId = 2L, episodeNumber = 1L, title = "Show 2 Episode 1")
+        insertEpisode(episodeId = 202L, seasonId = 21L, showId = 2L, episodeNumber = 2L, title = "Show 2 Episode 2")
+    }
+
+    private fun insertShow3WithMultipleSeasons() {
+        insertShow(id = 3, name = "Multi-Season Show")
+
+        insertSeason(seasonId = 31L, showId = 3L, seasonNumber = 1L)
+        insertEpisode(episodeId = 301L, seasonId = 31L, showId = 3L, episodeNumber = 1L, title = "S1E1")
+        insertEpisode(episodeId = 302L, seasonId = 31L, showId = 3L, episodeNumber = 2L, title = "S1E2")
+
+        insertSeason(seasonId = 32L, showId = 3L, seasonNumber = 2L)
+        insertEpisode(episodeId = 303L, seasonId = 32L, showId = 3L, episodeNumber = 1L, title = "S2E1")
+    }
+
+    private fun insertShow4WithSpecials() {
+        insertShow(id = 4, name = "Show with Specials")
+
+        insertSeason(seasonId = 40L, showId = 4L, seasonNumber = 0L, title = "Specials", episodeCount = 1L)
+        insertEpisode(episodeId = 400L, seasonId = 40L, showId = 4L, episodeNumber = 1L, title = "Christmas Special")
+
+        insertSeason(seasonId = 41L, showId = 4L, seasonNumber = 1L, episodeCount = 1L)
+        insertEpisode(episodeId = 401L, seasonId = 41L, showId = 4L, episodeNumber = 1L, title = "Regular Episode 1")
     }
 }

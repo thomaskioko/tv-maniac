@@ -10,10 +10,10 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.core.base)
-            implementation(projects.core.buildconfig.testing)
             implementation(projects.core.logger.api)
             implementation(projects.core.logger.testing)
             implementation(projects.core.util.api)
+            implementation(projects.core.util.testing)
             implementation(projects.navigation.api)
             implementation(projects.navigation.implementation)
             implementation(projects.domain.logout)

@@ -1,13 +1,13 @@
 package com.thomaskioko.tvmaniac.domain.watchlist
 
+import com.thomaskioko.tvmaniac.db.FollowedShows
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.db.Watchlists
 import com.thomaskioko.tvmaniac.watchlist.presenter.model.WatchlistItem
 import kotlinx.collections.immutable.toPersistentList
 
 val cachedResult = mutableListOf(
-    Watchlists(
-        id = Id(84958),
+    FollowedShows(
+        show_id = Id(84958),
         name = "Loki",
         poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         status = "Ended",
@@ -21,8 +21,8 @@ val cachedResult = mutableListOf(
 )
 
 val updatedData = listOf(
-    Watchlists(
-        id = Id(84958),
+    FollowedShows(
+        show_id = Id(84958),
         name = "Loki",
         poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         status = "Ended",
@@ -33,8 +33,8 @@ val updatedData = listOf(
         watched_count = 0,
         total_episode_count = 0,
     ),
-    Watchlists(
-        id = Id(1232),
+    FollowedShows(
+        show_id = Id(1232),
         name = "The Lazarus Project",
         poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         status = "Ended",
@@ -48,14 +48,14 @@ val updatedData = listOf(
 )
 
 internal fun expectedUiResult(
-    result: List<Watchlists> = updatedData,
+    result: List<FollowedShows> = updatedData,
 ) = result
     .map {
         val watched = it.watched_count
         val total = it.total_episode_count
         val progress = if (total > 0) watched.toFloat() / total else 0f
         WatchlistItem(
-            tmdbId = it.id.id,
+            tmdbId = it.show_id.id,
             title = it.name,
             posterImageUrl = it.poster_path,
             status = it.status,

@@ -2,8 +2,6 @@ package com.thomaskioko.tvmaniac.watchlist.presenter
 
 public sealed interface WatchlistAction
 
-public data object ReloadWatchlist : WatchlistAction
-
 public data class WatchlistShowClicked(val id: Long) : WatchlistAction
 
 public data class WatchlistQueryChanged(val query: String) : WatchlistAction

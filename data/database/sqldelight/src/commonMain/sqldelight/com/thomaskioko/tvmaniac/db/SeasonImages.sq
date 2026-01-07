@@ -17,7 +17,7 @@ VALUES( ?, ?);
 
 seasonImages:
 SELECT
-    season_images.id,
+    season_images.id AS image_id,
     season_images.season_id,
     season_images.image_url
 FROM

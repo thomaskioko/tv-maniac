@@ -3,17 +3,17 @@ package com.thomaskioko.tvmaniac.episodes.implementation
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.db.GetEntriesByPendingAction
+import com.thomaskioko.tvmaniac.db.GetPreviousUnwatchedEpisodes
+import com.thomaskioko.tvmaniac.db.GetWatchedEpisodes
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.db.Watched_episodes
-import com.thomaskioko.tvmaniac.episodes.api.NextEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.api.model.EpisodeWatchParams
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
-import com.thomaskioko.tvmaniac.episodes.api.model.UnwatchedEpisode
-import com.thomaskioko.tvmaniac.episodes.api.model.WatchProgress
-import com.thomaskioko.tvmaniac.episodes.api.model.absoluteEpisodeNumber
+import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
@@ -29,33 +29,15 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @ContributesBinding(AppScope::class)
 public class DefaultWatchedEpisodeDao(
     private val database: TvManiacDatabase,
-    private val nextEpisodeDao: NextEpisodeDao,
     private val dispatchers: AppCoroutineDispatchers,
 ) : WatchedEpisodeDao {
 
-    override fun observeWatchedEpisodes(showId: Long): Flow<List<Watched_episodes>> {
+    override fun observeWatchedEpisodes(showId: Long): Flow<List<GetWatchedEpisodes>> {
         return database.watchedEpisodesQueries
             .getWatchedEpisodes(Id(showId))
             .asFlow()
             .mapToList(dispatchers.databaseRead)
             .catch { emit(emptyList()) }
-    }
-
-    override fun observeWatchProgress(showId: Long): Flow<WatchProgress> {
-        return combine(
-            observeWatchedEpisodes(showId),
-            nextEpisodeDao.observeNextEpisode(showId),
-        ) { watchedEpisodes, nextEpisode ->
-            val lastWatched = watchedEpisodes.maxByOrNull { it.absoluteEpisodeNumber() }
-
-            WatchProgress(
-                showId = showId,
-                totalEpisodesWatched = watchedEpisodes.size,
-                lastSeasonWatched = lastWatched?.season_number,
-                lastEpisodeWatched = lastWatched?.episode_number,
-                nextEpisode = nextEpisode,
-            )
-        }
     }
 
     override suspend fun markAsWatched(
@@ -64,12 +46,13 @@ public class DefaultWatchedEpisodeDao(
         seasonNumber: Long,
         episodeNumber: Long,
         watchedAt: Long,
+        includeSpecials: Boolean,
     ) {
         withContext(dispatchers.databaseWrite) {
             database.transaction {
-                database.watchlistQueries.upsertIfNotExists(
-                    id = Id(showId),
-                    created_at = watchedAt,
+                database.followedShowsQueries.upsertIfNotExists(
+                    tmdbId = showId,
+                    followedAt = watchedAt,
                 )
                 database.watchedEpisodesQueries.markAsWatched(
                     show_id = Id(showId),
@@ -77,50 +60,42 @@ public class DefaultWatchedEpisodeDao(
                     season_number = seasonNumber,
                     episode_number = episodeNumber,
                     watched_at = watchedAt,
+                    pending_action = PendingAction.UPLOAD.value,
+                )
+                database.showMetadataQueries.recalculateLastWatched(
+                    show_id = Id(showId),
+                    include_specials = if (includeSpecials) 1L else 0L,
                 )
             }
         }
     }
 
-    override suspend fun markAsUnwatched(showId: Long, episodeId: Long) {
+    override suspend fun markAsUnwatched(showId: Long, episodeId: Long, includeSpecials: Boolean) {
         withContext(dispatchers.databaseWrite) {
             database.transaction {
-                database.watchedEpisodesQueries.markAsUnwatched(
+                val entry = database.watchedEpisodesQueries
+                    .getEntryByShowAndEpisode(Id(showId), Id(episodeId))
+                    .executeAsOneOrNull()
+
+                if (entry != null) {
+                    if (entry.trakt_id != null) {
+                        database.watchedEpisodesQueries.updatePendingActionByShowAndEpisode(
+                            pending_action = PendingAction.DELETE.value,
+                            show_id = Id(showId),
+                            episode_id = Id(episodeId),
+                        )
+                    } else {
+                        database.watchedEpisodesQueries.markAsUnwatched(
+                            show_id = Id(showId),
+                            episode_id = Id(episodeId),
+                        )
+                    }
+                }
+                database.showMetadataQueries.recalculateLastWatched(
                     show_id = Id(showId),
-                    episode_id = Id(episodeId),
+                    include_specials = if (includeSpecials) 1L else 0L,
                 )
             }
-        }
-    }
-
-    override suspend fun getLastWatchedEpisode(showId: Long): Watched_episodes? {
-        return withContext(dispatchers.databaseRead) {
-            database.watchedEpisodesQueries
-                .getLastWatchedEpisode(Id(showId))
-                .executeAsOneOrNull()
-        }
-    }
-
-    override suspend fun getWatchedEpisodesForSeason(
-        showId: Long,
-        seasonNumber: Long,
-    ): List<Watched_episodes> {
-        return withContext(dispatchers.databaseRead) {
-            database.watchedEpisodesQueries
-                .getWatchedEpisodesForSeason(Id(showId), seasonNumber)
-                .executeAsList()
-        }
-    }
-
-    override suspend fun isEpisodeWatched(
-        showId: Long,
-        seasonNumber: Long,
-        episodeNumber: Long,
-    ): Boolean {
-        return withContext(dispatchers.databaseRead) {
-            database.watchedEpisodesQueries
-                .isEpisodeWatched(Id(showId), seasonNumber, episodeNumber)
-                .executeAsOne()
         }
     }
 
@@ -128,6 +103,7 @@ public class DefaultWatchedEpisodeDao(
         withContext(dispatchers.databaseWrite) {
             database.transaction {
                 database.watchedEpisodesQueries.deleteAllForShow(Id(showId))
+                database.showMetadataQueries.clearLastWatched(Id(showId))
             }
         }
     }
@@ -198,12 +174,13 @@ public class DefaultWatchedEpisodeDao(
         seasonNumber: Long,
         episodes: List<EpisodeWatchParams>,
         timestamp: Long,
+        includeSpecials: Boolean,
     ) {
         withContext(dispatchers.databaseWrite) {
             database.transaction {
-                database.watchlistQueries.upsertIfNotExists(
-                    id = Id(showId),
-                    created_at = timestamp,
+                database.followedShowsQueries.upsertIfNotExists(
+                    tmdbId = showId,
+                    followedAt = timestamp,
                 )
                 episodes.forEach { episode ->
                     require(episode.seasonNumber == seasonNumber) {
@@ -216,16 +193,25 @@ public class DefaultWatchedEpisodeDao(
                         season_number = episode.seasonNumber,
                         episode_number = episode.episodeNumber,
                         watched_at = episodeTimestamp,
+                        pending_action = PendingAction.UPLOAD.value,
                     )
                 }
+                database.showMetadataQueries.recalculateLastWatched(
+                    show_id = Id(showId),
+                    include_specials = if (includeSpecials) 1L else 0L,
+                )
             }
         }
     }
 
-    override suspend fun markSeasonAsUnwatched(showId: Long, seasonNumber: Long) {
+    override suspend fun markSeasonAsUnwatched(showId: Long, seasonNumber: Long, includeSpecials: Boolean) {
         withContext(dispatchers.databaseWrite) {
             database.transaction {
                 database.watchedEpisodesQueries.deleteForSeason(Id(showId), seasonNumber)
+                database.showMetadataQueries.recalculateLastWatched(
+                    show_id = Id(showId),
+                    include_specials = if (includeSpecials) 1L else 0L,
+                )
             }
         }
     }
@@ -234,11 +220,16 @@ public class DefaultWatchedEpisodeDao(
         showId: Long,
         seasonNumber: Long,
         timestamp: Long,
+        includeSpecials: Boolean,
     ) {
         withContext(dispatchers.databaseWrite) {
             database.transaction {
                 val unwatchedEpisodes = database.watchedEpisodesQueries
-                    .getUnwatchedEpisodesInPreviousSeasons(Id(showId), seasonNumber)
+                    .getUnwatchedEpisodesInPreviousSeasons(
+                        show_id = Id(showId),
+                        season_number = seasonNumber,
+                        include_specials = if (includeSpecials) 1L else 0L,
+                    )
                     .executeAsList()
 
                 unwatchedEpisodes.forEach { episode ->
@@ -248,8 +239,13 @@ public class DefaultWatchedEpisodeDao(
                         season_number = episode.season_number,
                         episode_number = episode.episode_number,
                         watched_at = timestamp,
+                        pending_action = PendingAction.UPLOAD.value,
                     )
                 }
+                database.showMetadataQueries.recalculateLastWatched(
+                    show_id = Id(showId),
+                    include_specials = if (includeSpecials) 1L else 0L,
+                )
             }
         }
     }
@@ -258,11 +254,16 @@ public class DefaultWatchedEpisodeDao(
         showId: Long,
         seasonNumber: Long,
         timestamp: Long,
+        includeSpecials: Boolean,
     ) {
         withContext(dispatchers.databaseWrite) {
             database.transaction {
                 val unwatchedEpisodesInPreviousSeasons = database.watchedEpisodesQueries
-                    .getUnwatchedEpisodesInPreviousSeasons(Id(showId), seasonNumber)
+                    .getUnwatchedEpisodesInPreviousSeasons(
+                        show_id = Id(showId),
+                        season_number = seasonNumber,
+                        include_specials = if (includeSpecials) 1L else 0L,
+                    )
                     .executeAsList()
 
                 unwatchedEpisodesInPreviousSeasons.forEach { episode ->
@@ -272,6 +273,7 @@ public class DefaultWatchedEpisodeDao(
                         season_number = episode.season_number,
                         episode_number = episode.episode_number,
                         watched_at = timestamp,
+                        pending_action = PendingAction.UPLOAD.value,
                     )
                 }
 
@@ -279,9 +281,9 @@ public class DefaultWatchedEpisodeDao(
                     .getEpisodesForSeason(Id(showId), seasonNumber)
                     .executeAsList()
 
-                database.watchlistQueries.upsertIfNotExists(
-                    id = Id(showId),
-                    created_at = timestamp,
+                database.followedShowsQueries.upsertIfNotExists(
+                    tmdbId = showId,
+                    followedAt = timestamp,
                 )
 
                 currentSeasonEpisodes.forEach { episode ->
@@ -291,8 +293,14 @@ public class DefaultWatchedEpisodeDao(
                         season_number = episode.season_number,
                         episode_number = episode.episode_number,
                         watched_at = timestamp,
+                        pending_action = PendingAction.UPLOAD.value,
                     )
                 }
+
+                database.showMetadataQueries.recalculateLastWatched(
+                    show_id = Id(showId),
+                    include_specials = if (includeSpecials) 1L else 0L,
+                )
             }
         }
     }
@@ -302,12 +310,16 @@ public class DefaultWatchedEpisodeDao(
         seasonNumber: Long,
         episodeNumber: Long,
         timestamp: Long,
+        includeSpecials: Boolean,
     ) {
         withContext(dispatchers.databaseWrite) {
             database.transaction {
-                val unwatchedEpisodes = database.watchedEpisodesQueries
-                    .getUnwatchedEpisodesBefore(Id(showId), seasonNumber, episodeNumber)
-                    .executeAsList()
+                val unwatchedEpisodes = getPreviousUnwatchedEpisodes(
+                    showId = showId,
+                    seasonNumber = seasonNumber,
+                    episodeNumber = episodeNumber,
+                    includeSpecials = includeSpecials,
+                )
 
                 unwatchedEpisodes.forEach { episode ->
                     database.watchedEpisodesQueries.markAsWatched(
@@ -316,8 +328,13 @@ public class DefaultWatchedEpisodeDao(
                         season_number = episode.season_number,
                         episode_number = episode.episode_number,
                         watched_at = timestamp,
+                        pending_action = PendingAction.UPLOAD.value,
                     )
                 }
+                database.showMetadataQueries.recalculateLastWatched(
+                    show_id = Id(showId),
+                    include_specials = if (includeSpecials) 1L else 0L,
+                )
             }
         }
     }
@@ -328,12 +345,16 @@ public class DefaultWatchedEpisodeDao(
         seasonNumber: Long,
         episodeNumber: Long,
         timestamp: Long,
+        includeSpecials: Boolean,
     ) {
         withContext(dispatchers.databaseWrite) {
             database.transaction {
-                val unwatchedEpisodes = database.watchedEpisodesQueries
-                    .getUnwatchedEpisodesBefore(Id(showId), seasonNumber, episodeNumber)
-                    .executeAsList()
+                val unwatchedEpisodes = getPreviousUnwatchedEpisodes(
+                    showId = showId,
+                    seasonNumber = seasonNumber,
+                    episodeNumber = episodeNumber,
+                    includeSpecials = includeSpecials,
+                )
 
                 unwatchedEpisodes.forEach { episode ->
                     database.watchedEpisodesQueries.markAsWatched(
@@ -342,12 +363,13 @@ public class DefaultWatchedEpisodeDao(
                         season_number = episode.season_number,
                         episode_number = episode.episode_number,
                         watched_at = timestamp,
+                        pending_action = PendingAction.UPLOAD.value,
                     )
                 }
 
-                database.watchlistQueries.upsertIfNotExists(
-                    id = Id(showId),
-                    created_at = timestamp,
+                database.followedShowsQueries.upsertIfNotExists(
+                    tmdbId = showId,
+                    followedAt = timestamp,
                 )
                 database.watchedEpisodesQueries.markAsWatched(
                     show_id = Id(showId),
@@ -355,33 +377,31 @@ public class DefaultWatchedEpisodeDao(
                     season_number = seasonNumber,
                     episode_number = episodeNumber,
                     watched_at = timestamp,
+                    pending_action = PendingAction.UPLOAD.value,
+                )
+                database.showMetadataQueries.recalculateLastWatched(
+                    show_id = Id(showId),
+                    include_specials = if (includeSpecials) 1L else 0L,
                 )
             }
         }
     }
 
-    override suspend fun getUnwatchedEpisodesBefore(
+    private fun getPreviousUnwatchedEpisodes(
         showId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
-    ): List<UnwatchedEpisode> {
-        return withContext(dispatchers.databaseRead) {
-            database.watchedEpisodesQueries
-                .getUnwatchedEpisodesBefore(
-                    show_id = Id(showId),
-                    season_number = seasonNumber,
-                    episode_number = episodeNumber,
-                )
-                .executeAsList()
-                .map { result ->
-                    UnwatchedEpisode(
-                        episodeId = result.episode_id.id,
-                        seasonNumber = result.season_number,
-                        episodeNumber = result.episode_number,
-                        seasonId = result.season_id.id,
-                    )
-                }
-        }
+        includeSpecials: Boolean,
+    ): List<GetPreviousUnwatchedEpisodes> {
+        val unwatchedEpisodes = database.watchedEpisodesQueries
+            .getPreviousUnwatchedEpisodes(
+                show_id = Id(showId),
+                season_number = seasonNumber,
+                episode_number = episodeNumber,
+                include_specials = if (includeSpecials) 1L else 0L,
+            )
+            .executeAsList()
+        return unwatchedEpisodes
     }
 
     override suspend fun getEpisodesForSeason(
@@ -405,77 +425,108 @@ public class DefaultWatchedEpisodeDao(
     override suspend fun getUnwatchedEpisodeCountInPreviousSeasons(
         showId: Long,
         seasonNumber: Long,
+        includeSpecials: Boolean,
     ): Long {
         return withContext(dispatchers.databaseRead) {
             database.watchedEpisodesQueries
-                .getUnwatchedEpisodeCountInPreviousSeasons(Id(showId), seasonNumber)
+                .getUnwatchedEpisodeCountInPreviousSeasons(
+                    show_id = Id(showId),
+                    season_number = seasonNumber,
+                    include_specials = if (includeSpecials) 1L else 0L,
+                )
                 .executeAsOne()
         }
-    }
-
-    override fun observeUnwatchedCountBefore(
-        showId: Long,
-        seasonNumber: Long,
-        episodeNumber: Long,
-    ): Flow<Int> {
-        return database.watchedEpisodesQueries
-            .getUnwatchedEpisodesBefore(Id(showId), seasonNumber, episodeNumber)
-            .asFlow()
-            .mapToList(dispatchers.databaseRead)
-            .map { it.size }
-            .catch { emit(0) }
     }
 
     override fun observeUnwatchedCountInPreviousSeasons(
         showId: Long,
         seasonNumber: Long,
+        includeSpecials: Boolean,
     ): Flow<Long> {
         return database.watchedEpisodesQueries
-            .getUnwatchedEpisodeCountInPreviousSeasons(Id(showId), seasonNumber)
+            .getUnwatchedEpisodeCountInPreviousSeasons(
+                show_id = Id(showId),
+                season_number = seasonNumber,
+                include_specials = if (includeSpecials) 1L else 0L,
+            )
             .asFlow()
             .map { it.executeAsOne() }
             .catch { emit(0L) }
     }
 
-    override fun observeUnsyncedEpisodes(): Flow<List<Watched_episodes>> {
-        return database.watchedEpisodesQueries
-            .getUnsyncedEpisodes()
-            .asFlow()
-            .mapToList(dispatchers.databaseRead)
-            .catch { emit(emptyList()) }
+    override suspend fun entriesByPendingAction(action: PendingAction): List<GetEntriesByPendingAction> {
+        return withContext(dispatchers.databaseRead) {
+            database.watchedEpisodesQueries
+                .getEntriesByPendingAction(action.value)
+                .executeAsList()
+        }
     }
 
-    override suspend fun updateSyncStatus(id: Long, status: String, syncedAt: Long) {
+    override suspend fun updatePendingAction(id: Long, action: PendingAction) {
         withContext(dispatchers.databaseWrite) {
-            database.transaction {
-                database.watchedEpisodesQueries.updateSyncStatus(status, syncedAt, id)
-            }
+            database.watchedEpisodesQueries.updatePendingAction(action.value, id)
+        }
+    }
+
+    override suspend fun deleteById(id: Long) {
+        withContext(dispatchers.databaseWrite) {
+            database.watchedEpisodesQueries.deleteById(id)
         }
     }
 
     override suspend fun upsertFromTrakt(
         showId: Long,
-        episodeId: Long,
+        episodeId: Long?,
         seasonNumber: Long,
         episodeNumber: Long,
         watchedAt: Long,
         traktId: Long,
         syncedAt: Long,
+        pendingAction: String,
+        includeSpecials: Boolean,
     ) {
         withContext(dispatchers.databaseWrite) {
             database.transaction {
-                database.watchlistQueries.upsertIfNotExists(
-                    id = Id(showId),
-                    created_at = watchedAt,
+                database.followedShowsQueries.upsertIfNotExists(
+                    tmdbId = showId,
+                    followedAt = watchedAt,
                 )
                 database.watchedEpisodesQueries.upsertFromTrakt(
                     show_id = Id(showId),
-                    episode_id = Id(episodeId),
+                    episode_id = episodeId?.let { Id(it) },
                     season_number = seasonNumber,
                     episode_number = episodeNumber,
                     watched_at = watchedAt,
                     trakt_id = traktId,
                     synced_at = syncedAt,
+                    pending_action = pendingAction,
+                )
+                database.showMetadataQueries.recalculateLastWatched(
+                    show_id = Id(showId),
+                    include_specials = if (includeSpecials) 1L else 0L,
+                )
+            }
+        }
+    }
+
+    override suspend fun upsert(entry: Watched_episodes, includeSpecials: Boolean) {
+        withContext(dispatchers.databaseWrite) {
+            database.transaction {
+                database.followedShowsQueries.upsertIfNotExists(
+                    tmdbId = entry.show_id.id,
+                    followedAt = entry.watched_at,
+                )
+                database.watchedEpisodesQueries.upsert(
+                    show_id = entry.show_id,
+                    episode_id = entry.episode_id,
+                    season_number = entry.season_number,
+                    episode_number = entry.episode_number,
+                    watched_at = entry.watched_at,
+                    pending_action = entry.pending_action,
+                )
+                database.showMetadataQueries.recalculateLastWatched(
+                    show_id = entry.show_id,
+                    include_specials = if (includeSpecials) 1L else 0L,
                 )
             }
         }

@@ -4,6 +4,7 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.SelectByShowId
 import com.thomaskioko.tvmaniac.db.Trailers
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import kotlinx.coroutines.flow.Flow
@@ -36,12 +37,9 @@ public class DefaultTrailerDao(
         trailerList.forEach { upsert(it) }
     }
 
-    override fun observeTrailersById(showId: Long): Flow<List<Trailers>> {
+    override fun observeTrailersById(showId: Long): Flow<List<SelectByShowId>> {
         return database.trailersQueries.selectByShowId(Id(showId)).asFlow().mapToList(dispatchers.io)
     }
-
-    override fun getTrailersById(showId: Long): List<Trailers> =
-        database.trailersQueries.selectByShowId(Id(showId)).executeAsList()
 
     override fun delete(id: Long) {
         database.transaction { database.trailersQueries.delete(Id(id)) }

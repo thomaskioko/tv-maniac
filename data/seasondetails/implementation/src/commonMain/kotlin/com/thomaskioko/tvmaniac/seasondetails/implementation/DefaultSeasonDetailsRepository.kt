@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.seasondetails.implementation
 
-import com.thomaskioko.tvmaniac.db.Season_images
+import com.thomaskioko.tvmaniac.db.SeasonImages
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsDao
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
@@ -37,5 +37,5 @@ public class DefaultSeasonDetailsRepository(
         param: SeasonDetailsParam,
     ): Flow<SeasonDetailsWithEpisodes?> = dao.observeSeasonEpisodeDetails(param.showId, param.seasonNumber)
 
-    override fun observeSeasonImages(id: Long): Flow<List<Season_images>> = dao.observeSeasonImages(id)
+    override fun observeSeasonImages(id: Long): Flow<List<SeasonImages>> = dao.observeSeasonImages(id)
 }

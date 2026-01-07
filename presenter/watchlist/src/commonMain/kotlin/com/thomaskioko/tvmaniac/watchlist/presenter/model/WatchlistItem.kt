@@ -12,4 +12,5 @@ public data class WatchlistItem(
     val totalEpisodesTracked: Long = 0,
     val watchProgress: Float = 0F,
     val lastWatchedAt: Long? = null,
+    val nextEpisode: NextEpisodeItem? = null,
 )

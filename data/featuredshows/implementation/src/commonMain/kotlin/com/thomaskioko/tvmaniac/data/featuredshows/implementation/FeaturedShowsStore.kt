@@ -21,7 +21,6 @@ import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
@@ -68,23 +67,16 @@ public class FeaturedShowsStore(
         }
     },
     sourceOfTruth = SourceOfTruth.of<Long, List<FeaturedShowWithImages>, List<ShowEntity>>(
-        reader = { page: Long ->
-            featuredShowsDao.observeFeaturedShows(page).map { shows ->
-                when {
-                    shows.isEmpty() -> null
-                    !requestManagerRepository.isRequestValid(
-                        requestType = FEATURED_SHOWS_TODAY.name,
-                        threshold = FEATURED_SHOWS_TODAY.duration,
-                    ) -> null
-                    else -> shows
-                }
-            }
-        },
+        reader = { page -> featuredShowsDao.observeFeaturedShows(page) },
         writer = { page, response ->
             withContext(dispatchers.databaseWrite) {
                 databaseTransactionRunner {
                     if (page == 1L) {
                         featuredShowsDao.deleteFeaturedShows()
+                        requestManagerRepository.upsert(
+                            entityId = FEATURED_SHOWS_TODAY.requestId,
+                            requestType = FEATURED_SHOWS_TODAY.name,
+                        )
                     }
 
                     response.forEach { showWithImages ->
@@ -112,11 +104,6 @@ public class FeaturedShowsStore(
                         )
                     }
                 }
-
-                requestManagerRepository.upsert(
-                    entityId = FEATURED_SHOWS_TODAY.requestId,
-                    requestType = FEATURED_SHOWS_TODAY.name,
-                )
             }
         },
     ).usingDispatchers(

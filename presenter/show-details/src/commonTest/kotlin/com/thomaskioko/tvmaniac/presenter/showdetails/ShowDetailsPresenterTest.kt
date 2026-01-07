@@ -11,10 +11,10 @@ import com.thomaskioko.tvmaniac.data.recommendedshows.testing.FakeRecommendedSho
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.db.RecommendedShows
+import com.thomaskioko.tvmaniac.db.SelectByShowId
 import com.thomaskioko.tvmaniac.db.ShowCast
 import com.thomaskioko.tvmaniac.db.ShowSeasons
 import com.thomaskioko.tvmaniac.db.SimilarShows
-import com.thomaskioko.tvmaniac.db.Trailers
 import com.thomaskioko.tvmaniac.db.TvshowDetails
 import com.thomaskioko.tvmaniac.db.WatchProviders
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
@@ -22,11 +22,15 @@ import com.thomaskioko.tvmaniac.domain.episode.ObserveContinueTrackingInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
 import com.thomaskioko.tvmaniac.domain.recommendedshows.RecommendedShowsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.PrefetchFirstSeasonInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
 import com.thomaskioko.tvmaniac.domain.watchproviders.WatchProvidersInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
+import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall
+import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ProviderModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowModel
@@ -38,7 +42,6 @@ import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
-import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
 import io.kotest.matchers.shouldBe
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
@@ -56,12 +59,13 @@ class ShowDetailsPresenterTest {
     private val seasonDetailsRepository = FakeSeasonDetailsRepository()
     private val trailerRepository = FakeTrailerRepository()
     private val similarShowsRepository = FakeSimilarShowsRepository()
-    private val watchlistRepository = FakeWatchlistRepository()
+    private val followedShowsRepository = FakeFollowedShowsRepository()
     private val watchProvidersRepository = FakeWatchProviderRepository()
     private val castRepository = FakeCastRepository()
     private val recommendedShowsRepository = FakeRecommendedShowsRepository()
     private val showDetailsRepository = FakeShowDetailsRepository()
     private val episodeRepository = FakeEpisodeRepository()
+    private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
     private val fakeFormatterUtil = FakeFormatterUtil()
     private val testDispatcher = StandardTestDispatcher()
     private val coroutineDispatcher = AppCoroutineDispatchers(
@@ -311,12 +315,11 @@ class ShowDetailsPresenterTest {
             awaitItem()
             val _ = awaitUntil { it.showDetails.tmdbId != 0L }
 
-            presenter.dispatch(FollowShowClicked(addToLibrary = false))
+            presenter.dispatch(FollowShowClicked(isInLibrary = false))
 
             testDispatcher.scheduler.advanceUntilIdle()
 
-            watchlistRepository.lastUpdateLibraryId shouldBe 84958
-            watchlistRepository.lastUpdateLibraryAddToLibrary shouldBe true
+            followedShowsRepository.addedShowIds shouldBe listOf(84958L)
         }
     }
 
@@ -504,7 +507,7 @@ class ShowDetailsPresenterTest {
         watchProviderResult: List<WatchProviders> = emptyList(),
         similarShowResult: List<SimilarShows> = emptyList(),
         recommendedShowResult: List<RecommendedShows> = emptyList(),
-        trailersResult: List<Trailers> = emptyList(),
+        trailersResult: List<SelectByShowId> = emptyList(),
     ) {
         showDetailsRepository.setShowDetailsResult(showDetailResult)
         trailerRepository.setYoutubePlayerInstalled(isYoutubeInstalled)
@@ -529,13 +532,16 @@ class ShowDetailsPresenterTest {
             onNavigateToSeason = onNavigateToSeason,
             onNavigateToShow = onNavigateToShow,
             onNavigateToTrailer = onNavigateToTrailer,
-            watchlistRepository = watchlistRepository,
+            followedShowsRepository = followedShowsRepository,
             recommendedShowsInteractor = RecommendedShowsInteractor(
                 recommendedShowsRepository = recommendedShowsRepository,
                 dispatchers = coroutineDispatcher,
             ),
             showDetailsInteractor = ShowDetailsInteractor(
                 showDetailsRepository = showDetailsRepository,
+                dispatchers = coroutineDispatcher,
+            ),
+            prefetchFirstSeasonInteractor = PrefetchFirstSeasonInteractor(
                 seasonsRepository = seasonsRepository,
                 seasonDetailsRepository = seasonDetailsRepository,
                 dispatchers = coroutineDispatcher,
@@ -568,6 +574,14 @@ class ShowDetailsPresenterTest {
             ),
             observeContinueTrackingInteractor = ObserveContinueTrackingInteractor(
                 episodeRepository = episodeRepository,
+            ),
+            showContentSyncInteractor = ShowContentSyncInteractor(
+                showDetailsRepository = showDetailsRepository,
+                seasonsRepository = seasonsRepository,
+                seasonDetailsRepository = seasonDetailsRepository,
+                watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
+                dispatchers = coroutineDispatcher,
+                logger = FakeLogger(),
             ),
             logger = FakeLogger(),
         )
