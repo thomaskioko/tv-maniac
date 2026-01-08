@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeDao
+import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.SEASON_1_EPISODE_COUNT
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.SEASON_1_ID
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.SEASON_1_NUMBER
@@ -193,6 +194,53 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
 
             val updatedProgress = awaitItem()
             updatedProgress.first { it.seasonNumber == SEASON_1_NUMBER }.watchedCount shouldBe 1
+        }
+    }
+
+    @Test
+    fun `should batch upsert multiple episodes in single transaction`() = runTest {
+        val now = Clock.System.now()
+        val entries = (1..5).map { episodeNumber ->
+            WatchedEpisodeEntry(
+                id = 0,
+                showId = TEST_SHOW_ID,
+                episodeId = (100L + episodeNumber),
+                seasonNumber = SEASON_1_NUMBER,
+                episodeNumber = episodeNumber.toLong(),
+                watchedAt = now,
+                traktId = (1000L + episodeNumber),
+            )
+        }
+
+        watchedEpisodeDao.upsertBatchFromTrakt(
+            showId = TEST_SHOW_ID,
+            entries = entries,
+            includeSpecials = false,
+        )
+
+        watchedEpisodeDao.observeWatchedEpisodes(TEST_SHOW_ID).test {
+            val watchedEpisodes = awaitItem()
+            watchedEpisodes shouldHaveSize 5
+        }
+
+        watchedEpisodeDao.observeSeasonWatchProgress(TEST_SHOW_ID, SEASON_1_NUMBER).test {
+            val progress = awaitItem()
+            progress.watchedCount shouldBe 5
+            progress.totalCount shouldBe SEASON_1_EPISODE_COUNT
+        }
+    }
+
+    @Test
+    fun `should handle empty batch upsert gracefully`() = runTest {
+        watchedEpisodeDao.upsertBatchFromTrakt(
+            showId = TEST_SHOW_ID,
+            entries = emptyList(),
+            includeSpecials = false,
+        )
+
+        watchedEpisodeDao.observeWatchedEpisodes(TEST_SHOW_ID).test {
+            val watchedEpisodes = awaitItem()
+            watchedEpisodes.shouldBeEmpty()
         }
     }
 

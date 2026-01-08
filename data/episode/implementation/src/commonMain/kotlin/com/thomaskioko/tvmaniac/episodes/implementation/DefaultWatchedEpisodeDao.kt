@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.db.Watched_episodes
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeDao
+import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
 import com.thomaskioko.tvmaniac.episodes.api.model.EpisodeWatchParams
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
@@ -501,6 +502,43 @@ public class DefaultWatchedEpisodeDao(
                     synced_at = syncedAt,
                     pending_action = pendingAction,
                 )
+                database.showMetadataQueries.recalculateLastWatched(
+                    show_id = Id(showId),
+                    include_specials = if (includeSpecials) 1L else 0L,
+                )
+            }
+        }
+    }
+
+    override suspend fun upsertBatchFromTrakt(
+        showId: Long,
+        entries: List<WatchedEpisodeEntry>,
+        includeSpecials: Boolean,
+    ) {
+        if (entries.isEmpty()) return
+
+        val syncedAt = kotlin.time.Clock.System.now().toEpochMilliseconds()
+
+        withContext(dispatchers.databaseWrite) {
+            database.transaction {
+                database.followedShowsQueries.upsertIfNotExists(
+                    tmdbId = showId,
+                    followedAt = entries.first().watchedAt.toEpochMilliseconds(),
+                )
+
+                entries.forEach { entry ->
+                    database.watchedEpisodesQueries.upsertFromTrakt(
+                        show_id = Id(showId),
+                        episode_id = entry.episodeId?.let { Id(it) },
+                        season_number = entry.seasonNumber,
+                        episode_number = entry.episodeNumber,
+                        watched_at = entry.watchedAt.toEpochMilliseconds(),
+                        trakt_id = entry.traktId ?: 0L,
+                        synced_at = syncedAt,
+                        pending_action = PendingAction.NOTHING.value,
+                    )
+                }
+
                 database.showMetadataQueries.recalculateLastWatched(
                     show_id = Id(showId),
                     include_specials = if (includeSpecials) 1L else 0L,
