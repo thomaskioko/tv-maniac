@@ -15,6 +15,8 @@ import com.thomaskioko.tvmaniac.episodes.implementation.MockData.SEASON_2_NUMBER
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.TEST_SHOW_ID
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.TEST_SHOW_NAME
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.TEST_SHOW_OVERVIEW
+import com.thomaskioko.tvmaniac.episodes.implementation.MockData.createSeasonDetailsForContinueTracking
+import com.thomaskioko.tvmaniac.episodes.implementation.MockData.testShowSeasons
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.i18n.testing.util.IgnoreIos
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
@@ -196,12 +198,12 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
     @Test
     fun `should return active season for continue tracking when user has watch progress`() =
         runTest {
-            fakeSeasonsRepository.setSeasonsResult(MockData.testShowSeasons)
+            fakeSeasonsRepository.setSeasonsResult(testShowSeasons)
 
             val season2Episodes =
                 MockData.createSeason2EpisodesWithWatchedState(watchedEpisodeNumber = 3L)
             fakeSeasonDetailsRepository.setSeasonsResult(
-                MockData.createSeasonDetailsForContinueTracking(
+                createSeasonDetailsForContinueTracking(
                     seasonId = SEASON_2_ID,
                     seasonNumber = SEASON_2_NUMBER,
                     episodes = season2Episodes,
@@ -226,11 +228,11 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should return season 1 for continue tracking when user has no watch progress`() = runTest {
-        fakeSeasonsRepository.setSeasonsResult(MockData.testShowSeasons)
+        fakeSeasonsRepository.setSeasonsResult(testShowSeasons)
 
         val season1Episodes = MockData.createSeason1EpisodesForContinueTracking()
         fakeSeasonDetailsRepository.setSeasonsResult(
-            MockData.createSeasonDetailsForContinueTracking(
+            createSeasonDetailsForContinueTracking(
                 seasonId = SEASON_1_ID,
                 seasonNumber = SEASON_1_NUMBER,
                 episodes = season1Episodes,
@@ -248,7 +250,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should return season with future episodes when all previous seasons watched`() = runTest {
-        fakeSeasonsRepository.setSeasonsResult(MockData.testShowSeasons)
+        fakeSeasonsRepository.setSeasonsResult(testShowSeasons)
 
         val futureEpisodes = MockData.createFutureEpisodesForSeason(
             seasonId = SEASON_1_ID,
@@ -257,7 +259,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
             daysUntilAir = 14,
         )
         fakeSeasonDetailsRepository.setSeasonsResult(
-            MockData.createSeasonDetailsForContinueTracking(
+            createSeasonDetailsForContinueTracking(
                 seasonId = SEASON_1_ID,
                 seasonNumber = SEASON_1_NUMBER,
                 episodes = futureEpisodes,
@@ -275,7 +277,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should return null when all episodes in all seasons are watched`() = runTest {
-        fakeSeasonsRepository.setSeasonsResult(MockData.testShowSeasons)
+        fakeSeasonsRepository.setSeasonsResult(testShowSeasons)
 
         val allWatchedEpisodes = MockData.createAllWatchedEpisodesForSeason(
             seasonId = SEASON_1_ID,
@@ -283,7 +285,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
             episodeCount = 5,
         )
         fakeSeasonDetailsRepository.setSeasonsResult(
-            MockData.createSeasonDetailsForContinueTracking(
+            createSeasonDetailsForContinueTracking(
                 seasonId = SEASON_1_ID,
                 seasonNumber = SEASON_1_NUMBER,
                 episodes = allWatchedEpisodes,
@@ -299,11 +301,36 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
     @Test
     fun `should return null for continue tracking when show not in library`() = runTest {
         fakeWatchlistDao.setIsInLibrary(false)
-        fakeSeasonsRepository.setSeasonsResult(MockData.testShowSeasons)
+        fakeSeasonsRepository.setSeasonsResult(testShowSeasons)
 
         episodeRepository.observeContinueTrackingEpisodes(TEST_SHOW_ID).test {
             val result = awaitItem()
             result.shouldBeNull()
+        }
+    }
+
+    @Test
+    fun `should emit continue tracking result when season details become available`() = runTest {
+        fakeSeasonsRepository.setSeasonsResult(testShowSeasons)
+        fakeSeasonDetailsRepository.setSeasonsResult(null)
+
+        episodeRepository.observeContinueTrackingEpisodes(TEST_SHOW_ID).test {
+            awaitItem().shouldBeNull()
+
+            val season1Episodes = MockData.createSeason1EpisodesForContinueTracking()
+            fakeSeasonDetailsRepository.setSeasonsResult(
+                createSeasonDetailsForContinueTracking(
+                    seasonId = SEASON_1_ID,
+                    seasonNumber = SEASON_1_NUMBER,
+                    episodes = season1Episodes,
+                ),
+            )
+
+            val result = awaitItem()
+            result.shouldNotBeNull()
+            result.currentSeasonNumber shouldBe SEASON_1_NUMBER
+            result.episodes shouldHaveSize 2
+            result.firstUnwatchedIndex shouldBe 0
         }
     }
 

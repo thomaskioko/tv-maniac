@@ -107,6 +107,7 @@ public class DefaultEpisodeRepository(
     override suspend fun markEpisodeAsUnwatched(showId: Long, episodeId: Long) {
         val includeSpecials = datastoreRepository.observeIncludeSpecials().first()
         watchedEpisodeDao.markAsUnwatched(showId, episodeId, includeSpecials)
+        syncRepository.value.syncShowEpisodeWatches(showId)
     }
 
     override fun observeLastWatchedEpisode(showId: Long): Flow<LastWatchedEpisode?> {
@@ -175,6 +176,7 @@ public class DefaultEpisodeRepository(
     override suspend fun markSeasonUnwatched(showId: Long, seasonNumber: Long) {
         val includeSpecials = datastoreRepository.observeIncludeSpecials().first()
         watchedEpisodeDao.markSeasonAsUnwatched(showId, seasonNumber, includeSpecials)
+        syncRepository.value.syncShowEpisodeWatches(showId)
     }
 
     override suspend fun getUnwatchedCountAfterFetchingPreviousSeasons(
@@ -227,42 +229,45 @@ public class DefaultEpisodeRepository(
             seasonsRepository.observeSeasonsByShowId(showId),
         ) { lastWatched, _, seasons ->
             lastWatched to seasons
-        }.mapLatest { (lastWatched, seasons) ->
-            seasons.takeIf { it.isNotEmpty() }?.let { availableSeasons ->
-                val startIndex = determineActiveSeasonIndex(availableSeasons, lastWatched)
-                findFirstSeasonWithUnwatchedEpisodes(showId, availableSeasons, startIndex)
-            }
+        }.flatMapLatest { (lastWatched, seasons) ->
+            if (seasons.isEmpty()) return@flatMapLatest flowOf(null)
+            val startIndex = determineActiveSeasonIndex(seasons, lastWatched)
+            observeFirstSeasonWithUnwatchedEpisodes(showId, seasons, startIndex)
         }
 
-    private suspend fun findFirstSeasonWithUnwatchedEpisodes(
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun observeFirstSeasonWithUnwatchedEpisodes(
         showId: Long,
         seasons: List<ShowSeasons>,
-        startIndex: Int,
-    ): ContinueTrackingResult? {
-        for (i in startIndex until seasons.size) {
-            val season = seasons[i]
-            val param = SeasonDetailsParam(
-                showId = showId,
-                seasonId = season.season_id.id,
-                seasonNumber = season.season_number,
-            )
+        currentIndex: Int,
+    ): Flow<ContinueTrackingResult?> {
+        if (currentIndex >= seasons.size) return flowOf(null)
 
-            val seasonDetails = seasonDetailsRepository.observeSeasonDetails(param).first()
-                ?: continue
+        val season = seasons[currentIndex]
+        val param = SeasonDetailsParam(
+            showId = showId,
+            seasonId = season.season_id.id,
+            seasonNumber = season.season_number,
+        )
 
-            val episodes = seasonDetails.episodes.toImmutableList()
-            val hasUnwatchedEpisodes = episodes.any { !it.isWatched }
-
-            if (hasUnwatchedEpisodes) {
-                return ContinueTrackingResult(
-                    episodes = episodes,
-                    firstUnwatchedIndex = calculateScrollIndex(seasonDetails.episodes),
-                    currentSeasonNumber = seasonDetails.seasonNumber,
-                    currentSeasonId = seasonDetails.seasonId,
-                )
+        return seasonDetailsRepository.observeSeasonDetails(param)
+            .flatMapLatest { seasonDetails ->
+                when {
+                    seasonDetails == null -> flowOf(null)
+                    seasonDetails.episodes.any { !it.isWatched } -> {
+                        val episodes = seasonDetails.episodes.toImmutableList()
+                        flowOf(
+                            ContinueTrackingResult(
+                                episodes = episodes,
+                                firstUnwatchedIndex = calculateScrollIndex(seasonDetails.episodes),
+                                currentSeasonNumber = seasonDetails.seasonNumber,
+                                currentSeasonId = seasonDetails.seasonId,
+                            ),
+                        )
+                    }
+                    else -> observeFirstSeasonWithUnwatchedEpisodes(showId, seasons, currentIndex + 1)
+                }
             }
-        }
-        return null
     }
 
     private fun determineActiveSeasonIndex(
