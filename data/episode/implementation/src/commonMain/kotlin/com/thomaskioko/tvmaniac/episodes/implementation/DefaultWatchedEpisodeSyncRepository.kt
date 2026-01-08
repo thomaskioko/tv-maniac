@@ -140,7 +140,7 @@ public class DefaultWatchedEpisodeSyncRepository(
                     seasonNumber = remoteEntry.seasonNumber,
                     episodeNumber = remoteEntry.episodeNumber,
                 )
-                remoteEntry.copy(episodeId = episode?.id?.id)
+                remoteEntry.copy(episodeId = episode?.episode_id?.id)
             }
 
             dao.upsertBatchFromTrakt(
