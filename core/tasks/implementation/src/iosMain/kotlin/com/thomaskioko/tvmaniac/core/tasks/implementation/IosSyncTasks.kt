@@ -19,6 +19,7 @@ import platform.BackgroundTasks.BGTaskScheduler
 import platform.Foundation.NSCalendar
 import platform.Foundation.NSCalendarMatchStrictly
 import platform.Foundation.NSDate
+import platform.Foundation.dateWithTimeIntervalSinceNow
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
@@ -75,22 +76,15 @@ public class IosSyncTasks(
         }
     }
 
-    private fun BGTask.runTask(block: suspend () -> Boolean) {
+    private fun BGTask.runTask(block: suspend () -> Unit) {
         logger.debug(TAG, "Starting library sync task")
 
-        val job = scope.io.launch {
-            try {
-                block()
-            } catch (e: kotlinx.coroutines.CancellationException) {
-                logger.debug(TAG, "Sync cancelled: ${e.message}")
-                throw e
-            }
-        }
+        val job = scope.io.launch { block() }
 
         expirationHandler = {
             logger.debug(TAG, "Library sync task expired, cancelling job")
-            job.cancel()
             setTaskCompletedWithSuccess(false)
+            job.cancel()
         }
 
         runBlocking {
@@ -98,9 +92,6 @@ public class IosSyncTasks(
                 job.join()
                 setTaskCompletedWithSuccess(true)
                 logger.debug(TAG, "Library sync task completed successfully")
-            } catch (e: kotlinx.coroutines.CancellationException) {
-                logger.debug(TAG, "Sync was cancelled: ${e.message}")
-                setTaskCompletedWithSuccess(false)
             } catch (e: Throwable) {
                 setTaskCompletedWithSuccess(false)
                 logger.error(TAG, "Library sync task failed: ${e.message}")
@@ -108,33 +99,26 @@ public class IosSyncTasks(
         }
     }
 
-    private suspend fun performSync(): Boolean {
+    private suspend fun performSync() {
         if (traktAuthRepository.value.state.first() != TraktAuthState.LOGGED_IN) {
             logger.debug(TAG, "User not logged in, skipping sync")
-            return true
+            return
         }
 
-        return try {
-            followedShowsSyncInteractor.value.executeSync(
-                FollowedShowsSyncInteractor.Param(forceRefresh = true),
-            )
-            datastoreRepository.value.setLastSyncTimestamp(dateTimeProvider.value.nowMillis())
-            true
-        } catch (e: Exception) {
-            logger.error(TAG, "Library sync failed: ${e.message}")
-            false
-        }
+        followedShowsSyncInteractor.value.executeSync(
+            FollowedShowsSyncInteractor.Param(forceRefresh = true),
+        )
+        datastoreRepository.value.setLastSyncTimestamp(dateTimeProvider.value.nowMillis())
     }
 
-    private fun nextSyncDate(): NSDate {
-        return NSCalendar.currentCalendar.nextDateAfterDate(
+    private fun nextSyncDate(): NSDate =
+        NSCalendar.currentCalendar.nextDateAfterDate(
             date = NSDate(),
             matchingHour = 0,
             minute = 0,
             second = 0,
             options = NSCalendarMatchStrictly,
-        )!!
-    }
+        ) ?: NSDate.dateWithTimeIntervalSinceNow(86400.0)
 
     private companion object {
         private const val TAG = "IosSyncTasks"
