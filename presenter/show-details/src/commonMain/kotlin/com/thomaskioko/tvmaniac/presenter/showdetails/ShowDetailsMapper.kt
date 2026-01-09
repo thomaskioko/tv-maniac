@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.presenter.showdetails
 
-import com.thomaskioko.tvmaniac.episodes.api.model.ContinueTrackingResult
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.CastModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ContinueTrackingEpisodeModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ProviderModel
@@ -10,7 +9,6 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.TrailerModel
 import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import com.thomaskioko.tvmaniac.domain.showdetails.model.Casts as DomainCasts
 import com.thomaskioko.tvmaniac.domain.showdetails.model.Providers as DomainProviders
@@ -119,11 +117,10 @@ internal fun EpisodeDetails.toContinueTrackingModel(showId: Long): ContinueTrack
 }
 
 internal fun mapContinueTrackingEpisodes(
-    result: ContinueTrackingResult?,
+    episodes: ImmutableList<EpisodeDetails>,
     showId: Long,
 ): ImmutableList<ContinueTrackingEpisodeModel> {
-    if (result == null) return persistentListOf()
-    return result.episodes
+    return episodes
         .map { it.toContinueTrackingModel(showId) }
         .toImmutableList()
 }

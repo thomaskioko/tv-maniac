@@ -1,5 +1,8 @@
 package com.thomaskioko.tvmaniac.domain.showdetails.model
 
+import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
+import kotlinx.collections.immutable.ImmutableList
+
 public data class ShowDetails(
     val tmdbId: Long,
     val title: String,
@@ -22,6 +25,8 @@ public data class ShowDetails(
     val recommendedShows: List<Show>,
     val similarShows: List<Show>,
     val trailersList: List<Trailer>,
+    val continueTrackingEpisodes: ImmutableList<EpisodeDetails>,
+    val continueTrackingScrollIndex: Int = 0,
 )
 
 public data class Casts(

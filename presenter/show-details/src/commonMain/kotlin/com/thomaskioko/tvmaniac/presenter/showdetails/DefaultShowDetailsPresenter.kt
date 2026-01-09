@@ -10,7 +10,6 @@ import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
-import com.thomaskioko.tvmaniac.domain.episode.ObserveContinueTrackingInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
 import com.thomaskioko.tvmaniac.domain.recommendedshows.RecommendedShowsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
@@ -51,7 +50,6 @@ public class DefaultShowDetailsPresenter(
     private val showContentSyncInteractor: ShowContentSyncInteractor,
     observableShowDetailsInteractor: ObservableShowDetailsInteractor,
     observeShowWatchProgressInteractor: ObserveShowWatchProgressInteractor,
-    observeContinueTrackingInteractor: ObserveContinueTrackingInteractor,
     private val logger: Logger,
 ) : ShowDetailsPresenter, ComponentContext by componentContext {
 
@@ -68,7 +66,6 @@ public class DefaultShowDetailsPresenter(
     init {
         observableShowDetailsInteractor(showId)
         observeShowWatchProgressInteractor(showId)
-        observeContinueTrackingInteractor(showId)
         coroutineScope.launch { observeShowDetails() }
     }
 
@@ -79,10 +76,9 @@ public class DefaultShowDetailsPresenter(
         watchProvidersLoadingState.observable,
         observableShowDetailsInteractor.flow,
         observeShowWatchProgressInteractor.flow,
-        observeContinueTrackingInteractor.flow,
         _state,
     ) { recommendedShowsUpdating, showDetailsUpdating, similarShowsUpdating, watchProvidersUpdating,
-        showDetails, watchProgress, continueTrackingResult, currentState,
+        showDetails, watchProgress, currentState,
         ->
         currentState.copy(
             showDetails = showDetails.toShowDetails(
@@ -94,8 +90,8 @@ public class DefaultShowDetailsPresenter(
             showDetailsRefreshing = showDetailsUpdating,
             similarShowsRefreshing = similarShowsUpdating,
             watchProvidersRefreshing = watchProvidersUpdating,
-            continueTrackingEpisodes = mapContinueTrackingEpisodes(continueTrackingResult, showId),
-            continueTrackingScrollIndex = continueTrackingResult?.firstUnwatchedIndex ?: 0,
+            continueTrackingEpisodes = mapContinueTrackingEpisodes(showDetails.continueTrackingEpisodes, showId),
+            continueTrackingScrollIndex = showDetails.continueTrackingScrollIndex,
         )
     }.stateIn(
         scope = coroutineScope,

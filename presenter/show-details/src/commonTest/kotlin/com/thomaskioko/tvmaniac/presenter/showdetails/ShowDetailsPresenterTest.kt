@@ -18,7 +18,6 @@ import com.thomaskioko.tvmaniac.db.SimilarShows
 import com.thomaskioko.tvmaniac.db.TvshowDetails
 import com.thomaskioko.tvmaniac.db.WatchProviders
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
-import com.thomaskioko.tvmaniac.domain.episode.ObserveContinueTrackingInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
 import com.thomaskioko.tvmaniac.domain.recommendedshows.RecommendedShowsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
@@ -570,9 +569,6 @@ class ShowDetailsPresenterTest {
                 episodeRepository = episodeRepository,
             ),
             observeShowWatchProgressInteractor = ObserveShowWatchProgressInteractor(
-                episodeRepository = episodeRepository,
-            ),
-            observeContinueTrackingInteractor = ObserveContinueTrackingInteractor(
                 episodeRepository = episodeRepository,
             ),
             showContentSyncInteractor = ShowContentSyncInteractor(
