@@ -23,6 +23,8 @@ public class FakeTraktAuthRepository : TraktAuthRepository {
 
     override val authError: Flow<AuthError?> = _authError.asStateFlow()
 
+    override fun isLoggedIn(): Boolean = _state.value == TraktAuthState.LOGGED_IN
+
     override suspend fun getAuthState(): AuthState? = authState
 
     override suspend fun refreshTokens(): AuthState? = refreshAuthState

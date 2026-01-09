@@ -8,12 +8,10 @@ import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsDao
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import com.thomaskioko.tvmaniac.util.api.ItemSyncer
 import com.thomaskioko.tvmaniac.util.api.syncerForEntity
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -45,8 +43,7 @@ public class DefaultFollowedShowsRepository(
     )
 
     override suspend fun syncFollowedShows(forceRefresh: Boolean) {
-        val authState = traktAuthRepository.state.first()
-        if (authState != TraktAuthState.LOGGED_IN) return
+        if (!traktAuthRepository.isLoggedIn()) return
 
         processPendingUploadActions()
         processPendingDeleteActions()

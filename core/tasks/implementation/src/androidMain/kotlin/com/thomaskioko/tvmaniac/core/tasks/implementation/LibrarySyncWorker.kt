@@ -7,9 +7,7 @@ import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.domain.followedshows.FollowedShowsSyncInteractor
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
-import kotlinx.coroutines.flow.first
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -27,7 +25,7 @@ public class LibrarySyncWorker(
     override suspend fun doWork(): Result {
         logger.debug(TAG, "Library sync worker starting")
 
-        if (traktAuthRepository.value.state.first() != TraktAuthState.LOGGED_IN) {
+        if (!traktAuthRepository.value.isLoggedIn()) {
             logger.debug(TAG, "User not logged in, skipping sync")
             return Result.success()
         }

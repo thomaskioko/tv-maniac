@@ -6,6 +6,8 @@ public interface TraktAuthRepository {
 
     public val state: Flow<TraktAuthState>
 
+    public fun isLoggedIn(): Boolean
+
     public val authError: Flow<AuthError?>
 
     public suspend fun getAuthState(): AuthState?

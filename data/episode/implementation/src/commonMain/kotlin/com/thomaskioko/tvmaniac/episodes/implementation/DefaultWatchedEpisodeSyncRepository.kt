@@ -15,7 +15,6 @@ import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsDao
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.first
@@ -61,9 +60,7 @@ public class DefaultWatchedEpisodeSyncRepository(
         }
     }
 
-    private suspend fun isLoggedIn(): Boolean {
-        return traktAuthRepository.state.first() == TraktAuthState.LOGGED_IN
-    }
+    private fun isLoggedIn(): Boolean = traktAuthRepository.isLoggedIn()
 
     private suspend fun processPendingUploads() {
         val pending = dao.entriesByPendingAction(PendingAction.UPLOAD)
