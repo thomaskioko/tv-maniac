@@ -46,8 +46,6 @@ public class DefaultWatchedEpisodeSyncRepository(
 
         followedShowsRepository.addFollowedShow(showId)
 
-        logger.debug(TAG, "Syncing episode watches for show $showId")
-
         processPendingUploads()
         processPendingDeletes()
 
