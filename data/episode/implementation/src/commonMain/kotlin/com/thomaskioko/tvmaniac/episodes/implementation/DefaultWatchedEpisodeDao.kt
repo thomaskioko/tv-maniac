@@ -533,7 +533,7 @@ public class DefaultWatchedEpisodeDao(
                         season_number = entry.seasonNumber,
                         episode_number = entry.episodeNumber,
                         watched_at = entry.watchedAt.toEpochMilliseconds(),
-                        trakt_id = entry.traktId ?: 0L,
+                        trakt_id = entry.traktId,
                         synced_at = syncedAt,
                         pending_action = PendingAction.NOTHING.value,
                     )
