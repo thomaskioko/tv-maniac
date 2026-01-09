@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -135,9 +136,10 @@ public class DefaultDiscoverShowsPresenter(
         private fun observeAuthState() {
             coroutineScope.launch {
                 traktAuthRepository.state
+                    .drop(1)
                     .distinctUntilChanged()
                     .filter { it == TraktAuthState.LOGGED_IN }
-                    .collect { observeShowData() }
+                    .collect { observeShowData(forceRefresh = true) }
             }
         }
 
