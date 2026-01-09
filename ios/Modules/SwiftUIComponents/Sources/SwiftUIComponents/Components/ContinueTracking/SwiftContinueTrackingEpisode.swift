@@ -12,6 +12,7 @@ public struct SwiftContinueTrackingEpisode: Identifiable {
     public let imageUrl: String?
     public let isWatched: Bool
     public let daysUntilAir: Int64?
+    public let hasAired: Bool
 
     public init(
         episodeId: Int64,
@@ -23,7 +24,8 @@ public struct SwiftContinueTrackingEpisode: Identifiable {
         episodeTitle: String,
         imageUrl: String?,
         isWatched: Bool,
-        daysUntilAir: Int64?
+        daysUntilAir: Int64?,
+        hasAired: Bool
     ) {
         self.episodeId = episodeId
         self.seasonId = seasonId
@@ -35,5 +37,6 @@ public struct SwiftContinueTrackingEpisode: Identifiable {
         self.imageUrl = imageUrl
         self.isWatched = isWatched
         self.daysUntilAir = daysUntilAir
+        self.hasAired = hasAired
     }
 }

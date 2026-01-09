@@ -17,6 +17,7 @@ public struct EpisodeItemView: View {
     private let isWatched: Bool
     private let isEpisodeUpdating: Bool
     private let daysUntilAir: Int64?
+    private let hasAired: Bool
     private let dayLabelFormat: (_ count: Int) -> String
     private let episodeWidth: CGFloat
     private let episodeHeight: CGFloat
@@ -32,6 +33,7 @@ public struct EpisodeItemView: View {
         isWatched: Bool = false,
         isEpisodeUpdating: Bool = false,
         daysUntilAir: Int64? = nil,
+        hasAired: Bool = true,
         dayLabelFormat: @escaping (_ count: Int) -> String = { count in count == 1 ? "day" : "days" },
         episodeWidth: CGFloat = Constants.defaultEpisodeWidth,
         episodeHeight: CGFloat = Constants.defaultEpisodeHeight,
@@ -46,6 +48,7 @@ public struct EpisodeItemView: View {
         self.isWatched = isWatched
         self.isEpisodeUpdating = isEpisodeUpdating
         self.daysUntilAir = daysUntilAir
+        self.hasAired = hasAired
         self.dayLabelFormat = dayLabelFormat
         self.episodeWidth = episodeWidth
         self.episodeHeight = episodeHeight
@@ -104,21 +107,11 @@ public struct EpisodeItemView: View {
 
     @ViewBuilder
     private var watchedButton: some View {
-        if let daysUntilAir, daysUntilAir > 0 {
-            VStack(spacing: 0) {
-                Text("\(daysUntilAir)")
-                    .textStyle(theme.typography.titleLarge)
-                    .foregroundColor(theme.colors.onSurfaceVariant)
-                Text(dayLabelFormat(Int(daysUntilAir)))
-                    .textStyle(theme.typography.labelSmall)
-                    .foregroundColor(theme.colors.onSurfaceVariant)
-            }
-            .padding(.trailing, theme.spacing.medium)
-        } else if isEpisodeUpdating {
+        if isEpisodeUpdating {
             ProgressView()
                 .frame(width: DimensionConstants.checkmarkSize, height: DimensionConstants.checkmarkSize)
                 .padding(.trailing, theme.spacing.medium)
-        } else {
+        } else if hasAired {
             Button(action: onWatchedToggle) {
                 ZStack {
                     Circle()
@@ -131,6 +124,21 @@ public struct EpisodeItemView: View {
             }
             .buttonStyle(.plain)
             .padding(.trailing, theme.spacing.medium)
+        } else if let daysUntilAir, daysUntilAir > 0 {
+            VStack(spacing: 0) {
+                Text("\(daysUntilAir)")
+                    .textStyle(theme.typography.titleLarge)
+                    .foregroundColor(theme.colors.onSurfaceVariant)
+                Text(dayLabelFormat(Int(daysUntilAir)))
+                    .textStyle(theme.typography.labelSmall)
+                    .foregroundColor(theme.colors.onSurfaceVariant)
+            }
+            .padding(.trailing, theme.spacing.medium)
+        } else {
+            Text("TBD")
+                .textStyle(theme.typography.titleMedium)
+                .foregroundColor(theme.colors.onSurfaceVariant)
+                .padding(.trailing, theme.spacing.medium)
         }
     }
 
@@ -196,7 +204,16 @@ private enum DimensionConstants {
             episodeTitle: "E03 • Future Episode",
             episodeOverView: "This episode will air in 7 days.",
             isWatched: false,
-            daysUntilAir: 7
+            daysUntilAir: 7,
+            hasAired: false
+        )
+
+        EpisodeItemView(
+            imageUrl: nil,
+            episodeTitle: "E04 • Unknown Air Date",
+            episodeOverView: "This episode has no known air date yet.",
+            isWatched: false,
+            hasAired: false
         )
     }
     .themedPreview()

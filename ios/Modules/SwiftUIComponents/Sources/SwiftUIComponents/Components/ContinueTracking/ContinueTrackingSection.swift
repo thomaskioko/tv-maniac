@@ -85,7 +85,8 @@ public struct ContinueTrackingSection: View {
                     episodeTitle: "First Episode",
                     imageUrl: nil,
                     isWatched: true,
-                    daysUntilAir: nil
+                    daysUntilAir: nil,
+                    hasAired: true
                 ),
                 SwiftContinueTrackingEpisode(
                     episodeId: 2,
@@ -97,7 +98,8 @@ public struct ContinueTrackingSection: View {
                     episodeTitle: "Second Episode",
                     imageUrl: nil,
                     isWatched: true,
-                    daysUntilAir: nil
+                    daysUntilAir: nil,
+                    hasAired: true
                 ),
                 SwiftContinueTrackingEpisode(
                     episodeId: 3,
@@ -109,7 +111,8 @@ public struct ContinueTrackingSection: View {
                     episodeTitle: "Re:start",
                     imageUrl: nil,
                     isWatched: false,
-                    daysUntilAir: nil
+                    daysUntilAir: nil,
+                    hasAired: true
                 ),
                 SwiftContinueTrackingEpisode(
                     episodeId: 4,
@@ -121,7 +124,8 @@ public struct ContinueTrackingSection: View {
                     episodeTitle: "Fourth Episode",
                     imageUrl: nil,
                     isWatched: false,
-                    daysUntilAir: 5
+                    daysUntilAir: 5,
+                    hasAired: false
                 ),
             ],
             scrollIndex: 2,

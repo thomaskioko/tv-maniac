@@ -162,7 +162,8 @@ public extension TvManiac.EpisodeDetailsModel {
             isWatched: isWatched,
             isEpisodeUpdating: isEpisodeUpdating,
             daysUntilAir: daysUntilAir?.int64Value,
-            hasPreviousUnwatched: hasPreviousUnwatched
+            hasPreviousUnwatched: hasPreviousUnwatched,
+            hasAired: hasAired
         )
     }
 }
@@ -229,7 +230,8 @@ public extension TvManiac.ContinueTrackingEpisodeModel {
             episodeTitle: episodeTitle,
             imageUrl: imageUrl,
             isWatched: isWatched,
-            daysUntilAir: daysUntilAir?.int64Value
+            daysUntilAir: daysUntilAir?.int64Value,
+            hasAired: hasAired
         )
     }
 }
