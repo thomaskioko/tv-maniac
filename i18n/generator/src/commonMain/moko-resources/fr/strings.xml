@@ -61,7 +61,7 @@
     <string name="label_settings_image_quality_high_description">Meilleure qualité, utilise plus de données</string>
     <string name="label_settings_image_quality_medium_description">Qualité et utilisation des données équilibrées</string>
     <string name="label_settings_image_quality_low_description">Qualité inférieure, économise les données</string>
-    <string name="label_settings_sync_update">Synchroniser &amp; Mettre à jour</string>
+    <string name="label_settings_sync_update">Synchroniser &amp; mettre à jour</string>
     <string name="label_settings_sync_update_description">Synchroniser et mettre à jour automatiquement le contenu</string>
     <string name="label_settings_last_sync_date">Dernière synchronisation : %s</string>
 
