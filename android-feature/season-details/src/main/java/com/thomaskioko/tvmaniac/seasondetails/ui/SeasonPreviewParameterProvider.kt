@@ -22,6 +22,7 @@ internal val episodeDetailsModel = EpisodeDetailsModel(
     seasonNumber = 1,
     isWatched = false,
     daysUntilAir = null,
+    hasAired = true,
     hasPreviousUnwatched = false,
 )
 

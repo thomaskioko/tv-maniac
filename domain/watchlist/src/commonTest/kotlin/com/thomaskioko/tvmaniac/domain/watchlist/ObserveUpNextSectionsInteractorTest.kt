@@ -218,6 +218,47 @@ class ObserveUpNextSectionsInteractorTest {
         }
     }
 
+    @Test
+    fun `should filter out episodes with unknown air date`() = runTest {
+        val episodes = listOf(
+            createNextEpisode(showId = 1, showName = "Loki", airDate = "2021-06-09"),
+            createNextEpisode(showId = 2, showName = "Wednesday", airDate = null),
+        )
+        watchlistRepository.setObserveResult(createWatchlist())
+        episodeRepository.setNextEpisodesForWatchlist(episodes)
+
+        interactor("")
+
+        interactor.flow.test {
+            val result = awaitItem()
+            result.watchNext.size shouldBe 1
+            result.watchNext[0].showName shouldBe "Loki"
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should filter out episodes that have not aired yet`() = runTest {
+        dateTimeProvider.setDaysUntilAir("2024-01-01", -14) // Aired 14 days ago
+        dateTimeProvider.setDaysUntilAir("2024-02-01", 17) // Airs in 17 days
+
+        val episodes = listOf(
+            createNextEpisode(showId = 1, showName = "Aired Show", airDate = "2024-01-01"),
+            createNextEpisode(showId = 2, showName = "Future Show", airDate = "2024-02-01"),
+        )
+        watchlistRepository.setObserveResult(createWatchlist())
+        episodeRepository.setNextEpisodesForWatchlist(episodes)
+
+        interactor("")
+
+        interactor.flow.test {
+            val result = awaitItem()
+            result.watchNext.size shouldBe 1
+            result.watchNext[0].showName shouldBe "Aired Show"
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
     private fun createWatchlist() = listOf(
         FollowedShows(
             show_id = Id(1),
@@ -249,6 +290,7 @@ class ObserveUpNextSectionsInteractorTest {
         showId: Long,
         showName: String,
         lastWatchedAt: Long? = null,
+        airDate: String? = "2021-06-09", // Default to a past aired date
     ) = NextEpisodeWithShow(
         showId = showId,
         showName = showName,
@@ -261,7 +303,7 @@ class ObserveUpNextSectionsInteractorTest {
         runtime = 45L,
         stillPath = "/still.jpg",
         overview = "Overview",
-        airDate = null,
+        airDate = airDate,
         lastWatchedAt = lastWatchedAt,
     )
 }

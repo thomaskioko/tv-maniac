@@ -30,13 +30,24 @@ public class ObserveUpNextSectionsInteractor(
                 it.show_id.id to (it.total_episode_count - it.watched_count).toInt()
             }
 
-            val filteredEpisodes = if (params.isNotBlank()) {
+            val searchFiltered = if (params.isNotBlank()) {
                 episodes.filter { it.showName.contains(params, ignoreCase = true) }
             } else {
                 episodes
             }
 
-            filteredEpisodes
+            // Filter out episodes that haven't aired yet
+            val airedEpisodes = searchFiltered.filter { episode ->
+                val airDate = episode.airDate
+                if (airDate == null) {
+                    false // Unknown air date - don't show
+                } else {
+                    val daysUntilAir = dateTimeProvider.calculateDaysUntilAir(airDate)
+                    daysUntilAir == null || daysUntilAir <= 0 // Has aired
+                }
+            }
+
+            airedEpisodes
                 .map { episode ->
                     val remaining = watchlistMap[episode.showId] ?: 0
                     episode.toUpNextEpisodeInfo(remaining)

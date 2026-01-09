@@ -11,4 +11,5 @@ public data class ContinueTrackingEpisodeModel(
     val imageUrl: String?,
     val isWatched: Boolean,
     val daysUntilAir: Int?,
+    val hasAired: Boolean,
 )

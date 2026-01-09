@@ -254,10 +254,9 @@ public class DefaultEpisodeRepository(
                 when {
                     seasonDetails == null -> flowOf(null)
                     seasonDetails.episodes.any { !it.isWatched } -> {
-                        val episodes = seasonDetails.episodes.toImmutableList()
                         flowOf(
                             ContinueTrackingResult(
-                                episodes = episodes,
+                                episodes = seasonDetails.episodes.toImmutableList(),
                                 firstUnwatchedIndex = calculateScrollIndex(seasonDetails.episodes),
                                 currentSeasonNumber = seasonDetails.seasonNumber,
                                 currentSeasonId = seasonDetails.seasonId,
@@ -274,7 +273,7 @@ public class DefaultEpisodeRepository(
         lastWatched: LastWatchedEpisode?,
     ): Int {
         return lastWatched?.let { watched ->
-            seasons.indexOfFirst { it.season_number == watched.seasonNumber.toLong() }
+            seasons.indexOfFirst { it.season_number == watched.seasonNumber }
                 .takeIf { it >= 0 }
         } ?: 0
     }

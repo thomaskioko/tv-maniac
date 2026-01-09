@@ -50,6 +50,7 @@ internal object MockData {
             airDate = "2023-01-0$episodeNumber",
             isWatched = false,
             daysUntilAir = null,
+            hasAired = true,
         )
     }
 
@@ -68,6 +69,7 @@ internal object MockData {
             airDate = "2023-02-20",
             isWatched = false,
             daysUntilAir = null,
+            hasAired = true,
         )
     }
 
@@ -111,6 +113,7 @@ internal object MockData {
                 airDate = "2023-01-0$episodeNumber",
                 isWatched = episodeNumber.toLong() == watchedEpisodeNumber,
                 daysUntilAir = null,
+                hasAired = true,
             )
         }
 
@@ -130,6 +133,7 @@ internal object MockData {
                 airDate = "2023-01-01",
                 isWatched = false,
                 daysUntilAir = null,
+                hasAired = true,
             ),
             EpisodeDetails(
                 id = 102L,
@@ -145,6 +149,7 @@ internal object MockData {
                 airDate = "2023-01-02",
                 isWatched = false,
                 daysUntilAir = null,
+                hasAired = true,
             ),
         )
 
@@ -185,6 +190,7 @@ internal object MockData {
                 airDate = null,
                 isWatched = false,
                 daysUntilAir = daysUntilAir,
+                hasAired = false,
             )
         }
 
@@ -208,6 +214,7 @@ internal object MockData {
                 airDate = "2023-01-0$episodeNumber",
                 isWatched = true,
                 daysUntilAir = null,
+                hasAired = true,
             )
         }
 }

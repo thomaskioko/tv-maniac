@@ -103,6 +103,7 @@ val testEpisodeDetails = EpisodeDetails(
     airDate = "2023-01-01",
     isWatched = false,
     daysUntilAir = null,
+    hasAired = true,
 )
 
 val testContinueTrackingResult = ContinueTrackingResult(

@@ -113,6 +113,7 @@ internal fun EpisodeDetails.toContinueTrackingModel(showId: Long): ContinueTrack
         imageUrl = stillPath,
         isWatched = isWatched,
         daysUntilAir = daysUntilAir,
+        hasAired = hasAired,
     )
 }
 

@@ -14,10 +14,16 @@ public class FakeDateTimeProvider(
     public var formatDateResult: String = "2024-01-01"
     public var formatDateTimeResult: String = "2024-01-01 12:00"
     public var getYearResult: String = "2024"
+    private var fakeToday: LocalDate? = null
+    private val daysUntilAirResults: MutableMap<String, Int?> = mutableMapOf()
 
     override fun now(): Instant = currentTime
-    override fun today(timeZone: TimeZone): LocalDate = currentTime.toLocalDateTime(timeZone).date
-    override fun calculateDaysUntilAir(airDateStr: String?, timeZone: TimeZone): Int? = null
+    override fun today(timeZone: TimeZone): LocalDate = fakeToday ?: currentTime.toLocalDateTime(timeZone).date
+
+    override fun calculateDaysUntilAir(airDateStr: String?, timeZone: TimeZone): Int? {
+        return daysUntilAirResults[airDateStr]
+    }
+
     override fun startOfDay(timeZone: TimeZone): Instant =
         currentTime.toLocalDateTime(timeZone).date.atStartOfDayIn(timeZone)
 
@@ -31,5 +37,13 @@ public class FakeDateTimeProvider(
 
     public fun setCurrentTimeMillis(millis: Long) {
         currentTime = Instant.fromEpochMilliseconds(millis)
+    }
+
+    public fun setFakeToday(year: Int, month: Int, day: Int) {
+        fakeToday = LocalDate(year, month, day)
+    }
+
+    public fun setDaysUntilAir(airDate: String, days: Int?) {
+        daysUntilAirResults[airDate] = days
     }
 }

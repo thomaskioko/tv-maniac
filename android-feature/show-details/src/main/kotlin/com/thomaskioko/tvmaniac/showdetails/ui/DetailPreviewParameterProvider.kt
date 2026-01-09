@@ -91,6 +91,7 @@ internal val showDetailsContent = ShowDetailsContent(
             imageUrl = null,
             isWatched = false,
             daysUntilAir = null,
+            hasAired = true,
         ),
         ContinueTrackingEpisodeModel(
             episodeId = 122L,
@@ -103,6 +104,7 @@ internal val showDetailsContent = ShowDetailsContent(
             imageUrl = null,
             isWatched = false,
             daysUntilAir = null,
+            hasAired = true,
         ),
         ContinueTrackingEpisodeModel(
             episodeId = 123L,
@@ -115,6 +117,7 @@ internal val showDetailsContent = ShowDetailsContent(
             imageUrl = null,
             isWatched = false,
             daysUntilAir = 5,
+            hasAired = false,
         ),
     ),
     message = null,

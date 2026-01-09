@@ -224,7 +224,7 @@ class WatchlistPresenterTest {
         episodeId: Long,
         episodeNumber: Long = 2L,
         lastWatchedAt: Long? = null,
-        airDate: String? = null,
+        airDate: String? = "2021-06-09",
     ) = NextEpisodeWithShow(
         showId = showId,
         showName = showName,

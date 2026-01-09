@@ -92,6 +92,9 @@ public class DefaultSeasonDetailsDao(
     private fun mapEpisode(resultItem: List<SeasonDetails>): List<EpisodeDetails> {
         return resultItem.mapNotNull { seasonDetails ->
             seasonDetails.episode_id?.let { episodeId ->
+                val airDate = seasonDetails.episode_air_date
+                val daysUntilAir = dateTimeProvider.calculateDaysUntilAir(airDate)
+                val hasAired = airDate != null && (daysUntilAir == null || daysUntilAir <= 0)
                 EpisodeDetails(
                     id = episodeId.id,
                     seasonId = seasonDetails.season_id.id,
@@ -102,10 +105,11 @@ public class DefaultSeasonDetailsDao(
                     voteAverage = seasonDetails.vote_average ?: 0.0,
                     voteCount = seasonDetails.vote_count ?: 0,
                     stillPath = seasonDetails.episode_image_url,
-                    airDate = seasonDetails.episode_air_date,
+                    airDate = airDate,
                     runtime = seasonDetails.runtime ?: 0,
                     isWatched = seasonDetails.is_watched == 1L,
-                    daysUntilAir = dateTimeProvider.calculateDaysUntilAir(seasonDetails.episode_air_date),
+                    daysUntilAir = daysUntilAir,
+                    hasAired = hasAired,
                 )
             }
         }

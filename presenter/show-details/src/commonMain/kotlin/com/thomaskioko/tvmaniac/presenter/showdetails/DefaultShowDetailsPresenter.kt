@@ -124,7 +124,18 @@ public class DefaultShowDetailsPresenter(
             }
 
             DetailBackClicked -> onBack()
-            ReloadShowDetails -> coroutineScope.launch { observeShowDetails(forceReload = true) }
+            ReloadShowDetails -> {
+                coroutineScope.launch { observeShowDetails(forceReload = true) }
+                coroutineScope.launch {
+                    showContentSyncInteractor(
+                        ShowContentSyncInteractor.Param(
+                            showId = showId,
+                            forceRefresh = true,
+                            isUserInitiated = true,
+                        ),
+                    ).collectStatus(showDetailsLoadingState, logger, uiMessageManager)
+                }
+            }
             DismissErrorSnackbar -> coroutineScope.launch { _state.update { it.copy(message = null) } }
             DismissShowsListSheet -> coroutineScope.launch { _state.update { it.copy(showListSheet = false) } }
             ShowShowsListSheet -> coroutineScope.launch { _state.update { it.copy(showListSheet = true) } }

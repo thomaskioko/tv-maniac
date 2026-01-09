@@ -110,6 +110,7 @@ private fun ContinueTrackingSectionPreview() {
                         imageUrl = "/still1.jpg",
                         isWatched = true,
                         daysUntilAir = null,
+                        hasAired = true,
                     ),
                     ContinueTrackingEpisodeModel(
                         episodeId = 2L,
@@ -122,6 +123,7 @@ private fun ContinueTrackingSectionPreview() {
                         imageUrl = null,
                         isWatched = false,
                         daysUntilAir = null,
+                        hasAired = true,
                     ),
                     ContinueTrackingEpisodeModel(
                         episodeId = 3L,
@@ -134,6 +136,7 @@ private fun ContinueTrackingSectionPreview() {
                         imageUrl = null,
                         isWatched = false,
                         daysUntilAir = 7,
+                        hasAired = false,
                     ),
                 ),
                 scrollIndex = 1,
