@@ -116,5 +116,11 @@ public interface WatchedEpisodeDao {
         includeSpecials: Boolean,
     )
 
+    public suspend fun upsertBatchFromTrakt(
+        showId: Long,
+        entries: List<WatchedEpisodeEntry>,
+        includeSpecials: Boolean,
+    )
+
     public suspend fun upsert(entry: Watched_episodes, includeSpecials: Boolean)
 }

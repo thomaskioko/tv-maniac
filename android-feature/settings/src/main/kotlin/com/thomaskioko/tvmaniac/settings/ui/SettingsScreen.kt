@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Security
+import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.icons.filled.Tv
 import androidx.compose.material.icons.filled.VideoLibrary
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -74,9 +75,12 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_med
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_medium_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_include_specials
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_include_specials_description
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_last_sync_date
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_privacy_policy
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_section_appearance
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_section_behavior
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_sync_update
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_sync_update_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_trakt_dialog_button_secondary
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_youtube
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_youtube_description
@@ -94,6 +98,7 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_dialog_logout_message
 import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_dialog_logout_title
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.settings.presenter.BackClicked
+import com.thomaskioko.tvmaniac.settings.presenter.BackgroundSyncToggled
 import com.thomaskioko.tvmaniac.settings.presenter.DismissAboutDialog
 import com.thomaskioko.tvmaniac.settings.presenter.DismissTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
@@ -267,6 +272,22 @@ private fun SettingsContent(
                 subtitle = label_settings_include_specials_description.resolve(context),
                 checked = state.includeSpecials,
                 onCheckedChange = { onAction(IncludeSpecialsToggled(it)) },
+            )
+        }
+
+        item { Spacer(modifier = Modifier.height(8.dp)) }
+
+        item {
+            SyncSettingsItem(
+                title = label_settings_sync_update.resolve(context),
+                subtitle = label_settings_sync_update_description.resolve(context),
+                checked = state.backgroundSyncEnabled,
+                lastSyncDate = if (state.showLastSyncDate) {
+                    stringResource(label_settings_last_sync_date.resourceId, state.lastSyncDate ?: "")
+                } else {
+                    null
+                },
+                onCheckedChange = { onAction(BackgroundSyncToggled(it)) },
             )
         }
 
@@ -549,6 +570,70 @@ private fun SettingsToggleItem(
                 uncheckedBorderColor = MaterialTheme.colorScheme.outline,
             ),
         )
+    }
+}
+
+@Composable
+private fun SyncSettingsItem(
+    title: String,
+    subtitle: String,
+    checked: Boolean,
+    lastSyncDate: String?,
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onCheckedChange(!checked) }
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Sync,
+                tint = MaterialTheme.colorScheme.secondary,
+                contentDescription = null,
+                modifier = Modifier.size(24.dp),
+            )
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Switch(
+                checked = checked,
+                onCheckedChange = onCheckedChange,
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = MaterialTheme.colorScheme.secondary,
+                    checkedTrackColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f),
+                    uncheckedThumbColor = MaterialTheme.colorScheme.onSurface,
+                    uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+                    uncheckedBorderColor = MaterialTheme.colorScheme.outline,
+                ),
+            )
+        }
+
+        if (lastSyncDate != null) {
+            Text(
+                text = lastSyncDate,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(start = 56.dp, bottom = 8.dp),
+            )
+        }
     }
 }
 

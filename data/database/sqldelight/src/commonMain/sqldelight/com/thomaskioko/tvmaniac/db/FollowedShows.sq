@@ -103,13 +103,14 @@ SELECT
 FROM followed_shows
 INNER JOIN tvshow ON followed_shows.tmdb_id = tvshow.id
 LEFT JOIN show_metadata ON tvshow.id = show_metadata.show_id
+LEFT JOIN shows_last_watched ON shows_last_watched.show_id = tvshow.id
 WHERE followed_shows.pending_action != 'DELETE'
   AND (
     (SELECT COUNT(*) FROM watched_episodes WHERE watched_episodes.show_id = tvshow.id) <
     (SELECT COUNT(*) FROM episode WHERE episode.show_id = tvshow.id AND (episode.air_date IS NULL OR episode.air_date <= date('now')))
     OR (SELECT COUNT(*) FROM episode WHERE episode.show_id = tvshow.id AND (episode.air_date IS NULL OR episode.air_date <= date('now'))) = 0
   )
-ORDER BY followed_shows.followed_at DESC;
+ORDER BY COALESCE(shows_last_watched.last_watched_at, followed_shows.followed_at) DESC;
 
 searchFollowedShows:
 SELECT
@@ -127,6 +128,7 @@ SELECT
 FROM followed_shows
 INNER JOIN tvshow ON followed_shows.tmdb_id = tvshow.id
 LEFT JOIN show_metadata ON tvshow.id = show_metadata.show_id
+LEFT JOIN shows_last_watched ON shows_last_watched.show_id = tvshow.id
 WHERE followed_shows.pending_action != 'DELETE'
   AND (
     (SELECT COUNT(*) FROM watched_episodes WHERE watched_episodes.show_id = tvshow.id) <
@@ -140,4 +142,4 @@ ORDER BY
     WHEN tvshow.name LIKE '% ' || :query || '%' COLLATE NOCASE THEN 2
     ELSE 3
   END,
-  followed_shows.followed_at DESC;
+  COALESCE(shows_last_watched.last_watched_at, followed_shows.followed_at) DESC;

@@ -60,6 +60,9 @@
     <string name="label_settings_image_quality_high_description">Beste Qualität, verbraucht mehr Daten</string>
     <string name="label_settings_image_quality_medium_description">Ausgewogene Qualität und Datenverbrauch</string>
     <string name="label_settings_image_quality_low_description">Geringere Qualität, spart Daten</string>
+    <string name="label_settings_sync_update">Synchronisieren &amp; Aktualisieren</string>
+    <string name="label_settings_sync_update_description">Inhalte automatisch synchronisieren und aktualisieren</string>
+    <string name="label_settings_last_sync_date">Letzte Synchronisierung: %s</string>
 
     <string name="app_name">Tv Maniac</string>
     <string name="menu_item_discover">Entdecken</string>

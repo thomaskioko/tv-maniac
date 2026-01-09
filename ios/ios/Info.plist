@@ -57,6 +57,7 @@
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>com.thomaskioko.tvmaniac.tokenrefresh</string>
+		<string>com.thomaskioko.tvmaniac.librarysync</string>
 	</array>
 </dict>
 </plist>

@@ -5,7 +5,7 @@ public extension TvManiacColorScheme {
         primary: Color(hex: "1A1A1A"),
         primaryContainer: Color(hex: "1A1A1A"),
         onPrimary: Color(hex: "F0F0F0"),
-        secondary: Color(hex: "FFFFFF"),
+        secondary: Color(hex: "C8C8CC"),
         onSecondary: Color(hex: "0A0A0A"),
         error: Color(hex: "FF6B6B"),
         onError: Color(hex: "0A0A0A"),

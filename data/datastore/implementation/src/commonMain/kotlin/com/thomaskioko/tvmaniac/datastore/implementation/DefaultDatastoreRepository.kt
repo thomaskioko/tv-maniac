@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
@@ -85,7 +86,7 @@ public class DefaultDatastoreRepository(
                 ImageQuality.HIGH.name -> ImageQuality.HIGH
                 ImageQuality.MEDIUM.name -> ImageQuality.MEDIUM
                 ImageQuality.LOW.name -> ImageQuality.LOW
-                else -> ImageQuality.MEDIUM
+                else -> ImageQuality.HIGH
             }
         }
 
@@ -125,6 +126,28 @@ public class DefaultDatastoreRepository(
         return dataStore.data.first()[KEY_LAST_TRAKT_USER_ID]
     }
 
+    override suspend fun setBackgroundSyncEnabled(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[KEY_BACKGROUND_SYNC_ENABLED] = enabled
+        }
+    }
+
+    override fun observeBackgroundSyncEnabled(): Flow<Boolean> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_BACKGROUND_SYNC_ENABLED] ?: true
+        }
+
+    override suspend fun setLastSyncTimestamp(timestamp: Long) {
+        dataStore.edit { preferences ->
+            preferences[KEY_LAST_SYNC_TIMESTAMP] = timestamp
+        }
+    }
+
+    override fun observeLastSyncTimestamp(): Flow<Long?> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_LAST_SYNC_TIMESTAMP]
+        }
+
     public companion object {
         public val KEY_THEME: Preferences.Key<String> = stringPreferencesKey("app_theme")
         public val KEY_LANGUAGE: Preferences.Key<String> = stringPreferencesKey("app_language")
@@ -133,5 +156,7 @@ public class DefaultDatastoreRepository(
         public val KEY_OPEN_TRAILERS_IN_YOUTUBE: Preferences.Key<Boolean> = booleanPreferencesKey("open_trailers_in_youtube")
         public val KEY_INCLUDE_SPECIALS: Preferences.Key<Boolean> = booleanPreferencesKey("include_specials")
         public val KEY_LAST_TRAKT_USER_ID: Preferences.Key<String> = stringPreferencesKey("last_trakt_user_id")
+        public val KEY_BACKGROUND_SYNC_ENABLED: Preferences.Key<Boolean> = booleanPreferencesKey("background_sync_enabled")
+        public val KEY_LAST_SYNC_TIMESTAMP: Preferences.Key<Long> = longPreferencesKey("last_sync_timestamp")
     }
 }

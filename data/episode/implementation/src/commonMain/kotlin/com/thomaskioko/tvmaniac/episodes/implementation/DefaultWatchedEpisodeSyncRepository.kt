@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
+import com.thomaskioko.tvmaniac.core.base.extensions.parallelForEach
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeWatchesDataSource
@@ -14,7 +15,8 @@ import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsDao
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.first
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -44,8 +46,6 @@ public class DefaultWatchedEpisodeSyncRepository(
 
         followedShowsRepository.addFollowedShow(showId)
 
-        logger.debug(TAG, "Syncing episode watches for show $showId")
-
         processPendingUploads()
         processPendingDeletes()
 
@@ -55,15 +55,10 @@ public class DefaultWatchedEpisodeSyncRepository(
 
             syncShowWatches(showId, traktId)
             lastRequestStore.updateShowLastRequest(showId)
-            logger.debug(TAG, "Show $showId sync completed (pulled remote)")
-        } else {
-            logger.debug(TAG, "Show $showId sync skipped (cache valid)")
         }
     }
 
-    private suspend fun isLoggedIn(): Boolean {
-        return traktAuthRepository.state.first() == TraktAuthState.LOGGED_IN
-    }
+    private fun isLoggedIn(): Boolean = traktAuthRepository.isLoggedIn()
 
     private suspend fun processPendingUploads() {
         val pending = dao.entriesByPendingAction(PendingAction.UPLOAD)
@@ -124,30 +119,33 @@ public class DefaultWatchedEpisodeSyncRepository(
         logger.debug(TAG, "Found ${remoteWatches.size} remote watches for show $tmdbId")
 
         val uniqueSeasons = remoteWatches.map { it.seasonNumber }.distinct()
-        for (seasonNumber in uniqueSeasons) {
+        uniqueSeasons.parallelForEach(concurrency = SEASON_CONCURRENCY) { seasonNumber ->
+            currentCoroutineContext().ensureActive()
             ensureSeasonDetailsExist(tmdbId, seasonNumber)
         }
 
         val includeSpecials = datastoreRepository.observeIncludeSpecials().first()
-        remoteWatches.forEach { remoteEntry ->
-            val episode = episodesDao.getEpisodeByShowSeasonEpisodeNumber(
-                showId = tmdbId,
-                seasonNumber = remoteEntry.seasonNumber,
-                episodeNumber = remoteEntry.episodeNumber,
-            )
 
-            dao.upsertFromTrakt(
+        remoteWatches.chunked(BATCH_SIZE).forEach { batch ->
+            currentCoroutineContext().ensureActive()
+
+            val entriesWithEpisodeIds = batch.map { remoteEntry ->
+                val episode = episodesDao.getEpisodeByShowSeasonEpisodeNumber(
+                    showId = tmdbId,
+                    seasonNumber = remoteEntry.seasonNumber,
+                    episodeNumber = remoteEntry.episodeNumber,
+                )
+                remoteEntry.copy(episodeId = episode?.episode_id?.id)
+            }
+
+            dao.upsertBatchFromTrakt(
                 showId = tmdbId,
-                episodeId = episode?.episode_id?.id,
-                seasonNumber = remoteEntry.seasonNumber,
-                episodeNumber = remoteEntry.episodeNumber,
-                watchedAt = remoteEntry.watchedAt.toEpochMilliseconds(),
-                traktId = remoteEntry.traktId ?: 0L,
-                syncedAt = kotlin.time.Clock.System.now().toEpochMilliseconds(),
-                pendingAction = PendingAction.NOTHING.value,
+                entries = entriesWithEpisodeIds,
                 includeSpecials = includeSpecials,
             )
         }
+
+        logger.debug(TAG, "Synced ${remoteWatches.size} episode watches for show $tmdbId")
     }
 
     private suspend fun ensureSeasonDetailsExist(showId: Long, seasonNumber: Long) {
@@ -174,5 +172,7 @@ public class DefaultWatchedEpisodeSyncRepository(
 
     private companion object {
         const val TAG = "WatchedEpisodeSyncRepository"
+        const val BATCH_SIZE = 50
+        const val SEASON_CONCURRENCY = 1
     }
 }

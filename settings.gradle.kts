@@ -75,6 +75,8 @@ include(
     ":core:network-util",
     ":core:paging",
     ":core:screenshot-tests",
+    ":core:tasks:api",
+    ":core:tasks:implementation",
     ":core:util",
     ":core:util:api",
     ":core:util:implementation",

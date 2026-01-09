@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.settings.presenter
 
 import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
+import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
@@ -11,10 +12,10 @@ import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
+import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -29,6 +30,7 @@ public class DefaultSettingsPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val backClicked: () -> Unit,
     private val datastoreRepository: DatastoreRepository,
+    private val dateTimeProvider: DateTimeProvider,
     private val logoutInteractor: LogoutInteractor,
     private val logger: Logger,
     traktAuthRepository: TraktAuthRepository,
@@ -47,20 +49,21 @@ public class DefaultSettingsPresenter(
         datastoreRepository.observeTheme(),
         datastoreRepository.observeOpenTrailersInYoutube(),
         datastoreRepository.observeIncludeSpecials(),
+        datastoreRepository.observeBackgroundSyncEnabled(),
+        datastoreRepository.observeLastSyncTimestamp(),
         traktAuthRepository.state,
-    ) { flows ->
-        val currentState = flows[0] as SettingsState
-        val imageQuality = flows[1] as com.thomaskioko.tvmaniac.datastore.api.ImageQuality
-        val appTheme = flows[2] as com.thomaskioko.tvmaniac.datastore.api.AppTheme
-        val openInYoutube = flows[3] as Boolean
-        val includeSpecials = flows[4] as Boolean
-        val authState = flows[5] as TraktAuthState
+    ) { currentState, imageQuality, appTheme, openInYoutube, includeSpecials, backgroundSyncEnabled, lastSyncTimestamp, authState ->
+
+        val lastSyncDate = lastSyncTimestamp?.let { dateTimeProvider.formatDateTime(it) }
         currentState.copy(
             imageQuality = imageQuality,
             theme = appTheme.toThemeModel(),
             openTrailersInYoutube = openInYoutube,
             includeSpecials = includeSpecials,
             isAuthenticated = authState == TraktAuthState.LOGGED_IN,
+            backgroundSyncEnabled = backgroundSyncEnabled,
+            lastSyncDate = lastSyncDate,
+            showLastSyncDate = backgroundSyncEnabled && lastSyncDate != null,
         )
     }.stateIn(
         scope = coroutineScope,
@@ -102,6 +105,12 @@ public class DefaultSettingsPresenter(
             is IncludeSpecialsToggled -> {
                 coroutineScope.launch {
                     datastoreRepository.saveIncludeSpecials(action.enabled)
+                }
+            }
+
+            is BackgroundSyncToggled -> {
+                coroutineScope.launch {
+                    datastoreRepository.setBackgroundSyncEnabled(action.enabled)
                 }
             }
         }

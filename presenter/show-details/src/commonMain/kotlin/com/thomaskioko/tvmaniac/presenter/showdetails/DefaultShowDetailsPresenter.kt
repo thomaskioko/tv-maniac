@@ -120,10 +120,10 @@ public class DefaultShowDetailsPresenter(
                         followedShowsRepository.removeFollowedShow(showId)
                     } else {
                         followedShowsRepository.addFollowedShow(showId)
+                        showContentSyncInteractor(
+                            ShowContentSyncInteractor.Param(showId = showId, isUserInitiated = true),
+                        ).collectStatus(episodeActionLoadingState, logger, uiMessageManager)
                     }
-                    showContentSyncInteractor(
-                        ShowContentSyncInteractor.Param(showId = showId, isUserInitiated = true),
-                    ).collectStatus(episodeActionLoadingState, logger, uiMessageManager)
                 }
             }
 

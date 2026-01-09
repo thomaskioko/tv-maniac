@@ -581,7 +581,6 @@ class ShowDetailsPresenterTest {
                 seasonDetailsRepository = seasonDetailsRepository,
                 watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
                 dispatchers = coroutineDispatcher,
-                logger = FakeLogger(),
             ),
             logger = FakeLogger(),
         )

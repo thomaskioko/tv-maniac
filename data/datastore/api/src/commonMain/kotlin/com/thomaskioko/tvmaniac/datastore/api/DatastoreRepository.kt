@@ -101,4 +101,32 @@ public interface DatastoreRepository {
      * @return The stored user slug, or null if none.
      */
     public suspend fun getLastTraktUserId(): String?
+
+    /**
+     * Saves the user's preference for background sync.
+     *
+     * @param enabled Whether background sync is enabled.
+     */
+    public suspend fun setBackgroundSyncEnabled(enabled: Boolean)
+
+    /**
+     * Observes the user's preference for background sync.
+     *
+     * @return A Flow of Boolean, true if background sync is enabled, false otherwise. Defaults to true.
+     */
+    public fun observeBackgroundSyncEnabled(): Flow<Boolean>
+
+    /**
+     * Saves the timestamp of the last successful background sync.
+     *
+     * @param timestamp The epoch milliseconds of the last sync.
+     */
+    public suspend fun setLastSyncTimestamp(timestamp: Long)
+
+    /**
+     * Observes the timestamp of the last successful background sync.
+     *
+     * @return A Flow of the timestamp in epoch milliseconds, or null if never synced.
+     */
+    public fun observeLastSyncTimestamp(): Flow<Long?>
 }

@@ -43,6 +43,9 @@ struct SettingsView: View {
                 includeSpecialsToggleRow
                     .padding(.top, theme.spacing.medium)
 
+                syncToggleRow
+                    .padding(.top, theme.spacing.medium)
+
                 sectionHeader(String(\.settings_title_info))
                     .padding(.top, theme.spacing.xLarge)
 
@@ -264,6 +267,42 @@ struct SettingsView: View {
             ))
             .labelsHidden()
             .tint(theme.colors.secondary)
+        }
+    }
+
+    @ViewBuilder
+    private var syncToggleRow: some View {
+        VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
+            HStack(spacing: theme.spacing.medium) {
+                settingsIcon("arrow.triangle.2.circlepath", color: theme.colors.secondary)
+
+                VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
+                    Text(String(\.label_settings_sync_update))
+                        .textStyle(theme.typography.titleMedium)
+                        .foregroundColor(theme.colors.onSurface)
+                    Text(String(\.label_settings_sync_update_description))
+                        .textStyle(theme.typography.bodySmall)
+                        .foregroundColor(theme.colors.onSurfaceVariant)
+                }
+
+                Spacer()
+
+                Toggle("", isOn: Binding(
+                    get: { uiState.backgroundSyncEnabled },
+                    set: { newValue in
+                        presenter.dispatch(action: BackgroundSyncToggled(enabled: newValue))
+                    }
+                ))
+                .labelsHidden()
+                .tint(theme.colors.secondary)
+            }
+
+            if uiState.showLastSyncDate, let lastSyncDate = uiState.lastSyncDate {
+                Text(String(\.label_settings_last_sync_date, parameter: lastSyncDate))
+                    .textStyle(theme.typography.bodySmall)
+                    .foregroundColor(theme.colors.onSurfaceVariant)
+                    .padding(.leading, 40)
+            }
         }
     }
 

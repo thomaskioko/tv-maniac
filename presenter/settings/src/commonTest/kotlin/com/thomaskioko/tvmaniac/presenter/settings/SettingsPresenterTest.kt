@@ -21,6 +21,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
 import com.thomaskioko.tvmaniac.settings.presenter.toAppTheme
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
+import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -37,6 +38,7 @@ class SettingsPresenterTest {
     private val lifecycle = LifecycleRegistry()
     private val testDispatcher = StandardTestDispatcher()
     private val datastoreRepository = FakeDatastoreRepository()
+    private val dateTimeProvider = FakeDateTimeProvider()
     private val traktAuthRepository = FakeTraktAuthRepository()
     private val userRepository = FakeUserRepository()
 
@@ -48,6 +50,7 @@ class SettingsPresenterTest {
         presenter = DefaultSettingsPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             datastoreRepository = datastoreRepository,
+            dateTimeProvider = dateTimeProvider,
             traktAuthRepository = traktAuthRepository,
             logger = FakeLogger(),
             logoutInteractor = LogoutInteractor(

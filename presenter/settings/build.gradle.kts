@@ -16,6 +16,7 @@ kotlin {
 
                 implementation(projects.core.base)
                 implementation(projects.core.logger.api)
+                implementation(projects.core.util.api)
                 implementation(projects.data.datastore.api)
                 implementation(projects.data.traktauth.api)
                 implementation(projects.domain.logout)
@@ -30,6 +31,7 @@ kotlin {
 
         commonTest {
             dependencies {
+                implementation(projects.core.util.testing)
                 implementation(projects.data.datastore.testing)
                 implementation(projects.data.traktauth.testing)
                 implementation(projects.data.user.testing)
