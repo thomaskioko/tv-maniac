@@ -66,7 +66,7 @@ LEFT OUTER JOIN
     followed_shows ON tvshow.id = followed_shows.tmdb_id AND followed_shows.pending_action != 'DELETE'
 WHERE
     trending_shows.page = :page
-    AND tvshow.vote_average >= 6.0
+    AND tvshow.ratings >= 6.0
     AND tvshow.vote_count >= 50
 ORDER BY
     trending_shows.position ASC;
@@ -85,7 +85,7 @@ INNER JOIN
 LEFT OUTER JOIN
     followed_shows ON tvshow.id = followed_shows.tmdb_id AND followed_shows.pending_action != 'DELETE'
 WHERE
-    tvshow.vote_average >= 6.0
+    tvshow.ratings >= 6.0
     AND tvshow.vote_count >= 50
 ORDER BY
     trending_shows.page ASC,

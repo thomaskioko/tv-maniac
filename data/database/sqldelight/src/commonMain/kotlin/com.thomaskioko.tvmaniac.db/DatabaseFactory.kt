@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.db
 import app.cash.sqldelight.db.SqlDriver
 import com.thomaskioko.tvmaniac.db.adapters.IdAdapter
 import com.thomaskioko.tvmaniac.db.adapters.InstantColumnAdapter
-import com.thomaskioko.tvmaniac.db.adapters.intColumnAdapter
+import com.thomaskioko.tvmaniac.db.adapters.stringColumnAdapter
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
@@ -43,7 +43,7 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
         ),
         tvshowAdapter = Tvshow.Adapter(
             idAdapter = IdAdapter(),
-            genre_idsAdapter = intColumnAdapter,
+            genresAdapter = stringColumnAdapter,
         ),
         upcoming_showsAdapter = Upcoming_shows.Adapter(
             idAdapter = IdAdapter(),

@@ -56,10 +56,10 @@ INNER JOIN
 LEFT OUTER JOIN
     followed_shows ON tvshow.id = followed_shows.tmdb_id AND followed_shows.pending_action != 'DELETE'
 WHERE
-    tvshow.vote_average >= 7.0
+    tvshow.ratings >= 7.0
     AND tvshow.vote_count >= 100
 ORDER BY
-    (tvshow.popularity * 0.3 + tvshow.vote_average * 10 * 0.7) DESC;
+    tvshow.ratings DESC;
 
 delete:
 DELETE FROM featured_shows

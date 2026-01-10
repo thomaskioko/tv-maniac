@@ -59,7 +59,7 @@ SELECT
     episode.episode_number,
     episode.overview,
     episode.runtime,
-    episode.vote_average,
+    episode.ratings,
     episode.vote_count,
     episode.image_url AS episode_image_url,
     episode.air_date AS episode_air_date,
@@ -89,6 +89,9 @@ SELECT
 FROM season
 WHERE show_id = :showId AND season_number = :seasonNumber
 LIMIT 1;
+
+updateImageUrl:
+UPDATE season SET image_url = ? WHERE id = ?;
 
 delete:
 DELETE FROM season WHERE show_id = ?;

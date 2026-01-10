@@ -1,0 +1,68 @@
+-- Migration 13: Rename vote_average to ratings in tvshow and episode tables
+-- Also removes popularity, last_air_date columns and changes genre_ids to genres
+
+-- Migrate tvshow table
+CREATE TABLE tvshow_new(
+    id INTEGER NOT NULL PRIMARY KEY,
+    backdrop_path TEXT DEFAULT NULL,
+    year TEXT DEFAULT NULL,
+    language TEXT,
+    name TEXT NOT NULL,
+    overview TEXT NOT NULL,
+    poster_path TEXT,
+    episode_numbers TEXT DEFAULT NULL,
+    season_numbers TEXT DEFAULT NULL,
+    status TEXT DEFAULT NULL,
+    ratings REAL NOT NULL,
+    vote_count INTEGER NOT NULL,
+    genres TEXT
+);
+
+INSERT INTO tvshow_new (
+    id, backdrop_path, year, language, name, overview,
+    poster_path, episode_numbers, season_numbers, status, ratings, vote_count, genres
+)
+SELECT
+    id, backdrop_path, first_air_date, language, name, overview,
+    poster_path, episode_numbers, season_numbers, status, vote_average, vote_count, genre_ids
+FROM tvshow;
+
+DROP TABLE tvshow;
+
+ALTER TABLE tvshow_new RENAME TO tvshow;
+
+CREATE INDEX IF NOT EXISTS idx_tvshow_name ON tvshow(name);
+
+-- Migrate episode table
+CREATE TABLE episode_new (
+    id INTEGER NOT NULL PRIMARY KEY,
+    season_id INTEGER NOT NULL,
+    show_id INTEGER NOT NULL,
+    episode_number INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    overview TEXT NOT NULL,
+    runtime INTEGER DEFAULT NULL,
+    vote_count INTEGER NOT NULL,
+    ratings REAL NOT NULL,
+    image_url TEXT DEFAULT NULL,
+    air_date TEXT DEFAULT NULL,
+    trakt_id INTEGER DEFAULT NULL,
+    FOREIGN KEY(season_id) REFERENCES season(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+INSERT INTO episode_new (
+    id, season_id, show_id, episode_number, title, overview,
+    runtime, vote_count, ratings, image_url, air_date, trakt_id
+)
+SELECT
+    id, season_id, show_id, episode_number, title, overview,
+    runtime, vote_count, vote_average, image_url, air_date, trakt_id
+FROM episode;
+
+DROP TABLE episode;
+
+ALTER TABLE episode_new RENAME TO episode;
+
+CREATE INDEX IF NOT EXISTS idx_episode_trakt_id ON episode(trakt_id);
+CREATE INDEX IF NOT EXISTS idx_episode_show_id ON episode(show_id);
+CREATE INDEX IF NOT EXISTS idx_episode_show_season ON episode(show_id, season_id);

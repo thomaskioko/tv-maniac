@@ -121,9 +121,10 @@ WHERE e.show_id = ? AND s.season_number = ?
 ORDER BY e.episode_number;
 
 getTotalEpisodesForShow:
-SELECT COUNT(*) FROM episode
-WHERE show_id = ?
-  AND (air_date IS NULL OR air_date <= date('now'));
+SELECT COALESCE(SUM(episode_count), 0) AS total
+FROM season
+WHERE show_id = :show_id
+  AND (season_number > 0 OR title != 'Specials');
 
 getWatchedEpisodesCountForShow:
 SELECT COUNT(*) FROM watched_episodes

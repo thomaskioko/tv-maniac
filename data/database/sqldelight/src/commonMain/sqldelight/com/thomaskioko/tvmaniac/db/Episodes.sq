@@ -12,7 +12,7 @@ CREATE TABLE episode (
     overview TEXT NOT NULL,
     runtime INTEGER DEFAULT NULL,
     vote_count INTEGER NOT NULL,
-    vote_average REAL NOT NULL,
+    ratings REAL NOT NULL,
     image_url TEXT DEFAULT NULL,
     air_date TEXT DEFAULT NULL,
     trakt_id INTEGER DEFAULT NULL,
@@ -32,7 +32,7 @@ INSERT OR REPLACE INTO episode(
     overview,
     runtime,
     vote_count,
-    vote_average,
+    ratings,
     episode_number,
     image_url,
     air_date,
@@ -49,7 +49,7 @@ SELECT
     episode.overview,
     episode.runtime,
     episode.vote_count,
-    episode.vote_average,
+    episode.ratings,
     episode.episode_number,
     episode.image_url
 FROM
@@ -75,7 +75,7 @@ SELECT
     episode.overview,
     episode.runtime,
     episode.vote_count,
-    episode.vote_average,
+    episode.ratings,
     episode.image_url,
     episode.air_date,
     episode.trakt_id
@@ -101,7 +101,7 @@ SELECT
     episode.overview,
     episode.runtime,
     episode.vote_count,
-    episode.vote_average,
+    episode.ratings,
     episode.image_url,
     episode.air_date,
     episode.trakt_id

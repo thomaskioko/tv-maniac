@@ -1,24 +1,22 @@
 import com.thomaskioko.tvmaniac.db.Id;
 import com.thomaskioko.tvmaniac.db.TmdbId;
-import kotlin.Int;
+import kotlin.String;
 import kotlin.collections.List;
 
 CREATE TABLE IF NOT EXISTS tvshow(
     id INTEGER AS Id<TmdbId> NOT NULL PRIMARY KEY,
     backdrop_path TEXT DEFAULT NULL,
-    first_air_date TEXT DEFAULT NULL,
+    year TEXT DEFAULT NULL,
     language TEXT,
     name TEXT NOT NULL,
     overview TEXT NOT NULL,
-    popularity REAL NOT NULL,
     poster_path TEXT,
     episode_numbers TEXT DEFAULT NULL,
-    last_air_date TEXT DEFAULT NULL,
     season_numbers TEXT DEFAULT NULL,
     status TEXT DEFAULT NULL,
-    vote_average REAL NOT NULL,
+    ratings REAL NOT NULL,
     vote_count INTEGER NOT NULL,
-    genre_ids TEXT AS List<Int> NOT NULL
+    genres TEXT AS List<String>
 );
 
 -- Create an index on the name column to improve search performance
@@ -30,19 +28,17 @@ INSERT OR REPLACE INTO tvshow(
     name,
     overview,
     language,
-    first_air_date,
-    vote_average,
+    year,
+    ratings,
     vote_count,
-    popularity,
-    genre_ids,
+    genres,
     status,
     episode_numbers,
-    last_air_date,
     season_numbers,
     poster_path,
     backdrop_path
 )
-VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?, ?,?);
+VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?);
 
 tvshowDetails:
 SELECT
@@ -50,27 +46,20 @@ SELECT
     tvshow.name,
     tvshow.overview,
     tvshow.language,
-    tvshow.first_air_date,
-    tvshow.last_air_date,
-    tvshow.popularity,
-    tvshow.vote_average,
+    tvshow.year,
+    tvshow.ratings,
     tvshow.status,
     tvshow.vote_count,
     tvshow.poster_path,
     tvshow.backdrop_path,
-    GROUP_CONCAT(genres.name, ', ') AS genre_list,
+    tvshow.genres,
     CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     tvshow
 LEFT OUTER JOIN
     followed_shows ON tvshow.id = followed_shows.tmdb_id AND followed_shows.pending_action != 'DELETE'
-LEFT OUTER JOIN
-    show_genres ON tvshow.id = show_genres.show_id
-LEFT OUTER JOIN
-    genres ON show_genres.genre_id = genres.id
 WHERE
-      tvshow.id = ?
-GROUP BY tvshow.id;
+    tvshow.id = ?;
 
 searchShows:
 SELECT
@@ -79,8 +68,8 @@ SELECT
     tvshow.poster_path,
     tvshow.overview,
     tvshow.status,
-    tvshow.vote_average,
-    tvshow.first_air_date,
+    tvshow.ratings,
+    tvshow.year,
     CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     tvshow
@@ -102,8 +91,8 @@ ORDER BY
         WHEN name LIKE '% ' || ? || '%' THEN 3  -- Word start match
         ELSE 4  -- Contains match
     END,
-    first_air_date DESC,
-    vote_average DESC;
+    year DESC,
+    ratings DESC;
 
 searchShowsCount:
 SELECT COUNT(*)
