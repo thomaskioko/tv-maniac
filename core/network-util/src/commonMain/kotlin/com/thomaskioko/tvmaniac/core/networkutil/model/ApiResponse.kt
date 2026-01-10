@@ -95,3 +95,8 @@ public fun <T> ApiResponse<T>.getOrThrow(): T = when (this) {
     is ApiResponse.Error.SerializationError -> throw Throwable("Serialization error: $message")
     is ApiResponse.Error.GenericError -> throw Throwable("Error: $message")
 }
+
+public fun <T> ApiResponse<T>.getOrNull(): T? = when (this) {
+    is ApiResponse.Success -> body
+    is ApiResponse.Error -> null
+}

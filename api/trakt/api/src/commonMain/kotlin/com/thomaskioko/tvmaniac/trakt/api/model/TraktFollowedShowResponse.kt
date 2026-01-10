@@ -24,7 +24,7 @@ public data class ShowResponse(
 public data class IdsResponse(
     @SerialName("slug") var slug: String,
     @SerialName("trakt") var trakt: Int,
-    @SerialName("tvdb") var tvdb: Int,
-    @SerialName("imdb") var imdb: String,
-    @SerialName("tmdb") var tmdb: Int,
+    @SerialName("tvdb") var tvdb: Int? = null,
+    @SerialName("imdb") var imdb: String? = null,
+    @SerialName("tmdb") var tmdb: Int? = null,
 )
