@@ -98,6 +98,21 @@ internal class DefaultDateTimeProviderTest {
     }
 
     @Test
+    fun `should return null given past ISO 8601 datetime`() {
+        val result = underTest.calculateDaysUntilAir("2020-01-01T04:00:00.000Z")
+
+        result.shouldBeNull()
+    }
+
+    @Test
+    fun `should return days until air given future ISO 8601 datetime`() {
+        val futureDate = underTest.today().plus(DatePeriod(days = 10))
+        val result = underTest.calculateDaysUntilAir("${futureDate}T04:00:00.000Z")
+
+        result shouldBe 10
+    }
+
+    @Test
     fun `should return midnight instant given timezone`() {
         val timeZone = TimeZone.UTC
         val expected = underTest.now()
@@ -161,5 +176,12 @@ internal class DefaultDateTimeProviderTest {
         underTest.getYear("2024-01-15") shouldBe "2024"
         underTest.getYear("1999-06-30") shouldBe "1999"
         underTest.getYear("2030-12-31") shouldBe "2030"
+    }
+
+    @Test
+    fun `should return year given ISO 8601 datetime string`() {
+        underTest.getYear("2025-11-07T02:00:00.000Z") shouldBe "2025"
+        underTest.getYear("2023-06-15T14:30:00.000Z") shouldBe "2023"
+        underTest.getYear("1999-12-31T23:59:59.999Z") shouldBe "1999"
     }
 }
