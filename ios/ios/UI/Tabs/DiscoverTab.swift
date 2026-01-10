@@ -80,7 +80,10 @@ struct DiscoverTab: View {
     @ViewBuilder
     private func headerContent(shows: [DiscoverShow]) -> some View {
         if shows.isEmpty {
-            LoadingIndicatorView()
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle())
+                .scaleEffect(1.5)
+                .tint(theme.colors.accent)
         } else {
             let items = shows.map {
                 $0.toSwift()
