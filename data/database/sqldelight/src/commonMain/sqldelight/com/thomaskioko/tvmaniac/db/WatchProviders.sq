@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS `watch_providers` (
     `logo_path` TEXT DEFAULT NULL,
     `name` TEXT,
      PRIMARY KEY (id, tmdb_id),
-     FOREIGN KEY(tmdb_id) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE
+     FOREIGN KEY(tmdb_id) REFERENCES tvshow(tmdb_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 -- indices

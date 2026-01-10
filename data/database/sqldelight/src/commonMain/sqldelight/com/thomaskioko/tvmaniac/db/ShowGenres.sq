@@ -4,11 +4,11 @@ import com.thomaskioko.tvmaniac.db.TmdbId;
 
 -- Create a junction table for many-to-many relationship between shows and genres
 CREATE TABLE IF NOT EXISTS show_genres (
-    show_id INTEGER AS Id<TmdbId> NOT NULL,
+    show_tmdb_id INTEGER AS Id<TmdbId> NOT NULL,
     genre_id INTEGER AS Id<GenreId> NOT NULL,
-    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY(show_tmdb_id) REFERENCES tvshow(tmdb_id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY(genre_id) REFERENCES genres(id) ON UPDATE CASCADE ON DELETE CASCADE,
-    PRIMARY KEY (show_id, genre_id)
+    PRIMARY KEY (show_tmdb_id, genre_id)
 );
 
 -- queries
@@ -19,11 +19,11 @@ SELECT EXISTS(
 );
 
 upsert:
-INSERT OR REPLACE INTO show_genres (show_id, genre_id)
+INSERT OR REPLACE INTO show_genres (show_tmdb_id, genre_id)
 VALUES (?, ?);
 
 showsByGenreId:
 SELECT s.*
 FROM tvshow s
-INNER JOIN show_genres sg ON s.id = sg.show_id
+INNER JOIN show_genres sg ON s.tmdb_id = sg.show_tmdb_id
 WHERE sg.genre_id = ?;

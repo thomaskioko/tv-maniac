@@ -24,37 +24,43 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
         episodeAdapter = Episode.Adapter(
             idAdapter = IdAdapter(),
             season_idAdapter = IdAdapter(),
-            show_idAdapter = IdAdapter(),
+            show_trakt_idAdapter = IdAdapter(),
         ),
         seasonAdapter = Season.Adapter(
             idAdapter = IdAdapter(),
-            show_idAdapter = IdAdapter(),
+            show_trakt_idAdapter = IdAdapter(),
         ),
         similar_showsAdapter = Similar_shows.Adapter(
-            idAdapter = IdAdapter(),
-            similar_show_idAdapter = IdAdapter(),
+            tmdb_idAdapter = IdAdapter(),
+            trakt_idAdapter = IdAdapter(),
+            similar_show_trakt_idAdapter = IdAdapter(),
         ),
         trailersAdapter = Trailers.Adapter(
-            show_idAdapter = IdAdapter(),
+            show_tmdb_idAdapter = IdAdapter(),
         ),
         trending_showsAdapter = Trending_shows.Adapter(
-            idAdapter = IdAdapter(),
+            tmdb_idAdapter = IdAdapter(),
+            trakt_idAdapter = IdAdapter(),
             pageAdapter = IdAdapter(),
         ),
         tvshowAdapter = Tvshow.Adapter(
-            idAdapter = IdAdapter(),
+            tmdb_idAdapter = IdAdapter(),
+            trakt_idAdapter = IdAdapter(),
             genresAdapter = stringColumnAdapter,
         ),
         upcoming_showsAdapter = Upcoming_shows.Adapter(
-            idAdapter = IdAdapter(),
+            tmdb_idAdapter = IdAdapter(),
+            trakt_idAdapter = IdAdapter(),
             pageAdapter = IdAdapter(),
         ),
         toprated_showsAdapter = Toprated_shows.Adapter(
-            idAdapter = IdAdapter(),
+            tmdb_idAdapter = IdAdapter(),
+            trakt_idAdapter = IdAdapter(),
             pageAdapter = IdAdapter(),
         ),
         popular_showsAdapter = Popular_shows.Adapter(
-            idAdapter = IdAdapter(),
+            tmdb_idAdapter = IdAdapter(),
+            trakt_idAdapter = IdAdapter(),
             pageAdapter = IdAdapter(),
         ),
         genresAdapter = Genres.Adapter(
@@ -67,8 +73,9 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
             season_idAdapter = IdAdapter(),
         ),
         recommended_showsAdapter = Recommended_shows.Adapter(
-            idAdapter = IdAdapter(),
-            recommended_show_idAdapter = IdAdapter(),
+            tmdb_idAdapter = IdAdapter(),
+            trakt_idAdapter = IdAdapter(),
+            recommended_show_trakt_idAdapter = IdAdapter(),
         ),
         castsAdapter = Casts.Adapter(
             idAdapter = IdAdapter(),
@@ -78,24 +85,29 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
             tmdb_idAdapter = IdAdapter(),
         ),
         featured_showsAdapter = Featured_shows.Adapter(
-            idAdapter = IdAdapter(),
+            tmdb_idAdapter = IdAdapter(),
+            trakt_idAdapter = IdAdapter(),
         ),
         show_genresAdapter = Show_genres.Adapter(
-            show_idAdapter = IdAdapter(),
+            show_tmdb_idAdapter = IdAdapter(),
             genre_idAdapter = IdAdapter(),
         ),
         show_metadataAdapter = Show_metadata.Adapter(
-            show_idAdapter = IdAdapter(),
+            show_trakt_idAdapter = IdAdapter(),
             last_watched_episode_idAdapter = IdAdapter(),
         ),
         cast_appearanceAdapter = Cast_appearance.Adapter(
             cast_idAdapter = IdAdapter(),
-            show_idAdapter = IdAdapter(),
+            show_tmdb_idAdapter = IdAdapter(),
             season_idAdapter = IdAdapter(),
         ),
         watched_episodesAdapter = Watched_episodes.Adapter(
-            show_idAdapter = IdAdapter(),
+            show_trakt_idAdapter = IdAdapter(),
             episode_idAdapter = IdAdapter(),
         ),
+        followed_showsAdapter = Followed_shows.Adapter(
+            trakt_idAdapter = IdAdapter(),
+            tmdb_idAdapter = IdAdapter(),
+        )
     )
 }

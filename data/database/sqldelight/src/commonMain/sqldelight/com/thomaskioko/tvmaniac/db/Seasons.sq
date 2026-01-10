@@ -1,22 +1,24 @@
 import com.thomaskioko.tvmaniac.db.Id;
 import com.thomaskioko.tvmaniac.db.SeasonId;
-import com.thomaskioko.tvmaniac.db.TmdbId;
+import com.thomaskioko.tvmaniac.db.TraktId;
 
 CREATE TABLE IF NOT EXISTS season (
     id INTEGER AS Id<SeasonId>  NOT NULL PRIMARY KEY,
-    show_id INTEGER AS Id<TmdbId> NOT NULL,
+    show_trakt_id INTEGER AS Id<TraktId> NOT NULL,
     season_number INTEGER NOT NULL,
     title TEXT NOT NULL,
     episode_count INTEGER NOT NULL,
     overview TEXT,
     image_url TEXT DEFAULT NULL,
-    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY(show_trakt_id) REFERENCES tvshow(trakt_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
+
+CREATE INDEX IF NOT EXISTS idx_season_show_trakt_id ON season(show_trakt_id);
 
 upsert:
 INSERT OR REPLACE INTO season(
     id,
-    show_id,
+    show_trakt_id,
     season_number,
     episode_count,
     title,
@@ -27,16 +29,16 @@ VALUES(?,?,?,?,?,?, ?);
 
 showSeasons:
 SELECT
-    tvshow.id AS show_id,
+    tvshow.trakt_id AS show_trakt_id,
     season.id AS season_id,
     season.title AS season_title,
     season.season_number
 FROM
     tvshow
 JOIN
-    season ON tvshow.id = season.show_id
+    season ON tvshow.trakt_id = season.show_trakt_id
 WHERE
-    tvshow.id = :showId
+    tvshow.trakt_id = :showTraktId
     AND (
         :includeSpecials = 1
         OR (season.season_number > 0 OR season.title != 'Specials')
@@ -46,7 +48,8 @@ ORDER BY
 
 seasonDetails:
 SELECT
-    tvshow.id AS show_id,
+    tvshow.trakt_id AS show_trakt_id,
+    tvshow.tmdb_id AS show_tmdb_id,
     tvshow.name AS show_title,
     season.id AS season_id,
     season.title AS season_title,
@@ -67,34 +70,34 @@ SELECT
 FROM
     tvshow
 INNER JOIN
-    season ON season.show_id = tvshow.id
+    season ON season.show_trakt_id = tvshow.trakt_id
 LEFT OUTER JOIN
     episode ON episode.season_id = season.id
 LEFT OUTER JOIN
-    watched_episodes ON watched_episodes.episode_id = episode.id AND watched_episodes.show_id = tvshow.id
+    watched_episodes ON watched_episodes.episode_id = episode.id AND watched_episodes.show_trakt_id = tvshow.trakt_id
 WHERE
-    tvshow.id = :showId AND season.season_number = :seasonNumber
+    tvshow.trakt_id = :showTraktId AND season.season_number = :seasonNumber
 ORDER BY
     episode.episode_number ASC;
 
 getSeasonByShowAndNumber:
 SELECT
     season.id AS season_id,
-    season.show_id,
+    season.show_trakt_id,
     season.season_number,
     season.title,
     season.episode_count,
     season.overview,
     season.image_url
 FROM season
-WHERE show_id = :showId AND season_number = :seasonNumber
+WHERE show_trakt_id = :showTraktId AND season_number = :seasonNumber
 LIMIT 1;
 
 updateImageUrl:
 UPDATE season SET image_url = ? WHERE id = ?;
 
 delete:
-DELETE FROM season WHERE show_id = ?;
+DELETE FROM season WHERE show_trakt_id = ?;
 
 deleteAll:
 DELETE FROM season;

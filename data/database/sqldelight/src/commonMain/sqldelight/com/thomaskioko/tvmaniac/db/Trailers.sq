@@ -3,19 +3,19 @@ import com.thomaskioko.tvmaniac.db.TmdbId;
 
 CREATE TABLE trailers (
     id TEXT NOT NULL PRIMARY KEY,
-    show_id INTEGER AS Id<TmdbId> NOT NULL,
+    show_tmdb_id INTEGER AS Id<TmdbId> NOT NULL,
     key TEXT NOT NULL,
     name TEXT NOT NULL,
     site TEXT NOT NULL,
     size INTEGER NOT NULL,
     type TEXT NOT NULL,
-    FOREIGN KEY(show_id)REFERENCES tvshow(id)
+    FOREIGN KEY(show_tmdb_id) REFERENCES tvshow(tmdb_id)
 );
 
 insertOrReplace:
 INSERT OR REPLACE INTO trailers(
     id,
-    show_id,
+    show_tmdb_id,
     key,
     name,
     site,
@@ -24,20 +24,20 @@ INSERT OR REPLACE INTO trailers(
 )
 VALUES(?,?,?,?,?,?,?);
 
-selectByShowId:
+selectByShowTmdbId:
 SELECT
     trailers.id AS trailer_id,
-    trailers.show_id,
+    trailers.show_tmdb_id,
     trailers.key,
     trailers.name,
     trailers.site,
     trailers.size,
     trailers.type
 FROM trailers
-WHERE show_id = ?;
+WHERE show_tmdb_id = ?;
 
 delete:
-DELETE FROM trailers WHERE show_id = ?;
+DELETE FROM trailers WHERE show_tmdb_id = ?;
 
 deleteAll:
 DELETE FROM trailers;

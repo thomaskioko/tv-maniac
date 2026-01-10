@@ -1,41 +1,44 @@
 import com.thomaskioko.tvmaniac.db.Id;
-import com.thomaskioko.tvmaniac.db.RecommendedShowId;
+import com.thomaskioko.tvmaniac.db.TraktId;
 import com.thomaskioko.tvmaniac.db.TmdbId;
 
 CREATE TABLE recommended_shows (
-    id INTEGER AS Id<TmdbId>,
-    recommended_show_id INTEGER AS Id<RecommendedShowId> NOT NULL,
-    PRIMARY KEY (recommended_show_id, id),
-    FOREIGN KEY(recommended_show_id) REFERENCES tvshow(id),
-    FOREIGN KEY(id) REFERENCES tvshow(id)
+    trakt_id INTEGER AS Id<TraktId>,
+    tmdb_id INTEGER AS Id<TmdbId> NOT NULL,
+    recommended_show_trakt_id INTEGER AS Id<TraktId> NOT NULL,
+    PRIMARY KEY (recommended_show_trakt_id, trakt_id),
+    FOREIGN KEY(recommended_show_trakt_id) REFERENCES tvshow(trakt_id),
+    FOREIGN KEY(trakt_id) REFERENCES tvshow(trakt_id)
 );
 
 upsert:
 INSERT OR REPLACE INTO recommended_shows(
-    id,
-    recommended_show_id
+    trakt_id,
+    tmdb_id,
+    recommended_show_trakt_id
 )
-VALUES(?,?);
+VALUES(?,?,?);
 
 recommendedShows:
 SELECT
-   tvshow.id AS tmdb_id,
+   tvshow.trakt_id AS show_trakt_id,
+   tvshow.tmdb_id AS show_tmdb_id,
    tvshow.name,
    tvshow.poster_path,
    tvshow.backdrop_path,
-   recommended_shows.recommended_show_id AS show_id,
+   recommended_shows.recommended_show_trakt_id,
    CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     tvshow
 JOIN
-    recommended_shows ON recommended_shows.id = tvshow.id
+    recommended_shows ON recommended_shows.trakt_id = tvshow.trakt_id
 LEFT OUTER JOIN
-    followed_shows ON tvshow.id = followed_shows.tmdb_id AND followed_shows.pending_action != 'DELETE'
+    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
 WHERE
-    recommended_shows.recommended_show_id = ?;
+    recommended_shows.recommended_show_trakt_id = ?;
 
 delete:
-DELETE FROM recommended_shows WHERE recommended_show_id = ?;
+DELETE FROM recommended_shows WHERE recommended_show_trakt_id = ?;
 
 deleteAll:
 DELETE FROM recommended_shows;

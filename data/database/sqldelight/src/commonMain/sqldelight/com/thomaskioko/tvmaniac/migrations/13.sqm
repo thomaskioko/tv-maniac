@@ -1,9 +1,34 @@
--- Migration 13: Rename vote_average to ratings in tvshow and episode tables
--- Also removes popularity, last_air_date columns and changes genre_ids to genres
+-- Migration 13: Migrate to Trakt ID as primary key
+-- This is a destructive migration - users should clear app data after update
 
--- Migrate tvshow table
-CREATE TABLE tvshow_new(
-    id INTEGER NOT NULL PRIMARY KEY,
+-- Drop all views first (they depend on tables)
+DROP VIEW IF EXISTS shows_last_watched;
+DROP VIEW IF EXISTS shows_next_to_watch;
+
+-- Drop all tables in order of dependencies
+DROP TABLE IF EXISTS watched_episodes;
+DROP TABLE IF EXISTS cast_appearance;
+DROP TABLE IF EXISTS season_images;
+DROP TABLE IF EXISTS season_videos;
+DROP TABLE IF EXISTS trailers;
+DROP TABLE IF EXISTS episode_image;
+DROP TABLE IF EXISTS episode;
+DROP TABLE IF EXISTS season;
+DROP TABLE IF EXISTS show_metadata;
+DROP TABLE IF EXISTS similar_shows;
+DROP TABLE IF EXISTS recommended_shows;
+DROP TABLE IF EXISTS popular_shows;
+DROP TABLE IF EXISTS trending_shows;
+DROP TABLE IF EXISTS toprated_shows;
+DROP TABLE IF EXISTS featured_shows;
+DROP TABLE IF EXISTS upcoming_shows;
+DROP TABLE IF EXISTS followed_shows;
+DROP TABLE IF EXISTS tvshow;
+
+-- Recreate tvshow table with trakt_id as primary key
+CREATE TABLE IF NOT EXISTS tvshow(
+    trakt_id INTEGER NOT NULL PRIMARY KEY,
+    tmdb_id INTEGER NOT NULL UNIQUE,
     backdrop_path TEXT DEFAULT NULL,
     year TEXT DEFAULT NULL,
     language TEXT,
@@ -18,26 +43,42 @@ CREATE TABLE tvshow_new(
     genres TEXT
 );
 
-INSERT INTO tvshow_new (
-    id, backdrop_path, year, language, name, overview,
-    poster_path, episode_numbers, season_numbers, status, ratings, vote_count, genres
-)
-SELECT
-    id, backdrop_path, first_air_date, language, name, overview,
-    poster_path, episode_numbers, season_numbers, status, vote_average, vote_count, genre_ids
-FROM tvshow;
-
-DROP TABLE tvshow;
-
-ALTER TABLE tvshow_new RENAME TO tvshow;
-
 CREATE INDEX IF NOT EXISTS idx_tvshow_name ON tvshow(name);
+CREATE INDEX IF NOT EXISTS idx_tvshow_tmdb_id ON tvshow(tmdb_id);
 
--- Migrate episode table
-CREATE TABLE episode_new (
+-- Recreate followed_shows with trakt_id as unique key
+CREATE TABLE IF NOT EXISTS followed_shows(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    trakt_id INTEGER NOT NULL UNIQUE,
+    tmdb_id INTEGER NOT NULL,
+    followed_at INTEGER NOT NULL,
+    pending_action TEXT NOT NULL DEFAULT 'NOTHING'
+        CHECK(pending_action IN ('NOTHING', 'UPLOAD', 'DELETE'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_followed_shows_trakt_id ON followed_shows(trakt_id);
+CREATE INDEX IF NOT EXISTS idx_followed_shows_tmdb_id ON followed_shows(tmdb_id);
+CREATE INDEX IF NOT EXISTS idx_followed_shows_pending_action ON followed_shows(pending_action);
+
+-- Recreate season table
+CREATE TABLE IF NOT EXISTS season (
+    id INTEGER NOT NULL PRIMARY KEY,
+    show_trakt_id INTEGER NOT NULL,
+    season_number INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    episode_count INTEGER NOT NULL,
+    overview TEXT,
+    image_url TEXT DEFAULT NULL,
+    FOREIGN KEY(show_trakt_id) REFERENCES tvshow(trakt_id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_season_show_trakt_id ON season(show_trakt_id);
+
+-- Recreate episode table
+CREATE TABLE episode (
     id INTEGER NOT NULL PRIMARY KEY,
     season_id INTEGER NOT NULL,
-    show_id INTEGER NOT NULL,
+    show_trakt_id INTEGER NOT NULL,
     episode_number INTEGER NOT NULL,
     title TEXT NOT NULL,
     overview TEXT NOT NULL,
@@ -47,22 +88,207 @@ CREATE TABLE episode_new (
     image_url TEXT DEFAULT NULL,
     air_date TEXT DEFAULT NULL,
     trakt_id INTEGER DEFAULT NULL,
-    FOREIGN KEY(season_id) REFERENCES season(id) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY(season_id) REFERENCES season(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY(show_trakt_id) REFERENCES tvshow(trakt_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-INSERT INTO episode_new (
-    id, season_id, show_id, episode_number, title, overview,
-    runtime, vote_count, ratings, image_url, air_date, trakt_id
-)
-SELECT
-    id, season_id, show_id, episode_number, title, overview,
-    runtime, vote_count, vote_average, image_url, air_date, trakt_id
-FROM episode;
-
-DROP TABLE episode;
-
-ALTER TABLE episode_new RENAME TO episode;
-
 CREATE INDEX IF NOT EXISTS idx_episode_trakt_id ON episode(trakt_id);
-CREATE INDEX IF NOT EXISTS idx_episode_show_id ON episode(show_id);
-CREATE INDEX IF NOT EXISTS idx_episode_show_season ON episode(show_id, season_id);
+CREATE INDEX IF NOT EXISTS idx_episode_show_trakt_id ON episode(show_trakt_id);
+CREATE INDEX IF NOT EXISTS idx_episode_show_season ON episode(show_trakt_id, season_id);
+
+-- Recreate watched_episodes table
+CREATE TABLE watched_episodes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    show_trakt_id INTEGER NOT NULL,
+    episode_id INTEGER DEFAULT NULL,
+    season_number INTEGER NOT NULL,
+    episode_number INTEGER NOT NULL,
+    watched_at INTEGER NOT NULL,
+    trakt_id INTEGER DEFAULT NULL,
+    synced_at INTEGER DEFAULT NULL,
+    pending_action TEXT NOT NULL,
+    FOREIGN KEY(show_trakt_id) REFERENCES tvshow(trakt_id) ON DELETE CASCADE,
+    FOREIGN KEY(episode_id) REFERENCES episode(id) ON DELETE CASCADE,
+    UNIQUE(show_trakt_id, season_number, episode_number)
+);
+
+CREATE INDEX IF NOT EXISTS idx_watched_episodes_show_trakt_id ON watched_episodes(show_trakt_id);
+CREATE INDEX IF NOT EXISTS idx_watched_episodes_show_season ON watched_episodes(show_trakt_id, season_number);
+CREATE INDEX IF NOT EXISTS idx_watched_episodes_pending_action ON watched_episodes(pending_action);
+CREATE INDEX IF NOT EXISTS idx_watched_episodes_trakt ON watched_episodes(trakt_id);
+
+-- Recreate show_metadata table
+CREATE TABLE show_metadata (
+    show_trakt_id INTEGER PRIMARY KEY NOT NULL,
+    season_count INTEGER NOT NULL DEFAULT 0,
+    episode_count INTEGER NOT NULL DEFAULT 0,
+    status TEXT DEFAULT NULL,
+    cached_watched_count INTEGER NOT NULL DEFAULT 0,
+    cached_total_count INTEGER NOT NULL DEFAULT 0,
+    last_watched_episode_id INTEGER DEFAULT NULL,
+    last_watched_season_number INTEGER DEFAULT NULL,
+    last_watched_episode_number INTEGER DEFAULT NULL,
+    last_watched_at INTEGER DEFAULT NULL,
+    FOREIGN KEY(show_trakt_id) REFERENCES tvshow(trakt_id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS index_show_metadata_show_trakt_id ON show_metadata(show_trakt_id);
+
+-- Recreate discovery tables
+CREATE TABLE IF NOT EXISTS popular_shows(
+    trakt_id INTEGER PRIMARY KEY NOT NULL,
+    tmdb_id INTEGER NOT NULL,
+    page INTEGER NOT NULL,
+    name TEXT,
+    poster_path TEXT,
+    overview TEXT,
+    page_order INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS index_popular_shows_trakt_id ON popular_shows(trakt_id);
+CREATE INDEX IF NOT EXISTS index_popular_shows_tmdb_id ON popular_shows(tmdb_id);
+
+CREATE TABLE IF NOT EXISTS trending_shows (
+    trakt_id INTEGER PRIMARY KEY NOT NULL,
+    tmdb_id INTEGER NOT NULL,
+    page INTEGER NOT NULL,
+    position INTEGER NOT NULL,
+    name TEXT,
+    poster_path TEXT,
+    overview TEXT
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS index_trending_shows_trakt_id ON trending_shows(trakt_id);
+CREATE INDEX IF NOT EXISTS index_trending_shows_tmdb_id ON trending_shows(tmdb_id);
+
+CREATE TABLE IF NOT EXISTS toprated_shows(
+    trakt_id INTEGER PRIMARY KEY NOT NULL,
+    tmdb_id INTEGER NOT NULL,
+    page INTEGER NOT NULL,
+    name TEXT,
+    poster_path TEXT,
+    overview TEXT,
+    page_order INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS index_toprated_shows_trakt_id ON toprated_shows(trakt_id);
+CREATE INDEX IF NOT EXISTS index_toprated_shows_tmdb_id ON toprated_shows(tmdb_id);
+
+CREATE TABLE IF NOT EXISTS featured_shows (
+    trakt_id INTEGER PRIMARY KEY NOT NULL,
+    tmdb_id INTEGER NOT NULL,
+    name TEXT,
+    poster_path TEXT,
+    overview TEXT,
+    page_order INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS index_featured_shows_trakt_id ON featured_shows(trakt_id);
+CREATE INDEX IF NOT EXISTS index_featured_shows_tmdb_id ON featured_shows(tmdb_id);
+
+CREATE TABLE IF NOT EXISTS upcoming_shows(
+    trakt_id INTEGER PRIMARY KEY NOT NULL,
+    tmdb_id INTEGER NOT NULL,
+    page INTEGER NOT NULL,
+    name TEXT,
+    poster_path TEXT,
+    overview TEXT
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS index_upcoming_shows_trakt_id ON upcoming_shows(trakt_id);
+CREATE INDEX IF NOT EXISTS index_upcoming_shows_tmdb_id ON upcoming_shows(tmdb_id);
+
+-- Recreate recommendation tables
+CREATE TABLE recommended_shows (
+    trakt_id INTEGER,
+    tmdb_id INTEGER NOT NULL,
+    recommended_show_trakt_id INTEGER NOT NULL,
+    PRIMARY KEY (recommended_show_trakt_id, trakt_id),
+    FOREIGN KEY(recommended_show_trakt_id) REFERENCES tvshow(trakt_id),
+    FOREIGN KEY(trakt_id) REFERENCES tvshow(trakt_id)
+);
+
+CREATE TABLE similar_shows (
+    trakt_id INTEGER,
+    tmdb_id INTEGER NOT NULL,
+    similar_show_trakt_id INTEGER NOT NULL,
+    page_order INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (similar_show_trakt_id, trakt_id),
+    FOREIGN KEY(similar_show_trakt_id) REFERENCES tvshow(trakt_id),
+    FOREIGN KEY(trakt_id) REFERENCES tvshow(trakt_id)
+);
+
+-- Recreate cast_appearance table (uses TMDB ID)
+CREATE TABLE IF NOT EXISTS cast_appearance (
+    cast_id INTEGER NOT NULL,
+    show_tmdb_id INTEGER NOT NULL,
+    season_id INTEGER,
+    PRIMARY KEY (cast_id, show_tmdb_id, season_id),
+    FOREIGN KEY(cast_id) REFERENCES casts(id) ON DELETE CASCADE,
+    FOREIGN KEY(show_tmdb_id) REFERENCES tvshow(tmdb_id) ON DELETE CASCADE,
+    FOREIGN KEY(season_id) REFERENCES season(id) ON DELETE CASCADE
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS index_cast_appearance_unique ON cast_appearance(cast_id, show_tmdb_id, season_id);
+CREATE UNIQUE INDEX IF NOT EXISTS index_cast_appearance_id ON cast_appearance(cast_id);
+
+-- Recreate trailers table (uses TMDB ID)
+CREATE TABLE trailers (
+    id TEXT NOT NULL PRIMARY KEY,
+    show_tmdb_id INTEGER NOT NULL,
+    key TEXT NOT NULL,
+    name TEXT NOT NULL,
+    site TEXT NOT NULL,
+    size INTEGER NOT NULL,
+    type TEXT NOT NULL,
+    FOREIGN KEY(show_tmdb_id) REFERENCES tvshow(tmdb_id)
+);
+
+-- Recreate season_images table
+CREATE TABLE season_images (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    season_id INTEGER NOT NULL,
+    image_url TEXT NOT NULL,
+    FOREIGN KEY (season_id) REFERENCES season(id) ON DELETE CASCADE
+);
+
+-- Recreate views
+CREATE VIEW shows_last_watched AS
+SELECT
+    tvshow.trakt_id AS show_trakt_id,
+    MAX((1000 * season.season_number) + episode.episode_number) AS last_watched_abs_number,
+    MAX(watched_episode.watched_at) AS last_watched_at
+FROM tvshow
+INNER JOIN season ON tvshow.trakt_id = season.show_trakt_id
+INNER JOIN episode ON episode.season_id = season.id AND episode.show_trakt_id = tvshow.trakt_id
+INNER JOIN watched_episodes AS watched_episode ON watched_episode.show_trakt_id = tvshow.trakt_id AND watched_episode.episode_id = episode.id
+WHERE season.season_number > 0 OR season.title != 'Specials'
+GROUP BY tvshow.trakt_id;
+
+CREATE VIEW shows_next_to_watch AS
+SELECT
+    tvshow.trakt_id AS show_trakt_id,
+    tvshow.tmdb_id AS show_tmdb_id,
+    episode.id AS episode_id,
+    episode.title AS episode_name,
+    season.id AS season_id,
+    season.season_number,
+    episode.episode_number,
+    episode.runtime,
+    episode.image_url AS still_path,
+    episode.overview,
+    tvshow.name AS show_name,
+    tvshow.poster_path AS show_poster,
+    ((1000 * season.season_number) + episode.episode_number) AS next_ep_abs_number,
+    episode.air_date,
+    last_watched.last_watched_at
+FROM tvshow
+INNER JOIN season ON tvshow.trakt_id = season.show_trakt_id
+INNER JOIN episode ON episode.season_id = season.id AND episode.show_trakt_id = tvshow.trakt_id
+LEFT JOIN watched_episodes AS watched_episode ON watched_episode.show_trakt_id = tvshow.trakt_id AND watched_episode.episode_id = episode.id
+LEFT JOIN shows_last_watched AS last_watched ON last_watched.show_trakt_id = tvshow.trakt_id
+WHERE (season.season_number > 0 OR (season.season_number = 0 AND season.title != 'Specials'))
+  AND watched_episode.episode_id IS NULL
+  AND ((1000 * season.season_number) + episode.episode_number) > COALESCE(last_watched.last_watched_abs_number, 0)
+  AND (episode.air_date IS NULL OR episode.air_date <= date('now'))
+ORDER BY tvshow.trakt_id, season.season_number, episode.episode_number;

@@ -1,12 +1,12 @@
 import com.thomaskioko.tvmaniac.db.EpisodeId;
 import com.thomaskioko.tvmaniac.db.Id;
 import com.thomaskioko.tvmaniac.db.SeasonId;
-import com.thomaskioko.tvmaniac.db.TmdbId;
+import com.thomaskioko.tvmaniac.db.TraktId;
 
 CREATE TABLE episode (
     id INTEGER AS Id<EpisodeId> NOT NULL PRIMARY KEY,
     season_id INTEGER AS Id<SeasonId> NOT NULL,
-    show_id INTEGER AS Id<TmdbId> NOT NULL,
+    show_trakt_id INTEGER AS Id<TraktId> NOT NULL,
     episode_number INTEGER NOT NULL,
     title TEXT NOT NULL,
     overview TEXT NOT NULL,
@@ -16,18 +16,19 @@ CREATE TABLE episode (
     image_url TEXT DEFAULT NULL,
     air_date TEXT DEFAULT NULL,
     trakt_id INTEGER DEFAULT NULL,
-    FOREIGN KEY(season_id) REFERENCES season(id) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY(season_id) REFERENCES season(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY(show_trakt_id) REFERENCES tvshow(trakt_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE INDEX IF NOT EXISTS idx_episode_trakt_id ON episode(trakt_id);
-CREATE INDEX IF NOT EXISTS idx_episode_show_id ON episode(show_id);
-CREATE INDEX IF NOT EXISTS idx_episode_show_season ON episode(show_id, season_id);
+CREATE INDEX IF NOT EXISTS idx_episode_show_trakt_id ON episode(show_trakt_id);
+CREATE INDEX IF NOT EXISTS idx_episode_show_season ON episode(show_trakt_id, season_id);
 
 upsert:
 INSERT OR REPLACE INTO episode(
     id,
     season_id,
-    show_id,
+    show_trakt_id,
     title,
     overview,
     runtime,
@@ -44,7 +45,7 @@ episodeDetails:
 SELECT
     episode.id AS episode_id,
     episode.season_id,
-    episode.show_id,
+    episode.show_trakt_id,
     episode.title,
     episode.overview,
     episode.runtime,
@@ -69,7 +70,7 @@ getEpisodeByTraktId:
 SELECT
     episode.id AS episode_id,
     episode.season_id,
-    episode.show_id,
+    episode.show_trakt_id,
     episode.episode_number,
     episode.title,
     episode.overview,
@@ -85,7 +86,7 @@ countEpisodesForShow:
 SELECT COUNT(*)
 FROM episode
 INNER JOIN season ON episode.season_id = season.id
-WHERE episode.show_id = :showId
+WHERE episode.show_trakt_id = :showTraktId
 AND (
     :includeSpecials = 1
     OR (season.season_number > 0 OR season.title != 'Specials')
@@ -95,7 +96,7 @@ getEpisodeByShowSeasonEpisodeNumber:
 SELECT
     episode.id AS episode_id,
     episode.season_id,
-    episode.show_id,
+    episode.show_trakt_id,
     episode.episode_number,
     episode.title,
     episode.overview,
@@ -107,8 +108,7 @@ SELECT
     episode.trakt_id
 FROM episode
 INNER JOIN season ON episode.season_id = season.id
-WHERE episode.show_id = :showId
+WHERE episode.show_trakt_id = :showTraktId
   AND season.season_number = :seasonNumber
   AND episode.episode_number = :episodeNumber
 LIMIT 1;
-

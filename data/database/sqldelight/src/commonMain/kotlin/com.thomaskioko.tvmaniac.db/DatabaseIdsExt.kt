@@ -33,6 +33,9 @@ public value class SimilarShowId(public val id: Long)
 public value class TmdbId(public val id: Long)
 
 @JvmInline
+public value class TraktId(public val id: Long)
+
+@JvmInline
 public value class WatchProviderId(public val id: Long)
 
 @JvmInline

@@ -1,9 +1,9 @@
 import com.thomaskioko.tvmaniac.db.Id;
-import com.thomaskioko.tvmaniac.db.TmdbId;
+import com.thomaskioko.tvmaniac.db.TraktId;
 import com.thomaskioko.tvmaniac.db.EpisodeId;
 
 CREATE TABLE show_metadata (
-    show_id INTEGER AS Id<TmdbId> PRIMARY KEY NOT NULL,
+    show_trakt_id INTEGER AS Id<TraktId> PRIMARY KEY NOT NULL,
     season_count INTEGER NOT NULL DEFAULT 0,
     episode_count INTEGER NOT NULL DEFAULT 0,
     status TEXT DEFAULT NULL,
@@ -13,16 +13,16 @@ CREATE TABLE show_metadata (
     last_watched_season_number INTEGER DEFAULT NULL,
     last_watched_episode_number INTEGER DEFAULT NULL,
     last_watched_at INTEGER DEFAULT NULL,
-    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY(show_trakt_id) REFERENCES tvshow(trakt_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 -- indices
-CREATE UNIQUE INDEX IF NOT EXISTS `index_show_metadata_show_id` ON `show_metadata` (`show_id`);
+CREATE UNIQUE INDEX IF NOT EXISTS `index_show_metadata_show_trakt_id` ON `show_metadata` (`show_trakt_id`);
 
 -- queries
 upsert:
 INSERT OR REPLACE INTO show_metadata(
-    show_id,
+    show_trakt_id,
     season_count,
     episode_count,
     status
@@ -33,7 +33,7 @@ UPDATE show_metadata SET
     last_watched_episode_id = (
         SELECT we.episode_id
         FROM watched_episodes we
-        WHERE we.show_id = :show_id
+        WHERE we.show_trakt_id = :show_trakt_id
           AND (:include_specials = 1 OR we.season_number > 0)
         ORDER BY we.watched_at DESC, (1000 * we.season_number) + we.episode_number DESC
         LIMIT 1
@@ -41,7 +41,7 @@ UPDATE show_metadata SET
     last_watched_season_number = (
         SELECT we.season_number
         FROM watched_episodes we
-        WHERE we.show_id = :show_id
+        WHERE we.show_trakt_id = :show_trakt_id
           AND (:include_specials = 1 OR we.season_number > 0)
         ORDER BY we.watched_at DESC, (1000 * we.season_number) + we.episode_number DESC
         LIMIT 1
@@ -49,7 +49,7 @@ UPDATE show_metadata SET
     last_watched_episode_number = (
         SELECT we.episode_number
         FROM watched_episodes we
-        WHERE we.show_id = :show_id
+        WHERE we.show_trakt_id = :show_trakt_id
           AND (:include_specials = 1 OR we.season_number > 0)
         ORDER BY we.watched_at DESC, (1000 * we.season_number) + we.episode_number DESC
         LIMIT 1
@@ -57,12 +57,12 @@ UPDATE show_metadata SET
     last_watched_at = (
         SELECT we.watched_at
         FROM watched_episodes we
-        WHERE we.show_id = :show_id
+        WHERE we.show_trakt_id = :show_trakt_id
           AND (:include_specials = 1 OR we.season_number > 0)
         ORDER BY we.watched_at DESC, (1000 * we.season_number) + we.episode_number DESC
         LIMIT 1
     )
-WHERE show_id = :show_id;
+WHERE show_trakt_id = :show_trakt_id;
 
 clearLastWatched:
 UPDATE show_metadata SET
@@ -70,4 +70,4 @@ UPDATE show_metadata SET
     last_watched_season_number = NULL,
     last_watched_episode_number = NULL,
     last_watched_at = NULL
-WHERE show_id = :show_id;
+WHERE show_trakt_id = :show_trakt_id;

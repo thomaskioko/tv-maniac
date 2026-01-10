@@ -1,10 +1,12 @@
 import com.thomaskioko.tvmaniac.db.Id;
 import com.thomaskioko.tvmaniac.db.TmdbId;
+import com.thomaskioko.tvmaniac.db.TraktId;
 import kotlin.String;
 import kotlin.collections.List;
 
 CREATE TABLE IF NOT EXISTS tvshow(
-    id INTEGER AS Id<TmdbId> NOT NULL PRIMARY KEY,
+    trakt_id INTEGER AS Id<TraktId> NOT NULL PRIMARY KEY,
+    tmdb_id INTEGER AS Id<TmdbId> NOT NULL UNIQUE,
     backdrop_path TEXT DEFAULT NULL,
     year TEXT DEFAULT NULL,
     language TEXT,
@@ -19,12 +21,14 @@ CREATE TABLE IF NOT EXISTS tvshow(
     genres TEXT AS List<String>
 );
 
--- Create an index on the name column to improve search performance
+-- Create indexes for common lookups
 CREATE INDEX IF NOT EXISTS idx_tvshow_name ON tvshow(name);
+CREATE INDEX IF NOT EXISTS idx_tvshow_tmdb_id ON tvshow(tmdb_id);
 
 upsert:
 INSERT OR REPLACE INTO tvshow(
-    id,
+    trakt_id,
+    tmdb_id,
     name,
     overview,
     language,
@@ -38,11 +42,12 @@ INSERT OR REPLACE INTO tvshow(
     poster_path,
     backdrop_path
 )
-VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?);
+VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?);
 
 tvshowDetails:
 SELECT
-    tvshow.id AS show_id,
+    tvshow.trakt_id,
+    tvshow.tmdb_id,
     tvshow.name,
     tvshow.overview,
     tvshow.language,
@@ -57,13 +62,36 @@ SELECT
 FROM
     tvshow
 LEFT OUTER JOIN
-    followed_shows ON tvshow.id = followed_shows.tmdb_id AND followed_shows.pending_action != 'DELETE'
+    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
 WHERE
-    tvshow.id = ?;
+    tvshow.trakt_id = ?;
+
+tvshowDetailsByTmdbId:
+SELECT
+    tvshow.trakt_id,
+    tvshow.tmdb_id,
+    tvshow.name,
+    tvshow.overview,
+    tvshow.language,
+    tvshow.year,
+    tvshow.ratings,
+    tvshow.status,
+    tvshow.vote_count,
+    tvshow.poster_path,
+    tvshow.backdrop_path,
+    tvshow.genres,
+    CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+FROM
+    tvshow
+LEFT OUTER JOIN
+    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
+WHERE
+    tvshow.tmdb_id = ?;
 
 searchShows:
 SELECT
-    tvshow.id AS show_id,
+    tvshow.trakt_id,
+    tvshow.tmdb_id,
     tvshow.name,
     tvshow.poster_path,
     tvshow.overview,
@@ -74,7 +102,7 @@ SELECT
 FROM
     tvshow
 LEFT OUTER JOIN
-    followed_shows ON tvshow.id = followed_shows.tmdb_id AND followed_shows.pending_action != 'DELETE'
+    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
 WHERE
     -- First try exact match on name start (most efficient, can use index)
     name LIKE ? || '%'
@@ -110,19 +138,25 @@ WHERE
 delete:
 DELETE
 FROM tvshow
-WHERE id = ?;
+WHERE trakt_id = ?;
 
 deleteAll:
 DELETE FROM tvshow;
 
 exists:
 SELECT EXISTS(
-    SELECT 1 FROM tvshow WHERE id = ?
+    SELECT 1 FROM tvshow WHERE trakt_id = ?
 );
 
-showsByIds:
+existsByTmdbId:
+SELECT EXISTS(
+    SELECT 1 FROM tvshow WHERE tmdb_id = ?
+);
+
+showsByTraktIds:
 SELECT
-    tvshow.id AS show_id,
+    tvshow.trakt_id,
+    tvshow.tmdb_id,
     tvshow.name,
     tvshow.poster_path,
     tvshow.overview,
@@ -130,16 +164,25 @@ SELECT
 FROM
     tvshow
 LEFT OUTER JOIN
-    followed_shows ON tvshow.id = followed_shows.tmdb_id AND followed_shows.pending_action != 'DELETE'
-WHERE tvshow.id IN ?;
+    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
+WHERE tvshow.trakt_id IN ?;
 
-showsByIdsStable:
+showsByTmdbIds:
 SELECT
-    tvshow.id AS show_id,
+    tvshow.trakt_id,
+    tvshow.tmdb_id,
     tvshow.name,
     tvshow.poster_path,
     tvshow.overview,
-    0 AS in_library
+    CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     tvshow
-WHERE tvshow.id IN ?;
+LEFT OUTER JOIN
+    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
+WHERE tvshow.tmdb_id IN ?;
+
+getTmdbIdByTraktId:
+SELECT tmdb_id FROM tvshow WHERE trakt_id = ?;
+
+getTraktIdByTmdbId:
+SELECT trakt_id FROM tvshow WHERE tmdb_id = ?;
