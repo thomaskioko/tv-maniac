@@ -58,14 +58,14 @@ internal fun NextEpisodesSection(
             ) {
                 itemsIndexed(
                     items = nextEpisodes,
-                    key = { _, episode -> "next_episode_${episode.showId}_${episode.episodeId}" },
+                    key = { _, episode -> "next_episode_${episode.showTraktId}_${episode.episodeId}" },
                 ) { _, episode ->
                     NextEpisodeCard(
                         episode = episode,
                         onEpisodeClick = onEpisodeClick,
                         onMarkWatched = { onMarkWatched(episode) },
-                        onUnfollowShow = { onUnfollowShow(episode.showId) },
-                        onOpenSeason = { onOpenSeason(episode.showId, episode.seasonId, episode.seasonNumber) },
+                        onUnfollowShow = { onUnfollowShow(episode.showTraktId) },
+                        onOpenSeason = { onOpenSeason(episode.showTraktId, episode.seasonId, episode.seasonNumber) },
                     )
                 }
             }
@@ -81,7 +81,7 @@ private fun NextEpisodesSectionPreview() {
             title = "Up Next",
             nextEpisodes = persistentListOf(
                 NextEpisodeUiModel(
-                    showId = 1L,
+                    showTraktId = 1L,
                     showName = "The Walking Dead: Daryl Dixon",
                     showPoster = "/poster1.jpg",
                     episodeId = 123L,
@@ -96,7 +96,7 @@ private fun NextEpisodesSectionPreview() {
                     isNew = true,
                 ),
                 NextEpisodeUiModel(
-                    showId = 2L,
+                    showTraktId = 2L,
                     showName = "Wednesday",
                     showPoster = "/poster2.jpg",
                     episodeId = 124L,
@@ -111,7 +111,7 @@ private fun NextEpisodesSectionPreview() {
                     isNew = false,
                 ),
                 NextEpisodeUiModel(
-                    showId = 3L,
+                    showTraktId = 3L,
                     showName = "House of the Dragon",
                     showPoster = "/poster3.jpg",
                     episodeId = 125L,

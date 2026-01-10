@@ -161,15 +161,15 @@ struct WatchlistTab: View {
                                 episode: episode,
                                 premiereLabel: String(\.badge_premiere),
                                 newLabel: String(\.badge_new),
-                                onItemClicked: { showId, episodeId in
-                                    presenter.dispatch(action: UpNextEpisodeClicked(showId: showId, episodeId: episodeId))
+                                onItemClicked: { showTraktId, episodeId in
+                                    presenter.dispatch(action: UpNextEpisodeClicked(showTraktId: showTraktId, episodeId: episodeId))
                                 },
-                                onShowTitleClicked: { showId in
-                                    presenter.dispatch(action: ShowTitleClicked(showId: showId))
+                                onShowTitleClicked: { showTraktId in
+                                    presenter.dispatch(action: ShowTitleClicked(showTraktId: showTraktId))
                                 },
                                 onMarkWatched: {
                                     presenter.dispatch(action: MarkUpNextEpisodeWatched(
-                                        showId: episode.showId,
+                                        showTraktId: episode.showTraktId,
                                         episodeId: episode.episodeId,
                                         seasonNumber: episode.seasonNumber,
                                         episodeNumber: episode.episodeNumberValue
@@ -195,15 +195,15 @@ struct WatchlistTab: View {
                                 episode: episode,
                                 premiereLabel: String(\.badge_premiere),
                                 newLabel: String(\.badge_new),
-                                onItemClicked: { showId, episodeId in
-                                    presenter.dispatch(action: UpNextEpisodeClicked(showId: showId, episodeId: episodeId))
+                                onItemClicked: { showTraktId, episodeId in
+                                    presenter.dispatch(action: UpNextEpisodeClicked(showTraktId: showTraktId, episodeId: episodeId))
                                 },
-                                onShowTitleClicked: { showId in
-                                    presenter.dispatch(action: ShowTitleClicked(showId: showId))
+                                onShowTitleClicked: { showTraktId in
+                                    presenter.dispatch(action: ShowTitleClicked(showTraktId: showTraktId))
                                 },
                                 onMarkWatched: {
                                     presenter.dispatch(action: MarkUpNextEpisodeWatched(
-                                        showId: episode.showId,
+                                        showTraktId: episode.showTraktId,
                                         episodeId: episode.episodeId,
                                         seasonNumber: episode.seasonNumber,
                                         episodeNumber: episode.episodeNumberValue
@@ -253,7 +253,7 @@ struct WatchlistTab: View {
     @ViewBuilder
     private func gridItemsView(items: [WatchlistItem]) -> some View {
         LazyVGrid(columns: WatchlistConstants.columns, spacing: WatchlistConstants.spacing) {
-            ForEach(items, id: \.tmdbId) { item in
+            ForEach(items, id: \.traktId) { item in
                 ZStack(alignment: .bottom) {
                     PosterItemView(
                         title: item.title,
@@ -266,9 +266,9 @@ struct WatchlistTab: View {
                 }
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
                 .clipped()
-                .matchedGeometryEffect(id: item.tmdbId, in: animation)
+                .matchedGeometryEffect(id: item.traktId, in: animation)
                 .onTapGesture {
-                    presenter.dispatch(action: WatchlistShowClicked(id: item.tmdbId))
+                    presenter.dispatch(action: WatchlistShowClicked(traktId: item.traktId))
                 }
             }
         }

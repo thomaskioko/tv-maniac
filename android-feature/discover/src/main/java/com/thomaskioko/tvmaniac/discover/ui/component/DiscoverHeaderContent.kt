@@ -93,7 +93,7 @@ internal fun PosterCardsPager(
                 currentPage = currentPage,
                 imageUrl = currentShow.posterImageUrl,
                 modifier = Modifier
-                    .clickable(onClick = { memoizedOnClick(currentShow.tmdbId) }),
+                    .clickable(onClick = { memoizedOnClick(currentShow.traktId) }),
             ) {
                 ShowCardOverlay(
                     title = currentShow.title,

@@ -276,7 +276,7 @@ private fun LazyColumnContent(
                 onMarkWatched = { episode ->
                     onAction(
                         MarkNextEpisodeWatched(
-                            showId = episode.showId,
+                            showTraktId = episode.showTraktId,
                             episodeId = episode.episodeId,
                             seasonNumber = episode.seasonNumber,
                             episodeNumber = episode.episodeNumber,

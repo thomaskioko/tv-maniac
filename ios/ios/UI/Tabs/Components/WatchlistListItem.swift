@@ -23,7 +23,7 @@ struct WatchlistListItem: View {
         .frame(height: WatchlistListItemConstants.height)
         .background(theme.colors.surfaceVariant)
         .cornerRadius(theme.shapes.medium)
-        .matchedGeometryEffect(id: item.tmdbId, in: namespace)
+        .matchedGeometryEffect(id: item.traktId, in: namespace)
     }
 
     @ViewBuilder

@@ -271,13 +271,13 @@ public struct ShowInfoView: View {
             ],
             trailerList: [
                 .init(
-                    showId: 123,
+                    showTmdbId: 123,
                     key: "XZ8daibM3AE",
                     name: "Series Trailer",
                     youtubeThumbnailUrl: "https://i.ytimg.com/vi/XZ8daibM3AE/hqdefault.jpg"
                 ),
                 .init(
-                    showId: 1234,
+                    showTmdbId: 1234,
                     key: "XZ8daibM3AE",
                     name: "Series Trailer",
                     youtubeThumbnailUrl: "https://i.ytimg.com/vi/XZ8daibM3AE/hqdefault.jpg"
@@ -305,21 +305,21 @@ public struct ShowInfoView: View {
             ],
             recommendedShowList: [
                 .init(
-                    tmdbId: 1234,
+                    traktId: 1234,
                     title: "Arcane",
                     posterUrl: "https://image.tmdb.org/t/p/w780/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg",
                     backdropUrl: nil,
                     inLibrary: false
                 ),
                 .init(
-                    tmdbId: 123,
+                    traktId: 123,
                     title: "The Lord of the Rings: The Rings of Power",
                     posterUrl: "https://image.tmdb.org/t/p/w780/NNC08YmJFFlLi1prBkK8quk3dp.jpg",
                     backdropUrl: nil,
                     inLibrary: false
                 ),
                 .init(
-                    tmdbId: 12346,
+                    traktId: 12346,
                     title: "Kaos",
                     posterUrl: "https://image.tmdb.org/t/p/w780/9Piw6Zju39bn3enIDLZzPfjMTBR.jpg",
                     backdropUrl: nil,
@@ -328,21 +328,21 @@ public struct ShowInfoView: View {
             ],
             similarShows: [
                 .init(
-                    tmdbId: 1234,
+                    traktId: 1234,
                     title: "Arcane",
                     posterUrl: "https://image.tmdb.org/t/p/w780/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg",
                     backdropUrl: nil,
                     inLibrary: false
                 ),
                 .init(
-                    tmdbId: 123,
+                    traktId: 123,
                     title: "The Lord of the Rings: The Rings of Power",
                     posterUrl: "https://image.tmdb.org/t/p/w780/NNC08YmJFFlLi1prBkK8quk3dp.jpg",
                     backdropUrl: nil,
                     inLibrary: false
                 ),
                 .init(
-                    tmdbId: 12346,
+                    traktId: 12346,
                     title: "Kaos",
                     posterUrl: "https://image.tmdb.org/t/p/w780/9Piw6Zju39bn3enIDLZzPfjMTBR.jpg",
                     backdropUrl: nil,

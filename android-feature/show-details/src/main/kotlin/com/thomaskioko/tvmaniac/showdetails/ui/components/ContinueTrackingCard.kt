@@ -145,7 +145,7 @@ private fun ContinueTrackingCardPreview() {
                 episode = ContinueTrackingEpisodeModel(
                     episodeId = 123L,
                     seasonId = 1L,
-                    showId = 1L,
+                    showTraktId = 1L,
                     episodeNumber = 3,
                     seasonNumber = 2,
                     episodeNumberFormatted = "S02 | E03",
@@ -170,7 +170,7 @@ private fun ContinueTrackingCardWatchedPreview() {
                 episode = ContinueTrackingEpisodeModel(
                     episodeId = 123L,
                     seasonId = 1L,
-                    showId = 1L,
+                    showTraktId = 1L,
                     episodeNumber = 2,
                     seasonNumber = 2,
                     episodeNumberFormatted = "S02 | E02",
@@ -195,7 +195,7 @@ private fun ContinueTrackingCardFuturePreview() {
                 episode = ContinueTrackingEpisodeModel(
                     episodeId = 123L,
                     seasonId = 1L,
-                    showId = 1L,
+                    showTraktId = 1L,
                     episodeNumber = 5,
                     seasonNumber = 2,
                     episodeNumberFormatted = "S02 | E05",
@@ -203,7 +203,7 @@ private fun ContinueTrackingCardFuturePreview() {
                     imageUrl = "/still.jpg",
                     isWatched = false,
                     daysUntilAir = 7,
-                    hasAired = false
+                    hasAired = false,
                 ),
                 onMarkWatched = {},
             )
@@ -220,7 +220,7 @@ private fun ContinueTrackingCardUnknownAirDatePreview() {
                 episode = ContinueTrackingEpisodeModel(
                     episodeId = 123L,
                     seasonId = 1L,
-                    showId = 1L,
+                    showTraktId = 1L,
                     episodeNumber = 6,
                     seasonNumber = 2,
                     episodeNumberFormatted = "S02 | E06",
@@ -228,7 +228,7 @@ private fun ContinueTrackingCardUnknownAirDatePreview() {
                     imageUrl = "/still.jpg",
                     isWatched = false,
                     daysUntilAir = null,
-                    hasAired = false
+                    hasAired = false,
                 ),
                 onMarkWatched = {},
             )

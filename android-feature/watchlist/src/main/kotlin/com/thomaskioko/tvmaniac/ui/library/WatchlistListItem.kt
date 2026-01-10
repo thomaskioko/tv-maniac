@@ -42,7 +42,7 @@ internal fun WatchlistListItem(
         modifier = modifier
             .fillMaxWidth()
             .height(140.dp),
-        onClick = { onItemClicked(item.tmdbId) },
+        onClick = { onItemClicked(item.traktId) },
         shape = RectangleShape,
     ) {
         Row(
@@ -54,7 +54,7 @@ internal fun WatchlistListItem(
                 imageWidth = 100.dp,
                 imageUrl = item.posterImageUrl,
                 title = item.title,
-                onClick = { onItemClicked(item.tmdbId) },
+                onClick = { onItemClicked(item.traktId) },
                 shape = RectangleShape,
             )
 

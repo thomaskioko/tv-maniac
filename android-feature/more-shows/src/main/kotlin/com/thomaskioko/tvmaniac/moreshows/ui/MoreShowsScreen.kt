@@ -181,7 +181,7 @@ internal fun GridContent(
                             .fillMaxWidth(),
                         imageUrl = show.posterImageUrl,
                         title = show.title,
-                        onClick = { onAction(MoreShowClicked(show.tmdbId)) },
+                        onClick = { onAction(MoreShowClicked(show.traktId)) },
                     )
                 }
             }

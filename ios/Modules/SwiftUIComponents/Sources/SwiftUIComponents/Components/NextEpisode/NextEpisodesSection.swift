@@ -81,7 +81,7 @@ public struct NextEpisodesSection: View {
             title: "Up Next",
             episodes: [
                 SwiftNextEpisode(
-                    showId: 123,
+                    showTraktId: 123,
                     showName: "The Walking Dead: Daryl Dixon",
                     showPoster: "/some-poster.jpg",
                     episodeId: 456,
@@ -93,7 +93,7 @@ public struct NextEpisodesSection: View {
                     badge: .premiere
                 ),
                 SwiftNextEpisode(
-                    showId: 124,
+                    showTraktId: 124,
                     showName: "Wednesday",
                     showPoster: "/another-poster.jpg",
                     episodeId: 789,
@@ -105,7 +105,7 @@ public struct NextEpisodesSection: View {
                     badge: .new
                 ),
                 SwiftNextEpisode(
-                    showId: 125,
+                    showTraktId: 125,
                     showName: "House of the Dragon",
                     showPoster: "/dragon-poster.jpg",
                     episodeId: 790,

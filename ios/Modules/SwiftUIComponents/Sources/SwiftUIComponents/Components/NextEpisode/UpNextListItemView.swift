@@ -28,7 +28,7 @@ public struct UpNextListItemView: View {
 
     public var body: some View {
         Button(action: {
-            onItemClicked(episode.showId, episode.episodeId)
+            onItemClicked(episode.showTraktId, episode.episodeId)
         }) {
             HStack(alignment: .top, spacing: 0) {
                 posterView
@@ -90,7 +90,7 @@ public struct UpNextListItemView: View {
 
     private var showTitlePill: some View {
         Button(action: {
-            onShowTitleClicked(episode.showId)
+            onShowTitleClicked(episode.showTraktId)
         }) {
             HStack(spacing: 2) {
                 Text(episode.showName)
@@ -177,7 +177,7 @@ private enum UpNextListItemViewConstants {
     VStack {
         UpNextListItemView(
             episode: SwiftNextEpisode(
-                showId: 1,
+                showTraktId: 1,
                 showName: "The Walking Dead: Daryl Dixon",
                 showPoster: "/poster.jpg",
                 episodeId: 123,

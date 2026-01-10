@@ -52,7 +52,7 @@ internal fun HorizontalShowContentRow(
                     modifier = Modifier
                         .width(260.dp)
                         .heightIn(160.dp, 220.dp),
-                    onClick = { onItemClicked(tvShow.tmdbId) },
+                    onClick = { onItemClicked(tvShow.traktId) },
                 )
             }
         }
@@ -67,6 +67,7 @@ private fun HorizontalRowContentPreview() {
             HorizontalShowContentRow(
                 tvShows = List(5) {
                     ShowItem(
+                        traktId = 84958,
                         tmdbId = 84958,
                         title = "Loki",
                         posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",

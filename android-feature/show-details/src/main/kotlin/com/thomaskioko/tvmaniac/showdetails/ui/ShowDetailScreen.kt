@@ -383,7 +383,7 @@ private fun ShowInfoContent(
             onMarkWatched = { episode ->
                 onAction(
                     MarkEpisodeWatched(
-                        showId = episode.showId,
+                        showTraktId = episode.showTraktId,
                         episodeId = episode.episodeId,
                         seasonNumber = episode.seasonNumber,
                         episodeNumber = episode.episodeNumber,
@@ -859,7 +859,7 @@ private fun TrailersContent(
 
                 Column {
                     Card(
-                        modifier = Modifier.clickable { onAction(WatchTrailerClicked(trailer.showId)) },
+                        modifier = Modifier.clickable { onAction(WatchTrailerClicked(trailer.showTmdbId)) },
                         shape = RoundedCornerShape(4.dp),
                         elevation = CardDefaults.cardElevation(
                             defaultElevation = 4.dp,
@@ -974,7 +974,7 @@ private fun HorizontalRowContent(
                 PosterCard(
                     imageUrl = tvShow.posterImageUrl,
                     title = tvShow.title,
-                    onClick = { onShowClicked(tvShow.tmdbId) },
+                    onClick = { onShowClicked(tvShow.traktId) },
                     imageWidth = 84.dp,
                 )
             }

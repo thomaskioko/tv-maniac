@@ -29,7 +29,7 @@ public struct GridView: View {
     public var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             LazyVGrid(columns: columns, spacing: spacing ?? theme.spacing.xxSmall) {
-                ForEach(items, id: \.tmdbId) { item in
+                ForEach(items, id: \.traktId) { item in
                     PosterItemView(
                         title: item.title,
                         posterUrl: item.posterUrl,
@@ -39,7 +39,7 @@ public struct GridView: View {
                     .aspectRatio(contentMode: .fill)
                     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
                     .clipped()
-                    .onTapGesture { onAction(item.tmdbId) }
+                    .onTapGesture { onAction(item.traktId) }
                 }
             }.padding(.all, theme.spacing.xSmall)
         }
@@ -50,32 +50,32 @@ public struct GridView: View {
     GridView(
         items: [
             .init(
-                tmdbId: 1234,
+                traktId: 1234,
                 title: "Arcane",
                 posterUrl: "https://image.tmdb.org/t/p/w780/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg"
             ),
             .init(
-                tmdbId: 123,
+                traktId: 123,
                 title: "The Lord of the Rings: The Rings of Power",
                 posterUrl: "https://image.tmdb.org/t/p/w780/NNC08YmJFFlLi1prBkK8quk3dp.jpg"
             ),
             .init(
-                tmdbId: 12346,
+                traktId: 12346,
                 title: "Kaos",
                 posterUrl: "https://image.tmdb.org/t/p/w780/9Piw6Zju39bn3enIDLZzPfjMTBR.jpg"
             ),
             .init(
-                tmdbId: 124,
+                traktId: 124,
                 title: "Terminator",
                 posterUrl: "https://image.tmdb.org/t/p/w780/woH18JkZMYhMSWqtHkPA4F6Gd1z.jpg"
             ),
             .init(
-                tmdbId: 123_346,
+                traktId: 123_346,
                 title: "The Perfect Couple",
                 posterUrl: "https://image.tmdb.org/t/p/w780//3buRSGVnutw8x4Lww0t70k5dG6R.jpg"
             ),
             .init(
-                tmdbId: 2346,
+                traktId: 2346,
                 title: "One Piece",
                 posterUrl: "https://image.tmdb.org/t/p/w780/2rmK7mnchw9Xr3XdiTFSxTTLXqv.jpg"
             ),

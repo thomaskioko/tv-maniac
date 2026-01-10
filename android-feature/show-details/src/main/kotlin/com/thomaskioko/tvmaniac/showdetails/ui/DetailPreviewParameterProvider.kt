@@ -40,13 +40,13 @@ internal val showDetailsContent = ShowDetailsContent(
         ),
         trailersList = persistentListOf(
             TrailerModel(
-                showId = 1232,
+                showTmdbId = 1232,
                 key = "",
                 name = "",
                 youtubeThumbnailUrl = "",
             ),
             TrailerModel(
-                showId = 1232,
+                showTmdbId = 1232,
                 key = "",
                 name = "",
                 youtubeThumbnailUrl = "",
@@ -54,7 +54,7 @@ internal val showDetailsContent = ShowDetailsContent(
         ),
         similarShows = persistentListOf(
             ShowModel(
-                tmdbId = 1232,
+                traktId = 1232,
                 title = "Loki",
                 posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
                 backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
@@ -63,7 +63,7 @@ internal val showDetailsContent = ShowDetailsContent(
         ),
         recommendedShows = persistentListOf(
             ShowModel(
-                tmdbId = 1232,
+                traktId = 1232,
                 title = "Loki",
                 posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
                 backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
@@ -83,7 +83,7 @@ internal val showDetailsContent = ShowDetailsContent(
         ContinueTrackingEpisodeModel(
             episodeId = 121L,
             seasonId = 1L,
-            showId = 1L,
+            showTraktId = 1L,
             episodeNumber = 1,
             seasonNumber = 2,
             episodeNumberFormatted = "S01 | E01",
@@ -96,7 +96,7 @@ internal val showDetailsContent = ShowDetailsContent(
         ContinueTrackingEpisodeModel(
             episodeId = 122L,
             seasonId = 1L,
-            showId = 1L,
+            showTraktId = 1L,
             episodeNumber = 2,
             seasonNumber = 2,
             episodeNumberFormatted = "S01 | E02",
@@ -109,7 +109,7 @@ internal val showDetailsContent = ShowDetailsContent(
         ContinueTrackingEpisodeModel(
             episodeId = 123L,
             seasonId = 1L,
-            showId = 1L,
+            showTraktId = 1L,
             episodeNumber = 3,
             seasonNumber = 2,
             episodeNumberFormatted = "S01 | E03",

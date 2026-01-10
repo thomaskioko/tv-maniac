@@ -1,10 +1,7 @@
 package com.thomaskioko.tvmaniac.search.ui
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.search.presenter.EmptySearchResult
-import com.thomaskioko.tvmaniac.search.presenter.SearchResultAvailable
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowState
-import com.thomaskioko.tvmaniac.search.presenter.ShowContentAvailable
 import com.thomaskioko.tvmaniac.search.presenter.model.ShowGenre
 import com.thomaskioko.tvmaniac.search.presenter.model.ShowItem
 import kotlinx.collections.immutable.toImmutableList
@@ -13,13 +10,27 @@ internal class SearchPreviewParameterProvider : PreviewParameterProvider<SearchS
     override val values: Sequence<SearchShowState>
         get() {
             return sequenceOf(
-                EmptySearchResult(),
-                EmptySearchResult(errorMessage = "Something went wrong"),
-                ShowContentAvailable(
+                // Empty state (no results, not loading)
+                SearchShowState(
+                    query = "test query",
+                    isUpdating = false,
+                ),
+                // Error state
+                SearchShowState(
+                    errorMessage = "Something went wrong",
+                ),
+                // Genre browsing mode
+                SearchShowState(
                     genres = createGenreShowList(),
                 ),
-                SearchResultAvailable(
-                    results = createDiscoverShowList(),
+                // Search results
+                SearchShowState(
+                    query = "loki",
+                    searchResults = createDiscoverShowList(),
+                ),
+                // Loading state
+                SearchShowState(
+                    isUpdating = true,
                 ),
             )
         }
@@ -29,9 +40,10 @@ internal fun createDiscoverShowList(size: Int = 5) = List(size) { discoverShow }
 
 internal val discoverShow = ShowItem(
     tmdbId = 84958,
+    traktId = 84958,
     title = "Loki",
     posterImageUrl = null,
-    overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” an ",
+    overview = "After stealing the Tesseract during the events of Avengers: Endgame, an ",
     status = "Ended",
     inLibrary = false,
 )
