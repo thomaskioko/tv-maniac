@@ -28,7 +28,7 @@ public class ObserveWatchlistSectionsInteractor(
     override fun createObservable(params: String): Flow<WatchlistSections> {
         return episodeRepository.observeNextEpisodesForWatchlist()
             .flatMapLatest { episodes ->
-                val nextEpisodeMap = episodes.associateBy { it.showId }
+                val nextEpisodeMap = episodes.associateBy { it.showTraktId }
 
                 if (params.isNotBlank()) {
                     watchlistRepository.searchWatchlistByQuery(params).map { list ->
@@ -64,13 +64,14 @@ private fun FollowedShows.toWatchlistShowInfo(nextEpisodeMap: Map<Long, NextEpis
     val watched = watched_count
     val total = total_episode_count
     val progress = if (total > 0) watched.toFloat() / total else 0f
-    val nextEp = nextEpisodeMap[show_id.id]
+    val nextEp = nextEpisodeMap[show_trakt_id.id]
     return WatchlistShowInfo(
-        tmdbId = show_id.id,
+        traktId = show_trakt_id.id,
+        tmdbId = show_tmdb_id.id,
         title = name,
         posterImageUrl = poster_path,
         status = status,
-        year = first_air_date,
+        year = year,
         seasonCount = season_count ?: 0,
         episodeCount = episode_count ?: 0,
         episodesWatched = watched,
@@ -85,13 +86,14 @@ private fun SearchFollowedShows.toWatchlistShowInfo(nextEpisodeMap: Map<Long, Ne
     val watched = watched_count
     val total = total_episode_count
     val progress = if (total > 0) watched.toFloat() / total else 0f
-    val nextEp = nextEpisodeMap[show_id.id]
+    val nextEp = nextEpisodeMap[show_trakt_id.id]
     return WatchlistShowInfo(
-        tmdbId = show_id.id,
+        traktId = show_trakt_id.id,
+        tmdbId = show_tmdb_id.id,
         title = name,
         posterImageUrl = poster_path,
         status = status,
-        year = first_air_date,
+        year = year,
         seasonCount = season_count ?: 0,
         episodeCount = episode_count ?: 0,
         episodesWatched = watched,

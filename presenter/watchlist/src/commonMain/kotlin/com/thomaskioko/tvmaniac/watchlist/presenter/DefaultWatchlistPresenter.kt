@@ -36,7 +36,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 public class DefaultWatchlistPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val navigateToShowDetails: (id: Long) -> Unit,
-    @Assisted private val navigateToSeason: (showId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
+    @Assisted private val navigateToSeason: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
     private val repository: WatchlistRepository,
     private val followedShowsRepository: FollowedShowsRepository,
     private val observeWatchlistSectionsInteractor: ObserveWatchlistSectionsInteractor,
@@ -103,16 +103,16 @@ public class DefaultWatchlistPresenter(
 
     override fun dispatch(action: WatchlistAction) {
         when (action) {
-            is WatchlistShowClicked -> navigateToShowDetails(action.id)
+            is WatchlistShowClicked -> navigateToShowDetails(action.traktId)
             is WatchlistQueryChanged -> updateQuery(action.query)
             is ClearWatchlistQuery -> clearQuery()
             ChangeListStyleClicked -> toggleListStyle()
             is MessageShown -> clearMessage(action.id)
-            is UpNextEpisodeClicked -> navigateToShowDetails(action.showId)
-            is ShowTitleClicked -> navigateToShowDetails(action.showId)
+            is UpNextEpisodeClicked -> navigateToShowDetails(action.showTraktId)
+            is ShowTitleClicked -> navigateToShowDetails(action.showTraktId)
             is MarkUpNextEpisodeWatched -> markEpisodeWatched(action)
-            is UnfollowShowFromUpNext -> unfollowShow(action.showId)
-            is OpenSeasonFromUpNext -> navigateToSeason(action.showId, action.seasonId, action.seasonNumber)
+            is UnfollowShowFromUpNext -> unfollowShow(action.showTraktId)
+            is OpenSeasonFromUpNext -> navigateToSeason(action.showTraktId, action.seasonId, action.seasonNumber)
         }
     }
 
@@ -120,7 +120,7 @@ public class DefaultWatchlistPresenter(
         coroutineScope.launch {
             markEpisodeWatchedInteractor(
                 MarkEpisodeWatchedParams(
-                    showId = action.showId,
+                    showTraktId = action.showTraktId,
                     episodeId = action.episodeId,
                     seasonNumber = action.seasonNumber,
                     episodeNumber = action.episodeNumber,
@@ -129,9 +129,9 @@ public class DefaultWatchlistPresenter(
         }
     }
 
-    private fun unfollowShow(showId: Long) {
+    private fun unfollowShow(showTraktId: Long) {
         coroutineScope.launch {
-            followedShowsRepository.removeFollowedShow(showId)
+            followedShowsRepository.removeFollowedShow(showTraktId)
         }
     }
 
@@ -174,12 +174,12 @@ public class DefaultWatchlistPresenterFactory(
     private val presenter: (
         componentContext: ComponentContext,
         navigateToShowDetails: (showDetails: Long) -> Unit,
-        navigateToSeason: (showId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
+        navigateToSeason: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
     ) -> WatchlistPresenter,
 ) : WatchlistPresenter.Factory {
     override fun invoke(
         componentContext: ComponentContext,
         navigateToShowDetails: (showDetails: Long) -> Unit,
-        navigateToSeason: (showId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
+        navigateToSeason: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
     ): WatchlistPresenter = presenter(componentContext, navigateToShowDetails, navigateToSeason)
 }

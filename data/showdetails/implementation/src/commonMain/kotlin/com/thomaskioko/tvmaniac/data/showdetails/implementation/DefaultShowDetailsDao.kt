@@ -22,16 +22,16 @@ public class DefaultShowDetailsDao(
 ) : ShowDetailsDao {
     private val tvShowQueries = database.tvShowQueries
 
-    override fun observeTvShows(id: Long): Flow<TvshowDetails> =
-        tvShowQueries.tvshowDetails(Id(id)).asFlow().mapToOne(dispatchers.io)
+    override fun observeTvShowByTraktId(traktId: Long): Flow<TvshowDetails> =
+        tvShowQueries.tvshowDetails(Id(traktId)).asFlow().mapToOne(dispatchers.io)
 
-    override fun getTvShow(id: Long): TvshowDetails =
-        tvShowQueries.tvshowDetails(Id(id)).executeAsOne()
+    override fun getTvShow(traktId: Long): TvshowDetails =
+        tvShowQueries.tvshowDetails(Id(traktId)).executeAsOne()
 
-    override fun getTvShowOrNull(id: Long): TvshowDetails? =
-        tvShowQueries.tvshowDetails(Id(id)).executeAsOneOrNull()
+    override fun getTvShowOrNull(traktId: Long): TvshowDetails? =
+        tvShowQueries.tvshowDetails(Id(traktId)).executeAsOneOrNull()
 
-    override fun deleteTvShow(id: Long) {
-        tvShowQueries.delete(Id(id))
+    override fun deleteTvShow(traktId: Long) {
+        tvShowQueries.delete(Id(traktId))
     }
 }

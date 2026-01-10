@@ -14,7 +14,7 @@ public class FakeSimilarShowsRepository : SimilarShowsRepository {
         similarShows.emit(result)
     }
 
-    override suspend fun fetchSimilarShows(id: Long, forceRefresh: Boolean) {
+    override suspend fun fetchSimilarShows(traktId: Long, forceRefresh: Boolean) {
     }
 
     override fun observeSimilarShows(id: Long): Flow<List<SimilarShows>> = similarShows.asStateFlow()

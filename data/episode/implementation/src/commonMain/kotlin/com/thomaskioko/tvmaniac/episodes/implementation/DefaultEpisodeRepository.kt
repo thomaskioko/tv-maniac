@@ -64,7 +64,7 @@ public class DefaultEpisodeRepository(
             }
 
     override suspend fun markEpisodeAsWatched(
-        showId: Long,
+        showTraktId: Long,
         episodeId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
@@ -73,18 +73,18 @@ public class DefaultEpisodeRepository(
         val timestamp = watchedAt?.toEpochMilliseconds() ?: dateTimeProvider.nowMillis()
         val includeSpecials = datastoreRepository.observeIncludeSpecials().first()
         watchedEpisodeDao.markAsWatched(
-            showId = showId,
+            showTraktId = showTraktId,
             episodeId = episodeId,
             seasonNumber = seasonNumber,
             episodeNumber = episodeNumber,
             watchedAt = timestamp,
             includeSpecials = includeSpecials,
         )
-        syncRepository.value.syncShowEpisodeWatches(showId)
+        syncRepository.value.syncShowEpisodeWatches(showTraktId)
     }
 
     override suspend fun markEpisodeAndPreviousEpisodesWatched(
-        showId: Long,
+        showTraktId: Long,
         episodeId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
@@ -93,31 +93,31 @@ public class DefaultEpisodeRepository(
         val timestamp = watchedAt?.toEpochMilliseconds() ?: dateTimeProvider.nowMillis()
         val includeSpecials = datastoreRepository.observeIncludeSpecials().first()
         watchedEpisodeDao.markEpisodeAndPreviousAsWatched(
-            showId = showId,
+            showTraktId = showTraktId,
             episodeId = episodeId,
             seasonNumber = seasonNumber,
             episodeNumber = episodeNumber,
             timestamp = timestamp,
             includeSpecials = includeSpecials,
         )
-        syncRepository.value.syncShowEpisodeWatches(showId)
+        syncRepository.value.syncShowEpisodeWatches(showTraktId)
     }
 
-    override suspend fun markEpisodeAsUnwatched(showId: Long, episodeId: Long) {
+    override suspend fun markEpisodeAsUnwatched(showTraktId: Long, episodeId: Long) {
         val includeSpecials = datastoreRepository.observeIncludeSpecials().first()
-        watchedEpisodeDao.markAsUnwatched(showId, episodeId, includeSpecials)
-        syncRepository.value.syncShowEpisodeWatches(showId)
+        watchedEpisodeDao.markAsUnwatched(showTraktId, episodeId, includeSpecials)
+        syncRepository.value.syncShowEpisodeWatches(showTraktId)
     }
 
-    override fun observeLastWatchedEpisode(showId: Long): Flow<LastWatchedEpisode?> {
+    override fun observeLastWatchedEpisode(showTraktId: Long): Flow<LastWatchedEpisode?> {
         return database.showsLastWatchedQueries
-            .lastWatchedEpisodeForShow(Id(showId))
+            .lastWatchedEpisodeForShow(Id(showTraktId))
             .asFlow()
             .mapToOneOrNull(dispatchers.databaseRead)
             .map { result ->
                 result?.let {
                     LastWatchedEpisode(
-                        showId = it.show_id.id,
+                        showTraktId = it.show_trakt_id.id,
                         episodeId = it.episode_id.id,
                         seasonNumber = it.last_watched_season,
                         episodeNumber = it.last_watched_episode,
@@ -128,75 +128,79 @@ public class DefaultEpisodeRepository(
     }
 
     override fun observeSeasonWatchProgress(
-        showId: Long,
+        showTraktId: Long,
         seasonNumber: Long,
     ): Flow<SeasonWatchProgress> =
-        watchedEpisodeDao.observeSeasonWatchProgress(showId, seasonNumber)
+        watchedEpisodeDao.observeSeasonWatchProgress(showTraktId, seasonNumber)
             .distinctUntilChanged()
 
-    override fun observeShowWatchProgress(showId: Long): Flow<ShowWatchProgress> =
-        watchedEpisodeDao.observeShowWatchProgress(showId)
+    override fun observeShowWatchProgress(showTraktId: Long): Flow<ShowWatchProgress> =
+        watchedEpisodeDao.observeShowWatchProgress(showTraktId)
             .distinctUntilChanged()
 
-    override fun observeAllSeasonsWatchProgress(showId: Long): Flow<List<SeasonWatchProgress>> =
-        watchedEpisodeDao.observeAllSeasonsWatchProgress(showId)
+    override fun observeAllSeasonsWatchProgress(showTraktId: Long): Flow<List<SeasonWatchProgress>> =
+        watchedEpisodeDao.observeAllSeasonsWatchProgress(showTraktId)
             .distinctUntilChanged()
 
-    override suspend fun markSeasonWatched(showId: Long, seasonNumber: Long, watchedAt: Instant?) {
+    override suspend fun markSeasonWatched(
+        showTraktId: Long,
+        seasonNumber: Long,
+        watchedAt: Instant?,
+    ) {
         val timestamp = watchedAt?.toEpochMilliseconds() ?: dateTimeProvider.nowMillis()
         val includeSpecials = datastoreRepository.observeIncludeSpecials().first()
-        val episodes = watchedEpisodeDao.getEpisodesForSeason(showId, seasonNumber)
+        val episodes = watchedEpisodeDao.getEpisodesForSeason(showTraktId, seasonNumber)
         watchedEpisodeDao.markSeasonAsWatched(
-            showId = showId,
+            showTraktId = showTraktId,
             seasonNumber = seasonNumber,
             episodes = episodes,
             timestamp = timestamp,
             includeSpecials = includeSpecials,
         )
-        syncRepository.value.syncShowEpisodeWatches(showId)
+        syncRepository.value.syncShowEpisodeWatches(showTraktId)
     }
 
     override suspend fun markSeasonAndPreviousSeasonsWatched(
-        showId: Long,
+        showTraktId: Long,
         seasonNumber: Long,
         watchedAt: Instant?,
     ) {
         val timestamp = watchedAt?.toEpochMilliseconds() ?: dateTimeProvider.nowMillis()
         val includeSpecials = datastoreRepository.observeIncludeSpecials().first()
         watchedEpisodeDao.markSeasonAndPreviousAsWatched(
-            showId = showId,
+            showTraktId = showTraktId,
             seasonNumber = seasonNumber,
             timestamp = timestamp,
             includeSpecials = includeSpecials,
         )
-        syncRepository.value.syncShowEpisodeWatches(showId)
+        syncRepository.value.syncShowEpisodeWatches(showTraktId)
     }
 
-    override suspend fun markSeasonUnwatched(showId: Long, seasonNumber: Long) {
+    override suspend fun markSeasonUnwatched(showTraktId: Long, seasonNumber: Long) {
         val includeSpecials = datastoreRepository.observeIncludeSpecials().first()
-        watchedEpisodeDao.markSeasonAsUnwatched(showId, seasonNumber, includeSpecials)
-        syncRepository.value.syncShowEpisodeWatches(showId)
+        watchedEpisodeDao.markSeasonAsUnwatched(showTraktId, seasonNumber, includeSpecials)
+        syncRepository.value.syncShowEpisodeWatches(showTraktId)
     }
 
     override suspend fun getUnwatchedCountAfterFetchingPreviousSeasons(
-        showId: Long,
+        showTraktId: Long,
         seasonNumber: Long,
     ): Long {
         val includeSpecials = datastoreRepository.observeIncludeSpecials().first()
-        val seasons = seasonsRepository.observeSeasonsByShowId(showId).first()
+        val seasons = seasonsRepository.observeSeasonsByShowId(showTraktId).first()
         val previousSeasons = seasons.filter { it.season_number in 1..<seasonNumber }
         previousSeasons.parallelForEach { season ->
             currentCoroutineContext().ensureActive()
             seasonDetailsRepository.fetchSeasonDetails(
                 SeasonDetailsParam(
-                    showId = showId,
+                    showTraktId = showTraktId,
                     seasonId = season.season_id.id,
                     seasonNumber = season.season_number,
                 ),
             )
         }
         return watchedEpisodeDao.getUnwatchedEpisodeCountInPreviousSeasons(
-            showId = showId,
+            showTraktId = showTraktId,
             seasonNumber = seasonNumber,
             includeSpecials = includeSpecials,
         )
@@ -204,39 +208,51 @@ public class DefaultEpisodeRepository(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun observeUnwatchedCountInPreviousSeasons(
-        showId: Long,
+        showTraktId: Long,
         seasonNumber: Long,
     ): Flow<Long> = datastoreRepository.observeIncludeSpecials()
         .flatMapLatest { includeSpecials ->
-            watchedEpisodeDao.observeUnwatchedCountInPreviousSeasons(showId, seasonNumber, includeSpecials)
+            watchedEpisodeDao.observeUnwatchedCountInPreviousSeasons(
+                showTraktId,
+                seasonNumber,
+                includeSpecials,
+            )
         }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun observeContinueTrackingEpisodes(showId: Long): Flow<ContinueTrackingResult?> =
-        watchlistDao.observeIsShowInLibrary(showId)
+    override fun observeContinueTrackingEpisodes(
+        showTraktId: Long,
+    ): Flow<ContinueTrackingResult?> =
+        watchlistDao.observeIsShowInLibrary(showTraktId)
             .flatMapLatest { isInLibrary ->
                 if (!isInLibrary) return@flatMapLatest flowOf(null)
-                observeTrackingResultForLibraryShow(showId)
+                observeTrackingResultForLibraryShow(showTraktId)
             }
             .catch { emit(null) }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun observeTrackingResultForLibraryShow(showId: Long): Flow<ContinueTrackingResult?> =
+    private fun observeTrackingResultForLibraryShow(
+        showTraktId: Long,
+    ): Flow<ContinueTrackingResult?> =
         combine(
-            observeLastWatchedEpisode(showId),
-            watchedEpisodeDao.observeWatchedEpisodes(showId),
-            seasonsRepository.observeSeasonsByShowId(showId),
+            observeLastWatchedEpisode(showTraktId),
+            watchedEpisodeDao.observeWatchedEpisodes(showTraktId),
+            seasonsRepository.observeSeasonsByShowId(showTraktId),
         ) { lastWatched, _, seasons ->
             lastWatched to seasons
         }.flatMapLatest { (lastWatched, seasons) ->
             if (seasons.isEmpty()) return@flatMapLatest flowOf(null)
             val startIndex = determineActiveSeasonIndex(seasons, lastWatched)
-            observeFirstSeasonWithUnwatchedEpisodes(showId, seasons, startIndex)
+            observeFirstSeasonWithUnwatchedEpisodes(
+                showTraktId = showTraktId,
+                seasons = seasons,
+                currentIndex = startIndex,
+            )
         }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun observeFirstSeasonWithUnwatchedEpisodes(
-        showId: Long,
+        showTraktId: Long,
         seasons: List<ShowSeasons>,
         currentIndex: Int,
     ): Flow<ContinueTrackingResult?> {
@@ -244,7 +260,7 @@ public class DefaultEpisodeRepository(
 
         val season = seasons[currentIndex]
         val param = SeasonDetailsParam(
-            showId = showId,
+            showTraktId = showTraktId,
             seasonId = season.season_id.id,
             seasonNumber = season.season_number,
         )
@@ -263,7 +279,12 @@ public class DefaultEpisodeRepository(
                             ),
                         )
                     }
-                    else -> observeFirstSeasonWithUnwatchedEpisodes(showId, seasons, currentIndex + 1)
+
+                    else -> observeFirstSeasonWithUnwatchedEpisodes(
+                        showTraktId = showTraktId,
+                        seasons = seasons,
+                        currentIndex = currentIndex + 1,
+                    )
                 }
             }
     }

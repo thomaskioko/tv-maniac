@@ -222,18 +222,17 @@ internal class DefaultUserDaoTest : BaseDatabaseTest() {
 
     private fun insertTestShowWithWatchlist() {
         val _ = database.tvShowQueries.upsert(
-            id = Id(1),
+            trakt_id = Id(1),
+            tmdb_id = Id(1),
             name = "Test Show",
             overview = "Test overview",
             language = "en",
-            first_air_date = "2023-01-01",
-            vote_average = 8.0,
+            year = "2023-01-01",
+            ratings = 8.0,
             vote_count = 100,
-            popularity = 95.0,
-            genre_ids = listOf(1, 2),
+            genres = listOf("Drama", "Action"),
             status = "Returning Series",
             episode_numbers = null,
-            last_air_date = null,
             season_numbers = null,
             poster_path = "/backdrop.jpg",
             backdrop_path = "/backdrop.jpg",
@@ -241,10 +240,10 @@ internal class DefaultUserDaoTest : BaseDatabaseTest() {
 
         val _ = database.followedShowsQueries.upsert(
             id = null,
-            tmdbId = 1L,
+            traktId = Id(1),
+            tmdbId = Id(1),
             followedAt = Clock.System.now().toEpochMilliseconds(),
             pendingAction = "NOTHING",
-            traktId = null,
         )
     }
 }

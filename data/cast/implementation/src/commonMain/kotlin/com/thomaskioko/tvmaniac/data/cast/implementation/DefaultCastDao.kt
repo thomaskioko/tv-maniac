@@ -36,7 +36,7 @@ public class DefaultCastDao(
     override fun upsert(entity: Cast_appearance) {
         database.castAppearanceQueries.upsert(
             cast_id = entity.cast_id,
-            show_id = entity.show_id,
+            show_tmdb_id = entity.show_tmdb_id,
             season_id = entity.season_id,
         )
     }

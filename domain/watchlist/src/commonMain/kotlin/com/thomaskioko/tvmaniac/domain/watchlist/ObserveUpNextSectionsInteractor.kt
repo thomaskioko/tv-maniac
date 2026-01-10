@@ -27,7 +27,7 @@ public class ObserveUpNextSectionsInteractor(
         ) { episodes, watchlist ->
             val currentTime = dateTimeProvider.nowMillis()
             val watchlistMap = watchlist.associate {
-                it.show_id.id to (it.total_episode_count - it.watched_count).toInt()
+                it.show_trakt_id.id to (it.total_episode_count - it.watched_count).toInt()
             }
 
             val searchFiltered = if (params.isNotBlank()) {
@@ -49,7 +49,7 @@ public class ObserveUpNextSectionsInteractor(
 
             airedEpisodes
                 .map { episode ->
-                    val remaining = watchlistMap[episode.showId] ?: 0
+                    val remaining = watchlistMap[episode.showTraktId] ?: 0
                     episode.toUpNextEpisodeInfo(remaining)
                 }.groupBySections(currentTime)
         }
@@ -58,7 +58,7 @@ public class ObserveUpNextSectionsInteractor(
 
 private fun NextEpisodeWithShow.toUpNextEpisodeInfo(remainingEpisodes: Int): UpNextEpisodeInfo {
     return UpNextEpisodeInfo(
-        showId = showId,
+        showTraktId = showTraktId,
         showName = showName,
         showPoster = showPoster,
         episodeId = episodeId,

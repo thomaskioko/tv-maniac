@@ -20,5 +20,5 @@ public class DefaultCastRepository(
     override fun observeSeasonCast(seasonId: Long): Flow<List<SeasonCast>> =
         dao.observeSeasonCast(seasonId)
 
-    override fun observeShowCast(showId: Long): Flow<List<ShowCast>> = dao.observeShowCast(showId)
+    override fun observeShowCast(showTraktId: Long): Flow<List<ShowCast>> = dao.observeShowCast(showTraktId)
 }

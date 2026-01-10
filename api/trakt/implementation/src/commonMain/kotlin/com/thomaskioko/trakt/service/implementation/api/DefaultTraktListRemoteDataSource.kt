@@ -99,6 +99,38 @@ public class DefaultTraktListRemoteDataSource(
             )
         }
 
+    override suspend fun addShowToWatchListByTraktId(
+        traktId: Long,
+    ): ApiResponse<TraktAddShowToListResponse> =
+        httpClient.safeRequest {
+            url {
+                method = HttpMethod.Post
+                path("sync/watchlist")
+            }
+            contentType(ContentType.Application.Json)
+            setBody(
+                TraktAddShowRequest(
+                    shows = listOf(TraktShow(ids = TraktShowIds(traktId = traktId))),
+                ),
+            )
+        }
+
+    override suspend fun removeShowFromWatchListByTraktId(
+        traktId: Long,
+    ): ApiResponse<TraktAddRemoveShowFromListResponse> =
+        httpClient.safeRequest {
+            url {
+                method = HttpMethod.Post
+                path("sync/watchlist/remove")
+            }
+            contentType(ContentType.Application.Json)
+            setBody(
+                TraktAddShowRequest(
+                    shows = listOf(TraktShow(ids = TraktShowIds(traktId = traktId))),
+                ),
+            )
+        }
+
     override suspend fun addShowToList(
         userSlug: String,
         listId: Long,

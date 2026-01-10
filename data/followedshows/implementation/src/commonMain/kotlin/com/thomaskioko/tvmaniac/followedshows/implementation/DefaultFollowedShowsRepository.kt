@@ -36,7 +36,7 @@ public class DefaultFollowedShowsRepository(
     private val syncer: ItemSyncer<FollowedShowEntry, FollowedShowEntry, Long> = syncerForEntity(
         upsertEntity = { entry -> val _ = followedShowsDao.upsert(entry) },
         deleteEntity = { entry -> followedShowsDao.deleteById(entry.id) },
-        entityToKey = { it.tmdbId },
+        entityToKey = { it.traktId },
         mapper = { networkEntity, currentEntity ->
             networkEntity.copy(id = currentEntity?.id ?: 0)
         },
@@ -60,38 +60,33 @@ public class DefaultFollowedShowsRepository(
     override fun observeFollowedShows(): Flow<List<FollowedShowEntry>> =
         followedShowsDao.entriesObservable()
 
-    override suspend fun addFollowedShow(tmdbId: Long) {
+    override suspend fun addFollowedShow(traktId: Long) {
         withContext(dispatchers.io) {
             transactionRunner {
-                val existingEntry = followedShowsDao.entryWithTmdbId(tmdbId)
+                val existingEntry = followedShowsDao.entryWithTraktId(traktId)
                 if (existingEntry == null || existingEntry.pendingAction == PendingAction.DELETE) {
                     val _ = followedShowsDao.upsert(
                         FollowedShowEntry(
                             id = existingEntry?.id ?: 0,
-                            tmdbId = tmdbId,
+                            traktId = traktId,
+                            tmdbId = existingEntry?.tmdbId,
                             followedAt = dateTimeProvider.now(),
                             pendingAction = PendingAction.UPLOAD,
-                            traktId = existingEntry?.traktId,
                         ),
                     )
-                    logger.debug(TAG, "Marked show $tmdbId for upload")
+                    logger.debug(TAG, "Marked show $traktId for upload")
                 }
             }
         }
         syncFollowedShows()
     }
 
-    override suspend fun removeFollowedShow(tmdbId: Long) {
+    override suspend fun removeFollowedShow(traktId: Long) {
         withContext(dispatchers.io) {
             transactionRunner {
-                followedShowsDao.entryWithTmdbId(tmdbId)?.also { entry ->
-                    if (entry.traktId != null) {
-                        val _ = followedShowsDao.upsert(entry.copy(pendingAction = PendingAction.DELETE))
-                        logger.debug(TAG, "Marked show $tmdbId for deletion")
-                    } else {
-                        followedShowsDao.deleteById(entry.id)
-                        logger.debug(TAG, "Deleted local entry for show $tmdbId")
-                    }
+                followedShowsDao.entryWithTraktId(traktId)?.also { entry ->
+                    val _ = followedShowsDao.upsert(entry.copy(pendingAction = PendingAction.DELETE))
+                    logger.debug(TAG, "Marked show $traktId for deletion")
                 }
             }
         }
@@ -109,7 +104,7 @@ public class DefaultFollowedShowsRepository(
 
         logger.debug(TAG, "Processing ${pending.size} pending shows")
 
-        dataSource.addShowsToWatchlist(pending.map { it.tmdbId })
+        dataSource.addShowsToWatchlistByTraktId(pending.map { it.traktId })
 
         withContext(dispatchers.io) {
             transactionRunner {
@@ -128,7 +123,7 @@ public class DefaultFollowedShowsRepository(
 
         logger.debug(TAG, "Processing ${pending.size} pending deletions")
 
-        dataSource.removeShowsFromWatchlist(pending.map { it.tmdbId })
+        dataSource.removeShowsFromWatchlistByTraktId(pending.map { it.traktId })
 
         withContext(dispatchers.io) {
             transactionRunner {

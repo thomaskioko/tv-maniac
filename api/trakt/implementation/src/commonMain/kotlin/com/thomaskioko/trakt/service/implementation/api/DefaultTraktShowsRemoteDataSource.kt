@@ -137,4 +137,19 @@ public class DefaultTraktShowsRemoteDataSource(
             parameter("type", "show")
             parameter("extended", "full")
         }
+
+    override suspend fun searchShows(
+        query: String,
+        page: Int,
+        limit: Int,
+    ): ApiResponse<List<TraktSearchResult>> =
+        httpClient.safeRequest {
+            url {
+                method = HttpMethod.Get
+                path("search")
+            }
+            parameter("type", "show")
+            parameter("query", query)
+            parameter("extended", "full")
+        }
 }

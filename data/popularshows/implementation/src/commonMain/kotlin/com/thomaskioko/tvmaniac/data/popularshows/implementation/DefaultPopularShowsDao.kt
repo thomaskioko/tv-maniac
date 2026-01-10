@@ -28,7 +28,8 @@ public class DefaultPopularShowsDao(
     override fun upsert(show: Popular_shows) {
         popularShowsQueries.transaction {
             popularShowsQueries.insert(
-                id = show.id,
+                traktId = show.trakt_id,
+                tmdbId = show.tmdb_id,
                 page = show.page,
                 name = show.name,
                 poster_path = show.poster_path,
@@ -40,9 +41,10 @@ public class DefaultPopularShowsDao(
 
     override fun observePopularShows(page: Long): Flow<List<ShowEntity>> =
         popularShowsQueries
-            .entriesInPage(Id(page)) { id, pageId, name, posterPath, overview, inLibrary ->
+            .entriesInPage(Id(page)) { traktId, tmdbId, pageId, name, posterPath, overview, inLibrary ->
                 ShowEntity(
-                    id = id.id,
+                    traktId = traktId.id,
+                    tmdbId = tmdbId.id,
                     page = pageId.id,
                     title = name,
                     posterPath = posterPath,
@@ -62,9 +64,10 @@ public class DefaultPopularShowsDao(
                 popularShowsQueries.pagedPopularShows(
                     limit = limit,
                     offset = offset,
-                ) { id, page, title, imageUrl, inLib ->
+                ) { traktId, tmdbId, page, title, imageUrl, inLib ->
                     ShowEntity(
-                        id = id.id,
+                        traktId = traktId.id,
+                        tmdbId = tmdbId.id,
                         page = page.id,
                         title = title,
                         posterPath = imageUrl,

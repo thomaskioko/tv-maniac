@@ -64,7 +64,7 @@ public class DefaultMoreShowsPresenter(
 
     override fun dispatch(action: MoreShowsActions) {
         when (action) {
-            is MoreShowClicked -> onNavigateToShowDetails(action.showId)
+            is MoreShowClicked -> onNavigateToShowDetails(action.traktId)
             MoreBackClicked -> onBack()
             RefreshMoreShows -> {
                 when (categoryId) {
@@ -150,7 +150,8 @@ public class DefaultMoreShowsPresenter(
     private fun Flow<PagingData<ShowEntity>>.mapToTvShow(): Flow<PagingData<TvShow>> = map {
         it.map { show ->
             TvShow(
-                tmdbId = show.id,
+                tmdbId = show.tmdbId,
+                traktId = show.traktId,
                 title = show.title,
                 posterImageUrl = show.posterPath,
                 inLibrary = show.inLibrary,

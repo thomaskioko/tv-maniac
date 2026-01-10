@@ -5,6 +5,7 @@ import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOne
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.db.FollowedShows
+import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.SearchFollowedShows
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.shows.api.WatchlistDao
@@ -33,8 +34,8 @@ public class DefaultWatchlistDao(
             .asFlow()
             .mapToList(dispatchers.io)
 
-    override fun observeIsShowInLibrary(showId: Long): Flow<Boolean> =
-        database.followedShowsQueries.isShowFollowed(showId)
+    override fun observeIsShowInLibrary(traktId: Long): Flow<Boolean> =
+        database.followedShowsQueries.isShowFollowed(Id(traktId))
             .asFlow()
             .mapToOne(dispatchers.io)
 }

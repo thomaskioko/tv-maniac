@@ -41,20 +41,17 @@ public class DefaultWatchedEpisodeSyncRepository(
     private val logger: Logger,
 ) : WatchedEpisodeSyncRepository {
 
-    override suspend fun syncShowEpisodeWatches(showId: Long, forceRefresh: Boolean) {
+    override suspend fun syncShowEpisodeWatches(showTraktId: Long, forceRefresh: Boolean) {
         if (!isLoggedIn()) return
 
-        followedShowsRepository.addFollowedShow(showId)
+        followedShowsRepository.addFollowedShow(showTraktId)
 
         processPendingUploads()
         processPendingDeletes()
 
-        if (forceRefresh || lastRequestStore.isShowRequestExpired(showId)) {
-            val entry = followedShowsDao.entryWithTmdbId(showId)
-            val traktId = entry?.traktId ?: return
-
-            syncShowWatches(showId, traktId)
-            lastRequestStore.updateShowLastRequest(showId)
+        if (forceRefresh || lastRequestStore.isShowRequestExpired(showTraktId)) {
+            syncShowWatches(showTraktId)
+            lastRequestStore.updateShowLastRequest(showTraktId)
         }
     }
 
@@ -70,7 +67,7 @@ public class DefaultWatchedEpisodeSyncRepository(
         val entries = pending.map { episode ->
             WatchedEpisodeEntry(
                 id = episode.watched_id,
-                showId = episode.show_id.id,
+                showTraktId = episode.show_trakt_id.id,
                 episodeId = episode.episode_id?.id,
                 seasonNumber = episode.season_number,
                 episodeNumber = episode.episode_number,
@@ -108,20 +105,20 @@ public class DefaultWatchedEpisodeSyncRepository(
         logger.debug(TAG, "Successfully deleted ${pending.size} episodes")
     }
 
-    private suspend fun syncShowWatches(tmdbId: Long, traktShowId: Long) {
-        val remoteWatches = dataSource.getShowEpisodeWatches(traktShowId)
+    private suspend fun syncShowWatches(showTraktId: Long) {
+        val remoteWatches = dataSource.getShowEpisodeWatches(showTraktId)
 
         if (remoteWatches.isEmpty()) {
-            logger.debug(TAG, "No remote watches for show $tmdbId")
+            logger.debug(TAG, "No remote watches for show $showTraktId")
             return
         }
 
-        logger.debug(TAG, "Found ${remoteWatches.size} remote watches for show $tmdbId")
+        logger.debug(TAG, "Found ${remoteWatches.size} remote watches for show $showTraktId")
 
         val uniqueSeasons = remoteWatches.map { it.seasonNumber }.distinct()
         uniqueSeasons.parallelForEach(concurrency = SEASON_CONCURRENCY) { seasonNumber ->
             currentCoroutineContext().ensureActive()
-            ensureSeasonDetailsExist(tmdbId, seasonNumber)
+            ensureSeasonDetailsExist(showTraktId, seasonNumber)
         }
 
         val includeSpecials = datastoreRepository.observeIncludeSpecials().first()
@@ -131,7 +128,7 @@ public class DefaultWatchedEpisodeSyncRepository(
 
             val entriesWithEpisodeIds = batch.map { remoteEntry ->
                 val episode = episodesDao.getEpisodeByShowSeasonEpisodeNumber(
-                    showId = tmdbId,
+                    showTraktId = showTraktId,
                     seasonNumber = remoteEntry.seasonNumber,
                     episodeNumber = remoteEntry.episodeNumber,
                 )
@@ -139,29 +136,29 @@ public class DefaultWatchedEpisodeSyncRepository(
             }
 
             dao.upsertBatchFromTrakt(
-                showId = tmdbId,
+                showTraktId = showTraktId,
                 entries = entriesWithEpisodeIds,
                 includeSpecials = includeSpecials,
             )
         }
 
-        logger.debug(TAG, "Synced ${remoteWatches.size} episode watches for show $tmdbId")
+        logger.debug(TAG, "Synced ${remoteWatches.size} episode watches for show $showTraktId")
     }
 
-    private suspend fun ensureSeasonDetailsExist(showId: Long, seasonNumber: Long) {
-        val season = seasonsDao.getSeasonByShowAndNumber(showId, seasonNumber) ?: return
+    private suspend fun ensureSeasonDetailsExist(showTraktId: Long, seasonNumber: Long) {
+        val season = seasonsDao.getSeasonByShowAndNumber(showTraktId, seasonNumber) ?: return
 
         val hasEpisodes = episodesDao.getEpisodeByShowSeasonEpisodeNumber(
-            showId = showId,
+            showTraktId = showTraktId,
             seasonNumber = seasonNumber,
             episodeNumber = 1,
         ) != null
 
         if (!hasEpisodes) {
-            logger.debug(TAG, "Fetching season $seasonNumber details for show $showId")
+            logger.debug(TAG, "Fetching season $seasonNumber details for show $showTraktId")
             seasonDetailsRepository.fetchSeasonDetails(
                 param = SeasonDetailsParam(
-                    showId = showId,
+                    showTraktId = showTraktId,
                     seasonId = season.season_id.id,
                     seasonNumber = seasonNumber,
                 ),

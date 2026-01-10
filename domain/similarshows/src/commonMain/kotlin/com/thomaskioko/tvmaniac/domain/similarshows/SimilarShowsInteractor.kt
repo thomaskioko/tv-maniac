@@ -14,7 +14,7 @@ public class SimilarShowsInteractor(
 ) : Interactor<Param>() {
     override suspend fun doWork(params: Param) {
         withContext(dispatchers.io) {
-            similarShowsRepository.fetchSimilarShows(id = params.id, forceRefresh = params.forceRefresh)
+            similarShowsRepository.fetchSimilarShows(traktId = params.id, forceRefresh = params.forceRefresh)
         }
     }
 

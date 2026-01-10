@@ -120,8 +120,8 @@ class WatchlistPresenterTest {
     @Test
     fun `should emit watchNextEpisodes when episodes are available`() = runTest {
         val nextEpisodes = listOf(
-            createNextEpisodeWithShow(showId = 1L, showName = "Loki", episodeId = 101L),
-            createNextEpisodeWithShow(showId = 2L, showName = "Wednesday", episodeId = 201L),
+            createNextEpisodeWithShow(showTraktId = 1L, showName = "Loki", episodeId = 101L),
+            createNextEpisodeWithShow(showTraktId = 2L, showName = "Wednesday", episodeId = 201L),
         )
 
         presenter.state.test {
@@ -139,8 +139,8 @@ class WatchlistPresenterTest {
     @Test
     fun `should filter watchNextEpisodes by show name when query is active`() = runTest {
         val nextEpisodes = listOf(
-            createNextEpisodeWithShow(showId = 1L, showName = "Loki", episodeId = 101L),
-            createNextEpisodeWithShow(showId = 2L, showName = "Wednesday", episodeId = 201L),
+            createNextEpisodeWithShow(showTraktId = 1L, showName = "Loki", episodeId = 101L),
+            createNextEpisodeWithShow(showTraktId = 2L, showName = "Wednesday", episodeId = 201L),
         )
 
         presenter.state.test {
@@ -167,7 +167,7 @@ class WatchlistPresenterTest {
         factory.dateTimeProvider.setCurrentTimeMillis(testDateMillis)
 
         val premiereEpisode = createNextEpisodeWithShow(
-            showId = 1L,
+            showTraktId = 1L,
             showName = "Loki",
             episodeId = 101L,
             episodeNumber = 1L,
@@ -193,13 +193,13 @@ class WatchlistPresenterTest {
         factory.dateTimeProvider.setCurrentTimeMillis(currentTime)
 
         val staleEpisode = createNextEpisodeWithShow(
-            showId = 1L,
+            showTraktId = 1L,
             showName = "Stale Show",
             episodeId = 101L,
             lastWatchedAt = eightDaysAgo,
         )
         val activeEpisode = createNextEpisodeWithShow(
-            showId = 2L,
+            showTraktId = 2L,
             showName = "Active Show",
             episodeId = 201L,
             lastWatchedAt = currentTime - (1 * 24 * 60 * 60 * 1000L),
@@ -219,14 +219,14 @@ class WatchlistPresenterTest {
     }
 
     private fun createNextEpisodeWithShow(
-        showId: Long,
+        showTraktId: Long,
         showName: String,
         episodeId: Long,
         episodeNumber: Long = 2L,
         lastWatchedAt: Long? = null,
         airDate: String? = "2021-06-09",
     ) = NextEpisodeWithShow(
-        showId = showId,
+        showTraktId = showTraktId,
         showName = showName,
         showPoster = "/poster.jpg",
         episodeId = episodeId,

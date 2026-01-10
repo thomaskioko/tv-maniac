@@ -27,7 +27,8 @@ public class DefaultFeaturedShowsDao(
     override fun upsert(show: Featured_shows) {
         featuredShowsQueries.transaction {
             featuredShowsQueries.insert(
-                id = show.id,
+                traktId = show.trakt_id,
+                tmdbId = show.tmdb_id,
                 name = show.name,
                 poster_path = show.poster_path,
                 overview = show.overview,
@@ -38,9 +39,10 @@ public class DefaultFeaturedShowsDao(
 
     override fun observeFeaturedShows(page: Long): Flow<List<ShowEntity>> =
         featuredShowsQueries
-            .entriesInPage { id, name, posterPath, overview, inLibrary ->
+            .entriesInPage { traktId, tmdbId, name, posterPath, overview, inLibrary ->
                 ShowEntity(
-                    id = id.id,
+                    traktId = traktId.id,
+                    tmdbId = tmdbId.id,
                     title = name,
                     posterPath = posterPath,
                     overview = overview,

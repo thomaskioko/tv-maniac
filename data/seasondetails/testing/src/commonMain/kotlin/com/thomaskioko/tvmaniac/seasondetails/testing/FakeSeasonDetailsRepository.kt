@@ -14,7 +14,8 @@ public class FakeSeasonDetailsRepository : SeasonDetailsRepository {
     private val seasonsResult = MutableStateFlow<SeasonDetailsWithEpisodes?>(
         SeasonDetailsWithEpisodes(
             seasonId = 0,
-            tvShowId = 0,
+            showTraktId = 0,
+            showTmdbId = 0,
             name = "",
             showTitle = "",
             seasonOverview = "",

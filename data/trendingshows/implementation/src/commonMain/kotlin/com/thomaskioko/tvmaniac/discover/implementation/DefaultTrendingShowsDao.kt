@@ -29,7 +29,8 @@ public class DefaultTrendingShowsDao(
     override fun upsert(show: Trending_shows) {
         trendingShowsQueries.transaction {
             trendingShowsQueries.insert(
-                id = show.id,
+                traktId = show.trakt_id,
+                tmdbId = show.tmdb_id,
                 page = show.page,
                 position = show.position,
                 name = show.name,
@@ -48,9 +49,10 @@ public class DefaultTrendingShowsDao(
                 trendingShowsQueries.pagedTrendingShows(
                     limit = limit,
                     offset = offset,
-                ) { id, page, title, imageUrl, inLib ->
+                ) { traktId, tmdbId, page, title, imageUrl, inLib ->
                     ShowEntity(
-                        id = id.id,
+                        traktId = traktId.id,
+                        tmdbId = tmdbId.id,
                         page = page.id,
                         title = title,
                         posterPath = imageUrl,
@@ -74,9 +76,10 @@ public class DefaultTrendingShowsDao(
 
     override fun observeTrendingShows(page: Long): Flow<List<ShowEntity>> =
         trendingShowsQueries
-            .entriesInPage(Id(page)) { id, pageId, name, posterPath, overview, inLibrary ->
+            .entriesInPage(Id(page)) { traktId, tmdbId, pageId, name, posterPath, overview, inLibrary ->
                 ShowEntity(
-                    id = id.id,
+                    traktId = traktId.id,
+                    tmdbId = tmdbId.id,
                     page = pageId.id,
                     title = name,
                     posterPath = posterPath,

@@ -13,7 +13,7 @@ public class ObserveUnwatchedInPreviousSeasonsInteractor(
 
     override fun createObservable(params: ObserveUnwatchedInPreviousSeasonsParams): Flow<Boolean> {
         return episodeRepository.observeUnwatchedCountInPreviousSeasons(
-            showId = params.showId,
+            showTraktId = params.showTraktId,
             seasonNumber = params.seasonNumber,
         )
             .map { it > 0 }
@@ -21,6 +21,6 @@ public class ObserveUnwatchedInPreviousSeasonsInteractor(
 }
 
 public data class ObserveUnwatchedInPreviousSeasonsParams(
-    val showId: Long,
+    val showTraktId: Long,
     val seasonNumber: Long,
 )

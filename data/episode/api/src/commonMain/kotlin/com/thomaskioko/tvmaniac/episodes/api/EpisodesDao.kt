@@ -14,7 +14,7 @@ public interface EpisodesDao {
     public fun deleteAll()
 
     public suspend fun getEpisodeByShowSeasonEpisodeNumber(
-        showId: Long,
+        showTraktId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
     ): GetEpisodeByShowSeasonEpisodeNumber?

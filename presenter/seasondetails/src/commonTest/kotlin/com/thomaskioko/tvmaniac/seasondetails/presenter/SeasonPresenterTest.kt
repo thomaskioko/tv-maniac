@@ -259,7 +259,7 @@ class SeasonPresenterTest {
         castRepository.setSeasonCast(emptyList())
         episodeRepository.setSeasonWatchProgress(
             SeasonWatchProgress(
-                showId = 1L,
+                showTraktId = 1L,
                 seasonNumber = 1L,
                 watchedCount = 5,
                 totalCount = 10,
@@ -282,7 +282,7 @@ class SeasonPresenterTest {
         castRepository.setSeasonCast(emptyList())
         episodeRepository.setSeasonWatchProgress(
             SeasonWatchProgress(
-                showId = 1L,
+                showTraktId = 1L,
                 seasonNumber = 1L,
                 watchedCount = 10,
                 totalCount = 10,
@@ -305,7 +305,7 @@ class SeasonPresenterTest {
         castRepository.setSeasonCast(emptyList())
         episodeRepository.setSeasonWatchProgress(
             SeasonWatchProgress(
-                showId = 1L,
+                showTraktId = 1L,
                 seasonNumber = 1L,
                 watchedCount = 10,
                 totalCount = 10,
@@ -330,7 +330,7 @@ class SeasonPresenterTest {
         castRepository.setSeasonCast(emptyList())
         episodeRepository.setSeasonWatchProgress(
             SeasonWatchProgress(
-                showId = 1L,
+                showTraktId = 1L,
                 seasonNumber = 1L,
                 watchedCount = 10,
                 totalCount = 10,
@@ -393,7 +393,7 @@ class SeasonPresenterTest {
             cancelAndIgnoreRemainingEvents()
 
             episodeRepository.lastMarkEpisodeWatchedCall shouldBe MarkEpisodeWatchedCall(
-                showId = 1,
+                showTraktId = 1,
                 episodeId = 12345,
                 seasonNumber = 1,
                 episodeNumber = 1,
@@ -427,7 +427,7 @@ class SeasonPresenterTest {
         castRepository.setSeasonCast(emptyList())
         episodeRepository.setSeasonWatchProgress(
             SeasonWatchProgress(
-                showId = 1L,
+                showTraktId = 1L,
                 seasonNumber = 1L,
                 watchedCount = 10,
                 totalCount = 10,
@@ -506,7 +506,7 @@ class SeasonPresenterTest {
             finalState.dialogState.shouldBeInstanceOf<SeasonDialogState.Hidden>()
 
             episodeRepository.lastMarkEpisodeWatchedCall shouldBe MarkEpisodeWatchedCall(
-                showId = 1,
+                showTraktId = 1,
                 episodeId = 12345,
                 seasonNumber = 1,
                 episodeNumber = 5,
@@ -579,7 +579,7 @@ class SeasonPresenterTest {
             finalState.dialogState.shouldBeInstanceOf<SeasonDialogState.Hidden>()
 
             episodeRepository.lastMarkEpisodeWatchedCall shouldBe MarkEpisodeWatchedCall(
-                showId = 1,
+                showTraktId = 1,
                 episodeId = 12345,
                 seasonNumber = 1,
                 episodeNumber = 5,
@@ -612,7 +612,7 @@ class SeasonPresenterTest {
             finalState.dialogState.shouldBeInstanceOf<SeasonDialogState.Hidden>()
 
             episodeRepository.lastMarkEpisodeUnwatchedCall shouldBe MarkEpisodeUnwatchedCall(
-                showId = 1,
+                showTraktId = 1,
                 episodeId = 12345,
             )
         }
@@ -665,7 +665,7 @@ class SeasonPresenterTest {
             finalState.dialogState.shouldBeInstanceOf<SeasonDialogState.Hidden>()
 
             episodeRepository.lastMarkSeasonWatchedCall shouldBe MarkSeasonWatchedCall(
-                showId = 1,
+                showTraktId = 1,
                 seasonNumber = 1,
                 markPreviousSeasons = true,
             )
@@ -698,7 +698,7 @@ class SeasonPresenterTest {
             finalState.dialogState.shouldBeInstanceOf<SeasonDialogState.Hidden>()
 
             episodeRepository.lastMarkSeasonWatchedCall shouldBe MarkSeasonWatchedCall(
-                showId = 1,
+                showTraktId = 1,
                 seasonNumber = 1,
                 markPreviousSeasons = false,
             )
@@ -791,7 +791,7 @@ class SeasonPresenterTest {
             cancelAndIgnoreRemainingEvents()
 
             episodeRepository.lastMarkSeasonWatchedCall shouldBe MarkSeasonWatchedCall(
-                showId = 1,
+                showTraktId = 1,
                 seasonNumber = 1,
                 markPreviousSeasons = false,
             )
@@ -804,7 +804,7 @@ class SeasonPresenterTest {
         seasonDetailsRepository.setSeasonsResult(initialDetails)
         castRepository.setSeasonCast(emptyList())
         episodeRepository.setSeasonWatchProgress(
-            SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 0, totalCount = 10),
+            SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 0, totalCount = 10),
         )
 
         presenter.state.test {
@@ -814,7 +814,7 @@ class SeasonPresenterTest {
             loadedState.watchProgress shouldBe 0f
 
             episodeRepository.setSeasonWatchProgress(
-                SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 1, totalCount = 10),
+                SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 1, totalCount = 10),
             )
 
             presenter.dispatch(
@@ -841,7 +841,7 @@ class SeasonPresenterTest {
         seasonDetailsRepository.setSeasonsResult(initialDetails)
         castRepository.setSeasonCast(emptyList())
         episodeRepository.setSeasonWatchProgress(
-            SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 5, totalCount = 10),
+            SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 5, totalCount = 10),
         )
 
         presenter.state.test {
@@ -860,7 +860,7 @@ class SeasonPresenterTest {
             dialogDismissedState.dialogState.shouldBeInstanceOf<SeasonDialogState.Hidden>()
 
             episodeRepository.setSeasonWatchProgress(
-                SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 4, totalCount = 10),
+                SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 4, totalCount = 10),
             )
 
             val updatedState = awaitItem()
@@ -875,7 +875,7 @@ class SeasonPresenterTest {
         seasonDetailsRepository.setSeasonsResult(initialDetails)
         castRepository.setSeasonCast(emptyList())
         episodeRepository.setSeasonWatchProgress(
-            SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 9, totalCount = 10),
+            SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 9, totalCount = 10),
         )
 
         presenter.state.test {
@@ -884,7 +884,7 @@ class SeasonPresenterTest {
             loadedState.isSeasonWatched shouldBe false
 
             episodeRepository.setSeasonWatchProgress(
-                SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 10, totalCount = 10),
+                SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 10, totalCount = 10),
             )
 
             presenter.dispatch(
@@ -911,7 +911,7 @@ class SeasonPresenterTest {
         seasonDetailsRepository.setSeasonsResult(initialDetails)
         castRepository.setSeasonCast(emptyList())
         episodeRepository.setSeasonWatchProgress(
-            SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 3, totalCount = 10),
+            SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 3, totalCount = 10),
         )
         episodeRepository.setUnwatchedCountInPreviousSeasons(0L)
 
@@ -922,7 +922,7 @@ class SeasonPresenterTest {
             loadedState.isSeasonWatched shouldBe false
 
             episodeRepository.setSeasonWatchProgress(
-                SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 10, totalCount = 10),
+                SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 10, totalCount = 10),
             )
 
             presenter.dispatch(MarkSeasonAsWatched(hasUnwatchedInPreviousSeasons = false))
@@ -943,7 +943,7 @@ class SeasonPresenterTest {
         seasonDetailsRepository.setSeasonsResult(initialDetails)
         castRepository.setSeasonCast(emptyList())
         episodeRepository.setSeasonWatchProgress(
-            SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 10, totalCount = 10),
+            SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 10, totalCount = 10),
         )
 
         presenter.state.test {
@@ -962,7 +962,7 @@ class SeasonPresenterTest {
             dialogDismissedState.dialogState.shouldBeInstanceOf<SeasonDialogState.Hidden>()
 
             episodeRepository.setSeasonWatchProgress(
-                SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 9, totalCount = 10),
+                SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 9, totalCount = 10),
             )
 
             val updatedState = awaitItem()
@@ -978,7 +978,7 @@ class SeasonPresenterTest {
         seasonDetailsRepository.setSeasonsResult(initialDetails)
         castRepository.setSeasonCast(emptyList())
         episodeRepository.setSeasonWatchProgress(
-            SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 10, totalCount = 10),
+            SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 10, totalCount = 10),
         )
 
         presenter.state.test {
@@ -998,7 +998,7 @@ class SeasonPresenterTest {
             dialogDismissedState.dialogState.shouldBeInstanceOf<SeasonDialogState.Hidden>()
 
             episodeRepository.setSeasonWatchProgress(
-                SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 0, totalCount = 10),
+                SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 0, totalCount = 10),
             )
 
             val updatedState = awaitItem()
@@ -1080,7 +1080,7 @@ class SeasonPresenterTest {
             cancelAndIgnoreRemainingEvents()
 
             episodeRepository.lastMarkEpisodeWatchedCall shouldBe MarkEpisodeWatchedCall(
-                showId = 1,
+                showTraktId = 1,
                 episodeId = 12345,
                 seasonNumber = 1,
                 episodeNumber = 1,
@@ -1095,7 +1095,7 @@ class SeasonPresenterTest {
         seasonDetailsRepository.setSeasonsResult(initialDetails)
         castRepository.setSeasonCast(emptyList())
         episodeRepository.setSeasonWatchProgress(
-            SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 10, totalCount = 10),
+            SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 10, totalCount = 10),
         )
 
         presenter.state.test {
@@ -1116,7 +1116,7 @@ class SeasonPresenterTest {
         seasonDetailsRepository.setSeasonsResult(initialDetails)
         castRepository.setSeasonCast(emptyList())
         episodeRepository.setSeasonWatchProgress(
-            SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 0, totalCount = 10),
+            SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 0, totalCount = 10),
         )
         episodeRepository.setUnwatchedCountInPreviousSeasons(0L)
 
@@ -1132,7 +1132,7 @@ class SeasonPresenterTest {
             cancelAndIgnoreRemainingEvents()
 
             episodeRepository.lastMarkSeasonWatchedCall shouldBe MarkSeasonWatchedCall(
-                showId = 1,
+                showTraktId = 1,
                 seasonNumber = 1,
                 markPreviousSeasons = false,
             )
@@ -1145,7 +1145,7 @@ class SeasonPresenterTest {
         seasonDetailsRepository.setSeasonsResult(initialDetails)
         castRepository.setSeasonCast(emptyList())
         episodeRepository.setSeasonWatchProgress(
-            SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 0, totalCount = 10),
+            SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 0, totalCount = 10),
         )
         episodeRepository.setUnwatchedCountInPreviousSeasons(5)
 
@@ -1172,7 +1172,7 @@ class SeasonPresenterTest {
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             param =
             SeasonDetailsUiParam(
-                showId = 1,
+                showTraktId = 1,
                 seasonId = 1,
                 seasonNumber = 1,
             ),

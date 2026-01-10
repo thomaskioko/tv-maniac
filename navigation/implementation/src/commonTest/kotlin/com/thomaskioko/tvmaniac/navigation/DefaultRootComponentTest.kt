@@ -100,7 +100,7 @@ abstract class DefaultRootComponentTest {
             awaitItem().active.instance.shouldBeInstanceOf<Home>()
 
             val param = SeasonDetailsUiParam(
-                showId = 1,
+                showTraktId = 1,
                 seasonId = 2,
                 seasonNumber = 3,
             )

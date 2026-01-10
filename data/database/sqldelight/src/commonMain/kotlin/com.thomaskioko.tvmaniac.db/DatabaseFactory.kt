@@ -108,6 +108,6 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
         followed_showsAdapter = Followed_shows.Adapter(
             trakt_idAdapter = IdAdapter(),
             tmdb_idAdapter = IdAdapter(),
-        )
+        ),
     )
 }

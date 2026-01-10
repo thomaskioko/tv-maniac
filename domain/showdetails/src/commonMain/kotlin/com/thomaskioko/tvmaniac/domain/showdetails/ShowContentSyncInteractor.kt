@@ -26,27 +26,33 @@ public class ShowContentSyncInteractor(
     override suspend fun doWork(params: Param) {
         withContext(dispatchers.io) {
             showDetailsRepository.fetchShowDetails(
-                id = params.showId,
+                id = params.traktId,
                 forceRefresh = params.forceRefresh,
             )
 
-            fetchShowSeasonDetails(params.showId, params.forceRefresh)
+            fetchShowSeasonDetails(
+                showTraktId = params.traktId,
+                forceRefresh = params.forceRefresh,
+            )
 
             watchedEpisodeSyncRepository.syncShowEpisodeWatches(
-                showId = params.showId,
+                showTraktId = params.traktId,
                 forceRefresh = params.forceRefresh,
             )
         }
     }
 
-    private suspend fun fetchShowSeasonDetails(showId: Long, forceRefresh: Boolean) {
-        val seasons = seasonsRepository.observeSeasonsByShowId(showId).first()
+    private suspend fun fetchShowSeasonDetails(
+        showTraktId: Long,
+        forceRefresh: Boolean,
+    ) {
+        val seasons = seasonsRepository.observeSeasonsByShowId(showTraktId).first()
 
         seasons.parallelForEach { season ->
             currentCoroutineContext().ensureActive()
             seasonDetailsRepository.fetchSeasonDetails(
                 param = SeasonDetailsParam(
-                    showId = showId,
+                    showTraktId = showTraktId,
                     seasonId = season.season_id.id,
                     seasonNumber = season.season_number,
                 ),
@@ -56,7 +62,7 @@ public class ShowContentSyncInteractor(
     }
 
     public data class Param(
-        val showId: Long,
+        val traktId: Long,
         val forceRefresh: Boolean = false,
         val isUserInitiated: Boolean = false,
     )

@@ -315,7 +315,7 @@ class DiscoverShowsPresenterTest {
             logger = FakeLogger(),
         )
 
-        testPresenter.dispatch(NextEpisodeClicked(showId = 123L, episodeId = 456L))
+        testPresenter.dispatch(NextEpisodeClicked(showTraktId = 123L, episodeId = 456L))
 
         navigatedShowId shouldBe 123L
         navigatedEpisodeId shouldBe 456L
@@ -336,7 +336,7 @@ class DiscoverShowsPresenterTest {
 
     private fun createNextEpisodesList(size: Int = LIST_SIZE) = List(size) { index ->
         NextEpisodeWithShow(
-            showId = 84958L + index,
+            showTraktId = 84958L + index,
             showName = "Test Show $index",
             showPoster = "/test-poster-$index.jpg",
             episodeId = 1000L + index,
@@ -353,7 +353,7 @@ class DiscoverShowsPresenterTest {
     private fun nextEpisodeUiModelList(size: Int = LIST_SIZE) =
         createNextEpisodesList(size).map { episode ->
             NextEpisodeUiModel(
-                showId = episode.showId,
+                showTraktId = episode.showTraktId,
                 showName = episode.showName,
                 showPoster = episode.showPoster,
                 episodeId = episode.episodeId,
@@ -371,7 +371,8 @@ class DiscoverShowsPresenterTest {
 
     private fun createDiscoverShowList(size: Int = LIST_SIZE) = List(size) {
         ShowEntity(
-            id = 84958,
+            traktId = 84958,
+            tmdbId = 84958,
             title = "Loki",
             posterPath = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
             inLibrary = false,
@@ -380,7 +381,8 @@ class DiscoverShowsPresenterTest {
 
     private fun uiModelList(size: Int = LIST_SIZE) = createDiscoverShowList(size).map {
         DiscoverShow(
-            tmdbId = it.id,
+            tmdbId = it.tmdbId,
+            traktId = it.traktId,
             title = it.title,
             posterImageUrl = it.posterPath,
             inLibrary = it.inLibrary,

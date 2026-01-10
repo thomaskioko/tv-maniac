@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.data.trailers.implementation
 
-import com.thomaskioko.tvmaniac.db.SelectByShowId
+import com.thomaskioko.tvmaniac.db.SelectByShowTmdbId
 import com.thomaskioko.tvmaniac.util.api.AppUtils
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
@@ -18,6 +18,6 @@ public class DefaultTrailerRepository(
 
     override fun isYoutubePlayerInstalled(): Flow<Boolean> = appUtils.isYoutubePlayerInstalled()
 
-    override fun observeTrailers(id: Long): Flow<List<SelectByShowId>> =
-        trailerDao.observeTrailersById(id)
+    override fun observeTrailers(id: Long): Flow<List<SelectByShowTmdbId>> =
+        trailerDao.observeTrailersByShowTmdbId(id)
 }

@@ -5,6 +5,7 @@ import kotlinx.collections.immutable.ImmutableList
 
 public data class ShowDetails(
     val tmdbId: Long,
+    val traktId: Long,
     val title: String,
     val overview: String,
     val language: String?,
@@ -55,7 +56,7 @@ public data class Season(
 }
 
 public data class Show(
-    val tmdbId: Long,
+    val traktId: Long,
     val title: String,
     val posterImageUrl: String?,
     val backdropImageUrl: String?,
@@ -63,7 +64,7 @@ public data class Show(
 )
 
 public data class Trailer(
-    val showId: Long,
+    val showTmdbId: Long,
     val key: String,
     val name: String,
     val youtubeThumbnailUrl: String,

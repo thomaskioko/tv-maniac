@@ -4,6 +4,8 @@ import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.TmdbId
+import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.SEASON_1_EPISODE_COUNT
@@ -64,7 +66,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
     @Test
     fun `should count all unwatched episodes in previous seasons`() = runTest {
         val count = watchedEpisodeDao.getUnwatchedEpisodeCountInPreviousSeasons(
-            showId = TEST_SHOW_ID,
+            showTraktId = TEST_SHOW_ID,
             seasonNumber = SEASON_2_NUMBER,
             includeSpecials = false,
         )
@@ -76,7 +78,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
     fun `should return all seasons watch progress with correct counts`() = runTest {
         val timestamp = Clock.System.now().toEpochMilliseconds()
         watchedEpisodeDao.markAsWatched(
-            showId = TEST_SHOW_ID,
+            showTraktId = TEST_SHOW_ID,
             episodeId = 101L,
             seasonNumber = SEASON_1_NUMBER,
             episodeNumber = 1L,
@@ -84,7 +86,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             includeSpecials = false,
         )
         watchedEpisodeDao.markAsWatched(
-            showId = TEST_SHOW_ID,
+            showTraktId = TEST_SHOW_ID,
             episodeId = 102L,
             seasonNumber = SEASON_1_NUMBER,
             episodeNumber = 2L,
@@ -92,7 +94,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             includeSpecials = false,
         )
         watchedEpisodeDao.markAsWatched(
-            showId = TEST_SHOW_ID,
+            showTraktId = TEST_SHOW_ID,
             episodeId = 103L,
             seasonNumber = SEASON_1_NUMBER,
             episodeNumber = 3L,
@@ -100,7 +102,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             includeSpecials = false,
         )
         watchedEpisodeDao.markAsWatched(
-            showId = TEST_SHOW_ID,
+            showTraktId = TEST_SHOW_ID,
             episodeId = 201L,
             seasonNumber = SEASON_2_NUMBER,
             episodeNumber = 1L,
@@ -157,7 +159,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             val episodeNumber = episodeIndex + 1
             val episodeId = 100L + episodeNumber
             watchedEpisodeDao.markAsWatched(
-                showId = TEST_SHOW_ID,
+                showTraktId = TEST_SHOW_ID,
                 episodeId = episodeId,
                 seasonNumber = SEASON_1_NUMBER,
                 episodeNumber = episodeNumber.toLong(),
@@ -184,7 +186,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             initialProgress.first { it.seasonNumber == SEASON_1_NUMBER }.watchedCount shouldBe 0
 
             watchedEpisodeDao.markAsWatched(
-                showId = TEST_SHOW_ID,
+                showTraktId = TEST_SHOW_ID,
                 episodeId = 101L,
                 seasonNumber = SEASON_1_NUMBER,
                 episodeNumber = 1L,
@@ -203,7 +205,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
         val entries = (1..5).map { episodeNumber ->
             WatchedEpisodeEntry(
                 id = 0,
-                showId = TEST_SHOW_ID,
+                showTraktId = TEST_SHOW_ID,
                 episodeId = (100L + episodeNumber),
                 seasonNumber = SEASON_1_NUMBER,
                 episodeNumber = episodeNumber.toLong(),
@@ -213,7 +215,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
         }
 
         watchedEpisodeDao.upsertBatchFromTrakt(
-            showId = TEST_SHOW_ID,
+            showTraktId = TEST_SHOW_ID,
             entries = entries,
             includeSpecials = false,
         )
@@ -233,7 +235,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
     @Test
     fun `should handle empty batch upsert gracefully`() = runTest {
         watchedEpisodeDao.upsertBatchFromTrakt(
-            showId = TEST_SHOW_ID,
+            showTraktId = TEST_SHOW_ID,
             entries = emptyList(),
             includeSpecials = false,
         )
@@ -246,18 +248,17 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
 
     private fun insertTestData() {
         val _ = database.tvShowQueries.upsert(
-            id = Id(TEST_SHOW_ID),
+            trakt_id = Id<TraktId>(TEST_SHOW_ID),
+            tmdb_id = Id<TmdbId>(TEST_SHOW_ID),
             name = TEST_SHOW_NAME,
             overview = TEST_SHOW_OVERVIEW,
             language = "en",
-            first_air_date = "2023-01-01",
-            vote_average = 8.0,
+            year = "2023-01-01",
+            ratings = 8.0,
             vote_count = 100,
-            popularity = 95.0,
-            genre_ids = listOf(1, 2),
+            genres = listOf("Drama", "Action"),
             status = "Returning Series",
             episode_numbers = null,
-            last_air_date = null,
             season_numbers = null,
             poster_path = "/test1.jpg",
             backdrop_path = "/backdrop1.jpg",
@@ -265,7 +266,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
 
         val _ = database.seasonsQueries.upsert(
             id = Id(SEASON_1_ID),
-            show_id = Id(TEST_SHOW_ID),
+            show_trakt_id = Id<TraktId>(TEST_SHOW_ID),
             season_number = SEASON_1_NUMBER,
             title = "Season 1",
             overview = "First season",
@@ -275,7 +276,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
 
         val _ = database.seasonsQueries.upsert(
             id = Id(SEASON_2_ID),
-            show_id = Id(TEST_SHOW_ID),
+            show_trakt_id = Id<TraktId>(TEST_SHOW_ID),
             season_number = SEASON_2_NUMBER,
             title = "Season 2",
             overview = "Second season",
@@ -289,13 +290,13 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             val _ = database.episodesQueries.upsert(
                 id = Id(episodeId),
                 season_id = Id(SEASON_1_ID),
-                show_id = Id(TEST_SHOW_ID),
+                show_trakt_id = Id<TraktId>(TEST_SHOW_ID),
                 title = "Episode $episodeNumber",
                 overview = "Episode $episodeNumber overview",
                 episode_number = episodeNumber.toLong(),
                 runtime = 45L,
                 image_url = "/episode$episodeNumber.jpg",
-                vote_average = 8.5,
+                ratings = 8.5,
                 vote_count = 50L,
                 air_date = "2023-01-0$episodeNumber",
                 trakt_id = null,
@@ -308,13 +309,13 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             val _ = database.episodesQueries.upsert(
                 id = Id(episodeId),
                 season_id = Id(SEASON_2_ID),
-                show_id = Id(TEST_SHOW_ID),
+                show_trakt_id = Id<TraktId>(TEST_SHOW_ID),
                 title = "Episode $episodeNumber",
                 overview = "Season 2 Episode $episodeNumber overview",
                 episode_number = episodeNumber.toLong(),
                 runtime = 45L,
                 image_url = "/s2e$episodeNumber.jpg",
-                vote_average = 9.0,
+                ratings = 9.0,
                 vote_count = 75L,
                 air_date = "2023-02-20",
                 trakt_id = null,
@@ -323,10 +324,10 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
 
         val _ = database.followedShowsQueries.upsert(
             id = null,
-            tmdbId = TEST_SHOW_ID,
+            traktId = Id<TraktId>(TEST_SHOW_ID),
+            tmdbId = Id<TmdbId>(TEST_SHOW_ID),
             followedAt = Clock.System.now().toEpochMilliseconds(),
             pendingAction = "NOTHING",
-            traktId = null,
         )
     }
 }

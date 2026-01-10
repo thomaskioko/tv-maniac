@@ -35,7 +35,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @ContributesBinding(ActivityScope::class, boundType = ShowDetailsPresenter::class)
 public class DefaultShowDetailsPresenter(
     @Assisted componentContext: ComponentContext,
-    @Assisted private val showId: Long,
+    @Assisted private val showTraktId: Long,
     @Assisted private val onBack: () -> Unit,
     @Assisted private val onNavigateToShow: (id: Long) -> Unit,
     @Assisted private val onNavigateToSeason: (param: ShowSeasonDetailsParam) -> Unit,
@@ -64,8 +64,8 @@ public class DefaultShowDetailsPresenter(
     private val _state = MutableStateFlow(ShowDetailsContent.Empty)
 
     init {
-        observableShowDetailsInteractor(showId)
-        observeShowWatchProgressInteractor(showId)
+        observableShowDetailsInteractor(showTraktId)
+        observeShowWatchProgressInteractor(showTraktId)
         coroutineScope.launch { observeShowDetails() }
     }
 
@@ -90,7 +90,7 @@ public class DefaultShowDetailsPresenter(
             showDetailsRefreshing = showDetailsUpdating,
             similarShowsRefreshing = similarShowsUpdating,
             watchProvidersRefreshing = watchProvidersUpdating,
-            continueTrackingEpisodes = mapContinueTrackingEpisodes(showDetails.continueTrackingEpisodes, showId),
+            continueTrackingEpisodes = mapContinueTrackingEpisodes(showDetails.continueTrackingEpisodes, showTraktId),
             continueTrackingScrollIndex = showDetails.continueTrackingScrollIndex,
         )
     }.stateIn(
@@ -113,11 +113,11 @@ public class DefaultShowDetailsPresenter(
             is FollowShowClicked -> {
                 coroutineScope.launch {
                     if (action.isInLibrary) {
-                        followedShowsRepository.removeFollowedShow(showId)
+                        followedShowsRepository.removeFollowedShow(showTraktId)
                     } else {
-                        followedShowsRepository.addFollowedShow(showId)
+                        followedShowsRepository.addFollowedShow(showTraktId)
                         showContentSyncInteractor(
-                            ShowContentSyncInteractor.Param(showId = showId, isUserInitiated = true),
+                            ShowContentSyncInteractor.Param(traktId = showTraktId, isUserInitiated = true),
                         ).collectStatus(episodeActionLoadingState, logger, uiMessageManager)
                     }
                 }
@@ -129,7 +129,7 @@ public class DefaultShowDetailsPresenter(
                 coroutineScope.launch {
                     showContentSyncInteractor(
                         ShowContentSyncInteractor.Param(
-                            showId = showId,
+                            traktId = showTraktId,
                             forceRefresh = true,
                             isUserInitiated = true,
                         ),
@@ -147,7 +147,7 @@ public class DefaultShowDetailsPresenter(
                 coroutineScope.launch {
                     markEpisodeWatchedInteractor(
                         MarkEpisodeWatchedParams(
-                            showId = action.showId,
+                            showTraktId = action.showTraktId,
                             episodeId = action.episodeId,
                             seasonNumber = action.seasonNumber,
                             episodeNumber = action.episodeNumber,
@@ -161,27 +161,27 @@ public class DefaultShowDetailsPresenter(
 
     private fun observeShowDetails(forceReload: Boolean = false) {
         coroutineScope.launch {
-            recommendedShowsInteractor(RecommendedShowsInteractor.Param(showId, forceReload))
+            recommendedShowsInteractor(RecommendedShowsInteractor.Param(showTraktId, forceReload))
                 .collectStatus(recommendedShowsLoadingState, logger, uiMessageManager)
         }
 
         coroutineScope.launch {
-            showDetailsInteractor(ShowDetailsInteractor.Param(showId, forceReload))
+            showDetailsInteractor(ShowDetailsInteractor.Param(showTraktId, forceReload))
                 .collectStatus(showDetailsLoadingState, logger, uiMessageManager)
         }
 
         coroutineScope.launch {
-            prefetchFirstSeasonInteractor(PrefetchFirstSeasonInteractor.Param(showId, forceReload))
+            prefetchFirstSeasonInteractor(PrefetchFirstSeasonInteractor.Param(showTraktId, forceReload))
                 .collectStatus(showDetailsLoadingState, logger, uiMessageManager)
         }
 
         coroutineScope.launch {
-            similarShowsInteractor(SimilarShowsInteractor.Param(showId, forceReload))
+            similarShowsInteractor(SimilarShowsInteractor.Param(showTraktId, forceReload))
                 .collectStatus(similarShowsLoadingState, logger, uiMessageManager)
         }
 
         coroutineScope.launch {
-            watchProvidersInteractor(WatchProvidersInteractor.Param(showId, forceReload))
+            watchProvidersInteractor(WatchProvidersInteractor.Param(showTraktId, forceReload))
                 .collectStatus(watchProvidersLoadingState, logger, uiMessageManager)
         }
     }

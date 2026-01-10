@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlin.time.Instant
 
 public data class MarkEpisodeWatchedCall(
-    val showId: Long,
+    val showTraktId: Long,
     val episodeId: Long,
     val seasonNumber: Long,
     val episodeNumber: Long,
@@ -20,13 +20,13 @@ public data class MarkEpisodeWatchedCall(
 )
 
 public data class MarkSeasonWatchedCall(
-    val showId: Long,
+    val showTraktId: Long,
     val seasonNumber: Long,
     val markPreviousSeasons: Boolean,
 )
 
 public data class MarkEpisodeUnwatchedCall(
-    val showId: Long,
+    val showTraktId: Long,
     val episodeId: Long,
 )
 
@@ -75,44 +75,44 @@ public class FakeEpisodeRepository : EpisodeRepository {
         nextEpisodesForWatchlist.asStateFlow()
 
     override suspend fun markEpisodeAsWatched(
-        showId: Long,
+        showTraktId: Long,
         episodeId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
         watchedAt: Instant?,
     ) {
-        lastMarkEpisodeWatchedCall = MarkEpisodeWatchedCall(showId, episodeId, seasonNumber, episodeNumber)
+        lastMarkEpisodeWatchedCall = MarkEpisodeWatchedCall(showTraktId, episodeId, seasonNumber, episodeNumber)
     }
 
-    override suspend fun markEpisodeAsUnwatched(showId: Long, episodeId: Long) {
-        lastMarkEpisodeUnwatchedCall = MarkEpisodeUnwatchedCall(showId, episodeId)
+    override suspend fun markEpisodeAsUnwatched(showTraktId: Long, episodeId: Long) {
+        lastMarkEpisodeUnwatchedCall = MarkEpisodeUnwatchedCall(showTraktId, episodeId)
     }
 
-    override fun observeLastWatchedEpisode(showId: Long): Flow<LastWatchedEpisode?> =
+    override fun observeLastWatchedEpisode(showTraktId: Long): Flow<LastWatchedEpisode?> =
         MutableStateFlow(null)
 
-    override fun observeSeasonWatchProgress(showId: Long, seasonNumber: Long): Flow<SeasonWatchProgress> =
+    override fun observeSeasonWatchProgress(showTraktId: Long, seasonNumber: Long): Flow<SeasonWatchProgress> =
         seasonWatchProgressFlow.asStateFlow()
 
-    override fun observeShowWatchProgress(showId: Long): Flow<ShowWatchProgress> =
+    override fun observeShowWatchProgress(showTraktId: Long): Flow<ShowWatchProgress> =
         showWatchProgressFlow.asStateFlow()
 
-    override fun observeAllSeasonsWatchProgress(showId: Long): Flow<List<SeasonWatchProgress>> =
+    override fun observeAllSeasonsWatchProgress(showTraktId: Long): Flow<List<SeasonWatchProgress>> =
         allSeasonsWatchProgressFlow.asStateFlow()
 
-    override suspend fun markSeasonWatched(showId: Long, seasonNumber: Long, watchedAt: Instant?) {
-        lastMarkSeasonWatchedCall = MarkSeasonWatchedCall(showId, seasonNumber, markPreviousSeasons = false)
+    override suspend fun markSeasonWatched(showTraktId: Long, seasonNumber: Long, watchedAt: Instant?) {
+        lastMarkSeasonWatchedCall = MarkSeasonWatchedCall(showTraktId, seasonNumber, markPreviousSeasons = false)
     }
 
     override suspend fun markEpisodeAndPreviousEpisodesWatched(
-        showId: Long,
+        showTraktId: Long,
         episodeId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
         watchedAt: Instant?,
     ) {
         lastMarkEpisodeWatchedCall = MarkEpisodeWatchedCall(
-            showId,
+            showTraktId,
             episodeId,
             seasonNumber,
             episodeNumber,
@@ -121,25 +121,25 @@ public class FakeEpisodeRepository : EpisodeRepository {
     }
 
     override suspend fun markSeasonAndPreviousSeasonsWatched(
-        showId: Long,
+        showTraktId: Long,
         seasonNumber: Long,
         watchedAt: Instant?,
     ) {
-        lastMarkSeasonWatchedCall = MarkSeasonWatchedCall(showId, seasonNumber, markPreviousSeasons = true)
+        lastMarkSeasonWatchedCall = MarkSeasonWatchedCall(showTraktId, seasonNumber, markPreviousSeasons = true)
     }
 
-    override suspend fun markSeasonUnwatched(showId: Long, seasonNumber: Long) {}
+    override suspend fun markSeasonUnwatched(showTraktId: Long, seasonNumber: Long) {}
 
     override suspend fun getUnwatchedCountAfterFetchingPreviousSeasons(
-        showId: Long,
+        showTraktId: Long,
         seasonNumber: Long,
     ): Long = unwatchedCountInPreviousSeasonsFlow.value
 
-    override fun observeContinueTrackingEpisodes(showId: Long): Flow<ContinueTrackingResult?> =
+    override fun observeContinueTrackingEpisodes(showTraktId: Long): Flow<ContinueTrackingResult?> =
         continueTrackingFlow.asStateFlow()
 
     override fun observeUnwatchedCountInPreviousSeasons(
-        showId: Long,
+        showTraktId: Long,
         seasonNumber: Long,
     ): Flow<Long> = unwatchedCountInPreviousSeasonsFlow.asStateFlow()
 }

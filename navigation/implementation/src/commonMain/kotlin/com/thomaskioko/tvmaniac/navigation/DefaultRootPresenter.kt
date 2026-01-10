@@ -102,7 +102,7 @@ public class DefaultRootPresenter(
                             navigator.pushNew(
                                 config = RootDestinationConfig.SeasonDetails(
                                     param = SeasonDetailsUiParam(
-                                        showId = params.showId,
+                                        showTraktId = params.showTraktId,
                                         seasonNumber = params.seasonNumber,
                                         seasonId = params.seasonId,
                                     ),

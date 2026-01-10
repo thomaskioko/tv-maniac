@@ -10,8 +10,8 @@ internal class FakeFollowedShowsDataSource : FollowedShowsDataSource {
     var followedShows: List<FollowedShowEntry> = emptyList()
     var addShowsCallCount = 0
     var removeShowsCallCount = 0
-    var lastAddedTmdbIds: List<Long> = emptyList()
-    var lastRemovedTmdbIds: List<Long> = emptyList()
+    var lastAddedTraktIds: List<Long> = emptyList()
+    var lastRemovedTraktIds: List<Long> = emptyList()
 
     override suspend fun getFollowedShows(): List<Pair<FollowedShowEntry, TraktFollowedShowResponse>> {
         return followedShows.map { entry ->
@@ -19,31 +19,31 @@ internal class FakeFollowedShowsDataSource : FollowedShowsDataSource {
         }
     }
 
-    override suspend fun addShowsToWatchlist(tmdbIds: List<Long>) {
+    override suspend fun addShowsToWatchlistByTraktId(traktIds: List<Long>) {
         addShowsCallCount++
-        lastAddedTmdbIds = tmdbIds
+        lastAddedTraktIds = traktIds
     }
 
-    override suspend fun removeShowsFromWatchlist(tmdbIds: List<Long>) {
+    override suspend fun removeShowsFromWatchlistByTraktId(traktIds: List<Long>) {
         removeShowsCallCount++
-        lastRemovedTmdbIds = tmdbIds
+        lastRemovedTraktIds = traktIds
     }
 
     private fun createFakeTraktResponse(entry: FollowedShowEntry): TraktFollowedShowResponse {
         return TraktFollowedShowResponse(
             rank = 1,
-            id = entry.traktId?.toInt() ?: 0,
+            id = entry.traktId.toInt(),
             listedAt = "2024-01-01T00:00:00.000Z",
             type = "show",
             show = ShowResponse(
-                title = "Test Show ${entry.tmdbId}",
+                title = "Test Show ${entry.traktId}",
                 year = 2023,
                 ids = IdsResponse(
-                    trakt = entry.traktId?.toInt() ?: 0,
-                    slug = "test-show-${entry.tmdbId}",
-                    imdb = "tt${entry.tmdbId}",
-                    tmdb = entry.tmdbId.toInt(),
-                    tvdb = entry.tmdbId.toInt(),
+                    trakt = entry.traktId,
+                    slug = "test-show-${entry.traktId}",
+                    imdb = "tt${entry.traktId}",
+                    tmdb = entry.tmdbId ?: 0L,
+                    tvdb = entry.tmdbId,
                 ),
             ),
         )

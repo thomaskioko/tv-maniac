@@ -26,7 +26,7 @@ val showDetailsContent = ShowDetailsContent(
         status = "Ended",
         votes = 1L,
         rating = 8.0,
-        genres = persistentListOf("1234"),
+        genres = persistentListOf("Action", "Adventure", "Sci-Fi"),
         isInLibrary = false,
     ),
     message = null,
@@ -34,49 +34,50 @@ val showDetailsContent = ShowDetailsContent(
 
 val similarShowList = listOf(
     SimilarShows(
-        tmdb_id = Id(184958),
+        show_tmdb_id = Id(184958),
         name = "Loki",
         poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         backdrop_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         in_library = 0,
-        show_id = Id(18495),
+        show_trakt_id = Id(18495),
+        similar_show_trakt_id = Id(18495),
     ),
 )
 
 val seasons = listOf(
     ShowSeasons(
         season_id = Id(84958),
-        show_id = Id(114355),
+        show_trakt_id = Id(114355),
         season_title = "Season 1",
         season_number = 1,
     ),
 )
 
 val tvShowDetails = TvshowDetails(
-    show_id = Id(849583),
+    trakt_id = Id(849583),
+    tmdb_id = Id(849583),
     name = "Loki",
     overview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
     language = "en",
-    first_air_date = "2021-06-09",
-    last_air_date = "2021-06-09",
-    popularity = 1.0,
-    vote_average = 8.0,
-    vote_count = 1,
+    year = "2021-06-09",
+    ratings = 8.0,
     status = "Ended",
+    vote_count = 1,
     poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
     backdrop_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-    genre_list = "1234",
+    genres = listOf("Action", "Adventure", "Sci-Fi"),
     in_library = 0,
 )
 
 val recommendedShowList = listOf(
     RecommendedShows(
-        tmdb_id = Id(184958),
+        show_tmdb_id = Id(184958),
         name = "Loki",
         poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         backdrop_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         in_library = 0,
-        show_id = Id(18495),
+        show_trakt_id = Id(18495),
+        recommended_show_trakt_id = Id(18495),
     ),
 )
 
@@ -118,7 +119,7 @@ val testContinueTrackingResult = ContinueTrackingResult(
 )
 
 val testShowWatchProgress = ShowWatchProgress(
-    showId = 84958L,
+    showTraktId = 84958L,
     watchedCount = 5,
     totalCount = 10,
 )
@@ -126,13 +127,13 @@ val testShowWatchProgress = ShowWatchProgress(
 val testSeasonsWithProgress = listOf(
     ShowSeasons(
         season_id = Id(101),
-        show_id = Id(84958),
+        show_trakt_id = Id(84958),
         season_title = "Season 1",
         season_number = 1,
     ),
     ShowSeasons(
         season_id = Id(102),
-        show_id = Id(84958),
+        show_trakt_id = Id(84958),
         season_title = "Season 2",
         season_number = 2,
     ),
@@ -140,13 +141,13 @@ val testSeasonsWithProgress = listOf(
 
 val testSeasonWatchProgress = listOf(
     SeasonWatchProgress(
-        showId = 84958L,
+        showTraktId = 84958L,
         seasonNumber = 1L,
         watchedCount = 8,
         totalCount = 10,
     ),
     SeasonWatchProgress(
-        showId = 84958L,
+        showTraktId = 84958L,
         seasonNumber = 2L,
         watchedCount = 3,
         totalCount = 12,
@@ -155,7 +156,7 @@ val testSeasonWatchProgress = listOf(
 
 val testPartialSeasonProgress = listOf(
     SeasonWatchProgress(
-        showId = 84958L,
+        showTraktId = 84958L,
         seasonNumber = 1L,
         watchedCount = 5,
         totalCount = 10,
@@ -164,7 +165,7 @@ val testPartialSeasonProgress = listOf(
 
 val testCompletedSeasonProgress = listOf(
     SeasonWatchProgress(
-        showId = 84958L,
+        showTraktId = 84958L,
         seasonNumber = 1L,
         watchedCount = 10,
         totalCount = 10,

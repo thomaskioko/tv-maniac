@@ -7,5 +7,5 @@ import kotlinx.coroutines.flow.Flow
 public interface CastRepository {
     public fun observeSeasonCast(seasonId: Long): Flow<List<SeasonCast>>
 
-    public fun observeShowCast(showId: Long): Flow<List<ShowCast>>
+    public fun observeShowCast(showTmdbId: Long): Flow<List<ShowCast>>
 }

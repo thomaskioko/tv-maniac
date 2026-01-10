@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.episodes.api.model
 
 public data class LastWatchedEpisode(
-    val showId: Long,
+    val showTraktId: Long,
     val episodeId: Long,
     val seasonNumber: Long,
     val episodeNumber: Long,

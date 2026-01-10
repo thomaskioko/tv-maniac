@@ -25,11 +25,11 @@ public class DefaultSimilarShowsRepository(
     private val requestManagerRepository: RequestManagerRepository,
 ) : SimilarShowsRepository {
 
-    override suspend fun fetchSimilarShows(id: Long, forceRefresh: Boolean) {
-        val param = SimilarParams(showId = id, page = DEFAULT_API_PAGE)
-        val isEmpty = dao.observeSimilarShows(id).first().isEmpty()
+    override suspend fun fetchSimilarShows(traktId: Long, forceRefresh: Boolean) {
+        val param = SimilarParams(showTraktId = traktId, page = DEFAULT_API_PAGE)
+        val isEmpty = dao.observeSimilarShows(traktId).first().isEmpty()
         val isExpired = requestManagerRepository.isRequestExpired(
-            entityId = id,
+            entityId = traktId,
             requestType = SIMILAR_SHOWS.name,
             threshold = SIMILAR_SHOWS.duration,
         )

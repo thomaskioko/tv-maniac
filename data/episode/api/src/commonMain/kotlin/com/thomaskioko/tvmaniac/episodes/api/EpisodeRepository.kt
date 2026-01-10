@@ -21,7 +21,7 @@ public interface EpisodeRepository {
      * @param watchedAt Optional timestamp for when the episode was watched. Defaults to current time.
      */
     public suspend fun markEpisodeAsWatched(
-        showId: Long,
+        showTraktId: Long,
         episodeId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
@@ -34,7 +34,7 @@ public interface EpisodeRepository {
      * @param watchedAt Optional timestamp for when the episodes were watched. Defaults to current time.
      */
     public suspend fun markEpisodeAndPreviousEpisodesWatched(
-        showId: Long,
+        showTraktId: Long,
         episodeId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
@@ -44,36 +44,36 @@ public interface EpisodeRepository {
     /**
      * Mark an episode as unwatched. The SQL view automatically updates next episode calculations.
      */
-    public suspend fun markEpisodeAsUnwatched(showId: Long, episodeId: Long)
+    public suspend fun markEpisodeAsUnwatched(showTraktId: Long, episodeId: Long)
 
     /**
      * Observe the last watched episode using the shows_last_watched view.
      * Provides absolute episode numbering context for progression tracking.
      */
-    public fun observeLastWatchedEpisode(showId: Long): Flow<LastWatchedEpisode?>
+    public fun observeLastWatchedEpisode(showTraktId: Long): Flow<LastWatchedEpisode?>
 
     /**
      * Observe watch progress for a specific season.
      */
-    public fun observeSeasonWatchProgress(showId: Long, seasonNumber: Long): Flow<SeasonWatchProgress>
+    public fun observeSeasonWatchProgress(showTraktId: Long, seasonNumber: Long): Flow<SeasonWatchProgress>
 
     /**
      * Observe watch progress for an entire show (across all seasons).
      */
-    public fun observeShowWatchProgress(showId: Long): Flow<ShowWatchProgress>
+    public fun observeShowWatchProgress(showTraktId: Long): Flow<ShowWatchProgress>
 
     /**
      * Observe watch progress for all seasons of a show.
      * Returns a list of SeasonWatchProgress, one per season.
      */
-    public fun observeAllSeasonsWatchProgress(showId: Long): Flow<List<SeasonWatchProgress>>
+    public fun observeAllSeasonsWatchProgress(showTraktId: Long): Flow<List<SeasonWatchProgress>>
 
     /**
      * Mark all episodes in a season as watched.
      * Automatically adds the show to the library if not already there.
      * @param watchedAt Optional timestamp for when the episodes were watched. Defaults to current time.
      */
-    public suspend fun markSeasonWatched(showId: Long, seasonNumber: Long, watchedAt: Instant? = null)
+    public suspend fun markSeasonWatched(showTraktId: Long, seasonNumber: Long, watchedAt: Instant? = null)
 
     /**
      * Mark all episodes in a season as watched along with all previous seasons.
@@ -81,7 +81,7 @@ public interface EpisodeRepository {
      * @param watchedAt Optional timestamp for when the episodes were watched. Defaults to current time.
      */
     public suspend fun markSeasonAndPreviousSeasonsWatched(
-        showId: Long,
+        showTraktId: Long,
         seasonNumber: Long,
         watchedAt: Instant? = null,
     )
@@ -89,7 +89,7 @@ public interface EpisodeRepository {
     /**
      * Mark all episodes in a season as unwatched.
      */
-    public suspend fun markSeasonUnwatched(showId: Long, seasonNumber: Long)
+    public suspend fun markSeasonUnwatched(showTraktId: Long, seasonNumber: Long)
 
     /**
      * Get count of unwatched episodes in seasons before the specified season number,
@@ -97,7 +97,7 @@ public interface EpisodeRepository {
      * Use this when the previous seasons may not have been loaded yet.
      */
     public suspend fun getUnwatchedCountAfterFetchingPreviousSeasons(
-        showId: Long,
+        showTraktId: Long,
         seasonNumber: Long,
     ): Long
 
@@ -106,7 +106,7 @@ public interface EpisodeRepository {
      * Used for reactive UI to determine if previous seasons dialog should be shown.
      */
     public fun observeUnwatchedCountInPreviousSeasons(
-        showId: Long,
+        showTraktId: Long,
         seasonNumber: Long,
     ): Flow<Long>
 
@@ -117,5 +117,5 @@ public interface EpisodeRepository {
      * - Auto-progresses to next season when all episodes in current season are watched
      * - Returns null when no unwatched episodes remain across all seasons
      */
-    public fun observeContinueTrackingEpisodes(showId: Long): Flow<ContinueTrackingResult?>
+    public fun observeContinueTrackingEpisodes(showTraktId: Long): Flow<ContinueTrackingResult?>
 }

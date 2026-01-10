@@ -6,6 +6,7 @@ public data class WatchlistSections(
 )
 
 public data class WatchlistShowInfo(
+    val traktId: Long,
     val tmdbId: Long,
     val title: String,
     val posterImageUrl: String?,

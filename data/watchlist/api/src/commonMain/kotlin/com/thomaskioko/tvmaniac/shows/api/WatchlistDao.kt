@@ -10,5 +10,5 @@ public interface WatchlistDao {
 
     public fun observeWatchlistByQuery(query: String): Flow<List<SearchFollowedShows>>
 
-    public fun observeIsShowInLibrary(showId: Long): Flow<Boolean>
+    public fun observeIsShowInLibrary(traktId: Long): Flow<Boolean>
 }

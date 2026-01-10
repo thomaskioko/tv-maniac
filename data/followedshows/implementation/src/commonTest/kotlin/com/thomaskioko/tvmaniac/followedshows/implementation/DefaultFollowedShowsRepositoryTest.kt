@@ -7,6 +7,8 @@ import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.DbTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.TmdbId
+import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowEntry
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.followedshows.implementation.fixtures.FakeFollowedShowsDataSource
@@ -76,7 +78,7 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
         val entries = dao.entries()
 
         entries.size shouldBe 1
-        entries.first().tmdbId shouldBe 1L
+        entries.first().traktId shouldBe 1L
         entries.first().pendingAction shouldBe PendingAction.UPLOAD
     }
 
@@ -84,16 +86,15 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
     fun `should re-add show marked for deletion`() = runTest {
         val _ = dao.upsert(
             FollowedShowEntry(
-                tmdbId = 1L,
+                traktId = 1L,
                 followedAt = testInstant,
                 pendingAction = PendingAction.DELETE,
-                traktId = 123L,
             ),
         )
 
         repository.addFollowedShow(1L)
 
-        val entry = dao.entryWithTmdbId(1L)
+        val entry = dao.entryWithTraktId(1L)
         entry?.pendingAction shouldBe PendingAction.UPLOAD
     }
 
@@ -101,7 +102,7 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
     fun `should not add show already in watchlist`() = runTest {
         val _ = dao.upsert(
             FollowedShowEntry(
-                tmdbId = 1L,
+                traktId = 1L,
                 followedAt = testInstant,
                 pendingAction = PendingAction.NOTHING,
             ),
@@ -118,24 +119,24 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
     fun `should mark show for deletion given trakt id exists`() = runTest {
         val _ = dao.upsert(
             FollowedShowEntry(
-                tmdbId = 1L,
+                traktId = 1L,
                 followedAt = testInstant,
                 pendingAction = PendingAction.NOTHING,
-                traktId = 123L,
             ),
         )
 
         repository.removeFollowedShow(1L)
 
-        val entry = dao.entryWithTmdbId(1L)
+        val entry = dao.entryWithTraktId(1L)
         entry?.pendingAction shouldBe PendingAction.DELETE
     }
 
     @Test
     fun `should delete local entry given no trakt id`() = runTest {
+        fakeAuthRepository.setState(TraktAuthState.LOGGED_IN)
         val _ = dao.upsert(
             FollowedShowEntry(
-                tmdbId = 1L,
+                traktId = 1L,
                 followedAt = testInstant,
                 pendingAction = PendingAction.UPLOAD,
             ),
@@ -143,7 +144,7 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
 
         repository.removeFollowedShow(1L)
 
-        val entry = dao.entryWithTmdbId(1L)
+        val entry = dao.entryWithTraktId(1L)
         entry shouldBe null
     }
 
@@ -151,14 +152,14 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
     fun `should observe followed shows`() = runTest {
         val _ = dao.upsert(
             FollowedShowEntry(
-                tmdbId = 1L,
+                traktId = 1L,
                 followedAt = testInstant,
                 pendingAction = PendingAction.NOTHING,
             ),
         )
         val _ = dao.upsert(
             FollowedShowEntry(
-                tmdbId = 2L,
+                traktId = 2L,
                 followedAt = testInstant,
                 pendingAction = PendingAction.NOTHING,
             ),
@@ -167,7 +168,7 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
         repository.observeFollowedShows().test {
             val entries = awaitItem()
             entries.size shouldBe 2
-            entries.map { it.tmdbId }.toSet() shouldBe setOf(1L, 2L)
+            entries.map { it.traktId }.toSet() shouldBe setOf(1L, 2L)
             cancelAndConsumeRemainingEvents()
         }
     }
@@ -187,14 +188,14 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
         fakeAuthRepository.setState(TraktAuthState.LOGGED_IN)
         val _ = dao.upsert(
             FollowedShowEntry(
-                tmdbId = 1L,
+                traktId = 1L,
                 followedAt = testInstant,
                 pendingAction = PendingAction.UPLOAD,
             ),
         )
         val _ = dao.upsert(
             FollowedShowEntry(
-                tmdbId = 2L,
+                traktId = 2L,
                 followedAt = testInstant,
                 pendingAction = PendingAction.UPLOAD,
             ),
@@ -203,7 +204,7 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
         repository.syncFollowedShows()
 
         fakeDataSource.addShowsCallCount shouldBe 1
-        fakeDataSource.lastAddedTmdbIds shouldBe listOf(1L, 2L)
+        fakeDataSource.lastAddedTraktIds shouldBe listOf(1L, 2L)
 
         val entries = dao.entries()
         entries.all { it.pendingAction == PendingAction.NOTHING } shouldBe true
@@ -214,25 +215,23 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
         fakeAuthRepository.setState(TraktAuthState.LOGGED_IN)
         val _ = dao.upsert(
             FollowedShowEntry(
-                tmdbId = 1L,
+                traktId = 1L,
                 followedAt = testInstant,
                 pendingAction = PendingAction.DELETE,
-                traktId = 123L,
             ),
         )
         val _ = dao.upsert(
             FollowedShowEntry(
-                tmdbId = 2L,
+                traktId = 2L,
                 followedAt = testInstant,
                 pendingAction = PendingAction.DELETE,
-                traktId = 456L,
             ),
         )
 
         repository.syncFollowedShows()
 
         fakeDataSource.removeShowsCallCount shouldBe 1
-        fakeDataSource.lastRemovedTmdbIds shouldBe listOf(1L, 2L)
+        fakeDataSource.lastRemovedTraktIds shouldBe listOf(1L, 2L)
 
         val entries = dao.entries()
         entries.size shouldBe 0
@@ -244,16 +243,14 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
         fakeRequestManagerRepository.requestValid = false
         fakeDataSource.followedShows = listOf(
             FollowedShowEntry(
-                tmdbId = 1L,
+                traktId = 1L,
                 followedAt = testInstant,
                 pendingAction = PendingAction.NOTHING,
-                traktId = 111L,
             ),
             FollowedShowEntry(
-                tmdbId = 2L,
+                traktId = 2L,
                 followedAt = testInstant,
                 pendingAction = PendingAction.NOTHING,
-                traktId = 222L,
             ),
         )
 
@@ -261,7 +258,7 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
 
         val entries = dao.entries()
         entries.size shouldBe 2
-        entries.map { it.tmdbId }.toSet() shouldBe setOf(1L, 2L)
+        entries.map { it.traktId }.toSet() shouldBe setOf(1L, 2L)
 
         fakeRequestManagerRepository.upsertCalled shouldBe true
     }
@@ -272,33 +269,29 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
         fakeRequestManagerRepository.requestValid = false
         val _ = dao.upsert(
             FollowedShowEntry(
-                tmdbId = 1L,
+                traktId = 1L,
                 followedAt = testInstant,
                 pendingAction = PendingAction.NOTHING,
-                traktId = 111L,
             ),
         )
         val _ = dao.upsert(
             FollowedShowEntry(
-                tmdbId = 2L,
+                traktId = 2L,
                 followedAt = testInstant,
                 pendingAction = PendingAction.NOTHING,
-                traktId = 222L,
             ),
         )
 
         fakeDataSource.followedShows = listOf(
             FollowedShowEntry(
-                tmdbId = 2L,
+                traktId = 2L,
                 followedAt = testInstant,
                 pendingAction = PendingAction.NOTHING,
-                traktId = 222L,
             ),
             FollowedShowEntry(
-                tmdbId = 3L,
+                traktId = 3L,
                 followedAt = testInstant,
                 pendingAction = PendingAction.NOTHING,
-                traktId = 333L,
             ),
         )
 
@@ -306,7 +299,7 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
 
         val entries = dao.entries()
         entries.size shouldBe 2
-        entries.map { it.tmdbId }.toSet() shouldBe setOf(2L, 3L)
+        entries.map { it.traktId }.toSet() shouldBe setOf(2L, 3L)
     }
 
     @Test
@@ -315,41 +308,37 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
         fakeRequestManagerRepository.requestValid = false
         val _ = dao.upsert(
             FollowedShowEntry(
-                tmdbId = 1L,
+                traktId = 1L,
                 followedAt = testInstant,
                 pendingAction = PendingAction.UPLOAD,
             ),
         )
         val _ = dao.upsert(
             FollowedShowEntry(
-                tmdbId = 2L,
+                traktId = 2L,
                 followedAt = testInstant,
                 pendingAction = PendingAction.NOTHING,
-                traktId = 222L,
             ),
         )
 
         fakeDataSource.followedShows = listOf(
             FollowedShowEntry(
-                tmdbId = 1L,
+                traktId = 1L,
                 followedAt = testInstant,
                 pendingAction = PendingAction.NOTHING,
-                traktId = 111L,
             ),
             FollowedShowEntry(
-                tmdbId = 3L,
+                traktId = 3L,
                 followedAt = testInstant,
                 pendingAction = PendingAction.NOTHING,
-                traktId = 333L,
             ),
         )
 
         repository.syncFollowedShows()
 
         val entries = dao.entries()
-        entries.any { it.tmdbId == 1L } shouldBe true
-        entries.find { it.tmdbId == 1L }?.pendingAction shouldBe PendingAction.NOTHING
-        entries.find { it.tmdbId == 1L }?.traktId shouldBe 111L
+        entries.any { it.traktId == 1L } shouldBe true
+        entries.find { it.traktId == 1L }?.pendingAction shouldBe PendingAction.NOTHING
     }
 
     @Test
@@ -372,54 +361,51 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
 
     private fun insertTestShows() {
         val _ = database.tvShowQueries.upsert(
-            id = Id(1),
+            trakt_id = Id<TraktId>(1),
+            tmdb_id = Id<TmdbId>(1),
             name = "Test Show 1",
             overview = "Test overview 1",
             language = "en",
-            first_air_date = "2023-01-01",
-            vote_average = 8.0,
+            year = "2023-01-01",
+            ratings = 8.0,
             vote_count = 100,
-            popularity = 95.0,
-            genre_ids = listOf(1, 2),
+            genres = listOf("Drama", "Action"),
             status = "Returning Series",
             episode_numbers = null,
-            last_air_date = null,
             season_numbers = null,
             poster_path = "/test1.jpg",
             backdrop_path = "/backdrop1.jpg",
         )
 
         val _ = database.tvShowQueries.upsert(
-            id = Id(2),
+            trakt_id = Id<TraktId>(2),
+            tmdb_id = Id<TmdbId>(2),
             name = "Test Show 2",
             overview = "Test overview 2",
             language = "en",
-            first_air_date = "2023-02-01",
-            vote_average = 7.5,
+            year = "2023-02-01",
+            ratings = 7.5,
             vote_count = 200,
-            popularity = 85.0,
-            genre_ids = listOf(2, 3),
+            genres = listOf("Comedy", "Romance"),
             status = "Ended",
             episode_numbers = null,
-            last_air_date = null,
             season_numbers = null,
             poster_path = "/test2.jpg",
             backdrop_path = "/backdrop2.jpg",
         )
 
         val _ = database.tvShowQueries.upsert(
-            id = Id(3),
+            trakt_id = Id<TraktId>(3),
+            tmdb_id = Id<TmdbId>(3),
             name = "Test Show 3",
             overview = "Test overview 3",
             language = "en",
-            first_air_date = "2023-03-01",
-            vote_average = 9.0,
+            year = "2023-03-01",
+            ratings = 9.0,
             vote_count = 300,
-            popularity = 75.0,
-            genre_ids = listOf(1, 3),
+            genres = listOf("Drama", "Thriller"),
             status = "Returning Series",
             episode_numbers = null,
-            last_air_date = null,
             season_numbers = null,
             poster_path = "/test3.jpg",
             backdrop_path = "/backdrop3.jpg",

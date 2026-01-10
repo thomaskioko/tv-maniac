@@ -23,6 +23,6 @@ public class FakeCastRepository : CastRepository {
     override fun observeSeasonCast(seasonId: Long): Flow<List<SeasonCast>> =
         seasonCastEntityList.receiveAsFlow()
 
-    override fun observeShowCast(showId: Long): Flow<List<ShowCast>> =
+    override fun observeShowCast(showTmdbId: Long): Flow<List<ShowCast>> =
         showCastEntityList.receiveAsFlow()
 }

@@ -25,7 +25,7 @@ public class DefaultSeasonDetailsRepository(
         param: SeasonDetailsParam,
         forceRefresh: Boolean,
     ) {
-        val details = dao.observeSeasonEpisodeDetails(param.showId, param.seasonNumber).first()
+        val details = dao.observeSeasonEpisodeDetails(param.showTraktId, param.seasonNumber).first()
         val isEmpty = details == null || details.episodes.isEmpty()
         when {
             forceRefresh || isEmpty -> store.fresh(param)
@@ -35,7 +35,7 @@ public class DefaultSeasonDetailsRepository(
 
     override fun observeSeasonDetails(
         param: SeasonDetailsParam,
-    ): Flow<SeasonDetailsWithEpisodes?> = dao.observeSeasonEpisodeDetails(param.showId, param.seasonNumber)
+    ): Flow<SeasonDetailsWithEpisodes?> = dao.observeSeasonEpisodeDetails(param.showTraktId, param.seasonNumber)
 
     override fun observeSeasonImages(id: Long): Flow<List<SeasonImages>> = dao.observeSeasonImages(id)
 }

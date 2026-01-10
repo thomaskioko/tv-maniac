@@ -140,6 +140,21 @@ public interface TraktShowsRemoteDataSource {
      * @see [Trakt ID Lookup](https://trakt.docs.apiary.io/#reference/search/id-lookup)
      */
     public suspend fun getShowByTmdbId(tmdbId: Long): ApiResponse<List<TraktSearchResult>>
+
+    /**
+     * Searches for shows by text query.
+     *
+     * @param query The search query string
+     * @param page Page number for pagination (1-indexed)
+     * @param limit Number of results per page (max 100)
+     * @return List of search results containing show information
+     * @see [Trakt Text Search](https://trakt.docs.apiary.io/#reference/search/text-query)
+     */
+    public suspend fun searchShows(
+        query: String,
+        page: Int = 1,
+        limit: Int = 20,
+    ): ApiResponse<List<TraktSearchResult>>
 }
 
 /**

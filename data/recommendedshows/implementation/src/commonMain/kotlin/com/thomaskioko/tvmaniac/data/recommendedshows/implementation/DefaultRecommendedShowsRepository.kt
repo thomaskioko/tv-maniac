@@ -31,7 +31,7 @@ public class DefaultRecommendedShowsRepository(
         id: Long,
         forceRefresh: Boolean,
     ) {
-        val key = RecommendedShowsParams(showId = id, page = DEFAULT_API_PAGE)
+        val key = RecommendedShowsParams(traktId = id, page = DEFAULT_API_PAGE)
         val isEmpty = dao.observeRecommendedShows(id).first().isEmpty()
         val isExpired = requestManagerRepository.isRequestExpired(
             entityId = id,

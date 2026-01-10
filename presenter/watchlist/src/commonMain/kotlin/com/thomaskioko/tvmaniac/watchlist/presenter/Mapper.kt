@@ -28,17 +28,17 @@ public fun List<FollowedShows>.entityToWatchlistShowList(
         val total = it.total_episode_count
         val progress = if (total > 0) watched.toFloat() / total else 0f
         WatchlistItem(
-            tmdbId = it.show_id.id,
+            traktId = it.show_trakt_id.id,
             title = it.name,
             posterImageUrl = it.poster_path,
             status = it.status,
-            year = it.first_air_date,
+            year = it.year,
             seasonCount = it.season_count ?: 0,
             episodeCount = it.episode_count ?: 0,
             episodesWatched = watched,
             totalEpisodesTracked = total,
             watchProgress = progress,
-            lastWatchedAt = lastWatchedMap[it.show_id.id],
+            lastWatchedAt = lastWatchedMap[it.show_trakt_id.id],
         )
     }
         .toPersistentList()
@@ -52,17 +52,17 @@ public fun List<SearchFollowedShows>.entityToWatchlistShowList(
         val total = it.total_episode_count
         val progress = if (total > 0) watched.toFloat() / total else 0f
         WatchlistItem(
-            tmdbId = it.show_id.id,
+            traktId = it.show_trakt_id.id,
             title = it.name,
             posterImageUrl = it.poster_path,
             status = it.status,
-            year = it.first_air_date,
+            year = it.year,
             seasonCount = it.season_count ?: 0,
             episodeCount = it.episode_count ?: 0,
             episodesWatched = watched,
             totalEpisodesTracked = total,
             watchProgress = progress,
-            lastWatchedAt = lastWatchedMap[it.show_id.id],
+            lastWatchedAt = lastWatchedMap[it.show_trakt_id.id],
         )
     }
         .toPersistentList()
@@ -123,7 +123,7 @@ internal fun WatchlistSections.toPresenter(): SectionedItems = SectionedItems(
 )
 
 internal fun WatchlistShowInfo.toPresenter(): WatchlistItem = WatchlistItem(
-    tmdbId = tmdbId,
+    traktId = traktId,
     title = title,
     posterImageUrl = posterImageUrl,
     status = status,
@@ -155,7 +155,7 @@ internal fun UpNextSections.toPresenter(currentTimeMillis: Long): SectionedEpiso
 internal fun UpNextEpisodeInfo.toPresenter(currentTimeMillis: Long): UpNextEpisodeItem {
     val badge = calculateBadge(episodeNumber, airDate, currentTimeMillis)
     return UpNextEpisodeItem(
-        showId = showId,
+        showTraktId = showTraktId,
         showName = showName,
         showPoster = showPoster,
         episodeId = episodeId,

@@ -37,5 +37,5 @@ public class DefaultShowDetailsRepository(
         }
     }
 
-    override fun observeShowDetails(id: Long): Flow<TvshowDetails> = dao.observeTvShows(id)
+    override fun observeShowDetails(id: Long): Flow<TvshowDetails> = dao.observeTvShowByTraktId(id)
 }

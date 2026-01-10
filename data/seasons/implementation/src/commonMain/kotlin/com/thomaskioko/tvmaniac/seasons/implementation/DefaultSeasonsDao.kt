@@ -31,7 +31,7 @@ public class DefaultSeasonsDao(
         database.transaction {
             seasonQueries.upsert(
                 id = season.id,
-                show_id = season.show_id,
+                show_trakt_id = season.show_trakt_id,
                 season_number = season.season_number,
                 episode_count = season.episode_count,
                 title = season.title,
@@ -45,29 +45,33 @@ public class DefaultSeasonsDao(
         entityList.forEach { upsert(it) }
     }
 
-    override fun observeSeasonsByShowId(id: Long, includeSpecials: Boolean): Flow<List<ShowSeasons>> {
+    override fun observeSeasonsByShowTraktId(showTraktId: Long, includeSpecials: Boolean): Flow<List<ShowSeasons>> {
         return database.seasonsQueries.showSeasons(
-            showId = Id(id),
+            showTraktId = Id(showTraktId),
             includeSpecials = if (includeSpecials) 1L else 0L,
         ).asFlow().mapToList(dispatcher.io)
     }
 
-    override fun fetchShowSeasons(id: Long, includeSpecials: Boolean): List<ShowSeasons> =
+    override fun fetchShowSeasons(showTraktId: Long, includeSpecials: Boolean): List<ShowSeasons> =
         database.seasonsQueries.showSeasons(
-            showId = Id(id),
+            showTraktId = Id(showTraktId),
             includeSpecials = if (includeSpecials) 1L else 0L,
         ).executeAsList()
 
-    override suspend fun getSeasonByShowAndNumber(showId: Long, seasonNumber: Long): GetSeasonByShowAndNumber? =
+    override suspend fun getSeasonByShowAndNumber(showTraktId: Long, seasonNumber: Long): GetSeasonByShowAndNumber? =
         withContext(dispatcher.databaseRead) {
             seasonQueries.getSeasonByShowAndNumber(
-                showId = Id(showId),
+                showTraktId = Id(showTraktId),
                 seasonNumber = seasonNumber,
             ).executeAsOneOrNull()
         }
 
-    override fun delete(id: Long) {
-        seasonQueries.delete(Id(id))
+    override fun updateImageUrl(seasonId: Long, imageUrl: String) {
+        seasonQueries.updateImageUrl(image_url = imageUrl, id = Id(seasonId))
+    }
+
+    override fun delete(showTraktId: Long) {
+        seasonQueries.delete(Id(showTraktId))
     }
 
     override fun deleteAll() {
