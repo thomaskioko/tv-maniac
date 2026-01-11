@@ -41,22 +41,19 @@ public class SimilarShowStore(
 ) : Store<SimilarParams, List<SimilarShows>> by storeBuilder(
     fetcher = Fetcher.of { param: SimilarParams ->
         coroutineScope {
-            val traktShow = traktRemoteDataSource.getShowByTmdbId(param.showId).getOrThrow()
-                .firstOrNull { it.type == "show" }?.show
-                ?: error("Could not find Trakt ID for TMDB ID: ${param.showId}")
-
             traktRemoteDataSource.getRelatedShows(
-                traktId = traktShow.ids.trakt.toLong(),
+                traktId = param.showTraktId,
                 page = param.page.toInt(),
             ).getOrThrow()
-                .filter { it.ids.tmdb != null }
-                .map { show ->
+                .mapNotNull { show ->
+                    val tmdbId = show.ids.tmdb ?: return@mapNotNull null
                     async {
                         val tmdbResult = runCatching {
-                            tmdbDataSource.getShowDetails(show.ids.tmdb!!.toLong())
+                            tmdbDataSource.getShowDetails(tmdbId)
                         }
                         SimilarShowResult(
                             traktShow = show,
+                            tmdbId = tmdbId,
                             tmdbDetails = tmdbResult.getOrNull()?.let {
                                 (it as? ApiResponse.Success)?.body
                             },
@@ -67,32 +64,34 @@ public class SimilarShowStore(
         }
     },
     sourceOfTruth = SourceOfTruth.of<SimilarParams, List<SimilarShowResult>, List<SimilarShows>>(
-        reader = { param: SimilarParams -> similarShowsDao.observeSimilarShows(param.showId) },
+        reader = { param: SimilarParams -> similarShowsDao.observeSimilarShows(param.showTraktId) },
         writer = { param: SimilarParams, response ->
             withContext(dispatchers.databaseWrite) {
                 databaseTransactionRunner {
                     response.forEachIndexed { index, result ->
-                        val showId = result.traktShow.ids.tmdb!!.toLong()
+                        val traktId = result.traktShow.ids.trakt
+                        val tmdbId = result.tmdbId
 
-                        if (!tvShowsDao.showExists(showId)) {
-                            tvShowsDao.upsert(result.toTvshow(showId, formatterUtil))
+                        if (!tvShowsDao.showExistsByTraktId(traktId)) {
+                            tvShowsDao.upsert(result.toTvshow(traktId, tmdbId, formatterUtil))
                         }
 
                         similarShowsDao.upsert(
-                            similarShowId = showId,
-                            showId = param.showId,
+                            showTraktId = traktId,
+                            showTmdbId = tmdbId,
+                            similarShowTraktId = param.showTraktId,
                             pageOrder = index,
                         )
                     }
                 }
 
                 requestManagerRepository.upsert(
-                    entityId = param.showId,
+                    entityId = param.showTraktId,
                     requestType = SIMILAR_SHOWS.name,
                 )
             }
         },
-        delete = { param -> similarShowsDao.delete(param.showId) },
+        delete = { param -> similarShowsDao.delete(param.showTraktId) },
         deleteAll = { databaseTransactionRunner(similarShowsDao::deleteAll) },
     ).usingDispatchers(
         readDispatcher = dispatchers.databaseRead,
@@ -101,9 +100,9 @@ public class SimilarShowStore(
 ).validator(
     Validator.by { cachedData ->
         withContext(dispatchers.io) {
-            val showId = cachedData.firstOrNull()?.show_id?.id ?: return@withContext false
+            val showTraktId = cachedData.firstOrNull()?.show_trakt_id?.id ?: return@withContext false
             !requestManagerRepository.isRequestExpired(
-                entityId = showId,
+                entityId = showTraktId,
                 requestType = SIMILAR_SHOWS.name,
                 threshold = SIMILAR_SHOWS.duration,
             )
@@ -113,27 +112,27 @@ public class SimilarShowStore(
 
 private data class SimilarShowResult(
     val traktShow: TraktShowResponse,
+    val tmdbId: Long,
     val tmdbDetails: TmdbShowDetailsResponse?,
 )
 
-private fun SimilarShowResult.toTvshow(showId: Long, formatterUtil: FormatterUtil): Tvshow {
+private fun SimilarShowResult.toTvshow(traktId: Long, tmdbId: Long, formatterUtil: FormatterUtil): Tvshow {
     val tmdb = tmdbDetails
     val trakt = traktShow
     return Tvshow(
-        id = Id(showId),
+        trakt_id = Id(traktId),
+        tmdb_id = Id(tmdbId),
         name = tmdb?.name ?: trakt.title,
         overview = tmdb?.overview ?: trakt.overview ?: "",
         language = tmdb?.originalLanguage ?: trakt.language,
-        first_air_date = tmdb?.firstAirDate ?: trakt.firstAirDate,
-        popularity = tmdb?.popularity ?: 0.0,
-        vote_average = tmdb?.voteAverage ?: trakt.rating ?: 0.0,
+        year = tmdb?.firstAirDate ?: trakt.firstAirDate,
+        ratings = tmdb?.voteAverage ?: trakt.rating ?: 0.0,
         vote_count = tmdb?.voteCount?.toLong() ?: trakt.votes?.toLong() ?: 0L,
         poster_path = tmdb?.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
         backdrop_path = tmdb?.backdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
         status = tmdb?.status ?: trakt.status,
-        genre_ids = tmdb?.genres?.map { it.id } ?: emptyList(),
-        episode_numbers = null,
-        last_air_date = null,
+        genres = trakt.genres?.map { it.replaceFirstChar { char -> char.uppercase() } },
+        episode_numbers = trakt.airedEpisodes?.toString(),
         season_numbers = null,
     )
 }

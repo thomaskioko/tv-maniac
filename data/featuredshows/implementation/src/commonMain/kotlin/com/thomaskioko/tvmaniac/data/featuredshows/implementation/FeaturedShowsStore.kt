@@ -42,13 +42,14 @@ public class FeaturedShowsStore(
     fetcher = Fetcher.of { page: Long ->
         coroutineScope {
             traktRemoteDataSource.getTrendingShows(page = page.toInt()).getOrThrow()
-                .filter { it.show.ids.tmdb != null }
-                .mapIndexed { index, traktResponse ->
+                .withIndex()
+                .mapNotNull { (index, traktResponse) ->
+                    val tmdbId = traktResponse.show.ids.tmdb ?: return@mapNotNull null
                     async {
-                        val tmdbId = traktResponse.show.ids.tmdb!!.toLong()
                         when (val tmdbDetails = tmdbDetailsDataSource.getShowDetails(tmdbId)) {
                             is ApiResponse.Success -> FeaturedShowWithImages(
                                 traktShow = traktResponse.show,
+                                tmdbId = tmdbId,
                                 tmdbPosterPath = tmdbDetails.body.posterPath,
                                 tmdbBackdropPath = tmdbDetails.body.backdropPath,
                                 pageOrder = index,
@@ -56,6 +57,7 @@ public class FeaturedShowsStore(
 
                             is ApiResponse.Error -> FeaturedShowWithImages(
                                 traktShow = traktResponse.show,
+                                tmdbId = tmdbId,
                                 tmdbPosterPath = null,
                                 tmdbBackdropPath = null,
                                 pageOrder = index,
@@ -81,7 +83,8 @@ public class FeaturedShowsStore(
 
                     response.forEach { showWithImages ->
                         val show = showWithImages.traktShow
-                        val showId = show.ids.tmdb!!.toLong()
+                        val traktId = show.ids.trakt
+                        val tmdbId = showWithImages.tmdbId
                         val posterPath = showWithImages.tmdbPosterPath?.let {
                             formatterUtil.formatTmdbPosterPath(it)
                         }
@@ -89,13 +92,14 @@ public class FeaturedShowsStore(
                             formatterUtil.formatTmdbPosterPath(it)
                         }
 
-                        if (!tvShowsDao.showExists(showId)) {
-                            tvShowsDao.upsert(show.toTvshow(showId, posterPath, backdropPath))
+                        if (!tvShowsDao.showExistsByTraktId(traktId)) {
+                            tvShowsDao.upsert(show.toTvshow(traktId, tmdbId, posterPath, backdropPath))
                         }
 
                         featuredShowsDao.upsert(
                             Featured_shows(
-                                id = Id(showId),
+                                trakt_id = Id(traktId),
+                                tmdb_id = Id(tmdbId),
                                 name = show.title,
                                 poster_path = posterPath,
                                 overview = show.overview,
@@ -123,29 +127,30 @@ public class FeaturedShowsStore(
 
 private data class FeaturedShowWithImages(
     val traktShow: TraktShowResponse,
+    val tmdbId: Long,
     val tmdbPosterPath: String?,
     val tmdbBackdropPath: String?,
     val pageOrder: Int,
 )
 
 private fun TraktShowResponse.toTvshow(
-    showId: Long,
+    traktId: Long,
+    tmdbId: Long,
     posterPath: String?,
     backdropPath: String?,
 ): Tvshow = Tvshow(
-    id = Id(showId),
+    trakt_id = Id(traktId),
+    tmdb_id = Id(tmdbId),
     name = title,
     overview = overview ?: "",
     language = language,
-    first_air_date = firstAirDate,
-    popularity = 0.0,
-    vote_average = rating ?: 0.0,
-    vote_count = votes?.toLong() ?: 0L,
+    year = firstAirDate,
+    ratings = rating ?: 0.0,
+    vote_count = votes ?: 0L,
     poster_path = posterPath,
     backdrop_path = backdropPath,
     status = status,
-    genre_ids = emptyList(),
-    episode_numbers = null,
-    last_air_date = null,
+    genres = genres?.map { it.replaceFirstChar { char -> char.uppercase() } },
+    episode_numbers = airedEpisodes?.toString(),
     season_numbers = null,
 )
