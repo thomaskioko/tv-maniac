@@ -79,6 +79,9 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
         ),
         castsAdapter = Casts.Adapter(
             idAdapter = IdAdapter(),
+            trakt_idAdapter = IdAdapter(),
+            show_trakt_idAdapter = IdAdapter(),
+            season_idAdapter = IdAdapter(),
         ),
         watch_providersAdapter = Watch_providers.Adapter(
             idAdapter = IdAdapter(),
@@ -95,11 +98,6 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
         show_metadataAdapter = Show_metadata.Adapter(
             show_trakt_idAdapter = IdAdapter(),
             last_watched_episode_idAdapter = IdAdapter(),
-        ),
-        cast_appearanceAdapter = Cast_appearance.Adapter(
-            cast_idAdapter = IdAdapter(),
-            show_tmdb_idAdapter = IdAdapter(),
-            season_idAdapter = IdAdapter(),
         ),
         watched_episodesAdapter = Watched_episodes.Adapter(
             show_trakt_idAdapter = IdAdapter(),

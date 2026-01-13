@@ -8,6 +8,7 @@ DROP VIEW IF EXISTS shows_next_to_watch;
 -- Drop all tables in order of dependencies
 DROP TABLE IF EXISTS watched_episodes;
 DROP TABLE IF EXISTS cast_appearance;
+DROP TABLE IF EXISTS casts;
 DROP TABLE IF EXISTS season_images;
 DROP TABLE IF EXISTS season_videos;
 DROP TABLE IF EXISTS trailers;
@@ -218,19 +219,24 @@ CREATE TABLE similar_shows (
     FOREIGN KEY(trakt_id) REFERENCES tvshow(trakt_id)
 );
 
--- Recreate cast_appearance table (uses TMDB ID)
-CREATE TABLE IF NOT EXISTS cast_appearance (
-    cast_id INTEGER NOT NULL,
-    show_tmdb_id INTEGER NOT NULL,
+-- Recreate casts table with show_trakt_id and season_id (simplified - no cast_appearance table)
+CREATE TABLE IF NOT EXISTS casts (
+    id INTEGER NOT NULL,
+    trakt_id INTEGER,
+    show_trakt_id INTEGER NOT NULL,
     season_id INTEGER,
-    PRIMARY KEY (cast_id, show_tmdb_id, season_id),
-    FOREIGN KEY(cast_id) REFERENCES casts(id) ON DELETE CASCADE,
-    FOREIGN KEY(show_tmdb_id) REFERENCES tvshow(tmdb_id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    character_name TEXT NOT NULL,
+    profile_path TEXT,
+    popularity REAL,
+    PRIMARY KEY (id, show_trakt_id, season_id),
+    FOREIGN KEY(show_trakt_id) REFERENCES tvshow(trakt_id) ON DELETE CASCADE,
     FOREIGN KEY(season_id) REFERENCES season(id) ON DELETE CASCADE
 );
 
-CREATE UNIQUE INDEX IF NOT EXISTS index_cast_appearance_unique ON cast_appearance(cast_id, show_tmdb_id, season_id);
-CREATE UNIQUE INDEX IF NOT EXISTS index_cast_appearance_id ON cast_appearance(cast_id);
+CREATE INDEX IF NOT EXISTS index_casts_trakt_id ON casts(trakt_id);
+CREATE INDEX IF NOT EXISTS index_casts_show_trakt_id ON casts(show_trakt_id);
+CREATE INDEX IF NOT EXISTS index_casts_season_id ON casts(season_id);
 
 -- Recreate trailers table (uses TMDB ID)
 CREATE TABLE trailers (
