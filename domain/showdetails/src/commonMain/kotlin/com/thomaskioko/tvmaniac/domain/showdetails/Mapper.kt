@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.domain.showdetails
 
 import com.thomaskioko.tvmaniac.db.RecommendedShows
-import com.thomaskioko.tvmaniac.db.SelectByShowTmdbId
+import com.thomaskioko.tvmaniac.db.SelectByShowTraktId
 import com.thomaskioko.tvmaniac.db.ShowCast
 import com.thomaskioko.tvmaniac.db.ShowSeasons
 import com.thomaskioko.tvmaniac.db.SimilarShows
@@ -69,12 +69,12 @@ internal fun List<ShowSeasons>.toSeasonsList(
         )
     }
 
-internal fun List<SelectByShowTmdbId>.toTrailerList(): List<Trailer> =
-    map {
+internal fun List<SelectByShowTraktId>.toTrailerList(): List<Trailer> =
+    map { trailer ->
         Trailer(
-            showTmdbId = it.show_tmdb_id.id,
-            key = it.key,
-            name = it.name,
-            youtubeThumbnailUrl = "https://i.ytimg.com/vi/${it.key}/hqdefault.jpg",
+            showTmdbId = trailer.show_tmdb_id.id,
+            key = trailer.trailer_id,
+            name = trailer.name,
+            youtubeThumbnailUrl = "https://i.ytimg.com/vi/${trailer.trailer_id}/hqdefault.jpg",
         )
     }
