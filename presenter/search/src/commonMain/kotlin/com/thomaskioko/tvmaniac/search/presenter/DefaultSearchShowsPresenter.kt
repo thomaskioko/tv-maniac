@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.genre.GenreRepository
 import com.thomaskioko.tvmaniac.search.api.SearchRepository
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -52,7 +53,8 @@ public class DefaultSearchShowsPresenter(
     }
 
     internal inner class PresenterInstance : InstanceKeeper.Instance {
-        private val _state = MutableStateFlow<SearchShowState>(InitialSearchState())
+        private var isInitialized = false
+        private val _state = MutableStateFlow(SearchShowState.Empty)
         val state: StateFlow<SearchShowState> = _state.asStateFlow()
 
         private val queryFlow = MutableSharedFlow<String>(
@@ -62,6 +64,9 @@ public class DefaultSearchShowsPresenter(
         )
 
         fun init() {
+            if (isInitialized) return
+            isInitialized = true
+
             coroutineScope.launch {
                 launch { observeGenre() }
                 launch { observeQueryFlow() }
@@ -71,12 +76,12 @@ public class DefaultSearchShowsPresenter(
         fun dispatch(action: SearchShowAction) {
             when (action) {
                 DismissSnackBar -> {
-                    _state.update {
-                        (it as? ShowContentAvailable)?.copy(errorMessage = null) ?: it
-                    }
+                    _state.update { it.copy(errorMessage = null) }
                 }
                 ReloadShowContent -> coroutineScope.launch { genreRepository.fetchGenresWithShows(true) }
-                LoadDiscoverShows, ClearQuery -> coroutineScope.launch { observeGenre() }
+                LoadDiscoverShows, ClearQuery -> {
+                    _state.update { it.copy(query = "", searchResults = persistentListOf()) }
+                }
                 is QueryChanged -> handleQueryChange(action.query)
                 is SearchShowClicked -> onNavigateToShowDetails(action.id)
                 is GenreCategoryClicked -> onNavigateToGenre(action.id)
@@ -85,24 +90,10 @@ public class DefaultSearchShowsPresenter(
 
         private suspend fun observeGenre() {
             genreRepository.observeGenresWithShows()
-                .onStart { updateShowState() }
+                .onStart { _state.update { it.copy(isUpdating = true) } }
                 .collect { result ->
-                    _state.update {
-                        ShowContentAvailable(
-                            isUpdating = false,
-                            genres = mapper.toGenreList(result),
-                        )
-                    }
+                    _state.update { it.copy(isUpdating = false, genres = mapper.toGenreList(result)) }
                 }
-        }
-
-        private fun updateShowState() {
-            _state.update { currentState ->
-                when (currentState) {
-                    is ShowContentAvailable -> currentState.copy(isUpdating = true)
-                    else -> ShowContentAvailable(isUpdating = true)
-                }
-            }
         }
 
         private suspend fun observeQueryFlow() {
@@ -116,8 +107,8 @@ public class DefaultSearchShowsPresenter(
                 .flatMapLatest { query -> searchRepository.observeSearchResults(query) }
                 .catch { error ->
                     _state.update {
-                        EmptySearchResult(
-                            query = queryFlow.replayCache.lastOrNull(),
+                        it.copy(
+                            isUpdating = false,
                             errorMessage = error.message ?: "An unknown error occurred",
                         )
                     }
@@ -129,18 +120,13 @@ public class DefaultSearchShowsPresenter(
 
         private suspend fun updateSearchLoadingState(query: String) {
             searchRepository.search(query)
-            _state.update { state ->
-                when (state) {
-                    is SearchResultAvailable -> state.copy(isUpdating = true, query = query)
-                    else -> SearchResultAvailable(isUpdating = true, query = query)
-                }
-            }
+            _state.update { it.copy(isUpdating = true, query = query) }
         }
 
         private fun handleQueryChange(query: String) {
             coroutineScope.launch {
                 if (query.isEmpty()) {
-                    observeGenre()
+                    _state.update { it.copy(query = "", searchResults = persistentListOf()) }
                 } else {
                     queryFlow.emit(query)
                 }
@@ -148,24 +134,7 @@ public class DefaultSearchShowsPresenter(
         }
 
         private fun handleSearchResults(shows: List<ShowEntity>) {
-            _state.update { state ->
-                val currentQuery = queryFlow.replayCache.lastOrNull() ?: state.query
-                when {
-                    !state.isUpdating && shows.isEmpty() -> EmptySearchResult(
-                        query = currentQuery,
-                    )
-                    state is SearchResultAvailable -> state.copy(
-                        isUpdating = false,
-                        results = mapper.toShowList(shows),
-                        query = currentQuery,
-                    )
-                    else -> SearchResultAvailable(
-                        isUpdating = false,
-                        results = mapper.toShowList(shows),
-                        query = currentQuery,
-                    )
-                }
-            }
+            _state.update { it.copy(isUpdating = false, searchResults = mapper.toShowList(shows)) }
         }
     }
 }
