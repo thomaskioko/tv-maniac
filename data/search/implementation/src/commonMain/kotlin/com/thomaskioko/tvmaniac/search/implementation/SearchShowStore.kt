@@ -2,15 +2,20 @@ package com.thomaskioko.tvmaniac.search.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.networkutil.model.getOrThrow
 import com.thomaskioko.tvmaniac.core.store.storeBuilder
 import com.thomaskioko.tvmaniac.core.store.usingDispatchers
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
-import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
-import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResponse
+import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
+import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
+import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
@@ -19,46 +24,66 @@ import org.mobilenativefoundation.store.store5.Store
 @Inject
 public class SearchShowStore(
     private val tvShowsDao: TvShowsDao,
-    private val tmdbRemoteDataSource: TmdbShowsNetworkDataSource,
+    private val traktRemoteDataSource: TraktShowsRemoteDataSource,
+    private val tmdbDataSource: TmdbShowDetailsNetworkDataSource,
     private val formatterUtil: FormatterUtil,
+    private val dateTimeProvider: DateTimeProvider,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<String, List<ShowEntity>> by storeBuilder(
     fetcher = Fetcher.of { query: String ->
-        when (val response = tmdbRemoteDataSource.searchShows(query)) {
-            is ApiResponse.Success -> response.body.results
-            is ApiResponse.Error.GenericError -> throw Throwable("${response.errorMessage}")
-            is ApiResponse.Error.HttpError -> throw Throwable("${response.code} - ${response.errorMessage}")
-            is ApiResponse.Error.SerializationError -> throw Throwable("${response.errorMessage}")
+        coroutineScope {
+            traktRemoteDataSource.searchShows(query).getOrThrow()
+                .mapNotNull { searchResult ->
+                    if (searchResult.type != "show") return@mapNotNull null
+                    val show = searchResult.show ?: return@mapNotNull null
+                    val tmdbId = show.ids.tmdb ?: return@mapNotNull null
+
+                    async {
+                        val tmdbResult = runCatching {
+                            tmdbDataSource.getShowDetails(tmdbId)
+                        }
+                        SearchShowResult(
+                            traktShow = show,
+                            tmdbId = tmdbId,
+                            tmdbDetails = tmdbResult.getOrNull()?.let {
+                                (it as? ApiResponse.Success)?.body
+                            },
+                        )
+                    }
+                }
+                .awaitAll()
         }
     },
-    sourceOfTruth = SourceOfTruth.of<String, List<TmdbShowResponse>, List<ShowEntity>>(
+    sourceOfTruth = SourceOfTruth.of<String, List<SearchShowResult>, List<ShowEntity>>(
         reader = { query: String -> tvShowsDao.observeShowsByQuery(query) },
         writer = { _, shows ->
-            if (tvShowsDao.shouldUpdateShows(shows.map { it.id })) {
-                val tvShows = shows.map { show ->
-                    Tvshow(
-                        id = Id(show.id.toLong()),
-                        name = show.name,
-                        overview = show.overview,
-                        language = show.originalLanguage,
-                        popularity = show.popularity,
-                        vote_average = show.voteAverage,
-                        vote_count = show.voteCount.toLong(),
-                        genre_ids = show.genreIds,
-                        poster_path = show.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
-                        backdrop_path = show.backdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
-                        status = null,
-                        first_air_date = null,
-                        episode_numbers = null,
-                        last_air_date = null,
-                        season_numbers = null,
-                    )
-                }
-                tvShowsDao.upsert(tvShows)
+            val tvShows = shows.map { result ->
+                result.toTvshow(formatterUtil, dateTimeProvider)
             }
+            tvShowsDao.upsert(tvShows)
         },
     ).usingDispatchers(
         readDispatcher = dispatchers.databaseRead,
         writeDispatcher = dispatchers.databaseWrite,
     ),
 ).build()
+
+private fun SearchShowResult.toTvshow(formatterUtil: FormatterUtil, dateTimeProvider: DateTimeProvider): Tvshow {
+    val tmdb = tmdbDetails
+    return Tvshow(
+        trakt_id = Id(traktShow.ids.trakt),
+        tmdb_id = Id(tmdbId),
+        name = traktShow.title,
+        overview = traktShow.overview ?: "",
+        language = traktShow.language,
+        status = traktShow.status,
+        year = traktShow.firstAirDate?.let { dateTimeProvider.getYear(it) },
+        episode_numbers = traktShow.airedEpisodes?.toString(),
+        ratings = tmdb?.voteAverage ?: 0.0,
+        vote_count = traktShow.votes ?: 0L,
+        poster_path = tmdb?.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
+        backdrop_path = tmdb?.backdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
+        genres = traktShow.genres?.map { it.replaceFirstChar { char -> char.uppercase() } },
+        season_numbers = null,
+    )
+}
