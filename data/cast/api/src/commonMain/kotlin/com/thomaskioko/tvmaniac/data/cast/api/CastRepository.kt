@@ -5,7 +5,9 @@ import com.thomaskioko.tvmaniac.db.ShowCast
 import kotlinx.coroutines.flow.Flow
 
 public interface CastRepository {
+    public suspend fun fetchShowCast(showTraktId: Long, forceRefresh: Boolean = false)
+
     public fun observeSeasonCast(seasonId: Long): Flow<List<SeasonCast>>
 
-    public fun observeShowCast(showTmdbId: Long): Flow<List<ShowCast>>
+    public fun observeShowCast(showTraktId: Long): Flow<List<ShowCast>>
 }
