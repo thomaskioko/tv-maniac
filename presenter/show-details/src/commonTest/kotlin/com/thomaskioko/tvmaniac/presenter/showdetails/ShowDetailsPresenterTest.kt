@@ -11,7 +11,7 @@ import com.thomaskioko.tvmaniac.data.recommendedshows.testing.FakeRecommendedSho
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.db.RecommendedShows
-import com.thomaskioko.tvmaniac.db.SelectByShowTmdbId
+import com.thomaskioko.tvmaniac.db.SelectByShowTraktId
 import com.thomaskioko.tvmaniac.db.ShowCast
 import com.thomaskioko.tvmaniac.db.ShowSeasons
 import com.thomaskioko.tvmaniac.db.SimilarShows
@@ -506,7 +506,7 @@ class ShowDetailsPresenterTest {
         watchProviderResult: List<WatchProviders> = emptyList(),
         similarShowResult: List<SimilarShows> = emptyList(),
         recommendedShowResult: List<RecommendedShows> = emptyList(),
-        trailersResult: List<SelectByShowTmdbId> = emptyList(),
+        trailersResult: List<SelectByShowTraktId> = emptyList(),
     ) {
         showDetailsRepository.setShowDetailsResult(showDetailResult)
         trailerRepository.setYoutubePlayerInstalled(isYoutubeInstalled)
@@ -538,6 +538,8 @@ class ShowDetailsPresenterTest {
             ),
             showDetailsInteractor = ShowDetailsInteractor(
                 showDetailsRepository = showDetailsRepository,
+                castRepository = castRepository,
+                trailerRepository = trailerRepository,
                 dispatchers = coroutineDispatcher,
             ),
             prefetchFirstSeasonInteractor = PrefetchFirstSeasonInteractor(
