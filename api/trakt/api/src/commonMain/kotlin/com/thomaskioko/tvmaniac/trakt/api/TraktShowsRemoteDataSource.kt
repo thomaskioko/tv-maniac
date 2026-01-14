@@ -4,8 +4,10 @@ import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktEpisodesResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSearchResult
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonsResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowPeopleResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktVideosResponse
 
 /**
  * Remote data source for fetching TV show data from the Trakt API.
@@ -155,6 +157,29 @@ public interface TraktShowsRemoteDataSource {
         page: Int = 1,
         limit: Int = 20,
     ): ApiResponse<List<TraktSearchResult>>
+
+    /**
+     * Fetches cast and crew for a specific show.
+     *
+     * Returns all cast members with their character names and episode counts.
+     * Data is sorted by episode count (most appearances first).
+     *
+     * @param traktId The Trakt ID of the show
+     * @return Show people response containing cast information
+     * @see [Trakt Show People](https://trakt.docs.apiary.io/#reference/shows/people)
+     */
+    public suspend fun getShowPeople(traktId: Long): ApiResponse<TraktShowPeopleResponse>
+
+    /**
+     * Fetches all videos for a specific show.
+     *
+     * Returns trailers, teasers, and other video content from YouTube and other sites.
+     *
+     * @param traktId The Trakt ID of the show
+     * @return List of video responses containing URLs and metadata
+     * @see [Trakt Show Videos](https://trakt.docs.apiary.io/#reference/shows/videos)
+     */
+    public suspend fun getShowVideos(traktId: Long): ApiResponse<List<TraktVideosResponse>>
 }
 
 /**

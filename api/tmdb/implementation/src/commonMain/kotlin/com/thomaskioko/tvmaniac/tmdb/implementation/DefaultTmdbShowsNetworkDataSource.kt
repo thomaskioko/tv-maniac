@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.tmdb.implementation
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.model.safeRequest
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
+import com.thomaskioko.tvmaniac.tmdb.api.model.CreditsResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbGenreResult
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResult
 import io.ktor.client.request.parameter
@@ -138,6 +139,15 @@ public class DefaultTmdbShowsNetworkDataSource(
             url {
                 method = HttpMethod.Get
                 path("3/genre/tv/list")
+            }
+        }
+    }
+
+    override suspend fun getShowCredits(tmdbId: Long): ApiResponse<CreditsResponse> {
+        return httpClient.safeRequest {
+            url {
+                method = HttpMethod.Get
+                path("3/tv/$tmdbId/credits")
             }
         }
     }
