@@ -94,7 +94,18 @@ public class AndroidTraktAuthManager(
             }
 
             if (tokenResponse != null) {
+                logger.debug("@exchangeAuthorizationCode Token Response: $tokenResponse" )
+
+                val accessToken = tokenResponse.accessToken
+                val refreshToken = tokenResponse.refreshToken
                 val expiresAtMillis = tokenResponse.accessTokenExpirationTime
+
+                if (accessToken.isNullOrBlank() || refreshToken.isNullOrBlank()) {
+                    logger.error("TokenExchangeError", Throwable("Token response missing access or refresh token"))
+                    loginAction.setAuthError(AuthError.TokenExchangeFailed)
+                    return
+                }
+
                 if (expiresAtMillis == null) {
                     logger.error("TokenExchangeError", Throwable("Token response missing expiration time"))
                     loginAction.setAuthError(AuthError.TokenExchangeFailed)
@@ -102,8 +113,8 @@ public class AndroidTraktAuthManager(
                 }
 
                 loginAction.saveTokens(
-                    accessToken = tokenResponse.accessToken.orEmpty(),
-                    refreshToken = tokenResponse.refreshToken.orEmpty(),
+                    accessToken = accessToken,
+                    refreshToken = refreshToken,
                     expiresAtSeconds = expiresAtMillis / 1000,
                 )
 
