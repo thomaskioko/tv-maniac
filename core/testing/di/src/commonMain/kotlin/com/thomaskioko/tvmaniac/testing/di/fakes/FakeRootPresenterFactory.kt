@@ -1,7 +1,10 @@
 package com.thomaskioko.tvmaniac.testing.di.fakes
 
 import com.arkivanov.decompose.ComponentContext
+import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
+import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
 import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsPresenter
 import com.thomaskioko.tvmaniac.navigation.DefaultRootPresenter
 import com.thomaskioko.tvmaniac.navigation.RootNavigator
@@ -13,6 +16,7 @@ import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.testing.di.TestScope
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
@@ -28,6 +32,10 @@ public class FakeRootPresenterFactory(
     private val showDetailsPresenterFactory: ShowDetailsPresenter.Factory,
     private val seasonDetailsPresenterFactory: SeasonDetailsPresenter.Factory,
     private val trailersPresenterFactory: TrailersPresenter.Factory,
+    private val traktAuthRepository: TraktAuthRepository,
+    private val updateUserProfileData: UpdateUserProfileData,
+    private val logoutInteractor: LogoutInteractor,
+    private val logger: Logger,
     private val datastoreRepository: DatastoreRepository,
 ) : RootPresenter.Factory {
     override fun invoke(
@@ -44,6 +52,10 @@ public class FakeRootPresenterFactory(
             showDetailsPresenterFactory = showDetailsPresenterFactory,
             seasonDetailsPresenterFactory = seasonDetailsPresenterFactory,
             trailersPresenterFactory = trailersPresenterFactory,
+            traktAuthRepository = traktAuthRepository,
+            updateUserProfileData = updateUserProfileData,
+            logoutInteractor = logoutInteractor,
+            logger = logger,
             datastoreRepository = datastoreRepository,
         )
 }

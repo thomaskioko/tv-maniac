@@ -10,11 +10,11 @@ public data class ProfileState(
     val authenticated: Boolean,
 ) {
     val showLoading: Boolean
-        get() = userProfile == null && (isLoading || isAuthenticating || authenticated)
+        get() = userProfile == null && errorMessage == null && (isLoading || isAuthenticating || authenticated)
 
     public companion object {
         public val DEFAULT_STATE: ProfileState = ProfileState(
-            isLoading = true,
+            isLoading = false,
             isAuthenticating = false,
             userProfile = null,
             errorMessage = null,
