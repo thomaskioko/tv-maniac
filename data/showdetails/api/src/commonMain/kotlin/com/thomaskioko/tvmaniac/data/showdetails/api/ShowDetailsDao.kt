@@ -4,11 +4,11 @@ import com.thomaskioko.tvmaniac.db.TvshowDetails
 import kotlinx.coroutines.flow.Flow
 
 public interface ShowDetailsDao {
-    public fun observeTvShows(id: Long): Flow<TvshowDetails>
+    public fun observeTvShowByTraktId(traktId: Long): Flow<TvshowDetails>
 
-    public fun getTvShow(id: Long): TvshowDetails
+    public fun getTvShow(traktId: Long): TvshowDetails
 
-    public fun getTvShowOrNull(id: Long): TvshowDetails?
+    public fun getTvShowOrNull(traktId: Long): TvshowDetails?
 
-    public fun deleteTvShow(id: Long)
+    public fun deleteTvShow(traktId: Long)
 }

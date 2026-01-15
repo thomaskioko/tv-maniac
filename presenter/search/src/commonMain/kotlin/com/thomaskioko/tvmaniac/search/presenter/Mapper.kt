@@ -17,7 +17,8 @@ public class Mapper(
     public fun toShowList(items: List<ShowEntity>): ImmutableList<ShowItem> =
         items.map {
             ShowItem(
-                tmdbId = it.id,
+                tmdbId = it.tmdbId,
+                traktId = it.traktId,
                 title = it.title,
                 posterImageUrl = it.posterPath,
                 inLibrary = it.inLibrary,

@@ -31,7 +31,7 @@ public class TraktEpisodeWatchesDataSource(
                 response.body.mapNotNull { entry ->
                     val showId = entry.show.ids.tmdbId ?: return@mapNotNull null
                     WatchedEpisodeEntry(
-                        showId = showId,
+                        showTraktId = showId,
                         episodeId = 0L,
                         seasonNumber = entry.episode.season.toLong(),
                         episodeNumber = entry.episode.number.toLong(),
@@ -48,10 +48,10 @@ public class TraktEpisodeWatchesDataSource(
     override suspend fun addEpisodeWatches(watches: List<WatchedEpisodeEntry>) {
         if (watches.isEmpty()) return
 
-        val showsMap = watches.groupBy { it.showId }
+        val showsMap = watches.groupBy { it.showTraktId }
 
         val shows = showsMap.mapNotNull { (showId, showWatches) ->
-            val showEntry = followedShowsDao.entryWithTmdbId(showId)
+            val showEntry = followedShowsDao.entryWithTraktId(showId)
             val traktId = showEntry?.traktId ?: return@mapNotNull null
 
             val seasons = showWatches

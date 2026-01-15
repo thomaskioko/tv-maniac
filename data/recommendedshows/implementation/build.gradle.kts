@@ -11,6 +11,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(projects.api.tmdb.api)
+                implementation(projects.api.trakt.api)
                 implementation(projects.core.base)
                 implementation(projects.core.logger.api)
                 implementation(projects.core.networkUtil)

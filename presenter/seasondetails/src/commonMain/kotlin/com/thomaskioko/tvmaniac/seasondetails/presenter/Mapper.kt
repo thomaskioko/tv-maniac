@@ -14,7 +14,9 @@ internal fun List<EpisodeDetails>.toEpisodes(
 ): PersistentList<EpisodeDetailsModel> {
     val sortedEpisodes = this.sortedBy { it.episodeNumber }
     return sortedEpisodes.mapIndexed { index, episode ->
-        val hasPreviousUnwatched = sortedEpisodes.take(index).any { !it.isWatched }
+        val hasPreviousUnwatched = sortedEpisodes.take(index).any { prev ->
+            !prev.isWatched && prev.hasAired
+        }
         EpisodeDetailsModel(
             id = episode.id,
             seasonId = episode.seasonId,
@@ -34,6 +36,7 @@ internal fun List<EpisodeDetails>.toEpisodes(
             } | E${episode.episodeNumber}",
             isWatched = episode.isWatched,
             daysUntilAir = episode.daysUntilAir,
+            hasAired = episode.hasAired,
             hasPreviousUnwatched = hasPreviousUnwatched,
             isEpisodeUpdating = episode.id in updatingEpisodesId,
         )

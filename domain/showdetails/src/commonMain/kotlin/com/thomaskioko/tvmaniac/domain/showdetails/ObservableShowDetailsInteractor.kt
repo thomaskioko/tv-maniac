@@ -13,6 +13,7 @@ import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject
@@ -41,28 +42,34 @@ public class ObservableShowDetailsInteractor(
             trailerRepository.observeTrailers(params),
             trailerRepository.isYoutubePlayerInstalled(),
             episodeRepository.observeAllSeasonsWatchProgress(params),
-        ) { showDetails, recommendedShows, seasonsList, castList, watchProviders, similarShows, trailers, isWebViewInstalled, seasonsProgress ->
+            episodeRepository.observeContinueTrackingEpisodes(params),
+        ) { showDetails, recommendedShows, seasonsList, castList, watchProviders, similarShows,
+            trailers, isWebViewInstalled, seasonsProgress, continueTracking,
+            ->
             val progressMap = seasonsProgress.associateBy { it.seasonNumber }
             ShowDetails(
-                tmdbId = showDetails.show_id.id,
+                traktId = showDetails.trakt_id.id,
+                tmdbId = showDetails.tmdb_id.id,
                 title = showDetails.name,
                 overview = showDetails.overview,
                 language = showDetails.language,
                 posterImageUrl = showDetails.poster_path,
                 backdropImageUrl = showDetails.backdrop_path,
                 votes = showDetails.vote_count,
-                rating = formatterUtil.formatDouble(showDetails.vote_average, 1),
-                year = showDetails.last_air_date ?: showDetails.first_air_date ?: "",
+                rating = formatterUtil.formatDouble(showDetails.ratings, 1),
+                year = showDetails.year ?: "",
                 status = showDetails.status,
                 isInLibrary = showDetails.in_library == 1L,
                 hasWebViewInstalled = isWebViewInstalled,
-                genres = showDetails.genre_list.toGenreList(),
+                genres = showDetails.genres ?: emptyList(),
                 providers = watchProviders.toWatchProviderList(),
                 castsList = castList.toCastList(),
                 seasonsList = seasonsList.toSeasonsList(progressMap),
                 similarShows = similarShows.toSimilarShowList(),
                 recommendedShows = recommendedShows.toRecommendedShowList(),
                 trailersList = trailers.toTrailerList(),
+                continueTrackingEpisodes = continueTracking?.episodes ?: persistentListOf(),
+                continueTrackingScrollIndex = continueTracking?.firstUnwatchedIndex ?: 0,
             )
         }.flowOn(dispatchers.io.limitedParallelism(8))
     }

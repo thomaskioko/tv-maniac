@@ -46,8 +46,8 @@ public class DefaultDiscoverShowsPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val onNavigateToShowDetails: (Long) -> Unit,
     @Assisted private val onNavigateToMore: (Long) -> Unit,
-    @Assisted private val onNavigateToEpisode: (showId: Long, episodeId: Long) -> Unit,
-    @Assisted private val onNavigateToSeason: (showId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
+    @Assisted private val onNavigateToEpisode: (showTraktId: Long, episodeId: Long) -> Unit,
+    @Assisted private val onNavigateToSeason: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
     private val discoverShowsInteractor: DiscoverShowsInteractor,
     private val followedShowsRepository: FollowedShowsRepository,
     private val featuredShowsInteractor: FeaturedShowsInteractor,
@@ -145,7 +145,7 @@ public class DefaultDiscoverShowsPresenter(
 
         public fun dispatch(action: DiscoverShowAction) {
             when (action) {
-                is ShowClicked -> onNavigateToShowDetails(action.id)
+                is ShowClicked -> onNavigateToShowDetails(action.traktId)
                 PopularClicked -> onNavigateToMore(Category.POPULAR.id)
                 TopRatedClicked -> onNavigateToMore(Category.TOP_RATED.id)
                 TrendingClicked -> onNavigateToMore(Category.TRENDING_TODAY.id)
@@ -154,21 +154,21 @@ public class DefaultDiscoverShowsPresenter(
                 is UpdateShowInLibrary -> {
                     coroutineScope.launch {
                         if (action.inLibrary) {
-                            followedShowsRepository.removeFollowedShow(action.id)
+                            followedShowsRepository.removeFollowedShow(action.traktId)
                         } else {
-                            followedShowsRepository.addFollowedShow(action.id)
+                            followedShowsRepository.addFollowedShow(action.traktId)
                         }
                     }
                 }
                 is MessageShown -> {
                     clearMessage(action.id)
                 }
-                is NextEpisodeClicked -> onNavigateToEpisode(action.showId, action.episodeId)
+                is NextEpisodeClicked -> onNavigateToEpisode(action.showTraktId, action.episodeId)
                 is MarkNextEpisodeWatched -> {
                     coroutineScope.launch {
                         markEpisodeWatchedInteractor(
                             MarkEpisodeWatchedParams(
-                                showId = action.showId,
+                                showTraktId = action.showTraktId,
                                 episodeId = action.episodeId,
                                 seasonNumber = action.seasonNumber,
                                 episodeNumber = action.episodeNumber,
@@ -178,11 +178,11 @@ public class DefaultDiscoverShowsPresenter(
                 }
                 is UnfollowShowFromUpNext -> {
                     coroutineScope.launch {
-                        followedShowsRepository.removeFollowedShow(action.showId)
+                        followedShowsRepository.removeFollowedShow(action.showTraktId)
                     }
                 }
                 is OpenSeasonFromUpNext -> {
-                    onNavigateToSeason(action.showId, action.seasonId, action.seasonNumber)
+                    onNavigateToSeason(action.showTraktId, action.seasonId, action.seasonNumber)
                 }
             }
         }
@@ -237,22 +237,22 @@ public class DefaultDiscoverPresenterFactory(
         componentContext: ComponentContext,
         onNavigateToShowDetails: (id: Long) -> Unit,
         onNavigateToMore: (categoryId: Long) -> Unit,
-        onNavigateToEpisode: (showId: Long, episodeId: Long) -> Unit,
-        onNavigateToSeason: (showId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
+        onNavigateToEpisode: (showTraktId: Long, episodeId: Long) -> Unit,
+        onNavigateToSeason: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
     ) -> DiscoverShowsPresenter,
 ) : DiscoverShowsPresenter.Factory {
     override fun invoke(
         componentContext: ComponentContext,
         onNavigateToShowDetails: (id: Long) -> Unit,
         onNavigateToMore: (categoryId: Long) -> Unit,
-        onNavigateToEpisode: (showId: Long, episodeId: Long) -> Unit,
-        onNavigateToSeason: (showId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
+        onNavigateToEpisode: (showTraktId: Long, episodeId: Long) -> Unit,
+        onNavigateToSeason: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
     ): DiscoverShowsPresenter = presenter(componentContext, onNavigateToShowDetails, onNavigateToMore, onNavigateToEpisode, onNavigateToSeason)
 }
 
 private fun NextEpisodeWithShow.toUiModel(): NextEpisodeUiModel {
     return NextEpisodeUiModel(
-        showId = showId,
+        showTraktId = showTraktId,
         showName = showName,
         showPoster = showPoster,
         episodeId = episodeId,

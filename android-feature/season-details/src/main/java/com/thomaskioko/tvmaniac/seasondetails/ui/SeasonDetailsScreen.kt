@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
@@ -33,8 +32,6 @@ import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -55,6 +52,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.BasicDialog
+import com.thomaskioko.tvmaniac.compose.components.CastCard
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
@@ -469,64 +467,15 @@ private fun CastContent(
                 flingBehavior = rememberSnapperFlingBehavior(lazyListState),
             ) {
                 itemsIndexed(castList) { index, cast ->
-                    Card(
+                    CastCard(
+                        profileUrl = cast.profileUrl,
+                        name = cast.name,
+                        characterName = cast.characterName,
                         modifier = Modifier.padding(
                             start = if (index == 0) 16.dp else 0.dp,
                             end = if (index == castList.size - 1) 16.dp else 8.dp,
                         ),
-                        shape = MaterialTheme.shapes.small,
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 8.dp,
-                        ),
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .size(width = 120.dp, height = 160.dp),
-                            contentAlignment = Alignment.BottomStart,
-                        ) {
-                            PosterCard(
-                                imageUrl = cast.profileUrl,
-                                title = cast.name,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .animateItem(),
-                            )
-
-                            Box(
-                                modifier = Modifier
-                                    .matchParentSize()
-                                    .background(contentBackgroundGradient()),
-                            )
-                            Column(
-                                modifier = Modifier.padding(8.dp),
-                            ) {
-                                Text(
-                                    text = cast.name,
-                                    modifier = Modifier
-                                        .padding(vertical = 4.dp)
-                                        .wrapContentWidth(),
-                                    overflow = TextOverflow.Ellipsis,
-                                    maxLines = 1,
-                                    style = MaterialTheme.typography.bodyMedium.copy(
-                                        fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                    ),
-                                )
-
-                                Text(
-                                    text = cast.characterName,
-                                    modifier = Modifier.wrapContentWidth(),
-                                    overflow = TextOverflow.Ellipsis,
-                                    maxLines = 1,
-                                    style = MaterialTheme.typography.bodyMedium.copy(
-                                        fontWeight = FontWeight.Normal,
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                    ),
-                                )
-                            }
-                        }
-                    }
+                    )
                 }
             }
         }

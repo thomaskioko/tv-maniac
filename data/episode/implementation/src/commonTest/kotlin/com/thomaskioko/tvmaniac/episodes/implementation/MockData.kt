@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.episodes.implementation
 
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.ShowSeasons
+import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
 import com.thomaskioko.tvmaniac.seasondetails.api.model.SeasonDetailsWithEpisodes
 
@@ -22,13 +23,13 @@ internal object MockData {
 
     val testShowSeasons = listOf(
         ShowSeasons(
-            show_id = Id(TEST_SHOW_ID),
+            show_trakt_id = Id<TraktId>(TEST_SHOW_ID),
             season_id = Id(SEASON_1_ID),
             season_title = "Season 1",
             season_number = SEASON_1_NUMBER,
         ),
         ShowSeasons(
-            show_id = Id(TEST_SHOW_ID),
+            show_trakt_id = Id<TraktId>(TEST_SHOW_ID),
             season_id = Id(SEASON_2_ID),
             season_title = "Season 2",
             season_number = SEASON_2_NUMBER,
@@ -50,6 +51,7 @@ internal object MockData {
             airDate = "2023-01-0$episodeNumber",
             isWatched = false,
             daysUntilAir = null,
+            hasAired = true,
         )
     }
 
@@ -68,12 +70,14 @@ internal object MockData {
             airDate = "2023-02-20",
             isWatched = false,
             daysUntilAir = null,
+            hasAired = true,
         )
     }
 
     val season1Details = SeasonDetailsWithEpisodes(
         seasonId = SEASON_1_ID,
-        tvShowId = TEST_SHOW_ID,
+        showTraktId = TEST_SHOW_ID,
+        showTmdbId = TEST_SHOW_ID,
         name = "Season 1",
         showTitle = TEST_SHOW_NAME,
         seasonOverview = "First season",
@@ -85,7 +89,8 @@ internal object MockData {
 
     val season2Details = SeasonDetailsWithEpisodes(
         seasonId = SEASON_2_ID,
-        tvShowId = TEST_SHOW_ID,
+        showTraktId = TEST_SHOW_ID,
+        showTmdbId = TEST_SHOW_ID,
         name = "Season 2",
         showTitle = TEST_SHOW_NAME,
         seasonOverview = "Second season",
@@ -111,6 +116,7 @@ internal object MockData {
                 airDate = "2023-01-0$episodeNumber",
                 isWatched = episodeNumber.toLong() == watchedEpisodeNumber,
                 daysUntilAir = null,
+                hasAired = true,
             )
         }
 
@@ -130,6 +136,7 @@ internal object MockData {
                 airDate = "2023-01-01",
                 isWatched = false,
                 daysUntilAir = null,
+                hasAired = true,
             ),
             EpisodeDetails(
                 id = 102L,
@@ -145,6 +152,7 @@ internal object MockData {
                 airDate = "2023-01-02",
                 isWatched = false,
                 daysUntilAir = null,
+                hasAired = true,
             ),
         )
 
@@ -154,7 +162,8 @@ internal object MockData {
         episodes: List<EpisodeDetails>,
     ) = SeasonDetailsWithEpisodes(
         seasonId = seasonId,
-        tvShowId = TEST_SHOW_ID,
+        showTraktId = TEST_SHOW_ID,
+        showTmdbId = TEST_SHOW_ID,
         name = "Season $seasonNumber",
         showTitle = "Test Show",
         seasonOverview = "Season $seasonNumber overview",
@@ -185,6 +194,7 @@ internal object MockData {
                 airDate = null,
                 isWatched = false,
                 daysUntilAir = daysUntilAir,
+                hasAired = false,
             )
         }
 
@@ -208,6 +218,7 @@ internal object MockData {
                 airDate = "2023-01-0$episodeNumber",
                 isWatched = true,
                 daysUntilAir = null,
+                hasAired = true,
             )
         }
 }

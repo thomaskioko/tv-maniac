@@ -20,18 +20,19 @@ public class DefaultRecommendedShowsDao(
     private val database: TvManiacDatabase,
     private val dispatchers: AppCoroutineDispatchers,
 ) : RecommendedShowsDao {
-    override fun upsert(showId: Long, recommendedShowId: Long) {
+    override fun upsert(showTraktId: Long, showTmdbId: Long, recommendedShowTraktId: Long) {
         database.recommendedShowsQueries.transaction {
             database.recommendedShowsQueries.upsert(
-                id = Id(recommendedShowId),
-                recommended_show_id = Id(showId),
+                trakt_id = Id(showTraktId),
+                tmdb_id = Id(showTmdbId),
+                recommended_show_trakt_id = Id(recommendedShowTraktId),
             )
         }
     }
 
-    override fun observeRecommendedShows(traktId: Long): Flow<List<RecommendedShows>> {
+    override fun observeRecommendedShows(showTraktId: Long): Flow<List<RecommendedShows>> {
         return database.recommendedShowsQueries
-            .recommendedShows(Id(traktId))
+            .recommendedShows(Id(showTraktId))
             .asFlow()
             .mapToList(dispatchers.io)
     }

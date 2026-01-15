@@ -5,7 +5,10 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsDao
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.PageId
 import com.thomaskioko.tvmaniac.db.Popular_shows
+import com.thomaskioko.tvmaniac.db.TmdbId
+import com.thomaskioko.tvmaniac.db.TraktId
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -51,26 +54,26 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
     fun `should insert popular shows`() = runTest {
         // Given - first insert a show into tvshow table
         val _ = database.tvShowQueries.upsert(
-            id = Id(999),
+            trakt_id = Id<TraktId>(999),
+            tmdb_id = Id<TmdbId>(999),
             name = "New Test Show",
             overview = "New test overview",
             language = "en",
-            first_air_date = "2023-03-01",
-            vote_average = 9.0,
+            year = "2023-03-01",
+            ratings = 9.0,
             vote_count = 300,
-            popularity = 99.0,
-            genre_ids = listOf(1, 2),
+            genres = listOf("Drama", "Action"),
             status = "Returning Series",
             episode_numbers = null,
-            last_air_date = null,
             season_numbers = null,
             poster_path = "/new_test.jpg",
             backdrop_path = "/new_backdrop.jpg",
         )
 
         val popularShow = Popular_shows(
-            id = Id(999),
-            page = Id(1),
+            trakt_id = Id<TraktId>(999),
+            tmdb_id = Id<TmdbId>(999),
+            page = Id<PageId>(1),
             name = "New Test Show",
             poster_path = "/new_test.jpg",
             overview = "New test overview",
@@ -88,7 +91,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
         dao.observePopularShows(page = 1).test {
             val shows = awaitItem()
             shows.size shouldBe 3
-            shows.any { it.id == 999L } shouldBe true
+            shows.any { it.traktId == 999L } shouldBe true
             cancelAndConsumeRemainingEvents()
         }
     }
@@ -97,8 +100,9 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
     fun `should update popular show item`() = runTest {
         // Given - show already exists from setup
         val existingShow = Popular_shows(
-            id = Id(1),
-            page = Id(2), // Different page
+            trakt_id = Id<TraktId>(1),
+            tmdb_id = Id<TmdbId>(1),
+            page = Id<PageId>(2), // Different page
             name = "Test Show 1 Updated",
             poster_path = "/test1_updated.jpg",
             overview = "Updated test overview",
@@ -112,7 +116,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
         dao.observePopularShows(page = 2).test {
             val shows = awaitItem()
             shows.size shouldBe 1 // Still returns all shows
-            val updatedShow = shows.find { it.id == 1L }
+            val updatedShow = shows.find { it.traktId == 1L }
             updatedShow?.page shouldBe 2L
             cancelAndConsumeRemainingEvents()
         }
@@ -129,8 +133,9 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
 
             // Update one of the shows to a different page
             val updatedShow = Popular_shows(
-                id = Id(1),
-                page = Id(3),
+                trakt_id = Id<TraktId>(1),
+                tmdb_id = Id<TmdbId>(1),
+                page = Id<PageId>(3),
                 name = "Test Show 1 Updated",
                 poster_path = "/test1_updated.jpg",
                 overview = "Updated test overview",
@@ -145,7 +150,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
         dao.observePopularShows(page = 3).test {
             val shows = awaitItem()
             shows.size shouldBe 1
-            val updatedShow = shows.find { it.id == 1L }
+            val updatedShow = shows.find { it.traktId == 1L }
             updatedShow?.page shouldBe 3L
             cancelAndConsumeRemainingEvents()
         }
@@ -212,13 +217,13 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
             shows.size shouldBe 2
 
             // Verify show data is correctly returned from stable query
-            val show1 = shows.find { it.id == 1L }
+            val show1 = shows.find { it.traktId == 1L }
             show1?.title shouldBe "Test Show 1"
             show1?.posterPath shouldBe "/test1.jpg"
             show1?.overview shouldBe "Test overview 1"
             show1?.inLibrary shouldBe false // Always false from stable query
 
-            val show2 = shows.find { it.id == 2L }
+            val show2 = shows.find { it.traktId == 2L }
             show2?.title shouldBe "Test Show 2"
             show2?.posterPath shouldBe "/test2.jpg"
             show2?.overview shouldBe "Test overview 2"
@@ -232,8 +237,9 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
     fun `stable query should not return shows with null names`() = runTest {
         // Given - insert a show without name (simulating pre-migration data)
         val _ = popularShowsQueries.insert(
-            id = Id(999),
-            page = Id(1),
+            traktId = Id<TraktId>(999),
+            tmdbId = Id<TmdbId>(999),
+            page = Id<PageId>(1),
             name = null,
             poster_path = "/test999.jpg",
             overview = "Test overview 999",
@@ -245,7 +251,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
             val shows = awaitItem()
             // Should only return shows with non-null names (the 2 from setup)
             shows.size shouldBe 2
-            shows.none { it.id == 999L } shouldBe true
+            shows.none { it.traktId == 999L } shouldBe true
             cancelAndConsumeRemainingEvents()
         }
     }
@@ -254,8 +260,9 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
     fun `stable query should filter by page correctly`() = runTest {
         // Given - add shows to different pages
         val _ = popularShowsQueries.insert(
-            id = Id(999),
-            page = Id(2),
+            traktId = Id<TraktId>(999),
+            tmdbId = Id<TmdbId>(999),
+            page = Id<PageId>(2),
             name = "Page 2 Show",
             poster_path = "/page2.jpg",
             overview = "Page 2 overview",
@@ -302,8 +309,9 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
 
             // When - add a new show
             val newShow = Popular_shows(
-                id = Id(999),
-                page = Id(1),
+                trakt_id = Id<TraktId>(999),
+                tmdb_id = Id<TmdbId>(999),
+                page = Id<PageId>(1),
                 name = "New Reactive Show",
                 poster_path = "/reactive.jpg",
                 overview = "Reactive overview",
@@ -314,7 +322,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
             // Then - should emit updated list
             val updatedShows = awaitItem()
             updatedShows.size shouldBe 3
-            updatedShows.any { it.id == 999L && it.title == "New Reactive Show" } shouldBe true
+            updatedShows.any { it.traktId == 999L && it.title == "New Reactive Show" } shouldBe true
 
             cancelAndConsumeRemainingEvents()
         }
@@ -324,8 +332,9 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
     fun `should handle COALESCE for empty names correctly`() = runTest {
         database.popularShowsQueries.transaction {
             val _ = database.popularShowsQueries.insert(
-                id = Id(888),
-                page = Id(1),
+                traktId = Id<TraktId>(888),
+                tmdbId = Id<TmdbId>(888),
+                page = Id<PageId>(1),
                 name = "",
                 poster_path = "/empty.jpg",
                 overview = "Empty name test",
@@ -335,7 +344,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
 
         dao.observePopularShows(page = 1).test {
             val shows = awaitItem()
-            val emptyNameShow = shows.find { it.id == 888L }
+            val emptyNameShow = shows.find { it.traktId == 888L }
             emptyNameShow?.title shouldBe "" // COALESCE should return empty string
             cancelAndConsumeRemainingEvents()
         }
@@ -343,44 +352,43 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
 
     private fun insertTestShows() {
         val _ = database.tvShowQueries.upsert(
-            id = Id(1),
+            trakt_id = Id<TraktId>(1),
+            tmdb_id = Id<TmdbId>(1),
             name = "Test Show 1",
             overview = "Test overview 1",
             language = "en",
-            first_air_date = "2023-01-01",
-            vote_average = 8.0,
+            year = "2023-01-01",
+            ratings = 8.0,
             vote_count = 100,
-            popularity = 95.0,
-            genre_ids = listOf(1, 2),
+            genres = listOf("Drama", "Action"),
             status = "Returning Series",
             episode_numbers = null,
-            last_air_date = null,
             season_numbers = null,
             poster_path = "/test1.jpg",
             backdrop_path = "/backdrop1.jpg",
         )
 
         val _ = database.tvShowQueries.upsert(
-            id = Id(2),
+            trakt_id = Id<TraktId>(2),
+            tmdb_id = Id<TmdbId>(2),
             name = "Test Show 2",
             overview = "Test overview 2",
             language = "en",
-            first_air_date = "2023-02-01",
-            vote_average = 7.5,
+            year = "2023-02-01",
+            ratings = 7.5,
             vote_count = 200,
-            popularity = 85.0,
-            genre_ids = listOf(2, 3),
+            genres = listOf("Comedy", "Drama"),
             status = "Ended",
             episode_numbers = null,
-            last_air_date = null,
             season_numbers = null,
             poster_path = "/test2.jpg",
             backdrop_path = "/backdrop2.jpg",
         )
 
         val _ = popularShowsQueries.insert(
-            id = Id(1),
-            page = Id(1),
+            traktId = Id<TraktId>(1),
+            tmdbId = Id<TmdbId>(1),
+            page = Id<PageId>(1),
             name = "Test Show 1",
             poster_path = "/test1.jpg",
             overview = "Test overview 1",
@@ -388,8 +396,9 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
         )
 
         val _ = popularShowsQueries.insert(
-            id = Id(2),
-            page = Id(1),
+            traktId = Id<TraktId>(2),
+            tmdbId = Id<TmdbId>(2),
+            page = Id<PageId>(1),
             name = "Test Show 2",
             poster_path = "/test2.jpg",
             overview = "Test overview 2",

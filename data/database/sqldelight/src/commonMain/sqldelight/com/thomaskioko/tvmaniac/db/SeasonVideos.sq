@@ -34,7 +34,7 @@ SELECT
     season_videos.size,
     season_videos.type,
     season.id AS season_primary_id,
-    season.show_id,
+    season.show_trakt_id,
     season.season_number,
     season.title,
     season.episode_count,

@@ -3,6 +3,8 @@ package com.thomaskioko.tvmaniac.episodes.implementation
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Episode
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.TmdbId
+import com.thomaskioko.tvmaniac.db.TraktId
 import io.kotest.matchers.shouldBe
 import kotlin.test.Test
 
@@ -26,7 +28,7 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
         queryResult.season_id shouldBe entity.season_id
         queryResult.title shouldBe entity.title
         queryResult.overview shouldBe entity.overview
-        queryResult.vote_average shouldBe entity.vote_average
+        queryResult.ratings shouldBe entity.ratings
         queryResult.vote_count shouldBe entity.vote_count
     }
 
@@ -36,18 +38,17 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
 
     private fun insertShow() {
         val _ = database.tvShowQueries.upsert(
-            id = Id(123232),
+            trakt_id = Id<TraktId>(123232),
+            tmdb_id = Id<TmdbId>(123232),
             name = "Loki",
             overview = "After stealing the Tesseract, Loki is brought to the Time Variance Authority.",
             language = "en",
-            first_air_date = "2021-06-09",
-            vote_average = 8.2,
+            year = "2021-06-09",
+            ratings = 8.2,
             vote_count = 7000,
-            popularity = 95.5,
-            genre_ids = listOf(18, 10765),
+            genres = listOf("Drama", "Science Fiction"),
             status = "Returning Series",
             episode_numbers = null,
-            last_air_date = null,
             season_numbers = null,
             poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
             backdrop_path = "/kXkuE8WXlCD8zMX7MxzBEKmLJUZ.jpg",
@@ -57,7 +58,7 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
     private fun insertSeason() {
         val _ = database.seasonsQueries.upsert(
             id = Id(114355),
-            show_id = Id(123232),
+            show_trakt_id = Id<TraktId>(123232),
             season_number = 1,
             episode_count = 6,
             title = "Season 1",
@@ -72,10 +73,10 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
             season_id = season_id,
             title = title,
             overview = overview,
-            vote_average = vote_average,
+            ratings = ratings,
             episode_number = episode_number,
             runtime = runtime,
-            show_id = show_id,
+            show_trakt_id = show_trakt_id,
             vote_count = vote_count,
             image_url = image_url,
             air_date = air_date,
@@ -87,11 +88,11 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
         Episode(
             id = Id(2534997),
             season_id = Id(114355),
-            show_id = Id(123232),
+            show_trakt_id = Id<TraktId>(123232),
             title = "Glorious Purpose",
             overview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
             vote_count = 42,
-            vote_average = 6.429,
+            ratings = 6.429,
             runtime = 45,
             episode_number = 1,
             image_url = "/yDWJYRAwMNKbIYT8ZB33qy84uzO.jpg",
@@ -101,11 +102,11 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
         Episode(
             id = Id(2927202),
             season_id = Id(114355),
-            show_id = Id(123232),
+            show_trakt_id = Id<TraktId>(123232),
             title = "The Variant",
             overview = "Mobius puts Loki to work, but not everyone at TVA is thrilled about the God of Mischief's presence.",
             vote_count = 42,
-            vote_average = 6.429,
+            ratings = 6.429,
             runtime = 45,
             episode_number = 1,
             image_url = "/yDWJYRAwMNKbIYT8ZB33qy84uzO.jpg",

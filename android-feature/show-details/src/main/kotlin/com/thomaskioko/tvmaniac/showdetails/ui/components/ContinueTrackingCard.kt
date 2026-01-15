@@ -83,27 +83,7 @@ internal fun ContinueTrackingCard(
                 )
             }
 
-            val daysUntilAir = episode.daysUntilAir
-            if (daysUntilAir != null && daysUntilAir > 0) {
-                Column(
-                    modifier = Modifier.padding(end = 12.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Text(
-                        text = daysUntilAir.toString(),
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    Text(
-                        text = pluralStringResource(
-                            MR.plurals.day_label.resourceId,
-                            daysUntilAir,
-                        ),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            } else {
+            if (episode.hasAired) {
                 Box(
                     modifier = Modifier
                         .padding(end = 12.dp)
@@ -122,6 +102,35 @@ internal fun ContinueTrackingCard(
                         tint = MaterialTheme.colorScheme.onPrimary,
                     )
                 }
+            } else {
+                val daysUntilAir = episode.daysUntilAir
+                if (daysUntilAir != null && daysUntilAir > 0) {
+                    Column(
+                        modifier = Modifier.padding(end = 12.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Text(
+                            text = daysUntilAir.toString(),
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Text(
+                            text = pluralStringResource(
+                                MR.plurals.day_label.resourceId,
+                                daysUntilAir,
+                            ),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                } else {
+                    Text(
+                        text = "TBD",
+                        modifier = Modifier.padding(end = 12.dp),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
         }
     }
@@ -136,7 +145,7 @@ private fun ContinueTrackingCardPreview() {
                 episode = ContinueTrackingEpisodeModel(
                     episodeId = 123L,
                     seasonId = 1L,
-                    showId = 1L,
+                    showTraktId = 1L,
                     episodeNumber = 3,
                     seasonNumber = 2,
                     episodeNumberFormatted = "S02 | E03",
@@ -144,6 +153,7 @@ private fun ContinueTrackingCardPreview() {
                     imageUrl = "/still.jpg",
                     isWatched = false,
                     daysUntilAir = null,
+                    hasAired = true,
                 ),
                 onMarkWatched = {},
             )
@@ -160,7 +170,7 @@ private fun ContinueTrackingCardWatchedPreview() {
                 episode = ContinueTrackingEpisodeModel(
                     episodeId = 123L,
                     seasonId = 1L,
-                    showId = 1L,
+                    showTraktId = 1L,
                     episodeNumber = 2,
                     seasonNumber = 2,
                     episodeNumberFormatted = "S02 | E02",
@@ -168,6 +178,7 @@ private fun ContinueTrackingCardWatchedPreview() {
                     imageUrl = "/still.jpg",
                     isWatched = true,
                     daysUntilAir = null,
+                    hasAired = true,
                 ),
                 onMarkWatched = {},
             )
@@ -184,7 +195,7 @@ private fun ContinueTrackingCardFuturePreview() {
                 episode = ContinueTrackingEpisodeModel(
                     episodeId = 123L,
                     seasonId = 1L,
-                    showId = 1L,
+                    showTraktId = 1L,
                     episodeNumber = 5,
                     seasonNumber = 2,
                     episodeNumberFormatted = "S02 | E05",
@@ -192,6 +203,32 @@ private fun ContinueTrackingCardFuturePreview() {
                     imageUrl = "/still.jpg",
                     isWatched = false,
                     daysUntilAir = 7,
+                    hasAired = false,
+                ),
+                onMarkWatched = {},
+            )
+        }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun ContinueTrackingCardUnknownAirDatePreview() {
+    TvManiacTheme {
+        Surface {
+            ContinueTrackingCard(
+                episode = ContinueTrackingEpisodeModel(
+                    episodeId = 123L,
+                    seasonId = 1L,
+                    showTraktId = 1L,
+                    episodeNumber = 6,
+                    seasonNumber = 2,
+                    episodeNumberFormatted = "S02 | E06",
+                    episodeTitle = "Unknown Air Date",
+                    imageUrl = "/still.jpg",
+                    isWatched = false,
+                    daysUntilAir = null,
+                    hasAired = false,
                 ),
                 onMarkWatched = {},
             )

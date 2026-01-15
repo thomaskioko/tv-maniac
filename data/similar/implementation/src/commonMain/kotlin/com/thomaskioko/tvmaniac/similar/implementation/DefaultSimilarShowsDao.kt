@@ -21,19 +21,20 @@ public class DefaultSimilarShowsDao(
     private val dispatchers: AppCoroutineDispatchers,
 ) : SimilarShowsDao {
 
-    override fun upsert(showId: Long, similarShowId: Long, pageOrder: Int) {
+    override fun upsert(showTraktId: Long, showTmdbId: Long, similarShowTraktId: Long, pageOrder: Int) {
         database.similarShowsQueries.transaction {
             database.similarShowsQueries.insertOrReplace(
-                id = Id(similarShowId),
-                similar_show_id = Id(showId),
+                trakt_id = Id(showTraktId),
+                tmdb_id = Id(showTmdbId),
+                similar_show_trakt_id = Id(similarShowTraktId),
                 page_order = pageOrder.toLong(),
             )
         }
     }
 
-    override fun observeSimilarShows(showId: Long): Flow<List<SimilarShows>> {
+    override fun observeSimilarShows(showTraktId: Long): Flow<List<SimilarShows>> {
         return database.similarShowsQueries
-            .similarShows(Id(showId))
+            .similarShows(Id(showTraktId))
             .asFlow()
             .mapToList(dispatchers.io)
     }

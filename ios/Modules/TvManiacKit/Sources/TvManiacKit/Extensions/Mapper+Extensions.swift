@@ -30,7 +30,7 @@ public extension TvManiac.ImageQuality {
 public extension TvManiac.WatchlistItem {
     func toSwift() -> ShowPosterImage {
         .init(
-            tmdbId: tmdbId,
+            traktId: traktId,
             title: title,
             posterUrl: posterImageUrl,
             inLibrary: true
@@ -41,7 +41,7 @@ public extension TvManiac.WatchlistItem {
 public extension TvManiac.SeasonImagesModel {
     func toSwift() -> ShowPosterImage {
         .init(
-            tmdbId: id,
+            traktId: id,
             title: "",
             posterUrl: imageUrl,
             inLibrary: false
@@ -52,7 +52,7 @@ public extension TvManiac.SeasonImagesModel {
 public extension TvManiac.TvShow {
     func toSwift() -> ShowPosterImage {
         .init(
-            tmdbId: tmdbId,
+            traktId: traktId,
             title: title,
             posterUrl: posterImageUrl,
             inLibrary: inLibrary
@@ -63,7 +63,7 @@ public extension TvManiac.TvShow {
 public extension TvManiac.DiscoverShow {
     func toSwift() -> SwiftShow {
         .init(
-            tmdbId: tmdbId,
+            traktId: traktId,
             title: title,
             posterUrl: posterImageUrl,
             backdropUrl: nil,
@@ -75,14 +75,14 @@ public extension TvManiac.DiscoverShow {
 
 public extension TvManiac.ShowGenre {
     func toSwift() -> SwiftShowGenre {
-        .init(tmdbId: id, name: name, imageUrl: posterUrl)
+        .init(traktId: id, tmdbId: id, name: name, imageUrl: posterUrl)
     }
 }
 
 public extension TvManiac.ShowModel {
     func toSwift() -> SwiftShow {
         .init(
-            tmdbId: tmdbId,
+            traktId: traktId,
             title: title,
             posterUrl: posterImageUrl,
             backdropUrl: nil,
@@ -94,7 +94,7 @@ public extension TvManiac.ShowModel {
 public extension TvManiac.TrailerModel {
     func toSwift() -> SwiftTrailer {
         .init(
-            showId: showId,
+            showTmdbId: showTmdbId,
             key: key,
             name: name,
             youtubeThumbnailUrl: youtubeThumbnailUrl
@@ -142,7 +142,7 @@ public extension String {
 public extension TvManiac.TvShow {
     func toSwift() -> SwiftShow {
         .init(
-            tmdbId: tmdbId,
+            traktId: traktId,
             title: title,
             posterUrl: posterImageUrl,
             inLibrary: inLibrary
@@ -162,21 +162,27 @@ public extension TvManiac.EpisodeDetailsModel {
             isWatched: isWatched,
             isEpisodeUpdating: isEpisodeUpdating,
             daysUntilAir: daysUntilAir?.int64Value,
-            hasPreviousUnwatched: hasPreviousUnwatched
+            hasPreviousUnwatched: hasPreviousUnwatched,
+            hasAired: hasAired
         )
     }
 }
 
 public extension TvManiac.SeasonImagesModel {
     func toSwift() -> SwiftShow {
-        .init(tmdbId: id, title: "", posterUrl: imageUrl, inLibrary: false)
+        .init(
+            traktId: id,
+            title: "",
+            posterUrl: imageUrl,
+            inLibrary: false
+        )
     }
 }
 
 public extension TvManiac.NextEpisodeUiModel {
     func toSwift() -> SwiftNextEpisode {
         .init(
-            showId: showId,
+            showTraktId: showTraktId,
             showName: showName,
             showPoster: showPoster,
             episodeId: episodeId,
@@ -196,7 +202,7 @@ public extension TvManiac.NextEpisodeUiModel {
 public extension TvManiac.ShowItem {
     func toSwift() -> SwiftShow {
         .init(
-            tmdbId: tmdbId,
+            traktId: traktId,
             title: title,
             posterUrl: posterImageUrl,
             backdropUrl: nil,
@@ -207,6 +213,7 @@ public extension TvManiac.ShowItem {
     func toSwift() -> SwiftSearchShow {
         .init(
             tmdbId: tmdbId,
+            traktId: traktId,
             title: title,
             overview: overview,
             status: status,
@@ -222,14 +229,15 @@ public extension TvManiac.ContinueTrackingEpisodeModel {
         .init(
             episodeId: episodeId,
             seasonId: seasonId,
-            showId: showId,
+            showTraktId: showTraktId,
             episodeNumber: episodeNumber,
             seasonNumber: seasonNumber,
             episodeNumberFormatted: episodeNumberFormatted,
             episodeTitle: episodeTitle,
             imageUrl: imageUrl,
             isWatched: isWatched,
-            daysUntilAir: daysUntilAir?.int64Value
+            daysUntilAir: daysUntilAir?.int64Value,
+            hasAired: hasAired
         )
     }
 }
@@ -237,7 +245,7 @@ public extension TvManiac.ContinueTrackingEpisodeModel {
 public extension TvManiac.UpNextEpisodeItem {
     func toSwift() -> SwiftNextEpisode {
         .init(
-            showId: showId,
+            showTraktId: showTraktId,
             showName: showName,
             showPoster: showPoster,
             episodeId: episodeId,

@@ -20,7 +20,7 @@ VALUES(?,?,?);
 
 episodeImage:
 SELECT
-    tvshow.id AS show_id,
+    tvshow.trakt_id AS show_trakt_id,
     season.season_number,
     episode.id AS episode_id,
     episode.episode_number,
@@ -30,11 +30,11 @@ FROM
 LEFT JOIN
     season ON season.id = episode.season_id
 LEFT JOIN
-    tvshow ON tvshow.id = season.show_id
+    tvshow ON tvshow.trakt_id = season.show_trakt_id
 LEFT OUTER JOIN
     episode_image ON episode_image.id = episode.id
 WHERE
-    tvshow.id = :showId AND episode_image.image_url IS NULL;
+    tvshow.trakt_id = :showTraktId AND episode_image.image_url IS NULL;
 
 delete:
 DELETE FROM episode_image WHERE id = ?;

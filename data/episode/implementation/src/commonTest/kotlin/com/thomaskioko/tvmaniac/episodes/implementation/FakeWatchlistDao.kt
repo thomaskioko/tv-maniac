@@ -18,5 +18,5 @@ internal class FakeWatchlistDao : WatchlistDao {
     override fun observeWatchlistByQuery(query: String): Flow<List<SearchFollowedShows>> =
         MutableStateFlow(emptyList())
 
-    override fun observeIsShowInLibrary(showId: Long): Flow<Boolean> = isInLibraryFlow
+    override fun observeIsShowInLibrary(traktId: Long): Flow<Boolean> = isInLibraryFlow
 }

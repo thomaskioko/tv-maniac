@@ -23,8 +23,8 @@ public data class ShowResponse(
 @Serializable
 public data class IdsResponse(
     @SerialName("slug") var slug: String,
-    @SerialName("trakt") var trakt: Int,
-    @SerialName("tvdb") var tvdb: Int,
-    @SerialName("imdb") var imdb: String,
-    @SerialName("tmdb") var tmdb: Int,
+    @SerialName("trakt") var trakt: Long,
+    @SerialName("tmdb") var tmdb: Long,
+    @SerialName("tvdb") var tvdb: Long? = null,
+    @SerialName("imdb") var imdb: String? = null,
 )

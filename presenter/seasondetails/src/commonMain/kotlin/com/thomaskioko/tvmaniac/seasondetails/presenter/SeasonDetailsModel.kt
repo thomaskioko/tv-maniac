@@ -12,13 +12,13 @@ import kotlinx.collections.immutable.persistentSetOf
 
 public sealed interface WatchOperation {
     public data class MarkEpisodeWatched(val params: MarkEpisodeWatchedParams) : WatchOperation
-    public data class MarkEpisodeUnwatched(val showId: Long, val episodeId: Long) : WatchOperation
+    public data class MarkEpisodeUnwatched(val showTraktId: Long, val episodeId: Long) : WatchOperation
     public data class MarkSeasonWatched(
-        val showId: Long,
+        val showTraktId: Long,
         val seasonNumber: Long,
         val markPreviousSeasons: Boolean = false,
     ) : WatchOperation
-    public data class MarkSeasonUnwatched(val showId: Long, val seasonNumber: Long) : WatchOperation
+    public data class MarkSeasonUnwatched(val showTraktId: Long, val seasonNumber: Long) : WatchOperation
 }
 
 public sealed interface SeasonDialogState {

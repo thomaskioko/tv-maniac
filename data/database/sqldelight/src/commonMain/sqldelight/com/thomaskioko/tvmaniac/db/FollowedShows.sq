@@ -1,79 +1,84 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.TraktId;
+import com.thomaskioko.tvmaniac.db.TmdbId;
+
 CREATE TABLE IF NOT EXISTS followed_shows(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    tmdb_id INTEGER NOT NULL UNIQUE,
+    trakt_id INTEGER AS Id<TraktId> NOT NULL UNIQUE,
+    tmdb_id INTEGER AS Id<TmdbId> DEFAULT NULL,
     followed_at INTEGER NOT NULL,
     pending_action TEXT NOT NULL DEFAULT 'NOTHING'
-        CHECK(pending_action IN ('NOTHING', 'UPLOAD', 'DELETE')),
-    trakt_id INTEGER
+        CHECK(pending_action IN ('NOTHING', 'UPLOAD', 'DELETE'))
 );
 
+CREATE INDEX IF NOT EXISTS idx_followed_shows_trakt_id ON followed_shows(trakt_id);
 CREATE INDEX IF NOT EXISTS idx_followed_shows_tmdb_id ON followed_shows(tmdb_id);
 CREATE INDEX IF NOT EXISTS idx_followed_shows_pending_action ON followed_shows(pending_action);
 
 entries:
 SELECT
     followed_shows.id AS followed_id,
+    followed_shows.trakt_id,
     followed_shows.tmdb_id,
     followed_shows.followed_at,
-    followed_shows.pending_action,
-    followed_shows.trakt_id
+    followed_shows.pending_action
 FROM followed_shows;
 
-entryWithTmdbId:
+entryWithTraktId:
 SELECT
     followed_shows.id AS followed_id,
+    followed_shows.trakt_id,
     followed_shows.tmdb_id,
     followed_shows.followed_at,
-    followed_shows.pending_action,
-    followed_shows.trakt_id
-FROM followed_shows WHERE tmdb_id = ?;
+    followed_shows.pending_action
+FROM followed_shows WHERE trakt_id = ?;
 
 entriesWithNoPendingAction:
 SELECT
     followed_shows.id AS followed_id,
+    followed_shows.trakt_id,
     followed_shows.tmdb_id,
     followed_shows.followed_at,
-    followed_shows.pending_action,
-    followed_shows.trakt_id
+    followed_shows.pending_action
 FROM followed_shows WHERE pending_action = 'NOTHING';
 
 entriesWithUploadPendingAction:
 SELECT
     followed_shows.id AS followed_id,
+    followed_shows.trakt_id,
     followed_shows.tmdb_id,
     followed_shows.followed_at,
-    followed_shows.pending_action,
-    followed_shows.trakt_id
+    followed_shows.pending_action
 FROM followed_shows WHERE pending_action = 'UPLOAD';
 
 entriesWithDeletePendingAction:
 SELECT
     followed_shows.id AS followed_id,
+    followed_shows.trakt_id,
     followed_shows.tmdb_id,
     followed_shows.followed_at,
-    followed_shows.pending_action,
-    followed_shows.trakt_id
+    followed_shows.pending_action
 FROM followed_shows WHERE pending_action = 'DELETE';
 
 upsert:
-INSERT OR REPLACE INTO followed_shows(id, tmdb_id, followed_at, pending_action, trakt_id)
-VALUES(:id, :tmdbId, :followedAt, :pendingAction, :traktId);
+INSERT OR REPLACE INTO followed_shows(id, trakt_id, tmdb_id, followed_at, pending_action)
+VALUES(:id, :traktId, :tmdbId, :followedAt, :pendingAction);
 
 insert:
-INSERT INTO followed_shows(tmdb_id, followed_at, pending_action, trakt_id)
-VALUES(:tmdbId, :followedAt, :pendingAction, :traktId);
+INSERT INTO followed_shows(trakt_id, tmdb_id, followed_at, pending_action)
+VALUES(:traktId, :tmdbId, :followedAt, :pendingAction);
 
 updatePendingAction:
 UPDATE followed_shows SET pending_action = :pendingAction WHERE id = :id;
 
-updatePendingActionForTmdbId:
-UPDATE followed_shows SET pending_action = :pendingAction WHERE tmdb_id = :tmdbId;
+updatePendingActionForTraktId:
+UPDATE followed_shows SET pending_action = :pendingAction WHERE trakt_id = :traktId;
 
 deleteById:
 DELETE FROM followed_shows WHERE id = ?;
 
-deleteByTmdbId:
-DELETE FROM followed_shows WHERE tmdb_id = ?;
+deleteByTraktId:
+DELETE FROM followed_shows WHERE trakt_id = ?;
 
 countEntries:
 SELECT COUNT(*) FROM followed_shows;
@@ -82,58 +87,60 @@ countEntriesWithPendingAction:
 SELECT COUNT(*) FROM followed_shows WHERE pending_action != 'NOTHING';
 
 upsertIfNotExists:
-INSERT OR IGNORE INTO followed_shows(tmdb_id, followed_at, pending_action)
-VALUES(:tmdbId, :followedAt, 'UPLOAD');
+INSERT OR IGNORE INTO followed_shows(trakt_id, tmdb_id, followed_at, pending_action)
+VALUES(:traktId, :tmdbId, :followedAt, 'UPLOAD');
 
 isShowFollowed:
-SELECT COUNT(*) > 0 FROM followed_shows WHERE tmdb_id = ? AND pending_action != 'DELETE';
+SELECT COUNT(*) > 0 FROM followed_shows WHERE trakt_id = ? AND pending_action != 'DELETE';
 
 followedShows:
 SELECT
-    tvshow.id AS show_id,
+    tvshow.trakt_id AS show_trakt_id,
+    tvshow.tmdb_id AS show_tmdb_id,
     tvshow.name,
     tvshow.poster_path,
-    tvshow.first_air_date,
+    tvshow.year,
     followed_shows.followed_at AS created_at,
     show_metadata.season_count,
     show_metadata.episode_count,
     show_metadata.status,
-    (SELECT COUNT(*) FROM watched_episodes WHERE watched_episodes.show_id = tvshow.id) AS watched_count,
-    (SELECT COUNT(*) FROM episode WHERE episode.show_id = tvshow.id AND (episode.air_date IS NULL OR episode.air_date <= date('now'))) AS total_episode_count
+    (SELECT COUNT(*) FROM watched_episodes WHERE watched_episodes.show_trakt_id = tvshow.trakt_id) AS watched_count,
+    (SELECT COUNT(*) FROM episode WHERE episode.show_trakt_id = tvshow.trakt_id AND (episode.air_date IS NULL OR episode.air_date <= date('now'))) AS total_episode_count
 FROM followed_shows
-INNER JOIN tvshow ON followed_shows.tmdb_id = tvshow.id
-LEFT JOIN show_metadata ON tvshow.id = show_metadata.show_id
-LEFT JOIN shows_last_watched ON shows_last_watched.show_id = tvshow.id
+INNER JOIN tvshow ON followed_shows.trakt_id = tvshow.trakt_id
+LEFT JOIN show_metadata ON tvshow.trakt_id = show_metadata.show_trakt_id
+LEFT JOIN shows_last_watched ON shows_last_watched.show_trakt_id = tvshow.trakt_id
 WHERE followed_shows.pending_action != 'DELETE'
   AND (
-    (SELECT COUNT(*) FROM watched_episodes WHERE watched_episodes.show_id = tvshow.id) <
-    (SELECT COUNT(*) FROM episode WHERE episode.show_id = tvshow.id AND (episode.air_date IS NULL OR episode.air_date <= date('now')))
-    OR (SELECT COUNT(*) FROM episode WHERE episode.show_id = tvshow.id AND (episode.air_date IS NULL OR episode.air_date <= date('now'))) = 0
+    (SELECT COUNT(*) FROM watched_episodes WHERE watched_episodes.show_trakt_id = tvshow.trakt_id) <
+    (SELECT COUNT(*) FROM episode WHERE episode.show_trakt_id = tvshow.trakt_id AND (episode.air_date IS NULL OR episode.air_date <= date('now')))
+    OR (SELECT COUNT(*) FROM episode WHERE episode.show_trakt_id = tvshow.trakt_id AND (episode.air_date IS NULL OR episode.air_date <= date('now'))) = 0
   )
 ORDER BY COALESCE(shows_last_watched.last_watched_at, followed_shows.followed_at) DESC;
 
 searchFollowedShows:
 SELECT
-    tvshow.id AS show_id,
+    tvshow.trakt_id AS show_trakt_id,
+    tvshow.tmdb_id AS show_tmdb_id,
     tvshow.name,
     tvshow.poster_path,
     tvshow.status,
-    tvshow.first_air_date,
+    tvshow.year,
     followed_shows.followed_at AS created_at,
     show_metadata.season_count,
     show_metadata.episode_count,
     show_metadata.status AS metadata_status,
-    (SELECT COUNT(*) FROM watched_episodes WHERE watched_episodes.show_id = tvshow.id) AS watched_count,
-    (SELECT COUNT(*) FROM episode WHERE episode.show_id = tvshow.id AND (episode.air_date IS NULL OR episode.air_date <= date('now'))) AS total_episode_count
+    (SELECT COUNT(*) FROM watched_episodes WHERE watched_episodes.show_trakt_id = tvshow.trakt_id) AS watched_count,
+    (SELECT COUNT(*) FROM episode WHERE episode.show_trakt_id = tvshow.trakt_id AND (episode.air_date IS NULL OR episode.air_date <= date('now'))) AS total_episode_count
 FROM followed_shows
-INNER JOIN tvshow ON followed_shows.tmdb_id = tvshow.id
-LEFT JOIN show_metadata ON tvshow.id = show_metadata.show_id
-LEFT JOIN shows_last_watched ON shows_last_watched.show_id = tvshow.id
+INNER JOIN tvshow ON followed_shows.trakt_id = tvshow.trakt_id
+LEFT JOIN show_metadata ON tvshow.trakt_id = show_metadata.show_trakt_id
+LEFT JOIN shows_last_watched ON shows_last_watched.show_trakt_id = tvshow.trakt_id
 WHERE followed_shows.pending_action != 'DELETE'
   AND (
-    (SELECT COUNT(*) FROM watched_episodes WHERE watched_episodes.show_id = tvshow.id) <
-    (SELECT COUNT(*) FROM episode WHERE episode.show_id = tvshow.id AND (episode.air_date IS NULL OR episode.air_date <= date('now')))
-    OR (SELECT COUNT(*) FROM episode WHERE episode.show_id = tvshow.id AND (episode.air_date IS NULL OR episode.air_date <= date('now'))) = 0
+    (SELECT COUNT(*) FROM watched_episodes WHERE watched_episodes.show_trakt_id = tvshow.trakt_id) <
+    (SELECT COUNT(*) FROM episode WHERE episode.show_trakt_id = tvshow.trakt_id AND (episode.air_date IS NULL OR episode.air_date <= date('now')))
+    OR (SELECT COUNT(*) FROM episode WHERE episode.show_trakt_id = tvshow.trakt_id AND (episode.air_date IS NULL OR episode.air_date <= date('now'))) = 0
   )
   AND tvshow.name LIKE '%' || :query || '%' COLLATE NOCASE
 ORDER BY

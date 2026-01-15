@@ -4,6 +4,7 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.db.FollowedShowsQueries
+import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowEntry
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsDao
@@ -15,6 +16,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 import kotlin.time.Instant
+
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
@@ -29,49 +31,49 @@ public class DefaultFollowedShowsDao(
     override fun entries(): List<FollowedShowEntry> {
         return queries.entries()
             .executeAsList()
-            .map { toEntry(it.followed_id, it.tmdb_id, it.followed_at, it.pending_action, it.trakt_id) }
+            .map { toEntry(it.followed_id, it.trakt_id.id, it.tmdb_id?.id, it.followed_at, it.pending_action) }
     }
 
     override fun entriesObservable(): Flow<List<FollowedShowEntry>> {
         return queries.entries()
             .asFlow()
             .mapToList(dispatchers.io)
-            .map { list -> list.map { toEntry(it.followed_id, it.tmdb_id, it.followed_at, it.pending_action, it.trakt_id) } }
+            .map { list -> list.map { toEntry(it.followed_id, it.trakt_id.id, it.tmdb_id?.id, it.followed_at, it.pending_action) } }
     }
 
-    override fun entryWithTmdbId(tmdbId: Long): FollowedShowEntry? {
-        return queries.entryWithTmdbId(tmdbId)
+    override fun entryWithTraktId(traktId: Long): FollowedShowEntry? {
+        return queries.entryWithTraktId(Id(traktId))
             .executeAsOneOrNull()
-            ?.let { toEntry(it.followed_id, it.tmdb_id, it.followed_at, it.pending_action, it.trakt_id) }
+            ?.let { toEntry(it.followed_id, it.trakt_id.id, it.tmdb_id?.id, it.followed_at, it.pending_action) }
     }
 
     override fun entriesWithNoPendingAction(): List<FollowedShowEntry> {
         return queries.entriesWithNoPendingAction()
             .executeAsList()
-            .map { toEntry(it.followed_id, it.tmdb_id, it.followed_at, it.pending_action, it.trakt_id) }
+            .map { toEntry(it.followed_id, it.trakt_id.id, it.tmdb_id?.id, it.followed_at, it.pending_action) }
     }
 
     override fun entriesWithUploadPendingAction(): List<FollowedShowEntry> {
         return queries.entriesWithUploadPendingAction()
             .executeAsList()
-            .map { toEntry(it.followed_id, it.tmdb_id, it.followed_at, it.pending_action, it.trakt_id) }
+            .map { toEntry(it.followed_id, it.trakt_id.id, it.tmdb_id?.id, it.followed_at, it.pending_action) }
     }
 
     override fun entriesWithDeletePendingAction(): List<FollowedShowEntry> {
         return queries.entriesWithDeletePendingAction()
             .executeAsList()
-            .map { toEntry(it.followed_id, it.tmdb_id, it.followed_at, it.pending_action, it.trakt_id) }
+            .map { toEntry(it.followed_id, it.trakt_id.id, it.tmdb_id?.id, it.followed_at, it.pending_action) }
     }
 
     override fun upsert(entry: FollowedShowEntry): Long {
         queries.upsert(
             id = entry.id.takeIf { it > 0 },
-            tmdbId = entry.tmdbId,
+            traktId = Id(entry.traktId),
+            tmdbId = entry.tmdbId?.let { Id(it) },
             followedAt = entry.followedAt.toEpochMilliseconds(),
             pendingAction = entry.pendingAction.value,
-            traktId = entry.traktId,
         )
-        return queries.entryWithTmdbId(entry.tmdbId).executeAsOneOrNull()?.followed_id ?: 0
+        return queries.entryWithTraktId(Id(entry.traktId)).executeAsOneOrNull()?.followed_id ?: 0
     }
 
     override fun updatePendingAction(id: Long, action: PendingAction) {
@@ -82,21 +84,21 @@ public class DefaultFollowedShowsDao(
         val _ = queries.deleteById(id)
     }
 
-    override fun deleteByTmdbId(tmdbId: Long) {
-        val _ = queries.deleteByTmdbId(tmdbId)
+    override fun deleteByTraktId(traktId: Long) {
+        val _ = queries.deleteByTraktId(Id(traktId))
     }
 
     private fun toEntry(
         followedId: Long,
-        tmdbId: Long,
+        traktId: Long,
+        tmdbId: Long?,
         followedAt: Long,
         pendingAction: String,
-        traktId: Long?,
     ): FollowedShowEntry = FollowedShowEntry(
         id = followedId,
+        traktId = traktId,
         tmdbId = tmdbId,
         followedAt = Instant.fromEpochMilliseconds(followedAt),
         pendingAction = PendingAction.fromValue(pendingAction),
-        traktId = traktId,
     )
 }

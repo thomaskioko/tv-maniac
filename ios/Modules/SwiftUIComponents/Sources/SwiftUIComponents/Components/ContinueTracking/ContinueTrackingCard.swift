@@ -42,17 +42,7 @@ public struct ContinueTrackingCard: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                if let daysUntilAir = episode.daysUntilAir, daysUntilAir > 0 {
-                    VStack(spacing: 0) {
-                        Text("\(daysUntilAir)")
-                            .textStyle(theme.typography.titleLarge)
-                            .foregroundColor(theme.colors.onSurfaceVariant)
-                        Text(dayLabelFormat(Int(daysUntilAir)))
-                            .textStyle(theme.typography.labelSmall)
-                            .foregroundColor(theme.colors.onSurfaceVariant)
-                    }
-                    .padding(.trailing, theme.spacing.small)
-                } else {
+                if episode.hasAired {
                     ZStack {
                         Circle()
                             .fill(episode.isWatched ? theme.colors.success : theme.colors.grey)
@@ -66,6 +56,21 @@ public struct ContinueTrackingCard: View {
                     .onTapGesture {
                         onMarkWatched()
                     }
+                } else if let daysUntilAir = episode.daysUntilAir, daysUntilAir > 0 {
+                    VStack(spacing: 0) {
+                        Text("\(daysUntilAir)")
+                            .textStyle(theme.typography.titleLarge)
+                            .foregroundColor(theme.colors.onSurfaceVariant)
+                        Text(dayLabelFormat(Int(daysUntilAir)))
+                            .textStyle(theme.typography.labelSmall)
+                            .foregroundColor(theme.colors.onSurfaceVariant)
+                    }
+                    .padding(.trailing, theme.spacing.small)
+                } else {
+                    Text("TBD")
+                        .textStyle(theme.typography.titleMedium)
+                        .foregroundColor(theme.colors.onSurfaceVariant)
+                        .padding(.trailing, theme.spacing.small)
                 }
             }
             .padding(.horizontal, theme.spacing.small)
@@ -92,14 +97,15 @@ private enum DimensionConstants {
             episode: SwiftContinueTrackingEpisode(
                 episodeId: 123,
                 seasonId: 1,
-                showId: 1,
+                showTraktId: 1,
                 episodeNumber: 3,
                 seasonNumber: 2,
                 episodeNumberFormatted: "S02 | E03",
                 episodeTitle: "Re:start",
                 imageUrl: nil,
                 isWatched: false,
-                daysUntilAir: nil
+                daysUntilAir: nil,
+                hasAired: true
             ),
             dayLabelFormat: { count in count == 1 ? "day" : "days" },
             onMarkWatched: {}
@@ -109,14 +115,15 @@ private enum DimensionConstants {
             episode: SwiftContinueTrackingEpisode(
                 episodeId: 122,
                 seasonId: 1,
-                showId: 1,
+                showTraktId: 1,
                 episodeNumber: 2,
                 seasonNumber: 2,
                 episodeNumberFormatted: "S02 | E02",
                 episodeTitle: "Previous Episode",
                 imageUrl: nil,
                 isWatched: true,
-                daysUntilAir: nil
+                daysUntilAir: nil,
+                hasAired: true
             ),
             dayLabelFormat: { count in count == 1 ? "day" : "days" },
             onMarkWatched: {}
@@ -126,14 +133,33 @@ private enum DimensionConstants {
             episode: SwiftContinueTrackingEpisode(
                 episodeId: 124,
                 seasonId: 1,
-                showId: 1,
+                showTraktId: 1,
                 episodeNumber: 5,
                 seasonNumber: 2,
                 episodeNumberFormatted: "S02 | E05",
                 episodeTitle: "Upcoming Episode",
                 imageUrl: nil,
                 isWatched: false,
-                daysUntilAir: 14
+                daysUntilAir: 14,
+                hasAired: false
+            ),
+            dayLabelFormat: { count in count == 1 ? "day" : "days" },
+            onMarkWatched: {}
+        )
+
+        ContinueTrackingCard(
+            episode: SwiftContinueTrackingEpisode(
+                episodeId: 125,
+                seasonId: 1,
+                showTraktId: 1,
+                episodeNumber: 6,
+                seasonNumber: 2,
+                episodeNumberFormatted: "S02 | E06",
+                episodeTitle: "Unknown Air Date",
+                imageUrl: nil,
+                isWatched: false,
+                daysUntilAir: nil,
+                hasAired: false
             ),
             dayLabelFormat: { count in count == 1 ? "day" : "days" },
             onMarkWatched: {}

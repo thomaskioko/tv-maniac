@@ -22,19 +22,19 @@ public class FakeFollowedShowsRepository : FollowedShowsRepository {
 
     override fun observeFollowedShows(): Flow<List<FollowedShowEntry>> = entries
 
-    override suspend fun addFollowedShow(tmdbId: Long) {
-        _addedShowIds.add(tmdbId)
+    override suspend fun addFollowedShow(traktId: Long) {
+        _addedShowIds.add(traktId)
         val newEntry = FollowedShowEntry(
-            id = tmdbId,
-            tmdbId = tmdbId,
+            id = traktId,
+            traktId = traktId,
             followedAt = Clock.System.now(),
         )
         entries.value += newEntry
     }
 
-    override suspend fun removeFollowedShow(tmdbId: Long) {
-        _removedShowIds.add(tmdbId)
-        entries.value = entries.value.filter { it.tmdbId != tmdbId }
+    override suspend fun removeFollowedShow(traktId: Long) {
+        _removedShowIds.add(traktId)
+        entries.value = entries.value.filter { it.traktId != traktId }
     }
 
     override suspend fun needsSync(expiry: Duration): Boolean = false

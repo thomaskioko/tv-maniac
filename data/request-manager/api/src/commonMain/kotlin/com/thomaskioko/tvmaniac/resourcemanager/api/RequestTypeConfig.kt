@@ -23,4 +23,6 @@ public enum class RequestTypeConfig(public val requestId: Long, public val durat
     FOLLOWED_SHOWS_SYNC(16, 3.hours),
     EPISODE_WATCHES_SYNC(17, 3.hours),
     SHOW_EPISODE_WATCHES_SYNC(18, 3.hours),
+    SHOW_CAST(19, 6.days),
+    TRAILERS(20, 6.days),
 }

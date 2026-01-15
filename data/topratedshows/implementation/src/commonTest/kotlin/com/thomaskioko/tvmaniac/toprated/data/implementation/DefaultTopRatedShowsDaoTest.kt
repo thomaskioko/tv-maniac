@@ -4,7 +4,10 @@ import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.PageId
+import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.db.Toprated_shows
+import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsDao
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
@@ -50,26 +53,26 @@ internal class DefaultTopRatedShowsDaoTest : BaseDatabaseTest() {
     @Test
     fun `should insert top rated shows`() = runTest {
         val _ = database.tvShowQueries.upsert(
-            id = Id(999),
+            trakt_id = Id<TraktId>(999),
+            tmdb_id = Id<TmdbId>(999),
             name = "New Test Show",
             overview = "New test overview",
             language = "en",
-            first_air_date = "2023-03-01",
-            vote_average = 9.0,
+            year = "2023-03-01",
+            ratings = 9.0,
             vote_count = 300,
-            popularity = 99.0,
-            genre_ids = listOf(1, 2),
+            genres = listOf("Drama", "Action"),
             status = "Returning Series",
             episode_numbers = null,
-            last_air_date = null,
             season_numbers = null,
             poster_path = "/new_test.jpg",
             backdrop_path = "/new_backdrop.jpg",
         )
 
         val topRatedShow = Toprated_shows(
-            id = Id(999),
-            page = Id(1),
+            trakt_id = Id<TraktId>(999),
+            tmdb_id = Id<TmdbId>(999),
+            page = Id<PageId>(1),
             name = "New Test Show",
             poster_path = "/new_test.jpg",
             overview = "New test overview",
@@ -83,7 +86,7 @@ internal class DefaultTopRatedShowsDaoTest : BaseDatabaseTest() {
         dao.observeTopRatedShows(page = 1).test {
             val shows = awaitItem()
             shows.size shouldBe 3
-            shows.any { it.id == 999L } shouldBe true
+            shows.any { it.traktId == 999L } shouldBe true
             cancelAndConsumeRemainingEvents()
         }
     }
@@ -98,13 +101,13 @@ internal class DefaultTopRatedShowsDaoTest : BaseDatabaseTest() {
             shows.size shouldBe 2
 
             // Verify show data is correctly returned from stable query
-            val show1 = shows.find { it.id == 1L }
+            val show1 = shows.find { it.traktId == 1L }
             show1?.title shouldBe "Test Show 1"
             show1?.posterPath shouldBe "/test1.jpg"
             show1?.overview shouldBe "Test overview 1"
             show1?.inLibrary shouldBe false // Always false from stable query
 
-            val show2 = shows.find { it.id == 2L }
+            val show2 = shows.find { it.traktId == 2L }
             show2?.title shouldBe "Test Show 2"
             show2?.posterPath shouldBe "/test2.jpg"
             show2?.overview shouldBe "Test overview 2"
@@ -117,8 +120,9 @@ internal class DefaultTopRatedShowsDaoTest : BaseDatabaseTest() {
     @Test
     fun `stable query should not return shows with null names`() = runTest {
         val _ = topRatedShowsQueries.insert(
-            id = Id(999),
-            page = Id(1),
+            traktId = Id<TraktId>(999),
+            tmdbId = Id<TmdbId>(999),
+            page = Id<PageId>(1),
             name = null,
             poster_path = "/test999.jpg",
             overview = "Test overview 999",
@@ -128,7 +132,7 @@ internal class DefaultTopRatedShowsDaoTest : BaseDatabaseTest() {
         dao.observeTopRatedShows(page = 1).test {
             val shows = awaitItem()
             shows.size shouldBe 2
-            shows.none { it.id == 999L } shouldBe true
+            shows.none { it.traktId == 999L } shouldBe true
             cancelAndConsumeRemainingEvents()
         }
     }
@@ -136,8 +140,9 @@ internal class DefaultTopRatedShowsDaoTest : BaseDatabaseTest() {
     @Test
     fun `stable query should filter by page correctly`() = runTest {
         val _ = topRatedShowsQueries.insert(
-            id = Id(999),
-            page = Id(2),
+            traktId = Id<TraktId>(999),
+            tmdbId = Id<TmdbId>(999),
+            page = Id<PageId>(2),
             name = "Page 2 Show",
             poster_path = "/page2.jpg",
             overview = "Page 2 overview",
@@ -191,8 +196,9 @@ internal class DefaultTopRatedShowsDaoTest : BaseDatabaseTest() {
 
             // When - add a new show
             val newShow = Toprated_shows(
-                id = Id(999),
-                page = Id(1),
+                trakt_id = Id<TraktId>(999),
+                tmdb_id = Id<TmdbId>(999),
+                page = Id<PageId>(1),
                 name = "New Reactive Show",
                 poster_path = "/reactive.jpg",
                 overview = "Reactive overview",
@@ -203,7 +209,7 @@ internal class DefaultTopRatedShowsDaoTest : BaseDatabaseTest() {
             // Then - should emit updated list
             val updatedShows = awaitItem()
             updatedShows.size shouldBe 3
-            updatedShows.any { it.id == 999L && it.title == "New Reactive Show" } shouldBe true
+            updatedShows.any { it.traktId == 999L && it.title == "New Reactive Show" } shouldBe true
 
             cancelAndConsumeRemainingEvents()
         }
@@ -212,36 +218,34 @@ internal class DefaultTopRatedShowsDaoTest : BaseDatabaseTest() {
     private fun insertTestShows() {
         // Insert test TV shows first
         val _ = database.tvShowQueries.upsert(
-            id = Id(1),
+            trakt_id = Id<TraktId>(1),
+            tmdb_id = Id<TmdbId>(1),
             name = "Test Show 1",
             overview = "Test overview 1",
             language = "en",
-            first_air_date = "2023-01-01",
-            vote_average = 8.0,
+            year = "2023-01-01",
+            ratings = 8.0,
             vote_count = 100,
-            popularity = 95.0,
-            genre_ids = listOf(1, 2),
+            genres = listOf("Drama", "Action"),
             status = "Returning Series",
             episode_numbers = null,
-            last_air_date = null,
             season_numbers = null,
             poster_path = "/test1.jpg",
             backdrop_path = "/backdrop1.jpg",
         )
 
         val _ = database.tvShowQueries.upsert(
-            id = Id(2),
+            trakt_id = Id<TraktId>(2),
+            tmdb_id = Id<TmdbId>(2),
             name = "Test Show 2",
             overview = "Test overview 2",
             language = "en",
-            first_air_date = "2023-02-01",
-            vote_average = 7.5,
+            year = "2023-02-01",
+            ratings = 7.5,
             vote_count = 200,
-            popularity = 85.0,
-            genre_ids = listOf(2, 3),
+            genres = listOf("Comedy", "Drama"),
             status = "Ended",
             episode_numbers = null,
-            last_air_date = null,
             season_numbers = null,
             poster_path = "/test2.jpg",
             backdrop_path = "/backdrop2.jpg",
@@ -249,8 +253,9 @@ internal class DefaultTopRatedShowsDaoTest : BaseDatabaseTest() {
 
         // Insert top rated shows with show data
         val _ = topRatedShowsQueries.insert(
-            id = Id(1),
-            page = Id(1),
+            traktId = Id<TraktId>(1),
+            tmdbId = Id<TmdbId>(1),
+            page = Id<PageId>(1),
             name = "Test Show 1",
             poster_path = "/test1.jpg",
             overview = "Test overview 1",
@@ -258,8 +263,9 @@ internal class DefaultTopRatedShowsDaoTest : BaseDatabaseTest() {
         )
 
         val _ = topRatedShowsQueries.insert(
-            id = Id(2),
-            page = Id(1),
+            traktId = Id<TraktId>(2),
+            tmdbId = Id<TmdbId>(2),
+            page = Id<PageId>(1),
             name = "Test Show 2",
             poster_path = "/test2.jpg",
             overview = "Test overview 2",

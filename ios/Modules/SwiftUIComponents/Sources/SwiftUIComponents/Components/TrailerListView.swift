@@ -48,13 +48,13 @@ public struct TrailerListView: View {
         TrailerListView(
             trailers: [
                 .init(
-                    showId: 123,
+                    showTmdbId: 123,
                     key: "XZ8daibM3AE",
                     name: "Series Trailer",
                     youtubeThumbnailUrl: "https://i.ytimg.com/vi/XZ8daibM3AE/hqdefault.jpg"
                 ),
                 .init(
-                    showId: 1234,
+                    showTmdbId: 1234,
                     key: "XZ8daibM3AE",
                     name: "Series Trailer",
                     youtubeThumbnailUrl: "https://i.ytimg.com/vi/XZ8daibM3AE/hqdefault.jpg"

@@ -8,37 +8,37 @@ class GridViewTest: SnapshotTestCase {
         GridView(
             items: [
                 .init(
-                    tmdbId: 1234,
+                    traktId: 1234,
                     title: "Arcane",
                     posterUrl: "",
                     inLibrary: false
                 ),
                 .init(
-                    tmdbId: 123,
+                    traktId: 123,
                     title: "The Lord of the Rings: The Rings of Power",
                     posterUrl: "",
                     inLibrary: false
                 ),
                 .init(
-                    tmdbId: 12346,
+                    traktId: 12346,
                     title: "Kaos",
                     posterUrl: "",
                     inLibrary: false
                 ),
                 .init(
-                    tmdbId: 124,
+                    traktId: 124,
                     title: "Terminator",
                     posterUrl: "",
                     inLibrary: false
                 ),
                 .init(
-                    tmdbId: 123_346,
+                    traktId: 123_346,
                     title: "The Perfect Couple",
                     posterUrl: "",
                     inLibrary: false
                 ),
                 .init(
-                    tmdbId: 2346,
+                    traktId: 2346,
                     title: "One Piece",
                     posterUrl: "",
                     inLibrary: false

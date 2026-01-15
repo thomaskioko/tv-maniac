@@ -11,14 +11,13 @@ import com.thomaskioko.tvmaniac.data.recommendedshows.testing.FakeRecommendedSho
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.db.RecommendedShows
-import com.thomaskioko.tvmaniac.db.SelectByShowId
+import com.thomaskioko.tvmaniac.db.SelectByShowTraktId
 import com.thomaskioko.tvmaniac.db.ShowCast
 import com.thomaskioko.tvmaniac.db.ShowSeasons
 import com.thomaskioko.tvmaniac.db.SimilarShows
 import com.thomaskioko.tvmaniac.db.TvshowDetails
 import com.thomaskioko.tvmaniac.db.WatchProviders
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
-import com.thomaskioko.tvmaniac.domain.episode.ObserveContinueTrackingInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
 import com.thomaskioko.tvmaniac.domain.recommendedshows.RecommendedShowsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
@@ -107,7 +106,7 @@ class ShowDetailsPresenterTest {
             emission.showDetails shouldBe showDetailsContent.showDetails.copy(
                 recommendedShows = persistentListOf(
                     ShowModel(
-                        tmdbId = 184958,
+                        traktId = 18495,
                         title = "Loki",
                         posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
                         backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
@@ -123,7 +122,7 @@ class ShowDetailsPresenterTest {
                 ),
                 similarShows = persistentListOf(
                     ShowModel(
-                        tmdbId = 184958,
+                        traktId = 18495,
                         title = "Loki",
                         posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
                         backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
@@ -132,7 +131,7 @@ class ShowDetailsPresenterTest {
                 ),
                 trailersList = persistentListOf(
                     TrailerModel(
-                        showId = 84958,
+                        showTmdbId = 84958,
                         key = "Fd43V",
                         name = "Some title",
                         youtubeThumbnailUrl = "https://i.ytimg.com/vi/Fd43V/hqdefault.jpg",
@@ -216,7 +215,7 @@ class ShowDetailsPresenterTest {
         presenter.dispatch(
             SeasonClicked(
                 ShowSeasonDetailsParam(
-                    showId = 2,
+                    showTraktId = 2,
                     selectedSeasonIndex = 2,
                     seasonNumber = 0,
                     seasonId = 0,
@@ -287,7 +286,7 @@ class ShowDetailsPresenterTest {
 
             presenter.dispatch(
                 MarkEpisodeWatched(
-                    showId = 84958,
+                    showTraktId = 84958,
                     episodeId = 1001,
                     seasonNumber = 1,
                     episodeNumber = 1,
@@ -297,7 +296,7 @@ class ShowDetailsPresenterTest {
             testDispatcher.scheduler.advanceUntilIdle()
 
             episodeRepository.lastMarkEpisodeWatchedCall shouldBe MarkEpisodeWatchedCall(
-                showId = 84958,
+                showTraktId = 84958,
                 episodeId = 1001,
                 seasonNumber = 1,
                 episodeNumber = 1,
@@ -344,7 +343,7 @@ class ShowDetailsPresenterTest {
 
             presenter.dispatch(
                 MarkEpisodeWatched(
-                    showId = 84958,
+                    showTraktId = 84958,
                     episodeId = 1001,
                     seasonNumber = 1,
                     episodeNumber = 1,
@@ -507,7 +506,7 @@ class ShowDetailsPresenterTest {
         watchProviderResult: List<WatchProviders> = emptyList(),
         similarShowResult: List<SimilarShows> = emptyList(),
         recommendedShowResult: List<RecommendedShows> = emptyList(),
-        trailersResult: List<SelectByShowId> = emptyList(),
+        trailersResult: List<SelectByShowTraktId> = emptyList(),
     ) {
         showDetailsRepository.setShowDetailsResult(showDetailResult)
         trailerRepository.setYoutubePlayerInstalled(isYoutubeInstalled)
@@ -526,7 +525,7 @@ class ShowDetailsPresenterTest {
         onNavigateToShow: (id: Long) -> Unit = {},
     ): ShowDetailsPresenter {
         return DefaultShowDetailsPresenter(
-            showId = 84958,
+            showTraktId = 84958,
             componentContext = DefaultComponentContext(lifecycle = LifecycleRegistry()),
             onBack = onBack,
             onNavigateToSeason = onNavigateToSeason,
@@ -539,6 +538,8 @@ class ShowDetailsPresenterTest {
             ),
             showDetailsInteractor = ShowDetailsInteractor(
                 showDetailsRepository = showDetailsRepository,
+                castRepository = castRepository,
+                trailerRepository = trailerRepository,
                 dispatchers = coroutineDispatcher,
             ),
             prefetchFirstSeasonInteractor = PrefetchFirstSeasonInteractor(
@@ -570,9 +571,6 @@ class ShowDetailsPresenterTest {
                 episodeRepository = episodeRepository,
             ),
             observeShowWatchProgressInteractor = ObserveShowWatchProgressInteractor(
-                episodeRepository = episodeRepository,
-            ),
-            observeContinueTrackingInteractor = ObserveContinueTrackingInteractor(
                 episodeRepository = episodeRepository,
             ),
             showContentSyncInteractor = ShowContentSyncInteractor(

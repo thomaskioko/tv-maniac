@@ -13,6 +13,7 @@ kotlin {
                 api(libs.coroutines.core)
 
                 implementation(projects.api.tmdb.api)
+                implementation(projects.api.trakt.api)
                 implementation(projects.core.base)
                 implementation(projects.core.networkUtil)
                 implementation(projects.core.util.api)

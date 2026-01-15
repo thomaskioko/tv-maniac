@@ -1,11 +1,11 @@
 import com.thomaskioko.tvmaniac.db.Id;
-import com.thomaskioko.tvmaniac.db.TmdbId;
+import com.thomaskioko.tvmaniac.db.TraktId;
 import com.thomaskioko.tvmaniac.db.EpisodeId;
 import kotlin.Boolean;
 
 CREATE TABLE watched_episodes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    show_id INTEGER AS Id<TmdbId> NOT NULL,
+    show_trakt_id INTEGER AS Id<TraktId> NOT NULL,
     episode_id INTEGER AS Id<EpisodeId> DEFAULT NULL,
     season_number INTEGER NOT NULL,
     episode_number INTEGER NOT NULL,
@@ -13,13 +13,13 @@ CREATE TABLE watched_episodes (
     trakt_id INTEGER DEFAULT NULL,
     synced_at INTEGER DEFAULT NULL,
     pending_action TEXT NOT NULL,
-    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON DELETE CASCADE,
+    FOREIGN KEY(show_trakt_id) REFERENCES tvshow(trakt_id) ON DELETE CASCADE,
     FOREIGN KEY(episode_id) REFERENCES episode(id) ON DELETE CASCADE,
-    UNIQUE(show_id, season_number, episode_number)
+    UNIQUE(show_trakt_id, season_number, episode_number)
 );
 
-CREATE INDEX IF NOT EXISTS idx_watched_episodes_show_id ON watched_episodes(show_id);
-CREATE INDEX IF NOT EXISTS idx_watched_episodes_show_season ON watched_episodes(show_id, season_number);
+CREATE INDEX IF NOT EXISTS idx_watched_episodes_show_trakt_id ON watched_episodes(show_trakt_id);
+CREATE INDEX IF NOT EXISTS idx_watched_episodes_show_season ON watched_episodes(show_trakt_id, season_number);
 CREATE INDEX IF NOT EXISTS idx_watched_episodes_pending_action ON watched_episodes(pending_action);
 CREATE INDEX IF NOT EXISTS idx_watched_episodes_trakt ON watched_episodes(trakt_id);
 
@@ -27,7 +27,7 @@ CREATE INDEX IF NOT EXISTS idx_watched_episodes_trakt ON watched_episodes(trakt_
 
 upsert:
 INSERT OR REPLACE INTO watched_episodes(
-    show_id,
+    show_trakt_id,
     episode_id,
     season_number,
     episode_number,
@@ -38,7 +38,7 @@ INSERT OR REPLACE INTO watched_episodes(
 getWatchedEpisodes:
 SELECT
     watched_episodes.id AS watched_id,
-    watched_episodes.show_id,
+    watched_episodes.show_trakt_id,
     watched_episodes.episode_id,
     watched_episodes.season_number,
     watched_episodes.episode_number,
@@ -47,13 +47,13 @@ SELECT
     watched_episodes.synced_at,
     watched_episodes.pending_action
 FROM watched_episodes
-WHERE show_id = ?
+WHERE show_trakt_id = ?
 ORDER BY season_number, episode_number;
 
 getWatchedEpisodesForSeason:
 SELECT
     watched_episodes.id AS watched_id,
-    watched_episodes.show_id,
+    watched_episodes.show_trakt_id,
     watched_episodes.episode_id,
     watched_episodes.season_number,
     watched_episodes.episode_number,
@@ -62,31 +62,31 @@ SELECT
     watched_episodes.synced_at,
     watched_episodes.pending_action
 FROM watched_episodes
-WHERE show_id = ? AND season_number = ?
+WHERE show_trakt_id = ? AND season_number = ?
 ORDER BY episode_number;
 
 markAsWatched:
 INSERT OR REPLACE INTO watched_episodes(
-    show_id, episode_id, season_number, episode_number, watched_at, pending_action
+    show_trakt_id, episode_id, season_number, episode_number, watched_at, pending_action
 ) VALUES (?, ?, ?, ?, ?, ?);
 
 markAsUnwatched:
 DELETE FROM watched_episodes
-WHERE show_id = ? AND episode_id = ?;
+WHERE show_trakt_id = ? AND episode_id = ?;
 
 deleteAllForShow:
 DELETE FROM watched_episodes
-WHERE show_id = ?;
+WHERE show_trakt_id = ?;
 
 deleteForSeason:
 DELETE FROM watched_episodes
-WHERE show_id = ? AND season_number = ?;
+WHERE show_trakt_id = ? AND season_number = ?;
 
 
 getTotalEpisodesForSeason:
 SELECT COUNT(*) FROM episode e
 INNER JOIN season s ON e.season_id = s.id
-WHERE e.show_id = ? AND s.season_number = ?
+WHERE e.show_trakt_id = ? AND s.season_number = ?
   AND (e.air_date IS NULL OR e.air_date <= date('now'));
 
 getPreviousUnwatchedEpisodes:
@@ -97,8 +97,8 @@ SELECT
     e.season_id
 FROM episode e
 INNER JOIN season s ON e.season_id = s.id
-LEFT JOIN watched_episodes we ON e.id = we.episode_id AND we.show_id = :show_id
-WHERE e.show_id = :show_id
+LEFT JOIN watched_episodes we ON e.id = we.episode_id AND we.show_trakt_id = :show_trakt_id
+WHERE e.show_trakt_id = :show_trakt_id
   AND (:include_specials = 1 OR (s.season_number > 0 OR s.title != 'Specials'))
   AND (
     (s.season_number < :season_number)
@@ -116,18 +116,19 @@ SELECT
     e.season_id
 FROM episode e
 INNER JOIN season s ON e.season_id = s.id
-WHERE e.show_id = ? AND s.season_number = ?
+WHERE e.show_trakt_id = ? AND s.season_number = ?
   AND (e.air_date IS NULL OR e.air_date <= date('now'))
 ORDER BY e.episode_number;
 
 getTotalEpisodesForShow:
-SELECT COUNT(*) FROM episode
-WHERE show_id = ?
-  AND (air_date IS NULL OR air_date <= date('now'));
+SELECT COALESCE(SUM(episode_count), 0) AS total
+FROM season
+WHERE show_trakt_id = :show_trakt_id
+  AND (season_number > 0 OR title != 'Specials');
 
 getWatchedEpisodesCountForShow:
 SELECT COUNT(*) FROM watched_episodes
-WHERE show_id = ?;
+WHERE show_trakt_id = ?;
 
 getUnwatchedEpisodesInPreviousSeasons:
 SELECT
@@ -137,8 +138,8 @@ SELECT
     e.season_id
 FROM episode e
 INNER JOIN season s ON e.season_id = s.id
-LEFT JOIN watched_episodes we ON e.id = we.episode_id AND we.show_id = :show_id
-WHERE e.show_id = :show_id
+LEFT JOIN watched_episodes we ON e.id = we.episode_id AND we.show_trakt_id = :show_trakt_id
+WHERE e.show_trakt_id = :show_trakt_id
   AND s.season_number < :season_number
   AND (:include_specials = 1 OR (s.season_number > 0 OR s.title != 'Specials'))
   AND we.id IS NULL
@@ -148,8 +149,8 @@ ORDER BY s.season_number, e.episode_number;
 getUnwatchedEpisodeCountInPreviousSeasons:
 SELECT COUNT(*) FROM episode e
 INNER JOIN season s ON e.season_id = s.id
-LEFT JOIN watched_episodes we ON e.id = we.episode_id AND we.show_id = :show_id
-WHERE e.show_id = :show_id
+LEFT JOIN watched_episodes we ON e.id = we.episode_id AND we.show_trakt_id = :show_trakt_id
+WHERE e.show_trakt_id = :show_trakt_id
   AND s.season_number < :season_number
   AND (:include_specials = 1 OR (s.season_number > 0 OR s.title != 'Specials'))
   AND we.id IS NULL
@@ -160,7 +161,7 @@ WHERE e.show_id = :show_id
 getEntriesByPendingAction:
 SELECT
     watched_episodes.id AS watched_id,
-    watched_episodes.show_id,
+    watched_episodes.show_trakt_id,
     watched_episodes.episode_id,
     watched_episodes.season_number,
     watched_episodes.episode_number,
@@ -180,7 +181,7 @@ WHERE id = ?;
 updatePendingActionByShowAndEpisode:
 UPDATE watched_episodes
 SET pending_action = ?
-WHERE show_id = ? AND episode_id = ?;
+WHERE show_trakt_id = ? AND episode_id = ?;
 
 deleteById:
 DELETE FROM watched_episodes WHERE id = ?;
@@ -188,7 +189,7 @@ DELETE FROM watched_episodes WHERE id = ?;
 getEntryByShowAndEpisode:
 SELECT
     watched_episodes.id AS watched_id,
-    watched_episodes.show_id,
+    watched_episodes.show_trakt_id,
     watched_episodes.episode_id,
     watched_episodes.season_number,
     watched_episodes.episode_number,
@@ -197,18 +198,18 @@ SELECT
     watched_episodes.synced_at,
     watched_episodes.pending_action
 FROM watched_episodes
-WHERE show_id = ? AND episode_id = ?;
+WHERE show_trakt_id = ? AND episode_id = ?;
 
 upsertFromTrakt:
 INSERT OR REPLACE INTO watched_episodes(
-    show_id, episode_id, season_number, episode_number, watched_at, trakt_id, synced_at, pending_action
+    show_trakt_id, episode_id, season_number, episode_number, watched_at, trakt_id, synced_at, pending_action
 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
 
 getAllSeasonsWatchProgress:
 SELECT
     s.season_number,
-    (SELECT COUNT(*) FROM watched_episodes we WHERE we.show_id = :show_id AND we.season_number = s.season_number) AS watched_count,
-    (SELECT COUNT(*) FROM episode e WHERE e.show_id = :show_id AND e.season_id = s.id AND (e.air_date IS NULL OR e.air_date <= date('now'))) AS total_count
+    (SELECT COUNT(*) FROM watched_episodes we WHERE we.show_trakt_id = :show_trakt_id AND we.season_number = s.season_number) AS watched_count,
+    (SELECT COUNT(*) FROM episode e WHERE e.show_trakt_id = :show_trakt_id AND e.season_id = s.id AND (e.air_date IS NULL OR e.air_date <= date('now'))) AS total_count
 FROM season s
-WHERE s.show_id = :show_id
+WHERE s.show_trakt_id = :show_trakt_id
 ORDER BY s.season_number;

@@ -1,7 +1,11 @@
 package com.thomaskioko.tvmaniac.domain.showdetails.model
 
+import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
+import kotlinx.collections.immutable.ImmutableList
+
 public data class ShowDetails(
     val tmdbId: Long,
+    val traktId: Long,
     val title: String,
     val overview: String,
     val language: String?,
@@ -22,6 +26,8 @@ public data class ShowDetails(
     val recommendedShows: List<Show>,
     val similarShows: List<Show>,
     val trailersList: List<Trailer>,
+    val continueTrackingEpisodes: ImmutableList<EpisodeDetails>,
+    val continueTrackingScrollIndex: Int = 0,
 )
 
 public data class Casts(
@@ -50,7 +56,7 @@ public data class Season(
 }
 
 public data class Show(
-    val tmdbId: Long,
+    val traktId: Long,
     val title: String,
     val posterImageUrl: String?,
     val backdropImageUrl: String?,
@@ -58,7 +64,7 @@ public data class Show(
 )
 
 public data class Trailer(
-    val showId: Long,
+    val showTmdbId: Long,
     val key: String,
     val name: String,
     val youtubeThumbnailUrl: String,

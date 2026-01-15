@@ -49,34 +49,40 @@ public struct ImageGalleryContentView: View {
     ImageGalleryContentView(
         items: [
             .init(
-                tmdbId: 1234,
+                traktId: 1234,
                 title: "Arcane",
-                posterUrl: "https://image.tmdb.org/t/p/w780/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg"
+                posterUrl: "https://image.tmdb.org/t/p/w780/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg",
+                inLibrary: false
             ),
             .init(
-                tmdbId: 123,
+                traktId: 123,
                 title: "The Lord of the Rings: The Rings of Power",
-                posterUrl: "https://image.tmdb.org/t/p/w780/NNC08YmJFFlLi1prBkK8quk3dp.jpg"
+                posterUrl: "https://image.tmdb.org/t/p/w780/NNC08YmJFFlLi1prBkK8quk3dp.jpg",
+                inLibrary: false
             ),
             .init(
-                tmdbId: 12346,
+                traktId: 12346,
                 title: "Kaos",
-                posterUrl: "https://image.tmdb.org/t/p/w780/9Piw6Zju39bn3enIDLZzPfjMTBR.jpg"
+                posterUrl: "https://image.tmdb.org/t/p/w780/9Piw6Zju39bn3enIDLZzPfjMTBR.jpg",
+                inLibrary: false
             ),
             .init(
-                tmdbId: 124,
+                traktId: 124,
                 title: "Terminator",
-                posterUrl: "https://image.tmdb.org/t/p/w780/woH18JkZMYhMSWqtHkPA4F6Gd1z.jpg"
+                posterUrl: "https://image.tmdb.org/t/p/w780/woH18JkZMYhMSWqtHkPA4F6Gd1z.jpg",
+                inLibrary: false
             ),
             .init(
-                tmdbId: 123_346,
+                traktId: 123_346,
                 title: "The Perfect Couple",
-                posterUrl: "https://image.tmdb.org/t/p/w780//3buRSGVnutw8x4Lww0t70k5dG6R.jpg"
+                posterUrl: "https://image.tmdb.org/t/p/w780//3buRSGVnutw8x4Lww0t70k5dG6R.jpg",
+                inLibrary: false
             ),
             .init(
-                tmdbId: 2346,
+                traktId: 2346,
                 title: "One Piece",
-                posterUrl: "https://image.tmdb.org/t/p/w780/2rmK7mnchw9Xr3XdiTFSxTTLXqv.jpg"
+                posterUrl: "https://image.tmdb.org/t/p/w780/2rmK7mnchw9Xr3XdiTFSxTTLXqv.jpg",
+                inLibrary: false
             ),
         ]
     )

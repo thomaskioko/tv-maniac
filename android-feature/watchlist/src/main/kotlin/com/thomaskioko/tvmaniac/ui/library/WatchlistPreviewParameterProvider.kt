@@ -10,7 +10,7 @@ import kotlinx.collections.immutable.toPersistentList
 
 internal val watchlistItems = List(3) { index ->
     WatchlistItem(
-        tmdbId = 84958L + index,
+        traktId = 84958L + index,
         title = "Loki",
         posterImageUrl = null,
         year = "2021",
@@ -23,7 +23,7 @@ internal val watchlistItems = List(3) { index ->
 
 internal val staleWatchlistItems = List(2) { index ->
     WatchlistItem(
-        tmdbId = 94958L + index,
+        traktId = 94958L + index,
         title = "The Mandalorian",
         posterImageUrl = null,
         year = "2019",
@@ -37,7 +37,7 @@ internal val staleWatchlistItems = List(2) { index ->
 
 internal val watchNextEpisodes = listOf(
     UpNextEpisodeItem(
-        showId = 84958L,
+        showTraktId = 84958L,
         showName = "Loki",
         showPoster = null,
         episodeId = 1L,
@@ -53,7 +53,7 @@ internal val watchNextEpisodes = listOf(
         remainingEpisodes = 5,
     ),
     UpNextEpisodeItem(
-        showId = 95557L,
+        showTraktId = 95557L,
         showName = "The Walking Dead",
         showPoster = null,
         episodeId = 12L,
@@ -72,7 +72,7 @@ internal val watchNextEpisodes = listOf(
 
 internal val staleEpisodes = listOf(
     UpNextEpisodeItem(
-        showId = 94958L,
+        showTraktId = 94958L,
         showName = "The Mandalorian",
         showPoster = null,
         episodeId = 5L,

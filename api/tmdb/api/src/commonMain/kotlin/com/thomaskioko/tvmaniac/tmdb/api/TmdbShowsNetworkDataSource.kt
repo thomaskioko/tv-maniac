@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.tmdb.api
 
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
+import com.thomaskioko.tvmaniac.tmdb.api.model.CreditsResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbGenreResult
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResult
 
@@ -98,4 +99,11 @@ public interface TmdbShowsNetworkDataSource {
      * Get the list of official genres for TV shows.
      */
     public suspend fun getShowGenres(): ApiResponse<TmdbGenreResult>
+
+    /**
+     * Get the cast and crew for a TV show.
+     *
+     * @param tmdbId TMDB show ID
+     */
+    public suspend fun getShowCredits(tmdbId: Long): ApiResponse<CreditsResponse>
 }

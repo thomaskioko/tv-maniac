@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftUIComponents
+import TvManiac
 import TvManiacKit
 
 struct SearchTab: View {
@@ -19,7 +20,7 @@ struct SearchTab: View {
 
     private var searchQueryBinding: Binding<String> {
         Binding(
-            get: { uiState.query ?? "" },
+            get: { uiState.query },
             set: { newValue in
                 let trimmedValue = newValue.trimmingCharacters(in: .whitespaces)
                 if !trimmedValue.isEmpty {
@@ -57,30 +58,46 @@ struct SearchTab: View {
 
     @ViewBuilder
     private var contentView: some View {
-        switch onEnum(of: uiState) {
-        case .initialSearchState:
+        let query = uiState.query
+        let isUpdating = uiState.isUpdating
+        let searchResults = uiState.searchResults
+        let genres = uiState.genres
+        let errorMessage = uiState.errorMessage
+
+        if let errorMessage {
+            // Error state
+            errorView(message: errorMessage)
+                .transition(.opacity)
+        } else if query.isEmpty, genres.isEmpty, isUpdating {
+            // Initial loading state
             loadingView
                 .transition(.opacity)
-        case let .searchResultAvailable(state):
-            searchResultsView(state: state)
+        } else if !query.isEmpty, !searchResults.isEmpty {
+            // Search results available
+            searchResultsView(results: searchResults, isUpdating: isUpdating)
                 .transition(.opacity)
-        case let .showContentAvailable(state):
-            genreSection(state: state)
-        case let .emptySearchResult(state):
-            if state.errorMessage != nil {
-                errorView(state: state)
-                    .transition(.opacity)
-            } else if !state.isUpdating {
-                emptyStateView
-                    .transition(.opacity)
-            }
+        } else if !query.isEmpty, searchResults.isEmpty, !isUpdating {
+            // Empty search results
+            emptyStateView
+                .transition(.opacity)
+        } else if !query.isEmpty, isUpdating {
+            // Search in progress
+            loadingView
+                .transition(.opacity)
+        } else if !genres.isEmpty {
+            // Genre browsing mode
+            genreSection(genres: genres, isUpdating: isUpdating)
+        } else {
+            // Fallback loading
+            loadingView
+                .transition(.opacity)
         }
     }
 
     @ViewBuilder
-    private func genreSection(state: ShowContentAvailable) -> some View {
+    private func genreSection(genres: [ShowGenre], isUpdating: Bool) -> some View {
         Section {
-            let items = state.genres.map {
+            let items = genres.map {
                 $0.toSwift()
             }
             let columns = [GridItem(.adaptive(minimum: 160), spacing: 8)]
@@ -103,7 +120,7 @@ struct SearchTab: View {
                     }
                 }
 
-                if state.isUpdating {
+                if isUpdating {
                     ProgressView()
                         .progressViewStyle(CircularProgressViewStyle())
                         .scaleEffect(1.5)
@@ -123,9 +140,9 @@ struct SearchTab: View {
     }
 
     @ViewBuilder
-    private func searchResultsView(state: SearchResultAvailable) -> some View {
+    private func searchResultsView(results: [ShowItem], isUpdating: Bool) -> some View {
         VStack {
-            if state.isUpdating {
+            if isUpdating {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle())
                     .scaleEffect(1.5)
@@ -135,7 +152,7 @@ struct SearchTab: View {
             }
 
             SearchResultListView(
-                items: state.results.map {
+                items: results.map {
                     $0.toSwift()
                 },
                 onClick: { id in
@@ -159,10 +176,10 @@ struct SearchTab: View {
         )
     }
 
-    private func errorView(state: EmptySearchResult) -> some View {
+    private func errorView(message: String) -> some View {
         FullScreenView(
             systemName: "exclamationmark.arrow.triangle.2.circlepath",
-            message: state.errorMessage ?? String(\.label_search_empty_results),
+            message: message,
             buttonText: String(\.button_error_retry),
             action: { presenter.dispatch(action: ReloadShowContent()) }
         )

@@ -23,7 +23,7 @@ class NextEpisodesSectionTest: SnapshotTestCase {
             title: "Up Next",
             episodes: [
                 SwiftNextEpisode(
-                    showId: 123,
+                    showTraktId: 123,
                     showName: "The Walking Dead: Daryl Dixon",
                     showPoster: "/poster1.jpg",
                     episodeId: 456,
@@ -49,7 +49,7 @@ class NextEpisodesSectionTest: SnapshotTestCase {
             title: "Up Next",
             episodes: [
                 SwiftNextEpisode(
-                    showId: 123,
+                    showTraktId: 123,
                     showName: "The Walking Dead: Daryl Dixon",
                     showPoster: "/poster1.jpg",
                     episodeId: 456,
@@ -60,7 +60,7 @@ class NextEpisodesSectionTest: SnapshotTestCase {
                     overview: "Daryl washes ashore in France and struggles to piece together how he got there and why."
                 ),
                 SwiftNextEpisode(
-                    showId: 124,
+                    showTraktId: 124,
                     showName: "Wednesday",
                     showPoster: "/poster2.jpg",
                     episodeId: 789,
@@ -71,7 +71,7 @@ class NextEpisodesSectionTest: SnapshotTestCase {
                     overview: "Wednesday arrives at Nevermore Academy and immediately gets off on the wrong foot."
                 ),
                 SwiftNextEpisode(
-                    showId: 125,
+                    showTraktId: 125,
                     showName: "House of the Dragon",
                     showPoster: "/poster3.jpg",
                     episodeId: 790,
@@ -97,7 +97,7 @@ class NextEpisodesSectionTest: SnapshotTestCase {
             title: "Continue Watching",
             episodes: [
                 SwiftNextEpisode(
-                    showId: 123,
+                    showTraktId: 123,
                     showName: "The Walking Dead: Daryl Dixon",
                     showPoster: "/poster1.jpg",
                     episodeId: 456,
@@ -108,7 +108,7 @@ class NextEpisodesSectionTest: SnapshotTestCase {
                     overview: "Daryl washes ashore in France and struggles to piece together how he got there and why."
                 ),
                 SwiftNextEpisode(
-                    showId: 124,
+                    showTraktId: 124,
                     showName: "Wednesday",
                     showPoster: "/poster2.jpg",
                     episodeId: 789,
@@ -135,7 +135,7 @@ class NextEpisodesSectionTest: SnapshotTestCase {
             title: "Continue Watching",
             episodes: [
                 SwiftNextEpisode(
-                    showId: 123,
+                    showTraktId: 123,
                     showName: "The Walking Dead: Daryl Dixon",
                     showPoster: "/poster1.jpg",
                     episodeId: 456,

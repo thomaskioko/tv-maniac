@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 public data class NetworksResponse(
     @SerialName("id") var id: Int,
-    @SerialName("logo_path") var logoPath: String,
+    @SerialName("logo_path") var logoPath: String? = null,
     @SerialName("name") var name: String,
 )

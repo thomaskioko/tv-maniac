@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.compose.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.outlined.Movie
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -29,6 +31,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -251,6 +254,141 @@ internal fun PosterCard(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
     ) {
         content()
+    }
+}
+
+@Composable
+public fun CastCard(
+    profileUrl: String?,
+    name: String,
+    characterName: String,
+    modifier: Modifier = Modifier,
+    height: Dp = 160.dp,
+) {
+    Card(
+        modifier = modifier,
+        shape = MaterialTheme.shapes.small,
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .size(width = 120.dp, height = height),
+            contentAlignment = Alignment.BottomStart,
+        ) {
+            CastPlaceholder(
+                modifier = Modifier.fillMaxSize(),
+                imageUrl = profileUrl,
+                name = name,
+            )
+
+            AsyncImageComposable(
+                model = profileUrl,
+                contentDescription = name,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize(),
+            )
+
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .background(contentBackgroundGradient()),
+            )
+
+            CastNameOverlay(
+                name = name,
+                characterName = characterName,
+            )
+        }
+    }
+}
+
+@Composable
+private fun CastPlaceholder(
+    imageUrl: String?,
+    modifier: Modifier = Modifier,
+    name: String? = null,
+) {
+    if (imageUrl.isNullOrEmpty()) {
+        Box(
+            modifier = modifier
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            Color.Gray.copy(alpha = 0.8f),
+                            Color.Gray,
+                        ),
+                    ),
+                ),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                modifier = Modifier.size(52.dp),
+                imageVector = Icons.Outlined.Person,
+                contentDescription = name,
+                tint = Color.White.copy(alpha = 0.8f),
+            )
+        }
+    }
+}
+
+@Composable
+private fun CastNameOverlay(
+    name: String,
+    characterName: String,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier.padding(8.dp)) {
+        Text(
+            text = name,
+            modifier = Modifier
+                .padding(vertical = 2.dp)
+                .fillMaxWidth(),
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
+            style = MaterialTheme.typography.bodyMedium.copy(
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
+            ),
+        )
+        Text(
+            text = characterName,
+            modifier = Modifier.fillMaxWidth(),
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
+            style = MaterialTheme.typography.bodyMedium.copy(
+                fontWeight = FontWeight.Normal,
+                color = MaterialTheme.colorScheme.onSurface,
+            ),
+        )
+    }
+}
+
+@Composable
+private fun contentBackgroundGradient(): Brush {
+    val surface = MaterialTheme.colorScheme.surface
+    return Brush.verticalGradient(
+        colors = listOf(
+            Color.Transparent,
+            surface.copy(alpha = 0.3f),
+            surface.copy(alpha = 0.6f),
+            surface.copy(alpha = 0.9f),
+            surface,
+        ),
+    )
+}
+
+@ThemePreviews
+@Composable
+private fun CastCardPreview() {
+    TvManiacTheme {
+        Surface {
+            CastCard(
+                profileUrl = null,
+                name = "Tom Hiddleston",
+                characterName = "Loki",
+            )
+        }
     }
 }
 

@@ -71,6 +71,7 @@ public struct EpisodeListView: View {
                             isWatched: item.isWatched,
                             isEpisodeUpdating: item.isEpisodeUpdating,
                             daysUntilAir: item.daysUntilAir,
+                            hasAired: item.hasAired,
                             dayLabelFormat: dayLabelFormat,
                             onWatchedToggle: { onEpisodeWatchToggle(item) }
                         )
@@ -126,6 +127,7 @@ public struct SwiftEpisode: Identifiable {
     public let isEpisodeUpdating: Bool
     public let daysUntilAir: Int64?
     public let hasPreviousUnwatched: Bool
+    public let hasAired: Bool
 
     public init(
         episodeId: Int64,
@@ -137,7 +139,8 @@ public struct SwiftEpisode: Identifiable {
         isWatched: Bool = false,
         isEpisodeUpdating: Bool = false,
         daysUntilAir: Int64? = nil,
-        hasPreviousUnwatched: Bool = false
+        hasPreviousUnwatched: Bool = false,
+        hasAired: Bool = true
     ) {
         self.episodeId = episodeId
         self.imageUrl = imageUrl
@@ -149,5 +152,6 @@ public struct SwiftEpisode: Identifiable {
         self.isEpisodeUpdating = isEpisodeUpdating
         self.daysUntilAir = daysUntilAir
         self.hasPreviousUnwatched = hasPreviousUnwatched
+        self.hasAired = hasAired
     }
 }

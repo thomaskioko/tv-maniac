@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.presenter.showdetails
 
-import com.thomaskioko.tvmaniac.episodes.api.model.ContinueTrackingResult
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.CastModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ContinueTrackingEpisodeModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ProviderModel
@@ -10,7 +9,6 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.TrailerModel
 import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import com.thomaskioko.tvmaniac.domain.showdetails.model.Casts as DomainCasts
 import com.thomaskioko.tvmaniac.domain.showdetails.model.Providers as DomainProviders
@@ -33,7 +31,7 @@ public fun DomainShowDetails.toShowDetails(
     votes = votes,
     rating = rating,
     year = year,
-    status = status,
+    status = status?.capitalizeFirstCharacter(),
     isInLibrary = isInLibrary,
     hasWebViewInstalled = hasWebViewInstalled,
     numberOfSeasons = numberOfSeasons ?: 0,
@@ -62,7 +60,7 @@ internal fun List<DomainCasts>.toCastList(): ImmutableList<CastModel> =
 internal fun List<DomainShow>.toShowList(): ImmutableList<ShowModel> =
     this.map {
         ShowModel(
-            tmdbId = it.tmdbId,
+            traktId = it.traktId,
             title = it.title,
             posterImageUrl = it.posterImageUrl,
             backdropImageUrl = it.backdropImageUrl,
@@ -94,20 +92,20 @@ internal fun List<DomainSeason>.toSeasonsList(): ImmutableList<SeasonModel> =
 internal fun List<DomainTrailer>.toTrailerList(): ImmutableList<TrailerModel> =
     this.map {
         TrailerModel(
-            showId = it.showId,
+            showTmdbId = it.showTmdbId,
             key = it.key,
             name = it.name,
             youtubeThumbnailUrl = it.youtubeThumbnailUrl,
         )
     }.toImmutableList()
 
-internal fun EpisodeDetails.toContinueTrackingModel(showId: Long): ContinueTrackingEpisodeModel {
+internal fun EpisodeDetails.toContinueTrackingModel(showTraktId: Long): ContinueTrackingEpisodeModel {
     val seasonStr = "S${seasonNumber.toString().padStart(2, '0')}"
     val episodeStr = "E${episodeNumber.toString().padStart(2, '0')}"
     return ContinueTrackingEpisodeModel(
         episodeId = id,
         seasonId = seasonId,
-        showId = showId,
+        showTraktId = showTraktId,
         episodeNumber = episodeNumber,
         seasonNumber = seasonNumber,
         episodeNumberFormatted = "$seasonStr | $episodeStr",
@@ -115,15 +113,17 @@ internal fun EpisodeDetails.toContinueTrackingModel(showId: Long): ContinueTrack
         imageUrl = stillPath,
         isWatched = isWatched,
         daysUntilAir = daysUntilAir,
+        hasAired = hasAired,
     )
 }
 
 internal fun mapContinueTrackingEpisodes(
-    result: ContinueTrackingResult?,
-    showId: Long,
+    episodes: ImmutableList<EpisodeDetails>,
+    showTraktId: Long,
 ): ImmutableList<ContinueTrackingEpisodeModel> {
-    if (result == null) return persistentListOf()
-    return result.episodes
-        .map { it.toContinueTrackingModel(showId) }
+    return episodes
+        .map { it.toContinueTrackingModel(showTraktId) }
         .toImmutableList()
 }
+
+private fun String.capitalizeFirstCharacter(): String = replaceFirstChar { char -> char.uppercase() }

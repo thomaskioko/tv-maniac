@@ -30,10 +30,10 @@ public class DefaultSeasonDetailsDao(
     private val seasonQueries
         get() = database.seasonsQueries
 
-    override fun fetchSeasonDetails(showId: Long, seasonNumber: Long): SeasonDetailsWithEpisodes? {
+    override fun fetchSeasonDetails(showTraktId: Long, seasonNumber: Long): SeasonDetailsWithEpisodes? {
         val queryResult = database.seasonsQueries
             .seasonDetails(
-                showId = Id(showId),
+                showTraktId = Id(showTraktId),
                 seasonNumber = seasonNumber,
             )
             .executeAsList()
@@ -41,16 +41,16 @@ public class DefaultSeasonDetailsDao(
     }
 
     override fun observeSeasonEpisodeDetails(
-        showId: Long,
+        showTraktId: Long,
         seasonNumber: Long,
     ): Flow<SeasonDetailsWithEpisodes?> =
-        seasonQueries.seasonDetails(showId = Id(showId), seasonNumber = seasonNumber)
+        seasonQueries.seasonDetails(showTraktId = Id(showTraktId), seasonNumber = seasonNumber)
             .asFlow()
             .map { it.executeAsList() }
             .map { if (it.isEmpty()) null else mapSeasonDetails(it) }
 
-    override fun delete(id: Long) {
-        seasonQueries.delete(Id(id))
+    override fun delete(showTraktId: Long) {
+        seasonQueries.delete(Id(showTraktId))
     }
 
     override fun deleteAll() {
@@ -81,7 +81,8 @@ public class DefaultSeasonDetailsDao(
             name = seasonDetails.season_title,
             seasonNumber = seasonDetails.season_number,
             seasonOverview = seasonDetails.overview ?: "",
-            tvShowId = seasonDetails.show_id.id,
+            showTraktId = seasonDetails.show_trakt_id.id,
+            showTmdbId = seasonDetails.show_tmdb_id.id,
             showTitle = seasonDetails.show_title,
             imageUrl = seasonDetails.season_image_url,
             episodes = episodeList,
@@ -92,6 +93,9 @@ public class DefaultSeasonDetailsDao(
     private fun mapEpisode(resultItem: List<SeasonDetails>): List<EpisodeDetails> {
         return resultItem.mapNotNull { seasonDetails ->
             seasonDetails.episode_id?.let { episodeId ->
+                val airDate = seasonDetails.episode_air_date
+                val daysUntilAir = dateTimeProvider.calculateDaysUntilAir(airDate)
+                val hasAired = airDate != null && (daysUntilAir == null || daysUntilAir <= 0)
                 EpisodeDetails(
                     id = episodeId.id,
                     seasonId = seasonDetails.season_id.id,
@@ -99,13 +103,14 @@ public class DefaultSeasonDetailsDao(
                     seasonNumber = seasonDetails.season_number,
                     episodeNumber = seasonDetails.episode_number ?: 0,
                     overview = seasonDetails.overview ?: "",
-                    voteAverage = seasonDetails.vote_average ?: 0.0,
+                    voteAverage = seasonDetails.ratings ?: 0.0,
                     voteCount = seasonDetails.vote_count ?: 0,
                     stillPath = seasonDetails.episode_image_url,
-                    airDate = seasonDetails.episode_air_date,
+                    airDate = airDate,
                     runtime = seasonDetails.runtime ?: 0,
                     isWatched = seasonDetails.is_watched == 1L,
-                    daysUntilAir = dateTimeProvider.calculateDaysUntilAir(seasonDetails.episode_air_date),
+                    daysUntilAir = daysUntilAir,
+                    hasAired = hasAired,
                 )
             }
         }

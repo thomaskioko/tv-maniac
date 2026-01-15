@@ -33,9 +33,9 @@ public class DefaultEpisodesDao(
                 runtime = entity.runtime,
                 episode_number = entity.episode_number,
                 image_url = entity.image_url,
-                show_id = entity.show_id,
+                show_trakt_id = entity.show_trakt_id,
                 vote_count = entity.vote_count,
-                vote_average = entity.vote_average,
+                ratings = entity.ratings,
                 air_date = entity.air_date,
                 trakt_id = entity.trakt_id,
             )
@@ -55,12 +55,12 @@ public class DefaultEpisodesDao(
     }
 
     override suspend fun getEpisodeByShowSeasonEpisodeNumber(
-        showId: Long,
+        showTraktId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
     ): GetEpisodeByShowSeasonEpisodeNumber? = withContext(dispatchers.databaseRead) {
         episodeQueries.getEpisodeByShowSeasonEpisodeNumber(
-            showId = Id(showId),
+            showTraktId = Id(showTraktId),
             seasonNumber = seasonNumber,
             episodeNumber = episodeNumber,
         ).executeAsOneOrNull()

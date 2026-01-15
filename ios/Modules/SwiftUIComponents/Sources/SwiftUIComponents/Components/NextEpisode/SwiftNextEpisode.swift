@@ -8,7 +8,7 @@ public enum SwiftEpisodeBadge {
 
 public struct SwiftNextEpisode: Identifiable {
     public let id: UUID = .init()
-    public let showId: Int64
+    public let showTraktId: Int64
     public let showName: String
     public let showPoster: String?
     public let episodeId: Int64
@@ -24,7 +24,7 @@ public struct SwiftNextEpisode: Identifiable {
     public let remainingEpisodes: Int32
 
     public init(
-        showId: Int64,
+        showTraktId: Int64,
         showName: String,
         showPoster: String?,
         episodeId: Int64,
@@ -39,7 +39,7 @@ public struct SwiftNextEpisode: Identifiable {
         badge: SwiftEpisodeBadge = .none,
         remainingEpisodes: Int32 = 0
     ) {
-        self.showId = showId
+        self.showTraktId = showTraktId
         self.showName = showName
         self.showPoster = showPoster
         self.episodeId = episodeId

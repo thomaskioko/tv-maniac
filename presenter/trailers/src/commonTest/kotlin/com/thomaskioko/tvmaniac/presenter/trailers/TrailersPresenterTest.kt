@@ -53,7 +53,7 @@ internal class TrailersPresenterTest {
                 selectedVideoKey = "Fd43V",
                 trailersList = persistentListOf(
                     Trailer(
-                        showId = 84958,
+                        showTmdbId = 84958,
                         key = "Fd43V",
                         name = "Some title",
                         youtubeThumbnailUrl = "https://i.ytimg.com/vi/Fd43V/hqdefault.jpg",
@@ -80,7 +80,7 @@ internal class TrailersPresenterTest {
                     selectedVideoKey = "Fd43V",
                     trailersList = persistentListOf(
                         Trailer(
-                            showId = 84958,
+                            showTmdbId = 84958,
                             key = "Fd43V",
                             name = "Some title",
                             youtubeThumbnailUrl = "https://i.ytimg.com/vi/Fd43V/hqdefault.jpg",

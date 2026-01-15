@@ -62,7 +62,7 @@ internal fun NextEpisodeCard(
             .width(300.dp)
             .height(160.dp)
             .combinedClickable(
-                onClick = { onEpisodeClick(episode.showId, episode.episodeId) },
+                onClick = { onEpisodeClick(episode.showTraktId, episode.episodeId) },
                 onLongClick = { showMenu = true },
             ),
         shape = MaterialTheme.shapes.small,
@@ -191,7 +191,7 @@ private fun NextEpisodeCardPreview() {
     TvManiacTheme {
         NextEpisodeCard(
             episode = NextEpisodeUiModel(
-                showId = 1L,
+                showTraktId = 1L,
                 showName = "The Walking Dead: Daryl Dixon",
                 showPoster = "/poster.jpg",
                 episodeId = 123L,

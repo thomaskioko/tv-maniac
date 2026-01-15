@@ -92,6 +92,7 @@ internal fun CollapsableContent(
                     episodeOverview = episode.overview,
                     isWatched = episode.isWatched,
                     isProcessing = episode.isEpisodeUpdating,
+                    hasAired = episode.hasAired,
                     daysUntilAir = episode.daysUntilAir,
                     onWatchedToggle = { onAction(ToggleEpisodeWatched(episode.id)) },
                     onEpisodeClicked = { onAction(EpisodeClicked(episode.id)) },

@@ -1,9 +1,13 @@
 package com.thomaskioko.tvmaniac.trakt.api
 
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktEpisodesResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSearchResult
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonsResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowPeopleResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktVideosResponse
 
 /**
  * Remote data source for fetching TV show data from the Trakt API.
@@ -96,6 +100,37 @@ public interface TraktShowsRemoteDataSource {
     ): ApiResponse<List<TraktShowResponse>>
 
     /**
+     * Fetches detailed information for a specific show.
+     *
+     * @param traktId The Trakt ID of the show
+     * @return Full show details including all extended information
+     * @see [Trakt Show Summary](https://trakt.docs.apiary.io/#reference/shows/summary)
+     */
+    public suspend fun getShowDetails(traktId: Long): ApiResponse<TraktShowResponse>
+
+    /**
+     * Fetches all seasons for a specific show with extended information.
+     *
+     * @param traktId The Trakt ID of the show
+     * @return List of seasons with episode counts, ratings, and air dates
+     * @see [Trakt Show Seasons](https://trakt.docs.apiary.io/#reference/seasons/summary)
+     */
+    public suspend fun getShowSeasons(traktId: Long): ApiResponse<List<TraktSeasonsResponse>>
+
+    /**
+     * Fetches a specific season with all episodes.
+     *
+     * @param traktId The Trakt ID of the show
+     * @param seasonNumber The season number to fetch
+     * @return Season details with all episodes
+     * @see [Trakt Season Summary](https://trakt.docs.apiary.io/#reference/seasons/season)
+     */
+    public suspend fun getSeasonEpisodes(
+        traktId: Long,
+        seasonNumber: Int,
+    ): ApiResponse<List<TraktEpisodesResponse>>
+
+    /**
      * Searches for a show by its TMDB ID.
      *
      * Used to cross-reference shows between TMDB and Trakt APIs. Returns search results
@@ -107,6 +142,44 @@ public interface TraktShowsRemoteDataSource {
      * @see [Trakt ID Lookup](https://trakt.docs.apiary.io/#reference/search/id-lookup)
      */
     public suspend fun getShowByTmdbId(tmdbId: Long): ApiResponse<List<TraktSearchResult>>
+
+    /**
+     * Searches for shows by text query.
+     *
+     * @param query The search query string
+     * @param page Page number for pagination (1-indexed)
+     * @param limit Number of results per page (max 100)
+     * @return List of search results containing show information
+     * @see [Trakt Text Search](https://trakt.docs.apiary.io/#reference/search/text-query)
+     */
+    public suspend fun searchShows(
+        query: String,
+        page: Int = 1,
+        limit: Int = 20,
+    ): ApiResponse<List<TraktSearchResult>>
+
+    /**
+     * Fetches cast and crew for a specific show.
+     *
+     * Returns all cast members with their character names and episode counts.
+     * Data is sorted by episode count (most appearances first).
+     *
+     * @param traktId The Trakt ID of the show
+     * @return Show people response containing cast information
+     * @see [Trakt Show People](https://trakt.docs.apiary.io/#reference/shows/people)
+     */
+    public suspend fun getShowPeople(traktId: Long): ApiResponse<TraktShowPeopleResponse>
+
+    /**
+     * Fetches all videos for a specific show.
+     *
+     * Returns trailers, teasers, and other video content from YouTube and other sites.
+     *
+     * @param traktId The Trakt ID of the show
+     * @return List of video responses containing URLs and metadata
+     * @see [Trakt Show Videos](https://trakt.docs.apiary.io/#reference/shows/videos)
+     */
+    public suspend fun getShowVideos(traktId: Long): ApiResponse<List<TraktVideosResponse>>
 }
 
 /**

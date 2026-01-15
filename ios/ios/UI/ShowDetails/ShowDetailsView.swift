@@ -139,7 +139,7 @@ struct ShowDetailsView: View {
             },
             onSeasonClicked: { index, season in
                 let params = ShowSeasonDetailsParam(
-                    showId: season.tvShowId,
+                    showTraktId: season.tvShowId,
                     seasonId: season.seasonId,
                     seasonNumber: season.seasonNumber,
                     selectedSeasonIndex: Int32(index)
@@ -152,7 +152,7 @@ struct ShowDetailsView: View {
             },
             onMarkEpisodeWatched: { episode in
                 presenter.dispatch(action: MarkEpisodeWatched(
-                    showId: episode.showId,
+                    showTraktId: episode.showTraktId,
                     episodeId: episode.episodeId,
                     seasonNumber: episode.seasonNumber,
                     episodeNumber: episode.episodeNumber

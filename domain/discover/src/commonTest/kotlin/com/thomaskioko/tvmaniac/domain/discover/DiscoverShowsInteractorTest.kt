@@ -125,7 +125,7 @@ class DiscoverShowsInteractorTest {
 
     private fun createNextEpisodesList(size: Int = 5) = List(size) { index ->
         NextEpisodeWithShow(
-            showId = 84958L + index,
+            showTraktId = 84958L + index,
             showName = "Test Show $index",
             showPoster = "/test-poster-$index.jpg",
             episodeId = 1000L + index,
@@ -141,7 +141,8 @@ class DiscoverShowsInteractorTest {
 
     private fun createTestShows() = List(3) {
         ShowEntity(
-            id = it.toLong(),
+            traktId = it.toLong(),
+            tmdbId = it.toLong(),
             title = "Show $it",
             posterPath = "poster_$it.jpg",
             inLibrary = false,

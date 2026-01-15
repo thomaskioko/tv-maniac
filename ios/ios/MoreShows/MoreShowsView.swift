@@ -49,7 +49,7 @@ struct MoreShowsView: View {
                 $0.toSwift()
             },
             onAction: { id in
-                presenter.dispatch(action: MoreShowClicked(showId: id))
+                presenter.dispatch(action: MoreShowClicked(traktId: id))
             }
         )
     }

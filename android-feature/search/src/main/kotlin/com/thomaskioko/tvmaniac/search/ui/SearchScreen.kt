@@ -61,17 +61,13 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.search_no_results
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.search.presenter.ClearQuery
 import com.thomaskioko.tvmaniac.search.presenter.DismissSnackBar
-import com.thomaskioko.tvmaniac.search.presenter.EmptySearchResult
 import com.thomaskioko.tvmaniac.search.presenter.GenreCategoryClicked
-import com.thomaskioko.tvmaniac.search.presenter.InitialSearchState
 import com.thomaskioko.tvmaniac.search.presenter.QueryChanged
 import com.thomaskioko.tvmaniac.search.presenter.ReloadShowContent
-import com.thomaskioko.tvmaniac.search.presenter.SearchResultAvailable
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowAction
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowClicked
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowState
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowsPresenter
-import com.thomaskioko.tvmaniac.search.presenter.ShowContentAvailable
 import com.thomaskioko.tvmaniac.search.presenter.model.ShowGenre
 import com.thomaskioko.tvmaniac.search.presenter.model.ShowItem
 import com.thomaskioko.tvmaniac.search.ui.components.SearchResultItem
@@ -101,6 +97,22 @@ internal fun SearchScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val snackBarHostState = remember { SnackbarHostState() }
     val lazyListState = rememberLazyListState()
+
+    // Handle error messages via snackbar
+    LaunchedEffect(state.errorMessage) {
+        state.errorMessage?.let { errorMessage ->
+            val snackBarResult = snackBarHostState.showSnackbar(
+                message = errorMessage,
+                duration = SnackbarDuration.Short,
+            )
+
+            when (snackBarResult) {
+                SnackbarResult.ActionPerformed,
+                SnackbarResult.Dismissed,
+                -> onAction(DismissSnackBar)
+            }
+        }
+    }
 
     Scaffold(
         modifier = modifier.statusBarsPadding(),
@@ -133,7 +145,6 @@ internal fun SearchScreen(
                 paddingValues = paddingValues,
                 scrollBehavior = scrollBehavior,
                 onAction = onAction,
-                snackBarHostState = snackBarHostState,
                 lazyListState = lazyListState,
             )
         },
@@ -146,50 +157,58 @@ private fun SearchScreenContent(
     paddingValues: PaddingValues,
     scrollBehavior: TopAppBarScrollBehavior,
     onAction: (SearchShowAction) -> Unit,
-    snackBarHostState: SnackbarHostState,
     lazyListState: LazyListState,
 ) {
     SearchScreenHeader(
-        query = state.query ?: "",
+        query = state.query,
         paddingValues = paddingValues,
         scrollBehavior = scrollBehavior,
         onAction = onAction,
         lazyListState = lazyListState,
     ) {
-        when (state) {
-            is EmptySearchResult -> {
-                val context = LocalContext.current
-                if (state.errorMessage != null) {
-                    EmptyContent(
-                        imageVector = Icons.Outlined.ErrorOutline,
-                        title = generic_empty_content.resolve(context),
-                        message = missing_api_key.resolve(context),
-                        buttonText = generic_retry.resolve(context),
-                        onClick = { onAction(ReloadShowContent) },
-                    )
-                } else {
-                    EmptyContent(
-                        imageVector = Icons.Filled.SearchOff,
-                        title = search_no_results.resolve(LocalContext.current),
-                    )
-                }
+        when {
+            // Loading state (initial load or search with no cached results)
+            state.isUpdating && state.searchResults.isEmpty() && state.genres.isEmpty() -> {
+                LoadingIndicator()
             }
-
-            is SearchResultAvailable -> SearchResultsContent(
-                onAction = onAction,
-                results = state.results,
-                scrollState = lazyListState,
-            )
-
-            is ShowContentAvailable -> ShowContent(
-                onAction = onAction,
-                genres = state.genres,
-                errorMessage = state.errorMessage,
-                snackBarHostState = snackBarHostState,
-                lazyListState = lazyListState,
-            )
-
-            is InitialSearchState -> LoadingIndicator()
+            // Search mode with results
+            state.query.isNotEmpty() && state.searchResults.isNotEmpty() -> {
+                SearchResultsContent(
+                    onAction = onAction,
+                    results = state.searchResults,
+                    scrollState = lazyListState,
+                )
+            }
+            // Search mode loading (with query but no results yet)
+            state.query.isNotEmpty() && state.isUpdating -> {
+                LoadingIndicator()
+            }
+            // Search mode with no results (not loading)
+            state.query.isNotEmpty() && state.searchResults.isEmpty() && !state.isUpdating -> {
+                EmptyContent(
+                    imageVector = Icons.Filled.SearchOff,
+                    title = search_no_results.resolve(LocalContext.current),
+                )
+            }
+            // Error state (when there's an error and no content to show)
+            state.errorMessage != null && state.genres.isEmpty() -> {
+                val context = LocalContext.current
+                EmptyContent(
+                    imageVector = Icons.Outlined.ErrorOutline,
+                    title = generic_empty_content.resolve(context),
+                    message = missing_api_key.resolve(context),
+                    buttonText = generic_retry.resolve(context),
+                    onClick = { onAction(ReloadShowContent) },
+                )
+            }
+            // Genre browsing mode (default)
+            state.genres.isNotEmpty() -> {
+                GenreContent(
+                    genres = state.genres,
+                    onItemClicked = { onAction(GenreCategoryClicked(it)) },
+                    lazyListState = lazyListState,
+                )
+            }
         }
     }
 }
@@ -225,11 +244,9 @@ private fun SearchScreenHeader(
 private fun SearchResultsContent(
     onAction: (SearchShowAction) -> Unit,
     scrollState: LazyListState,
-    results: ImmutableList<ShowItem>?,
+    results: ImmutableList<ShowItem>,
     modifier: Modifier = Modifier,
 ) {
-    if (results.isNullOrEmpty()) return
-
     LazyColumn(
         modifier = modifier,
         state = scrollState,
@@ -245,42 +262,10 @@ private fun SearchResultsContent(
                 year = item.year,
                 overview = item.overview,
                 imageUrl = item.posterImageUrl,
-                onClick = { onAction(SearchShowClicked(item.tmdbId)) },
+                onClick = { onAction(SearchShowClicked(item.traktId)) },
             )
         }
     }
-}
-
-@Composable
-private fun ShowContent(
-    errorMessage: String?,
-    snackBarHostState: SnackbarHostState,
-    lazyListState: LazyListState,
-    onAction: (SearchShowAction) -> Unit,
-    genres: ImmutableList<ShowGenre>,
-    modifier: Modifier = Modifier,
-) {
-    LaunchedEffect(errorMessage) {
-        errorMessage?.let {
-            val snackBarResult = snackBarHostState.showSnackbar(
-                message = errorMessage,
-                duration = SnackbarDuration.Short,
-            )
-
-            when (snackBarResult) {
-                SnackbarResult.ActionPerformed,
-                SnackbarResult.Dismissed,
-                -> onAction(DismissSnackBar)
-            }
-        }
-    }
-
-    GenreContent(
-        genres = genres,
-        onItemClicked = { onAction(GenreCategoryClicked(it)) },
-        modifier = modifier,
-        lazyListState = lazyListState,
-    )
 }
 
 @Composable

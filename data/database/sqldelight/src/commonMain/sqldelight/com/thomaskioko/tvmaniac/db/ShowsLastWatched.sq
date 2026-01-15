@@ -1,25 +1,25 @@
 CREATE VIEW shows_last_watched AS
 SELECT
-    tvshow.id AS show_id,
+    tvshow.trakt_id AS show_trakt_id,
     MAX((1000 * season.season_number) + episode.episode_number) AS last_watched_abs_number,
     MAX(watched_episode.watched_at) AS last_watched_at
 FROM tvshow
-INNER JOIN season ON tvshow.id = season.show_id
-INNER JOIN episode ON episode.season_id = season.id AND episode.show_id = tvshow.id
-INNER JOIN watched_episodes AS watched_episode ON watched_episode.show_id = tvshow.id AND watched_episode.episode_id = episode.id
+INNER JOIN season ON tvshow.trakt_id = season.show_trakt_id
+INNER JOIN episode ON episode.season_id = season.id AND episode.show_trakt_id = tvshow.trakt_id
+INNER JOIN watched_episodes AS watched_episode ON watched_episode.show_trakt_id = tvshow.trakt_id AND watched_episode.episode_id = episode.id
 WHERE season.season_number > 0 OR season.title != 'Specials'
-GROUP BY tvshow.id;
+GROUP BY tvshow.trakt_id;
 
 lastWatchedEpisodeForShow:
 SELECT
-    last_watched.show_id,
+    last_watched.show_trakt_id,
     episode.id AS episode_id,
     season.season_number AS last_watched_season,
     episode.episode_number AS last_watched_episode,
     last_watched.last_watched_at
 FROM shows_last_watched AS last_watched
-INNER JOIN season ON season.show_id = last_watched.show_id
-INNER JOIN episode ON episode.season_id = season.id AND episode.show_id = last_watched.show_id
-WHERE last_watched.show_id = ?
+INNER JOIN season ON season.show_trakt_id = last_watched.show_trakt_id
+INNER JOIN episode ON episode.season_id = season.id AND episode.show_trakt_id = last_watched.show_trakt_id
+WHERE last_watched.show_trakt_id = ?
   AND ((1000 * season.season_number) + episode.episode_number) = last_watched.last_watched_abs_number
 LIMIT 1;

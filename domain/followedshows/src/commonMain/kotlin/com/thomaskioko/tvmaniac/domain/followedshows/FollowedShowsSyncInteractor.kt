@@ -23,7 +23,7 @@ public class FollowedShowsSyncInteractor(
 
     override suspend fun doWork(params: Param) {
         withContext(dispatchers.io) {
-            followedShowsRepository.syncFollowedShows()
+            followedShowsRepository.syncFollowedShows(params.forceRefresh)
 
             val followedShows = followedShowsRepository.observeFollowedShows().first()
             logger.debug(TAG, "Syncing content for ${followedShows.size} followed shows.")
@@ -32,7 +32,7 @@ public class FollowedShowsSyncInteractor(
                 currentCoroutineContext().ensureActive()
                 showContentSyncInteractor.executeSync(
                     ShowContentSyncInteractor.Param(
-                        showId = show.tmdbId,
+                        traktId = show.traktId,
                         forceRefresh = params.forceRefresh,
                         isUserInitiated = false,
                     ),

@@ -1,32 +1,57 @@
 import com.thomaskioko.tvmaniac.db.CastId;
 import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.TraktId;
+import com.thomaskioko.tvmaniac.db.SeasonId;
 
 CREATE TABLE IF NOT EXISTS casts (
-    id INTEGER AS Id<CastId> NOT NULL PRIMARY KEY,
+    id INTEGER AS Id<CastId> NOT NULL,
+    trakt_id INTEGER AS Id<TraktId>,
+    show_trakt_id INTEGER AS Id<TraktId> NOT NULL,
+    season_id INTEGER AS Id<SeasonId>,
     name TEXT NOT NULL,
     character_name TEXT NOT NULL,
     profile_path TEXT,
-    popularity REAL
+    popularity REAL,
+    PRIMARY KEY (id, show_trakt_id, season_id),
+    FOREIGN KEY(show_trakt_id) REFERENCES tvshow(trakt_id) ON DELETE CASCADE,
+    FOREIGN KEY(season_id) REFERENCES season(id) ON DELETE CASCADE
 );
+
+-- indices
+CREATE INDEX IF NOT EXISTS `index_casts_trakt_id` ON `casts` (`trakt_id`);
+CREATE INDEX IF NOT EXISTS `index_casts_show_trakt_id` ON `casts` (`show_trakt_id`);
+CREATE INDEX IF NOT EXISTS `index_casts_season_id` ON `casts` (`season_id`);
 
 upsert:
 INSERT OR REPLACE INTO casts(
     id,
+    trakt_id,
+    show_trakt_id,
+    season_id,
     name,
     character_name,
     profile_path,
     popularity
 )
-VALUES(?,?, ?, ?,?);
+VALUES(?, ?, ?, ?, ?, ?, ?, ?);
 
-cast:
+showCast:
 SELECT
-    casts.id AS cast_id,
-    casts.name,
-    casts.character_name,
-    casts.profile_path,
-    casts.popularity
-FROM
-    casts
-WHERE
-    casts.id = ?;
+    id AS cast_id,
+    trakt_id,
+    show_trakt_id,
+    name,
+    profile_path,
+    character_name
+FROM casts
+WHERE show_trakt_id = ? AND season_id IS NULL;
+
+seasonCast:
+SELECT
+    id AS cast_id,
+    trakt_id,
+    name,
+    profile_path,
+    character_name
+FROM casts
+WHERE season_id = ?;

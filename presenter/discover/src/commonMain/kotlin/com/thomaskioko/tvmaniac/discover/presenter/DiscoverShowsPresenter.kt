@@ -16,8 +16,8 @@ public interface DiscoverShowsPresenter {
             componentContext: ComponentContext,
             onNavigateToShowDetails: (id: Long) -> Unit,
             onNavigateToMore: (categoryId: Long) -> Unit,
-            onNavigateToEpisode: (showId: Long, episodeId: Long) -> Unit = { _, _ -> },
-            onNavigateToSeason: (showId: Long, seasonId: Long, seasonNumber: Long) -> Unit = { _, _, _ -> },
+            onNavigateToEpisode: (showTraktId: Long, episodeId: Long) -> Unit = { _, _ -> },
+            onNavigateToSeason: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit = { _, _, _ -> },
         ): DiscoverShowsPresenter
     }
 }

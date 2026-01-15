@@ -13,8 +13,8 @@ import kotlin.time.Instant
 
 public interface FollowedShowsDataSource {
     public suspend fun getFollowedShows(): List<Pair<FollowedShowEntry, TraktFollowedShowResponse>>
-    public suspend fun addShowsToWatchlist(tmdbIds: List<Long>)
-    public suspend fun removeShowsFromWatchlist(tmdbIds: List<Long>)
+    public suspend fun addShowsToWatchlistByTraktId(traktIds: List<Long>)
+    public suspend fun removeShowsFromWatchlistByTraktId(traktIds: List<Long>)
 }
 
 @Inject
@@ -28,12 +28,11 @@ public class TraktFollowedShowsDataSource(
         return when (val response = traktListDataSource.getWatchList()) {
             is ApiResponse.Success -> {
                 response.body.map { traktShow ->
-                    val tmdbId = traktShow.show.ids.tmdb.toLong()
                     val entry = FollowedShowEntry(
-                        tmdbId = tmdbId,
+                        traktId = traktShow.show.ids.trakt.toLong(),
+                        tmdbId = traktShow.show.ids.tmdb?.toLong(),
                         followedAt = Instant.parse(traktShow.listedAt),
                         pendingAction = PendingAction.NOTHING,
-                        traktId = traktShow.show.ids.trakt.toLong(),
                     )
                     entry to traktShow
                 }
@@ -49,9 +48,9 @@ public class TraktFollowedShowsDataSource(
         }
     }
 
-    override suspend fun addShowsToWatchlist(tmdbIds: List<Long>) {
-        for (showId in tmdbIds) {
-            when (val response = traktListDataSource.addShowToWatchListByTmdbId(showId)) {
+    override suspend fun addShowsToWatchlistByTraktId(traktIds: List<Long>) {
+        for (traktId in traktIds) {
+            when (val response = traktListDataSource.addShowToWatchListByTraktId(traktId)) {
                 is ApiResponse.Success -> continue
                 is ApiResponse.Error -> {
                     val errorMessage = when (response) {
@@ -59,15 +58,15 @@ public class TraktFollowedShowsDataSource(
                         is ApiResponse.Error.SerializationError -> "Serialization error: ${response.errorMessage}"
                         is ApiResponse.Error.GenericError -> response.errorMessage ?: "Unknown error"
                     }
-                    throw Exception("Failed to add show $showId to watchlist: $errorMessage")
+                    throw Exception("Failed to add show $traktId to watchlist: $errorMessage")
                 }
             }
         }
     }
 
-    override suspend fun removeShowsFromWatchlist(tmdbIds: List<Long>) {
-        for (showId in tmdbIds) {
-            when (val response = traktListDataSource.removeShowFromWatchListByTmdbId(showId)) {
+    override suspend fun removeShowsFromWatchlistByTraktId(traktIds: List<Long>) {
+        for (traktId in traktIds) {
+            when (val response = traktListDataSource.removeShowFromWatchListByTraktId(traktId)) {
                 is ApiResponse.Success -> continue
                 is ApiResponse.Error -> {
                     val errorMessage = when (response) {
@@ -75,7 +74,7 @@ public class TraktFollowedShowsDataSource(
                         is ApiResponse.Error.SerializationError -> "Serialization error: ${response.errorMessage}"
                         is ApiResponse.Error.GenericError -> response.errorMessage ?: "Unknown error"
                     }
-                    throw Exception("Failed to remove show $showId from watchlist: $errorMessage")
+                    throw Exception("Failed to remove show $traktId from watchlist: $errorMessage")
                 }
             }
         }

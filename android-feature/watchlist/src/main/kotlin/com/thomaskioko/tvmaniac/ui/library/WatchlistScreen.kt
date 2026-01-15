@@ -190,7 +190,7 @@ internal fun WatchlistScreen(
                                 onMarkWatched = { episode ->
                                     onAction(
                                         MarkUpNextEpisodeWatched(
-                                            showId = episode.showId,
+                                            showTraktId = episode.showTraktId,
                                             episodeId = episode.episodeId,
                                             seasonNumber = episode.seasonNumber,
                                             episodeNumber = episode.episodeNumber,
@@ -373,7 +373,7 @@ private fun WatchlistGridItem(
                 .aspectRatio(2f / 3f),
             imageUrl = show.posterImageUrl,
             title = show.title,
-            onClick = { onItemClicked(show.tmdbId) },
+            onClick = { onItemClicked(show.traktId) },
             shape = RectangleShape,
         )
         ShowLinearProgressIndicator(
@@ -410,13 +410,13 @@ private fun SectionedUpNextListContent(
                     modifier = Modifier.animateItem(),
                 )
             }
-            items(watchNextEpisodes, key = { "watchnext_${it.showId}_${it.episodeId}" }) { episode ->
+            items(watchNextEpisodes, key = { "watchnext_${it.showTraktId}_${it.episodeId}" }) { episode ->
                 UpNextListItem(
                     item = episode,
                     premiereLabel = premiereLabel,
                     newLabel = newLabel,
                     onItemClicked = onEpisodeClicked,
-                    onShowTitleClicked = { onShowTitleClicked(episode.showId) },
+                    onShowTitleClicked = { onShowTitleClicked(episode.showTraktId) },
                     onMarkWatched = { onMarkWatched(episode) },
                     modifier = Modifier.animateItem(),
                 )
@@ -430,13 +430,13 @@ private fun SectionedUpNextListContent(
                     modifier = Modifier.animateItem(),
                 )
             }
-            items(staleEpisodes, key = { "stale_${it.showId}_${it.episodeId}" }) { episode ->
+            items(staleEpisodes, key = { "stale_${it.showTraktId}_${it.episodeId}" }) { episode ->
                 UpNextListItem(
                     item = episode,
                     premiereLabel = premiereLabel,
                     newLabel = newLabel,
                     onItemClicked = onEpisodeClicked,
-                    onShowTitleClicked = { onShowTitleClicked(episode.showId) },
+                    onShowTitleClicked = { onShowTitleClicked(episode.showTraktId) },
                     onMarkWatched = { onMarkWatched(episode) },
                     modifier = Modifier.animateItem(),
                 )

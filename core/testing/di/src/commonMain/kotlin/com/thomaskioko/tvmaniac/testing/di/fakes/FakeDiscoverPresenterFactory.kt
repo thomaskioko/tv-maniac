@@ -20,8 +20,8 @@ public class FakeDiscoverPresenterFactory : DiscoverShowsPresenter.Factory {
         componentContext: ComponentContext,
         onNavigateToShowDetails: (id: Long) -> Unit,
         onNavigateToMore: (categoryId: Long) -> Unit,
-        onNavigateToEpisode: (showId: Long, episodeId: Long) -> Unit,
-        onNavigateToSeason: (showId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
+        onNavigateToEpisode: (showTraktId: Long, episodeId: Long) -> Unit,
+        onNavigateToSeason: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
     ): DiscoverShowsPresenter = FakeDiscoverShowsPresenter()
 }
 

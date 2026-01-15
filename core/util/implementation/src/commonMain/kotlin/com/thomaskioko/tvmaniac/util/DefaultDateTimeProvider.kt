@@ -28,12 +28,10 @@ public class DefaultDateTimeProvider : DateTimeProvider {
         timeZone: TimeZone,
     ): Int? {
         if (airDateStr.isNullOrBlank()) return null
-        val airDate = try {
-            LocalDate.parse(airDateStr)
-        } catch (_: IllegalArgumentException) {
-            return null
-        }
-        val days = today().daysUntil(airDate)
+        val airDate = runCatching { LocalDate.parse(airDateStr) }
+            .recoverCatching { Instant.parse(airDateStr).toLocalDateTime(timeZone).date }
+            .getOrNull() ?: return null
+        val days = today(timeZone).daysUntil(airDate)
         return if (days > 0) days else null
     }
 
@@ -59,12 +57,12 @@ public class DefaultDateTimeProvider : DateTimeProvider {
 
     override fun getYear(dateString: String): String {
         if (dateString.isEmpty()) return "--"
-        return try {
-            val localDate = LocalDate.parse(dateString)
-            localDate.year.toString()
-        } catch (exception: Exception) {
-            Logger.e("getYear:: $dateString ${exception.message}", exception)
-            "TBA"
-        }
+        return runCatching { LocalDate.parse(dateString).year }
+            .recoverCatching { Instant.parse(dateString).toLocalDateTime(TimeZone.UTC).year }
+            .map { it.toString() }
+            .getOrElse { exception ->
+                Logger.e("getYear:: $dateString ${exception.message}", exception)
+                "TBA"
+            }
     }
 }

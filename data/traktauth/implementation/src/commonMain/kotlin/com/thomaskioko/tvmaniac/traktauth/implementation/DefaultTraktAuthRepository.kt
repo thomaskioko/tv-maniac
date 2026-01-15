@@ -84,7 +84,10 @@ public class DefaultTraktAuthRepository(
                 updateAuthState(AuthState.Empty)
                 null
             }
-            is RefreshTokenResult.Failed -> null
+            is RefreshTokenResult.Failed -> {
+                updateAuthState(AuthState.Empty)
+                null
+            }
         }
     }
 

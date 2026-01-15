@@ -4,9 +4,7 @@ import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
-import com.thomaskioko.tvmaniac.search.presenter.EmptySearchResult
-import com.thomaskioko.tvmaniac.search.presenter.SearchResultAvailable
-import com.thomaskioko.tvmaniac.search.presenter.ShowContentAvailable
+import com.thomaskioko.tvmaniac.search.presenter.SearchShowState
 import com.thomaskioko.tvmaniac.search.ui.SearchScreen
 import com.thomaskioko.tvmaniac.search.ui.createDiscoverShowList
 import com.thomaskioko.tvmaniac.search.ui.createGenreShowList
@@ -32,7 +30,10 @@ class SearchScreenTest {
         composeTestRule.captureMultiDevice("SearchEmptyState") {
             TvManiacBackground {
                 SearchScreen(
-                    state = EmptySearchResult(),
+                    state = SearchShowState(
+                        query = "test",
+                        isUpdating = false,
+                    ),
                     onAction = {},
                 )
             }
@@ -44,7 +45,9 @@ class SearchScreenTest {
         composeTestRule.captureMultiDevice("SearchErrorState") {
             TvManiacBackground {
                 SearchScreen(
-                    state = EmptySearchResult(),
+                    state = SearchShowState(
+                        errorMessage = "Something went wrong",
+                    ),
                     onAction = {},
                 )
             }
@@ -56,7 +59,7 @@ class SearchScreenTest {
         composeTestRule.captureMultiDevice("SearchShowContentAvailable") {
             TvManiacBackground {
                 SearchScreen(
-                    state = ShowContentAvailable(
+                    state = SearchShowState(
                         genres = createGenreShowList(),
                     ),
                     onAction = {},
@@ -70,8 +73,9 @@ class SearchScreenTest {
         composeTestRule.captureMultiDevice("SearchResultAvailable") {
             TvManiacBackground {
                 SearchScreen(
-                    SearchResultAvailable(
-                        results = createDiscoverShowList(),
+                    state = SearchShowState(
+                        query = "loki",
+                        searchResults = createDiscoverShowList(),
                     ),
                     onAction = {},
                 )

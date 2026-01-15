@@ -14,4 +14,5 @@ public data class EpisodeDetails(
     val airDate: String?,
     val isWatched: Boolean,
     val daysUntilAir: Int?,
+    val hasAired: Boolean,
 )

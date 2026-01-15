@@ -11,13 +11,13 @@ public class MarkSeasonUnwatchedInteractor(
 
     override suspend fun doWork(params: MarkSeasonUnwatchedParams) {
         episodeRepository.markSeasonUnwatched(
-            showId = params.showId,
+            showTraktId = params.showTraktId,
             seasonNumber = params.seasonNumber,
         )
     }
 }
 
 public data class MarkSeasonUnwatchedParams(
-    val showId: Long,
+    val showTraktId: Long,
     val seasonNumber: Long,
 )

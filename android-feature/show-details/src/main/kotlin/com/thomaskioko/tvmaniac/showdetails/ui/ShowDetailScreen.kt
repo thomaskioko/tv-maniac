@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
@@ -71,6 +70,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
+import com.thomaskioko.tvmaniac.compose.components.CastCard
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
 import com.thomaskioko.tvmaniac.compose.components.FilledHorizontalIconButton
@@ -85,7 +85,6 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
 import com.thomaskioko.tvmaniac.compose.components.actionIconWhen
 import com.thomaskioko.tvmaniac.compose.extensions.backgroundGradient
-import com.thomaskioko.tvmaniac.compose.extensions.contentBackgroundGradient
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.i18n.MR
@@ -383,7 +382,7 @@ private fun ShowInfoContent(
             onMarkWatched = { episode ->
                 onAction(
                     MarkEpisodeWatched(
-                        showId = episode.showId,
+                        showTraktId = episode.showTraktId,
                         episodeId = episode.episodeId,
                         seasonNumber = episode.seasonNumber,
                         episodeNumber = episode.episodeNumber,
@@ -770,65 +769,15 @@ private fun CastContent(
                 flingBehavior = rememberSnapperFlingBehavior(lazyListState),
             ) {
                 itemsIndexed(castsList) { index, cast ->
-                    Card(
+                    CastCard(
+                        profileUrl = cast.profileUrl,
+                        name = cast.name,
+                        characterName = cast.characterName,
                         modifier = Modifier.padding(
                             start = if (index == 0) 16.dp else 0.dp,
                             end = if (index == castsList.size - 1) 16.dp else 8.dp,
                         ),
-                        shape = MaterialTheme.shapes.small,
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 8.dp,
-                        ),
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .size(width = 120.dp, height = 160.dp),
-                            contentAlignment = Alignment.BottomStart,
-                        ) {
-                            AsyncImageComposable(
-                                model = cast.profileUrl,
-                                contentDescription = cast.name,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .animateItem(),
-                            )
-
-                            Box(
-                                modifier = Modifier
-                                    .matchParentSize()
-                                    .background(contentBackgroundGradient()),
-                            )
-                            Column(
-                                modifier = Modifier.padding(8.dp),
-                            ) {
-                                Text(
-                                    text = cast.name,
-                                    modifier = Modifier
-                                        .padding(vertical = 2.dp)
-                                        .wrapContentWidth(),
-                                    overflow = TextOverflow.Ellipsis,
-                                    maxLines = 1,
-                                    style = MaterialTheme.typography.bodyMedium.copy(
-                                        fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                    ),
-                                )
-
-                                Text(
-                                    text = cast.characterName,
-                                    modifier = Modifier.wrapContentWidth(),
-                                    overflow = TextOverflow.Ellipsis,
-                                    maxLines = 1,
-                                    style = MaterialTheme.typography.bodyMedium.copy(
-                                        fontWeight = FontWeight.Normal,
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                    ),
-                                )
-                            }
-                        }
-                    }
+                    )
                 }
             }
         }
@@ -859,7 +808,7 @@ private fun TrailersContent(
 
                 Column {
                     Card(
-                        modifier = Modifier.clickable { onAction(WatchTrailerClicked(trailer.showId)) },
+                        modifier = Modifier.clickable { onAction(WatchTrailerClicked(trailer.showTmdbId)) },
                         shape = RoundedCornerShape(4.dp),
                         elevation = CardDefaults.cardElevation(
                             defaultElevation = 4.dp,
@@ -974,7 +923,7 @@ private fun HorizontalRowContent(
                 PosterCard(
                     imageUrl = tvShow.posterImageUrl,
                     title = tvShow.title,
-                    onClick = { onShowClicked(tvShow.tmdbId) },
+                    onClick = { onShowClicked(tvShow.traktId) },
                     imageWidth = 84.dp,
                 )
             }

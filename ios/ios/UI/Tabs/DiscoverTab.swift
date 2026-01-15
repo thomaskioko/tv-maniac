@@ -80,7 +80,10 @@ struct DiscoverTab: View {
     @ViewBuilder
     private func headerContent(shows: [DiscoverShow]) -> some View {
         if shows.isEmpty {
-            LoadingIndicatorView()
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle())
+                .scaleEffect(1.5)
+                .tint(theme.colors.accent)
         } else {
             let items = shows.map {
                 $0.toSwift()
@@ -93,7 +96,7 @@ struct DiscoverTab: View {
                     store.savedIndex = currentIndex
                 },
                 onItemTapped: { id in
-                    presenter.dispatch(action: ShowClicked(id: id))
+                    presenter.dispatch(action: ShowClicked(traktId: id))
                 }
             ) { index in
                 CarouselItemView(item: items[index])
@@ -123,7 +126,7 @@ struct DiscoverTab: View {
                     posterHeight: scrollViewHeight
                 )
                 .onTapGesture {
-                    presenter.dispatch(action: ShowClicked(id: item.tmdbId))
+                    presenter.dispatch(action: ShowClicked(traktId: item.traktId))
                 }
             }
         }
@@ -206,23 +209,23 @@ struct DiscoverTab: View {
                 markWatchedLabel: String(\.menu_mark_watched),
                 unfollowShowLabel: String(\.menu_unfollow_show),
                 openSeasonLabel: String(\.menu_open_season),
-                onEpisodeClick: { showId, episodeId in
-                    presenter.dispatch(action: NextEpisodeClicked(showId: showId, episodeId: episodeId))
+                onEpisodeClick: { showTraktId, episodeId in
+                    presenter.dispatch(action: NextEpisodeClicked(showTraktId: showTraktId, episodeId: episodeId))
                 },
                 onMarkWatched: { episode in
                     presenter.dispatch(action: MarkNextEpisodeWatched(
-                        showId: episode.showId,
+                        showTraktId: episode.showTraktId,
                         episodeId: episode.episodeId,
                         seasonNumber: episode.seasonNumber,
                         episodeNumber: episode.episodeNumberValue
                     ))
                 },
                 onUnfollowShow: { episode in
-                    presenter.dispatch(action: UnfollowShowFromUpNext(showId: episode.showId))
+                    presenter.dispatch(action: UnfollowShowFromUpNext(showTraktId: episode.showTraktId))
                 },
                 onOpenSeason: { episode in
                     presenter.dispatch(action: OpenSeasonFromUpNext(
-                        showId: episode.showId,
+                        showTraktId: episode.showTraktId,
                         seasonId: episode.seasonId,
                         seasonNumber: episode.seasonNumber
                     ))
@@ -235,7 +238,7 @@ struct DiscoverTab: View {
                 items: state.trendingToday.map {
                     $0.toSwift()
                 },
-                onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
+                onClick: { id in presenter.dispatch(action: ShowClicked(traktId: id)) },
                 onMoreClicked: { presenter.dispatch(action: TrendingClicked()) }
             )
 
@@ -245,7 +248,7 @@ struct DiscoverTab: View {
                 items: state.upcomingShows.map {
                     $0.toSwift()
                 },
-                onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
+                onClick: { id in presenter.dispatch(action: ShowClicked(traktId: id)) },
                 onMoreClicked: { presenter.dispatch(action: UpComingClicked()) }
             )
 
@@ -255,7 +258,7 @@ struct DiscoverTab: View {
                 items: state.popularShows.map {
                     $0.toSwift()
                 },
-                onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
+                onClick: { id in presenter.dispatch(action: ShowClicked(traktId: id)) },
                 onMoreClicked: { presenter.dispatch(action: PopularClicked()) }
             )
 
@@ -265,7 +268,7 @@ struct DiscoverTab: View {
                 items: state.topRatedShows.map {
                     $0.toSwift()
                 },
-                onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
+                onClick: { id in presenter.dispatch(action: ShowClicked(traktId: id)) },
                 onMoreClicked: { presenter.dispatch(action: TopRatedClicked()) }
             )
         }

@@ -11,6 +11,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(projects.api.tmdb.api)
+                implementation(projects.api.trakt.api)
                 implementation(projects.core.base)
                 implementation(projects.core.networkUtil)
                 implementation(projects.data.database.sqldelight)
@@ -21,6 +22,7 @@ kotlin {
                 implementation(projects.data.requestManager.api)
                 implementation(projects.data.seasondetails.api)
                 implementation(projects.data.seasons.api)
+                implementation(projects.data.shows.api)
 
                 implementation(libs.kotlinx.atomicfu)
                 implementation(libs.sqldelight.extensions)

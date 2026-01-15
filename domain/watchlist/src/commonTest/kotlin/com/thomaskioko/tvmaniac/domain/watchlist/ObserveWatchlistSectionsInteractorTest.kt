@@ -89,7 +89,7 @@ class ObserveWatchlistSectionsInteractorTest {
         watchlistRepository.setObserveResult(watchlist)
         episodeRepository.setNextEpisodesForWatchlist(
             listOf(
-                createNextEpisode(showId = 84958, showName = "Loki", lastWatchedAt = twentyTwoDaysAgo),
+                createNextEpisode(showTraktId = 84958, showName = "Loki", lastWatchedAt = twentyTwoDaysAgo),
             ),
         )
 
@@ -109,11 +109,12 @@ class ObserveWatchlistSectionsInteractorTest {
     fun `should filter watchlist by query using search`() = runTest {
         val searchResults = listOf(
             SearchFollowedShows(
-                show_id = Id(84958),
+                show_trakt_id = Id(84958),
+                show_tmdb_id = Id(84958),
                 name = "Loki",
                 poster_path = "/poster.jpg",
                 status = "Ended",
-                first_air_date = "2024",
+                year = "2024",
                 created_at = 0,
                 season_count = 2,
                 episode_count = 12,
@@ -139,11 +140,12 @@ class ObserveWatchlistSectionsInteractorTest {
     fun `should calculate watch progress correctly`() = runTest {
         val watchlist = listOf(
             FollowedShows(
-                show_id = Id(1),
+                show_trakt_id = Id(1),
+                show_tmdb_id = Id(1),
                 name = "Show with Progress",
                 poster_path = "/poster.jpg",
                 status = "Ongoing",
-                first_air_date = "2024",
+                year = "2024",
                 created_at = 0,
                 season_count = 2,
                 episode_count = 20,
@@ -168,11 +170,12 @@ class ObserveWatchlistSectionsInteractorTest {
 
     private fun createTestWatchlist() = listOf(
         FollowedShows(
-            show_id = Id(84958),
+            show_trakt_id = Id(84958),
+            show_tmdb_id = Id(84958),
             name = "Loki",
             poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
             status = "Ended",
-            first_air_date = "2024",
+            year = "2024",
             created_at = 0,
             season_count = 2,
             episode_count = 12,
@@ -180,11 +183,12 @@ class ObserveWatchlistSectionsInteractorTest {
             total_episode_count = 10,
         ),
         FollowedShows(
-            show_id = Id(1232),
+            show_trakt_id = Id(1232),
+            show_tmdb_id = Id(1232),
             name = "The Lazarus Project",
             poster_path = "/lazarus_poster.jpg",
             status = "Ongoing",
-            first_air_date = "2023",
+            year = "2023",
             created_at = 0,
             season_count = 1,
             episode_count = 8,
@@ -194,11 +198,11 @@ class ObserveWatchlistSectionsInteractorTest {
     )
 
     private fun createNextEpisode(
-        showId: Long,
+        showTraktId: Long,
         showName: String,
         lastWatchedAt: Long? = null,
     ) = NextEpisodeWithShow(
-        showId = showId,
+        showTraktId = showTraktId,
         showName = showName,
         showPoster = "/poster.jpg",
         episodeId = 1L,

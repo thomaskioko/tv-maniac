@@ -11,16 +11,16 @@ import kotlinx.coroutines.flow.Flow
 
 public interface WatchedEpisodeDao {
 
-    public fun observeWatchedEpisodes(showId: Long): Flow<List<GetWatchedEpisodes>>
+    public fun observeWatchedEpisodes(showTraktId: Long): Flow<List<GetWatchedEpisodes>>
 
-    public fun observeSeasonWatchProgress(showId: Long, seasonNumber: Long): Flow<SeasonWatchProgress>
+    public fun observeSeasonWatchProgress(showTraktId: Long, seasonNumber: Long): Flow<SeasonWatchProgress>
 
-    public fun observeShowWatchProgress(showId: Long): Flow<ShowWatchProgress>
+    public fun observeShowWatchProgress(showTraktId: Long): Flow<ShowWatchProgress>
 
-    public fun observeAllSeasonsWatchProgress(showId: Long): Flow<List<SeasonWatchProgress>>
+    public fun observeAllSeasonsWatchProgress(showTraktId: Long): Flow<List<SeasonWatchProgress>>
 
     public suspend fun markAsWatched(
-        showId: Long,
+        showTraktId: Long,
         episodeId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
@@ -29,13 +29,13 @@ public interface WatchedEpisodeDao {
     )
 
     public suspend fun markAsUnwatched(
-        showId: Long,
+        showTraktId: Long,
         episodeId: Long,
         includeSpecials: Boolean,
     )
 
     public suspend fun markSeasonAsWatched(
-        showId: Long,
+        showTraktId: Long,
         seasonNumber: Long,
         episodes: List<EpisodeWatchParams>,
         timestamp: Long,
@@ -43,27 +43,27 @@ public interface WatchedEpisodeDao {
     )
 
     public suspend fun markSeasonAsUnwatched(
-        showId: Long,
+        showTraktId: Long,
         seasonNumber: Long,
         includeSpecials: Boolean,
     )
 
     public suspend fun markPreviousSeasonsAsWatched(
-        showId: Long,
+        showTraktId: Long,
         seasonNumber: Long,
         timestamp: Long,
         includeSpecials: Boolean,
     )
 
     public suspend fun markSeasonAndPreviousAsWatched(
-        showId: Long,
+        showTraktId: Long,
         seasonNumber: Long,
         timestamp: Long,
         includeSpecials: Boolean,
     )
 
     public suspend fun markPreviousEpisodesAsWatched(
-        showId: Long,
+        showTraktId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
         timestamp: Long,
@@ -71,7 +71,7 @@ public interface WatchedEpisodeDao {
     )
 
     public suspend fun markEpisodeAndPreviousAsWatched(
-        showId: Long,
+        showTraktId: Long,
         episodeId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
@@ -80,20 +80,20 @@ public interface WatchedEpisodeDao {
     )
 
     public suspend fun getEpisodesForSeason(
-        showId: Long,
+        showTraktId: Long,
         seasonNumber: Long,
     ): List<EpisodeWatchParams>
 
-    public suspend fun deleteAllForShow(showId: Long)
+    public suspend fun deleteAllForShow(showTraktId: Long)
 
     public suspend fun getUnwatchedEpisodeCountInPreviousSeasons(
-        showId: Long,
+        showTraktId: Long,
         seasonNumber: Long,
         includeSpecials: Boolean,
     ): Long
 
     public fun observeUnwatchedCountInPreviousSeasons(
-        showId: Long,
+        showTraktId: Long,
         seasonNumber: Long,
         includeSpecials: Boolean,
     ): Flow<Long>
@@ -105,7 +105,7 @@ public interface WatchedEpisodeDao {
     public suspend fun deleteById(id: Long)
 
     public suspend fun upsertFromTrakt(
-        showId: Long,
+        showTraktId: Long,
         episodeId: Long?,
         seasonNumber: Long,
         episodeNumber: Long,
@@ -117,7 +117,7 @@ public interface WatchedEpisodeDao {
     )
 
     public suspend fun upsertBatchFromTrakt(
-        showId: Long,
+        showTraktId: Long,
         entries: List<WatchedEpisodeEntry>,
         includeSpecials: Boolean,
     )

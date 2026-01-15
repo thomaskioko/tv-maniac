@@ -2,9 +2,11 @@ package com.thomaskioko.tvmaniac.profile.presenter
 
 import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
+import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
+import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.domain.user.ObserveUserProfileInteractor
@@ -17,13 +19,14 @@ import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.SettingsClicked
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileInfo
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileState
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileStats
+import com.thomaskioko.tvmaniac.traktauth.api.AuthError
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
@@ -41,37 +44,33 @@ public class DefaultProfilePresenter(
     private val updateUserProfileData: UpdateUserProfileData,
     private val logger: Logger,
     observeUserProfileInteractor: ObserveUserProfileInteractor,
+    private val coroutineScope: CoroutineScope = componentContext.coroutineScope(),
 ) : ProfilePresenter, ComponentContext by componentContext {
 
     private val profileLoadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
-    private val coroutineScope = coroutineScope()
     private val isAuthenticating = MutableStateFlow(false)
 
     init {
         observeUserProfileInteractor(Unit)
-        coroutineScope.launch {
-            observeUserProfileInteractor.flow.collect { profile ->
-                if (profile != null && profile.authState == TraktAuthState.LOGGED_IN) {
-                    isAuthenticating.value = false
-                }
-            }
-        }
+        fetchUserData()
     }
 
     override val state: StateFlow<ProfileState> = combine(
         observeUserProfileInteractor.flow,
         traktAuthRepository.state,
+        traktAuthRepository.authError,
         profileLoadingState.observable,
         isAuthenticating,
         uiMessageManager.message,
-    ) { userProfile, authState, isLoading, authenticating, errorMessage ->
+    ) { userProfile, authState, authError, isLoading, authenticating, uiMessage ->
         val authenticated = authState == TraktAuthState.LOGGED_IN
+        val errorMessage = authError?.toUiMessage() ?: uiMessage
 
         ProfileState(
             userProfile = userProfile?.toPresentation(),
             isLoading = isLoading,
-            isAuthenticating = authenticating,
+            isAuthenticating = if (authError != null) false else authenticating,
             errorMessage = errorMessage,
             authenticated = authenticated,
         )
@@ -91,7 +90,10 @@ public class DefaultProfilePresenter(
             }
             SettingsClicked -> onSettings()
             RefreshProfile -> fetchUserData(forceRefresh = true)
-            is MessageShown -> clearMessage(action.id)
+            is MessageShown -> {
+                clearMessage(action.id)
+                coroutineScope.launch { traktAuthRepository.setAuthError(null) }
+            }
         }
     }
 
@@ -128,6 +130,15 @@ private fun UserProfile.toPresentation(): ProfileInfo {
         ),
         backgroundUrl = backgroundUrl,
     )
+}
+
+private fun AuthError.toUiMessage(): UiMessage = when (this) {
+    is AuthError.OAuthFailed -> UiMessage("Login failed: $message")
+    AuthError.OAuthCancelled -> UiMessage("Login cancelled")
+    AuthError.TokenExchangeFailed -> UiMessage("Failed to complete login. Please try again.")
+    AuthError.TokenExpired -> UiMessage("Session expired. Please login again.")
+    AuthError.NetworkError -> UiMessage("Network error. Please check your connection.")
+    AuthError.Unknown -> UiMessage("An unexpected error occurred. Please try again.")
 }
 
 @Inject

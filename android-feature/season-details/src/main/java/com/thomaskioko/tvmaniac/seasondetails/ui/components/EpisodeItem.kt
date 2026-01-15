@@ -42,6 +42,7 @@ internal fun EpisodeItem(
     episodeOverview: String,
     isWatched: Boolean,
     isProcessing: Boolean,
+    hasAired: Boolean,
     onWatchedToggle: () -> Unit,
     modifier: Modifier = Modifier,
     daysUntilAir: Int? = null,
@@ -89,26 +90,7 @@ internal fun EpisodeItem(
                 )
             }
 
-            if (daysUntilAir != null && daysUntilAir > 0) {
-                Column(
-                    modifier = Modifier.padding(12.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Text(
-                        text = daysUntilAir.toString(),
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    Text(
-                        text = pluralStringResource(
-                            MR.plurals.day_label.resourceId,
-                            daysUntilAir,
-                        ),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            } else if (isProcessing) {
+            if (isProcessing) {
                 CircularProgressIndicator(
                     modifier = Modifier
                         .padding(12.dp)
@@ -116,7 +98,7 @@ internal fun EpisodeItem(
                     strokeWidth = 2.dp,
                     color = MaterialTheme.colorScheme.primary,
                 )
-            } else {
+            } else if (hasAired) {
                 Box(
                     modifier = Modifier
                         .padding(12.dp)
@@ -135,6 +117,32 @@ internal fun EpisodeItem(
                         tint = MaterialTheme.colorScheme.onPrimary,
                     )
                 }
+            } else if (daysUntilAir != null && daysUntilAir > 0) {
+                Column(
+                    modifier = Modifier.padding(12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Text(
+                        text = daysUntilAir.toString(),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Text(
+                        text = pluralStringResource(
+                            MR.plurals.day_label.resourceId,
+                            daysUntilAir,
+                        ),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            } else {
+                Text(
+                    text = "TBD",
+                    modifier = Modifier.padding(12.dp),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
         }
     }
@@ -151,6 +159,7 @@ private fun WatchlistRowItemPreview() {
                 imageUrl = episodeDetailsModel.imageUrl,
                 isWatched = false,
                 isProcessing = false,
+                hasAired = true,
                 onWatchedToggle = {},
                 onEpisodeClicked = {},
             )
@@ -169,6 +178,7 @@ private fun WatchlistRowItemWatchedPreview() {
                 imageUrl = episodeDetailsModel.imageUrl,
                 isWatched = true,
                 isProcessing = false,
+                hasAired = true,
                 onWatchedToggle = {},
                 onEpisodeClicked = {},
             )
@@ -187,7 +197,27 @@ private fun EpisodeItemFuturePreview() {
                 imageUrl = episodeDetailsModel.imageUrl,
                 isWatched = false,
                 isProcessing = false,
+                hasAired = false,
                 daysUntilAir = 7,
+                onWatchedToggle = {},
+                onEpisodeClicked = {},
+            )
+        }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun EpisodeItemUnknownAirDatePreview() {
+    TvManiacTheme {
+        Surface {
+            EpisodeItem(
+                title = episodeDetailsModel.episodeNumberTitle,
+                episodeOverview = episodeDetailsModel.overview,
+                imageUrl = episodeDetailsModel.imageUrl,
+                isWatched = false,
+                isProcessing = false,
+                hasAired = false,
                 onWatchedToggle = {},
                 onEpisodeClicked = {},
             )

@@ -7,7 +7,11 @@ import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asStateFlow
 import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
+import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.core.view.InvokeError
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
+import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
 import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsPresenter
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
@@ -17,16 +21,25 @@ import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
+import com.thomaskioko.tvmaniac.traktauth.api.AuthError
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
+import kotlin.time.Duration.Companion.milliseconds
 
+@OptIn(kotlinx.coroutines.FlowPreview::class)
 @Inject
 public class DefaultRootPresenter(
     @Assisted componentContext: ComponentContext,
@@ -38,9 +51,38 @@ public class DefaultRootPresenter(
     private val showDetailsPresenterFactory: ShowDetailsPresenter.Factory,
     private val seasonDetailsPresenterFactory: SeasonDetailsPresenter.Factory,
     private val trailersPresenterFactory: TrailersPresenter.Factory,
+    private val traktAuthRepository: TraktAuthRepository,
+    private val updateUserProfileData: UpdateUserProfileData,
+    private val logoutInteractor: LogoutInteractor,
+    private val logger: Logger,
     coroutineScope: CoroutineScope = componentContext.coroutineScope(),
     datastoreRepository: DatastoreRepository,
 ) : RootPresenter, ComponentContext by componentContext {
+
+    init {
+        coroutineScope.launch {
+            traktAuthRepository.state
+                .debounce(200.milliseconds)
+                .distinctUntilChanged()
+                .filter { it == TraktAuthState.LOGGED_IN }
+                .collect { refreshUserProfile(coroutineScope) }
+        }
+    }
+
+    private fun refreshUserProfile(scope: CoroutineScope) {
+        scope.launch {
+            updateUserProfileData(UpdateUserProfileData.Params(forceRefresh = false))
+                .collect { status ->
+                    if (status is InvokeError) {
+                        logger.error("RootPresenter", "Failed to sync user profile: ${status.throwable.message}")
+                        if (status.throwable.message?.contains("401") == true) {
+                            traktAuthRepository.setAuthError(AuthError.TokenExpired)
+                            logoutInteractor.executeSync(Unit)
+                        }
+                    }
+                }
+        }
+    }
 
     override val childStack: StateFlow<ChildStack<*, Child>> = childStack(
         source = navigator.getStackNavigation(),
@@ -102,7 +144,7 @@ public class DefaultRootPresenter(
                             navigator.pushNew(
                                 config = RootDestinationConfig.SeasonDetails(
                                     param = SeasonDetailsUiParam(
-                                        showId = params.showId,
+                                        showTraktId = params.showTraktId,
                                         seasonNumber = params.seasonNumber,
                                         seasonId = params.seasonId,
                                     ),
@@ -159,6 +201,10 @@ public class DefaultRootPresenter(
         private val showDetailsPresenterFactory: ShowDetailsPresenter.Factory,
         private val seasonDetailsPresenterFactory: SeasonDetailsPresenter.Factory,
         private val trailersPresenterFactory: TrailersPresenter.Factory,
+        private val traktAuthRepository: TraktAuthRepository,
+        private val updateUserProfileData: UpdateUserProfileData,
+        private val logoutInteractor: LogoutInteractor,
+        private val logger: Logger,
         private val datastoreRepository: DatastoreRepository,
     ) : RootPresenter.Factory {
         override fun invoke(
@@ -174,6 +220,10 @@ public class DefaultRootPresenter(
             showDetailsPresenterFactory = showDetailsPresenterFactory,
             seasonDetailsPresenterFactory = seasonDetailsPresenterFactory,
             trailersPresenterFactory = trailersPresenterFactory,
+            traktAuthRepository = traktAuthRepository,
+            updateUserProfileData = updateUserProfileData,
+            logoutInteractor = logoutInteractor,
+            logger = logger,
             datastoreRepository = datastoreRepository,
         )
     }

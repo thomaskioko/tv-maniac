@@ -120,11 +120,12 @@ class ObservableWatchlistInteractorTest {
         val initialWatchlist = createTestWatchlist()
         val updatedWatchlist = createTestWatchlist().plus(
             FollowedShows(
-                show_id = Id(999),
+                show_trakt_id = Id(999),
+                show_tmdb_id = Id(999),
                 name = "New Show",
                 poster_path = "/new_poster.jpg",
                 status = "Ongoing",
-                first_air_date = "2024",
+                year = "2024",
                 created_at = 0,
                 season_count = 2,
                 episode_count = 20,
@@ -184,11 +185,12 @@ class ObservableWatchlistInteractorTest {
 
     private fun createTestWatchlist() = listOf(
         FollowedShows(
-            show_id = Id(84958),
+            show_trakt_id = Id(84958),
+            show_tmdb_id = Id(84958),
             name = "Loki",
             poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
             status = "Ended",
-            first_air_date = "2024",
+            year = "2024",
             created_at = 0,
             season_count = 2,
             episode_count = 12,
@@ -196,11 +198,12 @@ class ObservableWatchlistInteractorTest {
             total_episode_count = 10,
         ),
         FollowedShows(
-            show_id = Id(1232),
+            show_trakt_id = Id(1232),
+            show_tmdb_id = Id(1232),
             name = "The Lazarus Project",
             poster_path = "/lazarus_poster.jpg",
             status = "Ongoing",
-            first_air_date = "2023",
+            year = "2023",
             created_at = 0,
             season_count = 1,
             episode_count = 8,

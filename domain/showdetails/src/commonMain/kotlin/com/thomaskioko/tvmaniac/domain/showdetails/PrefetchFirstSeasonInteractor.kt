@@ -19,12 +19,12 @@ public class PrefetchFirstSeasonInteractor(
 
     override suspend fun doWork(params: Param) {
         withContext(dispatchers.io) {
-            val seasons = seasonsRepository.observeSeasonsByShowId(params.showId).first()
+            val seasons = seasonsRepository.observeSeasonsByShowId(params.showTraktId).first()
             val firstSeason = seasons.minByOrNull { it.season_number } ?: return@withContext
 
             seasonDetailsRepository.fetchSeasonDetails(
                 param = SeasonDetailsParam(
-                    showId = params.showId,
+                    showTraktId = params.showTraktId,
                     seasonId = firstSeason.season_id.id,
                     seasonNumber = firstSeason.season_number,
                 ),
@@ -33,5 +33,8 @@ public class PrefetchFirstSeasonInteractor(
         }
     }
 
-    public data class Param(val showId: Long, val forceRefresh: Boolean = false)
+    public data class Param(
+        val showTraktId: Long,
+        val forceRefresh: Boolean = false,
+    )
 }

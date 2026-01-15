@@ -58,7 +58,7 @@ public class DefaultSeasonDetailsPresenter(
 ) : SeasonDetailsPresenter, ComponentContext by componentContext {
 
     private val seasonDetailsParam: SeasonDetailsParam = SeasonDetailsParam(
-        showId = param.showId,
+        showTraktId = param.showTraktId,
         seasonId = param.seasonId,
         seasonNumber = param.seasonNumber,
     )
@@ -109,13 +109,13 @@ public class DefaultSeasonDetailsPresenter(
         observableSeasonDetailsInteractor(seasonDetailsParam)
         observeSeasonWatchProgressInteractor(
             ObserveSeasonWatchProgressParams(
-                showId = param.showId,
+                showTraktId = param.showTraktId,
                 seasonNumber = param.seasonNumber,
             ),
         )
         observeUnwatchedInPreviousSeasonsInteractor(
             ObserveUnwatchedInPreviousSeasonsParams(
-                showId = param.showId,
+                showTraktId = param.showTraktId,
                 seasonNumber = param.seasonNumber,
             ),
         )
@@ -137,7 +137,7 @@ public class DefaultSeasonDetailsPresenter(
                 is MarkEpisodeUnwatched -> updateState {
                     copy(
                         dialogState = SeasonDialogState.UnwatchEpisodeConfirmation(
-                            primaryOperation = WatchOperation.MarkEpisodeUnwatched(param.showId, action.episodeId),
+                            primaryOperation = WatchOperation.MarkEpisodeUnwatched(param.showTraktId, action.episodeId),
                         ),
                     )
                 }
@@ -152,7 +152,7 @@ public class DefaultSeasonDetailsPresenter(
 
     private suspend fun handleMarkEpisodeWatched(action: MarkEpisodeWatched) {
         val params = MarkEpisodeWatchedParams(
-            showId = param.showId,
+            showTraktId = param.showTraktId,
             episodeId = action.episodeId,
             seasonNumber = action.seasonNumber,
             episodeNumber = action.episodeNumber,
@@ -175,7 +175,7 @@ public class DefaultSeasonDetailsPresenter(
         updateState {
             copy(
                 dialogState = SeasonDialogState.UnwatchSeasonConfirmation(
-                    primaryOperation = WatchOperation.MarkSeasonUnwatched(param.showId, param.seasonNumber),
+                    primaryOperation = WatchOperation.MarkSeasonUnwatched(param.showTraktId, param.seasonNumber),
                 ),
             )
         }
@@ -186,14 +186,14 @@ public class DefaultSeasonDetailsPresenter(
             updateState {
                 copy(
                     dialogState = SeasonDialogState.MarkPreviousSeasonsConfirmation(
-                        primaryOperation = WatchOperation.MarkSeasonWatched(param.showId, param.seasonNumber, markPreviousSeasons = true),
-                        secondaryOperation = WatchOperation.MarkSeasonWatched(param.showId, param.seasonNumber, markPreviousSeasons = false),
+                        primaryOperation = WatchOperation.MarkSeasonWatched(param.showTraktId, param.seasonNumber, markPreviousSeasons = true),
+                        secondaryOperation = WatchOperation.MarkSeasonWatched(param.showTraktId, param.seasonNumber, markPreviousSeasons = false),
                     ),
                 )
             }
             return
         }
-        execute(WatchOperation.MarkSeasonWatched(param.showId, param.seasonNumber))
+        execute(WatchOperation.MarkSeasonWatched(param.showTraktId, param.seasonNumber))
     }
 
     private suspend fun handleToggleEpisodeWatched(episodeId: Long) {
@@ -212,7 +212,7 @@ public class DefaultSeasonDetailsPresenter(
                 copy(
                     updatingEpisodeIds = (updatingEpisodeIds - episodeId).toPersistentSet(),
                     dialogState = SeasonDialogState.UnwatchEpisodeConfirmation(
-                        primaryOperation = WatchOperation.MarkEpisodeUnwatched(param.showId, episodeId),
+                        primaryOperation = WatchOperation.MarkEpisodeUnwatched(param.showTraktId, episodeId),
                     ),
                 )
             }
@@ -259,15 +259,15 @@ public class DefaultSeasonDetailsPresenter(
                 markEpisodeWatchedInteractor(operation.params)
             is WatchOperation.MarkEpisodeUnwatched ->
                 markEpisodeUnwatchedInteractor(
-                    MarkEpisodeUnwatchedParams(operation.showId, operation.episodeId),
+                    MarkEpisodeUnwatchedParams(operation.showTraktId, operation.episodeId),
                 )
             is WatchOperation.MarkSeasonWatched ->
                 markSeasonWatchedInteractor(
-                    MarkSeasonWatchedParams(operation.showId, operation.seasonNumber, operation.markPreviousSeasons),
+                    MarkSeasonWatchedParams(operation.showTraktId, operation.seasonNumber, operation.markPreviousSeasons),
                 )
             is WatchOperation.MarkSeasonUnwatched ->
                 markSeasonUnwatchedInteractor(
-                    MarkSeasonUnwatchedParams(operation.showId, operation.seasonNumber),
+                    MarkSeasonUnwatchedParams(operation.showTraktId, operation.seasonNumber),
                 )
         }.collectStatus(episodeLoadingState, logger, uiMessageManager)
 
@@ -290,7 +290,7 @@ public class DefaultSeasonDetailsPresenter(
         coroutineScope.launch {
             fetchPreviousSeasonsInteractor(
                 FetchPreviousSeasonsParams(
-                    showId = param.showId,
+                    showTraktId = param.showTraktId,
                     seasonNumber = param.seasonNumber,
                 ),
             ).collectStatus(checkingPreviousSeasonsLoadingState, logger, uiMessageManager)

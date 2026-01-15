@@ -52,7 +52,7 @@ internal fun HorizontalRowContent(
             ) {
                 itemsIndexed(
                     items = tvShows,
-                    key = { index, tvShow -> "${category}_${tvShow.tmdbId}_$index" },
+                    key = { index, tvShow -> "${category}_${tvShow.traktId}_$index" },
                 ) { index, tvShow ->
                     val value = if (index == 0) 16 else 8
 
@@ -61,7 +61,7 @@ internal fun HorizontalRowContent(
                     PosterCard(
                         imageUrl = tvShow.posterImageUrl,
                         title = tvShow.title,
-                        onClick = { onItemClicked(tvShow.tmdbId) },
+                        onClick = { onItemClicked(tvShow.traktId) },
                         isInLibrary = tvShow.inLibrary,
                     )
                 }

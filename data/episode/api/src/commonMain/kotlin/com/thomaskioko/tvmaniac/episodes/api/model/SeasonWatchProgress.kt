@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.episodes.api.model
 
 public data class SeasonWatchProgress(
-    val showId: Long,
+    val showTraktId: Long,
     val seasonNumber: Long,
     val watchedCount: Int,
     val totalCount: Int,

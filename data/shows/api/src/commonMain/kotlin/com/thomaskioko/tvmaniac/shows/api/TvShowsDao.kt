@@ -17,9 +17,11 @@ public interface TvShowsDao {
 
     public suspend fun shouldUpdateShows(shows: List<Int>): Boolean
 
-    public fun getShowById(id: Long): Tvshow?
+    public fun getShowByTraktId(traktId: Long): Tvshow?
 
-    public fun showExists(id: Long): Boolean
+    public fun showExistsByTraktId(traktId: Long): Boolean
 
-    public fun getShowsByIds(ids: List<Long>): List<ShowEntity>
+    public fun getShowsByTraktIds(traktIds: List<Long>): List<ShowEntity>
+
+    public fun getTmdbIdByTraktId(traktId: Long): Long?
 }

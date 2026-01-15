@@ -2,7 +2,7 @@ import Foundation
 
 public struct SwiftShow: Identifiable {
     public let id: UUID = .init()
-    public let tmdbId: Int64
+    public let traktId: Int64
     public let title: String
     public let posterUrl: String?
     public let backdropUrl: String?
@@ -10,14 +10,14 @@ public struct SwiftShow: Identifiable {
     public let overview: String?
 
     public init(
-        tmdbId: Int64,
+        traktId: Int64,
         title: String,
         posterUrl: String?,
         backdropUrl: String? = nil,
         inLibrary: Bool,
         overview: String? = nil
     ) {
-        self.tmdbId = tmdbId
+        self.traktId = traktId
         self.title = title
         self.posterUrl = posterUrl
         self.backdropUrl = backdropUrl

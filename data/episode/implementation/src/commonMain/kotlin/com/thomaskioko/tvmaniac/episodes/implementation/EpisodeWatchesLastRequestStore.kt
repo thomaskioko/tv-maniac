@@ -23,11 +23,11 @@ public class EpisodeWatchesLastRequestStore(
     public fun isRequestExpired(expiry: Duration = DEFAULT_EXPIRY): Boolean =
         !isRequestValid(expiry)
 
-    public fun isShowRequestExpired(showId: Long, expiry: Duration = DEFAULT_EXPIRY): Boolean =
-        requestManagerRepository.isRequestExpired(showId, SHOW_REQUEST_TYPE, expiry)
+    public fun isShowRequestExpired(showTraktId: Long, expiry: Duration = DEFAULT_EXPIRY): Boolean =
+        requestManagerRepository.isRequestExpired(showTraktId, SHOW_REQUEST_TYPE, expiry)
 
-    public fun updateShowLastRequest(showId: Long) {
-        requestManagerRepository.upsert(showId, SHOW_REQUEST_TYPE)
+    public fun updateShowLastRequest(showTraktId: Long) {
+        requestManagerRepository.upsert(showTraktId, SHOW_REQUEST_TYPE)
     }
 
     private companion object {

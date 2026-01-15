@@ -34,7 +34,7 @@ public struct NextEpisodeCard: View {
 
     public var body: some View {
         Button(action: {
-            onEpisodeClick(episode.showId, episode.episodeId)
+            onEpisodeClick(episode.showTraktId, episode.episodeId)
         }) {
             ZStack {
                 CachedAsyncImage(
@@ -140,7 +140,7 @@ private enum DimensionConstants {
     VStack {
         NextEpisodeCard(
             episode: SwiftNextEpisode(
-                showId: 1,
+                showTraktId: 1,
                 showName: "The Walking Dead: Daryl Dixon",
                 showPoster: "/poster.jpg",
                 episodeId: 123,

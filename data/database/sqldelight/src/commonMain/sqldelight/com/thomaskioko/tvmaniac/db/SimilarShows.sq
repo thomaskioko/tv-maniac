@@ -1,44 +1,47 @@
 import com.thomaskioko.tvmaniac.db.Id;
-import com.thomaskioko.tvmaniac.db.SimilarShowId;
+import com.thomaskioko.tvmaniac.db.TraktId;
 import com.thomaskioko.tvmaniac.db.TmdbId;
 
 CREATE TABLE similar_shows (
-    id INTEGER AS Id<TmdbId>,
-    similar_show_id INTEGER AS Id<SimilarShowId> NOT NULL,
+    trakt_id INTEGER AS Id<TraktId>,
+    tmdb_id INTEGER AS Id<TmdbId> NOT NULL,
+    similar_show_trakt_id INTEGER AS Id<TraktId> NOT NULL,
     page_order INTEGER NOT NULL DEFAULT 0,
-    PRIMARY KEY (similar_show_id, id),
-    FOREIGN KEY(similar_show_id) REFERENCES tvshow(id),
-    FOREIGN KEY(id) REFERENCES tvshow(id)
+    PRIMARY KEY (similar_show_trakt_id, trakt_id),
+    FOREIGN KEY(similar_show_trakt_id) REFERENCES tvshow(trakt_id),
+    FOREIGN KEY(trakt_id) REFERENCES tvshow(trakt_id)
 );
 
 insertOrReplace:
 INSERT OR REPLACE INTO similar_shows(
-    id,
-    similar_show_id,
+    trakt_id,
+    tmdb_id,
+    similar_show_trakt_id,
     page_order
 )
-VALUES(?,?,?);
+VALUES(?,?,?,?);
 
 similarShows:
 SELECT
-   tvshow.id AS tmdb_id,
+   tvshow.trakt_id AS show_trakt_id,
+   tvshow.tmdb_id AS show_tmdb_id,
    tvshow.name,
    tvshow.poster_path,
    tvshow.backdrop_path,
-   similar_shows.similar_show_id AS show_id,
+   similar_shows.similar_show_trakt_id,
    CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     tvshow
 JOIN
-    similar_shows ON tvshow.id = similar_shows.id
+    similar_shows ON tvshow.trakt_id = similar_shows.trakt_id
 LEFT OUTER JOIN
-    followed_shows ON tvshow.id = followed_shows.tmdb_id AND followed_shows.pending_action != 'DELETE'
+    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
 WHERE
-    similar_shows.similar_show_id = ?
+    similar_shows.similar_show_trakt_id = ?
 ORDER BY similar_shows.page_order ASC;
 
 delete:
-DELETE FROM similar_shows WHERE similar_show_id = ?;
+DELETE FROM similar_shows WHERE similar_show_trakt_id = ?;
 
 deleteAll:
 DELETE FROM similar_shows;

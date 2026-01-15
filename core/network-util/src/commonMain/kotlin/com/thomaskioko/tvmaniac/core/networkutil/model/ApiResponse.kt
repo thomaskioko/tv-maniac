@@ -7,6 +7,7 @@ import io.ktor.client.plugins.ResponseException
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.request
 import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
 import kotlinx.serialization.SerializationException
 
 public suspend inline fun <reified T> HttpClient.safeRequest(
@@ -16,15 +17,17 @@ public suspend inline fun <reified T> HttpClient.safeRequest(
         val response = request { block() }
         ApiResponse.Success(response.body())
     } catch (exception: ClientRequestException) {
+        val errorBody: String = exception.response.bodyAsText()
+        val url = exception.response.call.request.url
         ApiResponse.Error.HttpError(
             code = exception.response.status.value,
-            errorBody = exception.response.body(),
-            errorMessage = "Status Code: ${exception.response.status.value} - API Key Missing",
+            errorBody = errorBody,
+            errorMessage = "HTTP ${exception.response.status.value} from $url: $errorBody",
         )
     } catch (exception: HttpExceptions) {
         ApiResponse.Error.HttpError(
             code = exception.response.status.value,
-            errorBody = exception.response.body(),
+            errorBody = exception.response.bodyAsText(),
             errorMessage = exception.message,
         )
     } catch (e: SerializationException) {
@@ -94,4 +97,9 @@ public fun <T> ApiResponse<T>.getOrThrow(): T = when (this) {
     is ApiResponse.Error.HttpError -> throw Throwable("HTTP $code: $errorMessage")
     is ApiResponse.Error.SerializationError -> throw Throwable("Serialization error: $message")
     is ApiResponse.Error.GenericError -> throw Throwable("Error: $message")
+}
+
+public fun <T> ApiResponse<T>.getOrNull(): T? = when (this) {
+    is ApiResponse.Success -> body
+    is ApiResponse.Error -> null
 }

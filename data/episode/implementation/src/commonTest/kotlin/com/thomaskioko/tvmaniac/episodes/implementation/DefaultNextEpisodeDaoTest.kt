@@ -4,6 +4,8 @@ import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.TmdbId
+import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.episodes.api.NextEpisodeDao
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -60,7 +62,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             watchlistEpisodes.size shouldBe 2
 
             val show2Episode = watchlistEpisodes[0]
-            show2Episode.showId shouldBe 2L
+            show2Episode.showTraktId shouldBe 2L
             show2Episode.showName shouldBe "Test Show 2"
             show2Episode.episodeName shouldBe "Show 2 Episode 1"
             show2Episode.seasonNumber shouldBe 1
@@ -68,7 +70,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             show2Episode.followedAt.shouldNotBeNull()
 
             val show1Episode = watchlistEpisodes[1]
-            show1Episode.showId shouldBe 1L
+            show1Episode.showTraktId shouldBe 1L
             show1Episode.showName shouldBe "Test Show 1"
             show1Episode.episodeName shouldBe "Episode 2"
             show1Episode.seasonNumber shouldBe 1
@@ -86,7 +88,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             episodes.size shouldBe 1
 
             val nextEpisode = episodes[0]
-            nextEpisode.showId shouldBe 1L
+            nextEpisode.showTraktId shouldBe 1L
             nextEpisode.showName shouldBe "Test Show 1"
             nextEpisode.episodeName shouldBe "Episode 1"
             nextEpisode.seasonNumber shouldBe 1
@@ -122,7 +124,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
             val episodes = awaitItem()
             episodes.size shouldBe 1
-            episodes[0].showId shouldBe 2L
+            episodes[0].showTraktId shouldBe 2L
             episodes[0].showName shouldBe "Test Show 2"
         }
     }
@@ -168,7 +170,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
             val episodes1 = awaitItem()
             episodes1.size shouldBe 1
-            episodes1[0].showId shouldBe 1L
+            episodes1[0].showTraktId shouldBe 1L
             episodes1[0].showName shouldBe "Test Show 1"
 
             followShow(showId = 2L, followedAt = watchDate + 1000)
@@ -176,10 +178,10 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             val episodes2 = awaitItem()
             episodes2.size shouldBe 2
 
-            episodes2[0].showId shouldBe 2L
+            episodes2[0].showTraktId shouldBe 2L
             episodes2[0].showName shouldBe "Test Show 2"
 
-            episodes2[1].showId shouldBe 1L
+            episodes2[1].showTraktId shouldBe 1L
             episodes2[1].showName shouldBe "Test Show 1"
         }
     }
@@ -208,7 +210,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
             val episodes1 = awaitItem()
             episodes1.size shouldBe 1
-            episodes1[0].showId shouldBe 5L
+            episodes1[0].showTraktId shouldBe 5L
             episodes1[0].showName shouldBe "Breaking Bad"
             episodes1[0].episodeName shouldBe "Pilot"
             episodes1[0].seasonNumber shouldBe 1
@@ -219,13 +221,13 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             val episodes2 = awaitItem()
             episodes2.size shouldBe 2
 
-            episodes2[0].showId shouldBe 6L
+            episodes2[0].showTraktId shouldBe 6L
             episodes2[0].showName shouldBe "Game of Thrones"
             episodes2[0].episodeName shouldBe "Winter Is Coming"
             episodes2[0].seasonNumber shouldBe 1
             episodes2[0].episodeNumber shouldBe 1
 
-            episodes2[1].showId shouldBe 5L
+            episodes2[1].showTraktId shouldBe 5L
             episodes2[1].showName shouldBe "Breaking Bad"
             episodes2[1].episodeName shouldBe "Pilot"
             episodes2[1].seasonNumber shouldBe 1
@@ -249,18 +251,18 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
             val episodes = awaitItem()
             episodes.size shouldBe 2
-            episodes[0].showId shouldBe 2L
-            episodes[1].showId shouldBe 1L
+            episodes[0].showTraktId shouldBe 2L
+            episodes[1].showTraktId shouldBe 1L
         }
     }
 
     private fun followShow(showId: Long, followedAt: Long) {
         val _ = database.followedShowsQueries.upsert(
             id = null,
-            tmdbId = showId,
+            traktId = Id<TraktId>(showId),
+            tmdbId = Id<TmdbId>(showId),
             followedAt = followedAt,
             pendingAction = "NOTHING",
-            traktId = null,
         )
     }
 
@@ -272,7 +274,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         watchedAt: Long = watchDate,
     ) {
         val _ = database.watchedEpisodesQueries.upsert(
-            show_id = Id(showId),
+            show_trakt_id = Id<TraktId>(showId),
             episode_id = Id(episodeId),
             season_number = seasonNumber,
             episode_number = episodeNumber,
@@ -288,18 +290,17 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         status: String = "Returning Series",
     ) {
         val _ = database.tvShowQueries.upsert(
-            id = Id(id),
+            trakt_id = Id<TraktId>(id),
+            tmdb_id = Id<TmdbId>(id),
             name = name,
             overview = overview,
             language = "en",
-            first_air_date = "2023-01-01",
-            vote_average = 8.0,
+            year = "2023-01-01",
+            ratings = 8.0,
             vote_count = 100,
-            popularity = 95.0,
-            genre_ids = listOf(1, 2),
+            genres = listOf("Drama", "Action"),
             status = status,
             episode_numbers = null,
-            last_air_date = null,
             season_numbers = null,
             poster_path = "/$id.jpg",
             backdrop_path = "/$id-back.jpg",
@@ -315,7 +316,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     ) {
         val _ = database.seasonsQueries.upsert(
             id = Id(seasonId),
-            show_id = Id(showId),
+            show_trakt_id = Id<TraktId>(showId),
             season_number = seasonNumber,
             title = title,
             overview = "Overview for $title",
@@ -335,13 +336,13 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         val _ = database.episodesQueries.upsert(
             id = Id(episodeId),
             season_id = Id(seasonId),
-            show_id = Id(showId),
+            show_trakt_id = Id<TraktId>(showId),
             title = title,
             overview = "Overview for $title",
             episode_number = episodeNumber,
             runtime = 45L,
             image_url = "/ep$episodeId.jpg",
-            vote_average = 8.0,
+            ratings = 8.0,
             vote_count = 100L,
             air_date = airDate,
             trakt_id = null,
@@ -393,13 +394,13 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         insertShow(id = 2, name = "Test Show 2", status = "Ended")
 
         val _ = database.showMetadataQueries.upsert(
-            show_id = Id(1),
+            show_trakt_id = Id<TraktId>(1),
             season_count = 1,
             episode_count = 3,
             status = "Returning Series",
         )
         val _ = database.showMetadataQueries.upsert(
-            show_id = Id(2),
+            show_trakt_id = Id<TraktId>(2),
             season_count = 1,
             episode_count = 2,
             status = "Ended",

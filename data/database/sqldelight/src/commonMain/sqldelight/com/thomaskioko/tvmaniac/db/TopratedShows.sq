@@ -1,32 +1,37 @@
 import com.thomaskioko.tvmaniac.db.Id;
 import com.thomaskioko.tvmaniac.db.PageId;
+import com.thomaskioko.tvmaniac.db.TraktId;
 import com.thomaskioko.tvmaniac.db.TmdbId;
 
 CREATE TABLE IF NOT EXISTS toprated_shows(
-    `id` INTEGER AS Id<TmdbId> PRIMARY KEY NOT NULL,
-    `page` INTEGER AS Id<PageId> NOT NULL,
-    `name` TEXT,
-    `poster_path` TEXT,
-    `overview` TEXT,
-    `page_order` INTEGER NOT NULL DEFAULT 0
+    trakt_id INTEGER AS Id<TraktId> PRIMARY KEY NOT NULL,
+    tmdb_id INTEGER AS Id<TmdbId> NOT NULL,
+    page INTEGER AS Id<PageId> NOT NULL,
+    name TEXT,
+    poster_path TEXT,
+    overview TEXT,
+    page_order INTEGER NOT NULL DEFAULT 0
 );
 
 -- indices
 
-CREATE UNIQUE INDEX IF NOT EXISTS `index_toprated_shows_show_id` ON `toprated_shows` (`id`);
+CREATE UNIQUE INDEX IF NOT EXISTS `index_toprated_shows_trakt_id` ON `toprated_shows` (`trakt_id`);
+CREATE INDEX IF NOT EXISTS `index_toprated_shows_tmdb_id` ON `toprated_shows` (`tmdb_id`);
 
 -- queries
 
 insert:
 INSERT OR REPLACE INTO toprated_shows(
-    `id`,
-    `page`,
-    `name`,
-    `poster_path`,
-    `overview`,
-    `page_order`
+    trakt_id,
+    tmdb_id,
+    page,
+    name,
+    poster_path,
+    overview,
+    page_order
 ) VALUES (
-    :id,
+    :traktId,
+    :tmdbId,
     :page,
     :name,
     :poster_path,
@@ -39,21 +44,23 @@ SELECT count(*) FROM toprated_shows;
 
 entriesInPage:
 SELECT
-    toprated_shows.id AS show_id,
+    toprated_shows.trakt_id AS show_trakt_id,
+    toprated_shows.tmdb_id AS show_tmdb_id,
     toprated_shows.page,
     COALESCE(toprated_shows.name, '') AS name,
     toprated_shows.poster_path,
     toprated_shows.overview,
     CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM toprated_shows
-LEFT OUTER JOIN followed_shows ON toprated_shows.id = followed_shows.tmdb_id AND followed_shows.pending_action != 'DELETE'
+LEFT OUTER JOIN followed_shows ON toprated_shows.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
 WHERE toprated_shows.page = :page
   AND toprated_shows.name IS NOT NULL
 ORDER BY toprated_shows.page_order ASC;
 
 topRatedShows:
 SELECT
-    toprated_shows.id AS show_id,
+    toprated_shows.trakt_id AS show_trakt_id,
+    toprated_shows.tmdb_id AS show_tmdb_id,
     toprated_shows.page,
     tvshow.name,
     tvshow.poster_path,
@@ -61,15 +68,16 @@ SELECT
 FROM
     toprated_shows
 INNER JOIN
-    tvshow ON tvshow.id = toprated_shows.id
+    tvshow ON tvshow.trakt_id = toprated_shows.trakt_id
 LEFT OUTER JOIN
-    followed_shows ON tvshow.id = followed_shows.tmdb_id AND followed_shows.pending_action != 'DELETE'
+    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
 ORDER BY
     toprated_shows.page ASC, toprated_shows.page_order ASC;
 
 topRatedShowByPage:
 SELECT
-    toprated_shows.id AS show_id,
+    toprated_shows.trakt_id AS show_trakt_id,
+    toprated_shows.tmdb_id AS show_tmdb_id,
     toprated_shows.page,
     tvshow.name,
     tvshow.poster_path,
@@ -77,15 +85,16 @@ SELECT
 FROM
     toprated_shows
 INNER JOIN
-    tvshow ON tvshow.id = toprated_shows.id
+    tvshow ON tvshow.trakt_id = toprated_shows.trakt_id
 LEFT OUTER JOIN
-    followed_shows ON tvshow.id = followed_shows.tmdb_id AND followed_shows.pending_action != 'DELETE'
+    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
 WHERE
     toprated_shows.page = :page;
 
 pagedTopRatedShows:
 SELECT
-    toprated_shows.id AS show_id,
+    toprated_shows.trakt_id AS show_trakt_id,
+    toprated_shows.tmdb_id AS show_tmdb_id,
     toprated_shows.page,
     tvshow.name,
     tvshow.poster_path,
@@ -93,9 +102,9 @@ SELECT
 FROM
     toprated_shows
 INNER JOIN
-    tvshow ON tvshow.id = toprated_shows.id
+    tvshow ON tvshow.trakt_id = toprated_shows.trakt_id
 LEFT OUTER JOIN
-    followed_shows ON tvshow.id = followed_shows.tmdb_id AND followed_shows.pending_action != 'DELETE'
+    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
 ORDER BY
     toprated_shows.page ASC, toprated_shows.page_order ASC
 LIMIT
@@ -106,7 +115,7 @@ SELECT EXISTS(SELECT 1 FROM toprated_shows WHERE page = :page LIMIT 1);
 
 delete:
 DELETE FROM toprated_shows
-WHERE id = :id;
+WHERE trakt_id = :traktId;
 
 deleteAll:
 DELETE FROM toprated_shows;

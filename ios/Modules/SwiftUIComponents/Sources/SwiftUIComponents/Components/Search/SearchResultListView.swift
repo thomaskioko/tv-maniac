@@ -29,7 +29,7 @@ public struct SearchResultListView: View {
                         )
                         .padding(.horizontal, theme.spacing.xSmall)
                         .onTapGesture {
-                            onClick(item.tmdbId)
+                            onClick(item.traktId)
                         }
                     }
                 }
@@ -44,6 +44,7 @@ public struct SearchResultListView: View {
             items: [
                 .init(
                     tmdbId: 44234,
+                    traktId: 44234,
                     title: "The Penguin",
                     overview: "Follow Oswald Oz Cobb’s quest for control as he seeks to fill the power vacuum left by the death of Carmine Falcone, transforming from a disfigured nobody to a noted mobster in Gotham City.",
                     status: "Ended",
@@ -53,6 +54,7 @@ public struct SearchResultListView: View {
                 ),
                 .init(
                     tmdbId: 1234,
+                    traktId: 44234,
                     title: "The Lord of the Rings: The Rings of Power",
                     overview: "In 1997, a haunted scientist brushes his family aside for an all-consuming project. In 2022, a renegade fighter battles a powerful robot for vital data.",
                     status: "Ended",
@@ -62,6 +64,7 @@ public struct SearchResultListView: View {
                 ),
                 .init(
                     tmdbId: 124,
+                    traktId: 44234,
                     title: "Kaos",
                     overview: "In 1997, a haunted scientist brushes his family aside for an all-consuming project. In 2022, a renegade fighter battles a powerful robot for vital data.",
                     status: "Ended",
@@ -71,6 +74,7 @@ public struct SearchResultListView: View {
                 ),
                 .init(
                     tmdbId: 234,
+                    traktId: 44234,
                     title: "Terminator",
                     overview: "In 1997, a haunted scientist brushes his family aside for an all-consuming project. In 2022, a renegade fighter battles a powerful robot for vital data.",
                     status: "Ended",
