@@ -56,8 +56,8 @@ class ShowInfoViewTest: SnapshotTestCase {
 
     private var trailerList: [SwiftTrailer] {
         [
-            .init(showId: 123, key: "XZ8daibM3AE", name: "Series Trailer", youtubeThumbnailUrl: ""),
-            .init(showId: 1234, key: "XZ8daibM3AE", name: "Series Trailer", youtubeThumbnailUrl: ""),
+            .init(showTmdbId: 123, key: "XZ8daibM3AE", name: "Series Trailer", youtubeThumbnailUrl: ""),
+            .init(showTmdbId: 1234, key: "XZ8daibM3AE", name: "Series Trailer", youtubeThumbnailUrl: ""),
         ]
     }
 
@@ -71,9 +71,9 @@ class ShowInfoViewTest: SnapshotTestCase {
 
     private var showList: [SwiftShow] {
         [
-            .init(tmdbId: 1234, title: "Arcane", posterUrl: "", backdropUrl: nil, inLibrary: false),
-            .init(tmdbId: 123, title: "The Lord of the Rings: The Rings of Power", posterUrl: "", backdropUrl: nil, inLibrary: false),
-            .init(tmdbId: 12346, title: "Kaos", posterUrl: "", backdropUrl: nil, inLibrary: false),
+            .init(traktId: 1234, title: "Arcane", posterUrl: "", backdropUrl: nil, inLibrary: false),
+            .init(traktId: 123, title: "The Lord of the Rings: The Rings of Power", posterUrl: "", backdropUrl: nil, inLibrary: false),
+            .init(traktId: 12346, title: "Kaos", posterUrl: "", backdropUrl: nil, inLibrary: false),
         ]
     }
 }

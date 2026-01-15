@@ -9,21 +9,21 @@ class HorizontalShowContentViewViewTest: SnapshotTestCase {
             title: "Trending Today",
             items: [
                 .init(
-                    tmdbId: 124,
+                    traktId: 124,
                     title: "Terminator",
                     posterUrl: "",
                     backdropUrl: nil,
                     inLibrary: false
                 ),
                 .init(
-                    tmdbId: 123_346,
+                    traktId: 123_346,
                     title: "The Perfect Couple",
                     posterUrl: "",
                     backdropUrl: nil,
                     inLibrary: false
                 ),
                 .init(
-                    tmdbId: 2346,
+                    traktId: 2346,
                     title: "One Piece",
                     posterUrl: "",
                     backdropUrl: nil,
