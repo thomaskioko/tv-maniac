@@ -94,7 +94,7 @@ public class AndroidTraktAuthManager(
             }
 
             if (tokenResponse != null) {
-                logger.debug("@exchangeAuthorizationCode Token Response: $tokenResponse" )
+                logger.debug("@exchangeAuthorizationCode Token Response: $tokenResponse")
 
                 val accessToken = tokenResponse.accessToken
                 val refreshToken = tokenResponse.refreshToken

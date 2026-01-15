@@ -17,18 +17,17 @@ public suspend inline fun <reified T> HttpClient.safeRequest(
         val response = request { block() }
         ApiResponse.Success(response.body())
     } catch (exception: ClientRequestException) {
-        val errorBody: String? = try { exception.response.bodyAsText() } catch (_: Exception) { null }
+        val errorBody: String = exception.response.bodyAsText()
         val url = exception.response.call.request.url
         ApiResponse.Error.HttpError(
             code = exception.response.status.value,
             errorBody = errorBody,
-            errorMessage = "HTTP ${exception.response.status.value} from $url: ${errorBody ?: "No response body"}",
+            errorMessage = "HTTP ${exception.response.status.value} from $url: $errorBody",
         )
     } catch (exception: HttpExceptions) {
-        val errorBody: String? = try { exception.response.bodyAsText() } catch (_: Exception) { null }
         ApiResponse.Error.HttpError(
             code = exception.response.status.value,
-            errorBody = errorBody,
+            errorBody = exception.response.bodyAsText(),
             errorMessage = exception.message,
         )
     } catch (e: SerializationException) {
