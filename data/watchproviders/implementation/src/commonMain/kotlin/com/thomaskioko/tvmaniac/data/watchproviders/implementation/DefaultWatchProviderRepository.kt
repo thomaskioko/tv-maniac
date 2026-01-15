@@ -5,7 +5,9 @@ import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderRepository
 import com.thomaskioko.tvmaniac.db.WatchProviders
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.WATCH_PROVIDERS
+import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.impl.extensions.fresh
@@ -20,24 +22,27 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 public class DefaultWatchProviderRepository(
     private val store: WatchProvidersStore,
     private val dao: WatchProviderDao,
+    private val tvShowsDao: TvShowsDao,
     private val requestManagerRepository: RequestManagerRepository,
 ) : WatchProviderRepository {
 
-    override suspend fun fetchWatchProviders(id: Long, forceRefresh: Boolean) {
-        val isEmpty = dao.observeWatchProviders(id).first().isEmpty()
+    override suspend fun fetchWatchProviders(traktId: Long, forceRefresh: Boolean) {
+        val tmdbId = tvShowsDao.getTmdbIdByTraktId(traktId) ?: return
+        val isEmpty = dao.observeWatchProviders(tmdbId).first().isEmpty()
         val isExpired = requestManagerRepository.isRequestExpired(
-            entityId = id,
+            entityId = tmdbId,
             requestType = WATCH_PROVIDERS.name,
             threshold = WATCH_PROVIDERS.duration,
         )
 
         when {
-            forceRefresh || isEmpty || isExpired -> store.fresh(id)
-            else -> store.get(id)
+            forceRefresh || isEmpty || isExpired -> store.fresh(traktId)
+            else -> store.get(traktId)
         }
     }
 
-    override fun observeWatchProviders(id: Long): Flow<List<WatchProviders>> {
-        return dao.observeWatchProviders(id)
+    override fun observeWatchProviders(traktId: Long): Flow<List<WatchProviders>> {
+        val tmdbId = tvShowsDao.getTmdbIdByTraktId(traktId) ?: return emptyFlow()
+        return dao.observeWatchProviders(tmdbId)
     }
 }
