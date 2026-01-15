@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.model.HttpExceptions
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest
+import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.auth.Auth
@@ -38,15 +39,28 @@ internal fun traktHttpClient(
 
         install(ContentNegotiation) { json(json = json) }
 
+        install(HttpRequestRetry) {
+            retryIf(5) { _, httpResponse ->
+                when {
+                    httpResponse.status.value in 500..599 -> true
+                    httpResponse.status == HttpStatusCode.TooManyRequests -> true
+                    else -> false
+                }
+            }
+            exponentialDelay()
+        }
+
         install(Auth) {
             bearer {
                 loadTokens {
-                    traktAuthRepository().getAuthState()?.let { state ->
-                        BearerTokens(
-                            accessToken = state.accessToken,
-                            refreshToken = state.refreshToken,
-                        )
-                    }
+                    traktAuthRepository().getAuthState()
+                        ?.takeIf { it.isAuthorized && it.accessToken.isNotBlank() }
+                        ?.let { state ->
+                            BearerTokens(
+                                accessToken = state.accessToken,
+                                refreshToken = state.refreshToken,
+                            )
+                        }
                 }
 
                 refreshTokens {
@@ -58,7 +72,7 @@ internal fun traktHttpClient(
                     }
                 }
 
-                sendWithoutRequest { request -> request.url.host == "api.trakt.tv" }
+                sendWithoutRequest { false }
             }
         }
 
@@ -83,6 +97,7 @@ internal fun traktHttpClient(
                             HttpStatusCode.Unauthorized -> "Unauthorized request"
                             HttpStatusCode.Forbidden -> "${response.status.value} Missing API key."
                             HttpStatusCode.NotFound -> "Invalid Request"
+                            HttpStatusCode.TooManyRequests -> "Rate limited. Please try again in a moment."
                             HttpStatusCode.UpgradeRequired -> "Upgrade to VIP"
                             HttpStatusCode.RequestTimeout -> "Network Timeout"
                             in HttpStatusCode.InternalServerError..HttpStatusCode.GatewayTimeout ->
