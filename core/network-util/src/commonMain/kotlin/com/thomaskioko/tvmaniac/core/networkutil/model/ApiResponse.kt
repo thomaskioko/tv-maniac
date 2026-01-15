@@ -7,6 +7,7 @@ import io.ktor.client.plugins.ResponseException
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.request
 import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
 import kotlinx.serialization.SerializationException
 
 public suspend inline fun <reified T> HttpClient.safeRequest(
@@ -16,15 +17,18 @@ public suspend inline fun <reified T> HttpClient.safeRequest(
         val response = request { block() }
         ApiResponse.Success(response.body())
     } catch (exception: ClientRequestException) {
+        val errorBody: String? = try { exception.response.bodyAsText() } catch (_: Exception) { null }
+        val url = exception.response.call.request.url
         ApiResponse.Error.HttpError(
             code = exception.response.status.value,
-            errorBody = exception.response.body(),
-            errorMessage = "Status Code: ${exception.response.status.value} - API Key Missing",
+            errorBody = errorBody,
+            errorMessage = "HTTP ${exception.response.status.value} from $url: ${errorBody ?: "No response body"}",
         )
     } catch (exception: HttpExceptions) {
+        val errorBody: String? = try { exception.response.bodyAsText() } catch (_: Exception) { null }
         ApiResponse.Error.HttpError(
             code = exception.response.status.value,
-            errorBody = exception.response.body(),
+            errorBody = errorBody,
             errorMessage = exception.message,
         )
     } catch (e: SerializationException) {
