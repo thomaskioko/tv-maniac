@@ -68,6 +68,15 @@ struct ShowDetailsView: View {
                             .imageScale(.large)
                             .opacity(1 - showGlass)
                     }
+                },
+                trailingIcon: {
+                    Button(action: {
+                        presenter.dispatch(action: ReloadShowDetails())
+                    }) {
+                        Image(systemName: "arrow.clockwise")
+                            .foregroundColor(theme.colors.accent)
+                            .imageScale(.large)
+                    }
                 }
             ),
             alignment: .top
