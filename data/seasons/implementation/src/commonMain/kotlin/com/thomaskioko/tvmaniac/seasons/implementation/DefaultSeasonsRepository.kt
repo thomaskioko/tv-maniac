@@ -27,4 +27,8 @@ public class DefaultSeasonsRepository(
                 seasonsDao.observeSeasonsByShowTraktId(id, includeSpecials)
             }
     }
+
+    override fun getSeasonsByShowId(id: Long, includeSpecials: Boolean): List<ShowSeasons> {
+        return seasonsDao.fetchShowSeasons(id, includeSpecials)
+    }
 }
