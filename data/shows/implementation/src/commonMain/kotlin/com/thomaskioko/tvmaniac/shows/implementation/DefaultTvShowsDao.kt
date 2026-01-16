@@ -116,7 +116,7 @@ public class DefaultTvShowsDao(
 
             tvShowQueries.tvshowDetails(Id(traktId)) { showTraktId, showTmdbId, name, overview, language, year,
                                                        ratings, status, voteCount, posterPath,
-                                                       backdropPath, genres, _,
+                                                       backdropPath, genres, seasonNumbers, _,
                 ->
                 Tvshow(
                     trakt_id = showTraktId,
@@ -132,7 +132,7 @@ public class DefaultTvShowsDao(
                     backdrop_path = backdropPath,
                     genres = genres,
                     episode_numbers = null,
-                    season_numbers = null,
+                    season_numbers = seasonNumbers,
                 )
             }.executeAsOneOrNull()
         }

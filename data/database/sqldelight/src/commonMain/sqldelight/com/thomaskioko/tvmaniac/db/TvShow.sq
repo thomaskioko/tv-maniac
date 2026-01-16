@@ -58,6 +58,7 @@ SELECT
     tvshow.poster_path,
     tvshow.backdrop_path,
     tvshow.genres,
+    tvshow.season_numbers,
     CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     tvshow
@@ -80,6 +81,7 @@ SELECT
     tvshow.poster_path,
     tvshow.backdrop_path,
     tvshow.genres,
+    tvshow.season_numbers,
     CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     tvshow
