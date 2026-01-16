@@ -41,7 +41,7 @@ public class SimilarShowStore(
 ) : Store<SimilarParams, List<SimilarShows>> by storeBuilder(
     fetcher = Fetcher.of { param: SimilarParams ->
         coroutineScope {
-            traktRemoteDataSource.getRelatedShows(
+            val results = traktRemoteDataSource.getRelatedShows(
                 traktId = param.showTraktId,
                 page = param.page.toInt(),
             ).getOrThrow()
@@ -61,6 +61,13 @@ public class SimilarShowStore(
                     }
                 }
                 .awaitAll()
+
+            requestManagerRepository.upsert(
+                entityId = param.showTraktId,
+                requestType = SIMILAR_SHOWS.name,
+            )
+
+            results
         }
     },
     sourceOfTruth = SourceOfTruth.of<SimilarParams, List<SimilarShowResult>, List<SimilarShows>>(
@@ -84,11 +91,6 @@ public class SimilarShowStore(
                         )
                     }
                 }
-
-                requestManagerRepository.upsert(
-                    entityId = param.showTraktId,
-                    requestType = SIMILAR_SHOWS.name,
-                )
             }
         },
         delete = { param -> similarShowsDao.delete(param.showTraktId) },
@@ -100,9 +102,9 @@ public class SimilarShowStore(
 ).validator(
     Validator.by { cachedData ->
         withContext(dispatchers.io) {
-            val showTraktId = cachedData.firstOrNull()?.show_trakt_id?.id ?: return@withContext false
+            val parentShowTraktId = cachedData.firstOrNull()?.similar_show_trakt_id?.id ?: return@withContext false
             !requestManagerRepository.isRequestExpired(
-                entityId = showTraktId,
+                entityId = parentShowTraktId,
                 requestType = SIMILAR_SHOWS.name,
                 threshold = SIMILAR_SHOWS.duration,
             )
@@ -110,11 +112,6 @@ public class SimilarShowStore(
     },
 ).build()
 
-private data class SimilarShowResult(
-    val traktShow: TraktShowResponse,
-    val tmdbId: Long,
-    val tmdbDetails: TmdbShowDetailsResponse?,
-)
 
 private fun SimilarShowResult.toTvshow(traktId: Long, tmdbId: Long, formatterUtil: FormatterUtil): Tvshow {
     val tmdb = tmdbDetails

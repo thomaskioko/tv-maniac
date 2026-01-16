@@ -25,10 +25,8 @@ public class DefaultSeasonDetailsRepository(
         param: SeasonDetailsParam,
         forceRefresh: Boolean,
     ) {
-        val details = dao.observeSeasonEpisodeDetails(param.showTraktId, param.seasonNumber).first()
-        val isEmpty = details == null || details.episodes.isEmpty()
         when {
-            forceRefresh || isEmpty -> store.fresh(param)
+            forceRefresh -> store.fresh(param)
             else -> store.get(param)
         }
     }

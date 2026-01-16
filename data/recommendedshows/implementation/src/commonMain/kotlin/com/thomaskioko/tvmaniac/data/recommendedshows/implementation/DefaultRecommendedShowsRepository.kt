@@ -25,22 +25,15 @@ public class DefaultRecommendedShowsRepository(
     private val store: RecommendedShowsStore,
     private val dao: RecommendedShowsDao,
     private val dispatchers: AppCoroutineDispatchers,
-    private val requestManagerRepository: RequestManagerRepository,
 ) : RecommendedShowsRepository {
     override suspend fun fetchRecommendedShows(
         id: Long,
         forceRefresh: Boolean,
     ) {
         val key = RecommendedShowsParams(traktId = id, page = DEFAULT_API_PAGE)
-        val isEmpty = dao.observeRecommendedShows(id).first().isEmpty()
-        val isExpired = requestManagerRepository.isRequestExpired(
-            entityId = id,
-            requestType = RECOMMENDED_SHOWS.name,
-            threshold = RECOMMENDED_SHOWS.duration,
-        )
 
         when {
-            forceRefresh || isEmpty || isExpired -> store.fresh(key)
+            forceRefresh -> store.fresh(key)
             else -> store.get(key)
         }
     }

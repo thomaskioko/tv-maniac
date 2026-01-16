@@ -56,6 +56,11 @@ public class ShowDetailsStore(
                 ?: error("Show ${showDetails.title} (trakt: $traktId) has no TMDB ID")
             val tmdbDetails = tmdbRemoteDataSource.getShowDetails(tmdbId).getOrThrow()
 
+            requestManagerRepository.upsert(
+                entityId = traktId,
+                requestType = SHOW_DETAILS.name,
+            )
+
             ShowDetailsResponse(
                 traktShow = showDetails,
                 traktSeasons = seasons,
@@ -104,12 +109,6 @@ public class ShowDetailsStore(
                         ),
                     )
                 }
-
-                // Update Last Request
-                requestManagerRepository.upsert(
-                    entityId = traktId,
-                    requestType = SHOW_DETAILS.name,
-                )
             }
         },
     )
