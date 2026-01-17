@@ -17,7 +17,6 @@ import com.thomaskioko.tvmaniac.db.TvshowDetails
 import com.thomaskioko.tvmaniac.db.WatchProviders
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
-import com.thomaskioko.tvmaniac.domain.recommendedshows.RecommendedShowsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.PrefetchFirstSeasonInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
@@ -37,6 +36,8 @@ import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
+import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
 import io.kotest.matchers.shouldBe
 import kotlinx.collections.immutable.persistentListOf
@@ -62,6 +63,7 @@ class ShowDetailsPresenterTest {
     private val showDetailsRepository = FakeShowDetailsRepository()
     private val episodeRepository = FakeEpisodeRepository()
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
+    private val traktAuthRepository = FakeTraktAuthRepository()
     private val fakeFormatterUtil = FakeFormatterUtil()
     private val testDispatcher = StandardTestDispatcher()
     private val coroutineDispatcher = AppCoroutineDispatchers(
@@ -442,6 +444,45 @@ class ShowDetailsPresenterTest {
         season1.isSeasonWatched shouldBe false
     }
 
+    @Test
+    fun `should sync watched episodes given auth state changes to logged in`() = runTest {
+        buildMockData(seasonResult = seasons)
+
+        val _ = buildShowDetailsPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        watchedEpisodeSyncRepository.reset()
+
+        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        watchedEpisodeSyncRepository.getLastSyncedShowId() shouldBe 84958L
+        watchedEpisodeSyncRepository.wasForceRefreshUsed() shouldBe true
+    }
+
+    @Test
+    fun `should sync watch progress on initial load given user is logged in`() = runTest {
+        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        buildMockData(seasonResult = seasons)
+
+        val _ = buildShowDetailsPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        watchedEpisodeSyncRepository.getLastSyncedShowId() shouldBe 84958L
+        watchedEpisodeSyncRepository.wasForceRefreshUsed() shouldBe false
+    }
+
+    @Test
+    fun `should not sync watch progress on initial load given user is logged out`() = runTest {
+        traktAuthRepository.setState(TraktAuthState.LOGGED_OUT)
+        buildMockData(seasonResult = seasons)
+
+        val _ = buildShowDetailsPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        watchedEpisodeSyncRepository.getLastSyncedShowId() shouldBe null
+    }
+
     private suspend fun buildMockData(
         isYoutubeInstalled: Boolean = false,
         castList: List<ShowCast> = emptyList(),
@@ -476,10 +517,6 @@ class ShowDetailsPresenterTest {
             onNavigateToShow = onNavigateToShow,
             onNavigateToTrailer = onNavigateToTrailer,
             followedShowsRepository = followedShowsRepository,
-            recommendedShowsInteractor = RecommendedShowsInteractor(
-                recommendedShowsRepository = recommendedShowsRepository,
-                dispatchers = coroutineDispatcher,
-            ),
             showDetailsInteractor = ShowDetailsInteractor(
                 showDetailsRepository = showDetailsRepository,
                 castRepository = castRepository,
@@ -524,6 +561,8 @@ class ShowDetailsPresenterTest {
                 watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
                 dispatchers = coroutineDispatcher,
             ),
+            traktAuthRepository = traktAuthRepository,
+            dispatchers = coroutineDispatcher,
             logger = FakeLogger(),
         )
     }

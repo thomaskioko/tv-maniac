@@ -19,13 +19,13 @@ kotlin {
                 implementation(projects.core.util.api)
                 implementation(projects.data.episode.api)
                 implementation(projects.domain.episode)
-                implementation(projects.domain.recommendedshows)
                 implementation(projects.domain.seasondetails)
                 implementation(projects.domain.showdetails)
                 implementation(projects.domain.similarshows)
                 implementation(projects.domain.watchproviders)
                 implementation(projects.data.followedshows.api)
                 implementation(projects.data.seasondetails.api)
+                implementation(projects.data.traktauth.api)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
@@ -51,6 +51,7 @@ kotlin {
                 implementation(projects.data.similar.testing)
                 implementation(projects.data.trailers.testing)
                 implementation(projects.data.traktauth.api)
+                implementation(projects.data.traktauth.testing)
                 implementation(projects.data.watchproviders.testing)
 
                 implementation(libs.bundles.unittest)

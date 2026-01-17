@@ -66,6 +66,7 @@ val tvShowDetails = TvshowDetails(
     poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
     backdrop_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
     genres = listOf("Action", "Adventure", "Sci-Fi"),
+    season_numbers = "2",
     in_library = 0,
 )
 
