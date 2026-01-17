@@ -66,7 +66,7 @@ public struct ToastModifier: ViewModifier {
     }
 }
 
-extension View {
+public extension View {
     func toastView(toast: Binding<Toast?>) -> some View {
         modifier(ToastModifier(toast: toast))
     }
