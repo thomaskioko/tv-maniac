@@ -77,9 +77,7 @@ public class SimilarShowStore(
                         val traktId = result.traktShow.ids.trakt
                         val tmdbId = result.tmdbId
 
-                        if (!tvShowsDao.showExistsByTraktId(traktId)) {
-                            tvShowsDao.upsert(result.toTvshow(traktId, tmdbId, formatterUtil))
-                        }
+                        tvShowsDao.upsertMerging(result.toTvshow(traktId, tmdbId, formatterUtil))
 
                         similarShowsDao.upsert(
                             showTraktId = traktId,

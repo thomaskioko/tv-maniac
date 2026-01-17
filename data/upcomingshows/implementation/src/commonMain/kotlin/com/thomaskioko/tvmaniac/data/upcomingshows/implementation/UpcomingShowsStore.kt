@@ -89,9 +89,7 @@ public class UpcomingShowsStore(
                         val traktId = result.traktShow!!.ids.trakt
                         val tmdbId = result.tmdbShow.id.toLong()
 
-                        if (!tvShowsDao.showExistsByTraktId(traktId)) {
-                            tvShowsDao.upsert(result.toTvshow(traktId, tmdbId, formatterUtil))
-                        }
+                        tvShowsDao.upsertMerging(result.toTvshow(traktId, tmdbId, formatterUtil))
 
                         upcomingShowsDao.upsert(
                             Upcoming_shows(
