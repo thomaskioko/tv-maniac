@@ -92,9 +92,7 @@ public class TopRatedShowsStore(
                             formatterUtil.formatTmdbPosterPath(it)
                         }
 
-                        if (!tvShowsDao.showExistsByTraktId(traktId)) {
-                            tvShowsDao.upsert(show.toTvshow(traktId, tmdbId, posterPath, backdropPath))
-                        }
+                        tvShowsDao.upsertMerging(show.toTvshow(traktId, tmdbId, posterPath, backdropPath))
 
                         topRatedShowsDao.upsert(
                             Toprated_shows(

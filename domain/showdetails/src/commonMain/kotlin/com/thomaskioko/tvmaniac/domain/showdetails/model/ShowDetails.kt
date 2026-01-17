@@ -23,7 +23,6 @@ public data class ShowDetails(
     val providers: List<Providers>,
     val castsList: List<Casts>,
     val seasonsList: List<Season>,
-    val recommendedShows: List<Show>,
     val similarShows: List<Show>,
     val trailersList: List<Trailer>,
     val continueTrackingEpisodes: ImmutableList<EpisodeDetails>,

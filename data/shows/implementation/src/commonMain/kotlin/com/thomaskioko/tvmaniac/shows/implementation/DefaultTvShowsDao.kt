@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
+import com.thomaskioko.tvmaniac.shows.api.mergeShows
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
@@ -24,15 +25,6 @@ public class DefaultTvShowsDao(
 ) : TvShowsDao {
 
     private val tvShowQueries = database.tvShowQueries
-
-    override suspend fun shouldUpdateShows(shows: List<Int>): Boolean {
-        if (shows.isEmpty()) return false
-
-        return shows.any { traktId ->
-            !tvShowQueries.exists(Id(traktId.toLong()))
-                .executeAsOne()
-        }
-    }
 
     override fun upsert(show: Tvshow) {
         tvShowQueries.transaction {
@@ -108,38 +100,11 @@ public class DefaultTvShowsDao(
         tvShowQueries.transaction { tvShowQueries.deleteAll() }
     }
 
-    override fun getShowByTraktId(traktId: Long): Tvshow? {
-        return tvShowQueries.transactionWithResult {
-            if (!tvShowQueries.exists(Id(traktId)).executeAsOne()) {
-                return@transactionWithResult null
-            }
-
-            tvShowQueries.tvshowDetails(Id(traktId)) { showTraktId, showTmdbId, name, overview, language, year,
-                                                       ratings, status, voteCount, posterPath,
-                                                       backdropPath, genres, _,
-                ->
-                Tvshow(
-                    trakt_id = showTraktId,
-                    tmdb_id = showTmdbId,
-                    name = name,
-                    overview = overview,
-                    language = language,
-                    year = year,
-                    ratings = ratings,
-                    status = status,
-                    vote_count = voteCount,
-                    poster_path = posterPath,
-                    backdrop_path = backdropPath,
-                    genres = genres,
-                    episode_numbers = null,
-                    season_numbers = null,
-                )
-            }.executeAsOneOrNull()
+    override fun upsertMerging(show: Tvshow) {
+        tvShowQueries.transaction {
+            val existing = tvShowQueries.tvshowByTraktId(show.trakt_id).executeAsOneOrNull()
+            upsertShowWithGenres(mergeShows(existing, show))
         }
-    }
-
-    override fun showExistsByTraktId(traktId: Long): Boolean {
-        return tvShowQueries.exists(Id(traktId)).executeAsOne()
     }
 
     override fun getShowsByTraktIds(traktIds: List<Long>): List<ShowEntity> {

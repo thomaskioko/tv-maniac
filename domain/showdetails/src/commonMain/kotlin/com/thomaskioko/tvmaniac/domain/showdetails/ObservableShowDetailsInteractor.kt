@@ -4,7 +4,6 @@ import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.interactor.SubjectInteractor
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.cast.api.CastRepository
-import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsRepository
 import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderRepository
@@ -22,7 +21,6 @@ import me.tatarka.inject.annotations.Inject
 public class ObservableShowDetailsInteractor(
     private val castRepository: CastRepository,
     private val episodeRepository: EpisodeRepository,
-    private val recommendedShowsRepository: RecommendedShowsRepository,
     private val seasonsRepository: SeasonsRepository,
     private val showDetailsRepository: ShowDetailsRepository,
     private val similarShowsRepository: SimilarShowsRepository,
@@ -34,7 +32,6 @@ public class ObservableShowDetailsInteractor(
     override fun createObservable(params: Long): Flow<ShowDetails> {
         return combine(
             showDetailsRepository.observeShowDetails(params),
-            recommendedShowsRepository.observeRecommendedShows(params),
             seasonsRepository.observeSeasonsByShowId(params),
             castRepository.observeShowCast(params),
             watchProviders.observeWatchProviders(params),
@@ -43,7 +40,7 @@ public class ObservableShowDetailsInteractor(
             trailerRepository.isYoutubePlayerInstalled(),
             episodeRepository.observeAllSeasonsWatchProgress(params),
             episodeRepository.observeContinueTrackingEpisodes(params),
-        ) { showDetails, recommendedShows, seasonsList, castList, watchProviders, similarShows,
+        ) { showDetails, seasonsList, castList, watchProviders, similarShows,
             trailers, isWebViewInstalled, seasonsProgress, continueTracking,
             ->
             val progressMap = seasonsProgress.associateBy { it.seasonNumber }
@@ -66,7 +63,6 @@ public class ObservableShowDetailsInteractor(
                 castsList = castList.toCastList(),
                 seasonsList = seasonsList.toSeasonsList(progressMap),
                 similarShows = similarShows.toSimilarShowList(),
-                recommendedShows = recommendedShows.toRecommendedShowList(),
                 trailersList = trailers.toTrailerList(),
                 continueTrackingEpisodes = continueTracking?.episodes ?: persistentListOf(),
                 continueTrackingScrollIndex = continueTracking?.firstUnwatchedIndex ?: 0,

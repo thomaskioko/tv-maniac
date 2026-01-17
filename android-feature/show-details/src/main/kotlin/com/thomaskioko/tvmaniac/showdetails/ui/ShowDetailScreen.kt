@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.showdetails.ui
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -96,7 +95,6 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_error_message
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_casts
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_providers
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_providers_label
-import com.thomaskioko.tvmaniac.i18n.MR.strings.title_recommended
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_similar
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_trailer
 import com.thomaskioko.tvmaniac.i18n.MR.strings.unfollow
@@ -426,11 +424,6 @@ private fun ShowInfoContent(
             onShowClicked = { onAction(DetailShowClicked(it)) },
         )
 
-        RecommendedShowsContent(
-            recommendedShows = showDetails.recommendedShows,
-            onShowClicked = { onAction(DetailShowClicked(it)) },
-        )
-
         Spacer(modifier = Modifier.height(54.dp))
     }
 }
@@ -474,7 +467,8 @@ private fun ShowBody(
     onUpdateFavoriteClicked: (Boolean) -> Unit,
     onAddToListClicked: () -> Unit,
 ) {
-    val surfaceGradient = backgroundGradient().reversed()
+    val gradient = backgroundGradient()
+    val surfaceGradient = remember(gradient) { gradient.reversed() }
 
     Box(
         modifier = Modifier
@@ -539,51 +533,52 @@ internal fun ShowMetadata(
     rating: Double,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        val resources = LocalContext.current.resources
+    val colorScheme = MaterialTheme.colorScheme
+    val typography = MaterialTheme.typography
+    val resources = LocalContext.current.resources
 
-        val divider = buildAnnotatedString {
-            val tagStyle = MaterialTheme.typography.labelMedium
+    val divider = remember(colorScheme.secondary, typography.labelMedium) {
+        buildAnnotatedString {
+            val tagStyle = typography.labelMedium
                 .toSpanStyle()
-                .copy(
-                    color = MaterialTheme.colorScheme.secondary,
-                )
+                .copy(color = colorScheme.secondary)
             withStyle(tagStyle) { append("  •  ") }
         }
-        val text = buildAnnotatedString {
-            val statusStyle = MaterialTheme.typography.labelMedium
+    }
+
+    val text = remember(
+        status,
+        releaseYear,
+        seasonNumber,
+        language,
+        colorScheme.secondary,
+        colorScheme.onSurface,
+        typography.labelMedium,
+    ) {
+        buildAnnotatedString {
+            val statusStyle = typography.labelMedium
                 .toSpanStyle()
                 .copy(
-                    color = MaterialTheme.colorScheme.secondary,
-                    background = MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f),
+                    color = colorScheme.secondary,
+                    background = colorScheme.secondary.copy(alpha = 0.08f),
                 )
 
-            val tagStyle = MaterialTheme.typography.labelMedium
+            val tagStyle = typography.labelMedium
                 .toSpanStyle()
-                .copy(
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
+                .copy(color = colorScheme.onSurface)
 
-            AnimatedVisibility(visible = !status.isNullOrBlank()) {
-                status?.let {
-                    withStyle(statusStyle) {
-                        append(" ")
-                        append(it)
-                        append(" ")
-                    }
-                    append(divider)
+            if (!status.isNullOrBlank()) {
+                withStyle(statusStyle) {
+                    append(" ")
+                    append(status)
+                    append(" ")
                 }
+                append(divider)
             }
 
             withStyle(tagStyle) { append(releaseYear) }
 
-            AnimatedVisibility(visible = seasonNumber > 0) {
+            if (seasonNumber > 0) {
                 append(divider)
                 withStyle(tagStyle) {
                     append(resources.getQuantityString(MR.plurals.season_count.resourceId, seasonNumber, seasonNumber))
@@ -596,7 +591,15 @@ internal fun ShowMetadata(
                 append(divider)
             }
         }
+    }
 
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
@@ -862,24 +865,6 @@ private fun TrailersContent(
             }
         }
     }
-}
-
-@Composable
-internal fun RecommendedShowsContent(
-    recommendedShows: ImmutableList<ShowModel>,
-    modifier: Modifier = Modifier,
-    onShowClicked: (Long) -> Unit = {},
-) {
-    if (recommendedShows.isEmpty()) return
-
-    Spacer(modifier = Modifier.height(16.dp))
-
-    HorizontalRowContent(
-        modifier = modifier,
-        items = recommendedShows,
-        onShowClicked = onShowClicked,
-        title = title_recommended.resolve(LocalContext.current),
-    )
 }
 
 @Composable

@@ -10,9 +10,12 @@ public class FakeSeasonsRepository : SeasonsRepository {
 
     private var seasonsResult = MutableStateFlow<List<ShowSeasons>>(emptyList())
 
-    public suspend fun setSeasonsResult(result: List<ShowSeasons>) {
-        seasonsResult.emit(result)
+    public fun setSeasonsResult(result: List<ShowSeasons>) {
+        seasonsResult.value = result
     }
 
     override fun observeSeasonsByShowId(id: Long): Flow<List<ShowSeasons>> = seasonsResult.asStateFlow()
+
+    override fun getSeasonsByShowId(id: Long, includeSpecials: Boolean): List<ShowSeasons> =
+        seasonsResult.value
 }

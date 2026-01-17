@@ -455,7 +455,6 @@ private fun ProfileScreenLoadingPreview() {
             ProfileScreen(
                 state = ProfileState(
                     isLoading = true,
-                    isAuthenticating = false,
                     userProfile = null,
                     errorMessage = null,
                     authenticated = false,

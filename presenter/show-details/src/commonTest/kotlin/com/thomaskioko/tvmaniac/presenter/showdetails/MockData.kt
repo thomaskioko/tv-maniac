@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.presenter.showdetails
 
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.db.RecommendedShows
 import com.thomaskioko.tvmaniac.db.ShowSeasons
 import com.thomaskioko.tvmaniac.db.SimilarShows
 import com.thomaskioko.tvmaniac.db.TvshowDetails
@@ -66,19 +65,8 @@ val tvShowDetails = TvshowDetails(
     poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
     backdrop_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
     genres = listOf("Action", "Adventure", "Sci-Fi"),
+    season_numbers = "2",
     in_library = 0,
-)
-
-val recommendedShowList = listOf(
-    RecommendedShows(
-        show_tmdb_id = Id(184958),
-        name = "Loki",
-        poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        backdrop_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        in_library = 0,
-        show_trakt_id = Id(18495),
-        recommended_show_trakt_id = Id(18495),
-    ),
 )
 
 val watchProviderList = listOf(

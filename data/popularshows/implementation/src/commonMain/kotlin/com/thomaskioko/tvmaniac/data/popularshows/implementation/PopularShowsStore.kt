@@ -92,9 +92,7 @@ public class PopularShowsStore(
                             formatterUtil.formatTmdbPosterPath(it)
                         }
 
-                        if (!tvShowsDao.showExistsByTraktId(traktId)) {
-                            tvShowsDao.upsert(show.toTvshow(traktId, tmdbId, posterPath, backdropPath))
-                        }
+                        tvShowsDao.upsertMerging(show.toTvshow(traktId, tmdbId, posterPath, backdropPath))
 
                         popularShowsDao.upsert(
                             Popular_shows(

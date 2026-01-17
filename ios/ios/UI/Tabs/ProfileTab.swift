@@ -8,6 +8,7 @@ struct ProfileTab: View {
     private let presenter: ProfilePresenter
     @State private var showGlass: Double = 0
     @State private var progressViewOffset: CGFloat = 0
+    @State private var toast: Toast?
     @StateObject @KotlinStateFlow private var uiState: ProfileState
 
     init(presenter: ProfilePresenter) {
@@ -53,14 +54,20 @@ struct ProfileTab: View {
         )
         .animation(.easeInOut(duration: 0.25), value: showGlass)
         .edgesIgnoringSafeArea(.top)
-        .alert(isPresented: .constant(uiState.errorMessage != nil)) {
-            Alert(
-                title: Text("Error"),
-                message: Text(uiState.errorMessage?.message ?? ""),
-                dismissButton: .default(Text("OK")) {
-                    presenter.dispatch(action: ProfileActionMessageShown(id: uiState.errorMessage?.id ?? 0))
-                }
-            )
+        .toastView(toast: $toast)
+        .onChange(of: uiState.errorMessage) { errorMessage in
+            if let errorMessage {
+                toast = Toast(
+                    type: .error,
+                    title: "Error",
+                    message: errorMessage.message
+                )
+            }
+        }
+        .onChange(of: toast) { newValue in
+            if newValue == nil, let errorMessage = uiState.errorMessage {
+                presenter.dispatch(action: ProfileActionMessageShown(id: errorMessage.id))
+            }
         }
     }
 

@@ -7,7 +7,6 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 public data class ShowDetailsContent(
-    val recommendedShowsRefreshing: Boolean = false,
     val showDetailsRefreshing: Boolean = false,
     val similarShowsRefreshing: Boolean = false,
     val watchProvidersRefreshing: Boolean = false,
@@ -19,7 +18,7 @@ public data class ShowDetailsContent(
     val message: UiMessage? = null,
 ) {
     public val isRefreshing: Boolean
-        get() = recommendedShowsRefreshing || showDetailsRefreshing || similarShowsRefreshing || watchProvidersRefreshing
+        get() = showDetailsRefreshing || similarShowsRefreshing || watchProvidersRefreshing
 
     public companion object {
         public val Empty: ShowDetailsContent = ShowDetailsContent(showDetailsRefreshing = true)

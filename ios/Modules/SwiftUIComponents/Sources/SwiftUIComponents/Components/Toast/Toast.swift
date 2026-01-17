@@ -1,10 +1,17 @@
 import SwiftUI
 
-struct Toast: Equatable {
-    var type: ToastStyle
-    var title: String
-    var message: String
-    var duration: Double = 3.5
+public struct Toast: Equatable {
+    public var type: ToastStyle
+    public var title: String
+    public var message: String
+    public var duration: Double
+
+    public init(type: ToastStyle, title: String, message: String, duration: Double = 3.5) {
+        self.type = type
+        self.title = title
+        self.message = message
+        self.duration = duration
+    }
 }
 
 public enum ToastStyle {

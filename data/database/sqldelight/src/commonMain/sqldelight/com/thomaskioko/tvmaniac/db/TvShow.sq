@@ -58,6 +58,7 @@ SELECT
     tvshow.poster_path,
     tvshow.backdrop_path,
     tvshow.genres,
+    tvshow.season_numbers,
     CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     tvshow
@@ -80,6 +81,7 @@ SELECT
     tvshow.poster_path,
     tvshow.backdrop_path,
     tvshow.genres,
+    tvshow.season_numbers,
     CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     tvshow
@@ -143,11 +145,6 @@ WHERE trakt_id = ?;
 deleteAll:
 DELETE FROM tvshow;
 
-exists:
-SELECT EXISTS(
-    SELECT 1 FROM tvshow WHERE trakt_id = ?
-);
-
 existsByTmdbId:
 SELECT EXISTS(
     SELECT 1 FROM tvshow WHERE tmdb_id = ?
@@ -186,3 +183,6 @@ SELECT tmdb_id FROM tvshow WHERE trakt_id = ?;
 
 getTraktIdByTmdbId:
 SELECT trakt_id FROM tvshow WHERE tmdb_id = ?;
+
+tvshowByTraktId:
+SELECT * FROM tvshow WHERE trakt_id = ?;

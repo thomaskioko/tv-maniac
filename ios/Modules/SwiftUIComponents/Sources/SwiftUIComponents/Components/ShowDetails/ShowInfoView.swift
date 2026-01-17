@@ -15,7 +15,6 @@ public struct ShowInfoView: View {
     private let providerList: [SwiftProviders]
     private let trailerList: [SwiftTrailer]
     private let castsList: [SwiftCast]
-    private let recommendedShowList: [SwiftShow]
     private let similarShows: [SwiftShow]
     private let continueTrackingEpisodes: [SwiftContinueTrackingEpisode]
     private let continueTrackingScrollIndex: Int
@@ -25,7 +24,6 @@ public struct ShowInfoView: View {
     private let stopTrackingLabel: String
     private let addToListLabel: String
     private let similarShowsTitle: String
-    private let recommendationsTitle: String
     private let seasonDetailsTitle: String
     private let showSeasonDetailsHeader: Bool
     private let seasonCountFormat: (_ count: Int32) -> String
@@ -50,7 +48,6 @@ public struct ShowInfoView: View {
         providerList: [SwiftProviders],
         trailerList: [SwiftTrailer],
         castsList: [SwiftCast],
-        recommendedShowList: [SwiftShow],
         similarShows: [SwiftShow],
         continueTrackingEpisodes: [SwiftContinueTrackingEpisode] = [],
         continueTrackingScrollIndex: Int = 0,
@@ -60,7 +57,6 @@ public struct ShowInfoView: View {
         stopTrackingLabel: String,
         addToListLabel: String,
         similarShowsTitle: String,
-        recommendationsTitle: String,
         seasonDetailsTitle: String,
         showSeasonDetailsHeader: Bool = true,
         seasonCountFormat: @escaping (_ count: Int32) -> String,
@@ -84,7 +80,6 @@ public struct ShowInfoView: View {
         self.providerList = providerList
         self.trailerList = trailerList
         self.castsList = castsList
-        self.recommendedShowList = recommendedShowList
         self.similarShows = similarShows
         self.continueTrackingEpisodes = continueTrackingEpisodes
         self.continueTrackingScrollIndex = continueTrackingScrollIndex
@@ -94,7 +89,6 @@ public struct ShowInfoView: View {
         self.stopTrackingLabel = stopTrackingLabel
         self.addToListLabel = addToListLabel
         self.similarShowsTitle = similarShowsTitle
-        self.recommendationsTitle = recommendationsTitle
         self.seasonDetailsTitle = seasonDetailsTitle
         self.showSeasonDetailsHeader = showSeasonDetailsHeader
         self.seasonCountFormat = seasonCountFormat
@@ -169,12 +163,6 @@ public struct ShowInfoView: View {
             HorizontalItemListView(
                 title: similarShowsTitle,
                 items: similarShows,
-                onClick: { id in onShowClicked(id) }
-            )
-
-            HorizontalItemListView(
-                title: recommendationsTitle,
-                items: recommendedShowList,
                 onClick: { id in onShowClicked(id) }
             )
         }
@@ -303,29 +291,6 @@ public struct ShowInfoView: View {
                     profileUrl: "https://image.tmdb.org/t/p/w780/4xLLQGEDWtmLWUapo0UnfvCdsXp.jpg"
                 ),
             ],
-            recommendedShowList: [
-                .init(
-                    traktId: 1234,
-                    title: "Arcane",
-                    posterUrl: "https://image.tmdb.org/t/p/w780/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg",
-                    backdropUrl: nil,
-                    inLibrary: false
-                ),
-                .init(
-                    traktId: 123,
-                    title: "The Lord of the Rings: The Rings of Power",
-                    posterUrl: "https://image.tmdb.org/t/p/w780/NNC08YmJFFlLi1prBkK8quk3dp.jpg",
-                    backdropUrl: nil,
-                    inLibrary: false
-                ),
-                .init(
-                    traktId: 12346,
-                    title: "Kaos",
-                    posterUrl: "https://image.tmdb.org/t/p/w780/9Piw6Zju39bn3enIDLZzPfjMTBR.jpg",
-                    backdropUrl: nil,
-                    inLibrary: false
-                ),
-            ],
             similarShows: [
                 .init(
                     traktId: 1234,
@@ -355,7 +320,6 @@ public struct ShowInfoView: View {
             stopTrackingLabel: "Stop Tracking",
             addToListLabel: "Add To List",
             similarShowsTitle: "Similar Shows",
-            recommendationsTitle: "Recommendations",
             seasonDetailsTitle: "Season Details",
             seasonCountFormat: { count in count == 1 ? "\(count) Season" : "\(count) Seasons" },
             episodesWatchedFormat: { watched, total in "\(watched) of \(total) episodes watched" },

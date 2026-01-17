@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.domain.showdetails
 
-import com.thomaskioko.tvmaniac.db.RecommendedShows
 import com.thomaskioko.tvmaniac.db.SelectByShowTraktId
 import com.thomaskioko.tvmaniac.db.ShowCast
 import com.thomaskioko.tvmaniac.db.ShowSeasons
@@ -24,17 +23,6 @@ internal fun List<ShowCast>.toCastList(): List<Casts> =
     }
 
 internal fun List<SimilarShows>.toSimilarShowList(): List<Show> =
-    map {
-        Show(
-            traktId = it.show_trakt_id.id,
-            title = it.name,
-            posterImageUrl = it.poster_path,
-            backdropImageUrl = it.backdrop_path,
-            isInLibrary = it.in_library == 1L,
-        )
-    }
-
-internal fun List<RecommendedShows>.toRecommendedShowList(): List<Show> =
     map {
         Show(
             traktId = it.show_trakt_id.id,

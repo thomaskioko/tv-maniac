@@ -68,6 +68,15 @@ struct ShowDetailsView: View {
                             .imageScale(.large)
                             .opacity(1 - showGlass)
                     }
+                },
+                trailingIcon: {
+                    Button(action: {
+                        presenter.dispatch(action: ReloadShowDetails())
+                    }) {
+                        Image(systemName: "arrow.clockwise")
+                            .foregroundColor(theme.colors.accent)
+                            .imageScale(.large)
+                    }
                 }
             ),
             alignment: .top
@@ -108,9 +117,6 @@ struct ShowDetailsView: View {
             castsList: uiState.showDetails.castsList.map {
                 $0.toSwift()
             },
-            recommendedShowList: uiState.showDetails.recommendedShows.map {
-                $0.toSwift()
-            },
             similarShows: uiState.showDetails.similarShows.map {
                 $0.toSwift()
             },
@@ -124,7 +130,6 @@ struct ShowDetailsView: View {
             stopTrackingLabel: String(\.unfollow),
             addToListLabel: String(\.btn_add_to_list),
             similarShowsTitle: String(\.title_similar),
-            recommendationsTitle: String(\.title_recommended),
             seasonDetailsTitle: String(\.title_season_details),
             showSeasonDetailsHeader: uiState.continueTrackingEpisodes.isEmpty,
             seasonCountFormat: { count in String(\.season_count, quantity: Int(count)) },

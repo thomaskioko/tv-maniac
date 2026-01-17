@@ -14,9 +14,7 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.SIMILAR_SH
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
-import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowDetailsResponse
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -41,7 +39,7 @@ public class SimilarShowStore(
 ) : Store<SimilarParams, List<SimilarShows>> by storeBuilder(
     fetcher = Fetcher.of { param: SimilarParams ->
         coroutineScope {
-            traktRemoteDataSource.getRelatedShows(
+            val results = traktRemoteDataSource.getRelatedShows(
                 traktId = param.showTraktId,
                 page = param.page.toInt(),
             ).getOrThrow()
@@ -61,6 +59,13 @@ public class SimilarShowStore(
                     }
                 }
                 .awaitAll()
+
+            requestManagerRepository.upsert(
+                entityId = param.showTraktId,
+                requestType = SIMILAR_SHOWS.name,
+            )
+
+            results
         }
     },
     sourceOfTruth = SourceOfTruth.of<SimilarParams, List<SimilarShowResult>, List<SimilarShows>>(
@@ -72,9 +77,7 @@ public class SimilarShowStore(
                         val traktId = result.traktShow.ids.trakt
                         val tmdbId = result.tmdbId
 
-                        if (!tvShowsDao.showExistsByTraktId(traktId)) {
-                            tvShowsDao.upsert(result.toTvshow(traktId, tmdbId, formatterUtil))
-                        }
+                        tvShowsDao.upsertMerging(result.toTvshow(traktId, tmdbId, formatterUtil))
 
                         similarShowsDao.upsert(
                             showTraktId = traktId,
@@ -84,11 +87,6 @@ public class SimilarShowStore(
                         )
                     }
                 }
-
-                requestManagerRepository.upsert(
-                    entityId = param.showTraktId,
-                    requestType = SIMILAR_SHOWS.name,
-                )
             }
         },
         delete = { param -> similarShowsDao.delete(param.showTraktId) },
@@ -100,21 +98,15 @@ public class SimilarShowStore(
 ).validator(
     Validator.by { cachedData ->
         withContext(dispatchers.io) {
-            val showTraktId = cachedData.firstOrNull()?.show_trakt_id?.id ?: return@withContext false
+            val parentShowTraktId = cachedData.firstOrNull()?.similar_show_trakt_id?.id ?: return@withContext false
             !requestManagerRepository.isRequestExpired(
-                entityId = showTraktId,
+                entityId = parentShowTraktId,
                 requestType = SIMILAR_SHOWS.name,
                 threshold = SIMILAR_SHOWS.duration,
             )
         }
     },
 ).build()
-
-private data class SimilarShowResult(
-    val traktShow: TraktShowResponse,
-    val tmdbId: Long,
-    val tmdbDetails: TmdbShowDetailsResponse?,
-)
 
 private fun SimilarShowResult.toTvshow(traktId: Long, tmdbId: Long, formatterUtil: FormatterUtil): Tvshow {
     val tmdb = tmdbDetails

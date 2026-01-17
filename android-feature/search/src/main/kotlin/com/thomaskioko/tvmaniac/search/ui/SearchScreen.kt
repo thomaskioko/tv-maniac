@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.SearchOff
 import androidx.compose.material.icons.outlined.ErrorOutline
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -68,6 +69,12 @@ import com.thomaskioko.tvmaniac.search.presenter.SearchShowAction
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowClicked
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowState
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowsPresenter
+import com.thomaskioko.tvmaniac.search.presenter.SearchUiState.BrowsingGenres
+import com.thomaskioko.tvmaniac.search.presenter.SearchUiState.Error
+import com.thomaskioko.tvmaniac.search.presenter.SearchUiState.InitialLoading
+import com.thomaskioko.tvmaniac.search.presenter.SearchUiState.SearchEmpty
+import com.thomaskioko.tvmaniac.search.presenter.SearchUiState.SearchLoading
+import com.thomaskioko.tvmaniac.search.presenter.SearchUiState.SearchResults
 import com.thomaskioko.tvmaniac.search.presenter.model.ShowGenre
 import com.thomaskioko.tvmaniac.search.presenter.model.ShowItem
 import com.thomaskioko.tvmaniac.search.ui.components.SearchResultItem
@@ -166,32 +173,29 @@ private fun SearchScreenContent(
         onAction = onAction,
         lazyListState = lazyListState,
     ) {
-        when {
-            // Loading state (initial load or search with no cached results)
-            state.isUpdating && state.searchResults.isEmpty() && state.genres.isEmpty() -> {
-                LoadingIndicator()
-            }
-            // Search mode with results
-            state.query.isNotEmpty() && state.searchResults.isNotEmpty() -> {
-                SearchResultsContent(
-                    onAction = onAction,
-                    results = state.searchResults,
-                    scrollState = lazyListState,
-                )
-            }
-            // Search mode loading (with query but no results yet)
-            state.query.isNotEmpty() && state.isUpdating -> {
-                LoadingIndicator()
-            }
-            // Search mode with no results (not loading)
-            state.query.isNotEmpty() && state.searchResults.isEmpty() && !state.isUpdating -> {
+        when (val uiState = state.uiState) {
+            InitialLoading, SearchLoading -> LoadingIndicator()
+            SearchEmpty -> {
                 EmptyContent(
                     imageVector = Icons.Filled.SearchOff,
                     title = search_no_results.resolve(LocalContext.current),
                 )
             }
-            // Error state (when there's an error and no content to show)
-            state.errorMessage != null && state.genres.isEmpty() -> {
+
+            is SearchResults -> SearchResultsContent(
+                onAction = onAction,
+                results = uiState.results,
+                scrollState = lazyListState,
+                isUpdating = uiState.isUpdating,
+            )
+
+            is BrowsingGenres -> GenreContent(
+                genres = uiState.genres,
+                onItemClicked = { onAction(GenreCategoryClicked(it)) },
+                lazyListState = lazyListState,
+            )
+
+            is Error -> {
                 val context = LocalContext.current
                 EmptyContent(
                     imageVector = Icons.Outlined.ErrorOutline,
@@ -199,14 +203,6 @@ private fun SearchScreenContent(
                     message = missing_api_key.resolve(context),
                     buttonText = generic_retry.resolve(context),
                     onClick = { onAction(ReloadShowContent) },
-                )
-            }
-            // Genre browsing mode (default)
-            state.genres.isNotEmpty() -> {
-                GenreContent(
-                    genres = state.genres,
-                    onItemClicked = { onAction(GenreCategoryClicked(it)) },
-                    lazyListState = lazyListState,
                 )
             }
         }
@@ -245,25 +241,37 @@ private fun SearchResultsContent(
     onAction: (SearchShowAction) -> Unit,
     scrollState: LazyListState,
     results: ImmutableList<ShowItem>,
+    isUpdating: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    LazyColumn(
-        modifier = modifier,
-        state = scrollState,
-    ) {
-        items(results) { item ->
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            SearchResultItem(
-                title = item.title,
-                status = item.status,
-                voteAverage = item.voteAverage,
-                year = item.year,
-                overview = item.overview,
-                imageUrl = item.posterImageUrl,
-                onClick = { onAction(SearchShowClicked(item.traktId)) },
+    Column(modifier = modifier) {
+        if (isUpdating) {
+            LinearProgressIndicator(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
+                color = MaterialTheme.colorScheme.secondary,
+                trackColor = MaterialTheme.colorScheme.surfaceVariant,
             )
+        }
+
+        LazyColumn(
+            state = scrollState,
+        ) {
+            items(results) { item ->
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                SearchResultItem(
+                    title = item.title,
+                    status = item.status,
+                    voteAverage = item.voteAverage,
+                    year = item.year,
+                    overview = item.overview,
+                    imageUrl = item.posterImageUrl,
+                    onClick = { onAction(SearchShowClicked(item.traktId)) },
+                )
+            }
         }
     }
 }

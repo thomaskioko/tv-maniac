@@ -43,7 +43,6 @@ public fun DomainShowDetails.toShowDetails(
     providers = providers.toWatchProviderList(),
     castsList = castsList.toCastList(),
     similarShows = similarShows.toShowList(),
-    recommendedShows = recommendedShows.toShowList(),
     trailersList = trailersList.toTrailerList(),
 )
 

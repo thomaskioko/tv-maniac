@@ -4,6 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
+import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
@@ -11,18 +12,24 @@ import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
-import com.thomaskioko.tvmaniac.domain.recommendedshows.RecommendedShowsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.PrefetchFirstSeasonInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor.Param
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
 import com.thomaskioko.tvmaniac.domain.watchproviders.WatchProvidersInteractor
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowSeasonDetailsParam
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -41,7 +48,6 @@ public class DefaultShowDetailsPresenter(
     @Assisted private val onNavigateToSeason: (param: ShowSeasonDetailsParam) -> Unit,
     @Assisted private val onNavigateToTrailer: (id: Long) -> Unit,
     private val followedShowsRepository: FollowedShowsRepository,
-    private val recommendedShowsInteractor: RecommendedShowsInteractor,
     private val showDetailsInteractor: ShowDetailsInteractor,
     private val prefetchFirstSeasonInteractor: PrefetchFirstSeasonInteractor,
     private val similarShowsInteractor: SimilarShowsInteractor,
@@ -50,10 +56,11 @@ public class DefaultShowDetailsPresenter(
     private val showContentSyncInteractor: ShowContentSyncInteractor,
     observableShowDetailsInteractor: ObservableShowDetailsInteractor,
     observeShowWatchProgressInteractor: ObserveShowWatchProgressInteractor,
+    private val traktAuthRepository: TraktAuthRepository,
     private val logger: Logger,
+    dispatchers: AppCoroutineDispatchers,
 ) : ShowDetailsPresenter, ComponentContext by componentContext {
 
-    private val recommendedShowsLoadingState = ObservableLoadingCounter()
     private val showDetailsLoadingState = ObservableLoadingCounter()
     private val similarShowsLoadingState = ObservableLoadingCounter()
     private val watchProvidersLoadingState = ObservableLoadingCounter()
@@ -66,18 +73,18 @@ public class DefaultShowDetailsPresenter(
     init {
         observableShowDetailsInteractor(showTraktId)
         observeShowWatchProgressInteractor(showTraktId)
-        coroutineScope.launch { observeShowDetails() }
+        observeShowDetails()
+        observeAuthState()
     }
 
     override val state: StateFlow<ShowDetailsContent> = combine(
-        recommendedShowsLoadingState.observable,
         showDetailsLoadingState.observable,
         similarShowsLoadingState.observable,
         watchProvidersLoadingState.observable,
         observableShowDetailsInteractor.flow,
         observeShowWatchProgressInteractor.flow,
         _state,
-    ) { recommendedShowsUpdating, showDetailsUpdating, similarShowsUpdating, watchProvidersUpdating,
+    ) { showDetailsUpdating, similarShowsUpdating, watchProvidersUpdating,
         showDetails, watchProgress, currentState,
         ->
         currentState.copy(
@@ -86,18 +93,19 @@ public class DefaultShowDetailsPresenter(
                 totalEpisodesCount = watchProgress.totalCount,
                 watchProgress = watchProgress.progressPercentage,
             ),
-            recommendedShowsRefreshing = recommendedShowsUpdating,
             showDetailsRefreshing = showDetailsUpdating,
             similarShowsRefreshing = similarShowsUpdating,
             watchProvidersRefreshing = watchProvidersUpdating,
             continueTrackingEpisodes = mapContinueTrackingEpisodes(showDetails.continueTrackingEpisodes, showTraktId),
             continueTrackingScrollIndex = showDetails.continueTrackingScrollIndex,
         )
-    }.stateIn(
-        scope = coroutineScope,
-        started = SharingStarted.Eagerly,
-        initialValue = _state.value,
-    )
+    }
+        .flowOn(dispatchers.computation)
+        .stateIn(
+            scope = coroutineScope,
+            started = SharingStarted.Eagerly,
+            initialValue = _state.value,
+        )
 
     override fun dispatch(action: ShowDetailsAction) {
         when (action) {
@@ -116,26 +124,13 @@ public class DefaultShowDetailsPresenter(
                         followedShowsRepository.removeFollowedShow(showTraktId)
                     } else {
                         followedShowsRepository.addFollowedShow(showTraktId)
-                        showContentSyncInteractor(
-                            ShowContentSyncInteractor.Param(traktId = showTraktId, isUserInitiated = true),
-                        ).collectStatus(episodeActionLoadingState, logger, uiMessageManager)
+                        syncShowContent(isUserInitiated = true, loadingState = episodeActionLoadingState)
                     }
                 }
             }
 
             DetailBackClicked -> onBack()
-            ReloadShowDetails -> {
-                coroutineScope.launch { observeShowDetails(forceReload = true) }
-                coroutineScope.launch {
-                    showContentSyncInteractor(
-                        ShowContentSyncInteractor.Param(
-                            traktId = showTraktId,
-                            forceRefresh = true,
-                            isUserInitiated = true,
-                        ),
-                    ).collectStatus(showDetailsLoadingState, logger, uiMessageManager)
-                }
-            }
+            ReloadShowDetails -> refreshShowContent(isUserInitiated = true)
             DismissErrorSnackbar -> coroutineScope.launch { _state.update { it.copy(message = null) } }
             DismissShowsListSheet -> coroutineScope.launch { _state.update { it.copy(showListSheet = false) } }
             ShowShowsListSheet -> coroutineScope.launch { _state.update { it.copy(showListSheet = true) } }
@@ -161,11 +156,6 @@ public class DefaultShowDetailsPresenter(
 
     private fun observeShowDetails(forceReload: Boolean = false) {
         coroutineScope.launch {
-            recommendedShowsInteractor(RecommendedShowsInteractor.Param(showTraktId, forceReload))
-                .collectStatus(recommendedShowsLoadingState, logger, uiMessageManager)
-        }
-
-        coroutineScope.launch {
             showDetailsInteractor(ShowDetailsInteractor.Param(showTraktId, forceReload))
                 .collectStatus(showDetailsLoadingState, logger, uiMessageManager)
         }
@@ -183,6 +173,51 @@ public class DefaultShowDetailsPresenter(
         coroutineScope.launch {
             watchProvidersInteractor(WatchProvidersInteractor.Param(showTraktId, forceReload))
                 .collectStatus(watchProvidersLoadingState, logger, uiMessageManager)
+        }
+
+        coroutineScope.launch {
+            if (traktAuthRepository.isLoggedIn()) {
+                syncShowContent(
+                    forceRefresh = forceReload,
+                    isUserInitiated = false,
+                    loadingState = showDetailsLoadingState,
+                )
+            }
+        }
+    }
+
+    private fun refreshShowContent(isUserInitiated: Boolean) {
+        observeShowDetails(forceReload = true)
+        coroutineScope.launch {
+            syncShowContent(
+                forceRefresh = true,
+                isUserInitiated = isUserInitiated,
+                loadingState = showDetailsLoadingState,
+            )
+        }
+    }
+
+    private suspend fun syncShowContent(
+        forceRefresh: Boolean = false,
+        isUserInitiated: Boolean,
+        loadingState: ObservableLoadingCounter,
+    ) {
+        showContentSyncInteractor(
+            params = Param(
+                traktId = showTraktId,
+                forceRefresh = forceRefresh,
+                isUserInitiated = isUserInitiated,
+            ),
+        ).collectStatus(loadingState, logger, uiMessageManager)
+    }
+
+    private fun observeAuthState() {
+        coroutineScope.launch {
+            traktAuthRepository.state
+                .drop(1)
+                .distinctUntilChanged()
+                .filter { it == TraktAuthState.LOGGED_IN }
+                .collect { refreshShowContent(isUserInitiated = false) }
         }
     }
 }

@@ -25,7 +25,6 @@ public data class ShowDetailsModel(
     val providers: ImmutableList<ProviderModel>,
     val castsList: ImmutableList<CastModel>,
     val seasonsList: ImmutableList<SeasonModel>,
-    val recommendedShows: ImmutableList<ShowModel>,
     val similarShows: ImmutableList<ShowModel>,
     val trailersList: ImmutableList<TrailerModel>,
     val selectedSeasonIndex: Int = 0,
@@ -48,7 +47,6 @@ public data class ShowDetailsModel(
             providers = persistentListOf(),
             castsList = persistentListOf(),
             seasonsList = persistentListOf(),
-            recommendedShows = persistentListOf(),
             similarShows = persistentListOf(),
             trailersList = persistentListOf(),
         )

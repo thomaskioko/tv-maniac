@@ -3,8 +3,6 @@ package com.thomaskioko.tvmaniac.data.showdetails.implementation
 import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsDao
 import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository
 import com.thomaskioko.tvmaniac.db.TvshowDetails
-import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
-import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.SHOW_DETAILS
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.impl.extensions.fresh
@@ -19,20 +17,11 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 public class DefaultShowDetailsRepository(
     private val showStore: ShowDetailsStore,
     private val dao: ShowDetailsDao,
-    private val requestManagerRepository: RequestManagerRepository,
 ) : ShowDetailsRepository {
 
     override suspend fun fetchShowDetails(id: Long, forceRefresh: Boolean) {
-        val existingShow = dao.getTvShowOrNull(id)
-        val statusIsNull = existingShow?.status.isNullOrBlank()
-        val isExpired = requestManagerRepository.isRequestExpired(
-            entityId = id,
-            requestType = SHOW_DETAILS.name,
-            threshold = SHOW_DETAILS.duration,
-        )
-
         when {
-            forceRefresh || existingShow == null || statusIsNull || isExpired -> showStore.fresh(id)
+            forceRefresh -> showStore.fresh(id)
             else -> showStore.get(id)
         }
     }

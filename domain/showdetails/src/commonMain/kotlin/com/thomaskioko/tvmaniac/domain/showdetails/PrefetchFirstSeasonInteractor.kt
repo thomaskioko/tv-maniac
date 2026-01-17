@@ -6,7 +6,6 @@ import com.thomaskioko.tvmaniac.domain.showdetails.PrefetchFirstSeasonInteractor
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
@@ -19,7 +18,7 @@ public class PrefetchFirstSeasonInteractor(
 
     override suspend fun doWork(params: Param) {
         withContext(dispatchers.io) {
-            val seasons = seasonsRepository.observeSeasonsByShowId(params.showTraktId).first()
+            val seasons = seasonsRepository.getSeasonsByShowId(params.showTraktId)
             val firstSeason = seasons.minByOrNull { it.season_number } ?: return@withContext
 
             seasonDetailsRepository.fetchSeasonDetails(
