@@ -119,8 +119,8 @@ public class DefaultSearchShowsPresenter(
         }
 
         private suspend fun updateSearchLoadingState(query: String) {
-            searchRepository.search(query)
             _state.update { it.copy(isUpdating = true, query = query) }
+            searchRepository.search(query)
         }
 
         private fun handleQueryChange(query: String) {
