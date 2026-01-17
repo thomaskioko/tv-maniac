@@ -15,11 +15,7 @@ public interface TvShowsDao {
 
     public fun deleteTvShows()
 
-    public suspend fun shouldUpdateShows(shows: List<Int>): Boolean
-
-    public fun getShowByTraktId(traktId: Long): Tvshow?
-
-    public fun showExistsByTraktId(traktId: Long): Boolean
+    public fun upsertMerging(show: Tvshow)
 
     public fun getShowsByTraktIds(traktIds: List<Long>): List<ShowEntity>
 
