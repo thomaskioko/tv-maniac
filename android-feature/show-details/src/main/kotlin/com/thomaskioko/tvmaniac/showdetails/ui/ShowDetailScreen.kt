@@ -95,7 +95,6 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_error_message
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_casts
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_providers
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_providers_label
-import com.thomaskioko.tvmaniac.i18n.MR.strings.title_recommended
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_similar
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_trailer
 import com.thomaskioko.tvmaniac.i18n.MR.strings.unfollow
@@ -424,7 +423,7 @@ private fun ShowInfoContent(
             similarShows = showDetails.similarShows,
             onShowClicked = { onAction(DetailShowClicked(it)) },
         )
-        
+
         Spacer(modifier = Modifier.height(54.dp))
     }
 }

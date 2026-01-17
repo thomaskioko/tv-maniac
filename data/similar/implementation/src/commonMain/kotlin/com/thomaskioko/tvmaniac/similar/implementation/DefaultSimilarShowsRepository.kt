@@ -23,7 +23,7 @@ public class DefaultSimilarShowsRepository(
         val param = SimilarParams(showTraktId = traktId)
 
         when {
-            forceRefresh  -> store.fresh(param)
+            forceRefresh -> store.fresh(param)
             else -> store.get(param)
         }
     }

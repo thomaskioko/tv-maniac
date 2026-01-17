@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.presenter.showdetails
 
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.db.RecommendedShows
 import com.thomaskioko.tvmaniac.db.ShowSeasons
 import com.thomaskioko.tvmaniac.db.SimilarShows
 import com.thomaskioko.tvmaniac.db.TvshowDetails
