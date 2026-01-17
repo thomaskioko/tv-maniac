@@ -61,15 +61,6 @@ internal val showDetailsContent = ShowDetailsContent(
                 isInLibrary = false,
             ),
         ),
-        recommendedShows = persistentListOf(
-            ShowModel(
-                traktId = 1232,
-                title = "Loki",
-                posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-                backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-                isInLibrary = false,
-            ),
-        ),
         providers = persistentListOf(
             ProviderModel(id = 1L, logoUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg", name = "Netflix"),
         ),

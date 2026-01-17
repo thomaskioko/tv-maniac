@@ -424,12 +424,7 @@ private fun ShowInfoContent(
             similarShows = showDetails.similarShows,
             onShowClicked = { onAction(DetailShowClicked(it)) },
         )
-
-        RecommendedShowsContent(
-            recommendedShows = showDetails.recommendedShows,
-            onShowClicked = { onAction(DetailShowClicked(it)) },
-        )
-
+        
         Spacer(modifier = Modifier.height(54.dp))
     }
 }
@@ -871,24 +866,6 @@ private fun TrailersContent(
             }
         }
     }
-}
-
-@Composable
-internal fun RecommendedShowsContent(
-    recommendedShows: ImmutableList<ShowModel>,
-    modifier: Modifier = Modifier,
-    onShowClicked: (Long) -> Unit = {},
-) {
-    if (recommendedShows.isEmpty()) return
-
-    Spacer(modifier = Modifier.height(16.dp))
-
-    HorizontalRowContent(
-        modifier = modifier,
-        items = recommendedShows,
-        onShowClicked = onShowClicked,
-        title = title_recommended.resolve(LocalContext.current),
-    )
 }
 
 @Composable

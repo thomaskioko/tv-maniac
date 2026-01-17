@@ -16,7 +16,6 @@ class ShowInfoViewTest: SnapshotTestCase {
             providerList: providerList,
             trailerList: trailerList,
             castsList: castsList,
-            recommendedShowList: showList,
             similarShows: showList,
             continueTrackingTitle: "Continue tracking",
             dayLabelFormat: { count in count == 1 ? "day" : "days" },
