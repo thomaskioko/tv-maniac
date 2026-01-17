@@ -70,18 +70,6 @@ val tvShowDetails = TvshowDetails(
     in_library = 0,
 )
 
-val recommendedShowList = listOf(
-    RecommendedShows(
-        show_tmdb_id = Id(184958),
-        name = "Loki",
-        poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        backdrop_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        in_library = 0,
-        show_trakt_id = Id(18495),
-        recommended_show_trakt_id = Id(18495),
-    ),
-)
-
 val watchProviderList = listOf(
     WatchProviders(
         provider_id = Id(184958),

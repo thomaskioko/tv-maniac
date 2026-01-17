@@ -5,7 +5,6 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
-import com.thomaskioko.tvmaniac.data.recommendedshows.testing.FakeRecommendedShowsRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.db.RecommendedShows
@@ -59,7 +58,6 @@ class ShowDetailsPresenterTest {
     private val followedShowsRepository = FakeFollowedShowsRepository()
     private val watchProvidersRepository = FakeWatchProviderRepository()
     private val castRepository = FakeCastRepository()
-    private val recommendedShowsRepository = FakeRecommendedShowsRepository()
     private val showDetailsRepository = FakeShowDetailsRepository()
     private val episodeRepository = FakeEpisodeRepository()
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
@@ -90,7 +88,6 @@ class ShowDetailsPresenterTest {
             showDetailResult = tvShowDetails,
             watchProviderResult = watchProviderList,
             similarShowResult = similarShowList,
-            recommendedShowResult = recommendedShowList,
             trailersResult = trailers,
         )
 
@@ -99,15 +96,6 @@ class ShowDetailsPresenterTest {
 
         val state = presenter.state.value
         state.showDetails shouldBe showDetailsContent.showDetails.copy(
-            recommendedShows = persistentListOf(
-                ShowModel(
-                    traktId = 18495,
-                    title = "Loki",
-                    posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-                    backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-                    isInLibrary = false,
-                ),
-            ),
             providers = persistentListOf(
                 ProviderModel(
                     id = 184958,
@@ -152,7 +140,6 @@ class ShowDetailsPresenterTest {
         seasonsRepository.setSeasonsResult(seasons)
         watchProvidersRepository.setWatchProvidersResult(watchProviderList)
         similarShowsRepository.setSimilarShowsResult(similarShowList)
-        recommendedShowsRepository.setObserveRecommendedShows(recommendedShowList)
         trailerRepository.setTrailerResult(trailers)
 
         presenter.dispatch(ReloadShowDetails)
@@ -179,7 +166,6 @@ class ShowDetailsPresenterTest {
 
             watchProvidersRepository.setWatchProvidersResult(watchProviderList)
             similarShowsRepository.setSimilarShowsResult(similarShowList)
-            recommendedShowsRepository.setObserveRecommendedShows(recommendedShowList)
             trailerRepository.setTrailerResult(trailers)
 
             presenter.dispatch(ReloadShowDetails)
@@ -490,7 +476,6 @@ class ShowDetailsPresenterTest {
         seasonResult: List<ShowSeasons> = emptyList(),
         watchProviderResult: List<WatchProviders> = emptyList(),
         similarShowResult: List<SimilarShows> = emptyList(),
-        recommendedShowResult: List<RecommendedShows> = emptyList(),
         trailersResult: List<SelectByShowTraktId> = emptyList(),
     ) {
         showDetailsRepository.setShowDetailsResult(showDetailResult)
@@ -499,7 +484,6 @@ class ShowDetailsPresenterTest {
         castRepository.setShowCast(castList)
         watchProvidersRepository.setWatchProvidersResult(watchProviderResult)
         similarShowsRepository.setSimilarShowsResult(similarShowResult)
-        recommendedShowsRepository.setObserveRecommendedShows(recommendedShowResult)
         trailerRepository.setTrailerResult(trailersResult)
     }
 
@@ -539,7 +523,6 @@ class ShowDetailsPresenterTest {
             observableShowDetailsInteractor = ObservableShowDetailsInteractor(
                 castRepository = castRepository,
                 episodeRepository = episodeRepository,
-                recommendedShowsRepository = recommendedShowsRepository,
                 seasonsRepository = seasonsRepository,
                 showDetailsRepository = showDetailsRepository,
                 similarShowsRepository = similarShowsRepository,

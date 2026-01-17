@@ -165,7 +165,6 @@ public struct ShowInfoView: View {
                 items: similarShows,
                 onClick: { id in onShowClicked(id) }
             )
-
         }
         .toastView(toast: $toast)
     }
