@@ -23,7 +23,6 @@ class ShowInfoViewTest: SnapshotTestCase {
             stopTrackingLabel: "Stop Tracking",
             addToListLabel: "Add To List",
             similarShowsTitle: "Similar Shows",
-            recommendationsTitle: "Recommendations",
             seasonDetailsTitle: "Season Details",
             seasonCountFormat: { count in count == 1 ? "\(count) Season" : "\(count) Seasons" },
             episodesWatchedFormat: { watched, total in "\(watched) of \(total) episodes watched" },
