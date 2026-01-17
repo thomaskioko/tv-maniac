@@ -58,38 +58,20 @@ struct SearchTab: View {
 
     @ViewBuilder
     private var contentView: some View {
-        let query = uiState.query
-        let isUpdating = uiState.isUpdating
-        let searchResults = uiState.searchResults
-        let genres = uiState.genres
-        let errorMessage = uiState.errorMessage
-
-        if let errorMessage {
-            // Error state
-            errorView(message: errorMessage)
-                .transition(.opacity)
-        } else if query.isEmpty, genres.isEmpty, isUpdating {
-            // Initial loading state
+        switch onEnum(of: uiState.uiState) {
+        case .initialLoading, .searchLoading:
             loadingView
                 .transition(.opacity)
-        } else if !query.isEmpty, !searchResults.isEmpty {
-            // Search results available
-            searchResultsView(results: searchResults, isUpdating: isUpdating)
-                .transition(.opacity)
-        } else if !query.isEmpty, searchResults.isEmpty, !isUpdating {
-            // Empty search results
+        case .searchEmpty:
             emptyStateView
                 .transition(.opacity)
-        } else if !query.isEmpty, isUpdating {
-            // Search in progress
-            loadingView
+        case let .searchResults(state):
+            searchResultsView(results: state.results, isUpdating: state.isUpdating)
                 .transition(.opacity)
-        } else if !genres.isEmpty {
-            // Genre browsing mode
-            genreSection(genres: genres, isUpdating: isUpdating)
-        } else {
-            // Fallback loading
-            loadingView
+        case let .browsingGenres(state):
+            genreSection(genres: Array(state.genres), isUpdating: state.isRefreshing)
+        case let .error(state):
+            errorView(message: state.message)
                 .transition(.opacity)
         }
     }
@@ -124,7 +106,7 @@ struct SearchTab: View {
                     ProgressView()
                         .progressViewStyle(CircularProgressViewStyle())
                         .scaleEffect(1.5)
-                        .tint(.gray)
+                        .tint(.accentColor)
                         .padding(.horizontal)
                         .padding(.bottom, 8)
                 }
@@ -143,12 +125,7 @@ struct SearchTab: View {
     private func searchResultsView(results: [ShowItem], isUpdating: Bool) -> some View {
         VStack {
             if isUpdating {
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle())
-                    .scaleEffect(1.5)
-                    .tint(.gray)
-                    .padding(.horizontal)
-                    .padding(.bottom, 8)
+                LoadingIndicatorView()
             }
 
             SearchResultListView(
@@ -165,7 +142,7 @@ struct SearchTab: View {
 
     private var loadingView: some View {
         CenteredFullScreenView {
-            LoadingIndicatorView(animate: true)
+            LoadingIndicatorView()
         }
     }
 
