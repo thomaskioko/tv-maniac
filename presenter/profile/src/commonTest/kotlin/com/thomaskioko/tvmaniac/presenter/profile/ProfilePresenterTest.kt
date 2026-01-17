@@ -13,10 +13,12 @@ import com.thomaskioko.tvmaniac.data.user.testing.createTestProfile
 import com.thomaskioko.tvmaniac.domain.user.ObserveUserProfileInteractor
 import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
 import com.thomaskioko.tvmaniac.profile.presenter.DefaultProfilePresenter
+import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction
 import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileInfo
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileState
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileStats
+import com.thomaskioko.tvmaniac.traktauth.api.AuthError
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
@@ -160,7 +162,79 @@ internal class ProfilePresenterTest {
             loadedState.userProfile shouldBe createExpectedProfileInfo(testProfile)
             loadedState.authenticated shouldBe true
             loadedState.isLoading shouldBe false
-            loadedState.isAuthenticating shouldBe false
+        }
+    }
+
+    @Test
+    fun `should hide loading when user logs out`() = runTest {
+        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        userRepository.setUserProfile(testProfile)
+
+        presenter.state.test {
+            awaitItem() shouldBe ProfileState.DEFAULT_STATE
+
+            val loadedState = awaitItem()
+            loadedState.userProfile shouldBe createExpectedProfileInfo(testProfile)
+            loadedState.authenticated shouldBe true
+            loadedState.showLoading shouldBe false
+
+            traktAuthRepository.setState(TraktAuthState.LOGGED_OUT)
+            userRepository.setUserProfile(null)
+
+            var loggedOutState = awaitItem()
+            while (loggedOutState.userProfile != null || loggedOutState.authenticated) {
+                loggedOutState = awaitItem()
+            }
+
+            loggedOutState.userProfile shouldBe null
+            loggedOutState.authenticated shouldBe false
+            loggedOutState.showLoading shouldBe false
+        }
+    }
+
+    @Test
+    fun `should reset loading state on successful authentication`() = runTest {
+        userRepository.setUserProfile(null)
+        traktAuthRepository.setState(TraktAuthState.LOGGED_OUT)
+
+        val testPresenter = createPresenter()
+
+        testPresenter.state.test {
+            awaitItem() shouldBe ProfileState.DEFAULT_STATE
+
+            traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+            userRepository.setUserProfile(testProfile)
+
+            val authenticatedState = awaitItem()
+            authenticatedState.authenticated shouldBe true
+            authenticatedState.showLoading shouldBe false
+            authenticatedState.userProfile shouldBe createExpectedProfileInfo(testProfile)
+        }
+    }
+
+    @Test
+    fun `should not show loading after auth error is dismissed`() = runTest {
+        userRepository.setUserProfile(null)
+        traktAuthRepository.setState(TraktAuthState.LOGGED_OUT)
+
+        val testPresenter = createPresenter()
+
+        testPresenter.state.test {
+            awaitItem() shouldBe ProfileState.DEFAULT_STATE
+
+            traktAuthRepository.setAuthError(AuthError.OAuthCancelled)
+
+            val errorState = awaitItem()
+            errorState.errorMessage?.message shouldBe "Login cancelled"
+            errorState.showLoading shouldBe false
+
+            val messageId = errorState.errorMessage!!.id
+            testPresenter.dispatch(ProfileAction.MessageShown(messageId))
+
+            val dismissedState = awaitItem()
+            dismissedState.errorMessage shouldBe null
+            dismissedState.showLoading shouldBe false
+            dismissedState.authenticated shouldBe false
         }
     }
 

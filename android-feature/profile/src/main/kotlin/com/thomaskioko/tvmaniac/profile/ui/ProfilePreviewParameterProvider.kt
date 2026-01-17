@@ -7,7 +7,6 @@ import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileStats
 
 internal val unauthenticatedState = ProfileState(
     isLoading = false,
-    isAuthenticating = false,
     userProfile = null,
     errorMessage = null,
     authenticated = false,
@@ -15,7 +14,6 @@ internal val unauthenticatedState = ProfileState(
 
 internal val authenticatedState = ProfileState(
     isLoading = false,
-    isAuthenticating = false,
     userProfile = ProfileInfo(
         slug = "testuser",
         username = "testuser",
