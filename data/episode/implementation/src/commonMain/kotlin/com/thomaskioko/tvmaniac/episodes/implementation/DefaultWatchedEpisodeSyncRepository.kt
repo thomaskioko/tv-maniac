@@ -42,7 +42,8 @@ public class DefaultWatchedEpisodeSyncRepository(
 ) : WatchedEpisodeSyncRepository {
 
     override suspend fun syncShowEpisodeWatches(showTraktId: Long, forceRefresh: Boolean) {
-        if (!isLoggedIn()) return
+        val authState = traktAuthRepository.getAuthState()
+        if (authState == null || !authState.isAuthorized) return
 
         followedShowsRepository.addFollowedShow(showTraktId)
 
@@ -54,8 +55,6 @@ public class DefaultWatchedEpisodeSyncRepository(
             lastRequestStore.updateShowLastRequest(showTraktId)
         }
     }
-
-    private fun isLoggedIn(): Boolean = traktAuthRepository.isLoggedIn()
 
     private suspend fun processPendingUploads() {
         val pending = dao.entriesByPendingAction(PendingAction.UPLOAD)

@@ -12,7 +12,7 @@ public interface TraktAuthRepository {
 
     public suspend fun getAuthState(): AuthState?
 
-    public suspend fun refreshTokens(): AuthState?
+    public suspend fun refreshTokens(): TokenRefreshResult
 
     public suspend fun logout()
 

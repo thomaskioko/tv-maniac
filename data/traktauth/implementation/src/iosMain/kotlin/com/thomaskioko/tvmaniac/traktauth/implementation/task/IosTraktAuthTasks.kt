@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.traktauth.implementation.task
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.traktauth.api.TokenRefreshResult.Success
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthTasks
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -91,7 +92,7 @@ public class IosTraktAuthTasks(
     private suspend fun performRefresh(): Boolean {
         val authState = traktAuthRepository.getAuthState() ?: return true
         if (!authState.isExpiringSoon()) return true
-        return traktAuthRepository.refreshTokens() != null
+        return traktAuthRepository.refreshTokens() is Success
     }
 
     public companion object {
