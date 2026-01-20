@@ -13,7 +13,7 @@ SELECT
     tvshow.name AS show_name,
     tvshow.poster_path AS show_poster,
     ((1000 * season.season_number) + episode.episode_number) AS next_ep_abs_number,
-    episode.air_date,
+    episode.first_aired,
     last_watched.last_watched_at
 FROM tvshow
 INNER JOIN season ON tvshow.trakt_id = season.show_trakt_id
@@ -23,7 +23,7 @@ LEFT JOIN shows_last_watched AS last_watched ON last_watched.show_trakt_id = tvs
 WHERE (season.season_number > 0 OR (season.season_number = 0 AND season.title != 'Specials'))
   AND watched_episode.episode_id IS NULL
   AND ((1000 * season.season_number) + episode.episode_number) > COALESCE(last_watched.last_watched_abs_number, 0)
-  AND (episode.air_date IS NULL OR episode.air_date <= date('now'))
+  AND (episode.first_aired IS NULL OR episode.first_aired <= (strftime('%s', 'now') * 1000))
 ORDER BY tvshow.trakt_id, season.season_number, episode.episode_number;
 
 nextEpisodeForShow:
@@ -49,7 +49,7 @@ WHERE tvshow.trakt_id = :showTraktId
   AND (:includeSpecials = 1 OR (season.season_number > 0 OR season.title != 'Specials'))
   AND watched_episode.episode_id IS NULL
   AND ((1000 * season.season_number) + episode.episode_number) > COALESCE(last_watched.last_watched_abs_number, 0)
-  AND (episode.air_date IS NULL OR episode.air_date <= date('now'))
+  AND (episode.first_aired IS NULL OR episode.first_aired <= (strftime('%s', 'now') * 1000))
 ORDER BY season.season_number, episode.episode_number
 LIMIT 1;
 
@@ -68,7 +68,7 @@ SELECT
     tvshow.name AS show_name,
     tvshow.poster_path AS show_poster,
     followed_show.followed_at,
-    next_episode.air_date,
+    next_episode.first_aired,
     next_episode.last_watched_at
 FROM followed_shows AS followed_show
 INNER JOIN tvshow ON followed_show.trakt_id = tvshow.trakt_id

@@ -14,8 +14,8 @@ CREATE TABLE episode (
     vote_count INTEGER NOT NULL,
     ratings REAL NOT NULL,
     image_url TEXT DEFAULT NULL,
-    air_date TEXT DEFAULT NULL,
     trakt_id INTEGER DEFAULT NULL,
+    first_aired INTEGER DEFAULT NULL,
     FOREIGN KEY(season_id) REFERENCES season(id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY(show_trakt_id) REFERENCES tvshow(trakt_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
@@ -23,6 +23,7 @@ CREATE TABLE episode (
 CREATE INDEX IF NOT EXISTS idx_episode_trakt_id ON episode(trakt_id);
 CREATE INDEX IF NOT EXISTS idx_episode_show_trakt_id ON episode(show_trakt_id);
 CREATE INDEX IF NOT EXISTS idx_episode_show_season ON episode(show_trakt_id, season_id);
+CREATE INDEX IF NOT EXISTS idx_episode_first_aired ON episode(first_aired);
 
 upsert:
 INSERT OR REPLACE INTO episode(
@@ -36,8 +37,8 @@ INSERT OR REPLACE INTO episode(
     ratings,
     episode_number,
     image_url,
-    air_date,
-    trakt_id
+    trakt_id,
+    first_aired
 )
 VALUES(?,?,?,?,?,?,?,?,?,?,?,?);
 
@@ -78,8 +79,8 @@ SELECT
     episode.vote_count,
     episode.ratings,
     episode.image_url,
-    episode.air_date,
-    episode.trakt_id
+    episode.trakt_id,
+    episode.first_aired
 FROM episode WHERE trakt_id = ?;
 
 countEpisodesForShow:
@@ -104,11 +105,48 @@ SELECT
     episode.vote_count,
     episode.ratings,
     episode.image_url,
-    episode.air_date,
-    episode.trakt_id
+    episode.trakt_id,
+    episode.first_aired
 FROM episode
 INNER JOIN season ON episode.season_id = season.id
 WHERE episode.show_trakt_id = :showTraktId
   AND season.season_number = :seasonNumber
   AND episode.episode_number = :episodeNumber
 LIMIT 1;
+
+updateFirstAired:
+UPDATE episode
+SET first_aired = :firstAired
+WHERE show_trakt_id = :showId
+  AND season_id IN (SELECT id FROM season WHERE show_trakt_id = :showId AND season_number = :seasonNumber)
+  AND episode_number = :episodeNumber;
+
+upcomingEpisodesFromFollowedShows:
+SELECT
+    episode.id AS episode_id,
+    episode.season_id,
+    episode.show_trakt_id,
+    episode.episode_number,
+    episode.title,
+    episode.overview,
+    episode.runtime,
+    episode.image_url,
+    episode.first_aired,
+    season.season_number,
+    tvshow.name AS show_name,
+    tvshow.poster_path AS show_poster
+FROM episode
+INNER JOIN season ON episode.season_id = season.id
+INNER JOIN tvshow ON episode.show_trakt_id = tvshow.trakt_id
+INNER JOIN followed_shows ON followed_shows.trakt_id = tvshow.trakt_id
+LEFT JOIN watched_episodes ON
+    watched_episodes.show_trakt_id = episode.show_trakt_id
+    AND watched_episodes.season_number = season.season_number
+    AND watched_episodes.episode_number = episode.episode_number
+WHERE season.season_number > 0
+  AND episode.first_aired IS NOT NULL
+  AND episode.first_aired > :fromEpoch
+  AND episode.first_aired < :toEpoch
+  AND watched_episodes.id IS NULL
+ORDER BY episode.first_aired ASC;
+

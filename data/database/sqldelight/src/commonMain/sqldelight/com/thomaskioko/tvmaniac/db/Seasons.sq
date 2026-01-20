@@ -65,7 +65,7 @@ SELECT
     episode.ratings,
     episode.vote_count,
     episode.image_url AS episode_image_url,
-    episode.air_date AS episode_air_date,
+    episode.first_aired AS episode_first_aired,
     CASE WHEN watched_episodes.id IS NOT NULL THEN 1 ELSE 0 END AS is_watched
 FROM
     tvshow
