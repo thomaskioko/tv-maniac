@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.traktauth.api.TokenRefreshResult.NetworkError
+import com.thomaskioko.tvmaniac.traktauth.api.TokenRefreshResult.Success
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -21,10 +23,9 @@ public class TokenRefreshWorker(
         val authState = traktAuthRepository.value.getAuthState() ?: return Result.success()
         if (!authState.isExpiringSoon()) return Result.success()
 
-        val refreshToken = traktAuthRepository.value.refreshTokens()
-
-        return when {
-            refreshToken != null -> Result.success()
+        return when (traktAuthRepository.value.refreshTokens()) {
+            is Success -> Result.success()
+            is NetworkError -> Result.retry()
             else -> Result.failure()
         }
     }

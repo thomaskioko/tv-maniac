@@ -80,17 +80,21 @@ public class AndroidTraktAuthManager(
 
     private suspend fun exchangeAuthorizationCode(tokenRequest: TokenRequest) {
         try {
-            val tokenResponse = suspendCoroutine { continuation ->
+            val result = suspendCoroutine { continuation ->
                 authService.value.performTokenRequest(
                     tokenRequest,
                     clientAuth.value,
                 ) { response, exception ->
-                    if (exception != null) {
-                        continuation.resume(null)
-                    } else {
-                        continuation.resume(response)
-                    }
+                    continuation.resume(response to exception)
                 }
+            }
+
+            val (tokenResponse, tokenException) = result
+
+            if (tokenException != null) {
+                logger.error("TokenExchangeError", tokenException)
+                loginAction.setAuthError(AuthError.TokenExchangeFailed)
+                return
             }
 
             if (tokenResponse != null) {

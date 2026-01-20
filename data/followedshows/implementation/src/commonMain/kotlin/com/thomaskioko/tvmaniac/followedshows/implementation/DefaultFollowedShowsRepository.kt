@@ -43,7 +43,8 @@ public class DefaultFollowedShowsRepository(
     )
 
     override suspend fun syncFollowedShows(forceRefresh: Boolean) {
-        if (!traktAuthRepository.isLoggedIn()) return
+        val authState = traktAuthRepository.getAuthState()
+        if (authState == null || !authState.isAuthorized) return
 
         processPendingUploadActions()
         processPendingDeleteActions()

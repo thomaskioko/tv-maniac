@@ -9,7 +9,7 @@ import net.openid.appauth.AuthorizationRequest
 import net.openid.appauth.AuthorizationService
 import net.openid.appauth.AuthorizationServiceConfiguration
 import net.openid.appauth.ClientAuthentication
-import net.openid.appauth.ClientSecretBasic
+import net.openid.appauth.ClientSecretPost
 import net.openid.appauth.ResponseTypeValues
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
@@ -22,7 +22,7 @@ public interface TraktAuthAndroidComponent {
     public fun provideAuthConfig(): AuthorizationServiceConfiguration {
         return AuthorizationServiceConfiguration(
             "https://trakt.tv/oauth/authorize".toUri(),
-            "https://trakt.tv/oauth/token".toUri(),
+            "https://api.trakt.tv/oauth/token".toUri(),
         )
     }
 
@@ -41,7 +41,7 @@ public interface TraktAuthAndroidComponent {
 
     @Provides
     public fun provideClientAuth(): ClientAuthentication =
-        ClientSecretBasic(BuildConfig.TRAKT_CLIENT_SECRET)
+        ClientSecretPost(BuildConfig.TRAKT_CLIENT_SECRET)
 
     @Provides
     @SingleIn(ActivityScope::class)

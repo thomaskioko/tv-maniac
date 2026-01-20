@@ -1,10 +1,13 @@
 package com.thomaskioko.tvmaniac.traktauth.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.traktauth.api.AuthError
 import com.thomaskioko.tvmaniac.traktauth.api.AuthState
 import com.thomaskioko.tvmaniac.traktauth.api.AuthStore
 import com.thomaskioko.tvmaniac.traktauth.api.RefreshTokenResult
+import com.thomaskioko.tvmaniac.traktauth.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.api.TraktRefreshTokenAction
@@ -32,6 +35,8 @@ public class DefaultTraktAuthRepository(
     private val authStore: AuthStore,
     private val refreshTokenAction: Lazy<TraktRefreshTokenAction>,
     private val dateTimeProvider: DateTimeProvider,
+    private val requestManagerRepository: RequestManagerRepository,
+    private val logger: Logger,
 ) : TraktAuthRepository {
 
     private val authState = MutableStateFlow<AuthState?>(null)
@@ -40,19 +45,11 @@ public class DefaultTraktAuthRepository(
 
     private val _authError = MutableStateFlow<AuthError?>(null)
 
-    init {
-        scope.launch {
-            val savedState = authStore.get()
-            if (savedState != null && savedState.isAuthorized) {
-                cacheAuthState(savedState)
-            }
-        }
-    }
-
     override val state: Flow<TraktAuthState> = authState.map { state ->
-        when (state?.isAuthorized) {
-            true -> TraktAuthState.LOGGED_IN
-            else -> TraktAuthState.LOGGED_OUT
+        if (state?.isAuthorized == true) {
+            TraktAuthState.LOGGED_IN
+        } else {
+            TraktAuthState.LOGGED_OUT
         }
     }
 
@@ -64,6 +61,9 @@ public class DefaultTraktAuthRepository(
         val cached = authState.value
 
         if (cached != null && cached.isAuthorized && dateTimeProvider.now() < authStateExpiry) {
+            if (cached.isExpiringSoon()) {
+                scope.launch { refreshTokens() }
+            }
             return cached
         }
 
@@ -72,21 +72,30 @@ public class DefaultTraktAuthRepository(
         }?.also { cacheAuthState(it) }
     }
 
-    override suspend fun refreshTokens(): AuthState? {
-        val currentState = getAuthState() ?: return null
+    override suspend fun refreshTokens(): TokenRefreshResult {
+        val currentState = getAuthState() ?: return TokenRefreshResult.NotLoggedIn
 
         return when (val result = refreshTokenAction.value.invoke(currentState)) {
             is RefreshTokenResult.Success -> {
+                _authError.value = null
                 updateAuthState(result.authState)
-                result.authState
+                TokenRefreshResult.Success(result.authState)
             }
             is RefreshTokenResult.TokenExpired -> {
+                logger.warning("TraktAuth", "Token expired/revoked - clearing auth state")
+                _authError.value = AuthError.TokenExpired
                 updateAuthState(AuthState.Empty)
-                null
+                TokenRefreshResult.TokenRevoked
+            }
+            is RefreshTokenResult.NetworkError -> {
+                logger.warning("TraktAuth", "Network error during token refresh: ${result.message}")
+                _authError.value = AuthError.NetworkError
+                TokenRefreshResult.NetworkError(result.message)
             }
             is RefreshTokenResult.Failed -> {
-                updateAuthState(AuthState.Empty)
-                null
+                logger.error("TraktAuth", "Token refresh failed: ${result.message}")
+                _authError.value = AuthError.Unknown
+                TokenRefreshResult.Failed(result.message)
             }
         }
     }
@@ -100,6 +109,8 @@ public class DefaultTraktAuthRepository(
         refreshToken: String,
         expiresAtSeconds: Long,
     ) {
+        requestManagerRepository.clearSyncRelatedRequests()
+
         val authState = AuthState(
             accessToken = accessToken,
             refreshToken = refreshToken,

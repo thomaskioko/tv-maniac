@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.data.showdetails.implementation
 
 import app.cash.sqldelight.coroutines.asFlow
-import app.cash.sqldelight.coroutines.mapToOne
+import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsDao
 import com.thomaskioko.tvmaniac.db.Id
@@ -22,8 +22,8 @@ public class DefaultShowDetailsDao(
 ) : ShowDetailsDao {
     private val tvShowQueries = database.tvShowQueries
 
-    override fun observeTvShowByTraktId(traktId: Long): Flow<TvshowDetails> =
-        tvShowQueries.tvshowDetails(Id(traktId)).asFlow().mapToOne(dispatchers.io)
+    override fun observeTvShowByTraktId(traktId: Long): Flow<TvshowDetails?> =
+        tvShowQueries.tvshowDetails(Id(traktId)).asFlow().mapToOneOrNull(dispatchers.io)
 
     override fun getTvShow(traktId: Long): TvshowDetails =
         tvShowQueries.tvshowDetails(Id(traktId)).executeAsOne()

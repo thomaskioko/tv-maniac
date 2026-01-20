@@ -36,6 +36,18 @@ public class DefaultRequestManagerRepository(
         val _ = database.lastRequestsQueries.deleteAll()
     }
 
+    override fun clearSyncRelatedRequests() {
+        val syncTypes = listOf(
+            RequestTypeConfig.FOLLOWED_SHOWS_SYNC.name,
+            RequestTypeConfig.EPISODE_WATCHES_SYNC.name,
+            RequestTypeConfig.SHOW_EPISODE_WATCHES_SYNC.name,
+            RequestTypeConfig.USER_PROFILE.name,
+        )
+        syncTypes.forEach { type ->
+            database.lastRequestsQueries.deleteByType(type)
+        }
+    }
+
     override fun isRequestExpired(entityId: Long, requestType: String, threshold: Duration): Boolean =
         isRequestBefore(entityId, requestType, dateTimeProvider.now() - threshold)
 

@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsDao
 import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository
 import com.thomaskioko.tvmaniac.db.TvshowDetails
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.impl.extensions.fresh
 import org.mobilenativefoundation.store.store5.impl.extensions.get
@@ -26,5 +27,6 @@ public class DefaultShowDetailsRepository(
         }
     }
 
-    override fun observeShowDetails(id: Long): Flow<TvshowDetails> = dao.observeTvShowByTraktId(id)
+    override fun observeShowDetails(id: Long): Flow<TvshowDetails> =
+        dao.observeTvShowByTraktId(id).filterNotNull()
 }

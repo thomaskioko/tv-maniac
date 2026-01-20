@@ -17,6 +17,7 @@ import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
+import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -36,6 +37,7 @@ public class FeaturedShowsStore(
     private val featuredShowsDao: FeaturedShowsDao,
     private val tvShowsDao: TvShowsDao,
     private val formatterUtil: FormatterUtil,
+    private val dateTimeProvider: DateTimeProvider,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, List<ShowEntity>> by storeBuilder(
@@ -92,7 +94,7 @@ public class FeaturedShowsStore(
                             formatterUtil.formatTmdbPosterPath(it)
                         }
 
-                        tvShowsDao.upsertMerging(show.toTvshow(traktId, tmdbId, posterPath, backdropPath))
+                        tvShowsDao.upsertMerging(show.toTvshow(traktId, tmdbId, posterPath, backdropPath, dateTimeProvider))
 
                         featuredShowsDao.upsert(
                             Featured_shows(
@@ -136,13 +138,14 @@ private fun TraktShowResponse.toTvshow(
     tmdbId: Long,
     posterPath: String?,
     backdropPath: String?,
+    dateTimeProvider: DateTimeProvider,
 ): Tvshow = Tvshow(
     trakt_id = Id(traktId),
     tmdb_id = Id(tmdbId),
     name = title,
     overview = overview ?: "",
     language = language,
-    year = firstAirDate,
+    year = firstAirDate?.let { dateTimeProvider.getYear(it) },
     ratings = rating ?: 0.0,
     vote_count = votes ?: 0L,
     poster_path = posterPath,

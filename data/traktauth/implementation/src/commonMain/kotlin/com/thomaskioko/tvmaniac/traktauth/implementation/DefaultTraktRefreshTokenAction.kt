@@ -31,7 +31,7 @@ public class DefaultTraktRefreshTokenAction(
 
                 if (accessToken == null || refreshToken == null || expiresIn == null) {
                     logger.error("TraktRefreshTokenAction", "Invalid response - missing tokens")
-                    return RefreshTokenResult.Failed
+                    return RefreshTokenResult.Failed("Invalid response - missing tokens")
                 }
 
                 val expiresAt = Clock.System.now() + expiresIn.seconds
@@ -53,16 +53,16 @@ public class DefaultTraktRefreshTokenAction(
                     RefreshTokenResult.TokenExpired
                 } else {
                     logger.error("TraktRefreshTokenAction", "HTTP error: ${response.code}")
-                    RefreshTokenResult.Failed
+                    RefreshTokenResult.Failed("HTTP ${response.code}: ${response.errorMessage}")
                 }
             }
             is ApiResponse.Error.SerializationError -> {
                 logger.error("TraktRefreshTokenAction", "Serialization error: ${response.message}")
-                RefreshTokenResult.Failed
+                RefreshTokenResult.Failed("Serialization error: ${response.message}")
             }
             is ApiResponse.Error.GenericError -> {
-                logger.error("TraktRefreshTokenAction", "Error: ${response.message}")
-                RefreshTokenResult.Failed
+                logger.error("TraktRefreshTokenAction", "Network error: ${response.message}")
+                RefreshTokenResult.NetworkError(response.message)
             }
         }
     }

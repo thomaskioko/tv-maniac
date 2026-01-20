@@ -13,6 +13,7 @@ import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowEntry
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.followedshows.implementation.fixtures.FakeFollowedShowsDataSource
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
+import com.thomaskioko.tvmaniac.traktauth.api.AuthState
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
@@ -133,7 +134,7 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should delete local entry given no trakt id`() = runTest {
-        fakeAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        setLoggedIn()
         val _ = dao.upsert(
             FollowedShowEntry(
                 traktId = 1L,
@@ -185,7 +186,7 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should process pending uploads during sync`() = runTest {
-        fakeAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        setLoggedIn()
         val _ = dao.upsert(
             FollowedShowEntry(
                 traktId = 1L,
@@ -212,7 +213,7 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should process pending deletes during sync`() = runTest {
-        fakeAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        setLoggedIn()
         val _ = dao.upsert(
             FollowedShowEntry(
                 traktId = 1L,
@@ -239,7 +240,7 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should pull remote watchlist during sync`() = runTest {
-        fakeAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        setLoggedIn()
         fakeRequestManagerRepository.requestValid = false
         fakeDataSource.followedShows = listOf(
             FollowedShowEntry(
@@ -265,7 +266,7 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should sync remote additions and deletions`() = runTest {
-        fakeAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        setLoggedIn()
         fakeRequestManagerRepository.requestValid = false
         val _ = dao.upsert(
             FollowedShowEntry(
@@ -304,7 +305,7 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should preserve pending upload entries after sync processes them`() = runTest {
-        fakeAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        setLoggedIn()
         fakeRequestManagerRepository.requestValid = false
         val _ = dao.upsert(
             FollowedShowEntry(
@@ -357,6 +358,17 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
         val needsSync = repository.needsSync()
 
         needsSync shouldBe false
+    }
+
+    private suspend fun setLoggedIn() {
+        fakeAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        fakeAuthRepository.setAuthState(
+            AuthState(
+                accessToken = "test_access_token",
+                refreshToken = "test_refresh_token",
+                isAuthorized = true,
+            ),
+        )
     }
 
     private fun insertTestShows() {

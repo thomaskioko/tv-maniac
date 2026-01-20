@@ -25,6 +25,8 @@ public class FakeRequestManagerRepository : RequestManagerRepository {
     }
 
     override fun deleteAll() {
-        // No-op for testing
+    }
+
+    override fun clearSyncRelatedRequests() {
     }
 }

@@ -15,4 +15,6 @@ public interface RequestManagerRepository {
     public fun delete(entityId: Long, requestType: String)
 
     public fun deleteAll()
+
+    public fun clearSyncRelatedRequests()
 }

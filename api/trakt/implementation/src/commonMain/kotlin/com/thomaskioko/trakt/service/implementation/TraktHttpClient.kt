@@ -1,6 +1,7 @@
 package com.thomaskioko.trakt.service.implementation
 
 import com.thomaskioko.tvmaniac.core.networkutil.model.HttpExceptions
+import com.thomaskioko.tvmaniac.traktauth.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest
@@ -64,11 +65,12 @@ internal fun traktHttpClient(
                 }
 
                 refreshTokens {
-                    traktAuthRepository().refreshTokens()?.let { state ->
-                        BearerTokens(
-                            accessToken = state.accessToken,
-                            refreshToken = state.refreshToken,
+                    when (val result = traktAuthRepository().refreshTokens()) {
+                        is TokenRefreshResult.Success -> BearerTokens(
+                            accessToken = result.authState.accessToken,
+                            refreshToken = result.authState.refreshToken,
                         )
+                        else -> null
                     }
                 }
 
@@ -121,7 +123,7 @@ internal fun traktHttpClient(
         }
 
         install(Logging) {
-            level = LogLevel.INFO
+            level = if (isDebug) LogLevel.BODY else LogLevel.NONE
             logger = if (isDebug) {
                 object : Logger {
                     override fun log(message: String) {
