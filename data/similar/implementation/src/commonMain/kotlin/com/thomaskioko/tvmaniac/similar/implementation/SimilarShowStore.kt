@@ -15,6 +15,7 @@ import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
+import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -34,6 +35,7 @@ public class SimilarShowStore(
     private val similarShowsDao: SimilarShowsDao,
     private val requestManagerRepository: RequestManagerRepository,
     private val formatterUtil: FormatterUtil,
+    private val dateTimeProvider: DateTimeProvider,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<SimilarParams, List<SimilarShows>> by storeBuilder(
@@ -77,7 +79,7 @@ public class SimilarShowStore(
                         val traktId = result.traktShow.ids.trakt
                         val tmdbId = result.tmdbId
 
-                        tvShowsDao.upsertMerging(result.toTvshow(traktId, tmdbId, formatterUtil))
+                        tvShowsDao.upsertMerging(result.toTvshow(traktId, tmdbId, formatterUtil, dateTimeProvider))
 
                         similarShowsDao.upsert(
                             showTraktId = traktId,
@@ -108,16 +110,22 @@ public class SimilarShowStore(
     },
 ).build()
 
-private fun SimilarShowResult.toTvshow(traktId: Long, tmdbId: Long, formatterUtil: FormatterUtil): Tvshow {
+private fun SimilarShowResult.toTvshow(
+    traktId: Long,
+    tmdbId: Long,
+    formatterUtil: FormatterUtil,
+    dateTimeProvider: DateTimeProvider,
+): Tvshow {
     val tmdb = tmdbDetails
     val trakt = traktShow
+    val dateString = tmdb?.firstAirDate ?: trakt.firstAirDate
     return Tvshow(
         trakt_id = Id(traktId),
         tmdb_id = Id(tmdbId),
         name = tmdb?.name ?: trakt.title,
         overview = tmdb?.overview ?: trakt.overview ?: "",
         language = tmdb?.originalLanguage ?: trakt.language,
-        year = tmdb?.firstAirDate ?: trakt.firstAirDate,
+        year = dateString?.let { dateTimeProvider.getYear(it) },
         ratings = tmdb?.voteAverage ?: trakt.rating ?: 0.0,
         vote_count = tmdb?.voteCount?.toLong() ?: trakt.votes?.toLong() ?: 0L,
         poster_path = tmdb?.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
