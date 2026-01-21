@@ -41,11 +41,13 @@ SELECT
     tvshow.name AS show_name,
     tvshow.poster_path AS show_poster
 FROM tvshow
+INNER JOIN followed_shows ON followed_shows.trakt_id = tvshow.trakt_id
 INNER JOIN season ON tvshow.trakt_id = season.show_trakt_id
 INNER JOIN episode ON episode.season_id = season.id AND episode.show_trakt_id = tvshow.trakt_id
 LEFT JOIN watched_episodes AS watched_episode ON watched_episode.show_trakt_id = tvshow.trakt_id AND watched_episode.episode_id = episode.id
 LEFT JOIN shows_last_watched AS last_watched ON last_watched.show_trakt_id = tvshow.trakt_id
 WHERE tvshow.trakt_id = :showTraktId
+  AND followed_shows.pending_action != 'DELETE'
   AND (:includeSpecials = 1 OR (season.season_number > 0 OR season.title != 'Specials'))
   AND watched_episode.episode_id IS NULL
   AND ((1000 * season.season_number) + episode.episode_number) > COALESCE(last_watched.last_watched_abs_number, 0)
@@ -67,11 +69,18 @@ SELECT
     next_episode.overview,
     tvshow.name AS show_name,
     tvshow.poster_path AS show_poster,
+    tvshow.status AS show_status,
+    tvshow.year AS show_year,
     followed_show.followed_at,
     next_episode.first_aired,
-    next_episode.last_watched_at
+    next_episode.last_watched_at,
+    COALESCE(show_metadata.season_count, 0) AS season_count,
+    COALESCE(show_metadata.episode_count, 0) AS episode_count,
+    COALESCE(show_metadata.cached_watched_count, 0) AS watched_count,
+    COALESCE(show_metadata.cached_total_count, 0) AS total_count
 FROM followed_shows AS followed_show
 INNER JOIN tvshow ON followed_show.trakt_id = tvshow.trakt_id
+LEFT JOIN show_metadata ON tvshow.trakt_id = show_metadata.show_trakt_id
 LEFT JOIN (
     SELECT
         show_trakt_id,

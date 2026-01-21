@@ -96,6 +96,21 @@ LIMIT 1;
 updateImageUrl:
 UPDATE season SET image_url = ? WHERE id = ?;
 
+getSeasonWithShowInfo:
+SELECT
+    tvshow.trakt_id AS show_trakt_id,
+    tvshow.tmdb_id AS show_tmdb_id,
+    tvshow.name AS show_title,
+    season.id AS season_id,
+    season.title AS season_title,
+    season.overview AS season_overview,
+    season.season_number,
+    season.episode_count,
+    season.image_url AS season_image_url
+FROM tvshow
+INNER JOIN season ON season.show_trakt_id = tvshow.trakt_id
+WHERE tvshow.trakt_id = :showTraktId AND season.season_number = :seasonNumber;
+
 delete:
 DELETE FROM season WHERE show_trakt_id = ?;
 

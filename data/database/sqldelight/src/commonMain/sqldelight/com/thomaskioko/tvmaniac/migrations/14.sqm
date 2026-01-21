@@ -1,0 +1,64 @@
+-- Migration 14: Remove air_date TEXT column and add first_aired INTEGER column
+-- Consolidates date storage to use epoch milliseconds for timezone-safe calculations
+-- Used for episode notifications scheduling
+-- Source: Trakt API provides full ISO 8601 timestamps which are converted to epoch
+
+CREATE TABLE episode_new(
+    id INTEGER NOT NULL PRIMARY KEY,
+    season_id INTEGER NOT NULL,
+    show_trakt_id INTEGER NOT NULL,
+    episode_number INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    overview TEXT NOT NULL,
+    runtime INTEGER DEFAULT NULL,
+    vote_count INTEGER NOT NULL,
+    ratings REAL NOT NULL,
+    image_url TEXT DEFAULT NULL,
+    trakt_id INTEGER DEFAULT NULL,
+    first_aired INTEGER DEFAULT NULL,
+    FOREIGN KEY(season_id) REFERENCES season(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY(show_trakt_id) REFERENCES tvshow(trakt_id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+DROP TABLE episode;
+ALTER TABLE episode_new RENAME TO episode;
+
+CREATE INDEX IF NOT EXISTS idx_episode_trakt_id ON episode(trakt_id);
+CREATE INDEX IF NOT EXISTS idx_episode_show_trakt_id ON episode(show_trakt_id);
+CREATE INDEX IF NOT EXISTS idx_episode_show_season ON episode(show_trakt_id, season_id);
+CREATE INDEX IF NOT EXISTS idx_episode_first_aired ON episode(first_aired);
+CREATE INDEX IF NOT EXISTS idx_episode_show_first_aired ON episode(show_trakt_id, first_aired);
+
+DELETE FROM season;
+
+DELETE FROM last_requests WHERE request_type IN ('SEASON_DETAILS', 'SHOW_DETAILS');
+
+DROP VIEW IF EXISTS shows_next_to_watch;
+
+CREATE VIEW shows_next_to_watch AS
+SELECT
+    tvshow.trakt_id AS show_trakt_id,
+    tvshow.tmdb_id AS show_tmdb_id,
+    episode.id AS episode_id,
+    episode.title AS episode_name,
+    season.id AS season_id,
+    season.season_number,
+    episode.episode_number,
+    episode.runtime,
+    episode.image_url AS still_path,
+    episode.overview,
+    tvshow.name AS show_name,
+    tvshow.poster_path AS show_poster,
+    ((1000 * season.season_number) + episode.episode_number) AS next_ep_abs_number,
+    episode.first_aired,
+    last_watched.last_watched_at
+FROM tvshow
+INNER JOIN season ON tvshow.trakt_id = season.show_trakt_id
+INNER JOIN episode ON episode.season_id = season.id AND episode.show_trakt_id = tvshow.trakt_id
+LEFT JOIN watched_episodes AS watched_episode ON watched_episode.show_trakt_id = tvshow.trakt_id AND watched_episode.episode_id = episode.id
+LEFT JOIN shows_last_watched AS last_watched ON last_watched.show_trakt_id = tvshow.trakt_id
+WHERE (season.season_number > 0 OR (season.season_number = 0 AND season.title != 'Specials'))
+  AND watched_episode.episode_id IS NULL
+  AND ((1000 * season.season_number) + episode.episode_number) > COALESCE(last_watched.last_watched_abs_number, 0)
+  AND (episode.first_aired IS NULL OR episode.first_aired <= (strftime('%s', 'now') * 1000))
+ORDER BY tvshow.trakt_id, season.season_number, episode.episode_number;

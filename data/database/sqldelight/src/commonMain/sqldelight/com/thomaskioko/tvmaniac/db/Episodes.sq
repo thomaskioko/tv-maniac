@@ -24,6 +24,7 @@ CREATE INDEX IF NOT EXISTS idx_episode_trakt_id ON episode(trakt_id);
 CREATE INDEX IF NOT EXISTS idx_episode_show_trakt_id ON episode(show_trakt_id);
 CREATE INDEX IF NOT EXISTS idx_episode_show_season ON episode(show_trakt_id, season_id);
 CREATE INDEX IF NOT EXISTS idx_episode_first_aired ON episode(first_aired);
+CREATE INDEX IF NOT EXISTS idx_episode_show_first_aired ON episode(show_trakt_id, first_aired);
 
 upsert:
 INSERT OR REPLACE INTO episode(
@@ -149,4 +150,25 @@ WHERE season.season_number > 0
   AND episode.first_aired < :toEpoch
   AND watched_episodes.id IS NULL
 ORDER BY episode.first_aired ASC;
+
+episodesBySeasonId:
+SELECT
+    episode.id AS episode_id,
+    episode.season_id,
+    episode.show_trakt_id,
+    episode.episode_number,
+    episode.title,
+    episode.overview,
+    episode.runtime,
+    episode.vote_count,
+    episode.ratings,
+    episode.image_url,
+    episode.first_aired,
+    CASE WHEN watched_episodes.id IS NOT NULL THEN 1 ELSE 0 END AS is_watched
+FROM episode
+LEFT OUTER JOIN watched_episodes
+    ON watched_episodes.episode_id = episode.id
+    AND watched_episodes.show_trakt_id = episode.show_trakt_id
+WHERE episode.season_id = :seasonId
+ORDER BY episode.episode_number ASC;
 

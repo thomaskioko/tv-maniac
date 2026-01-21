@@ -71,3 +71,18 @@ UPDATE show_metadata SET
     last_watched_episode_number = NULL,
     last_watched_at = NULL
 WHERE show_trakt_id = :show_trakt_id;
+
+recalculateCachedCounts:
+UPDATE show_metadata SET
+    cached_watched_count = (
+        SELECT COUNT(*) FROM watched_episodes
+        WHERE watched_episodes.show_trakt_id = :show_trakt_id
+    ),
+    cached_total_count = (
+        SELECT COUNT(*) FROM episode
+        INNER JOIN season ON episode.season_id = season.id
+        WHERE episode.show_trakt_id = :show_trakt_id
+        AND season.season_number > 0
+        AND (episode.first_aired IS NULL OR episode.first_aired <= strftime('%s', 'now') * 1000)
+    )
+WHERE show_trakt_id = :show_trakt_id;
