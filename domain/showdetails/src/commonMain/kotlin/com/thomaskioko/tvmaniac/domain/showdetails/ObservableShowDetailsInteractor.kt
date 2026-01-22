@@ -65,7 +65,6 @@ public class ObservableShowDetailsInteractor(
                 similarShows = similarShows.toSimilarShowList(),
                 trailersList = trailers.toTrailerList(),
                 continueTrackingEpisodes = continueTracking?.episodes ?: persistentListOf(),
-                continueTrackingScrollIndex = continueTracking?.firstUnwatchedIndex ?: 0,
             )
         }.flowOn(dispatchers.io.limitedParallelism(8))
     }
