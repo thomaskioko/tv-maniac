@@ -9,7 +9,6 @@ import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.mapNotNull
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -17,26 +16,23 @@ public class ObservableSeasonDetailsInteractor(
     private val seasonDetailsRepository: SeasonDetailsRepository,
     private val castRepository: CastRepository,
 ) : SubjectInteractor<SeasonDetailsParam, SeasonDetailsResult>() {
-    override fun createObservable(params: SeasonDetailsParam): Flow<SeasonDetailsResult> {
-        return combine(
+    override fun createObservable(params: SeasonDetailsParam): Flow<SeasonDetailsResult> =
+        combine(
             seasonDetailsRepository.observeSeasonImages(params.seasonId),
             seasonDetailsRepository.observeSeasonDetails(params),
             castRepository.observeSeasonCast(params.seasonId),
         ) { images, seasonDetails, cast ->
-            seasonDetails?.let { details ->
-                SeasonDetailsResult(
-                    seasonDetails = details,
-                    images = images.map { image -> SeasonImages(image.image_id, image.image_url) },
-                    cast = cast.map { castMember ->
-                        SeasonCast(
-                            id = castMember.cast_id.id,
-                            name = castMember.name,
-                            profilePath = castMember.profile_path,
-                            characterName = castMember.character_name,
-                        )
-                    },
-                )
-            }
-        }.mapNotNull { it }
-    }
+            SeasonDetailsResult(
+                seasonDetails = seasonDetails,
+                images = images.map { image -> SeasonImages(image.image_id, image.image_url) },
+                cast = cast.map { castMember ->
+                    SeasonCast(
+                        id = castMember.cast_id.id,
+                        name = castMember.name,
+                        profilePath = castMember.profile_path,
+                        characterName = castMember.character_name,
+                    )
+                },
+            )
+        }
 }
