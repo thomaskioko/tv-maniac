@@ -12,6 +12,12 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsModel
 import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
+
+private fun LocalDate.toEpochMillis(): Long =
+    atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
 
 val showDetailsContent = ShowDetailsContent(
     showDetails = ShowDetailsModel.Empty.copy(
@@ -89,7 +95,7 @@ val testEpisodeDetails = EpisodeDetails(
     voteAverage = 8.5,
     voteCount = 100L,
     stillPath = "/episode1.jpg",
-    airDate = "2023-01-01",
+    firstAired = LocalDate(2023, 1, 1).toEpochMillis(),
     isWatched = false,
     daysUntilAir = null,
     hasAired = true,
@@ -101,7 +107,6 @@ val testContinueTrackingResult = ContinueTrackingResult(
         testEpisodeDetails.copy(id = 1002L, episodeNumber = 2L, name = "Episode 2"),
         testEpisodeDetails.copy(id = 1003L, episodeNumber = 3L, name = "Episode 3"),
     ).toImmutableList(),
-    firstUnwatchedIndex = 0,
     currentSeasonNumber = 1L,
     currentSeasonId = 101L,
 )
