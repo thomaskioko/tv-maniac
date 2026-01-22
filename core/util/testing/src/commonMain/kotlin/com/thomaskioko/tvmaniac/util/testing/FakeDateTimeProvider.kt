@@ -15,6 +15,7 @@ public class FakeDateTimeProvider(
     private var epochToDisplayDateTimeResult: String = "2024-01-01 12:00"
     private var extractYearResult: String = "2024"
     private var fakeToday: LocalDate? = null
+    private var currentYearResult: Int = 2024
 
     override fun now(): Instant = currentTime
 
@@ -33,6 +34,8 @@ public class FakeDateTimeProvider(
         return runCatching { Instant.parse(dateStr).toEpochMilliseconds() }
             .getOrNull()
     }
+
+    override fun currentYear(timeZone: TimeZone): Int = currentYearResult
 
     public fun setCurrentTime(instant: Instant) {
         currentTime = instant
@@ -56,5 +59,9 @@ public class FakeDateTimeProvider(
 
     public fun setExtractYearResult(result: String) {
         extractYearResult = result
+    }
+
+    public fun setCurrentYear(year: Int) {
+        currentYearResult = year
     }
 }

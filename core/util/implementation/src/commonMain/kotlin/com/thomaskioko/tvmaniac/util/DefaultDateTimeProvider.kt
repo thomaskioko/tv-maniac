@@ -60,4 +60,6 @@ public class DefaultDateTimeProvider : DateTimeProvider {
         return runCatching { Instant.parse(dateStr).toEpochMilliseconds() }
             .getOrNull()
     }
+
+    override fun currentYear(timeZone: TimeZone): Int = today(timeZone).year
 }

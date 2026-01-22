@@ -12,4 +12,5 @@ public interface DateTimeProvider {
     public fun extractYear(dateString: String): String
     public fun todayAsIsoDate(timeZone: TimeZone = TimeZone.currentSystemDefault()): String
     public fun isoDateToEpoch(dateStr: String?): Long?
+    public fun currentYear(timeZone: TimeZone = TimeZone.currentSystemDefault()): Int
 }
