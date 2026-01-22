@@ -85,7 +85,7 @@ public class DefaultSeasonDetailsPresenter(
             isEpisodeUpdating = episodeUpdating,
             seasonId = detailsResult.seasonDetails.seasonId,
             seasonName = detailsResult.seasonDetails.name,
-            seasonOverview = detailsResult.seasonDetails.seasonOverview,
+            seasonOverview = detailsResult.seasonDetails.seasonOverview ?: "",
             episodeCount = detailsResult.seasonDetails.episodeCount,
             imageUrl = detailsResult.seasonDetails.imageUrl,
             episodeDetailsList = detailsResult.seasonDetails.episodes.toEpisodes(
