@@ -166,15 +166,16 @@ class WatchlistPresenterTest {
 
     @Test
     fun `should show PREMIERE badge for episode 1`() = runTest {
-        val testDateMillis = 20076L * 24 * 60 * 60 * 1000L
-        factory.dateTimeProvider.setCurrentTimeMillis(testDateMillis)
+        val currentTime = LocalDate(2024, 11, 14).toEpochMillis()
+        factory.dateTimeProvider.setCurrentTimeMillis(currentTime)
 
         val premiereEpisode = createNextEpisodeWithShow(
             showTraktId = 1L,
             showName = "Loki",
             episodeId = 101L,
             episodeNumber = 1L,
-            firstAired = testDateMillis,
+            seasonNumber = 2L,
+            firstAired = currentTime,
         )
 
         presenter.state.test {
@@ -227,6 +228,7 @@ class WatchlistPresenterTest {
         showName: String,
         episodeId: Long,
         episodeNumber: Long = 2L,
+        seasonNumber: Long = 1L,
         lastWatchedAt: Long? = null,
         firstAired: Long? = LocalDate(2021, 6, 9).toEpochMillis(),
     ) = NextEpisodeWithShow(
@@ -238,8 +240,8 @@ class WatchlistPresenterTest {
         showYear = "2024",
         episodeId = episodeId,
         episodeName = "Episode Title",
-        seasonId = 1L,
-        seasonNumber = 1L,
+        seasonId = seasonNumber,
+        seasonNumber = seasonNumber,
         episodeNumber = episodeNumber,
         runtime = 45L,
         stillPath = "/still.jpg",

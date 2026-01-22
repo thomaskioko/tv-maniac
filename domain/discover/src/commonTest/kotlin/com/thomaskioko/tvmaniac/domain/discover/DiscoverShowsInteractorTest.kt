@@ -126,8 +126,11 @@ class DiscoverShowsInteractorTest {
     private fun createNextEpisodesList(size: Int = 5) = List(size) { index ->
         NextEpisodeWithShow(
             showTraktId = 84958L + index,
+            showTmdbId = 84958L + index,
             showName = "Test Show $index",
             showPoster = "/test-poster-$index.jpg",
+            showStatus = "Ended",
+            showYear = "2024",
             episodeId = 1000L + index,
             episodeName = "Test Episode $index",
             seasonNumber = 1L,
@@ -136,6 +139,10 @@ class DiscoverShowsInteractorTest {
             stillPath = "/test-still-$index.jpg",
             overview = "Test episode overview $index",
             seasonId = 1234,
+            seasonCount = 2,
+            episodeCount = 12,
+            watchedCount = 0,
+            totalCount = 10,
         )
     }
 

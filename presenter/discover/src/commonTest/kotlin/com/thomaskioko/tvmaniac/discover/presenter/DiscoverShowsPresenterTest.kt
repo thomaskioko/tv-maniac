@@ -337,8 +337,11 @@ class DiscoverShowsPresenterTest {
     private fun createNextEpisodesList(size: Int = LIST_SIZE) = List(size) { index ->
         NextEpisodeWithShow(
             showTraktId = 84958L + index,
+            showTmdbId = 84958L + index,
             showName = "Test Show $index",
             showPoster = "/test-poster-$index.jpg",
+            showStatus = "Ended",
+            showYear = "2024",
             episodeId = 1000L + index,
             episodeName = "Test Episode $index",
             seasonId = 2000L + index,
@@ -347,6 +350,10 @@ class DiscoverShowsPresenterTest {
             runtime = 45L,
             stillPath = "/test-still-$index.jpg",
             overview = "Test episode overview $index",
+            seasonCount = 2,
+            episodeCount = 12,
+            watchedCount = 0,
+            totalCount = 10,
         )
     }.toImmutableList()
 
