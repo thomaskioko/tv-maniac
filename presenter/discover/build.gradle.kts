@@ -42,7 +42,6 @@ kotlin {
                 implementation(projects.data.traktauth.testing)
                 implementation(projects.data.trendingshows.testing)
                 implementation(projects.data.upcomingshows.testing)
-                implementation(projects.i18n.testing)
 
                 implementation(libs.bundles.unittest)
             }
