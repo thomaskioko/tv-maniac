@@ -150,7 +150,7 @@ jobs:
                 uses: gradle/actions/setup-gradle@v5
 
             -   name: Run Common iOS Unit Tests
-                run: ./gradlew clean iosSimulatorArm64Test -Papp.enableIos=true -Papp.debugOnly=false
+                run: ./gradlew iosSimulatorArm64Test -Papp.enableIos=true -Papp.debugOnly=false
 
             -   name: Upload Common Test Report
                 uses: actions/upload-artifact@v6
