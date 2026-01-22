@@ -29,9 +29,8 @@ public class DefaultGenreRepository(
     }
 
     override suspend fun fetchShowByGenreId(id: String, forceRefresh: Boolean) {
-        val isEmpty = genreDao.observeShowsByGenreId(id).first().isEmpty()
         when {
-            forceRefresh || isEmpty -> showsByGenreIdStore.fresh(id)
+            forceRefresh -> showsByGenreIdStore.fresh(id)
             else -> showsByGenreIdStore.get(id)
         }
     }
