@@ -44,6 +44,7 @@ kotlin {
                 implementation(projects.data.traktauth.testing)
                 implementation(projects.data.watchlist.testing)
                 implementation(projects.domain.showdetails)
+                implementation(projects.i18n.testing)
 
                 implementation(libs.bundles.unittest)
             }

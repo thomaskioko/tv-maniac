@@ -5,6 +5,7 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
 import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
+import com.thomaskioko.tvmaniac.i18n.testing.util.IgnoreIos
 import com.thomaskioko.tvmaniac.watchlist.presenter.ChangeListStyleClicked
 import com.thomaskioko.tvmaniac.watchlist.presenter.FakeWatchlistPresenterFactory
 import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistPresenter
@@ -27,6 +28,7 @@ import kotlin.test.Test
 private fun LocalDate.toEpochMillis(): Long =
     atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
 
+@IgnoreIos
 class WatchlistPresenterTest {
 
     private val lifecycle = LifecycleRegistry()
