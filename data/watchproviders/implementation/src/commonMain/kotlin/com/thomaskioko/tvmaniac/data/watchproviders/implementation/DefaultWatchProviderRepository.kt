@@ -28,7 +28,6 @@ public class DefaultWatchProviderRepository(
 
     override suspend fun fetchWatchProviders(traktId: Long, forceRefresh: Boolean) {
         val tmdbId = tvShowsDao.getTmdbIdByTraktId(traktId) ?: return
-        val isEmpty = dao.observeWatchProviders(tmdbId).first().isEmpty()
         val isExpired = requestManagerRepository.isRequestExpired(
             entityId = tmdbId,
             requestType = WATCH_PROVIDERS.name,
@@ -36,7 +35,7 @@ public class DefaultWatchProviderRepository(
         )
 
         when {
-            forceRefresh || isEmpty || isExpired -> store.fresh(traktId)
+            forceRefresh || isExpired -> store.fresh(traktId)
             else -> store.get(traktId)
         }
     }

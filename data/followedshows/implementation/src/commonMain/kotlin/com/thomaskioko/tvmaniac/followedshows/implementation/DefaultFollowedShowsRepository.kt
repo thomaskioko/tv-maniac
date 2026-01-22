@@ -58,8 +58,8 @@ public class DefaultFollowedShowsRepository(
         }
     }
 
-    override fun observeFollowedShows(): Flow<List<FollowedShowEntry>> =
-        followedShowsDao.entriesObservable()
+    override suspend fun getFollowedShows(): List<FollowedShowEntry> =
+        withContext(dispatchers.io) { followedShowsDao.entries() }
 
     override suspend fun addFollowedShow(traktId: Long) {
         withContext(dispatchers.io) {

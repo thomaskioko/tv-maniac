@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.db.SeasonCast
 import com.thomaskioko.tvmaniac.db.ShowCast
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
@@ -34,6 +35,11 @@ public class DefaultCastDao(
             popularity = entity.popularity,
         )
     }
+
+    override suspend fun getShowCast(traktId: Long): List<ShowCast> =
+        withContext(dispatcher.io) {
+            database.castQueries.showCast(Id(traktId)).executeAsList()
+        }
 
     override fun observeShowCast(traktId: Long): Flow<List<ShowCast>> =
         database.castQueries.showCast(Id(traktId)).asFlow().mapToList(dispatcher.io)

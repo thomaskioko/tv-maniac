@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.Flow
 public interface CastDao {
     public fun upsert(entity: Casts)
 
+    public suspend fun getShowCast(traktId: Long): List<ShowCast>
+
     public fun observeShowCast(traktId: Long): Flow<List<ShowCast>>
 
     public fun observeSeasonCast(seasonId: Long): Flow<List<SeasonCast>>

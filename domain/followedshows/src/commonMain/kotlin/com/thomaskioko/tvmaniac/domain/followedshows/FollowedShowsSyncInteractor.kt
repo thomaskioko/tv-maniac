@@ -9,7 +9,6 @@ import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
@@ -25,7 +24,7 @@ public class FollowedShowsSyncInteractor(
         withContext(dispatchers.io) {
             followedShowsRepository.syncFollowedShows(params.forceRefresh)
 
-            val followedShows = followedShowsRepository.observeFollowedShows().first()
+            val followedShows = followedShowsRepository.getFollowedShows()
             logger.debug(TAG, "Syncing content for ${followedShows.size} followed shows.")
 
             followedShows.parallelForEach { show ->

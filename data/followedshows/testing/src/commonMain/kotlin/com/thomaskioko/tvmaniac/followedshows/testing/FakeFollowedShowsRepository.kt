@@ -20,7 +20,7 @@ public class FakeFollowedShowsRepository : FollowedShowsRepository {
     override suspend fun syncFollowedShows(forceRefresh: Boolean) {
     }
 
-    override fun observeFollowedShows(): Flow<List<FollowedShowEntry>> = entries
+    override suspend fun getFollowedShows(): List<FollowedShowEntry> = entries.value
 
     override suspend fun addFollowedShow(traktId: Long) {
         _addedShowIds.add(traktId)

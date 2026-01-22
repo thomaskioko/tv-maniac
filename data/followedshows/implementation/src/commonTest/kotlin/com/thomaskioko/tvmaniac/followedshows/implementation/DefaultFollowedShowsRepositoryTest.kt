@@ -166,12 +166,9 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
             ),
         )
 
-        repository.observeFollowedShows().test {
-            val entries = awaitItem()
+            val entries = repository.getFollowedShows()
             entries.size shouldBe 2
             entries.map { it.traktId }.toSet() shouldBe setOf(1L, 2L)
-            cancelAndConsumeRemainingEvents()
-        }
     }
 
     @Test
