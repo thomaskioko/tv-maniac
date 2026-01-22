@@ -21,6 +21,10 @@ public class FakeDatastoreRepository : DatastoreRepository {
     private val lastTraktUserId: MutableStateFlow<String?> = MutableStateFlow(null)
     private val backgroundSyncEnabledFlow = MutableStateFlow(true)
     private val lastSyncTimestampFlow: MutableStateFlow<Long?> = MutableStateFlow(null)
+    private val episodeNotificationsEnabledFlow = MutableStateFlow(false)
+    private val notificationPermissionAskedFlow = MutableStateFlow(false)
+    private val showNotificationRationaleFlow = MutableStateFlow(false)
+    private val requestNotificationPermissionFlow = MutableStateFlow(false)
 
     public suspend fun setTheme(appTheme: AppTheme) {
         appThemeFlow.value = appTheme
@@ -70,6 +74,8 @@ public class FakeDatastoreRepository : DatastoreRepository {
 
     override fun observeIncludeSpecials(): Flow<Boolean> = includeSpecialsFlow.asStateFlow()
 
+    override suspend fun getIncludeSpecials(): Boolean = includeSpecialsFlow.value
+
     override suspend fun saveLastTraktUserId(userId: String?) {
     }
 
@@ -86,4 +92,28 @@ public class FakeDatastoreRepository : DatastoreRepository {
     }
 
     override fun observeLastSyncTimestamp(): Flow<Long?> = lastSyncTimestampFlow.asStateFlow()
+
+    override suspend fun setEpisodeNotificationsEnabled(enabled: Boolean) {
+        episodeNotificationsEnabledFlow.value = enabled
+    }
+
+    override fun observeEpisodeNotificationsEnabled(): Flow<Boolean> = episodeNotificationsEnabledFlow.asStateFlow()
+
+    override suspend fun setNotificationPermissionAsked(asked: Boolean) {
+        notificationPermissionAskedFlow.value = asked
+    }
+
+    override fun observeNotificationPermissionAsked(): Flow<Boolean> = notificationPermissionAskedFlow.asStateFlow()
+
+    override suspend fun setShowNotificationRationale(show: Boolean) {
+        showNotificationRationaleFlow.value = show
+    }
+
+    override fun observeShowNotificationRationale(): Flow<Boolean> = showNotificationRationaleFlow.asStateFlow()
+
+    override suspend fun setRequestNotificationPermission(request: Boolean) {
+        requestNotificationPermissionFlow.value = request
+    }
+
+    override fun observeRequestNotificationPermission(): Flow<Boolean> = requestNotificationPermissionFlow.asStateFlow()
 }
