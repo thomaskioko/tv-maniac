@@ -22,6 +22,9 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
+private fun LocalDate.toEpochMillis(): Long =
+    atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
+
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
 
@@ -331,7 +334,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         showId: Long,
         episodeNumber: Long,
         title: String,
-        airDate: String = "2023-01-01",
+        firstAired: Long? = LocalDate(2023, 1, 1).toEpochMillis(),
     ) {
         val _ = database.episodesQueries.upsert(
             id = Id(episodeId),
@@ -344,8 +347,8 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             image_url = "/ep$episodeId.jpg",
             ratings = 8.0,
             vote_count = 100L,
-            air_date = airDate,
             trakt_id = null,
+            first_aired = firstAired,
         )
     }
 
