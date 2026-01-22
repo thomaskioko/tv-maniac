@@ -8,7 +8,7 @@ public data class WatchlistQueryChanged(val query: String) : WatchlistAction
 
 public data object ClearWatchlistQuery : WatchlistAction
 
-public data object ChangeListStyleClicked : WatchlistAction
+public data class ChangeListStyleClicked(val isGridMode: Boolean) : WatchlistAction
 
 public data class MessageShown(val id: Long) : WatchlistAction
 

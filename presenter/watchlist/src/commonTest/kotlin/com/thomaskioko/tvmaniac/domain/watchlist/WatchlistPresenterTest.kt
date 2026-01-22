@@ -17,9 +17,15 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+
+private fun LocalDate.toEpochMillis(): Long =
+    atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
 
 class WatchlistPresenterTest {
 
@@ -58,15 +64,15 @@ class WatchlistPresenterTest {
         presenter.state.test {
             awaitItem() shouldBe WatchlistState()
 
-            factory.repository.setObserveResult(cachedResult)
+            factory.episodeRepository.setNextEpisodesForWatchlist(cachedNextEpisodes)
 
             val state = awaitItem()
             state.query shouldBe ""
             state.isSearchActive shouldBe false
             state.isGridMode shouldBe true
-            state.watchNextItems shouldBe expectedUiResult(cachedResult)
+            state.watchNextItems shouldBe expectedUiResult(cachedNextEpisodes)
 
-            factory.repository.setObserveResult(updatedData)
+            factory.episodeRepository.setNextEpisodesForWatchlist(updatedNextEpisodes)
 
             val secondUpdate = awaitItem()
             secondUpdate.watchNextItems shouldBe expectedUiResult()
@@ -78,18 +84,18 @@ class WatchlistPresenterTest {
         presenter.state.test {
             awaitItem() shouldBe WatchlistState()
 
-            factory.repository.setObserveResult(cachedResult)
+            factory.episodeRepository.setNextEpisodesForWatchlist(cachedNextEpisodes)
 
             val initialState = awaitItem()
             initialState.isGridMode shouldBe true
-            initialState.watchNextItems shouldBe expectedUiResult(cachedResult)
+            initialState.watchNextItems shouldBe expectedUiResult(cachedNextEpisodes)
 
-            presenter.dispatch(ChangeListStyleClicked)
+            presenter.dispatch(ChangeListStyleClicked(isGridMode = true))
 
             val updatedState = awaitItem()
             updatedState.isGridMode shouldBe false
 
-            presenter.dispatch(ChangeListStyleClicked)
+            presenter.dispatch(ChangeListStyleClicked(isGridMode = false))
 
             val finalState = awaitItem()
             finalState.isGridMode shouldBe true
@@ -98,12 +104,10 @@ class WatchlistPresenterTest {
 
     @Test
     fun `should update query and search state when WatchlistQueryChanged is dispatched`() = runTest {
-        factory.repository.setSearchResult(emptyList())
-
         presenter.state.test {
             awaitItem() shouldBe WatchlistState()
 
-            factory.repository.setObserveResult(cachedResult)
+            factory.episodeRepository.setNextEpisodesForWatchlist(cachedNextEpisodes)
 
             val initialState = awaitItem()
             initialState.query shouldBe ""
@@ -162,7 +166,6 @@ class WatchlistPresenterTest {
 
     @Test
     fun `should show PREMIERE badge for episode 1`() = runTest {
-        val testDate = "2025-12-14"
         val testDateMillis = 20076L * 24 * 60 * 60 * 1000L
         factory.dateTimeProvider.setCurrentTimeMillis(testDateMillis)
 
@@ -171,7 +174,7 @@ class WatchlistPresenterTest {
             showName = "Loki",
             episodeId = 101L,
             episodeNumber = 1L,
-            airDate = testDate,
+            firstAired = testDateMillis,
         )
 
         presenter.state.test {
@@ -186,9 +189,10 @@ class WatchlistPresenterTest {
     }
 
     @Test
-    fun `should group episodes into stale section when last watched over 7 days ago`() = runTest {
-        val currentTime = 1000000000000L
-        val eightDaysAgo = currentTime - (8 * 24 * 60 * 60 * 1000L)
+    fun `should group episodes into stale section when last watched over 16 days ago`() = runTest {
+        val currentTime = LocalDate(2023, 11, 14).toEpochMillis()
+        val seventeenDaysAgo = LocalDate(2023, 10, 28).toEpochMillis()
+        val oneDayAgo = LocalDate(2023, 11, 13).toEpochMillis()
 
         factory.dateTimeProvider.setCurrentTimeMillis(currentTime)
 
@@ -196,13 +200,13 @@ class WatchlistPresenterTest {
             showTraktId = 1L,
             showName = "Stale Show",
             episodeId = 101L,
-            lastWatchedAt = eightDaysAgo,
+            lastWatchedAt = seventeenDaysAgo,
         )
         val activeEpisode = createNextEpisodeWithShow(
             showTraktId = 2L,
             showName = "Active Show",
             episodeId = 201L,
-            lastWatchedAt = currentTime - (1 * 24 * 60 * 60 * 1000L),
+            lastWatchedAt = oneDayAgo,
         )
 
         presenter.state.test {
@@ -224,11 +228,14 @@ class WatchlistPresenterTest {
         episodeId: Long,
         episodeNumber: Long = 2L,
         lastWatchedAt: Long? = null,
-        airDate: String? = "2021-06-09",
+        firstAired: Long? = LocalDate(2021, 6, 9).toEpochMillis(),
     ) = NextEpisodeWithShow(
         showTraktId = showTraktId,
+        showTmdbId = showTraktId,
         showName = showName,
         showPoster = "/poster.jpg",
+        showStatus = "Ended",
+        showYear = "2024",
         episodeId = episodeId,
         episodeName = "Episode Title",
         seasonId = 1L,
@@ -237,7 +244,11 @@ class WatchlistPresenterTest {
         runtime = 45L,
         stillPath = "/still.jpg",
         overview = "Episode overview",
-        airDate = airDate,
+        firstAired = firstAired,
         lastWatchedAt = lastWatchedAt,
+        seasonCount = 2,
+        episodeCount = 12,
+        watchedCount = 0,
+        totalCount = 10,
     )
 }
