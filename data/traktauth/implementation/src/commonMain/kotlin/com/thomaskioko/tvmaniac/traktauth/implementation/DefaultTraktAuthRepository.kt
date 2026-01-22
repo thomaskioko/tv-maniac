@@ -45,6 +45,12 @@ public class DefaultTraktAuthRepository(
 
     private val _authError = MutableStateFlow<AuthError?>(null)
 
+    init {
+        scope.launch {
+            authStore.get()?.also { cacheAuthState(it) }
+        }
+    }
+
     override val state: Flow<TraktAuthState> = authState.map { state ->
         if (state?.isAuthorized == true) {
             TraktAuthState.LOGGED_IN
