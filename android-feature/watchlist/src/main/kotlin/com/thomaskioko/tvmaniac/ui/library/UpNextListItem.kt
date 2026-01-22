@@ -119,7 +119,7 @@ internal fun UpNextListItem(
                     when (item.badge) {
                         EpisodeBadge.PREMIERE -> PremiereBadge(text = premiereLabel)
                         EpisodeBadge.NEW -> NewBadge(text = newLabel)
-                        EpisodeBadge.NONE -> {}
+                        null -> {}
                     }
                 }
             }
