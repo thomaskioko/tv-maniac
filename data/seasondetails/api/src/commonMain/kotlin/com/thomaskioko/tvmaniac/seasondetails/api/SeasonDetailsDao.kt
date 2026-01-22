@@ -1,13 +1,17 @@
 package com.thomaskioko.tvmaniac.seasondetails.api
 
+import com.thomaskioko.tvmaniac.db.EpisodesBySeasonId
+import com.thomaskioko.tvmaniac.db.GetSeasonWithShowInfo
+import com.thomaskioko.tvmaniac.db.SeasonDetails
 import com.thomaskioko.tvmaniac.db.SeasonImages
-import com.thomaskioko.tvmaniac.seasondetails.api.model.SeasonDetailsWithEpisodes
 import kotlinx.coroutines.flow.Flow
 
 public interface SeasonDetailsDao {
-    public fun fetchSeasonDetails(showTraktId: Long, seasonNumber: Long): SeasonDetailsWithEpisodes?
+    public fun observeSeasonDetails(showTraktId: Long, seasonNumber: Long): Flow<List<SeasonDetails>>
 
-    public fun observeSeasonEpisodeDetails(showTraktId: Long, seasonNumber: Long): Flow<SeasonDetailsWithEpisodes?>
+    public fun observeSeasonWithShowInfo(showTraktId: Long, seasonNumber: Long): Flow<GetSeasonWithShowInfo?>
+
+    public fun observeEpisodesBySeasonId(seasonId: Long): Flow<List<EpisodesBySeasonId>>
 
     public fun delete(showTraktId: Long)
 

@@ -6,7 +6,7 @@ public data class SeasonDetailsWithEpisodes(
     val showTmdbId: Long,
     val name: String,
     val showTitle: String,
-    val seasonOverview: String,
+    val seasonOverview: String?,
     val imageUrl: String?,
     val seasonNumber: Long,
     val episodeCount: Long,

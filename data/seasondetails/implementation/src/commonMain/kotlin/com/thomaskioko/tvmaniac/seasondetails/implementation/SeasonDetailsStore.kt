@@ -10,16 +10,17 @@ import com.thomaskioko.tvmaniac.db.Casts
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Episode
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.SeasonDetails
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.SEASON_DETAILS
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsDao
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
-import com.thomaskioko.tvmaniac.seasondetails.api.model.SeasonDetailsWithEpisodes
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsDao
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbSeasonDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
+import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -40,29 +41,23 @@ public class SeasonDetailsStore(
     private val seasonsDao: SeasonsDao,
     private val seasonDetailsDao: SeasonDetailsDao,
     private val formatterUtil: FormatterUtil,
+    private val dateTimeProvider: DateTimeProvider,
     private val requestManagerRepository: RequestManagerRepository,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
-) : Store<SeasonDetailsParam, SeasonDetailsWithEpisodes> by storeBuilder(
+) : Store<SeasonDetailsParam, List<SeasonDetails>> by storeBuilder(
     fetcher = Fetcher.of { params: SeasonDetailsParam ->
         coroutineScope {
-            // Get TMDB ID for TMDB API calls (supplementary data)
             val showTmdbId = tvShowsDao.getTmdbIdByTraktId(params.showTraktId)
 
-            // Fetch Trakt episodes and TMDB data in parallel
-            val traktSeasonDeferred = async {
+            val traktSeason = async {
                 traktRemoteDataSource.getSeasonEpisodes(params.showTraktId, params.seasonNumber.toInt()).getOrThrow()
-            }
-            val tmdbSeasonDeferred = async {
-                // TMDB data is supplementary - use getOrNull so failures don't break the fetch
+            }.await()
+            val tmdbSeason = async {
                 showTmdbId?.let {
                     tmdbRemoteDataSource.getSeasonDetails(it, params.seasonNumber).getOrNull()
                 }
-            }
-
-            // Await and combine
-            val traktSeason = traktSeasonDeferred.await()
-            val tmdbSeason = tmdbSeasonDeferred.await()
+            }.await()
 
             SeasonDetailsResponse(
                 traktEpisodes = traktSeason,
@@ -72,26 +67,24 @@ public class SeasonDetailsStore(
             )
         }
     },
-    sourceOfTruth = SourceOfTruth.of<SeasonDetailsParam, SeasonDetailsResponse, SeasonDetailsWithEpisodes>(
+    sourceOfTruth = SourceOfTruth.of<SeasonDetailsParam, SeasonDetailsResponse, List<SeasonDetails>>(
         reader = { params: SeasonDetailsParam ->
-            seasonDetailsDao.observeSeasonEpisodeDetails(
+            seasonDetailsDao.observeSeasonDetails(
                 params.showTraktId,
                 params.seasonNumber,
             )
         },
         writer = { params: SeasonDetailsParam, response ->
             databaseTransactionRunner {
-                // Create a map of TMDB episode images by episode number
                 val tmdbEpisodeImages = response.tmdbEpisodes.associate {
                     it.episodeNumber to it.stillPath
                 }
 
-                // Insert Episodes (from Trakt with TMDB images)
                 response.traktEpisodes.forEach { episode ->
                     val tmdbImage = tmdbEpisodeImages[episode.episodeNumber]
                     episodesDao.insert(
                         Episode(
-                            id = Id(episode.ids.tmdb?.toLong() ?: episode.ids.trakt.toLong()),
+                            id = Id(episode.ids.trakt.toLong()),
                             season_id = Id(params.seasonId),
                             show_trakt_id = Id(params.showTraktId),
                             episode_number = episode.episodeNumber.toLong(),
@@ -101,22 +94,19 @@ public class SeasonDetailsStore(
                             vote_count = episode.votes?.toLong() ?: 0L,
                             ratings = episode.ratings ?: 0.0,
                             image_url = tmdbImage?.let { formatterUtil.formatTmdbPosterPath(it) },
-                            air_date = episode.firstAired,
                             trakt_id = episode.ids.trakt.toLong(),
+                            first_aired = dateTimeProvider.isoDateToEpoch(episode.firstAired),
                         ),
                     )
                 }
 
-                // Insert Season Images (from TMDB) - optional
                 response.tmdbImages?.posters?.let { posters ->
-                    // Update the season's main image_url with the first poster
                     posters.firstOrNull()?.let { firstPoster ->
                         seasonsDao.updateImageUrl(
                             seasonId = params.seasonId,
                             imageUrl = formatterUtil.formatTmdbPosterPath(firstPoster.filePath),
                         )
                     }
-                    // Also store all posters in season_images table for gallery
                     posters.forEach { image ->
                         seasonDetailsDao.upsertSeasonImage(
                             seasonId = params.seasonId,
@@ -125,7 +115,7 @@ public class SeasonDetailsStore(
                     }
                 }
 
-                // Insert Season Cast (from TMDB) - optional
+                // TODO:: Migrate to Fetch from Trakt
                 response.tmdbCredits?.cast?.forEach { cast ->
                     castDao.upsert(
                         Casts(
@@ -160,14 +150,16 @@ public class SeasonDetailsStore(
             writeDispatcher = dispatchers.databaseWrite,
         ),
 ).validator(
-    Validator.by {
-        withContext(dispatchers.io) {
-            !requestManagerRepository.isRequestExpired(
-                entityId = it.seasonId,
-                requestType = SEASON_DETAILS.name,
-                threshold = SEASON_DETAILS.duration,
-            )
-        }
+    Validator.by { seasonDetailsList ->
+        seasonDetailsList.firstOrNull()?.season_id?.id?.let { seasonId ->
+            withContext(dispatchers.io) {
+                !requestManagerRepository.isRequestExpired(
+                    entityId = seasonId,
+                    requestType = SEASON_DETAILS.name,
+                    threshold = SEASON_DETAILS.duration,
+                )
+            }
+        } ?: false
     },
 )
     .build()
