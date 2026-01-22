@@ -6,10 +6,10 @@ import com.thomaskioko.tvmaniac.episodes.api.model.LastWatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
+import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlin.time.Instant
 
 public data class MarkEpisodeWatchedCall(
     val showTraktId: Long,
@@ -37,6 +37,7 @@ public class FakeEpisodeRepository : EpisodeRepository {
     private val allSeasonsWatchProgressFlow = MutableStateFlow<List<SeasonWatchProgress>>(emptyList())
     private val continueTrackingFlow = MutableStateFlow<ContinueTrackingResult?>(null)
     private val unwatchedCountInPreviousSeasonsFlow = MutableStateFlow(0L)
+    private val upcomingEpisodesFlow = MutableStateFlow<List<UpcomingEpisode>>(emptyList())
 
     public var lastMarkEpisodeWatchedCall: MarkEpisodeWatchedCall? = null
         private set
@@ -71,6 +72,10 @@ public class FakeEpisodeRepository : EpisodeRepository {
         unwatchedCountInPreviousSeasonsFlow.value = count
     }
 
+    public fun setUpcomingEpisodes(episodes: List<UpcomingEpisode>) {
+        upcomingEpisodesFlow.value = episodes
+    }
+
     override fun observeNextEpisodesForWatchlist(): Flow<List<NextEpisodeWithShow>> =
         nextEpisodesForWatchlist.asStateFlow()
 
@@ -79,7 +84,6 @@ public class FakeEpisodeRepository : EpisodeRepository {
         episodeId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
-        watchedAt: Instant?,
     ) {
         lastMarkEpisodeWatchedCall = MarkEpisodeWatchedCall(showTraktId, episodeId, seasonNumber, episodeNumber)
     }
@@ -100,7 +104,7 @@ public class FakeEpisodeRepository : EpisodeRepository {
     override fun observeAllSeasonsWatchProgress(showTraktId: Long): Flow<List<SeasonWatchProgress>> =
         allSeasonsWatchProgressFlow.asStateFlow()
 
-    override suspend fun markSeasonWatched(showTraktId: Long, seasonNumber: Long, watchedAt: Instant?) {
+    override suspend fun markSeasonWatched(showTraktId: Long, seasonNumber: Long) {
         lastMarkSeasonWatchedCall = MarkSeasonWatchedCall(showTraktId, seasonNumber, markPreviousSeasons = false)
     }
 
@@ -109,7 +113,6 @@ public class FakeEpisodeRepository : EpisodeRepository {
         episodeId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
-        watchedAt: Instant?,
     ) {
         lastMarkEpisodeWatchedCall = MarkEpisodeWatchedCall(
             showTraktId,
@@ -123,7 +126,6 @@ public class FakeEpisodeRepository : EpisodeRepository {
     override suspend fun markSeasonAndPreviousSeasonsWatched(
         showTraktId: Long,
         seasonNumber: Long,
-        watchedAt: Instant?,
     ) {
         lastMarkSeasonWatchedCall = MarkSeasonWatchedCall(showTraktId, seasonNumber, markPreviousSeasons = true)
     }
@@ -142,4 +144,10 @@ public class FakeEpisodeRepository : EpisodeRepository {
         showTraktId: Long,
         seasonNumber: Long,
     ): Flow<Long> = unwatchedCountInPreviousSeasonsFlow.asStateFlow()
+
+    override suspend fun getUpcomingEpisodesFromFollowedShows(fromEpoch: Long, toEpoch: Long): List<UpcomingEpisode> =
+        upcomingEpisodesFlow.value
+
+    override suspend fun syncUpcomingEpisodesFromTrakt(startDate: String, days: Int, forceRefresh: Boolean) {
+    }
 }

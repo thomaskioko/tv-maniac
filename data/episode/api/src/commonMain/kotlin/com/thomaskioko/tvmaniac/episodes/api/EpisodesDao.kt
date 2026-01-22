@@ -1,6 +1,9 @@
 package com.thomaskioko.tvmaniac.episodes.api
 
 import com.thomaskioko.tvmaniac.db.GetEpisodeByShowSeasonEpisodeNumber
+import com.thomaskioko.tvmaniac.db.NextEpisodeForShow
+import com.thomaskioko.tvmaniac.db.UpcomingEpisodesFromFollowedShows
+import kotlinx.coroutines.flow.Flow
 import com.thomaskioko.tvmaniac.db.Episode as EpisodeCache
 
 public interface EpisodesDao {
@@ -18,4 +21,26 @@ public interface EpisodesDao {
         seasonNumber: Long,
         episodeNumber: Long,
     ): GetEpisodeByShowSeasonEpisodeNumber?
+
+    public suspend fun updateFirstAired(
+        showId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+        firstAired: Long,
+    )
+
+    public fun observeUpcomingEpisodesFromFollowedShows(
+        fromEpoch: Long,
+        toEpoch: Long,
+    ): Flow<List<UpcomingEpisodesFromFollowedShows>>
+
+    public suspend fun getUpcomingEpisodesFromFollowedShows(
+        fromEpoch: Long,
+        toEpoch: Long,
+    ): List<UpcomingEpisodesFromFollowedShows>
+
+    public fun observeNextEpisodeForShow(
+        showTraktId: Long,
+        includeSpecials: Boolean,
+    ): Flow<NextEpisodeForShow?>
 }

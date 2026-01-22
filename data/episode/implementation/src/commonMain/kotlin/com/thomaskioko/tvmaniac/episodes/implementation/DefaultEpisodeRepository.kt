@@ -50,7 +50,7 @@ public class DefaultEpisodeRepository(
     private val seasonsRepository: SeasonsRepository,
     private val seasonDetailsRepository: SeasonDetailsRepository,
     private val syncRepository: Lazy<WatchedEpisodeSyncRepository>,
-    private val calendarStore: TraktCalendarStore,
+    private val upcomingEpisodesStore: UpcomingEpisodesStore,
 ) : EpisodeRepository {
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -263,10 +263,10 @@ public class DefaultEpisodeRepository(
         days: Int,
         forceRefresh: Boolean,
     ) {
-        val params = TraktCalendarParams(startDate, days)
+        val params = UpcomingEpisodesParams(startDate, days)
         when {
-            forceRefresh -> calendarStore.fresh(params)
-            else -> calendarStore.get(params)
+            forceRefresh -> upcomingEpisodesStore.fresh(params)
+            else -> upcomingEpisodesStore.get(params)
         }
     }
 

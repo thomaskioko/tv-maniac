@@ -80,8 +80,8 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
             dateTimeProvider = fakeDateTimeProvider,
         )
     }
-    private val calendarStore by lazy {
-        TraktCalendarStore(
+    private val upcomingEpisodesStore by lazy {
+        UpcomingEpisodesStore(
             calendarDataSource = fakeCalendarDataSource,
             episodesDao = episodesDao,
             requestManagerRepository = fakeRequestManagerRepository,
@@ -104,7 +104,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
             seasonsRepository = fakeSeasonsRepository,
             seasonDetailsRepository = fakeSeasonDetailsRepository,
             syncRepository = lazy { fakeSyncRepository },
-            calendarStore = calendarStore,
+            upcomingEpisodesStore = upcomingEpisodesStore,
         )
 
         insertTestData()
