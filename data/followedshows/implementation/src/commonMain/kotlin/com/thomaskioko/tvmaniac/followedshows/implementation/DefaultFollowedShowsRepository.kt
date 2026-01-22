@@ -11,7 +11,6 @@ import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import com.thomaskioko.tvmaniac.util.api.ItemSyncer
 import com.thomaskioko.tvmaniac.util.api.syncerForEntity
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope

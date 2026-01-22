@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.followedshows.implementation
 
-import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
@@ -166,9 +165,9 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
             ),
         )
 
-            val entries = repository.getFollowedShows()
-            entries.size shouldBe 2
-            entries.map { it.traktId }.toSet() shouldBe setOf(1L, 2L)
+        val entries = repository.getFollowedShows()
+        entries.size shouldBe 2
+        entries.map { it.traktId }.toSet() shouldBe setOf(1L, 2L)
     }
 
     @Test

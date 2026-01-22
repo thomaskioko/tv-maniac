@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.followedshows.testing
 
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowEntry
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlin.time.Clock
 import kotlin.time.Duration

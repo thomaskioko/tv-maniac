@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.genre
 
 import com.thomaskioko.tvmaniac.db.Tvshow
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.impl.extensions.fresh
 import org.mobilenativefoundation.store.store5.impl.extensions.get
