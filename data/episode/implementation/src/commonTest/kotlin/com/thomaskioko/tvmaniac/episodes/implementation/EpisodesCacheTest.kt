@@ -33,7 +33,7 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
     }
 
     private fun List<Episode>.insertEpisodeEntityQuery() {
-        map { it.insertEpisodeEntityQuery() }
+        forEach { it.insertEpisodeEntityQuery() }
     }
 
     private fun insertShow() {
@@ -79,8 +79,8 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
             show_trakt_id = show_trakt_id,
             vote_count = vote_count,
             image_url = image_url,
-            air_date = air_date,
             trakt_id = trakt_id,
+            first_aired = first_aired,
         )
     }
 
@@ -96,8 +96,8 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
             runtime = 45,
             episode_number = 1,
             image_url = "/yDWJYRAwMNKbIYT8ZB33qy84uzO.jpg",
-            air_date = "2021-06-09",
             trakt_id = null,
+            first_aired = 1623196800000,
         ),
         Episode(
             id = Id(2927202),
@@ -110,8 +110,8 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
             runtime = 45,
             episode_number = 1,
             image_url = "/yDWJYRAwMNKbIYT8ZB33qy84uzO.jpg",
-            air_date = "2021-06-16",
             trakt_id = null,
+            first_aired = 1623801600000,
         ),
     )
 }

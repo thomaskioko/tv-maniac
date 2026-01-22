@@ -14,7 +14,7 @@ public class WatchProvidersInteractor(
 ) : Interactor<Param>() {
     override suspend fun doWork(params: Param) {
         withContext(dispatchers.io) {
-            repository.fetchWatchProviders(id = params.id, forceRefresh = params.forceRefresh)
+            repository.fetchWatchProviders(traktId = params.id, forceRefresh = params.forceRefresh)
         }
     }
 

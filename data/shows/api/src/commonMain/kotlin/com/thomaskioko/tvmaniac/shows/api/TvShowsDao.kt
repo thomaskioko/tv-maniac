@@ -13,6 +13,8 @@ public interface TvShowsDao {
 
     public fun observeQueryCount(query: String): Flow<Long>
 
+    public suspend fun getQueryCount(query: String): Long
+
     public fun deleteTvShows()
 
     public fun upsertMerging(show: Tvshow)

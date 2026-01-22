@@ -1,27 +1,29 @@
 package com.thomaskioko.tvmaniac.domain.watchlist
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.db.FollowedShows
-import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.domain.watchlist.model.UpNextSections
 import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
-import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
+private fun LocalDate.toEpochMillis(): Long =
+    atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
+
 @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
 class ObserveUpNextSectionsInteractorTest {
     private val testDispatcher = StandardTestDispatcher()
-    private val watchlistRepository = FakeWatchlistRepository()
     private val episodeRepository = FakeEpisodeRepository()
     private val dateTimeProvider = FakeDateTimeProvider()
 
@@ -32,9 +34,8 @@ class ObserveUpNextSectionsInteractorTest {
         Dispatchers.setMain(testDispatcher)
 
         interactor = ObserveUpNextSectionsInteractor(
-            watchlistRepository = watchlistRepository,
             episodeRepository = episodeRepository,
-            dateTimeProvider = dateTimeProvider,
+            mapper = UpNextSectionsMapper(dateTimeProvider),
         )
     }
 
@@ -45,7 +46,6 @@ class ObserveUpNextSectionsInteractorTest {
 
     @Test
     fun `should return empty sections when no episodes`() = runTest {
-        watchlistRepository.setObserveResult(emptyList())
         episodeRepository.setNextEpisodesForWatchlist(emptyList())
 
         interactor("")
@@ -65,7 +65,6 @@ class ObserveUpNextSectionsInteractorTest {
             createNextEpisode(showTraktId = 1, showName = "Loki"),
             createNextEpisode(showTraktId = 2, showName = "Wednesday"),
         )
-        watchlistRepository.setObserveResult(createWatchlist())
         episodeRepository.setNextEpisodesForWatchlist(episodes)
 
         interactor("")
@@ -81,18 +80,18 @@ class ObserveUpNextSectionsInteractorTest {
     }
 
     @Test
-    fun `should group stale episodes when lastWatched is over 7 days ago`() = runTest {
-        val currentTime = 1000000000000L
-        val eightDaysAgo = currentTime - (8 * 24 * 60 * 60 * 1000L)
-        val oneDayAgo = currentTime - (1 * 24 * 60 * 60 * 1000L)
+    fun `should group stale episodes when lastWatched is over 16 days ago`() = runTest {
+        val currentTime = LocalDate(2023, 11, 14).toEpochMillis()
+        val seventeenDaysAgo = LocalDate(2023, 10, 28).toEpochMillis()
+        val oneDayAgo = LocalDate(2023, 11, 13).toEpochMillis()
+        val pastAiredDate = LocalDate(2023, 10, 15).toEpochMillis()
 
         dateTimeProvider.setCurrentTimeMillis(currentTime)
 
         val episodes = listOf(
-            createNextEpisode(showTraktId = 1, showName = "Stale Show", lastWatchedAt = eightDaysAgo),
-            createNextEpisode(showTraktId = 2, showName = "Active Show", lastWatchedAt = oneDayAgo),
+            createNextEpisode(showTraktId = 1, showName = "Stale Show", lastWatchedAt = seventeenDaysAgo, firstAired = pastAiredDate),
+            createNextEpisode(showTraktId = 2, showName = "Active Show", lastWatchedAt = oneDayAgo, firstAired = pastAiredDate),
         )
-        watchlistRepository.setObserveResult(createWatchlist())
         episodeRepository.setNextEpisodesForWatchlist(episodes)
 
         interactor("")
@@ -113,7 +112,6 @@ class ObserveUpNextSectionsInteractorTest {
             createNextEpisode(showTraktId = 1, showName = "Loki"),
             createNextEpisode(showTraktId = 2, showName = "Wednesday"),
         )
-        watchlistRepository.setObserveResult(createWatchlist())
         episodeRepository.setNextEpisodesForWatchlist(episodes)
 
         interactor("Loki")
@@ -127,26 +125,10 @@ class ObserveUpNextSectionsInteractorTest {
     }
 
     @Test
-    fun `should calculate remaining episodes from watchlist`() = runTest {
-        val watchlist = listOf(
-            FollowedShows(
-                show_trakt_id = Id(1),
-                show_tmdb_id = Id(1),
-                name = "Loki",
-                poster_path = "/poster.jpg",
-                status = "Ongoing",
-                year = "2024",
-                created_at = 0,
-                season_count = 2,
-                episode_count = 20,
-                watched_count = 5,
-                total_episode_count = 10,
-            ),
-        )
+    fun `should calculate remaining episodes from episode data`() = runTest {
         val episodes = listOf(
-            createNextEpisode(showTraktId = 1, showName = "Loki"),
+            createNextEpisode(showTraktId = 1, showName = "Loki", watchedCount = 5, totalCount = 10),
         )
-        watchlistRepository.setObserveResult(watchlist)
         episodeRepository.setNextEpisodesForWatchlist(episodes)
 
         interactor("")
@@ -165,7 +147,6 @@ class ObserveUpNextSectionsInteractorTest {
             createNextEpisode(showTraktId = 1, showName = "Loki"),
             createNextEpisode(showTraktId = 2, showName = "Wednesday"),
         )
-        watchlistRepository.setObserveResult(createWatchlist())
         episodeRepository.setNextEpisodesForWatchlist(episodes)
 
         interactor("loki")
@@ -183,8 +164,11 @@ class ObserveUpNextSectionsInteractorTest {
         val episodes = listOf(
             NextEpisodeWithShow(
                 showTraktId = 1,
+                showTmdbId = 1,
                 showName = "Loki",
                 showPoster = "/poster.jpg",
+                showStatus = "Ended",
+                showYear = "2021",
                 episodeId = 101,
                 episodeName = "Glorious Purpose",
                 seasonId = 10,
@@ -193,11 +177,14 @@ class ObserveUpNextSectionsInteractorTest {
                 runtime = 51,
                 stillPath = "/still.jpg",
                 overview = "Episode overview",
-                airDate = "2021-06-09",
+                firstAired = LocalDate(2021, 6, 9).toEpochMillis(),
                 lastWatchedAt = null,
+                seasonCount = 2,
+                episodeCount = 12,
+                watchedCount = 0,
+                totalCount = 10,
             ),
         )
-        watchlistRepository.setObserveResult(createWatchlist())
         episodeRepository.setNextEpisodesForWatchlist(episodes)
 
         interactor("")
@@ -210,11 +197,12 @@ class ObserveUpNextSectionsInteractorTest {
             episode.showName shouldBe "Loki"
             episode.episodeId shouldBe 101
             episode.episodeTitle shouldBe "Glorious Purpose"
+            episode.episodeNumberFormatted shouldBe "S01 | E01"
             episode.seasonNumber shouldBe 1
             episode.episodeNumber shouldBe 1
-            episode.runtime shouldBe 51
+            episode.formattedRuntime shouldBe "51 min"
             episode.overview shouldBe "Episode overview"
-            episode.airDate shouldBe "2021-06-09"
+            episode.firstAired shouldBe LocalDate(2021, 6, 9).toEpochMillis()
             cancelAndConsumeRemainingEvents()
         }
     }
@@ -222,10 +210,9 @@ class ObserveUpNextSectionsInteractorTest {
     @Test
     fun `should filter out episodes with unknown air date`() = runTest {
         val episodes = listOf(
-            createNextEpisode(showTraktId = 1, showName = "Loki", airDate = "2021-06-09"),
-            createNextEpisode(showTraktId = 2, showName = "Wednesday", airDate = null),
+            createNextEpisode(showTraktId = 1, showName = "Loki", firstAired = LocalDate(2021, 6, 9).toEpochMillis()),
+            createNextEpisode(showTraktId = 2, showName = "Wednesday", firstAired = null),
         )
-        watchlistRepository.setObserveResult(createWatchlist())
         episodeRepository.setNextEpisodesForWatchlist(episodes)
 
         interactor("")
@@ -239,15 +226,46 @@ class ObserveUpNextSectionsInteractorTest {
     }
 
     @Test
+    fun `should format episode number with padding`() = runTest {
+        val episodes = listOf(
+            createNextEpisode(showTraktId = 1, showName = "Show", seasonNumber = 10, episodeNumber = 5),
+        )
+        episodeRepository.setNextEpisodesForWatchlist(episodes)
+
+        interactor("")
+
+        interactor.flow.test {
+            val result = awaitItem()
+            result.watchNext[0].episodeNumberFormatted shouldBe "S10 | E05"
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should return null formatted runtime when runtime is null`() = runTest {
+        val episodes = listOf(
+            createNextEpisode(showTraktId = 1, showName = "Show", runtime = null),
+        )
+        episodeRepository.setNextEpisodesForWatchlist(episodes)
+
+        interactor("")
+
+        interactor.flow.test {
+            val result = awaitItem()
+            result.watchNext[0].formattedRuntime shouldBe null
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
     fun `should filter out episodes that have not aired yet`() = runTest {
-        dateTimeProvider.setDaysUntilAir("2024-01-01", -14) // Aired 14 days ago
-        dateTimeProvider.setDaysUntilAir("2024-02-01", 17) // Airs in 17 days
+        val pastEpoch = dateTimeProvider.nowMillis() - (14 * 24 * 60 * 60 * 1000L)
+        val futureEpoch = dateTimeProvider.nowMillis() + (17 * 24 * 60 * 60 * 1000L)
 
         val episodes = listOf(
-            createNextEpisode(showTraktId = 1, showName = "Aired Show", airDate = "2024-01-01"),
-            createNextEpisode(showTraktId = 2, showName = "Future Show", airDate = "2024-02-01"),
+            createNextEpisode(showTraktId = 1, showName = "Aired Show", firstAired = pastEpoch),
+            createNextEpisode(showTraktId = 2, showName = "Future Show", firstAired = futureEpoch),
         )
-        watchlistRepository.setObserveResult(createWatchlist())
         episodeRepository.setNextEpisodesForWatchlist(episodes)
 
         interactor("")
@@ -260,53 +278,36 @@ class ObserveUpNextSectionsInteractorTest {
         }
     }
 
-    private fun createWatchlist() = listOf(
-        FollowedShows(
-            show_trakt_id = Id(1),
-            show_tmdb_id = Id(1),
-            name = "Loki",
-            poster_path = "/poster.jpg",
-            status = "Ended",
-            year = "2024",
-            created_at = 0,
-            season_count = 2,
-            episode_count = 12,
-            watched_count = 0,
-            total_episode_count = 10,
-        ),
-        FollowedShows(
-            show_trakt_id = Id(2),
-            show_tmdb_id = Id(2),
-            name = "Wednesday",
-            poster_path = "/poster2.jpg",
-            status = "Ongoing",
-            year = "2023",
-            created_at = 0,
-            season_count = 1,
-            episode_count = 8,
-            watched_count = 0,
-            total_episode_count = 8,
-        ),
-    )
-
     private fun createNextEpisode(
         showTraktId: Long,
         showName: String,
         lastWatchedAt: Long? = null,
-        airDate: String? = "2021-06-09", // Default to a past aired date
+        firstAired: Long? = LocalDate(2021, 6, 9).toEpochMillis(),
+        watchedCount: Long = 0,
+        totalCount: Long = 10,
+        seasonNumber: Long = 1L,
+        episodeNumber: Long = 2L,
+        runtime: Long? = 45L,
     ) = NextEpisodeWithShow(
         showTraktId = showTraktId,
+        showTmdbId = showTraktId,
         showName = showName,
         showPoster = "/poster.jpg",
+        showStatus = "Ended",
+        showYear = "2024",
         episodeId = showTraktId * 100 + 1,
         episodeName = "Episode Title",
         seasonId = 1L,
-        seasonNumber = 1L,
-        episodeNumber = 2L,
-        runtime = 45L,
+        seasonNumber = seasonNumber,
+        episodeNumber = episodeNumber,
+        runtime = runtime,
         stillPath = "/still.jpg",
         overview = "Overview",
-        airDate = airDate,
+        firstAired = firstAired,
         lastWatchedAt = lastWatchedAt,
+        seasonCount = 2,
+        episodeCount = 12,
+        watchedCount = watchedCount,
+        totalCount = totalCount,
     )
 }

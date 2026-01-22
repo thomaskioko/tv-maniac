@@ -8,7 +8,6 @@ import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
-import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsDao
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
@@ -17,7 +16,6 @@ import com.thomaskioko.tvmaniac.seasons.api.SeasonsDao
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.flow.first
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
@@ -31,7 +29,6 @@ public class DefaultWatchedEpisodeSyncRepository(
     private val dao: WatchedEpisodeDao,
     private val episodesDao: EpisodesDao,
     private val seasonsDao: SeasonsDao,
-    private val followedShowsDao: FollowedShowsDao,
     private val followedShowsRepository: FollowedShowsRepository,
     private val dataSource: EpisodeWatchesDataSource,
     private val seasonDetailsRepository: SeasonDetailsRepository,
@@ -120,7 +117,7 @@ public class DefaultWatchedEpisodeSyncRepository(
             ensureSeasonDetailsExist(showTraktId, seasonNumber)
         }
 
-        val includeSpecials = datastoreRepository.observeIncludeSpecials().first()
+        val includeSpecials = datastoreRepository.getIncludeSpecials()
 
         remoteWatches.chunked(BATCH_SIZE).forEach { batch ->
             currentCoroutineContext().ensureActive()

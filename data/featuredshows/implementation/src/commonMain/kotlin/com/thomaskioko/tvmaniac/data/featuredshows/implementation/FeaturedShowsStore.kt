@@ -145,7 +145,7 @@ private fun TraktShowResponse.toTvshow(
     name = title,
     overview = overview ?: "",
     language = language,
-    year = firstAirDate?.let { dateTimeProvider.getYear(it) },
+    year = firstAirDate?.let { dateTimeProvider.extractYear(it) },
     ratings = rating ?: 0.0,
     vote_count = votes ?: 0L,
     poster_path = posterPath,

@@ -13,6 +13,7 @@ kotlin {
             dependencies {
 
                 api(projects.data.cast.api)
+                api(projects.data.datastore.api)
                 api(projects.data.episode.api)
                 api(projects.data.seasondetails.api)
                 api(projects.data.seasons.api)

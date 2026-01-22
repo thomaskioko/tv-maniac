@@ -7,5 +7,5 @@ public data class NextEpisodeItem(
     val seasonNumber: Long,
     val episodeNumber: Long,
     val stillPath: String?,
-    val airDate: String?,
+    val firstAired: Long?,
 )

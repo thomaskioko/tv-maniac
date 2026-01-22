@@ -1,106 +1,56 @@
 package com.thomaskioko.tvmaniac.domain.watchlist
 
 import com.thomaskioko.tvmaniac.core.base.interactor.SubjectInteractor
-import com.thomaskioko.tvmaniac.db.FollowedShows
-import com.thomaskioko.tvmaniac.db.SearchFollowedShows
 import com.thomaskioko.tvmaniac.domain.watchlist.model.NextEpisodeInfo
 import com.thomaskioko.tvmaniac.domain.watchlist.model.WatchlistSections
 import com.thomaskioko.tvmaniac.domain.watchlist.model.WatchlistShowInfo
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
-import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
-import kotlin.jvm.JvmName
 
 private const val THREE_WEEKS_MILLIS = 21 * 24 * 60 * 60 * 1000L
 
 @Inject
 public class ObserveWatchlistSectionsInteractor(
-    private val watchlistRepository: WatchlistRepository,
     private val episodeRepository: EpisodeRepository,
     private val dateTimeProvider: DateTimeProvider,
 ) : SubjectInteractor<String, WatchlistSections>() {
 
     override fun createObservable(params: String): Flow<WatchlistSections> {
         return episodeRepository.observeNextEpisodesForWatchlist()
-            .flatMapLatest { episodes ->
-                val nextEpisodeMap = episodes.associateBy { it.showTraktId }
-
-                if (params.isNotBlank()) {
-                    watchlistRepository.searchWatchlistByQuery(params).map { list ->
-                        list.toWatchlistSections(nextEpisodeMap, dateTimeProvider.nowMillis())
-                    }
-                } else {
-                    watchlistRepository.observeWatchlist().map { list ->
-                        list.toWatchlistSections(nextEpisodeMap, dateTimeProvider.nowMillis())
-                    }
-                }
+            .map { episodes ->
+                episodes
+                    .filter { params.isBlank() || it.showName.contains(params, ignoreCase = true) }
+                    .map { it.toWatchlistShowInfo() }
+                    .filterNot { it.isCompleted() }
+                    .groupBySections(dateTimeProvider.nowMillis())
             }
     }
 }
 
-private fun List<FollowedShows>.toWatchlistSections(
-    nextEpisodeMap: Map<Long, NextEpisodeWithShow>,
-    currentTimeMillis: Long,
-): WatchlistSections {
-    val items = map { it.toWatchlistShowInfo(nextEpisodeMap) }
-    return items.groupBySections(currentTimeMillis)
+private fun WatchlistShowInfo.isCompleted(): Boolean {
+    return totalEpisodesTracked in 1..episodesWatched
 }
 
-@JvmName("searchToWatchlistSections")
-private fun List<SearchFollowedShows>.toWatchlistSections(
-    nextEpisodeMap: Map<Long, NextEpisodeWithShow>,
-    currentTimeMillis: Long,
-): WatchlistSections {
-    val items = map { it.toWatchlistShowInfo(nextEpisodeMap) }
-    return items.groupBySections(currentTimeMillis)
-}
-
-private fun FollowedShows.toWatchlistShowInfo(nextEpisodeMap: Map<Long, NextEpisodeWithShow>): WatchlistShowInfo {
-    val watched = watched_count
-    val total = total_episode_count
-    val progress = if (total > 0) watched.toFloat() / total else 0f
-    val nextEp = nextEpisodeMap[show_trakt_id.id]
+private fun NextEpisodeWithShow.toWatchlistShowInfo(): WatchlistShowInfo {
+    val progress = if (totalCount > 0) watchedCount.toFloat() / totalCount else 0f
     return WatchlistShowInfo(
-        traktId = show_trakt_id.id,
-        tmdbId = show_tmdb_id.id,
-        title = name,
-        posterImageUrl = poster_path,
-        status = status,
-        year = year,
-        seasonCount = season_count ?: 0,
-        episodeCount = episode_count ?: 0,
-        episodesWatched = watched,
-        totalEpisodesTracked = total,
+        traktId = showTraktId,
+        tmdbId = showTmdbId,
+        title = showName,
+        posterImageUrl = showPoster,
+        status = showStatus,
+        year = showYear,
+        seasonCount = seasonCount,
+        episodeCount = episodeCount,
+        episodesWatched = watchedCount,
+        totalEpisodesTracked = totalCount,
         watchProgress = progress,
-        lastWatchedAt = nextEp?.lastWatchedAt,
-        nextEpisode = nextEp?.toNextEpisodeInfo(),
-    )
-}
-
-private fun SearchFollowedShows.toWatchlistShowInfo(nextEpisodeMap: Map<Long, NextEpisodeWithShow>): WatchlistShowInfo {
-    val watched = watched_count
-    val total = total_episode_count
-    val progress = if (total > 0) watched.toFloat() / total else 0f
-    val nextEp = nextEpisodeMap[show_trakt_id.id]
-    return WatchlistShowInfo(
-        traktId = show_trakt_id.id,
-        tmdbId = show_tmdb_id.id,
-        title = name,
-        posterImageUrl = poster_path,
-        status = status,
-        year = year,
-        seasonCount = season_count ?: 0,
-        episodeCount = episode_count ?: 0,
-        episodesWatched = watched,
-        totalEpisodesTracked = total,
-        watchProgress = progress,
-        lastWatchedAt = nextEp?.lastWatchedAt,
-        nextEpisode = nextEp?.toNextEpisodeInfo(),
+        lastWatchedAt = lastWatchedAt,
+        nextEpisode = toNextEpisodeInfo(),
     )
 }
 
@@ -111,7 +61,7 @@ private fun NextEpisodeWithShow.toNextEpisodeInfo(): NextEpisodeInfo {
         seasonNumber = seasonNumber,
         episodeNumber = episodeNumber,
         stillPath = stillPath,
-        airDate = airDate,
+        firstAired = firstAired,
     )
 }
 
@@ -122,11 +72,6 @@ private fun List<WatchlistShowInfo>.groupBySections(currentTimeMillis: Long): Wa
     val stale = mutableListOf<WatchlistShowInfo>()
 
     forEach { item ->
-        val allEpisodesWatched = item.totalEpisodesTracked > 0 &&
-            item.episodesWatched >= item.totalEpisodesTracked
-        val isCompleted = item.nextEpisode == null && allEpisodesWatched
-        if (isCompleted) return@forEach
-
         val lastWatched = item.lastWatchedAt ?: 0L
         if (lastWatched in 1..<threeWeeksAgo) {
             stale.add(item)

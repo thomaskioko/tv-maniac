@@ -11,25 +11,31 @@ import kotlin.time.Instant
 public class FakeDateTimeProvider(
     private var currentTime: Instant = Clock.System.now(),
 ) : DateTimeProvider {
-    public var formatDateResult: String = "2024-01-01"
-    public var formatDateTimeResult: String = "2024-01-01 12:00"
-    public var getYearResult: String = "2024"
+    private var epochToIsoDateResult: String = "2024-01-01"
+    private var epochToDisplayDateTimeResult: String = "2024-01-01 12:00"
+    private var extractYearResult: String = "2024"
     private var fakeToday: LocalDate? = null
-    private val daysUntilAirResults: MutableMap<String, Int?> = mutableMapOf()
+    private var currentYearResult: Int = 2024
 
     override fun now(): Instant = currentTime
-    override fun today(timeZone: TimeZone): LocalDate = fakeToday ?: currentTime.toLocalDateTime(timeZone).date
 
-    override fun calculateDaysUntilAir(airDateStr: String?, timeZone: TimeZone): Int? {
-        return daysUntilAirResults[airDateStr]
-    }
+    private fun today(timeZone: TimeZone): LocalDate = fakeToday ?: currentTime.toLocalDateTime(timeZone).date
 
     override fun startOfDay(timeZone: TimeZone): Instant =
         currentTime.toLocalDateTime(timeZone).date.atStartOfDayIn(timeZone)
 
-    override fun formatDate(epochMillis: Long, timeZone: TimeZone): String = formatDateResult
-    override fun formatDateTime(epochMillis: Long, timeZone: TimeZone): String = formatDateTimeResult
-    override fun getYear(dateString: String): String = getYearResult
+    override fun epochToIsoDate(epochMillis: Long, timeZone: TimeZone): String = epochToIsoDateResult
+    override fun epochToDisplayDateTime(epochMillis: Long, timeZone: TimeZone): String = epochToDisplayDateTimeResult
+    override fun extractYear(dateString: String): String = extractYearResult
+    override fun todayAsIsoDate(timeZone: TimeZone): String = today(timeZone).toString()
+
+    override fun isoDateToEpoch(dateStr: String?): Long? {
+        if (dateStr.isNullOrBlank()) return null
+        return runCatching { Instant.parse(dateStr).toEpochMilliseconds() }
+            .getOrNull()
+    }
+
+    override fun currentYear(timeZone: TimeZone): Int = currentYearResult
 
     public fun setCurrentTime(instant: Instant) {
         currentTime = instant
@@ -43,7 +49,19 @@ public class FakeDateTimeProvider(
         fakeToday = LocalDate(year, month, day)
     }
 
-    public fun setDaysUntilAir(airDate: String, days: Int?) {
-        daysUntilAirResults[airDate] = days
+    public fun setEpochToIsoDateResult(result: String) {
+        epochToIsoDateResult = result
+    }
+
+    public fun setEpochToDisplayDateTimeResult(result: String) {
+        epochToDisplayDateTimeResult = result
+    }
+
+    public fun setExtractYearResult(result: String) {
+        extractYearResult = result
+    }
+
+    public fun setCurrentYear(year: Int) {
+        currentYearResult = year
     }
 }

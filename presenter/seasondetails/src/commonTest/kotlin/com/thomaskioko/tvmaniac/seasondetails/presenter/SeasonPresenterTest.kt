@@ -37,9 +37,15 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+
+private fun LocalDate.toEpochMillis(): Long =
+    atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
 
 class SeasonPresenterTest {
 
@@ -91,7 +97,7 @@ class SeasonPresenterTest {
                     voteAverage = 8.0,
                     voteCount = 4958,
                     isWatched = false,
-                    airDate = "2020-01-01",
+                    firstAired = LocalDate(2020, 1, 1).toEpochMillis(),
                     daysUntilAir = null,
                     hasAired = true,
                 ),
@@ -146,7 +152,7 @@ class SeasonPresenterTest {
                     isWatched = false,
                     seasonNumber = 1,
                     stillPath = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-                    airDate = "2020-01-01",
+                    firstAired = LocalDate(2020, 1, 1).toEpochMillis(),
                     daysUntilAir = null,
                     hasAired = true,
                 ),
@@ -417,7 +423,7 @@ class SeasonPresenterTest {
             val state = awaitItem()
             val dialog = state.dialogState
             dialog.shouldBeInstanceOf<SeasonDialogState.UnwatchEpisodeConfirmation>()
-            (dialog as SeasonDialogState.UnwatchEpisodeConfirmation).primaryOperation.episodeId shouldBe 12345
+            dialog.primaryOperation.episodeId shouldBe 12345
         }
     }
 
@@ -603,7 +609,7 @@ class SeasonPresenterTest {
             val dialogState = awaitItem()
             val dialog = dialogState.dialogState
             dialog.shouldBeInstanceOf<SeasonDialogState.UnwatchEpisodeConfirmation>()
-            (dialog as SeasonDialogState.UnwatchEpisodeConfirmation).primaryOperation.episodeId shouldBe 12345
+            dialog.primaryOperation.episodeId shouldBe 12345
 
             presenter.dispatch(ConfirmDialogAction)
 
@@ -1025,7 +1031,7 @@ class SeasonPresenterTest {
                     isWatched = true,
                     seasonNumber = 1,
                     stillPath = "/image.jpg",
-                    airDate = "2020-01-01",
+                    firstAired = LocalDate(2020, 1, 1).toEpochMillis(),
                     daysUntilAir = null,
                     hasAired = true,
                 ),
@@ -1061,7 +1067,7 @@ class SeasonPresenterTest {
                     isWatched = false,
                     seasonNumber = 1,
                     stillPath = "/image.jpg",
-                    airDate = "2020-01-01",
+                    firstAired = LocalDate(2020, 1, 1).toEpochMillis(),
                     daysUntilAir = null,
                     hasAired = true,
                 ),

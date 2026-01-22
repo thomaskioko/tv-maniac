@@ -88,6 +88,13 @@ public interface DatastoreRepository {
     public fun observeIncludeSpecials(): Flow<Boolean>
 
     /**
+     * Gets the user's preference for including Specials when marking seasons as watched.
+     *
+     * @return Boolean, true if Specials should be included, false otherwise. Defaults to false.
+     */
+    public suspend fun getIncludeSpecials(): Boolean
+
+    /**
      * Saves the last logged-in Trakt user ID (slug).
      * Used to detect user switches on re-login and prevent data leakage between accounts.
      *
@@ -129,4 +136,61 @@ public interface DatastoreRepository {
      * @return A Flow of the timestamp in epoch milliseconds, or null if never synced.
      */
     public fun observeLastSyncTimestamp(): Flow<Long?>
+
+    /**
+     * Saves the user's preference for episode notifications.
+     *
+     * @param enabled Whether episode notifications are enabled.
+     */
+    public suspend fun setEpisodeNotificationsEnabled(enabled: Boolean)
+
+    /**
+     * Observes the user's preference for episode notifications.
+     *
+     * @return A Flow of Boolean, true if episode notifications are enabled, false otherwise. Defaults to false.
+     */
+    public fun observeEpisodeNotificationsEnabled(): Flow<Boolean>
+
+    /**
+     * Saves whether the notification permission has been asked.
+     * Used to ensure we only prompt once on first launch.
+     *
+     * @param asked Whether the permission has been asked.
+     */
+    public suspend fun setNotificationPermissionAsked(asked: Boolean)
+
+    /**
+     * Observes whether the notification permission has been asked.
+     *
+     * @return A Flow of Boolean, true if permission has been asked, false otherwise. Defaults to false.
+     */
+    public fun observeNotificationPermissionAsked(): Flow<Boolean>
+
+    /**
+     * Sets whether to show the notification rationale dialog.
+     *
+     * @param show Whether to show the rationale dialog.
+     */
+    public suspend fun setShowNotificationRationale(show: Boolean)
+
+    /**
+     * Observes whether to show the notification rationale dialog.
+     *
+     * @return A Flow of Boolean, true if rationale should be shown.
+     */
+    public fun observeShowNotificationRationale(): Flow<Boolean>
+
+    /**
+     * Sets whether to request the system notification permission.
+     *
+     * @param request Whether to request the permission.
+     */
+    public suspend fun setRequestNotificationPermission(request: Boolean)
+
+    /**
+     * Observes whether to request the system notification permission.
+     *
+     * @return A Flow of Boolean, true if permission should be requested.
+     */
+    public fun observeRequestNotificationPermission(): Flow<Boolean>
 }

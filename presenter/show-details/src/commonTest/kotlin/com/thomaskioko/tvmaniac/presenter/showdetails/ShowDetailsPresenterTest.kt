@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
+import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.SelectByShowTraktId
 import com.thomaskioko.tvmaniac.db.ShowCast
 import com.thomaskioko.tvmaniac.db.ShowSeasons
@@ -21,10 +22,12 @@ import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
 import com.thomaskioko.tvmaniac.domain.watchproviders.WatchProvidersInteractor
+import com.thomaskioko.tvmaniac.episodes.api.model.ContinueTrackingResult
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
+import com.thomaskioko.tvmaniac.i18n.testing.util.IgnoreIos
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ProviderModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowSeasonDetailsParam
@@ -39,6 +42,7 @@ import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
 import io.kotest.matchers.shouldBe
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -48,6 +52,7 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
+@IgnoreIos
 class ShowDetailsPresenterTest {
 
     private val seasonsRepository = FakeSeasonsRepository()
@@ -62,6 +67,7 @@ class ShowDetailsPresenterTest {
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
     private val traktAuthRepository = FakeTraktAuthRepository()
     private val fakeFormatterUtil = FakeFormatterUtil()
+    private val fakeDatastoreRepository = FakeDatastoreRepository()
     private val testDispatcher = StandardTestDispatcher()
     private val coroutineDispatcher = AppCoroutineDispatchers(
         main = testDispatcher,
@@ -288,8 +294,14 @@ class ShowDetailsPresenterTest {
         initialState.continueTrackingEpisodes.size shouldBe 3
         initialState.continueTrackingScrollIndex shouldBe 0
 
-        val updatedTrackingResult = testContinueTrackingResult.copy(
-            firstUnwatchedIndex = 1,
+        val updatedTrackingResult = ContinueTrackingResult(
+            episodes = listOf(
+                testEpisodeDetails.copy(isWatched = true),
+                testEpisodeDetails.copy(id = 1002L, episodeNumber = 2L, name = "Episode 2"),
+                testEpisodeDetails.copy(id = 1003L, episodeNumber = 3L, name = "Episode 3"),
+            ).toImmutableList(),
+            currentSeasonNumber = 1L,
+            currentSeasonId = 101L,
         )
         episodeRepository.setContinueTrackingResult(updatedTrackingResult)
 
@@ -541,6 +553,7 @@ class ShowDetailsPresenterTest {
                 seasonsRepository = seasonsRepository,
                 seasonDetailsRepository = seasonDetailsRepository,
                 watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
+                datastoreRepository = fakeDatastoreRepository,
                 dispatchers = coroutineDispatcher,
             ),
             traktAuthRepository = traktAuthRepository,

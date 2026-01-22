@@ -87,7 +87,7 @@ getTotalEpisodesForSeason:
 SELECT COUNT(*) FROM episode e
 INNER JOIN season s ON e.season_id = s.id
 WHERE e.show_trakt_id = ? AND s.season_number = ?
-  AND (e.air_date IS NULL OR e.air_date <= date('now'));
+  AND (e.first_aired IS NULL OR e.first_aired <= date('now'));
 
 getPreviousUnwatchedEpisodes:
 SELECT
@@ -105,7 +105,7 @@ WHERE e.show_trakt_id = :show_trakt_id
     OR (s.season_number = :season_number AND e.episode_number < :episode_number)
   )
   AND we.id IS NULL
-  AND (e.air_date IS NULL OR e.air_date <= date('now'))
+  AND (e.first_aired IS NULL OR e.first_aired <= date('now'))
 ORDER BY s.season_number, e.episode_number;
 
 getEpisodesForSeason:
@@ -117,7 +117,7 @@ SELECT
 FROM episode e
 INNER JOIN season s ON e.season_id = s.id
 WHERE e.show_trakt_id = ? AND s.season_number = ?
-  AND (e.air_date IS NULL OR e.air_date <= date('now'))
+  AND (e.first_aired IS NULL OR e.first_aired <= date('now'))
 ORDER BY e.episode_number;
 
 getTotalEpisodesForShow:
@@ -143,7 +143,7 @@ WHERE e.show_trakt_id = :show_trakt_id
   AND s.season_number < :season_number
   AND (:include_specials = 1 OR (s.season_number > 0 OR s.title != 'Specials'))
   AND we.id IS NULL
-  AND (e.air_date IS NULL OR e.air_date <= date('now'))
+  AND (e.first_aired IS NULL OR e.first_aired <= date('now'))
 ORDER BY s.season_number, e.episode_number;
 
 getUnwatchedEpisodeCountInPreviousSeasons:
@@ -154,7 +154,7 @@ WHERE e.show_trakt_id = :show_trakt_id
   AND s.season_number < :season_number
   AND (:include_specials = 1 OR (s.season_number > 0 OR s.title != 'Specials'))
   AND we.id IS NULL
-  AND (e.air_date IS NULL OR e.air_date <= date('now'));
+  AND (e.first_aired IS NULL OR e.first_aired <= date('now'));
 
 -- Trakt Sync Queries
 
@@ -209,7 +209,7 @@ getAllSeasonsWatchProgress:
 SELECT
     s.season_number,
     (SELECT COUNT(*) FROM watched_episodes we WHERE we.show_trakt_id = :show_trakt_id AND we.season_number = s.season_number) AS watched_count,
-    (SELECT COUNT(*) FROM episode e WHERE e.show_trakt_id = :show_trakt_id AND e.season_id = s.id AND (e.air_date IS NULL OR e.air_date <= date('now'))) AS total_count
+    (SELECT COUNT(*) FROM episode e WHERE e.show_trakt_id = :show_trakt_id AND e.season_id = s.id AND (e.first_aired IS NULL OR e.first_aired <= date('now'))) AS total_count
 FROM season s
 WHERE s.show_trakt_id = :show_trakt_id
 ORDER BY s.season_number;

@@ -77,7 +77,7 @@ private fun SearchShowResult.toTvshow(formatterUtil: FormatterUtil, dateTimeProv
         overview = traktShow.overview ?: "",
         language = traktShow.language,
         status = traktShow.status,
-        year = traktShow.firstAirDate?.let { dateTimeProvider.getYear(it) },
+        year = traktShow.firstAirDate?.let { dateTimeProvider.extractYear(it) },
         episode_numbers = traktShow.airedEpisodes?.toString(),
         ratings = tmdb?.voteAverage ?: 0.0,
         vote_count = traktShow.votes ?: 0L,

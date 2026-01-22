@@ -65,7 +65,7 @@ SELECT
     episode.ratings,
     episode.vote_count,
     episode.image_url AS episode_image_url,
-    episode.air_date AS episode_air_date,
+    episode.first_aired AS episode_first_aired,
     CASE WHEN watched_episodes.id IS NOT NULL THEN 1 ELSE 0 END AS is_watched
 FROM
     tvshow
@@ -95,6 +95,21 @@ LIMIT 1;
 
 updateImageUrl:
 UPDATE season SET image_url = ? WHERE id = ?;
+
+getSeasonWithShowInfo:
+SELECT
+    tvshow.trakt_id AS show_trakt_id,
+    tvshow.tmdb_id AS show_tmdb_id,
+    tvshow.name AS show_title,
+    season.id AS season_id,
+    season.title AS season_title,
+    season.overview AS season_overview,
+    season.season_number,
+    season.episode_count,
+    season.image_url AS season_image_url
+FROM tvshow
+INNER JOIN season ON season.show_trakt_id = tvshow.trakt_id
+WHERE tvshow.trakt_id = :showTraktId AND season.season_number = :seasonNumber;
 
 delete:
 DELETE FROM season WHERE show_trakt_id = ?;

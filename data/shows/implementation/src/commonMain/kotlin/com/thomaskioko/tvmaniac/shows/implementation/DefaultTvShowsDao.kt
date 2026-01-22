@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.shows.api.mergeShows
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
@@ -95,6 +96,11 @@ public class DefaultTvShowsDao(
             .asFlow()
             .mapToOne(dispatchers.io)
     }
+
+    override suspend fun getQueryCount(query: String): Long =
+        withContext(dispatchers.io) {
+            tvShowQueries.searchShowsCount(query, query, query, query).executeAsOne()
+        }
 
     override fun deleteTvShows() {
         tvShowQueries.transaction { tvShowQueries.deleteAll() }

@@ -5,9 +5,9 @@ import kotlinx.coroutines.flow.Flow
 
 public interface WatchProviderRepository {
     public suspend fun fetchWatchProviders(
-        id: Long,
+        traktId: Long,
         forceRefresh: Boolean = false,
     )
 
-    public fun observeWatchProviders(id: Long): Flow<List<WatchProviders>>
+    public fun observeWatchProviders(traktId: Long): Flow<List<WatchProviders>>
 }

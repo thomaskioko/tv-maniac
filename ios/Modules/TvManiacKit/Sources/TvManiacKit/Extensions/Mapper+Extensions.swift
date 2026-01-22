@@ -257,7 +257,7 @@ public extension TvManiac.UpNextEpisodeItem {
             runtime: runtime,
             stillImage: stillImage,
             overview: overview,
-            badge: badge.toSwift(),
+            badge: badge?.toSwift() ?? .none,
             remainingEpisodes: remainingEpisodes
         )
     }
@@ -270,8 +270,6 @@ public extension TvManiac.EpisodeBadge {
             .premiere
         case .theNew:
             .new
-        case .none:
-            .none
         }
     }
 }

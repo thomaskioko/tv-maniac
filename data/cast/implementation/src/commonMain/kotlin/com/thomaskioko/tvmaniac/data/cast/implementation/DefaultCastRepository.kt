@@ -7,7 +7,6 @@ import com.thomaskioko.tvmaniac.db.ShowCast
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.SHOW_CAST
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.impl.extensions.fresh
 import org.mobilenativefoundation.store.store5.impl.extensions.get
@@ -25,7 +24,7 @@ public class DefaultCastRepository(
 ) : CastRepository {
 
     override suspend fun fetchShowCast(showTraktId: Long, forceRefresh: Boolean) {
-        val isEmpty = dao.observeShowCast(showTraktId).first().isEmpty()
+        val isEmpty = dao.getShowCast(showTraktId).isEmpty()
         val isExpired = requestManagerRepository.isRequestExpired(
             entityId = showTraktId,
             requestType = SHOW_CAST.name,

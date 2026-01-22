@@ -26,8 +26,16 @@ public data class ShowDetails(
     val similarShows: List<Show>,
     val trailersList: List<Trailer>,
     val continueTrackingEpisodes: ImmutableList<EpisodeDetails>,
-    val continueTrackingScrollIndex: Int = 0,
-)
+) {
+    val continueTrackingScrollIndex: Int
+        get() {
+            val firstUnwatched = continueTrackingEpisodes.indexOfFirst { !it.isWatched }
+            if (firstUnwatched >= 0) return firstUnwatched
+
+            val nextAfterLastWatched = continueTrackingEpisodes.indexOfLast { it.isWatched } + 1
+            return if (nextAfterLastWatched < continueTrackingEpisodes.size) nextAfterLastWatched else 0
+        }
+}
 
 public data class Casts(
     val id: Long,

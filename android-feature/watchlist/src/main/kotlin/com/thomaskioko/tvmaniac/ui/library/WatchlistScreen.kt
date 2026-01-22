@@ -222,7 +222,7 @@ private fun TopBar(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     IconButton(
-                        onClick = { onAction(ChangeListStyleClicked) },
+                        onClick = { onAction(ChangeListStyleClicked(state.isGridMode)) },
                     ) {
                         val image = if (state.isGridMode) {
                             Icons.AutoMirrored.Outlined.List

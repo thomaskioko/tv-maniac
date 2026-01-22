@@ -28,7 +28,6 @@ kotlin {
                 implementation(projects.data.seasons.api)
                 implementation(projects.data.seasondetails.api)
                 implementation(projects.data.traktauth.api)
-                implementation(projects.data.watchlist.api)
 
                 implementation(libs.kotlinx.datetime)
                 implementation(libs.sqldelight.extensions)
@@ -43,6 +42,7 @@ kotlin {
                 implementation(projects.data.database.testing)
                 implementation(projects.data.datastore.testing)
                 implementation(projects.data.episode.testing)
+                implementation(projects.data.requestManager.testing)
                 implementation(projects.data.seasons.testing)
                 implementation(projects.data.seasondetails.testing)
                 implementation(projects.i18n.testing)

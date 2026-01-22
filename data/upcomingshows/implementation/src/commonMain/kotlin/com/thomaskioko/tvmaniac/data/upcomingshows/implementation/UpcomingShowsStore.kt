@@ -137,7 +137,7 @@ private fun UpcomingShowResult.toTvshow(
         name = tmdb.name,
         overview = tmdb.overview,
         language = tmdb.originalLanguage ?: trakt?.language,
-        year = dateString?.let { dateTimeProvider.getYear(it) },
+        year = dateString?.let { dateTimeProvider.extractYear(it) },
         ratings = tmdb.voteAverage,
         vote_count = tmdb.voteCount.toLong(),
         poster_path = tmdb.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },

@@ -104,19 +104,13 @@ SELECT
     show_metadata.season_count,
     show_metadata.episode_count,
     show_metadata.status,
-    (SELECT COUNT(*) FROM watched_episodes WHERE watched_episodes.show_trakt_id = tvshow.trakt_id) AS watched_count,
-    (SELECT COUNT(*) FROM episode WHERE episode.show_trakt_id = tvshow.trakt_id AND (episode.air_date IS NULL OR episode.air_date <= date('now'))) AS total_episode_count
+    show_metadata.cached_watched_count AS watched_count,
+    show_metadata.cached_total_count AS total_episode_count
 FROM followed_shows
 INNER JOIN tvshow ON followed_shows.trakt_id = tvshow.trakt_id
 LEFT JOIN show_metadata ON tvshow.trakt_id = show_metadata.show_trakt_id
-LEFT JOIN shows_last_watched ON shows_last_watched.show_trakt_id = tvshow.trakt_id
 WHERE followed_shows.pending_action != 'DELETE'
-  AND (
-    (SELECT COUNT(*) FROM watched_episodes WHERE watched_episodes.show_trakt_id = tvshow.trakt_id) <
-    (SELECT COUNT(*) FROM episode WHERE episode.show_trakt_id = tvshow.trakt_id AND (episode.air_date IS NULL OR episode.air_date <= date('now')))
-    OR (SELECT COUNT(*) FROM episode WHERE episode.show_trakt_id = tvshow.trakt_id AND (episode.air_date IS NULL OR episode.air_date <= date('now'))) = 0
-  )
-ORDER BY COALESCE(shows_last_watched.last_watched_at, followed_shows.followed_at) DESC;
+ORDER BY COALESCE(show_metadata.last_watched_at, followed_shows.followed_at) DESC;
 
 searchFollowedShows:
 SELECT
@@ -130,18 +124,12 @@ SELECT
     show_metadata.season_count,
     show_metadata.episode_count,
     show_metadata.status AS metadata_status,
-    (SELECT COUNT(*) FROM watched_episodes WHERE watched_episodes.show_trakt_id = tvshow.trakt_id) AS watched_count,
-    (SELECT COUNT(*) FROM episode WHERE episode.show_trakt_id = tvshow.trakt_id AND (episode.air_date IS NULL OR episode.air_date <= date('now'))) AS total_episode_count
+    show_metadata.cached_watched_count AS watched_count,
+    show_metadata.cached_total_count AS total_episode_count
 FROM followed_shows
 INNER JOIN tvshow ON followed_shows.trakt_id = tvshow.trakt_id
 LEFT JOIN show_metadata ON tvshow.trakt_id = show_metadata.show_trakt_id
-LEFT JOIN shows_last_watched ON shows_last_watched.show_trakt_id = tvshow.trakt_id
 WHERE followed_shows.pending_action != 'DELETE'
-  AND (
-    (SELECT COUNT(*) FROM watched_episodes WHERE watched_episodes.show_trakt_id = tvshow.trakt_id) <
-    (SELECT COUNT(*) FROM episode WHERE episode.show_trakt_id = tvshow.trakt_id AND (episode.air_date IS NULL OR episode.air_date <= date('now')))
-    OR (SELECT COUNT(*) FROM episode WHERE episode.show_trakt_id = tvshow.trakt_id AND (episode.air_date IS NULL OR episode.air_date <= date('now'))) = 0
-  )
   AND tvshow.name LIKE '%' || :query || '%' COLLATE NOCASE
 ORDER BY
   CASE
@@ -149,4 +137,4 @@ ORDER BY
     WHEN tvshow.name LIKE '% ' || :query || '%' COLLATE NOCASE THEN 2
     ELSE 3
   END,
-  COALESCE(shows_last_watched.last_watched_at, followed_shows.followed_at) DESC;
+  COALESCE(show_metadata.last_watched_at, followed_shows.followed_at) DESC;

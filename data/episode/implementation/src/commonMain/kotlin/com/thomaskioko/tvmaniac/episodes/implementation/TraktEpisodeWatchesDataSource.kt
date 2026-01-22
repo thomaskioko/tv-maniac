@@ -29,9 +29,9 @@ public class TraktEpisodeWatchesDataSource(
         return when (val response = remoteDataSource.getShowEpisodeWatches(showTraktId)) {
             is ApiResponse.Success -> {
                 response.body.mapNotNull { entry ->
-                    val showId = entry.show.ids.tmdbId ?: return@mapNotNull null
+                    val traktId = entry.show.ids.traktId ?: return@mapNotNull null
                     WatchedEpisodeEntry(
-                        showTraktId = showId,
+                        showTraktId = traktId,
                         episodeId = 0L,
                         seasonNumber = entry.episode.season.toLong(),
                         episodeNumber = entry.episode.number.toLong(),

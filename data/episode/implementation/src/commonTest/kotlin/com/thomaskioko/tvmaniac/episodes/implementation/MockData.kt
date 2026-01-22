@@ -5,6 +5,9 @@ import com.thomaskioko.tvmaniac.db.ShowSeasons
 import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
 import com.thomaskioko.tvmaniac.seasondetails.api.model.SeasonDetailsWithEpisodes
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
 
 internal object MockData {
     const val TEST_SHOW_ID = 1L
@@ -20,6 +23,9 @@ internal object MockData {
     const val SEASON_0_EPISODE_COUNT = 2
     const val SEASON_1_EPISODE_COUNT = 7
     const val SEASON_2_EPISODE_COUNT = 13
+
+    private fun LocalDate.toEpochMillis(): Long =
+        atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
 
     val testShowSeasons = listOf(
         ShowSeasons(
@@ -48,7 +54,7 @@ internal object MockData {
             voteAverage = 8.5,
             voteCount = 50L,
             stillPath = "/episode$episodeNumber.jpg",
-            airDate = "2023-01-0$episodeNumber",
+            firstAired = LocalDate(2023, 1, episodeNumber).toEpochMillis(),
             isWatched = false,
             daysUntilAir = null,
             hasAired = true,
@@ -67,7 +73,7 @@ internal object MockData {
             voteAverage = 9.0,
             voteCount = 75L,
             stillPath = "/s2e$episodeNumber.jpg",
-            airDate = "2023-02-20",
+            firstAired = LocalDate(2023, 2, 20).toEpochMillis(),
             isWatched = false,
             daysUntilAir = null,
             hasAired = true,
@@ -113,7 +119,7 @@ internal object MockData {
                 voteAverage = 8.0,
                 voteCount = 100L,
                 stillPath = null,
-                airDate = "2023-01-0$episodeNumber",
+                firstAired = LocalDate(2023, 1, episodeNumber).toEpochMillis(),
                 isWatched = episodeNumber.toLong() == watchedEpisodeNumber,
                 daysUntilAir = null,
                 hasAired = true,
@@ -133,7 +139,7 @@ internal object MockData {
                 voteAverage = 8.0,
                 voteCount = 100L,
                 stillPath = null,
-                airDate = "2023-01-01",
+                firstAired = LocalDate(2023, 1, 1).toEpochMillis(),
                 isWatched = false,
                 daysUntilAir = null,
                 hasAired = true,
@@ -149,7 +155,7 @@ internal object MockData {
                 voteAverage = 8.0,
                 voteCount = 100L,
                 stillPath = null,
-                airDate = "2023-01-02",
+                firstAired = LocalDate(2023, 1, 2).toEpochMillis(),
                 isWatched = false,
                 daysUntilAir = null,
                 hasAired = true,
@@ -181,7 +187,7 @@ internal object MockData {
     ): List<EpisodeDetails> =
         (1..episodeCount).map { episodeNumber ->
             EpisodeDetails(
-                id = (seasonNumber * 100 + episodeNumber).toLong(),
+                id = (seasonNumber * 100 + episodeNumber),
                 seasonId = seasonId,
                 name = "S${seasonNumber}E$episodeNumber",
                 seasonNumber = seasonNumber,
@@ -191,34 +197,10 @@ internal object MockData {
                 voteAverage = 0.0,
                 voteCount = 0L,
                 stillPath = null,
-                airDate = null,
+                firstAired = null,
                 isWatched = false,
                 daysUntilAir = daysUntilAir,
                 hasAired = false,
-            )
-        }
-
-    fun createAllWatchedEpisodesForSeason(
-        seasonId: Long,
-        seasonNumber: Long,
-        episodeCount: Int = 5,
-    ): List<EpisodeDetails> =
-        (1..episodeCount).map { episodeNumber ->
-            EpisodeDetails(
-                id = (seasonNumber * 100 + episodeNumber).toLong(),
-                seasonId = seasonId,
-                name = "S${seasonNumber}E$episodeNumber",
-                seasonNumber = seasonNumber,
-                episodeNumber = episodeNumber.toLong(),
-                runtime = 45L,
-                overview = "Episode overview",
-                voteAverage = 8.5,
-                voteCount = 100L,
-                stillPath = null,
-                airDate = "2023-01-0$episodeNumber",
-                isWatched = true,
-                daysUntilAir = null,
-                hasAired = true,
             )
         }
 }

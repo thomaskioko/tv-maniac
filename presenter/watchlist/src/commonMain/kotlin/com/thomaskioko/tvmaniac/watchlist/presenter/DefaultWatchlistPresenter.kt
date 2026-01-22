@@ -17,13 +17,11 @@ import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
-import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
@@ -44,7 +42,6 @@ public class DefaultWatchlistPresenter(
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val followedShowsSyncInteractor: FollowedShowsSyncInteractor,
     private val traktAuthRepository: TraktAuthRepository,
-    private val dateTimeProvider: DateTimeProvider,
     private val logger: Logger,
 ) : WatchlistPresenter, ComponentContext by componentContext {
 
@@ -81,9 +78,8 @@ public class DefaultWatchlistPresenter(
         uiMessageManager.message,
         queryFlow,
     ) { isLoading, upNextLoading, watchlistSections, upNextSections, isGridMode, message, query ->
-        val currentTime = dateTimeProvider.nowMillis()
         val sectionedItems = watchlistSections.toPresenter()
-        val sectionedEpisodes = upNextSections.toPresenter(currentTime)
+        val sectionedEpisodes = upNextSections.toPresenter()
         WatchlistState(
             query = query,
             isSearchActive = query.isNotBlank(),
@@ -106,7 +102,7 @@ public class DefaultWatchlistPresenter(
             is WatchlistShowClicked -> navigateToShowDetails(action.traktId)
             is WatchlistQueryChanged -> updateQuery(action.query)
             is ClearWatchlistQuery -> clearQuery()
-            ChangeListStyleClicked -> toggleListStyle()
+            is ChangeListStyleClicked -> toggleListStyle(action.isGridMode)
             is MessageShown -> clearMessage(action.id)
             is UpNextEpisodeClicked -> navigateToShowDetails(action.showTraktId)
             is ShowTitleClicked -> navigateToShowDetails(action.showTraktId)
@@ -157,12 +153,9 @@ public class DefaultWatchlistPresenter(
         }
     }
 
-    private fun toggleListStyle() {
+    private fun toggleListStyle(currentIsGridMode: Boolean) {
         coroutineScope.launch {
-            val currentIsGridMode = repository.observeListStyle().first()
-            val newIsGridMode = !currentIsGridMode
-
-            repository.saveListStyle(newIsGridMode)
+            repository.saveListStyle(!currentIsGridMode)
         }
     }
 }

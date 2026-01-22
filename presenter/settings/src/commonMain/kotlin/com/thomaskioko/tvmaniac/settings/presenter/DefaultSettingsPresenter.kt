@@ -54,7 +54,7 @@ public class DefaultSettingsPresenter(
         traktAuthRepository.state,
     ) { currentState, imageQuality, appTheme, openInYoutube, includeSpecials, backgroundSyncEnabled, lastSyncTimestamp, authState ->
 
-        val lastSyncDate = lastSyncTimestamp?.let { dateTimeProvider.formatDateTime(it) }
+        val lastSyncDate = lastSyncTimestamp?.let { dateTimeProvider.epochToDisplayDateTime(it) }
         currentState.copy(
             imageQuality = imageQuality,
             theme = appTheme.toThemeModel(),

@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.flowOf
 
 public class FakeSeasonDetailsRepository : SeasonDetailsRepository {
 
-    private val seasonsResult = MutableStateFlow<SeasonDetailsWithEpisodes?>(
+    private val seasonsResult = MutableStateFlow(
         SeasonDetailsWithEpisodes(
             seasonId = 0,
             showTraktId = 0,
@@ -26,7 +26,7 @@ public class FakeSeasonDetailsRepository : SeasonDetailsRepository {
         ),
     )
 
-    public suspend fun setSeasonsResult(result: SeasonDetailsWithEpisodes?) {
+    public suspend fun setSeasonsResult(result: SeasonDetailsWithEpisodes) {
         seasonsResult.emit(result)
     }
 
@@ -36,7 +36,7 @@ public class FakeSeasonDetailsRepository : SeasonDetailsRepository {
     ) {
     }
 
-    override fun observeSeasonDetails(param: SeasonDetailsParam): Flow<SeasonDetailsWithEpisodes?> = seasonsResult.asStateFlow()
+    override fun observeSeasonDetails(param: SeasonDetailsParam): Flow<SeasonDetailsWithEpisodes> = seasonsResult.asStateFlow()
 
     override fun observeSeasonImages(id: Long): Flow<List<SeasonImages>> = flowOf(emptyList())
 }

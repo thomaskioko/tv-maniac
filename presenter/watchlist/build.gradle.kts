@@ -35,6 +35,7 @@ kotlin {
             dependencies {
                 implementation(projects.core.logger.testing)
                 implementation(projects.core.util.testing)
+                implementation(projects.data.datastore.testing)
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.followedshows.testing)
                 implementation(projects.data.seasondetails.testing)
@@ -43,6 +44,7 @@ kotlin {
                 implementation(projects.data.traktauth.testing)
                 implementation(projects.data.watchlist.testing)
                 implementation(projects.domain.showdetails)
+                implementation(projects.i18n.testing)
 
                 implementation(libs.bundles.unittest)
             }

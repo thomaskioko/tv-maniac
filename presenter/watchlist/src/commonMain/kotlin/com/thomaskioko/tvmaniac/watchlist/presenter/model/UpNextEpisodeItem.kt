@@ -13,7 +13,7 @@ public data class UpNextEpisodeItem(
     val runtime: String?,
     val stillImage: String?,
     val overview: String,
-    val badge: EpisodeBadge = EpisodeBadge.NONE,
+    val badge: EpisodeBadge? = null,
     val remainingEpisodes: Int = 0,
     val lastWatchedAt: Long? = null,
 )

@@ -25,7 +25,6 @@ import org.mobilenativefoundation.store.store5.impl.extensions.get
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
-import kotlin.time.Duration.Companion.days
 
 @Inject
 @SingleIn(AppScope::class)
@@ -40,15 +39,16 @@ public class DefaultUpcomingShowsRepository(
 
     private val startOfDay get() = dateTimeProvider.startOfDay()
 
-    private val duration get() = dateTimeProvider.formatDate(startOfDay.plus(DateTimePeriod(days = 122), TimeZone.currentSystemDefault()).toEpochMilliseconds())
+    private val validUntilIsoDate
+        get() = startOfDay
+            .plus(DateTimePeriod(days = 122), TimeZone.currentSystemDefault())
+            .toEpochMilliseconds()
+            .let(dateTimeProvider::epochToIsoDate)
 
     override suspend fun fetchUpcomingShows(forceRefresh: Boolean) {
-        val page = 1L // Always fetch first page for non-paginated requests
-        // TODO:: Load this from duration repository. Default range is 4 months
         val params = UpcomingParams(
-            startDate = dateTimeProvider.formatDate(startOfDay.toEpochMilliseconds()),
-            endDate = duration,
-            page = page,
+            startDate = dateTimeProvider.epochToIsoDate(startOfDay.toEpochMilliseconds()),
+            endDate = validUntilIsoDate,
         )
         when {
             forceRefresh -> store.fresh(params)
@@ -73,8 +73,8 @@ public class DefaultUpcomingShowsRepository(
             try {
                 val result = store.fresh(
                     UpcomingParams(
-                        startDate = dateTimeProvider.formatDate(startOfDay.toEpochMilliseconds()),
-                        endDate = duration,
+                        startDate = dateTimeProvider.epochToIsoDate(startOfDay.toEpochMilliseconds()),
+                        endDate = validUntilIsoDate,
                         page = page,
                     ),
                 )

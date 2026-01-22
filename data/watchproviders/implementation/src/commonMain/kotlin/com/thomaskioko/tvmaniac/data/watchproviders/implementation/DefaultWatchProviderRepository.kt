@@ -8,7 +8,6 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.WATCH_PROV
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.first
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.impl.extensions.fresh
 import org.mobilenativefoundation.store.store5.impl.extensions.get
@@ -28,7 +27,6 @@ public class DefaultWatchProviderRepository(
 
     override suspend fun fetchWatchProviders(traktId: Long, forceRefresh: Boolean) {
         val tmdbId = tvShowsDao.getTmdbIdByTraktId(traktId) ?: return
-        val isEmpty = dao.observeWatchProviders(tmdbId).first().isEmpty()
         val isExpired = requestManagerRepository.isRequestExpired(
             entityId = tmdbId,
             requestType = WATCH_PROVIDERS.name,
@@ -36,7 +34,7 @@ public class DefaultWatchProviderRepository(
         )
 
         when {
-            forceRefresh || isEmpty || isExpired -> store.fresh(traktId)
+            forceRefresh || isExpired -> store.fresh(traktId)
             else -> store.get(traktId)
         }
     }

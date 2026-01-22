@@ -2,8 +2,11 @@ package com.thomaskioko.tvmaniac.episodes.api.model
 
 public data class NextEpisodeWithShow(
     val showTraktId: Long,
+    val showTmdbId: Long,
     val showName: String,
     val showPoster: String?,
+    val showStatus: String?,
+    val showYear: String?,
     val episodeId: Long,
     val episodeName: String?,
     val seasonId: Long,
@@ -13,6 +16,10 @@ public data class NextEpisodeWithShow(
     val stillPath: String?,
     val overview: String?,
     val followedAt: Long? = null,
-    val airDate: String? = null,
+    val firstAired: Long? = null,
     val lastWatchedAt: Long? = null,
+    val seasonCount: Long = 0,
+    val episodeCount: Long = 0,
+    val watchedCount: Long = 0,
+    val totalCount: Long = 0,
 )
