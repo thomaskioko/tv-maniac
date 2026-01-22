@@ -51,7 +51,7 @@ struct WatchlistTab: View {
                 HStack {
                     Button {
                         withAnimation {
-                            presenter.dispatch(action: ChangeListStyleClicked())
+                            presenter.dispatch(action: ChangeListStyleClicked(isGridMode: uiState.isGridMode))
                         }
                     } label: {
                         Label(String(\.label_watchlist_list_style), systemImage: image)
