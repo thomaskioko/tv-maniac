@@ -125,7 +125,7 @@ private fun SimilarShowResult.toTvshow(
         name = tmdb?.name ?: trakt.title,
         overview = tmdb?.overview ?: trakt.overview ?: "",
         language = tmdb?.originalLanguage ?: trakt.language,
-        year = dateString?.let { dateTimeProvider.getYear(it) },
+        year = dateString?.let { dateTimeProvider.extractYear(it) },
         ratings = tmdb?.voteAverage ?: trakt.rating ?: 0.0,
         vote_count = tmdb?.voteCount?.toLong() ?: trakt.votes?.toLong() ?: 0L,
         poster_path = tmdb?.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },

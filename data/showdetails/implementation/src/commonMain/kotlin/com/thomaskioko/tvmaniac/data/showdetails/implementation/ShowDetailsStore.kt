@@ -85,7 +85,7 @@ public class ShowDetailsStore(
                         overview = show.overview ?: "",
                         language = show.language,
                         status = show.status,
-                        year = show.firstAirDate?.let { dateTimeProvider.getYear(it) },
+                        year = show.firstAirDate?.let { dateTimeProvider.extractYear(it) },
                         episode_numbers = show.airedEpisodes?.toString(),
                         season_numbers = response.traktSeasons.size.toString(),
                         ratings = show.rating ?: 0.0,
@@ -99,7 +99,7 @@ public class ShowDetailsStore(
                 response.traktSeasons.forEach { season ->
                     seasonDao.upsert(
                         Season(
-                            id = Id(season.ids.tmdb?.toLong() ?: season.ids.trakt.toLong()),
+                            id = Id(season.ids.trakt.toLong()),
                             show_trakt_id = Id(traktId),
                             season_number = season.number.toLong(),
                             episode_count = season.episodeCount.toLong(),
