@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.episodes.implementation
 
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse.Success
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.Id
@@ -18,11 +19,13 @@ import com.thomaskioko.tvmaniac.episodes.implementation.MockData.TEST_SHOW_ID
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.TEST_SHOW_NAME
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.TEST_SHOW_OVERVIEW
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.createSeasonDetailsForContinueTracking
-import com.thomaskioko.tvmaniac.episodes.implementation.MockData.testShowSeasons
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.i18n.testing.util.IgnoreIos
+import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
+import com.thomaskioko.tvmaniac.trakt.api.TraktCalendarRemoteDataSource
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktCalendarResponse
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
@@ -35,10 +38,16 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.time.Clock
+
+private fun LocalDate.toEpochMillis(): Long =
+    atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
 
 @IgnoreIos
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -52,17 +61,33 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
         databaseWrite = testDispatcher,
         databaseRead = testDispatcher,
     )
-    private val fakeWatchlistDao = FakeWatchlistDao()
     private val fakeSeasonDetailsRepository = FakeSeasonDetailsRepository()
     private val fakeDatastoreRepository = FakeDatastoreRepository()
     private val fakeSeasonsRepository = FakeSeasonsRepository()
     private val fakeDateTimeProvider = FakeDateTimeProvider()
     private val fakeSyncRepository = FakeWatchedEpisodeSyncRepository()
-    private val nextEpisodeDao = DefaultNextEpisodeDao(database, coroutineDispatcher)
-    private val watchedEpisodeDao = DefaultWatchedEpisodeDao(
-        database = database,
-        dispatchers = coroutineDispatcher,
-    )
+    private val fakeRequestManagerRepository = FakeRequestManagerRepository()
+    private val fakeCalendarDataSource = object : TraktCalendarRemoteDataSource {
+        override suspend fun getMyShowsCalendar(startDate: String, days: Int) =
+            Success(emptyList<TraktCalendarResponse>())
+    }
+    private val nextEpisodeDao by lazy { DefaultNextEpisodeDao(database, coroutineDispatcher) }
+    private val episodesDao by lazy { DefaultEpisodesDao(database, coroutineDispatcher) }
+    private val watchedEpisodeDao by lazy {
+        DefaultWatchedEpisodeDao(
+            database = database,
+            dispatchers = coroutineDispatcher,
+            dateTimeProvider = fakeDateTimeProvider,
+        )
+    }
+    private val calendarStore by lazy {
+        TraktCalendarStore(
+            calendarDataSource = fakeCalendarDataSource,
+            episodesDao = episodesDao,
+            requestManagerRepository = fakeRequestManagerRepository,
+            dispatchers = coroutineDispatcher,
+        )
+    }
     private lateinit var episodeRepository: EpisodeRepository
 
     @BeforeTest
@@ -72,14 +97,14 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
         episodeRepository = DefaultEpisodeRepository(
             watchedEpisodeDao = watchedEpisodeDao,
             nextEpisodeDao = nextEpisodeDao,
+            episodesDao = episodesDao,
             database = database,
             datastoreRepository = fakeDatastoreRepository,
             dispatchers = coroutineDispatcher,
             seasonsRepository = fakeSeasonsRepository,
             seasonDetailsRepository = fakeSeasonDetailsRepository,
-            watchlistDao = fakeWatchlistDao,
-            dateTimeProvider = fakeDateTimeProvider,
             syncRepository = lazy { fakeSyncRepository },
+            calendarStore = calendarStore,
         )
 
         insertTestData()
@@ -200,8 +225,6 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
     @Test
     fun `should return active season for continue tracking when user has watch progress`() =
         runTest {
-            fakeSeasonsRepository.setSeasonsResult(testShowSeasons)
-
             val season2Episodes =
                 MockData.createSeason2EpisodesWithWatchedState(watchedEpisodeNumber = 3L)
             fakeSeasonDetailsRepository.setSeasonsResult(
@@ -224,14 +247,11 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
                 result.shouldNotBeNull()
                 result.currentSeasonNumber shouldBe SEASON_2_NUMBER
                 result.episodes shouldHaveSize 4
-                result.firstUnwatchedIndex shouldBe 0
             }
         }
 
     @Test
     fun `should return season 1 for continue tracking when user has no watch progress`() = runTest {
-        fakeSeasonsRepository.setSeasonsResult(testShowSeasons)
-
         val season1Episodes = MockData.createSeason1EpisodesForContinueTracking()
         fakeSeasonDetailsRepository.setSeasonsResult(
             createSeasonDetailsForContinueTracking(
@@ -246,14 +266,11 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
             result.shouldNotBeNull()
             result.currentSeasonNumber shouldBe SEASON_1_NUMBER
             result.episodes shouldHaveSize 2
-            result.firstUnwatchedIndex shouldBe 0
         }
     }
 
     @Test
     fun `should return season with future episodes when all previous seasons watched`() = runTest {
-        fakeSeasonsRepository.setSeasonsResult(testShowSeasons)
-
         val futureEpisodes = MockData.createFutureEpisodesForSeason(
             seasonId = SEASON_1_ID,
             seasonNumber = SEASON_1_NUMBER,
@@ -279,20 +296,27 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should return null when all episodes in all seasons are watched`() = runTest {
-        fakeSeasonsRepository.setSeasonsResult(testShowSeasons)
-
-        val allWatchedEpisodes = MockData.createAllWatchedEpisodesForSeason(
-            seasonId = SEASON_1_ID,
-            seasonNumber = SEASON_1_NUMBER,
-            episodeCount = 5,
-        )
-        fakeSeasonDetailsRepository.setSeasonsResult(
-            createSeasonDetailsForContinueTracking(
-                seasonId = SEASON_1_ID,
+        repeat(SEASON_1_EPISODE_COUNT) { episodeIndex ->
+            val episodeNumber = episodeIndex + 1
+            val episodeId = 100L + episodeNumber
+            episodeRepository.markEpisodeAsWatched(
+                showTraktId = TEST_SHOW_ID,
+                episodeId = episodeId,
                 seasonNumber = SEASON_1_NUMBER,
-                episodes = allWatchedEpisodes,
-            ),
-        )
+                episodeNumber = episodeNumber.toLong(),
+            )
+        }
+
+        repeat(SEASON_2_EPISODE_COUNT) { episodeIndex ->
+            val episodeNumber = episodeIndex + 1
+            val episodeId = 200L + episodeNumber
+            episodeRepository.markEpisodeAsWatched(
+                showTraktId = TEST_SHOW_ID,
+                episodeId = episodeId,
+                seasonNumber = SEASON_2_NUMBER,
+                episodeNumber = episodeNumber.toLong(),
+            )
+        }
 
         episodeRepository.observeContinueTrackingEpisodes(TEST_SHOW_ID).test {
             val result = awaitItem()
@@ -302,37 +326,29 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should return null for continue tracking when show not in library`() = runTest {
-        fakeWatchlistDao.setIsInLibrary(false)
-        fakeSeasonsRepository.setSeasonsResult(testShowSeasons)
-
-        episodeRepository.observeContinueTrackingEpisodes(TEST_SHOW_ID).test {
+        val notInLibraryShowId = 999L
+        episodeRepository.observeContinueTrackingEpisodes(notInLibraryShowId).test {
             val result = awaitItem()
             result.shouldBeNull()
         }
     }
 
     @Test
-    fun `should emit continue tracking result when season details become available`() = runTest {
-        fakeSeasonsRepository.setSeasonsResult(testShowSeasons)
-        fakeSeasonDetailsRepository.setSeasonsResult(null)
+    fun `should emit continue tracking result when season details change`() = runTest {
+        val initialEpisodes = MockData.createSeason1EpisodesForContinueTracking()
+        fakeSeasonDetailsRepository.setSeasonsResult(
+            createSeasonDetailsForContinueTracking(
+                seasonId = SEASON_1_ID,
+                seasonNumber = SEASON_1_NUMBER,
+                episodes = initialEpisodes,
+            ),
+        )
 
         episodeRepository.observeContinueTrackingEpisodes(TEST_SHOW_ID).test {
-            awaitItem().shouldBeNull()
-
-            val season1Episodes = MockData.createSeason1EpisodesForContinueTracking()
-            fakeSeasonDetailsRepository.setSeasonsResult(
-                createSeasonDetailsForContinueTracking(
-                    seasonId = SEASON_1_ID,
-                    seasonNumber = SEASON_1_NUMBER,
-                    episodes = season1Episodes,
-                ),
-            )
-
             val result = awaitItem()
             result.shouldNotBeNull()
             result.currentSeasonNumber shouldBe SEASON_1_NUMBER
             result.episodes shouldHaveSize 2
-            result.firstUnwatchedIndex shouldBe 0
         }
     }
 
@@ -448,8 +464,8 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
                 image_url = "/episode$episodeNumber.jpg",
                 ratings = 8.5,
                 vote_count = 50L,
-                air_date = "2023-01-0$episodeNumber",
                 trakt_id = null,
+                first_aired = LocalDate(2023, 1, episodeNumber).toEpochMillis(),
             )
         }
 
@@ -459,7 +475,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
             val _ = database.episodesQueries.upsert(
                 id = Id(episodeId),
                 season_id = Id(SEASON_2_ID),
-                show_trakt_id = Id<TraktId>(TEST_SHOW_ID),
+                show_trakt_id = Id(TEST_SHOW_ID),
                 title = "Episode $episodeNumber",
                 overview = "Season 2 Episode $episodeNumber overview",
                 episode_number = episodeNumber.toLong(),
@@ -467,21 +483,21 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
                 image_url = "/s2e$episodeNumber.jpg",
                 ratings = 9.0,
                 vote_count = 75L,
-                air_date = "2023-02-20",
                 trakt_id = null,
+                first_aired = LocalDate(2023, 2, 20).toEpochMillis(),
             )
         }
 
         val _ = database.followedShowsQueries.upsert(
             id = null,
-            traktId = Id<TraktId>(TEST_SHOW_ID),
-            tmdbId = Id<TmdbId>(TEST_SHOW_ID),
+            traktId = Id(TEST_SHOW_ID),
+            tmdbId = Id(TEST_SHOW_ID),
             followedAt = Clock.System.now().toEpochMilliseconds(),
             pendingAction = "NOTHING",
         )
 
         val _ = database.showMetadataQueries.upsert(
-            show_trakt_id = Id<TraktId>(TEST_SHOW_ID),
+            show_trakt_id = Id(TEST_SHOW_ID),
             season_count = 2,
             episode_count = (SEASON_1_EPISODE_COUNT + SEASON_2_EPISODE_COUNT).toLong(),
             status = "Returning Series",

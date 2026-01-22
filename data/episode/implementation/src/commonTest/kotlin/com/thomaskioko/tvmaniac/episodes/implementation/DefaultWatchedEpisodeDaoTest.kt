@@ -17,6 +17,7 @@ import com.thomaskioko.tvmaniac.episodes.implementation.MockData.SEASON_2_NUMBER
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.TEST_SHOW_ID
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.TEST_SHOW_NAME
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.TEST_SHOW_OVERVIEW
+import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
@@ -26,10 +27,16 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.time.Clock
+
+private fun LocalDate.toEpochMillis(): Long =
+    atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
@@ -42,6 +49,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
         databaseWrite = testDispatcher,
         databaseRead = testDispatcher,
     )
+    private val fakeDateTimeProvider = FakeDateTimeProvider()
 
     private lateinit var watchedEpisodeDao: WatchedEpisodeDao
 
@@ -52,6 +60,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
         watchedEpisodeDao = DefaultWatchedEpisodeDao(
             database = database,
             dispatchers = coroutineDispatcher,
+            dateTimeProvider = fakeDateTimeProvider,
         )
 
         insertTestData()
@@ -76,13 +85,11 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should return all seasons watch progress with correct counts`() = runTest {
-        val timestamp = Clock.System.now().toEpochMilliseconds()
         watchedEpisodeDao.markAsWatched(
             showTraktId = TEST_SHOW_ID,
             episodeId = 101L,
             seasonNumber = SEASON_1_NUMBER,
             episodeNumber = 1L,
-            watchedAt = timestamp,
             includeSpecials = false,
         )
         watchedEpisodeDao.markAsWatched(
@@ -90,7 +97,6 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             episodeId = 102L,
             seasonNumber = SEASON_1_NUMBER,
             episodeNumber = 2L,
-            watchedAt = timestamp,
             includeSpecials = false,
         )
         watchedEpisodeDao.markAsWatched(
@@ -98,7 +104,6 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             episodeId = 103L,
             seasonNumber = SEASON_1_NUMBER,
             episodeNumber = 3L,
-            watchedAt = timestamp,
             includeSpecials = false,
         )
         watchedEpisodeDao.markAsWatched(
@@ -106,7 +111,6 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             episodeId = 201L,
             seasonNumber = SEASON_2_NUMBER,
             episodeNumber = 1L,
-            watchedAt = timestamp,
             includeSpecials = false,
         )
 
@@ -154,7 +158,6 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should return full progress when all episodes watched`() = runTest {
-        val timestamp = Clock.System.now().toEpochMilliseconds()
         repeat(SEASON_1_EPISODE_COUNT) { episodeIndex ->
             val episodeNumber = episodeIndex + 1
             val episodeId = 100L + episodeNumber
@@ -163,7 +166,6 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
                 episodeId = episodeId,
                 seasonNumber = SEASON_1_NUMBER,
                 episodeNumber = episodeNumber.toLong(),
-                watchedAt = timestamp,
                 includeSpecials = false,
             )
         }
@@ -179,8 +181,6 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should update progress when episode is marked as watched`() = runTest {
-        val timestamp = Clock.System.now().toEpochMilliseconds()
-
         watchedEpisodeDao.observeAllSeasonsWatchProgress(TEST_SHOW_ID).test {
             val initialProgress = awaitItem()
             initialProgress.first { it.seasonNumber == SEASON_1_NUMBER }.watchedCount shouldBe 0
@@ -190,7 +190,6 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
                 episodeId = 101L,
                 seasonNumber = SEASON_1_NUMBER,
                 episodeNumber = 1L,
-                watchedAt = timestamp,
                 includeSpecials = false,
             )
 
@@ -248,8 +247,8 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
 
     private fun insertTestData() {
         val _ = database.tvShowQueries.upsert(
-            trakt_id = Id<TraktId>(TEST_SHOW_ID),
-            tmdb_id = Id<TmdbId>(TEST_SHOW_ID),
+            trakt_id = Id(TEST_SHOW_ID),
+            tmdb_id = Id(TEST_SHOW_ID),
             name = TEST_SHOW_NAME,
             overview = TEST_SHOW_OVERVIEW,
             language = "en",
@@ -266,7 +265,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
 
         val _ = database.seasonsQueries.upsert(
             id = Id(SEASON_1_ID),
-            show_trakt_id = Id<TraktId>(TEST_SHOW_ID),
+            show_trakt_id = Id(TEST_SHOW_ID),
             season_number = SEASON_1_NUMBER,
             title = "Season 1",
             overview = "First season",
@@ -276,7 +275,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
 
         val _ = database.seasonsQueries.upsert(
             id = Id(SEASON_2_ID),
-            show_trakt_id = Id<TraktId>(TEST_SHOW_ID),
+            show_trakt_id = Id(TEST_SHOW_ID),
             season_number = SEASON_2_NUMBER,
             title = "Season 2",
             overview = "Second season",
@@ -290,7 +289,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             val _ = database.episodesQueries.upsert(
                 id = Id(episodeId),
                 season_id = Id(SEASON_1_ID),
-                show_trakt_id = Id<TraktId>(TEST_SHOW_ID),
+                show_trakt_id = Id(TEST_SHOW_ID),
                 title = "Episode $episodeNumber",
                 overview = "Episode $episodeNumber overview",
                 episode_number = episodeNumber.toLong(),
@@ -298,8 +297,8 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
                 image_url = "/episode$episodeNumber.jpg",
                 ratings = 8.5,
                 vote_count = 50L,
-                air_date = "2023-01-0$episodeNumber",
                 trakt_id = null,
+                first_aired = LocalDate(2023, 1, episodeNumber).toEpochMillis(),
             )
         }
 
@@ -317,8 +316,8 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
                 image_url = "/s2e$episodeNumber.jpg",
                 ratings = 9.0,
                 vote_count = 75L,
-                air_date = "2023-02-20",
                 trakt_id = null,
+                first_aired = LocalDate(2023, 2, 20).toEpochMillis(),
             )
         }
 

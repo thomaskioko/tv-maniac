@@ -5,8 +5,8 @@ import com.thomaskioko.tvmaniac.episodes.api.model.LastWatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
+import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
 import kotlinx.coroutines.flow.Flow
-import kotlin.time.Instant
 
 public interface EpisodeRepository {
 
@@ -18,27 +18,23 @@ public interface EpisodeRepository {
     /**
      * Mark an episode as watched. The SQL view automatically updates next episode calculations.
      * Automatically adds the show to the library if not already there.
-     * @param watchedAt Optional timestamp for when the episode was watched. Defaults to current time.
      */
     public suspend fun markEpisodeAsWatched(
         showTraktId: Long,
         episodeId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
-        watchedAt: Instant? = null,
     )
 
     /**
      * Mark an episode as watched along with all previous unwatched episodes.
      * Automatically adds the show to the library if not already there.
-     * @param watchedAt Optional timestamp for when the episodes were watched. Defaults to current time.
      */
     public suspend fun markEpisodeAndPreviousEpisodesWatched(
         showTraktId: Long,
         episodeId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
-        watchedAt: Instant? = null,
     )
 
     /**
@@ -71,19 +67,16 @@ public interface EpisodeRepository {
     /**
      * Mark all episodes in a season as watched.
      * Automatically adds the show to the library if not already there.
-     * @param watchedAt Optional timestamp for when the episodes were watched. Defaults to current time.
      */
-    public suspend fun markSeasonWatched(showTraktId: Long, seasonNumber: Long, watchedAt: Instant? = null)
+    public suspend fun markSeasonWatched(showTraktId: Long, seasonNumber: Long)
 
     /**
      * Mark all episodes in a season as watched along with all previous seasons.
      * Automatically adds the show to the library if not already there.
-     * @param watchedAt Optional timestamp for when the episodes were watched. Defaults to current time.
      */
     public suspend fun markSeasonAndPreviousSeasonsWatched(
         showTraktId: Long,
         seasonNumber: Long,
-        watchedAt: Instant? = null,
     )
 
     /**
@@ -118,4 +111,27 @@ public interface EpisodeRepository {
      * - Returns null when no unwatched episodes remain across all seasons
      */
     public fun observeContinueTrackingEpisodes(showTraktId: Long): Flow<ContinueTrackingResult?>
+
+    /**
+     * Get upcoming episodes from followed shows within the specified time window.
+     * Only returns episodes that have first_aired set and are not yet watched.
+     * @param fromEpoch Start of time window in milliseconds (typically current time)
+     * @param toEpoch End of time window in milliseconds
+     * @return List of upcoming episodes ordered by air time
+     */
+    public suspend fun getUpcomingEpisodesFromFollowedShows(fromEpoch: Long, toEpoch: Long): List<UpcomingEpisode>
+
+    /**
+     * Sync upcoming episodes from Trakt Calendar API.
+     * Updates the first_aired timestamp for episodes in the user's followed shows.
+     * Uses request tracking to avoid redundant API calls within the cache window.
+     * @param startDate Start date in YYYY-MM-DD format
+     * @param days Number of days to fetch
+     * @param forceRefresh If true, bypasses cache validation and always fetches from API
+     */
+    public suspend fun syncUpcomingEpisodesFromTrakt(
+        startDate: String,
+        days: Int,
+        forceRefresh: Boolean = false,
+    )
 }
