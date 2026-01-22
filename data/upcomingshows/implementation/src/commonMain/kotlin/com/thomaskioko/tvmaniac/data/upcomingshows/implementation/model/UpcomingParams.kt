@@ -5,6 +5,6 @@ import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_SORT_ORDER
 internal data class UpcomingParams(
     val startDate: String,
     val endDate: String,
-    val page: Long,
+    val page: Long = 1L,
     val sortBy: String = DEFAULT_SORT_ORDER,
 )
