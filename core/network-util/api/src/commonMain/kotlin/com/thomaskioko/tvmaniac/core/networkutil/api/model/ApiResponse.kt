@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.core.networkutil.model
+package com.thomaskioko.tvmaniac.core.networkutil.api.model
 
 public sealed class ApiResponse<out T> {
     public data class Success<T>(val body: T) : ApiResponse<T>()

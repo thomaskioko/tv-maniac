@@ -24,6 +24,7 @@ kotlin {
                 implementation(projects.data.datastore.api)
                 implementation(projects.data.traktauth.api)
                 implementation(projects.domain.followedshows)
+                implementation(libs.kotlinx.atomicfu)
                 implementation(libs.kotlinx.datetime)
             }
         }

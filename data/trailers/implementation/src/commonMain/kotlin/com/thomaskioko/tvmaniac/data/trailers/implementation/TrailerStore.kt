@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.data.trailers.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.networkutil.model.getOrThrow
-import com.thomaskioko.tvmaniac.core.store.storeBuilder
-import com.thomaskioko.tvmaniac.core.store.usingDispatchers
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.storeBuilder
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.usingDispatchers
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.getOrThrow
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.SelectByShowTraktId
@@ -12,6 +12,7 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.TRAILERS
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktVideosResponse
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
@@ -31,7 +32,7 @@ public class TrailerStore(
     fetcher = Fetcher.of { traktId: Long ->
         traktRemoteDataSource.getShowVideos(traktId).getOrThrow()
     },
-    sourceOfTruth = SourceOfTruth.of<Long, List<com.thomaskioko.tvmaniac.trakt.api.model.TraktVideosResponse>, List<SelectByShowTraktId>>(
+    sourceOfTruth = SourceOfTruth.of<Long, List<TraktVideosResponse>, List<SelectByShowTraktId>>(
         reader = { traktId: Long ->
             trailerDao.observeTrailersByShowTraktId(traktId)
         },

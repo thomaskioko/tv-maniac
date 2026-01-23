@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.followedshows.implementation
 
-import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowEntry
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
@@ -29,8 +29,8 @@ public class TraktFollowedShowsDataSource(
             is ApiResponse.Success -> {
                 response.body.map { traktShow ->
                     val entry = FollowedShowEntry(
-                        traktId = traktShow.show.ids.trakt.toLong(),
-                        tmdbId = traktShow.show.ids.tmdb?.toLong(),
+                        traktId = traktShow.show.ids.trakt,
+                        tmdbId = traktShow.show.ids.tmdb,
                         followedAt = Instant.parse(traktShow.listedAt),
                         pendingAction = PendingAction.NOTHING,
                     )

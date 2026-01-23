@@ -7,6 +7,8 @@ kotlin {
         commonMain.dependencies {
             api(libs.coroutines.core)
             api(libs.store5)
+
+            implementation(libs.ktor.core)
         }
     }
 }
