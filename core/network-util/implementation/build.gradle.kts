@@ -15,13 +15,17 @@ scaffold {
 kotlin {
     sourceSets {
         commonMain.dependencies {
+            api(projects.core.networkUtil.api)
 
             implementation(projects.core.base)
 
-            implementation(libs.androidx.paging.common)
             implementation(libs.coroutines.core)
             implementation(libs.ktor.core)
             implementation(libs.store5)
+        }
+
+        commonTest.dependencies {
+            implementation(libs.bundles.unittest)
         }
     }
 }

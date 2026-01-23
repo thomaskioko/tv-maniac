@@ -44,6 +44,8 @@ kotlin {
         commonMain {
             dependencies {
                 api(projects.core.util.api)
+                api(projects.core.networkUtil.api)
+                api(projects.core.networkUtil.implementation)
                 api(projects.i18n.api)
                 api(projects.navigation.api)
                 api(projects.data.traktauth.api)
