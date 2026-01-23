@@ -54,11 +54,16 @@ class ObserveWatchlistSectionsInteractorTest {
     }
 
     @Test
-    fun `should return all items in watchNext when no lastWatched data`() = runTest {
+    fun `should return items in watchNext given recent followedAt and no lastWatched`() = runTest {
+        val currentTime = 1000000000000L
+        val recentFollowedAt = currentTime - 1000L
+
+        dateTimeProvider.setCurrentTimeMillis(currentTime)
+
         episodeRepository.setNextEpisodesForWatchlist(
             listOf(
-                createNextEpisode(showTraktId = 84958, showName = "Loki"),
-                createNextEpisode(showTraktId = 1232, showName = "The Lazarus Project"),
+                createNextEpisode(showTraktId = 84958, showName = "Loki", followedAt = recentFollowedAt),
+                createNextEpisode(showTraktId = 1232, showName = "The Lazarus Project", followedAt = recentFollowedAt),
             ),
         )
 
@@ -78,13 +83,14 @@ class ObserveWatchlistSectionsInteractorTest {
     fun `should group stale items when lastWatched is over 21 days ago`() = runTest {
         val currentTime = 1000000000000L
         val twentyTwoDaysAgo = currentTime - (22 * 24 * 60 * 60 * 1000L)
+        val recentFollowedAt = currentTime - 1000L
 
         dateTimeProvider.setCurrentTimeMillis(currentTime)
 
         episodeRepository.setNextEpisodesForWatchlist(
             listOf(
                 createNextEpisode(showTraktId = 84958, showName = "Loki", lastWatchedAt = twentyTwoDaysAgo),
-                createNextEpisode(showTraktId = 1232, showName = "The Lazarus Project"),
+                createNextEpisode(showTraktId = 1232, showName = "The Lazarus Project", followedAt = recentFollowedAt),
             ),
         )
 
@@ -96,6 +102,63 @@ class ObserveWatchlistSectionsInteractorTest {
             result.watchNext[0].title shouldBe "The Lazarus Project"
             result.stale.size shouldBe 1
             result.stale[0].title shouldBe "Loki"
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should group items as stale when followedAt is over 21 days ago and never watched`() = runTest {
+        val currentTime = 1000000000000L
+        val twentyTwoDaysAgo = currentTime - (22 * 24 * 60 * 60 * 1000L)
+        val recentFollowedAt = currentTime - 1000L
+
+        dateTimeProvider.setCurrentTimeMillis(currentTime)
+
+        episodeRepository.setNextEpisodesForWatchlist(
+            listOf(
+                createNextEpisode(showTraktId = 84958, showName = "Old Follow", followedAt = twentyTwoDaysAgo),
+                createNextEpisode(showTraktId = 1232, showName = "Recent Follow", followedAt = recentFollowedAt),
+            ),
+        )
+
+        interactor("")
+
+        interactor.flow.test {
+            val result = awaitItem()
+            result.watchNext.size shouldBe 1
+            result.watchNext[0].title shouldBe "Recent Follow"
+            result.stale.size shouldBe 1
+            result.stale[0].title shouldBe "Old Follow"
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should use lastWatchedAt over followedAt when both are present`() = runTest {
+        val currentTime = 1000000000000L
+        val twentyTwoDaysAgo = currentTime - (22 * 24 * 60 * 60 * 1000L)
+        val recentWatch = currentTime - 1000L
+
+        dateTimeProvider.setCurrentTimeMillis(currentTime)
+
+        episodeRepository.setNextEpisodesForWatchlist(
+            listOf(
+                createNextEpisode(
+                    showTraktId = 84958,
+                    showName = "Recently Watched",
+                    lastWatchedAt = recentWatch,
+                    followedAt = twentyTwoDaysAgo,
+                ),
+            ),
+        )
+
+        interactor("")
+
+        interactor.flow.test {
+            val result = awaitItem()
+            result.watchNext.size shouldBe 1
+            result.watchNext[0].title shouldBe "Recently Watched"
+            result.stale.size shouldBe 0
             cancelAndConsumeRemainingEvents()
         }
     }
@@ -168,6 +231,7 @@ class ObserveWatchlistSectionsInteractorTest {
         showTraktId: Long,
         showName: String,
         lastWatchedAt: Long? = null,
+        followedAt: Long? = null,
         watchedCount: Long = 0,
         totalCount: Long = 10,
     ) = NextEpisodeWithShow(
@@ -185,6 +249,7 @@ class ObserveWatchlistSectionsInteractorTest {
         runtime = 45L,
         stillPath = "/still.jpg",
         overview = "Overview",
+        followedAt = followedAt,
         firstAired = null,
         lastWatchedAt = lastWatchedAt,
         seasonCount = 2,

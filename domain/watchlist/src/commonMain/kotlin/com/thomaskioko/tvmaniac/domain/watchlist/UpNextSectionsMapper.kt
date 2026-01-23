@@ -77,6 +77,7 @@ public class UpNextSectionsMapper(
             firstAired = firstAired,
             remainingEpisodes = remainingEpisodes,
             lastWatchedAt = lastWatchedAt,
+            followedAt = followedAt,
             badge = badge,
         )
     }
@@ -95,11 +96,15 @@ public class UpNextSectionsMapper(
 
         forEach { item ->
             val lastWatched = item.lastWatchedAt ?: 0L
-            if (lastWatched in 1..<sixteenDaysAgo) {
-                stale.add(item)
-            } else {
-                watchNext.add(item)
+            val followedAt = item.followedAt ?: 0L
+
+            val isStale = when {
+                lastWatched > 0 -> lastWatched < sixteenDaysAgo
+                followedAt > 0 -> followedAt < sixteenDaysAgo
+                else -> false
             }
+
+            if (isStale) stale.add(item) else watchNext.add(item)
         }
 
         return UpNextSections(
