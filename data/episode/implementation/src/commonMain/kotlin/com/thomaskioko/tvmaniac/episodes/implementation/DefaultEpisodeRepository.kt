@@ -36,6 +36,7 @@ import org.mobilenativefoundation.store.store5.impl.extensions.get
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
+import kotlin.time.Duration
 
 @Inject
 @SingleIn(AppScope::class)
@@ -235,11 +236,10 @@ public class DefaultEpisodeRepository(
             }
 
     override suspend fun getUpcomingEpisodesFromFollowedShows(
-        fromEpoch: Long,
-        toEpoch: Long,
+        limit: Duration,
     ): List<UpcomingEpisode> =
         withContext(dispatchers.io) {
-            episodesDao.getUpcomingEpisodesFromFollowedShows(fromEpoch, toEpoch)
+            episodesDao.getUpcomingEpisodesFromFollowedShows(limit)
                 .map { episode ->
                     UpcomingEpisode(
                         episodeId = episode.episode_id.id,

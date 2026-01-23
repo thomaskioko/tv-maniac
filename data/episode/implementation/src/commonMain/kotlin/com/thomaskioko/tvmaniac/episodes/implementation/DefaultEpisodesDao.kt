@@ -11,12 +11,15 @@ import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.db.UpcomingEpisodesFromFollowedShows
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
+import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
+import kotlin.time.Duration
 import com.thomaskioko.tvmaniac.db.Episode as EpisodeCache
 
 @Inject
@@ -25,6 +28,7 @@ import com.thomaskioko.tvmaniac.db.Episode as EpisodeCache
 public class DefaultEpisodesDao(
     private val database: TvManiacDatabase,
     private val dispatchers: AppCoroutineDispatchers,
+    private val dateTimeProvider: DateTimeProvider,
 ) : EpisodesDao {
 
     private val episodeQueries
@@ -88,18 +92,24 @@ public class DefaultEpisodesDao(
     }
 
     override fun observeUpcomingEpisodesFromFollowedShows(
-        fromEpoch: Long,
-        toEpoch: Long,
-    ): Flow<List<UpcomingEpisodesFromFollowedShows>> =
-        episodeQueries.upcomingEpisodesFromFollowedShows(fromEpoch, toEpoch)
+        limit: Duration,
+    ): Flow<List<UpcomingEpisodesFromFollowedShows>> {
+        val now = dateTimeProvider.nowMillis()
+        val toEpoch = now + limit.inWholeMilliseconds
+        return episodeQueries.upcomingEpisodesFromFollowedShows(now, toEpoch)
             .asFlow()
             .mapToList(dispatchers.databaseRead)
+            .map { episodes ->
+                episodes.filter { it.first_aired in now..toEpoch }
+            }
+    }
 
     override suspend fun getUpcomingEpisodesFromFollowedShows(
-        fromEpoch: Long,
-        toEpoch: Long,
+        limit: Duration,
     ): List<UpcomingEpisodesFromFollowedShows> = withContext(dispatchers.databaseRead) {
-        episodeQueries.upcomingEpisodesFromFollowedShows(fromEpoch, toEpoch).executeAsList()
+        val now = dateTimeProvider.nowMillis()
+        val toEpoch = now + limit.inWholeMilliseconds
+        episodeQueries.upcomingEpisodesFromFollowedShows(now, toEpoch).executeAsList()
     }
 
     override fun observeNextEpisodeForShow(

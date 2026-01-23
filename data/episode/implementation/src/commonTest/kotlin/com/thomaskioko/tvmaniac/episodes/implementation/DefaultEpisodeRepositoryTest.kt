@@ -72,7 +72,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
             Success(emptyList<TraktCalendarResponse>())
     }
     private val nextEpisodeDao by lazy { DefaultNextEpisodeDao(database, coroutineDispatcher) }
-    private val episodesDao by lazy { DefaultEpisodesDao(database, coroutineDispatcher) }
+    private val episodesDao by lazy { DefaultEpisodesDao(database, coroutineDispatcher, fakeDateTimeProvider) }
     private val watchedEpisodeDao by lazy {
         DefaultWatchedEpisodeDao(
             database = database,
