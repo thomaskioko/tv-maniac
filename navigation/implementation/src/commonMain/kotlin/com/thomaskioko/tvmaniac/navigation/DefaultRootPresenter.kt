@@ -7,7 +7,6 @@ import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asStateFlow
 import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
-import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.InvokeError
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
@@ -54,9 +53,8 @@ public class DefaultRootPresenter(
     private val traktAuthRepository: TraktAuthRepository,
     private val updateUserProfileData: UpdateUserProfileData,
     private val logoutInteractor: LogoutInteractor,
-    private val logger: Logger,
     coroutineScope: CoroutineScope = componentContext.coroutineScope(),
-    datastoreRepository: DatastoreRepository,
+    private val datastoreRepository: DatastoreRepository,
 ) : RootPresenter, ComponentContext by componentContext {
 
     init {
@@ -65,23 +63,20 @@ public class DefaultRootPresenter(
                 .debounce(200.milliseconds)
                 .distinctUntilChanged()
                 .filter { it == TraktAuthState.LOGGED_IN }
-                .collect { refreshUserProfile(coroutineScope) }
+                .collect { refreshUserProfile() }
         }
     }
 
-    private fun refreshUserProfile(scope: CoroutineScope) {
-        scope.launch {
-            updateUserProfileData(UpdateUserProfileData.Params(forceRefresh = false))
-                .collect { status ->
-                    if (status is InvokeError) {
-                        logger.error("RootPresenter", "Failed to sync user profile: ${status.throwable.message}")
-                        if (status.throwable.message?.contains("401") == true) {
-                            traktAuthRepository.setAuthError(AuthError.TokenExpired)
-                            logoutInteractor.executeSync(Unit)
-                        }
+    private suspend fun refreshUserProfile() {
+        updateUserProfileData(UpdateUserProfileData.Params(forceRefresh = false))
+            .collect { status ->
+                if (status is InvokeError) {
+                    if (status.throwable.message?.contains("401") == true) {
+                        traktAuthRepository.setAuthError(AuthError.TokenExpired)
+                        logoutInteractor.executeSync(Unit)
                     }
                 }
-        }
+            }
     }
 
     override val childStack: StateFlow<ChildStack<*, Child>> = childStack(
@@ -204,7 +199,6 @@ public class DefaultRootPresenter(
         private val traktAuthRepository: TraktAuthRepository,
         private val updateUserProfileData: UpdateUserProfileData,
         private val logoutInteractor: LogoutInteractor,
-        private val logger: Logger,
         private val datastoreRepository: DatastoreRepository,
     ) : RootPresenter.Factory {
         override fun invoke(
@@ -223,7 +217,6 @@ public class DefaultRootPresenter(
             traktAuthRepository = traktAuthRepository,
             updateUserProfileData = updateUserProfileData,
             logoutInteractor = logoutInteractor,
-            logger = logger,
             datastoreRepository = datastoreRepository,
         )
     }
