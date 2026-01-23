@@ -78,4 +78,24 @@ class AndroidFormatterUtilTest {
 
         result shouldBeEqual expected
     }
+
+    @Test
+    fun `should return formatted date time given epoch millis and pattern`() {
+        val epochMillis = 1737630240000L
+        val pattern = "MMM d, yyyy 'at' HH:mm"
+
+        val result = formatterUtil.formatDateTime(epochMillis, pattern)
+
+        result shouldBeEqual "Jan 23, 2025 at 11:24"
+    }
+
+    @Test
+    fun `should return formatted date given different pattern`() {
+        val epochMillis = 1702386411000L
+        val pattern = "yyyy-MM-dd"
+
+        val result = formatterUtil.formatDateTime(epochMillis, pattern)
+
+        result shouldBeEqual "2023-12-12"
+    }
 }

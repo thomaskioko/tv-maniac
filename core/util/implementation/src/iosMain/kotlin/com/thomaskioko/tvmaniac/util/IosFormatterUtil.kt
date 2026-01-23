@@ -2,8 +2,11 @@ package com.thomaskioko.tvmaniac.util
 
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 import me.tatarka.inject.annotations.Inject
+import platform.Foundation.NSDate
+import platform.Foundation.NSDateFormatter
 import platform.Foundation.NSNumber
 import platform.Foundation.NSNumberFormatter
+import platform.Foundation.dateWithTimeIntervalSince1970
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
@@ -53,5 +56,12 @@ public class IosFormatterUtil : FormatterUtil {
                 formatter.stringFromNumber(NSNumber(integer = numValue)) ?: number.toString()
             }
         }
+    }
+
+    override fun formatDateTime(epochMillis: Long, pattern: String): String {
+        val date = NSDate.dateWithTimeIntervalSince1970(epochMillis / 1000.0)
+        val formatter = NSDateFormatter()
+        formatter.dateFormat = pattern
+        return formatter.stringFromDate(date)
     }
 }

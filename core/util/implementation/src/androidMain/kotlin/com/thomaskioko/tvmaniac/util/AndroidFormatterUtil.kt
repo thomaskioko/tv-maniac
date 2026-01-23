@@ -7,6 +7,9 @@ import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 import java.math.RoundingMode
 import java.text.DecimalFormat
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlin.math.floor
 import kotlin.math.log10
 import kotlin.math.pow
@@ -37,5 +40,11 @@ public class AndroidFormatterUtil : FormatterUtil {
                 DecimalFormat("#,##0").format(numValue)
             }
         }
+    }
+
+    override fun formatDateTime(epochMillis: Long, pattern: String): String {
+        val date = Date(epochMillis)
+        val formatter = SimpleDateFormat(pattern, Locale.getDefault())
+        return formatter.format(date)
     }
 }
