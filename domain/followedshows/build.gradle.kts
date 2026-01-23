@@ -16,7 +16,10 @@ kotlin {
 
                 implementation(projects.core.base)
                 implementation(projects.core.logger.api)
+                implementation(projects.core.networkUtil.api)
                 implementation(projects.data.datastore.api)
+                implementation(projects.data.watchlist.api)
+                implementation(projects.data.followedshows.api)
                 implementation(projects.data.episode.api)
                 implementation(projects.data.seasondetails.api)
                 implementation(projects.data.seasons.api)

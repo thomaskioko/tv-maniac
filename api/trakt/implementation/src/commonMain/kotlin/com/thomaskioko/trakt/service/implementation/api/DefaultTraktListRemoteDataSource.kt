@@ -1,8 +1,8 @@
 package com.thomaskioko.trakt.service.implementation.api
 
 import com.thomaskioko.trakt.service.implementation.TraktHttpClient
-import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.safeRequest
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAddRemoveShowFromListResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAddShowRequest
