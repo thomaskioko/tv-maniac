@@ -248,4 +248,12 @@
     <string name="label_settings_include_specials_description">Specials und Bonusstaffeln anzeigen</string>
 
     <string name="label_up_to_date">Alles gesehen</string>
+
+    <string name="label_settings_episode_notifications">Episodenbenachrichtigungen</string>
+    <string name="label_settings_episode_notifications_description">Benachrichtigt werden, wenn neue Episoden ausgestrahlt werden</string>
+
+    <string name="notification_rationale_title">Episodenbenachrichtigungen</string>
+    <string name="notification_rationale_message">Lassen Sie sich benachrichtigen, wenn neue Episoden Ihrer Lieblingssendungen bald ausgestrahlt werden, damit Sie sie nie verpassen.</string>
+    <string name="notification_rationale_enable">Aktivieren</string>
+    <string name="notification_rationale_not_now">Nicht jetzt</string>
 </resources>
