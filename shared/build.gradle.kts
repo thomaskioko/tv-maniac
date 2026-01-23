@@ -63,6 +63,8 @@ kotlin {
                 api(projects.domain.followedshows)
                 api(projects.data.followedshows.api)
                 api(projects.data.followedshows.implementation)
+                api(projects.data.syncActivity.api)
+                api(projects.data.syncActivity.implementation)
 
                 implementation(projects.api.tmdb.api)
                 implementation(projects.api.tmdb.implementation)

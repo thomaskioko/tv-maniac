@@ -107,5 +107,10 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
             trakt_idAdapter = IdAdapter(),
             tmdb_idAdapter = IdAdapter(),
         ),
+        trakt_last_activityAdapter = Trakt_last_activity.Adapter(
+            remote_timestampAdapter = InstantColumnAdapter,
+            synced_remote_timestampAdapter = InstantColumnAdapter,
+            fetched_atAdapter = InstantColumnAdapter,
+        ),
     )
 }

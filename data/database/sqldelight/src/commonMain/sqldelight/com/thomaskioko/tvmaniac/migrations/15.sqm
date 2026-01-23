@@ -1,5 +1,7 @@
--- Migration 15: Add show_watch_progress view
+-- Migration 15: Add show_watch_progress view, Add trakt_last_activity table
 -- Calculates watched/total episode counts on-the-fly for watchlist progress indicator
+-- Stores activity timestamps from Trakt's /sync/last_activities endpoint
+-- to enable smarter sync decisions by only fetching data that has actually changed
 
 CREATE VIEW show_watch_progress AS
 SELECT
@@ -21,3 +23,15 @@ LEFT JOIN (
     AND (episode.first_aired IS NULL OR episode.first_aired <= strftime('%s', 'now') * 1000)
     GROUP BY episode.show_trakt_id
 ) AS total ON total.show_trakt_id = tvshow.trakt_id;
+
+
+CREATE TABLE trakt_last_activity (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    activity_type TEXT NOT NULL,
+    remote_timestamp INTEGER NOT NULL,
+    synced_remote_timestamp INTEGER,
+    fetched_at INTEGER NOT NULL
+);
+
+CREATE UNIQUE INDEX idx_trakt_activity_type ON trakt_last_activity(activity_type);
+
