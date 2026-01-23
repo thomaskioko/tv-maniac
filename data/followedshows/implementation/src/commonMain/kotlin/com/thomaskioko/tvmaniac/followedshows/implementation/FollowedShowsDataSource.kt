@@ -25,7 +25,8 @@ public class TraktFollowedShowsDataSource(
 ) : FollowedShowsDataSource {
 
     override suspend fun getFollowedShows(): List<Pair<FollowedShowEntry, TraktFollowedShowResponse>> {
-        return when (val response = traktListDataSource.getWatchList()) {
+        //TODO::Refactor this to load from user preference.
+        return when (val response = traktListDataSource.getWatchList(sortBy = "added")) {
             is ApiResponse.Success -> {
                 response.body.map { traktShow ->
                     val entry = FollowedShowEntry(

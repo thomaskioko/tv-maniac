@@ -1,8 +1,8 @@
 package com.thomaskioko.trakt.service.implementation.api
 
 import com.thomaskioko.trakt.service.implementation.TraktHttpClient
-import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.safeRequest
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.safeRequest
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAddRemoveShowFromListResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAddShowRequest
@@ -58,12 +58,12 @@ public class DefaultTraktListRemoteDataSource(
             .get("users/$userSlug/lists/$listId/items/shows") { parameter("sort_by", "added") }
             .body()
 
-    override suspend fun getWatchList(): ApiResponse<List<TraktFollowedShowResponse>> =
+    override suspend fun getWatchList(sortBy: String): ApiResponse<List<TraktFollowedShowResponse>> =
         httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
-                path("sync/watchlist/shows")
-                parameter("sort_by", "added")
+                path("users/me/watchlist/shows")
+                parameter("sort_by", sortBy)
             }
         }
 
