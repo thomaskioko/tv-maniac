@@ -42,7 +42,7 @@ public class UserStore(
                 )
 
                 requestManagerRepository.upsert(
-                    entityId = response.ids.slug.hashCode().toLong(),
+                    entityId = USER_PROFILE.requestId,
                     requestType = USER_PROFILE.name,
                 )
             }
@@ -56,8 +56,7 @@ public class UserStore(
 ).validator(
     Validator.by { user ->
         withContext(dispatchers.io) {
-            !requestManagerRepository.isRequestExpired(
-                entityId = user.slug.hashCode().toLong(),
+            requestManagerRepository.isRequestValid(
                 requestType = USER_PROFILE.name,
                 threshold = USER_PROFILE.duration,
             )
