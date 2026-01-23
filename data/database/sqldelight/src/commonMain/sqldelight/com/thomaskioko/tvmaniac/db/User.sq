@@ -28,14 +28,6 @@ FROM
 WHERE
     slug = ?;
 
-getCurrentUser:
-SELECT
-    *
-FROM
-    user
-WHERE
-    is_me != 0;
-
 observeCurrentUser:
 SELECT
     *
@@ -59,5 +51,5 @@ FROM followed_shows fs
 INNER JOIN tvshow t ON fs.tmdb_id = t.tmdb_id
 WHERE t.poster_path IS NOT NULL
   AND fs.pending_action != 'DELETE'
-ORDER BY RANDOM()
+ORDER BY fs.followed_at DESC
 LIMIT 1;

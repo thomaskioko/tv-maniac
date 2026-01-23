@@ -30,14 +30,12 @@ public class UserStore(
         reader = { key -> userDao.observeUserByKey(key) },
         writer = { username, response ->
             withContext(dispatchers.databaseWrite) {
-                val backgroundUrl = userDao.getRandomWatchlistBackdrop()
-
                 userDao.upsertUser(
                     slug = response.ids.slug,
                     userName = response.userName,
                     fullName = response.name,
                     profilePicture = response.images.avatar.full,
-                    backgroundUrl = backgroundUrl,
+                    backgroundUrl = null,
                     isMe = username == "me",
                 )
 
