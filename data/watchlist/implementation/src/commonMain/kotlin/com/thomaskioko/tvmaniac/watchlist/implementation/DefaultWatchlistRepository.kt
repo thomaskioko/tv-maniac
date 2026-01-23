@@ -10,7 +10,7 @@ import com.thomaskioko.tvmaniac.db.SearchFollowedShows
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsDao
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
-import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.FOLLOWED_SHOWS_SYNC
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.WATCHLIST_SYNC
 import com.thomaskioko.tvmaniac.shows.api.WatchlistDao
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
 import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityRepository
@@ -82,7 +82,7 @@ public class DefaultWatchlistRepository(
 
     override suspend fun needsSync(expiry: Duration): Boolean =
         !requestManagerRepository.isRequestValid(
-            requestType = FOLLOWED_SHOWS_SYNC.name,
+            requestType = WATCHLIST_SYNC.name,
             threshold = expiry,
         )
 
