@@ -23,7 +23,6 @@ LEFT JOIN shows_last_watched AS last_watched ON last_watched.show_trakt_id = tvs
 WHERE (season.season_number > 0 OR (season.season_number = 0 AND season.title != 'Specials'))
   AND watched_episode.episode_id IS NULL
   AND ((1000 * season.season_number) + episode.episode_number) > COALESCE(last_watched.last_watched_abs_number, 0)
-  AND (episode.first_aired IS NULL OR episode.first_aired <= (strftime('%s', 'now') * 1000))
 ORDER BY tvshow.trakt_id, season.season_number, episode.episode_number;
 
 nextEpisodeForShow:
@@ -51,7 +50,6 @@ WHERE tvshow.trakt_id = :showTraktId
   AND (:includeSpecials = 1 OR (season.season_number > 0 OR season.title != 'Specials'))
   AND watched_episode.episode_id IS NULL
   AND ((1000 * season.season_number) + episode.episode_number) > COALESCE(last_watched.last_watched_abs_number, 0)
-  AND (episode.first_aired IS NULL OR episode.first_aired <= (strftime('%s', 'now') * 1000))
 ORDER BY season.season_number, episode.episode_number
 LIMIT 1;
 
