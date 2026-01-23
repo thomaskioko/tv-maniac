@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.watchlist.presenter
 import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
+import com.thomaskioko.tvmaniac.core.networkutil.testing.FakeApiRateLimiter
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
@@ -16,6 +17,7 @@ import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepositor
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
+import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
@@ -26,6 +28,9 @@ class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
     val episodeRepository = FakeEpisodeRepository()
     val dateTimeProvider = FakeDateTimeProvider()
     val traktAuthRepository = FakeTraktAuthRepository()
+    private val fakeApiRateLimiter = FakeApiRateLimiter()
+    private val fakeTraktActivityRepository = FakeTraktActivityRepository()
+    private val fakeWatchlistRepository = FakeWatchlistRepository()
 
     val testDispatcher = UnconfinedTestDispatcher()
 
@@ -65,6 +70,7 @@ class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
         watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
         datastoreRepository = FakeDatastoreRepository(),
         dispatchers = coroutineDispatcher,
+        apiRateLimiter = fakeApiRateLimiter,
     )
 
     private val followedShowsSyncInteractor = FollowedShowsSyncInteractor(
@@ -72,6 +78,9 @@ class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
         showContentSyncInteractor = showContentSyncInteractor,
         dispatchers = coroutineDispatcher,
         logger = fakeLogger,
+        apiRateLimiter = fakeApiRateLimiter,
+        traktActivityRepository = fakeTraktActivityRepository,
+        watchlistRepository = fakeWatchlistRepository,
     )
 
     override fun invoke(

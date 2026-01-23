@@ -40,6 +40,7 @@ kotlin {
             implementation(projects.data.traktauth.testing)
             implementation(projects.data.user.api)
             implementation(projects.data.user.testing)
+            implementation(projects.data.syncActivity.testing)
 
             api(libs.decompose.decompose)
             api(libs.kotlin.test)

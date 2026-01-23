@@ -37,6 +37,7 @@ kotlin {
                 implementation(projects.data.user.testing)
                 implementation(projects.core.logger.testing)
                 implementation(projects.i18n.testing)
+                implementation(projects.data.syncActivity.testing)
 
                 implementation(libs.bundles.unittest)
             }

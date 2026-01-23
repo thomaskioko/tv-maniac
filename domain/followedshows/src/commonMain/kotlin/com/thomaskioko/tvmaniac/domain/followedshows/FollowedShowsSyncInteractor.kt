@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.domain.followedshows.FollowedShowsSyncInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
+import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityRepository
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
@@ -20,6 +21,7 @@ import me.tatarka.inject.annotations.Inject
 public class FollowedShowsSyncInteractor(
     private val followedShowsRepository: FollowedShowsRepository,
     private val watchlistRepository: WatchlistRepository,
+    private val traktActivityRepository: TraktActivityRepository,
     private val showContentSyncInteractor: ShowContentSyncInteractor,
     private val apiRateLimiter: ApiRateLimiter,
     private val dispatchers: AppCoroutineDispatchers,
@@ -28,6 +30,7 @@ public class FollowedShowsSyncInteractor(
 
     override suspend fun doWork(params: Param) {
         withContext(dispatchers.io) {
+            traktActivityRepository.fetchLatestActivities(params.forceRefresh)
 
             watchlistRepository.syncWatchlist(params.forceRefresh)
 

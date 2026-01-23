@@ -45,6 +45,8 @@ kotlin {
                 implementation(projects.data.watchlist.testing)
                 implementation(projects.domain.showdetails)
                 implementation(projects.i18n.testing)
+                implementation(projects.core.networkUtil.testing)
+                implementation(projects.data.syncActivity.testing)
 
                 implementation(libs.bundles.unittest)
             }

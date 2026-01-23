@@ -23,6 +23,7 @@ kotlin {
                 implementation(projects.data.episode.api)
                 implementation(projects.data.seasondetails.api)
                 implementation(projects.data.seasons.api)
+                implementation(projects.data.syncActivity.api)
                 implementation(projects.data.traktauth.api)
                 implementation(projects.domain.showdetails)
 

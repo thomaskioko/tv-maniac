@@ -19,6 +19,7 @@ kotlin {
 
                 implementation(projects.core.base)
                 implementation(projects.data.datastore.api)
+                implementation(projects.data.syncActivity.api)
 
                 implementation(libs.coroutines.core)
                 implementation(libs.kotlinInject.runtime)

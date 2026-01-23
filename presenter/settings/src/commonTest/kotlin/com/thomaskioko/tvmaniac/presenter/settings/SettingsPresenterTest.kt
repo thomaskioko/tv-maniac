@@ -20,6 +20,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.ShowTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
 import com.thomaskioko.tvmaniac.settings.presenter.toAppTheme
+import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.shouldBe
@@ -41,6 +42,7 @@ class SettingsPresenterTest {
     private val dateTimeProvider = FakeDateTimeProvider()
     private val traktAuthRepository = FakeTraktAuthRepository()
     private val userRepository = FakeUserRepository()
+    private val fakeTraktActivityRepository = FakeTraktActivityRepository()
 
     private lateinit var presenter: SettingsPresenter
 
@@ -57,6 +59,7 @@ class SettingsPresenterTest {
                 traktAuthRepository = traktAuthRepository,
                 userRepository = userRepository,
                 datastoreRepository = datastoreRepository,
+                traktActivityRepository = fakeTraktActivityRepository,
             ),
             backClicked = {},
         )
