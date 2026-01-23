@@ -8,7 +8,9 @@ kotlin {
             dependencies {
                 api(projects.data.syncActivity.api)
 
+                implementation(projects.data.database.sqldelight)
                 implementation(libs.coroutines.core)
+                implementation(libs.sqldelight.extensions)
             }
         }
     }

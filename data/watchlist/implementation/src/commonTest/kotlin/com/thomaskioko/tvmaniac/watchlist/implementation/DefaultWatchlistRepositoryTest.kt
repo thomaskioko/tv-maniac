@@ -2,12 +2,14 @@ package com.thomaskioko.tvmaniac.watchlist.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
+import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowEntry
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsDao
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
+import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityDao
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.traktauth.api.AuthState
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
@@ -25,7 +27,7 @@ import kotlin.time.Instant
 private val testInstant = Instant.DISTANT_PAST
 
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class DefaultWatchlistRepositoryTest {
+internal class DefaultWatchlistRepositoryTest : BaseDatabaseTest() {
 
     private val testDispatcher = UnconfinedTestDispatcher()
     private val coroutineDispatcher = AppCoroutineDispatchers(
@@ -44,15 +46,18 @@ internal class DefaultWatchlistRepositoryTest {
     private val fakeDatastoreRepository = FakeDatastoreRepository()
     private val fakeTraktActivityRepository = FakeTraktActivityRepository()
     private val transactionRunner = FakeTransactionRunner()
+    private lateinit var fakeTraktActivityDao: FakeTraktActivityDao
     private lateinit var watchlistStore: WatchlistStore
     private lateinit var repository: DefaultWatchlistRepository
 
     @BeforeTest
     fun setup() {
+        fakeTraktActivityDao = FakeTraktActivityDao(database)
         watchlistStore = WatchlistStore(
             traktListDataSource = fakeTraktListDataSource,
             followedShowsDao = fakeFollowedShowsDao,
             requestManagerRepository = fakeRequestManagerRepository,
+            traktActivityDao = fakeTraktActivityDao,
             transactionRunner = transactionRunner,
             dispatchers = coroutineDispatcher,
         )

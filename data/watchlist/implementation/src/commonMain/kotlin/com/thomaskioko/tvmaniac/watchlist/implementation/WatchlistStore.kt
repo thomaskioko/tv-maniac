@@ -9,7 +9,9 @@ import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowEntry
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsDao
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
-import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.FOLLOWED_SHOWS_SYNC
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.WATCHLIST_SYNC
+import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityDao
+import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType.SHOWS_WATCHLISTED
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktFollowedShowResponse
 import kotlinx.coroutines.withContext
@@ -27,6 +29,7 @@ public class WatchlistStore(
     private val traktListDataSource: TraktListRemoteDataSource,
     private val followedShowsDao: FollowedShowsDao,
     private val requestManagerRepository: RequestManagerRepository,
+    private val traktActivityDao: TraktActivityDao,
     private val transactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<Unit, List<FollowedShowEntry>> by storeBuilder(
@@ -56,9 +59,11 @@ public class WatchlistStore(
             }
 
             requestManagerRepository.upsert(
-                entityId = FOLLOWED_SHOWS_SYNC.requestId,
-                requestType = FOLLOWED_SHOWS_SYNC.name,
+                entityId = WATCHLIST_SYNC.requestId,
+                requestType = WATCHLIST_SYNC.name,
             )
+
+            traktActivityDao.markAsSynced(SHOWS_WATCHLISTED)
         },
         delete = { _: Unit -> },
         deleteAll = { },
@@ -70,8 +75,8 @@ public class WatchlistStore(
     Validator.by {
         withContext(dispatchers.io) {
             requestManagerRepository.isRequestValid(
-                requestType = FOLLOWED_SHOWS_SYNC.name,
-                threshold = FOLLOWED_SHOWS_SYNC.duration,
+                requestType = WATCHLIST_SYNC.name,
+                threshold = WATCHLIST_SYNC.duration,
             )
         }
     },
