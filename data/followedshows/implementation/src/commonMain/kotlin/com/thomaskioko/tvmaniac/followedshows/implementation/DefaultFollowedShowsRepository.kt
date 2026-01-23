@@ -53,8 +53,6 @@ public class DefaultFollowedShowsRepository(
             fetchRemoteWatchlist()
             lastRequestStore.updateLastRequest()
             logger.debug(TAG, "Sync completed (pulled remote)")
-        } else {
-            logger.debug(TAG, "Sync skipped (cache valid)")
         }
     }
 
