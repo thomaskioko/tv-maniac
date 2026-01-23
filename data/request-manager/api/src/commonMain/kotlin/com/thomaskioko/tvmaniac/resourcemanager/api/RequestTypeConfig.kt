@@ -26,4 +26,5 @@ public enum class RequestTypeConfig(public val requestId: Long, public val durat
     SHOW_CAST(19, 6.days),
     TRAILERS(20, 6.days),
     UPCOMING_EPISODES(21, 3.hours),
+    USER_STATS(22, 3.days),
 }
