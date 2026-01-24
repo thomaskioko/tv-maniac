@@ -30,3 +30,5 @@ public data class OpenSeasonFromUpNext(
     val seasonId: Long,
     val seasonNumber: Long,
 ) : WatchlistAction
+
+public data class RefreshWatchlist(val forceRefresh: Boolean = false) : WatchlistAction
