@@ -260,6 +260,7 @@ private fun TopBar(
                             modifier = Modifier
                                 .size(24.dp)
                                 .padding(end = 16.dp),
+                            strokeWidth = 2.dp,
                         )
                     }
                 }
