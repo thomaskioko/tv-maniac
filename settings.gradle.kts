@@ -163,7 +163,6 @@ include(
     ":domain:followedshows",
     ":domain:genre",
     ":domain:logout",
-    ":domain:notifications",
     ":domain:recommendedshows",
     ":domain:seasondetails",
     ":domain:showdetails",
