@@ -20,6 +20,7 @@ kotlin {
             implementation(projects.core.base)
 
             implementation(libs.coroutines.core)
+            implementation(libs.kotlinx.atomicfu)
             implementation(libs.ktor.core)
             implementation(libs.store5)
         }
