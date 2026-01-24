@@ -5,11 +5,16 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.tasks.api.SyncTasks
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.domain.followedshows.FollowedShowsSyncInteractor
+import com.thomaskioko.tvmaniac.domain.followedshows.FollowedShowsSyncInteractor.Param
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
@@ -17,34 +22,52 @@ import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 @Inject
 @ContributesBinding(AppScope::class, multibinding = true)
 public class SyncTasksInitializer(
-    private val syncTasks: SyncTasks,
-    private val traktAuthRepository: TraktAuthRepository,
-    private val datastoreRepository: DatastoreRepository,
+    syncTasks: Lazy<SyncTasks>,
+    followedShowsSyncInteractor: Lazy<FollowedShowsSyncInteractor>,
+    datastoreRepo: Lazy<DatastoreRepository>,
+    traktAuthRepo: Lazy<TraktAuthRepository>,
     private val coroutineScope: AppCoroutineScope,
     private val logger: Logger,
 ) : AppInitializer {
 
-    override fun init() {
-        syncTasks.setup()
+    private val syncTask by syncTasks
+    private val syncInteractor by followedShowsSyncInteractor
+    private val datastoreRepository by datastoreRepo
+    private val traktAuthRepository by traktAuthRepo
 
+    override fun init() {
+        syncTask.setup()
+        observeDataSync()
+        observeLibrarySync()
+    }
+
+    private fun observeDataSync() {
+        coroutineScope.io.launch {
+            traktAuthRepository.state
+                .distinctUntilChanged()
+                .filter { it == TraktAuthState.LOGGED_IN }
+                .collect {
+                    withContext(NonCancellable) {
+                        syncInteractor.executeSync(Param())
+                        logger.debug(TAG, "Library sync completed successfully")
+                    }
+                }
+        }
+    }
+
+    private fun observeLibrarySync() {
         coroutineScope.io.launch {
             combine(
                 traktAuthRepository.state,
                 datastoreRepository.observeBackgroundSyncEnabled(),
             ) { authState, syncEnabled ->
-                authState to syncEnabled
+                authState == TraktAuthState.LOGGED_IN && syncEnabled
             }
                 .distinctUntilChanged()
-                .collect { (authState, syncEnabled) ->
+                .collect { shouldSync ->
                     when {
-                        authState == TraktAuthState.LOGGED_IN && syncEnabled -> {
-                            logger.debug(TAG, "Scheduling library sync (logged in + enabled)")
-                            syncTasks.scheduleLibrarySync()
-                        }
-                        else -> {
-                            logger.debug(TAG, "Cancelling library sync (logged out or disabled)")
-                            syncTasks.cancelLibrarySync()
-                        }
+                        shouldSync -> syncTask.scheduleLibrarySync()
+                        else -> syncTask.cancelLibrarySync()
                     }
                 }
         }
