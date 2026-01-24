@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowEntry
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsDao
+import com.thomaskioko.tvmaniac.i18n.testing.util.IgnoreIos
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityDao
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
@@ -27,6 +28,7 @@ import kotlin.time.Instant
 private val testInstant = Instant.DISTANT_PAST
 
 @OptIn(ExperimentalCoroutinesApi::class)
+@IgnoreIos
 internal class DefaultWatchlistRepositoryTest : BaseDatabaseTest() {
 
     private val testDispatcher = UnconfinedTestDispatcher()

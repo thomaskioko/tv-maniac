@@ -43,6 +43,7 @@ kotlin {
                 implementation(projects.data.requestManager.testing)
                 implementation(projects.data.traktauth.testing)
                 implementation(projects.data.syncActivity.testing)
+                implementation(projects.i18n.testing)
             }
         }
     }
