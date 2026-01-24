@@ -4,6 +4,7 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
+import com.thomaskioko.tvmaniac.core.networkutil.testing.FakeApiRateLimiter
 import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
@@ -68,6 +69,8 @@ class ShowDetailsPresenterTest {
     private val traktAuthRepository = FakeTraktAuthRepository()
     private val fakeFormatterUtil = FakeFormatterUtil()
     private val fakeDatastoreRepository = FakeDatastoreRepository()
+    private val fakeLogger = FakeLogger()
+    private val fakeApiRateLimiter = FakeApiRateLimiter()
     private val testDispatcher = StandardTestDispatcher()
     private val coroutineDispatcher = AppCoroutineDispatchers(
         main = testDispatcher,
@@ -555,10 +558,12 @@ class ShowDetailsPresenterTest {
                 watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
                 datastoreRepository = fakeDatastoreRepository,
                 dispatchers = coroutineDispatcher,
+                apiRateLimiter = fakeApiRateLimiter,
+                logger = fakeLogger,
             ),
             traktAuthRepository = traktAuthRepository,
             dispatchers = coroutineDispatcher,
-            logger = FakeLogger(),
+            logger = fakeLogger,
         )
     }
 }

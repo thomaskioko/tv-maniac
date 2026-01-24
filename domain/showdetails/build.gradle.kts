@@ -23,6 +23,8 @@ kotlin {
                 api(projects.data.trailers.api)
                 api(projects.data.watchlist.api)
                 api(projects.data.watchproviders.api)
+                implementation(projects.core.logger.api)
+                implementation(projects.core.networkUtil.api)
 
                 implementation(projects.core.base)
                 implementation(projects.core.util.api)
