@@ -10,6 +10,7 @@ import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 import kotlin.math.floor
 import kotlin.math.log10
 import kotlin.math.pow
@@ -44,7 +45,8 @@ public class AndroidFormatterUtil : FormatterUtil {
 
     override fun formatDateTime(epochMillis: Long, pattern: String): String {
         val date = Date(epochMillis)
-        val formatter = SimpleDateFormat(pattern, Locale.getDefault())
+        val formatter = SimpleDateFormat(pattern, Locale.US)
+        formatter.timeZone = TimeZone.getTimeZone("UTC")
         return formatter.format(date)
     }
 }

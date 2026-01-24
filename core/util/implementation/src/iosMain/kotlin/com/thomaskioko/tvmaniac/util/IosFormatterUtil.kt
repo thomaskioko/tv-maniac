@@ -4,9 +4,13 @@ import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 import me.tatarka.inject.annotations.Inject
 import platform.Foundation.NSDate
 import platform.Foundation.NSDateFormatter
+import platform.Foundation.NSLocale
 import platform.Foundation.NSNumber
 import platform.Foundation.NSNumberFormatter
+import platform.Foundation.NSTimeZone
 import platform.Foundation.dateWithTimeIntervalSince1970
+import platform.Foundation.localeWithLocaleIdentifier
+import platform.Foundation.timeZoneWithName
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
@@ -61,7 +65,9 @@ public class IosFormatterUtil : FormatterUtil {
     override fun formatDateTime(epochMillis: Long, pattern: String): String {
         val date = NSDate.dateWithTimeIntervalSince1970(epochMillis / 1000.0)
         val formatter = NSDateFormatter()
+        formatter.locale = NSLocale.localeWithLocaleIdentifier("en_US_POSIX")
         formatter.dateFormat = pattern
+        NSTimeZone.timeZoneWithName("UTC")?.let { formatter.timeZone = it }
         return formatter.stringFromDate(date)
     }
 }

@@ -1,6 +1,9 @@
 package com.thomaskioko.tvmaniac.util
 
 import io.kotest.matchers.equals.shouldBeEqual
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
 import kotlin.test.Test
 
 class IosFormatterUtilTest {
@@ -81,7 +84,8 @@ class IosFormatterUtilTest {
 
     @Test
     fun `should return formatted date time given epoch millis and pattern`() {
-        val epochMillis = 1737630240000L
+        val dateTime = LocalDateTime(2025, 1, 23, 11, 24, 0)
+        val epochMillis = dateTime.toInstant(TimeZone.UTC).toEpochMilliseconds()
         val pattern = "MMM d, yyyy 'at' HH:mm"
 
         val result = formatterUtil.formatDateTime(epochMillis, pattern)
@@ -91,7 +95,8 @@ class IosFormatterUtilTest {
 
     @Test
     fun `should return formatted date given different pattern`() {
-        val epochMillis = 1702386411000L
+        val dateTime = LocalDateTime(2023, 12, 12, 0, 0, 0)
+        val epochMillis = dateTime.toInstant(TimeZone.UTC).toEpochMilliseconds()
         val pattern = "yyyy-MM-dd"
 
         val result = formatterUtil.formatDateTime(epochMillis, pattern)
