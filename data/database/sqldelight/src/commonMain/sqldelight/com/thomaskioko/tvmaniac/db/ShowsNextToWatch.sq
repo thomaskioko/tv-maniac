@@ -23,7 +23,6 @@ LEFT JOIN shows_last_watched AS last_watched ON last_watched.show_trakt_id = tvs
 WHERE (season.season_number > 0 OR (season.season_number = 0 AND season.title != 'Specials'))
   AND watched_episode.episode_id IS NULL
   AND ((1000 * season.season_number) + episode.episode_number) > COALESCE(last_watched.last_watched_abs_number, 0)
-  AND (episode.first_aired IS NULL OR episode.first_aired <= (strftime('%s', 'now') * 1000))
 ORDER BY tvshow.trakt_id, season.season_number, episode.episode_number;
 
 nextEpisodeForShow:
@@ -51,7 +50,6 @@ WHERE tvshow.trakt_id = :showTraktId
   AND (:includeSpecials = 1 OR (season.season_number > 0 OR season.title != 'Specials'))
   AND watched_episode.episode_id IS NULL
   AND ((1000 * season.season_number) + episode.episode_number) > COALESCE(last_watched.last_watched_abs_number, 0)
-  AND (episode.first_aired IS NULL OR episode.first_aired <= (strftime('%s', 'now') * 1000))
 ORDER BY season.season_number, episode.episode_number
 LIMIT 1;
 
@@ -76,11 +74,12 @@ SELECT
     next_episode.last_watched_at,
     COALESCE(show_metadata.season_count, 0) AS season_count,
     COALESCE(show_metadata.episode_count, 0) AS episode_count,
-    COALESCE(show_metadata.cached_watched_count, 0) AS watched_count,
-    COALESCE(show_metadata.cached_total_count, 0) AS total_count
+    COALESCE(show_watch_progress.watched_count, 0) AS watched_count,
+    COALESCE(show_watch_progress.total_count, 0) AS total_count
 FROM followed_shows AS followed_show
 INNER JOIN tvshow ON followed_show.trakt_id = tvshow.trakt_id
 LEFT JOIN show_metadata ON tvshow.trakt_id = show_metadata.show_trakt_id
+LEFT JOIN show_watch_progress ON show_watch_progress.show_trakt_id = followed_show.trakt_id
 LEFT JOIN (
     SELECT
         show_trakt_id,

@@ -81,7 +81,7 @@ struct WatchlistListItem: View {
             .padding(.vertical)
             .padding(.horizontal, theme.spacing.xSmall)
 
-            ProgressView(value: 0, total: 1)
+            ProgressView(value: item.watchProgress, total: 1)
                 .progressViewStyle(RoundedRectProgressViewStyle())
                 .offset(y: 2)
         }

@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.trakt.api
 
-import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAddRemoveShowFromListResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAddShowToListResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktCreateListResponse
@@ -18,7 +18,7 @@ public interface TraktListRemoteDataSource {
 
     public suspend fun getFollowedList(listId: Long, userSlug: String): List<TraktFollowedShowResponse>
 
-    public suspend fun getWatchList(): ApiResponse<List<TraktFollowedShowResponse>>
+    public suspend fun getWatchList(sortBy: String): ApiResponse<List<TraktFollowedShowResponse>>
 
     public suspend fun addShowToWatchListByTmdbId(tmdbId: Long): ApiResponse<TraktAddShowToListResponse>
 

@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
-import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeWatchesDataSource
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsDao

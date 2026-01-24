@@ -44,6 +44,8 @@ kotlin {
         commonMain {
             dependencies {
                 api(projects.core.util.api)
+                api(projects.core.networkUtil.api)
+                api(projects.core.networkUtil.implementation)
                 api(projects.i18n.api)
                 api(projects.navigation.api)
                 api(projects.data.traktauth.api)
@@ -61,6 +63,8 @@ kotlin {
                 api(projects.domain.followedshows)
                 api(projects.data.followedshows.api)
                 api(projects.data.followedshows.implementation)
+                api(projects.data.syncActivity.api)
+                api(projects.data.syncActivity.implementation)
 
                 implementation(projects.api.tmdb.api)
                 implementation(projects.api.tmdb.implementation)

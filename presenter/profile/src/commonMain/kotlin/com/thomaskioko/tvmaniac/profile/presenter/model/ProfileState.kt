@@ -13,7 +13,7 @@ public data class ProfileState(
 
     public companion object {
         public val DEFAULT_STATE: ProfileState = ProfileState(
-            isLoading = false,
+            isLoading = true,
             userProfile = null,
             errorMessage = null,
             authenticated = false,

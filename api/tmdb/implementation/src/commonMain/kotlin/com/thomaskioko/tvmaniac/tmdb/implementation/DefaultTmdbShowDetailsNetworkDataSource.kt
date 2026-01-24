@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.tmdb.implementation
 
-import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
-import com.thomaskioko.tvmaniac.core.networkutil.model.safeRequest
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.safeRequest
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowDetailsResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResult

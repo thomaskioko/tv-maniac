@@ -19,7 +19,7 @@ kotlin {
                 implementation(projects.core.base)
                 implementation(projects.core.logger.api)
                 implementation(projects.core.paging)
-                implementation(projects.core.networkUtil)
+                implementation(projects.core.networkUtil.api)
                 implementation(projects.core.util.api)
                 implementation(projects.data.popularshows.api)
                 implementation(projects.data.requestManager.api)

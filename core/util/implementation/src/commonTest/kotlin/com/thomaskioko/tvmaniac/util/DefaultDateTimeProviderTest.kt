@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.util
 
+import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
 import io.kotest.matchers.longs.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import kotlinx.datetime.LocalDateTime
@@ -12,7 +13,8 @@ import kotlin.time.Duration.Companion.days
 
 internal class DefaultDateTimeProviderTest {
 
-    private val underTest = DefaultDateTimeProvider()
+    private val fakeFormatterUtil = FakeFormatterUtil()
+    private val underTest = DefaultDateTimeProvider(fakeFormatterUtil)
 
     @Test
     fun `should return current instant`() {
@@ -105,5 +107,15 @@ internal class DefaultDateTimeProviderTest {
         underTest.extractYear("2025-11-07T02:00:00.000Z") shouldBe "2025"
         underTest.extractYear("2023-06-15T14:30:00.000Z") shouldBe "2023"
         underTest.extractYear("1999-12-31T23:59:59.999Z") shouldBe "1999"
+    }
+
+    @Test
+    fun `should return formatted display date time given epoch milliseconds`() {
+        fakeFormatterUtil.setFormattedDateTime("Jan 23, 2025 at 11:24")
+        val epochMillis = 1737630240000L
+
+        val result = underTest.epochToDisplayDateTime(epochMillis, TimeZone.UTC)
+
+        result shouldBe "Jan 23, 2025 at 11:24"
     }
 }

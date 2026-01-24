@@ -26,7 +26,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
@@ -104,15 +105,9 @@ public class DefaultProfilePresenter(
     private fun observeAuthState() {
         coroutineScope.launch {
             traktAuthRepository.state
-                .distinctUntilChanged()
-                .collect { authState ->
-                    when (authState) {
-                        TraktAuthState.LOGGED_IN -> {
-                            fetchUserData(forceRefresh = true)
-                        }
-                        TraktAuthState.LOGGED_OUT -> Unit
-                    }
-                }
+                .drop(1)
+                .filter { it == TraktAuthState.LOGGED_IN }
+                .collect { fetchUserData(forceRefresh = true) }
         }
     }
 

@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.data.user.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.store.apiFetcher
-import com.thomaskioko.tvmaniac.core.store.storeBuilder
-import com.thomaskioko.tvmaniac.core.store.usingDispatchers
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.apiFetcher
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.storeBuilder
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.usingDispatchers
 import com.thomaskioko.tvmaniac.data.user.api.UserDao
 import com.thomaskioko.tvmaniac.db.User
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
@@ -30,19 +30,17 @@ public class UserStore(
         reader = { key -> userDao.observeUserByKey(key) },
         writer = { username, response ->
             withContext(dispatchers.databaseWrite) {
-                val backgroundUrl = userDao.getRandomWatchlistBackdrop()
-
                 userDao.upsertUser(
                     slug = response.ids.slug,
                     userName = response.userName,
                     fullName = response.name,
                     profilePicture = response.images.avatar.full,
-                    backgroundUrl = backgroundUrl,
+                    backgroundUrl = null,
                     isMe = username == "me",
                 )
 
                 requestManagerRepository.upsert(
-                    entityId = response.ids.slug.hashCode().toLong(),
+                    entityId = USER_PROFILE.requestId,
                     requestType = USER_PROFILE.name,
                 )
             }
@@ -56,8 +54,7 @@ public class UserStore(
 ).validator(
     Validator.by { user ->
         withContext(dispatchers.io) {
-            !requestManagerRepository.isRequestExpired(
-                entityId = user.slug.hashCode().toLong(),
+            requestManagerRepository.isRequestValid(
                 requestType = USER_PROFILE.name,
                 threshold = USER_PROFILE.duration,
             )

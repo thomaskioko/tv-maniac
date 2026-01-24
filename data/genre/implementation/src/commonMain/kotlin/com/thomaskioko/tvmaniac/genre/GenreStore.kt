@@ -2,9 +2,9 @@ package com.thomaskioko.tvmaniac.genre
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
-import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
-import com.thomaskioko.tvmaniac.core.store.storeBuilder
-import com.thomaskioko.tvmaniac.core.store.usingDispatchers
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.storeBuilder
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.usingDispatchers
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.db.Genres
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository

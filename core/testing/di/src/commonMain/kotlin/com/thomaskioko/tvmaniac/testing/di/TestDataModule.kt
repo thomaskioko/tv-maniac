@@ -9,6 +9,8 @@ import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
+import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityRepository
+import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
@@ -43,6 +45,11 @@ public interface TestDataModule {
     @Provides
     @SingleIn(TestScope::class)
     public fun provideRequestManagerRepository(): RequestManagerRepository = FakeRequestManagerRepository()
+
+    @Provides
+    @SingleIn(TestScope::class)
+    public fun provideTraktActivityRepository(): TraktActivityRepository =
+        FakeTraktActivityRepository()
 
     @Provides
     @SingleIn(TestScope::class)

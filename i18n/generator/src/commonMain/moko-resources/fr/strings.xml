@@ -246,4 +246,12 @@
     <string name="label_settings_include_specials_description">Afficher les Specials et saisons bonus</string>
 
     <string name="label_up_to_date">Tout vu</string>
+
+    <string name="label_settings_episode_notifications">Notifications d\'épisodes</string>
+    <string name="label_settings_episode_notifications_description">Recevez une notification lors de la diffusion de nouveaux épisodes</string>
+
+    <string name="notification_rationale_title">Notifications d\'épisodes</string>
+    <string name="notification_rationale_message">Recevez une notification lorsque de nouveaux épisodes de vos séries préférées sont sur le point d\'être diffusés pour ne jamais les manquer.</string>
+    <string name="notification_rationale_enable">Activer</string>
+    <string name="notification_rationale_not_now">Pas maintenant</string>
 </resources>

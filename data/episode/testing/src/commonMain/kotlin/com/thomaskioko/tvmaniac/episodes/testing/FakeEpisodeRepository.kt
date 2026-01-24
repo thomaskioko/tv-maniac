@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlin.time.Duration
 
 public data class MarkEpisodeWatchedCall(
     val showTraktId: Long,
@@ -28,6 +29,12 @@ public data class MarkSeasonWatchedCall(
 public data class MarkEpisodeUnwatchedCall(
     val showTraktId: Long,
     val episodeId: Long,
+)
+
+public data class SyncParams(
+    val startDate: String,
+    val days: Int,
+    val forceRefresh: Boolean,
 )
 
 public class FakeEpisodeRepository : EpisodeRepository {
@@ -145,7 +152,7 @@ public class FakeEpisodeRepository : EpisodeRepository {
         seasonNumber: Long,
     ): Flow<Long> = unwatchedCountInPreviousSeasonsFlow.asStateFlow()
 
-    override suspend fun getUpcomingEpisodesFromFollowedShows(fromEpoch: Long, toEpoch: Long): List<UpcomingEpisode> =
+    override suspend fun getUpcomingEpisodesFromFollowedShows(limit: Duration): List<UpcomingEpisode> =
         upcomingEpisodesFlow.value
 
     override suspend fun syncUpcomingEpisodesFromTrakt(startDate: String, days: Int, forceRefresh: Boolean) {

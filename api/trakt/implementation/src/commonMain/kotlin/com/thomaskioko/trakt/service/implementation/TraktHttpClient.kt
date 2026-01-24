@@ -1,6 +1,6 @@
 package com.thomaskioko.trakt.service.implementation
 
-import com.thomaskioko.tvmaniac.core.networkutil.model.HttpExceptions
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.HttpExceptions
 import com.thomaskioko.tvmaniac.traktauth.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import io.ktor.client.HttpClient
@@ -48,7 +48,11 @@ internal fun traktHttpClient(
                     else -> false
                 }
             }
-            exponentialDelay()
+            exponentialDelay(
+                base = 2.0,
+                maxDelayMs = 60_000L,
+                randomizationMs = 1000L,
+            )
         }
 
         install(Auth) {

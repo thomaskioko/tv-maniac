@@ -1,10 +1,10 @@
 package com.thomaskioko.tvmaniac.seasondetails.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.networkutil.model.getOrNull
-import com.thomaskioko.tvmaniac.core.networkutil.model.getOrThrow
-import com.thomaskioko.tvmaniac.core.store.storeBuilder
-import com.thomaskioko.tvmaniac.core.store.usingDispatchers
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.storeBuilder
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.usingDispatchers
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.getOrNull
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.getOrThrow
 import com.thomaskioko.tvmaniac.data.cast.api.CastDao
 import com.thomaskioko.tvmaniac.db.Casts
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner

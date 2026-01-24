@@ -12,6 +12,7 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.headers
 import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.URLProtocol
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
@@ -50,8 +51,18 @@ internal fun tmdbHttpClient(
         }
 
         install(HttpRequestRetry) {
-            retryOnServerErrors(maxRetries = 3)
-            exponentialDelay()
+            retryIf(5) { _, httpResponse ->
+                when {
+                    httpResponse.status.value in 500..599 -> true
+                    httpResponse.status == HttpStatusCode.TooManyRequests -> true
+                    else -> false
+                }
+            }
+            exponentialDelay(
+                base = 2.0,
+                maxDelayMs = 60_000L,
+                randomizationMs = 1000L,
+            )
         }
 
         install(Logging) {

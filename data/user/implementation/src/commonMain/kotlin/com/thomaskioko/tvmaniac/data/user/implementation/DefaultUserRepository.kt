@@ -6,9 +6,7 @@ import com.thomaskioko.tvmaniac.data.user.api.UserRepository
 import com.thomaskioko.tvmaniac.data.user.api.UserStatsDao
 import com.thomaskioko.tvmaniac.data.user.api.model.UserProfile
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.ExperimentalStoreApi
@@ -62,9 +60,5 @@ public class DefaultUserRepository(
         statsStore.clear()
         userDao.deleteAll()
         userStatsDao.deleteAll()
-    }
-
-    private suspend fun TraktAuthRepository.isLoggedIn(): Boolean {
-        return state.first() == TraktAuthState.LOGGED_IN
     }
 }

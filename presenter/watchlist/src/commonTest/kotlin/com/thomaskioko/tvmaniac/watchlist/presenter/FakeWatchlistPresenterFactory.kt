@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.watchlist.presenter
 import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
+import com.thomaskioko.tvmaniac.core.networkutil.testing.FakeApiRateLimiter
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
@@ -16,23 +17,29 @@ import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepositor
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
-import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
+import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.StandardTestDispatcher
 
 class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
     val repository = FakeWatchlistRepository()
     val episodeRepository = FakeEpisodeRepository()
     val dateTimeProvider = FakeDateTimeProvider()
-    val traktAuthRepository = FakeTraktAuthRepository()
 
-    val testDispatcher = UnconfinedTestDispatcher()
+    val testDispatcher = StandardTestDispatcher()
 
     private val fakeFollowedShowsRepository = FakeFollowedShowsRepository()
     private val fakeLogger = FakeLogger()
+    private val fakeTraktActivityRepository = FakeTraktActivityRepository()
+    private val fakeShowDetailsRepository = FakeShowDetailsRepository()
+    private val fakeSeasonsRepository = FakeSeasonsRepository()
+    private val fakeSeasonDetailsRepository = FakeSeasonDetailsRepository()
+    private val fakeWatchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
+    private val fakeDatastoreRepository = FakeDatastoreRepository()
+    private val fakeApiRateLimiter = FakeApiRateLimiter()
 
-    private val coroutineDispatcher = AppCoroutineDispatchers(
+    private val coroutineDispatchers = AppCoroutineDispatchers(
         main = testDispatcher,
         io = testDispatcher,
         computation = testDispatcher,
@@ -59,18 +66,22 @@ class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
     )
 
     private val showContentSyncInteractor = ShowContentSyncInteractor(
-        showDetailsRepository = FakeShowDetailsRepository(),
-        seasonsRepository = FakeSeasonsRepository(),
-        seasonDetailsRepository = FakeSeasonDetailsRepository(),
-        watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
-        datastoreRepository = FakeDatastoreRepository(),
-        dispatchers = coroutineDispatcher,
+        showDetailsRepository = fakeShowDetailsRepository,
+        seasonsRepository = fakeSeasonsRepository,
+        seasonDetailsRepository = fakeSeasonDetailsRepository,
+        watchedEpisodeSyncRepository = fakeWatchedEpisodeSyncRepository,
+        datastoreRepository = fakeDatastoreRepository,
+        apiRateLimiter = fakeApiRateLimiter,
+        dispatchers = coroutineDispatchers,
+        logger = fakeLogger,
     )
 
     private val followedShowsSyncInteractor = FollowedShowsSyncInteractor(
         followedShowsRepository = fakeFollowedShowsRepository,
+        watchlistRepository = repository,
+        traktActivityRepository = fakeTraktActivityRepository,
         showContentSyncInteractor = showContentSyncInteractor,
-        dispatchers = coroutineDispatcher,
+        dispatchers = coroutineDispatchers,
         logger = fakeLogger,
     )
 
@@ -86,9 +97,8 @@ class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
         followedShowsRepository = fakeFollowedShowsRepository,
         observeWatchlistSectionsInteractor = observeWatchlistSectionsInteractor,
         observeUpNextSectionsInteractor = observeUpNextSectionsInteractor,
-        markEpisodeWatchedInteractor = fakeMarkEpisodeWatchedInteractor,
         followedShowsSyncInteractor = followedShowsSyncInteractor,
-        traktAuthRepository = traktAuthRepository,
+        markEpisodeWatchedInteractor = fakeMarkEpisodeWatchedInteractor,
         logger = fakeLogger,
     )
 }

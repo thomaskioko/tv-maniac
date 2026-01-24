@@ -29,6 +29,9 @@ kotlin {
             implementation(libs.androidx.security.crypto)
         }
 
-        commonTest.dependencies { implementation(libs.bundles.unittest) }
+        commonTest.dependencies {
+            implementation(projects.core.util.testing)
+            implementation(libs.bundles.unittest)
+        }
     }
 }

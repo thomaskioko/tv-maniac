@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.store.apiFetcher
-import com.thomaskioko.tvmaniac.core.store.storeBuilder
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.apiFetcher
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.storeBuilder
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.UPCOMING_EPISODES

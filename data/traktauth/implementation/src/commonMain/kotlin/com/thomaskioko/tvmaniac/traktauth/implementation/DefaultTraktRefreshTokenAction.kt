@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.traktauth.implementation
 
 import com.thomaskioko.tvmaniac.core.logger.Logger
-import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.TraktTokenRemoteDataSource
 import com.thomaskioko.tvmaniac.traktauth.api.AuthState
 import com.thomaskioko.tvmaniac.traktauth.api.RefreshTokenResult

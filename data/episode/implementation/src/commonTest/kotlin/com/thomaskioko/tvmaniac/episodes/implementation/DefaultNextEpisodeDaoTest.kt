@@ -247,6 +247,80 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should return correct watch progress given some episodes watched`() = runTest {
+        followShow(showId = 1L, followedAt = watchDate)
+        markEpisodeWatched(showId = 1L, episodeId = 101L, seasonNumber = 1L, episodeNumber = 1L)
+
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
+            val episodes = awaitItem()
+            episodes.size shouldBe 1
+
+            val episode = episodes[0]
+            episode.watchedCount shouldBe 1
+            episode.totalCount shouldBe 3
+        }
+    }
+
+    @Test
+    fun `should return zero watched count given no episodes watched`() = runTest {
+        followShow(showId = 1L, followedAt = watchDate)
+
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
+            val episodes = awaitItem()
+            episodes.size shouldBe 1
+
+            val episode = episodes[0]
+            episode.watchedCount shouldBe 0
+            episode.totalCount shouldBe 3
+        }
+    }
+
+    @Test
+    fun `should update watch progress given episode marked as watched`() = runTest {
+        followShow(showId = 1L, followedAt = watchDate)
+
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
+            val initialEpisodes = awaitItem()
+            initialEpisodes[0].watchedCount shouldBe 0
+            initialEpisodes[0].totalCount shouldBe 3
+
+            markEpisodeWatched(showId = 1L, episodeId = 101L, seasonNumber = 1L, episodeNumber = 1L)
+
+            val updatedEpisodes = awaitItem()
+            updatedEpisodes[0].watchedCount shouldBe 1
+            updatedEpisodes[0].totalCount shouldBe 3
+
+            markEpisodeWatched(showId = 1L, episodeId = 102L, seasonNumber = 1L, episodeNumber = 2L)
+
+            val finalEpisodes = awaitItem()
+            finalEpisodes[0].watchedCount shouldBe 2
+            finalEpisodes[0].totalCount shouldBe 3
+        }
+    }
+
+    @Test
+    fun `should exclude deleted watched episodes from watch count`() = runTest {
+        followShow(showId = 1L, followedAt = watchDate)
+        markEpisodeWatched(showId = 1L, episodeId = 101L, seasonNumber = 1L, episodeNumber = 1L)
+        markEpisodeWatchedWithPendingAction(
+            showId = 1L,
+            episodeId = 102L,
+            seasonNumber = 1L,
+            episodeNumber = 2L,
+            pendingAction = "DELETE",
+        )
+
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
+            val episodes = awaitItem()
+            episodes.size shouldBe 1
+
+            val episode = episodes[0]
+            episode.watchedCount shouldBe 1
+            episode.totalCount shouldBe 3
+        }
+    }
+
+    @Test
     fun `should order by followed_at descending`() = runTest {
         followShow(showId = 1L, followedAt = watchDate)
         followShow(showId = 2L, followedAt = watchDate + 2000)
@@ -283,6 +357,24 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             episode_number = episodeNumber,
             watched_at = watchedAt,
             pending_action = "NOTHING",
+        )
+    }
+
+    private fun markEpisodeWatchedWithPendingAction(
+        showId: Long,
+        episodeId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+        pendingAction: String,
+        watchedAt: Long = watchDate,
+    ) {
+        val _ = database.watchedEpisodesQueries.upsert(
+            show_trakt_id = Id<TraktId>(showId),
+            episode_id = Id(episodeId),
+            season_number = seasonNumber,
+            episode_number = episodeNumber,
+            watched_at = watchedAt,
+            pending_action = pendingAction,
         )
     }
 

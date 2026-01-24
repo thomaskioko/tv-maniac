@@ -4,7 +4,6 @@ import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowEntry
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlin.time.Clock
-import kotlin.time.Duration
 
 public class FakeFollowedShowsRepository : FollowedShowsRepository {
 
@@ -15,9 +14,6 @@ public class FakeFollowedShowsRepository : FollowedShowsRepository {
     public val addedShowIds: List<Long> get() = _addedShowIds
     public val removedShowIds: List<Long> get() = _removedShowIds
     public var needsSyncResult: Boolean = true
-
-    override suspend fun syncFollowedShows(forceRefresh: Boolean) {
-    }
 
     override suspend fun getFollowedShows(): List<FollowedShowEntry> = entries.value
 
@@ -35,8 +31,6 @@ public class FakeFollowedShowsRepository : FollowedShowsRepository {
         _removedShowIds.add(traktId)
         entries.value = entries.value.filter { it.traktId != traktId }
     }
-
-    override suspend fun needsSync(expiry: Duration): Boolean = false
 
     public fun setEntries(newEntries: List<FollowedShowEntry>) {
         entries.value = newEntries

@@ -17,7 +17,6 @@ kotlin {
                 implementation(projects.core.util.api)
                 implementation(projects.data.episode.api)
                 implementation(projects.data.followedshows.api)
-                implementation(projects.data.traktauth.api)
                 implementation(projects.data.watchlist.api)
                 implementation(projects.domain.episode)
                 implementation(projects.domain.followedshows)
@@ -34,6 +33,7 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(projects.core.logger.testing)
+                implementation(projects.core.networkUtil.testing)
                 implementation(projects.core.util.testing)
                 implementation(projects.data.datastore.testing)
                 implementation(projects.data.episode.testing)
@@ -41,7 +41,7 @@ kotlin {
                 implementation(projects.data.seasondetails.testing)
                 implementation(projects.data.seasons.testing)
                 implementation(projects.data.showdetails.testing)
-                implementation(projects.data.traktauth.testing)
+                implementation(projects.data.syncActivity.testing)
                 implementation(projects.data.watchlist.testing)
                 implementation(projects.domain.showdetails)
                 implementation(projects.i18n.testing)

@@ -10,7 +10,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api(projects.core.networkUtil)
+                api(projects.core.networkUtil.api)
             }
         }
     }

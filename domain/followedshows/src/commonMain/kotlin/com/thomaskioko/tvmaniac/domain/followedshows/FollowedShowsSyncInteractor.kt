@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.domain.followedshows
 
+import com.thomaskioko.tvmaniac.core.base.extensions.DEFAULT_SYNC_CONCURRENCY
 import com.thomaskioko.tvmaniac.core.base.extensions.parallelForEach
 import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
@@ -7,7 +8,8 @@ import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.domain.followedshows.FollowedShowsSyncInteractor.Param
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
-import kotlinx.coroutines.currentCoroutineContext
+import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
+import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityRepository
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
@@ -15,6 +17,8 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 public class FollowedShowsSyncInteractor(
     private val followedShowsRepository: FollowedShowsRepository,
+    private val watchlistRepository: WatchlistRepository,
+    private val traktActivityRepository: TraktActivityRepository,
     private val showContentSyncInteractor: ShowContentSyncInteractor,
     private val dispatchers: AppCoroutineDispatchers,
     private val logger: Logger,
@@ -22,13 +26,16 @@ public class FollowedShowsSyncInteractor(
 
     override suspend fun doWork(params: Param) {
         withContext(dispatchers.io) {
-            followedShowsRepository.syncFollowedShows(params.forceRefresh)
+            traktActivityRepository.fetchLatestActivities(params.forceRefresh)
+
+            watchlistRepository.syncWatchlist(params.forceRefresh)
 
             val followedShows = followedShowsRepository.getFollowedShows()
             logger.debug(TAG, "Syncing content for ${followedShows.size} followed shows.")
 
-            followedShows.parallelForEach { show ->
-                currentCoroutineContext().ensureActive()
+            followedShows.parallelForEach(concurrency = DEFAULT_SYNC_CONCURRENCY) { show ->
+                ensureActive()
+
                 showContentSyncInteractor.executeSync(
                     ShowContentSyncInteractor.Param(
                         traktId = show.traktId,

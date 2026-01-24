@@ -6,10 +6,8 @@ import com.thomaskioko.tvmaniac.core.tasks.api.SyncTasks
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.domain.followedshows.FollowedShowsSyncInteractor
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.tatarka.inject.annotations.Inject
@@ -100,7 +98,7 @@ public class IosSyncTasks(
     }
 
     private suspend fun performSync() {
-        if (traktAuthRepository.value.state.first() != TraktAuthState.LOGGED_IN) {
+        if (!traktAuthRepository.value.isLoggedIn()) {
             logger.debug(TAG, "User not logged in, skipping sync")
             return
         }

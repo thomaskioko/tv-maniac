@@ -9,4 +9,7 @@ public interface FormatterUtil {
 
     /** Formats a given number and adds a prefix. e.g 1000 -> 1k */
     public fun formatDuration(number: Int): String
+
+    /** Formats epoch milliseconds to a human-readable date/time string using the given pattern. */
+    public fun formatDateTime(epochMillis: Long, pattern: String): String
 }

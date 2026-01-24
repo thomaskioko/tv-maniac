@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.episodes.implementation
 
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse.Success
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse.Success
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.Id
@@ -72,7 +72,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
             Success(emptyList<TraktCalendarResponse>())
     }
     private val nextEpisodeDao by lazy { DefaultNextEpisodeDao(database, coroutineDispatcher) }
-    private val episodesDao by lazy { DefaultEpisodesDao(database, coroutineDispatcher) }
+    private val episodesDao by lazy { DefaultEpisodesDao(database, coroutineDispatcher, fakeDateTimeProvider) }
     private val watchedEpisodeDao by lazy {
         DefaultWatchedEpisodeDao(
             database = database,

@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.util
 
 import co.touchlab.kermit.Logger
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
+import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
@@ -17,7 +18,9 @@ import kotlin.time.Instant
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-public class DefaultDateTimeProvider : DateTimeProvider {
+public class DefaultDateTimeProvider(
+    private val formatterUtil: FormatterUtil,
+) : DateTimeProvider {
     override fun now(): Instant = Clock.System.now()
 
     private fun today(timeZone: TimeZone): LocalDate = Clock.System.todayIn(timeZone)
@@ -34,12 +37,7 @@ public class DefaultDateTimeProvider : DateTimeProvider {
     }
 
     override fun epochToDisplayDateTime(epochMillis: Long, timeZone: TimeZone): String {
-        val instant = Instant.fromEpochMilliseconds(epochMillis)
-        val localDateTime = instant.toLocalDateTime(timeZone)
-        val date = localDateTime.date
-        val hour = localDateTime.hour.toString().padStart(2, '0')
-        val minute = localDateTime.minute.toString().padStart(2, '0')
-        return "$date $hour:$minute"
+        return formatterUtil.formatDateTime(epochMillis, "MMM d, yyyy 'at' HH:mm")
     }
 
     override fun extractYear(dateString: String): String {

@@ -29,5 +29,6 @@ public data class UpNextEpisodeInfo(
     val firstAired: Long?,
     val remainingEpisodes: Int,
     val lastWatchedAt: Long?,
+    val followedAt: Long?,
     val badge: EpisodeBadge = EpisodeBadge.NONE,
 )

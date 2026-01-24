@@ -8,7 +8,6 @@ import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
-import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
@@ -29,7 +28,6 @@ public class DefaultWatchedEpisodeSyncRepository(
     private val dao: WatchedEpisodeDao,
     private val episodesDao: EpisodesDao,
     private val seasonsDao: SeasonsDao,
-    private val followedShowsRepository: FollowedShowsRepository,
     private val dataSource: EpisodeWatchesDataSource,
     private val seasonDetailsRepository: SeasonDetailsRepository,
     private val datastoreRepository: DatastoreRepository,
@@ -41,8 +39,6 @@ public class DefaultWatchedEpisodeSyncRepository(
     override suspend fun syncShowEpisodeWatches(showTraktId: Long, forceRefresh: Boolean) {
         val authState = traktAuthRepository.getAuthState()
         if (authState == null || !authState.isAuthorized) return
-
-        followedShowsRepository.addFollowedShow(showTraktId)
 
         processPendingUploads()
         processPendingDeletes()
