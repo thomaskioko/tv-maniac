@@ -32,10 +32,12 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_about_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_about_github
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_about_section_title
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_about_source_code
+import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_about_version
 import com.thomaskioko.tvmaniac.i18n.resolve
 
 @Composable
 internal fun AboutSheetContent(
+    versionName: String,
     onGitHubClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -74,7 +76,7 @@ internal fun AboutSheetContent(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "Version 1.0.0",
+                    text = settings_about_version.resolve(context).format(versionName),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.secondary,
                 )
@@ -162,6 +164,7 @@ private fun AboutSheetContentPreview() {
     TvManiacTheme {
         Surface {
             AboutSheetContent(
+                versionName = "1.0.0",
                 onGitHubClick = {},
             )
         }

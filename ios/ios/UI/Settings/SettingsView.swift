@@ -408,7 +408,7 @@ struct SettingsView: View {
                             .textStyle(theme.typography.headlineLarge)
                             .foregroundColor(theme.colors.onSurface)
 
-                        Text("Version 1.0.0")
+                        Text(String(\.settings_about_version, parameter: uiState.versionName))
                             .textStyle(theme.typography.bodyLarge)
                             .foregroundColor(theme.colors.secondary)
                     }

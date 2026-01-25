@@ -206,6 +206,7 @@ internal fun SettingsScreen(
             containerColor = MaterialTheme.colorScheme.surface,
         ) {
             AboutSheetContent(
+                versionName = state.versionName,
                 onGitHubClick = { openInCustomTab(context, GITHUB_URL) },
             )
         }
