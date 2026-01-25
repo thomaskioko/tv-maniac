@@ -15,13 +15,13 @@ import com.thomaskioko.tvmaniac.settings.presenter.DismissThemeClicked
 import com.thomaskioko.tvmaniac.settings.presenter.DismissTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
-import com.thomaskioko.tvmaniac.settings.presenter.SettingsState.Companion.DEFAULT_STATE
 import com.thomaskioko.tvmaniac.settings.presenter.ShowTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
 import com.thomaskioko.tvmaniac.settings.presenter.toAppTheme
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
+import com.thomaskioko.tvmaniac.util.testing.FakeApplicationInfo
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
@@ -61,6 +61,7 @@ class SettingsPresenterTest {
                 datastoreRepository = datastoreRepository,
                 traktActivityRepository = fakeTraktActivityRepository,
             ),
+            appInfo = FakeApplicationInfo.DEFAULT,
             backClicked = {},
         )
     }
@@ -72,91 +73,78 @@ class SettingsPresenterTest {
 
     @Test
     fun `should emit default state when initialized`() = runTest {
-        presenter.state.test { awaitItem() shouldBe DEFAULT_STATE }
+        presenter.state.test {
+            val state = awaitItem()
+            state.versionName shouldBe "0.0.0"
+        }
     }
 
     @Test
     fun `should update theme when theme is selected`() = runTest {
         presenter.state.test {
-            awaitItem() shouldBe DEFAULT_STATE // Initial State
+            val initialState = awaitItem()
+            initialState.versionName shouldBe "0.0.0"
 
             presenter.dispatch(ChangeThemeClicked)
-            awaitItem() shouldBe
-                DEFAULT_STATE.copy(
-                    showthemePopup = true,
-                )
+            awaitItem().showthemePopup shouldBe true
 
             datastoreRepository.setTheme(ThemeModel.DARK.toAppTheme())
             presenter.dispatch(ThemeSelected(ThemeModel.DARK))
 
-            awaitItem() shouldBe
-                DEFAULT_STATE.copy(
-                    showthemePopup = true,
-                    theme = ThemeModel.DARK,
-                )
-            awaitItem() shouldBe
-                DEFAULT_STATE.copy(
-                    showthemePopup = false,
-                    theme = ThemeModel.DARK,
-                )
+            val updatedState1 = awaitItem()
+            updatedState1.showthemePopup shouldBe true
+            updatedState1.theme shouldBe ThemeModel.DARK
+
+            val updatedState2 = awaitItem()
+            updatedState2.showthemePopup shouldBe false
+            updatedState2.theme shouldBe ThemeModel.DARK
         }
     }
 
     @Test
     fun `should hide theme dialog when dismissed`() = runTest {
         presenter.state.test {
-            awaitItem() shouldBe DEFAULT_STATE // Initial State
+            awaitItem()
 
             presenter.dispatch(ChangeThemeClicked)
-
-            awaitItem() shouldBe DEFAULT_STATE.copy(
-                showthemePopup = true,
-            )
+            awaitItem().showthemePopup shouldBe true
 
             presenter.dispatch(DismissThemeClicked)
-
-            awaitItem() shouldBe DEFAULT_STATE.copy(
-                showthemePopup = false,
-            )
+            awaitItem().showthemePopup shouldBe false
         }
     }
 
     @Test
     fun `should show and hide trakt dialog when toggled`() = runTest {
         presenter.state.test {
-            awaitItem() shouldBe DEFAULT_STATE // Initial State
+            awaitItem()
 
             presenter.dispatch(ShowTraktDialog)
-
-            awaitItem() shouldBe DEFAULT_STATE.copy(
-                showTraktDialog = true,
-            )
+            awaitItem().showTraktDialog shouldBe true
 
             presenter.dispatch(DismissTraktDialog)
-
-            awaitItem() shouldBe
-                DEFAULT_STATE.copy(
-                    showTraktDialog = false,
-                )
+            awaitItem().showTraktDialog shouldBe false
         }
     }
 
     @Test
     fun `should update image quality when quality is selected`() = runTest {
         presenter.state.test {
-            awaitItem() shouldBe DEFAULT_STATE
+            awaitItem()
 
             presenter.dispatch(ImageQualitySelected(ImageQuality.HIGH))
-
-            awaitItem() shouldBe DEFAULT_STATE.copy(
-                imageQuality = ImageQuality.HIGH,
-            )
+            awaitItem().imageQuality shouldBe ImageQuality.HIGH
 
             presenter.dispatch(ImageQualitySelected(ImageQuality.LOW))
+            awaitItem().imageQuality shouldBe ImageQuality.LOW
+        }
+    }
 
-            awaitItem() shouldBe DEFAULT_STATE.copy(
-                imageQuality = ImageQuality.LOW,
-            )
+    @Test
+    fun `should include version name in state`() = runTest {
+        presenter.state.test {
+            val state = awaitItem()
+            state.versionName shouldBe "0.0.0"
         }
     }
 }

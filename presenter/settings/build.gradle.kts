@@ -36,6 +36,7 @@ kotlin {
                 implementation(projects.data.traktauth.testing)
                 implementation(projects.data.user.testing)
                 implementation(projects.core.logger.testing)
+                implementation(projects.core.util.testing)
                 implementation(projects.i18n.testing)
                 implementation(projects.data.syncActivity.testing)
 

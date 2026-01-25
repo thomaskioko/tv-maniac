@@ -16,6 +16,7 @@ public data class SettingsState(
     val backgroundSyncEnabled: Boolean = true,
     val lastSyncDate: String? = null,
     val showLastSyncDate: Boolean = false,
+    val versionName: String,
 ) {
     public companion object {
         public val DEFAULT_STATE: SettingsState = SettingsState(
@@ -31,6 +32,7 @@ public data class SettingsState(
             backgroundSyncEnabled = true,
             lastSyncDate = null,
             showLastSyncDate = false,
+            versionName = "0.0.0",
         )
     }
 }
