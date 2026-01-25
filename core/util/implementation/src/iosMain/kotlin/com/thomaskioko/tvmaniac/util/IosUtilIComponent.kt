@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.util
 
-import com.thomaskioko.tvmaniac.buildconfig.api.BuildConfig
 import com.thomaskioko.tvmaniac.util.api.ApplicationInfo
+import com.thomaskioko.tvmaniac.util.api.BuildConfig
 import com.thomaskioko.tvmaniac.util.api.Platform
 import me.tatarka.inject.annotations.Provides
 import platform.Foundation.NSBundle
