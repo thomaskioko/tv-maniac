@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftUIComponents
+import TvManiac
 import TvManiacKit
 
 @main
@@ -7,46 +8,64 @@ struct iOSApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self)
     var appDelegate: AppDelegate
 
+    @Environment(\.scenePhase)
+    var scenePhase: ScenePhase
+
+    @State private var componentHolder: ComponentHolder<IosViewPresenterComponent>?
+    @State private var authCoordinator: TraktAuthCoordinator?
+
     init() {
         TvManiacTypographyScheme.configureMoko()
     }
 
-    @Environment(\.scenePhase)
-    var scenePhase: ScenePhase
-
-    @State private var authCoordinator: TraktAuthCoordinator?
-
     var body: some Scene {
         WindowGroup {
-            RootNavigationView(
-                rootPresenter: appDelegate.presenterComponent.rootPresenter,
-                rootNavigator: appDelegate.presenterComponent.rootNavigator
-            )
-            .environmentObject(appDelegate)
-            .onAppear {
-                if authCoordinator == nil {
-                    authCoordinator = AuthCoordinatorFactory.create(
-                        authRepository: appDelegate.traktAuthRepository,
-                        logger: appDelegate.logger
-                    )
+            if let holder = componentHolder {
+                RootNavigationView(
+                    rootPresenter: holder.component.rootPresenter,
+                    rootNavigator: holder.component.rootNavigator
+                )
+                .environmentObject(appDelegate)
+                .onAppear {
+                    setupAuthCoordinator()
                 }
+                .onChange(of: scenePhase) { newPhase in
+                    handleScenePhaseChange(newPhase, lifecycle: holder.lifecycle)
+                }
+            } else {
+                Color.clear.onAppear {
+                    componentHolder = ComponentHolder { context in
+                        appDelegate.appComponent.componentFactory.createComponent(
+                            componentContext: context
+                        )
+                    }
+                }
+            }
+        }
+    }
 
-                appDelegate.setupAuthBridge { [weak authCoordinator] in
-                    authCoordinator?.initiateAuthorization()
-                }
-            }
-            .onChange(of: scenePhase) { newPhase in
-                switch newPhase {
-                case .background:
-                    appDelegate.lifecycle.stop()
-                case .inactive:
-                    appDelegate.lifecycle.pause()
-                case .active:
-                    appDelegate.lifecycle.resume()
-                @unknown default:
-                    break
-                }
-            }
+    private func setupAuthCoordinator() {
+        if authCoordinator == nil {
+            authCoordinator = AuthCoordinatorFactory.create(
+                authRepository: appDelegate.traktAuthRepository,
+                logger: appDelegate.logger
+            )
+        }
+        appDelegate.setupAuthBridge { [weak authCoordinator] in
+            authCoordinator?.initiateAuthorization()
+        }
+    }
+
+    private func handleScenePhaseChange(_ phase: ScenePhase, lifecycle: LifecycleRegistry) {
+        switch phase {
+        case .background:
+            lifecycle.stop()
+        case .inactive:
+            lifecycle.pause()
+        case .active:
+            lifecycle.resume()
+        @unknown default:
+            break
         }
     }
 }
