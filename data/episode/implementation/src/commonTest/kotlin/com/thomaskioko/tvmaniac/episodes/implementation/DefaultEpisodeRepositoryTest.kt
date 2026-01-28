@@ -103,7 +103,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
             dispatchers = coroutineDispatcher,
             seasonsRepository = fakeSeasonsRepository,
             seasonDetailsRepository = fakeSeasonDetailsRepository,
-            syncRepository = lazy { fakeSyncRepository },
+            syncRepository = fakeSyncRepository,
             upcomingEpisodesStore = upcomingEpisodesStore,
         )
 
