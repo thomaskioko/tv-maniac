@@ -14,12 +14,12 @@ import TvManiacKit
 struct MoreShowsView: View {
     private let presenter: MoreShowsPresenter
 
-    @StateFlow private var uiState: MoreShowsState
+    @StateObject @KotlinStateFlow private var uiState: MoreShowsState
     @State private var query = String()
 
     init(presenter: MoreShowsPresenter) {
         self.presenter = presenter
-        _uiState = StateFlow(presenter.state)
+        _uiState = .init(presenter.state)
     }
 
     var body: some View {

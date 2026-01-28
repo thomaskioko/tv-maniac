@@ -17,7 +17,7 @@ struct SeasonDetailsView: View {
 
     @Environment(\.presentationMode) var presentationMode
 
-    @StateFlow private var uiState: SeasonDetailsModel
+    @StateObject @KotlinStateFlow private var uiState: SeasonDetailsModel
     @State private var isTruncated = false
     @State private var showFullText = false
     @State private var showModal = false
@@ -30,7 +30,7 @@ struct SeasonDetailsView: View {
 
     init(presenter: SeasonDetailsPresenter) {
         self.presenter = presenter
-        _uiState = StateFlow(presenter.state)
+        _uiState = .init(presenter.state)
     }
 
     var body: some View {
