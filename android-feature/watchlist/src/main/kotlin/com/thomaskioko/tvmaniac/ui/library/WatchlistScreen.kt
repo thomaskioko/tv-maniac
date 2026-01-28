@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.ui.library
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.spring
@@ -11,7 +12,6 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -22,9 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.List
@@ -32,6 +30,8 @@ import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.material.icons.outlined.Inbox
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -55,7 +55,6 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
-import com.thomaskioko.tvmaniac.compose.components.SearchTextContainer
 import com.thomaskioko.tvmaniac.compose.components.ShowLinearProgressIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
@@ -63,6 +62,7 @@ import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.i18n.MR.strings.badge_new
 import com.thomaskioko.tvmaniac.i18n.MR.strings.badge_premiere
+import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_search
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_discover_up_next
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_up_to_date
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_watchlist_empty_result
@@ -70,10 +70,12 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_library
 import com.thomaskioko.tvmaniac.i18n.MR.strings.msg_search_show_hint
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_not_watched_for_while
 import com.thomaskioko.tvmaniac.i18n.resolve
+import com.thomaskioko.tvmaniac.ui.library.component.Searchbar
 import com.thomaskioko.tvmaniac.watchlist.presenter.ChangeListStyleClicked
 import com.thomaskioko.tvmaniac.watchlist.presenter.ClearWatchlistQuery
 import com.thomaskioko.tvmaniac.watchlist.presenter.MarkUpNextEpisodeWatched
 import com.thomaskioko.tvmaniac.watchlist.presenter.ShowTitleClicked
+import com.thomaskioko.tvmaniac.watchlist.presenter.ToggleSearchActive
 import com.thomaskioko.tvmaniac.watchlist.presenter.UpNextEpisodeClicked
 import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistAction
 import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistPresenter
@@ -106,7 +108,6 @@ internal fun WatchlistScreen(
     onAction: (WatchlistAction) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val lazyListState = rememberLazyListState()
 
     Scaffold(
         modifier = modifier
@@ -116,7 +117,6 @@ internal fun WatchlistScreen(
                 onAction = onAction,
                 state = state,
                 scrollBehavior = scrollBehavior,
-                listState = lazyListState,
             )
         },
         content = { contentPadding ->
@@ -211,79 +211,120 @@ private fun TopBar(
     onAction: (WatchlistAction) -> Unit,
     state: WatchlistState,
     scrollBehavior: TopAppBarScrollBehavior,
-    listState: LazyListState,
 ) {
-    Column {
-        TvManiacTopBar(
-            title = {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    IconButton(
-                        onClick = { onAction(ChangeListStyleClicked(state.isGridMode)) },
-                    ) {
-                        val image = if (state.isGridMode) {
-                            Icons.AutoMirrored.Outlined.List
-                        } else {
-                            Icons.Outlined.GridView
-                        }
-                        Icon(
-                            imageVector = image,
-                            contentDescription = "Toggle list style",
-                            tint = MaterialTheme.colorScheme.onSurface,
-                        )
-                    }
+    val context = LocalContext.current
 
-                    Text(
-                        text = menu_item_library.resolve(LocalContext.current),
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            color = MaterialTheme.colorScheme.onSurface,
-                        ),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
+    BackHandler(enabled = state.isSearchActive) {
+        onAction(ClearWatchlistQuery)
+        onAction(ToggleSearchActive)
+    }
+
+    TvManiacTopBar(
+        title = {
+            AnimatedContent(
+                targetState = state.isSearchActive,
+                transitionSpec = {
+                    (scaleIn(animationSpec = spring()) + fadeIn()) togetherWith
+                        (scaleOut(animationSpec = spring()) + fadeOut())
+                },
+                label = "search_expansion_animation",
+            ) { expanded ->
+                if (expanded) {
+                    Searchbar(
+                        query = state.query,
+                        hint = msg_search_show_hint.resolve(context),
+                        onQueryChanged = { onAction(WatchlistQueryChanged(it)) },
+                        onCloseClick = {
+                            onAction(ClearWatchlistQuery)
+                            onAction(ToggleSearchActive)
+                        },
                     )
-
-                    IconButton(
-                        onClick = { /* TODO: Implement filter functionality */ },
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.FilterList,
-                            contentDescription = "Filter",
-                            tint = MaterialTheme.colorScheme.onSurface,
-                        )
-                    }
-
-                    AnimatedVisibility(visible = state.isRefreshing || state.isSyncing) {
-                        LoadingIndicator(
-                            modifier = Modifier
-                                .size(24.dp)
-                                .padding(end = 16.dp),
-                            strokeWidth = 2.dp,
-                        )
-                    }
+                } else {
+                    CollapsedTopBarContent(
+                        state = state,
+                        onAction = onAction,
+                        onSearchClick = { onAction(ToggleSearchActive) },
+                    )
                 }
-            },
-            scrollBehavior = scrollBehavior,
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.background,
-                scrolledContainerColor = MaterialTheme.colorScheme.background,
+            }
+        },
+        scrollBehavior = scrollBehavior,
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.background,
+            scrolledContainerColor = MaterialTheme.colorScheme.background,
+        ),
+    )
+}
+
+@Composable
+private fun CollapsedTopBarContent(
+    state: WatchlistState,
+    onAction: (WatchlistAction) -> Unit,
+    onSearchClick: () -> Unit,
+) {
+    val context = LocalContext.current
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        IconButton(
+            modifier = Modifier.padding(end = 8.dp),
+            onClick = { onAction(ChangeListStyleClicked(state.isGridMode)) },
+        ) {
+            val image = if (state.isGridMode) {
+                Icons.AutoMirrored.Outlined.List
+            } else {
+                Icons.Outlined.GridView
+            }
+            Icon(
+                imageVector = image,
+                contentDescription = "Toggle list style",
+                tint = MaterialTheme.colorScheme.onSurface,
+            )
+        }
+
+        Text(
+            text = menu_item_library.resolve(context),
+            style = MaterialTheme.typography.titleLarge.copy(
+                color = MaterialTheme.colorScheme.onSurface,
             ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
 
-        SearchTextContainer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp)
-                .padding(bottom = 8.dp),
-            query = state.query,
-            hint = msg_search_show_hint.resolve(LocalContext.current),
-            lazyListState = listState,
-            content = {},
-            onClearQuery = { onAction(ClearWatchlistQuery) },
-            onQueryChanged = { onAction(WatchlistQueryChanged(it)) },
-        )
+        Row(
+            modifier = Modifier.padding(end = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            IconButton(onClick = onSearchClick) {
+                Icon(
+                    imageVector = Icons.Outlined.Search,
+                    contentDescription = cd_search.resolve(context),
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+
+            IconButton(
+                onClick = { /* TODO: Implement filter functionality */ },
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.FilterList,
+                    contentDescription = "Filter",
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+
+            AnimatedVisibility(visible = state.isRefreshing || state.isSyncing) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(20.dp),
+                    color = MaterialTheme.colorScheme.secondary,
+                    strokeWidth = 2.dp,
+                )
+            }
+        }
     }
 }
 

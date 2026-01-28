@@ -110,6 +110,15 @@ internal class WatchlistPreviewParameterProvider : PreviewParameterProvider<Watc
                     staleEpisodes = staleEpisodes,
                 ),
                 WatchlistState(
+                    isGridMode = false,
+                    isRefreshing = false,
+                    isSearchActive = true,
+                    watchNextItems = watchlistItems,
+                    staleItems = staleWatchlistItems,
+                    watchNextEpisodes = watchNextEpisodes,
+                    staleEpisodes = staleEpisodes,
+                ),
+                WatchlistState(
                     isRefreshing = false,
                     watchNextItems = watchlistItems,
                     staleItems = staleWatchlistItems,

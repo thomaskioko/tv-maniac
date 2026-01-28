@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -45,6 +46,7 @@ public class DefaultWatchlistPresenter(
     private val uiMessageManager = UiMessageManager()
     private val coroutineScope = coroutineScope()
     private val queryFlow = MutableStateFlow("")
+    private val _state = MutableStateFlow(WatchlistState())
 
     init {
         observeWatchlistSectionsInteractor(queryFlow.value)
@@ -53,6 +55,7 @@ public class DefaultWatchlistPresenter(
     }
 
     override val state: StateFlow<WatchlistState> = combine(
+        _state,
         watchlistLoadingState.observable,
         upNextActionLoadingState.observable,
         observeWatchlistSectionsInteractor.flow,
@@ -60,12 +63,11 @@ public class DefaultWatchlistPresenter(
         repository.observeListStyle(),
         uiMessageManager.message,
         queryFlow,
-    ) { isLoading, upNextLoading, watchlistSections, upNextSections, isGridMode, message, query ->
+    ) { currentState, isLoading, upNextLoading, watchlistSections, upNextSections, isGridMode, message, query ->
         val sectionedItems = watchlistSections.toPresenter()
         val sectionedEpisodes = upNextSections.toPresenter()
-        WatchlistState(
+        currentState.copy(
             query = query,
-            isSearchActive = query.isNotBlank(),
             isGridMode = isGridMode,
             isRefreshing = isLoading || upNextLoading,
             watchNextItems = sectionedItems.watchNext,
@@ -85,6 +87,7 @@ public class DefaultWatchlistPresenter(
             is WatchlistShowClicked -> navigateToShowDetails(action.traktId)
             is WatchlistQueryChanged -> updateQuery(action.query)
             is ClearWatchlistQuery -> clearQuery()
+            is ToggleSearchActive -> toggleSearchActive()
             is ChangeListStyleClicked -> toggleListStyle(action.isGridMode)
             is MessageShown -> clearMessage(action.id)
             is UpNextEpisodeClicked -> navigateToShowDetails(action.showTraktId)
@@ -135,6 +138,10 @@ public class DefaultWatchlistPresenter(
             observeWatchlistSectionsInteractor("")
             observeUpNextSectionsInteractor("")
         }
+    }
+
+    private fun toggleSearchActive() {
+        _state.update { it.copy(isSearchActive = !it.isSearchActive) }
     }
 
     private fun toggleListStyle(currentIsGridMode: Boolean) {

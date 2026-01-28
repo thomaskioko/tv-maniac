@@ -21,6 +21,7 @@ dependencies {
     implementation(projects.androidDesignsystem)
     implementation(projects.i18n.generator)
 
+    implementation(libs.androidx.compose.activity)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.runtime)

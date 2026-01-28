@@ -61,6 +61,24 @@ class WatchlistScreenTest {
     }
 
     @Test
+    fun watchlistScreenSearchActiveState() {
+        composeTestRule.captureMultiDevice("SearchActiveResult") {
+            TvManiacBackground {
+                WatchlistScreen(
+                    state = WatchlistState(
+                        isGridMode = false,
+                        isRefreshing = false,
+                        isSearchActive = true,
+                        watchNextEpisodes = watchNextEpisodes,
+                        staleEpisodes = watchNextEpisodes,
+                    ),
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
     fun libraryScreenEmptyState() {
         composeTestRule.captureMultiDevice("EmptySearchResult") {
             TvManiacBackground {

@@ -20,14 +20,14 @@ import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
-import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 
 class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
     val repository = FakeWatchlistRepository()
     val episodeRepository = FakeEpisodeRepository()
     val dateTimeProvider = FakeDateTimeProvider()
 
-    val testDispatcher = StandardTestDispatcher()
+    val testDispatcher = UnconfinedTestDispatcher()
 
     private val fakeFollowedShowsRepository = FakeFollowedShowsRepository()
     private val fakeLogger = FakeLogger()
@@ -39,7 +39,7 @@ class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
     private val fakeDatastoreRepository = FakeDatastoreRepository()
     private val fakeApiRateLimiter = FakeApiRateLimiter()
 
-    private val coroutineDispatchers = AppCoroutineDispatchers(
+    private val coroutineDispatcher = AppCoroutineDispatchers(
         main = testDispatcher,
         io = testDispatcher,
         computation = testDispatcher,
@@ -72,7 +72,7 @@ class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
         watchedEpisodeSyncRepository = fakeWatchedEpisodeSyncRepository,
         datastoreRepository = fakeDatastoreRepository,
         apiRateLimiter = fakeApiRateLimiter,
-        dispatchers = coroutineDispatchers,
+        dispatchers = coroutineDispatcher,
         logger = fakeLogger,
     )
 
@@ -81,7 +81,7 @@ class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
         watchlistRepository = repository,
         traktActivityRepository = fakeTraktActivityRepository,
         showContentSyncInteractor = showContentSyncInteractor,
-        dispatchers = coroutineDispatchers,
+        dispatchers = coroutineDispatcher,
         logger = fakeLogger,
     )
 
@@ -97,8 +97,8 @@ class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
         followedShowsRepository = fakeFollowedShowsRepository,
         observeWatchlistSectionsInteractor = observeWatchlistSectionsInteractor,
         observeUpNextSectionsInteractor = observeUpNextSectionsInteractor,
-        followedShowsSyncInteractor = followedShowsSyncInteractor,
         markEpisodeWatchedInteractor = fakeMarkEpisodeWatchedInteractor,
+        followedShowsSyncInteractor = followedShowsSyncInteractor,
         logger = fakeLogger,
     )
 }
