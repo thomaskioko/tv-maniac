@@ -45,8 +45,8 @@ struct DiscoverTab: View {
                 collapsedImageHeight: 120,
                 header: { _ in
                     ZStack(alignment: .bottom) {
-                        headerContent(shows: state.featuredShows)
-                        showInfoOverlay(state.featuredShows.map { $0.toSwift() })
+                        headerContent(shows: uiState.featuredShowsSwift)
+                        showInfoOverlay(uiState.featuredShowsSwift)
                     }
                 },
                 content: {
@@ -78,18 +78,15 @@ struct DiscoverTab: View {
     // MARK: - Header Content
 
     @ViewBuilder
-    private func headerContent(shows: [DiscoverShow]) -> some View {
+    private func headerContent(shows: [SwiftShow]) -> some View {
         if shows.isEmpty {
             ProgressView()
                 .progressViewStyle(CircularProgressViewStyle())
                 .scaleEffect(1.5)
                 .tint(theme.colors.accent)
         } else {
-            let items = shows.map {
-                $0.toSwift()
-            }
             CarouselView(
-                items: items,
+                items: shows,
                 currentIndex: $currentIndex,
                 onItemScrolled: { item in
                     selectedShow = item
@@ -99,7 +96,7 @@ struct DiscoverTab: View {
                     presenter.dispatch(action: ShowClicked(traktId: id))
                 }
             ) { index in
-                CarouselItemView(item: items[index])
+                CarouselItemView(item: shows[index])
             }
             .simultaneousGesture(
                 DragGesture(minimumDistance: 5)
@@ -200,11 +197,11 @@ struct DiscoverTab: View {
     // MARK: - Discover List Content
 
     @ViewBuilder
-    private func discoverListContent(state: DiscoverViewState) -> some View {
+    private func discoverListContent(state _: DiscoverViewState) -> some View {
         VStack {
             NextEpisodesSection(
                 title: String(\.label_discover_up_next),
-                episodes: state.nextEpisodes.map { $0.toSwift() },
+                episodes: uiState.nextEpisodesSwift,
                 chevronStyle: .chevronOnly,
                 markWatchedLabel: String(\.menu_mark_watched),
                 unfollowShowLabel: String(\.menu_unfollow_show),
@@ -235,9 +232,7 @@ struct DiscoverTab: View {
             HorizontalItemListView(
                 title: String(\.label_discover_trending_today),
                 chevronStyle: .chevronOnly,
-                items: state.trendingToday.map {
-                    $0.toSwift()
-                },
+                items: uiState.trendingTodaySwift,
                 onClick: { id in presenter.dispatch(action: ShowClicked(traktId: id)) },
                 onMoreClicked: { presenter.dispatch(action: TrendingClicked()) }
             )
@@ -245,9 +240,7 @@ struct DiscoverTab: View {
             HorizontalItemListView(
                 title: String(\.label_discover_upcoming),
                 chevronStyle: .chevronOnly,
-                items: state.upcomingShows.map {
-                    $0.toSwift()
-                },
+                items: uiState.upcomingShowsSwift,
                 onClick: { id in presenter.dispatch(action: ShowClicked(traktId: id)) },
                 onMoreClicked: { presenter.dispatch(action: UpComingClicked()) }
             )
@@ -255,9 +248,7 @@ struct DiscoverTab: View {
             HorizontalItemListView(
                 title: String(\.label_discover_popular),
                 chevronStyle: .chevronOnly,
-                items: state.popularShows.map {
-                    $0.toSwift()
-                },
+                items: uiState.popularShowsSwift,
                 onClick: { id in presenter.dispatch(action: ShowClicked(traktId: id)) },
                 onMoreClicked: { presenter.dispatch(action: PopularClicked()) }
             )
@@ -265,9 +256,7 @@ struct DiscoverTab: View {
             HorizontalItemListView(
                 title: String(\.label_discover_top_rated),
                 chevronStyle: .chevronOnly,
-                items: state.topRatedShows.map {
-                    $0.toSwift()
-                },
+                items: uiState.topRatedShowsSwift,
                 onClick: { id in presenter.dispatch(action: ShowClicked(traktId: id)) },
                 onMoreClicked: { presenter.dispatch(action: TopRatedClicked()) }
             )

@@ -273,3 +273,29 @@ public extension TvManiac.EpisodeBadge {
         }
     }
 }
+
+public extension TvManiac.DiscoverViewState {
+    var featuredShowsSwift: [SwiftShow] {
+        featuredShows.map { $0.toSwift() }
+    }
+
+    var nextEpisodesSwift: [SwiftNextEpisode] {
+        nextEpisodes.map { $0.toSwift() }
+    }
+
+    var trendingTodaySwift: [SwiftShow] {
+        trendingToday.map { $0.toSwift() }
+    }
+
+    var upcomingShowsSwift: [SwiftShow] {
+        upcomingShows.map { $0.toSwift() }
+    }
+
+    var popularShowsSwift: [SwiftShow] {
+        popularShows.map { $0.toSwift() }
+    }
+
+    var topRatedShowsSwift: [SwiftShow] {
+        topRatedShows.map { $0.toSwift() }
+    }
+}
