@@ -60,8 +60,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import com.thomaskioko.tvmaniac.compose.components.BasicDialog
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacAlertDialog
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
@@ -746,16 +746,13 @@ private fun LogoutDialog(
         enter = fadeIn(initialAlpha = 0.4f),
         exit = fadeOut(animationSpec = tween(durationMillis = 250)),
     ) {
-        BasicDialog(
-            dialogTitle = trakt_dialog_logout_title.resolve(context),
-            dialogMessage = trakt_dialog_logout_message.resolve(context),
+        TvManiacAlertDialog(
+            title = trakt_dialog_logout_title.resolve(context),
+            message = trakt_dialog_logout_message.resolve(context),
             confirmButtonText = logout.resolve(context),
             dismissButtonText = label_settings_trakt_dialog_button_secondary.resolve(context),
-            onDismissDialog = onDismissDialog,
-            confirmButtonClicked = onLogoutClicked,
-            dismissButtonClicked = onDismissDialog,
-            enableConfirmButton = true,
-            enableDismissButton = true,
+            onConfirm = onLogoutClicked,
+            onDismiss = onDismissDialog,
         )
     }
 }

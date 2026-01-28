@@ -51,7 +51,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.components.BasicDialog
 import com.thomaskioko.tvmaniac.compose.components.CastCard
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
@@ -61,6 +60,7 @@ import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
 import com.thomaskioko.tvmaniac.compose.components.SheetDragHandle
 import com.thomaskioko.tvmaniac.compose.components.ShowLinearProgressIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacAlertDialog
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
 import com.thomaskioko.tvmaniac.compose.components.actionIconWhen
 import com.thomaskioko.tvmaniac.compose.extensions.contentBackgroundGradient
@@ -501,14 +501,13 @@ private fun SeasonsWatchDialog(
         dialog_message_watched.resolve(context)
     }
 
-    BasicDialog(
-        dialogTitle = title,
-        dialogMessage = message,
+    TvManiacAlertDialog(
+        title = title,
+        message = message,
         confirmButtonText = dialog_button_yes.resolve(context),
         dismissButtonText = dialog_button_no.resolve(context),
-        onDismissDialog = { onAction(DismissDialog) },
-        confirmButtonClicked = { onAction(ConfirmDialogAction) },
-        dismissButtonClicked = { onAction(DismissDialog) },
+        onConfirm = { onAction(ConfirmDialogAction) },
+        onDismiss = { onAction(DismissDialog) },
     )
 }
 
@@ -520,14 +519,13 @@ private fun MarkPreviousEpisodesDialog(
 ) {
     val context = LocalContext.current
 
-    BasicDialog(
-        dialogTitle = dialog_title_mark_previous.resolve(context),
-        dialogMessage = dialog_message_mark_previous.resolve(context),
+    TvManiacAlertDialog(
+        title = dialog_title_mark_previous.resolve(context),
+        message = dialog_message_mark_previous.resolve(context),
         confirmButtonText = dialog_button_mark_all.resolve(context),
         dismissButtonText = dialog_button_just_this.resolve(context),
-        onDismissDialog = onDismiss,
-        confirmButtonClicked = onMarkAll,
-        dismissButtonClicked = onMarkJustThis,
+        onConfirm = onMarkAll,
+        onDismiss = onMarkJustThis,
     )
 }
 
@@ -538,14 +536,13 @@ private fun MarkEpisodeUnwatchedDialog(
 ) {
     val context = LocalContext.current
 
-    BasicDialog(
-        dialogTitle = dialog_title_episode_unwatched.resolve(context),
-        dialogMessage = dialog_message_episode_unwatched.resolve(context),
+    TvManiacAlertDialog(
+        title = dialog_title_episode_unwatched.resolve(context),
+        message = dialog_message_episode_unwatched.resolve(context),
         confirmButtonText = dialog_button_yes.resolve(context),
         dismissButtonText = dialog_button_no.resolve(context),
-        onDismissDialog = onDismiss,
-        confirmButtonClicked = onConfirm,
-        dismissButtonClicked = onDismiss,
+        onConfirm = onConfirm,
+        onDismiss = onDismiss,
     )
 }
 
@@ -557,14 +554,13 @@ private fun MarkPreviousSeasonsDialog(
 ) {
     val context = LocalContext.current
 
-    BasicDialog(
-        dialogTitle = dialog_title_mark_previous_seasons.resolve(context),
-        dialogMessage = dialog_message_mark_previous_seasons.resolve(context),
+    TvManiacAlertDialog(
+        title = dialog_title_mark_previous_seasons.resolve(context),
+        message = dialog_message_mark_previous_seasons.resolve(context),
         confirmButtonText = dialog_button_mark_all_seasons.resolve(context),
         dismissButtonText = dialog_button_just_this_season.resolve(context),
-        onDismissDialog = onDismiss,
-        confirmButtonClicked = onMarkAll,
-        dismissButtonClicked = onMarkJustThis,
+        onConfirm = onMarkAll,
+        onDismiss = onMarkJustThis,
     )
 }
 
