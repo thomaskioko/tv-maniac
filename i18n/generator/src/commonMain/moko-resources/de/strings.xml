@@ -82,6 +82,7 @@
     <string name="cd_user_profile">Benutzerprofil</string>
     <string name="cd_show_images">%s Bilder</string>
     <string name="cd_clear_text">Text löschen</string>
+    <string name="cd_search">Suche</string>
 
     <string name="details_episodes">Episoden</string>
     <string name="details_cast">Besetzung</string>

@@ -9,7 +9,16 @@ struct WatchlistTab: View {
     @StateObject @KotlinStateFlow private var uiState: WatchlistState
     @State private var showListSelection = false
     @State private var isRotating = 0.0
+    @FocusState private var isSearchFocused: Bool
     @Namespace private var animation
+
+    private var watchNextEpisodesSwift: [SwiftNextEpisode] {
+        uiState.watchNextEpisodes.map { $0.toSwift() }
+    }
+
+    private var staleEpisodesSwift: [SwiftNextEpisode] {
+        uiState.staleEpisodes.map { $0.toSwift() }
+    }
 
     init(presenter: WatchlistPresenter) {
         self.presenter = presenter
@@ -42,40 +51,43 @@ struct WatchlistTab: View {
         .navigationBarTitleDisplayMode(.inline)
         .disableAutocorrection(true)
         .toolbar {
-            let image = if uiState.isGridMode {
-                "list.bullet"
-            } else {
-                "rectangle.grid.2x2"
-            }
-            ToolbarItem(placement: .navigationBarLeading) {
-                HStack {
-                    Button {
-                        withAnimation {
-                            presenter.dispatch(action: ChangeListStyleClicked(isGridMode: uiState.isGridMode))
-                        }
-                    } label: {
-                        Label(String(\.label_watchlist_list_style), systemImage: image)
-                            .labelStyle(.iconOnly)
-                    }
-                    .buttonBorderShape(.roundedRectangle(radius: theme.shapes.large))
-                    .buttonStyle(.bordered)
-                    .tint(theme.colors.accent)
+            if uiState.isSearchActive {
+                ToolbarItem(placement: .principal) {
+                    expandedSearchBar
                 }
-            }
-            ToolbarItem(placement: .principal) {
-                titleView
-            }
-            ToolbarItem(placement: .navigationBarTrailing) {
-                HStack {
-                    filterButton
+            } else {
+                let image = if uiState.isGridMode {
+                    "list.bullet"
+                } else {
+                    "rectangle.grid.2x2"
+                }
+                ToolbarItem(placement: .navigationBarLeading) {
+                    HStack {
+                        Button {
+                            withAnimation {
+                                presenter.dispatch(action: ChangeListStyleClicked(isGridMode: uiState.isGridMode))
+                            }
+                        } label: {
+                            Label(String(\.label_watchlist_list_style), systemImage: image)
+                                .labelStyle(.iconOnly)
+                        }
+                        .buttonBorderShape(.roundedRectangle(radius: theme.shapes.large))
+                        .buttonStyle(.bordered)
+                        .tint(theme.colors.accent)
+                    }
+                }
+                ToolbarItem(placement: .principal) {
+                    titleView
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    HStack(spacing: theme.spacing.xSmall) {
+                        searchButton
+                        filterButton
+                    }
                 }
             }
         }
-        .searchable(
-            text: searchQueryBinding,
-            placement: .navigationBarDrawer(displayMode: .always),
-            prompt: String(\.label_search_placeholder)
-        )
+        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: uiState.isSearchActive)
         .disableAutocorrection(true)
         .textInputAutocapitalization(.never)
         .toolbarBackground(theme.colors.surface, for: .navigationBar)
@@ -136,6 +148,21 @@ struct WatchlistTab: View {
         }
     }
 
+    private var searchButton: some View {
+        Button {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                presenter.dispatch(action: ToggleSearchActive())
+                isSearchFocused = true
+            }
+        } label: {
+            Label(String(\.label_tab_search), systemImage: "magnifyingglass")
+                .labelStyle(.iconOnly)
+        }
+        .buttonBorderShape(.roundedRectangle(radius: theme.shapes.large))
+        .buttonStyle(.bordered)
+        .tint(theme.colors.accent)
+    }
+
     private var filterButton: some View {
         Button {
             withAnimation {
@@ -150,13 +177,48 @@ struct WatchlistTab: View {
         .tint(theme.colors.accent)
     }
 
+    private var expandedSearchBar: some View {
+        HStack(spacing: theme.spacing.small) {
+            HStack {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(theme.colors.onSurfaceVariant)
+
+                TextField(String(\.label_search_placeholder), text: searchQueryBinding)
+                    .textStyle(theme.typography.bodyMedium)
+                    .focused($isSearchFocused)
+                    .submitLabel(.search)
+
+                Button {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        if !uiState.query.isEmpty {
+                            presenter.dispatch(action: ClearWatchlistQuery())
+                        } else {
+                            presenter.dispatch(action: ToggleSearchActive())
+                            isSearchFocused = false
+                        }
+                    }
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(theme.colors.onSurfaceVariant)
+                }
+            }
+            .padding(.horizontal, theme.spacing.small)
+            .padding(.vertical, 6)
+            .background(theme.colors.surfaceVariant.opacity(0.5))
+            .clipShape(RoundedRectangle(cornerRadius: theme.shapes.medium))
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.bottom, theme.spacing.small)
+        .transition(.scale.combined(with: .opacity))
+    }
+
     @ViewBuilder
     private var sectionedListContent: some View {
         ScrollView(showsIndicators: false) {
             LazyVStack(spacing: theme.spacing.xSmall, pinnedViews: [.sectionHeaders]) {
-                if !uiState.watchNextEpisodes.isEmpty {
+                if !watchNextEpisodesSwift.isEmpty {
                     Section {
-                        ForEach(uiState.watchNextEpisodes.map { $0.toSwift() }, id: \.episodeId) { episode in
+                        ForEach(watchNextEpisodesSwift, id: \.episodeId) { episode in
                             UpNextListItemView(
                                 episode: episode,
                                 premiereLabel: String(\.badge_premiere),
@@ -188,9 +250,9 @@ struct WatchlistTab: View {
                     }
                 }
 
-                if !uiState.staleEpisodes.isEmpty {
+                if !staleEpisodesSwift.isEmpty {
                     Section {
-                        ForEach(uiState.staleEpisodes.map { $0.toSwift() }, id: \.episodeId) { episode in
+                        ForEach(staleEpisodesSwift, id: \.episodeId) { episode in
                             UpNextListItemView(
                                 episode: episode,
                                 premiereLabel: String(\.badge_premiere),

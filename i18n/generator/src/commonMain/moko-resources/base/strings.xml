@@ -93,6 +93,7 @@
     <string name="cd_user_profile">User profile</string>
     <string name="cd_show_images">%s Images</string>
     <string name="cd_clear_text">Clear Text</string>
+    <string name="cd_search">Search</string>
 
     <string name="details_episodes">Episodes</string>
     <string name="details_cast">Casts</string>

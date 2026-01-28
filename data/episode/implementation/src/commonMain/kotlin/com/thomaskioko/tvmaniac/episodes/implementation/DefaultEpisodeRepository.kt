@@ -50,7 +50,7 @@ public class DefaultEpisodeRepository(
     private val dispatchers: AppCoroutineDispatchers,
     private val seasonsRepository: SeasonsRepository,
     private val seasonDetailsRepository: SeasonDetailsRepository,
-    private val syncRepository: Lazy<WatchedEpisodeSyncRepository>,
+    private val syncRepository: WatchedEpisodeSyncRepository,
     private val upcomingEpisodesStore: UpcomingEpisodesStore,
 ) : EpisodeRepository {
 
@@ -75,7 +75,7 @@ public class DefaultEpisodeRepository(
             episodeNumber = episodeNumber,
             includeSpecials = includeSpecials,
         )
-        syncRepository.value.syncShowEpisodeWatches(showTraktId)
+        syncRepository.syncShowEpisodeWatches(showTraktId)
     }
 
     override suspend fun markEpisodeAndPreviousEpisodesWatched(
@@ -92,7 +92,7 @@ public class DefaultEpisodeRepository(
             episodeNumber = episodeNumber,
             includeSpecials = includeSpecials,
         )
-        syncRepository.value.syncShowEpisodeWatches(showTraktId)
+        syncRepository.syncShowEpisodeWatches(showTraktId)
     }
 
     override suspend fun markEpisodeAsUnwatched(showTraktId: Long, episodeId: Long) {
@@ -102,7 +102,7 @@ public class DefaultEpisodeRepository(
             episodeId = episodeId,
             includeSpecials = includeSpecials,
         )
-        syncRepository.value.syncShowEpisodeWatches(showTraktId)
+        syncRepository.syncShowEpisodeWatches(showTraktId)
     }
 
     override fun observeLastWatchedEpisode(showTraktId: Long): Flow<LastWatchedEpisode?> {
@@ -150,7 +150,7 @@ public class DefaultEpisodeRepository(
             episodes = episodes,
             includeSpecials = includeSpecials,
         )
-        syncRepository.value.syncShowEpisodeWatches(showTraktId)
+        syncRepository.syncShowEpisodeWatches(showTraktId)
     }
 
     override suspend fun markSeasonAndPreviousSeasonsWatched(
@@ -163,13 +163,13 @@ public class DefaultEpisodeRepository(
             seasonNumber = seasonNumber,
             includeSpecials = includeSpecials,
         )
-        syncRepository.value.syncShowEpisodeWatches(showTraktId)
+        syncRepository.syncShowEpisodeWatches(showTraktId)
     }
 
     override suspend fun markSeasonUnwatched(showTraktId: Long, seasonNumber: Long) {
         val includeSpecials = getIncludeSpecials()
         watchedEpisodeDao.markSeasonAsUnwatched(showTraktId, seasonNumber, includeSpecials)
-        syncRepository.value.syncShowEpisodeWatches(showTraktId)
+        syncRepository.syncShowEpisodeWatches(showTraktId)
     }
 
     override suspend fun getUnwatchedCountAfterFetchingPreviousSeasons(

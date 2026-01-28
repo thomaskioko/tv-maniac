@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.i18n.testing.util.IgnoreIos
 import com.thomaskioko.tvmaniac.watchlist.presenter.ChangeListStyleClicked
 import com.thomaskioko.tvmaniac.watchlist.presenter.FakeWatchlistPresenterFactory
+import com.thomaskioko.tvmaniac.watchlist.presenter.ToggleSearchActive
 import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistPresenter
 import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistQueryChanged
 import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistState
@@ -105,7 +106,7 @@ class WatchlistPresenterTest {
     }
 
     @Test
-    fun `should update query and search state when WatchlistQueryChanged is dispatched`() = runTest {
+    fun `should update query when WatchlistQueryChanged is dispatched`() = runTest {
         presenter.state.test {
             awaitItem() shouldBe WatchlistState()
 
@@ -113,13 +114,33 @@ class WatchlistPresenterTest {
 
             val initialState = awaitItem()
             initialState.query shouldBe ""
-            initialState.isSearchActive shouldBe false
 
             presenter.dispatch(WatchlistQueryChanged("test query"))
 
             val updatedState = awaitItem()
             updatedState.query shouldBe "test query"
-            updatedState.isSearchActive shouldBe true
+        }
+    }
+
+    @Test
+    fun `should toggle search active state when ToggleSearchActive is dispatched`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe WatchlistState()
+
+            factory.episodeRepository.setNextEpisodesForWatchlist(cachedNextEpisodes)
+
+            val initialState = awaitItem()
+            initialState.isSearchActive shouldBe false
+
+            presenter.dispatch(ToggleSearchActive)
+
+            val activeState = awaitItem()
+            activeState.isSearchActive shouldBe true
+
+            presenter.dispatch(ToggleSearchActive)
+
+            val inactiveState = awaitItem()
+            inactiveState.isSearchActive shouldBe false
         }
     }
 
