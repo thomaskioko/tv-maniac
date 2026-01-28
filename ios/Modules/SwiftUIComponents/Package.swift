@@ -15,8 +15,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/SDWebImage/SDWebImageSwiftUI.git", from: "3.1.4"),
-        .package(url: "https://github.com/SDWebImage/SDWebImageWebPCoder.git", from: "0.15.0"),
+        .package(url: "https://github.com/onevcat/Kingfisher.git", from: "8.0.0"),
         .package(url: "https://github.com/SvenTiigi/YouTubePlayerKit.git", from: "2.0.5"),
         .package(name: "SnapshotTestingLib", path: "../SnapshotTestingLib"),
     ],
@@ -24,8 +23,7 @@ let package = Package(
         .target(
             name: "SwiftUIComponents",
             dependencies: [
-                "SDWebImageSwiftUI",
-                "SDWebImageWebPCoder",
+                .product(name: "Kingfisher", package: "Kingfisher"),
                 "YouTubePlayerKit",
             ]
         ),
