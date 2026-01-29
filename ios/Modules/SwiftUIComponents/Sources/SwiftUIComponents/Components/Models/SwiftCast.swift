@@ -1,8 +1,7 @@
-
 import Foundation
 
-public struct SwiftCast: Identifiable {
-    public let id = UUID()
+public struct SwiftCast: Identifiable, Equatable {
+    public var id: Int64 { castId }
     public let castId: Int64
     public let name: String
     public let characterName: String
