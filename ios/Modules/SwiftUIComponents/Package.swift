@@ -15,7 +15,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/onevcat/Kingfisher.git", from: "8.0.0"),
+        .package(url: "https://github.com/onevcat/Kingfisher.git", from: "8.6.2"),
         .package(url: "https://github.com/SvenTiigi/YouTubePlayerKit.git", from: "2.0.5"),
         .package(name: "SnapshotTestingLib", path: "../SnapshotTestingLib"),
     ],
