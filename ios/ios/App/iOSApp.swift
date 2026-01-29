@@ -60,6 +60,7 @@ struct iOSApp: App {
         switch phase {
         case .background:
             lifecycle.stop()
+            ImageConfiguration.handleBackgroundCleanup()
         case .inactive:
             lifecycle.pause()
         case .active:
