@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.resourcemanager.api
 
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
-import kotlin.time.Duration.Companion.hours
 
 public enum class RequestTypeConfig(public val requestId: Long, public val duration: Duration) {
     FEATURED_SHOWS_TODAY(1, 1.days),
