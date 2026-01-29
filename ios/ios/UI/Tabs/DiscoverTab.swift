@@ -92,21 +92,12 @@ struct DiscoverTab: View {
                     selectedShow = item
                     store.savedIndex = currentIndex
                 },
-                onItemTapped: { id in
-                    presenter.dispatch(action: ShowClicked(traktId: id))
+                onDraggingChanged: { isDragging in
+                    isDraggingCarousel = isDragging
                 }
             ) { index in
                 CarouselItemView(item: shows[index])
             }
-            .simultaneousGesture(
-                DragGesture(minimumDistance: 5)
-                    .onChanged { _ in
-                        isDraggingCarousel = true
-                    }
-                    .onEnded { _ in
-                        isDraggingCarousel = false
-                    }
-            )
         }
     }
 
