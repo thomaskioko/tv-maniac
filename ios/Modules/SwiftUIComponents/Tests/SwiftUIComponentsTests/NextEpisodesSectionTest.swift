@@ -137,12 +137,12 @@ class NextEpisodesSectionTest: SnapshotTestCase {
                 SwiftNextEpisode(
                     showTraktId: 123,
                     showName: "The Walking Dead: Daryl Dixon",
-                    showPoster: "/poster1.jpg",
+                    showPoster: nil,
                     episodeId: 456,
                     episodeTitle: "L'âme Perdue",
                     episodeNumber: "S02E01",
                     runtime: "45 min",
-                    stillImage: "/still1.jpg",
+                    stillImage: nil,
                     overview: "Daryl washes ashore in France and struggles to piece together how he got there and why."
                 ),
             ],
