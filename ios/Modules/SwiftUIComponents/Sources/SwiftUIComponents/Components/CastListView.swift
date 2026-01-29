@@ -23,7 +23,7 @@ public struct CastListView: View {
                 ChevronTitle(title: "Cast")
 
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack {
+                    LazyHStack {
                         ForEach(casts, id: \.castId) { cast in
                             CastCardView(
                                 profileUrl: cast.profileUrl,

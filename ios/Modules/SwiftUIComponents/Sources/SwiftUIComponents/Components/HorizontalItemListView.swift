@@ -44,7 +44,7 @@ public struct HorizontalItemListView: View {
                 )
 
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack {
+                    LazyHStack {
                         ForEach(items, id: \.traktId) { item in
                             PosterItemView(
                                 title: item.title,
