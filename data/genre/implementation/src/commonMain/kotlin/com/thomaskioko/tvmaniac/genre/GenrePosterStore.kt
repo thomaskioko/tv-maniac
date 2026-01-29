@@ -33,7 +33,7 @@ public class GenrePosterStore(
         )
     },
     sourceOfTruth = SourceOfTruth.of<Long, TmdbShowResult, List<ShowGenresEntity>>(
-        reader = { genreId: Long -> genreDao.observeGenres() },
+        reader = { _ -> genreDao.observeGenres() },
         writer = { genreId, response ->
             val posterPath = response.results.shuffled().firstOrNull()?.posterPath
             val posterUrl = posterPath?.let { formatterUtil.formatTmdbPosterPath(it) }

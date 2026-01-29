@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-// TODO: Move this to UICore Package
 public struct CenteredFullScreenView<Content: View>: View {
     @Environment(\.keyboardHeight) var keyboardHeight
     private let content: () -> Content
@@ -24,12 +23,11 @@ public struct CenteredFullScreenView<Content: View>: View {
                 .position(
                     x: geometry.size.width / 2,
                     y: keyboardHeight > 0
-                        ? geometry.size.height / 3 // Position higher when keyboard is visible
-                        : geometry.size.height / 2 // Center when keyboard is hidden
+                        ? geometry.size.height / 3
+                        : geometry.size.height / 2
                 )
                 .animation(.easeOut(duration: 0.25), value: keyboardHeight)
         }
-        .frame(maxWidth: .infinity)
-        .frame(height: UIScreen.main.bounds.height - 200)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }

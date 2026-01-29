@@ -3,12 +3,14 @@ import TvManiac
 
 @MainActor
 @propertyWrapper
-public final class KotlinStateFlow<T: AnyObject>: ObservableObject {
-    @Published public var wrappedValue: T
-    private var publisher: Task<Void, Never>?
-    private let stateFlow: SkieSwiftStateFlow<T>
+public final class KotlinOptionalStateFlow<T: AnyObject>: ObservableObject {
+    private let stateFlow: SkieSwiftOptionalStateFlow<T>
 
-    public init(_ value: SkieSwiftStateFlow<T>) {
+    @Published public var wrappedValue: T?
+
+    private var publisher: Task<Void, Never>?
+
+    public init(_ value: SkieSwiftOptionalStateFlow<T>) {
         stateFlow = value
         wrappedValue = value.value
 
@@ -28,14 +30,14 @@ public final class KotlinStateFlow<T: AnyObject>: ObservableObject {
 
 public extension ObservedObject {
     @MainActor
-    init<F>(_ stateFlow: SkieSwiftStateFlow<F>) where ObjectType == KotlinStateFlow<F> {
-        self.init(wrappedValue: KotlinStateFlow(stateFlow))
+    init<F>(_ stateFlow: SkieSwiftOptionalStateFlow<F>) where ObjectType == KotlinOptionalStateFlow<F> {
+        self.init(wrappedValue: KotlinOptionalStateFlow(stateFlow))
     }
 }
 
 public extension StateObject {
     @MainActor
-    init<F>(_ stateFlow: SkieSwiftStateFlow<F>) where ObjectType == KotlinStateFlow<F> {
-        self.init(wrappedValue: KotlinStateFlow(stateFlow))
+    init<F>(_ stateFlow: SkieSwiftOptionalStateFlow<F>) where ObjectType == KotlinOptionalStateFlow<F> {
+        self.init(wrappedValue: KotlinOptionalStateFlow(stateFlow))
     }
 }

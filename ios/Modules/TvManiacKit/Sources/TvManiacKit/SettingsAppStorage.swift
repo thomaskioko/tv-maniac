@@ -8,5 +8,5 @@ public final class SettingsAppStorage: ObservableObject {
 
     @AppStorage("app.theme") public var appTheme: DeviceAppTheme = .light
     @AppStorage("discover.carousel.index") public var savedIndex = 1
-    @AppStorage("image.quality") public var imageQuality: SwiftImageQuality = .high
+    @AppStorage("image.quality") public var imageQuality: SwiftImageQuality = .medium
 }

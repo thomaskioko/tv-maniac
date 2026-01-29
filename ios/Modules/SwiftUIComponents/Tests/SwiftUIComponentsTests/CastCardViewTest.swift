@@ -6,7 +6,7 @@ import XCTest
 class CastCardViewTest: SnapshotTestCase {
     func test_CastCardViewWithImage() {
         CastCardView(
-            profileUrl: "https://image.tmdb.org/t/p/w780/1mm7JGHIUX3GRRGXEV9QCzsI0ao.jpg",
+            profileUrl: "",
             name: "Rosario Dawson",
             characterName: "Claire Temple"
         )

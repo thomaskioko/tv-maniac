@@ -24,7 +24,7 @@ struct RootNavigationView: View {
 
     var body: some View {
         SplashView {
-            DecomposeNavigationView(
+            DecomposeNavigationStack(
                 stack: rootPresenter.childStack,
                 onBack: rootNavigator.popTo
             ) { child in

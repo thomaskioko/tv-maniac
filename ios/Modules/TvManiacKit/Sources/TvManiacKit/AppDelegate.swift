@@ -12,13 +12,7 @@ import TvManiac
 import UIKit
 
 public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
-    public let lifecycle = LifecycleRegistryKt.LifecycleRegistry()
-
-    private lazy var appComponent = IosApplicationComponent.companion.create()
-
-    public lazy var presenterComponent: IosViewPresenterComponent = appComponent.componentFactory.createComponent(
-        componentContext: DefaultComponentContext(lifecycle: lifecycle)
-    )
+    public lazy var appComponent = IosApplicationComponent.companion.create()
 
     public lazy var traktAuthRepository = appComponent.traktAuthRepository
     public lazy var logger = appComponent.logger
@@ -26,19 +20,12 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
 
     override public init() {
         super.init()
-        LifecycleRegistryExtKt.create(lifecycle)
-
         initializeApp()
-
         appComponent.initializers.initialize()
     }
 
     public func setupAuthBridge(authCallback: @escaping () -> Void) {
         traktAuthManager.setAuthCallback(callback: authCallback)
-    }
-
-    deinit {
-        LifecycleRegistryExtKt.destroy(lifecycle)
     }
 
     // MARK: - App Initialization

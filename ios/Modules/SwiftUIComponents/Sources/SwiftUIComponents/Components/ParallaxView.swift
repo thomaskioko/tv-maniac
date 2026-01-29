@@ -15,7 +15,7 @@ public struct ParallaxView<Header: View, Content: View>: View {
 
     @State private var scrollOffset: CGFloat = 0
     @State private var headerImageRect: CGRect = .zero
-    @ObservedObject private var contentFrame: ViewFrame = .init()
+    @State private var contentFrame: CGRect = .zero
 
     public init(
         imageHeight: CGFloat,
@@ -50,7 +50,7 @@ public struct ParallaxView<Header: View, Content: View>: View {
                     .frame(height: imageHeight)
 
                     content()
-                        .background(GeometryGetter(rect: $contentFrame.frame))
+                        .background(GeometryGetter(rect: $contentFrame))
                 }
             }
             .background(GeometryGetter(rect: $headerImageRect))
@@ -72,22 +72,6 @@ public struct ParallaxView<Header: View, Content: View>: View {
         }
 
         return 0
-    }
-}
-
-class ViewFrame: ObservableObject {
-    var startingRect: CGRect?
-
-    @Published var frame: CGRect {
-        willSet {
-            if startingRect == nil {
-                startingRect = newValue
-            }
-        }
-    }
-
-    init() {
-        frame = .zero
     }
 }
 

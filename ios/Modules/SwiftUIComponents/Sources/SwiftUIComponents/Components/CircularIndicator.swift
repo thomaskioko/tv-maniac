@@ -18,6 +18,7 @@ public struct CircularIndicator: View {
     @State private var indicatorProgress: CGFloat = 0
     @State private var progressTimer: Timer?
     @State private var lastIndex: Int = 0
+    @State private var isSettling: Bool = false
 
     private let maxVisibleDots = 8
 
@@ -36,25 +37,26 @@ public struct CircularIndicator: View {
             if totalItems <= maxVisibleDots {
                 ForEach(0 ..< totalItems, id: \.self) { index in
                     indicatorDot(for: index, isActive: currentIndex == index)
-                        .id("\(index)-\(currentIndex == index)")
+                        .id(index)
                 }
             } else {
                 ForEach(0 ..< maxVisibleDots, id: \.self) { dotIndex in
                     dynamicIndicatorDot(dotIndex: dotIndex)
-                        .id("\(dotIndex)-\(currentIndex)")
+                        .id(dotIndex)
                 }
             }
         }
         .drawingGroup()
         .animation(nil, value: indicatorProgress)
-        .onChange(of: currentIndex) { newIndex in
+        .animation(nil, value: currentIndex)
+        .onChange(of: currentIndex) { _, newIndex in
             if lastIndex != newIndex {
                 let isWrapAround = (lastIndex == totalItems - 1 && newIndex == 0) ||
                     (lastIndex == 0 && newIndex == totalItems - 1)
 
                 lastIndex = newIndex
 
-                if !isDragging {
+                if !isDragging, !isSettling {
                     if isWrapAround {
                         progressTimer?.invalidate()
                         progressTimer = nil
@@ -73,13 +75,19 @@ public struct CircularIndicator: View {
                 }
             }
         }
-        .onChange(of: isDragging) { dragging in
-            if !dragging, progressTimer == nil {
-                resetAndStartProgress()
-            } else if dragging {
+        .onChange(of: isDragging) { _, dragging in
+            if dragging {
                 progressTimer?.invalidate()
                 progressTimer = nil
                 indicatorProgress = 0
+            } else {
+                isSettling = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                    isSettling = false
+                    if !isDragging {
+                        resetAndStartProgress()
+                    }
+                }
             }
         }
         .onAppear {

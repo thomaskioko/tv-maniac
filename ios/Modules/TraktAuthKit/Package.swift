@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "TraktAuthKit",
     platforms: [
-        .iOS(.v14),
+        .iOS(.v17),
     ],
     products: [
         .library(

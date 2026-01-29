@@ -44,11 +44,7 @@ public struct PosterItemView: View {
             url: posterUrl,
             priority: .normal,
             showIndicator: true
-        ) { image in
-            image
-                .resizable()
-                .scaledToFill()
-        } placeholder: {
+        ) {
             PosterPlaceholder(
                 title: title,
                 posterWidth: posterWidth,

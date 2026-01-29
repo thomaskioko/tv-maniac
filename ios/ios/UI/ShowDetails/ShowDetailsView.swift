@@ -44,7 +44,10 @@ struct ShowDetailsView: View {
             onScroll: { offset in
                 let opacity = -offset - 170
                 let normalizedOpacity = opacity / 220
-                showGlass = max(0, min(1, normalizedOpacity))
+                let newValue = max(0, min(1, normalizedOpacity))
+                if abs(newValue - showGlass) > 0.02 {
+                    showGlass = newValue
+                }
             }
         )
         .background(theme.colors.background)
@@ -78,10 +81,10 @@ struct ShowDetailsView: View {
                             .imageScale(.large)
                     }
                 }
-            ),
+            )
+            .animation(.easeInOut(duration: 0.25), value: showGlass),
             alignment: .top
         )
-        .animation(.easeInOut(duration: 0.25), value: showGlass)
         .coordinateSpace(name: CoordinateSpaces.scrollView)
         .edgesIgnoringSafeArea(.top)
         .sheet(isPresented: $showCustomList) {

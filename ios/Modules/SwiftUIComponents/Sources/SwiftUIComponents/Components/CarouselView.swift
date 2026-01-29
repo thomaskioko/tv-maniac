@@ -1,88 +1,112 @@
 import Combine
 import SwiftUI
 
-/// A view that displays a horizontally scrolling carousel of show posters
-/// with auto-scrolling and interactive gesture support.
 public struct CarouselView<T, Content: View>: View {
     private let items: [T]
     @Binding private var currentIndex: Int
     private let onItemScrolled: (T) -> Void
-    private let onItemTapped: (Int64) -> Void
+    private let onDraggingChanged: ((Bool) -> Void)?
     private let content: (Int) -> Content
 
-    @State private var timer: Timer.TimerPublisher = Timer.publish(every: 5, on: .main, in: .common)
+    @Environment(\.scenePhase) private var scenePhase
     @State private var timerCancellable: Cancellable?
     @State private var isDragging: Bool = false
+    @State private var scrollPosition: Int?
 
     public init(
         items: [T],
         currentIndex: Binding<Int>,
         onItemScrolled: @escaping (T) -> Void,
-        onItemTapped: @escaping (Int64) -> Void,
+        onDraggingChanged: ((Bool) -> Void)? = nil,
         content: @escaping (Int) -> Content
     ) {
         self.items = items
         _currentIndex = currentIndex
         self.onItemScrolled = onItemScrolled
-        self.onItemTapped = onItemTapped
+        self.onDraggingChanged = onDraggingChanged
         self.content = content
     }
 
     public var body: some View {
-        ZStack(alignment: .bottom) {
-            TabView(selection: $currentIndex) {
-                ForEach(items.indices, id: \.self) { index in
-                    ZStack(alignment: Alignment(horizontal: .trailing, vertical: .bottom), content: {
-                        GeometryReader { reader in
-                            let screenWidth = reader.size.width
+        GeometryReader { geometry in
+            let itemWidth = geometry.size.width
 
-                            HStack(spacing: 0) {
-                                content(index)
-                                    .offset(x: -reader.frame(in: .global).minX)
-                                    .frame(width: screenWidth)
-                            }
-                            .onChange(of: currentIndex) { _ in
-                                notifyActiveItem()
-                            }
-                            .onAppear {
-                                notifyActiveItem()
-                            }
-                        }
-                        .cornerRadius(0)
-                        .simultaneousGesture(
-                            DragGesture(minimumDistance: 0)
-                                .onChanged { _ in
-                                    isDragging = true
-                                    stopAutoScroll()
-                                }
-                                .onEnded { _ in
-                                    isDragging = false
-                                    setupAutoScroll()
-                                }
-                        )
-                    })
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: 0) {
+                    ForEach(items.indices, id: \.self) { index in
+                        content(index)
+                            .frame(width: itemWidth)
+                            .id(index)
+                    }
+                }
+                .scrollTargetLayout()
+            }
+            .scrollTargetBehavior(.paging)
+            .scrollPosition(id: $scrollPosition)
+            .onChange(of: scrollPosition) { _, newValue in
+                if let newIndex = newValue {
+                    currentIndex = newIndex
+                    notifyActiveItem()
                 }
             }
-            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+            .onChange(of: currentIndex) { _, newValue in
+                if scrollPosition != newValue {
+                    withAnimation(.easeOut(duration: 0.8)) {
+                        scrollPosition = newValue
+                    }
+                }
+            }
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 10)
+                    .onChanged { _ in
+                        isDragging = true
+                        stopAutoScroll()
+                        onDraggingChanged?(true)
+                    }
+                    .onEnded { _ in
+                        isDragging = false
+                        setupAutoScroll()
+                        onDraggingChanged?(false)
+                    }
+            )
             .onAppear {
-                setupAutoScroll()
+                scrollPosition = currentIndex
             }
-            .onDisappear {
-                stopAutoScroll()
-            }
+        }
+        .onAppear {
+            setupAutoScroll()
+            notifyActiveItem()
+        }
+        .onDisappear {
+            stopAutoScroll()
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            handleScenePhaseChange(newPhase)
+        }
+    }
+
+    private func handleScenePhaseChange(_ phase: ScenePhase) {
+        switch phase {
+        case .active:
+            setupAutoScroll()
+        case .inactive, .background:
+            stopAutoScroll()
+        @unknown default:
+            break
         }
     }
 
     private func setupAutoScroll() {
-        guard !isDragging else {
-            return
-        }
-        timer = Timer.publish(every: 5, on: .main, in: .common)
-        timerCancellable = timer.autoconnect().sink { _ in
-            withAnimation(.easeOut(duration: 0.8)) {
-                currentIndex = (currentIndex + 1) % items.count
+        guard !isDragging, !items.isEmpty else { return }
+        stopAutoScroll()
+        let itemCount = items.count
+        timerCancellable = Timer.publish(every: 5, on: .main, in: .common)
+            .autoconnect()
+            .sink { _ in
+                withAnimation(.easeOut(duration: 0.8)) {
+                    currentIndex = (currentIndex + 1) % itemCount
+                }
             }
-        }
     }
 
     private func stopAutoScroll() {
@@ -91,14 +115,7 @@ public struct CarouselView<T, Content: View>: View {
     }
 
     private func notifyActiveItem() {
+        guard !items.isEmpty, items.indices.contains(currentIndex) else { return }
         onItemScrolled(items[currentIndex])
-    }
-}
-
-private struct ScrollOffsetPreferenceKey: PreferenceKey {
-    static var defaultValue: CGFloat = 0
-
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = nextValue()
     }
 }
