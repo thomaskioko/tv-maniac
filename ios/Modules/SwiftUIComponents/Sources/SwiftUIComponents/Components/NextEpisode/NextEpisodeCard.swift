@@ -41,11 +41,7 @@ public struct NextEpisodeCard: View {
                     url: episode.stillImage ?? episode.showPoster,
                     priority: .high,
                     showIndicator: true
-                ) { image in
-                    image
-                        .resizable()
-                        .scaledToFill()
-                } placeholder: {
+                ) {
                     Rectangle()
                         .fill(Color.gray.opacity(0.3))
                         .overlay(

@@ -26,13 +26,10 @@ public struct AvatarView: View {
         CachedAsyncImage(
             url: avatarUrl,
             showIndicator: true
-        ) { image in
-            image
-                .resizable()
-                .scaledToFill()
-        } placeholder: {
+        ) {
             placeholderView(resolvedBorderColor)
         }
+        .scaledToFill()
         .frame(width: size, height: size)
         .clipShape(Circle())
         .overlay(

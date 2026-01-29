@@ -40,9 +40,7 @@ public struct FeaturedContentPosterView: View {
         CachedAsyncImage(
             url: posterImageUrl,
             priority: .high
-        ) { image in
-            image.resizable()
-        } placeholder: {
+        ) {
             PosterPlaceholder(
                 title: title,
                 posterWidth: posterWidth,

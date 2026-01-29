@@ -29,12 +29,10 @@ public struct ProviderItemView: View {
 
     public var body: some View {
         VStack(alignment: .leading) {
-            CachedAsyncImage(url: logoUrl) { image in
-                image.resizable()
-                    .padding(.horizontal, theme.spacing.xxSmall)
-            } placeholder: {
+            CachedAsyncImage(url: logoUrl) {
                 providerPlaceholder
             }
+            .padding(.horizontal, theme.spacing.xxSmall)
             .aspectRatio(contentMode: .fill)
             .frame(
                 width: imageWidth,

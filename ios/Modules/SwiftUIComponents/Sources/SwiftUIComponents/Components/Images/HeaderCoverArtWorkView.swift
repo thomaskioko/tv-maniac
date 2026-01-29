@@ -29,9 +29,7 @@ public struct HeaderCoverArtWorkView: View {
         CachedAsyncImage(
             url: imageUrl,
             priority: .high
-        ) { image in
-            image.resizable()
-        } placeholder: {
+        ) {
             headerPosterPlaceholder
         }
         .aspectRatio(contentMode: .fill)

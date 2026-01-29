@@ -18,9 +18,7 @@ public struct TransparentImageBackground: View {
     }
 
     public var body: some View {
-        CachedAsyncImage(url: imageUrl) { image in
-            image.resizable()
-        } placeholder: {
+        CachedAsyncImage(url: imageUrl) {
             Rectangle()
                 .fill(theme.colors.background)
                 .ignoresSafeArea()

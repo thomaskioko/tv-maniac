@@ -21,9 +21,9 @@ public struct CastCardView: View {
     }
 
     private var profileImage: some View {
-        CachedAsyncImage(url: profileUrl) { image in
-            image.resizable()
-        } placeholder: {
+        CachedAsyncImage(
+            url: profileUrl
+        ) {
             profilePlaceholder
         }
         .aspectRatio(contentMode: .fill)
