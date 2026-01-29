@@ -172,14 +172,9 @@ public struct ShowInfoView: View {
     private var watchlistButton: some View {
         Button(action: onAddToLibrary) {
             VStack {
-                if #available(iOS 17.0, *) {
-                    Image(systemName: isFollowed ? "minus.circle.fill" : "plus.circle.fill")
-                        .foregroundColor(theme.colors.onButtonBackground)
-                        .symbolEffect(isFollowed ? .bounce.down : .bounce.up, value: isFollowed)
-                } else {
-                    Image(systemName: isFollowed ? "minus.circle.fill" : "plus.circle.fill")
-                        .foregroundColor(theme.colors.onButtonBackground)
-                }
+                Image(systemName: isFollowed ? "minus.circle.fill" : "plus.circle.fill")
+                    .foregroundColor(theme.colors.onButtonBackground)
+                    .symbolEffect(isFollowed ? .bounce.down : .bounce.up, value: isFollowed)
 
                 Text(isFollowed ? stopTrackingLabel : trackLabel)
                     .lineLimit(1)
