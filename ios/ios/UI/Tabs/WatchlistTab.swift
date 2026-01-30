@@ -26,16 +26,10 @@ struct WatchlistTab: View {
     }
 
     private var searchQueryBinding: Binding<String> {
-        Binding(
+        BindingFactories.searchQuery(
             get: { uiState.query },
-            set: { newValue in
-                let trimmedValue = newValue.trimmingCharacters(in: .whitespaces)
-                if !trimmedValue.isEmpty {
-                    presenter.dispatch(action: WatchlistQueryChanged(query: newValue))
-                } else {
-                    presenter.dispatch(action: ClearWatchlistQuery())
-                }
-            }
+            onChanged: { presenter.dispatch(action: WatchlistQueryChanged(query: $0)) },
+            onCleared: { presenter.dispatch(action: ClearWatchlistQuery()) }
         )
     }
 

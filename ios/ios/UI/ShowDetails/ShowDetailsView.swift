@@ -42,9 +42,7 @@ struct ShowDetailsView: View {
                 showInfoDetails
             },
             onScroll: { offset in
-                let opacity = -offset - 170
-                let normalizedOpacity = opacity / 220
-                let newValue = max(0, min(1, normalizedOpacity))
+                let newValue = ParallaxConstants.glassOpacity(from: offset, triggerOffset: 170, divisor: 220)
                 if abs(newValue - showGlass) > 0.02 {
                     showGlass = newValue
                 }
@@ -82,7 +80,7 @@ struct ShowDetailsView: View {
                     }
                 }
             )
-            .animation(.easeInOut(duration: 0.25), value: showGlass),
+            .animation(.easeInOut(duration: AnimationConstants.defaultDuration), value: showGlass),
             alignment: .top
         )
         .coordinateSpace(name: CoordinateSpaces.scrollView)
