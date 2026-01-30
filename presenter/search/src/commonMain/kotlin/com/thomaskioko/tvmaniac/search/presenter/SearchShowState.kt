@@ -28,7 +28,7 @@ public sealed interface SearchUiState {
 
 public data class SearchShowState(
     val query: String = "",
-    val isUpdating: Boolean = false,
+    val isUpdating: Boolean = true,
     val errorMessage: String? = null,
     val searchResults: ImmutableList<ShowItem> = persistentListOf(),
     val genres: ImmutableList<ShowGenre> = persistentListOf(),
