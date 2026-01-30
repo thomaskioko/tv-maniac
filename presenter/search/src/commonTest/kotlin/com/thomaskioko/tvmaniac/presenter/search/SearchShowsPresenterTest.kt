@@ -200,7 +200,6 @@ class SearchShowsPresenterTest {
             // Valid query
             presenter.dispatch(QueryChanged("abc"))
 
-
             awaitItem() shouldBe SearchShowState(isUpdating = false, query = "abc")
 
             fakeSearchRepository.setSearchResult(createDiscoverShowList())
