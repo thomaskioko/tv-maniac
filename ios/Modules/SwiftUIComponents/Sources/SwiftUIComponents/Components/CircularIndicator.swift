@@ -19,6 +19,7 @@ public struct CircularIndicator: View {
     @State private var progressTimer: Timer?
     @State private var lastIndex: Int = 0
     @State private var isSettling: Bool = false
+    @State private var pendingWorkItem: DispatchWorkItem?
 
     private let maxVisibleDots = 8
 
@@ -62,7 +63,7 @@ public struct CircularIndicator: View {
                         progressTimer = nil
                         indicatorProgress = 0
 
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        scheduleDelayedWork(delay: 0.1) {
                             resetAndStartProgress()
                         }
                     } else {
@@ -82,7 +83,7 @@ public struct CircularIndicator: View {
                 indicatorProgress = 0
             } else {
                 isSettling = true
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                scheduleDelayedWork(delay: 0.4) {
                     isSettling = false
                     if !isDragging {
                         resetAndStartProgress()
@@ -96,6 +97,23 @@ public struct CircularIndicator: View {
                 resetAndStartProgress()
             }
         }
+        .onDisappear {
+            cleanup()
+        }
+    }
+
+    private func cleanup() {
+        progressTimer?.invalidate()
+        progressTimer = nil
+        pendingWorkItem?.cancel()
+        pendingWorkItem = nil
+    }
+
+    private func scheduleDelayedWork(delay: Double, action: @escaping () -> Void) {
+        pendingWorkItem?.cancel()
+        let workItem = DispatchWorkItem { action() }
+        pendingWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: workItem)
     }
 
     @ViewBuilder
@@ -139,7 +157,7 @@ public struct CircularIndicator: View {
             indicatorProgress = 0
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+        scheduleDelayedWork(delay: 0.05) {
             let startTime = Date()
             progressTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
                 let elapsed = Date().timeIntervalSince(startTime)
