@@ -224,7 +224,10 @@ struct WatchlistTab: View {
                                 premiereLabel: String(\.badge_premiere),
                                 newLabel: String(\.badge_new),
                                 onItemClicked: { showTraktId, episodeId in
-                                    presenter.dispatch(action: UpNextEpisodeClicked(showTraktId: showTraktId, episodeId: episodeId))
+                                    presenter.dispatch(action: UpNextEpisodeClicked(
+                                        showTraktId: showTraktId,
+                                        episodeId: episodeId
+                                    ))
                                 },
                                 onShowTitleClicked: { showTraktId in
                                     presenter.dispatch(action: ShowTitleClicked(showTraktId: showTraktId))
@@ -258,7 +261,10 @@ struct WatchlistTab: View {
                                 premiereLabel: String(\.badge_premiere),
                                 newLabel: String(\.badge_new),
                                 onItemClicked: { showTraktId, episodeId in
-                                    presenter.dispatch(action: UpNextEpisodeClicked(showTraktId: showTraktId, episodeId: episodeId))
+                                    presenter.dispatch(action: UpNextEpisodeClicked(
+                                        showTraktId: showTraktId,
+                                        episodeId: episodeId
+                                    ))
                                 },
                                 onShowTitleClicked: { showTraktId in
                                     presenter.dispatch(action: ShowTitleClicked(showTraktId: showTraktId))

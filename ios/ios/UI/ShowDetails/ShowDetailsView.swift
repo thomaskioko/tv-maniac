@@ -136,7 +136,12 @@ struct ShowDetailsView: View {
             seasonDetailsTitle: String(\.title_season_details),
             showSeasonDetailsHeader: uiState.continueTrackingEpisodes.isEmpty,
             seasonCountFormat: { count in String(\.season_count, quantity: Int(count)) },
-            episodesWatchedFormat: { watched, total in String(\.episodes_watched, quantity: Int(total), Int(watched), Int(total)) },
+            episodesWatchedFormat: { watched, total in String(
+                \.episodes_watched,
+                quantity: Int(total),
+                Int(watched),
+                Int(total)
+            ) },
             episodesLeftFormat: { count in String(\.episodes_left, quantity: Int(count), Int(count)) },
             upToDateLabel: String(\.label_up_to_date),
             onAddToCustomList: {
