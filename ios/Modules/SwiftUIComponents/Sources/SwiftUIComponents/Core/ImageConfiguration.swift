@@ -7,6 +7,9 @@ public enum ImageConfiguration {
     public static func configure() {
         guard !isConfigured else { return }
         isConfigured = true
+
+        let config = ImagePipeline.Configuration.withDataCache(name: "com.thomaskioko.tvmaniac.images")
+        ImagePipeline.shared = ImagePipeline(configuration: config)
     }
 
     public static func clearCache() {
