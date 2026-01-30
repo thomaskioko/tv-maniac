@@ -46,6 +46,7 @@ class SearchScreenTest {
             TvManiacBackground {
                 SearchScreen(
                     state = SearchShowState(
+                        isUpdating = false,
                         errorMessage = "Something went wrong",
                     ),
                     onAction = {},
@@ -60,6 +61,7 @@ class SearchScreenTest {
             TvManiacBackground {
                 SearchScreen(
                     state = SearchShowState(
+                        isUpdating = false,
                         genres = createGenreShowList(),
                     ),
                     onAction = {},
@@ -75,6 +77,7 @@ class SearchScreenTest {
                 SearchScreen(
                     state = SearchShowState(
                         query = "loki",
+                        isUpdating = false,
                         searchResults = createDiscoverShowList(),
                     ),
                     onAction = {},
