@@ -37,18 +37,21 @@ public struct NextEpisodeCard: View {
             onEpisodeClick(episode.showTraktId, episode.episodeId)
         }) {
             ZStack {
-                CachedAsyncImage(
+                LazyResizableImage(
                     url: episode.stillImage ?? episode.showPoster,
-                    priority: .high,
-                    showIndicator: true
-                ) {
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.3))
-                        .overlay(
-                            Image(systemName: "tv")
-                                .textStyle(theme.typography.titleLarge)
-                                .foregroundColor(theme.colors.onSurfaceVariant)
-                        )
+                    size: CGSize(width: DimensionConstants.imageWidth, height: DimensionConstants.imageHeight)
+                ) { state in
+                    if let image = state.image {
+                        image.resizable()
+                    } else {
+                        Rectangle()
+                            .fill(Color.gray.opacity(0.3))
+                            .overlay(
+                                Image(systemName: "tv")
+                                    .textStyle(theme.typography.titleLarge)
+                                    .foregroundColor(theme.colors.onSurfaceVariant)
+                            )
+                    }
                 }
                 .scaledToFill()
                 .frame(width: DimensionConstants.imageWidth, height: DimensionConstants.imageHeight)

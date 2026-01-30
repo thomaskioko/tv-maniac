@@ -21,13 +21,18 @@ public struct CastCardView: View {
     }
 
     private var profileImage: some View {
-        CachedAsyncImage(
-            url: profileUrl
-        ) {
-            profilePlaceholder
+        LazyResizableImage(
+            url: profileUrl,
+            size: CGSize(width: DimensionConstants.profileWidth, height: DimensionConstants.profileHeight)
+        ) { state in
+            if let image = state.image {
+                image.resizable()
+            } else {
+                profilePlaceholder
+            }
         }
         .aspectRatio(contentMode: .fill)
-        .frame(width: 120, height: 160)
+        .frame(width: DimensionConstants.profileWidth, height: DimensionConstants.profileHeight)
     }
 
     private var profilePlaceholder: some View {
@@ -77,6 +82,11 @@ public struct CastCardView: View {
         .padding(.bottom, theme.spacing.medium)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
+}
+
+private enum DimensionConstants {
+    static let profileWidth: CGFloat = 120
+    static let profileHeight: CGFloat = 160
 }
 
 #Preview {

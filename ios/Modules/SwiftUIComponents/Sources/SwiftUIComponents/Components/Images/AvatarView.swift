@@ -23,11 +23,15 @@ public struct AvatarView: View {
     public var body: some View {
         let resolvedBorderColor = borderColor ?? theme.colors.onPrimary
 
-        CachedAsyncImage(
+        LazyResizableImage(
             url: avatarUrl,
-            showIndicator: true
-        ) {
-            placeholderView(resolvedBorderColor)
+            size: CGSize(width: size, height: size)
+        ) { state in
+            if let image = state.image {
+                image.resizable()
+            } else {
+                placeholderView(resolvedBorderColor)
+            }
         }
         .scaledToFill()
         .frame(width: size, height: size)

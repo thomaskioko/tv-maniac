@@ -37,16 +37,20 @@ public struct FeaturedContentPosterView: View {
     }
 
     public var body: some View {
-        CachedAsyncImage(
+        LazyResizableImage(
             url: posterImageUrl,
-            priority: .high
-        ) {
-            PosterPlaceholder(
-                title: title,
-                posterWidth: posterWidth,
-                posterHeight: posterHeight,
-                posterRadius: resolvedRadius
-            )
+            size: CGSize(width: posterWidth, height: posterHeight)
+        ) { state in
+            if let image = state.image {
+                image.resizable()
+            } else {
+                PosterPlaceholder(
+                    title: title,
+                    posterWidth: posterWidth,
+                    posterHeight: posterHeight,
+                    posterRadius: resolvedRadius
+                )
+            }
         }
         .aspectRatio(contentMode: .fill)
         .overlay {

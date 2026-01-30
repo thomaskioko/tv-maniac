@@ -1,11 +1,3 @@
-//
-//  PosterItemView.swift
-//  tv-maniac
-//
-//  Created by Thomas Kioko on 19.12.23.
-//  Copyright © 2023 orgName. All rights reserved.
-//
-
 import SwiftUI
 
 public struct PosterItemView: View {
@@ -40,17 +32,20 @@ public struct PosterItemView: View {
     public var body: some View {
         let resolvedRadius = posterRadius ?? theme.shapes.small
 
-        CachedAsyncImage(
+        LazyResizableImage(
             url: posterUrl,
-            priority: .normal,
-            showIndicator: true
-        ) {
-            PosterPlaceholder(
-                title: title,
-                posterWidth: posterWidth,
-                posterHeight: posterHeight,
-                posterRadius: resolvedRadius
-            )
+            size: CGSize(width: posterWidth, height: posterHeight)
+        ) { state in
+            if let image = state.image {
+                image.resizable()
+            } else {
+                PosterPlaceholder(
+                    title: title,
+                    posterWidth: posterWidth,
+                    posterHeight: posterHeight,
+                    posterRadius: resolvedRadius
+                )
+            }
         }
         .scaledToFill()
         .clipShape(RoundedRectangle(cornerRadius: resolvedRadius, style: .continuous))

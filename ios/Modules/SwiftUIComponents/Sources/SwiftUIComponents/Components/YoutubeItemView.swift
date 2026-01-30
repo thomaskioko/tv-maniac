@@ -50,8 +50,15 @@ public struct YoutubeItemView: View {
                 .opacity(0)
 
             VStack {
-                CachedAsyncImage(url: thumbnailUrl) {
-                    placeholder
+                LazyResizableImage(
+                    url: thumbnailUrl,
+                    size: CGSize(width: DimensionConstants.imageWidth, height: DimensionConstants.imageHeight)
+                ) { state in
+                    if let image = state.image {
+                        image.resizable()
+                    } else {
+                        placeholder
+                    }
                 }
                 .aspectRatio(contentMode: .fill)
                 .frame(
