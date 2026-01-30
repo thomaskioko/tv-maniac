@@ -13,6 +13,7 @@ struct iOSApp: App {
 
     @State private var componentHolder: ComponentHolder<IosViewPresenterComponent>?
     @State private var authCoordinator: TraktAuthCoordinator?
+    @State private var toastManager = ToastManager()
 
     init() {
         TvManiacTypographyScheme.configureMoko()
@@ -26,6 +27,20 @@ struct iOSApp: App {
                     rootNavigator: holder.component.rootNavigator
                 )
                 .environmentObject(appDelegate)
+                .environment(toastManager)
+                .overlay(alignment: .bottom) {
+                    if let toast = toastManager.toast {
+                        ToastView(
+                            type: toast.type,
+                            title: toast.title,
+                            message: toast.message,
+                            onCancelTapped: { toastManager.dismiss() }
+                        )
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                        .padding(.bottom, 50)
+                    }
+                }
+                .animation(.spring(), value: toastManager.toast)
                 .onAppear {
                     setupAuthCoordinator()
                 }
