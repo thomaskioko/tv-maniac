@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftUIComponents
 import TvManiac
 import UIKit
 
@@ -18,17 +19,11 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
 
     override public init() {
         super.init()
-        initializeApp()
+        ImageConfiguration.configure()
         appComponent.initializers.initialize()
     }
 
     public func setupAuthBridge(authCallback: @escaping () -> Void) {
         traktAuthManager.setAuthCallback(callback: authCallback)
-    }
-
-    // MARK: - App Initialization
-
-    private func initializeApp() {
-        ImageSystemManager.shared.initialize()
     }
 }
