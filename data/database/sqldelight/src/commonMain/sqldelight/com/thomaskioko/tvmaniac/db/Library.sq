@@ -1,0 +1,65 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.TraktId;
+import com.thomaskioko.tvmaniac.db.TmdbId;
+import kotlin.String;
+import kotlin.collections.List;
+
+libraryShows:
+SELECT
+    tvshow.trakt_id AS show_trakt_id,
+    tvshow.tmdb_id AS show_tmdb_id,
+    tvshow.name AS title,
+    tvshow.poster_path,
+    tvshow.status,
+    tvshow.year,
+    tvshow.ratings,
+    tvshow.genres,
+    COALESCE(CAST(tvshow.season_numbers AS INTEGER), 0) AS season_count,
+    COALESCE(CAST(tvshow.episode_numbers AS INTEGER), 0) AS episode_count,
+    COALESCE(show_metadata.cached_watched_count, 0) AS watched_count,
+    COALESCE(show_metadata.cached_total_count, 0) AS total_count,
+    show_metadata.last_watched_at,
+    followed_shows.followed_at,
+    CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS is_followed
+FROM tvshow
+LEFT JOIN followed_shows ON tvshow.trakt_id = followed_shows.trakt_id
+    AND followed_shows.pending_action != 'DELETE'
+LEFT JOIN show_metadata ON tvshow.trakt_id = show_metadata.show_trakt_id
+WHERE (
+    followed_shows.id IS NOT NULL
+    OR show_metadata.cached_watched_count > 0
+)
+AND (
+    :query IS NULL
+    OR :query = ''
+    OR tvshow.name LIKE '%' || :query || '%' COLLATE NOCASE
+)
+AND (
+    :followedOnly = 0
+    OR followed_shows.id IS NOT NULL
+)
+ORDER BY
+    CASE WHEN :sortOption = 'LAST_WATCHED'
+        THEN COALESCE(show_metadata.last_watched_at, followed_shows.followed_at, 0)
+    END DESC,
+    CASE WHEN :sortOption = 'ALPHABETICAL'
+        THEN tvshow.name COLLATE NOCASE
+    END ASC;
+
+watchProvidersForShow:
+SELECT
+    watch_providers.id AS provider_id,
+    watch_providers.name,
+    watch_providers.logo_path
+FROM watch_providers
+WHERE watch_providers.tmdb_id = :tmdbId;
+
+countLibraryShows:
+SELECT COUNT(*) FROM tvshow
+LEFT JOIN followed_shows ON tvshow.trakt_id = followed_shows.trakt_id
+    AND followed_shows.pending_action != 'DELETE'
+LEFT JOIN show_metadata ON tvshow.trakt_id = show_metadata.show_trakt_id
+WHERE (
+    followed_shows.id IS NOT NULL
+    OR show_metadata.cached_watched_count > 0
+);
