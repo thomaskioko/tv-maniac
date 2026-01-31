@@ -1,11 +1,10 @@
-package com.thomaskioko.tvmaniac.domain.followedshows
+package com.thomaskioko.tvmaniac.domain.watchlist
 
 import com.thomaskioko.tvmaniac.core.base.extensions.DEFAULT_SYNC_CONCURRENCY
 import com.thomaskioko.tvmaniac.core.base.extensions.parallelForEach
 import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.Logger
-import com.thomaskioko.tvmaniac.domain.followedshows.FollowedShowsSyncInteractor.Param
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
@@ -15,14 +14,14 @@ import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-public class FollowedShowsSyncInteractor(
+public class WatchlistSyncInteractor(
     private val followedShowsRepository: FollowedShowsRepository,
     private val watchlistRepository: WatchlistRepository,
     private val traktActivityRepository: TraktActivityRepository,
     private val showContentSyncInteractor: ShowContentSyncInteractor,
     private val dispatchers: AppCoroutineDispatchers,
     private val logger: Logger,
-) : Interactor<Param>() {
+) : Interactor<WatchlistSyncInteractor.Param>() {
 
     override suspend fun doWork(params: Param) {
         withContext(dispatchers.io) {
