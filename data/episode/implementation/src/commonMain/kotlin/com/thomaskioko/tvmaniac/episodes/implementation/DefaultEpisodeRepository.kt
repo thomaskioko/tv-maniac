@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.episodes.implementation
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToOneOrNull
-import com.thomaskioko.tvmaniac.core.base.extensions.parallelForEach
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.db.Id
@@ -11,23 +10,15 @@ import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
-import com.thomaskioko.tvmaniac.episodes.api.model.ContinueTrackingResult
 import com.thomaskioko.tvmaniac.episodes.api.model.LastWatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
-import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
-import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
-import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
@@ -48,8 +39,6 @@ public class DefaultEpisodeRepository(
     private val database: TvManiacDatabase,
     private val datastoreRepository: DatastoreRepository,
     private val dispatchers: AppCoroutineDispatchers,
-    private val seasonsRepository: SeasonsRepository,
-    private val seasonDetailsRepository: SeasonDetailsRepository,
     private val syncRepository: WatchedEpisodeSyncRepository,
     private val upcomingEpisodesStore: UpcomingEpisodesStore,
 ) : EpisodeRepository {
@@ -172,23 +161,11 @@ public class DefaultEpisodeRepository(
         syncRepository.syncShowEpisodeWatches(showTraktId)
     }
 
-    override suspend fun getUnwatchedCountAfterFetchingPreviousSeasons(
+    override suspend fun getUnwatchedCountInPreviousSeasons(
         showTraktId: Long,
         seasonNumber: Long,
     ): Long {
         val includeSpecials = getIncludeSpecials()
-        val seasons = seasonsRepository.getSeasonsByShowId(showTraktId)
-        val previousSeasons = seasons.filter { it.season_number in 1..<seasonNumber }
-        previousSeasons.parallelForEach { season ->
-            currentCoroutineContext().ensureActive()
-            seasonDetailsRepository.fetchSeasonDetails(
-                SeasonDetailsParam(
-                    showTraktId = showTraktId,
-                    seasonId = season.season_id.id,
-                    seasonNumber = season.season_number,
-                ),
-            )
-        }
         return watchedEpisodeDao.getUnwatchedEpisodeCountInPreviousSeasons(
             showTraktId = showTraktId,
             seasonNumber = seasonNumber,
@@ -208,32 +185,6 @@ public class DefaultEpisodeRepository(
                 includeSpecials,
             )
         }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override fun observeContinueTrackingEpisodes(
-        showTraktId: Long,
-    ): Flow<ContinueTrackingResult?> =
-        datastoreRepository.observeIncludeSpecials()
-            .flatMapLatest { includeSpecials ->
-                episodesDao.observeNextEpisodeForShow(showTraktId, includeSpecials)
-            }
-            .flatMapLatest { nextEpisode ->
-                if (nextEpisode == null) return@flatMapLatest flowOf(null)
-
-                val param = SeasonDetailsParam(
-                    showTraktId = showTraktId,
-                    seasonId = nextEpisode.season_id.id,
-                    seasonNumber = nextEpisode.season_number,
-                )
-                seasonDetailsRepository.observeSeasonDetails(param)
-                    .map { seasonDetails ->
-                        ContinueTrackingResult(
-                            episodes = seasonDetails.episodes.toImmutableList(),
-                            currentSeasonNumber = seasonDetails.seasonNumber,
-                            currentSeasonId = seasonDetails.seasonId,
-                        )
-                    }
-            }
 
     override suspend fun getUpcomingEpisodesFromFollowedShows(
         limit: Duration,

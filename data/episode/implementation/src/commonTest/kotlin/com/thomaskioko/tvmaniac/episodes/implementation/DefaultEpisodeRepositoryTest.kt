@@ -18,12 +18,9 @@ import com.thomaskioko.tvmaniac.episodes.implementation.MockData.SEASON_2_NUMBER
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.TEST_SHOW_ID
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.TEST_SHOW_NAME
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.TEST_SHOW_OVERVIEW
-import com.thomaskioko.tvmaniac.episodes.implementation.MockData.createSeasonDetailsForContinueTracking
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.i18n.testing.util.IgnoreIos
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
-import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
-import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktCalendarRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktCalendarResponse
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
@@ -61,9 +58,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
         databaseWrite = testDispatcher,
         databaseRead = testDispatcher,
     )
-    private val fakeSeasonDetailsRepository = FakeSeasonDetailsRepository()
     private val fakeDatastoreRepository = FakeDatastoreRepository()
-    private val fakeSeasonsRepository = FakeSeasonsRepository()
     private val fakeDateTimeProvider = FakeDateTimeProvider()
     private val fakeSyncRepository = FakeWatchedEpisodeSyncRepository()
     private val fakeRequestManagerRepository = FakeRequestManagerRepository()
@@ -101,8 +96,6 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
             database = database,
             datastoreRepository = fakeDatastoreRepository,
             dispatchers = coroutineDispatcher,
-            seasonsRepository = fakeSeasonsRepository,
-            seasonDetailsRepository = fakeSeasonDetailsRepository,
             syncRepository = fakeSyncRepository,
             upcomingEpisodesStore = upcomingEpisodesStore,
         )
@@ -219,136 +212,6 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
             afterSecond.episodeId shouldBe 105L
             afterSecond.seasonNumber shouldBe 1
             afterSecond.episodeNumber shouldBe 5
-        }
-    }
-
-    @Test
-    fun `should return active season for continue tracking when user has watch progress`() =
-        runTest {
-            val season2Episodes =
-                MockData.createSeason2EpisodesWithWatchedState(watchedEpisodeNumber = 3L)
-            fakeSeasonDetailsRepository.setSeasonsResult(
-                createSeasonDetailsForContinueTracking(
-                    seasonId = SEASON_2_ID,
-                    seasonNumber = SEASON_2_NUMBER,
-                    episodes = season2Episodes,
-                ),
-            )
-
-            episodeRepository.markEpisodeAsWatched(
-                showTraktId = TEST_SHOW_ID,
-                episodeId = 203L,
-                seasonNumber = SEASON_2_NUMBER,
-                episodeNumber = 3L,
-            )
-
-            episodeRepository.observeContinueTrackingEpisodes(TEST_SHOW_ID).test {
-                val result = awaitItem()
-                result.shouldNotBeNull()
-                result.currentSeasonNumber shouldBe SEASON_2_NUMBER
-                result.episodes shouldHaveSize 4
-            }
-        }
-
-    @Test
-    fun `should return season 1 for continue tracking when user has no watch progress`() = runTest {
-        val season1Episodes = MockData.createSeason1EpisodesForContinueTracking()
-        fakeSeasonDetailsRepository.setSeasonsResult(
-            createSeasonDetailsForContinueTracking(
-                seasonId = SEASON_1_ID,
-                seasonNumber = SEASON_1_NUMBER,
-                episodes = season1Episodes,
-            ),
-        )
-
-        episodeRepository.observeContinueTrackingEpisodes(TEST_SHOW_ID).test {
-            val result = awaitItem()
-            result.shouldNotBeNull()
-            result.currentSeasonNumber shouldBe SEASON_1_NUMBER
-            result.episodes shouldHaveSize 2
-        }
-    }
-
-    @Test
-    fun `should return season with future episodes when all previous seasons watched`() = runTest {
-        val futureEpisodes = MockData.createFutureEpisodesForSeason(
-            seasonId = SEASON_1_ID,
-            seasonNumber = SEASON_1_NUMBER,
-            episodeCount = 3,
-            daysUntilAir = 14,
-        )
-        fakeSeasonDetailsRepository.setSeasonsResult(
-            createSeasonDetailsForContinueTracking(
-                seasonId = SEASON_1_ID,
-                seasonNumber = SEASON_1_NUMBER,
-                episodes = futureEpisodes,
-            ),
-        )
-
-        episodeRepository.observeContinueTrackingEpisodes(TEST_SHOW_ID).test {
-            val result = awaitItem()
-            result.shouldNotBeNull()
-            result.currentSeasonNumber shouldBe SEASON_1_NUMBER
-            result.episodes shouldHaveSize 3
-            result.episodes.all { it.daysUntilAir != null && it.daysUntilAir!! > 0 } shouldBe true
-        }
-    }
-
-    @Test
-    fun `should return null when all episodes in all seasons are watched`() = runTest {
-        repeat(SEASON_1_EPISODE_COUNT) { episodeIndex ->
-            val episodeNumber = episodeIndex + 1
-            val episodeId = 100L + episodeNumber
-            episodeRepository.markEpisodeAsWatched(
-                showTraktId = TEST_SHOW_ID,
-                episodeId = episodeId,
-                seasonNumber = SEASON_1_NUMBER,
-                episodeNumber = episodeNumber.toLong(),
-            )
-        }
-
-        repeat(SEASON_2_EPISODE_COUNT) { episodeIndex ->
-            val episodeNumber = episodeIndex + 1
-            val episodeId = 200L + episodeNumber
-            episodeRepository.markEpisodeAsWatched(
-                showTraktId = TEST_SHOW_ID,
-                episodeId = episodeId,
-                seasonNumber = SEASON_2_NUMBER,
-                episodeNumber = episodeNumber.toLong(),
-            )
-        }
-
-        episodeRepository.observeContinueTrackingEpisodes(TEST_SHOW_ID).test {
-            val result = awaitItem()
-            result.shouldBeNull()
-        }
-    }
-
-    @Test
-    fun `should return null for continue tracking when show not in library`() = runTest {
-        val notInLibraryShowId = 999L
-        episodeRepository.observeContinueTrackingEpisodes(notInLibraryShowId).test {
-            val result = awaitItem()
-            result.shouldBeNull()
-        }
-    }
-
-    @Test
-    fun `should emit continue tracking result when season details change`() = runTest {
-        val initialEpisodes = MockData.createSeason1EpisodesForContinueTracking()
-        fakeSeasonDetailsRepository.setSeasonsResult(
-            createSeasonDetailsForContinueTracking(
-                seasonId = SEASON_1_ID,
-                seasonNumber = SEASON_1_NUMBER,
-                episodes = initialEpisodes,
-            ),
-        )
-
-        episodeRepository.observeContinueTrackingEpisodes(TEST_SHOW_ID).test {
-            val result = awaitItem()
-            result.shouldNotBeNull()
-            result.currentSeasonNumber shouldBe SEASON_1_NUMBER
-            result.episodes shouldHaveSize 2
         }
     }
 

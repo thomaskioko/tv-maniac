@@ -10,6 +10,7 @@ kotlin {
                 implementation(projects.core.networkUtil.api)
 
                 api(libs.coroutines.core)
+                api(libs.kotlinx.collections)
             }
         }
     }

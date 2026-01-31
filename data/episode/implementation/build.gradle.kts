@@ -24,8 +24,6 @@ kotlin {
                 implementation(projects.data.datastore.api)
                 implementation(projects.data.episode.api)
                 implementation(projects.data.requestManager.api)
-                implementation(projects.data.seasons.api)
-                implementation(projects.data.seasondetails.api)
                 implementation(projects.data.traktauth.api)
 
                 implementation(libs.kotlinx.datetime)
@@ -42,8 +40,6 @@ kotlin {
                 implementation(projects.data.datastore.testing)
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.requestManager.testing)
-                implementation(projects.data.seasons.testing)
-                implementation(projects.data.seasondetails.testing)
                 implementation(projects.i18n.testing)
             }
         }

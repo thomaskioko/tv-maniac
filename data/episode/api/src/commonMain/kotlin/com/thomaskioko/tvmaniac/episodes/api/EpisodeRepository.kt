@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.episodes.api
 
-import com.thomaskioko.tvmaniac.episodes.api.model.ContinueTrackingResult
 import com.thomaskioko.tvmaniac.episodes.api.model.LastWatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
@@ -86,11 +85,10 @@ public interface EpisodeRepository {
     public suspend fun markSeasonUnwatched(showTraktId: Long, seasonNumber: Long)
 
     /**
-     * Get count of unwatched episodes in seasons before the specified season number,
-     * ensuring that previous seasons' episode data is fetched first.
-     * Use this when the previous seasons may not have been loaded yet.
+     * Get count of unwatched episodes in seasons before the specified season number.
+     * Assumes previous seasons' episode data has already been fetched.
      */
-    public suspend fun getUnwatchedCountAfterFetchingPreviousSeasons(
+    public suspend fun getUnwatchedCountInPreviousSeasons(
         showTraktId: Long,
         seasonNumber: Long,
     ): Long
@@ -103,15 +101,6 @@ public interface EpisodeRepository {
         showTraktId: Long,
         seasonNumber: Long,
     ): Flow<Long>
-
-    /**
-     * Observe episodes for continue tracking feature.
-     * Automatically selects the appropriate season based on watch progress:
-     * - Starts from the last watched season, or Season 1 if no history
-     * - Auto-progresses to next season when all episodes in current season are watched
-     * - Returns null when no unwatched episodes remain across all seasons
-     */
-    public fun observeContinueTrackingEpisodes(showTraktId: Long): Flow<ContinueTrackingResult?>
 
     /**
      * Get upcoming episodes from followed shows within the specified time window.

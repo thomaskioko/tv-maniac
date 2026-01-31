@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.episodes.testing
 
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
-import com.thomaskioko.tvmaniac.episodes.api.model.ContinueTrackingResult
 import com.thomaskioko.tvmaniac.episodes.api.model.LastWatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
@@ -42,7 +41,6 @@ public class FakeEpisodeRepository : EpisodeRepository {
     private val seasonWatchProgressFlow = MutableStateFlow(SeasonWatchProgress(0, 0, 0, 0))
     private val showWatchProgressFlow = MutableStateFlow(ShowWatchProgress(0, 0, 0))
     private val allSeasonsWatchProgressFlow = MutableStateFlow<List<SeasonWatchProgress>>(emptyList())
-    private val continueTrackingFlow = MutableStateFlow<ContinueTrackingResult?>(null)
     private val unwatchedCountInPreviousSeasonsFlow = MutableStateFlow(0L)
     private val upcomingEpisodesFlow = MutableStateFlow<List<UpcomingEpisode>>(emptyList())
 
@@ -69,10 +67,6 @@ public class FakeEpisodeRepository : EpisodeRepository {
 
     public fun setAllSeasonsWatchProgress(progressList: List<SeasonWatchProgress>) {
         allSeasonsWatchProgressFlow.value = progressList
-    }
-
-    public fun setContinueTrackingResult(result: ContinueTrackingResult?) {
-        continueTrackingFlow.value = result
     }
 
     public fun setUnwatchedCountInPreviousSeasons(count: Long) {
@@ -139,13 +133,10 @@ public class FakeEpisodeRepository : EpisodeRepository {
 
     override suspend fun markSeasonUnwatched(showTraktId: Long, seasonNumber: Long) {}
 
-    override suspend fun getUnwatchedCountAfterFetchingPreviousSeasons(
+    override suspend fun getUnwatchedCountInPreviousSeasons(
         showTraktId: Long,
         seasonNumber: Long,
     ): Long = unwatchedCountInPreviousSeasonsFlow.value
-
-    override fun observeContinueTrackingEpisodes(showTraktId: Long): Flow<ContinueTrackingResult?> =
-        continueTrackingFlow.asStateFlow()
 
     override fun observeUnwatchedCountInPreviousSeasons(
         showTraktId: Long,
