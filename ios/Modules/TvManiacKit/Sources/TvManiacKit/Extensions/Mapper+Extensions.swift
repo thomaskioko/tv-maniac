@@ -299,3 +299,26 @@ public extension TvManiac.DiscoverViewState {
         topRatedShows.map { $0.toSwift() }
     }
 }
+
+public extension TvManiac.LibraryShowItem {
+    func toSwift() -> SwiftLibraryItem {
+        .init(
+            traktId: traktId,
+            title: title,
+            posterUrl: posterImageUrl,
+            year: year,
+            status: status,
+            seasonCount: seasonCount,
+            episodeCount: episodeCount,
+            rating: rating?.doubleValue,
+            genres: genres?.compactMap { $0 as? String },
+            watchProviders: watchProviders.map { $0.toSwift() }
+        )
+    }
+}
+
+public extension TvManiac.WatchProviderItem {
+    func toSwift() -> SwiftProviders {
+        .init(providerId: id, logoUrl: logoUrl)
+    }
+}

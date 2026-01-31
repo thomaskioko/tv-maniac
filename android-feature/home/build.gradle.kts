@@ -15,7 +15,7 @@ dependencies {
     implementation(projects.i18n.generator)
 
     implementation(projects.androidFeature.discover)
-    implementation(projects.androidFeature.watchlist)
+    implementation(projects.androidFeature.library)
     implementation(projects.androidFeature.profile)
     implementation(projects.androidFeature.search)
 

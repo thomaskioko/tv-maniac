@@ -24,12 +24,12 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_search
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.Child.Discover
+import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.Child.Library
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.Child.Profile
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.Child.Search
-import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.Child.Watchlist
 import com.thomaskioko.tvmaniac.profile.ui.ProfileScreen
 import com.thomaskioko.tvmaniac.search.ui.SearchScreen
-import com.thomaskioko.tvmaniac.ui.library.WatchlistScreen
+import com.thomaskioko.tvmaniac.ui.library.LibraryScreen
 
 @Composable
 public fun HomeScreen(
@@ -58,8 +58,8 @@ private fun ChildrenContent(homePresenter: HomePresenter, modifier: Modifier = M
                     modifier = fillMaxSizeModifier,
                 )
             }
-            is Watchlist -> {
-                WatchlistScreen(
+            is Library -> {
+                LibraryScreen(
                     presenter = screen.presenter,
                     modifier = fillMaxSizeModifier,
                 )
@@ -109,7 +109,7 @@ internal fun BottomNavigationContent(
         TvManiacBottomNavigationItem(
             imageVector = Icons.Outlined.VideoLibrary,
             title = menu_item_library.resolve(context),
-            selected = activeComponent is Watchlist,
+            selected = activeComponent is Library,
             onClick = { component.onLibraryClicked() },
         )
 
