@@ -11,8 +11,11 @@ kotlin {
                 implementation(projects.core.base)
                 implementation(projects.core.util.api)
                 implementation(projects.core.networkUtil.api)
+                implementation(projects.core.logger.api)
                 implementation(projects.data.episode.api)
                 implementation(projects.data.watchlist.api)
+                implementation(projects.data.syncActivity.api)
+                implementation(projects.domain.showdetails)
 
                 implementation(libs.coroutines.core)
                 implementation(libs.kotlinInject.runtime)

@@ -4,7 +4,7 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.tasks.api.SyncTasks
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
-import com.thomaskioko.tvmaniac.domain.followedshows.FollowedShowsSyncInteractor
+import com.thomaskioko.tvmaniac.domain.library.SyncLibraryInteractor
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -26,7 +26,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class IosSyncTasks(
-    private val followedShowsSyncInteractor: Lazy<FollowedShowsSyncInteractor>,
+    private val syncLibraryInteractor: Lazy<SyncLibraryInteractor>,
     private val traktAuthRepository: Lazy<TraktAuthRepository>,
     private val datastoreRepository: Lazy<DatastoreRepository>,
     private val dateTimeProvider: Lazy<DateTimeProvider>,
@@ -103,8 +103,8 @@ public class IosSyncTasks(
             return
         }
 
-        followedShowsSyncInteractor.value.executeSync(
-            FollowedShowsSyncInteractor.Param(forceRefresh = true),
+        syncLibraryInteractor.value.executeSync(
+            SyncLibraryInteractor.Param(forceRefresh = true),
         )
         datastoreRepository.value.setLastSyncTimestamp(dateTimeProvider.value.nowMillis())
     }

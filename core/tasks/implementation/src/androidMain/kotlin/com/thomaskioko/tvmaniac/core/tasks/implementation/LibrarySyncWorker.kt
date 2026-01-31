@@ -5,9 +5,10 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
-import com.thomaskioko.tvmaniac.domain.followedshows.FollowedShowsSyncInteractor
+import com.thomaskioko.tvmaniac.domain.library.SyncLibraryInteractor
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
+import kotlinx.coroutines.CancellationException
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -15,7 +16,7 @@ import me.tatarka.inject.annotations.Inject
 public class LibrarySyncWorker(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
-    private val followedShowsSyncInteractor: Lazy<FollowedShowsSyncInteractor>,
+    private val syncLibraryInteractor: Lazy<SyncLibraryInteractor>,
     private val traktAuthRepository: Lazy<TraktAuthRepository>,
     private val datastoreRepository: Lazy<DatastoreRepository>,
     private val dateTimeProvider: Lazy<DateTimeProvider>,
@@ -31,12 +32,15 @@ public class LibrarySyncWorker(
         }
 
         return try {
-            followedShowsSyncInteractor.value.executeSync(
-                FollowedShowsSyncInteractor.Param(forceRefresh = true),
+            syncLibraryInteractor.value.executeSync(
+                SyncLibraryInteractor.Param(forceRefresh = true),
             )
             datastoreRepository.value.setLastSyncTimestamp(dateTimeProvider.value.nowMillis())
             logger.debug(TAG, "Library sync completed successfully")
             Result.success()
+        } catch (e: CancellationException) {
+            logger.debug(TAG, "Library sync cancelled, will retry when constraints are met")
+            Result.retry()
         } catch (e: Exception) {
             logger.error(TAG, "Library sync failed: ${e.message}")
             Result.failure()

@@ -7,11 +7,11 @@ import com.thomaskioko.tvmaniac.core.networkutil.testing.FakeApiRateLimiter
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
-import com.thomaskioko.tvmaniac.domain.followedshows.FollowedShowsSyncInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.ObserveUpNextSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.ObserveWatchlistSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.UpNextSectionsMapper
+import com.thomaskioko.tvmaniac.domain.watchlist.WatchlistSyncInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
@@ -76,7 +76,7 @@ class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
         logger = fakeLogger,
     )
 
-    private val followedShowsSyncInteractor = FollowedShowsSyncInteractor(
+    private val watchlistSyncInteractor = WatchlistSyncInteractor(
         followedShowsRepository = fakeFollowedShowsRepository,
         watchlistRepository = repository,
         traktActivityRepository = fakeTraktActivityRepository,
@@ -98,7 +98,7 @@ class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
         observeWatchlistSectionsInteractor = observeWatchlistSectionsInteractor,
         observeUpNextSectionsInteractor = observeUpNextSectionsInteractor,
         markEpisodeWatchedInteractor = fakeMarkEpisodeWatchedInteractor,
-        followedShowsSyncInteractor = followedShowsSyncInteractor,
+        watchlistSyncInteractor = watchlistSyncInteractor,
         logger = fakeLogger,
     )
 }

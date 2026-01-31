@@ -23,7 +23,6 @@ import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
 import com.thomaskioko.tvmaniac.domain.watchproviders.WatchProvidersInteractor
-import com.thomaskioko.tvmaniac.episodes.api.model.ContinueTrackingResult
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall
@@ -33,6 +32,7 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.model.ProviderModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.TrailerModel
+import com.thomaskioko.tvmaniac.seasondetails.api.model.ContinueTrackingResult
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
@@ -209,7 +209,7 @@ class ShowDetailsPresenterTest {
     @Test
     fun `should display continue tracking episodes when available`() = runTest {
         buildMockData()
-        episodeRepository.setContinueTrackingResult(testContinueTrackingResult)
+        seasonDetailsRepository.setContinueTrackingResult(testContinueTrackingResult)
 
         val presenter = buildShowDetailsPresenter()
         testDispatcher.scheduler.advanceUntilIdle()
@@ -288,7 +288,7 @@ class ShowDetailsPresenterTest {
     @Test
     fun `should update continue tracking list when episode is marked as watched`() = runTest {
         buildMockData()
-        episodeRepository.setContinueTrackingResult(testContinueTrackingResult)
+        seasonDetailsRepository.setContinueTrackingResult(testContinueTrackingResult)
 
         val presenter = buildShowDetailsPresenter()
         testDispatcher.scheduler.advanceUntilIdle()
@@ -306,7 +306,7 @@ class ShowDetailsPresenterTest {
             currentSeasonNumber = 1L,
             currentSeasonId = 101L,
         )
-        episodeRepository.setContinueTrackingResult(updatedTrackingResult)
+        seasonDetailsRepository.setContinueTrackingResult(updatedTrackingResult)
 
         presenter.dispatch(
             MarkEpisodeWatched(
@@ -326,7 +326,7 @@ class ShowDetailsPresenterTest {
     @Test
     fun `should clear continue tracking list when show is removed from library`() = runTest {
         buildMockData()
-        episodeRepository.setContinueTrackingResult(testContinueTrackingResult)
+        seasonDetailsRepository.setContinueTrackingResult(testContinueTrackingResult)
 
         val presenter = buildShowDetailsPresenter()
         testDispatcher.scheduler.advanceUntilIdle()
@@ -334,7 +334,7 @@ class ShowDetailsPresenterTest {
         val initialState = presenter.state.value
         initialState.continueTrackingEpisodes.size shouldBe 3
 
-        episodeRepository.setContinueTrackingResult(null)
+        seasonDetailsRepository.setContinueTrackingResult(null)
 
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -537,6 +537,7 @@ class ShowDetailsPresenterTest {
             observableShowDetailsInteractor = ObservableShowDetailsInteractor(
                 castRepository = castRepository,
                 episodeRepository = episodeRepository,
+                seasonDetailsRepository = seasonDetailsRepository,
                 seasonsRepository = seasonsRepository,
                 showDetailsRepository = showDetailsRepository,
                 similarShowsRepository = similarShowsRepository,

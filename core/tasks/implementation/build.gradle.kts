@@ -22,7 +22,7 @@ kotlin {
                 implementation(projects.core.logger.api)
                 implementation(projects.data.datastore.api)
                 implementation(projects.data.traktauth.api)
-                implementation(projects.domain.followedshows)
+                implementation(projects.domain.library)
                 implementation(projects.domain.user)
                 implementation(libs.kotlinx.atomicfu)
                 implementation(libs.kotlinx.datetime)
