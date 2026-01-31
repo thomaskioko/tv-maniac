@@ -4,11 +4,11 @@ import TvManiacKit
 
 struct ProfileTab: View {
     @Theme private var theme
+    @Environment(ToastManager.self) private var toastManager
 
     private let presenter: ProfilePresenter
     @State private var showGlass: Double = 0
     @State private var progressViewOffset: CGFloat = 0
-    @State private var toast: Toast?
     @StateObject @KotlinStateFlow private var uiState: ProfileState
 
     init(presenter: ProfilePresenter) {
@@ -52,19 +52,14 @@ struct ProfileTab: View {
             ),
             alignment: .top
         )
-        .animation(.easeInOut(duration: 0.25), value: showGlass)
+        .animation(.easeInOut(duration: AnimationConstants.defaultDuration), value: showGlass)
         .edgesIgnoringSafeArea(.top)
-        .toastView(toast: $toast)
         .onChange(of: uiState.errorMessage) { errorMessage in
             if let errorMessage {
-                toast = Toast(
-                    type: .error,
-                    title: "Error",
-                    message: errorMessage.message
-                )
+                toastManager.showError(title: "Error", message: errorMessage.message)
             }
         }
-        .onChange(of: toast) { newValue in
+        .onChange(of: toastManager.toast) { newValue in
             if newValue == nil, let errorMessage = uiState.errorMessage {
                 presenter.dispatch(action: ProfileActionMessageShown(id: errorMessage.id))
             }
@@ -99,9 +94,7 @@ struct ProfileTab: View {
                 }
             },
             onScroll: { offset in
-                let opacity = -offset - 150
-                let normalizedOpacity = opacity / 200
-                showGlass = max(0, min(1, normalizedOpacity))
+                showGlass = ParallaxConstants.glassOpacity(from: offset)
             }
         )
     }
@@ -322,9 +315,7 @@ struct ProfileTab: View {
         }
         .coordinateSpace(name: "scrollView")
         .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
-            let opacity = -offset - 150
-            let normalizedOpacity = opacity / 200
-            showGlass = max(0, min(1, normalizedOpacity))
+            showGlass = ParallaxConstants.glassOpacity(from: offset)
         }
     }
 

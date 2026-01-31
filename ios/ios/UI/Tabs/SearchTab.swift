@@ -16,19 +16,11 @@ struct SearchTab: View {
         _uiState = .init(presenter.state)
     }
 
-    // MARK: - Bindings
-
     private var searchQueryBinding: Binding<String> {
-        Binding(
+        BindingFactories.searchQuery(
             get: { uiState.query },
-            set: { newValue in
-                let trimmedValue = newValue.trimmingCharacters(in: .whitespaces)
-                if !trimmedValue.isEmpty {
-                    presenter.dispatch(action: QueryChanged(query: newValue))
-                } else {
-                    presenter.dispatch(action: ClearQuery())
-                }
-            }
+            onChanged: { presenter.dispatch(action: QueryChanged(query: $0)) },
+            onCleared: { presenter.dispatch(action: ClearQuery()) }
         )
     }
 

@@ -41,8 +41,8 @@ struct DiscoverTab: View {
     private func discoverLoadedContent(state: DiscoverViewState) -> some View {
         ZStack(alignment: .bottom) {
             ParallaxView(
-                imageHeight: 520,
-                collapsedImageHeight: 120,
+                imageHeight: ParallaxConstants.defaultImageHeight,
+                collapsedImageHeight: ParallaxConstants.collapsedImageHeight,
                 header: { _ in
                     ZStack(alignment: .bottom) {
                         headerContent(shows: uiState.featuredShowsSwift)
@@ -53,9 +53,7 @@ struct DiscoverTab: View {
                     discoverListContent(state: state)
                 },
                 onScroll: { offset in
-                    let opacity = -offset - 150
-                    let normalizedOpacity = opacity / 200
-                    showGlass = max(0, min(1, normalizedOpacity))
+                    showGlass = ParallaxConstants.glassOpacity(from: offset)
                 }
             )
         }
@@ -70,7 +68,7 @@ struct DiscoverTab: View {
             ),
             alignment: .top
         )
-        .animation(.easeInOut(duration: 0.25), value: showGlass)
+        .animation(.easeInOut(duration: AnimationConstants.defaultDuration), value: showGlass)
         .coordinateSpace(name: "scrollView")
         .edgesIgnoringSafeArea(.top)
     }

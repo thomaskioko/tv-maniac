@@ -75,7 +75,7 @@ struct SeasonDetailsView: View {
             },
             alignment: .top
         )
-        .animation(.easeInOut(duration: 0.25), value: showGlass)
+        .animation(.easeInOut(duration: AnimationConstants.defaultDuration), value: showGlass)
         .edgesIgnoringSafeArea(.top)
         .sheet(isPresented: $showModal) {
             ImageGalleryContentView(items: uiState.seasonImages.map {
@@ -188,9 +188,7 @@ struct SeasonDetailsView: View {
                 CastListView(casts: toCastsList(state.seasonCast))
             },
             onScroll: { offset in
-                let opacity = -offset - 150
-                let normalizedOpacity = opacity / 200
-                showGlass = max(0, min(1, normalizedOpacity))
+                showGlass = ParallaxConstants.glassOpacity(from: offset)
 
                 let startOffset = CGFloat(245)
                 let endOffset = 0

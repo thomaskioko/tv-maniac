@@ -1,12 +1,5 @@
-//
-//  TransparentImageBackground.swift
-//  tv-maniac
-//
-//  Created by Thomas Kioko on 21.12.23.
-//  Copyright © 2023 orgName. All rights reserved.
-//
-
 import SwiftUI
+import UIKit
 
 public struct TransparentImageBackground: View {
     @Theme private var theme
@@ -18,11 +11,21 @@ public struct TransparentImageBackground: View {
     }
 
     public var body: some View {
-        CachedAsyncImage(url: imageUrl) {
-            Rectangle()
-                .fill(theme.colors.background)
-                .ignoresSafeArea()
-                .padding(.zero)
+        LazyResizableImage(
+            url: imageUrl,
+            size: CGSize(
+                width: UIScreen.main.bounds.width,
+                height: UIScreen.main.bounds.height
+            )
+        ) { state in
+            if let image = state.image {
+                image.resizable()
+            } else {
+                Rectangle()
+                    .fill(theme.colors.background)
+                    .ignoresSafeArea()
+                    .padding(.zero)
+            }
         }
         .aspectRatio(contentMode: .fill)
         .ignoresSafeArea()

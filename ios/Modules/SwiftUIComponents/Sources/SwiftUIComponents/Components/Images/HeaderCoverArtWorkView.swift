@@ -1,11 +1,3 @@
-//
-//  HeaderCoverArtWorkView.swift
-//  tv-maniac
-//
-//  Created by Thomas Kioko on 19.12.23.
-//  Copyright © 2023 orgName. All rights reserved.
-//
-
 import SwiftUI
 
 public struct HeaderCoverArtWorkView: View {
@@ -26,11 +18,15 @@ public struct HeaderCoverArtWorkView: View {
     }
 
     public var body: some View {
-        CachedAsyncImage(
+        LazyResizableImage(
             url: imageUrl,
-            priority: .high
-        ) {
-            headerPosterPlaceholder
+            size: CGSize(width: DimensionConstants.posterWidth, height: posterHeight)
+        ) { state in
+            if let image = state.image {
+                image.resizable()
+            } else {
+                headerPosterPlaceholder
+            }
         }
         .aspectRatio(contentMode: .fill)
         .frame(width: DimensionConstants.posterWidth, height: posterHeight)

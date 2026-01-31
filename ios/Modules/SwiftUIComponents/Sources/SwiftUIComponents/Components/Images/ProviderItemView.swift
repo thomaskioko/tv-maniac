@@ -29,8 +29,15 @@ public struct ProviderItemView: View {
 
     public var body: some View {
         VStack(alignment: .leading) {
-            CachedAsyncImage(url: logoUrl) {
-                providerPlaceholder
+            LazyResizableImage(
+                url: logoUrl,
+                size: CGSize(width: imageWidth, height: imageHeight)
+            ) { state in
+                if let image = state.image {
+                    image.resizable()
+                } else {
+                    providerPlaceholder
+                }
             }
             .padding(.horizontal, theme.spacing.xxSmall)
             .aspectRatio(contentMode: .fill)

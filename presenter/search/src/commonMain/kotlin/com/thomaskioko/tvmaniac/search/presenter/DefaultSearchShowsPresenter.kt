@@ -13,15 +13,16 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
@@ -54,8 +55,22 @@ public class DefaultSearchShowsPresenter(
 
     internal inner class PresenterInstance : InstanceKeeper.Instance {
         private var isInitialized = false
-        private val _state = MutableStateFlow(SearchShowState.Empty)
-        val state: StateFlow<SearchShowState> = _state.asStateFlow()
+        private val _state: MutableStateFlow<SearchShowState> =
+            MutableStateFlow(SearchShowState.Empty)
+        val state: StateFlow<SearchShowState> = combine(
+            genreRepository.observeGenresWithShows(),
+            _state,
+        ) { result, currentState ->
+            currentState.copy(
+                isUpdating = false,
+                genres = mapper.toGenreList(result),
+            )
+        }
+            .stateIn(
+                scope = coroutineScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = SearchShowState.Empty,
+            )
 
         private val queryFlow = MutableSharedFlow<String>(
             replay = 1,
@@ -78,10 +93,17 @@ public class DefaultSearchShowsPresenter(
                 DismissSnackBar -> {
                     _state.update { it.copy(errorMessage = null) }
                 }
-                ReloadShowContent -> coroutineScope.launch { genreRepository.fetchGenresWithShows(true) }
+
+                ReloadShowContent -> coroutineScope.launch {
+                    genreRepository.fetchGenresWithShows(
+                        true,
+                    )
+                }
+
                 LoadDiscoverShows, ClearQuery -> {
                     _state.update { it.copy(query = "", searchResults = persistentListOf()) }
                 }
+
                 is QueryChanged -> handleQueryChange(action.query)
                 is SearchShowClicked -> onNavigateToShowDetails(action.id)
                 is GenreCategoryClicked -> onNavigateToGenre(action.id)
@@ -89,11 +111,7 @@ public class DefaultSearchShowsPresenter(
         }
 
         private suspend fun observeGenre() {
-            genreRepository.observeGenresWithShows()
-                .onStart { _state.update { it.copy(isUpdating = true) } }
-                .collect { result ->
-                    _state.update { it.copy(isUpdating = false, genres = mapper.toGenreList(result)) }
-                }
+            genreRepository.observeGenrePosters()
         }
 
         private suspend fun observeQueryFlow() {
@@ -153,5 +171,6 @@ public class DefaultSearchPresenterFactory(
         componentContext: ComponentContext,
         onNavigateToShowDetails: (id: Long) -> Unit,
         onNavigateToGenre: (id: Long) -> Unit,
-    ): SearchShowsPresenter = presenter(componentContext, onNavigateToShowDetails, onNavigateToGenre)
+    ): SearchShowsPresenter =
+        presenter(componentContext, onNavigateToShowDetails, onNavigateToGenre)
 }

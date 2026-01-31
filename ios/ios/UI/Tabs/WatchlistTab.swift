@@ -26,16 +26,10 @@ struct WatchlistTab: View {
     }
 
     private var searchQueryBinding: Binding<String> {
-        Binding(
+        BindingFactories.searchQuery(
             get: { uiState.query },
-            set: { newValue in
-                let trimmedValue = newValue.trimmingCharacters(in: .whitespaces)
-                if !trimmedValue.isEmpty {
-                    presenter.dispatch(action: WatchlistQueryChanged(query: newValue))
-                } else {
-                    presenter.dispatch(action: ClearWatchlistQuery())
-                }
-            }
+            onChanged: { presenter.dispatch(action: WatchlistQueryChanged(query: $0)) },
+            onCleared: { presenter.dispatch(action: ClearWatchlistQuery()) }
         )
     }
 
@@ -224,7 +218,10 @@ struct WatchlistTab: View {
                                 premiereLabel: String(\.badge_premiere),
                                 newLabel: String(\.badge_new),
                                 onItemClicked: { showTraktId, episodeId in
-                                    presenter.dispatch(action: UpNextEpisodeClicked(showTraktId: showTraktId, episodeId: episodeId))
+                                    presenter.dispatch(action: UpNextEpisodeClicked(
+                                        showTraktId: showTraktId,
+                                        episodeId: episodeId
+                                    ))
                                 },
                                 onShowTitleClicked: { showTraktId in
                                     presenter.dispatch(action: ShowTitleClicked(showTraktId: showTraktId))
@@ -258,7 +255,10 @@ struct WatchlistTab: View {
                                 premiereLabel: String(\.badge_premiere),
                                 newLabel: String(\.badge_new),
                                 onItemClicked: { showTraktId, episodeId in
-                                    presenter.dispatch(action: UpNextEpisodeClicked(showTraktId: showTraktId, episodeId: episodeId))
+                                    presenter.dispatch(action: UpNextEpisodeClicked(
+                                        showTraktId: showTraktId,
+                                        episodeId: episodeId
+                                    ))
                                 },
                                 onShowTitleClicked: { showTraktId in
                                     presenter.dispatch(action: ShowTitleClicked(showTraktId: showTraktId))

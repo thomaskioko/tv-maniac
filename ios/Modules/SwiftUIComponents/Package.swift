@@ -15,7 +15,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/onevcat/Kingfisher.git", from: "8.0.0"),
+        .package(url: "https://github.com/kean/Nuke", exact: "12.8.0"),
         .package(url: "https://github.com/SvenTiigi/YouTubePlayerKit.git", from: "2.0.5"),
         .package(name: "SnapshotTestingLib", path: "../SnapshotTestingLib"),
     ],
@@ -23,7 +23,8 @@ let package = Package(
         .target(
             name: "SwiftUIComponents",
             dependencies: [
-                .product(name: "Kingfisher", package: "Kingfisher"),
+                .product(name: "Nuke", package: "Nuke"),
+                .product(name: "NukeUI", package: "Nuke"),
                 "YouTubePlayerKit",
             ]
         ),
