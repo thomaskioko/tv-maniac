@@ -42,6 +42,7 @@ develocity {
     buildScan {
         termsOfUseUrl = "https://gradle.com/terms-of-service"
         termsOfUseAgree = "yes"
+        publishing.onlyIf { false }
     }
 }
 
@@ -49,6 +50,7 @@ include(
     ":android-designsystem",
     ":android-feature:discover",
     ":android-feature:home",
+    ":android-feature:library",
     ":android-feature:more-shows",
     ":android-feature:profile",
     ":android-feature:search",
@@ -105,6 +107,9 @@ include(
     ":data:genre:api",
     ":data:genre:implementation",
     ":data:genre:testing",
+    ":data:library:api",
+    ":data:library:implementation",
+    ":data:library:testing",
     ":data:popularshows:api",
     ":data:popularshows:implementation",
     ":data:popularshows:testing",
@@ -162,6 +167,7 @@ include(
     ":domain:episode",
     ":domain:followedshows",
     ":domain:genre",
+    ":domain:library",
     ":domain:logout",
     ":domain:recommendedshows",
     ":domain:seasondetails",
@@ -178,6 +184,7 @@ include(
     ":navigation:implementation",
     ":presenter:discover",
     ":presenter:home",
+    ":presenter:library",
     ":presenter:more-shows",
     ":presenter:profile",
     ":presenter:search",
