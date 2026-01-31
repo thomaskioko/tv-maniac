@@ -1,17 +1,17 @@
-package com.thomaskioko.tvmaniac.domain.episode
+package com.thomaskioko.tvmaniac.domain.seasondetails
 
 import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
-import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
+import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 public class FetchPreviousSeasonsInteractor(
-    private val episodeRepository: EpisodeRepository,
+    private val seasonDetailsRepository: SeasonDetailsRepository,
 ) : Interactor<FetchPreviousSeasonsParams>() {
     override suspend fun doWork(params: FetchPreviousSeasonsParams) {
-        val _ = episodeRepository.getUnwatchedCountAfterFetchingPreviousSeasons(
+        seasonDetailsRepository.syncPreviousSeasonsEpisodes(
             showTraktId = params.showTraktId,
-            seasonNumber = params.seasonNumber,
+            beforeSeasonNumber = params.seasonNumber,
         )
     }
 }

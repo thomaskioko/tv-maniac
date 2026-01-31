@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.domain.episode
+package com.thomaskioko.tvmaniac.domain.seasondetails
 
 import com.thomaskioko.tvmaniac.core.base.interactor.SubjectInteractor
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
