@@ -58,7 +58,7 @@ abstract class HomePresenterTest {
             awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Discover>()
             presenter.onLibraryClicked()
 
-            awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Watchlist>()
+            awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Library>()
         }
     }
 
