@@ -195,6 +195,17 @@ public class DefaultDatastoreRepository(
             preferences[KEY_REQUEST_NOTIFICATION_PERMISSION] ?: false
         }
 
+    override suspend fun saveLibrarySortOption(sortOption: String) {
+        dataStore.edit { preferences ->
+            preferences[KEY_LIBRARY_SORT_OPTION] = sortOption
+        }
+    }
+
+    override fun observeLibrarySortOption(): Flow<String> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_LIBRARY_SORT_OPTION] ?: "LAST_WATCHED"
+        }
+
     public companion object {
         public val KEY_THEME: Preferences.Key<String> = stringPreferencesKey("app_theme")
         public val KEY_LANGUAGE: Preferences.Key<String> = stringPreferencesKey("app_language")
@@ -209,5 +220,6 @@ public class DefaultDatastoreRepository(
         public val KEY_NOTIFICATION_PERMISSION_ASKED: Preferences.Key<Boolean> = booleanPreferencesKey("notification_permission_asked")
         public val KEY_SHOW_NOTIFICATION_RATIONALE: Preferences.Key<Boolean> = booleanPreferencesKey("show_notification_rationale")
         public val KEY_REQUEST_NOTIFICATION_PERMISSION: Preferences.Key<Boolean> = booleanPreferencesKey("request_notification_permission")
+        public val KEY_LIBRARY_SORT_OPTION: Preferences.Key<String> = stringPreferencesKey("library_sort_option")
     }
 }
