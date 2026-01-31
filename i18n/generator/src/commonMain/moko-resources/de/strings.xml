@@ -68,7 +68,7 @@
     <string name="menu_item_discover">Entdecken</string>
     <string name="menu_item_search">Suchen</string>
     <string name="menu_item_follow">Folgen</string>
-    <string name="menu_item_library">Merkliste</string>
+    <string name="menu_item_library">Bibliothek</string>
     <string name="menu_item_settings">Einstellungen</string>
     <string name="menu_item_profile">Profil</string>
 
@@ -257,4 +257,33 @@
     <string name="notification_rationale_message">Lassen Sie sich benachrichtigen, wenn neue Episoden Ihrer Lieblingssendungen bald ausgestrahlt werden, damit Sie sie nie verpassen.</string>
     <string name="notification_rationale_enable">Aktivieren</string>
     <string name="notification_rationale_not_now">Nicht jetzt</string>
+
+    <string name="title_calendar">Kalender</string>
+    <string name="label_calendar_empty">Keine kommenden Episoden</string>
+    <string name="label_calendar_login_required">Melden Sie sich bei Trakt an, um Ihren Kalender zu sehen</string>
+    <string name="label_calendar_more_episodes">+%d Episoden</string>
+
+    <string name="label_library_title">Bibliothek</string>
+    <string name="label_library_filter_title">Filter</string>
+    <string name="label_library_sort_title">Sortieren &amp; Filtern</string>
+    <string name="label_library_sort_by">SORTIEREN NACH</string>
+    <string name="label_library_sort_last_watched_desc">Zuletzt gesehen ↓</string>
+    <string name="label_library_sort_last_watched_asc">Zuletzt gesehen ↑</string>
+    <string name="label_library_sort_new_episodes">Neue Episoden ↓</string>
+    <string name="label_library_sort_episodes_left_desc">Verbleibende Episoden ↓</string>
+    <string name="label_library_sort_episodes_left_asc">Verbleibende Episoden ↑</string>
+    <string name="label_library_sort_last_watched">Zuletzt gesehen</string>
+    <string name="label_library_sort_alphabetical">A-Z</string>
+    <string name="label_library_filter_followed_only">Nur gefolgte</string>
+    <string name="label_library_filter_genres">GENRES</string>
+    <string name="label_library_filter_status">STATUS</string>
+    <string name="label_library_filter_show_more">Mehr anzeigen</string>
+    <string name="label_library_filter_show_less">Weniger anzeigen</string>
+    <string name="label_library_filter_clear">Löschen</string>
+    <string name="label_library_filter_apply">Filtern</string>
+    <string name="label_library_status_returning">Laufende Serie</string>
+    <string name="label_library_status_planned">Geplant</string>
+    <string name="label_library_status_in_production">In Produktion</string>
+    <string name="label_library_status_ended">Beendet</string>
+    <string name="label_library_status_canceled">Abgesetzt</string>
 </resources>
