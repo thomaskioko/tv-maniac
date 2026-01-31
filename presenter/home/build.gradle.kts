@@ -20,6 +20,7 @@ kotlin {
                 implementation(projects.data.traktauth.api)
                 implementation(projects.domain.discover)
                 implementation(projects.domain.genre)
+                implementation(projects.presenter.calendar)
                 implementation(projects.presenter.discover)
                 implementation(projects.presenter.search)
                 implementation(projects.presenter.profile)

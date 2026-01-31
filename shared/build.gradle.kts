@@ -20,6 +20,7 @@ scaffold {
             export(projects.navigation.api)
             export(projects.data.datastore.api)
             export(projects.data.traktauth.api)
+            export(projects.presenter.calendar)
             export(projects.presenter.discover)
             export(projects.presenter.home)
             export(projects.presenter.watchlist)
@@ -65,6 +66,11 @@ kotlin {
                 api(projects.data.followedshows.implementation)
                 api(projects.data.syncActivity.api)
                 api(projects.data.syncActivity.implementation)
+
+                api(projects.data.watchlist.api)
+                api(projects.data.watchlist.implementation)
+                api(projects.data.library.api)
+                api(projects.data.library.implementation)
 
                 implementation(projects.api.tmdb.api)
                 implementation(projects.api.tmdb.implementation)
