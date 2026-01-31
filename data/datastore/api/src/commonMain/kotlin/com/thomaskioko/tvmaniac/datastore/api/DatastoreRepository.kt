@@ -204,7 +204,7 @@ public interface DatastoreRepository {
     /**
      * Observes the user's preferred library sort option.
      *
-     * @return A Flow of the sort option name, defaulting to "LAST_WATCHED".
+     * @return A Flow of the sort option name, defaulting to "LAST_WATCHED_DESC".
      */
     public fun observeLibrarySortOption(): Flow<String>
 }

@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.data.library.testing
 
-import com.thomaskioko.tvmaniac.data.library.model.LibraryItem
 import com.thomaskioko.tvmaniac.data.library.LibraryRepository
+import com.thomaskioko.tvmaniac.data.library.model.LibraryItem
 import com.thomaskioko.tvmaniac.data.library.model.LibrarySortOption
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,7 +12,7 @@ public class FakeLibraryRepository : LibraryRepository {
 
     private val libraryItemsFlow = MutableStateFlow<List<LibraryItem>>(emptyList())
     private val isGridModeFlow = MutableStateFlow(true)
-    private val sortOptionFlow = MutableStateFlow(LibrarySortOption.LAST_WATCHED)
+    private val sortOptionFlow = MutableStateFlow(LibrarySortOption.LAST_WATCHED_DESC)
 
     public fun setLibraryItems(items: List<LibraryItem>) {
         libraryItemsFlow.value = items
@@ -43,7 +43,11 @@ public class FakeLibraryRepository : LibraryRepository {
             }
 
             when (sortOption) {
-                LibrarySortOption.LAST_WATCHED -> filtered.sortedByDescending { it.lastWatchedAt ?: it.followedAt ?: 0L }
+                LibrarySortOption.LAST_WATCHED_DESC -> filtered.sortedByDescending { it.lastWatchedAt ?: it.followedAt ?: 0L }
+                LibrarySortOption.LAST_WATCHED_ASC -> filtered.sortedBy { it.lastWatchedAt ?: it.followedAt ?: 0L }
+                LibrarySortOption.NEW_EPISODES -> filtered.sortedByDescending { it.totalCount - it.watchedCount }
+                LibrarySortOption.EPISODES_LEFT_DESC -> filtered.sortedByDescending { it.totalCount - it.watchedCount }
+                LibrarySortOption.EPISODES_LEFT_ASC -> filtered.sortedBy { it.totalCount - it.watchedCount }
                 LibrarySortOption.ALPHABETICAL -> filtered.sortedBy { it.title.lowercase() }
             }
         }

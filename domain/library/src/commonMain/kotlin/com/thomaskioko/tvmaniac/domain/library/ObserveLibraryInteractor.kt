@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.domain.library
 
 import com.thomaskioko.tvmaniac.core.base.interactor.SubjectInteractor
-import com.thomaskioko.tvmaniac.data.library.model.LibraryItem
 import com.thomaskioko.tvmaniac.data.library.LibraryRepository
+import com.thomaskioko.tvmaniac.data.library.model.LibraryItem
 import com.thomaskioko.tvmaniac.data.library.model.LibrarySortOption
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
@@ -22,7 +22,7 @@ public class ObserveLibraryInteractor(
 
     public data class Params(
         val query: String = "",
-        val sortOption: LibrarySortOption = LibrarySortOption.LAST_WATCHED,
+        val sortOption: LibrarySortOption = LibrarySortOption.LAST_WATCHED_DESC,
         val followedOnly: Boolean = false,
     )
 }

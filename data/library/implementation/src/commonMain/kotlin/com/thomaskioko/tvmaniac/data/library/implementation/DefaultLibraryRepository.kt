@@ -33,10 +33,7 @@ public class DefaultLibraryRepository(
         followedOnly: Boolean,
     ): Flow<List<LibraryItem>> {
         return if (query.isBlank()) {
-            libraryDao.observeLibrary(
-                sortOption = sortOption,
-                followedOnly = followedOnly,
-            )
+            libraryDao.observeLibrary(followedOnly = followedOnly)
         } else {
             libraryDao.searchLibrary(query)
         }
@@ -48,6 +45,24 @@ public class DefaultLibraryRepository(
                     show.toLibraryItem(providers)
                 }
             }
+            .map { items -> items.applySorting(sortOption) }
+    }
+
+    private fun List<LibraryItem>.applySorting(sortOption: LibrarySortOption): List<LibraryItem> {
+        return when (sortOption) {
+            LibrarySortOption.LAST_WATCHED_DESC ->
+                sortedByDescending { it.lastWatchedAt ?: it.followedAt ?: 0L }
+            LibrarySortOption.LAST_WATCHED_ASC ->
+                sortedBy { it.lastWatchedAt ?: it.followedAt ?: Long.MAX_VALUE }
+            LibrarySortOption.NEW_EPISODES ->
+                sortedByDescending { it.totalCount - it.watchedCount }
+            LibrarySortOption.EPISODES_LEFT_DESC ->
+                sortedByDescending { it.totalCount - it.watchedCount }
+            LibrarySortOption.EPISODES_LEFT_ASC ->
+                sortedBy { it.totalCount - it.watchedCount }
+            LibrarySortOption.ALPHABETICAL ->
+                sortedBy { it.title.lowercase() }
+        }
     }
 
     override fun observeListStyle(): Flow<Boolean> {
@@ -64,7 +79,7 @@ public class DefaultLibraryRepository(
     override fun observeSortOption(): Flow<LibrarySortOption> {
         return datastoreRepository.observeLibrarySortOption().map { sortOptionName ->
             LibrarySortOption.entries.find { it.name == sortOptionName }
-                ?: LibrarySortOption.LAST_WATCHED
+                ?: LibrarySortOption.LAST_WATCHED_DESC
         }
     }
 

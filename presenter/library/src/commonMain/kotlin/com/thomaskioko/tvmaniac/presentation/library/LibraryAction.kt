@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.presentation.library
 
 import com.thomaskioko.tvmaniac.presentation.library.model.LibrarySortOption
+import com.thomaskioko.tvmaniac.presentation.library.model.ShowStatus
 
 public sealed interface LibraryAction
 
@@ -17,6 +18,12 @@ public data class ChangeListStyleClicked(val isGridMode: Boolean) : LibraryActio
 public data class ChangeSortOption(val sortOption: LibrarySortOption) : LibraryAction
 
 public data object ToggleFollowedOnly : LibraryAction
+
+public data class ToggleGenreFilter(val genre: String) : LibraryAction
+
+public data class ToggleStatusFilter(val status: ShowStatus) : LibraryAction
+
+public data object ClearFilters : LibraryAction
 
 public data class MessageShown(val id: Long) : LibraryAction
 

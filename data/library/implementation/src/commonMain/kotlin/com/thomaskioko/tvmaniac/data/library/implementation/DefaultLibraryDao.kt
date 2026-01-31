@@ -4,7 +4,6 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.library.LibraryDao
-import com.thomaskioko.tvmaniac.data.library.model.LibrarySortOption
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.LibraryShows
 import com.thomaskioko.tvmaniac.db.TmdbId
@@ -24,14 +23,10 @@ public class DefaultLibraryDao(
     private val dispatchers: AppCoroutineDispatchers,
 ) : LibraryDao {
 
-    override fun observeLibrary(
-        sortOption: LibrarySortOption,
-        followedOnly: Boolean,
-    ): Flow<List<LibraryShows>> =
+    override fun observeLibrary(followedOnly: Boolean): Flow<List<LibraryShows>> =
         database.libraryQueries.libraryShows(
             query = null,
             followedOnly = if (followedOnly) 1L else 0L,
-            sortOption = sortOption.name,
         )
             .asFlow()
             .mapToList(dispatchers.io)
@@ -40,7 +35,6 @@ public class DefaultLibraryDao(
         database.libraryQueries.libraryShows(
             query = query,
             followedOnly = 0L,
-            sortOption = LibrarySortOption.LAST_WATCHED.name,
         )
             .asFlow()
             .mapToList(dispatchers.io)

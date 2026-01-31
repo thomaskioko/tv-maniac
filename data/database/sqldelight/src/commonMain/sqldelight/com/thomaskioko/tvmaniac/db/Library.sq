@@ -37,14 +37,7 @@ AND (
 AND (
     :followedOnly = 0
     OR followed_shows.id IS NOT NULL
-)
-ORDER BY
-    CASE WHEN :sortOption = 'LAST_WATCHED'
-        THEN COALESCE(show_metadata.last_watched_at, followed_shows.followed_at, 0)
-    END DESC,
-    CASE WHEN :sortOption = 'ALPHABETICAL'
-        THEN tvshow.name COLLATE NOCASE
-    END ASC;
+);
 
 watchProvidersForShow:
 SELECT

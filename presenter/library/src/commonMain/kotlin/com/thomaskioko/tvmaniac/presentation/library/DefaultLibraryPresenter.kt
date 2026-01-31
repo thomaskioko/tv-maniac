@@ -8,16 +8,18 @@ import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
-import com.thomaskioko.tvmaniac.data.library.model.LibraryItem
 import com.thomaskioko.tvmaniac.data.library.LibraryRepository
+import com.thomaskioko.tvmaniac.data.library.model.LibraryItem
 import com.thomaskioko.tvmaniac.data.library.model.WatchProvider
 import com.thomaskioko.tvmaniac.domain.library.ObserveLibraryInteractor
 import com.thomaskioko.tvmaniac.domain.library.SyncLibraryInteractor
 import com.thomaskioko.tvmaniac.presentation.library.model.LibraryShowItem
 import com.thomaskioko.tvmaniac.presentation.library.model.LibrarySortOption
+import com.thomaskioko.tvmaniac.presentation.library.model.ShowStatus
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -49,8 +51,10 @@ public class DefaultLibraryPresenter(
     private val loadingState = ObservableLoadingCounter()
     private val coroutineScope = coroutineScope()
     private val queryFlow = MutableStateFlow("")
-    private val sortOptionFlow = MutableStateFlow(LibrarySortOption.LAST_WATCHED)
+    private val sortOptionFlow = MutableStateFlow(LibrarySortOption.LAST_WATCHED_DESC)
     private val followedOnlyFlow = MutableStateFlow(false)
+    private val selectedGenresFlow = MutableStateFlow<Set<String>>(emptySet())
+    private val selectedStatusesFlow = MutableStateFlow<Set<ShowStatus>>(emptySet())
     private val _state = MutableStateFlow(LibraryState())
 
     init {
@@ -67,15 +71,30 @@ public class DefaultLibraryPresenter(
         uiMessageManager.message,
         queryFlow,
         followedOnlyFlow,
+        selectedGenresFlow,
+        selectedStatusesFlow,
         loadingState.observable,
-    ) { currentState, items, isGridMode, sortOption, message, query, followedOnly, isLoading ->
+    ) { currentState, items, isGridMode, sortOption, message, query, followedOnly, selectedGenres,
+        selectedStatuses, isLoading,
+        ->
+
+        // TODO:: Load this from the repo
+        val availableGenres = getAvailableGenres(items)
+        val availableStatuses = getAvailableStatuses(items)
+        val filteredItems = applyFilters(items, selectedGenres, selectedStatuses)
+        val sortedItems = applySorting(filteredItems, sortOption)
+
         currentState.copy(
             query = query,
             isGridMode = isGridMode,
             isRefreshing = isLoading,
             sortOption = sortOption,
             followedOnly = followedOnly,
-            items = items.map { it.toLibraryShowItem() }.toImmutableList(),
+            availableGenres = availableGenres.toImmutableList(),
+            selectedGenres = selectedGenres.toImmutableSet(),
+            availableStatuses = availableStatuses.toImmutableList(),
+            selectedStatuses = selectedStatuses.toImmutableSet(),
+            items = sortedItems.map { it.toLibraryShowItem() }.toImmutableList(),
             message = message,
         )
     }.stateIn(
@@ -93,8 +112,59 @@ public class DefaultLibraryPresenter(
             is ChangeListStyleClicked -> toggleListStyle(action.isGridMode)
             is ChangeSortOption -> changeSortOption(action.sortOption)
             is ToggleFollowedOnly -> toggleFollowedOnly()
+            is ToggleGenreFilter -> toggleGenreFilter(action.genre)
+            is ToggleStatusFilter -> toggleStatusFilter(action.status)
+            is ClearFilters -> clearFilters()
             is MessageShown -> clearMessage(action.id)
             is RefreshLibrary -> syncLibrary(forceRefresh = true)
+        }
+    }
+
+    private fun getAvailableGenres(items: List<LibraryItem>): List<String> {
+        return items
+            .flatMap { it.genres.orEmpty() }
+            .distinct()
+            .sorted()
+    }
+
+    private fun getAvailableStatuses(items: List<LibraryItem>): List<ShowStatus> {
+        return items
+            .mapNotNull { item -> ShowStatus.fromDisplayName(item.status) }
+            .distinct()
+            .sortedBy { it.ordinal }
+    }
+
+    private fun applyFilters(
+        items: List<LibraryItem>,
+        selectedGenres: Set<String>,
+        selectedStatuses: Set<ShowStatus>,
+    ): List<LibraryItem> {
+        return items.filter { item ->
+            val matchesGenre = selectedGenres.isEmpty() ||
+                item.genres?.any { it in selectedGenres } == true
+            val matchesStatus = selectedStatuses.isEmpty() ||
+                ShowStatus.fromDisplayName(item.status) in selectedStatuses
+            matchesGenre && matchesStatus
+        }
+    }
+
+    private fun applySorting(
+        items: List<LibraryItem>,
+        sortOption: LibrarySortOption,
+    ): List<LibraryItem> {
+        return when (sortOption) {
+            LibrarySortOption.LAST_WATCHED_DESC -> items.sortedByDescending { it.lastWatchedAt ?: 0L }
+            LibrarySortOption.LAST_WATCHED_ASC -> items.sortedBy { it.lastWatchedAt ?: 0L }
+            LibrarySortOption.NEW_EPISODES -> items.sortedByDescending {
+                (it.totalCount - it.watchedCount).coerceAtLeast(0)
+            }
+            LibrarySortOption.EPISODES_LEFT_DESC -> items.sortedByDescending {
+                (it.totalCount - it.watchedCount).coerceAtLeast(0)
+            }
+            LibrarySortOption.EPISODES_LEFT_ASC -> items.sortedBy {
+                (it.totalCount - it.watchedCount).coerceAtLeast(0)
+            }
+            LibrarySortOption.ALPHABETICAL -> items.sortedBy { it.title.lowercase() }
         }
     }
 
@@ -162,6 +232,7 @@ public class DefaultLibraryPresenter(
 
     private fun changeSortOption(sortOption: LibrarySortOption) {
         coroutineScope.launch {
+            sortOptionFlow.emit(sortOption)
             repository.saveSortOption(sortOption.toData())
         }
     }
@@ -170,6 +241,39 @@ public class DefaultLibraryPresenter(
         coroutineScope.launch {
             followedOnlyFlow.emit(!followedOnlyFlow.value)
             observeLibrary()
+        }
+    }
+
+    private fun toggleGenreFilter(genre: String) {
+        coroutineScope.launch {
+            val currentGenres = selectedGenresFlow.value
+            val newGenres = if (genre in currentGenres) {
+                currentGenres - genre
+            } else {
+                currentGenres + genre
+            }
+            selectedGenresFlow.emit(newGenres)
+        }
+    }
+
+    private fun toggleStatusFilter(status: ShowStatus) {
+        coroutineScope.launch {
+            val currentStatuses = selectedStatusesFlow.value
+            val newStatuses = if (status in currentStatuses) {
+                currentStatuses - status
+            } else {
+                currentStatuses + status
+            }
+            selectedStatusesFlow.emit(newStatuses)
+        }
+    }
+
+    private fun clearFilters() {
+        coroutineScope.launch {
+            selectedGenresFlow.emit(emptySet())
+            selectedStatusesFlow.emit(emptySet())
+            sortOptionFlow.emit(LibrarySortOption.LAST_WATCHED_DESC)
+            repository.saveSortOption(DataLibrarySortOption.LAST_WATCHED_DESC)
         }
     }
 
@@ -203,12 +307,20 @@ private fun WatchProvider.toUiModel() =
     )
 
 private fun LibrarySortOption.toData(): DataLibrarySortOption = when (this) {
-    LibrarySortOption.LAST_WATCHED -> DataLibrarySortOption.LAST_WATCHED
+    LibrarySortOption.LAST_WATCHED_DESC -> DataLibrarySortOption.LAST_WATCHED_DESC
+    LibrarySortOption.LAST_WATCHED_ASC -> DataLibrarySortOption.LAST_WATCHED_ASC
+    LibrarySortOption.NEW_EPISODES -> DataLibrarySortOption.NEW_EPISODES
+    LibrarySortOption.EPISODES_LEFT_DESC -> DataLibrarySortOption.EPISODES_LEFT_DESC
+    LibrarySortOption.EPISODES_LEFT_ASC -> DataLibrarySortOption.EPISODES_LEFT_ASC
     LibrarySortOption.ALPHABETICAL -> DataLibrarySortOption.ALPHABETICAL
 }
 
 private fun DataLibrarySortOption.toPresentation(): LibrarySortOption = when (this) {
-    DataLibrarySortOption.LAST_WATCHED -> LibrarySortOption.LAST_WATCHED
+    DataLibrarySortOption.LAST_WATCHED_DESC -> LibrarySortOption.LAST_WATCHED_DESC
+    DataLibrarySortOption.LAST_WATCHED_ASC -> LibrarySortOption.LAST_WATCHED_ASC
+    DataLibrarySortOption.NEW_EPISODES -> LibrarySortOption.NEW_EPISODES
+    DataLibrarySortOption.EPISODES_LEFT_DESC -> LibrarySortOption.EPISODES_LEFT_DESC
+    DataLibrarySortOption.EPISODES_LEFT_ASC -> LibrarySortOption.EPISODES_LEFT_ASC
     DataLibrarySortOption.ALPHABETICAL -> LibrarySortOption.ALPHABETICAL
 }
 

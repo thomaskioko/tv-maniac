@@ -18,5 +18,3 @@ public data class LibraryItem(
     val isFollowed: Boolean,
     val watchProviders: List<WatchProvider> = emptyList(),
 )
-
-
