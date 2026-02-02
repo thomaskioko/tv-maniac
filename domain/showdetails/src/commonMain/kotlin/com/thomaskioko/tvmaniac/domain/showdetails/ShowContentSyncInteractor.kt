@@ -4,10 +4,9 @@ import com.thomaskioko.tvmaniac.core.base.extensions.parallelForEach
 import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.Logger
-import com.thomaskioko.tvmaniac.core.networkutil.api.ApiRateLimiter
-import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.withRateLimitTracking
 import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
@@ -21,8 +20,8 @@ public class ShowContentSyncInteractor(
     private val showDetailsRepository: ShowDetailsRepository,
     private val seasonsRepository: SeasonsRepository,
     private val seasonDetailsRepository: SeasonDetailsRepository,
+    private val watchedEpisodeSyncRepository: WatchedEpisodeSyncRepository,
     private val datastoreRepository: DatastoreRepository,
-    private val apiRateLimiter: ApiRateLimiter,
     private val dispatchers: AppCoroutineDispatchers,
     private val logger: Logger,
 ) : Interactor<ShowContentSyncInteractor.Param>() {
@@ -36,6 +35,11 @@ public class ShowContentSyncInteractor(
                 )
 
                 fetchShowSeasonDetails(
+                    showTraktId = params.traktId,
+                    forceRefresh = params.forceRefresh,
+                )
+
+                watchedEpisodeSyncRepository.syncShowEpisodeWatches(
                     showTraktId = params.traktId,
                     forceRefresh = params.forceRefresh,
                 )
@@ -53,16 +57,14 @@ public class ShowContentSyncInteractor(
         val seasons = seasonsRepository.getSeasonsByShowId(showTraktId, includeSpecials)
 
         seasons.parallelForEach(concurrency = SEASON_SYNC_CONCURRENCY) { season ->
-            apiRateLimiter.withRateLimitTracking {
-                seasonDetailsRepository.fetchSeasonDetails(
-                    param = SeasonDetailsParam(
-                        showTraktId = showTraktId,
-                        seasonId = season.season_id.id,
-                        seasonNumber = season.season_number,
-                    ),
-                    forceRefresh = forceRefresh,
-                )
-            }
+            seasonDetailsRepository.fetchSeasonDetails(
+                param = SeasonDetailsParam(
+                    showTraktId = showTraktId,
+                    seasonId = season.season_id.id,
+                    seasonNumber = season.season_number,
+                ),
+                forceRefresh = forceRefresh,
+            )
         }
     }
 
