@@ -137,7 +137,7 @@ public struct LibraryListItemView: View {
                 genres: ["Drama", "Crime", "Thriller"],
                 watchProviders: [
                     SwiftProviders(providerId: 1, logoUrl: nil),
-                    SwiftProviders(providerId: 2, logoUrl: nil)
+                    SwiftProviders(providerId: 2, logoUrl: nil),
                 ]
             ),
             onItemClicked: {}
