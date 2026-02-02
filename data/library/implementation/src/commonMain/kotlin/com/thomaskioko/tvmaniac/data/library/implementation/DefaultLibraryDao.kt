@@ -39,6 +39,8 @@ public class DefaultLibraryDao(
             .asFlow()
             .mapToList(dispatchers.io)
 
-    override fun getWatchProviders(tmdbId: Long): List<WatchProvidersForShow> =
-        database.libraryQueries.watchProvidersForShow(Id<TmdbId>(tmdbId)).executeAsList()
+    override fun observeWatchProviders(tmdbId: Long): Flow<List<WatchProvidersForShow>> =
+        database.libraryQueries.watchProvidersForShow(Id<TmdbId>(tmdbId))
+            .asFlow()
+            .mapToList(dispatchers.databaseRead)
 }

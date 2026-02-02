@@ -21,8 +21,12 @@ import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType.SHOWS_WATCHL
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.impl.extensions.fresh
@@ -32,6 +36,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 import kotlin.time.Duration
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
@@ -54,20 +59,31 @@ public class DefaultLibraryRepository(
         sortOption: LibrarySortOption,
         followedOnly: Boolean,
     ): Flow<List<LibraryItem>> {
-        return if (query.isBlank()) {
+        val showsFlow = if (query.isBlank()) {
             libraryDao.observeLibrary(followedOnly = followedOnly)
         } else {
             libraryDao.searchLibrary(query)
         }
+
+        return showsFlow
             .distinctUntilChanged()
-            .map { shows ->
-                shows.map { show ->
-                    val providers = libraryDao.getWatchProviders(show.show_tmdb_id.id)
-                        .map { it.toWatchProvider() }
-                    show.toLibraryItem(providers)
-                }
-            }
+            .flatMapLatest { shows -> observeShowsWithProviders(shows) }
             .map { items -> items.applySorting(sortOption) }
+    }
+
+    private fun observeShowsWithProviders(shows: List<LibraryShows>): Flow<List<LibraryItem>> {
+        if (shows.isEmpty()) return flowOf(emptyList())
+
+        val providerFlows = shows.map { show ->
+            libraryDao.observeWatchProviders(show.show_tmdb_id.id)
+        }
+
+        return combine(providerFlows) { providerArrays ->
+            shows.mapIndexed { index, show ->
+                val providers = providerArrays[index].map { it.toWatchProvider() }
+                show.toLibraryItem(providers)
+            }
+        }
     }
 
     private fun List<LibraryItem>.applySorting(sortOption: LibrarySortOption): List<LibraryItem> {

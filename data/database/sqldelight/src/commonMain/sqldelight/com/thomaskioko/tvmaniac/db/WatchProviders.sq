@@ -36,6 +36,17 @@ FROM
 WHERE
     watch_providers.tmdb_id = :showId;
 
+watchProvidersByTraktId:
+SELECT
+    watch_providers.id AS provider_id,
+    watch_providers.name,
+    watch_providers.logo_path,
+    watch_providers.tmdb_id,
+    tvshow.trakt_id AS show_trakt_id
+FROM watch_providers
+INNER JOIN tvshow ON watch_providers.tmdb_id = tvshow.tmdb_id
+WHERE tvshow.trakt_id = :traktId;
+
 delete:
 DELETE
 FROM watch_providers

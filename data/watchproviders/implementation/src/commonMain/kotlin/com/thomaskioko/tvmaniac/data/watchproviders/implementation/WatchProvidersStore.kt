@@ -9,18 +9,14 @@ import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.WatchProviders
 import com.thomaskioko.tvmaniac.db.Watch_providers
-import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
-import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.WATCH_PROVIDERS
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.WatchProvidersResult
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
-import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
-import org.mobilenativefoundation.store.store5.Validator
 
 @Inject
 public class WatchProvidersStore(
@@ -28,7 +24,6 @@ public class WatchProvidersStore(
     private val tvShowsDao: TvShowsDao,
     private val dao: WatchProviderDao,
     private val formatterUtil: FormatterUtil,
-    private val requestManagerRepository: RequestManagerRepository,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, List<WatchProviders>> by storeBuilder(
@@ -72,11 +67,6 @@ public class WatchProvidersStore(
                         )
                     }
                 }
-
-                requestManagerRepository.upsert(
-                    entityId = result.tmdbId,
-                    requestType = WATCH_PROVIDERS.name,
-                )
             }
         },
         delete = { traktId ->
@@ -90,17 +80,6 @@ public class WatchProvidersStore(
         readDispatcher = dispatchers.databaseRead,
         writeDispatcher = dispatchers.databaseWrite,
     ),
-).validator(
-    Validator.by { cachedData ->
-        withContext(dispatchers.io) {
-            val showId = cachedData.firstOrNull()?.tmdb_id?.id ?: return@withContext false
-            !requestManagerRepository.isRequestExpired(
-                entityId = showId,
-                requestType = WATCH_PROVIDERS.name,
-                threshold = WATCH_PROVIDERS.duration,
-            )
-        }
-    },
 ).build()
 
 private data class WatchProvidersFetchResult(

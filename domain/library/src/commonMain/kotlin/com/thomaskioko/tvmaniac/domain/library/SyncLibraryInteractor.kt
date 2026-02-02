@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.data.library.LibraryRepository
 import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository
+import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderRepository
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsEpisodesSyncRepository
 import kotlinx.coroutines.ensureActive
@@ -18,6 +19,7 @@ public class SyncLibraryInteractor(
     private val followedShowsRepository: FollowedShowsRepository,
     private val showDetailsRepository: ShowDetailsRepository,
     private val seasonsEpisodesSyncRepository: SeasonsEpisodesSyncRepository,
+    private val watchProviderRepository: WatchProviderRepository,
     private val dispatchers: AppCoroutineDispatchers,
     private val logger: Logger,
 ) : Interactor<SyncLibraryInteractor.Param>() {
@@ -39,6 +41,13 @@ public class SyncLibraryInteractor(
 
                 showDetailsRepository.fetchShowDetails(
                     id = show.traktId,
+                    forceRefresh = params.forceRefresh,
+                )
+
+                ensureActive()
+
+                watchProviderRepository.fetchWatchProviders(
+                    traktId = show.traktId,
                     forceRefresh = params.forceRefresh,
                 )
 

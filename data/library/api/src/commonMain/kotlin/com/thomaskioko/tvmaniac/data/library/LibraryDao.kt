@@ -10,5 +10,5 @@ public interface LibraryDao {
 
     public fun searchLibrary(query: String): Flow<List<LibraryShows>>
 
-    public fun getWatchProviders(tmdbId: Long): List<WatchProvidersForShow>
+    public fun observeWatchProviders(tmdbId: Long): Flow<List<WatchProvidersForShow>>
 }

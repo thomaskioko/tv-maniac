@@ -16,7 +16,6 @@ kotlin {
                 implementation(projects.core.util.api)
                 implementation(projects.data.shows.api)
                 implementation(projects.data.watchproviders.api)
-                implementation(projects.data.requestManager.api)
 
                 api(libs.coroutines.core)
 
