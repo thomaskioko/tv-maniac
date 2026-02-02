@@ -4,8 +4,6 @@ import com.thomaskioko.tvmaniac.data.cast.api.CastDao
 import com.thomaskioko.tvmaniac.data.cast.api.CastRepository
 import com.thomaskioko.tvmaniac.db.SeasonCast
 import com.thomaskioko.tvmaniac.db.ShowCast
-import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
-import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.SHOW_CAST
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.impl.extensions.fresh
@@ -20,19 +18,12 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 public class DefaultCastRepository(
     private val dao: CastDao,
     private val showCastStore: ShowCastStore,
-    private val requestManagerRepository: RequestManagerRepository,
 ) : CastRepository {
 
     override suspend fun fetchShowCast(showTraktId: Long, forceRefresh: Boolean) {
         val isEmpty = dao.getShowCast(showTraktId).isEmpty()
-        val isExpired = requestManagerRepository.isRequestExpired(
-            entityId = showTraktId,
-            requestType = SHOW_CAST.name,
-            threshold = SHOW_CAST.duration,
-        )
-
         when {
-            forceRefresh || isEmpty || isExpired -> showCastStore.fresh(showTraktId)
+            forceRefresh || isEmpty -> showCastStore.fresh(showTraktId)
             else -> showCastStore.get(showTraktId)
         }
     }

@@ -33,6 +33,9 @@ public class DefaultTrailerDao(
         )
     }
 
+    override fun getTrailersByShowTraktId(showTraktId: Long): List<SelectByShowTraktId> =
+        database.trailersQueries.selectByShowTraktId(Id(showTraktId)).executeAsList()
+
     override fun observeTrailersByShowTraktId(showTraktId: Long): Flow<List<SelectByShowTraktId>> {
         return database.trailersQueries.selectByShowTraktId(Id(showTraktId)).asFlow().mapToList(dispatchers.io)
     }
