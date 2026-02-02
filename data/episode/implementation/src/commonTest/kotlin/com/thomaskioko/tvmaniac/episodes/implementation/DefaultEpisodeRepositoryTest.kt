@@ -2,12 +2,9 @@ package com.thomaskioko.tvmaniac.episodes.implementation
 
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse.Success
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.db.TmdbId
-import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.SEASON_1_EPISODE_COUNT
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.SEASON_1_ID
@@ -18,16 +15,13 @@ import com.thomaskioko.tvmaniac.episodes.implementation.MockData.SEASON_2_NUMBER
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.TEST_SHOW_ID
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.TEST_SHOW_NAME
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.TEST_SHOW_OVERVIEW
+import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultNextEpisodeDao
+import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultWatchedEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.i18n.testing.util.IgnoreIos
-import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
-import com.thomaskioko.tvmaniac.trakt.api.TraktCalendarRemoteDataSource
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktCalendarResponse
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
-import io.kotest.matchers.nulls.shouldBeNull
-import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -61,28 +55,13 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
     private val fakeDatastoreRepository = FakeDatastoreRepository()
     private val fakeDateTimeProvider = FakeDateTimeProvider()
     private val fakeSyncRepository = FakeWatchedEpisodeSyncRepository()
-    private val fakeRequestManagerRepository = FakeRequestManagerRepository()
-    private val fakeCalendarDataSource = object : TraktCalendarRemoteDataSource {
-        override suspend fun getMyShowsCalendar(startDate: String, days: Int) =
-            Success(emptyList<TraktCalendarResponse>())
-    }
-    private val nextEpisodeDao by lazy { DefaultNextEpisodeDao(database, coroutineDispatcher) }
-    private val episodesDao by lazy { DefaultEpisodesDao(database, coroutineDispatcher, fakeDateTimeProvider) }
-    private val watchedEpisodeDao by lazy {
-        DefaultWatchedEpisodeDao(
-            database = database,
-            dispatchers = coroutineDispatcher,
-            dateTimeProvider = fakeDateTimeProvider,
-        )
-    }
-    private val upcomingEpisodesStore by lazy {
-        UpcomingEpisodesStore(
-            calendarDataSource = fakeCalendarDataSource,
-            episodesDao = episodesDao,
-            requestManagerRepository = fakeRequestManagerRepository,
-            dispatchers = coroutineDispatcher,
-        )
-    }
+    private val nextEpisodeDao = DefaultNextEpisodeDao(database, coroutineDispatcher)
+    private val watchedEpisodeDao = DefaultWatchedEpisodeDao(
+        database = database,
+        dispatchers = coroutineDispatcher,
+        dateTimeProvider = fakeDateTimeProvider,
+    )
+
     private lateinit var episodeRepository: EpisodeRepository
 
     @BeforeTest
@@ -92,12 +71,8 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
         episodeRepository = DefaultEpisodeRepository(
             watchedEpisodeDao = watchedEpisodeDao,
             nextEpisodeDao = nextEpisodeDao,
-            episodesDao = episodesDao,
-            database = database,
             datastoreRepository = fakeDatastoreRepository,
-            dispatchers = coroutineDispatcher,
             syncRepository = fakeSyncRepository,
-            upcomingEpisodesStore = upcomingEpisodesStore,
         )
 
         insertTestData()
@@ -180,42 +155,6 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should observe last watched episode`() = runTest {
-        val flow = episodeRepository.observeLastWatchedEpisode(showTraktId = TEST_SHOW_ID)
-
-        flow.test {
-            val initialItem = awaitItem()
-            initialItem.shouldBeNull()
-
-            episodeRepository.markEpisodeAsWatched(
-                showTraktId = TEST_SHOW_ID,
-                episodeId = 103L,
-                seasonNumber = SEASON_1_NUMBER,
-                episodeNumber = 3L,
-            )
-
-            val afterFirst = awaitItem()
-            afterFirst.shouldNotBeNull()
-            afterFirst.episodeId shouldBe 103L
-            afterFirst.seasonNumber shouldBe 1
-            afterFirst.episodeNumber shouldBe 3
-
-            episodeRepository.markEpisodeAsWatched(
-                showTraktId = TEST_SHOW_ID,
-                episodeId = 105L,
-                seasonNumber = SEASON_1_NUMBER,
-                episodeNumber = 5L,
-            )
-
-            val afterSecond = awaitItem()
-            afterSecond.shouldNotBeNull()
-            afterSecond.episodeId shouldBe 105L
-            afterSecond.seasonNumber shouldBe 1
-            afterSecond.episodeNumber shouldBe 5
-        }
-    }
-
-    @Test
     fun `should observe all seasons watch progress with correct counts`() = runTest {
         episodeRepository.markEpisodeAsWatched(TEST_SHOW_ID, 101L, SEASON_1_NUMBER, 1L)
         episodeRepository.markEpisodeAsWatched(TEST_SHOW_ID, 102L, SEASON_1_NUMBER, 2L)
@@ -277,8 +216,8 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
 
     private fun insertTestData() {
         val _ = database.tvShowQueries.upsert(
-            trakt_id = Id<TraktId>(TEST_SHOW_ID),
-            tmdb_id = Id<TmdbId>(TEST_SHOW_ID),
+            trakt_id = Id(TEST_SHOW_ID),
+            tmdb_id = Id(TEST_SHOW_ID),
             name = TEST_SHOW_NAME,
             overview = TEST_SHOW_OVERVIEW,
             language = "en",
@@ -295,7 +234,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
 
         val _ = database.seasonsQueries.upsert(
             id = Id(SEASON_1_ID),
-            show_trakt_id = Id<TraktId>(TEST_SHOW_ID),
+            show_trakt_id = Id(TEST_SHOW_ID),
             season_number = SEASON_1_NUMBER,
             title = "Season 1",
             overview = "First season",
@@ -305,7 +244,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
 
         val _ = database.seasonsQueries.upsert(
             id = Id(SEASON_2_ID),
-            show_trakt_id = Id<TraktId>(TEST_SHOW_ID),
+            show_trakt_id = Id(TEST_SHOW_ID),
             season_number = SEASON_2_NUMBER,
             title = "Season 2",
             overview = "Second season",
@@ -319,7 +258,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
             val _ = database.episodesQueries.upsert(
                 id = Id(episodeId),
                 season_id = Id(SEASON_1_ID),
-                show_trakt_id = Id<TraktId>(TEST_SHOW_ID),
+                show_trakt_id = Id(TEST_SHOW_ID),
                 title = "Episode $episodeNumber",
                 overview = "Episode $episodeNumber overview",
                 episode_number = episodeNumber.toLong(),

@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.episodes.testing
 
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
-import com.thomaskioko.tvmaniac.episodes.api.model.LastWatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
@@ -9,7 +8,6 @@ import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlin.time.Duration
 
 public data class MarkEpisodeWatchedCall(
     val showTraktId: Long,
@@ -93,9 +91,6 @@ public class FakeEpisodeRepository : EpisodeRepository {
         lastMarkEpisodeUnwatchedCall = MarkEpisodeUnwatchedCall(showTraktId, episodeId)
     }
 
-    override fun observeLastWatchedEpisode(showTraktId: Long): Flow<LastWatchedEpisode?> =
-        MutableStateFlow(null)
-
     override fun observeSeasonWatchProgress(showTraktId: Long, seasonNumber: Long): Flow<SeasonWatchProgress> =
         seasonWatchProgressFlow.asStateFlow()
 
@@ -133,19 +128,8 @@ public class FakeEpisodeRepository : EpisodeRepository {
 
     override suspend fun markSeasonUnwatched(showTraktId: Long, seasonNumber: Long) {}
 
-    override suspend fun getUnwatchedCountInPreviousSeasons(
-        showTraktId: Long,
-        seasonNumber: Long,
-    ): Long = unwatchedCountInPreviousSeasonsFlow.value
-
     override fun observeUnwatchedCountInPreviousSeasons(
         showTraktId: Long,
         seasonNumber: Long,
     ): Flow<Long> = unwatchedCountInPreviousSeasonsFlow.asStateFlow()
-
-    override suspend fun getUpcomingEpisodesFromFollowedShows(limit: Duration): List<UpcomingEpisode> =
-        upcomingEpisodesFlow.value
-
-    override suspend fun syncUpcomingEpisodesFromTrakt(startDate: String, days: Int, forceRefresh: Boolean) {
-    }
 }

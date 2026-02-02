@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.episodes.implementation
+package com.thomaskioko.tvmaniac.episodes.implementation.dao
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList

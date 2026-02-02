@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.episodes.implementation
+package com.thomaskioko.tvmaniac.episodes.implementation.dao
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
@@ -24,6 +24,7 @@ import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
+import kotlin.time.Clock
 
 @Inject
 @SingleIn(AppScope::class)
@@ -440,7 +441,7 @@ public class DefaultWatchedEpisodeDao(
     ) {
         if (entries.isEmpty()) return
 
-        val syncedAt = kotlin.time.Clock.System.now().toEpochMilliseconds()
+        val syncedAt = Clock.System.now().toEpochMilliseconds()
 
         withContext(dispatchers.databaseWrite) {
             database.transaction {
