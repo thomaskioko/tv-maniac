@@ -109,13 +109,18 @@ struct DiscoverTab: View {
                     title: item.title,
                     posterUrl: item.posterUrl,
                     posterWidth: geometry.size.width,
-                    posterHeight: scrollViewHeight
+                    posterHeight: scrollViewHeight,
+                    processorHeight: CarouselConstants.fixedImageHeight
                 )
                 .onTapGesture {
                     presenter.dispatch(action: ShowClicked(traktId: item.traktId))
                 }
             }
         }
+    }
+
+    private enum CarouselConstants {
+        static let fixedImageHeight: CGFloat = 600
     }
 
     @ViewBuilder

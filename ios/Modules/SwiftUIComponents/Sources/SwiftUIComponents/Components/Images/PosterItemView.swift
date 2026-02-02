@@ -10,6 +10,7 @@ public struct PosterItemView: View {
     private let posterWidth: CGFloat
     private let posterHeight: CGFloat
     private let posterRadius: CGFloat?
+    private let processorHeight: CGFloat?
 
     public init(
         title: String?,
@@ -18,7 +19,8 @@ public struct PosterItemView: View {
         isInLibrary: Bool = false,
         posterWidth: CGFloat = 120,
         posterHeight: CGFloat = 180,
-        posterRadius: CGFloat? = nil
+        posterRadius: CGFloat? = nil,
+        processorHeight: CGFloat? = nil
     ) {
         self.title = title
         self.posterUrl = posterUrl
@@ -27,14 +29,16 @@ public struct PosterItemView: View {
         self.posterWidth = posterWidth
         self.posterHeight = posterHeight
         self.posterRadius = posterRadius
+        self.processorHeight = processorHeight
     }
 
     public var body: some View {
         let resolvedRadius = posterRadius ?? theme.shapes.small
+        let imageHeight = processorHeight ?? posterHeight
 
         LazyResizableImage(
             url: posterUrl,
-            size: CGSize(width: posterWidth, height: posterHeight)
+            size: CGSize(width: posterWidth, height: imageHeight)
         ) { state in
             if let image = state.image {
                 image.resizable()
@@ -42,7 +46,7 @@ public struct PosterItemView: View {
                 PosterPlaceholder(
                     title: title,
                     posterWidth: posterWidth,
-                    posterHeight: posterHeight,
+                    posterHeight: imageHeight,
                     posterRadius: resolvedRadius
                 )
             }
@@ -50,6 +54,7 @@ public struct PosterItemView: View {
         .scaledToFill()
         .clipShape(RoundedRectangle(cornerRadius: resolvedRadius, style: .continuous))
         .frame(width: posterWidth, height: posterHeight)
+        .clipped()
         .overlay {
             if isInLibrary {
                 LibraryOverlay(libraryImageOverlay: libraryImageOverlay)
