@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.presentation.library.model
 
-//TODO:: Load this from repository.
+// TODO:: Load this from repository.
 public enum class ShowStatus(public val displayName: String) {
     RETURNING_SERIES("Returning Series"),
     PLANNED("Planned"),

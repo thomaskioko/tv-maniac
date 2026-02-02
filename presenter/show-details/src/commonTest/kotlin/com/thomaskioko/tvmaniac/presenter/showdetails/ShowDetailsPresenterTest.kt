@@ -4,7 +4,6 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
-import com.thomaskioko.tvmaniac.core.networkutil.testing.FakeApiRateLimiter
 import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
@@ -69,7 +68,6 @@ class ShowDetailsPresenterTest {
     private val fakeFormatterUtil = FakeFormatterUtil()
     private val fakeDatastoreRepository = FakeDatastoreRepository()
     private val fakeLogger = FakeLogger()
-    private val fakeApiRateLimiter = FakeApiRateLimiter()
     private val testDispatcher = StandardTestDispatcher()
     private val coroutineDispatcher = AppCoroutineDispatchers(
         main = testDispatcher,
@@ -133,30 +131,31 @@ class ShowDetailsPresenterTest {
     }
 
     @Test
-    fun `should update state to Loaded when ReloadShowDetails and new data is available`() = runTest {
-        buildMockData()
+    fun `should update state to Loaded when ReloadShowDetails and new data is available`() =
+        runTest {
+            buildMockData()
 
-        val presenter = buildShowDetailsPresenter()
-        testDispatcher.scheduler.advanceUntilIdle()
+            val presenter = buildShowDetailsPresenter()
+            testDispatcher.scheduler.advanceUntilIdle()
 
-        val initialState = presenter.state.value
-        initialState.showDetails shouldBe showDetailsContent.showDetails
-        initialState.isRefreshing shouldBe false
-        initialState.message shouldBe null
+            val initialState = presenter.state.value
+            initialState.showDetails shouldBe showDetailsContent.showDetails
+            initialState.isRefreshing shouldBe false
+            initialState.message shouldBe null
 
-        seasonsRepository.setSeasonsResult(seasons)
-        watchProvidersRepository.setWatchProvidersResult(watchProviderList)
-        similarShowsRepository.setSimilarShowsResult(similarShowList)
-        trailerRepository.setTrailerResult(trailers)
+            seasonsRepository.setSeasonsResult(seasons)
+            watchProvidersRepository.setWatchProvidersResult(watchProviderList)
+            similarShowsRepository.setSimilarShowsResult(similarShowList)
+            trailerRepository.setTrailerResult(trailers)
 
-        presenter.dispatch(ReloadShowDetails)
-        testDispatcher.scheduler.advanceUntilIdle()
+            presenter.dispatch(ReloadShowDetails)
+            testDispatcher.scheduler.advanceUntilIdle()
 
-        val updatedState = presenter.state.value.showDetails
-        updatedState.seasonsList.size shouldBe 1
-        updatedState.similarShows.size shouldBe 1
-        updatedState.providers.size shouldBe 1
-    }
+            val updatedState = presenter.state.value.showDetails
+            updatedState.seasonsList.size shouldBe 1
+            updatedState.similarShows.size shouldBe 1
+            updatedState.providers.size shouldBe 1
+        }
 
     @Test
     fun `should update infoState to Loaded with correct data when ReloadShowDetails and fetching season fails`() =
@@ -245,30 +244,31 @@ class ShowDetailsPresenterTest {
     }
 
     @Test
-    fun `should mark episode as watched when MarkEpisodeWatchedFromTracking is dispatched`() = runTest {
-        buildMockData()
+    fun `should mark episode as watched when MarkEpisodeWatchedFromTracking is dispatched`() =
+        runTest {
+            buildMockData()
 
-        val presenter = buildShowDetailsPresenter()
-        testDispatcher.scheduler.advanceUntilIdle()
+            val presenter = buildShowDetailsPresenter()
+            testDispatcher.scheduler.advanceUntilIdle()
 
-        presenter.dispatch(
-            MarkEpisodeWatched(
+            presenter.dispatch(
+                MarkEpisodeWatched(
+                    showTraktId = 84958,
+                    episodeId = 1001,
+                    seasonNumber = 1,
+                    episodeNumber = 1,
+                ),
+            )
+
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            episodeRepository.lastMarkEpisodeWatchedCall shouldBe MarkEpisodeWatchedCall(
                 showTraktId = 84958,
                 episodeId = 1001,
                 seasonNumber = 1,
                 episodeNumber = 1,
-            ),
-        )
-
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        episodeRepository.lastMarkEpisodeWatchedCall shouldBe MarkEpisodeWatchedCall(
-            showTraktId = 84958,
-            episodeId = 1001,
-            seasonNumber = 1,
-            episodeNumber = 1,
-        )
-    }
+            )
+        }
 
     @Test
     fun `should update library when FollowShowClicked is dispatched`() = runTest {
@@ -468,7 +468,7 @@ class ShowDetailsPresenterTest {
         testDispatcher.scheduler.advanceUntilIdle()
 
         watchedEpisodeSyncRepository.getLastSyncedShowId() shouldBe 84958L
-        watchedEpisodeSyncRepository.wasForceRefreshUsed() shouldBe true
+        watchedEpisodeSyncRepository.wasForceRefreshUsed() shouldBe false
     }
 
     @Test
@@ -552,8 +552,8 @@ class ShowDetailsPresenterTest {
                 seasonDetailsRepository = seasonDetailsRepository,
                 datastoreRepository = fakeDatastoreRepository,
                 dispatchers = coroutineDispatcher,
-                apiRateLimiter = fakeApiRateLimiter,
                 logger = fakeLogger,
+                watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
             ),
             traktAuthRepository = traktAuthRepository,
             dispatchers = coroutineDispatcher,

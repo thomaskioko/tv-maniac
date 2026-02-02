@@ -53,7 +53,6 @@ kotlin {
                 implementation(projects.data.traktauth.testing)
                 implementation(projects.data.watchproviders.testing)
                 implementation(projects.i18n.testing)
-                implementation(projects.core.networkUtil.testing)
 
                 implementation(libs.bundles.unittest)
             }
