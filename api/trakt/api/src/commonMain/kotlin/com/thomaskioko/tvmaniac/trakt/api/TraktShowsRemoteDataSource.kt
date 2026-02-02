@@ -126,7 +126,7 @@ public interface TraktShowsRemoteDataSource {
      * @return Season details with all episodes
      * @see [Trakt Season Summary](https://trakt.docs.apiary.io/#reference/seasons/season)
      */
-    public suspend fun getSeasonEpisodes(
+    public suspend fun getShowSeasonEpisodes(
         traktId: Long,
         seasonNumber: Int,
     ): ApiResponse<List<TraktEpisodesResponse>>

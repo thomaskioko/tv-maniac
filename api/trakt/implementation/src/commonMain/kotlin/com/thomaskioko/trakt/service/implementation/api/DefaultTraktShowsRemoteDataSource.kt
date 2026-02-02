@@ -119,7 +119,7 @@ public class DefaultTraktShowsRemoteDataSource(
             parameter("extended", "full")
         }
 
-    override suspend fun getSeasonEpisodes(
+    override suspend fun getShowSeasonEpisodes(
         traktId: Long,
         seasonNumber: Int,
     ): ApiResponse<List<TraktEpisodesResponse>> =

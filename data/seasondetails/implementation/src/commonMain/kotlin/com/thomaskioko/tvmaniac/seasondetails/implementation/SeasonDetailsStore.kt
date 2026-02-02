@@ -51,7 +51,7 @@ public class SeasonDetailsStore(
             val showTmdbId = tvShowsDao.getTmdbIdByTraktId(params.showTraktId)
 
             val traktSeason = async {
-                traktRemoteDataSource.getSeasonEpisodes(params.showTraktId, params.seasonNumber.toInt()).getOrThrow()
+                traktRemoteDataSource.getShowSeasonEpisodes(params.showTraktId, params.seasonNumber.toInt()).getOrThrow()
             }.await()
             val tmdbSeason = async {
                 showTmdbId?.let {
@@ -76,6 +76,11 @@ public class SeasonDetailsStore(
         },
         writer = { params: SeasonDetailsParam, response ->
             databaseTransactionRunner {
+                val showExists = tvShowsDao.getTmdbIdByTraktId(params.showTraktId) != null
+                if (!showExists) {
+                    return@databaseTransactionRunner
+                }
+
                 val tmdbEpisodeImages = response.tmdbEpisodes.associate {
                     it.episodeNumber to it.stillPath
                 }
