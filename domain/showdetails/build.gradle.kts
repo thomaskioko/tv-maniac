@@ -20,7 +20,6 @@ kotlin {
                 implementation(projects.data.shows.api)
                 implementation(projects.data.similar.api)
                 implementation(projects.data.trailers.api)
-                implementation(projects.data.watchlist.api)
                 implementation(projects.data.watchproviders.api)
                 implementation(projects.core.logger.api)
 
@@ -40,6 +39,7 @@ kotlin {
                 implementation(projects.data.topratedshows.testing)
                 implementation(projects.data.trendingshows.testing)
                 implementation(projects.data.upcomingshows.testing)
+                implementation(projects.data.watchproviders.testing)
 
                 implementation(libs.bundles.unittest)
             }

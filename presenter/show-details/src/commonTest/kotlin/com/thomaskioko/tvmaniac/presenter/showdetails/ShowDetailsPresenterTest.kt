@@ -517,6 +517,7 @@ class ShowDetailsPresenterTest {
                 castRepository = castRepository,
                 trailerRepository = trailerRepository,
                 dispatchers = coroutineDispatcher,
+                providerRepository = watchProvidersRepository,
             ),
             similarShowsInteractor = SimilarShowsInteractor(
                 similarShowsRepository = similarShowsRepository,

@@ -61,6 +61,7 @@ public class DefaultLibraryPresenter(
         observeSortOptionChanges()
         observeAuthState()
         observeLibrary()
+        syncLibrary()
     }
 
     override val state: StateFlow<LibraryState> = combine(
@@ -177,7 +178,7 @@ public class DefaultLibraryPresenter(
         }
     }
 
-    private fun syncLibrary(forceRefresh: Boolean) {
+    private fun syncLibrary(forceRefresh: Boolean = false) {
         coroutineScope.launch {
             syncLibraryInteractor(SyncLibraryInteractor.Param(forceRefresh = forceRefresh))
                 .collectStatus(loadingState, logger, uiMessageManager, "Library")
