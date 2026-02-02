@@ -311,13 +311,13 @@ public extension TvManiac.LibraryShowItem {
             seasonCount: seasonCount,
             episodeCount: episodeCount,
             rating: rating?.doubleValue,
-            genres: genres?.compactMap { $0 as? String },
+            genres: genres?.map { String($0) },
             watchProviders: watchProviders.map { $0.toSwift() }
         )
     }
 }
 
-public extension TvManiac.WatchProviderItem {
+public extension TvManiac.WatchProviderUiModel {
     func toSwift() -> SwiftProviders {
         .init(providerId: id, logoUrl: logoUrl)
     }
