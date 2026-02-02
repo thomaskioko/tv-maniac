@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.watchlist.implementation
+package com.thomaskioko.tvmaniac.data.library.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.apiFetcher
@@ -25,7 +25,7 @@ import kotlin.time.Instant
 
 @Inject
 @SingleIn(AppScope::class)
-public class WatchlistStore(
+public class LibraryStore(
     private val traktListDataSource: TraktListRemoteDataSource,
     private val followedShowsDao: FollowedShowsDao,
     private val requestManagerRepository: RequestManagerRepository,

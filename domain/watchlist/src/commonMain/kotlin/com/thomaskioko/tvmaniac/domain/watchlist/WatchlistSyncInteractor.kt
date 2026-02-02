@@ -5,9 +5,9 @@ import com.thomaskioko.tvmaniac.core.base.extensions.parallelForEach
 import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.data.library.LibraryRepository
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
-import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
 import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityRepository
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
@@ -16,7 +16,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 public class WatchlistSyncInteractor(
     private val followedShowsRepository: FollowedShowsRepository,
-    private val watchlistRepository: WatchlistRepository,
+    private val libraryRepository: LibraryRepository,
     private val traktActivityRepository: TraktActivityRepository,
     private val showContentSyncInteractor: ShowContentSyncInteractor,
     private val dispatchers: AppCoroutineDispatchers,
@@ -27,7 +27,7 @@ public class WatchlistSyncInteractor(
         withContext(dispatchers.io) {
             traktActivityRepository.fetchLatestActivities(params.forceRefresh)
 
-            watchlistRepository.syncWatchlist(params.forceRefresh)
+            libraryRepository.syncLibrary(params.forceRefresh)
 
             val followedShows = followedShowsRepository.getFollowedShows()
             logger.debug(TAG, "Syncing content for ${followedShows.size} followed shows.")

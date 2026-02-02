@@ -4,6 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.networkutil.testing.FakeApiRateLimiter
+import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
@@ -13,7 +14,6 @@ import com.thomaskioko.tvmaniac.domain.watchlist.ObserveWatchlistSectionsInterac
 import com.thomaskioko.tvmaniac.domain.watchlist.UpNextSectionsMapper
 import com.thomaskioko.tvmaniac.domain.watchlist.WatchlistSyncInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
-import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
@@ -35,7 +35,7 @@ class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
     private val fakeShowDetailsRepository = FakeShowDetailsRepository()
     private val fakeSeasonsRepository = FakeSeasonsRepository()
     private val fakeSeasonDetailsRepository = FakeSeasonDetailsRepository()
-    private val fakeWatchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
+    private val fakeLibraryRepository = FakeLibraryRepository()
     private val fakeDatastoreRepository = FakeDatastoreRepository()
     private val fakeApiRateLimiter = FakeApiRateLimiter()
 
@@ -69,7 +69,6 @@ class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
         showDetailsRepository = fakeShowDetailsRepository,
         seasonsRepository = fakeSeasonsRepository,
         seasonDetailsRepository = fakeSeasonDetailsRepository,
-        watchedEpisodeSyncRepository = fakeWatchedEpisodeSyncRepository,
         datastoreRepository = fakeDatastoreRepository,
         apiRateLimiter = fakeApiRateLimiter,
         dispatchers = coroutineDispatcher,
@@ -78,7 +77,7 @@ class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
 
     private val watchlistSyncInteractor = WatchlistSyncInteractor(
         followedShowsRepository = fakeFollowedShowsRepository,
-        watchlistRepository = repository,
+        libraryRepository = fakeLibraryRepository,
         traktActivityRepository = fakeTraktActivityRepository,
         showContentSyncInteractor = showContentSyncInteractor,
         dispatchers = coroutineDispatcher,

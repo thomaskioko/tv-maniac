@@ -7,12 +7,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
+import kotlin.time.Duration
 
 public class FakeLibraryRepository : LibraryRepository {
 
     private val libraryItemsFlow = MutableStateFlow<List<LibraryItem>>(emptyList())
     private val isGridModeFlow = MutableStateFlow(true)
     private val sortOptionFlow = MutableStateFlow(LibrarySortOption.LAST_WATCHED_DESC)
+    private var needsSyncResult = true
 
     public fun setLibraryItems(items: List<LibraryItem>) {
         libraryItemsFlow.value = items
@@ -24,6 +26,10 @@ public class FakeLibraryRepository : LibraryRepository {
 
     public fun setSortOption(sortOption: LibrarySortOption) {
         sortOptionFlow.value = sortOption
+    }
+
+    public fun setNeedsSyncResult(value: Boolean) {
+        needsSyncResult = value
     }
 
     override fun observeLibrary(
@@ -64,4 +70,9 @@ public class FakeLibraryRepository : LibraryRepository {
     override suspend fun saveSortOption(sortOption: LibrarySortOption) {
         sortOptionFlow.value = sortOption
     }
+
+    override suspend fun syncLibrary(forceRefresh: Boolean) {
+    }
+
+    override suspend fun needsSync(expiry: Duration): Boolean = needsSyncResult
 }

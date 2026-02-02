@@ -3,6 +3,8 @@ package com.thomaskioko.tvmaniac.data.library
 import com.thomaskioko.tvmaniac.data.library.model.LibraryItem
 import com.thomaskioko.tvmaniac.data.library.model.LibrarySortOption
 import kotlinx.coroutines.flow.Flow
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
 
 public interface LibraryRepository {
 
@@ -19,4 +21,8 @@ public interface LibraryRepository {
     public fun observeSortOption(): Flow<LibrarySortOption>
 
     public suspend fun saveSortOption(sortOption: LibrarySortOption)
+
+    public suspend fun syncLibrary(forceRefresh: Boolean = false)
+
+    public suspend fun needsSync(expiry: Duration = 3.hours): Boolean
 }

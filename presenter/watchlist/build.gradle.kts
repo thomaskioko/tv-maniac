@@ -43,6 +43,7 @@ kotlin {
                 implementation(projects.data.showdetails.testing)
                 implementation(projects.data.syncActivity.testing)
                 implementation(projects.data.watchlist.testing)
+                implementation(projects.data.library.testing)
                 implementation(projects.domain.showdetails)
                 implementation(projects.i18n.testing)
 
