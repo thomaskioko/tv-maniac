@@ -11,6 +11,11 @@ public interface SeasonDetailsRepository {
         forceRefresh: Boolean = false,
     )
 
+    public suspend fun syncShowSeasonDetails(
+        showTraktId: Long,
+        forceRefresh: Boolean = false,
+    )
+
     public suspend fun syncPreviousSeasonsEpisodes(
         showTraktId: Long,
         beforeSeasonNumber: Long,

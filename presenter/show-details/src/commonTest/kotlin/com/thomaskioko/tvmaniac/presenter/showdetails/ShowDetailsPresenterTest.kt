@@ -7,7 +7,6 @@ import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
-import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.SelectByShowTraktId
 import com.thomaskioko.tvmaniac.db.ShowCast
 import com.thomaskioko.tvmaniac.db.ShowSeasons
@@ -66,7 +65,6 @@ class ShowDetailsPresenterTest {
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
     private val traktAuthRepository = FakeTraktAuthRepository()
     private val fakeFormatterUtil = FakeFormatterUtil()
-    private val fakeDatastoreRepository = FakeDatastoreRepository()
     private val fakeLogger = FakeLogger()
     private val testDispatcher = StandardTestDispatcher()
     private val coroutineDispatcher = AppCoroutineDispatchers(
@@ -548,9 +546,7 @@ class ShowDetailsPresenterTest {
             ),
             showContentSyncInteractor = ShowContentSyncInteractor(
                 showDetailsRepository = showDetailsRepository,
-                seasonsRepository = seasonsRepository,
                 seasonDetailsRepository = seasonDetailsRepository,
-                datastoreRepository = fakeDatastoreRepository,
                 dispatchers = coroutineDispatcher,
                 logger = fakeLogger,
                 watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,

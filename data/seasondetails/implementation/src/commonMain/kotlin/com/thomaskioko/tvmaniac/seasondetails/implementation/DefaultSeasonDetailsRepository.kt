@@ -6,6 +6,8 @@ import com.thomaskioko.tvmaniac.db.EpisodesBySeasonId
 import com.thomaskioko.tvmaniac.db.GetSeasonWithShowInfo
 import com.thomaskioko.tvmaniac.db.SeasonImages
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsDao
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
@@ -40,12 +42,15 @@ public class DefaultSeasonDetailsRepository(
     private val episodesDao: EpisodesDao,
     private val seasonsRepository: SeasonsRepository,
     private val datastoreRepository: DatastoreRepository,
+    private val requestManagerRepository: RequestManagerRepository,
     private val dateTimeProvider: DateTimeProvider,
 ) : SeasonDetailsRepository {
 
     private companion object {
         const val MILLIS_PER_DAY = 24 * 60 * 60 * 1000L
+        const val SEASON_SYNC_CONCURRENCY = 2
     }
+
     override suspend fun fetchSeasonDetails(
         param: SeasonDetailsParam,
         forceRefresh: Boolean,
@@ -54,6 +59,40 @@ public class DefaultSeasonDetailsRepository(
             forceRefresh -> store.fresh(param)
             else -> store.get(param)
         }
+    }
+
+    override suspend fun syncShowSeasonDetails(
+        showTraktId: Long,
+        forceRefresh: Boolean,
+    ) {
+        val isCacheValid = !requestManagerRepository.isRequestExpired(
+            entityId = showTraktId,
+            requestType = RequestTypeConfig.SHOW_SEASON_DETAILS_SYNC.name,
+            threshold = RequestTypeConfig.SHOW_SEASON_DETAILS_SYNC.duration,
+        )
+
+        if (!forceRefresh && isCacheValid) {
+            return
+        }
+
+        val includeSpecials = datastoreRepository.getIncludeSpecials()
+        val seasons = seasonsRepository.getSeasonsByShowId(showTraktId, includeSpecials)
+
+        seasons.parallelForEach(concurrency = SEASON_SYNC_CONCURRENCY) { season ->
+            fetchSeasonDetails(
+                param = SeasonDetailsParam(
+                    showTraktId = showTraktId,
+                    seasonId = season.season_id.id,
+                    seasonNumber = season.season_number,
+                ),
+                forceRefresh = forceRefresh,
+            )
+        }
+
+        requestManagerRepository.upsert(
+            entityId = showTraktId,
+            requestType = RequestTypeConfig.SHOW_SEASON_DETAILS_SYNC.name,
+        )
     }
 
     override suspend fun syncPreviousSeasonsEpisodes(

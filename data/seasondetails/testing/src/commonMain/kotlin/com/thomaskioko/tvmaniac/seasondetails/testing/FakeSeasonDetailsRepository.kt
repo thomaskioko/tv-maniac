@@ -51,6 +51,12 @@ public class FakeSeasonDetailsRepository : SeasonDetailsRepository {
     ) {
     }
 
+    override suspend fun syncShowSeasonDetails(
+        showTraktId: Long,
+        forceRefresh: Boolean,
+    ) {
+    }
+
     override suspend fun syncPreviousSeasonsEpisodes(
         showTraktId: Long,
         beforeSeasonNumber: Long,

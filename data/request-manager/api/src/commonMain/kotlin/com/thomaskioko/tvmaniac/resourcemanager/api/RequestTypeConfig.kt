@@ -29,4 +29,5 @@ public enum class RequestTypeConfig(public val requestId: Long, public val durat
     USER_STATS(22, 3.days),
     TRAKT_ACTIVITIES(23, 1.days),
     SEASONS_EPISODES_SYNC(24, 3.days),
+    SHOW_SEASON_DETAILS_SYNC(25, 3.hours),
 }
