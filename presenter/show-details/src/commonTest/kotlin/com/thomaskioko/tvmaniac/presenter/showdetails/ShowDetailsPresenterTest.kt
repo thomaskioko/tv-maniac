@@ -18,7 +18,6 @@ import com.thomaskioko.tvmaniac.db.WatchProviders
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
-import com.thomaskioko.tvmaniac.domain.showdetails.PrefetchFirstSeasonInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
@@ -469,7 +468,7 @@ class ShowDetailsPresenterTest {
         testDispatcher.scheduler.advanceUntilIdle()
 
         watchedEpisodeSyncRepository.getLastSyncedShowId() shouldBe 84958L
-        watchedEpisodeSyncRepository.wasForceRefreshUsed() shouldBe false
+        watchedEpisodeSyncRepository.wasForceRefreshUsed() shouldBe true
     }
 
     @Test
@@ -521,11 +520,6 @@ class ShowDetailsPresenterTest {
                 trailerRepository = trailerRepository,
                 dispatchers = coroutineDispatcher,
             ),
-            prefetchFirstSeasonInteractor = PrefetchFirstSeasonInteractor(
-                seasonsRepository = seasonsRepository,
-                seasonDetailsRepository = seasonDetailsRepository,
-                dispatchers = coroutineDispatcher,
-            ),
             similarShowsInteractor = SimilarShowsInteractor(
                 similarShowsRepository = similarShowsRepository,
                 dispatchers = coroutineDispatcher,
@@ -556,7 +550,6 @@ class ShowDetailsPresenterTest {
                 showDetailsRepository = showDetailsRepository,
                 seasonsRepository = seasonsRepository,
                 seasonDetailsRepository = seasonDetailsRepository,
-                watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
                 datastoreRepository = fakeDatastoreRepository,
                 dispatchers = coroutineDispatcher,
                 apiRateLimiter = fakeApiRateLimiter,

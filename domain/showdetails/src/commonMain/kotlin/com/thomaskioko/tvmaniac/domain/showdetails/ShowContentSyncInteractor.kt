@@ -8,7 +8,6 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.ApiRateLimiter
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.withRateLimitTracking
 import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
-import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
@@ -22,7 +21,6 @@ public class ShowContentSyncInteractor(
     private val showDetailsRepository: ShowDetailsRepository,
     private val seasonsRepository: SeasonsRepository,
     private val seasonDetailsRepository: SeasonDetailsRepository,
-    private val watchedEpisodeSyncRepository: WatchedEpisodeSyncRepository,
     private val datastoreRepository: DatastoreRepository,
     private val apiRateLimiter: ApiRateLimiter,
     private val dispatchers: AppCoroutineDispatchers,
@@ -38,11 +36,6 @@ public class ShowContentSyncInteractor(
                 )
 
                 fetchShowSeasonDetails(
-                    showTraktId = params.traktId,
-                    forceRefresh = params.forceRefresh,
-                )
-
-                watchedEpisodeSyncRepository.syncShowEpisodeWatches(
                     showTraktId = params.traktId,
                     forceRefresh = params.forceRefresh,
                 )

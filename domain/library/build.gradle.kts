@@ -13,7 +13,6 @@ kotlin {
                 implementation(projects.data.library.api)
                 implementation(projects.data.seasons.api)
                 implementation(projects.data.showdetails.api)
-                implementation(projects.data.watchlist.api)
 
                 implementation(libs.coroutines.core)
                 implementation(libs.kotlinInject.runtime)

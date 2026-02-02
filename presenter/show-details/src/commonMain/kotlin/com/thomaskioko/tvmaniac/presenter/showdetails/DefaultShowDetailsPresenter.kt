@@ -13,7 +13,6 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
-import com.thomaskioko.tvmaniac.domain.showdetails.PrefetchFirstSeasonInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor.Param
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
@@ -49,7 +48,6 @@ public class DefaultShowDetailsPresenter(
     @Assisted private val onNavigateToTrailer: (id: Long) -> Unit,
     private val followedShowsRepository: FollowedShowsRepository,
     private val showDetailsInteractor: ShowDetailsInteractor,
-    private val prefetchFirstSeasonInteractor: PrefetchFirstSeasonInteractor,
     private val similarShowsInteractor: SimilarShowsInteractor,
     private val watchProvidersInteractor: WatchProvidersInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
@@ -154,15 +152,18 @@ public class DefaultShowDetailsPresenter(
         }
     }
 
-    private fun observeShowDetails(forceReload: Boolean = false) {
+    private fun observeShowDetails(forceReload: Boolean = false, isUserInitiated: Boolean = false) {
         coroutineScope.launch {
             showDetailsInteractor(ShowDetailsInteractor.Param(showTraktId, forceReload))
                 .collectStatus(showDetailsLoadingState, logger, uiMessageManager)
-        }
 
-        coroutineScope.launch {
-            prefetchFirstSeasonInteractor(PrefetchFirstSeasonInteractor.Param(showTraktId, forceReload))
-                .collectStatus(showDetailsLoadingState, logger, uiMessageManager)
+            if (traktAuthRepository.isLoggedIn()) {
+                syncShowContent(
+                    forceRefresh = forceReload,
+                    isUserInitiated = isUserInitiated,
+                    loadingState = showDetailsLoadingState,
+                )
+            }
         }
 
         coroutineScope.launch {
@@ -174,27 +175,10 @@ public class DefaultShowDetailsPresenter(
             watchProvidersInteractor(WatchProvidersInteractor.Param(showTraktId, forceReload))
                 .collectStatus(watchProvidersLoadingState, logger, uiMessageManager)
         }
-
-        coroutineScope.launch {
-            if (traktAuthRepository.isLoggedIn()) {
-                syncShowContent(
-                    forceRefresh = forceReload,
-                    isUserInitiated = false,
-                    loadingState = showDetailsLoadingState,
-                )
-            }
-        }
     }
 
     private fun refreshShowContent(isUserInitiated: Boolean) {
-        observeShowDetails(forceReload = true)
-        coroutineScope.launch {
-            syncShowContent(
-                forceRefresh = true,
-                isUserInitiated = isUserInitiated,
-                loadingState = showDetailsLoadingState,
-            )
-        }
+        observeShowDetails(forceReload = true, isUserInitiated = isUserInitiated)
     }
 
     private suspend fun syncShowContent(
