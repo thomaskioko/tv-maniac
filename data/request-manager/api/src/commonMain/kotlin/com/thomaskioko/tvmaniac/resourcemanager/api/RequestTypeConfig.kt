@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.resourcemanager.api
 
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.hours
 
 public enum class RequestTypeConfig(public val requestId: Long, public val duration: Duration) {
     FEATURED_SHOWS_TODAY(1, 1.days),
@@ -21,7 +22,7 @@ public enum class RequestTypeConfig(public val requestId: Long, public val durat
     USER_PROFILE(15, 3.days),
     WATCHLIST_SYNC(16, 1.days),
     EPISODE_WATCHES_SYNC(17, 1.days),
-    SHOW_EPISODE_WATCHES_SYNC(18, 1.days),
+    SHOW_EPISODE_WATCHES_SYNC(18, 1.hours),
     SHOW_CAST(19, 6.days),
     TRAILERS(20, 6.days),
     UPCOMING_EPISODES(21, 5.days),
