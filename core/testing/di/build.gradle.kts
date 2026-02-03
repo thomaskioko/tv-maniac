@@ -25,6 +25,7 @@ kotlin {
             implementation(projects.presenter.search)
             implementation(projects.presenter.settings)
             implementation(projects.presenter.watchlist)
+            implementation(projects.presenter.library)
             implementation(projects.presenter.showDetails)
             implementation(projects.presenter.moreShows)
             implementation(projects.presenter.seasondetails)

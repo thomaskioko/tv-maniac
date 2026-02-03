@@ -29,8 +29,8 @@ public struct TabBarView: View {
                     case let .search(screen):
                         SearchTab(presenter: screen.presenter)
                             .id(ObjectIdentifier(screen))
-                    case let .watchlist(screen):
-                        WatchlistTab(presenter: screen.presenter)
+                    case let .library(screen):
+                        LibraryTab(presenter: screen.presenter)
                             .id(ObjectIdentifier(screen))
                     case let .profile(screen):
                         ProfileTab(presenter: screen.presenter)
@@ -46,7 +46,7 @@ public struct TabBarView: View {
             switch newTab {
             case .discover: presenter.onDiscoverClicked()
             case .search: presenter.onSearchClicked()
-            case .watchlist: presenter.onLibraryClicked()
+            case .library: presenter.onLibraryClicked()
             case .profile: presenter.onProfileClicked()
             }
         }
@@ -56,7 +56,7 @@ public struct TabBarView: View {
         switch onEnum(of: child) {
         case .discover: .discover
         case .search: .search
-        case .watchlist: .watchlist
+        case .library: .library
         case .profile: .profile
         }
     }
@@ -67,14 +67,14 @@ public struct TabBarView: View {
 public enum NavigationTab: String, CaseIterable {
     case discover
     case search
-    case watchlist
+    case library
     case profile
 
     var title: String {
         switch self {
         case .discover: String(\.label_tab_discover)
         case .search: String(\.label_tab_search)
-        case .watchlist: String(\.label_tab_watchlist)
+        case .library: String(\.menu_item_library)
         case .profile: String(\.menu_item_profile)
         }
     }
@@ -83,7 +83,7 @@ public enum NavigationTab: String, CaseIterable {
         switch self {
         case .discover: "tv"
         case .search: "magnifyingglass"
-        case .watchlist: "square.stack"
+        case .library: "square.stack"
         case .profile: "person.crop.circle"
         }
     }

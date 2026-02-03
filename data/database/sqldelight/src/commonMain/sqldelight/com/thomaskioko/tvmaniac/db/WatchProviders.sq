@@ -1,19 +1,20 @@
 import com.thomaskioko.tvmaniac.db.Id;
 import com.thomaskioko.tvmaniac.db.TmdbId;
+import com.thomaskioko.tvmaniac.db.TraktId;
 import com.thomaskioko.tvmaniac.db.WatchProviderId;
 
 CREATE TABLE IF NOT EXISTS `watch_providers` (
     `id` INTEGER AS Id<WatchProviderId> NOT NULL,
     `tmdb_id` INTEGER AS Id<TmdbId> NOT NULL,
+    `trakt_id` INTEGER AS Id<TraktId> NOT NULL,
     `logo_path` TEXT DEFAULT NULL,
     `name` TEXT,
-     PRIMARY KEY (id, tmdb_id),
-     FOREIGN KEY(tmdb_id) REFERENCES tvshow(tmdb_id) ON UPDATE CASCADE ON DELETE CASCADE
+     PRIMARY KEY (id, trakt_id)
 );
 
 -- indices
 
-CREATE UNIQUE INDEX IF NOT EXISTS `index_watch_providers_provider_id` ON `watch_providers` (`id`);
+CREATE INDEX IF NOT EXISTS `index_watch_providers_trakt_id` ON `watch_providers` (`trakt_id`);
 
 -- queries
 
@@ -21,9 +22,10 @@ upsert:
 INSERT OR REPLACE INTO watch_providers (
     id,
     tmdb_id,
+    trakt_id,
     logo_path,
     name
-) VALUES (?, ?, ?, ?);
+) VALUES (?, ?, ?, ?, ?);
 
 watchProviders:
 SELECT
@@ -36,10 +38,19 @@ FROM
 WHERE
     watch_providers.tmdb_id = :showId;
 
-delete:
+watchProvidersByTraktId:
+SELECT
+    watch_providers.id AS provider_id,
+    watch_providers.name,
+    watch_providers.logo_path,
+    watch_providers.tmdb_id
+FROM watch_providers
+WHERE watch_providers.trakt_id = :traktId;
+
+deleteByTraktId:
 DELETE
 FROM watch_providers
-WHERE id = ?;
+WHERE trakt_id = ?;
 
 deleteAll:
 DELETE FROM watch_providers;

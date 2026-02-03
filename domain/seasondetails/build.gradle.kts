@@ -8,6 +8,7 @@ kotlin {
             dependencies {
                 implementation(projects.core.base)
                 implementation(projects.data.cast.api)
+                implementation(projects.data.episode.api)
                 implementation(projects.data.seasondetails.api)
 
                 api(libs.coroutines.core)

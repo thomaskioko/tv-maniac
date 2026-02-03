@@ -3,9 +3,9 @@ package com.thomaskioko.tvmaniac.presenter.home
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowsPresenter
+import com.thomaskioko.tvmaniac.presentation.library.LibraryPresenter
 import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowsPresenter
-import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistPresenter
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.Serializable
 
@@ -32,7 +32,7 @@ public interface HomePresenter {
     public sealed interface Child {
         public class Discover(public val presenter: DiscoverShowsPresenter) : Child
 
-        public class Watchlist(public val presenter: WatchlistPresenter) : Child
+        public class Library(public val presenter: LibraryPresenter) : Child
 
         public class Search(public val presenter: SearchShowsPresenter) : Child
 

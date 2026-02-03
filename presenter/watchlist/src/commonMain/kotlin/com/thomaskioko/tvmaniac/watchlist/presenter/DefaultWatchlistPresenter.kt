@@ -10,9 +10,9 @@ import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
-import com.thomaskioko.tvmaniac.domain.followedshows.FollowedShowsSyncInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.ObserveUpNextSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.ObserveWatchlistSectionsInteractor
+import com.thomaskioko.tvmaniac.domain.watchlist.WatchlistSyncInteractor
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,7 +36,7 @@ public class DefaultWatchlistPresenter(
     private val followedShowsRepository: FollowedShowsRepository,
     private val observeWatchlistSectionsInteractor: ObserveWatchlistSectionsInteractor,
     private val observeUpNextSectionsInteractor: ObserveUpNextSectionsInteractor,
-    private val followedShowsSyncInteractor: FollowedShowsSyncInteractor,
+    private val watchlistSyncInteractor: WatchlistSyncInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val logger: Logger,
 ) : WatchlistPresenter, ComponentContext by componentContext {
@@ -152,7 +152,7 @@ public class DefaultWatchlistPresenter(
 
     private fun syncWatchlist(forceRefresh: Boolean = false) {
         coroutineScope.launch {
-            followedShowsSyncInteractor(FollowedShowsSyncInteractor.Param(forceRefresh))
+            watchlistSyncInteractor(WatchlistSyncInteractor.Param(forceRefresh))
                 .collectStatus(watchlistLoadingState, logger, uiMessageManager)
         }
     }

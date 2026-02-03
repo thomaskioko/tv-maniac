@@ -23,7 +23,7 @@ kotlin {
                 implementation(projects.presenter.discover)
                 implementation(projects.presenter.search)
                 implementation(projects.presenter.profile)
-                implementation(projects.presenter.watchlist)
+                implementation(projects.presenter.library)
 
                 implementation(libs.decompose.decompose)
                 implementation(libs.essenty.lifecycle)

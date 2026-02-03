@@ -23,7 +23,7 @@ public class EpisodeWatchesLastRequestStore(
     public fun isRequestExpired(expiry: Duration = DEFAULT_EXPIRY): Boolean =
         !isRequestValid(expiry)
 
-    public fun isShowRequestExpired(showTraktId: Long, expiry: Duration = DEFAULT_EXPIRY): Boolean =
+    public fun isShowRequestExpired(showTraktId: Long, expiry: Duration = SHOW_DEFAULT_EXPIRY): Boolean =
         requestManagerRepository.isRequestExpired(showTraktId, SHOW_REQUEST_TYPE, expiry)
 
     public fun updateShowLastRequest(showTraktId: Long) {
@@ -32,6 +32,7 @@ public class EpisodeWatchesLastRequestStore(
 
     private companion object {
         const val SHOW_REQUEST_TYPE = "SHOW_EPISODE_WATCHES_SYNC"
+        val SHOW_DEFAULT_EXPIRY: Duration = RequestTypeConfig.SHOW_EPISODE_WATCHES_SYNC.duration
         val REQUEST_TYPE = RequestTypeConfig.EPISODE_WATCHES_SYNC.name
         val ENTITY_ID = RequestTypeConfig.EPISODE_WATCHES_SYNC.requestId
         val DEFAULT_EXPIRY: Duration = RequestTypeConfig.EPISODE_WATCHES_SYNC.duration

@@ -10,6 +10,7 @@ kotlin {
                 api(projects.data.database.sqldelight)
 
                 implementation(libs.coroutines.core)
+                implementation(libs.kotlinx.collections)
             }
         }
     }

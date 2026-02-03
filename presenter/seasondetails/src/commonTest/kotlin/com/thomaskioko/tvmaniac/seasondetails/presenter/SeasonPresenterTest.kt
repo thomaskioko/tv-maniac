@@ -8,14 +8,14 @@ import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.SeasonCast
-import com.thomaskioko.tvmaniac.domain.episode.FetchPreviousSeasonsInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
-import com.thomaskioko.tvmaniac.domain.episode.MarkSeasonUnwatchedInteractor
-import com.thomaskioko.tvmaniac.domain.episode.MarkSeasonWatchedInteractor
-import com.thomaskioko.tvmaniac.domain.episode.ObserveSeasonWatchProgressInteractor
-import com.thomaskioko.tvmaniac.domain.episode.ObserveUnwatchedInPreviousSeasonsInteractor
+import com.thomaskioko.tvmaniac.domain.seasondetails.FetchPreviousSeasonsInteractor
+import com.thomaskioko.tvmaniac.domain.seasondetails.MarkSeasonUnwatchedInteractor
+import com.thomaskioko.tvmaniac.domain.seasondetails.MarkSeasonWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.ObservableSeasonDetailsInteractor
+import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveSeasonWatchProgressInteractor
+import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveUnwatchedInPreviousSeasonsInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsInteractor
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
@@ -1206,7 +1206,7 @@ class SeasonPresenterTest {
                 episodeRepository = episodeRepository,
             ),
             fetchPreviousSeasonsInteractor = FetchPreviousSeasonsInteractor(
-                episodeRepository = episodeRepository,
+                seasonDetailsRepository = seasonDetailsRepository,
             ),
             observeSeasonWatchProgressInteractor = ObserveSeasonWatchProgressInteractor(
                 episodeRepository = episodeRepository,

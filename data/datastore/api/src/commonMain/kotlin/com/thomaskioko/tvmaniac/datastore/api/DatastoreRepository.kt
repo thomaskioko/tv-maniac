@@ -193,4 +193,18 @@ public interface DatastoreRepository {
      * @return A Flow of Boolean, true if permission should be requested.
      */
     public fun observeRequestNotificationPermission(): Flow<Boolean>
+
+    /**
+     * Saves the user's preferred library sort option.
+     *
+     * @param sortOption The sort option name (e.g., "LAST_WATCHED", "ALPHABETICAL").
+     */
+    public suspend fun saveLibrarySortOption(sortOption: String)
+
+    /**
+     * Observes the user's preferred library sort option.
+     *
+     * @return A Flow of the sort option name, defaulting to "LAST_WATCHED_DESC".
+     */
+    public fun observeLibrarySortOption(): Flow<String>
 }

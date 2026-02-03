@@ -86,6 +86,7 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
         watch_providersAdapter = Watch_providers.Adapter(
             idAdapter = IdAdapter(),
             tmdb_idAdapter = IdAdapter(),
+            trakt_idAdapter = IdAdapter(),
         ),
         featured_showsAdapter = Featured_shows.Adapter(
             tmdb_idAdapter = IdAdapter(),

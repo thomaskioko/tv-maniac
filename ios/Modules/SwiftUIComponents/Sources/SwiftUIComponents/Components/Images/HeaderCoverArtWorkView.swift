@@ -20,7 +20,7 @@ public struct HeaderCoverArtWorkView: View {
     public var body: some View {
         LazyResizableImage(
             url: imageUrl,
-            size: CGSize(width: DimensionConstants.posterWidth, height: posterHeight)
+            size: CGSize(width: DimensionConstants.posterWidth, height: DimensionConstants.fixedImageHeight)
         ) { state in
             if let image = state.image {
                 image.resizable()
@@ -28,8 +28,9 @@ public struct HeaderCoverArtWorkView: View {
                 headerPosterPlaceholder
             }
         }
-        .aspectRatio(contentMode: .fill)
+        .scaledToFill()
         .frame(width: DimensionConstants.posterWidth, height: posterHeight)
+        .clipped()
     }
 
     @ViewBuilder
@@ -45,7 +46,7 @@ public struct HeaderCoverArtWorkView: View {
                     .padding()
             }
         }
-        .frame(width: DimensionConstants.posterWidth, height: posterHeight)
+        .frame(width: DimensionConstants.posterWidth, height: DimensionConstants.fixedImageHeight)
         .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
         .shadow(radius: DimensionConstants.shadowRadius)
     }
@@ -53,6 +54,7 @@ public struct HeaderCoverArtWorkView: View {
 
 private enum DimensionConstants {
     static let posterWidth: CGFloat = UIScreen.main.bounds.width
+    static let fixedImageHeight: CGFloat = 600
     static let shadowRadius: CGFloat = 2
     static let cornerRadius: CGFloat = 8
 }

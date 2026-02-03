@@ -4,11 +4,9 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
-import com.thomaskioko.tvmaniac.core.networkutil.testing.FakeApiRateLimiter
 import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
-import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.SelectByShowTraktId
 import com.thomaskioko.tvmaniac.db.ShowCast
 import com.thomaskioko.tvmaniac.db.ShowSeasons
@@ -18,12 +16,10 @@ import com.thomaskioko.tvmaniac.db.WatchProviders
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
-import com.thomaskioko.tvmaniac.domain.showdetails.PrefetchFirstSeasonInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
 import com.thomaskioko.tvmaniac.domain.watchproviders.WatchProvidersInteractor
-import com.thomaskioko.tvmaniac.episodes.api.model.ContinueTrackingResult
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall
@@ -33,6 +29,7 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.model.ProviderModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.TrailerModel
+import com.thomaskioko.tvmaniac.seasondetails.api.model.ContinueTrackingResult
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
@@ -68,9 +65,7 @@ class ShowDetailsPresenterTest {
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
     private val traktAuthRepository = FakeTraktAuthRepository()
     private val fakeFormatterUtil = FakeFormatterUtil()
-    private val fakeDatastoreRepository = FakeDatastoreRepository()
     private val fakeLogger = FakeLogger()
-    private val fakeApiRateLimiter = FakeApiRateLimiter()
     private val testDispatcher = StandardTestDispatcher()
     private val coroutineDispatcher = AppCoroutineDispatchers(
         main = testDispatcher,
@@ -134,30 +129,31 @@ class ShowDetailsPresenterTest {
     }
 
     @Test
-    fun `should update state to Loaded when ReloadShowDetails and new data is available`() = runTest {
-        buildMockData()
+    fun `should update state to Loaded when ReloadShowDetails and new data is available`() =
+        runTest {
+            buildMockData()
 
-        val presenter = buildShowDetailsPresenter()
-        testDispatcher.scheduler.advanceUntilIdle()
+            val presenter = buildShowDetailsPresenter()
+            testDispatcher.scheduler.advanceUntilIdle()
 
-        val initialState = presenter.state.value
-        initialState.showDetails shouldBe showDetailsContent.showDetails
-        initialState.isRefreshing shouldBe false
-        initialState.message shouldBe null
+            val initialState = presenter.state.value
+            initialState.showDetails shouldBe showDetailsContent.showDetails
+            initialState.isRefreshing shouldBe false
+            initialState.message shouldBe null
 
-        seasonsRepository.setSeasonsResult(seasons)
-        watchProvidersRepository.setWatchProvidersResult(watchProviderList)
-        similarShowsRepository.setSimilarShowsResult(similarShowList)
-        trailerRepository.setTrailerResult(trailers)
+            seasonsRepository.setSeasonsResult(seasons)
+            watchProvidersRepository.setWatchProvidersResult(watchProviderList)
+            similarShowsRepository.setSimilarShowsResult(similarShowList)
+            trailerRepository.setTrailerResult(trailers)
 
-        presenter.dispatch(ReloadShowDetails)
-        testDispatcher.scheduler.advanceUntilIdle()
+            presenter.dispatch(ReloadShowDetails)
+            testDispatcher.scheduler.advanceUntilIdle()
 
-        val updatedState = presenter.state.value.showDetails
-        updatedState.seasonsList.size shouldBe 1
-        updatedState.similarShows.size shouldBe 1
-        updatedState.providers.size shouldBe 1
-    }
+            val updatedState = presenter.state.value.showDetails
+            updatedState.seasonsList.size shouldBe 1
+            updatedState.similarShows.size shouldBe 1
+            updatedState.providers.size shouldBe 1
+        }
 
     @Test
     fun `should update infoState to Loaded with correct data when ReloadShowDetails and fetching season fails`() =
@@ -209,7 +205,7 @@ class ShowDetailsPresenterTest {
     @Test
     fun `should display continue tracking episodes when available`() = runTest {
         buildMockData()
-        episodeRepository.setContinueTrackingResult(testContinueTrackingResult)
+        seasonDetailsRepository.setContinueTrackingResult(testContinueTrackingResult)
 
         val presenter = buildShowDetailsPresenter()
         testDispatcher.scheduler.advanceUntilIdle()
@@ -246,30 +242,31 @@ class ShowDetailsPresenterTest {
     }
 
     @Test
-    fun `should mark episode as watched when MarkEpisodeWatchedFromTracking is dispatched`() = runTest {
-        buildMockData()
+    fun `should mark episode as watched when MarkEpisodeWatchedFromTracking is dispatched`() =
+        runTest {
+            buildMockData()
 
-        val presenter = buildShowDetailsPresenter()
-        testDispatcher.scheduler.advanceUntilIdle()
+            val presenter = buildShowDetailsPresenter()
+            testDispatcher.scheduler.advanceUntilIdle()
 
-        presenter.dispatch(
-            MarkEpisodeWatched(
+            presenter.dispatch(
+                MarkEpisodeWatched(
+                    showTraktId = 84958,
+                    episodeId = 1001,
+                    seasonNumber = 1,
+                    episodeNumber = 1,
+                ),
+            )
+
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            episodeRepository.lastMarkEpisodeWatchedCall shouldBe MarkEpisodeWatchedCall(
                 showTraktId = 84958,
                 episodeId = 1001,
                 seasonNumber = 1,
                 episodeNumber = 1,
-            ),
-        )
-
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        episodeRepository.lastMarkEpisodeWatchedCall shouldBe MarkEpisodeWatchedCall(
-            showTraktId = 84958,
-            episodeId = 1001,
-            seasonNumber = 1,
-            episodeNumber = 1,
-        )
-    }
+            )
+        }
 
     @Test
     fun `should update library when FollowShowClicked is dispatched`() = runTest {
@@ -288,7 +285,7 @@ class ShowDetailsPresenterTest {
     @Test
     fun `should update continue tracking list when episode is marked as watched`() = runTest {
         buildMockData()
-        episodeRepository.setContinueTrackingResult(testContinueTrackingResult)
+        seasonDetailsRepository.setContinueTrackingResult(testContinueTrackingResult)
 
         val presenter = buildShowDetailsPresenter()
         testDispatcher.scheduler.advanceUntilIdle()
@@ -306,7 +303,7 @@ class ShowDetailsPresenterTest {
             currentSeasonNumber = 1L,
             currentSeasonId = 101L,
         )
-        episodeRepository.setContinueTrackingResult(updatedTrackingResult)
+        seasonDetailsRepository.setContinueTrackingResult(updatedTrackingResult)
 
         presenter.dispatch(
             MarkEpisodeWatched(
@@ -326,7 +323,7 @@ class ShowDetailsPresenterTest {
     @Test
     fun `should clear continue tracking list when show is removed from library`() = runTest {
         buildMockData()
-        episodeRepository.setContinueTrackingResult(testContinueTrackingResult)
+        seasonDetailsRepository.setContinueTrackingResult(testContinueTrackingResult)
 
         val presenter = buildShowDetailsPresenter()
         testDispatcher.scheduler.advanceUntilIdle()
@@ -334,7 +331,7 @@ class ShowDetailsPresenterTest {
         val initialState = presenter.state.value
         initialState.continueTrackingEpisodes.size shouldBe 3
 
-        episodeRepository.setContinueTrackingResult(null)
+        seasonDetailsRepository.setContinueTrackingResult(null)
 
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -520,11 +517,7 @@ class ShowDetailsPresenterTest {
                 castRepository = castRepository,
                 trailerRepository = trailerRepository,
                 dispatchers = coroutineDispatcher,
-            ),
-            prefetchFirstSeasonInteractor = PrefetchFirstSeasonInteractor(
-                seasonsRepository = seasonsRepository,
-                seasonDetailsRepository = seasonDetailsRepository,
-                dispatchers = coroutineDispatcher,
+                providerRepository = watchProvidersRepository,
             ),
             similarShowsInteractor = SimilarShowsInteractor(
                 similarShowsRepository = similarShowsRepository,
@@ -537,6 +530,7 @@ class ShowDetailsPresenterTest {
             observableShowDetailsInteractor = ObservableShowDetailsInteractor(
                 castRepository = castRepository,
                 episodeRepository = episodeRepository,
+                seasonDetailsRepository = seasonDetailsRepository,
                 seasonsRepository = seasonsRepository,
                 showDetailsRepository = showDetailsRepository,
                 similarShowsRepository = similarShowsRepository,
@@ -553,13 +547,10 @@ class ShowDetailsPresenterTest {
             ),
             showContentSyncInteractor = ShowContentSyncInteractor(
                 showDetailsRepository = showDetailsRepository,
-                seasonsRepository = seasonsRepository,
                 seasonDetailsRepository = seasonDetailsRepository,
-                watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
-                datastoreRepository = fakeDatastoreRepository,
                 dispatchers = coroutineDispatcher,
-                apiRateLimiter = fakeApiRateLimiter,
                 logger = fakeLogger,
+                watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
             ),
             traktAuthRepository = traktAuthRepository,
             dispatchers = coroutineDispatcher,

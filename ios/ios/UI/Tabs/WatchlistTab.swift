@@ -59,7 +59,7 @@ struct WatchlistTab: View {
                     HStack {
                         Button {
                             withAnimation {
-                                presenter.dispatch(action: ChangeListStyleClicked(isGridMode: uiState.isGridMode))
+                                presenter.dispatch(action: ChangeListStyleClicked_(isGridMode: uiState.isGridMode))
                             }
                         } label: {
                             Label(String(\.label_watchlist_list_style), systemImage: image)
@@ -145,7 +145,7 @@ struct WatchlistTab: View {
     private var searchButton: some View {
         Button {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                presenter.dispatch(action: ToggleSearchActive())
+                presenter.dispatch(action: ToggleSearchActive_())
                 isSearchFocused = true
             }
         } label: {
@@ -187,7 +187,7 @@ struct WatchlistTab: View {
                         if !uiState.query.isEmpty {
                             presenter.dispatch(action: ClearWatchlistQuery())
                         } else {
-                            presenter.dispatch(action: ToggleSearchActive())
+                            presenter.dispatch(action: ToggleSearchActive_())
                             isSearchFocused = false
                         }
                     }

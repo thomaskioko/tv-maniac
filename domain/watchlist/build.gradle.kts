@@ -10,9 +10,10 @@ kotlin {
 
                 implementation(projects.core.base)
                 implementation(projects.core.util.api)
-                implementation(projects.core.networkUtil.api)
                 implementation(projects.data.episode.api)
+                implementation(projects.data.library.api)
                 implementation(projects.data.watchlist.api)
+                implementation(projects.data.syncActivity.api)
 
                 implementation(libs.coroutines.core)
                 implementation(libs.kotlinInject.runtime)
@@ -24,6 +25,7 @@ kotlin {
                 implementation(libs.bundles.unittest)
                 implementation(projects.core.util.testing)
                 implementation(projects.data.episode.testing)
+                implementation(projects.data.library.testing)
                 implementation(projects.data.watchlist.testing)
             }
         }
