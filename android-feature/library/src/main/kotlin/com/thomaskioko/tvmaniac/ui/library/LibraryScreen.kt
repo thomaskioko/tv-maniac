@@ -12,6 +12,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -382,6 +383,7 @@ private fun LibraryListContent(
 ) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(top = 8.dp),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) {
         items(items.size, key = { items[it].traktId }) { index ->
