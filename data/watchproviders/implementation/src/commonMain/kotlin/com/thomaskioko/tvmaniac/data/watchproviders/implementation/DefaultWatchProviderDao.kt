@@ -27,9 +27,10 @@ public class DefaultWatchProviderDao(
     override fun upsert(entity: Watch_providers) {
         database.watchProvidersQueries.upsert(
             id = entity.id,
-            name = entity.name,
-            logo_path = entity.logo_path,
             tmdb_id = entity.tmdb_id,
+            trakt_id = entity.trakt_id,
+            logo_path = entity.logo_path,
+            name = entity.name,
         )
     }
 
@@ -47,8 +48,8 @@ public class DefaultWatchProviderDao(
     override fun fetchWatchProvidersByTraktId(traktId: Long): List<WatchProvidersByTraktId> =
         database.watchProvidersQueries.watchProvidersByTraktId(Id<TraktId>(traktId)).executeAsList()
 
-    override fun delete(id: Long) {
-        database.watchProvidersQueries.delete(Id(id))
+    override fun deleteByTraktId(traktId: Long) {
+        database.watchProvidersQueries.deleteByTraktId(Id<TraktId>(traktId))
     }
 
     override fun deleteAll() {

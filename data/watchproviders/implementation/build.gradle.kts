@@ -14,6 +14,7 @@ kotlin {
                 implementation(projects.core.base)
                 implementation(projects.data.database.sqldelight)
                 implementation(projects.core.util.api)
+                implementation(projects.data.requestManager.api)
                 implementation(projects.data.shows.api)
                 implementation(projects.data.watchproviders.api)
 

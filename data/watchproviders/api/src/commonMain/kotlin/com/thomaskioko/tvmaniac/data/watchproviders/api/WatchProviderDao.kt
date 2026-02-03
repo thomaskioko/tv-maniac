@@ -16,7 +16,7 @@ public interface WatchProviderDao {
 
     public fun fetchWatchProvidersByTraktId(traktId: Long): List<WatchProvidersByTraktId>
 
-    public fun delete(id: Long)
+    public fun deleteByTraktId(traktId: Long)
 
     public fun deleteAll()
 }
