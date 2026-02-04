@@ -38,7 +38,8 @@ SELECT
     episode.image_url AS still_path,
     episode.overview,
     tvshow.name AS show_name,
-    tvshow.poster_path AS show_poster
+    tvshow.poster_path AS show_poster,
+    episode.first_aired
 FROM tvshow
 INNER JOIN followed_shows ON followed_shows.trakt_id = tvshow.trakt_id
 INNER JOIN season ON tvshow.trakt_id = season.show_trakt_id
