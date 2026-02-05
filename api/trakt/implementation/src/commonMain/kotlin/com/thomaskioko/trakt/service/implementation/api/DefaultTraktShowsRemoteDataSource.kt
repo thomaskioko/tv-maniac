@@ -13,6 +13,7 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowPeopleResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktVideosResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedProgressResponse
 import io.ktor.client.request.parameter
 import io.ktor.http.HttpMethod
 import io.ktor.http.path
@@ -180,5 +181,14 @@ public class DefaultTraktShowsRemoteDataSource(
                 method = HttpMethod.Get
                 path("shows/$traktId/videos")
             }
+        }
+
+    override suspend fun getWatchedProgress(traktId: Long): ApiResponse<TraktWatchedProgressResponse> =
+        httpClient.safeRequest {
+            url {
+                method = HttpMethod.Get
+                path("shows/$traktId/progress/watched")
+            }
+            parameter("extended", "full")
         }
 }

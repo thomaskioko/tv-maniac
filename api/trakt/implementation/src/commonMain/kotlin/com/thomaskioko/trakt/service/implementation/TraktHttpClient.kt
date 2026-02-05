@@ -78,7 +78,7 @@ internal fun traktHttpClient(
                     }
                 }
 
-                sendWithoutRequest { false }
+                sendWithoutRequest { true }
             }
         }
 
