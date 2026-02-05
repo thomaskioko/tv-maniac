@@ -80,7 +80,7 @@ public class DefaultUserDao(
             }
 
     override fun getRandomWatchlistBackdrop(): String? =
-        database.userQueries.getRandomWatchlistBackdrop().executeAsOneOrNull()
+        database.userQueries.getRandomWatchlistBackdrop().executeAsOneOrNull()?.image_url
 
     override suspend fun upsertUser(
         slug: String,
