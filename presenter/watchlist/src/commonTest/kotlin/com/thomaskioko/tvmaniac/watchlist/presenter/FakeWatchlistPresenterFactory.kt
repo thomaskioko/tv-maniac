@@ -12,6 +12,7 @@ import com.thomaskioko.tvmaniac.domain.watchlist.WatchlistSyncInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
+import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -19,6 +20,7 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
     val repository = FakeWatchlistRepository()
     val episodeRepository = FakeEpisodeRepository()
+    val upNextRepository = FakeUpNextRepository()
     val dateTimeProvider = FakeDateTimeProvider()
 
     val testDispatcher = UnconfinedTestDispatcher()
@@ -41,7 +43,7 @@ class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
     )
 
     private val observeWatchlistSectionsInteractor = ObserveWatchlistSectionsInteractor(
-        episodeRepository = episodeRepository,
+        upNextRepository = upNextRepository,
         dateTimeProvider = dateTimeProvider,
     )
 
@@ -50,7 +52,7 @@ class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
     )
 
     private val observeUpNextSectionsInteractor = ObserveUpNextSectionsInteractor(
-        episodeRepository = episodeRepository,
+        upNextRepository = upNextRepository,
         mapper = upNextSectionsMapper,
     )
 

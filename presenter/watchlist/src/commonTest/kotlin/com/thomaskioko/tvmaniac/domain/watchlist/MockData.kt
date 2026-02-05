@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.domain.watchlist
 
-import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
+import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.watchlist.presenter.model.NextEpisodeItem
 import com.thomaskioko.tvmaniac.watchlist.presenter.model.WatchlistItem
 import kotlinx.collections.immutable.toPersistentList

@@ -4,8 +4,8 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
-import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.i18n.testing.util.IgnoreIos
+import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.watchlist.presenter.ChangeListStyleClicked
 import com.thomaskioko.tvmaniac.watchlist.presenter.FakeWatchlistPresenterFactory
 import com.thomaskioko.tvmaniac.watchlist.presenter.ToggleSearchActive
@@ -67,7 +67,7 @@ class WatchlistPresenterTest {
         presenter.state.test {
             awaitItem() shouldBe WatchlistState()
 
-            factory.episodeRepository.setNextEpisodesForWatchlist(cachedNextEpisodes)
+            factory.upNextRepository.setNextEpisodesForWatchlist(cachedNextEpisodes)
 
             val state = awaitItem()
             state.query shouldBe ""
@@ -75,7 +75,7 @@ class WatchlistPresenterTest {
             state.isGridMode shouldBe true
             state.watchNextItems shouldBe expectedUiResult(cachedNextEpisodes)
 
-            factory.episodeRepository.setNextEpisodesForWatchlist(updatedNextEpisodes)
+            factory.upNextRepository.setNextEpisodesForWatchlist(updatedNextEpisodes)
 
             val secondUpdate = awaitItem()
             secondUpdate.watchNextItems shouldBe expectedUiResult()
@@ -87,7 +87,7 @@ class WatchlistPresenterTest {
         presenter.state.test {
             awaitItem() shouldBe WatchlistState()
 
-            factory.episodeRepository.setNextEpisodesForWatchlist(cachedNextEpisodes)
+            factory.upNextRepository.setNextEpisodesForWatchlist(cachedNextEpisodes)
 
             val initialState = awaitItem()
             initialState.isGridMode shouldBe true
@@ -110,7 +110,7 @@ class WatchlistPresenterTest {
         presenter.state.test {
             awaitItem() shouldBe WatchlistState()
 
-            factory.episodeRepository.setNextEpisodesForWatchlist(cachedNextEpisodes)
+            factory.upNextRepository.setNextEpisodesForWatchlist(cachedNextEpisodes)
 
             val initialState = awaitItem()
             initialState.query shouldBe ""
@@ -127,7 +127,7 @@ class WatchlistPresenterTest {
         presenter.state.test {
             awaitItem() shouldBe WatchlistState()
 
-            factory.episodeRepository.setNextEpisodesForWatchlist(cachedNextEpisodes)
+            factory.upNextRepository.setNextEpisodesForWatchlist(cachedNextEpisodes)
 
             val initialState = awaitItem()
             initialState.isSearchActive shouldBe false
@@ -154,7 +154,7 @@ class WatchlistPresenterTest {
         presenter.state.test {
             awaitItem() shouldBe WatchlistState()
 
-            factory.episodeRepository.setNextEpisodesForWatchlist(nextEpisodes)
+            factory.upNextRepository.setNextEpisodesForWatchlist(nextEpisodes)
 
             val state = awaitItem()
             state.watchNextEpisodes.size shouldBe 2
@@ -173,7 +173,7 @@ class WatchlistPresenterTest {
         presenter.state.test {
             awaitItem() shouldBe WatchlistState()
 
-            factory.episodeRepository.setNextEpisodesForWatchlist(nextEpisodes)
+            factory.upNextRepository.setNextEpisodesForWatchlist(nextEpisodes)
             awaitItem()
 
             presenter.dispatch(WatchlistQueryChanged("Loki"))
@@ -204,7 +204,7 @@ class WatchlistPresenterTest {
         presenter.state.test {
             awaitItem() shouldBe WatchlistState()
 
-            factory.episodeRepository.setNextEpisodesForWatchlist(listOf(premiereEpisode))
+            factory.upNextRepository.setNextEpisodesForWatchlist(listOf(premiereEpisode))
 
             val state = awaitItem()
             state.watchNextEpisodes.size shouldBe 1
@@ -236,7 +236,7 @@ class WatchlistPresenterTest {
         presenter.state.test {
             awaitItem() shouldBe WatchlistState()
 
-            factory.episodeRepository.setNextEpisodesForWatchlist(listOf(staleEpisode, activeEpisode))
+            factory.upNextRepository.setNextEpisodesForWatchlist(listOf(staleEpisode, activeEpisode))
 
             val state = awaitItem()
             state.watchNextEpisodes.size shouldBe 1
