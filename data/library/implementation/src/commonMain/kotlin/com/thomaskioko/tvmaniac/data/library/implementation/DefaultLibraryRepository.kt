@@ -158,12 +158,16 @@ public class DefaultLibraryRepository(
         processPendingUploadActions()
         processPendingDeleteActions()
 
-        val watchlistChanged = traktActivityRepository.hasActivityChanged(SHOWS_WATCHLISTED)
+        val activityChanged = traktActivityRepository.hasActivityChanged(SHOWS_WATCHLISTED)
+        val shouldRefresh = forceRefresh || activityChanged
 
-        if (forceRefresh || watchlistChanged) {
-            libraryStore.fresh(Unit)
-        } else {
-            libraryStore.get(Unit)
+        when {
+            shouldRefresh -> libraryStore.fresh(Unit)
+            else -> libraryStore.get(Unit)
+        }
+
+        if (activityChanged) {
+            traktActivityRepository.markActivityAsSynced(SHOWS_WATCHLISTED)
         }
 
         logger.debug(TAG, "Sync completed")

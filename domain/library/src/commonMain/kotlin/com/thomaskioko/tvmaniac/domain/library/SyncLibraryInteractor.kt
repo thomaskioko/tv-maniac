@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.data.library.LibraryRepository
 import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderRepository
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
+import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityRepository
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
@@ -18,12 +19,15 @@ public class SyncLibraryInteractor(
     private val followedShowsRepository: FollowedShowsRepository,
     private val showDetailsRepository: ShowDetailsRepository,
     private val watchProviderRepository: WatchProviderRepository,
+    private val traktActivityRepository: TraktActivityRepository,
     private val dispatchers: AppCoroutineDispatchers,
     private val logger: Logger,
 ) : Interactor<SyncLibraryInteractor.Param>() {
 
     override suspend fun doWork(params: Param) {
         withContext(dispatchers.io) {
+            traktActivityRepository.fetchLatestActivities(params.forceRefresh)
+
             val needsSync = params.forceRefresh || libraryRepository.needsSync()
 
             if (needsSync) {

@@ -11,6 +11,7 @@ kotlin {
                 implementation(projects.data.followedshows.api)
                 implementation(projects.data.library.api)
                 implementation(projects.data.showdetails.api)
+                implementation(projects.data.syncActivity.api)
                 implementation(projects.data.watchproviders.api)
 
                 implementation(libs.coroutines.core)
