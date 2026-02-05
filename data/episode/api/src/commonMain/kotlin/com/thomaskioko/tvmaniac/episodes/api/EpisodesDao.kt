@@ -42,4 +42,9 @@ public interface EpisodesDao {
         showTraktId: Long,
         includeSpecials: Boolean,
     ): Flow<NextEpisodeForShow?>
+
+    public suspend fun getNextEpisodeForShow(
+        showTraktId: Long,
+        includeSpecials: Boolean,
+    ): NextEpisodeForShow?
 }

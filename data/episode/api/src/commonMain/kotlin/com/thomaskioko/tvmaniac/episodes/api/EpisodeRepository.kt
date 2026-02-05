@@ -1,16 +1,10 @@
 package com.thomaskioko.tvmaniac.episodes.api
 
-import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import kotlinx.coroutines.flow.Flow
 
 public interface EpisodeRepository {
-
-    /**
-     * Observe next episodes for all shows in the watchlist using the shows_next_to_watch view.
-     */
-    public fun observeNextEpisodesForWatchlist(): Flow<List<NextEpisodeWithShow>>
 
     /**
      * Mark an episode as watched. The SQL view automatically updates next episode calculations.

@@ -120,4 +120,14 @@ public class DefaultEpisodesDao(
             showTraktId = Id<TraktId>(showTraktId),
             includeSpecials = if (includeSpecials) 1L else 0L,
         ).asFlow().mapToOneOrNull(dispatchers.databaseRead)
+
+    override suspend fun getNextEpisodeForShow(
+        showTraktId: Long,
+        includeSpecials: Boolean,
+    ): NextEpisodeForShow? = withContext(dispatchers.databaseRead) {
+        database.showsNextToWatchQueries.nextEpisodeForShow(
+            showTraktId = Id<TraktId>(showTraktId),
+            includeSpecials = if (includeSpecials) 1L else 0L,
+        ).executeAsOneOrNull()
+    }
 }

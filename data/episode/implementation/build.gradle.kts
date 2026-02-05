@@ -23,8 +23,10 @@ kotlin {
                 implementation(projects.data.database.sqldelight)
                 implementation(projects.data.datastore.api)
                 implementation(projects.data.episode.api)
+                implementation(projects.data.followedshows.api)
                 implementation(projects.data.requestManager.api)
                 implementation(projects.data.traktauth.api)
+                implementation(projects.data.upnext.api)
 
                 implementation(libs.kotlinx.datetime)
                 implementation(libs.sqldelight.extensions)
@@ -39,6 +41,8 @@ kotlin {
                 implementation(projects.data.database.testing)
                 implementation(projects.data.datastore.testing)
                 implementation(projects.data.episode.testing)
+                implementation(projects.data.upnext.testing)
+                implementation(projects.data.followedshows.testing)
                 implementation(projects.data.requestManager.testing)
                 implementation(projects.i18n.testing)
             }
