@@ -20,13 +20,14 @@ import com.thomaskioko.tvmaniac.discover.presenter.model.NextEpisodeUiModel
 import com.thomaskioko.tvmaniac.domain.discover.DiscoverShowsInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
-import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsInteractor
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
+import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
+import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldNotBeSameInstanceAs
@@ -51,6 +52,7 @@ class DiscoverShowsPresenterTest {
     private val popularShowsRepository = FakePopularShowsRepository()
     private val genreRepository = FakeGenreRepository()
     private val episodeRepository = FakeEpisodeRepository()
+    private val upNextRepository = FakeUpNextRepository()
     private val followedShowsRepository = FakeFollowedShowsRepository()
     private val traktAuthRepository = FakeTraktAuthRepository()
     private val coroutineDispatcher = AppCoroutineDispatchers(
@@ -273,6 +275,7 @@ class DiscoverShowsPresenterTest {
                 navigatedEpisodeId = episodeId
             },
             onNavigateToSeason = { _, _, _ -> },
+            onNavigateToUpNext = {},
             discoverShowsInteractor = DiscoverShowsInteractor(
                 featuredShowsRepository = featuredShowsRepository,
                 topRatedShowsRepository = topRatedShowsRepository,
@@ -280,7 +283,7 @@ class DiscoverShowsPresenterTest {
                 trendingShowsRepository = trendingShowsRepository,
                 upcomingShowsRepository = upcomingShowsRepository,
                 genreRepository = genreRepository,
-                episodeRepository = episodeRepository,
+                upNextRepository = upNextRepository,
                 dispatchers = coroutineDispatcher,
             ),
             followedShowsRepository = followedShowsRepository,
@@ -331,7 +334,7 @@ class DiscoverShowsPresenterTest {
     }
 
     private fun setNextEpisodes(episodes: List<NextEpisodeWithShow>) {
-        episodeRepository.setNextEpisodesForWatchlist(episodes)
+        upNextRepository.setNextEpisodesForWatchlist(episodes)
     }
 
     private fun createNextEpisodesList(size: Int = LIST_SIZE) = List(size) { index ->
@@ -409,6 +412,7 @@ class DiscoverShowsPresenterTest {
         onNavigateToMore = {},
         onNavigateToEpisode = { _, _ -> },
         onNavigateToSeason = { _, _, _ -> },
+        onNavigateToUpNext = {},
         discoverShowsInteractor = DiscoverShowsInteractor(
             featuredShowsRepository = featuredShowsRepository,
             topRatedShowsRepository = topRatedShowsRepository,
@@ -416,7 +420,7 @@ class DiscoverShowsPresenterTest {
             trendingShowsRepository = trendingShowsRepository,
             upcomingShowsRepository = upcomingShowsRepository,
             genreRepository = genreRepository,
-            episodeRepository = episodeRepository,
+            upNextRepository = upNextRepository,
             dispatchers = coroutineDispatcher,
         ),
         followedShowsRepository = followedShowsRepository,
