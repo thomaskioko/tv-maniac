@@ -207,4 +207,18 @@ public interface DatastoreRepository {
      * @return A Flow of the sort option name, defaulting to "LAST_WATCHED_DESC".
      */
     public fun observeLibrarySortOption(): Flow<String>
+
+    /**
+     * Saves the user's preferred Up Next sort option.
+     *
+     * @param sortOption The sort option name (e.g., "LAST_WATCHED", "AIR_DATE").
+     */
+    public suspend fun saveUpNextSortOption(sortOption: String)
+
+    /**
+     * Observes the user's preferred Up Next sort option.
+     *
+     * @return A Flow of the sort option name, defaulting to "LAST_WATCHED".
+     */
+    public fun observeUpNextSortOption(): Flow<String>
 }
