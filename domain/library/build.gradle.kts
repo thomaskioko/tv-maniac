@@ -8,10 +8,8 @@ kotlin {
             dependencies {
                 implementation(projects.core.base)
                 implementation(projects.core.logger.api)
-                implementation(projects.data.episode.api)
                 implementation(projects.data.followedshows.api)
                 implementation(projects.data.library.api)
-                implementation(projects.data.seasons.api)
                 implementation(projects.data.showdetails.api)
                 implementation(projects.data.watchproviders.api)
 

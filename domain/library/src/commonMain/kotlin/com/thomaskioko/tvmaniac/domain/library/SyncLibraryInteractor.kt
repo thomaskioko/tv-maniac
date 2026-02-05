@@ -8,7 +8,6 @@ import com.thomaskioko.tvmaniac.data.library.LibraryRepository
 import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderRepository
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
-import com.thomaskioko.tvmaniac.seasons.api.SeasonsEpisodesSyncRepository
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
@@ -18,7 +17,6 @@ public class SyncLibraryInteractor(
     private val libraryRepository: LibraryRepository,
     private val followedShowsRepository: FollowedShowsRepository,
     private val showDetailsRepository: ShowDetailsRepository,
-    private val seasonsEpisodesSyncRepository: SeasonsEpisodesSyncRepository,
     private val watchProviderRepository: WatchProviderRepository,
     private val dispatchers: AppCoroutineDispatchers,
     private val logger: Logger,
@@ -48,13 +46,6 @@ public class SyncLibraryInteractor(
 
                 watchProviderRepository.fetchWatchProviders(
                     traktId = show.traktId,
-                    forceRefresh = params.forceRefresh,
-                )
-
-                ensureActive()
-
-                seasonsEpisodesSyncRepository.syncSeasonsWithEpisodes(
-                    showTraktId = show.traktId,
                     forceRefresh = params.forceRefresh,
                 )
             }
