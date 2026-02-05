@@ -1,0 +1,121 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.TraktId;
+
+CREATE TABLE IF NOT EXISTS next_episodes (
+    show_trakt_id INTEGER AS Id<TraktId> PRIMARY KEY NOT NULL,
+    episode_trakt_id INTEGER DEFAULT NULL,
+    season_number INTEGER DEFAULT NULL,
+    episode_number INTEGER DEFAULT NULL,
+    title TEXT DEFAULT NULL,
+    overview TEXT DEFAULT NULL,
+    runtime INTEGER DEFAULT NULL,
+    first_aired INTEGER DEFAULT NULL,
+    image_url TEXT DEFAULT NULL,
+    is_show_complete INTEGER NOT NULL DEFAULT 0,
+    last_episode_season INTEGER DEFAULT NULL,
+    last_episode_number INTEGER DEFAULT NULL,
+    trakt_last_watched_at INTEGER DEFAULT NULL,
+    updated_at INTEGER NOT NULL,
+    FOREIGN KEY(show_trakt_id) REFERENCES tvshow(trakt_id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_next_episodes_updated_at ON next_episodes(updated_at);
+CREATE INDEX IF NOT EXISTS idx_next_episodes_trakt_last_watched ON next_episodes(trakt_last_watched_at);
+
+upsert:
+INSERT OR REPLACE INTO next_episodes(
+    show_trakt_id,
+    episode_trakt_id,
+    season_number,
+    episode_number,
+    title,
+    overview,
+    runtime,
+    first_aired,
+    image_url,
+    is_show_complete,
+    last_episode_season,
+    last_episode_number,
+    trakt_last_watched_at,
+    updated_at
+)
+VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+nextEpisodesWithShowInfo:
+SELECT
+    next_ep.show_trakt_id,
+    tvshow.tmdb_id AS show_tmdb_id,
+    tvshow.name AS show_name,
+    tvshow.poster_path AS show_poster,
+    tvshow.status AS show_status,
+    tvshow.year AS show_year,
+    next_ep.episode_trakt_id AS episode_id,
+    next_ep.title AS episode_name,
+    season.id AS season_id,
+    next_ep.season_number,
+    next_ep.episode_number,
+    next_ep.runtime,
+    next_ep.image_url AS still_path,
+    next_ep.overview,
+    next_ep.first_aired,
+    next_ep.is_show_complete,
+    next_ep.last_episode_season,
+    next_ep.last_episode_number,
+    next_ep.updated_at,
+    followed_shows.followed_at,
+    COALESCE(show_metadata.season_count, 0) AS season_count,
+    COALESCE(show_metadata.episode_count, 0) AS episode_count,
+    COALESCE(show_metadata.cached_watched_count, 0) AS watched_count,
+    COALESCE(show_metadata.cached_total_count, 0) AS total_count,
+    next_ep.trakt_last_watched_at AS last_watched_at
+FROM next_episodes AS next_ep
+INNER JOIN followed_shows ON followed_shows.trakt_id = next_ep.show_trakt_id
+INNER JOIN tvshow ON tvshow.trakt_id = next_ep.show_trakt_id
+LEFT JOIN season ON season.show_trakt_id = next_ep.show_trakt_id
+    AND season.season_number = next_ep.season_number
+LEFT JOIN show_metadata ON show_metadata.show_trakt_id = next_ep.show_trakt_id
+WHERE followed_shows.pending_action != 'DELETE'
+  AND next_ep.is_show_complete = 0
+ORDER BY COALESCE(next_ep.trakt_last_watched_at, followed_shows.followed_at) DESC;
+
+getNextEpisodeForShow:
+SELECT
+    next_ep.show_trakt_id,
+    next_ep.episode_trakt_id AS episode_id,
+    next_ep.season_number,
+    next_ep.episode_number,
+    next_ep.title AS episode_name,
+    next_ep.overview,
+    next_ep.runtime,
+    next_ep.first_aired,
+    next_ep.image_url AS still_path,
+    next_ep.is_show_complete,
+    next_ep.updated_at
+FROM next_episodes AS next_ep
+WHERE next_ep.show_trakt_id = ?;
+
+deleteForShow:
+DELETE FROM next_episodes WHERE show_trakt_id = ?;
+
+deleteAll:
+DELETE FROM next_episodes;
+
+countEntries:
+SELECT COUNT(*) FROM next_episodes;
+
+entriesForFollowedShows:
+SELECT
+    next_ep.show_trakt_id,
+    next_ep.episode_trakt_id,
+    next_ep.season_number,
+    next_ep.episode_number,
+    next_ep.title,
+    next_ep.overview,
+    next_ep.runtime,
+    next_ep.first_aired,
+    next_ep.image_url,
+    next_ep.is_show_complete,
+    next_ep.updated_at
+FROM next_episodes AS next_ep
+INNER JOIN followed_shows ON followed_shows.trakt_id = next_ep.show_trakt_id
+WHERE followed_shows.pending_action != 'DELETE';

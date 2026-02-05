@@ -25,6 +25,19 @@ INSERT OR REPLACE INTO show_metadata(
     status
 ) VALUES (?, ?, ?, ?);
 
+upsertWithProgress:
+INSERT INTO show_metadata(
+    show_trakt_id,
+    season_count,
+    episode_count,
+    status,
+    cached_watched_count,
+    cached_total_count
+) VALUES (?, 0, 0, NULL, ?, ?)
+ON CONFLICT(show_trakt_id) DO UPDATE SET
+    cached_watched_count = excluded.cached_watched_count,
+    cached_total_count = excluded.cached_total_count;
+
 recalculateLastWatched:
 WITH last_watched_cte AS (
     SELECT we.episode_id, we.season_number, we.episode_number, we.watched_at
