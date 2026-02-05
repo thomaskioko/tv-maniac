@@ -16,9 +16,6 @@ CREATE TABLE show_metadata (
     FOREIGN KEY(show_trakt_id) REFERENCES tvshow(trakt_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
--- indices
-CREATE UNIQUE INDEX IF NOT EXISTS `index_show_metadata_show_trakt_id` ON `show_metadata` (`show_trakt_id`);
-
 -- queries
 upsert:
 INSERT OR REPLACE INTO show_metadata(
@@ -29,39 +26,19 @@ INSERT OR REPLACE INTO show_metadata(
 ) VALUES (?, ?, ?, ?);
 
 recalculateLastWatched:
+WITH last_watched_cte AS (
+    SELECT we.episode_id, we.season_number, we.episode_number, we.watched_at
+    FROM watched_episodes we
+    WHERE we.show_trakt_id = :show_trakt_id
+      AND (:include_specials = 1 OR we.season_number > 0)
+    ORDER BY we.watched_at DESC, (1000 * we.season_number) + we.episode_number DESC
+    LIMIT 1
+)
 UPDATE show_metadata SET
-    last_watched_episode_id = (
-        SELECT we.episode_id
-        FROM watched_episodes we
-        WHERE we.show_trakt_id = :show_trakt_id
-          AND (:include_specials = 1 OR we.season_number > 0)
-        ORDER BY we.watched_at DESC, (1000 * we.season_number) + we.episode_number DESC
-        LIMIT 1
-    ),
-    last_watched_season_number = (
-        SELECT we.season_number
-        FROM watched_episodes we
-        WHERE we.show_trakt_id = :show_trakt_id
-          AND (:include_specials = 1 OR we.season_number > 0)
-        ORDER BY we.watched_at DESC, (1000 * we.season_number) + we.episode_number DESC
-        LIMIT 1
-    ),
-    last_watched_episode_number = (
-        SELECT we.episode_number
-        FROM watched_episodes we
-        WHERE we.show_trakt_id = :show_trakt_id
-          AND (:include_specials = 1 OR we.season_number > 0)
-        ORDER BY we.watched_at DESC, (1000 * we.season_number) + we.episode_number DESC
-        LIMIT 1
-    ),
-    last_watched_at = (
-        SELECT we.watched_at
-        FROM watched_episodes we
-        WHERE we.show_trakt_id = :show_trakt_id
-          AND (:include_specials = 1 OR we.season_number > 0)
-        ORDER BY we.watched_at DESC, (1000 * we.season_number) + we.episode_number DESC
-        LIMIT 1
-    )
+    last_watched_episode_id = (SELECT episode_id FROM last_watched_cte),
+    last_watched_season_number = (SELECT season_number FROM last_watched_cte),
+    last_watched_episode_number = (SELECT episode_number FROM last_watched_cte),
+    last_watched_at = (SELECT watched_at FROM last_watched_cte)
 WHERE show_trakt_id = :show_trakt_id;
 
 recalculateCachedCounts:

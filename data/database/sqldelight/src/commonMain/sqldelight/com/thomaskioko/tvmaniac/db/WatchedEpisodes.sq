@@ -22,6 +22,7 @@ CREATE INDEX IF NOT EXISTS idx_watched_episodes_show_trakt_id ON watched_episode
 CREATE INDEX IF NOT EXISTS idx_watched_episodes_show_season ON watched_episodes(show_trakt_id, season_number);
 CREATE INDEX IF NOT EXISTS idx_watched_episodes_pending_action ON watched_episodes(pending_action);
 CREATE INDEX IF NOT EXISTS idx_watched_episodes_trakt ON watched_episodes(trakt_id);
+CREATE INDEX IF NOT EXISTS idx_watched_show_episode ON watched_episodes(show_trakt_id, episode_id);
 
 -- Queries
 
@@ -208,8 +209,21 @@ INSERT OR REPLACE INTO watched_episodes(
 getAllSeasonsWatchProgress:
 SELECT
     s.season_number,
-    (SELECT COUNT(*) FROM watched_episodes we WHERE we.show_trakt_id = :show_trakt_id AND we.season_number = s.season_number) AS watched_count,
-    (SELECT COUNT(*) FROM episode e WHERE e.show_trakt_id = :show_trakt_id AND e.season_id = s.id AND (e.first_aired IS NULL OR e.first_aired <= date('now'))) AS total_count
+    COALESCE(watched.cnt, 0) AS watched_count,
+    COALESCE(total.cnt, 0) AS total_count
 FROM season s
+LEFT JOIN (
+    SELECT season_number, COUNT(*) AS cnt
+    FROM watched_episodes
+    WHERE show_trakt_id = :show_trakt_id
+    GROUP BY season_number
+) watched ON watched.season_number = s.season_number
+LEFT JOIN (
+    SELECT season_id, COUNT(*) AS cnt
+    FROM episode
+    WHERE show_trakt_id = :show_trakt_id
+      AND (first_aired IS NULL OR first_aired <= date('now'))
+    GROUP BY season_id
+) total ON total.season_id = s.id
 WHERE s.show_trakt_id = :show_trakt_id
 ORDER BY s.season_number;
