@@ -22,9 +22,8 @@ public class DefaultWatchProviderRepository(
 ) : WatchProviderRepository {
 
     override suspend fun fetchWatchProviders(traktId: Long, forceRefresh: Boolean) {
-        val isEmpty = dao.fetchWatchProvidersByTraktId(traktId).isEmpty()
         when {
-            forceRefresh || isEmpty -> store.fresh(traktId)
+            forceRefresh -> store.fresh(traktId)
             else -> store.get(traktId)
         }
     }
