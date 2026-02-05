@@ -286,4 +286,8 @@
     <string name="label_library_status_in_production">In Produktion</string>
     <string name="label_library_status_ended">Beendet</string>
     <string name="label_library_status_canceled">Abgesetzt</string>
+
+    <string name="label_upnext_empty">Keine Sendungen in Ihrer Merkliste</string>
+    <string name="label_upnext_sort_last_watched">Zuletzt gesehen</string>
+    <string name="label_upnext_sort_air_date">Ausstrahlungsdatum</string>
 </resources>

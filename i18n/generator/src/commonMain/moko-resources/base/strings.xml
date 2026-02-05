@@ -288,4 +288,8 @@
     <string name="label_calendar_empty">No upcoming episodes</string>
     <string name="label_calendar_login_required">Login to Trakt to see your calendar</string>
     <string name="label_calendar_more_episodes">+%d episodes</string>
+
+    <string name="label_upnext_empty">No shows in your watchlist</string>
+    <string name="label_upnext_sort_last_watched">Last Watched</string>
+    <string name="label_upnext_sort_air_date">Air Date</string>
 </resources>

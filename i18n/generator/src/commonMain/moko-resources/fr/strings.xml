@@ -284,4 +284,8 @@
     <string name="label_library_status_in_production">En production</string>
     <string name="label_library_status_ended">Terminé</string>
     <string name="label_library_status_canceled">Annulé</string>
+
+    <string name="label_upnext_empty">Aucune série dans votre liste de suivi</string>
+    <string name="label_upnext_sort_last_watched">Dernièrement vu</string>
+    <string name="label_upnext_sort_air_date">Date de diffusion</string>
 </resources>
