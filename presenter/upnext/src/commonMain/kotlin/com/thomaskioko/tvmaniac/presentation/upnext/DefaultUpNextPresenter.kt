@@ -139,27 +139,34 @@ public class DefaultUpNextPresenter(
     }
 }
 
-private fun NextEpisodeWithShow.toUiModel(): UpNextEpisodeUiModel = UpNextEpisodeUiModel(
-    showTraktId = showTraktId,
-    showTmdbId = showTmdbId,
-    showName = showName,
-    showPoster = showPoster,
-    showStatus = showStatus,
-    showYear = showYear,
-    episodeId = episodeId,
-    episodeName = episodeName,
-    seasonId = seasonId,
-    seasonNumber = seasonNumber,
-    episodeNumber = episodeNumber,
-    runtime = runtime,
-    stillPath = stillPath,
-    overview = overview,
-    firstAired = firstAired,
-    seasonCount = seasonCount,
-    episodeCount = episodeCount,
-    watchedCount = watchedCount,
-    totalCount = totalCount,
-)
+private fun NextEpisodeWithShow.toUiModel(): UpNextEpisodeUiModel {
+    val season = seasonNumber.toString().padStart(2, '0')
+    val episode = episodeNumber.toString().padStart(2, '0')
+    return UpNextEpisodeUiModel(
+        showTraktId = showTraktId,
+        showTmdbId = showTmdbId,
+        showName = showName,
+        showPoster = showPoster,
+        showStatus = showStatus,
+        showYear = showYear,
+        episodeId = episodeId,
+        episodeName = episodeName,
+        seasonId = seasonId,
+        seasonNumber = seasonNumber,
+        episodeNumber = episodeNumber,
+        runtime = runtime,
+        stillPath = stillPath,
+        overview = overview,
+        firstAired = firstAired,
+        seasonCount = seasonCount,
+        episodeCount = episodeCount,
+        watchedCount = watchedCount,
+        totalCount = totalCount,
+        formattedEpisodeNumber = "S${season}E$episode",
+        remainingEpisodes = totalCount - watchedCount,
+        formattedRuntime = runtime?.let { "${it}m" },
+    )
+}
 
 @Inject
 @SingleIn(ActivityScope::class)
