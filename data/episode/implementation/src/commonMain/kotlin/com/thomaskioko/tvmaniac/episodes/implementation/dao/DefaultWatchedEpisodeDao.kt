@@ -58,9 +58,10 @@ public class DefaultWatchedEpisodeDao(
                     tmdbId = null,
                     followedAt = timestamp,
                 )
+                val localEpisodeId = getEpisodeIdOrNull(showTraktId, seasonNumber, episodeNumber)
                 val _ = database.watchedEpisodesQueries.markAsWatched(
                     show_trakt_id = Id(showTraktId),
-                    episode_id = Id(episodeId),
+                    episode_id = localEpisodeId?.let { Id(it) },
                     season_number = seasonNumber,
                     episode_number = episodeNumber,
                     watched_at = timestamp,
@@ -70,7 +71,7 @@ public class DefaultWatchedEpisodeDao(
                     show_trakt_id = Id(showTraktId),
                     include_specials = if (includeSpecials) 1L else 0L,
                 )
-                val _ = database.showMetadataQueries.recalculateCachedCounts(
+                val _ = database.showMetadataQueries.incrementWatchedCount(
                     show_trakt_id = Id(showTraktId),
                 )
             }
@@ -362,6 +363,22 @@ public class DefaultWatchedEpisodeDao(
             )
             .executeAsList()
         return unwatchedEpisodes
+    }
+
+    private fun getEpisodeIdOrNull(
+        showTraktId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+    ): Long? {
+        return database.episodesQueries
+            .getEpisodeByShowSeasonEpisodeNumber(
+                showTraktId = Id(showTraktId),
+                seasonNumber = seasonNumber,
+                episodeNumber = episodeNumber,
+            )
+            .executeAsOneOrNull()
+            ?.episode_id
+            ?.id
     }
 
     override suspend fun getEpisodesForSeason(

@@ -30,12 +30,19 @@ public class DefaultWatchedEpisodeSyncRepository(
     private val logger: Logger,
 ) : WatchedEpisodeSyncRepository {
 
+    override suspend fun uploadPendingEpisodes() {
+        val authState = traktAuthRepository.getAuthState()
+        if (authState == null || !authState.isAuthorized) return
+
+        processPendingEpisodesToUploads()
+    }
+
     override suspend fun syncShowEpisodeWatches(showTraktId: Long, forceRefresh: Boolean) {
         val authState = traktAuthRepository.getAuthState()
         if (authState == null || !authState.isAuthorized) return
 
-        processPendingUploads()
-        processPendingDeletes()
+        processPendingEpisodesToUploads()
+        processPendingEpisodesDeletes()
 
         if (forceRefresh || lastRequestStore.isShowRequestExpired(showTraktId)) {
             syncShowWatches(showTraktId)
@@ -43,7 +50,7 @@ public class DefaultWatchedEpisodeSyncRepository(
         }
     }
 
-    private suspend fun processPendingUploads() {
+    private suspend fun processPendingEpisodesToUploads() {
         val pending = dao.entriesByPendingAction(PendingAction.UPLOAD)
 
         if (pending.isEmpty()) return
@@ -72,7 +79,7 @@ public class DefaultWatchedEpisodeSyncRepository(
         logger.debug(TAG, "Successfully uploaded ${pending.size} episodes")
     }
 
-    private suspend fun processPendingDeletes() {
+    private suspend fun processPendingEpisodesDeletes() {
         val pending = dao.entriesByPendingAction(PendingAction.DELETE)
 
         if (pending.isEmpty()) return

@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.episodes.implementation
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeDao
+import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
@@ -22,6 +23,7 @@ public class DefaultEpisodeRepository(
     private val watchedEpisodeDao: WatchedEpisodeDao,
     private val datastoreRepository: DatastoreRepository,
     private val upNextRepository: UpNextRepository,
+    private val syncRepository: WatchedEpisodeSyncRepository,
 ) : EpisodeRepository {
 
     override suspend fun markEpisodeAsWatched(
@@ -38,7 +40,13 @@ public class DefaultEpisodeRepository(
             episodeNumber = episodeNumber,
             includeSpecials = includeSpecials,
         )
-        upNextRepository.updateUpNextForShow(showTraktId)
+        syncRepository.uploadPendingEpisodes()
+
+        upNextRepository.fetchUpNext(
+            showTraktId = showTraktId,
+            seasonNumber = seasonNumber,
+            episodeNumber = episodeNumber,
+        )
     }
 
     override suspend fun markEpisodeAndPreviousEpisodesWatched(
