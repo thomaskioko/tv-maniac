@@ -27,12 +27,11 @@ public class ObserveUpNextInteractor(
                     UpNextResult(
                         sortOption = sortOption,
                         episodes = episodes
-                            .filterAired(dateTimeProvider.nowMillis(), sortOption)
+                            .filterAired(dateTimeProvider.nowMillis(), sortOption),
                     )
                 }
         }
 }
-
 
 private fun List<NextEpisodeWithShow>.filterAired(nowMillis: Long, option: UpNextSortOption): List<NextEpisodeWithShow> =
     filter { episode ->
