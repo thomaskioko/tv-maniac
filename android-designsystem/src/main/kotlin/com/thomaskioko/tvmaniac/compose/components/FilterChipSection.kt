@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.ui.library
+package com.thomaskioko.tvmaniac.compose.components
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
@@ -41,7 +41,7 @@ import com.thomaskioko.tvmaniac.i18n.resolve
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-internal fun <T> FilterChipSection(
+public fun <T> FilterChipSection(
     title: String,
     items: List<T>,
     selectedItems: Set<T>,
@@ -92,7 +92,7 @@ internal fun <T> FilterChipSection(
 }
 
 @Composable
-internal fun SectionHeader(
+public fun SectionHeader(
     title: String,
     modifier: Modifier = Modifier,
 ) {
@@ -118,7 +118,7 @@ internal fun SectionHeader(
 }
 
 @Composable
-internal fun SelectableFilterChip(
+public fun SelectableFilterChip(
     label: String,
     isSelected: Boolean,
     onClick: () -> Unit,
@@ -241,7 +241,7 @@ private fun SectionHeaderPreview() {
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 private fun SelectableFilterChipPreview() {
     TvManiacTheme {
