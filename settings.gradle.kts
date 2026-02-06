@@ -168,6 +168,7 @@ include(
     ":data:watchproviders:testing",
     ":domain:discover",
     ":domain:episode",
+    ":domain:upnext",
     ":domain:followedshows",
     ":domain:genre",
     ":domain:library",
