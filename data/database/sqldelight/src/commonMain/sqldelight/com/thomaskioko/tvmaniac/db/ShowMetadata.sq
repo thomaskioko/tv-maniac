@@ -54,6 +54,11 @@ UPDATE show_metadata SET
     last_watched_at = (SELECT watched_at FROM last_watched_cte)
 WHERE show_trakt_id = :show_trakt_id;
 
+incrementWatchedCount:
+UPDATE show_metadata SET
+    cached_watched_count = cached_watched_count + 1
+WHERE show_trakt_id = :show_trakt_id;
+
 recalculateCachedCounts:
 UPDATE show_metadata SET
     cached_watched_count = (

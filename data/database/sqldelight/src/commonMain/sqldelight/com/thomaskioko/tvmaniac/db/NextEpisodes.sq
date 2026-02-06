@@ -112,9 +112,41 @@ LEFT JOIN season ON season.show_trakt_id = next_ep.show_trakt_id
     AND season.season_number = next_ep.season_number
 LEFT JOIN show_metadata ON show_metadata.show_trakt_id = next_ep.show_trakt_id
 WHERE next_ep.show_trakt_id = ?
-  AND next_ep.episode_trakt_id IS NOT NULL
-  AND followed_shows.pending_action != 'DELETE'
-  AND next_ep.is_show_complete = 0;
+  AND followed_shows.pending_action != 'DELETE';
+
+advanceAfterWatched:
+UPDATE next_episodes SET
+    is_show_complete = CASE
+        WHEN last_episode_season IS NOT NULL
+            AND last_episode_season = :watched_season
+            AND last_episode_number = :watched_episode
+        THEN 1
+        ELSE is_show_complete
+    END,
+    episode_number = CASE
+        WHEN last_episode_season IS NOT NULL
+            AND last_episode_season = :watched_season
+            AND last_episode_number = :watched_episode
+        THEN episode_number
+        ELSE episode_number + 1
+    END,
+    episode_trakt_id = CASE
+        WHEN last_episode_season IS NOT NULL
+            AND last_episode_season = :watched_season
+            AND last_episode_number = :watched_episode
+        THEN episode_trakt_id
+        ELSE 0
+    END,
+    title = NULL,
+    overview = NULL,
+    runtime = NULL,
+    first_aired = NULL,
+    image_url = NULL,
+    trakt_last_watched_at = :watched_at,
+    updated_at = :updated_at
+WHERE show_trakt_id = :show_trakt_id
+    AND season_number = :watched_season
+    AND episode_number = :watched_episode;
 
 deleteForShow:
 DELETE FROM next_episodes WHERE show_trakt_id = ?;
