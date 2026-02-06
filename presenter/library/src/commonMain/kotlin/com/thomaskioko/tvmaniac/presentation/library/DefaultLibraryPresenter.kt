@@ -23,7 +23,7 @@ import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -61,7 +61,6 @@ public class DefaultLibraryPresenter(
         observeSortOptionChanges()
         observeAuthState()
         observeLibrary()
-        syncLibrary()
     }
 
     override val state: StateFlow<LibraryState> = combine(
@@ -168,9 +167,9 @@ public class DefaultLibraryPresenter(
     private fun observeAuthState() {
         coroutineScope.launch {
             traktAuthRepository.state
-                .drop(1)
+                .distinctUntilChanged()
                 .filter { it == TraktAuthState.LOGGED_IN }
-                .collect { syncLibrary(forceRefresh = true) }
+                .collect { syncLibrary() }
         }
     }
 
