@@ -18,6 +18,7 @@ dependencies {
     implementation(projects.androidFeature.library)
     implementation(projects.androidFeature.profile)
     implementation(projects.androidFeature.search)
+    implementation(projects.androidFeature.upnext)
 
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.runtime)

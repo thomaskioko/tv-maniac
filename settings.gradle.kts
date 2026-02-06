@@ -58,6 +58,7 @@ include(
     ":android-feature:settings",
     ":android-feature:show-details",
     ":android-feature:trailers",
+    ":android-feature:upnext",
     ":android-feature:watchlist",
     ":api:tmdb:api",
     ":api:tmdb:implementation",

@@ -274,6 +274,29 @@ public extension TvManiac.EpisodeBadge {
     }
 }
 
+public extension TvManiac.UpNextEpisodeUiModel {
+    func toSwift() -> SwiftNextEpisode {
+        let season = String(format: "%02d", seasonNumber)
+        let episode = String(format: "%02d", episodeNumber)
+        let remaining = Int32(totalCount - watchedCount)
+        return .init(
+            showTraktId: showTraktId,
+            showName: showName,
+            showPoster: showPoster,
+            episodeId: episodeId,
+            episodeTitle: episodeName ?? "",
+            episodeNumber: "S\(season) | E\(episode)",
+            seasonId: seasonId,
+            seasonNumber: seasonNumber,
+            episodeNumberValue: episodeNumber,
+            runtime: runtime.map { "\($0) min" },
+            stillImage: stillPath,
+            overview: overview ?? "",
+            remainingEpisodes: remaining
+        )
+    }
+}
+
 public extension TvManiac.DiscoverViewState {
     var featuredShowsSwift: [SwiftShow] {
         featuredShows.map { $0.toSwift() }
