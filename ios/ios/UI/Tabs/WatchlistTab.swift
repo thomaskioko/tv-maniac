@@ -12,13 +12,9 @@ struct WatchlistTab: View {
     @FocusState private var isSearchFocused: Bool
     @Namespace private var animation
 
-    private var watchNextEpisodesSwift: [SwiftNextEpisode] {
-        uiState.watchNextEpisodes.map { $0.toSwift() }
-    }
-
-    private var staleEpisodesSwift: [SwiftNextEpisode] {
-        uiState.staleEpisodes.map { $0.toSwift() }
-    }
+    // Cache converted episodes to avoid recreating arrays on every render
+    @State private var watchNextEpisodesSwift: [SwiftNextEpisode] = []
+    @State private var staleEpisodesSwift: [SwiftNextEpisode] = []
 
     init(presenter: WatchlistPresenter) {
         self.presenter = presenter
@@ -86,6 +82,17 @@ struct WatchlistTab: View {
         .textInputAutocapitalization(.never)
         .toolbarBackground(theme.colors.surface, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
+        .onChange(of: uiState.watchNextEpisodes) { _, newValue in
+            watchNextEpisodesSwift = newValue.map { $0.toSwift() }
+        }
+        .onChange(of: uiState.staleEpisodes) { _, newValue in
+            staleEpisodesSwift = newValue.map { $0.toSwift() }
+        }
+        .onAppear {
+            // Initialize cached arrays
+            watchNextEpisodesSwift = uiState.watchNextEpisodes.map { $0.toSwift() }
+            staleEpisodesSwift = uiState.staleEpisodes.map { $0.toSwift() }
+        }
     }
 
     @ViewBuilder
@@ -213,7 +220,7 @@ struct WatchlistTab: View {
                 if !watchNextEpisodesSwift.isEmpty {
                     Section {
                         ForEach(watchNextEpisodesSwift, id: \.episodeId) { episode in
-                            UpNextListItemView(
+                            WatchListItemView(
                                 episode: episode,
                                 premiereLabel: String(\.badge_premiere),
                                 newLabel: String(\.badge_new),
@@ -250,7 +257,7 @@ struct WatchlistTab: View {
                 if !staleEpisodesSwift.isEmpty {
                     Section {
                         ForEach(staleEpisodesSwift, id: \.episodeId) { episode in
-                            UpNextListItemView(
+                            WatchListItemView(
                                 episode: episode,
                                 premiereLabel: String(\.badge_premiere),
                                 newLabel: String(\.badge_new),
