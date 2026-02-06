@@ -26,7 +26,16 @@ public struct FilterChip: View {
                 .background(
                     isSelected
                         ? theme.colors.accent
-                        : theme.colors.surfaceVariant.opacity(0.5)
+                        : Color.clear
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: theme.shapes.small)
+                        .strokeBorder(
+                            isSelected
+                                ? Color.clear
+                                : theme.colors.onSurface.opacity(0.2),
+                            lineWidth: 1
+                        )
                 )
                 .foregroundColor(
                     isSelected
