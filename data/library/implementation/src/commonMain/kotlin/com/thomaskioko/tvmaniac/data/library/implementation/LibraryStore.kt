@@ -10,7 +10,7 @@ import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowEntry
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsDao
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
-import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.WATCHLIST_SYNC
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.LIBRARY_SYNC
 import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityDao
 import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType.SHOWS_WATCHLISTED
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
@@ -60,8 +60,8 @@ public class LibraryStore(
             }
 
             requestManagerRepository.upsert(
-                entityId = WATCHLIST_SYNC.requestId,
-                requestType = WATCHLIST_SYNC.name,
+                entityId = LIBRARY_SYNC.requestId,
+                requestType = LIBRARY_SYNC.name,
             )
 
             traktActivityDao.markAsSynced(SHOWS_WATCHLISTED)
@@ -76,8 +76,8 @@ public class LibraryStore(
     Validator.by {
         withContext(dispatchers.io) {
             requestManagerRepository.isRequestValid(
-                requestType = WATCHLIST_SYNC.name,
-                threshold = WATCHLIST_SYNC.duration,
+                requestType = LIBRARY_SYNC.name,
+                threshold = LIBRARY_SYNC.duration,
             )
         }
     },

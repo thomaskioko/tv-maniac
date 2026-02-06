@@ -38,7 +38,7 @@ public class DefaultRequestManagerRepository(
 
     override fun clearSyncRelatedRequests() {
         val syncTypes = listOf(
-            RequestTypeConfig.WATCHLIST_SYNC.name,
+            RequestTypeConfig.LIBRARY_SYNC.name,
             RequestTypeConfig.EPISODE_WATCHES_SYNC.name,
             RequestTypeConfig.SHOW_EPISODE_WATCHES_SYNC.name,
             RequestTypeConfig.USER_PROFILE.name,

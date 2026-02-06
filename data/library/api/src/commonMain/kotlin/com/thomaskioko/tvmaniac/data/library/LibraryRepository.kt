@@ -4,7 +4,6 @@ import com.thomaskioko.tvmaniac.data.library.model.LibraryItem
 import com.thomaskioko.tvmaniac.data.library.model.LibrarySortOption
 import kotlinx.coroutines.flow.Flow
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.hours
 
 public interface LibraryRepository {
 
@@ -24,5 +23,5 @@ public interface LibraryRepository {
 
     public suspend fun syncLibrary(forceRefresh: Boolean = false)
 
-    public suspend fun needsSync(expiry: Duration = 3.hours): Boolean
+    public suspend fun needsSync(expiry: Duration): Boolean
 }

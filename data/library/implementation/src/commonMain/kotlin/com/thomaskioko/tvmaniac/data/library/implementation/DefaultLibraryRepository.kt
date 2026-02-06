@@ -15,9 +15,7 @@ import com.thomaskioko.tvmaniac.db.WatchProvidersForShow
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsDao
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
-import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.WATCHLIST_SYNC
-import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityRepository
-import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType.SHOWS_WATCHLISTED
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.LIBRARY_SYNC
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
@@ -49,7 +47,6 @@ public class DefaultLibraryRepository(
     private val traktListDataSource: TraktListRemoteDataSource,
     private val requestManagerRepository: RequestManagerRepository,
     private val traktAuthRepository: TraktAuthRepository,
-    private val traktActivityRepository: TraktActivityRepository,
     private val transactionRunner: DatabaseTransactionRunner,
     private val formatterUtil: FormatterUtil,
     private val logger: Logger,
@@ -155,17 +152,10 @@ public class DefaultLibraryRepository(
         processPendingUploadActions()
         processPendingDeleteActions()
 
-        val activityChanged = traktActivityRepository.hasActivityChanged(SHOWS_WATCHLISTED)
-        val shouldRefresh = forceRefresh || activityChanged
-
         val sortOption = currentSortOption()
         when {
-            shouldRefresh -> libraryStore.fresh(sortOption)
+            forceRefresh -> libraryStore.fresh(sortOption)
             else -> libraryStore.get(sortOption)
-        }
-
-        if (activityChanged) {
-            traktActivityRepository.markActivityAsSynced(SHOWS_WATCHLISTED)
         }
 
         logger.debug(TAG, "Sync completed")
@@ -173,7 +163,7 @@ public class DefaultLibraryRepository(
 
     override suspend fun needsSync(expiry: Duration): Boolean =
         !requestManagerRepository.isRequestValid(
-            requestType = WATCHLIST_SYNC.name,
+            requestType = LIBRARY_SYNC.name,
             threshold = expiry,
         )
 
