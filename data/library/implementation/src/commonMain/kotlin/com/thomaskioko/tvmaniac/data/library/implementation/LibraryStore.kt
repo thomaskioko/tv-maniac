@@ -34,7 +34,7 @@ public class LibraryStore(
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<Unit, List<FollowedShowEntry>> by storeBuilder(
     fetcher = apiFetcher { _: Unit ->
-        traktListDataSource.getWatchList(sortBy = "rank")
+        traktListDataSource.getWatchList(sortBy = "added", sortHow = "desc")
     },
     sourceOfTruth = SourceOfTruth.of(
         reader = { _: Unit -> followedShowsDao.entriesObservable() },
