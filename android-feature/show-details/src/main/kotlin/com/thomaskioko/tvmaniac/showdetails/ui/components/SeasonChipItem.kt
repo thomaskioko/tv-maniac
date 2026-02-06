@@ -11,7 +11,7 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.SeasonModel
 
 @Composable
-internal fun SeasonProgressCard(
+internal fun SeasonChipItem(
     season: SeasonModel,
     isSelected: Boolean,
     onClick: () -> Unit,
@@ -27,10 +27,10 @@ internal fun SeasonProgressCard(
 
 @ThemePreviews
 @Composable
-private fun SeasonProgressCardPreview() {
+private fun SeasonChipItemPreview() {
     TvManiacTheme {
         Surface {
-            SeasonProgressCard(
+            SeasonChipItem(
                 season = SeasonModel(
                     seasonId = 1L,
                     tvShowId = 1L,
@@ -49,10 +49,10 @@ private fun SeasonProgressCardPreview() {
 
 @ThemePreviews
 @Composable
-private fun SeasonProgressCardSelectedPreview() {
+private fun SeasonChipItemSelectedPreview() {
     TvManiacTheme {
         Surface {
-            SeasonProgressCard(
+            SeasonChipItem(
                 season = SeasonModel(
                     seasonId = 1L,
                     tvShowId = 1L,
