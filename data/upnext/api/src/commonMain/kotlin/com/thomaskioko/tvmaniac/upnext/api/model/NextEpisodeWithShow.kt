@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.episodes.api.model
+package com.thomaskioko.tvmaniac.upnext.api.model
 
 public data class NextEpisodeWithShow(
     val showTraktId: Long,
