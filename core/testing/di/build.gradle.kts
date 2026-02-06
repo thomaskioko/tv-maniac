@@ -30,6 +30,7 @@ kotlin {
             implementation(projects.presenter.moreShows)
             implementation(projects.presenter.seasondetails)
             implementation(projects.presenter.trailers)
+            implementation(projects.presenter.upnext)
             implementation(projects.data.datastore.api)
             implementation(projects.data.datastore.testing)
             implementation(projects.data.requestManager.api)

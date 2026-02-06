@@ -31,6 +31,7 @@ scaffold {
             export(projects.presenter.trailers)
             export(projects.presenter.profile)
             export(projects.presenter.library)
+            export(projects.presenter.upnext)
 
             export(libs.decompose.decompose)
             export(libs.essenty.lifecycle)
@@ -61,6 +62,7 @@ kotlin {
                 api(projects.presenter.trailers)
                 api(projects.presenter.profile)
                 api(projects.presenter.library)
+                api(projects.presenter.upnext)
 
                 api(projects.domain.followedshows)
                 api(projects.data.followedshows.api)
@@ -72,6 +74,9 @@ kotlin {
                 api(projects.data.watchlist.implementation)
                 api(projects.data.library.api)
                 api(projects.data.library.implementation)
+                api(projects.data.upnext.api)
+                api(projects.data.upnext.implementation)
+                api(projects.domain.upnext)
 
                 implementation(projects.api.tmdb.api)
                 implementation(projects.api.tmdb.implementation)

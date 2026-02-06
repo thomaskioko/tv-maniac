@@ -196,6 +196,7 @@ include(
     ":presenter:settings",
     ":presenter:show-details",
     ":presenter:trailers",
+    ":presenter:upnext",
     ":presenter:watchlist",
     ":shared",
 )

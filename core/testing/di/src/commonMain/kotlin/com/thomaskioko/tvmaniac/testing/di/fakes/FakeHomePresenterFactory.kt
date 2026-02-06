@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.testing.di.fakes
 import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.library.LibraryPresenter
+import com.thomaskioko.tvmaniac.presentation.upnext.UpNextPresenter
 import com.thomaskioko.tvmaniac.presenter.home.DefaultHomePresenter
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
@@ -20,6 +21,7 @@ public class FakeHomePresenterFactory(
     private val libraryPresenterFactory: LibraryPresenter.Factory,
     private val searchPresenterFactory: SearchShowsPresenter.Factory,
     private val profilePresenterFactory: ProfilePresenter.Factory,
+    private val upNextPresenterFactory: UpNextPresenter.Factory,
 ) : HomePresenter.Factory {
     override fun invoke(
         componentContext: ComponentContext,
@@ -34,6 +36,7 @@ public class FakeHomePresenterFactory(
             libraryPresenterFactory = libraryPresenterFactory,
             searchPresenterFactory = searchPresenterFactory,
             profilePresenterFactory = profilePresenterFactory,
+            upNextPresenterFactory = upNextPresenterFactory,
         )
         return factory(componentContext, onShowClicked, onMoreShowClicked, onShowGenreClicked, onNavigateToProfile, onSettingsClicked)
     }
