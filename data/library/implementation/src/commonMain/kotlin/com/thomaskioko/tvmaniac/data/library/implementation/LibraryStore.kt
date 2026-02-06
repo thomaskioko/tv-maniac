@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.apiFetcher
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.storeBuilder
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.usingDispatchers
+import com.thomaskioko.tvmaniac.data.library.model.LibrarySortOption
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowEntry
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsDao
@@ -32,13 +33,13 @@ public class LibraryStore(
     private val traktActivityDao: TraktActivityDao,
     private val transactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
-) : Store<Unit, List<FollowedShowEntry>> by storeBuilder(
-    fetcher = apiFetcher { _: Unit ->
-        traktListDataSource.getWatchList(sortBy = "added", sortHow = "desc")
+) : Store<LibrarySortOption, List<FollowedShowEntry>> by storeBuilder(
+    fetcher = apiFetcher { key: LibrarySortOption ->
+        traktListDataSource.getWatchList(sortBy = key.sortBy, sortHow = key.sortHow)
     },
     sourceOfTruth = SourceOfTruth.of(
-        reader = { _: Unit -> followedShowsDao.entriesObservable() },
-        writer = { _: Unit, response: List<TraktFollowedShowResponse> ->
+        reader = { _: LibrarySortOption -> followedShowsDao.entriesObservable() },
+        writer = { _: LibrarySortOption, response: List<TraktFollowedShowResponse> ->
             val networkEntries = response.map { it.toFollowedShowEntry() }
 
             transactionRunner {
@@ -65,7 +66,7 @@ public class LibraryStore(
 
             traktActivityDao.markAsSynced(SHOWS_WATCHLISTED)
         },
-        delete = { _: Unit -> },
+        delete = { _: LibrarySortOption -> },
         deleteAll = { },
     ).usingDispatchers(
         readDispatcher = dispatchers.databaseRead,

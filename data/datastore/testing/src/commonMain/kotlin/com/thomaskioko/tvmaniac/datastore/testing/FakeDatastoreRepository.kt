@@ -25,7 +25,7 @@ public class FakeDatastoreRepository : DatastoreRepository {
     private val notificationPermissionAskedFlow = MutableStateFlow(false)
     private val showNotificationRationaleFlow = MutableStateFlow(false)
     private val requestNotificationPermissionFlow = MutableStateFlow(false)
-    private val librarySortOptionFlow = MutableStateFlow("LAST_WATCHED_DESC")
+    private val librarySortOptionFlow = MutableStateFlow("ADDED_DESC")
 
     public suspend fun setTheme(appTheme: AppTheme) {
         appThemeFlow.value = appTheme

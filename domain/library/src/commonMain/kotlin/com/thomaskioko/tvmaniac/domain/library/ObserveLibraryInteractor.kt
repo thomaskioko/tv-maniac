@@ -22,7 +22,7 @@ public class ObserveLibraryInteractor(
 
     public data class Params(
         val query: String = "",
-        val sortOption: LibrarySortOption = LibrarySortOption.LAST_WATCHED_DESC,
+        val sortOption: LibrarySortOption = LibrarySortOption.ADDED_DESC,
         val followedOnly: Boolean = false,
     )
 }

@@ -25,6 +25,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -88,18 +89,14 @@ public class DefaultLibraryRepository(
 
     private fun List<LibraryItem>.applySorting(sortOption: LibrarySortOption): List<LibraryItem> {
         return when (sortOption) {
-            LibrarySortOption.LAST_WATCHED_DESC ->
-                sortedByDescending { it.lastWatchedAt ?: it.followedAt ?: 0L }
-            LibrarySortOption.LAST_WATCHED_ASC ->
-                sortedBy { it.lastWatchedAt ?: it.followedAt ?: Long.MAX_VALUE }
-            LibrarySortOption.NEW_EPISODES ->
-                sortedByDescending { it.totalCount - it.watchedCount }
-            LibrarySortOption.EPISODES_LEFT_DESC ->
-                sortedByDescending { it.totalCount - it.watchedCount }
-            LibrarySortOption.EPISODES_LEFT_ASC ->
-                sortedBy { it.totalCount - it.watchedCount }
-            LibrarySortOption.ALPHABETICAL ->
-                sortedBy { it.title.lowercase() }
+            LibrarySortOption.RANK_ASC -> this
+            LibrarySortOption.RANK_DESC -> reversed()
+            LibrarySortOption.ADDED_DESC -> sortedByDescending { it.followedAt ?: 0L }
+            LibrarySortOption.ADDED_ASC -> sortedBy { it.followedAt ?: Long.MAX_VALUE }
+            LibrarySortOption.RELEASED_DESC -> sortedByDescending { it.year }
+            LibrarySortOption.RELEASED_ASC -> sortedBy { it.year }
+            LibrarySortOption.TITLE_ASC -> sortedBy { it.title.lowercase() }
+            LibrarySortOption.TITLE_DESC -> sortedByDescending { it.title.lowercase() }
         }
     }
 
@@ -117,7 +114,7 @@ public class DefaultLibraryRepository(
     override fun observeSortOption(): Flow<LibrarySortOption> {
         return datastoreRepository.observeLibrarySortOption().map { sortOptionName ->
             LibrarySortOption.entries.find { it.name == sortOptionName }
-                ?: LibrarySortOption.LAST_WATCHED_DESC
+                ?: LibrarySortOption.ADDED_DESC
         }
     }
 
@@ -161,9 +158,10 @@ public class DefaultLibraryRepository(
         val activityChanged = traktActivityRepository.hasActivityChanged(SHOWS_WATCHLISTED)
         val shouldRefresh = forceRefresh || activityChanged
 
+        val sortOption = currentSortOption()
         when {
-            shouldRefresh -> libraryStore.fresh(Unit)
-            else -> libraryStore.get(Unit)
+            shouldRefresh -> libraryStore.fresh(sortOption)
+            else -> libraryStore.get(sortOption)
         }
 
         if (activityChanged) {
@@ -227,6 +225,12 @@ public class DefaultLibraryRepository(
         is ApiResponse.Error.HttpError -> "HTTP $code: $errorMessage"
         is ApiResponse.Error.SerializationError -> "Serialization error: $errorMessage"
         is ApiResponse.Error.GenericError -> errorMessage ?: "Unknown error"
+    }
+
+    private suspend fun currentSortOption(): LibrarySortOption {
+        val name = datastoreRepository.observeLibrarySortOption().first()
+        return LibrarySortOption.entries.find { it.name == name }
+            ?: LibrarySortOption.ADDED_DESC
     }
 
     private companion object {

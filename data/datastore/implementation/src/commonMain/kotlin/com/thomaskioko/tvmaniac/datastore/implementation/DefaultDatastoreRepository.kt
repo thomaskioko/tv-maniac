@@ -203,7 +203,7 @@ public class DefaultDatastoreRepository(
 
     override fun observeLibrarySortOption(): Flow<String> =
         dataStore.data.map { preferences ->
-            preferences[KEY_LIBRARY_SORT_OPTION] ?: "LAST_WATCHED_DESC"
+            preferences[KEY_LIBRARY_SORT_OPTION] ?: "ADDED_DESC"
         }
 
     override suspend fun saveUpNextSortOption(sortOption: String) {

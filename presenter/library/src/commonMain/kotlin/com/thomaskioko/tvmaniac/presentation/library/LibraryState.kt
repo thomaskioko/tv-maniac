@@ -14,7 +14,7 @@ public data class LibraryState(
     val isSearchActive: Boolean = false,
     val isGridMode: Boolean = true,
     val isRefreshing: Boolean = true,
-    val sortOption: LibrarySortOption = LibrarySortOption.LAST_WATCHED_DESC,
+    val sortOption: LibrarySortOption = LibrarySortOption.ADDED_DESC,
     val followedOnly: Boolean = false,
     val availableGenres: ImmutableList<String> = persistentListOf(),
     val selectedGenres: ImmutableSet<String> = persistentSetOf(),
