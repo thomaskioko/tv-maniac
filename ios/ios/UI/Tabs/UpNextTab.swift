@@ -19,15 +19,13 @@ struct UpNextTab: View {
     }
 
     var body: some View {
-        ZStack {
-            theme.colors.background
-                .ignoresSafeArea()
+        VStack(spacing: 0) {
+            sortChipsRow
+                .background(theme.colors.background)
 
-            VStack(spacing: 0) {
-                sortChipsRow
-                contentView
-            }
+            contentView
         }
+        .background(theme.colors.background.ignoresSafeArea())
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
@@ -74,7 +72,12 @@ struct UpNextTab: View {
     @ViewBuilder
     private var contentView: some View {
         if uiState.showLoading {
-            Spacer()
+            VStack {
+                Spacer()
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: theme.colors.accent))
+                Spacer()
+            }
         } else if uiState.isEmpty {
             emptyView
         } else {
@@ -105,8 +108,6 @@ struct UpNextTab: View {
                     ForEach(episodesSwift, id: \.episodeId) { episode in
                         UpNextListItemView(
                             episode: episode,
-                            premiereLabel: String(\.badge_premiere),
-                            newLabel: String(\.badge_new),
                             onItemClicked: { showTraktId, _ in
                                 presenter.dispatch(action: UpNextShowClicked(showTraktId: showTraktId))
                             },

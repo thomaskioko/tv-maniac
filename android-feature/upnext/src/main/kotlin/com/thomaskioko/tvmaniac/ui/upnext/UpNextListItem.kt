@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
+import com.thomaskioko.tvmaniac.compose.components.TextTitlePill
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.presentation.upnext.model.UpNextEpisodeUiModel
@@ -70,18 +71,19 @@ internal fun UpNextListItem(
                         bottom = 12.dp,
                     ),
             ) {
-                Text(
-                    text = item.showName,
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
+                TextTitlePill(
+                    showName = item.showName,
+                    onClick = { onItemClicked(item.showTraktId) },
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = buildEpisodeInfoString(item),
+                    text = buildString {
+                        append(item.formattedEpisodeNumber)
+                        if (item.remainingEpisodes > 0) append(" +${item.remainingEpisodes}")
+                        item.formattedRuntime?.let { append(" ($it)") }
+                    },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.secondary,
                 )
@@ -142,22 +144,6 @@ internal fun UpNextListItem(
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-        }
-    }
-}
-
-private fun buildEpisodeInfoString(item: UpNextEpisodeUiModel): String = buildString {
-    append("S${item.seasonNumber?.toString()?.padStart(2, '0') ?: "00"}")
-    append("E${item.episodeNumber?.toString()?.padStart(2, '0') ?: "00"}")
-
-    val remaining = item.totalCount - item.watchedCount
-    if (remaining > 0) {
-        append(" +$remaining")
-    }
-
-    item.runtime?.let { runtime ->
-        if (runtime > 0) {
-            append(" (${runtime}m)")
         }
     }
 }

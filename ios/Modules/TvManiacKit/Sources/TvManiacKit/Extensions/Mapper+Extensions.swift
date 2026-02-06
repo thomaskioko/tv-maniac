@@ -276,23 +276,22 @@ public extension TvManiac.EpisodeBadge {
 
 public extension TvManiac.UpNextEpisodeUiModel {
     func toSwift() -> SwiftNextEpisode {
-        let season = String(format: "%02d", seasonNumber)
-        let episode = String(format: "%02d", episodeNumber)
-        let remaining = Int32(totalCount - watchedCount)
-        return .init(
+        .init(
             showTraktId: showTraktId,
             showName: showName,
             showPoster: showPoster,
-            episodeId: episodeId,
+            episodeId: episodeId?.int64Value ?? 0,
             episodeTitle: episodeName ?? "",
-            episodeNumber: "S\(season) | E\(episode)",
-            seasonId: seasonId,
-            seasonNumber: seasonNumber,
-            episodeNumberValue: episodeNumber,
-            runtime: runtime.map { "\($0) min" },
+            episodeNumber: formattedEpisodeNumber,
+            seasonId: seasonId?.int64Value ?? 0,
+            seasonNumber: seasonNumber?.int64Value ?? 0,
+            episodeNumberValue: episodeNumber?.int64Value ?? 0,
+            runtime: formattedRuntime,
             stillImage: stillPath,
             overview: overview ?? "",
-            remainingEpisodes: remaining
+            remainingEpisodes: Int32(remainingEpisodes),
+            watchedCount: watchedCount,
+            totalCount: totalCount
         )
     }
 }

@@ -57,6 +57,9 @@ internal class UpNextEpisodePreviewParameterProvider : PreviewParameterProvider<
             episodeCount = 62,
             watchedCount = 55,
             totalCount = 62,
+            formattedEpisodeNumber = "S05E14",
+            remainingEpisodes = 7,
+            formattedRuntime = "47m",
         ),
         UpNextEpisodeUiModel(
             showTraktId = 2,
@@ -78,6 +81,9 @@ internal class UpNextEpisodePreviewParameterProvider : PreviewParameterProvider<
             episodeCount = 73,
             watchedCount = 20,
             totalCount = 73,
+            formattedEpisodeNumber = "S03E09",
+            remainingEpisodes = 53,
+            formattedRuntime = "52m",
         ),
         UpNextEpisodeUiModel(
             showTraktId = 3,
@@ -99,6 +105,9 @@ internal class UpNextEpisodePreviewParameterProvider : PreviewParameterProvider<
             episodeCount = 34,
             watchedCount = 0,
             totalCount = 34,
+            formattedEpisodeNumber = "S01E01",
+            remainingEpisodes = 34,
+            formattedRuntime = "50m",
         ),
     )
 }
@@ -124,6 +133,9 @@ private fun previewEpisodes() = listOf(
         episodeCount = 62,
         watchedCount = 55,
         totalCount = 62,
+        formattedEpisodeNumber = "S05E14",
+        remainingEpisodes = 7,
+        formattedRuntime = "47m",
     ),
     UpNextEpisodeUiModel(
         showTraktId = 2,
@@ -145,6 +157,9 @@ private fun previewEpisodes() = listOf(
         episodeCount = 73,
         watchedCount = 20,
         totalCount = 73,
+        formattedEpisodeNumber = "S03E09",
+        remainingEpisodes = 53,
+        formattedRuntime = "52m",
     ),
     UpNextEpisodeUiModel(
         showTraktId = 3,
@@ -166,6 +181,9 @@ private fun previewEpisodes() = listOf(
         episodeCount = 34,
         watchedCount = 0,
         totalCount = 34,
+        formattedEpisodeNumber = "S01E01",
+        remainingEpisodes = 34,
+        formattedRuntime = "50m",
     ),
     UpNextEpisodeUiModel(
         showTraktId = 4,
@@ -187,5 +205,8 @@ private fun previewEpisodes() = listOf(
         episodeCount = 18,
         watchedCount = 12,
         totalCount = 18,
+        formattedEpisodeNumber = "S02E05",
+        remainingEpisodes = 6,
+        formattedRuntime = "67m",
     ),
 ).toImmutableList()
