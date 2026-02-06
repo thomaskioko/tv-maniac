@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.core.base.extensions.asStateFlow
 import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.library.LibraryPresenter
+import com.thomaskioko.tvmaniac.presentation.upnext.UpNextPresenter
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.Child
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.HomeConfig
 import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
@@ -29,6 +30,7 @@ public class DefaultHomePresenter private constructor(
     @Assisted private val onShowGenreClicked: (id: Long) -> Unit,
     @Assisted private val onSettingsClicked: () -> Unit,
     private val discoverPresenterFactory: DiscoverShowsPresenter.Factory,
+    private val upNextPresenterFactory: UpNextPresenter.Factory,
     private val libraryPresenterFactory: LibraryPresenter.Factory,
     private val searchPresenterFactory: SearchShowsPresenter.Factory,
     private val profilePresenterFactory: ProfilePresenter.Factory,
@@ -46,6 +48,10 @@ public class DefaultHomePresenter private constructor(
 
     override fun onDiscoverClicked() {
         onTabClicked(HomeConfig.Discover)
+    }
+
+    override fun onUpNextClicked() {
+        onTabClicked(HomeConfig.UpNext)
     }
 
     override fun onLibraryClicked() {
@@ -92,6 +98,16 @@ public class DefaultHomePresenter private constructor(
                         onNavigateToEpisode = { showId, episodeId ->
                             // TODO:: Add Navigation to episode detail
                         },
+                        onNavigateToUpNext = { onUpNextClicked() },
+                    ),
+                )
+            }
+
+            HomeConfig.UpNext -> {
+                Child.UpNext(
+                    presenter = upNextPresenterFactory(
+                        componentContext = componentContext,
+                        navigateToShowDetails = { id -> onShowClicked(id) },
                     ),
                 )
             }
@@ -132,6 +148,7 @@ public class DefaultHomePresenter private constructor(
     @ContributesBinding(ActivityScope::class, HomePresenter.Factory::class)
     public class Factory(
         private val discoverPresenterFactory: DiscoverShowsPresenter.Factory,
+        private val upNextPresenterFactory: UpNextPresenter.Factory,
         private val libraryPresenterFactory: LibraryPresenter.Factory,
         private val searchPresenterFactory: SearchShowsPresenter.Factory,
         private val profilePresenterFactory: ProfilePresenter.Factory,
@@ -150,6 +167,7 @@ public class DefaultHomePresenter private constructor(
             onShowGenreClicked = onShowGenreClicked,
             onSettingsClicked = onSettingsClicked,
             discoverPresenterFactory = discoverPresenterFactory,
+            upNextPresenterFactory = upNextPresenterFactory,
             libraryPresenterFactory = libraryPresenterFactory,
             searchPresenterFactory = searchPresenterFactory,
             profilePresenterFactory = profilePresenterFactory,
