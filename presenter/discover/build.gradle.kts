@@ -17,6 +17,7 @@ kotlin {
                 implementation(projects.domain.discover)
                 implementation(projects.domain.episode)
                 implementation(projects.domain.genre)
+                implementation(projects.domain.user)
                 implementation(projects.data.episode.api)
                 implementation(projects.data.followedshows.api)
                 implementation(projects.data.traktauth.api)
@@ -43,6 +44,7 @@ kotlin {
                 implementation(projects.data.traktauth.testing)
                 implementation(projects.data.trendingshows.testing)
                 implementation(projects.data.upcomingshows.testing)
+                implementation(projects.data.user.testing)
 
                 implementation(libs.bundles.unittest)
             }

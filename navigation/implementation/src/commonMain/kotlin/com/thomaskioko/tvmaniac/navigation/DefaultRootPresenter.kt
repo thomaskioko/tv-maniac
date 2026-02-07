@@ -116,6 +116,7 @@ public class DefaultRootPresenter(
                 Child.Profile(
                     presenter = profilePresenterFactory(
                         componentContext = componentContext,
+                        navigateBack = { navigator.pop() },
                         navigateToSettings = { navigator.pushNew(RootDestinationConfig.Settings) },
                     ),
                 )

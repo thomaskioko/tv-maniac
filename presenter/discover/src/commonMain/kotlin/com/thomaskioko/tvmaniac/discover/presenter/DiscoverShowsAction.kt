@@ -36,3 +36,5 @@ public data class OpenSeasonFromUpNext(
     val seasonId: Long,
     val seasonNumber: Long,
 ) : DiscoverShowAction
+
+public data object ProfileIconClicked : DiscoverShowAction

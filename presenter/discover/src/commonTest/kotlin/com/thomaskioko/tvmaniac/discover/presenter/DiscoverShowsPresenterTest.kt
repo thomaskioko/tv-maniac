@@ -14,12 +14,14 @@ import com.thomaskioko.tvmaniac.data.topratedshows.testing.FakeTopRatedShowsRepo
 import com.thomaskioko.tvmaniac.data.trendingshows.testing.FakeTrendingShowsRepository
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsInteractor
 import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepository
+import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsInteractor
 import com.thomaskioko.tvmaniac.discover.presenter.model.DiscoverShow
 import com.thomaskioko.tvmaniac.discover.presenter.model.NextEpisodeUiModel
 import com.thomaskioko.tvmaniac.domain.discover.DiscoverShowsInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
+import com.thomaskioko.tvmaniac.domain.user.ObserveUserProfileInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
@@ -54,6 +56,7 @@ class DiscoverShowsPresenterTest {
     private val episodeRepository = FakeEpisodeRepository()
     private val upNextRepository = FakeUpNextRepository()
     private val followedShowsRepository = FakeFollowedShowsRepository()
+    private val userRepository = FakeUserRepository(userProfile = null)
     private val traktAuthRepository = FakeTraktAuthRepository()
     private val coroutineDispatcher = AppCoroutineDispatchers(
         main = testDispatcher,
@@ -276,6 +279,7 @@ class DiscoverShowsPresenterTest {
             },
             onNavigateToSeason = { _, _, _ -> },
             onNavigateToUpNext = {},
+            onNavigateToProfile = {},
             discoverShowsInteractor = DiscoverShowsInteractor(
                 featuredShowsRepository = featuredShowsRepository,
                 topRatedShowsRepository = topRatedShowsRepository,
@@ -313,6 +317,10 @@ class DiscoverShowsPresenterTest {
             ),
             markEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(
                 episodeRepository = episodeRepository,
+            ),
+            observeUserProfileInteractor = ObserveUserProfileInteractor(
+                userRepository = userRepository,
+                traktAuthRepository = traktAuthRepository,
             ),
             traktAuthRepository = traktAuthRepository,
             logger = FakeLogger(),
@@ -413,6 +421,7 @@ class DiscoverShowsPresenterTest {
         onNavigateToEpisode = { _, _ -> },
         onNavigateToSeason = { _, _, _ -> },
         onNavigateToUpNext = {},
+        onNavigateToProfile = {},
         discoverShowsInteractor = DiscoverShowsInteractor(
             featuredShowsRepository = featuredShowsRepository,
             topRatedShowsRepository = topRatedShowsRepository,
@@ -450,6 +459,10 @@ class DiscoverShowsPresenterTest {
         ),
         markEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(
             episodeRepository = episodeRepository,
+        ),
+        observeUserProfileInteractor = ObserveUserProfileInteractor(
+            userRepository = userRepository,
+            traktAuthRepository = traktAuthRepository,
         ),
         traktAuthRepository = traktAuthRepository,
         logger = FakeLogger(),

@@ -22,7 +22,6 @@ kotlin {
                 implementation(projects.domain.genre)
                 implementation(projects.presenter.discover)
                 implementation(projects.presenter.search)
-                implementation(projects.presenter.profile)
                 implementation(projects.presenter.library)
                 implementation(projects.presenter.upnext)
 
