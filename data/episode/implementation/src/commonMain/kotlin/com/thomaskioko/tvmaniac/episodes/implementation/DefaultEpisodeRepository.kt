@@ -1,20 +1,27 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
+import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
+import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
+import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
 import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
+import org.mobilenativefoundation.store.store5.impl.extensions.fresh
+import org.mobilenativefoundation.store.store5.impl.extensions.get
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
+import kotlin.time.Duration
 
 @Inject
 @SingleIn(AppScope::class)
@@ -24,6 +31,9 @@ public class DefaultEpisodeRepository(
     private val datastoreRepository: DatastoreRepository,
     private val upNextRepository: UpNextRepository,
     private val syncRepository: WatchedEpisodeSyncRepository,
+    private val episodesDao: EpisodesDao,
+    private val dispatchers: AppCoroutineDispatchers,
+    private val upcomingEpisodesStore: UpcomingEpisodesStore,
 ) : EpisodeRepository {
 
     override suspend fun markEpisodeAsWatched(
@@ -137,6 +147,41 @@ public class DefaultEpisodeRepository(
                 includeSpecials,
             )
         }
+
+    override suspend fun getUpcomingEpisodesFromFollowedShows(
+        limit: Duration,
+    ): List<UpcomingEpisode> =
+        withContext(dispatchers.io) {
+            episodesDao.getUpcomingEpisodesFromFollowedShows(limit)
+                .map { episode ->
+                    UpcomingEpisode(
+                        episodeId = episode.episode_id.id,
+                        seasonId = episode.season_id.id,
+                        showId = episode.show_trakt_id.id,
+                        episodeNumber = episode.episode_number,
+                        seasonNumber = episode.season_number,
+                        title = episode.title,
+                        overview = episode.overview,
+                        runtime = episode.runtime,
+                        imageUrl = episode.image_url,
+                        firstAired = episode.first_aired,
+                        showName = episode.show_name,
+                        showPoster = episode.show_poster,
+                    )
+                }
+        }
+
+    override suspend fun syncUpcomingEpisodesFromTrakt(
+        startDate: String,
+        days: Int,
+        forceRefresh: Boolean,
+    ) {
+        val params = UpcomingEpisodesParams(startDate, days)
+        when {
+            forceRefresh -> upcomingEpisodesStore.fresh(params)
+            else -> upcomingEpisodesStore.get(params)
+        }
+    }
 
     private suspend fun getIncludeSpecials(): Boolean = datastoreRepository.getIncludeSpecials()
 }

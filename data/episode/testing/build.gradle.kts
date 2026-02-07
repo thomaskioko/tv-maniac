@@ -6,8 +6,8 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                api(projects.data.episode.api)
                 implementation(projects.data.database.sqldelight)
-                implementation(projects.data.episode.api)
 
                 implementation(libs.kotlinx.datetime)
                 implementation(libs.coroutines.core)

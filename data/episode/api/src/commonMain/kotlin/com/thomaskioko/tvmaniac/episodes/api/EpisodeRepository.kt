@@ -2,7 +2,9 @@ package com.thomaskioko.tvmaniac.episodes.api
 
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
+import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
 import kotlinx.coroutines.flow.Flow
+import kotlin.time.Duration
 
 public interface EpisodeRepository {
 
@@ -77,4 +79,27 @@ public interface EpisodeRepository {
         showTraktId: Long,
         seasonNumber: Long,
     ): Flow<Long>
+
+    /**
+     * Get upcoming episodes from followed shows within the specified time window.
+     * Only returns episodes that have first_aired set and are not yet watched.
+     * Time filtering (from current time to now + limit) is handled internally.
+     * @param limit Duration from now to search for upcoming episodes
+     * @return List of upcoming episodes ordered by air time
+     */
+    public suspend fun getUpcomingEpisodesFromFollowedShows(limit: Duration): List<UpcomingEpisode>
+
+    /**
+     * Sync upcoming episodes from Trakt Calendar API.
+     * Updates the first_aired timestamp for episodes in the user's followed shows.
+     * Uses request tracking to avoid redundant API calls within the cache window.
+     * @param startDate Start date in YYYY-MM-DD format
+     * @param days Number of days to fetch
+     * @param forceRefresh If true, bypasses cache validation and always fetches from API
+     */
+    public suspend fun syncUpcomingEpisodesFromTrakt(
+        startDate: String,
+        days: Int,
+        forceRefresh: Boolean = false,
+    )
 }
