@@ -15,6 +15,7 @@ let package = Package(
         ),
     ],
     dependencies: [
+        .package(name: "CoreKit", path: "../CoreKit"),
         .package(name: "SwiftUIComponents", path: "../SwiftUIComponents"),
         .package(name: "TraktAuthKit", path: "../TraktAuthKit"),
     ],
@@ -22,6 +23,7 @@ let package = Package(
         .target(
             name: "TvManiacKit",
             dependencies: [
+                "CoreKit",
                 "SwiftUIComponents",
                 "TraktAuthKit",
             ]
