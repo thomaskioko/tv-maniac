@@ -17,6 +17,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 public class FakeProfilePresenterFactory : ProfilePresenter.Factory {
     override fun invoke(
         componentContext: ComponentContext,
+        navigateBack: () -> Unit,
         navigateToSettings: () -> Unit,
     ): ProfilePresenter = FakeProfilePresenter()
 }

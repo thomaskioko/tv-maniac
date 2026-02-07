@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.outlined.Movie
 import androidx.compose.material.icons.outlined.Person
@@ -24,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -40,6 +43,44 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_show_poster
+
+@Composable
+public fun CircularCard(
+    imageUrl: String?,
+    modifier: Modifier = Modifier,
+    size: Dp = 38.dp,
+    contentDescription: String? = null,
+    placeholderIcon: ImageVector = Icons.Filled.AccountCircle,
+    onClick: () -> Unit = {},
+) {
+    Box(
+        modifier = modifier
+            .size(size)
+            .clip(CircleShape)
+            .background(
+                color = MaterialTheme.colorScheme.surfaceVariant,
+                shape = CircleShape,
+            )
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) {
+        if (imageUrl.isNullOrEmpty()) {
+            Icon(
+                imageVector = placeholderIcon,
+                contentDescription = contentDescription,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(size * 0.6f),
+            )
+        } else {
+            AsyncImageComposable(
+                model = imageUrl,
+                contentDescription = contentDescription,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize(),
+            )
+        }
+    }
+}
 
 @Composable
 public fun PosterCard(
@@ -439,5 +480,31 @@ private fun PosterBackdropPreview() {
                     .height(240.dp),
             )
         }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun CircularCardPreview() {
+    TvManiacTheme {
+        Surface {
+            CircularCard(
+                imageUrl = null,
+                contentDescription = "Profile",
+                onClick = {},
+            )
+        }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun CircularCardWithImagePreview() {
+    TvManiacTheme {
+        CircularCard(
+            imageUrl = "",
+            contentDescription = "Profile",
+            onClick = {},
+        )
     }
 }

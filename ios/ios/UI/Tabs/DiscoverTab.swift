@@ -9,11 +9,12 @@ struct DiscoverTab: View {
     @StateObject @KotlinStateFlow private var uiState: DiscoverViewState
     @StateObject private var store = SettingsAppStorage.shared
     @State private var currentIndex: Int
-    @State private var showNavigationBar = false
     @State private var selectedShow: SwiftShow?
     @State private var showGlass: Double = 0
-    @State private var rotationAngle: Double = 0
     @State private var isDraggingCarousel: Bool = false
+    @State private var pullOffset: CGFloat = 0
+    @State private var isRefreshing: Bool = false
+    @State private var isScrollInteracting: Bool = false
     private let title = String(\.label_discover_title)
 
     init(presenter: DiscoverShowsPresenter) {
@@ -38,42 +39,107 @@ struct DiscoverTab: View {
     // MARK: - Discover Content
 
     @ViewBuilder
-    private func discoverLoadedContent(state: DiscoverViewState) -> some View {
-        ZStack(alignment: .bottom) {
-            ParallaxView(
-                imageHeight: ParallaxConstants.defaultImageHeight,
-                collapsedImageHeight: ParallaxConstants.collapsedImageHeight,
-                header: { _ in
-                    ZStack(alignment: .bottom) {
-                        headerContent(shows: uiState.featuredShowsSwift)
-                        showInfoOverlay(uiState.featuredShowsSwift)
-                    }
-                },
-                content: {
-                    discoverListContent(state: state)
-                },
-                onScroll: { offset in
-                    showGlass = ParallaxConstants.glassOpacity(from: offset)
+    private func discoverLoadedContent(state _: DiscoverViewState) -> some View {
+        ZStack(alignment: .top) {
+            discoverScrollView
+
+            LinearGradient(
+                colors: [
+                    .black.opacity(0.6),
+                    .black.opacity(0.3),
+                    .clear,
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 150)
+            .allowsHitTesting(false)
+
+            if #available(iOS 18.0, *) {
+                let progress = min(pullOffset / RefreshConstants.threshold, 1.0)
+
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                    .scaleEffect(2.0)
+                    .opacity(pullOffset > 0 ? max(0.6, Double(progress)) : 0)
+                    .padding(.top, RefreshConstants.indicatorTopPadding)
+            }
+
+            GlassToolbar(
+                title: title,
+                opacity: showGlass,
+                isLoading: false,
+                trailingIcon: {
+                    profileIcon(avatarUrl: uiState.userAvatarUrl)
                 }
             )
+            .animation(.easeInOut(duration: AnimationConstants.defaultDuration), value: showGlass)
         }
         .background(theme.colors.background)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarColor(backgroundColor: .clear)
-        .overlay(
-            GlassToolbar(
-                title: title,
-                opacity: showGlass,
-                isLoading: state.isRefreshing
-            ),
-            alignment: .top
-        )
-        .animation(.easeInOut(duration: AnimationConstants.defaultDuration), value: showGlass)
-        .coordinateSpace(name: "scrollView")
         .edgesIgnoringSafeArea(.top)
         .onDisappear {
             selectedShow = nil
         }
+        .onChange(of: uiState.isRefreshing) { _, newValue in
+            if !newValue, isRefreshing {
+                withAnimation(.easeOut(duration: AnimationConstants.defaultDuration)) {
+                    isRefreshing = false
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var discoverScrollView: some View {
+        if #available(iOS 18.0, *) {
+            scrollViewContent
+                .onScrollGeometryChange(for: CGFloat.self) { geometry in
+                    geometry.contentOffset.y
+                } action: { _, newValue in
+                    if !isRefreshing, isScrollInteracting {
+                        pullOffset = max(0, -newValue)
+                    }
+                }
+                .onScrollPhaseChange { oldPhase, newPhase in
+                    isScrollInteracting = newPhase == .interacting
+                    if oldPhase == .interacting {
+                        if !isRefreshing, pullOffset >= RefreshConstants.threshold {
+                            triggerRefresh()
+                        }
+                        pullOffset = 0
+                    }
+                }
+        } else {
+            scrollViewContent
+        }
+    }
+
+    private var scrollViewContent: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 0) {
+                GeometryReader { proxy in
+                    let scrollY = proxy.frame(in: .named("discoverScroll")).minY
+
+                    headerContent(shows: uiState.featuredShowsSwift)
+                        .frame(width: proxy.size.width, height: CarouselConstants.headerHeight + max(scrollY, 0))
+                        .offset(y: -max(scrollY, 0))
+                        .overlay(alignment: .bottom) {
+                            showInfoOverlay(uiState.featuredShowsSwift)
+                        }
+                        .onChange(of: scrollY) { _, newValue in
+                            showGlass = newValue < 0
+                                ? ParallaxConstants.glassOpacity(from: newValue)
+                                : 0
+                        }
+                }
+                .frame(height: CarouselConstants.headerHeight)
+
+                discoverListContent(state: uiState)
+            }
+        }
+        .coordinateSpace(name: "discoverScroll")
     }
 
     // MARK: - Header Content
@@ -97,34 +163,36 @@ struct DiscoverTab: View {
                     isDraggingCarousel = isDragging
                 }
             ) { index in
-                CarouselItemView(item: shows[index])
+                carouselItemView(item: shows[index])
             }
         }
     }
 
     @ViewBuilder
-    private func CarouselItemView(item: SwiftShow) -> some View {
+    private func carouselItemView(item: SwiftShow) -> some View {
         GeometryReader { geometry in
-            let scrollViewHeight = geometry.size.height
-
-            ZStack(alignment: .bottom) {
-                PosterItemView(
-                    title: item.title,
-                    posterUrl: item.posterUrl,
-                    imageType: .backdrop,
-                    posterWidth: geometry.size.width,
-                    posterHeight: scrollViewHeight,
-                    processorHeight: CarouselConstants.fixedImageHeight
-                )
-                .onTapGesture {
-                    presenter.dispatch(action: ShowClicked(traktId: item.traktId))
-                }
+            PosterItemView(
+                title: item.title,
+                posterUrl: item.posterUrl,
+                imageType: .backdrop,
+                posterWidth: geometry.size.width,
+                posterHeight: geometry.size.height,
+                processorHeight: CarouselConstants.fixedImageHeight
+            )
+            .onTapGesture {
+                presenter.dispatch(action: ShowClicked(traktId: item.traktId))
             }
         }
     }
 
     private enum CarouselConstants {
-        static let fixedImageHeight: CGFloat = ParallaxConstants.defaultImageHeight
+        static let headerHeight: CGFloat = 580
+        static let fixedImageHeight: CGFloat = headerHeight
+    }
+
+    private enum RefreshConstants {
+        static let threshold: CGFloat = 80
+        static let indicatorTopPadding: CGFloat = 100
     }
 
     @ViewBuilder
@@ -154,27 +222,24 @@ struct DiscoverTab: View {
         .allowsHitTesting(false)
         .background(
             LinearGradient(
-                gradient: Gradient(
-                    colors: [
-                        theme.colors.background,
-                        theme.colors.background,
-                        theme.colors.background,
-                        theme.colors.background.opacity(0.9),
-                        theme.colors.background.opacity(0.7),
-                        theme.colors.background.opacity(0.4),
-                        .clear,
-                    ]
-                ),
+                stops: [
+                    .init(color: theme.colors.background, location: 0),
+                    .init(color: theme.colors.background, location: 0.3),
+                    .init(color: theme.colors.background.opacity(0.9), location: 0.5),
+                    .init(color: theme.colors.background.opacity(0.7), location: 0.65),
+                    .init(color: theme.colors.background.opacity(0.4), location: 0.8),
+                    .init(color: .clear, location: 1.0),
+                ],
                 startPoint: .bottom,
                 endPoint: .top
             )
-            .frame(height: 280)
+            .padding(.top, -120)
             .allowsHitTesting(false)
         )
     }
 
     @ViewBuilder
-    func customIndicator(_ shows: [SwiftShow]) -> some View {
+    private func customIndicator(_ shows: [SwiftShow]) -> some View {
         ZStack {
             Color.clear
                 .frame(height: 10)
@@ -186,7 +251,6 @@ struct DiscoverTab: View {
             )
             .allowsHitTesting(false)
             .transaction { transaction in
-                // Disable any inherited animations
                 transaction.animation = nil
             }
         }
@@ -260,9 +324,27 @@ struct DiscoverTab: View {
             )
         }
         .padding(.top, theme.spacing.medium)
-        .padding(.bottom, 90)
         .background(theme.colors.background)
         .offset(y: -10)
+    }
+
+    private func triggerRefresh() {
+        isRefreshing = true
+        presenter.dispatch(action: RefreshData())
+    }
+
+    // MARK: - Top Bar Icons
+
+    @ViewBuilder
+    private func profileIcon(avatarUrl: String?) -> some View {
+        Button(action: {
+            presenter.dispatch(action: ProfileIconClicked())
+        }) {
+            AvatarView(
+                avatarUrl: avatarUrl,
+                size: 32,
+            )
+        }
     }
 
     // MARK: - Empty View
@@ -304,51 +386,5 @@ struct DiscoverTab: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding([.trailing, .leading], theme.spacing.medium)
-    }
-
-    private func getShow(currentIndex: Int, shows: [SwiftShow]) -> SwiftShow? {
-        guard !shows.isEmpty, currentIndex < shows.count else {
-            return nil
-        }
-        return shows[currentIndex]
-    }
-
-    private enum CoordinateSpaces {
-        case scrollView
-    }
-}
-
-struct PullToRefreshView: View {
-    var coordinateSpaceName: String
-    var onRefresh: () async -> Void
-    @State private var needRefresh: Bool = false
-
-    var body: some View {
-        GeometryReader { geo in
-            if geo.frame(in: .named(coordinateSpaceName)).midY > 50 {
-                Spacer()
-                    .onAppear {
-                        needRefresh = true
-                    }
-            } else if geo.frame(in: .named(coordinateSpaceName)).midY < 1 {
-                Spacer()
-                    .onAppear {
-                        if needRefresh {
-                            needRefresh = false
-                            Task {
-                                await onRefresh()
-                            }
-                        }
-                    }
-            }
-            HStack {
-                Spacer()
-                if needRefresh {
-                    ThemedProgressView()
-                }
-                Spacer()
-            }
-        }
-        .padding(.top, -50)
     }
 }

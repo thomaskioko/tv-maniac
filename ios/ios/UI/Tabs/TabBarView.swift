@@ -35,9 +35,6 @@ public struct TabBarView: View {
                     case let .library(screen):
                         LibraryTab(presenter: screen.presenter)
                             .id(ObjectIdentifier(screen))
-                    case let .profile(screen):
-                        ProfileTab(presenter: screen.presenter)
-                            .id(ObjectIdentifier(screen))
                     }
                 }
             }
@@ -51,9 +48,17 @@ public struct TabBarView: View {
             case .upNext: presenter.onUpNextClicked()
             case .search: presenter.onSearchClicked()
             case .library: presenter.onLibraryClicked()
-            case .profile: presenter.onProfileClicked()
             }
         }
+        .onChange(of: activeTab) { newTab in
+            if selectedTab != newTab {
+                selectedTab = newTab
+            }
+        }
+    }
+
+    private var activeTab: NavigationTab {
+        tabForChild(stack.active.instance)
     }
 
     private func tabForChild(_ child: HomePresenterChild) -> NavigationTab {
@@ -62,7 +67,6 @@ public struct TabBarView: View {
         case .upNext: .upNext
         case .search: .search
         case .library: .library
-        case .profile: .profile
         }
     }
 }
@@ -74,7 +78,6 @@ public enum NavigationTab: String, CaseIterable {
     case upNext
     case library
     case search
-    case profile
 
     var title: String {
         switch self {
@@ -82,7 +85,6 @@ public enum NavigationTab: String, CaseIterable {
         case .upNext: String(\.label_discover_up_next)
         case .library: String(\.menu_item_library)
         case .search: String(\.label_tab_search)
-        case .profile: String(\.menu_item_profile)
         }
     }
 
@@ -92,7 +94,6 @@ public enum NavigationTab: String, CaseIterable {
         case .upNext: "play.circle"
         case .library: "square.stack"
         case .search: "magnifyingglass"
-        case .profile: "person.crop.circle"
         }
     }
 }
