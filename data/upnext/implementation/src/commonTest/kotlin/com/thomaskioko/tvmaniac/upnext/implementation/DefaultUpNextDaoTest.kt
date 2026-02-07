@@ -54,6 +54,7 @@ internal class DefaultUpNextDaoTest : BaseDatabaseTest() {
     fun `should exclude caught-up show given next episode has no air date`() = runTest {
         insertShow(id = 1L, name = "Outer Banks")
         insertFollowedShow(showId = 1L)
+        insertSeason(showId = 1L, seasonNumber = 5)
         insertShowMetadata(showId = 1L, watchedCount = 40, totalCount = 40)
         dao.upsert(
             showTraktId = 1L,
@@ -82,6 +83,7 @@ internal class DefaultUpNextDaoTest : BaseDatabaseTest() {
         val futureAirDate = NOW + 86_400_000L
         insertShow(id = 1L, name = "Outer Banks")
         insertFollowedShow(showId = 1L)
+        insertSeason(showId = 1L, seasonNumber = 5)
         insertShowMetadata(showId = 1L, watchedCount = 40, totalCount = 40)
         dao.upsert(
             showTraktId = 1L,
@@ -110,6 +112,7 @@ internal class DefaultUpNextDaoTest : BaseDatabaseTest() {
         val pastAirDate = NOW - 86_400_000L
         insertShow(id = 1L, name = "Severance")
         insertFollowedShow(showId = 1L)
+        insertSeason(showId = 1L, seasonNumber = 2)
         insertShowMetadata(showId = 1L, watchedCount = 10, totalCount = 10)
         dao.upsert(
             showTraktId = 1L,
@@ -139,6 +142,7 @@ internal class DefaultUpNextDaoTest : BaseDatabaseTest() {
     fun `should include show given user has unwatched aired episodes`() = runTest {
         insertShow(id = 1L, name = "Wonder Man")
         insertFollowedShow(showId = 1L)
+        insertSeason(showId = 1L, seasonNumber = 1)
         insertShowMetadata(showId = 1L, watchedCount = 0, totalCount = 8)
         dao.upsert(
             showTraktId = 1L,
@@ -168,6 +172,7 @@ internal class DefaultUpNextDaoTest : BaseDatabaseTest() {
     fun `should include show given no metadata exists`() = runTest {
         insertShow(id = 1L, name = "New Show")
         insertFollowedShow(showId = 1L)
+        insertSeason(showId = 1L, seasonNumber = 1)
         dao.upsert(
             showTraktId = 1L,
             episodeTraktId = 1001L,
@@ -218,6 +223,18 @@ internal class DefaultUpNextDaoTest : BaseDatabaseTest() {
             tmdbId = Id(showId),
             followedAt = NOW - 10_000,
             pendingAction = "NOTHING",
+        )
+    }
+
+    private fun insertSeason(showId: Long, seasonNumber: Long, episodeCount: Long = 10) {
+        val _ = database.seasonsQueries.upsert(
+            id = Id(showId * 100 + seasonNumber),
+            show_trakt_id = Id(showId),
+            season_number = seasonNumber,
+            episode_count = episodeCount,
+            title = "Season $seasonNumber",
+            overview = null,
+            image_url = null,
         )
     }
 
