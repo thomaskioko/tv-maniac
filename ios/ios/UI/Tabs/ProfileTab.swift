@@ -38,6 +38,16 @@ struct ProfileTab: View {
             GlassToolbar(
                 title: String(\.profile_title),
                 opacity: showGlass,
+                leadingIcon: {
+                    Button(action: {
+                        presenter.dispatch(action: ProfileActionBackClicked())
+                    }) {
+                        Image(systemName: "chevron.left")
+                            .foregroundColor(theme.colors.accent)
+                            .imageScale(.large)
+                            .opacity(1 - showGlass)
+                    }
+                },
                 trailingIcon: {
                     Button(
                         action: {

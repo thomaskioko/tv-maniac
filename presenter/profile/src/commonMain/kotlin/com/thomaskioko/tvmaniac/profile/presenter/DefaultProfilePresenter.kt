@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.domain.user.ObserveUserProfileInteractor
 import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
 import com.thomaskioko.tvmaniac.domain.user.model.UserProfile
+import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.BackClicked
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.LoginClicked
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.MessageShown
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.RefreshProfile
@@ -39,6 +40,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @ContributesBinding(ActivityScope::class, ProfilePresenter::class)
 public class DefaultProfilePresenter(
     @Assisted componentContext: ComponentContext,
+    @Assisted private val onBack: () -> Unit,
     @Assisted private val onSettings: () -> Unit,
     private val traktAuthManager: TraktAuthManager,
     private val traktAuthRepository: TraktAuthRepository,
@@ -81,6 +83,7 @@ public class DefaultProfilePresenter(
 
     override fun dispatch(action: ProfileAction) {
         when (action) {
+            BackClicked -> onBack()
             LoginClicked -> {
                 coroutineScope.launch {
                     traktAuthManager.launchWebView()
@@ -154,11 +157,13 @@ private fun AuthError.toUiMessage(): UiMessage = when (this) {
 public class DefaultProfilePresenterFactory(
     private val presenter: (
         componentContext: ComponentContext,
+        onBack: () -> Unit,
         onSettings: () -> Unit,
     ) -> DefaultProfilePresenter,
 ) : ProfilePresenter.Factory {
     override fun invoke(
         componentContext: ComponentContext,
+        navigateBack: () -> Unit,
         navigateToSettings: () -> Unit,
-    ): ProfilePresenter = presenter(componentContext, navigateToSettings)
+    ): ProfilePresenter = presenter(componentContext, navigateBack, navigateToSettings)
 }
