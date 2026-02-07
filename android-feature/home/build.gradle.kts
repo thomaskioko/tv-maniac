@@ -16,7 +16,6 @@ dependencies {
 
     implementation(projects.androidFeature.discover)
     implementation(projects.androidFeature.library)
-    implementation(projects.androidFeature.profile)
     implementation(projects.androidFeature.search)
     implementation(projects.androidFeature.upnext)
 

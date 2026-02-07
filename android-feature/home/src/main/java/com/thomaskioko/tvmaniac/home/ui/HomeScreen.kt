@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Movie
 import androidx.compose.material.icons.outlined.PlayCircleOutline
 import androidx.compose.material.icons.outlined.Search
@@ -21,16 +20,13 @@ import com.thomaskioko.tvmaniac.discover.ui.DiscoverScreen
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_discover_up_next
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_discover
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_library
-import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_profile
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_search
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.Child.Discover
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.Child.Library
-import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.Child.Profile
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.Child.Search
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.Child.UpNext
-import com.thomaskioko.tvmaniac.profile.ui.ProfileScreen
 import com.thomaskioko.tvmaniac.search.ui.SearchScreen
 import com.thomaskioko.tvmaniac.ui.library.LibraryScreen
 import com.thomaskioko.tvmaniac.ui.upnext.UpNextScreen
@@ -80,12 +76,6 @@ private fun ChildrenContent(homePresenter: HomePresenter, modifier: Modifier = M
                     modifier = fillMaxSizeModifier,
                 )
             }
-            is Profile -> {
-                ProfileScreen(
-                    presenter = screen.presenter,
-                    modifier = fillMaxSizeModifier,
-                )
-            }
         }
     }
 }
@@ -128,13 +118,6 @@ internal fun BottomNavigationContent(
             title = menu_item_search.resolve(context),
             selected = activeComponent is Search,
             onClick = { component.onSearchClicked() },
-        )
-
-        TvManiacBottomNavigationItem(
-            imageVector = Icons.Outlined.AccountCircle,
-            title = menu_item_profile.resolve(context),
-            selected = activeComponent is Profile,
-            onClick = { component.onProfileClicked() },
         )
     }
 }
