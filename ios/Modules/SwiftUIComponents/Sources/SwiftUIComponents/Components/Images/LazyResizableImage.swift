@@ -38,6 +38,11 @@ public struct LazyResizableImage<Content: View>: View {
                     guard oldValue != newValue else { return }
                     updateResizing(with: newValue)
                 }
+                .onDisappear {
+                    // Cancel pending task when view disappears to prevent memory leaks
+                    debouncedTask?.cancel()
+                    debouncedTask = nil
+                }
             }
         }
     }
@@ -48,6 +53,10 @@ public struct LazyResizableImage<Content: View>: View {
             do {
                 try await Task.sleep(for: .milliseconds(200))
             } catch { return }
+
+            // Check if task was cancelled during sleep
+            guard !Task.isCancelled else { return }
+
             await MainActor.run {
                 resizeProcessor = .resize(size: newSize)
             }
