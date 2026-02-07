@@ -83,10 +83,11 @@ public class DefaultDatastoreRepository(
     override fun observeImageQuality(): Flow<ImageQuality> =
         dataStore.data.map { preferences ->
             when (preferences[KEY_IMAGE_QUALITY]) {
+                ImageQuality.AUTO.name -> ImageQuality.AUTO
                 ImageQuality.HIGH.name -> ImageQuality.HIGH
                 ImageQuality.MEDIUM.name -> ImageQuality.MEDIUM
                 ImageQuality.LOW.name -> ImageQuality.LOW
-                else -> ImageQuality.HIGH
+                else -> ImageQuality.AUTO
             }
         }
 

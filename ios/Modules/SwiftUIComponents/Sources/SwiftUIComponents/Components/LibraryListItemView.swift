@@ -46,6 +46,7 @@ public struct LibraryListItemView: View {
             HStack(alignment: .top, spacing: theme.spacing.medium) {
                 LazyResizableImage(
                     url: item.posterUrl,
+                    imageType: .poster,
                     size: CGSize(width: 120, height: 200)
                 ) { state in
                     if let image = state.image {

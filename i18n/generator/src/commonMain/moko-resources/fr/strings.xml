@@ -55,9 +55,11 @@
     </string>
     <string name="label_settings_privacy_policy">Politique de confidentialité</string>
     <string name="label_settings_image_quality">Qualité d'image</string>
+    <string name="label_settings_image_quality_auto">Automatique</string>
     <string name="label_settings_image_quality_high">Élevée</string>
     <string name="label_settings_image_quality_medium">Moyenne</string>
     <string name="label_settings_image_quality_low">Faible</string>
+    <string name="label_settings_image_quality_auto_description">Ajuste la qualité en fonction de votre appareil</string>
     <string name="label_settings_image_quality_high_description">Meilleure qualité, utilise plus de données</string>
     <string name="label_settings_image_quality_medium_description">Qualité et utilisation des données équilibrées</string>
     <string name="label_settings_image_quality_low_description">Qualité inférieure, économise les données</string>

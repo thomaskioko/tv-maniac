@@ -57,9 +57,11 @@
     <string name="label_settings_language_message">Choose your preferred language for the app interface</string>
     <string name="label_settings_privacy_policy">Privacy Policy</string>
     <string name="label_settings_image_quality">Image Quality</string>
+    <string name="label_settings_image_quality_auto">Auto</string>
     <string name="label_settings_image_quality_high">High</string>
     <string name="label_settings_image_quality_medium">Medium</string>
     <string name="label_settings_image_quality_low">Low</string>
+    <string name="label_settings_image_quality_auto_description">Adjusts quality based on your device</string>
     <string name="label_settings_image_quality_high_description">Best quality, uses more data</string>
     <string name="label_settings_image_quality_medium_description">Balanced quality and data usage</string>
     <string name="label_settings_image_quality_low_description">Lower quality, saves data</string>

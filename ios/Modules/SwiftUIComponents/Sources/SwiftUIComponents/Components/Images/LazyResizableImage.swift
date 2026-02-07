@@ -12,10 +12,11 @@ public struct LazyResizableImage<Content: View>: View {
 
     public init(
         url: String?,
+        imageType: TmdbImageType? = nil,
         size: CGSize? = nil,
         @ViewBuilder content: @escaping (LazyImageState) -> Content
     ) {
-        self.url = ImageConfiguration.transformURL(url ?? "")
+        self.url = ImageConfiguration.transformURL(url ?? "", imageType: imageType)
         fixedSize = size
         self.content = content
     }
@@ -65,8 +66,8 @@ public struct LazyResizableImage<Content: View>: View {
 }
 
 public extension LazyResizableImage {
-    init(url: String?, size: CGSize? = nil) where Content == AnyView {
-        self.init(url: url, size: size) { state in
+    init(url: String?, imageType: TmdbImageType? = nil, size: CGSize? = nil) where Content == AnyView {
+        self.init(url: url, imageType: imageType, size: size) { state in
             AnyView(
                 Group {
                     if let image = state.image {

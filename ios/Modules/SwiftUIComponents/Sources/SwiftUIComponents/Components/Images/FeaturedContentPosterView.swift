@@ -39,6 +39,7 @@ public struct FeaturedContentPosterView: View {
     public var body: some View {
         LazyResizableImage(
             url: posterImageUrl,
+            imageType: .poster,
             size: CGSize(width: posterWidth, height: posterHeight)
         ) { state in
             if let image = state.image {

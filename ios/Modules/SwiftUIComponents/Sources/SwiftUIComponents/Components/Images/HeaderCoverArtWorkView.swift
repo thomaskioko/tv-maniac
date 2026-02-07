@@ -20,6 +20,7 @@ public struct HeaderCoverArtWorkView: View {
     public var body: some View {
         LazyResizableImage(
             url: imageUrl,
+            imageType: .backdrop,
             size: CGSize(width: DimensionConstants.posterWidth, height: DimensionConstants.fixedImageHeight)
         ) { state in
             if let image = state.image {

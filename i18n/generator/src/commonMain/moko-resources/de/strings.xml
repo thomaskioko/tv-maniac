@@ -54,9 +54,11 @@
     <string name="label_settings_language_message">Wählen Sie Ihre bevorzugte Sprache für die App-Oberfläche</string>
     <string name="label_settings_privacy_policy">Datenschutzrichtlinie</string>
     <string name="label_settings_image_quality">Bildqualität</string>
+    <string name="label_settings_image_quality_auto">Automatisch</string>
     <string name="label_settings_image_quality_high">Hoch</string>
     <string name="label_settings_image_quality_medium">Mittel</string>
     <string name="label_settings_image_quality_low">Niedrig</string>
+    <string name="label_settings_image_quality_auto_description">Passt die Qualität an Ihr Gerät an</string>
     <string name="label_settings_image_quality_high_description">Beste Qualität, verbraucht mehr Daten</string>
     <string name="label_settings_image_quality_medium_description">Ausgewogene Qualität und Datenverbrauch</string>
     <string name="label_settings_image_quality_low_description">Geringere Qualität, spart Daten</string>

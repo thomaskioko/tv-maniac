@@ -13,6 +13,7 @@ public struct TransparentImageBackground: View {
     public var body: some View {
         LazyResizableImage(
             url: imageUrl,
+            imageType: .backdrop,
             size: CGSize(
                 width: UIScreen.main.bounds.width,
                 height: UIScreen.main.bounds.height

@@ -15,7 +15,7 @@ public class FakeDatastoreRepository : DatastoreRepository {
     private val appThemeFlow = MutableStateFlow(AppTheme.SYSTEM_THEME)
     private val languageFlow: Channel<String> = Channel(Channel.UNLIMITED)
     private val listStyleFlow: Channel<ListStyle> = Channel(Channel.UNLIMITED)
-    private val imageQualityFlow = MutableStateFlow(ImageQuality.MEDIUM)
+    private val imageQualityFlow = MutableStateFlow(ImageQuality.AUTO)
     private val openTrailersInYoutubeFlow = MutableStateFlow(false)
     private val includeSpecialsFlow = MutableStateFlow(false)
     private val lastTraktUserId: MutableStateFlow<String?> = MutableStateFlow(null)

@@ -6,6 +6,8 @@ import TvManiac
 public extension TvManiac.ImageQuality {
     func toSwift() -> SwiftImageQuality {
         switch self {
+        case .auto:
+            .auto
         case .high:
             .high
         case .medium:
@@ -17,6 +19,8 @@ public extension TvManiac.ImageQuality {
 
     static func fromSwift(_ swiftQuality: SwiftImageQuality) -> TvManiac.ImageQuality {
         switch swiftQuality {
+        case .auto:
+            .auto
         case .high:
             .high
         case .medium:
