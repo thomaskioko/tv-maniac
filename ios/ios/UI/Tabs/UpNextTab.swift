@@ -19,35 +19,30 @@ struct UpNextTab: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            sortChipsRow
-                .background(theme.colors.background)
-
-            contentView
-        }
-        .background(theme.colors.background.ignoresSafeArea())
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                titleView
+        contentView
+            .background(theme.colors.background.ignoresSafeArea())
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    titleView
+                }
             }
-        }
-        .toolbarBackground(theme.colors.surface, for: .navigationBar)
-        .toolbarBackground(.visible, for: .navigationBar)
-        .refreshable {
-            presenter.dispatch(action: RefreshUpNext())
-        }
-        .onChange(of: uiState.message) { _, newValue in
-            if let message = newValue {
-                toast = Toast(
-                    type: .error,
-                    title: "Error",
-                    message: message.message
-                )
-                presenter.dispatch(action: UpNextMessageShown(id: message.id))
+            .toolbarBackground(theme.colors.surface, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .refreshable {
+                presenter.dispatch(action: RefreshUpNext())
             }
-        }
-        .toastView(toast: $toast)
+            .onChange(of: uiState.message) { _, newValue in
+                if let message = newValue {
+                    toast = Toast(
+                        type: .error,
+                        title: "Error",
+                        message: message.message
+                    )
+                    presenter.dispatch(action: UpNextMessageShown(id: message.id))
+                }
+            }
+            .toastView(toast: $toast)
     }
 
     private var sortChipsRow: some View {
@@ -104,25 +99,30 @@ struct UpNextTab: View {
     private var listContent: some View {
         ScrollViewReader { proxy in
             ScrollView(showsIndicators: false) {
-                LazyVStack(spacing: theme.spacing.small) {
-                    ForEach(episodesSwift, id: \.episodeId) { episode in
-                        UpNextListItemView(
-                            episode: episode,
-                            onItemClicked: { showTraktId, _ in
-                                presenter.dispatch(action: UpNextShowClicked(showTraktId: showTraktId))
-                            },
-                            onShowTitleClicked: { showTraktId in
-                                presenter.dispatch(action: UpNextShowClicked(showTraktId: showTraktId))
-                            },
-                            onMarkWatched: {
-                                presenter.dispatch(action: MarkWatched(
-                                    showTraktId: episode.showTraktId,
-                                    episodeId: episode.episodeId,
-                                    seasonNumber: episode.seasonNumber,
-                                    episodeNumber: episode.episodeNumberValue
-                                ))
-                            }
-                        )
+                LazyVStack(spacing: theme.spacing.small, pinnedViews: [.sectionHeaders]) {
+                    Section {
+                        ForEach(episodesSwift, id: \.episodeId) { episode in
+                            UpNextListItemView(
+                                episode: episode,
+                                onItemClicked: { showTraktId, _ in
+                                    presenter.dispatch(action: UpNextShowClicked(showTraktId: showTraktId))
+                                },
+                                onShowTitleClicked: { showTraktId in
+                                    presenter.dispatch(action: UpNextShowClicked(showTraktId: showTraktId))
+                                },
+                                onMarkWatched: {
+                                    presenter.dispatch(action: MarkWatched(
+                                        showTraktId: episode.showTraktId,
+                                        episodeId: episode.episodeId,
+                                        seasonNumber: episode.seasonNumber,
+                                        episodeNumber: episode.episodeNumberValue
+                                    ))
+                                }
+                            )
+                        }
+                    } header: {
+                        sortChipsRow
+                            .background(theme.colors.background)
                     }
                 }
             }
@@ -146,14 +146,21 @@ struct UpNextTab: View {
     @ViewBuilder
     private var emptyView: some View {
         ScrollView {
-            CenteredFullScreenView {
-                FullScreenView(
-                    systemName: "tray",
-                    message: String(\.label_upnext_empty),
-                    subtitle: nil,
-                    color: theme.colors.onSurfaceVariant
-                )
-                .frame(maxWidth: .infinity)
+            LazyVStack(pinnedViews: [.sectionHeaders]) {
+                Section {
+                    CenteredFullScreenView {
+                        FullScreenView(
+                            systemName: "tray",
+                            message: String(\.label_upnext_empty),
+                            subtitle: nil,
+                            color: theme.colors.onSurfaceVariant
+                        )
+                        .frame(maxWidth: .infinity)
+                    }
+                } header: {
+                    sortChipsRow
+                        .background(theme.colors.background)
+                }
             }
         }
     }
