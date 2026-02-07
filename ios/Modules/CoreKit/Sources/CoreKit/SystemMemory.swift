@@ -43,9 +43,11 @@ public enum SystemMemory {
 
     public static var pressureLevel: MemoryPressureLevel {
         guard let used = usedMemory else { return .normal }
+        let usedMB = Double(used) / (1024 * 1024)
         let ratio = Double(used) / Double(totalMemory)
-        if ratio > 0.06 { return .critical }
-        if ratio > 0.04 { return .warning }
+
+        if usedMB > 600 || ratio > 0.35 { return .critical }
+        if usedMB > 350 || ratio > 0.20 { return .warning }
         return .normal
     }
 
