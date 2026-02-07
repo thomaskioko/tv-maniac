@@ -89,9 +89,12 @@ struct WatchlistTab: View {
             staleEpisodesSwift = newValue.map { $0.toSwift() }
         }
         .onAppear {
-            // Initialize cached arrays
             watchNextEpisodesSwift = uiState.watchNextEpisodes.map { $0.toSwift() }
             staleEpisodesSwift = uiState.staleEpisodes.map { $0.toSwift() }
+        }
+        .onDisappear {
+            watchNextEpisodesSwift.removeAll()
+            staleEpisodesSwift.removeAll()
         }
     }
 
