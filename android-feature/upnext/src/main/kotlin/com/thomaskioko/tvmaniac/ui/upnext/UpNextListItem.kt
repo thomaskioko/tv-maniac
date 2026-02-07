@@ -1,7 +1,9 @@
 package com.thomaskioko.tvmaniac.ui.upnext
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,11 +12,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.CheckCircleOutline
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -31,6 +33,7 @@ import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.TextTitlePill
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.theme.grey
 import com.thomaskioko.tvmaniac.presentation.upnext.model.UpNextEpisodeUiModel
 import com.thomaskioko.tvmaniac.ui.upnext.preview.UpNextEpisodePreviewParameterProvider
 
@@ -133,15 +136,22 @@ internal fun UpNextListItem(
                 }
             }
 
-            IconButton(
-                onClick = onMarkWatched,
-                modifier = Modifier.padding(end = 4.dp),
+            Box(
+                modifier = Modifier
+                    .padding(12.dp)
+                    .size(28.dp)
+                    .background(
+                        color = grey,
+                        shape = CircleShape,
+                    )
+                    .clickable { onMarkWatched() },
+                contentAlignment = Alignment.Center,
             ) {
                 Icon(
-                    modifier = Modifier.size(28.dp),
-                    imageVector = Icons.Rounded.CheckCircleOutline,
-                    contentDescription = "Mark as watched",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(16.dp),
+                    imageVector = Icons.Rounded.Check,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimary,
                 )
             }
         }

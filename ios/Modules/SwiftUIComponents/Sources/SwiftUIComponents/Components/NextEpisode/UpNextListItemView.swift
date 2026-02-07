@@ -99,9 +99,11 @@ public struct UpNextListItemView: View {
             : 0
 
         return HStack(spacing: 8) {
-            ProgressView(value: progress)
-                .tint(theme.colors.secondary)
-                .frame(maxWidth: .infinity)
+            SegmentedProgressBar(
+                segmentProgress: [progress],
+                height: 4
+            )
+            .frame(maxWidth: .infinity)
 
             if episode.totalCount > 0 {
                 Text("\(episode.watchedCount)/\(episode.totalCount)")
