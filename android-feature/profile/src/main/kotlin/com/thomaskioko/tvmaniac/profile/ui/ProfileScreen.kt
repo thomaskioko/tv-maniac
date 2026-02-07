@@ -43,7 +43,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -55,7 +54,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
+import com.thomaskioko.tvmaniac.compose.components.CircularCard
 import com.thomaskioko.tvmaniac.compose.components.OutlinedVerticalIconButton
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
@@ -404,30 +403,20 @@ private fun HeaderContent(
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.Bottom,
         ) {
-            if (!avatarUrl.isNullOrBlank()) {
-                AsyncImageComposable(
-                    model = avatarUrl,
-                    contentDescription = stringResource(
-                        cd_profile_pic.resourceId,
-                        username,
-                    ),
-                    modifier = Modifier
-                        .size(80.dp)
-                        .clip(CircleShape)
-                        .border(3.dp, MaterialTheme.colorScheme.secondary, CircleShape),
-                )
-            } else {
-                Icon(
-                    imageVector = Icons.Filled.Person,
-                    tint = MaterialTheme.colorScheme.secondary,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(80.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
-                        .padding(16.dp),
-                )
-            }
+            CircularCard(
+                imageUrl = avatarUrl,
+                size = 80.dp,
+                placeholderIcon = Icons.Filled.Person,
+                contentDescription = stringResource(
+                    cd_profile_pic.resourceId,
+                    username,
+                ),
+                modifier = if (!avatarUrl.isNullOrBlank()) {
+                    Modifier.border(3.dp, MaterialTheme.colorScheme.secondary, CircleShape)
+                } else {
+                    Modifier
+                },
+            )
 
             Spacer(modifier = Modifier.width(16.dp))
 
