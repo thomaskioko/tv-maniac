@@ -51,7 +51,7 @@ public struct UpNextListItemView: View {
             .cornerRadius(UpNextListItemViewConstants.cornerRadius)
         }
         .buttonStyle(PlainButtonStyle())
-        .padding(.horizontal, theme.spacing.medium)
+        .padding(.horizontal, theme.spacing.xSmall)
     }
 
     private var posterView: some View {

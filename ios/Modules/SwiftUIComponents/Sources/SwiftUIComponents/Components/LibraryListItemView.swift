@@ -105,7 +105,7 @@ public struct LibraryListItemView: View {
                                     }
                                 }
                                 .frame(width: 32, height: 32)
-                                .clipShape(RoundedRectangle(cornerRadius: 6))
+                                .clipShape(RoundedRectangle(cornerRadius: theme.shapes.small))
                             }
                         }
                     }
@@ -115,8 +115,8 @@ public struct LibraryListItemView: View {
                 .padding(.trailing, theme.spacing.small)
             }
             .frame(height: 200)
-            .background(theme.colors.surfaceVariant)
-            .clipShape(RoundedRectangle(cornerRadius: theme.shapes.large))
+            .background(theme.colors.surface)
+            .clipShape(RoundedRectangle(cornerRadius: theme.shapes.small))
             .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
         }
         .buttonStyle(.plain)

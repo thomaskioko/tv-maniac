@@ -205,7 +205,8 @@ struct LibraryTab: View {
                     }
                 }
             }
-            .padding(.horizontal)
+            .padding(.horizontal, theme.spacing.xSmall)
+            .padding(.top, theme.spacing.small)
         }
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: uiState.isGridMode)
     }
@@ -223,7 +224,7 @@ struct LibraryTab: View {
                     )
                 }
             }
-            .padding(.horizontal)
+            .padding(.horizontal, theme.spacing.xSmall)
             .padding(.top, theme.spacing.small)
         }
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: uiState.isGridMode)

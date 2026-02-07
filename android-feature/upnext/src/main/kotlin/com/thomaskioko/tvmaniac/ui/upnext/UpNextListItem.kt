@@ -45,7 +45,7 @@ internal fun UpNextListItem(
         modifier = modifier
             .fillMaxWidth()
             .height(140.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant,
+        color = MaterialTheme.colorScheme.surface,
         onClick = { onItemClicked(item.showTraktId) },
     ) {
         Row(

@@ -47,7 +47,7 @@ internal fun LibraryListItem(
         modifier = modifier
             .fillMaxWidth()
             .height(200.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant,
+        color = MaterialTheme.colorScheme.surface,
         shadowElevation = 4.dp,
         onClick = { onItemClicked(item.traktId) },
     ) {
