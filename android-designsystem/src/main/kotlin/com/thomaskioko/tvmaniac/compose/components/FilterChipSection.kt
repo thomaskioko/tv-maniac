@@ -142,7 +142,7 @@ public fun SelectableFilterChip(
             selectedLabelColor = MaterialTheme.colorScheme.onSecondary,
         ),
         border = FilterChipDefaults.filterChipBorder(
-            borderColor = Color.Transparent,
+            borderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
             selectedBorderColor = Color.Transparent,
             enabled = true,
             selected = isSelected,

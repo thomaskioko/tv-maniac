@@ -33,8 +33,8 @@ public struct FilterChip: View {
                         .strokeBorder(
                             isSelected
                                 ? Color.clear
-                                : theme.colors.onSurface.opacity(0.2),
-                            lineWidth: 1
+                                : theme.colors.onSurface.opacity(0.8),
+                            lineWidth: 1.5
                         )
                 )
                 .foregroundColor(
