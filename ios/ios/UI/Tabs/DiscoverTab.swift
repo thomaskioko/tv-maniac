@@ -342,9 +342,7 @@ struct DiscoverTab: View {
         }) {
             AvatarView(
                 avatarUrl: avatarUrl,
-                size: 28,
-                borderColor: theme.colors.accent,
-                borderWidth: 1.5
+                size: 32,
             )
         }
     }
