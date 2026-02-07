@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.data.library.LibraryRepository
 import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderRepository
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.LIBRARY_SYNC
 import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityRepository
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
@@ -25,15 +26,18 @@ public class SyncLibraryInteractor(
 ) : Interactor<SyncLibraryInteractor.Param>() {
 
     override suspend fun doWork(params: Param) {
+        val needsSync = params.forceRefresh || libraryRepository.needsSync(LIBRARY_SYNC.duration)
+        if (!needsSync) {
+            logger.debug(TAG, "Library sync skipped - cache still valid")
+            return
+        }
+
         withContext(dispatchers.io) {
             traktActivityRepository.fetchLatestActivities(params.forceRefresh)
 
-            val needsSync = params.forceRefresh || libraryRepository.needsSync()
+            logger.debug(TAG, "Syncing library watchlist")
 
-            if (needsSync) {
-                logger.debug(TAG, "Syncing library watchlist")
-                libraryRepository.syncLibrary(params.forceRefresh)
-            }
+            libraryRepository.syncLibrary(params.forceRefresh)
 
             val followedShows = followedShowsRepository.getFollowedShows()
             logger.debug(TAG, "Syncing ${followedShows.size} followed shows")
