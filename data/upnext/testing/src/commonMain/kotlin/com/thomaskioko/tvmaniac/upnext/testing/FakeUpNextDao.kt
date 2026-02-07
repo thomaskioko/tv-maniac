@@ -23,6 +23,9 @@ public class FakeUpNextDao : UpNextDao {
     override fun observeNextEpisodesFromCache(): Flow<List<NextEpisodeWithShow>> =
         nextEpisodesFlow.asStateFlow()
 
+    override suspend fun getNextEpisodesFromCache(): List<NextEpisodeWithShow> =
+        nextEpisodesFlow.value
+
     override fun observeNextEpisodeForShow(showTraktId: Long): Flow<List<NextEpisodeWithShow>> =
         nextEpisodesFlow.map { episodes -> episodes.filter { it.showTraktId == showTraktId } }
 

@@ -35,6 +35,15 @@ public class DefaultUpNextDao(
             .map { it.filterActionableEpisodes(dateTimeProvider.nowMillis()) }
     }
 
+    override suspend fun getNextEpisodesFromCache(): List<NextEpisodeWithShow> {
+        return withContext(dispatchers.databaseRead) {
+            database.nextEpisodesQueries
+                .nextEpisodesWithShowInfo()
+                .executeAsList()
+                .filterActionableEpisodes(dateTimeProvider.nowMillis())
+        }
+    }
+
     override fun observeNextEpisodeForShow(showTraktId: Long): Flow<List<NextEpisodeWithShow>> {
         return database.nextEpisodesQueries
             .nextEpisodeWithShowInfoByShowId(Id(showTraktId))

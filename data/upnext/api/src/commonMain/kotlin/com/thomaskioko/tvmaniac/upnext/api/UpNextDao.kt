@@ -7,6 +7,8 @@ public interface UpNextDao {
 
     public fun observeNextEpisodesFromCache(): Flow<List<NextEpisodeWithShow>>
 
+    public suspend fun getNextEpisodesFromCache(): List<NextEpisodeWithShow>
+
     public fun observeNextEpisodeForShow(showTraktId: Long): Flow<List<NextEpisodeWithShow>>
 
     public suspend fun upsert(

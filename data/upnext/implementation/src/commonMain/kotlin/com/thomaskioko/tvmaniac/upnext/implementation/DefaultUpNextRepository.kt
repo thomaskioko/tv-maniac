@@ -5,6 +5,8 @@ import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsDao
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.UPNEXT_FULL_SYNC
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.upnext.api.UpNextDao
 import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
@@ -28,6 +30,7 @@ public class DefaultUpNextRepository(
     private val followedShowsDao: FollowedShowsDao,
     private val tvShowsDao: TvShowsDao,
     private val showDetailsRepository: ShowDetailsRepository,
+    private val requestManagerRepository: RequestManagerRepository,
     private val logger: Logger,
 ) : UpNextRepository {
 
@@ -39,6 +42,8 @@ public class DefaultUpNextRepository(
             .map { entries -> entries.count { it.pendingAction == PendingAction.NOTHING } }
 
     override suspend fun fetchUpNextEpisodes(forceRefresh: Boolean) {
+        if (!forceRefresh && isSyncValid()) return
+
         val followedShows = followedShowsDao.entriesWithNoPendingAction()
         if (followedShows.isEmpty()) {
             logger.debug(TAG, "No followed shows found, skipping UpNext refresh")
@@ -60,6 +65,11 @@ public class DefaultUpNextRepository(
                 }
             }
         }
+
+        requestManagerRepository.upsert(
+            entityId = UPNEXT_FULL_SYNC.requestId,
+            requestType = UPNEXT_FULL_SYNC.name,
+        )
 
         logger.debug(TAG, "UpNext refresh complete")
     }
@@ -99,6 +109,19 @@ public class DefaultUpNextRepository(
                 watchedEpisode = episodeNumber,
             )
         }
+    }
+
+    private suspend fun isSyncValid(): Boolean {
+        val hasCachedData = upNextDao.getNextEpisodesFromCache().isNotEmpty()
+        val isSyncFresh = requestManagerRepository.isRequestValid(
+            requestType = UPNEXT_FULL_SYNC.name,
+            threshold = UPNEXT_FULL_SYNC.duration,
+        )
+        if (hasCachedData && isSyncFresh) {
+            logger.debug(TAG, "UpNext full sync still valid, skipping refresh")
+            return true
+        }
+        return false
     }
 
     private suspend fun ensureShowExists(showTraktId: Long) {
