@@ -21,7 +21,7 @@ public struct TextTitlePill: View {
         Button(action: onTap) {
             HStack(spacing: 2) {
                 Text(title)
-                    .textStyle(titleStyle ?? theme.typography.titleMedium)
+                    .textStyle(titleStyle ?? theme.typography.titleSmall)
                     .lineLimit(1)
                     .foregroundColor(theme.colors.onSurface)
                 Image(systemName: "chevron.right")
