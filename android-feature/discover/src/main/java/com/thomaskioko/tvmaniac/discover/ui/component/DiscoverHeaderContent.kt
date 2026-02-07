@@ -77,7 +77,7 @@ internal fun PosterCardsPager(
     val containerHeight = with(density) {
         LocalWindowInfo.current.containerSize.height.toDp()
     }
-    val pagerHeight = containerHeight / 1.6f
+    val pagerHeight = containerHeight / 1.5f
     Box {
         HorizontalPager(
             modifier = modifier
