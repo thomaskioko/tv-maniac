@@ -111,6 +111,7 @@ struct DiscoverTab: View {
                 PosterItemView(
                     title: item.title,
                     posterUrl: item.posterUrl,
+                    imageType: .backdrop,
                     posterWidth: geometry.size.width,
                     posterHeight: scrollViewHeight,
                     processorHeight: CarouselConstants.fixedImageHeight
