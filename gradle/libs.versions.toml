@@ -164,6 +164,7 @@ roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", versi
 
 snapper = { module = "dev.chrisbanes.snapper:snapper", version.ref = "snapper" }
 
+sqldelight-dialect = { module = "app.cash.sqldelight:sqlite-3-25-dialect", version.ref = "sqldelight" }
 sqldelight-driver-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 sqldelight-driver-jvm = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
 sqldelight-driver-native = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }

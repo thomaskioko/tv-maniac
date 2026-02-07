@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		D60D952B2CDBE1160039884B /* TvManiacKit in Frameworks */ = {isa = PBXBuildFile; productRef = D60D952A2CDBE1160039884B /* TvManiacKit */; };
 		D60F8D272EC8060C00916042 /* TraktAuthKit in Frameworks */ = {isa = PBXBuildFile; productRef = D60F8D262EC8060C00916042 /* TraktAuthKit */; };
+		D6A2A0EC2EC800000001CD83 /* CoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = D6A2A0ED2EC800000001CD83 /* CoreKit */; };
 		D636CE4D2B4487B1003F7876 /* MoreShowsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D636CE4C2B4487B1003F7876 /* MoreShowsView.swift */; };
 		D6619D372C89D37900D273E7 /* SwiftUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = D6619D362C89D37900D273E7 /* SwiftUIComponents */; };
 		D6619D382C89D37A00D273E8 /* config-dev.json in Resources */ = {isa = PBXBuildFile; fileRef = D6619D392C89D37A00D273E8 /* config-dev.json */; };
@@ -49,6 +50,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D6A2A0EC2EC800000001CD83 /* CoreKit in Frameworks */,
 				D60F8D272EC8060C00916042 /* TraktAuthKit in Frameworks */,
 				D6619D372C89D37900D273E7 /* SwiftUIComponents in Frameworks */,
 				D60D952B2CDBE1160039884B /* TvManiacKit in Frameworks */,
@@ -136,6 +138,7 @@
 			);
 			name = "tv-maniac";
 			packageProductDependencies = (
+				D6A2A0ED2EC800000001CD83 /* CoreKit */,
 				D6619D362C89D37900D273E7 /* SwiftUIComponents */,
 				D60D952A2CDBE1160039884B /* TvManiacKit */,
 				D60F8D262EC8060C00916042 /* TraktAuthKit */,
@@ -487,6 +490,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		D6A2A0ED2EC800000001CD83 /* CoreKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CoreKit;
+		};
 		D60D952A2CDBE1160039884B /* TvManiacKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = TvManiacKit;

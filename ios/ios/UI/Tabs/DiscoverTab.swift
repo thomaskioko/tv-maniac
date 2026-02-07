@@ -71,6 +71,9 @@ struct DiscoverTab: View {
         .animation(.easeInOut(duration: AnimationConstants.defaultDuration), value: showGlass)
         .coordinateSpace(name: "scrollView")
         .edgesIgnoringSafeArea(.top)
+        .onDisappear {
+            selectedShow = nil
+        }
     }
 
     // MARK: - Header Content
@@ -108,6 +111,7 @@ struct DiscoverTab: View {
                 PosterItemView(
                     title: item.title,
                     posterUrl: item.posterUrl,
+                    imageType: .backdrop,
                     posterWidth: geometry.size.width,
                     posterHeight: scrollViewHeight,
                     processorHeight: CarouselConstants.fixedImageHeight
@@ -120,7 +124,7 @@ struct DiscoverTab: View {
     }
 
     private enum CarouselConstants {
-        static let fixedImageHeight: CGFloat = 600
+        static let fixedImageHeight: CGFloat = ParallaxConstants.defaultImageHeight
     }
 
     @ViewBuilder

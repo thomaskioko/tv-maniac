@@ -57,9 +57,11 @@
     <string name="label_settings_language_message">Choose your preferred language for the app interface</string>
     <string name="label_settings_privacy_policy">Privacy Policy</string>
     <string name="label_settings_image_quality">Image Quality</string>
+    <string name="label_settings_image_quality_auto">Auto</string>
     <string name="label_settings_image_quality_high">High</string>
     <string name="label_settings_image_quality_medium">Medium</string>
     <string name="label_settings_image_quality_low">Low</string>
+    <string name="label_settings_image_quality_auto_description">Adjusts quality based on your device</string>
     <string name="label_settings_image_quality_high_description">Best quality, uses more data</string>
     <string name="label_settings_image_quality_medium_description">Balanced quality and data usage</string>
     <string name="label_settings_image_quality_low_description">Lower quality, saves data</string>
@@ -264,13 +266,14 @@
     <string name="label_library_filter_title">Filter</string>
     <string name="label_library_sort_title">Sort &amp; Filter</string>
     <string name="label_library_sort_by">SORT BY</string>
-    <string name="label_library_sort_last_watched_desc">Last watched ↓</string>
-    <string name="label_library_sort_last_watched_asc">Last watched ↑</string>
-    <string name="label_library_sort_new_episodes">New Episodes ↓</string>
-    <string name="label_library_sort_episodes_left_desc">Episodes left ↓</string>
-    <string name="label_library_sort_episodes_left_asc">Episodes left ↑</string>
-    <string name="label_library_sort_last_watched">Last Watched</string>
-    <string name="label_library_sort_alphabetical">A-Z</string>
+    <string name="label_library_sort_rank_asc">Rank ↑</string>
+    <string name="label_library_sort_rank_desc">Rank ↓</string>
+    <string name="label_library_sort_added_desc">Added ↓</string>
+    <string name="label_library_sort_added_asc">Added ↑</string>
+    <string name="label_library_sort_released_desc">Released ↓</string>
+    <string name="label_library_sort_released_asc">Released ↑</string>
+    <string name="label_library_sort_title_asc">Title ↑</string>
+    <string name="label_library_sort_title_desc">Title ↓</string>
     <string name="label_library_filter_followed_only">Followed Only</string>
     <string name="label_library_filter_genres">GENRES</string>
     <string name="label_library_filter_status">STATUS</string>
@@ -288,4 +291,8 @@
     <string name="label_calendar_empty">No upcoming episodes</string>
     <string name="label_calendar_login_required">Login to Trakt to see your calendar</string>
     <string name="label_calendar_more_episodes">+%d episodes</string>
+
+    <string name="label_upnext_empty">No shows in your watchlist</string>
+    <string name="label_upnext_sort_last_watched">Last Watched</string>
+    <string name="label_upnext_sort_air_date">Air Date</string>
 </resources>

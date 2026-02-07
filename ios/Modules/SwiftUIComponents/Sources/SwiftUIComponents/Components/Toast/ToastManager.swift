@@ -13,9 +13,9 @@ public final class ToastManager {
         self.toast = toast
 
         if toast.duration > 0 {
-            dismissalTask = Task {
+            dismissalTask = Task { @MainActor [weak self] in
                 try? await Task.sleep(for: .seconds(toast.duration))
-                guard !Task.isCancelled else { return }
+                guard !Task.isCancelled, let self else { return }
                 dismiss()
             }
         }
@@ -60,17 +60,17 @@ public final class ToastManager {
     ) {
         show(type: .info, title: "", message: loadingMessage, duration: 0)
 
-        Task {
+        Task { @MainActor [weak self] in
             do {
                 let result = try await task()
-                guard !Task.isCancelled else { return }
+                guard !Task.isCancelled, let self else { return }
                 if let successToast = onSuccess?(result) {
                     show(successToast)
                 } else {
                     dismiss()
                 }
             } catch {
-                guard !Task.isCancelled else { return }
+                guard !Task.isCancelled, let self else { return }
                 if let failureToast = onFailure?(error) {
                     show(failureToast)
                 } else {

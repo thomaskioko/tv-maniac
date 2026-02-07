@@ -7,11 +7,11 @@ import com.thomaskioko.tvmaniac.data.featuredshows.api.FeaturedShowsRepository
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsRepository
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsRepository
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
-import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
-import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.genre.GenreRepository
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsRepository
+import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
+import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject
@@ -24,7 +24,7 @@ public class DiscoverShowsInteractor(
     private val trendingShowsRepository: TrendingShowsRepository,
     private val upcomingShowsRepository: UpcomingShowsRepository,
     private val genreRepository: GenreRepository,
-    private val episodeRepository: EpisodeRepository,
+    private val upNextRepository: UpNextRepository,
     private val dispatchers: AppCoroutineDispatchers,
 ) : SubjectInteractor<Unit, DiscoverShowsData>() {
 
@@ -35,7 +35,7 @@ public class DiscoverShowsInteractor(
         popularShowsRepository.observePopularShows(),
         trendingShowsRepository.observeTrendingShows(),
         upcomingShowsRepository.observeUpcomingShows(),
-        episodeRepository.observeNextEpisodesForWatchlist(),
+        upNextRepository.observeNextEpisodesForWatchlist(),
     ) { _, featured, topRated, popular, trending, upcoming, nextEpisodes ->
         DiscoverShowsData(
             featuredShows = featured,

@@ -7,10 +7,10 @@ import com.thomaskioko.tvmaniac.data.popularshows.testing.FakePopularShowsReposi
 import com.thomaskioko.tvmaniac.data.topratedshows.testing.FakeTopRatedShowsRepository
 import com.thomaskioko.tvmaniac.data.trendingshows.testing.FakeTrendingShowsRepository
 import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepository
-import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
-import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
+import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
+import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -30,7 +30,7 @@ class DiscoverShowsInteractorTest {
     private val trendingShowsRepository = FakeTrendingShowsRepository()
     private val upcomingShowsRepository = FakeUpcomingShowsRepository()
     private val genreRepository = FakeGenreRepository()
-    private val episodeRepository = FakeEpisodeRepository()
+    private val upNextRepository = FakeUpNextRepository()
 
     private val coroutineDispatcher = AppCoroutineDispatchers(
         main = testDispatcher,
@@ -53,7 +53,7 @@ class DiscoverShowsInteractorTest {
             trendingShowsRepository = trendingShowsRepository,
             upcomingShowsRepository = upcomingShowsRepository,
             genreRepository = genreRepository,
-            episodeRepository = episodeRepository,
+            upNextRepository = upNextRepository,
             dispatchers = coroutineDispatcher,
         )
     }
@@ -120,7 +120,7 @@ class DiscoverShowsInteractorTest {
     }
 
     private fun setNextEpisodes(episodes: List<NextEpisodeWithShow>) {
-        episodeRepository.setNextEpisodesForWatchlist(episodes)
+        upNextRepository.setNextEpisodesForWatchlist(episodes)
     }
 
     private fun createNextEpisodesList(size: Int = 5) = List(size) { index ->

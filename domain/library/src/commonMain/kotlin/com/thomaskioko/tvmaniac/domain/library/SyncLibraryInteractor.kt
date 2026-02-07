@@ -8,7 +8,8 @@ import com.thomaskioko.tvmaniac.data.library.LibraryRepository
 import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderRepository
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
-import com.thomaskioko.tvmaniac.seasons.api.SeasonsEpisodesSyncRepository
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.LIBRARY_SYNC
+import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityRepository
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
@@ -18,20 +19,25 @@ public class SyncLibraryInteractor(
     private val libraryRepository: LibraryRepository,
     private val followedShowsRepository: FollowedShowsRepository,
     private val showDetailsRepository: ShowDetailsRepository,
-    private val seasonsEpisodesSyncRepository: SeasonsEpisodesSyncRepository,
     private val watchProviderRepository: WatchProviderRepository,
+    private val traktActivityRepository: TraktActivityRepository,
     private val dispatchers: AppCoroutineDispatchers,
     private val logger: Logger,
 ) : Interactor<SyncLibraryInteractor.Param>() {
 
     override suspend fun doWork(params: Param) {
-        withContext(dispatchers.io) {
-            val needsSync = params.forceRefresh || libraryRepository.needsSync()
+        val needsSync = params.forceRefresh || libraryRepository.needsSync(LIBRARY_SYNC.duration)
+        if (!needsSync) {
+            logger.debug(TAG, "Library sync skipped - cache still valid")
+            return
+        }
 
-            if (needsSync) {
-                logger.debug(TAG, "Syncing library watchlist")
-                libraryRepository.syncLibrary(params.forceRefresh)
-            }
+        withContext(dispatchers.io) {
+            traktActivityRepository.fetchLatestActivities(params.forceRefresh)
+
+            logger.debug(TAG, "Syncing library watchlist")
+
+            libraryRepository.syncLibrary(params.forceRefresh)
 
             val followedShows = followedShowsRepository.getFollowedShows()
             logger.debug(TAG, "Syncing ${followedShows.size} followed shows")
@@ -48,13 +54,6 @@ public class SyncLibraryInteractor(
 
                 watchProviderRepository.fetchWatchProviders(
                     traktId = show.traktId,
-                    forceRefresh = params.forceRefresh,
-                )
-
-                ensureActive()
-
-                seasonsEpisodesSyncRepository.syncSeasonsWithEpisodes(
-                    showTraktId = show.traktId,
                     forceRefresh = params.forceRefresh,
                 )
             }

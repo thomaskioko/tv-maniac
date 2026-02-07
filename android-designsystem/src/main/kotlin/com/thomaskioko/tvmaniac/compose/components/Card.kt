@@ -99,50 +99,48 @@ private fun PlaceholderContent(
     imageSize: Dp = 52.dp,
     title: String? = null,
 ) {
-    if (imageUrl.isNullOrEmpty()) {
-        ConstraintLayout(
-            modifier = modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            Color.Gray.copy(alpha = 0.8f),
-                            Color.Gray,
-                        ),
+    ConstraintLayout(
+        modifier = modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        Color.Gray.copy(alpha = 0.8f),
+                        Color.Gray,
                     ),
                 ),
-        ) {
-            val (icon, text) = createRefs()
+            ),
+    ) {
+        val (icon, text) = createRefs()
 
-            Icon(
+        Icon(
+            modifier = Modifier
+                .size(imageSize)
+                .constrainAs(icon) {
+                    centerTo(parent)
+                },
+            imageVector = Icons.Outlined.Movie,
+            contentDescription = title,
+            tint = Color.White.copy(alpha = 0.8f),
+        )
+
+        title?.let {
+            Text(
+                text = it,
                 modifier = Modifier
-                    .size(imageSize)
-                    .constrainAs(icon) {
-                        centerTo(parent)
+                    .padding(horizontal = 4.dp)
+                    .constrainAs(text) {
+                        top.linkTo(icon.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        width = Dimension.fillToConstraints
                     },
-                imageVector = Icons.Outlined.Movie,
-                contentDescription = title,
-                tint = Color.White.copy(alpha = 0.8f),
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.White.copy(alpha = 0.8f),
+                textAlign = TextAlign.Center,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
             )
-
-            title?.let {
-                Text(
-                    text = it,
-                    modifier = Modifier
-                        .padding(horizontal = 4.dp)
-                        .constrainAs(text) {
-                            top.linkTo(icon.bottom)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                            width = Dimension.fillToConstraints
-                        },
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.White.copy(alpha = 0.8f),
-                    textAlign = TextAlign.Center,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
         }
     }
 }

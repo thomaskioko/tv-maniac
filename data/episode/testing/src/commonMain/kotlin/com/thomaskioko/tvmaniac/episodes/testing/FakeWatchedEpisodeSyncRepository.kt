@@ -19,4 +19,7 @@ public class FakeWatchedEpisodeSyncRepository : WatchedEpisodeSyncRepository {
         lastSyncedShowId = showTraktId
         lastForceRefresh = forceRefresh
     }
+
+    override suspend fun uploadPendingEpisodes() {
+    }
 }

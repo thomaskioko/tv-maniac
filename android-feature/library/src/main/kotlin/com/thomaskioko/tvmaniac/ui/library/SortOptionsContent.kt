@@ -24,21 +24,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.components.FilterChipSection
+import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_filter_apply
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_filter_clear
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_filter_genres
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_filter_status
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_alphabetical
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_added_asc
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_added_desc
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_by
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_episodes_left_asc
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_episodes_left_desc
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_last_watched_asc
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_last_watched_desc
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_new_episodes
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_rank_asc
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_rank_desc
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_released_asc
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_released_desc
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_title_asc
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_title_desc
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_status_canceled
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_status_ended
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_status_in_production
@@ -81,12 +84,14 @@ internal fun SortOptionsContent(
                 onItemToggle = { onSortOptionSelected(it) },
                 labelProvider = { sortOption ->
                     when (sortOption) {
-                        LibrarySortOption.LAST_WATCHED_DESC -> label_library_sort_last_watched_desc.resolve(context)
-                        LibrarySortOption.LAST_WATCHED_ASC -> label_library_sort_last_watched_asc.resolve(context)
-                        LibrarySortOption.NEW_EPISODES -> label_library_sort_new_episodes.resolve(context)
-                        LibrarySortOption.EPISODES_LEFT_DESC -> label_library_sort_episodes_left_desc.resolve(context)
-                        LibrarySortOption.EPISODES_LEFT_ASC -> label_library_sort_episodes_left_asc.resolve(context)
-                        LibrarySortOption.ALPHABETICAL -> label_library_sort_alphabetical.resolve(context)
+                        LibrarySortOption.RANK_ASC -> label_library_sort_rank_asc.resolve(context)
+                        LibrarySortOption.RANK_DESC -> label_library_sort_rank_desc.resolve(context)
+                        LibrarySortOption.ADDED_DESC -> label_library_sort_added_desc.resolve(context)
+                        LibrarySortOption.ADDED_ASC -> label_library_sort_added_asc.resolve(context)
+                        LibrarySortOption.RELEASED_DESC -> label_library_sort_released_desc.resolve(context)
+                        LibrarySortOption.RELEASED_ASC -> label_library_sort_released_asc.resolve(context)
+                        LibrarySortOption.TITLE_ASC -> label_library_sort_title_asc.resolve(context)
+                        LibrarySortOption.TITLE_DESC -> label_library_sort_title_desc.resolve(context)
                     }
                 },
                 collapsedItemCount = 5,
@@ -185,7 +190,7 @@ private fun FilterActionBar(
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 private fun SortOptionsContentPreview(
     @PreviewParameter(LibraryStatePreviewParameterProvider::class) state: LibraryState,

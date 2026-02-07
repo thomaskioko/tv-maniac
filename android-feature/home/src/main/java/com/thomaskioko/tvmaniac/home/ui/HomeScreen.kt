@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Movie
+import androidx.compose.material.icons.outlined.PlayCircleOutline
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.VideoLibrary
 import androidx.compose.runtime.Composable
@@ -17,6 +18,7 @@ import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomNavigationItem
 import com.thomaskioko.tvmaniac.compose.components.TvManiacNavigationBar
 import com.thomaskioko.tvmaniac.discover.ui.DiscoverScreen
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_discover_up_next
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_discover
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_library
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_profile
@@ -27,9 +29,11 @@ import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.Child.Discover
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.Child.Library
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.Child.Profile
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.Child.Search
+import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.Child.UpNext
 import com.thomaskioko.tvmaniac.profile.ui.ProfileScreen
 import com.thomaskioko.tvmaniac.search.ui.SearchScreen
 import com.thomaskioko.tvmaniac.ui.library.LibraryScreen
+import com.thomaskioko.tvmaniac.ui.upnext.UpNextScreen
 
 @Composable
 public fun HomeScreen(
@@ -54,6 +58,12 @@ private fun ChildrenContent(homePresenter: HomePresenter, modifier: Modifier = M
         when (val screen = child.instance) {
             is Discover -> {
                 DiscoverScreen(
+                    presenter = screen.presenter,
+                    modifier = fillMaxSizeModifier,
+                )
+            }
+            is UpNext -> {
+                UpNextScreen(
                     presenter = screen.presenter,
                     modifier = fillMaxSizeModifier,
                 )
@@ -100,10 +110,10 @@ internal fun BottomNavigationContent(
         )
 
         TvManiacBottomNavigationItem(
-            imageVector = Icons.Outlined.Search,
-            title = menu_item_search.resolve(context),
-            selected = activeComponent is Search,
-            onClick = { component.onSearchClicked() },
+            imageVector = Icons.Outlined.PlayCircleOutline,
+            title = label_discover_up_next.resolve(context),
+            selected = activeComponent is UpNext,
+            onClick = { component.onUpNextClicked() },
         )
 
         TvManiacBottomNavigationItem(
@@ -111,6 +121,13 @@ internal fun BottomNavigationContent(
             title = menu_item_library.resolve(context),
             selected = activeComponent is Library,
             onClick = { component.onLibraryClicked() },
+        )
+
+        TvManiacBottomNavigationItem(
+            imageVector = Icons.Outlined.Search,
+            title = menu_item_search.resolve(context),
+            selected = activeComponent is Search,
+            onClick = { component.onSearchClicked() },
         )
 
         TvManiacBottomNavigationItem(

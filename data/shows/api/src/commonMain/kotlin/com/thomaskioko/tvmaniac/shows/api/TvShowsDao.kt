@@ -22,4 +22,6 @@ public interface TvShowsDao {
     public fun getShowsByTraktIds(traktIds: List<Long>): List<ShowEntity>
 
     public fun getTmdbIdByTraktId(traktId: Long): Long?
+
+    public suspend fun existsByTraktId(traktId: Long): Boolean
 }

@@ -26,7 +26,7 @@ CREATE INDEX IF NOT EXISTS idx_tvshow_name ON tvshow(name);
 CREATE INDEX IF NOT EXISTS idx_tvshow_tmdb_id ON tvshow(tmdb_id);
 
 upsert:
-INSERT OR REPLACE INTO tvshow(
+INSERT INTO tvshow(
     trakt_id,
     tmdb_id,
     name,
@@ -42,7 +42,21 @@ INSERT OR REPLACE INTO tvshow(
     poster_path,
     backdrop_path
 )
-VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+ON CONFLICT(trakt_id) DO UPDATE SET
+    tmdb_id = excluded.tmdb_id,
+    name = excluded.name,
+    overview = excluded.overview,
+    language = excluded.language,
+    year = excluded.year,
+    ratings = excluded.ratings,
+    vote_count = excluded.vote_count,
+    genres = excluded.genres,
+    status = excluded.status,
+    episode_numbers = excluded.episode_numbers,
+    season_numbers = excluded.season_numbers,
+    poster_path = excluded.poster_path,
+    backdrop_path = excluded.backdrop_path;
 
 tvshowDetails:
 SELECT
@@ -148,6 +162,11 @@ DELETE FROM tvshow;
 existsByTmdbId:
 SELECT EXISTS(
     SELECT 1 FROM tvshow WHERE tmdb_id = ?
+);
+
+existsByTraktId:
+SELECT EXISTS(
+    SELECT 1 FROM tvshow WHERE trakt_id = ?
 );
 
 showsByTraktIds:

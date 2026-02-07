@@ -1,0 +1,25 @@
+CREATE TABLE IF NOT EXISTS next_episodes (
+    show_trakt_id INTEGER PRIMARY KEY NOT NULL,
+    episode_trakt_id INTEGER DEFAULT NULL,
+    season_number INTEGER DEFAULT NULL,
+    episode_number INTEGER DEFAULT NULL,
+    title TEXT DEFAULT NULL,
+    overview TEXT DEFAULT NULL,
+    runtime INTEGER DEFAULT NULL,
+    first_aired INTEGER DEFAULT NULL,
+    image_url TEXT DEFAULT NULL,
+    is_show_complete INTEGER NOT NULL DEFAULT 0,
+    last_episode_season INTEGER DEFAULT NULL,
+    last_episode_number INTEGER DEFAULT NULL,
+    trakt_last_watched_at INTEGER DEFAULT NULL,
+    updated_at INTEGER NOT NULL,
+    FOREIGN KEY(show_trakt_id) REFERENCES tvshow(trakt_id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_next_episodes_updated_at ON next_episodes(updated_at);
+CREATE INDEX IF NOT EXISTS idx_next_episodes_trakt_last_watched ON next_episodes(trakt_last_watched_at);
+CREATE INDEX IF NOT EXISTS idx_followed_trakt_pending ON followed_shows(trakt_id, pending_action);
+CREATE INDEX IF NOT EXISTS idx_watched_show_episode ON watched_episodes(show_trakt_id, episode_id);
+CREATE INDEX IF NOT EXISTS idx_season_show_number_id ON season(show_trakt_id, season_number, id);
+DROP INDEX IF EXISTS idx_next_episodes_show_trakt_id;
+DROP INDEX IF EXISTS index_show_metadata_show_trakt_id;

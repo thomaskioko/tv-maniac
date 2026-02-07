@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.domain.watchlist
 import com.thomaskioko.tvmaniac.domain.watchlist.model.EpisodeBadge
 import com.thomaskioko.tvmaniac.domain.watchlist.model.UpNextEpisodeInfo
 import com.thomaskioko.tvmaniac.domain.watchlist.model.UpNextSections
-import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
+import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import me.tatarka.inject.annotations.Inject
 

@@ -27,7 +27,7 @@ public struct SegmentedProgressBar: View {
                         progress: progress,
                         height: height,
                         accentColor: theme.colors.accent,
-                        trackColor: theme.colors.surfaceVariant
+                        trackColor: theme.colors.accent.opacity(0.3)
                     )
                 }
             }

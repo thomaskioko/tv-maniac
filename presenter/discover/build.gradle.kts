@@ -34,6 +34,7 @@ kotlin {
             dependencies {
                 implementation(projects.core.logger.testing)
                 implementation(projects.data.episode.testing)
+                implementation(projects.data.upnext.testing)
                 implementation(projects.data.featuredshows.testing)
                 implementation(projects.data.followedshows.testing)
                 implementation(projects.data.genre.testing)

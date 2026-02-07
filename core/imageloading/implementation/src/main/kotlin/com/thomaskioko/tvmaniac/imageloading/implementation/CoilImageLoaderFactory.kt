@@ -52,9 +52,10 @@ public class CoilImageLoaderFactory(
     private fun calculateDiskCacheSize(): Long {
         val baseSize = 250L * 1024 * 1024 // 250MB
         return when (imageQualityProvider.getCurrentQuality()) {
-            ImageQuality.LOW -> baseSize / 2 // 125MB for low quality
-            ImageQuality.MEDIUM -> baseSize // 250MB for medium
-            ImageQuality.HIGH -> baseSize * 2 // 500MB for high quality
+            ImageQuality.AUTO -> baseSize
+            ImageQuality.LOW -> baseSize / 2
+            ImageQuality.MEDIUM -> baseSize
+            ImageQuality.HIGH -> baseSize * 2
         }
     }
 }

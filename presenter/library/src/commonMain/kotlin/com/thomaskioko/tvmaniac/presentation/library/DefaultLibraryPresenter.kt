@@ -23,7 +23,7 @@ import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -51,7 +51,7 @@ public class DefaultLibraryPresenter(
     private val loadingState = ObservableLoadingCounter()
     private val coroutineScope = coroutineScope()
     private val queryFlow = MutableStateFlow("")
-    private val sortOptionFlow = MutableStateFlow(LibrarySortOption.LAST_WATCHED_DESC)
+    private val sortOptionFlow = MutableStateFlow(LibrarySortOption.ADDED_DESC)
     private val followedOnlyFlow = MutableStateFlow(false)
     private val selectedGenresFlow = MutableStateFlow<Set<String>>(emptySet())
     private val selectedStatusesFlow = MutableStateFlow<Set<ShowStatus>>(emptySet())
@@ -61,7 +61,6 @@ public class DefaultLibraryPresenter(
         observeSortOptionChanges()
         observeAuthState()
         observeLibrary()
-        syncLibrary()
     }
 
     override val state: StateFlow<LibraryState> = combine(
@@ -154,27 +153,23 @@ public class DefaultLibraryPresenter(
         sortOption: LibrarySortOption,
     ): List<LibraryItem> {
         return when (sortOption) {
-            LibrarySortOption.LAST_WATCHED_DESC -> items.sortedByDescending { it.lastWatchedAt ?: 0L }
-            LibrarySortOption.LAST_WATCHED_ASC -> items.sortedBy { it.lastWatchedAt ?: 0L }
-            LibrarySortOption.NEW_EPISODES -> items.sortedByDescending {
-                (it.totalCount - it.watchedCount).coerceAtLeast(0)
-            }
-            LibrarySortOption.EPISODES_LEFT_DESC -> items.sortedByDescending {
-                (it.totalCount - it.watchedCount).coerceAtLeast(0)
-            }
-            LibrarySortOption.EPISODES_LEFT_ASC -> items.sortedBy {
-                (it.totalCount - it.watchedCount).coerceAtLeast(0)
-            }
-            LibrarySortOption.ALPHABETICAL -> items.sortedBy { it.title.lowercase() }
+            LibrarySortOption.RANK_ASC -> items
+            LibrarySortOption.RANK_DESC -> items.reversed()
+            LibrarySortOption.ADDED_DESC -> items.sortedByDescending { it.followedAt ?: 0L }
+            LibrarySortOption.ADDED_ASC -> items.sortedBy { it.followedAt ?: Long.MAX_VALUE }
+            LibrarySortOption.RELEASED_DESC -> items.sortedByDescending { it.year }
+            LibrarySortOption.RELEASED_ASC -> items.sortedBy { it.year }
+            LibrarySortOption.TITLE_ASC -> items.sortedBy { it.title.lowercase() }
+            LibrarySortOption.TITLE_DESC -> items.sortedByDescending { it.title.lowercase() }
         }
     }
 
     private fun observeAuthState() {
         coroutineScope.launch {
             traktAuthRepository.state
-                .drop(1)
+                .distinctUntilChanged()
                 .filter { it == TraktAuthState.LOGGED_IN }
-                .collect { syncLibrary(forceRefresh = true) }
+                .collect { syncLibrary() }
         }
     }
 
@@ -273,8 +268,8 @@ public class DefaultLibraryPresenter(
         coroutineScope.launch {
             selectedGenresFlow.emit(emptySet())
             selectedStatusesFlow.emit(emptySet())
-            sortOptionFlow.emit(LibrarySortOption.LAST_WATCHED_DESC)
-            repository.saveSortOption(DataLibrarySortOption.LAST_WATCHED_DESC)
+            sortOptionFlow.emit(LibrarySortOption.ADDED_DESC)
+            repository.saveSortOption(DataLibrarySortOption.ADDED_DESC)
         }
     }
 
@@ -308,21 +303,25 @@ private fun WatchProvider.toUiModel() =
     )
 
 private fun LibrarySortOption.toData(): DataLibrarySortOption = when (this) {
-    LibrarySortOption.LAST_WATCHED_DESC -> DataLibrarySortOption.LAST_WATCHED_DESC
-    LibrarySortOption.LAST_WATCHED_ASC -> DataLibrarySortOption.LAST_WATCHED_ASC
-    LibrarySortOption.NEW_EPISODES -> DataLibrarySortOption.NEW_EPISODES
-    LibrarySortOption.EPISODES_LEFT_DESC -> DataLibrarySortOption.EPISODES_LEFT_DESC
-    LibrarySortOption.EPISODES_LEFT_ASC -> DataLibrarySortOption.EPISODES_LEFT_ASC
-    LibrarySortOption.ALPHABETICAL -> DataLibrarySortOption.ALPHABETICAL
+    LibrarySortOption.RANK_ASC -> DataLibrarySortOption.RANK_ASC
+    LibrarySortOption.RANK_DESC -> DataLibrarySortOption.RANK_DESC
+    LibrarySortOption.ADDED_DESC -> DataLibrarySortOption.ADDED_DESC
+    LibrarySortOption.ADDED_ASC -> DataLibrarySortOption.ADDED_ASC
+    LibrarySortOption.RELEASED_DESC -> DataLibrarySortOption.RELEASED_DESC
+    LibrarySortOption.RELEASED_ASC -> DataLibrarySortOption.RELEASED_ASC
+    LibrarySortOption.TITLE_ASC -> DataLibrarySortOption.TITLE_ASC
+    LibrarySortOption.TITLE_DESC -> DataLibrarySortOption.TITLE_DESC
 }
 
 private fun DataLibrarySortOption.toPresentation(): LibrarySortOption = when (this) {
-    DataLibrarySortOption.LAST_WATCHED_DESC -> LibrarySortOption.LAST_WATCHED_DESC
-    DataLibrarySortOption.LAST_WATCHED_ASC -> LibrarySortOption.LAST_WATCHED_ASC
-    DataLibrarySortOption.NEW_EPISODES -> LibrarySortOption.NEW_EPISODES
-    DataLibrarySortOption.EPISODES_LEFT_DESC -> LibrarySortOption.EPISODES_LEFT_DESC
-    DataLibrarySortOption.EPISODES_LEFT_ASC -> LibrarySortOption.EPISODES_LEFT_ASC
-    DataLibrarySortOption.ALPHABETICAL -> LibrarySortOption.ALPHABETICAL
+    DataLibrarySortOption.RANK_ASC -> LibrarySortOption.RANK_ASC
+    DataLibrarySortOption.RANK_DESC -> LibrarySortOption.RANK_DESC
+    DataLibrarySortOption.ADDED_DESC -> LibrarySortOption.ADDED_DESC
+    DataLibrarySortOption.ADDED_ASC -> LibrarySortOption.ADDED_ASC
+    DataLibrarySortOption.RELEASED_DESC -> LibrarySortOption.RELEASED_DESC
+    DataLibrarySortOption.RELEASED_ASC -> LibrarySortOption.RELEASED_ASC
+    DataLibrarySortOption.TITLE_ASC -> LibrarySortOption.TITLE_ASC
+    DataLibrarySortOption.TITLE_DESC -> LibrarySortOption.TITLE_DESC
 }
 
 @Inject

@@ -2,8 +2,8 @@ package com.thomaskioko.tvmaniac.domain.watchlist
 
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.domain.watchlist.model.WatchlistSections
-import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
-import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
+import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
+import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +18,7 @@ import kotlin.test.Test
 @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
 class ObserveWatchlistSectionsInteractorTest {
     private val testDispatcher = StandardTestDispatcher()
-    private val episodeRepository = FakeEpisodeRepository()
+    private val upNextRepository = FakeUpNextRepository()
     private val dateTimeProvider = FakeDateTimeProvider()
 
     private lateinit var interactor: ObserveWatchlistSectionsInteractor
@@ -28,7 +28,7 @@ class ObserveWatchlistSectionsInteractorTest {
         Dispatchers.setMain(testDispatcher)
 
         interactor = ObserveWatchlistSectionsInteractor(
-            episodeRepository = episodeRepository,
+            upNextRepository = upNextRepository,
             dateTimeProvider = dateTimeProvider,
         )
     }
@@ -40,7 +40,7 @@ class ObserveWatchlistSectionsInteractorTest {
 
     @Test
     fun `should return empty sections when watchlist is empty`() = runTest {
-        episodeRepository.setNextEpisodesForWatchlist(emptyList())
+        upNextRepository.setNextEpisodesForWatchlist(emptyList())
 
         interactor("")
 
@@ -60,7 +60,7 @@ class ObserveWatchlistSectionsInteractorTest {
 
         dateTimeProvider.setCurrentTimeMillis(currentTime)
 
-        episodeRepository.setNextEpisodesForWatchlist(
+        upNextRepository.setNextEpisodesForWatchlist(
             listOf(
                 createNextEpisode(showTraktId = 84958, showName = "Loki", followedAt = recentFollowedAt),
                 createNextEpisode(showTraktId = 1232, showName = "The Lazarus Project", followedAt = recentFollowedAt),
@@ -87,7 +87,7 @@ class ObserveWatchlistSectionsInteractorTest {
 
         dateTimeProvider.setCurrentTimeMillis(currentTime)
 
-        episodeRepository.setNextEpisodesForWatchlist(
+        upNextRepository.setNextEpisodesForWatchlist(
             listOf(
                 createNextEpisode(showTraktId = 84958, showName = "Loki", lastWatchedAt = twentyTwoDaysAgo),
                 createNextEpisode(showTraktId = 1232, showName = "The Lazarus Project", followedAt = recentFollowedAt),
@@ -114,7 +114,7 @@ class ObserveWatchlistSectionsInteractorTest {
 
         dateTimeProvider.setCurrentTimeMillis(currentTime)
 
-        episodeRepository.setNextEpisodesForWatchlist(
+        upNextRepository.setNextEpisodesForWatchlist(
             listOf(
                 createNextEpisode(showTraktId = 84958, showName = "Old Follow", followedAt = twentyTwoDaysAgo),
                 createNextEpisode(showTraktId = 1232, showName = "Recent Follow", followedAt = recentFollowedAt),
@@ -141,7 +141,7 @@ class ObserveWatchlistSectionsInteractorTest {
 
         dateTimeProvider.setCurrentTimeMillis(currentTime)
 
-        episodeRepository.setNextEpisodesForWatchlist(
+        upNextRepository.setNextEpisodesForWatchlist(
             listOf(
                 createNextEpisode(
                     showTraktId = 84958,
@@ -165,7 +165,7 @@ class ObserveWatchlistSectionsInteractorTest {
 
     @Test
     fun `should filter watchlist by query`() = runTest {
-        episodeRepository.setNextEpisodesForWatchlist(
+        upNextRepository.setNextEpisodesForWatchlist(
             listOf(
                 createNextEpisode(showTraktId = 84958, showName = "Loki"),
                 createNextEpisode(showTraktId = 1232, showName = "The Lazarus Project"),
@@ -184,7 +184,7 @@ class ObserveWatchlistSectionsInteractorTest {
 
     @Test
     fun `should calculate watch progress correctly`() = runTest {
-        episodeRepository.setNextEpisodesForWatchlist(
+        upNextRepository.setNextEpisodesForWatchlist(
             listOf(
                 createNextEpisode(
                     showTraktId = 1,
@@ -209,7 +209,7 @@ class ObserveWatchlistSectionsInteractorTest {
 
     @Test
     fun `should exclude completed shows from sections`() = runTest {
-        episodeRepository.setNextEpisodesForWatchlist(
+        upNextRepository.setNextEpisodesForWatchlist(
             listOf(
                 createNextEpisode(showTraktId = 1, showName = "In Progress", watchedCount = 5, totalCount = 10),
                 createNextEpisode(showTraktId = 2, showName = "Completed", watchedCount = 10, totalCount = 10),

@@ -55,20 +55,24 @@ struct SortOptionsSheet: View {
             selectedItems: [state.sortOption],
             labelProvider: { sortOption in
                 switch sortOption {
-                case .lastWatchedDesc:
-                    String(\.label_library_sort_last_watched_desc)
-                case .lastWatchedAsc:
-                    String(\.label_library_sort_last_watched_asc)
-                case .newEpisodes:
-                    String(\.label_library_sort_new_episodes)
-                case .episodesLeftDesc:
-                    String(\.label_library_sort_episodes_left_desc)
-                case .episodesLeftAsc:
-                    String(\.label_library_sort_episodes_left_asc)
-                case .alphabetical:
-                    String(\.label_library_sort_alphabetical)
+                case .rankAsc:
+                    String(\.label_library_sort_rank_asc)
+                case .rankDesc:
+                    String(\.label_library_sort_rank_desc)
+                case .addedDesc:
+                    String(\.label_library_sort_added_desc)
+                case .addedAsc:
+                    String(\.label_library_sort_added_asc)
+                case .releasedDesc:
+                    String(\.label_library_sort_released_desc)
+                case .releasedAsc:
+                    String(\.label_library_sort_released_asc)
+                case .titleAsc:
+                    String(\.label_library_sort_title_asc)
+                case .titleDesc:
+                    String(\.label_library_sort_title_desc)
                 default:
-                    String(\.label_library_sort_last_watched_desc)
+                    String(\.label_library_sort_rank_desc)
                 }
             },
             onItemToggle: { onSortOptionSelected($0) },

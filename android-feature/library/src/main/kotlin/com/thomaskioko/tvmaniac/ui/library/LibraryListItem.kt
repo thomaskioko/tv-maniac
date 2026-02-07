@@ -24,11 +24,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
+import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.i18n.MR.plurals.episode_count
 import com.thomaskioko.tvmaniac.i18n.MR.plurals.season_count
@@ -47,7 +47,7 @@ internal fun LibraryListItem(
         modifier = modifier
             .fillMaxWidth()
             .height(200.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant,
+        color = MaterialTheme.colorScheme.surface,
         shadowElevation = 4.dp,
         onClick = { onItemClicked(item.traktId) },
     ) {
@@ -158,7 +158,7 @@ private fun buildMetadataString(item: LibraryShowItem): String = buildString {
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 private fun LibraryListItemPreview(
     @PreviewParameter(LibraryListItemPreviewParameterProvider::class) item: LibraryShowItem,

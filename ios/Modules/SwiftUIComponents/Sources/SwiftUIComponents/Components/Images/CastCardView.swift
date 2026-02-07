@@ -23,6 +23,7 @@ public struct CastCardView: View {
     private var profileImage: some View {
         LazyResizableImage(
             url: profileUrl,
+            imageType: .profile,
             size: CGSize(width: DimensionConstants.profileWidth, height: DimensionConstants.profileHeight)
         ) { state in
             if let image = state.image {

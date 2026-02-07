@@ -246,6 +246,56 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
         }
     }
 
+    @Test
+    fun `should mark episode as watched without local episode data given UpNext context`() = runTest {
+        val showId = 9999L
+        val nonExistentEpisodeId = 88888L
+        val seasonNumber = 1L
+        val episodeNumber = 5L
+
+        val _ = database.tvShowQueries.upsert(
+            trakt_id = Id(showId),
+            tmdb_id = Id(showId),
+            name = "UpNext Test Show",
+            overview = "A show where episode details haven't been synced",
+            language = "en",
+            year = "2024",
+            ratings = 7.5,
+            vote_count = 50,
+            genres = listOf("Drama"),
+            status = "Returning Series",
+            episode_numbers = null,
+            season_numbers = null,
+            poster_path = "/test.jpg",
+            backdrop_path = "/backdrop.jpg",
+        )
+
+        val _ = database.seasonsQueries.upsert(
+            id = Id(9001L),
+            show_trakt_id = Id(showId),
+            season_number = seasonNumber,
+            title = "Season 1",
+            overview = "First season",
+            episode_count = 10L,
+            image_url = "/season1.jpg",
+        )
+
+        watchedEpisodeDao.markAsWatched(
+            showTraktId = showId,
+            episodeId = nonExistentEpisodeId,
+            seasonNumber = seasonNumber,
+            episodeNumber = episodeNumber,
+            includeSpecials = false,
+        )
+
+        watchedEpisodeDao.observeWatchedEpisodes(showId).test {
+            val watchedEpisodes = awaitItem()
+            watchedEpisodes shouldHaveSize 1
+            watchedEpisodes.first().season_number shouldBe seasonNumber
+            watchedEpisodes.first().episode_number shouldBe episodeNumber
+        }
+    }
+
     private fun insertTestData() {
         val _ = database.tvShowQueries.upsert(
             trakt_id = Id(TEST_SHOW_ID),

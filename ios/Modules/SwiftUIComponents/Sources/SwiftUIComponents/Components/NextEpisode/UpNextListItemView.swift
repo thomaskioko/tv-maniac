@@ -4,26 +4,36 @@ public struct UpNextListItemView: View {
     @Theme private var theme
 
     let episode: SwiftNextEpisode
-    let premiereLabel: String
-    let newLabel: String
     let onItemClicked: (Int64, Int64) -> Void
     let onShowTitleClicked: (Int64) -> Void
     let onMarkWatched: () -> Void
 
+    // Cache computed values to avoid recalculation
+    private let posterImageUrl: String?
+    private let episodeInfoText: String
+
     public init(
         episode: SwiftNextEpisode,
-        premiereLabel: String,
-        newLabel: String,
         onItemClicked: @escaping (Int64, Int64) -> Void,
         onShowTitleClicked: @escaping (Int64) -> Void,
         onMarkWatched: @escaping () -> Void
     ) {
         self.episode = episode
-        self.premiereLabel = premiereLabel
-        self.newLabel = newLabel
         self.onItemClicked = onItemClicked
         self.onShowTitleClicked = onShowTitleClicked
         self.onMarkWatched = onMarkWatched
+
+        // Pre-compute values to reduce work during rendering
+        posterImageUrl = episode.stillImage ?? episode.showPoster
+
+        var text = episode.episodeNumber
+        if episode.remainingEpisodes > 0 {
+            text += " +\(episode.remainingEpisodes)"
+        }
+        if let runtime = episode.runtime {
+            text += " (\(runtime))"
+        }
+        episodeInfoText = text
     }
 
     public var body: some View {
@@ -41,13 +51,13 @@ public struct UpNextListItemView: View {
             .cornerRadius(UpNextListItemViewConstants.cornerRadius)
         }
         .buttonStyle(PlainButtonStyle())
-        .padding(.horizontal, theme.spacing.medium)
+        .padding(.horizontal, theme.spacing.xSmall)
     }
 
     private var posterView: some View {
         PosterItemView(
             title: nil,
-            posterUrl: episode.stillImage ?? episode.showPoster,
+            posterUrl: posterImageUrl,
             posterWidth: UpNextListItemViewConstants.imageWidth,
             posterHeight: UpNextListItemViewConstants.height,
             posterRadius: 0
@@ -58,95 +68,49 @@ public struct UpNextListItemView: View {
 
     private var episodeDetails: some View {
         VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
-            showTitlePill
+            TextTitlePill(
+                title: episode.showName,
+                onTap: { onShowTitleClicked(episode.showTraktId) }
+            )
 
-            HStack(spacing: 4) {
-                Text(episode.episodeNumber)
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(theme.colors.onSurface)
-                    .lineLimit(1)
-                if episode.remainingEpisodes > 0 {
-                    Text("+\(episode.remainingEpisodes)")
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundColor(theme.colors.onSurface.opacity(0.6))
-                }
-            }
-            .padding(.top, 16)
+            Text(episodeInfoText)
+                .textStyle(theme.typography.bodySmall)
+                .foregroundColor(theme.colors.accent)
+                .lineLimit(1)
+                .padding(.top, 8)
 
             Text(episode.episodeTitle)
-                .font(.system(size: 12))
+                .textStyle(theme.typography.bodySmall)
                 .foregroundColor(theme.colors.onSurface.opacity(0.7))
                 .lineLimit(2)
-                .padding(.top, 4)
 
             Spacer()
 
-            badgeView
+            progressView
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, theme.spacing.small)
         .padding(.horizontal, theme.spacing.xSmall)
     }
 
-    private var showTitlePill: some View {
-        Button(action: {
-            onShowTitleClicked(episode.showTraktId)
-        }) {
-            HStack(spacing: 2) {
-                Text(episode.showName)
-                    .font(.system(size: 12, weight: .medium))
-                    .lineLimit(1)
-                    .foregroundColor(theme.colors.onSurface)
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 10))
-                    .foregroundColor(theme.colors.onSurface)
-            }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(theme.colors.onSurface, lineWidth: 1)
-            )
-        }
-        .buttonStyle(.plain)
-    }
+    private var progressView: some View {
+        let progress: Float = episode.totalCount > 0
+            ? Float(episode.watchedCount) / Float(episode.totalCount)
+            : 0
 
-    @ViewBuilder
-    private var badgeView: some View {
-        HStack(spacing: 4) {
-            switch episode.badge {
-            case .premiere:
-                premiereBadge
-            case .new:
-                newBadge
-            case .none:
-                EmptyView()
+        return HStack(spacing: 8) {
+            SegmentedProgressBar(
+                segmentProgress: [progress],
+                height: 4
+            )
+            .frame(maxWidth: .infinity)
+
+            if episode.totalCount > 0 {
+                Text("\(episode.watchedCount)/\(episode.totalCount)")
+                    .textStyle(theme.typography.labelSmall)
+                    .foregroundColor(theme.colors.onSurface.opacity(0.6))
             }
         }
-    }
-
-    private var premiereBadge: some View {
-        Text(premiereLabel)
-            .font(.system(size: 10, weight: .medium))
-            .foregroundColor(theme.colors.background)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(
-                RoundedRectangle(cornerRadius: 4)
-                    .fill(theme.colors.onSurface)
-            )
-    }
-
-    private var newBadge: some View {
-        Text(newLabel)
-            .font(.system(size: 10, weight: .medium))
-            .foregroundColor(theme.colors.onSecondary)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(
-                RoundedRectangle(cornerRadius: 4)
-                    .fill(theme.colors.secondary)
-            )
     }
 
     private var watchedButton: some View {
@@ -190,10 +154,10 @@ private enum UpNextListItemViewConstants {
                 stillImage: "/still.jpg",
                 overview: "Daryl washes ashore in France.",
                 badge: .premiere,
-                remainingEpisodes: 7
+                remainingEpisodes: 7,
+                watchedCount: 3,
+                totalCount: 10
             ),
-            premiereLabel: "PREMIERE",
-            newLabel: "NEW",
             onItemClicked: { _, _ in },
             onShowTitleClicked: { _ in },
             onMarkWatched: {}

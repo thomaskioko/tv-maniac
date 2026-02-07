@@ -14,12 +14,12 @@ kotlin {
             dependencies {
 
                 api(projects.data.featuredshows.api)
-                api(projects.data.genre.api)
                 api(projects.data.popularshows.api)
                 api(projects.data.topratedshows.api)
                 api(projects.data.trendingshows.api)
                 api(projects.data.upcomingshows.api)
-                api(projects.data.episode.api)
+                implementation(projects.data.genre.api)
+                implementation(projects.data.upnext.api)
 
                 implementation(projects.core.base)
 
@@ -36,7 +36,7 @@ kotlin {
                 implementation(projects.data.topratedshows.testing)
                 implementation(projects.data.trendingshows.testing)
                 implementation(projects.data.upcomingshows.testing)
-                implementation(projects.data.episode.testing)
+                implementation(projects.data.upnext.testing)
 
                 implementation(libs.bundles.unittest)
             }

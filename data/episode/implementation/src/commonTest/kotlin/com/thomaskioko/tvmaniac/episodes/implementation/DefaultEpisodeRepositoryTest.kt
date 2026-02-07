@@ -3,9 +3,7 @@ package com.thomaskioko.tvmaniac.episodes.implementation
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
-import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.SEASON_1_EPISODE_COUNT
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.SEASON_1_ID
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.SEASON_1_NUMBER
@@ -15,9 +13,7 @@ import com.thomaskioko.tvmaniac.episodes.implementation.MockData.SEASON_2_NUMBER
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.TEST_SHOW_ID
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.TEST_SHOW_NAME
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.TEST_SHOW_OVERVIEW
-import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultNextEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultWatchedEpisodeDao
-import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.i18n.testing.util.IgnoreIos
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.collections.shouldBeEmpty
@@ -52,29 +48,16 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
         databaseWrite = testDispatcher,
         databaseRead = testDispatcher,
     )
-    private val fakeDatastoreRepository = FakeDatastoreRepository()
     private val fakeDateTimeProvider = FakeDateTimeProvider()
-    private val fakeSyncRepository = FakeWatchedEpisodeSyncRepository()
-    private val nextEpisodeDao = DefaultNextEpisodeDao(database, coroutineDispatcher)
     private val watchedEpisodeDao = DefaultWatchedEpisodeDao(
         database = database,
         dispatchers = coroutineDispatcher,
         dateTimeProvider = fakeDateTimeProvider,
     )
 
-    private lateinit var episodeRepository: EpisodeRepository
-
     @BeforeTest
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-
-        episodeRepository = DefaultEpisodeRepository(
-            watchedEpisodeDao = watchedEpisodeDao,
-            nextEpisodeDao = nextEpisodeDao,
-            datastoreRepository = fakeDatastoreRepository,
-            syncRepository = fakeSyncRepository,
-        )
-
         insertTestData()
     }
 
@@ -85,83 +68,13 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should return next season first episode after season complete`() = runTest {
-        repeat(SEASON_1_EPISODE_COUNT) { episodeIndex ->
-            val episodeNumber = episodeIndex + 1
-            val episodeId = 100L + episodeNumber
-            episodeRepository.markEpisodeAsWatched(
-                showTraktId = TEST_SHOW_ID,
-                episodeId = episodeId,
-                seasonNumber = SEASON_1_NUMBER,
-                episodeNumber = episodeNumber.toLong(),
-            )
-        }
-    }
-
-    @Test
-    fun `should return null when all episodes watched`() = runTest {
-        repeat(SEASON_1_EPISODE_COUNT) { episodeIndex ->
-            val episodeNumber = episodeIndex + 1
-            val episodeId = 100L + episodeNumber
-            episodeRepository.markEpisodeAsWatched(
-                showTraktId = TEST_SHOW_ID,
-                episodeId = episodeId,
-                seasonNumber = SEASON_1_NUMBER,
-                episodeNumber = episodeNumber.toLong(),
-            )
-        }
-
-        repeat(SEASON_2_EPISODE_COUNT) { episodeIndex ->
-            val episodeNumber = episodeIndex + 1
-            val episodeId = 200L + episodeNumber
-            episodeRepository.markEpisodeAsWatched(
-                showTraktId = TEST_SHOW_ID,
-                episodeId = episodeId,
-                seasonNumber = SEASON_2_NUMBER,
-                episodeNumber = episodeNumber.toLong(),
-            )
-        }
-    }
-
-    @Test
-    fun `should observe next episodes for watchlist`() = runTest {
-        episodeRepository.observeNextEpisodesForWatchlist().test {
-            val nextEpisodes = awaitItem()
-            nextEpisodes shouldHaveSize 1
-            nextEpisodes.first().showTraktId shouldBe TEST_SHOW_ID
-            nextEpisodes.first().episodeId shouldBe 101L
-            nextEpisodes.first().showName shouldBe TEST_SHOW_NAME
-        }
-    }
-
-    @Test
-    fun `should update watchlist next episodes when episode marked watched`() = runTest {
-        episodeRepository.observeNextEpisodesForWatchlist().test {
-            var nextEpisodes = awaitItem()
-            nextEpisodes shouldHaveSize 1
-            nextEpisodes.first().episodeId shouldBe 101L
-
-            episodeRepository.markEpisodeAsWatched(
-                showTraktId = TEST_SHOW_ID,
-                episodeId = 101L,
-                seasonNumber = SEASON_1_NUMBER,
-                episodeNumber = 1L,
-            )
-
-            nextEpisodes = awaitItem()
-            nextEpisodes shouldHaveSize 1
-            nextEpisodes.first().episodeId shouldBe 102L
-        }
-    }
-
-    @Test
     fun `should observe all seasons watch progress with correct counts`() = runTest {
-        episodeRepository.markEpisodeAsWatched(TEST_SHOW_ID, 101L, SEASON_1_NUMBER, 1L)
-        episodeRepository.markEpisodeAsWatched(TEST_SHOW_ID, 102L, SEASON_1_NUMBER, 2L)
-        episodeRepository.markEpisodeAsWatched(TEST_SHOW_ID, 103L, SEASON_1_NUMBER, 3L)
-        episodeRepository.markEpisodeAsWatched(TEST_SHOW_ID, 201L, SEASON_2_NUMBER, 1L)
+        watchedEpisodeDao.markAsWatched(TEST_SHOW_ID, 101L, SEASON_1_NUMBER, 1L, false)
+        watchedEpisodeDao.markAsWatched(TEST_SHOW_ID, 102L, SEASON_1_NUMBER, 2L, false)
+        watchedEpisodeDao.markAsWatched(TEST_SHOW_ID, 103L, SEASON_1_NUMBER, 3L, false)
+        watchedEpisodeDao.markAsWatched(TEST_SHOW_ID, 201L, SEASON_2_NUMBER, 1L, false)
 
-        episodeRepository.observeAllSeasonsWatchProgress(TEST_SHOW_ID).test {
+        watchedEpisodeDao.observeAllSeasonsWatchProgress(TEST_SHOW_ID).test {
             val progress = awaitItem()
             progress shouldHaveSize 2
 
@@ -178,7 +91,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should return empty progress for non-existent show`() = runTest {
-        episodeRepository.observeAllSeasonsWatchProgress(999L).test {
+        watchedEpisodeDao.observeAllSeasonsWatchProgress(999L).test {
             val progress = awaitItem()
             progress.shouldBeEmpty()
         }
@@ -186,11 +99,11 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should update all seasons progress when episode marked watched`() = runTest {
-        episodeRepository.observeAllSeasonsWatchProgress(TEST_SHOW_ID).test {
+        watchedEpisodeDao.observeAllSeasonsWatchProgress(TEST_SHOW_ID).test {
             val initialProgress = awaitItem()
             initialProgress.first { it.seasonNumber == SEASON_1_NUMBER }.watchedCount shouldBe 0
 
-            episodeRepository.markEpisodeAsWatched(TEST_SHOW_ID, 101L, SEASON_1_NUMBER, 1L)
+            watchedEpisodeDao.markAsWatched(TEST_SHOW_ID, 101L, SEASON_1_NUMBER, 1L, false)
 
             val updatedProgress = awaitItem()
             updatedProgress.first { it.seasonNumber == SEASON_1_NUMBER }.watchedCount shouldBe 1
@@ -202,10 +115,10 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
         repeat(SEASON_1_EPISODE_COUNT) { episodeIndex ->
             val episodeNumber = episodeIndex + 1
             val episodeId = 100L + episodeNumber
-            episodeRepository.markEpisodeAsWatched(TEST_SHOW_ID, episodeId, SEASON_1_NUMBER, episodeNumber.toLong())
+            watchedEpisodeDao.markAsWatched(TEST_SHOW_ID, episodeId, SEASON_1_NUMBER, episodeNumber.toLong(), false)
         }
 
-        episodeRepository.observeAllSeasonsWatchProgress(TEST_SHOW_ID).test {
+        watchedEpisodeDao.observeAllSeasonsWatchProgress(TEST_SHOW_ID).test {
             val progress = awaitItem()
             val season1Progress = progress.first { it.seasonNumber == SEASON_1_NUMBER }
             season1Progress.watchedCount shouldBe SEASON_1_EPISODE_COUNT

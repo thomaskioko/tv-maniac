@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.ui.library
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,9 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -34,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.NewBadge
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.PremiereBadge
+import com.thomaskioko.tvmaniac.compose.components.TextTitlePill
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.grey
@@ -41,7 +39,7 @@ import com.thomaskioko.tvmaniac.watchlist.presenter.model.EpisodeBadge
 import com.thomaskioko.tvmaniac.watchlist.presenter.model.UpNextEpisodeItem
 
 @Composable
-internal fun UpNextListItem(
+internal fun WatchListUpNextListItem(
     item: UpNextEpisodeItem,
     premiereLabel: String,
     newLabel: String,
@@ -74,7 +72,7 @@ internal fun UpNextListItem(
                     .fillMaxHeight()
                     .padding(vertical = 8.dp, horizontal = 16.dp),
             ) {
-                ShowTitlePill(
+                TextTitlePill(
                     showName = item.showName,
                     onClick = { onShowTitleClicked(item.showTraktId) },
                 )
@@ -147,46 +145,12 @@ internal fun UpNextListItem(
     }
 }
 
-@Composable
-private fun ShowTitlePill(
-    showName: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Surface(
-        modifier = modifier.clickable { onClick() },
-        shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surface,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface),
-    ) {
-        Row(
-            modifier = Modifier.padding(start = 8.dp, end = 4.dp, top = 4.dp, bottom = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = showName,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.weight(1f, fill = false),
-            )
-            Icon(
-                modifier = Modifier.size(16.dp),
-                imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurface,
-            )
-        }
-    }
-}
-
 @ThemePreviews
 @Composable
-private fun UpNextListItemPreview() {
+private fun WatchListUpNextListItemPreview() {
     TvManiacTheme {
         Surface {
-            UpNextListItem(
+            WatchListUpNextListItem(
                 item = UpNextEpisodeItem(
                     showTraktId = 1L,
                     showName = "The Walking Dead: Daryl Dixon",

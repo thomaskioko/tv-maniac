@@ -18,6 +18,7 @@ public interface DiscoverShowsPresenter {
             onNavigateToMore: (categoryId: Long) -> Unit,
             onNavigateToEpisode: (showTraktId: Long, episodeId: Long) -> Unit = { _, _ -> },
             onNavigateToSeason: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit = { _, _, _ -> },
+            onNavigateToUpNext: () -> Unit = {},
         ): DiscoverShowsPresenter
     }
 }

@@ -67,6 +67,8 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_back
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_auto
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_auto_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_high
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_high_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_low
@@ -470,6 +472,11 @@ private fun ImageQualitySection(
             modifier = Modifier.padding(start = 40.dp),
         ) {
             ImageQualityChip(
+                label = label_settings_image_quality_auto.resolve(context),
+                isSelected = imageQuality == ImageQuality.AUTO,
+                onClick = { onQualitySelected(ImageQuality.AUTO) },
+            )
+            ImageQualityChip(
                 label = label_settings_image_quality_high.resolve(context),
                 isSelected = imageQuality == ImageQuality.HIGH,
                 onClick = { onQualitySelected(ImageQuality.HIGH) },
@@ -764,6 +771,7 @@ private fun openInCustomTab(context: Context, url: String) {
 
 private fun getQualityDescriptionString(quality: ImageQuality, context: Context): String {
     return when (quality) {
+        ImageQuality.AUTO -> label_settings_image_quality_auto_description.resolve(context)
         ImageQuality.HIGH -> label_settings_image_quality_high_description.resolve(context)
         ImageQuality.MEDIUM -> label_settings_image_quality_medium_description.resolve(context)
         ImageQuality.LOW -> label_settings_image_quality_low_description.resolve(context)

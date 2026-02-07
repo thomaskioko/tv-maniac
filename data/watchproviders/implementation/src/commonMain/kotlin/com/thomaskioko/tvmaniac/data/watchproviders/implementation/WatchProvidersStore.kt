@@ -9,14 +9,18 @@ import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.WatchProvidersByTraktId
 import com.thomaskioko.tvmaniac.db.Watch_providers
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.WATCH_PROVIDERS
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.WatchProvidersResult
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
+import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
+import org.mobilenativefoundation.store.store5.Validator
 
 @Inject
 public class WatchProvidersStore(
@@ -24,6 +28,7 @@ public class WatchProvidersStore(
     private val tvShowsDao: TvShowsDao,
     private val dao: WatchProviderDao,
     private val formatterUtil: FormatterUtil,
+    private val requestManagerRepository: RequestManagerRepository,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, List<WatchProvidersByTraktId>> by storeBuilder(
@@ -31,7 +36,13 @@ public class WatchProvidersStore(
         val tmdbId = tvShowsDao.getTmdbIdByTraktId(traktId)
             ?: throw Throwable("TMDB ID not found for Trakt ID: $traktId")
         when (val response = remoteDataSource.getShowWatchProviders(tmdbId)) {
-            is ApiResponse.Success -> WatchProvidersFetchResult(tmdbId, response.body)
+            is ApiResponse.Success -> {
+                requestManagerRepository.upsert(
+                    entityId = traktId,
+                    requestType = WATCH_PROVIDERS.name,
+                )
+                WatchProvidersFetchResult(tmdbId, response.body)
+            }
             is ApiResponse.Error.GenericError -> throw Throwable("${response.errorMessage}")
             is ApiResponse.Error.HttpError -> throw Throwable("${response.code} - ${response.errorMessage}")
             is ApiResponse.Error.SerializationError -> throw Throwable("${response.errorMessage}")
@@ -79,6 +90,17 @@ public class WatchProvidersStore(
         readDispatcher = dispatchers.databaseRead,
         writeDispatcher = dispatchers.databaseWrite,
     ),
+).validator(
+    Validator.by { result ->
+        withContext(dispatchers.io) {
+            val traktId = result.firstOrNull()?.trakt_id?.id ?: return@withContext false
+            !requestManagerRepository.isRequestExpired(
+                entityId = traktId,
+                requestType = WATCH_PROVIDERS.name,
+                threshold = WATCH_PROVIDERS.duration,
+            )
+        }
+    },
 ).build()
 
 private data class WatchProvidersFetchResult(

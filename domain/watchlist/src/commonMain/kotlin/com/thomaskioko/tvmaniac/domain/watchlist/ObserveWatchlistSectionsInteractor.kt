@@ -4,8 +4,8 @@ import com.thomaskioko.tvmaniac.core.base.interactor.SubjectInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.model.NextEpisodeInfo
 import com.thomaskioko.tvmaniac.domain.watchlist.model.WatchlistSections
 import com.thomaskioko.tvmaniac.domain.watchlist.model.WatchlistShowInfo
-import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
-import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
+import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
+import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -15,12 +15,12 @@ private const val THREE_WEEKS_MILLIS = 21 * 24 * 60 * 60 * 1000L
 
 @Inject
 public class ObserveWatchlistSectionsInteractor(
-    private val episodeRepository: EpisodeRepository,
+    private val upNextRepository: UpNextRepository,
     private val dateTimeProvider: DateTimeProvider,
 ) : SubjectInteractor<String, WatchlistSections>() {
 
     override fun createObservable(params: String): Flow<WatchlistSections> {
-        return episodeRepository.observeNextEpisodesForWatchlist()
+        return upNextRepository.observeNextEpisodesForWatchlist()
             .map { episodes ->
                 episodes
                     .filter { params.isBlank() || it.showName.contains(params, ignoreCase = true) }

@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS followed_shows(
 CREATE INDEX IF NOT EXISTS idx_followed_shows_trakt_id ON followed_shows(trakt_id);
 CREATE INDEX IF NOT EXISTS idx_followed_shows_tmdb_id ON followed_shows(tmdb_id);
 CREATE INDEX IF NOT EXISTS idx_followed_shows_pending_action ON followed_shows(pending_action);
+CREATE INDEX IF NOT EXISTS idx_followed_trakt_pending ON followed_shows(trakt_id, pending_action);
 
 entries:
 SELECT

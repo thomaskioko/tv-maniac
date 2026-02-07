@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowPeopleResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktVideosResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedProgressResponse
 
 /**
  * Remote data source for fetching TV show data from the Trakt API.
@@ -193,6 +194,19 @@ public interface TraktShowsRemoteDataSource {
      * @see [Trakt Show Videos](https://trakt.docs.apiary.io/#reference/shows/videos)
      */
     public suspend fun getShowVideos(traktId: Long): ApiResponse<List<TraktVideosResponse>>
+
+    /**
+     * Fetches the user's watch progress for a specific show.
+     *
+     * Returns progress data including the next unwatched episode and the last watched episode.
+     * Requires user authentication. The response includes `aired`, `completed` counts,
+     * and nested `next_episode` / `last_episode` objects.
+     *
+     * @param traktId The Trakt ID of the show
+     * @return Watch progress with next and last episode information
+     * @see [Trakt Watched Progress](https://trakt.docs.apiary.io/#reference/shows/watched-progress)
+     */
+    public suspend fun getWatchedProgress(traktId: Long): ApiResponse<TraktWatchedProgressResponse>
 }
 
 /**

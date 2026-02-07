@@ -22,7 +22,7 @@ public class DefaultImageQualityProvider(
     private val datastoreRepository: DatastoreRepository,
 ) : ImageQualityProvider {
 
-    private val currentQuality = MutableStateFlow(ImageQuality.HIGH)
+    private val currentQuality = MutableStateFlow(ImageQuality.AUTO)
 
     init {
         coroutineScope.io.launch {

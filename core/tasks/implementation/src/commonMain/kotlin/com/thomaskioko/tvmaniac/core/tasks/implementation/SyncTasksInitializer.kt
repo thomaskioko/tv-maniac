@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -44,6 +45,7 @@ public class SyncTasksInitializer(
         coroutineScope.io.launch {
             traktAuthRepository.state
                 .distinctUntilChanged()
+                .drop(1)
                 .filter { it == TraktAuthState.LOGGED_IN }
                 .collect {
                     withContext(NonCancellable) {

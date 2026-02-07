@@ -39,6 +39,7 @@ public struct NextEpisodeCard: View {
             ZStack {
                 LazyResizableImage(
                     url: episode.stillImage ?? episode.showPoster,
+                    imageType: .backdrop,
                     size: CGSize(width: DimensionConstants.imageWidth, height: DimensionConstants.imageHeight)
                 ) { state in
                     if let image = state.image {

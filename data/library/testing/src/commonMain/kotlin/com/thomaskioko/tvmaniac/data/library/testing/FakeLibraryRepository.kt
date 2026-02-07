@@ -13,7 +13,7 @@ public class FakeLibraryRepository : LibraryRepository {
 
     private val libraryItemsFlow = MutableStateFlow<List<LibraryItem>>(emptyList())
     private val isGridModeFlow = MutableStateFlow(true)
-    private val sortOptionFlow = MutableStateFlow(LibrarySortOption.LAST_WATCHED_DESC)
+    private val sortOptionFlow = MutableStateFlow(LibrarySortOption.ADDED_DESC)
     private var needsSyncResult = true
 
     public fun setLibraryItems(items: List<LibraryItem>) {
@@ -49,12 +49,14 @@ public class FakeLibraryRepository : LibraryRepository {
             }
 
             when (sortOption) {
-                LibrarySortOption.LAST_WATCHED_DESC -> filtered.sortedByDescending { it.lastWatchedAt ?: it.followedAt ?: 0L }
-                LibrarySortOption.LAST_WATCHED_ASC -> filtered.sortedBy { it.lastWatchedAt ?: it.followedAt ?: 0L }
-                LibrarySortOption.NEW_EPISODES -> filtered.sortedByDescending { it.totalCount - it.watchedCount }
-                LibrarySortOption.EPISODES_LEFT_DESC -> filtered.sortedByDescending { it.totalCount - it.watchedCount }
-                LibrarySortOption.EPISODES_LEFT_ASC -> filtered.sortedBy { it.totalCount - it.watchedCount }
-                LibrarySortOption.ALPHABETICAL -> filtered.sortedBy { it.title.lowercase() }
+                LibrarySortOption.RANK_ASC -> filtered
+                LibrarySortOption.RANK_DESC -> filtered.reversed()
+                LibrarySortOption.ADDED_DESC -> filtered.sortedByDescending { it.followedAt ?: 0L }
+                LibrarySortOption.ADDED_ASC -> filtered.sortedBy { it.followedAt ?: Long.MAX_VALUE }
+                LibrarySortOption.RELEASED_DESC -> filtered.sortedByDescending { it.year }
+                LibrarySortOption.RELEASED_ASC -> filtered.sortedBy { it.year }
+                LibrarySortOption.TITLE_ASC -> filtered.sortedBy { it.title.lowercase() }
+                LibrarySortOption.TITLE_DESC -> filtered.sortedByDescending { it.title.lowercase() }
             }
         }
     }

@@ -12,10 +12,11 @@ public struct LazyResizableImage<Content: View>: View {
 
     public init(
         url: String?,
+        imageType: TmdbImageType? = nil,
         size: CGSize? = nil,
         @ViewBuilder content: @escaping (LazyImageState) -> Content
     ) {
-        self.url = ImageConfiguration.transformURL(url ?? "")
+        self.url = ImageConfiguration.transformURL(url ?? "", imageType: imageType)
         fixedSize = size
         self.content = content
     }
@@ -38,6 +39,11 @@ public struct LazyResizableImage<Content: View>: View {
                     guard oldValue != newValue else { return }
                     updateResizing(with: newValue)
                 }
+                .onDisappear {
+                    // Cancel pending task when view disappears to prevent memory leaks
+                    debouncedTask?.cancel()
+                    debouncedTask = nil
+                }
             }
         }
     }
@@ -48,6 +54,10 @@ public struct LazyResizableImage<Content: View>: View {
             do {
                 try await Task.sleep(for: .milliseconds(200))
             } catch { return }
+
+            // Check if task was cancelled during sleep
+            guard !Task.isCancelled else { return }
+
             await MainActor.run {
                 resizeProcessor = .resize(size: newSize)
             }
@@ -56,8 +66,8 @@ public struct LazyResizableImage<Content: View>: View {
 }
 
 public extension LazyResizableImage {
-    init(url: String?, size: CGSize? = nil) where Content == AnyView {
-        self.init(url: url, size: size) { state in
+    init(url: String?, imageType: TmdbImageType? = nil, size: CGSize? = nil) where Content == AnyView {
+        self.init(url: url, imageType: imageType, size: size) { state in
             AnyView(
                 Group {
                     if let image = state.image {

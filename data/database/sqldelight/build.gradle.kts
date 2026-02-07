@@ -37,6 +37,7 @@ sqldelight {
     databases {
         create("TvManiacDatabase") {
             packageName = "com.thomaskioko.tvmaniac.db"
+            dialect(libs.sqldelight.dialect)
 
             schemaOutputDirectory.set(file("src/commonMain/sqldelight/com/thomaskioko/tvmaniac/schemas"))
             migrationOutputDirectory.set(file("src/commonMain/sqldelight/com/thomaskioko/tvmaniac/migrations"))

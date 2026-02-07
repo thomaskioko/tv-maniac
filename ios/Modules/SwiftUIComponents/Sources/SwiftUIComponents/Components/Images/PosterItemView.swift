@@ -7,6 +7,7 @@ public struct PosterItemView: View {
     private let posterUrl: String?
     private let libraryImageOverlay: String
     private let isInLibrary: Bool
+    private let imageType: TmdbImageType
     private let posterWidth: CGFloat
     private let posterHeight: CGFloat
     private let posterRadius: CGFloat?
@@ -17,6 +18,7 @@ public struct PosterItemView: View {
         posterUrl: String?,
         libraryImageOverlay: String = "square.stack.fill",
         isInLibrary: Bool = false,
+        imageType: TmdbImageType = .poster,
         posterWidth: CGFloat = 120,
         posterHeight: CGFloat = 180,
         posterRadius: CGFloat? = nil,
@@ -26,6 +28,7 @@ public struct PosterItemView: View {
         self.posterUrl = posterUrl
         self.libraryImageOverlay = libraryImageOverlay
         self.isInLibrary = isInLibrary
+        self.imageType = imageType
         self.posterWidth = posterWidth
         self.posterHeight = posterHeight
         self.posterRadius = posterRadius
@@ -38,6 +41,7 @@ public struct PosterItemView: View {
 
         LazyResizableImage(
             url: posterUrl,
+            imageType: imageType,
             size: CGSize(width: posterWidth, height: imageHeight)
         ) { state in
             if let image = state.image {

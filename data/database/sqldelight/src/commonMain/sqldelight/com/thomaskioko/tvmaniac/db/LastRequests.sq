@@ -21,12 +21,6 @@ SELECT *
 FROM last_requests
 WHERE request_type = ? AND entity_id = ?;
 
-
-getLastRequestForType:
-SELECT *
-FROM last_requests
-WHERE request_type = ? AND entity_id = ?;
-
 lastInsertRowId:
 SELECT last_insert_rowid();
 

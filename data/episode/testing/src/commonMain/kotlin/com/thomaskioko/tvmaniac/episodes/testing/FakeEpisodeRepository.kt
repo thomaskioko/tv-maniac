@@ -1,10 +1,8 @@
 package com.thomaskioko.tvmaniac.episodes.testing
 
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
-import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
-import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -35,12 +33,10 @@ public data class SyncParams(
 )
 
 public class FakeEpisodeRepository : EpisodeRepository {
-    private val nextEpisodesForWatchlist = MutableStateFlow<List<NextEpisodeWithShow>>(emptyList())
     private val seasonWatchProgressFlow = MutableStateFlow(SeasonWatchProgress(0, 0, 0, 0))
     private val showWatchProgressFlow = MutableStateFlow(ShowWatchProgress(0, 0, 0))
     private val allSeasonsWatchProgressFlow = MutableStateFlow<List<SeasonWatchProgress>>(emptyList())
     private val unwatchedCountInPreviousSeasonsFlow = MutableStateFlow(0L)
-    private val upcomingEpisodesFlow = MutableStateFlow<List<UpcomingEpisode>>(emptyList())
 
     public var lastMarkEpisodeWatchedCall: MarkEpisodeWatchedCall? = null
         private set
@@ -50,10 +46,6 @@ public class FakeEpisodeRepository : EpisodeRepository {
 
     public var lastMarkEpisodeUnwatchedCall: MarkEpisodeUnwatchedCall? = null
         private set
-
-    public fun setNextEpisodesForWatchlist(episodes: List<NextEpisodeWithShow>) {
-        nextEpisodesForWatchlist.value = episodes
-    }
 
     public fun setSeasonWatchProgress(progress: SeasonWatchProgress) {
         seasonWatchProgressFlow.value = progress
@@ -70,13 +62,6 @@ public class FakeEpisodeRepository : EpisodeRepository {
     public fun setUnwatchedCountInPreviousSeasons(count: Long) {
         unwatchedCountInPreviousSeasonsFlow.value = count
     }
-
-    public fun setUpcomingEpisodes(episodes: List<UpcomingEpisode>) {
-        upcomingEpisodesFlow.value = episodes
-    }
-
-    override fun observeNextEpisodesForWatchlist(): Flow<List<NextEpisodeWithShow>> =
-        nextEpisodesForWatchlist.asStateFlow()
 
     override suspend fun markEpisodeAsWatched(
         showTraktId: Long,

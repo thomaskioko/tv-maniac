@@ -45,21 +45,19 @@ public struct ContinueTrackingSection: View {
                         }
                         .padding(.horizontal, theme.spacing.medium)
                     }
-                    .onAppear {
+                    .task(id: scrollIndex) {
                         if scrollIndex >= 0, scrollIndex < episodes.count {
                             let targetId = episodes[scrollIndex].id
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+
+                            // Small delay for initial appearance
+                            try? await Task.sleep(for: .milliseconds(100))
+
+                            guard !Task.isCancelled else { return }
+
+                            await MainActor.run {
                                 withAnimation(.easeInOut(duration: 0.3)) {
                                     proxy.scrollTo(targetId, anchor: .center)
                                 }
-                            }
-                        }
-                    }
-                    .onChange(of: scrollIndex) { newIndex in
-                        if newIndex >= 0, newIndex < episodes.count {
-                            let targetId = episodes[newIndex].id
-                            withAnimation(.easeInOut(duration: 0.3)) {
-                                proxy.scrollTo(targetId, anchor: .center)
                             }
                         }
                     }

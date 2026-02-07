@@ -12,6 +12,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
@@ -24,6 +25,7 @@ public fun SegmentedProgressBar(
     modifier: Modifier = Modifier,
     height: Dp = 6.dp,
     segmentGap: Dp = 4.dp,
+    trackColor: Color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f),
 ) {
     if (segmentProgress.isEmpty()) return
 
@@ -36,6 +38,7 @@ public fun SegmentedProgressBar(
                 progress = progress,
                 modifier = Modifier.weight(1f),
                 height = height,
+                trackColor = trackColor,
             )
         }
     }
@@ -46,9 +49,9 @@ private fun ProgressSegment(
     progress: Float,
     modifier: Modifier = Modifier,
     height: Dp = 6.dp,
+    trackColor: Color,
 ) {
     val shape = RoundedCornerShape(height / 2)
-    val trackColor = MaterialTheme.colorScheme.surfaceVariant
     val progressColor = MaterialTheme.colorScheme.secondary
 
     Box(

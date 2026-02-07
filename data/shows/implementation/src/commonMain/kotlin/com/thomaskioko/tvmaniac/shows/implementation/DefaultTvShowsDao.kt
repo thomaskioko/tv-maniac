@@ -131,4 +131,9 @@ public class DefaultTvShowsDao(
     override fun getTmdbIdByTraktId(traktId: Long): Long? {
         return tvShowQueries.getTmdbIdByTraktId(Id(traktId)).executeAsOneOrNull()?.id
     }
+
+    override suspend fun existsByTraktId(traktId: Long): Boolean =
+        withContext(dispatchers.io) {
+            tvShowQueries.existsByTraktId(Id(traktId)).executeAsOne()
+        }
 }

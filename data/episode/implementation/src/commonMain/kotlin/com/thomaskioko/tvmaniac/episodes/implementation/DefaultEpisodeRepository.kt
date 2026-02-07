@@ -4,10 +4,9 @@ import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
-import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
-import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultNextEpisodeDao
+import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -22,17 +21,10 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @ContributesBinding(AppScope::class)
 public class DefaultEpisodeRepository(
     private val watchedEpisodeDao: WatchedEpisodeDao,
-    private val nextEpisodeDao: DefaultNextEpisodeDao,
     private val datastoreRepository: DatastoreRepository,
+    private val upNextRepository: UpNextRepository,
     private val syncRepository: WatchedEpisodeSyncRepository,
 ) : EpisodeRepository {
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override fun observeNextEpisodesForWatchlist(): Flow<List<NextEpisodeWithShow>> =
-        datastoreRepository.observeIncludeSpecials()
-            .flatMapLatest { includeSpecials ->
-                nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials)
-            }
 
     override suspend fun markEpisodeAsWatched(
         showTraktId: Long,
@@ -48,7 +40,13 @@ public class DefaultEpisodeRepository(
             episodeNumber = episodeNumber,
             includeSpecials = includeSpecials,
         )
-        syncRepository.syncShowEpisodeWatches(showTraktId)
+        syncRepository.uploadPendingEpisodes()
+
+        upNextRepository.fetchUpNext(
+            showTraktId = showTraktId,
+            seasonNumber = seasonNumber,
+            episodeNumber = episodeNumber,
+        )
     }
 
     override suspend fun markEpisodeAndPreviousEpisodesWatched(
@@ -65,7 +63,7 @@ public class DefaultEpisodeRepository(
             episodeNumber = episodeNumber,
             includeSpecials = includeSpecials,
         )
-        syncRepository.syncShowEpisodeWatches(showTraktId)
+        upNextRepository.updateUpNextForShow(showTraktId)
     }
 
     override suspend fun markEpisodeAsUnwatched(showTraktId: Long, episodeId: Long) {
@@ -75,7 +73,7 @@ public class DefaultEpisodeRepository(
             episodeId = episodeId,
             includeSpecials = includeSpecials,
         )
-        syncRepository.syncShowEpisodeWatches(showTraktId)
+        upNextRepository.updateUpNextForShow(showTraktId)
     }
 
     override fun observeSeasonWatchProgress(
@@ -105,7 +103,7 @@ public class DefaultEpisodeRepository(
             episodes = episodes,
             includeSpecials = includeSpecials,
         )
-        syncRepository.syncShowEpisodeWatches(showTraktId)
+        upNextRepository.updateUpNextForShow(showTraktId)
     }
 
     override suspend fun markSeasonAndPreviousSeasonsWatched(
@@ -118,13 +116,13 @@ public class DefaultEpisodeRepository(
             seasonNumber = seasonNumber,
             includeSpecials = includeSpecials,
         )
-        syncRepository.syncShowEpisodeWatches(showTraktId)
+        upNextRepository.updateUpNextForShow(showTraktId)
     }
 
     override suspend fun markSeasonUnwatched(showTraktId: Long, seasonNumber: Long) {
         val includeSpecials = getIncludeSpecials()
         watchedEpisodeDao.markSeasonAsUnwatched(showTraktId, seasonNumber, includeSpecials)
-        syncRepository.syncShowEpisodeWatches(showTraktId)
+        upNextRepository.updateUpNextForShow(showTraktId)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)

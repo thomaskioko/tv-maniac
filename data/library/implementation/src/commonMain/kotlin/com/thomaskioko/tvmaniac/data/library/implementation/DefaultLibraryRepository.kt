@@ -15,9 +15,7 @@ import com.thomaskioko.tvmaniac.db.WatchProvidersForShow
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsDao
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
-import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.WATCHLIST_SYNC
-import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityRepository
-import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType.SHOWS_WATCHLISTED
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.LIBRARY_SYNC
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
@@ -25,6 +23,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -48,7 +47,6 @@ public class DefaultLibraryRepository(
     private val traktListDataSource: TraktListRemoteDataSource,
     private val requestManagerRepository: RequestManagerRepository,
     private val traktAuthRepository: TraktAuthRepository,
-    private val traktActivityRepository: TraktActivityRepository,
     private val transactionRunner: DatabaseTransactionRunner,
     private val formatterUtil: FormatterUtil,
     private val logger: Logger,
@@ -88,18 +86,14 @@ public class DefaultLibraryRepository(
 
     private fun List<LibraryItem>.applySorting(sortOption: LibrarySortOption): List<LibraryItem> {
         return when (sortOption) {
-            LibrarySortOption.LAST_WATCHED_DESC ->
-                sortedByDescending { it.lastWatchedAt ?: it.followedAt ?: 0L }
-            LibrarySortOption.LAST_WATCHED_ASC ->
-                sortedBy { it.lastWatchedAt ?: it.followedAt ?: Long.MAX_VALUE }
-            LibrarySortOption.NEW_EPISODES ->
-                sortedByDescending { it.totalCount - it.watchedCount }
-            LibrarySortOption.EPISODES_LEFT_DESC ->
-                sortedByDescending { it.totalCount - it.watchedCount }
-            LibrarySortOption.EPISODES_LEFT_ASC ->
-                sortedBy { it.totalCount - it.watchedCount }
-            LibrarySortOption.ALPHABETICAL ->
-                sortedBy { it.title.lowercase() }
+            LibrarySortOption.RANK_ASC -> this
+            LibrarySortOption.RANK_DESC -> reversed()
+            LibrarySortOption.ADDED_DESC -> sortedByDescending { it.followedAt ?: 0L }
+            LibrarySortOption.ADDED_ASC -> sortedBy { it.followedAt ?: Long.MAX_VALUE }
+            LibrarySortOption.RELEASED_DESC -> sortedByDescending { it.year }
+            LibrarySortOption.RELEASED_ASC -> sortedBy { it.year }
+            LibrarySortOption.TITLE_ASC -> sortedBy { it.title.lowercase() }
+            LibrarySortOption.TITLE_DESC -> sortedByDescending { it.title.lowercase() }
         }
     }
 
@@ -117,7 +111,7 @@ public class DefaultLibraryRepository(
     override fun observeSortOption(): Flow<LibrarySortOption> {
         return datastoreRepository.observeLibrarySortOption().map { sortOptionName ->
             LibrarySortOption.entries.find { it.name == sortOptionName }
-                ?: LibrarySortOption.LAST_WATCHED_DESC
+                ?: LibrarySortOption.ADDED_DESC
         }
     }
 
@@ -158,12 +152,10 @@ public class DefaultLibraryRepository(
         processPendingUploadActions()
         processPendingDeleteActions()
 
-        val watchlistChanged = traktActivityRepository.hasActivityChanged(SHOWS_WATCHLISTED)
-
-        if (forceRefresh || watchlistChanged) {
-            libraryStore.fresh(Unit)
-        } else {
-            libraryStore.get(Unit)
+        val sortOption = currentSortOption()
+        when {
+            forceRefresh -> libraryStore.fresh(sortOption)
+            else -> libraryStore.get(sortOption)
         }
 
         logger.debug(TAG, "Sync completed")
@@ -171,7 +163,7 @@ public class DefaultLibraryRepository(
 
     override suspend fun needsSync(expiry: Duration): Boolean =
         !requestManagerRepository.isRequestValid(
-            requestType = WATCHLIST_SYNC.name,
+            requestType = LIBRARY_SYNC.name,
             threshold = expiry,
         )
 
@@ -223,6 +215,12 @@ public class DefaultLibraryRepository(
         is ApiResponse.Error.HttpError -> "HTTP $code: $errorMessage"
         is ApiResponse.Error.SerializationError -> "Serialization error: $errorMessage"
         is ApiResponse.Error.GenericError -> errorMessage ?: "Unknown error"
+    }
+
+    private suspend fun currentSortOption(): LibrarySortOption {
+        val name = datastoreRepository.observeLibrarySortOption().first()
+        return LibrarySortOption.entries.find { it.name == name }
+            ?: LibrarySortOption.ADDED_DESC
     }
 
     private companion object {

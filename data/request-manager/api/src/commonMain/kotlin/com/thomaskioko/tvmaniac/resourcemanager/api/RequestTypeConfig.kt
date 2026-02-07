@@ -16,7 +16,7 @@ public enum class RequestTypeConfig(public val requestId: Long, public val durat
     UPCOMING_SHOWS(9, 3.days),
     WATCHLIST_METADATA(14, 1.days),
     USER_PROFILE(15, 3.days),
-    WATCHLIST_SYNC(16, 1.days),
+    LIBRARY_SYNC(16, 1.days),
     EPISODE_WATCHES_SYNC(17, 1.days),
     SHOW_EPISODE_WATCHES_SYNC(18, 1.hours),
     SHOW_CAST(19, 6.days),
@@ -26,4 +26,7 @@ public enum class RequestTypeConfig(public val requestId: Long, public val durat
     TRAKT_ACTIVITIES(23, 1.days),
     SEASONS_EPISODES_SYNC(24, 3.days),
     SHOW_SEASON_DETAILS_SYNC(25, 3.hours),
+    NEXT_EPISODES_SYNC(26, 1.hours),
+    WATCH_PROVIDERS(27, 30.days),
+    UPNEXT_FULL_SYNC(28, 1.hours),
 }

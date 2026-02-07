@@ -26,6 +26,9 @@ public struct TabBarView: View {
                     case let .discover(screen):
                         DiscoverTab(presenter: screen.presenter)
                             .id(ObjectIdentifier(screen))
+                    case let .upNext(screen):
+                        UpNextTab(presenter: screen.presenter)
+                            .id(ObjectIdentifier(screen))
                     case let .search(screen):
                         SearchTab(presenter: screen.presenter)
                             .id(ObjectIdentifier(screen))
@@ -45,6 +48,7 @@ public struct TabBarView: View {
         .onChange(of: selectedTab) { newTab in
             switch newTab {
             case .discover: presenter.onDiscoverClicked()
+            case .upNext: presenter.onUpNextClicked()
             case .search: presenter.onSearchClicked()
             case .library: presenter.onLibraryClicked()
             case .profile: presenter.onProfileClicked()
@@ -55,6 +59,7 @@ public struct TabBarView: View {
     private func tabForChild(_ child: HomePresenterChild) -> NavigationTab {
         switch onEnum(of: child) {
         case .discover: .discover
+        case .upNext: .upNext
         case .search: .search
         case .library: .library
         case .profile: .profile
@@ -66,15 +71,17 @@ public struct TabBarView: View {
 
 public enum NavigationTab: String, CaseIterable {
     case discover
-    case search
+    case upNext
     case library
+    case search
     case profile
 
     var title: String {
         switch self {
         case .discover: String(\.label_tab_discover)
-        case .search: String(\.label_tab_search)
+        case .upNext: String(\.label_discover_up_next)
         case .library: String(\.menu_item_library)
+        case .search: String(\.label_tab_search)
         case .profile: String(\.menu_item_profile)
         }
     }
@@ -82,8 +89,9 @@ public enum NavigationTab: String, CaseIterable {
     var icon: String {
         switch self {
         case .discover: "tv"
-        case .search: "magnifyingglass"
+        case .upNext: "play.circle"
         case .library: "square.stack"
+        case .search: "magnifyingglass"
         case .profile: "person.crop.circle"
         }
     }
