@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.discover.ui
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -21,16 +21,19 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.DismissState
 import androidx.compose.material.DismissValue
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Movie
+import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberDismissState
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
@@ -44,14 +47,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
+import com.thomaskioko.tvmaniac.compose.components.ScrimButton
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.compose.extensions.copy
@@ -64,6 +71,7 @@ import com.thomaskioko.tvmaniac.discover.presenter.MessageShown
 import com.thomaskioko.tvmaniac.discover.presenter.NextEpisodeClicked
 import com.thomaskioko.tvmaniac.discover.presenter.OpenSeasonFromUpNext
 import com.thomaskioko.tvmaniac.discover.presenter.PopularClicked
+import com.thomaskioko.tvmaniac.discover.presenter.ProfileIconClicked
 import com.thomaskioko.tvmaniac.discover.presenter.RefreshData
 import com.thomaskioko.tvmaniac.discover.presenter.ShowClicked
 import com.thomaskioko.tvmaniac.discover.presenter.TopRatedClicked
@@ -145,6 +153,7 @@ internal fun DiscoverScreen(
                     buttonText = generic_retry.resolve(context),
                     onClick = { onAction(RefreshData) },
                 )
+
             state.showError -> ErrorUi(
                 modifier = Modifier
                     .fillMaxSize()
@@ -153,13 +162,18 @@ internal fun DiscoverScreen(
                     Image(
                         modifier = Modifier.size(120.dp),
                         imageVector = Icons.Outlined.ErrorOutline,
-                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F)),
+                        colorFilter = ColorFilter.tint(
+                            MaterialTheme.colorScheme.secondary.copy(
+                                alpha = 0.8F,
+                            ),
+                        ),
                         contentDescription = null,
                     )
                 },
                 errorMessage = state.message?.message,
                 onRetry = { onAction(RefreshData) },
             )
+
             else -> DiscoverContent(
                 modifier = modifier,
                 pagerState = pagerState,
@@ -189,7 +203,8 @@ private fun DiscoverContent(
         }
     }
 
-    val pullRefreshState = rememberPullRefreshState(refreshing = false, onRefresh = { onAction(RefreshData) })
+    val pullRefreshState =
+        rememberPullRefreshState(refreshing = false, onRefresh = { onAction(RefreshData) })
     val listState = rememberLazyListState()
 
     Box(
@@ -231,7 +246,31 @@ private fun DiscoverContent(
                         .padding(start = 16.dp),
                 )
             },
-            isRefreshing = state.isRefreshing,
+            actions = { showAppBarBackground ->
+                if (state.userAvatarUrl != null) {
+                    AsyncImageComposable(
+                        model = state.userAvatarUrl,
+                        contentDescription = "Profile",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                            .size(38.dp)
+                            .clip(CircleShape)
+                            .clickable(onClick = { onAction(ProfileIconClicked) }),
+                    )
+                } else {
+                    ScrimButton(
+                        show = showAppBarBackground,
+                        onClick = { onAction(ProfileIconClicked) },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.AccountCircle,
+                            contentDescription = "Profile",
+                            tint = MaterialTheme.colorScheme.onSurface,
+                        )
+                    }
+                }
+            },
         )
     }
 }
