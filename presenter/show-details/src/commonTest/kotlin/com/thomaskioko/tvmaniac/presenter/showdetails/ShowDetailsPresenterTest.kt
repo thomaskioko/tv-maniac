@@ -1,12 +1,16 @@
 package com.thomaskioko.tvmaniac.presenter.showdetails
 
+import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
+import com.thomaskioko.tvmaniac.core.notifications.api.EpisodeNotification
+import com.thomaskioko.tvmaniac.core.notifications.testing.FakeNotificationManager
 import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
+import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.SelectByShowTraktId
 import com.thomaskioko.tvmaniac.db.ShowCast
 import com.thomaskioko.tvmaniac.db.ShowSeasons
@@ -15,17 +19,21 @@ import com.thomaskioko.tvmaniac.db.TvshowDetails
 import com.thomaskioko.tvmaniac.db.WatchProviders
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
+import com.thomaskioko.tvmaniac.domain.notifications.ScheduleEpisodeNotificationsInteractor
+import com.thomaskioko.tvmaniac.domain.notifications.SyncTraktCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
 import com.thomaskioko.tvmaniac.domain.watchproviders.WatchProvidersInteractor
+import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.i18n.testing.util.IgnoreIos
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ProviderModel
+import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.TrailerModel
@@ -37,6 +45,7 @@ import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
+import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
 import io.kotest.matchers.shouldBe
 import kotlinx.collections.immutable.persistentListOf
@@ -46,9 +55,15 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+
+private fun LocalDate.toEpochMillis(): Long =
+    atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
 
 @IgnoreIos
 class ShowDetailsPresenterTest {
@@ -65,7 +80,10 @@ class ShowDetailsPresenterTest {
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
     private val traktAuthRepository = FakeTraktAuthRepository()
     private val fakeFormatterUtil = FakeFormatterUtil()
+    private val fakeNotificationManager = FakeNotificationManager()
+    private val fakeDatastoreRepository = FakeDatastoreRepository()
     private val fakeLogger = FakeLogger()
+    private val fakeDateTimeProvider = FakeDateTimeProvider()
     private val testDispatcher = StandardTestDispatcher()
     private val coroutineDispatcher = AppCoroutineDispatchers(
         main = testDispatcher,
@@ -78,6 +96,7 @@ class ShowDetailsPresenterTest {
     @BeforeTest
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
+        fakeNotificationManager.reset()
     }
 
     @AfterTest
@@ -280,6 +299,138 @@ class ShowDetailsPresenterTest {
         testDispatcher.scheduler.advanceUntilIdle()
 
         followedShowsRepository.addedShowIds shouldBe listOf(84958L)
+    }
+
+    @Test
+    fun `should invoke onShowFollowed callback when following a show`() = runTest {
+        buildMockData()
+        var onShowFollowedCalled = false
+
+        val presenter = buildShowDetailsPresenter(
+            onShowFollowed = { onShowFollowedCalled = true },
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(FollowShowClicked(isInLibrary = false))
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        onShowFollowedCalled shouldBe true
+    }
+
+    @Test
+    fun `should not invoke onShowFollowed callback when unfollowing a show`() = runTest {
+        buildMockData()
+        var onShowFollowedCalled = false
+
+        val presenter = buildShowDetailsPresenter(
+            onShowFollowed = { onShowFollowedCalled = true },
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(FollowShowClicked(isInLibrary = true))
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        onShowFollowedCalled shouldBe false
+    }
+
+    @Test
+    fun `should schedule episode notifications when following a show with notifications enabled`() = runTest {
+        buildMockData()
+        fakeDatastoreRepository.setEpisodeNotificationsEnabled(true)
+
+        fakeDateTimeProvider.setCurrentTimeMillis(LocalDate(2025, 1, 1).toEpochMillis())
+
+        episodeRepository.setUpcomingEpisodes(
+            listOf(
+                UpcomingEpisode(
+                    episodeId = 101,
+                    seasonId = 1,
+                    showId = 84958,
+                    episodeNumber = 1,
+                    seasonNumber = 1,
+                    title = "Episode 1",
+                    overview = "Overview",
+                    runtime = 45,
+                    imageUrl = "/still.jpg",
+                    firstAired = LocalDate(2025, 1, 20).toEpochMillis(),
+                    showName = "Loki",
+                    showPoster = "/poster.jpg",
+                ),
+            ),
+        )
+
+        val presenter = buildShowDetailsPresenter()
+
+        presenter.state.test {
+            awaitItem()
+            awaitItem()
+
+            presenter.dispatch(FollowShowClicked(isInLibrary = false))
+
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            fakeNotificationManager.getPendingNotifications().size shouldBe 1
+        }
+    }
+
+    @Test
+    fun `should not schedule notifications when following a show with notifications disabled`() = runTest {
+        buildMockData()
+        fakeDatastoreRepository.setEpisodeNotificationsEnabled(false)
+
+        val presenter = buildShowDetailsPresenter()
+
+        presenter.state.test {
+            awaitItem()
+            awaitItem()
+
+            presenter.dispatch(FollowShowClicked(isInLibrary = false))
+
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            fakeNotificationManager.getScheduledNotifications() shouldBe emptyMap()
+        }
+    }
+
+    @Test
+    fun `should cancel notifications for show when unfollowing`() = runTest {
+        buildMockData()
+        fakeNotificationManager.addPendingNotification(
+            EpisodeNotification(
+                id = 1,
+                showId = 84958,
+                seasonId = 1,
+                showName = "Loki",
+                episodeTitle = "Episode 1",
+                seasonNumber = 1,
+                episodeNumber = 1,
+                imageUrl = null,
+                scheduledTime = 1000L,
+            ),
+        )
+        fakeNotificationManager.addPendingNotification(
+            EpisodeNotification(
+                id = 2,
+                showId = 99999,
+                seasonId = 2,
+                showName = "Other Show",
+                episodeTitle = "Episode 1",
+                seasonNumber = 1,
+                episodeNumber = 1,
+                imageUrl = null,
+                scheduledTime = 2000L,
+            ),
+        )
+
+        val presenter = buildShowDetailsPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(FollowShowClicked(isInLibrary = true))
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val pendingNotifications = fakeNotificationManager.getPendingNotifications()
+        pendingNotifications.filter { it.showId == 84958L } shouldBe emptyList()
+        pendingNotifications.filter { it.showId == 99999L }.size shouldBe 1
     }
 
     @Test
@@ -499,18 +650,21 @@ class ShowDetailsPresenterTest {
     }
 
     private fun buildShowDetailsPresenter(
+        param: ShowDetailsParam = ShowDetailsParam(id = 84958),
         onBack: () -> Unit = {},
         onNavigateToSeason: (param: ShowSeasonDetailsParam) -> Unit = {},
         onNavigateToTrailer: (id: Long) -> Unit = {},
         onNavigateToShow: (id: Long) -> Unit = {},
+        onShowFollowed: () -> Unit = {},
     ): ShowDetailsPresenter {
         return DefaultShowDetailsPresenter(
-            showTraktId = 84958,
+            param = param,
             componentContext = DefaultComponentContext(lifecycle = LifecycleRegistry()),
             onBack = onBack,
             onNavigateToSeason = onNavigateToSeason,
             onNavigateToShow = onNavigateToShow,
             onNavigateToTrailer = onNavigateToTrailer,
+            onShowFollowed = onShowFollowed,
             followedShowsRepository = followedShowsRepository,
             showDetailsInteractor = ShowDetailsInteractor(
                 showDetailsRepository = showDetailsRepository,
@@ -552,6 +706,20 @@ class ShowDetailsPresenterTest {
                 logger = fakeLogger,
                 watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
             ),
+            syncTraktCalendarInteractor = SyncTraktCalendarInteractor(
+                episodeRepository = episodeRepository,
+                dateTimeProvider = fakeDateTimeProvider,
+                logger = FakeLogger(),
+                dispatchers = coroutineDispatcher,
+            ),
+            scheduleEpisodeNotificationsInteractor = ScheduleEpisodeNotificationsInteractor(
+                episodeRepository = episodeRepository,
+                notificationManager = fakeNotificationManager,
+                dateTimeProvider = fakeDateTimeProvider,
+                logger = FakeLogger(),
+                dispatchers = coroutineDispatcher,
+            ),
+            notificationManager = fakeNotificationManager,
             traktAuthRepository = traktAuthRepository,
             dispatchers = coroutineDispatcher,
             logger = fakeLogger,

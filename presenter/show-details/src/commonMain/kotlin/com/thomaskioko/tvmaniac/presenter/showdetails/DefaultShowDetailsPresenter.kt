@@ -6,12 +6,15 @@ import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
+import com.thomaskioko.tvmaniac.domain.notifications.ScheduleEpisodeNotificationsInteractor
+import com.thomaskioko.tvmaniac.domain.notifications.SyncTraktCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor.Param
@@ -19,6 +22,7 @@ import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
 import com.thomaskioko.tvmaniac.domain.watchproviders.WatchProvidersInteractor
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
+import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
@@ -41,17 +45,21 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @ContributesBinding(ActivityScope::class, boundType = ShowDetailsPresenter::class)
 public class DefaultShowDetailsPresenter(
     @Assisted componentContext: ComponentContext,
-    @Assisted private val showTraktId: Long,
+    @Assisted private val param: ShowDetailsParam,
     @Assisted private val onBack: () -> Unit,
     @Assisted private val onNavigateToShow: (id: Long) -> Unit,
     @Assisted private val onNavigateToSeason: (param: ShowSeasonDetailsParam) -> Unit,
     @Assisted private val onNavigateToTrailer: (id: Long) -> Unit,
+    @Assisted private val onShowFollowed: () -> Unit,
     private val followedShowsRepository: FollowedShowsRepository,
     private val showDetailsInteractor: ShowDetailsInteractor,
     private val similarShowsInteractor: SimilarShowsInteractor,
     private val watchProvidersInteractor: WatchProvidersInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val showContentSyncInteractor: ShowContentSyncInteractor,
+    private val syncTraktCalendarInteractor: SyncTraktCalendarInteractor,
+    private val scheduleEpisodeNotificationsInteractor: ScheduleEpisodeNotificationsInteractor,
+    private val notificationManager: NotificationManager,
     observableShowDetailsInteractor: ObservableShowDetailsInteractor,
     observeShowWatchProgressInteractor: ObserveShowWatchProgressInteractor,
     private val traktAuthRepository: TraktAuthRepository,
@@ -59,6 +67,7 @@ public class DefaultShowDetailsPresenter(
     dispatchers: AppCoroutineDispatchers,
 ) : ShowDetailsPresenter, ComponentContext by componentContext {
 
+    private val showTraktId: Long = param.id
     private val showDetailsLoadingState = ObservableLoadingCounter()
     private val similarShowsLoadingState = ObservableLoadingCounter()
     private val watchProvidersLoadingState = ObservableLoadingCounter()
@@ -71,7 +80,7 @@ public class DefaultShowDetailsPresenter(
     init {
         observableShowDetailsInteractor(showTraktId)
         observeShowWatchProgressInteractor(showTraktId)
-        observeShowDetails()
+        observeShowDetails(forceReload = param.forceRefresh)
         observeAuthState()
     }
 
@@ -120,9 +129,18 @@ public class DefaultShowDetailsPresenter(
                 coroutineScope.launch {
                     if (action.isInLibrary) {
                         followedShowsRepository.removeFollowedShow(showTraktId)
+                        notificationManager.cancelNotificationsForShow(showTraktId)
                     } else {
                         followedShowsRepository.addFollowedShow(showTraktId)
                         syncShowContent(isUserInitiated = true, loadingState = episodeActionLoadingState)
+
+                        syncTraktCalendarInteractor(SyncTraktCalendarInteractor.Params(forceRefresh = true))
+                            .collectStatus(episodeActionLoadingState, logger, uiMessageManager)
+
+                        scheduleEpisodeNotificationsInteractor(ScheduleEpisodeNotificationsInteractor.Params())
+                            .collectStatus(episodeActionLoadingState, logger, uiMessageManager)
+
+                        onShowFollowed()
                     }
                 }
             }
@@ -212,26 +230,29 @@ public class DefaultShowDetailsPresenter(
 public class DefaultShowDetailsPresenterFactory(
     private val presenter: (
         componentContext: ComponentContext,
-        id: Long,
+        param: ShowDetailsParam,
         onBack: () -> Unit,
         onNavigateToShow: (id: Long) -> Unit,
         onNavigateToSeason: (param: ShowSeasonDetailsParam) -> Unit,
         onNavigateToTrailer: (id: Long) -> Unit,
+        onShowFollowed: () -> Unit,
     ) -> ShowDetailsPresenter,
 ) : ShowDetailsPresenter.Factory {
     override fun invoke(
         componentContext: ComponentContext,
-        id: Long,
+        param: ShowDetailsParam,
         onBack: () -> Unit,
         onNavigateToShow: (id: Long) -> Unit,
         onNavigateToSeason: (param: ShowSeasonDetailsParam) -> Unit,
         onNavigateToTrailer: (id: Long) -> Unit,
+        onShowFollowed: () -> Unit,
     ): ShowDetailsPresenter = presenter(
         componentContext,
-        id,
+        param,
         onBack,
         onNavigateToShow,
         onNavigateToSeason,
         onNavigateToTrailer,
+        onShowFollowed,
     )
 }
