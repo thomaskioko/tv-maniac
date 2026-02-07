@@ -252,10 +252,13 @@
 
     <string name="label_settings_episode_notifications">Notifications d\'épisodes</string>
     <string name="label_settings_episode_notifications_description">Recevez une notification lors de la diffusion de nouveaux épisodes</string>
+    <string name="label_settings_section_developer">Développeur</string>
+    <string name="label_settings_debug_notification_description">Déclenche une notification de test</string>
+    <string name="label_settings_debug_notification_scheduled">Notification programmée !</string>
 
-    <string name="notification_rationale_title">Notifications d\'épisodes</string>
-    <string name="notification_rationale_message">Recevez une notification lorsque de nouveaux épisodes de vos séries préférées sont sur le point d\'être diffusés pour ne jamais les manquer.</string>
-    <string name="notification_rationale_enable">Activer</string>
+    <string name="notification_rationale_title">Ne manquez aucun épisode</string>
+    <string name="notification_rationale_message">Recevez une notification lorsque les épisodes de vos séries suivies sont sur le point d\'être diffusés pour ne jamais manquer une première.</string>
+    <string name="notification_rationale_enable">Activer les notifications</string>
     <string name="notification_rationale_not_now">Pas maintenant</string>
 
     <string name="title_calendar">Calendrier</string>
@@ -298,4 +301,9 @@
     <string name="label_debug_section_background_tasks">Tâches en arrière-plan</string>
     <string name="label_debug_section_notifications">Notifications</string>
     <string name="label_debug_coming_soon">Bientôt disponible</string>
+
+    <string name="notification_permission_denied_title">Notifications désactivées</string>
+    <string name="notification_permission_denied_message">Pour recevoir les notifications d\'épisodes, veuillez activer les notifications dans les paramètres de votre appareil.</string>
+    <string name="notification_permission_denied_settings">Ouvrir les paramètres</string>
+    <string name="notification_permission_denied_cancel">Annuler</string>
 </resources>

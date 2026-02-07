@@ -70,11 +70,19 @@
     <string name="label_settings_last_sync_date">Last sync: %s</string>
     <string name="label_settings_episode_notifications">Episode Notifications</string>
     <string name="label_settings_episode_notifications_description">Get notified when new episodes air</string>
+    <string name="label_settings_section_developer">Developer</string>
+    <string name="label_settings_debug_notification_description">Triggers a test notification</string>
+    <string name="label_settings_debug_notification_scheduled">Notification scheduled!</string>
 
-    <string name="notification_rationale_title">Episode Notifications</string>
-    <string name="notification_rationale_message">Get notified when new episodes from your favorite shows are about to air so you never miss them.</string>
-    <string name="notification_rationale_enable">Enable</string>
+    <string name="notification_rationale_title">Never miss new episodes</string>
+    <string name="notification_rationale_message">Get notified when episodes from your followed shows are about to air so you never miss a premiere.</string>
+    <string name="notification_rationale_enable">Enable Notifications</string>
     <string name="notification_rationale_not_now">Not Now</string>
+
+    <string name="notification_permission_denied_title">Notifications Disabled</string>
+    <string name="notification_permission_denied_message">To receive episode notifications, please enable notifications in your device settings.</string>
+    <string name="notification_permission_denied_settings">Open Settings</string>
+    <string name="notification_permission_denied_cancel">Cancel</string>
 
 
     <string name="app_name">Tv Maniac</string>
