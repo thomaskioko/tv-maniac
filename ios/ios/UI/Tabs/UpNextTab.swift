@@ -67,11 +67,8 @@ struct UpNextTab: View {
     @ViewBuilder
     private var contentView: some View {
         if uiState.showLoading {
-            VStack {
-                Spacer()
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: theme.colors.accent))
-                Spacer()
+            CenteredFullScreenView {
+                LoadingIndicatorView()
             }
         } else if uiState.isEmpty {
             emptyView
@@ -145,22 +142,14 @@ struct UpNextTab: View {
 
     @ViewBuilder
     private var emptyView: some View {
-        ScrollView {
-            LazyVStack(pinnedViews: [.sectionHeaders]) {
-                Section {
-                    CenteredFullScreenView {
-                        FullScreenView(
-                            systemName: "tray",
-                            message: String(\.label_upnext_empty),
-                            subtitle: nil,
-                            color: theme.colors.onSurfaceVariant
-                        )
-                        .frame(maxWidth: .infinity)
-                    }
-                } header: {
-                    sortChipsRow
-                        .background(theme.colors.background)
-                }
+        VStack(spacing: 0) {
+            CenteredFullScreenView {
+                FullScreenView(
+                    systemName: "tray",
+                    message: String(\.label_upnext_empty),
+                    subtitle: nil,
+                    color: theme.colors.onSurfaceVariant
+                )
             }
         }
     }
