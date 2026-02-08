@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.core.tasks.api
+package com.thomaskioko.tvmaniac.domain.library
 
 public interface SyncTasks {
     public fun setup(): Unit = Unit

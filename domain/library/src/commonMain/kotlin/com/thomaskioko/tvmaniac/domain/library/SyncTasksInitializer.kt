@@ -1,11 +1,9 @@
-package com.thomaskioko.tvmaniac.core.tasks.implementation
+package com.thomaskioko.tvmaniac.domain.library
 
 import com.thomaskioko.tvmaniac.core.base.AppInitializer
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
-import com.thomaskioko.tvmaniac.core.tasks.api.SyncTasks
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
-import com.thomaskioko.tvmaniac.domain.library.SyncLibraryInteractor
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import kotlinx.coroutines.NonCancellable
