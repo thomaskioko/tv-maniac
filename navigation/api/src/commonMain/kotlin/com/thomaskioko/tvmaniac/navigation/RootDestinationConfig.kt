@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.navigation
 
+import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonDetailsUiParam
 import kotlinx.serialization.Serializable
 
@@ -15,7 +16,7 @@ public sealed interface RootDestinationConfig {
     public data object Settings : RootDestinationConfig
 
     @Serializable
-    public data class ShowDetails(val id: Long) : RootDestinationConfig
+    public data class ShowDetails(val param: ShowDetailsParam) : RootDestinationConfig
 
     @Serializable
     public data class SeasonDetails(val param: SeasonDetailsUiParam) : RootDestinationConfig

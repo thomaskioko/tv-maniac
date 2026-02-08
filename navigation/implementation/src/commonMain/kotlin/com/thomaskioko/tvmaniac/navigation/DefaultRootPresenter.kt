@@ -15,6 +15,7 @@ import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsPresenter
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenter
+import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.presenter.trailers.TrailersPresenter
 import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsPresenter
@@ -98,15 +99,36 @@ public class DefaultRootPresenter(
                 initialValue = ThemeState(),
             )
 
-    private fun createScreen(config: RootDestinationConfig, componentContext: ComponentContext): Child =
+    private fun createScreen(
+        config: RootDestinationConfig,
+        componentContext: ComponentContext,
+    ): Child =
         when (config) {
             is RootDestinationConfig.Home ->
                 Child.Home(
                     presenter = homePresenterFactory(
                         componentContext = componentContext,
-                        onShowClicked = { id -> navigator.pushNew(RootDestinationConfig.ShowDetails(id)) },
-                        onMoreShowClicked = { id -> navigator.pushNew(RootDestinationConfig.MoreShows(id)) },
-                        onShowGenreClicked = { id -> navigator.pushNew(RootDestinationConfig.GenreShows(id)) },
+                        onShowClicked = { id ->
+                            navigator.pushNew(
+                                RootDestinationConfig.ShowDetails(
+                                    ShowDetailsParam(id = id),
+                                ),
+                            )
+                        },
+                        onMoreShowClicked = { id ->
+                            navigator.pushNew(
+                                RootDestinationConfig.MoreShows(
+                                    id,
+                                ),
+                            )
+                        },
+                        onShowGenreClicked = { id ->
+                            navigator.pushNew(
+                                RootDestinationConfig.GenreShows(
+                                    id,
+                                ),
+                            )
+                        },
                         onNavigateToProfile = { navigator.pushNew(RootDestinationConfig.Profile) },
                         onSettingsClicked = { navigator.pushNew(RootDestinationConfig.Settings) },
                     ),
@@ -133,9 +155,15 @@ public class DefaultRootPresenter(
                 Child.ShowDetails(
                     presenter = showDetailsPresenterFactory(
                         componentContext = componentContext,
-                        id = config.id,
+                        param = config.param,
                         onBack = navigator::pop,
-                        onNavigateToShow = { id -> navigator.pushToFront(RootDestinationConfig.ShowDetails(id)) },
+                        onNavigateToShow = { id ->
+                            navigator.pushToFront(
+                                RootDestinationConfig.ShowDetails(
+                                    ShowDetailsParam(id),
+                                ),
+                            )
+                        },
                         onNavigateToSeason = { params ->
                             navigator.pushNew(
                                 config = RootDestinationConfig.SeasonDetails(
@@ -147,7 +175,14 @@ public class DefaultRootPresenter(
                                 ),
                             )
                         },
-                        onNavigateToTrailer = { id -> navigator.pushNew(RootDestinationConfig.Trailers(id)) },
+                        onNavigateToTrailer = { id ->
+                            navigator.pushNew(
+                                RootDestinationConfig.Trailers(
+                                    id,
+                                ),
+                            )
+                        },
+                        onShowFollowed = { },
                     ),
                 )
 
@@ -178,7 +213,7 @@ public class DefaultRootPresenter(
                         id = config.id,
                         onBack = navigator::pop,
                         onNavigateToShowDetails = { id ->
-                            navigator.pushNew(RootDestinationConfig.ShowDetails(id))
+                            navigator.pushNew(RootDestinationConfig.ShowDetails(ShowDetailsParam(id)))
                         },
                     ),
                 )

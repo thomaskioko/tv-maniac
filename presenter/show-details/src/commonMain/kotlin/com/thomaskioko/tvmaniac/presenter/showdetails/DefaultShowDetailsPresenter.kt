@@ -6,15 +6,12 @@ import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.Logger
-import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
-import com.thomaskioko.tvmaniac.domain.notifications.ScheduleEpisodeNotificationsInteractor
-import com.thomaskioko.tvmaniac.domain.notifications.SyncTraktCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor.Param
@@ -57,9 +54,6 @@ public class DefaultShowDetailsPresenter(
     private val watchProvidersInteractor: WatchProvidersInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val showContentSyncInteractor: ShowContentSyncInteractor,
-    private val syncTraktCalendarInteractor: SyncTraktCalendarInteractor,
-    private val scheduleEpisodeNotificationsInteractor: ScheduleEpisodeNotificationsInteractor,
-    private val notificationManager: NotificationManager,
     observableShowDetailsInteractor: ObservableShowDetailsInteractor,
     observeShowWatchProgressInteractor: ObserveShowWatchProgressInteractor,
     private val traktAuthRepository: TraktAuthRepository,
@@ -129,16 +123,9 @@ public class DefaultShowDetailsPresenter(
                 coroutineScope.launch {
                     if (action.isInLibrary) {
                         followedShowsRepository.removeFollowedShow(showTraktId)
-                        notificationManager.cancelNotificationsForShow(showTraktId)
                     } else {
                         followedShowsRepository.addFollowedShow(showTraktId)
                         syncShowContent(isUserInitiated = true, loadingState = episodeActionLoadingState)
-
-                        syncTraktCalendarInteractor(SyncTraktCalendarInteractor.Params(forceRefresh = true))
-                            .collectStatus(episodeActionLoadingState, logger, uiMessageManager)
-
-                        scheduleEpisodeNotificationsInteractor(ScheduleEpisodeNotificationsInteractor.Params())
-                            .collectStatus(episodeActionLoadingState, logger, uiMessageManager)
 
                         onShowFollowed()
                     }
