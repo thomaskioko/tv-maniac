@@ -8,7 +8,6 @@ struct ProfileTab: View {
 
     private let presenter: ProfilePresenter
     @State private var showGlass: Double = 0
-    @State private var progressViewOffset: CGFloat = 0
     @StateObject @KotlinStateFlow private var uiState: ProfileState
 
     init(presenter: ProfilePresenter) {
@@ -17,24 +16,30 @@ struct ProfileTab: View {
     }
 
     var body: some View {
-        ZStack {
-            theme.colors.background
-                .edgesIgnoringSafeArea(.all)
-
+        ZStack(alignment: .top) {
             if uiState.showLoading {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle(tint: theme.colors.accent))
                     .scaleEffect(1.5)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if let userProfile = uiState.userProfile {
-                profileContent(userProfile: userProfile)
+                profileScrollView(userProfile: userProfile)
             } else {
-                unauthenticatedContent()
+                unauthenticatedScrollView
             }
-        }
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarColor(backgroundColor: .clear)
-        .navigationBarBackButtonHidden(true)
-        .overlay(
+
+            LinearGradient(
+                colors: [
+                    .black.opacity(0.6),
+                    .black.opacity(0.3),
+                    .clear,
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 150)
+            .allowsHitTesting(false)
+
             GlassToolbar(
                 title: String(\.profile_title),
                 opacity: showGlass,
@@ -49,20 +54,24 @@ struct ProfileTab: View {
                     }
                 },
                 trailingIcon: {
-                    Button(
-                        action: {
-                            presenter.dispatch(action: ProfileActionSettingsClicked())
-                        }
-                    ) {
+                    Button(action: {
+                        presenter.dispatch(action: ProfileActionSettingsClicked())
+                    }) {
                         Image(systemName: "gearshape")
                             .textStyle(theme.typography.headlineSmall)
                             .foregroundColor(theme.colors.accent)
                     }
                 }
-            ),
-            alignment: .top
-        )
-        .animation(.easeInOut(duration: AnimationConstants.defaultDuration), value: showGlass)
+            )
+            .animation(.easeInOut(duration: AnimationConstants.defaultDuration), value: showGlass)
+        }
+        .background(theme.colors.background)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarColor(backgroundColor: .clear)
+        .navigationBarBackButtonHidden(true)
+        .swipeBackGesture {
+            presenter.dispatch(action: ProfileActionBackClicked())
+        }
         .edgesIgnoringSafeArea(.top)
         .onChange(of: uiState.errorMessage) { errorMessage in
             if let errorMessage {
@@ -76,46 +85,50 @@ struct ProfileTab: View {
         }
     }
 
-    @ViewBuilder
-    private func profileContent(userProfile: ProfileInfo) -> some View {
-        ParallaxView(
-            imageHeight: DimensionConstants.imageHeight,
-            collapsedImageHeight: DimensionConstants.collapsedImageHeight,
-            header: { proxy in
-                HeaderContent(
-                    userProfile: userProfile,
-                    progress: proxy.getTitleOpacity(
-                        geometry: proxy,
-                        imageHeight: DimensionConstants.imageHeight,
-                        collapsedImageHeight: DimensionConstants.collapsedImageHeight
-                    ),
-                    headerHeight: proxy.getHeightForHeaderImage(proxy)
-                )
-            },
-            content: {
+    // MARK: - Authenticated Content
+
+    private func profileScrollView(userProfile: ProfileInfo) -> some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 0) {
+                GeometryReader { proxy in
+                    let scrollY = proxy.frame(in: .named("profileScroll")).minY
+                    let headerHeight = DimensionConstants.imageHeight + max(scrollY, 0)
+
+                    headerContent(userProfile: userProfile, height: headerHeight)
+                        .frame(width: proxy.size.width, height: headerHeight)
+                        .offset(y: -max(scrollY, 0))
+                        .onChange(of: scrollY) { _, newValue in
+                            DispatchQueue.main.async {
+                                showGlass = newValue < 0
+                                    ? ParallaxConstants.glassOpacity(from: newValue)
+                                    : 0
+                            }
+                        }
+                }
+                .frame(height: DimensionConstants.imageHeight)
+
                 VStack(spacing: 0) {
                     Spacer()
-                        .frame(height: 24)
+                        .frame(height: theme.spacing.large)
 
                     statsSection(stats: userProfile.stats)
 
                     Spacer()
-                        .frame(height: 32)
+                        .frame(height: theme.spacing.xLarge)
                 }
-            },
-            onScroll: { offset in
-                showGlass = ParallaxConstants.glassOpacity(from: offset)
+                .background(theme.colors.background)
+                .offset(y: -10)
             }
-        )
+        }
+        .coordinateSpace(name: "profileScroll")
     }
 
     @ViewBuilder
-    private func HeaderContent(userProfile: ProfileInfo, progress: CGFloat, headerHeight: CGFloat) -> some View {
+    private func headerContent(userProfile: ProfileInfo, height: CGFloat) -> some View {
         ZStack(alignment: .bottom) {
-            // Background image
             HeaderCoverArtWorkView(
                 imageUrl: userProfile.backgroundUrl,
-                posterHeight: headerHeight
+                posterHeight: height
             )
             .foregroundStyle(.ultraThinMaterial)
             .overlay(
@@ -133,54 +146,42 @@ struct ProfileTab: View {
                     endPoint: .bottom
                 )
             )
-            .frame(height: headerHeight)
 
-            ZStack(alignment: .bottom) {
-                VStack {
-                    Spacer()
+            HStack(alignment: .center, spacing: 16) {
+                AvatarView(
+                    avatarUrl: userProfile.avatarUrl,
+                    size: 80,
+                    borderColor: theme.colors.accent,
+                    borderWidth: 3
+                )
 
-                    HStack(alignment: .center, spacing: 16) {
-                        // Avatar
-                        AvatarView(
-                            avatarUrl: userProfile.avatarUrl,
-                            size: 80,
-                            borderColor: theme.colors.accent,
-                            borderWidth: 3
-                        )
+                VStack(alignment: .leading, spacing: theme.spacing.xSmall) {
+                    Text(userProfile.fullName ?? userProfile.username)
+                        .textStyle(theme.typography.titleLarge)
+                        .foregroundColor(theme.colors.onPrimary)
 
-                        // Username and Edit button
-                        VStack(alignment: .leading, spacing: theme.spacing.xSmall) {
-                            Text(userProfile.fullName ?? userProfile.username)
-                                .textStyle(theme.typography.titleLarge)
-                                .foregroundColor(theme.colors.onPrimary)
-
-                            Button(action: {
-                                // Edit action - empty for now
-                            }) {
-                                Text(String(\.profile_edit_button))
-                                    .textStyle(theme.typography.labelMedium)
-                                    .foregroundColor(theme.colors.onPrimary)
-                                    .padding(.horizontal, 20)
-                                    .padding(.vertical, theme.spacing.xSmall)
-                                    .background(Color.clear)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: theme.shapes.medium)
-                                            .stroke(theme.colors.onPrimary, lineWidth: 1)
-                                    )
-                            }
-                        }
-
-                        Spacer()
+                    Button(action: {}) {
+                        Text(String(\.profile_edit_button))
+                            .textStyle(theme.typography.labelMedium)
+                            .foregroundColor(theme.colors.onPrimary)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, theme.spacing.xSmall)
+                            .background(Color.clear)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: theme.shapes.medium)
+                                    .stroke(theme.colors.onPrimary, lineWidth: 1)
+                            )
                     }
-                    .padding(theme.spacing.medium)
                 }
-                .frame(height: headerHeight)
+
+                Spacer()
             }
-            .opacity(1 - progress)
+            .padding(theme.spacing.medium)
         }
-        .frame(height: headerHeight)
         .clipped()
     }
+
+    // MARK: - Stats Section
 
     @ViewBuilder
     private func statsSection(stats: ProfileStats) -> some View {
@@ -196,7 +197,6 @@ struct ProfileTab: View {
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(alignment: .top, spacing: theme.spacing.small) {
-                    // Watch Time Card
                     StatsCardItem(
                         systemImage: "calendar",
                         title: String(\.profile_watch_time)
@@ -208,7 +208,6 @@ struct ProfileTab: View {
                         }
                     }
 
-                    // Episodes Watched Card
                     StatsCardItem(
                         systemImage: "tv",
                         title: String(\.profile_episodes_watched)
@@ -247,8 +246,9 @@ struct ProfileTab: View {
         return formatter.string(from: NSNumber(value: number)) ?? "\(number)"
     }
 
-    @ViewBuilder
-    private func unauthenticatedContent() -> some View {
+    // MARK: - Unauthenticated Content
+
+    private var unauthenticatedScrollView: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(alignment: .leading, spacing: theme.spacing.large) {
                 Spacer()
@@ -325,7 +325,9 @@ struct ProfileTab: View {
         }
         .coordinateSpace(name: "scrollView")
         .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
-            showGlass = ParallaxConstants.glassOpacity(from: offset)
+            DispatchQueue.main.async {
+                showGlass = ParallaxConstants.glassOpacity(from: offset)
+            }
         }
     }
 
@@ -355,7 +357,6 @@ struct ProfileTab: View {
 
 private enum DimensionConstants {
     static let imageHeight: CGFloat = 350
-    static let collapsedImageHeight: CGFloat = 120.0
 }
 
 struct ScrollOffsetPreferenceKey: PreferenceKey {
