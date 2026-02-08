@@ -53,8 +53,10 @@ public struct CarouselView<T, Content: View>: View {
             }
             .onChange(of: currentIndex) { _, newValue in
                 if scrollPosition != newValue {
-                    withAnimation(.easeOut(duration: 0.8)) {
-                        scrollPosition = newValue
+                    DispatchQueue.main.async {
+                        withAnimation(.easeOut(duration: 0.8)) {
+                            scrollPosition = newValue
+                        }
                     }
                 }
             }
