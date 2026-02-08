@@ -44,7 +44,9 @@ public struct ParallaxView<Header: View, Content: View>: View {
                             .background(GeometryGetter(rect: $headerImageRect))
                             .offset(y: getOffsetForHeaderImage(proxy))
                             .onChange(of: offset) { newOffset in
-                                onScroll(newOffset)
+                                DispatchQueue.main.async {
+                                    onScroll(newOffset)
+                                }
                             }
                     }
                     .frame(height: imageHeight)
@@ -88,7 +90,9 @@ public struct GeometryGetter: View {
                 .preference(key: RectanglePreferenceKey.self, value: geometry.frame(in: .global))
         }
         .onPreferenceChange(RectanglePreferenceKey.self) { value in
-            rect = value
+            DispatchQueue.main.async {
+                rect = value
+            }
         }
     }
 }

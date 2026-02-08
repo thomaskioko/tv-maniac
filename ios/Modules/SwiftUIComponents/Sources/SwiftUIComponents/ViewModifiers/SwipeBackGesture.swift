@@ -19,23 +19,37 @@ public struct SwipeBackGesture: ViewModifier {
 private struct SwipeBackGestureHandler: UIViewControllerRepresentable {
     let onSwipe: () -> Void
 
-    func makeUIViewController(context _: Context) -> UIViewController {
-        let controller = UIViewController()
-        return controller
+    func makeUIViewController(context: Context) -> SwipeBackViewController {
+        SwipeBackViewController(coordinator: context.coordinator)
     }
 
-    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-        // Enable the interactive pop gesture even when the back button is hidden
-        DispatchQueue.main.async {
-            if let navigationController = uiViewController.navigationController {
-                navigationController.interactivePopGestureRecognizer?.isEnabled = true
-                navigationController.interactivePopGestureRecognizer?.delegate = context.coordinator
-            }
-        }
+    func updateUIViewController(_ uiViewController: SwipeBackViewController, context: Context) {
+        uiViewController.coordinator = context.coordinator
     }
 
     func makeCoordinator() -> Coordinator {
         Coordinator(onSwipe: onSwipe)
+    }
+
+    final class SwipeBackViewController: UIViewController {
+        var coordinator: Coordinator?
+
+        init(coordinator: Coordinator) {
+            self.coordinator = coordinator
+            super.init(nibName: nil, bundle: nil)
+        }
+
+        @available(*, unavailable)
+        required init?(coder _: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+
+        override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            guard let navigationController else { return }
+            navigationController.interactivePopGestureRecognizer?.isEnabled = true
+            navigationController.interactivePopGestureRecognizer?.delegate = coordinator
+        }
     }
 
     class Coordinator: NSObject, UIGestureRecognizerDelegate {
@@ -46,7 +60,6 @@ private struct SwipeBackGestureHandler: UIViewControllerRepresentable {
         }
 
         func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-            // Allow the gesture if we're not at the root of the navigation stack
             if let nav = gestureRecognizer.view as? UINavigationController {
                 return nav.viewControllers.count > 1
             }

@@ -13,6 +13,7 @@ kotlin {
             dependencies {
                 implementation(libs.appauth)
                 implementation(libs.coroutines.core)
+                implementation(projects.core.tasks.api)
                 implementation(projects.data.traktauth.api)
                 implementation(projects.core.util.api)
 
@@ -20,7 +21,6 @@ kotlin {
                 implementation(libs.androidx.browser)
                 implementation(libs.androidx.core.ktx)
                 implementation(libs.androidx.datastore.preference)
-                implementation(libs.androidx.work.runtime)
                 implementation(projects.data.datastore.api)
             }
         }
@@ -40,6 +40,7 @@ kotlin {
 
         iosMain {
             dependencies {
+                implementation(projects.core.tasks.api)
                 implementation(libs.multiplatformsettings.core)
                 implementation(libs.multiplatformsettings.coroutines)
             }

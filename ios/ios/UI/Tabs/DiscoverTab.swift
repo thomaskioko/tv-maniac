@@ -129,9 +129,11 @@ struct DiscoverTab: View {
                             showInfoOverlay(uiState.featuredShowsSwift)
                         }
                         .onChange(of: scrollY) { _, newValue in
-                            showGlass = newValue < 0
-                                ? ParallaxConstants.glassOpacity(from: newValue)
-                                : 0
+                            DispatchQueue.main.async {
+                                showGlass = newValue < 0
+                                    ? ParallaxConstants.glassOpacity(from: newValue)
+                                    : 0
+                            }
                         }
                 }
                 .frame(height: CarouselConstants.headerHeight)
@@ -342,7 +344,7 @@ struct DiscoverTab: View {
         }) {
             AvatarView(
                 avatarUrl: avatarUrl,
-                size: 32,
+                size: 32
             )
         }
     }

@@ -4,6 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsAction
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsContent
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenter
+import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.testing.di.TestScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,11 +19,12 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 public class FakeShowDetailsPresenterFactory : ShowDetailsPresenter.Factory {
     override fun invoke(
         componentContext: ComponentContext,
-        id: Long,
+        param: ShowDetailsParam,
         onBack: () -> Unit,
         onNavigateToShow: (Long) -> Unit,
         onNavigateToSeason: (ShowSeasonDetailsParam) -> Unit,
         onNavigateToTrailer: (Long) -> Unit,
+        onShowFollowed: () -> Unit,
     ): ShowDetailsPresenter = FakeShowDetailsPresenter()
 }
 

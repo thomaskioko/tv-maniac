@@ -26,6 +26,7 @@ import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.i18n.testing.util.IgnoreIos
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ProviderModel
+import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.TrailerModel
@@ -46,9 +47,15 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+
+private fun LocalDate.toEpochMillis(): Long =
+    atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
 
 @IgnoreIos
 class ShowDetailsPresenterTest {
@@ -283,6 +290,38 @@ class ShowDetailsPresenterTest {
     }
 
     @Test
+    fun `should invoke onShowFollowed callback when following a show`() = runTest {
+        buildMockData()
+        var onShowFollowedCalled = false
+
+        val presenter = buildShowDetailsPresenter(
+            onShowFollowed = { onShowFollowedCalled = true },
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(FollowShowClicked(isInLibrary = false))
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        onShowFollowedCalled shouldBe true
+    }
+
+    @Test
+    fun `should not invoke onShowFollowed callback when unfollowing a show`() = runTest {
+        buildMockData()
+        var onShowFollowedCalled = false
+
+        val presenter = buildShowDetailsPresenter(
+            onShowFollowed = { onShowFollowedCalled = true },
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(FollowShowClicked(isInLibrary = true))
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        onShowFollowedCalled shouldBe false
+    }
+
+    @Test
     fun `should update continue tracking list when episode is marked as watched`() = runTest {
         buildMockData()
         seasonDetailsRepository.setContinueTrackingResult(testContinueTrackingResult)
@@ -499,18 +538,21 @@ class ShowDetailsPresenterTest {
     }
 
     private fun buildShowDetailsPresenter(
+        param: ShowDetailsParam = ShowDetailsParam(id = 84958),
         onBack: () -> Unit = {},
         onNavigateToSeason: (param: ShowSeasonDetailsParam) -> Unit = {},
         onNavigateToTrailer: (id: Long) -> Unit = {},
         onNavigateToShow: (id: Long) -> Unit = {},
+        onShowFollowed: () -> Unit = {},
     ): ShowDetailsPresenter {
         return DefaultShowDetailsPresenter(
-            showTraktId = 84958,
+            param = param,
             componentContext = DefaultComponentContext(lifecycle = LifecycleRegistry()),
             onBack = onBack,
             onNavigateToSeason = onNavigateToSeason,
             onNavigateToShow = onNavigateToShow,
             onNavigateToTrailer = onNavigateToTrailer,
+            onShowFollowed = onShowFollowed,
             followedShowsRepository = followedShowsRepository,
             showDetailsInteractor = ShowDetailsInteractor(
                 showDetailsRepository = showDetailsRepository,

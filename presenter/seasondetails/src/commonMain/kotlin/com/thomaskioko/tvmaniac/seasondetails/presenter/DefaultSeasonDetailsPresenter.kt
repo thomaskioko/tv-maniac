@@ -119,7 +119,7 @@ public class DefaultSeasonDetailsPresenter(
                 seasonNumber = param.seasonNumber,
             ),
         )
-        observeSeasonDetails()
+        observeSeasonDetails(forceReload = param.forceRefresh)
         prefetchPreviousSeasonsData()
     }
 
