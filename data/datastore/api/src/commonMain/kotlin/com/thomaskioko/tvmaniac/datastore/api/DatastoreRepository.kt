@@ -167,6 +167,13 @@ public interface DatastoreRepository {
     public fun observeNotificationPermissionAsked(): Flow<Boolean>
 
     /**
+     * Gets whether the notification permission has been asked.
+     *
+     * @return Boolean, true if permission has been asked, false otherwise. Defaults to false.
+     */
+    public suspend fun getNotificationPermissionAsked(): Boolean
+
+    /**
      * Sets whether to show the notification rationale dialog.
      *
      * @param show Whether to show the rationale dialog.

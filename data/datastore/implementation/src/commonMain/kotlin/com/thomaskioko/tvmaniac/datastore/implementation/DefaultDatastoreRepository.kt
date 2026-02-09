@@ -174,6 +174,9 @@ public class DefaultDatastoreRepository(
             preferences[KEY_NOTIFICATION_PERMISSION_ASKED] ?: false
         }
 
+    override suspend fun getNotificationPermissionAsked(): Boolean =
+        dataStore.data.first()[KEY_NOTIFICATION_PERMISSION_ASKED] ?: false
+
     override suspend fun setShowNotificationRationale(show: Boolean) {
         dataStore.edit { preferences ->
             preferences[KEY_SHOW_NOTIFICATION_RATIONALE] = show
