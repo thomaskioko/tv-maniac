@@ -75,7 +75,8 @@ internal class PendingNotificationsStore(context: Context) {
         return try {
             json.decodeFromString<List<StoredNotification>>(jsonString)
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to deserialize pending notifications", e)
+            Log.e(TAG, "Failed to deserialize pending notifications, clearing corrupted data", e)
+            prefs.edit { remove(KEY_NOTIFICATIONS) }
             emptyList()
         }
     }

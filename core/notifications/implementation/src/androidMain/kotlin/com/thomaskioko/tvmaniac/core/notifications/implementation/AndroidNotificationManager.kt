@@ -44,6 +44,11 @@ public class AndroidNotificationManager(
     }
 
     override suspend fun scheduleNotification(notification: EpisodeNotification) {
+        if (!notificationManagerCompat.areNotificationsEnabled()) {
+            logger.debug(TAG, "Skipping notification scheduling - notifications not enabled")
+            return
+        }
+
         createNotificationChannel(notification.channel)
         pendingNotificationsStore.addNotification(notification)
 
