@@ -8,6 +8,8 @@ public interface UserRepository {
 
     public fun observeCurrentUser(): Flow<UserProfile?>
 
+    public suspend fun getCurrentUser(): UserProfile?
+
     public suspend fun fetchUserProfile(
         username: String = "me",
         forceRefresh: Boolean = false,

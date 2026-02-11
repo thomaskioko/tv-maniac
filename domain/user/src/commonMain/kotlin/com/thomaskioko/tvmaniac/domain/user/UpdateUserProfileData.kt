@@ -20,7 +20,7 @@ public class UpdateUserProfileData(
                 forceRefresh = params.forceRefresh,
             )
 
-            val slug = userRepository.observeCurrentUser().first()?.slug ?: return@withContext
+            val slug = userRepository.getCurrentUser()?.slug ?: return@withContext
 
             userRepository.fetchUserStats(
                 slug = slug,
