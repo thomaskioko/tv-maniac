@@ -41,8 +41,8 @@ private fun List<NextEpisodeWithShow>.filterAired(nowMillis: Long, option: UpNex
 
 private fun List<NextEpisodeWithShow>.sortedBy(option: UpNextSortOption): List<NextEpisodeWithShow> =
     when (option) {
-        UpNextSortOption.LAST_WATCHED -> sortedByDescending { it.lastWatchedAt ?: it.followedAt ?: 0L }
-        UpNextSortOption.AIR_DATE -> sortedByDescending { it.firstAired ?: 0L }
+        UpNextSortOption.LAST_WATCHED -> sortedBy { it.lastWatchedAt ?: it.followedAt ?: Long.MAX_VALUE }
+        UpNextSortOption.AIR_DATE -> sortedBy { it.firstAired ?: Long.MAX_VALUE }
     }
 
 private fun String.toUpNextSortOption(): UpNextSortOption = when (this) {

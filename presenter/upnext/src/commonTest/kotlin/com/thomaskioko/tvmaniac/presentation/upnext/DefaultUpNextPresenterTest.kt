@@ -93,8 +93,8 @@ internal class DefaultUpNextPresenterTest {
             val state = awaitItem()
             state.sortOption shouldBe UpNextSortOption.LAST_WATCHED
             state.episodes shouldHaveSize 2
-            state.episodes[0].showName shouldBe "New Show"
-            state.episodes[1].showName shouldBe "Old Show"
+            state.episodes[0].showName shouldBe "Old Show"
+            state.episodes[1].showName shouldBe "New Show"
         }
     }
 
@@ -114,8 +114,8 @@ internal class DefaultUpNextPresenterTest {
             val state = awaitItem()
             state.sortOption shouldBe UpNextSortOption.AIR_DATE
             state.episodes shouldHaveSize 2
-            state.episodes[0].showName shouldBe "New Episode"
-            state.episodes[1].showName shouldBe "Old Episode"
+            state.episodes[0].showName shouldBe "Old Episode"
+            state.episodes[1].showName shouldBe "New Episode"
         }
     }
 
@@ -134,8 +134,8 @@ internal class DefaultUpNextPresenterTest {
             skipItems(1)
             val state = awaitItem()
             state.episodes shouldHaveSize 2
-            state.episodes[0].showName shouldBe "New Follow"
-            state.episodes[1].showName shouldBe "Old Follow"
+            state.episodes[0].showName shouldBe "Old Follow"
+            state.episodes[1].showName shouldBe "New Follow"
         }
     }
 
