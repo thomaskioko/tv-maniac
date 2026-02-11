@@ -3,11 +3,11 @@ package com.thomaskioko.tvmaniac.core.notifications.implementation
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import androidx.core.content.edit
 import com.thomaskioko.tvmaniac.core.notifications.api.EpisodeNotification
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationChannel
 import com.thomaskioko.tvmaniac.core.notifications.implementation.model.StoredNotification
 import kotlinx.serialization.json.Json
-import androidx.core.content.edit
 
 internal class PendingNotificationsStore(context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
