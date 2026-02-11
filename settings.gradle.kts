@@ -180,6 +180,7 @@ include(
     ":domain:logout",
     ":domain:notifications",
     ":domain:recommendedshows",
+    ":domain:settings",
     ":domain:seasondetails",
     ":domain:showdetails",
     ":domain:similarshows",
