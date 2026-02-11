@@ -110,9 +110,16 @@ public struct CircularIndicator: View {
     }
 
     private func scheduleDelayedWork(delay: Double, action: @escaping () -> Void) {
+        // Cancel any existing work
         pendingWorkItem?.cancel()
-        let workItem = DispatchWorkItem { action() }
+
+        // Create new work item
+        let workItem = DispatchWorkItem {
+            action()
+        }
         pendingWorkItem = workItem
+
+        // Schedule it
         DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: workItem)
     }
 

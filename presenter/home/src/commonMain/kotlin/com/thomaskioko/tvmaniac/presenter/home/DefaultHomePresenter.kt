@@ -9,11 +9,11 @@ import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asStateFlow
 import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowsPresenter
+import com.thomaskioko.tvmaniac.presentation.library.LibraryPresenter
+import com.thomaskioko.tvmaniac.presentation.upnext.UpNextPresenter
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.Child
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.HomeConfig
-import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowsPresenter
-import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistPresenter
 import kotlinx.coroutines.flow.StateFlow
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -27,11 +27,12 @@ public class DefaultHomePresenter private constructor(
     @Assisted private val onShowClicked: (id: Long) -> Unit,
     @Assisted private val onMoreShowClicked: (id: Long) -> Unit,
     @Assisted private val onShowGenreClicked: (id: Long) -> Unit,
+    @Assisted private val onNavigateToProfile: () -> Unit,
     @Assisted private val onSettingsClicked: () -> Unit,
     private val discoverPresenterFactory: DiscoverShowsPresenter.Factory,
-    private val watchlistPresenterFactory: WatchlistPresenter.Factory,
+    private val upNextPresenterFactory: UpNextPresenter.Factory,
+    private val libraryPresenterFactory: LibraryPresenter.Factory,
     private val searchPresenterFactory: SearchShowsPresenter.Factory,
-    private val profilePresenterFactory: ProfilePresenter.Factory,
 ) : ComponentContext by componentContext, HomePresenter {
     private val navigation = StackNavigation<HomeConfig>()
 
@@ -48,16 +49,16 @@ public class DefaultHomePresenter private constructor(
         onTabClicked(HomeConfig.Discover)
     }
 
+    override fun onUpNextClicked() {
+        onTabClicked(HomeConfig.UpNext)
+    }
+
     override fun onLibraryClicked() {
         onTabClicked(HomeConfig.Library)
     }
 
     override fun onSearchClicked() {
         onTabClicked(HomeConfig.Search)
-    }
-
-    override fun onProfileClicked() {
-        onTabClicked(HomeConfig.Profile)
     }
 
     override fun onTabClicked(config: HomeConfig) {
@@ -92,19 +93,27 @@ public class DefaultHomePresenter private constructor(
                         onNavigateToEpisode = { showId, episodeId ->
                             // TODO:: Add Navigation to episode detail
                         },
+                        onNavigateToUpNext = { onUpNextClicked() },
+                        onNavigateToProfile = onNavigateToProfile,
+                    ),
+                )
+            }
+
+            HomeConfig.UpNext -> {
+                Child.UpNext(
+                    presenter = upNextPresenterFactory(
+                        componentContext = componentContext,
+                        navigateToShowDetails = { id -> onShowClicked(id) },
                     ),
                 )
             }
 
             HomeConfig.Library -> {
-                Child.Watchlist(
-                    presenter = watchlistPresenterFactory(
+                Child.Library(
+                    presenter = libraryPresenterFactory(
                         componentContext = componentContext,
                         navigateToShowDetails = { id ->
                             onShowClicked(id)
-                        },
-                        navigateToSeason = { showId, seasonId, seasonNumber ->
-                            // TODO:: Add Navigation to season detail
                         },
                     ),
                 )
@@ -119,15 +128,6 @@ public class DefaultHomePresenter private constructor(
                     ),
                 )
             }
-
-            HomeConfig.Profile -> {
-                Child.Profile(
-                    presenter = profilePresenterFactory(
-                        componentContext = componentContext,
-                        navigateToSettings = onSettingsClicked,
-                    ),
-                )
-            }
         }
 
     @Inject
@@ -135,9 +135,9 @@ public class DefaultHomePresenter private constructor(
     @ContributesBinding(ActivityScope::class, HomePresenter.Factory::class)
     public class Factory(
         private val discoverPresenterFactory: DiscoverShowsPresenter.Factory,
-        private val watchlistPresenterFactory: WatchlistPresenter.Factory,
+        private val upNextPresenterFactory: UpNextPresenter.Factory,
+        private val libraryPresenterFactory: LibraryPresenter.Factory,
         private val searchPresenterFactory: SearchShowsPresenter.Factory,
-        private val profilePresenterFactory: ProfilePresenter.Factory,
     ) : HomePresenter.Factory {
         override fun invoke(
             componentContext: ComponentContext,
@@ -151,11 +151,12 @@ public class DefaultHomePresenter private constructor(
             onShowClicked = onShowClicked,
             onMoreShowClicked = onMoreShowClicked,
             onShowGenreClicked = onShowGenreClicked,
+            onNavigateToProfile = onNavigateToProfile,
             onSettingsClicked = onSettingsClicked,
             discoverPresenterFactory = discoverPresenterFactory,
-            watchlistPresenterFactory = watchlistPresenterFactory,
+            upNextPresenterFactory = upNextPresenterFactory,
+            libraryPresenterFactory = libraryPresenterFactory,
             searchPresenterFactory = searchPresenterFactory,
-            profilePresenterFactory = profilePresenterFactory,
         )
     }
 }

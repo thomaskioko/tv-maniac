@@ -18,19 +18,15 @@ kotlin {
         commonMain {
             dependencies {
                 api(projects.core.tasks.api)
-                implementation(projects.core.base)
+                implementation(libs.coroutines.core)
                 implementation(projects.core.logger.api)
-                implementation(projects.data.datastore.api)
-                implementation(projects.data.traktauth.api)
-                implementation(projects.domain.followedshows)
-                implementation(projects.domain.user)
                 implementation(libs.kotlinx.atomicfu)
-                implementation(libs.kotlinx.datetime)
             }
         }
 
         iosMain {
             dependencies {
+                implementation(projects.core.base)
             }
         }
     }

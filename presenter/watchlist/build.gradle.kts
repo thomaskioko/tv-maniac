@@ -33,16 +33,13 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(projects.core.logger.testing)
-                implementation(projects.core.networkUtil.testing)
                 implementation(projects.core.util.testing)
-                implementation(projects.data.datastore.testing)
                 implementation(projects.data.episode.testing)
+                implementation(projects.data.upnext.testing)
                 implementation(projects.data.followedshows.testing)
-                implementation(projects.data.seasondetails.testing)
-                implementation(projects.data.seasons.testing)
-                implementation(projects.data.showdetails.testing)
                 implementation(projects.data.syncActivity.testing)
                 implementation(projects.data.watchlist.testing)
+                implementation(projects.data.library.testing)
                 implementation(projects.domain.showdetails)
                 implementation(projects.i18n.testing)
 

@@ -8,24 +8,19 @@ import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.SelectByShowTraktId
 import com.thomaskioko.tvmaniac.db.Trailers
-import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
-import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.TRAILERS
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktVideosResponse
-import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
-import org.mobilenativefoundation.store.store5.Validator
 
 @Inject
 public class TrailerStore(
     private val traktRemoteDataSource: TraktShowsRemoteDataSource,
     private val tvShowsDao: TvShowsDao,
     private val trailerDao: TrailerDao,
-    private val requestManagerRepository: RequestManagerRepository,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, List<SelectByShowTraktId>> by storeBuilder(
@@ -57,11 +52,6 @@ public class TrailerStore(
                             ),
                         )
                     }
-
-                requestManagerRepository.upsert(
-                    entityId = traktId,
-                    requestType = TRAILERS.name,
-                )
             }
         },
     )
@@ -69,17 +59,6 @@ public class TrailerStore(
             readDispatcher = dispatchers.databaseRead,
             writeDispatcher = dispatchers.databaseWrite,
         ),
-).validator(
-    Validator.by { cachedData ->
-        withContext(dispatchers.io) {
-            val traktId = cachedData.firstOrNull()?.show_trakt_id?.id ?: return@withContext false
-            !requestManagerRepository.isRequestExpired(
-                entityId = traktId,
-                requestType = TRAILERS.name,
-                threshold = TRAILERS.duration,
-            )
-        }
-    },
 ).build()
 
 private fun extractYouTubeKey(url: String): String? {

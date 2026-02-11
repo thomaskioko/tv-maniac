@@ -15,7 +15,7 @@ public class FakeDatastoreRepository : DatastoreRepository {
     private val appThemeFlow = MutableStateFlow(AppTheme.SYSTEM_THEME)
     private val languageFlow: Channel<String> = Channel(Channel.UNLIMITED)
     private val listStyleFlow: Channel<ListStyle> = Channel(Channel.UNLIMITED)
-    private val imageQualityFlow = MutableStateFlow(ImageQuality.MEDIUM)
+    private val imageQualityFlow = MutableStateFlow(ImageQuality.AUTO)
     private val openTrailersInYoutubeFlow = MutableStateFlow(false)
     private val includeSpecialsFlow = MutableStateFlow(false)
     private val lastTraktUserId: MutableStateFlow<String?> = MutableStateFlow(null)
@@ -25,6 +25,7 @@ public class FakeDatastoreRepository : DatastoreRepository {
     private val notificationPermissionAskedFlow = MutableStateFlow(false)
     private val showNotificationRationaleFlow = MutableStateFlow(false)
     private val requestNotificationPermissionFlow = MutableStateFlow(false)
+    private val librarySortOptionFlow = MutableStateFlow("ADDED_DESC")
 
     public suspend fun setTheme(appTheme: AppTheme) {
         appThemeFlow.value = appTheme
@@ -116,4 +117,18 @@ public class FakeDatastoreRepository : DatastoreRepository {
     }
 
     override fun observeRequestNotificationPermission(): Flow<Boolean> = requestNotificationPermissionFlow.asStateFlow()
+
+    override suspend fun saveLibrarySortOption(sortOption: String) {
+        librarySortOptionFlow.value = sortOption
+    }
+
+    override fun observeLibrarySortOption(): Flow<String> = librarySortOptionFlow.asStateFlow()
+
+    private val upNextSortOptionFlow = MutableStateFlow("LAST_WATCHED")
+
+    override suspend fun saveUpNextSortOption(sortOption: String) {
+        upNextSortOptionFlow.value = sortOption
+    }
+
+    override fun observeUpNextSortOption(): Flow<String> = upNextSortOptionFlow.asStateFlow()
 }

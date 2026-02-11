@@ -1,0 +1,13 @@
+DROP TABLE IF EXISTS watch_providers;
+
+CREATE TABLE IF NOT EXISTS `watch_providers` (
+    `id` INTEGER NOT NULL,
+    `tmdb_id` INTEGER NOT NULL,
+    `trakt_id` INTEGER NOT NULL,
+    `logo_path` TEXT DEFAULT NULL,
+    `name` TEXT,
+     PRIMARY KEY (id, trakt_id)
+);
+
+DROP INDEX IF EXISTS `index_watch_providers_provider_id`;
+CREATE INDEX IF NOT EXISTS `index_watch_providers_trakt_id` ON `watch_providers` (`trakt_id`);

@@ -478,6 +478,8 @@ struct SettingsView: View {
 
     private func imageQualityTitle(for quality: SwiftImageQuality) -> String {
         switch quality {
+        case .auto:
+            String(\.label_settings_image_quality_auto)
         case .high:
             String(\.label_settings_image_quality_high)
         case .medium:
@@ -489,6 +491,8 @@ struct SettingsView: View {
 
     private func imageQualityDescription(for quality: SwiftImageQuality) -> String {
         switch quality {
+        case .auto:
+            String(\.label_settings_image_quality_auto_description)
         case .high:
             String(\.label_settings_image_quality_high_description)
         case .medium:

@@ -3,11 +3,13 @@ package com.thomaskioko.tvmaniac.trakt.api
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktEpisodesResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSearchResult
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowPeopleResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktVideosResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedProgressResponse
 
 /**
  * Remote data source for fetching TV show data from the Trakt API.
@@ -125,10 +127,22 @@ public interface TraktShowsRemoteDataSource {
      * @return Season details with all episodes
      * @see [Trakt Season Summary](https://trakt.docs.apiary.io/#reference/seasons/season)
      */
-    public suspend fun getSeasonEpisodes(
+    public suspend fun getShowSeasonEpisodes(
         traktId: Long,
         seasonNumber: Int,
     ): ApiResponse<List<TraktEpisodesResponse>>
+
+    /**
+     * Fetches all seasons with all episodes for a show in a single API call.
+     *
+     * Uses extended=full,episodes to get complete season and episode data,
+     * reducing API calls from N (one per season) to 1.
+     *
+     * @param traktId The Trakt ID of the show
+     * @return List of seasons, each containing its episodes
+     * @see [Trakt Seasons](https://trakt.docs.apiary.io/#reference/seasons/summary)
+     */
+    public suspend fun getSeasonsWithEpisodes(traktId: Long): ApiResponse<List<TraktSeasonEpisodesResponse>>
 
     /**
      * Searches for a show by its TMDB ID.
@@ -180,6 +194,19 @@ public interface TraktShowsRemoteDataSource {
      * @see [Trakt Show Videos](https://trakt.docs.apiary.io/#reference/shows/videos)
      */
     public suspend fun getShowVideos(traktId: Long): ApiResponse<List<TraktVideosResponse>>
+
+    /**
+     * Fetches the user's watch progress for a specific show.
+     *
+     * Returns progress data including the next unwatched episode and the last watched episode.
+     * Requires user authentication. The response includes `aired`, `completed` counts,
+     * and nested `next_episode` / `last_episode` objects.
+     *
+     * @param traktId The Trakt ID of the show
+     * @return Watch progress with next and last episode information
+     * @see [Trakt Watched Progress](https://trakt.docs.apiary.io/#reference/shows/watched-progress)
+     */
+    public suspend fun getWatchedProgress(traktId: Long): ApiResponse<TraktWatchedProgressResponse>
 }
 
 /**

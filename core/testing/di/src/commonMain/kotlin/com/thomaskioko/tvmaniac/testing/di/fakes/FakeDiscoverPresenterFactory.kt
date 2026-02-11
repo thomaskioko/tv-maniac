@@ -22,6 +22,8 @@ public class FakeDiscoverPresenterFactory : DiscoverShowsPresenter.Factory {
         onNavigateToMore: (categoryId: Long) -> Unit,
         onNavigateToEpisode: (showTraktId: Long, episodeId: Long) -> Unit,
         onNavigateToSeason: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
+        onNavigateToUpNext: () -> Unit,
+        onNavigateToProfile: () -> Unit,
     ): DiscoverShowsPresenter = FakeDiscoverShowsPresenter()
 }
 

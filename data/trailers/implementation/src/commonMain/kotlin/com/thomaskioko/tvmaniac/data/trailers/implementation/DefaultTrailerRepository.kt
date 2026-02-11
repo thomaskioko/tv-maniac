@@ -1,8 +1,6 @@
 package com.thomaskioko.tvmaniac.data.trailers.implementation
 
 import com.thomaskioko.tvmaniac.db.SelectByShowTraktId
-import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
-import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.TRAILERS
 import com.thomaskioko.tvmaniac.util.api.AppUtils
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
@@ -19,7 +17,6 @@ public class DefaultTrailerRepository(
     private val appUtils: AppUtils,
     private val trailerDao: TrailerDao,
     private val trailerStore: TrailerStore,
-    private val requestManagerRepository: RequestManagerRepository,
 ) : TrailerRepository {
 
     override fun isYoutubePlayerInstalled(): Flow<Boolean> = appUtils.isYoutubePlayerInstalled()
@@ -28,14 +25,9 @@ public class DefaultTrailerRepository(
         trailerDao.observeTrailersByShowTraktId(traktId)
 
     override suspend fun fetchTrailers(traktId: Long, forceRefresh: Boolean) {
-        val isExpired = requestManagerRepository.isRequestExpired(
-            entityId = traktId,
-            requestType = TRAILERS.name,
-            threshold = TRAILERS.duration,
-        )
-
+        val isEmpty = trailerDao.getTrailersByShowTraktId(traktId).isEmpty()
         when {
-            forceRefresh || isExpired -> trailerStore.fresh(traktId)
+            forceRefresh || isEmpty -> trailerStore.fresh(traktId)
             else -> trailerStore.get(traktId)
         }
     }

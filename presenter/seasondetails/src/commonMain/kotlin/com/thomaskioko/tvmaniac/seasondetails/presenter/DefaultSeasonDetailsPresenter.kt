@@ -8,21 +8,21 @@ import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
-import com.thomaskioko.tvmaniac.domain.episode.FetchPreviousSeasonsInteractor
-import com.thomaskioko.tvmaniac.domain.episode.FetchPreviousSeasonsParams
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedParams
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
-import com.thomaskioko.tvmaniac.domain.episode.MarkSeasonUnwatchedInteractor
-import com.thomaskioko.tvmaniac.domain.episode.MarkSeasonUnwatchedParams
-import com.thomaskioko.tvmaniac.domain.episode.MarkSeasonWatchedInteractor
-import com.thomaskioko.tvmaniac.domain.episode.MarkSeasonWatchedParams
-import com.thomaskioko.tvmaniac.domain.episode.ObserveSeasonWatchProgressInteractor
-import com.thomaskioko.tvmaniac.domain.episode.ObserveSeasonWatchProgressParams
-import com.thomaskioko.tvmaniac.domain.episode.ObserveUnwatchedInPreviousSeasonsInteractor
-import com.thomaskioko.tvmaniac.domain.episode.ObserveUnwatchedInPreviousSeasonsParams
+import com.thomaskioko.tvmaniac.domain.seasondetails.FetchPreviousSeasonsInteractor
+import com.thomaskioko.tvmaniac.domain.seasondetails.FetchPreviousSeasonsParams
+import com.thomaskioko.tvmaniac.domain.seasondetails.MarkSeasonUnwatchedInteractor
+import com.thomaskioko.tvmaniac.domain.seasondetails.MarkSeasonUnwatchedParams
+import com.thomaskioko.tvmaniac.domain.seasondetails.MarkSeasonWatchedInteractor
+import com.thomaskioko.tvmaniac.domain.seasondetails.MarkSeasonWatchedParams
 import com.thomaskioko.tvmaniac.domain.seasondetails.ObservableSeasonDetailsInteractor
+import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveSeasonWatchProgressInteractor
+import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveSeasonWatchProgressParams
+import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveUnwatchedInPreviousSeasonsInteractor
+import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveUnwatchedInPreviousSeasonsParams
 import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsInteractor
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonDetailsUiParam
@@ -119,7 +119,7 @@ public class DefaultSeasonDetailsPresenter(
                 seasonNumber = param.seasonNumber,
             ),
         )
-        observeSeasonDetails()
+        observeSeasonDetails(forceReload = param.forceRefresh)
         prefetchPreviousSeasonsData()
     }
 

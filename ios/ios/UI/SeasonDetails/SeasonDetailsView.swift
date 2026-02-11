@@ -198,6 +198,9 @@ struct SeasonDetailsView: View {
         .onAppear {
             showModal = state.isGalleryVisible
         }
+        .onDisappear {
+            showModal = false
+        }
     }
 
     @ViewBuilder

@@ -20,6 +20,8 @@ public data class DiscoverViewState(
     val upcomingShows: ImmutableList<DiscoverShow> = persistentListOf(),
     val trendingToday: ImmutableList<DiscoverShow> = persistentListOf(),
     val nextEpisodes: ImmutableList<NextEpisodeUiModel> = persistentListOf(),
+    val userAvatarUrl: String? = null,
+    val isSignedIn: Boolean = false,
     val message: UiMessage? = null,
 ) {
     val isRefreshing: Boolean

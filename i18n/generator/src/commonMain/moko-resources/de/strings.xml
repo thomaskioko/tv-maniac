@@ -54,21 +54,23 @@
     <string name="label_settings_language_message">Wählen Sie Ihre bevorzugte Sprache für die App-Oberfläche</string>
     <string name="label_settings_privacy_policy">Datenschutzrichtlinie</string>
     <string name="label_settings_image_quality">Bildqualität</string>
+    <string name="label_settings_image_quality_auto">Automatisch</string>
     <string name="label_settings_image_quality_high">Hoch</string>
     <string name="label_settings_image_quality_medium">Mittel</string>
     <string name="label_settings_image_quality_low">Niedrig</string>
+    <string name="label_settings_image_quality_auto_description">Passt die Qualität an Ihr Gerät an</string>
     <string name="label_settings_image_quality_high_description">Beste Qualität, verbraucht mehr Daten</string>
     <string name="label_settings_image_quality_medium_description">Ausgewogene Qualität und Datenverbrauch</string>
     <string name="label_settings_image_quality_low_description">Geringere Qualität, spart Daten</string>
     <string name="label_settings_sync_update">Synchronisieren &amp; Aktualisieren</string>
-    <string name="label_settings_sync_update_description">Inhalte automatisch synchronisieren und aktualisieren</string>
+    <string name="label_settings_sync_update_description">Inhalte automatisch synchronisieren</string>
     <string name="label_settings_last_sync_date">Letzte Synchronisierung: %s</string>
 
     <string name="app_name">Tv Maniac</string>
     <string name="menu_item_discover">Entdecken</string>
     <string name="menu_item_search">Suchen</string>
     <string name="menu_item_follow">Folgen</string>
-    <string name="menu_item_library">Merkliste</string>
+    <string name="menu_item_library">Bibliothek</string>
     <string name="menu_item_settings">Einstellungen</string>
     <string name="menu_item_profile">Profil</string>
 
@@ -257,4 +259,38 @@
     <string name="notification_rationale_message">Lassen Sie sich benachrichtigen, wenn neue Episoden Ihrer Lieblingssendungen bald ausgestrahlt werden, damit Sie sie nie verpassen.</string>
     <string name="notification_rationale_enable">Aktivieren</string>
     <string name="notification_rationale_not_now">Nicht jetzt</string>
+
+    <string name="title_calendar">Kalender</string>
+    <string name="label_calendar_empty">Keine kommenden Episoden</string>
+    <string name="label_calendar_login_required">Melden Sie sich bei Trakt an, um Ihren Kalender zu sehen</string>
+    <string name="label_calendar_more_episodes">+%d Episoden</string>
+
+    <string name="label_library_title">Bibliothek</string>
+    <string name="label_library_filter_title">Filter</string>
+    <string name="label_library_sort_title">Sortieren &amp; Filtern</string>
+    <string name="label_library_sort_by">SORTIEREN NACH</string>
+    <string name="label_library_sort_rank_asc">Rang ↑</string>
+    <string name="label_library_sort_rank_desc">Rang ↓</string>
+    <string name="label_library_sort_added_desc">Hinzugefügt ↓</string>
+    <string name="label_library_sort_added_asc">Hinzugefügt ↑</string>
+    <string name="label_library_sort_released_desc">Veröffentlicht ↓</string>
+    <string name="label_library_sort_released_asc">Veröffentlicht ↑</string>
+    <string name="label_library_sort_title_asc">Titel ↑</string>
+    <string name="label_library_sort_title_desc">Titel ↓</string>
+    <string name="label_library_filter_followed_only">Nur gefolgte</string>
+    <string name="label_library_filter_genres">GENRES</string>
+    <string name="label_library_filter_status">STATUS</string>
+    <string name="label_library_filter_show_more">Mehr anzeigen</string>
+    <string name="label_library_filter_show_less">Weniger anzeigen</string>
+    <string name="label_library_filter_clear">Löschen</string>
+    <string name="label_library_filter_apply">Filtern</string>
+    <string name="label_library_status_returning">Laufende Serie</string>
+    <string name="label_library_status_planned">Geplant</string>
+    <string name="label_library_status_in_production">In Produktion</string>
+    <string name="label_library_status_ended">Beendet</string>
+    <string name="label_library_status_canceled">Abgesetzt</string>
+
+    <string name="label_upnext_empty">Keine Sendungen in Ihrer Merkliste</string>
+    <string name="label_upnext_sort_last_watched">Zuletzt gesehen</string>
+    <string name="label_upnext_sort_air_date">Ausstrahlungsdatum</string>
 </resources>

@@ -26,14 +26,14 @@ public struct TabBarView: View {
                     case let .discover(screen):
                         DiscoverTab(presenter: screen.presenter)
                             .id(ObjectIdentifier(screen))
+                    case let .upNext(screen):
+                        UpNextTab(presenter: screen.presenter)
+                            .id(ObjectIdentifier(screen))
                     case let .search(screen):
                         SearchTab(presenter: screen.presenter)
                             .id(ObjectIdentifier(screen))
-                    case let .watchlist(screen):
-                        WatchlistTab(presenter: screen.presenter)
-                            .id(ObjectIdentifier(screen))
-                    case let .profile(screen):
-                        ProfileTab(presenter: screen.presenter)
+                    case let .library(screen):
+                        LibraryTab(presenter: screen.presenter)
                             .id(ObjectIdentifier(screen))
                     }
                 }
@@ -45,19 +45,28 @@ public struct TabBarView: View {
         .onChange(of: selectedTab) { newTab in
             switch newTab {
             case .discover: presenter.onDiscoverClicked()
+            case .upNext: presenter.onUpNextClicked()
             case .search: presenter.onSearchClicked()
-            case .watchlist: presenter.onLibraryClicked()
-            case .profile: presenter.onProfileClicked()
+            case .library: presenter.onLibraryClicked()
             }
         }
+        .onChange(of: activeTab) { newTab in
+            if selectedTab != newTab {
+                selectedTab = newTab
+            }
+        }
+    }
+
+    private var activeTab: NavigationTab {
+        tabForChild(stack.active.instance)
     }
 
     private func tabForChild(_ child: HomePresenterChild) -> NavigationTab {
         switch onEnum(of: child) {
         case .discover: .discover
+        case .upNext: .upNext
         case .search: .search
-        case .watchlist: .watchlist
-        case .profile: .profile
+        case .library: .library
         }
     }
 }
@@ -66,25 +75,25 @@ public struct TabBarView: View {
 
 public enum NavigationTab: String, CaseIterable {
     case discover
+    case upNext
+    case library
     case search
-    case watchlist
-    case profile
 
     var title: String {
         switch self {
         case .discover: String(\.label_tab_discover)
+        case .upNext: String(\.label_discover_up_next)
+        case .library: String(\.menu_item_library)
         case .search: String(\.label_tab_search)
-        case .watchlist: String(\.label_tab_watchlist)
-        case .profile: String(\.menu_item_profile)
         }
     }
 
     var icon: String {
         switch self {
         case .discover: "tv"
+        case .upNext: "play.circle"
+        case .library: "square.stack"
         case .search: "magnifyingglass"
-        case .watchlist: "square.stack"
-        case .profile: "person.crop.circle"
         }
     }
 }

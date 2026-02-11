@@ -10,6 +10,8 @@ public data object PopularClicked : DiscoverShowAction
 
 public data object TopRatedClicked : DiscoverShowAction
 
+public data object UpNextMoreClicked : DiscoverShowAction
+
 public data object RefreshData : DiscoverShowAction
 
 public data class ShowClicked(val traktId: Long) : DiscoverShowAction
@@ -34,3 +36,5 @@ public data class OpenSeasonFromUpNext(
     val seasonId: Long,
     val seasonNumber: Long,
 ) : DiscoverShowAction
+
+public data object ProfileIconClicked : DiscoverShowAction

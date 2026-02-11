@@ -7,7 +7,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderDao
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.db.WatchProviders
+import com.thomaskioko.tvmaniac.db.WatchProvidersByTraktId
 import com.thomaskioko.tvmaniac.db.Watch_providers
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.WATCH_PROVIDERS
@@ -31,33 +31,38 @@ public class WatchProvidersStore(
     private val requestManagerRepository: RequestManagerRepository,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
-) : Store<Long, List<WatchProviders>> by storeBuilder(
+) : Store<Long, List<WatchProvidersByTraktId>> by storeBuilder(
     fetcher = Fetcher.of { traktId ->
         val tmdbId = tvShowsDao.getTmdbIdByTraktId(traktId)
             ?: throw Throwable("TMDB ID not found for Trakt ID: $traktId")
         when (val response = remoteDataSource.getShowWatchProviders(tmdbId)) {
-            is ApiResponse.Success -> WatchProvidersFetchResult(tmdbId, response.body)
+            is ApiResponse.Success -> {
+                requestManagerRepository.upsert(
+                    entityId = traktId,
+                    requestType = WATCH_PROVIDERS.name,
+                )
+                WatchProvidersFetchResult(tmdbId, response.body)
+            }
             is ApiResponse.Error.GenericError -> throw Throwable("${response.errorMessage}")
             is ApiResponse.Error.HttpError -> throw Throwable("${response.code} - ${response.errorMessage}")
             is ApiResponse.Error.SerializationError -> throw Throwable("${response.errorMessage}")
         }
     },
-    sourceOfTruth = SourceOfTruth.of<Long, WatchProvidersFetchResult, List<WatchProviders>>(
+    sourceOfTruth = SourceOfTruth.of<Long, WatchProvidersFetchResult, List<WatchProvidersByTraktId>>(
         reader = { traktId ->
-            val tmdbId = tvShowsDao.getTmdbIdByTraktId(traktId)
-            tmdbId?.let { dao.observeWatchProviders(it) } ?: dao.observeWatchProviders(traktId)
+            dao.observeWatchProvidersByTraktId(traktId)
         },
-        writer = { _, result ->
+        writer = { traktId, result ->
             databaseTransactionRunner {
-                // TODO:: Get users locale and format the date accordingly.
                 result.response.results.US?.let { usProvider ->
                     usProvider.free.forEach {
                         dao.upsert(
                             Watch_providers(
                                 id = Id(it.providerId.toLong()),
+                                tmdb_id = Id(result.tmdbId),
+                                trakt_id = Id(traktId),
                                 logo_path = it.logoPath?.let { path -> formatterUtil.formatTmdbPosterPath(path) },
                                 name = it.providerName,
-                                tmdb_id = Id(result.tmdbId),
                             ),
                         )
                     }
@@ -65,24 +70,19 @@ public class WatchProvidersStore(
                         dao.upsert(
                             Watch_providers(
                                 id = Id(it.providerId.toLong()),
+                                tmdb_id = Id(result.tmdbId),
+                                trakt_id = Id(traktId),
                                 logo_path = it.logoPath?.let { path -> formatterUtil.formatTmdbPosterPath(path) },
                                 name = it.providerName,
-                                tmdb_id = Id(result.tmdbId),
                             ),
                         )
                     }
                 }
-
-                requestManagerRepository.upsert(
-                    entityId = result.tmdbId,
-                    requestType = WATCH_PROVIDERS.name,
-                )
             }
         },
         delete = { traktId ->
             databaseTransactionRunner {
-                val tmdbId = tvShowsDao.getTmdbIdByTraktId(traktId)
-                tmdbId?.let { dao.delete(it) }
+                dao.deleteByTraktId(traktId)
             }
         },
         deleteAll = { databaseTransactionRunner(dao::deleteAll) },
@@ -91,11 +91,11 @@ public class WatchProvidersStore(
         writeDispatcher = dispatchers.databaseWrite,
     ),
 ).validator(
-    Validator.by { cachedData ->
+    Validator.by { result ->
         withContext(dispatchers.io) {
-            val showId = cachedData.firstOrNull()?.tmdb_id?.id ?: return@withContext false
+            val traktId = result.firstOrNull()?.trakt_id?.id ?: return@withContext false
             !requestManagerRepository.isRequestExpired(
-                entityId = showId,
+                entityId = traktId,
                 requestType = WATCH_PROVIDERS.name,
                 threshold = WATCH_PROVIDERS.duration,
             )

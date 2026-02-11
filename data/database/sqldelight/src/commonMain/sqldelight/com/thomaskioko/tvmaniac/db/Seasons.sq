@@ -14,9 +14,10 @@ CREATE TABLE IF NOT EXISTS season (
 );
 
 CREATE INDEX IF NOT EXISTS idx_season_show_trakt_id ON season(show_trakt_id);
+CREATE INDEX IF NOT EXISTS idx_season_show_number_id ON season(show_trakt_id, season_number, id);
 
 upsert:
-INSERT OR REPLACE INTO season(
+INSERT INTO season(
     id,
     show_trakt_id,
     season_number,
@@ -25,7 +26,14 @@ INSERT OR REPLACE INTO season(
     overview,
     image_url
 )
-VALUES(?,?,?,?,?,?, ?);
+VALUES(?,?,?,?,?,?,?)
+ON CONFLICT(id) DO UPDATE SET
+    show_trakt_id = excluded.show_trakt_id,
+    season_number = excluded.season_number,
+    episode_count = excluded.episode_count,
+    title = excluded.title,
+    overview = excluded.overview,
+    image_url = excluded.image_url;
 
 showSeasons:
 SELECT

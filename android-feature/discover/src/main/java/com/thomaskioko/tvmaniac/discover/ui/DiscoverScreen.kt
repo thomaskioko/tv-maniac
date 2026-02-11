@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.discover.ui
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -49,6 +48,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.components.CircularCard
 import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
@@ -64,6 +64,7 @@ import com.thomaskioko.tvmaniac.discover.presenter.MessageShown
 import com.thomaskioko.tvmaniac.discover.presenter.NextEpisodeClicked
 import com.thomaskioko.tvmaniac.discover.presenter.OpenSeasonFromUpNext
 import com.thomaskioko.tvmaniac.discover.presenter.PopularClicked
+import com.thomaskioko.tvmaniac.discover.presenter.ProfileIconClicked
 import com.thomaskioko.tvmaniac.discover.presenter.RefreshData
 import com.thomaskioko.tvmaniac.discover.presenter.ShowClicked
 import com.thomaskioko.tvmaniac.discover.presenter.TopRatedClicked
@@ -145,6 +146,7 @@ internal fun DiscoverScreen(
                     buttonText = generic_retry.resolve(context),
                     onClick = { onAction(RefreshData) },
                 )
+
             state.showError -> ErrorUi(
                 modifier = Modifier
                     .fillMaxSize()
@@ -153,13 +155,18 @@ internal fun DiscoverScreen(
                     Image(
                         modifier = Modifier.size(120.dp),
                         imageVector = Icons.Outlined.ErrorOutline,
-                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F)),
+                        colorFilter = ColorFilter.tint(
+                            MaterialTheme.colorScheme.secondary.copy(
+                                alpha = 0.8F,
+                            ),
+                        ),
                         contentDescription = null,
                     )
                 },
                 errorMessage = state.message?.message,
                 onRetry = { onAction(RefreshData) },
             )
+
             else -> DiscoverContent(
                 modifier = modifier,
                 pagerState = pagerState,
@@ -189,7 +196,8 @@ private fun DiscoverContent(
         }
     }
 
-    val pullRefreshState = rememberPullRefreshState(refreshing = false, onRefresh = { onAction(RefreshData) })
+    val pullRefreshState =
+        rememberPullRefreshState(refreshing = false, onRefresh = { onAction(RefreshData) })
     val listState = rememberLazyListState()
 
     Box(
@@ -231,7 +239,14 @@ private fun DiscoverContent(
                         .padding(start = 16.dp),
                 )
             },
-            isRefreshing = state.isRefreshing,
+            actions = { _ ->
+                CircularCard(
+                    imageUrl = state.userAvatarUrl,
+                    contentDescription = "Profile",
+                    modifier = Modifier.padding(end = 8.dp),
+                    onClick = { onAction(ProfileIconClicked) },
+                )
+            },
         )
     }
 }

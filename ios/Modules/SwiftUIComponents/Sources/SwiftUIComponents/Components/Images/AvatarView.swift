@@ -12,7 +12,7 @@ public struct AvatarView: View {
         avatarUrl: String?,
         size: CGFloat = 32,
         borderColor: Color? = nil,
-        borderWidth: CGFloat = 2
+        borderWidth: CGFloat = 0
     ) {
         self.avatarUrl = avatarUrl
         self.size = size

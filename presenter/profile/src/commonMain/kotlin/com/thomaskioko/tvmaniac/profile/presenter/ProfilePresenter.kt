@@ -11,6 +11,7 @@ public interface ProfilePresenter {
     public interface Factory {
         public operator fun invoke(
             componentContext: ComponentContext,
+            navigateBack: () -> Unit,
             navigateToSettings: () -> Unit,
         ): ProfilePresenter
     }

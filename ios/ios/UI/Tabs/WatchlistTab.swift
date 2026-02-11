@@ -12,13 +12,9 @@ struct WatchlistTab: View {
     @FocusState private var isSearchFocused: Bool
     @Namespace private var animation
 
-    private var watchNextEpisodesSwift: [SwiftNextEpisode] {
-        uiState.watchNextEpisodes.map { $0.toSwift() }
-    }
-
-    private var staleEpisodesSwift: [SwiftNextEpisode] {
-        uiState.staleEpisodes.map { $0.toSwift() }
-    }
+    // Cache converted episodes to avoid recreating arrays on every render
+    @State private var watchNextEpisodesSwift: [SwiftNextEpisode] = []
+    @State private var staleEpisodesSwift: [SwiftNextEpisode] = []
 
     init(presenter: WatchlistPresenter) {
         self.presenter = presenter
@@ -59,7 +55,7 @@ struct WatchlistTab: View {
                     HStack {
                         Button {
                             withAnimation {
-                                presenter.dispatch(action: ChangeListStyleClicked(isGridMode: uiState.isGridMode))
+                                presenter.dispatch(action: ChangeListStyleClicked_(isGridMode: uiState.isGridMode))
                             }
                         } label: {
                             Label(String(\.label_watchlist_list_style), systemImage: image)
@@ -86,6 +82,20 @@ struct WatchlistTab: View {
         .textInputAutocapitalization(.never)
         .toolbarBackground(theme.colors.surface, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
+        .onChange(of: uiState.watchNextEpisodes) { _, newValue in
+            watchNextEpisodesSwift = newValue.map { $0.toSwift() }
+        }
+        .onChange(of: uiState.staleEpisodes) { _, newValue in
+            staleEpisodesSwift = newValue.map { $0.toSwift() }
+        }
+        .onAppear {
+            watchNextEpisodesSwift = uiState.watchNextEpisodes.map { $0.toSwift() }
+            staleEpisodesSwift = uiState.staleEpisodes.map { $0.toSwift() }
+        }
+        .onDisappear {
+            watchNextEpisodesSwift.removeAll()
+            staleEpisodesSwift.removeAll()
+        }
     }
 
     @ViewBuilder
@@ -145,7 +155,7 @@ struct WatchlistTab: View {
     private var searchButton: some View {
         Button {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                presenter.dispatch(action: ToggleSearchActive())
+                presenter.dispatch(action: ToggleSearchActive_())
                 isSearchFocused = true
             }
         } label: {
@@ -187,7 +197,7 @@ struct WatchlistTab: View {
                         if !uiState.query.isEmpty {
                             presenter.dispatch(action: ClearWatchlistQuery())
                         } else {
-                            presenter.dispatch(action: ToggleSearchActive())
+                            presenter.dispatch(action: ToggleSearchActive_())
                             isSearchFocused = false
                         }
                     }
@@ -213,7 +223,7 @@ struct WatchlistTab: View {
                 if !watchNextEpisodesSwift.isEmpty {
                     Section {
                         ForEach(watchNextEpisodesSwift, id: \.episodeId) { episode in
-                            UpNextListItemView(
+                            WatchListItemView(
                                 episode: episode,
                                 premiereLabel: String(\.badge_premiere),
                                 newLabel: String(\.badge_new),
@@ -250,7 +260,7 @@ struct WatchlistTab: View {
                 if !staleEpisodesSwift.isEmpty {
                     Section {
                         ForEach(staleEpisodesSwift, id: \.episodeId) { episode in
-                            UpNextListItemView(
+                            WatchListItemView(
                                 episode: episode,
                                 premiereLabel: String(\.badge_premiere),
                                 newLabel: String(\.badge_new),

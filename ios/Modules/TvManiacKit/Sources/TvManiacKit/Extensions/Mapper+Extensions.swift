@@ -6,6 +6,8 @@ import TvManiac
 public extension TvManiac.ImageQuality {
     func toSwift() -> SwiftImageQuality {
         switch self {
+        case .auto:
+            .auto
         case .high:
             .high
         case .medium:
@@ -17,6 +19,8 @@ public extension TvManiac.ImageQuality {
 
     static func fromSwift(_ swiftQuality: SwiftImageQuality) -> TvManiac.ImageQuality {
         switch swiftQuality {
+        case .auto:
+            .auto
         case .high:
             .high
         case .medium:
@@ -274,6 +278,28 @@ public extension TvManiac.EpisodeBadge {
     }
 }
 
+public extension TvManiac.UpNextEpisodeUiModel {
+    func toSwift() -> SwiftNextEpisode {
+        .init(
+            showTraktId: showTraktId,
+            showName: showName,
+            showPoster: showPoster,
+            episodeId: episodeId?.int64Value ?? 0,
+            episodeTitle: episodeName ?? "",
+            episodeNumber: formattedEpisodeNumber,
+            seasonId: seasonId?.int64Value ?? 0,
+            seasonNumber: seasonNumber?.int64Value ?? 0,
+            episodeNumberValue: episodeNumber?.int64Value ?? 0,
+            runtime: formattedRuntime,
+            stillImage: stillPath,
+            overview: overview ?? "",
+            remainingEpisodes: Int32(remainingEpisodes),
+            watchedCount: watchedCount,
+            totalCount: totalCount
+        )
+    }
+}
+
 public extension TvManiac.DiscoverViewState {
     var featuredShowsSwift: [SwiftShow] {
         featuredShows.map { $0.toSwift() }
@@ -297,5 +323,28 @@ public extension TvManiac.DiscoverViewState {
 
     var topRatedShowsSwift: [SwiftShow] {
         topRatedShows.map { $0.toSwift() }
+    }
+}
+
+public extension TvManiac.LibraryShowItem {
+    func toSwift() -> SwiftLibraryItem {
+        .init(
+            traktId: traktId,
+            title: title,
+            posterUrl: posterImageUrl,
+            year: year,
+            status: status,
+            seasonCount: seasonCount,
+            episodeCount: episodeCount,
+            rating: rating?.doubleValue,
+            genres: genres?.map { String($0) },
+            watchProviders: watchProviders.map { $0.toSwift() }
+        )
+    }
+}
+
+public extension TvManiac.WatchProviderUiModel {
+    func toSwift() -> SwiftProviders {
+        .init(providerId: id, logoUrl: logoUrl)
     }
 }

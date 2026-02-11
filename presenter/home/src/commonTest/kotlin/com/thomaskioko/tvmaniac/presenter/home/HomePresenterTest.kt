@@ -58,17 +58,7 @@ abstract class HomePresenterTest {
             awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Discover>()
             presenter.onLibraryClicked()
 
-            awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Watchlist>()
-        }
-    }
-
-    @Test
-    fun `should return Profile as active instance when onProfileClicked`() = runTest {
-        presenter.homeChildStack.test {
-            awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Discover>()
-            presenter.onProfileClicked()
-
-            awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Profile>()
+            awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Library>()
         }
     }
 }

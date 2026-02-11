@@ -23,6 +23,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
@@ -42,7 +43,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -54,7 +54,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
+import com.thomaskioko.tvmaniac.compose.components.CircularCard
 import com.thomaskioko.tvmaniac.compose.components.OutlinedVerticalIconButton
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
@@ -62,6 +62,7 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_navigate_back
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_profile_pic
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_settings
 import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_edit_button
@@ -74,6 +75,7 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_title
 import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_watch_time
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction
+import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.BackClicked
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.LoginClicked
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.MessageShown
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.SettingsClicked
@@ -145,6 +147,13 @@ internal fun ProfileScreen(
                             overflow = TextOverflow.Ellipsis,
                         )
                     },
+                    navigationIcon = {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = cd_navigate_back.resolve(LocalContext.current),
+                            tint = MaterialTheme.colorScheme.onBackground,
+                        )
+                    },
                     actionIcon = {
                         Icon(
                             imageVector = Icons.Filled.Settings,
@@ -153,6 +162,7 @@ internal fun ProfileScreen(
                         )
                     },
                     isRefreshing = state.isLoading,
+                    onNavIconClicked = { onAction(BackClicked) },
                     onActionIconClicked = { onAction(SettingsClicked) },
                 )
 
@@ -393,30 +403,20 @@ private fun HeaderContent(
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.Bottom,
         ) {
-            if (!avatarUrl.isNullOrBlank()) {
-                AsyncImageComposable(
-                    model = avatarUrl,
-                    contentDescription = stringResource(
-                        cd_profile_pic.resourceId,
-                        username,
-                    ),
-                    modifier = Modifier
-                        .size(80.dp)
-                        .clip(CircleShape)
-                        .border(3.dp, MaterialTheme.colorScheme.secondary, CircleShape),
-                )
-            } else {
-                Icon(
-                    imageVector = Icons.Filled.Person,
-                    tint = MaterialTheme.colorScheme.secondary,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(80.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
-                        .padding(16.dp),
-                )
-            }
+            CircularCard(
+                imageUrl = avatarUrl,
+                size = 80.dp,
+                placeholderIcon = Icons.Filled.Person,
+                contentDescription = stringResource(
+                    cd_profile_pic.resourceId,
+                    username,
+                ),
+                modifier = if (!avatarUrl.isNullOrBlank()) {
+                    Modifier.border(3.dp, MaterialTheme.colorScheme.secondary, CircleShape)
+                } else {
+                    Modifier
+                },
+            )
 
             Spacer(modifier = Modifier.width(16.dp))
 

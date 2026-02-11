@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.presenter.showdetails
 
 import com.arkivanov.decompose.ComponentContext
+import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowSeasonDetailsParam
 import kotlinx.coroutines.flow.StateFlow
 
@@ -12,11 +13,12 @@ public interface ShowDetailsPresenter {
     public interface Factory {
         public operator fun invoke(
             componentContext: ComponentContext,
-            id: Long,
+            param: ShowDetailsParam,
             onBack: () -> Unit,
             onNavigateToShow: (id: Long) -> Unit,
             onNavigateToSeason: (param: ShowSeasonDetailsParam) -> Unit,
             onNavigateToTrailer: (id: Long) -> Unit,
+            onShowFollowed: () -> Unit,
         ): ShowDetailsPresenter
     }
 }

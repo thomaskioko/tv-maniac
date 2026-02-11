@@ -12,19 +12,16 @@ kotlin {
         commonMain {
             dependencies {
 
-                api(projects.data.cast.api)
-                api(projects.data.datastore.api)
-                api(projects.data.episode.api)
-                api(projects.data.seasondetails.api)
-                api(projects.data.seasons.api)
-                api(projects.data.showdetails.api)
-                api(projects.data.shows.api)
-                api(projects.data.similar.api)
-                api(projects.data.trailers.api)
-                api(projects.data.watchlist.api)
-                api(projects.data.watchproviders.api)
+                implementation(projects.data.cast.api)
+                implementation(projects.data.episode.api)
+                implementation(projects.data.seasondetails.api)
+                implementation(projects.data.seasons.api)
+                implementation(projects.data.showdetails.api)
+                implementation(projects.data.shows.api)
+                implementation(projects.data.similar.api)
+                implementation(projects.data.trailers.api)
+                implementation(projects.data.watchproviders.api)
                 implementation(projects.core.logger.api)
-                implementation(projects.core.networkUtil.api)
 
                 implementation(projects.core.base)
                 implementation(projects.core.util.api)
@@ -42,6 +39,7 @@ kotlin {
                 implementation(projects.data.topratedshows.testing)
                 implementation(projects.data.trendingshows.testing)
                 implementation(projects.data.upcomingshows.testing)
+                implementation(projects.data.watchproviders.testing)
 
                 implementation(libs.bundles.unittest)
             }

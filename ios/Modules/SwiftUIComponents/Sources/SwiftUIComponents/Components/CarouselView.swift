@@ -10,7 +10,6 @@ public struct CarouselView<T, Content: View>: View {
 
     @Environment(\.scenePhase) private var scenePhase
     @State private var timerCancellable: Cancellable?
-    @State private var isDragging: Bool = false
     @State private var scrollPosition: Int?
 
     public init(
@@ -48,27 +47,19 @@ public struct CarouselView<T, Content: View>: View {
                     currentIndex = newIndex
                     notifyActiveItem()
                 }
+                stopAutoScroll()
+                setupAutoScroll()
+                onDraggingChanged?(false)
             }
             .onChange(of: currentIndex) { _, newValue in
                 if scrollPosition != newValue {
-                    withAnimation(.easeOut(duration: 0.8)) {
-                        scrollPosition = newValue
+                    DispatchQueue.main.async {
+                        withAnimation(.easeOut(duration: 0.8)) {
+                            scrollPosition = newValue
+                        }
                     }
                 }
             }
-            .simultaneousGesture(
-                DragGesture(minimumDistance: 10)
-                    .onChanged { _ in
-                        isDragging = true
-                        stopAutoScroll()
-                        onDraggingChanged?(true)
-                    }
-                    .onEnded { _ in
-                        isDragging = false
-                        setupAutoScroll()
-                        onDraggingChanged?(false)
-                    }
-            )
             .onAppear {
                 scrollPosition = currentIndex
             }
@@ -97,7 +88,7 @@ public struct CarouselView<T, Content: View>: View {
     }
 
     private func setupAutoScroll() {
-        guard !isDragging, !items.isEmpty else { return }
+        guard !items.isEmpty else { return }
         stopAutoScroll()
         let itemCount = items.count
         timerCancellable = Timer.publish(every: 5, on: .main, in: .common)

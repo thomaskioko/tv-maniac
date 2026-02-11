@@ -58,13 +58,15 @@ public class DefaultTraktListRemoteDataSource(
             .get("users/$userSlug/lists/$listId/items/shows") { parameter("sort_by", "added") }
             .body()
 
-    override suspend fun getWatchList(sortBy: String): ApiResponse<List<TraktFollowedShowResponse>> =
+    override suspend fun getWatchList(sortBy: String, sortHow: String): ApiResponse<List<TraktFollowedShowResponse>> =
         httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
                 path("users/me/watchlist/shows")
-                parameter("sort_by", sortBy)
+                parameter("limit", "10000")
             }
+            headers.append("X-Sort-By", sortBy)
+            headers.append("X-Sort-How", sortHow)
         }
 
     override suspend fun addShowToWatchListByTmdbId(

@@ -18,7 +18,7 @@ public interface TraktListRemoteDataSource {
 
     public suspend fun getFollowedList(listId: Long, userSlug: String): List<TraktFollowedShowResponse>
 
-    public suspend fun getWatchList(sortBy: String): ApiResponse<List<TraktFollowedShowResponse>>
+    public suspend fun getWatchList(sortBy: String, sortHow: String): ApiResponse<List<TraktFollowedShowResponse>>
 
     public suspend fun addShowToWatchListByTmdbId(tmdbId: Long): ApiResponse<TraktAddShowToListResponse>
 

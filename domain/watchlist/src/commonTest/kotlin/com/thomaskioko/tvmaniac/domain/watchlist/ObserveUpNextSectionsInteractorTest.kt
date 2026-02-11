@@ -2,8 +2,8 @@ package com.thomaskioko.tvmaniac.domain.watchlist
 
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.domain.watchlist.model.UpNextSections
-import com.thomaskioko.tvmaniac.episodes.api.model.NextEpisodeWithShow
-import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
+import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
+import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +24,7 @@ private fun LocalDate.toEpochMillis(): Long =
 @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
 class ObserveUpNextSectionsInteractorTest {
     private val testDispatcher = StandardTestDispatcher()
-    private val episodeRepository = FakeEpisodeRepository()
+    private val upNextRepository = FakeUpNextRepository()
     private val dateTimeProvider = FakeDateTimeProvider()
 
     private lateinit var interactor: ObserveUpNextSectionsInteractor
@@ -34,7 +34,7 @@ class ObserveUpNextSectionsInteractorTest {
         Dispatchers.setMain(testDispatcher)
 
         interactor = ObserveUpNextSectionsInteractor(
-            episodeRepository = episodeRepository,
+            upNextRepository = upNextRepository,
             mapper = UpNextSectionsMapper(dateTimeProvider),
         )
     }
@@ -46,7 +46,7 @@ class ObserveUpNextSectionsInteractorTest {
 
     @Test
     fun `should return empty sections when no episodes`() = runTest {
-        episodeRepository.setNextEpisodesForWatchlist(emptyList())
+        upNextRepository.setNextEpisodesForWatchlist(emptyList())
 
         interactor("")
 
@@ -65,7 +65,7 @@ class ObserveUpNextSectionsInteractorTest {
             createNextEpisode(showTraktId = 1, showName = "Loki"),
             createNextEpisode(showTraktId = 2, showName = "Wednesday"),
         )
-        episodeRepository.setNextEpisodesForWatchlist(episodes)
+        upNextRepository.setNextEpisodesForWatchlist(episodes)
 
         interactor("")
 
@@ -92,7 +92,7 @@ class ObserveUpNextSectionsInteractorTest {
             createNextEpisode(showTraktId = 1, showName = "Stale Show", lastWatchedAt = seventeenDaysAgo, firstAired = pastAiredDate),
             createNextEpisode(showTraktId = 2, showName = "Active Show", lastWatchedAt = oneDayAgo, firstAired = pastAiredDate),
         )
-        episodeRepository.setNextEpisodesForWatchlist(episodes)
+        upNextRepository.setNextEpisodesForWatchlist(episodes)
 
         interactor("")
 
@@ -112,7 +112,7 @@ class ObserveUpNextSectionsInteractorTest {
             createNextEpisode(showTraktId = 1, showName = "Loki"),
             createNextEpisode(showTraktId = 2, showName = "Wednesday"),
         )
-        episodeRepository.setNextEpisodesForWatchlist(episodes)
+        upNextRepository.setNextEpisodesForWatchlist(episodes)
 
         interactor("Loki")
 
@@ -129,7 +129,7 @@ class ObserveUpNextSectionsInteractorTest {
         val episodes = listOf(
             createNextEpisode(showTraktId = 1, showName = "Loki", watchedCount = 5, totalCount = 10),
         )
-        episodeRepository.setNextEpisodesForWatchlist(episodes)
+        upNextRepository.setNextEpisodesForWatchlist(episodes)
 
         interactor("")
 
@@ -147,7 +147,7 @@ class ObserveUpNextSectionsInteractorTest {
             createNextEpisode(showTraktId = 1, showName = "Loki"),
             createNextEpisode(showTraktId = 2, showName = "Wednesday"),
         )
-        episodeRepository.setNextEpisodesForWatchlist(episodes)
+        upNextRepository.setNextEpisodesForWatchlist(episodes)
 
         interactor("loki")
 
@@ -185,7 +185,7 @@ class ObserveUpNextSectionsInteractorTest {
                 totalCount = 10,
             ),
         )
-        episodeRepository.setNextEpisodesForWatchlist(episodes)
+        upNextRepository.setNextEpisodesForWatchlist(episodes)
 
         interactor("")
 
@@ -213,7 +213,7 @@ class ObserveUpNextSectionsInteractorTest {
             createNextEpisode(showTraktId = 1, showName = "Loki", firstAired = LocalDate(2021, 6, 9).toEpochMillis()),
             createNextEpisode(showTraktId = 2, showName = "Wednesday", firstAired = null),
         )
-        episodeRepository.setNextEpisodesForWatchlist(episodes)
+        upNextRepository.setNextEpisodesForWatchlist(episodes)
 
         interactor("")
 
@@ -230,7 +230,7 @@ class ObserveUpNextSectionsInteractorTest {
         val episodes = listOf(
             createNextEpisode(showTraktId = 1, showName = "Show", seasonNumber = 10, episodeNumber = 5),
         )
-        episodeRepository.setNextEpisodesForWatchlist(episodes)
+        upNextRepository.setNextEpisodesForWatchlist(episodes)
 
         interactor("")
 
@@ -246,7 +246,7 @@ class ObserveUpNextSectionsInteractorTest {
         val episodes = listOf(
             createNextEpisode(showTraktId = 1, showName = "Show", runtime = null),
         )
-        episodeRepository.setNextEpisodesForWatchlist(episodes)
+        upNextRepository.setNextEpisodesForWatchlist(episodes)
 
         interactor("")
 
@@ -266,7 +266,7 @@ class ObserveUpNextSectionsInteractorTest {
             createNextEpisode(showTraktId = 1, showName = "Aired Show", firstAired = pastEpoch),
             createNextEpisode(showTraktId = 2, showName = "Future Show", firstAired = futureEpoch),
         )
-        episodeRepository.setNextEpisodesForWatchlist(episodes)
+        upNextRepository.setNextEpisodesForWatchlist(episodes)
 
         interactor("")
 

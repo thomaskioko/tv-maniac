@@ -22,7 +22,7 @@ public data class SettingsState(
         public val DEFAULT_STATE: SettingsState = SettingsState(
             isAuthenticated = false,
             theme = ThemeModel.SYSTEM,
-            imageQuality = ImageQuality.MEDIUM,
+            imageQuality = ImageQuality.AUTO,
             showTraktDialog = false,
             showthemePopup = false,
             showAboutDialog = false,

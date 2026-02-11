@@ -170,7 +170,7 @@ internal fun WatchProgressSection(
                         items = seasonsList,
                         key = { index, item -> "${item.tvShowId}_${item.seasonId}_$index" },
                     ) { index, season ->
-                        SeasonProgressCard(
+                        SeasonChipItem(
                             season = season,
                             isSelected = index == selectedSeasonIndex,
                             onClick = { onSeasonClicked(index, season) },

@@ -42,6 +42,7 @@ develocity {
     buildScan {
         termsOfUseUrl = "https://gradle.com/terms-of-service"
         termsOfUseAgree = "yes"
+        publishing.onlyIf { false }
     }
 }
 
@@ -49,6 +50,7 @@ include(
     ":android-designsystem",
     ":android-feature:discover",
     ":android-feature:home",
+    ":android-feature:library",
     ":android-feature:more-shows",
     ":android-feature:profile",
     ":android-feature:search",
@@ -56,6 +58,7 @@ include(
     ":android-feature:settings",
     ":android-feature:show-details",
     ":android-feature:trailers",
+    ":android-feature:upnext",
     ":android-feature:watchlist",
     ":api:tmdb:api",
     ":api:tmdb:implementation",
@@ -105,6 +108,9 @@ include(
     ":data:genre:api",
     ":data:genre:implementation",
     ":data:genre:testing",
+    ":data:library:api",
+    ":data:library:implementation",
+    ":data:library:testing",
     ":data:popularshows:api",
     ":data:popularshows:implementation",
     ":data:popularshows:testing",
@@ -149,6 +155,9 @@ include(
     ":data:upcomingshows:api",
     ":data:upcomingshows:implementation",
     ":data:upcomingshows:testing",
+    ":data:upnext:api",
+    ":data:upnext:implementation",
+    ":data:upnext:testing",
     ":data:user:api",
     ":data:user:implementation",
     ":data:user:testing",
@@ -160,8 +169,10 @@ include(
     ":data:watchproviders:testing",
     ":domain:discover",
     ":domain:episode",
+    ":domain:upnext",
     ":domain:followedshows",
     ":domain:genre",
+    ":domain:library",
     ":domain:logout",
     ":domain:recommendedshows",
     ":domain:seasondetails",
@@ -178,6 +189,7 @@ include(
     ":navigation:implementation",
     ":presenter:discover",
     ":presenter:home",
+    ":presenter:library",
     ":presenter:more-shows",
     ":presenter:profile",
     ":presenter:search",
@@ -185,6 +197,7 @@ include(
     ":presenter:settings",
     ":presenter:show-details",
     ":presenter:trailers",
+    ":presenter:upnext",
     ":presenter:watchlist",
     ":shared",
 )

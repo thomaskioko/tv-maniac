@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderRepository
 import com.thomaskioko.tvmaniac.domain.showdetails.model.ShowDetails
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
+import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
@@ -21,6 +22,7 @@ import me.tatarka.inject.annotations.Inject
 public class ObservableShowDetailsInteractor(
     private val castRepository: CastRepository,
     private val episodeRepository: EpisodeRepository,
+    private val seasonDetailsRepository: SeasonDetailsRepository,
     private val seasonsRepository: SeasonsRepository,
     private val showDetailsRepository: ShowDetailsRepository,
     private val similarShowsRepository: SimilarShowsRepository,
@@ -39,7 +41,7 @@ public class ObservableShowDetailsInteractor(
             trailerRepository.observeTrailers(params),
             trailerRepository.isYoutubePlayerInstalled(),
             episodeRepository.observeAllSeasonsWatchProgress(params),
-            episodeRepository.observeContinueTrackingEpisodes(params),
+            seasonDetailsRepository.observeContinueTrackingEpisodes(params),
         ) { showDetails, seasonsList, castList, watchProviders, similarShows,
             trailers, isWebViewInstalled, seasonsProgress, continueTracking,
             ->

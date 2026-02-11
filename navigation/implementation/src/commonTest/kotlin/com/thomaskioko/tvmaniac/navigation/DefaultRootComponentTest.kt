@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.Home
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.MoreShows
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.ShowDetails
+import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonDetailsUiParam
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -56,7 +57,7 @@ abstract class DefaultRootComponentTest {
         presenter.childStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<Home>()
 
-            navigator.bringToFront(RootDestinationConfig.ShowDetails(1))
+            navigator.bringToFront(RootDestinationConfig.ShowDetails(ShowDetailsParam(1)))
 
             val moreScreen = awaitItem().active.instance
 
@@ -73,7 +74,7 @@ abstract class DefaultRootComponentTest {
         presenter.childStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<Home>()
 
-            navigator.bringToFront(RootDestinationConfig.ShowDetails(1))
+            navigator.bringToFront(RootDestinationConfig.ShowDetails(ShowDetailsParam(1)))
 
             val moreScreen = awaitItem().active.instance
 
@@ -143,7 +144,7 @@ abstract class DefaultRootComponentTest {
         presenter.childStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<Home>()
 
-            navigator.pushNew(RootDestinationConfig.ShowDetails(1))
+            navigator.pushNew(RootDestinationConfig.ShowDetails(ShowDetailsParam(1)))
 
             val showDetailsScreen = awaitItem().active.instance
 
@@ -156,7 +157,7 @@ abstract class DefaultRootComponentTest {
         presenter.childStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<Home>()
 
-            navigator.pushToFront(RootDestinationConfig.ShowDetails(1))
+            navigator.pushToFront(RootDestinationConfig.ShowDetails(ShowDetailsParam(1)))
 
             val showDetailsScreen = awaitItem().active.instance
 
@@ -169,7 +170,7 @@ abstract class DefaultRootComponentTest {
         presenter.childStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<Home>()
 
-            navigator.pushNew(RootDestinationConfig.ShowDetails(1))
+            navigator.pushNew(RootDestinationConfig.ShowDetails(ShowDetailsParam(1)))
             awaitItem().active.instance.shouldBeInstanceOf<ShowDetails>()
 
             navigator.pushNew(RootDestinationConfig.MoreShows(1))

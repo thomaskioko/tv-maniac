@@ -453,7 +453,7 @@ private fun SectionedUpNextListContent(
                 )
             }
             items(watchNextEpisodes, key = { "watchnext_${it.showTraktId}_${it.episodeId}" }) { episode ->
-                UpNextListItem(
+                WatchListUpNextListItem(
                     item = episode,
                     premiereLabel = premiereLabel,
                     newLabel = newLabel,
@@ -473,7 +473,7 @@ private fun SectionedUpNextListContent(
                 )
             }
             items(staleEpisodes, key = { "stale_${it.showTraktId}_${it.episodeId}" }) { episode ->
-                UpNextListItem(
+                WatchListUpNextListItem(
                     item = episode,
                     premiereLabel = premiereLabel,
                     newLabel = newLabel,
