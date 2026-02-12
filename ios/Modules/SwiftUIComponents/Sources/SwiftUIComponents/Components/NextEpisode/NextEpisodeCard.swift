@@ -38,7 +38,7 @@ public struct NextEpisodeCard: View {
         }) {
             ZStack {
                 LazyResizableImage(
-                    url: episode.stillImage ?? episode.showPoster,
+                    url: episode.imageUrl,
                     imageType: .backdrop,
                     size: CGSize(width: DimensionConstants.imageWidth, height: DimensionConstants.imageHeight)
                 ) { state in
@@ -142,12 +142,11 @@ private enum DimensionConstants {
             episode: SwiftNextEpisode(
                 showTraktId: 1,
                 showName: "The Walking Dead: Daryl Dixon",
-                showPoster: "/poster.jpg",
+                imageUrl: "/still.jpg",
                 episodeId: 123,
                 episodeTitle: "L'âme Perdue",
                 episodeNumber: "S02E01",
                 runtime: "45 min",
-                stillImage: "/still.jpg",
                 overview: "Daryl washes ashore in France and struggles to piece together how he got there and why.",
                 badge: .new
             ),

@@ -313,10 +313,9 @@ internal class DefaultUpNextPresenterTest {
             uiModel.seasonNumber shouldBe 1L
             uiModel.episodeNumber shouldBe 1L
             uiModel.runtime shouldBe 60L
-            uiModel.stillPath shouldBe "/still.jpg"
+            uiModel.imageUrl shouldBe "/still.jpg"
             uiModel.overview shouldBe "A great episode"
             uiModel.showName shouldBe "Test Show"
-            uiModel.showPoster shouldBe "/poster.jpg"
             uiModel.showStatus shouldBe "Returning Series"
             uiModel.showYear shouldBe "2025"
             uiModel.firstAired shouldBe 1000L

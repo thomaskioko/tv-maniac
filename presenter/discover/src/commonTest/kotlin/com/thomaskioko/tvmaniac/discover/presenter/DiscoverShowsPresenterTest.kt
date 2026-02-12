@@ -21,6 +21,7 @@ import com.thomaskioko.tvmaniac.discover.presenter.model.NextEpisodeUiModel
 import com.thomaskioko.tvmaniac.domain.discover.DiscoverShowsInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
+import com.thomaskioko.tvmaniac.domain.upnext.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.user.ObserveUserProfileInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
@@ -58,6 +59,9 @@ class DiscoverShowsPresenterTest {
     private val followedShowsRepository = FakeFollowedShowsRepository()
     private val userRepository = FakeUserRepository(userProfile = null)
     private val traktAuthRepository = FakeTraktAuthRepository()
+    private val observeUpNextInteractor = ObserveUpNextInteractor(
+        repository = upNextRepository,
+    )
     private val coroutineDispatcher = AppCoroutineDispatchers(
         main = testDispatcher,
         io = testDispatcher,
@@ -287,7 +291,7 @@ class DiscoverShowsPresenterTest {
                 trendingShowsRepository = trendingShowsRepository,
                 upcomingShowsRepository = upcomingShowsRepository,
                 genreRepository = genreRepository,
-                upNextRepository = upNextRepository,
+                observeUpNextInteractor = observeUpNextInteractor,
                 dispatchers = coroutineDispatcher,
             ),
             followedShowsRepository = followedShowsRepository,
@@ -373,7 +377,7 @@ class DiscoverShowsPresenterTest {
             NextEpisodeUiModel(
                 showTraktId = episode.showTraktId,
                 showName = episode.showName,
-                showPoster = episode.showPoster,
+                imageUrl = episode.stillPath ?: episode.showPoster,
                 episodeId = episode.episodeId,
                 episodeTitle = episode.episodeName ?: "",
                 episodeNumberFormatted = "S${episode.seasonNumber}E${episode.episodeNumber}",
@@ -381,7 +385,6 @@ class DiscoverShowsPresenterTest {
                 seasonNumber = episode.seasonNumber,
                 episodeNumber = episode.episodeNumber,
                 runtime = episode.runtime?.let { "$it min" },
-                stillImage = episode.stillPath,
                 overview = episode.overview ?: "",
                 isNew = false,
             )
@@ -429,7 +432,7 @@ class DiscoverShowsPresenterTest {
             trendingShowsRepository = trendingShowsRepository,
             upcomingShowsRepository = upcomingShowsRepository,
             genreRepository = genreRepository,
-            upNextRepository = upNextRepository,
+            observeUpNextInteractor = observeUpNextInteractor,
             dispatchers = coroutineDispatcher,
         ),
         followedShowsRepository = followedShowsRepository,

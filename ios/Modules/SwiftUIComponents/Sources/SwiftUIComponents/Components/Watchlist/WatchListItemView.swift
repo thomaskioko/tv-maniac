@@ -47,7 +47,7 @@ public struct WatchListItemView: View {
     private var posterView: some View {
         PosterItemView(
             title: nil,
-            posterUrl: episode.stillImage ?? episode.showPoster,
+            posterUrl: episode.imageUrl,
             posterWidth: WatchListItemViewConstants.imageWidth,
             posterHeight: WatchListItemViewConstants.height,
             posterRadius: 0
@@ -159,7 +159,7 @@ private enum WatchListItemViewConstants {
             episode: SwiftNextEpisode(
                 showTraktId: 1,
                 showName: "The Walking Dead: Daryl Dixon",
-                showPoster: "/poster.jpg",
+                imageUrl: "/still.jpg",
                 episodeId: 123,
                 episodeTitle: "L'ame Perdue",
                 episodeNumber: "S02 | E01",
@@ -167,7 +167,6 @@ private enum WatchListItemViewConstants {
                 seasonNumber: 2,
                 episodeNumberValue: 1,
                 runtime: "45 min",
-                stillImage: "/still.jpg",
                 overview: "Daryl washes ashore in France.",
                 badge: .premiere,
                 remainingEpisodes: 7

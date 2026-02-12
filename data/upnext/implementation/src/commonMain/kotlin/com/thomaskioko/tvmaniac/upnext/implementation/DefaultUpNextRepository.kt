@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsDao
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.UPNEXT_FULL_SYNC
+import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.upnext.api.UpNextDao
@@ -31,6 +32,7 @@ public class DefaultUpNextRepository(
     private val followedShowsDao: FollowedShowsDao,
     private val tvShowsDao: TvShowsDao,
     private val showDetailsRepository: ShowDetailsRepository,
+    private val seasonDetailsRepository: SeasonDetailsRepository,
     private val requestManagerRepository: RequestManagerRepository,
     private val logger: Logger,
     private val traktAuthRepository: TraktAuthRepository,
@@ -65,6 +67,11 @@ public class DefaultUpNextRepository(
                     forceRefresh -> showUpNextStore.fresh(show.traktId)
                     else -> showUpNextStore.get(show.traktId)
                 }
+
+                seasonDetailsRepository.syncShowSeasonDetails(
+                    showTraktId = show.traktId,
+                    forceRefresh = forceRefresh,
+                )
             }
         }
 

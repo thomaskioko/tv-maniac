@@ -23,6 +23,7 @@ kotlin {
                 implementation(projects.data.datastore.api)
                 implementation(projects.data.followedshows.api)
                 implementation(projects.data.requestManager.api)
+                implementation(projects.data.seasondetails.api)
                 implementation(projects.data.showdetails.api)
                 implementation(projects.data.shows.api)
                 implementation(projects.data.traktauth.api)
