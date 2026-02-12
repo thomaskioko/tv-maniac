@@ -6,15 +6,10 @@ plugins {
 
 scaffold {
     addAndroidTarget(
-        configure = {
-            enableAndroidResources()
-        },
-        libraryConfiguration = {
-            lint {
-                baseline = file("lint-baseline.xml")
-                disable += "UnusedResources"
-            }
-            testOptions.unitTests.isIncludeAndroidResources = true
+        enableAndroidResources = true,
+        lintConfiguration = {
+            baseline = file("lint-baseline.xml")
+            disable += "UnusedResources"
         },
     )
 
