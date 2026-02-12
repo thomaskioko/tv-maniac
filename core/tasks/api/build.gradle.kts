@@ -3,5 +3,5 @@ plugins {
 }
 
 scaffold {
-    addAndroidMultiplatformTarget()
+    addAndroidTarget()
 }

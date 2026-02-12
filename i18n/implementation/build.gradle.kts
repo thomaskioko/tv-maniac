@@ -5,12 +5,11 @@ plugins {
 scaffold {
     useKotlinInject()
     addAndroidTarget(
-        libraryConfiguration = {
-            lint {
-                baseline = file("lint-baseline.xml")
-                disable += "AppBundleLocaleChanges"
-            }
-            testOptions.unitTests.isIncludeAndroidResources = true
+        enableAndroidResources = true,
+        withHostTestBuilder = true,
+        lintConfiguration = {
+            baseline = file("lint-baseline.xml")
+            disable += "AppBundleLocaleChanges"
         },
     )
 }
@@ -20,13 +19,6 @@ kotlin {
         androidMain {
             dependencies {
                 api(libs.moko.resources.compose)
-            }
-        }
-
-        androidUnitTest {
-            dependencies {
-                implementation(libs.androidx.junit)
-                implementation(libs.robolectric)
             }
         }
 
@@ -50,4 +42,9 @@ kotlin {
             }
         }
     }
+}
+
+dependencies {
+    "androidHostTestCompilationImplementation"(libs.androidx.junit)
+    "androidHostTestCompilationImplementation"(libs.robolectric)
 }
