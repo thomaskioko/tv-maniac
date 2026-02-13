@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arkivanov.decompose.extensions.compose.stack.Children
+import com.thomaskioko.tvmaniac.debug.ui.DebugMenuScreen
 import com.thomaskioko.tvmaniac.home.ui.HomeScreen
 import com.thomaskioko.tvmaniac.moreshows.ui.MoreShowsScreen
 import com.thomaskioko.tvmaniac.navigation.RootPresenter
@@ -55,6 +56,11 @@ private fun ChildrenContent(rootPresenter: RootPresenter, modifier: Modifier = M
                 )
             is RootPresenter.Child.Settings ->
                 SettingsScreen(
+                    presenter = screen.presenter,
+                    modifier = fillMaxSizeModifier,
+                )
+            is RootPresenter.Child.Debug ->
+                DebugMenuScreen(
                     presenter = screen.presenter,
                     modifier = fillMaxSizeModifier,
                 )

@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.navigation
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
+import com.thomaskioko.tvmaniac.debug.presenter.DebugPresenter
 import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsPresenter
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenter
@@ -29,6 +30,8 @@ public interface RootPresenter {
         public class Profile(public val presenter: ProfilePresenter) : Child
 
         public class Settings(public val presenter: SettingsPresenter) : Child
+
+        public class Debug(public val presenter: DebugPresenter) : Child
 
         public class ShowDetails(public val presenter: ShowDetailsPresenter) : Child
 

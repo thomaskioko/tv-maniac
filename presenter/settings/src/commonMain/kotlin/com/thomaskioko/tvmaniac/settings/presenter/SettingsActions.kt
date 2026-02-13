@@ -39,3 +39,5 @@ public data class IncludeSpecialsToggled(
 public data class BackgroundSyncToggled(
     val enabled: Boolean,
 ) : SettingsActions
+
+public data object NavigateToDebugMenu : SettingsActions

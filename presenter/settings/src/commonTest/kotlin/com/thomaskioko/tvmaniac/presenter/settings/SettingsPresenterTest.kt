@@ -63,6 +63,7 @@ class SettingsPresenterTest {
             ),
             appInfo = FakeApplicationInfo.DEFAULT,
             backClicked = {},
+            onNavigateToDebugMenu = {},
         )
     }
 

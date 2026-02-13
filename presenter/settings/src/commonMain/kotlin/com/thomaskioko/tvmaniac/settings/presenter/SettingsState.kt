@@ -17,6 +17,7 @@ public data class SettingsState(
     val lastSyncDate: String? = null,
     val showLastSyncDate: Boolean = false,
     val versionName: String,
+    val isDebugBuild: Boolean = false,
 ) {
     public companion object {
         public val DEFAULT_STATE: SettingsState = SettingsState(

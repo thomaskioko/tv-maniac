@@ -44,6 +44,9 @@ struct RootNavigationView: View {
                 case let .settings(child):
                     SettingsView(presenter: child.presenter)
                         .id(ObjectIdentifier(child))
+                case let .debug(child):
+                    DebugMenuView(presenter: child.presenter)
+                        .id(ObjectIdentifier(child))
                 case .moreShows:
                     EmptyView()
                 case .trailers:

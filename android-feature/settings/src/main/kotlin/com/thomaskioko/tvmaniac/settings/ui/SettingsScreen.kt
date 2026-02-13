@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Palette
@@ -66,6 +67,9 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_back
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_menu_subtitle
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_menu_title
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_section_developer
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_auto
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_auto_description
@@ -105,6 +109,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.DismissAboutDialog
 import com.thomaskioko.tvmaniac.settings.presenter.DismissTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
 import com.thomaskioko.tvmaniac.settings.presenter.IncludeSpecialsToggled
+import com.thomaskioko.tvmaniac.settings.presenter.NavigateToDebugMenu
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsActions
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
@@ -334,6 +339,25 @@ private fun SettingsContent(
                 TraktAccountSection(
                     showTraktDialog = state.showTraktDialog,
                     onAction = onAction,
+                )
+            }
+        }
+
+        if (state.isDebugBuild) {
+            item { Spacer(modifier = Modifier.height(24.dp)) }
+
+            item {
+                SectionHeader(title = label_debug_section_developer.resolve(context))
+            }
+
+            item { Spacer(modifier = Modifier.height(16.dp)) }
+
+            item {
+                SettingsClickableItem(
+                    icon = Icons.Filled.BugReport,
+                    title = label_debug_menu_title.resolve(context),
+                    subtitle = label_debug_menu_subtitle.resolve(context),
+                    onClick = { onAction(NavigateToDebugMenu) },
                 )
             }
         }

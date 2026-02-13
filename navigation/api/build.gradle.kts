@@ -15,6 +15,7 @@ kotlin {
 
                 implementation(projects.core.base)
                 implementation(projects.data.datastore.api)
+                implementation(projects.presenter.debug)
                 implementation(projects.presenter.discover)
                 implementation(projects.presenter.home)
                 implementation(projects.presenter.moreShows)
