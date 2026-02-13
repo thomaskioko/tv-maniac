@@ -32,51 +32,25 @@ struct LibraryTab: View {
             VStack {
                 contentView
             }
+            .padding(.top, DimensionConstants.toolbarInset)
         }
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarColor(backgroundColor: .clear)
         .disableAutocorrection(true)
-        .toolbar {
-            if uiState.isSearchActive {
-                ToolbarItem(placement: .principal) {
-                    expandedSearchBar
-                }
-            } else {
-                let image = if uiState.isGridMode {
-                    "list.bullet"
+        .overlay(
+            Group {
+                if uiState.isSearchActive {
+                    searchBarOverlay
                 } else {
-                    "rectangle.grid.2x2"
+                    libraryToolbar
                 }
-                ToolbarItem(placement: .navigationBarLeading) {
-                    HStack {
-                        Button {
-                            withAnimation {
-                                presenter.dispatch(action: ChangeListStyleClicked(isGridMode: uiState.isGridMode))
-                            }
-                        } label: {
-                            Label(String(\.label_watchlist_list_style), systemImage: image)
-                                .labelStyle(.iconOnly)
-                        }
-                        .buttonBorderShape(.roundedRectangle(radius: theme.shapes.large))
-                        .buttonStyle(.bordered)
-                        .tint(theme.colors.accent)
-                    }
-                }
-                ToolbarItem(placement: .principal) {
-                    titleView
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    HStack(spacing: theme.spacing.xSmall) {
-                        searchButton
-                        filterButton
-                    }
-                }
-            }
-        }
+            },
+            alignment: .top
+        )
+        .edgesIgnoringSafeArea(.top)
         .animation(.spring(response: 0.3, dampingFraction: 0.8), value: uiState.isSearchActive)
         .disableAutocorrection(true)
         .textInputAutocapitalization(.never)
-        .toolbarBackground(theme.colors.surface, for: .navigationBar)
-        .toolbarBackground(.visible, for: .navigationBar)
         .sheet(isPresented: $showSortOptions) {
             SortOptionsSheet(
                 state: uiState,
@@ -117,40 +91,46 @@ struct LibraryTab: View {
         }
     }
 
-    private var titleView: some View {
-        HStack {
-            Text(String(\.label_library_title))
-                .textStyle(theme.typography.titleMedium)
-                .lineLimit(1)
-                .foregroundColor(theme.colors.onSurface)
-        }
-    }
-
-    private var searchButton: some View {
-        Button {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                presenter.dispatch(action: ToggleSearchActive())
-                isSearchFocused = true
+    private var libraryToolbar: some View {
+        let image = uiState.isGridMode ? "list.bullet" : "rectangle.grid.2x2"
+        return GlassToolbar(
+            title: String(\.label_library_title),
+            opacity: 1.0,
+            leadingIcon: {
+                GlassButton(icon: image) {
+                    withAnimation {
+                        presenter.dispatch(action: ChangeListStyleClicked(isGridMode: uiState.isGridMode))
+                    }
+                }
+            },
+            trailingIcon: {
+                HStack(spacing: theme.spacing.xSmall) {
+                    GlassButton(icon: "magnifyingglass") {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            presenter.dispatch(action: ToggleSearchActive())
+                            isSearchFocused = true
+                        }
+                    }
+                    GlassButton(icon: "line.3.horizontal.decrease.circle") {
+                        showSortOptions = true
+                    }
+                }
             }
-        } label: {
-            Label(String(\.label_tab_search), systemImage: "magnifyingglass")
-                .labelStyle(.iconOnly)
-        }
-        .buttonBorderShape(.roundedRectangle(radius: theme.shapes.large))
-        .buttonStyle(.bordered)
-        .tint(theme.colors.accent)
+        )
     }
 
-    private var filterButton: some View {
-        Button {
-            showSortOptions = true
-        } label: {
-            Label(String(\.label_watchlist_sort_list), systemImage: "line.3.horizontal.decrease.circle")
-                .labelStyle(.iconOnly)
+    private var searchBarOverlay: some View {
+        let topPadding = DimensionConstants.safeAreaTop
+        return ZStack(alignment: .top) {
+            theme.colors.surface
+                .frame(height: DimensionConstants.toolbarHeight + topPadding)
+                .ignoresSafeArea()
+
+            expandedSearchBar
+                .padding(.horizontal, theme.spacing.medium)
+                .padding(.top, topPadding + theme.spacing.xSmall)
         }
-        .buttonBorderShape(.roundedRectangle(radius: theme.shapes.large))
-        .buttonStyle(.bordered)
-        .tint(theme.colors.accent)
+        .frame(maxWidth: .infinity)
     }
 
     private var expandedSearchBar: some View {
@@ -184,8 +164,6 @@ struct LibraryTab: View {
             .clipShape(RoundedRectangle(cornerRadius: theme.shapes.medium))
         }
         .frame(maxWidth: .infinity)
-        .padding(.bottom, theme.spacing.small)
-        .transition(.scale.combined(with: .opacity))
     }
 
     @ViewBuilder
@@ -251,4 +229,16 @@ public enum LibraryConstants {
     static let columns: [GridItem] = [
         GridItem(.adaptive(minimum: 100), spacing: spacing),
     ]
+}
+
+private enum DimensionConstants {
+    static let toolbarHeight: CGFloat = 44
+    static var safeAreaTop: CGFloat {
+        (UIApplication.shared.connectedScenes.first as? UIWindowScene)?
+            .windows.first?.safeAreaInsets.top ?? 0
+    }
+
+    static var toolbarInset: CGFloat {
+        toolbarHeight + safeAreaTop
+    }
 }

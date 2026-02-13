@@ -62,22 +62,14 @@ struct ShowDetailsView: View {
                 opacity: showGlass,
                 isLoading: uiState.isRefreshing,
                 leadingIcon: {
-                    Button(action: {
+                    GlassButton(icon: "chevron.left") {
                         presenter.dispatch(action: DetailBackClicked())
-                    }) {
-                        Image(systemName: "chevron.left")
-                            .foregroundColor(theme.colors.accent)
-                            .imageScale(.large)
-                            .opacity(1 - showGlass)
                     }
+                    .opacity(1 - showGlass)
                 },
                 trailingIcon: {
-                    Button(action: {
+                    GlassButton(icon: "arrow.clockwise") {
                         presenter.dispatch(action: ReloadShowDetails())
-                    }) {
-                        Image(systemName: "arrow.clockwise")
-                            .foregroundColor(theme.colors.accent)
-                            .imageScale(.large)
                     }
                 }
             )
@@ -104,6 +96,17 @@ struct ShowDetailsView: View {
                 posterUrl: uiState.showDetails.posterImageUrl
             )
         }
+        .onChange(of: uiState.message) { _, newValue in
+            if let message = newValue {
+                toast = Toast(
+                    type: .error,
+                    title: "Error",
+                    message: message.message
+                )
+                presenter.dispatch(action: ShowDetailsMessageShown(id: message.id))
+            }
+        }
+        .toastView(toast: $toast)
     }
 
     @ViewBuilder

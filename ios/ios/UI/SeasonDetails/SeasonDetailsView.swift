@@ -15,8 +15,6 @@ struct SeasonDetailsView: View {
 
     private let presenter: SeasonDetailsPresenter
 
-    @Environment(\.presentationMode) var presentationMode
-
     @StateObject @KotlinStateFlow private var uiState: SeasonDetailsModel
     @State private var isTruncated = false
     @State private var showFullText = false
@@ -53,6 +51,9 @@ struct SeasonDetailsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .navigationBarColor(backgroundColor: .clear)
+        .swipeBackGesture {
+            presenter.dispatch(action: SeasonDetailsBackClicked())
+        }
         .overlay(
             VStack(spacing: 0) {
                 GlassToolbar(
@@ -60,14 +61,10 @@ struct SeasonDetailsView: View {
                     opacity: showGlass,
                     isLoading: uiState.isRefreshing,
                     leadingIcon: {
-                        Button(action: {
+                        GlassButton(icon: "chevron.left") {
                             presenter.dispatch(action: SeasonDetailsBackClicked())
-                        }) {
-                            Image(systemName: "chevron.left")
-                                .foregroundColor(theme.colors.accent)
-                                .imageScale(.large)
-                                .opacity(1 - showGlass)
                         }
+                        .opacity(1 - showGlass)
                     }
                 )
                 ProgressView(value: uiState.watchProgress, total: 1)
@@ -141,6 +138,17 @@ struct SeasonDetailsView: View {
         } message: {
             Text(String(\.dialog_message_mark_previous_seasons))
         }
+        .onChange(of: uiState.message) { _, newValue in
+            if let message = newValue {
+                toast = Toast(
+                    type: .error,
+                    title: "Error",
+                    message: message.message
+                )
+                presenter.dispatch(action: SeasonDetailsMessageShown(id: message.id))
+            }
+        }
+        .toastView(toast: $toast)
     }
 
     @ViewBuilder
