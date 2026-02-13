@@ -101,14 +101,15 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.unfollow
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presenter.showdetails.DetailBackClicked
 import com.thomaskioko.tvmaniac.presenter.showdetails.DetailShowClicked
-import com.thomaskioko.tvmaniac.presenter.showdetails.DismissErrorSnackbar
 import com.thomaskioko.tvmaniac.presenter.showdetails.DismissShowsListSheet
 import com.thomaskioko.tvmaniac.presenter.showdetails.FollowShowClicked
+import com.thomaskioko.tvmaniac.presenter.showdetails.MarkEpisodeUnwatched
 import com.thomaskioko.tvmaniac.presenter.showdetails.MarkEpisodeWatched
 import com.thomaskioko.tvmaniac.presenter.showdetails.ReloadShowDetails
 import com.thomaskioko.tvmaniac.presenter.showdetails.SeasonClicked
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsAction
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsContent
+import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsMessageShown
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowShowsListSheet
 import com.thomaskioko.tvmaniac.presenter.showdetails.WatchTrailerClicked
@@ -172,9 +173,10 @@ internal fun ShowDetailsScreen(
         snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
         content = { contentPadding ->
             LaunchedEffect(key1 = state.message) {
-                if (state.message?.message != null) {
+                val message = state.message
+                if (message != null) {
                     val actionResult = snackBarHostState.showSnackbar(
-                        message = state.message!!.message,
+                        message = message.message,
                         actionLabel = "Dismiss",
                         withDismissAction = false,
                         duration = SnackbarDuration.Short,
@@ -183,7 +185,7 @@ internal fun ShowDetailsScreen(
                         SnackbarResult.ActionPerformed,
                         SnackbarResult.Dismissed,
                         -> {
-                            onAction(DismissErrorSnackbar)
+                            onAction(ShowDetailsMessageShown(message.id))
                         }
                     }
                 }
@@ -378,14 +380,23 @@ private fun ShowInfoContent(
             episodes = continueTrackingEpisodes,
             scrollIndex = continueTrackingScrollIndex,
             onMarkWatched = { episode ->
-                onAction(
-                    MarkEpisodeWatched(
-                        showTraktId = episode.showTraktId,
-                        episodeId = episode.episodeId,
-                        seasonNumber = episode.seasonNumber,
-                        episodeNumber = episode.episodeNumber,
-                    ),
-                )
+                if (episode.isWatched) {
+                    onAction(
+                        MarkEpisodeUnwatched(
+                            showTraktId = episode.showTraktId,
+                            episodeId = episode.episodeId,
+                        ),
+                    )
+                } else {
+                    onAction(
+                        MarkEpisodeWatched(
+                            showTraktId = episode.showTraktId,
+                            episodeId = episode.episodeId,
+                            seasonNumber = episode.seasonNumber,
+                            episodeNumber = episode.episodeNumber,
+                        ),
+                    )
+                }
             },
         )
 

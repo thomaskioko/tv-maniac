@@ -9,6 +9,8 @@ import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
+import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
+import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedParams
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
@@ -53,6 +55,7 @@ public class DefaultShowDetailsPresenter(
     private val similarShowsInteractor: SimilarShowsInteractor,
     private val watchProvidersInteractor: WatchProvidersInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
+    private val markEpisodeUnwatchedInteractor: MarkEpisodeUnwatchedInteractor,
     private val showContentSyncInteractor: ShowContentSyncInteractor,
     observableShowDetailsInteractor: ObservableShowDetailsInteractor,
     observeShowWatchProgressInteractor: ObserveShowWatchProgressInteractor,
@@ -84,9 +87,10 @@ public class DefaultShowDetailsPresenter(
         watchProvidersLoadingState.observable,
         observableShowDetailsInteractor.flow,
         observeShowWatchProgressInteractor.flow,
+        uiMessageManager.message,
         _state,
     ) { showDetailsUpdating, similarShowsUpdating, watchProvidersUpdating,
-        showDetails, watchProgress, currentState,
+        showDetails, watchProgress, message, currentState,
         ->
         currentState.copy(
             showDetails = showDetails.toShowDetails(
@@ -99,6 +103,7 @@ public class DefaultShowDetailsPresenter(
             watchProvidersRefreshing = watchProvidersUpdating,
             continueTrackingEpisodes = mapContinueTrackingEpisodes(showDetails.continueTrackingEpisodes, showTraktId),
             continueTrackingScrollIndex = showDetails.continueTrackingScrollIndex,
+            message = message,
         )
     }
         .flowOn(dispatchers.computation)
@@ -134,7 +139,7 @@ public class DefaultShowDetailsPresenter(
 
             DetailBackClicked -> onBack()
             ReloadShowDetails -> refreshShowContent(isUserInitiated = true)
-            DismissErrorSnackbar -> coroutineScope.launch { _state.update { it.copy(message = null) } }
+            is ShowDetailsMessageShown -> clearMessage(action.id)
             DismissShowsListSheet -> coroutineScope.launch { _state.update { it.copy(showListSheet = false) } }
             ShowShowsListSheet -> coroutineScope.launch { _state.update { it.copy(showListSheet = true) } }
             CreateCustomList -> {
@@ -150,6 +155,17 @@ public class DefaultShowDetailsPresenter(
                             seasonNumber = action.seasonNumber,
                             episodeNumber = action.episodeNumber,
                             markPreviousEpisodes = false,
+                        ),
+                    ).collectStatus(episodeActionLoadingState, logger, uiMessageManager)
+                }
+            }
+
+            is MarkEpisodeUnwatched -> {
+                coroutineScope.launch {
+                    markEpisodeUnwatchedInteractor(
+                        MarkEpisodeUnwatchedParams(
+                            showTraktId = action.showTraktId,
+                            episodeId = action.episodeId,
                         ),
                     ).collectStatus(episodeActionLoadingState, logger, uiMessageManager)
                 }
@@ -198,6 +214,12 @@ public class DefaultShowDetailsPresenter(
                 isUserInitiated = isUserInitiated,
             ),
         ).collectStatus(loadingState, logger, uiMessageManager)
+    }
+
+    private fun clearMessage(id: Long) {
+        coroutineScope.launch {
+            uiMessageManager.clearMessage(id)
+        }
     }
 
     private fun observeAuthState() {

@@ -13,6 +13,7 @@ import com.thomaskioko.tvmaniac.db.ShowSeasons
 import com.thomaskioko.tvmaniac.db.SimilarShows
 import com.thomaskioko.tvmaniac.db.TvshowDetails
 import com.thomaskioko.tvmaniac.db.WatchProviders
+import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
@@ -22,6 +23,7 @@ import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
 import com.thomaskioko.tvmaniac.domain.watchproviders.WatchProvidersInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
+import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeUnwatchedCall
 import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.i18n.testing.util.IgnoreIos
@@ -272,6 +274,29 @@ class ShowDetailsPresenterTest {
                 episodeId = 1001,
                 seasonNumber = 1,
                 episodeNumber = 1,
+            )
+        }
+
+    @Test
+    fun `should mark episode as unwatched when MarkEpisodeUnwatched is dispatched`() =
+        runTest {
+            buildMockData()
+
+            val presenter = buildShowDetailsPresenter()
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            presenter.dispatch(
+                MarkEpisodeUnwatched(
+                    showTraktId = 84958,
+                    episodeId = 1001,
+                ),
+            )
+
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            episodeRepository.lastMarkEpisodeUnwatchedCall shouldBe MarkEpisodeUnwatchedCall(
+                showTraktId = 84958,
+                episodeId = 1001,
             )
         }
 
@@ -582,6 +607,9 @@ class ShowDetailsPresenterTest {
                 dispatchers = coroutineDispatcher,
             ),
             markEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(
+                episodeRepository = episodeRepository,
+            ),
+            markEpisodeUnwatchedInteractor = MarkEpisodeUnwatchedInteractor(
                 episodeRepository = episodeRepository,
             ),
             observeShowWatchProgressInteractor = ObserveShowWatchProgressInteractor(

@@ -34,11 +34,17 @@ import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -93,6 +99,7 @@ import com.thomaskioko.tvmaniac.seasondetails.presenter.DismissDialog
 import com.thomaskioko.tvmaniac.seasondetails.presenter.ReloadSeasonDetails
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsAction
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsBackClicked
+import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsMessageShown
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsModel
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDialogState
@@ -110,10 +117,28 @@ public fun SeasonDetailsScreen(
     modifier: Modifier = Modifier,
 ) {
     val state by presenter.state.collectAsState()
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(key1 = state.message) {
+        val message = state.message
+        if (message != null && !state.showError) {
+            val result = snackBarHostState.showSnackbar(
+                message = message.message,
+                actionLabel = "Dismiss",
+                duration = SnackbarDuration.Short,
+            )
+            when (result) {
+                SnackbarResult.ActionPerformed,
+                SnackbarResult.Dismissed,
+                -> presenter.dispatch(SeasonDetailsMessageShown(message.id))
+            }
+        }
+    }
 
     SeasonDetailsScreen(
         modifier = modifier,
         state = state,
+        snackBarHostState = snackBarHostState,
         onAction = presenter::dispatch,
     )
 }
@@ -121,6 +146,7 @@ public fun SeasonDetailsScreen(
 @Composable
 internal fun SeasonDetailsScreen(
     state: SeasonDetailsModel,
+    snackBarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
     onAction: (SeasonDetailsAction) -> Unit,
 ) {
@@ -131,6 +157,7 @@ internal fun SeasonDetailsScreen(
         showBottomSheet = state.isGalleryVisible,
         sheetContent = { ImageGalleryContent(imageList = state.seasonImages) },
         onDismissBottomSheet = { onAction(DismissDialog) },
+        snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
         sheetDragHandle = {
             val title = stringResource(cd_show_images.resourceId, state.seasonName)
             SheetDragHandle(
@@ -573,6 +600,7 @@ private fun SeasonDetailScreenPreview(
         Surface {
             SeasonDetailsScreen(
                 state = state,
+                snackBarHostState = remember { SnackbarHostState() },
                 onAction = {},
             )
         }

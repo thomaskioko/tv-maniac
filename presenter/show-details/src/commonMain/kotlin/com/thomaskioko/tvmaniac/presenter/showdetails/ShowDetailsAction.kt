@@ -10,7 +10,7 @@ public data object ShowShowsListSheet : ShowDetailsAction
 
 public data object CreateCustomList : ShowDetailsAction
 
-public data object DismissErrorSnackbar : ShowDetailsAction
+public data class ShowDetailsMessageShown(val id: Long) : ShowDetailsAction
 
 public data object DetailBackClicked : ShowDetailsAction
 
@@ -29,4 +29,9 @@ public data class MarkEpisodeWatched(
     val episodeId: Long,
     val seasonNumber: Long,
     val episodeNumber: Long,
+) : ShowDetailsAction
+
+public data class MarkEpisodeUnwatched(
+    val showTraktId: Long,
+    val episodeId: Long,
 ) : ShowDetailsAction

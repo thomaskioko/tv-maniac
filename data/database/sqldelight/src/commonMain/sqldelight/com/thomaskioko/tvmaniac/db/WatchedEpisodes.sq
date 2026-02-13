@@ -63,7 +63,7 @@ SELECT
     watched_episodes.synced_at,
     watched_episodes.pending_action
 FROM watched_episodes
-WHERE show_trakt_id = ? AND season_number = ?
+WHERE show_trakt_id = ? AND season_number = ? AND pending_action != 'DELETE'
 ORDER BY episode_number;
 
 markAsWatched:
@@ -98,7 +98,7 @@ SELECT
     e.season_id
 FROM episode e
 INNER JOIN season s ON e.season_id = s.id
-LEFT JOIN watched_episodes we ON e.id = we.episode_id AND we.show_trakt_id = :show_trakt_id
+LEFT JOIN watched_episodes we ON e.id = we.episode_id AND we.show_trakt_id = :show_trakt_id AND we.pending_action != 'DELETE'
 WHERE e.show_trakt_id = :show_trakt_id
   AND (:include_specials = 1 OR (s.season_number > 0 OR s.title != 'Specials'))
   AND (
@@ -129,7 +129,7 @@ WHERE show_trakt_id = :show_trakt_id
 
 getWatchedEpisodesCountForShow:
 SELECT COUNT(*) FROM watched_episodes
-WHERE show_trakt_id = ?;
+WHERE show_trakt_id = ? AND pending_action != 'DELETE';
 
 getUnwatchedEpisodesInPreviousSeasons:
 SELECT
@@ -139,7 +139,7 @@ SELECT
     e.season_id
 FROM episode e
 INNER JOIN season s ON e.season_id = s.id
-LEFT JOIN watched_episodes we ON e.id = we.episode_id AND we.show_trakt_id = :show_trakt_id
+LEFT JOIN watched_episodes we ON e.id = we.episode_id AND we.show_trakt_id = :show_trakt_id AND we.pending_action != 'DELETE'
 WHERE e.show_trakt_id = :show_trakt_id
   AND s.season_number < :season_number
   AND (:include_specials = 1 OR (s.season_number > 0 OR s.title != 'Specials'))
@@ -150,7 +150,7 @@ ORDER BY s.season_number, e.episode_number;
 getUnwatchedEpisodeCountInPreviousSeasons:
 SELECT COUNT(*) FROM episode e
 INNER JOIN season s ON e.season_id = s.id
-LEFT JOIN watched_episodes we ON e.id = we.episode_id AND we.show_trakt_id = :show_trakt_id
+LEFT JOIN watched_episodes we ON e.id = we.episode_id AND we.show_trakt_id = :show_trakt_id AND we.pending_action != 'DELETE'
 WHERE e.show_trakt_id = :show_trakt_id
   AND s.season_number < :season_number
   AND (:include_specials = 1 OR (s.season_number > 0 OR s.title != 'Specials'))
@@ -215,7 +215,7 @@ FROM season s
 LEFT JOIN (
     SELECT season_number, COUNT(*) AS cnt
     FROM watched_episodes
-    WHERE show_trakt_id = :show_trakt_id
+    WHERE show_trakt_id = :show_trakt_id AND pending_action != 'DELETE'
     GROUP BY season_number
 ) watched ON watched.season_number = s.season_number
 LEFT JOIN (

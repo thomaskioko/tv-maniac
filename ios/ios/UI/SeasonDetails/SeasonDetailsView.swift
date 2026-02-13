@@ -27,6 +27,7 @@ struct SeasonDetailsView: View {
     @State private var showUnwatchedConfirmAlert = false
     @State private var showMarkPreviousSeasonsAlert = false
     @State private var showSeasonUnwatchAlert = false
+    @State private var toast: Toast?
 
     init(presenter: SeasonDetailsPresenter) {
         self.presenter = presenter
@@ -82,6 +83,17 @@ struct SeasonDetailsView: View {
                 $0.toSwift()
             })
         }
+        .onChange(of: uiState.message) { _, newValue in
+            if let message = newValue {
+                toast = Toast(
+                    type: .error,
+                    title: "Error",
+                    message: message.message
+                )
+                presenter.dispatch(action: SeasonDetailsMessageShown(id: message.id))
+            }
+        }
+        .toastView(toast: $toast)
         .onChange(of: uiState.isDialogVisible) { _ in
             let dialogState = uiState.dialogState
             showMarkPreviousAlert = dialogState is SeasonDialogStateMarkPreviousEpisodesConfirmation
