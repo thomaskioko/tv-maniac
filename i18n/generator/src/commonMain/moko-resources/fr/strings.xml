@@ -291,4 +291,11 @@
     <string name="label_upnext_empty">Aucune série dans votre liste de suivi</string>
     <string name="label_upnext_sort_last_watched">Dernièrement vu</string>
     <string name="label_upnext_sort_air_date">Date de diffusion</string>
+
+    <string name="label_debug_menu_title">Menu de débogage</string>
+    <string name="label_debug_section_developer">Développeur</string>
+    <string name="label_debug_menu_subtitle">Outils de développement et diagnostics</string>
+    <string name="label_debug_section_background_tasks">Tâches en arrière-plan</string>
+    <string name="label_debug_section_notifications">Notifications</string>
+    <string name="label_debug_coming_soon">Bientôt disponible</string>
 </resources>

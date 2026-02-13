@@ -295,4 +295,11 @@
     <string name="label_upnext_empty">No shows in your watchlist</string>
     <string name="label_upnext_sort_last_watched">Last Watched</string>
     <string name="label_upnext_sort_air_date">Air Date</string>
+
+    <string name="label_debug_menu_title">Debug Menu</string>
+    <string name="label_debug_section_developer">Developer</string>
+    <string name="label_debug_menu_subtitle">Developer tools and diagnostics</string>
+    <string name="label_debug_section_background_tasks">Background Tasks</string>
+    <string name="label_debug_section_notifications">Notifications</string>
+    <string name="label_debug_coming_soon">Coming soon</string>
 </resources>
