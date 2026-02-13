@@ -119,6 +119,22 @@ FROM tvshow
 INNER JOIN season ON season.show_trakt_id = tvshow.trakt_id
 WHERE tvshow.trakt_id = :showTraktId AND season.season_number = :seasonNumber;
 
+latestSeasonPerFollowedShow:
+SELECT
+    season.show_trakt_id,
+    season.id AS season_id,
+    season.season_number
+FROM season
+INNER JOIN followed_shows ON followed_shows.trakt_id = season.show_trakt_id
+WHERE followed_shows.pending_action != 'DELETE'
+  AND season.season_number > 0
+  AND season.season_number = (
+    SELECT MAX(s2.season_number)
+    FROM season s2
+    WHERE s2.show_trakt_id = season.show_trakt_id
+      AND s2.season_number > 0
+  );
+
 delete:
 DELETE FROM season WHERE show_trakt_id = ?;
 

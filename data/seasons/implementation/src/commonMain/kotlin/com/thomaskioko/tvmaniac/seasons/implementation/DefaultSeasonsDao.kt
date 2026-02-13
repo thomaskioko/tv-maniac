@@ -5,6 +5,7 @@ import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.db.GetSeasonByShowAndNumber
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.LatestSeasonPerFollowedShow
 import com.thomaskioko.tvmaniac.db.Season
 import com.thomaskioko.tvmaniac.db.ShowSeasons
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
@@ -64,6 +65,11 @@ public class DefaultSeasonsDao(
                 showTraktId = Id(showTraktId),
                 seasonNumber = seasonNumber,
             ).executeAsOneOrNull()
+        }
+
+    override suspend fun getLatestSeasonPerFollowedShow(): List<LatestSeasonPerFollowedShow> =
+        withContext(dispatcher.databaseRead) {
+            seasonQueries.latestSeasonPerFollowedShow().executeAsList()
         }
 
     override fun updateImageUrl(seasonId: Long, imageUrl: String) {
