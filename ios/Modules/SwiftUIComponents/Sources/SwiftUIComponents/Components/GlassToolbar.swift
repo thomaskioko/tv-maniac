@@ -166,48 +166,10 @@ public extension View {
     }
 }
 
-// MARK: - Glass Button Component
-
-/// A circular button with a glass/blur effect matching the toolbar design
-public struct GlassButton: View {
-    @Environment(\.colorScheme) private var colorScheme
-
-    private let icon: String
-    private let action: () -> Void
-
-    public init(icon: String, action: @escaping () -> Void) {
-        self.icon = icon
-        self.action = action
-    }
-
-    public var body: some View {
-        Button(action: action) {
-            ZStack {
-                // Semi-transparent background circle
-                Circle()
-                    .fill(Color.black.opacity(colorScheme == .dark ? 0.5 : 0.3))
-                    .frame(width: 44, height: 44)
-                    .overlay(
-                        Circle()
-                            .strokeBorder(Color.white.opacity(0.15), lineWidth: 1)
-                    )
-                    .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
-
-                // Icon
-                Image(systemName: icon)
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(.white)
-            }
-        }
-        .frame(width: 44, height: 44)
-    }
-}
-
 // MARK: - Preview
 
 #Preview("Glass Toolbar with Buttons") {
     ZStack {
-        // Background image simulation
         LinearGradient(
             gradient: Gradient(colors: [.white]),
             startPoint: .topLeading,
@@ -253,29 +215,6 @@ public struct GlassButton: View {
             )
 
             Spacer()
-        }
-    }
-    .preferredColorScheme(.dark)
-}
-
-#Preview("Glass Button Styles") {
-    ZStack {
-        Color.black.ignoresSafeArea()
-
-        VStack(spacing: 30) {
-            HStack(spacing: 20) {
-                GlassButton(icon: "chevron.left") {}
-                GlassButton(icon: "ellipsis") {}
-                GlassButton(icon: "magnifyingglass") {}
-                GlassButton(icon: "gear") {}
-            }
-
-            HStack(spacing: 20) {
-                GlassButton(icon: "heart") {}
-                GlassButton(icon: "share") {}
-                GlassButton(icon: "bookmark") {}
-                GlassButton(icon: "play.fill") {}
-            }
         }
     }
     .preferredColorScheme(.dark)
