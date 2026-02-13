@@ -3,7 +3,7 @@ plugins {
 }
 
 scaffold {
-    addAndroidMultiplatformTarget(withJava = true)
+    addAndroidTarget()
     useKotlinInject()
     useSerialization()
 

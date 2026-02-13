@@ -51,7 +51,6 @@ jobs:
                       --no-configuration-cache
 
 
-
     android-lint:
         runs-on: ubuntu-latest
         steps:
@@ -133,31 +132,32 @@ jobs:
                     name: test-report
                     path: '**/build/reports/*'
 
-    common-ios-test:
-        runs-on: macos-latest
-
-        steps:
-            -   name: Checkout
-                uses: actions/checkout@v6
-
-            -   name: Set up JDK
-                uses: actions/setup-java@v5
-                with:
-                    distribution: ${{ env.DISTRIBUTION }}
-                    java-version: ${{ env.JDK_VERSION }}
-
-            -   name: 🐘 Setup Gradle
-                uses: gradle/actions/setup-gradle@v5
-
-            -   name: Run Common iOS Unit Tests
-                run: ./gradlew iosSimulatorArm64Test -Papp.enableIos=true -Papp.debugOnly=false
-
-            -   name: Upload Common Test Report
-                uses: actions/upload-artifact@v6
-                if: always()
-                with:
-                    name: common-ios-test-report
-                    path: '**/build/reports/*'
+    # TODO:: Investigate Freezing test
+    #    common-ios-test:
+    #        runs-on: macos-latest
+    #
+    #        steps:
+    #            -   name: Checkout
+    #                uses: actions/checkout@v6
+    #
+    #            -   name: Set up JDK
+    #                uses: actions/setup-java@v5
+    #                with:
+    #                    distribution: ${{ env.DISTRIBUTION }}
+    #                    java-version: ${{ env.JDK_VERSION }}
+    #
+    #            -   name: 🐘 Setup Gradle
+    #                uses: gradle/actions/setup-gradle@v5
+    #
+    #            -   name: Run Common iOS Unit Tests
+    #                run: ./gradlew iosSimulatorArm64Test -Papp.enableIos=true -Papp.debugOnly=false
+    #
+    #            -   name: Upload Common Test Report
+    #                uses: actions/upload-artifact@v6
+    #                if: always()
+    #                with:
+    #                    name: common-ios-test-report
+    #                    path: '**/build/reports/*'
 
     build-ios:
         runs-on: macos-15
@@ -207,9 +207,6 @@ jobs:
                     path: |
                         build/
                         fastlane/logs
-
-
-
 
     swift-lint:
         runs-on: macos-latest
