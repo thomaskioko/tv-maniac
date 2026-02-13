@@ -32,6 +32,7 @@ scaffold {
             export(projects.presenter.profile)
             export(projects.presenter.library)
             export(projects.presenter.upnext)
+            export(projects.presenter.debug)
 
             export(libs.decompose.decompose)
             export(libs.essenty.lifecycle)
@@ -63,6 +64,7 @@ kotlin {
                 api(projects.presenter.profile)
                 api(projects.presenter.library)
                 api(projects.presenter.upnext)
+                api(projects.presenter.debug)
 
                 api(projects.domain.followedshows)
                 api(projects.data.followedshows.api)

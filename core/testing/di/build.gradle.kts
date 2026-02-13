@@ -19,6 +19,7 @@ kotlin {
             implementation(projects.domain.logout)
             implementation(projects.domain.user)
             implementation(projects.domain.watchlist)
+            implementation(projects.presenter.debug)
             implementation(projects.presenter.home)
             implementation(projects.presenter.discover)
             implementation(projects.presenter.profile)

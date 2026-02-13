@@ -20,6 +20,7 @@ scaffold {
 
 dependencies {
     implementation(projects.androidDesignsystem)
+    implementation(projects.androidFeature.debug)
     implementation(projects.androidFeature.home)
     implementation(projects.androidFeature.moreShows)
     implementation(projects.androidFeature.profile)
