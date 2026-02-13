@@ -82,7 +82,7 @@ INNER JOIN
 LEFT OUTER JOIN
     episode ON episode.season_id = season.id
 LEFT OUTER JOIN
-    watched_episodes ON watched_episodes.episode_id = episode.id AND watched_episodes.show_trakt_id = tvshow.trakt_id
+    watched_episodes ON watched_episodes.episode_id = episode.id AND watched_episodes.show_trakt_id = tvshow.trakt_id AND watched_episodes.pending_action != 'DELETE'
 WHERE
     tvshow.trakt_id = :showTraktId AND season.season_number = :seasonNumber
 ORDER BY

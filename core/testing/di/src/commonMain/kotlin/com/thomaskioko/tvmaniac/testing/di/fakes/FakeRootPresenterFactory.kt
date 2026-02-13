@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.testing.di.fakes
 
 import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.debug.presenter.DebugPresenter
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
 import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsPresenter
@@ -27,6 +28,7 @@ public class FakeRootPresenterFactory(
     private val homePresenterFactory: HomePresenter.Factory,
     private val profilePresenterFactory: ProfilePresenter.Factory,
     private val settingsPresenterFactory: SettingsPresenter.Factory,
+    private val debugPresenterFactory: DebugPresenter.Factory,
     private val moreShowsPresenterFactory: MoreShowsPresenter.Factory,
     private val showDetailsPresenterFactory: ShowDetailsPresenter.Factory,
     private val seasonDetailsPresenterFactory: SeasonDetailsPresenter.Factory,
@@ -46,6 +48,7 @@ public class FakeRootPresenterFactory(
             homePresenterFactory = homePresenterFactory,
             profilePresenterFactory = profilePresenterFactory,
             settingsPresenterFactory = settingsPresenterFactory,
+            debugPresenterFactory = debugPresenterFactory,
             moreShowsPresenterFactory = moreShowsPresenterFactory,
             showDetailsPresenterFactory = showDetailsPresenterFactory,
             seasonDetailsPresenterFactory = seasonDetailsPresenterFactory,

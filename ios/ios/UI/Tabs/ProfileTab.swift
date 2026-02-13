@@ -44,22 +44,14 @@ struct ProfileTab: View {
                 title: String(\.profile_title),
                 opacity: showGlass,
                 leadingIcon: {
-                    Button(action: {
+                    GlassButton(icon: "chevron.left") {
                         presenter.dispatch(action: ProfileActionBackClicked())
-                    }) {
-                        Image(systemName: "chevron.left")
-                            .foregroundColor(theme.colors.accent)
-                            .imageScale(.large)
-                            .opacity(1 - showGlass)
                     }
+                    .opacity(1 - showGlass)
                 },
                 trailingIcon: {
-                    Button(action: {
+                    GlassButton(icon: "gearshape") {
                         presenter.dispatch(action: ProfileActionSettingsClicked())
-                    }) {
-                        Image(systemName: "gearshape")
-                            .textStyle(theme.typography.headlineSmall)
-                            .foregroundColor(theme.colors.accent)
                     }
                 }
             )

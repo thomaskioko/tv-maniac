@@ -15,8 +15,6 @@ struct SeasonDetailsView: View {
 
     private let presenter: SeasonDetailsPresenter
 
-    @Environment(\.presentationMode) var presentationMode
-
     @StateObject @KotlinStateFlow private var uiState: SeasonDetailsModel
     @State private var isTruncated = false
     @State private var showFullText = false
@@ -27,6 +25,7 @@ struct SeasonDetailsView: View {
     @State private var showUnwatchedConfirmAlert = false
     @State private var showMarkPreviousSeasonsAlert = false
     @State private var showSeasonUnwatchAlert = false
+    @State private var toast: Toast?
 
     init(presenter: SeasonDetailsPresenter) {
         self.presenter = presenter
@@ -52,6 +51,9 @@ struct SeasonDetailsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .navigationBarColor(backgroundColor: .clear)
+        .swipeBackGesture {
+            presenter.dispatch(action: SeasonDetailsBackClicked())
+        }
         .overlay(
             VStack(spacing: 0) {
                 GlassToolbar(
@@ -59,14 +61,10 @@ struct SeasonDetailsView: View {
                     opacity: showGlass,
                     isLoading: uiState.isRefreshing,
                     leadingIcon: {
-                        Button(action: {
+                        GlassButton(icon: "chevron.left") {
                             presenter.dispatch(action: SeasonDetailsBackClicked())
-                        }) {
-                            Image(systemName: "chevron.left")
-                                .foregroundColor(theme.colors.accent)
-                                .imageScale(.large)
-                                .opacity(1 - showGlass)
                         }
+                        .opacity(1 - showGlass)
                     }
                 )
                 ProgressView(value: uiState.watchProgress, total: 1)
@@ -82,6 +80,17 @@ struct SeasonDetailsView: View {
                 $0.toSwift()
             })
         }
+        .onChange(of: uiState.message) { _, newValue in
+            if let message = newValue {
+                toast = Toast(
+                    type: .error,
+                    title: "Error",
+                    message: message.message
+                )
+                presenter.dispatch(action: SeasonDetailsMessageShown(id: message.id))
+            }
+        }
+        .toastView(toast: $toast)
         .onChange(of: uiState.isDialogVisible) { _ in
             let dialogState = uiState.dialogState
             showMarkPreviousAlert = dialogState is SeasonDialogStateMarkPreviousEpisodesConfirmation
@@ -129,6 +138,17 @@ struct SeasonDetailsView: View {
         } message: {
             Text(String(\.dialog_message_mark_previous_seasons))
         }
+        .onChange(of: uiState.message) { _, newValue in
+            if let message = newValue {
+                toast = Toast(
+                    type: .error,
+                    title: "Error",
+                    message: message.message
+                )
+                presenter.dispatch(action: SeasonDetailsMessageShown(id: message.id))
+            }
+        }
+        .toastView(toast: $toast)
     }
 
     @ViewBuilder

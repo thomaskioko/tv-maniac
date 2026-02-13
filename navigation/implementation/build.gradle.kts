@@ -26,6 +26,7 @@ kotlin {
             implementation(projects.domain.watchproviders)
             implementation(projects.navigation.api)
 
+            implementation(projects.presenter.debug)
             implementation(projects.presenter.discover)
             implementation(projects.presenter.home)
             implementation(projects.presenter.moreShows)

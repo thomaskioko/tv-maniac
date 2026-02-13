@@ -48,6 +48,7 @@ develocity {
 
 include(
     ":android-designsystem",
+    ":android-feature:debug",
     ":android-feature:discover",
     ":android-feature:home",
     ":android-feature:library",
@@ -187,6 +188,7 @@ include(
     ":i18n:testing",
     ":navigation:api",
     ":navigation:implementation",
+    ":presenter:debug",
     ":presenter:discover",
     ":presenter:home",
     ":presenter:library",

@@ -339,7 +339,7 @@ struct DiscoverTab: View {
 
     @ViewBuilder
     private func profileIcon(avatarUrl: String?) -> some View {
-        Button(action: {
+        GlassButton(action: {
             presenter.dispatch(action: ProfileIconClicked())
         }) {
             AvatarView(

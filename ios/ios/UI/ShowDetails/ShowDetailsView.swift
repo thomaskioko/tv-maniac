@@ -9,6 +9,7 @@ struct ShowDetailsView: View {
     @StateObject @KotlinStateFlow private var uiState: ShowDetailsContent
     @State private var showGlass: Double = 0
     @State private var showCustomList = false
+    @State private var toast: Toast?
 
     init(presenter: ShowDetailsPresenter) {
         self.presenter = presenter
@@ -61,22 +62,14 @@ struct ShowDetailsView: View {
                 opacity: showGlass,
                 isLoading: uiState.isRefreshing,
                 leadingIcon: {
-                    Button(action: {
+                    GlassButton(icon: "chevron.left") {
                         presenter.dispatch(action: DetailBackClicked())
-                    }) {
-                        Image(systemName: "chevron.left")
-                            .foregroundColor(theme.colors.accent)
-                            .imageScale(.large)
-                            .opacity(1 - showGlass)
                     }
+                    .opacity(1 - showGlass)
                 },
                 trailingIcon: {
-                    Button(action: {
+                    GlassButton(icon: "arrow.clockwise") {
                         presenter.dispatch(action: ReloadShowDetails())
-                    }) {
-                        Image(systemName: "arrow.clockwise")
-                            .foregroundColor(theme.colors.accent)
-                            .imageScale(.large)
                     }
                 }
             )
@@ -85,6 +78,17 @@ struct ShowDetailsView: View {
         )
         .coordinateSpace(name: CoordinateSpaces.scrollView)
         .edgesIgnoringSafeArea(.top)
+        .onChange(of: uiState.message) { _, newValue in
+            if let message = newValue {
+                toast = Toast(
+                    type: .error,
+                    title: "Error",
+                    message: message.message
+                )
+                presenter.dispatch(action: ShowDetailsMessageShown(id: message.id))
+            }
+        }
+        .toastView(toast: $toast)
         .sheet(isPresented: $showCustomList) {
             WatchlistSelector(
                 showView: $showCustomList,
@@ -92,6 +96,17 @@ struct ShowDetailsView: View {
                 posterUrl: uiState.showDetails.posterImageUrl
             )
         }
+        .onChange(of: uiState.message) { _, newValue in
+            if let message = newValue {
+                toast = Toast(
+                    type: .error,
+                    title: "Error",
+                    message: message.message
+                )
+                presenter.dispatch(action: ShowDetailsMessageShown(id: message.id))
+            }
+        }
+        .toastView(toast: $toast)
     }
 
     @ViewBuilder
@@ -162,12 +177,19 @@ struct ShowDetailsView: View {
                 presenter.dispatch(action: DetailShowClicked(id: id))
             },
             onMarkEpisodeWatched: { episode in
-                presenter.dispatch(action: MarkEpisodeWatched(
-                    showTraktId: episode.showTraktId,
-                    episodeId: episode.episodeId,
-                    seasonNumber: episode.seasonNumber,
-                    episodeNumber: episode.episodeNumber
-                ))
+                if episode.isWatched {
+                    presenter.dispatch(action: MarkEpisodeUnwatched(
+                        showTraktId: episode.showTraktId,
+                        episodeId: episode.episodeId
+                    ))
+                } else {
+                    presenter.dispatch(action: MarkEpisodeWatched(
+                        showTraktId: episode.showTraktId,
+                        episodeId: episode.episodeId,
+                        seasonNumber: episode.seasonNumber,
+                        episodeNumber: episode.episodeNumber
+                    ))
+                }
             }
         )
     }

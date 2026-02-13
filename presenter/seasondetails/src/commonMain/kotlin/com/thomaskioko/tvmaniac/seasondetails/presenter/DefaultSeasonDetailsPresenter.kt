@@ -76,9 +76,10 @@ public class DefaultSeasonDetailsPresenter(
         observableSeasonDetailsInteractor.flow,
         observeSeasonWatchProgressInteractor.flow,
         observeUnwatchedInPreviousSeasonsInteractor.flow,
+        uiMessageManager.message,
         _state,
     ) { seasonDetailsUpdating, checkingPreviousSeasons, episodeUpdating,
-        detailsResult, watchProgress, unwatchedInPreviousSeasons, currentState,
+        detailsResult, watchProgress, unwatchedInPreviousSeasons, message, currentState,
         ->
         currentState.copy(
             isSeasonDetailsUpdating = seasonDetailsUpdating,
@@ -98,6 +99,7 @@ public class DefaultSeasonDetailsPresenter(
             isSeasonWatched = watchProgress.isSeasonWatched,
             watchedEpisodeCount = watchProgress.watchedCount,
             hasUnwatchedInPreviousSeasons = unwatchedInPreviousSeasons,
+            message = message,
         )
     }.stateIn(
         scope = coroutineScope,
@@ -144,6 +146,7 @@ public class DefaultSeasonDetailsPresenter(
                 is ToggleEpisodeWatched -> handleToggleEpisodeWatched(action.episodeId)
                 ToggleSeasonWatched -> handleToggleSeasonWatched()
                 DismissDialog -> updateState { copy(dialogState = SeasonDialogState.Hidden) }
+                is SeasonDetailsMessageShown -> uiMessageManager.clearMessage(action.id)
                 ConfirmDialogAction -> handleConfirmDialogAction()
                 SecondaryDialogAction -> handleSecondaryDialogAction()
             }

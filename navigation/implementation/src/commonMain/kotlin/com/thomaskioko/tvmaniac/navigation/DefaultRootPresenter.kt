@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.view.InvokeError
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.debug.presenter.DebugPresenter
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
 import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsPresenter
@@ -47,6 +48,7 @@ public class DefaultRootPresenter(
     private val homePresenterFactory: HomePresenter.Factory,
     private val profilePresenterFactory: ProfilePresenter.Factory,
     private val settingsPresenterFactory: SettingsPresenter.Factory,
+    private val debugPresenterFactory: DebugPresenter.Factory,
     private val moreShowsPresenterFactory: MoreShowsPresenter.Factory,
     private val showDetailsPresenterFactory: ShowDetailsPresenter.Factory,
     private val seasonDetailsPresenterFactory: SeasonDetailsPresenter.Factory,
@@ -148,6 +150,15 @@ public class DefaultRootPresenter(
                     presenter = settingsPresenterFactory(
                         componentContext = componentContext,
                         backClicked = navigator::pop,
+                        onNavigateToDebugMenu = { navigator.pushNew(RootDestinationConfig.Debug) },
+                    ),
+                )
+
+            is RootDestinationConfig.Debug ->
+                Child.Debug(
+                    presenter = debugPresenterFactory(
+                        componentContext = componentContext,
+                        backClicked = navigator::pop,
                     ),
                 )
 
@@ -228,6 +239,7 @@ public class DefaultRootPresenter(
         private val homePresenterFactory: HomePresenter.Factory,
         private val profilePresenterFactory: ProfilePresenter.Factory,
         private val settingsPresenterFactory: SettingsPresenter.Factory,
+        private val debugPresenterFactory: DebugPresenter.Factory,
         private val moreShowsPresenterFactory: MoreShowsPresenter.Factory,
         private val showDetailsPresenterFactory: ShowDetailsPresenter.Factory,
         private val seasonDetailsPresenterFactory: SeasonDetailsPresenter.Factory,
@@ -246,6 +258,7 @@ public class DefaultRootPresenter(
             homePresenterFactory = homePresenterFactory,
             profilePresenterFactory = profilePresenterFactory,
             settingsPresenterFactory = settingsPresenterFactory,
+            debugPresenterFactory = debugPresenterFactory,
             moreShowsPresenterFactory = moreShowsPresenterFactory,
             showDetailsPresenterFactory = showDetailsPresenterFactory,
             seasonDetailsPresenterFactory = seasonDetailsPresenterFactory,

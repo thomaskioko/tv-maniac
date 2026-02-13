@@ -144,6 +144,7 @@ LEFT JOIN watched_episodes ON
     watched_episodes.show_trakt_id = episode.show_trakt_id
     AND watched_episodes.season_number = season.season_number
     AND watched_episodes.episode_number = episode.episode_number
+    AND watched_episodes.pending_action != 'DELETE'
 WHERE season.season_number > 0
   AND episode.first_aired IS NOT NULL
   AND episode.first_aired > :fromEpoch
@@ -169,6 +170,7 @@ FROM episode
 LEFT OUTER JOIN watched_episodes
     ON watched_episodes.episode_id = episode.id
     AND watched_episodes.show_trakt_id = episode.show_trakt_id
+    AND watched_episodes.pending_action != 'DELETE'
 WHERE episode.season_id = :seasonId
 ORDER BY episode.episode_number ASC;
 

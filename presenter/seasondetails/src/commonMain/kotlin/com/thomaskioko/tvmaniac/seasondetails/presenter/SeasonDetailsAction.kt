@@ -22,6 +22,8 @@ public data object SecondaryDialogAction : SeasonDetailsAction
 
 public data object ReloadSeasonDetails : SeasonDetailsAction
 
+public data class SeasonDetailsMessageShown(val id: Long) : SeasonDetailsAction
+
 public data class MarkEpisodeWatched(
     val episodeId: Long,
     val seasonNumber: Long,

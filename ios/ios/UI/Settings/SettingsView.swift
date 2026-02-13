@@ -14,7 +14,6 @@ struct SettingsView: View {
     @State private var showPolicy = false
     @State private var showAboutSheet = false
     @Environment(\.openURL) var openURL
-    @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject private var appDelegate: AppDelegate
 
     init(presenter: SettingsPresenter) {
@@ -23,6 +22,56 @@ struct SettingsView: View {
     }
 
     var body: some View {
+        settingsContent
+            .scrollContentBackground(.hidden)
+            .background(theme.colors.background)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(true)
+            .navigationBarColor(backgroundColor: .clear)
+            .swipeBackGesture {
+                presenter.dispatch(action: BackClicked_())
+            }
+            .overlay(
+                GlassToolbar(
+                    title: String(\.label_settings_title),
+                    opacity: 1.0,
+                    leadingIcon: {
+                        GlassButton(icon: "chevron.left") {
+                            presenter.dispatch(action: BackClicked_())
+                        }
+                    }
+                ),
+                alignment: .top
+            )
+            .edgesIgnoringSafeArea(.top)
+            .settingsObservers(
+                uiState: uiState,
+                store: store,
+                showingErrorAlert: $showingErrorAlert
+            )
+            .settingsAlerts(
+                uiState: uiState,
+                showingErrorAlert: $showingErrorAlert,
+                showingLogoutAlert: $showingLogoutAlert,
+                onLogout: { presenter.dispatch(action: TraktLogoutClicked()) }
+            )
+            .sheet(isPresented: $showAboutSheet) {
+                AboutSheet()
+            }
+            .sheet(isPresented: $showPolicy) {
+                if let url = URL(string: "https://github.com/c0de-wizard/tv-maniac") {
+                    SFSafariViewWrapper(url: url)
+                        .appTint()
+                        .appTheme()
+                }
+            }
+            .onAppear {
+                store.imageQuality = uiState.imageQuality.toSwift()
+            }
+    }
+
+    @ViewBuilder
+    private var settingsContent: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 sectionHeader(String(\.label_settings_section_appearance))
@@ -63,70 +112,19 @@ struct SettingsView: View {
                         .padding(.top, theme.spacing.medium)
                 }
 
+                #if DEBUG
+                    sectionHeader(String(\.label_debug_section_developer))
+                        .padding(.top, theme.spacing.xLarge)
+
+                    debugMenuRow
+                        .padding(.top, theme.spacing.medium)
+                #endif
+
                 Spacer()
                     .frame(height: theme.spacing.xLarge)
             }
             .padding(.horizontal, theme.spacing.medium)
-        }
-        .scrollContentBackground(.hidden)
-        .background(theme.colors.background)
-        .navigationTitle(Text(String(\.label_settings_title)))
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
-        .swipeBackGesture {
-            presenter.dispatch(action: BackClicked())
-        }
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    presenter.dispatch(action: BackClicked())
-                } label: {
-                    Image(systemName: "chevron.left")
-                        .textStyle(theme.typography.titleMedium)
-                        .foregroundColor(theme.colors.accent)
-                }
-            }
-        }
-        .toolbarBackground(theme.colors.surface, for: .navigationBar)
-        .toolbarBackground(.visible, for: .navigationBar)
-        .onChange(of: uiState.theme) { newTheme in
-            store.appTheme = newTheme.toDeviceAppTheme()
-        }
-        .onChange(of: uiState.imageQuality) { imageQuality in
-            store.imageQuality = imageQuality.toSwift()
-        }
-        .onChange(of: uiState.errorMessage) { errorMessage in
-            showingErrorAlert = errorMessage != nil
-        }
-        .alert(isPresented: $showingErrorAlert) {
-            Alert(
-                title: Text("Error"),
-                message: Text(uiState.errorMessage ?? "An error occurred"),
-                dismissButton: .default(Text("OK"))
-            )
-        }
-        .alert(isPresented: $showingLogoutAlert) {
-            Alert(
-                title: Text(String(\.trakt_dialog_logout_title)),
-                message: Text(String(\.trakt_dialog_logout_message)),
-                primaryButton: .destructive(Text(String(\.logout))) {
-                    presenter.dispatch(action: TraktLogoutClicked())
-                },
-                secondaryButton: .cancel()
-            )
-        }
-        .sheet(isPresented: $showAboutSheet) {
-            AboutSheet()
-        }
-        .sheet(isPresented: $showPolicy) {
-            if let url = URL(string: "https://github.com/c0de-wizard/tv-maniac") {
-                SFSafariViewWrapper(url: url)
-                    .appTint()
-                    .appTheme()
-            }
-        }
-        .onAppear {
-            store.imageQuality = uiState.imageQuality.toSwift()
+            .padding(.top, DimensionConstants.toolbarInset)
         }
     }
 
@@ -386,6 +384,34 @@ struct SettingsView: View {
     }
 
     @ViewBuilder
+    private var debugMenuRow: some View {
+        Button {
+            presenter.dispatch(action: NavigateToDebugMenu())
+        } label: {
+            HStack(spacing: theme.spacing.medium) {
+                settingsIcon("ladybug", color: theme.colors.secondary)
+
+                VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
+                    Text(String(\.label_debug_menu_title))
+                        .textStyle(theme.typography.titleMedium)
+                        .foregroundColor(theme.colors.onSurface)
+                    Text(String(\.label_debug_menu_subtitle))
+                        .textStyle(theme.typography.bodySmall)
+                        .foregroundColor(theme.colors.onSurfaceVariant)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .foregroundColor(theme.colors.onSurfaceVariant)
+            }
+            .padding(.vertical, theme.spacing.small)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+
+    @ViewBuilder
     private func settingsIcon(_ systemName: String, color: Color) -> some View {
         Image(systemName: systemName)
             .foregroundColor(color)
@@ -500,5 +526,56 @@ struct SettingsView: View {
         case .low:
             String(\.label_settings_image_quality_low_description)
         }
+    }
+}
+
+private extension View {
+    func settingsObservers(
+        uiState: SettingsState,
+        store: SettingsAppStorage,
+        showingErrorAlert: Binding<Bool>
+    ) -> some View {
+        onChange(of: uiState.theme) { newTheme in
+            store.appTheme = newTheme.toDeviceAppTheme()
+        }
+        .onChange(of: uiState.imageQuality) { imageQuality in
+            store.imageQuality = imageQuality.toSwift()
+        }
+        .onChange(of: uiState.errorMessage) { errorMessage in
+            showingErrorAlert.wrappedValue = errorMessage != nil
+        }
+    }
+
+    func settingsAlerts(
+        uiState: SettingsState,
+        showingErrorAlert: Binding<Bool>,
+        showingLogoutAlert: Binding<Bool>,
+        onLogout: @escaping () -> Void
+    ) -> some View {
+        alert(isPresented: showingErrorAlert) {
+            Alert(
+                title: Text("Error"),
+                message: Text(uiState.errorMessage ?? "An error occurred"),
+                dismissButton: .default(Text("OK"))
+            )
+        }
+        .alert(isPresented: showingLogoutAlert) {
+            Alert(
+                title: Text(String(\.trakt_dialog_logout_title)),
+                message: Text(String(\.trakt_dialog_logout_message)),
+                primaryButton: .destructive(Text(String(\.logout))) {
+                    onLogout()
+                },
+                secondaryButton: .cancel()
+            )
+        }
+    }
+}
+
+private enum DimensionConstants {
+    static var toolbarInset: CGFloat {
+        let safeAreaTop = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?
+            .windows.first?.safeAreaInsets.top ?? 0
+        return 44 + safeAreaTop
     }
 }

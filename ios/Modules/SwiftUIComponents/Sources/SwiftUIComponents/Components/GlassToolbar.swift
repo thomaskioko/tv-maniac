@@ -87,7 +87,7 @@ public struct GlassToolbar<LeadingIcon: View, TrailingIcon: View>: View {
                 } else {
                     Rectangle()
                         .fill(Color.clear)
-                        .frame(width: 30)
+                        .frame(width: 44)
                 }
 
                 Text(title)
@@ -102,13 +102,13 @@ public struct GlassToolbar<LeadingIcon: View, TrailingIcon: View>: View {
                     ProgressView()
                         .progressViewStyle(CircularProgressViewStyle(tint: theme.colors.onSurface))
                         .scaleEffect(0.8)
-                        .frame(width: 30)
+                        .frame(width: 44)
                 } else if let trailingIcon {
                     trailingIcon()
                 } else {
                     Rectangle()
                         .fill(Color.clear)
-                        .frame(width: 30)
+                        .frame(width: 44)
                 }
             }
             .padding(.horizontal, theme.spacing.medium)
@@ -164,4 +164,58 @@ public extension View {
     func navigationBarColor(backgroundColor: UIColor) -> some View {
         modifier(NavigationBarModifier(backgroundColor: backgroundColor))
     }
+}
+
+// MARK: - Preview
+
+#Preview("Glass Toolbar with Buttons") {
+    ZStack {
+        LinearGradient(
+            gradient: Gradient(colors: [.white]),
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+        .ignoresSafeArea()
+
+        VStack {
+            GlassToolbar(
+                title: "Detective",
+                opacity: 1.0,
+                isLoading: false,
+                leadingIcon: {
+                    GlassButton(icon: "chevron.left") {
+                        print("Back tapped")
+                    }
+                },
+                trailingIcon: {
+                    GlassButton(icon: "ellipsis") {
+                        print("Menu tapped")
+                    }
+                }
+            )
+
+            Spacer()
+        }
+    }
+    .preferredColorScheme(.dark)
+}
+
+#Preview("Glass Toolbar - Loading State") {
+    ZStack {
+        VStack {
+            GlassToolbar(
+                title: "Loading...",
+                opacity: 1.0,
+                isLoading: true,
+                leadingIcon: {
+                    GlassButton(icon: "chevron.left") {
+                        print("Back tapped")
+                    }
+                }
+            )
+
+            Spacer()
+        }
+    }
+    .preferredColorScheme(.dark)
 }

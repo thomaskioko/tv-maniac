@@ -293,4 +293,11 @@
     <string name="label_upnext_empty">Keine Sendungen in Ihrer Merkliste</string>
     <string name="label_upnext_sort_last_watched">Zuletzt gesehen</string>
     <string name="label_upnext_sort_air_date">Ausstrahlungsdatum</string>
+
+    <string name="label_debug_menu_title">Debug-Menü</string>
+    <string name="label_debug_section_developer">Entwickler</string>
+    <string name="label_debug_menu_subtitle">Entwicklertools und Diagnose</string>
+    <string name="label_debug_section_background_tasks">Hintergrundaufgaben</string>
+    <string name="label_debug_section_notifications">Benachrichtigungen</string>
+    <string name="label_debug_coming_soon">Demnächst verfügbar</string>
 </resources>

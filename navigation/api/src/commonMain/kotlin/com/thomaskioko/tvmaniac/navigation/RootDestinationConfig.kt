@@ -16,6 +16,9 @@ public sealed interface RootDestinationConfig {
     public data object Settings : RootDestinationConfig
 
     @Serializable
+    public data object Debug : RootDestinationConfig
+
+    @Serializable
     public data class ShowDetails(val param: ShowDetailsParam) : RootDestinationConfig
 
     @Serializable
