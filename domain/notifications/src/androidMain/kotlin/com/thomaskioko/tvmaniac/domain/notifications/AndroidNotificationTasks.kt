@@ -36,6 +36,10 @@ public class AndroidNotificationTasks(
     }
 
     override fun scheduleEpisodeNotifications() {
+        scheduler.schedulePeriodic(workerName)
+    }
+
+    override fun scheduleAndRunEpisodeNotifications() {
         scheduler.scheduleAndExecute(workerName)
     }
 
@@ -46,19 +50,19 @@ public class AndroidNotificationTasks(
     override suspend fun execute(): WorkerResult {
         logger.debug(TAG, "Episode notification worker running")
 
+        val lookaheadLimit = NOTIFICATION_CHECK_INTERVAL * LOOKAHEAD_MULTIPLIER
+
+        runCatching {
+            refreshInteractor.value.executeSync(
+                RefreshUpcomingSeasonDetailsInteractor.Params(),
+            )
+        }.onFailure { logger.error(TAG, "Season details refresh failed: ${it.message}") }
+
         runCatching {
             syncTraktCalendarInteractor.value.executeSync(
                 SyncTraktCalendarInteractor.Params(forceRefresh = true),
             )
         }.onFailure { logger.error(TAG, "Calendar sync failed: ${it.message}") }
-
-        val lookaheadLimit = NOTIFICATION_CHECK_INTERVAL * LOOKAHEAD_MULTIPLIER
-
-        runCatching {
-            refreshInteractor.value.executeSync(
-                RefreshUpcomingSeasonDetailsInteractor.Params(limit = lookaheadLimit),
-            )
-        }.onFailure { logger.error(TAG, "Season details refresh failed: ${it.message}") }
 
         return runCatching {
             scheduleInteractor.value.executeSync(

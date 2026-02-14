@@ -32,6 +32,10 @@ public class IosNotificationTasks(
     }
 
     override fun scheduleEpisodeNotifications() {
+        registry.schedule(taskId)
+    }
+
+    override fun scheduleAndRunEpisodeNotifications() {
         registry.scheduleAndExecute(taskId)
     }
 
@@ -39,22 +43,34 @@ public class IosNotificationTasks(
         registry.cancel(taskId)
     }
 
+    override fun rescheduleBackgroundTask() {
+        registry.schedule(taskId)
+    }
+
     override suspend fun execute() {
-        logger.debug(TAG, "Episode notification task running")
+        logger.debug(TAG, "Episode notification task running (lookahead: $lookaheadLimit)")
+
+        runCatching {
+            refreshUpcomingSeasonDetailsInteractor.value.executeSync(refreshParams)
+        }
+            .onSuccess { logger.debug(TAG, "Season details refresh completed") }
+            .onFailure { logger.error(TAG, "Season details refresh failed: ${it.message}") }
 
         runCatching {
             syncTraktCalendarInteractor.value.executeSync(
                 SyncTraktCalendarInteractor.Params(forceRefresh = true),
             )
-        }.onFailure { logger.error(TAG, "Calendar sync failed: ${it.message}") }
-
-        runCatching {
-            refreshUpcomingSeasonDetailsInteractor.value.executeSync(refreshParams)
-        }.onFailure { logger.error(TAG, "Season details refresh failed: ${it.message}") }
+        }
+            .onSuccess { logger.debug(TAG, "Calendar sync completed") }
+            .onFailure { logger.error(TAG, "Calendar sync failed: ${it.message}") }
 
         runCatching {
             scheduleEpisodeNotificationsInteractor.value.executeSync(scheduleParams)
-        }.onFailure { logger.error(TAG, "Notification scheduling failed: ${it.message}") }
+        }
+            .onSuccess { logger.debug(TAG, "Notification scheduling completed") }
+            .onFailure { logger.error(TAG, "Notification scheduling failed: ${it.message}") }
+
+        logger.debug(TAG, "Episode notification task finished")
     }
 
     private companion object {
@@ -64,9 +80,9 @@ public class IosNotificationTasks(
         private val NOTIFICATION_CHECK_INTERVAL = 6.hours
         private const val LOOKAHEAD_MULTIPLIER = 1.5 // 9-hour lookahead window, 3-hour overlap
         private val lookaheadLimit = NOTIFICATION_CHECK_INTERVAL * LOOKAHEAD_MULTIPLIER
-        private val refreshParams =
-            RefreshUpcomingSeasonDetailsInteractor.Params(limit = lookaheadLimit)
-        private val scheduleParams =
-            ScheduleEpisodeNotificationsInteractor.Params(limit = lookaheadLimit)
+        private val refreshParams = RefreshUpcomingSeasonDetailsInteractor.Params()
+        private val scheduleParams = ScheduleEpisodeNotificationsInteractor.Params(
+            limit = lookaheadLimit,
+        )
     }
 }

@@ -32,7 +32,7 @@ public class ToggleEpisodeNotificationsInteractor(
 
         datastoreRepository.setEpisodeNotificationsEnabled(true)
         if (traktAuthRepository.isLoggedIn()) {
-            notificationTasks.scheduleEpisodeNotifications()
+            notificationTasks.scheduleAndRunEpisodeNotifications()
         }
     }
 }

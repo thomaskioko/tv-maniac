@@ -3,7 +3,7 @@ plugins {
 }
 
 scaffold {
-    addAndroidMultiplatformTarget()
+    addAndroidTarget()
     useKotlinInject()
     optIn("kotlinx.coroutines.FlowPreview")
     optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
@@ -17,6 +17,7 @@ kotlin {
                 implementation(projects.core.tasks.api)
                 implementation(projects.data.datastore.api)
                 implementation(projects.data.episode.api)
+                implementation(projects.data.seasons.api)
                 implementation(projects.core.logger.api)
                 implementation(projects.core.networkUtil.api)
                 implementation(projects.core.notifications.api)

@@ -72,11 +72,14 @@ public class ScheduleEpisodeNotificationsInteractor(
                 )
             }
 
-            oldNotificationIds
-                .filterNot { it in newNotificationIds }
-                .forEach { notificationManager.cancelNotification(it) }
+            val staleIds = oldNotificationIds.filterNot { it in newNotificationIds }
+            staleIds.forEach { notificationManager.cancelNotification(it) }
 
-            logger.debug(TAG, "Completed notification scheduling")
+            val pendingCount = notificationManager.getPendingNotifications().size
+            logger.debug(
+                TAG,
+                "Scheduling complete: ${newNotificationIds.size} scheduled, ${staleIds.size} cancelled, $pendingCount pending",
+            )
         }
     }
 

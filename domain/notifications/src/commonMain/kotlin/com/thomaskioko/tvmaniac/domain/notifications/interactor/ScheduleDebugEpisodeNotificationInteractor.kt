@@ -12,6 +12,7 @@ import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 
 @Inject
@@ -22,15 +23,15 @@ public class ScheduleDebugEpisodeNotificationInteractor(
     private val dateTimeProvider: DateTimeProvider,
     private val logger: Logger,
     private val dispatchers: AppCoroutineDispatchers,
-) : Interactor<Unit>() {
+) : Interactor<ScheduleDebugEpisodeNotificationInteractor.Params>() {
 
-    override suspend fun doWork(params: Unit) {
+    override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {
             val upcomingEpisodes = episodeRepository.getUpcomingEpisodesFromFollowedShows(
                 limit = 365.days,
             )
 
-            val scheduledTime = dateTimeProvider.nowMillis()
+            val scheduledTime = dateTimeProvider.nowMillis() + params.delay.inWholeMilliseconds
 
             val notification = if (upcomingEpisodes.isNotEmpty()) {
                 val episode = upcomingEpisodes.random()
@@ -65,6 +66,10 @@ public class ScheduleDebugEpisodeNotificationInteractor(
             logger.debug(TAG, "Triggered debug notification: ${notification.showName}")
         }
     }
+
+    public data class Params(
+        val delay: Duration = Duration.ZERO,
+    )
 
     private companion object {
         private const val TAG = "ScheduleDebugEpisodeNotification"
