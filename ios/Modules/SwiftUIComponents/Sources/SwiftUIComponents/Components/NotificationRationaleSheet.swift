@@ -54,6 +54,7 @@ public struct NotificationRationaleSheet: View {
 
             Button(action: onEnable) {
                 Text(enableButtonText)
+                    .textStyle(theme.typography.labelLarge)
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
@@ -63,6 +64,7 @@ public struct NotificationRationaleSheet: View {
 
             Button(action: onDismiss) {
                 Text(dismissButtonText)
+                    .textStyle(theme.typography.labelLarge)
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderless)
