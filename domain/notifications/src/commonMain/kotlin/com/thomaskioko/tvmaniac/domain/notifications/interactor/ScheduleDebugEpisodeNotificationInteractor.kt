@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.notifications.api.EpisodeNotification
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationChannel
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager
+import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import kotlinx.coroutines.withContext
@@ -18,6 +19,7 @@ import kotlin.time.Duration.Companion.days
 @Inject
 @SingleIn(AppScope::class)
 public class ScheduleDebugEpisodeNotificationInteractor(
+    private val datastoreRepository: DatastoreRepository,
     private val episodeRepository: EpisodeRepository,
     private val notificationManager: NotificationManager,
     private val dateTimeProvider: DateTimeProvider,
@@ -26,6 +28,10 @@ public class ScheduleDebugEpisodeNotificationInteractor(
 ) : Interactor<ScheduleDebugEpisodeNotificationInteractor.Params>() {
 
     override suspend fun doWork(params: Params) {
+        if (!datastoreRepository.getEpisodeNotificationsEnabled()) {
+            logger.debug(TAG, "Episode notifications disabled, skipping scheduling")
+            return
+        }
         withContext(dispatchers.io) {
             val upcomingEpisodes = episodeRepository.getUpcomingEpisodesFromFollowedShows(
                 limit = 365.days,

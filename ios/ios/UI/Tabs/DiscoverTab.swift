@@ -15,6 +15,7 @@ struct DiscoverTab: View {
     @State private var pullOffset: CGFloat = 0
     @State private var isRefreshing: Bool = false
     @State private var isScrollInteracting: Bool = false
+    @State private var toast: Toast?
     private let title = String(\.label_discover_title)
 
     init(presenter: DiscoverShowsPresenter) {
@@ -89,6 +90,17 @@ struct DiscoverTab: View {
                 }
             }
         }
+        .onChange(of: uiState.message) { _, newValue in
+            if let message = newValue {
+                toast = Toast(
+                    type: .error,
+                    title: "Error",
+                    message: message.message
+                )
+                presenter.dispatch(action: MessageShown(id: message.id))
+            }
+        }
+        .toastView(toast: $toast)
     }
 
     @ViewBuilder

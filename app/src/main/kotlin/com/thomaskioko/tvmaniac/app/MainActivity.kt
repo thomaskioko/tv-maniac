@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.app
 
 import android.animation.ObjectAnimator
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
@@ -19,8 +20,12 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import com.thomaskioko.tvmaniac.RootScreen
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager.Companion.EXTRA_FROM_NOTIFICATION
+import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager.Companion.EXTRA_SHOW_ID
+import com.thomaskioko.tvmaniac.core.notifications.implementation.DebugNotificationManager
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.inject.ActivityComponent
+import com.thomaskioko.tvmaniac.navigation.DeepLinkDestination
 
 public class MainActivity : ComponentActivity() {
     private lateinit var component: ActivityComponent
@@ -28,7 +33,7 @@ public class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        component = ActivityComponent.Companion.create(this)
+        component = ActivityComponent.create(this)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
@@ -62,13 +67,13 @@ public class MainActivity : ComponentActivity() {
 
             DisposableEffect(useDarkTheme) {
                 enableEdgeToEdge(
-                    statusBarStyle = SystemBarStyle.Companion.auto(
+                    statusBarStyle = SystemBarStyle.auto(
                         Color.TRANSPARENT,
                         Color.TRANSPARENT,
                     ) {
                         useDarkTheme
                     },
-                    navigationBarStyle = SystemBarStyle.Companion.auto(
+                    navigationBarStyle = SystemBarStyle.auto(
                         lightScrim,
                         darkScrim,
                     ) {
@@ -79,6 +84,28 @@ public class MainActivity : ComponentActivity() {
             }
 
             TvManiacTheme(appTheme = appTheme) { RootScreen(rootPresenter = component.rootPresenter) }
+        }
+
+        handleNotificationIntent(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleNotificationIntent(intent)
+    }
+
+    private fun handleNotificationIntent(intent: Intent?) {
+        // TODO:: Create Platform Intent handler and move this code.
+        val deepLink = intent?.getStringExtra(DebugNotificationManager.EXTRA_DEEP_LINK)
+        if (deepLink == DebugNotificationManager.DEEP_LINK_DEBUG_MENU) {
+            component.rootPresenter.onDeepLink(DeepLinkDestination.DebugMenu)
+            return
+        }
+
+        if (intent?.getBooleanExtra(EXTRA_FROM_NOTIFICATION, false) != true) return
+        val showId = intent.getLongExtra(EXTRA_SHOW_ID, -1L)
+        if (showId != -1L) {
+            component.rootPresenter.onDeepLink(DeepLinkDestination.ShowDetails(showId = showId))
         }
     }
 }

@@ -23,9 +23,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -33,7 +30,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -43,7 +39,9 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.SelectableFilterChip
+import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
@@ -69,12 +67,10 @@ public fun UpNextScreen(
     modifier: Modifier = Modifier,
 ) {
     val state by presenter.state.collectAsState()
-    val snackbarHostState = remember { SnackbarHostState() }
 
     UpNextScreen(
         modifier = modifier,
         state = state,
-        snackbarHostState = snackbarHostState,
         onAction = presenter::dispatch,
     )
 }
@@ -84,7 +80,6 @@ public fun UpNextScreen(
 internal fun UpNextScreen(
     state: UpNextState,
     modifier: Modifier = Modifier,
-    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     onAction: (UpNextAction) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -95,99 +90,96 @@ internal fun UpNextScreen(
         listState.animateScrollToItem(0)
     }
 
-    LaunchedEffect(state.message) {
-        state.message?.let { message ->
-            snackbarHostState.showSnackbar(
-                message = message.message,
-                duration = SnackbarDuration.Short,
-            )
-            onAction(UpNextMessageShown(message.id))
-        }
-    }
-
-    Scaffold(
-        modifier = modifier.statusBarsPadding(),
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        topBar = {
-            TvManiacTopBar(
-                title = { TopBarContent(state = state) },
-                scrollBehavior = scrollBehavior,
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    scrolledContainerColor = MaterialTheme.colorScheme.background,
-                ),
-            )
-        },
-        content = { contentPadding ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(contentPadding.copy(copyBottom = false)),
-            ) {
-                SortChipsRow(
-                    currentSortOption = state.sortOption,
-                    onSortOptionSelected = { onAction(UpNextChangeSortOption(it)) },
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            modifier = modifier.statusBarsPadding(),
+            topBar = {
+                TvManiacTopBar(
+                    title = { TopBarContent(state = state) },
+                    scrollBehavior = scrollBehavior,
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.background,
+                        scrolledContainerColor = MaterialTheme.colorScheme.background,
+                    ),
                 )
-
-                PullToRefreshBox(
-                    isRefreshing = state.isRefreshing,
-                    onRefresh = { onAction(RefreshUpNext) },
-                    modifier = Modifier.weight(1f),
+            },
+            content = { contentPadding ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(contentPadding.copy(copyBottom = false)),
                 ) {
-                    when {
-                        state.showLoading -> Box(modifier = Modifier.fillMaxSize())
-                        state.isEmpty -> {
-                            LazyColumn(
-                                modifier = Modifier.fillMaxSize(),
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                            ) {
-                                item {
-                                    EmptyContent(
-                                        imageVector = Icons.Outlined.Inbox,
-                                        message = label_upnext_empty.resolve(context),
-                                    )
+                    SortChipsRow(
+                        currentSortOption = state.sortOption,
+                        onSortOptionSelected = { onAction(UpNextChangeSortOption(it)) },
+                    )
+
+                    PullToRefreshBox(
+                        isRefreshing = state.isRefreshing,
+                        onRefresh = { onAction(RefreshUpNext) },
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        when {
+                            state.showLoading -> Box(modifier = Modifier.fillMaxSize())
+                            state.isEmpty -> {
+                                LazyColumn(
+                                    modifier = Modifier.fillMaxSize(),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                ) {
+                                    item {
+                                        EmptyContent(
+                                            imageVector = Icons.Outlined.Inbox,
+                                            message = label_upnext_empty.resolve(context),
+                                        )
+                                    }
                                 }
                             }
-                        }
-                        else -> {
-                            LazyColumn(
-                                state = listState,
-                                verticalArrangement = Arrangement.spacedBy(8.dp),
-                                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-                                modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-                            ) {
-                                items(
-                                    items = state.episodes,
-                                    key = { it.showTraktId },
-                                ) { episode ->
-                                    UpNextListItem(
-                                        modifier = Modifier.animateItem(),
-                                        item = episode,
-                                        onItemClicked = { onAction(UpNextShowClicked(it)) },
-                                        onMarkWatched = {
-                                            onAction(
-                                                MarkWatched(
-                                                    showTraktId = episode.showTraktId,
-                                                    episodeId = episode.episodeId!!,
-                                                    seasonNumber = episode.seasonNumber!!,
-                                                    episodeNumber = episode.episodeNumber!!,
-                                                ),
-                                            )
-                                        },
-                                    )
-                                }
+                            else -> {
+                                LazyColumn(
+                                    state = listState,
+                                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+                                    modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+                                ) {
+                                    items(
+                                        items = state.episodes,
+                                        key = { it.showTraktId },
+                                    ) { episode ->
+                                        UpNextListItem(
+                                            modifier = Modifier.animateItem(),
+                                            item = episode,
+                                            onItemClicked = { onAction(UpNextShowClicked(it)) },
+                                            onMarkWatched = {
+                                                onAction(
+                                                    MarkWatched(
+                                                        showTraktId = episode.showTraktId,
+                                                        episodeId = episode.episodeId!!,
+                                                        seasonNumber = episode.seasonNumber!!,
+                                                        episodeNumber = episode.episodeNumber!!,
+                                                    ),
+                                                )
+                                            },
+                                        )
+                                    }
 
-                                item {
-                                    Spacer(modifier = Modifier.navigationBarsPadding())
+                                    item {
+                                        Spacer(modifier = Modifier.navigationBarsPadding())
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
-        },
-    )
+            },
+        )
+
+        TvManiacSnackBarHost(
+            message = state.message?.message,
+            style = SnackBarStyle.Error,
+            onDismiss = { state.message?.let { onAction(UpNextMessageShown(it.id)) } },
+        )
+    }
 }
 
 @Composable
@@ -257,7 +249,6 @@ private fun UpNextScreenPreview(
     TvManiacTheme {
         UpNextScreen(
             state = state,
-            snackbarHostState = SnackbarHostState(),
             onAction = {},
         )
     }

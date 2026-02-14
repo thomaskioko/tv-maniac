@@ -2,21 +2,21 @@ package com.thomaskioko.tvmaniac.debug.presenter
 
 import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
+import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
-import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.domain.library.SyncLibraryInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleDebugEpisodeNotificationInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.RefreshUpNextInteractor
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -39,6 +39,7 @@ public class DefaultDebugPresenter(
     private val refreshUpNextInteractor: RefreshUpNextInteractor,
     private val dateTimeProvider: DateTimeProvider,
     private val logger: Logger,
+    traktAuthRepository: TraktAuthRepository,
 ) : DebugPresenter, ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
@@ -46,7 +47,6 @@ public class DefaultDebugPresenter(
     private val librarySyncState = ObservableLoadingCounter()
     private val upNextSyncState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
-    private val snackbarMessage = MutableStateFlow<UiMessage?>(null)
 
     private val lastLibrarySyncDate = datastoreRepository.observeLastSyncTimestamp()
         .map { it?.let(dateTimeProvider::epochToDisplayDateTime) }
@@ -61,15 +61,19 @@ public class DefaultDebugPresenter(
         lastLibrarySyncDate,
         lastUpNextSyncDate,
         uiMessageManager.message,
-        snackbarMessage,
-    ) { values ->
+        traktAuthRepository.state,
+    ) {
+            isSchedulingDebugNotification, isSyncingLibrary, isSyncingUpNext, lastLibrarySyncDate, lastUpNextSyncDate,
+            message, isLoggedIn,
+        ->
         DebugState(
-            isSchedulingDebugNotification = values[0] as Boolean,
-            isSyncingLibrary = values[1] as Boolean,
-            isSyncingUpNext = values[2] as Boolean,
-            lastLibrarySyncDate = values[3] as String?,
-            lastUpNextSyncDate = values[4] as String?,
-            message = values[6] as UiMessage?,
+            isSchedulingDebugNotification = isSchedulingDebugNotification,
+            isSyncingLibrary = isSyncingLibrary,
+            isSyncingUpNext = isSyncingUpNext,
+            lastLibrarySyncDate = lastLibrarySyncDate,
+            lastUpNextSyncDate = lastUpNextSyncDate,
+            message = message,
+            isLoggedIn = isLoggedIn == TraktAuthState.LOGGED_IN,
         )
     }.stateIn(
         scope = coroutineScope,
@@ -81,15 +85,10 @@ public class DefaultDebugPresenter(
         when (action) {
             BackClicked -> backClicked()
             TriggerDebugNotification -> scheduleDebugNotification()
-            TriggerDelayedDebugNotification -> {
-                snackbarMessage.value = UiMessage(message = NOTIFICATION_SCHEDULED_MESSAGE)
-                scheduleDebugNotification(5.minutes)
-            }
+            TriggerDelayedDebugNotification -> scheduleDebugNotification(5.minutes)
             TriggerLibrarySync -> triggerLibrarySync()
             TriggerUpNextSync -> triggerUpNextSync()
-            is DismissSnackbar -> {
-                snackbarMessage.value = null
-            }
+            is DismissSnackbar -> coroutineScope.launch { uiMessageManager.clearMessage(action.messageId) }
         }
     }
 
@@ -118,10 +117,6 @@ public class DefaultDebugPresenter(
             refreshUpNextInteractor(true)
                 .collectStatus(upNextSyncState, logger, uiMessageManager)
         }
-    }
-
-    private companion object {
-        const val NOTIFICATION_SCHEDULED_MESSAGE = "Notification scheduled in 5 minutes"
     }
 }
 

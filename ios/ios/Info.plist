@@ -6,6 +6,7 @@
 	<array>
 		<string>com.thomaskioko.tvmaniac.tokenrefresh</string>
 		<string>com.thomaskioko.tvmaniac.librarysync</string>
+		<string>com.thomaskioko.tvmaniac.episodenotifications</string>
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>

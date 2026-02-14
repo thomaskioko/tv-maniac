@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftUIComponents
 import TvManiac
 import TvManiacKit
+import UserNotifications
 
 struct SettingsView: View {
     @Theme private var theme
@@ -13,6 +14,7 @@ struct SettingsView: View {
     @State private var showingErrorAlert: Bool = false
     @State private var showPolicy = false
     @State private var showAboutSheet = false
+    @State private var showNotificationPermissionDeniedAlert = false
     @Environment(\.openURL) var openURL
     @EnvironmentObject private var appDelegate: AppDelegate
 
@@ -59,7 +61,7 @@ struct SettingsView: View {
                 AboutSheet()
             }
             .sheet(isPresented: $showPolicy) {
-                if let url = URL(string: "https://github.com/c0de-wizard/tv-maniac") {
+                if let url = URL(string: uiState.privacyPolicyUrl) {
                     SFSafariViewWrapper(url: url)
                         .appTint()
                         .appTheme()
@@ -86,13 +88,16 @@ struct SettingsView: View {
                 sectionHeader(String(\.label_settings_section_behavior))
                     .padding(.top, theme.spacing.xLarge)
 
-                youtubeToggleRow
+                notificationsToggleRow
+                    .padding(.top, theme.spacing.medium)
+
+                syncToggleRow
                     .padding(.top, theme.spacing.medium)
 
                 includeSpecialsToggleRow
                     .padding(.top, theme.spacing.medium)
 
-                syncToggleRow
+                youtubeToggleRow
                     .padding(.top, theme.spacing.medium)
 
                 sectionHeader(String(\.settings_title_info))
@@ -270,36 +275,90 @@ struct SettingsView: View {
 
     @ViewBuilder
     private var syncToggleRow: some View {
-        VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
-            HStack(spacing: theme.spacing.medium) {
-                settingsIcon("arrow.triangle.2.circlepath", color: theme.colors.secondary)
+        HStack(spacing: theme.spacing.medium) {
+            settingsIcon("arrow.triangle.2.circlepath", color: theme.colors.secondary)
 
-                VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
-                    Text(String(\.label_settings_sync_update))
-                        .textStyle(theme.typography.titleMedium)
-                        .foregroundColor(theme.colors.onSurface)
-                    Text(String(\.label_settings_sync_update_description))
+            VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
+                Text(String(\.label_settings_sync_update))
+                    .textStyle(theme.typography.titleMedium)
+                    .foregroundColor(theme.colors.onSurface)
+                Text(String(\.label_settings_sync_update_description))
+                    .textStyle(theme.typography.bodySmall)
+                    .foregroundColor(theme.colors.onSurfaceVariant)
+                if uiState.showLastSyncDate, let lastSyncDate = uiState.lastSyncDate {
+                    Text(String(\.label_settings_last_sync_date, parameter: lastSyncDate))
                         .textStyle(theme.typography.bodySmall)
                         .foregroundColor(theme.colors.onSurfaceVariant)
                 }
-
-                Spacer()
-
-                Toggle("", isOn: Binding(
-                    get: { uiState.backgroundSyncEnabled },
-                    set: { newValue in
-                        presenter.dispatch(action: BackgroundSyncToggled(enabled: newValue))
-                    }
-                ))
-                .labelsHidden()
-                .tint(theme.colors.secondary)
             }
 
-            if uiState.showLastSyncDate, let lastSyncDate = uiState.lastSyncDate {
-                Text(String(\.label_settings_last_sync_date, parameter: lastSyncDate))
+            Spacer()
+
+            Toggle("", isOn: Binding(
+                get: { uiState.backgroundSyncEnabled },
+                set: { newValue in
+                    presenter.dispatch(action: BackgroundSyncToggled(enabled: newValue))
+                }
+            ))
+            .labelsHidden()
+            .tint(theme.colors.secondary)
+        }
+    }
+
+    @ViewBuilder
+    private var notificationsToggleRow: some View {
+        HStack(spacing: theme.spacing.medium) {
+            settingsIcon("bell.fill", color: theme.colors.secondary)
+
+            VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
+                Text(String(\.label_settings_episode_notifications))
+                    .textStyle(theme.typography.titleMedium)
+                    .foregroundColor(theme.colors.onSurface)
+                Text(String(\.label_settings_episode_notifications_description))
                     .textStyle(theme.typography.bodySmall)
                     .foregroundColor(theme.colors.onSurfaceVariant)
-                    .padding(.leading, 40)
+            }
+
+            Spacer()
+
+            Toggle("", isOn: Binding(
+                get: { uiState.episodeNotificationsEnabled },
+                set: { newValue in
+                    handleNotificationToggle(enabled: newValue)
+                }
+            ))
+            .labelsHidden()
+            .tint(theme.colors.secondary)
+        }
+        .alert(
+            String(\.notification_permission_denied_title),
+            isPresented: $showNotificationPermissionDeniedAlert
+        ) {
+            Button(String(\.notification_permission_denied_cancel), role: .cancel) {}
+            Button(String(\.notification_permission_denied_settings)) {
+                if let settingsUrl = URL(string: UIApplication.openSettingsURLString) {
+                    openURL(settingsUrl)
+                }
+            }
+        } message: {
+            Text(String(\.notification_permission_denied_message))
+        }
+    }
+
+    private func handleNotificationToggle(enabled: Bool) {
+        guard enabled else {
+            presenter.dispatch(action: EpisodeNotificationsToggled(enabled: false))
+            return
+        }
+
+        Task {
+            let settings = await UNUserNotificationCenter.current().notificationSettings()
+            await MainActor.run {
+                if settings.authorizationStatus == .denied {
+                    showNotificationPermissionDeniedAlert = true
+                } else {
+                    presenter.dispatch(action: EpisodeNotificationsToggled(enabled: true))
+                }
             }
         }
     }
@@ -460,7 +519,7 @@ struct SettingsView: View {
                         .overlay(theme.colors.outline)
 
                     Button {
-                        if let url = URL(string: "https://github.com/c0de-wizard/tv-maniac") {
+                        if let url = URL(string: uiState.githubUrl) {
                             openURL(url)
                         }
                     } label: {

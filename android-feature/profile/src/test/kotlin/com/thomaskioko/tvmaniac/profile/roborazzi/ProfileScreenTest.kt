@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.profile.roborazzi
 
 import androidx.activity.ComponentActivity
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.profile.ui.ProfileScreen
@@ -31,7 +30,6 @@ internal class ProfileScreenTest {
             TvManiacBackground {
                 ProfileScreen(
                     state = unauthenticatedState,
-                    snackbarHostState = SnackbarHostState(),
                     onAction = {},
                 )
             }
@@ -44,7 +42,6 @@ internal class ProfileScreenTest {
             TvManiacBackground {
                 ProfileScreen(
                     state = authenticatedState,
-                    snackbarHostState = SnackbarHostState(),
                     onAction = {},
                 )
             }

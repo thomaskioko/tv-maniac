@@ -21,58 +21,54 @@ public struct ToastView: View {
     }
 
     public var body: some View {
-        VStack(alignment: .leading) {
-            HStack(alignment: .top) {
-                Image(systemName: type.iconFileName)
-                    .foregroundColor(type.themeColor)
+        HStack(alignment: .center, spacing: theme.spacing.small) {
+            Image(systemName: type.iconFileName)
+                .foregroundColor(.white)
+                .font(.title3)
 
-                VStack(alignment: .leading) {
-                    Text(title)
-                        .textStyle(theme.typography.bodyMedium)
-                        .foregroundColor(theme.colors.onSurface)
-
-                    Text(message)
-                        .textStyle(theme.typography.bodySmall)
-                        .foregroundColor(theme.colors.onSurface)
-                }
-
-                Spacer(minLength: theme.spacing.small - 2)
-
-                Button(action: onCancelTapped) {
-                    Image(systemName: "xmark")
-                        .foregroundColor(theme.colors.onSurface)
-                }
-            }
-            .padding(theme.spacing.medium)
+            Text(message)
+                .textStyle(theme.typography.bodyMedium)
+                .foregroundColor(.white)
+                .lineLimit(3)
         }
-        .background(theme.colors.surface)
-        .overlay(
-            Rectangle()
-                .fill(type.themeColor)
-                .frame(width: 6)
-                .clipped(),
-            alignment: .leading
-        )
-        .frame(minWidth: 0, maxWidth: .infinity)
-        .cornerRadius(theme.shapes.medium)
-        .shadow(color: Color.black.opacity(0.25), radius: 4, x: 0, y: 1)
+        .padding(theme.spacing.medium)
+        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+        .background(type.themeColor)
+        .cornerRadius(theme.shapes.large)
         .padding(.horizontal, theme.spacing.medium)
+        .onTapGesture {
+            onCancelTapped()
+        }
     }
 }
 
 #Preview {
-    VStack {
+    VStack(spacing: 16) {
         ToastView(
             type: .error,
             title: "Error",
-            message: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+            message: "Something went wrong while syncing your data. Check your internet connection. If the problem persists, contact us.",
             onCancelTapped: {}
         )
 
         ToastView(
             type: .info,
             title: "Info",
-            message: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+            message: "Your data has been synced successfully.",
+            onCancelTapped: {}
+        )
+
+        ToastView(
+            type: .warning,
+            title: "Warning",
+            message: "Your session is about to expire.",
+            onCancelTapped: {}
+        )
+
+        ToastView(
+            type: .success,
+            title: "Success",
+            message: "Changes saved successfully.",
             onCancelTapped: {}
         )
     }

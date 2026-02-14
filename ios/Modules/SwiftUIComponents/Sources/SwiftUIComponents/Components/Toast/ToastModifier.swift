@@ -3,6 +3,8 @@ import SwiftUI
 public struct ToastModifier: ViewModifier {
     @Binding var toast: Toast?
     @State private var workItem: DispatchWorkItem?
+    @State private var dragOffsetX: CGFloat = 0
+    @State private var dragOffsetY: CGFloat = 0
 
     public func body(content: Content) -> some View {
         content
@@ -10,7 +12,6 @@ public struct ToastModifier: ViewModifier {
             .overlay(
                 ZStack {
                     mainToastView()
-                        .offset(y: -30)
                 }
                 .animation(.spring(), value: toast)
             )
@@ -22,8 +23,6 @@ public struct ToastModifier: ViewModifier {
     @ViewBuilder func mainToastView() -> some View {
         if let toast {
             VStack {
-                Spacer()
-
                 ToastView(
                     type: toast.type,
                     title: toast.title,
@@ -32,8 +31,37 @@ public struct ToastModifier: ViewModifier {
                         dismissToast()
                     }
                 )
+                .offset(x: dragOffsetX, y: dragOffsetY)
+                .opacity(1.0 - max(abs(dragOffsetX) / 300.0, abs(dragOffsetY) / 240.0))
+                .gesture(
+                    DragGesture()
+                        .onChanged { value in
+                            dragOffsetX = value.translation.width
+                            if value.translation.height < 0 {
+                                dragOffsetY = value.translation.height
+                            }
+                        }
+                        .onEnded { value in
+                            let predicted = value.predictedEndTranslation
+                            let isFlingUp = predicted.height < -300
+                            let isFlingHorizontal = abs(predicted.width) > 300
+
+                            if value.translation.height < -50 || isFlingUp {
+                                dismissToast()
+                            } else if abs(value.translation.width) > 50 || isFlingHorizontal {
+                                dismissToast()
+                            } else {
+                                withAnimation(.spring()) {
+                                    dragOffsetX = 0
+                                    dragOffsetY = 0
+                                }
+                            }
+                        }
+                )
+
+                Spacer()
             }
-            .transition(.move(edge: .bottom))
+            .transition(.move(edge: .top).combined(with: .opacity))
         }
     }
 
@@ -42,6 +70,8 @@ public struct ToastModifier: ViewModifier {
             return
         }
 
+        dragOffsetX = 0
+        dragOffsetY = 0
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
 
         if toast.duration > 0 {

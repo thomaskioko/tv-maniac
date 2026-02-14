@@ -741,6 +741,7 @@ class ShowDetailsPresenterTest {
                 dispatchers = coroutineDispatcher,
             ),
             scheduleEpisodeNotificationsInteractor = ScheduleEpisodeNotificationsInteractor(
+                datastoreRepository = fakeDatastoreRepository,
                 episodeRepository = episodeRepository,
                 notificationManager = fakeNotificationManager,
                 dateTimeProvider = fakeDateTimeProvider,

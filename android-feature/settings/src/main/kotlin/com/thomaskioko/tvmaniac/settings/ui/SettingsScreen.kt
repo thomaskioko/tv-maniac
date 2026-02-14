@@ -25,12 +25,14 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.icons.filled.Tv
 import androidx.compose.material.icons.filled.VideoLibrary
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -70,6 +72,8 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_back
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_menu_subtitle
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_menu_title
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_section_developer
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_episode_notifications
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_episode_notifications_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_auto
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_auto_description
@@ -107,6 +111,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.BackClicked
 import com.thomaskioko.tvmaniac.settings.presenter.BackgroundSyncToggled
 import com.thomaskioko.tvmaniac.settings.presenter.DismissAboutDialog
 import com.thomaskioko.tvmaniac.settings.presenter.DismissTraktDialog
+import com.thomaskioko.tvmaniac.settings.presenter.EpisodeNotificationsToggled
 import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
 import com.thomaskioko.tvmaniac.settings.presenter.IncludeSpecialsToggled
 import com.thomaskioko.tvmaniac.settings.presenter.NavigateToDebugMenu
@@ -119,9 +124,6 @@ import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
 import com.thomaskioko.tvmaniac.settings.presenter.TraktLogoutClicked
 import com.thomaskioko.tvmaniac.settings.presenter.YoutubeToggled
-
-private const val GITHUB_URL = "https://github.com/c0de-wizard/tv-maniac"
-private const val PRIVACY_POLICY_URL = "https://github.com/c0de-wizard/tv-maniac"
 
 @Composable
 public fun SettingsScreen(
@@ -197,6 +199,9 @@ internal fun SettingsScreen(
             SettingsContent(
                 state = state,
                 onAction = onAction,
+                onNotificationToggle = { enabled ->
+                    onAction(EpisodeNotificationsToggled(enabled))
+                },
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding),
@@ -214,7 +219,7 @@ internal fun SettingsScreen(
         ) {
             AboutSheetContent(
                 versionName = state.versionName,
-                onGitHubClick = { openInCustomTab(context, GITHUB_URL) },
+                onGitHubClick = { openInCustomTab(context, state.githubUrl) },
             )
         }
     }
@@ -224,6 +229,7 @@ internal fun SettingsScreen(
 private fun SettingsContent(
     state: SettingsState,
     onAction: (SettingsActions) -> Unit,
+    onNotificationToggle: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -263,27 +269,13 @@ private fun SettingsContent(
 
         item {
             SettingsToggleItem(
-                icon = Icons.Filled.Tv,
-                title = label_settings_youtube.resolve(context),
-                subtitle = label_settings_youtube_description.resolve(context),
-                checked = state.openTrailersInYoutube,
-                onCheckedChange = { onAction(YoutubeToggled(it)) },
+                icon = Icons.Filled.Notifications,
+                title = label_settings_episode_notifications.resolve(context),
+                subtitle = label_settings_episode_notifications_description.resolve(context),
+                checked = state.episodeNotificationsEnabled,
+                onCheckedChange = onNotificationToggle,
             )
         }
-
-        item { Spacer(modifier = Modifier.height(8.dp)) }
-
-        item {
-            SettingsToggleItem(
-                icon = Icons.Filled.VideoLibrary,
-                title = label_settings_include_specials.resolve(context),
-                subtitle = label_settings_include_specials_description.resolve(context),
-                checked = state.includeSpecials,
-                onCheckedChange = { onAction(IncludeSpecialsToggled(it)) },
-            )
-        }
-
-        item { Spacer(modifier = Modifier.height(8.dp)) }
 
         item {
             SyncSettingsItem(
@@ -296,6 +288,26 @@ private fun SettingsContent(
                     null
                 },
                 onCheckedChange = { onAction(BackgroundSyncToggled(it)) },
+            )
+        }
+
+        item {
+            SettingsToggleItem(
+                icon = Icons.Filled.VideoLibrary,
+                title = label_settings_include_specials.resolve(context),
+                subtitle = label_settings_include_specials_description.resolve(context),
+                checked = state.includeSpecials,
+                onCheckedChange = { onAction(IncludeSpecialsToggled(it)) },
+            )
+        }
+
+        item {
+            SettingsToggleItem(
+                icon = Icons.Filled.Tv,
+                title = label_settings_youtube.resolve(context),
+                subtitle = label_settings_youtube_description.resolve(context),
+                checked = state.openTrailersInYoutube,
+                onCheckedChange = { onAction(YoutubeToggled(it)) },
             )
         }
 
@@ -322,7 +334,7 @@ private fun SettingsContent(
             SettingsClickableItem(
                 icon = Icons.Filled.Security,
                 title = label_settings_privacy_policy.resolve(context),
-                onClick = { openInCustomTab(context, PRIVACY_POLICY_URL) },
+                onClick = { openInCustomTab(context, state.privacyPolicyUrl) },
             )
         }
 
@@ -485,6 +497,7 @@ private fun ImageQualitySection(
                     text = getQualityDescriptionString(imageQuality, context),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 4.dp),
                 )
             }
         }
@@ -586,6 +599,7 @@ private fun SettingsToggleItem(
                 text = subtitle,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 4.dp),
             )
         }
 
@@ -636,11 +650,21 @@ private fun SyncSettingsItem(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
                 )
+
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 4.dp),
                 )
+
+                if (lastSyncDate != null) {
+                    Text(
+                        text = lastSyncDate,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -657,15 +681,6 @@ private fun SyncSettingsItem(
                 ),
             )
         }
-
-        if (lastSyncDate != null) {
-            Text(
-                text = lastSyncDate,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(start = 56.dp, bottom = 8.dp),
-            )
-        }
     }
 }
 
@@ -676,11 +691,12 @@ private fun SettingsClickableItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
+    isLoading: Boolean = false,
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .clickable(enabled = !isLoading, onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -703,15 +719,24 @@ private fun SettingsClickableItem(
                     text = subtitle,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 4.dp),
                 )
             }
         }
 
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        if (isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(20.dp),
+                strokeWidth = 2.dp,
+                color = MaterialTheme.colorScheme.secondary,
+            )
+        } else {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
     }
 }
 

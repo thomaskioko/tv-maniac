@@ -22,7 +22,6 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.DismissState
 import androidx.compose.material.DismissValue
-import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material.icons.outlined.ErrorOutline
@@ -32,12 +31,9 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -52,8 +48,10 @@ import com.thomaskioko.tvmaniac.compose.components.CircularCard
 import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
+import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
+import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowAction
@@ -111,6 +109,12 @@ public fun DiscoverScreen(
         pagerState = pagerState,
         onAction = presenter::dispatch,
     )
+
+    TvManiacSnackBarHost(
+        message = discoverState.message?.message,
+        style = SnackBarStyle.Error,
+        onDismiss = { discoverState.message?.let { MessageShown(it.id) } },
+    )
 }
 
 @Composable
@@ -124,15 +128,6 @@ internal fun DiscoverScreen(
 ) {
     Scaffold(
         modifier = modifier,
-        snackbarHost = {
-            SnackbarHost(hostState = snackBarHostState) { data ->
-                SwipeToDismiss(
-                    state = dismissSnackbarState,
-                    background = {},
-                    dismissContent = { Snackbar(snackbarData = data) },
-                )
-            }
-        },
     ) { paddingValues ->
         val context = LocalContext.current
         when {
@@ -186,16 +181,6 @@ private fun DiscoverContent(
     onAction: (DiscoverShowAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (state.showSnackBarError) {
-        state.message?.let { message ->
-            LaunchedEffect(message) {
-                snackBarHostState.showSnackbar(message.message)
-                // Notify the view model that the message has been dismissed
-                onAction(MessageShown(message.id))
-            }
-        }
-    }
-
     val pullRefreshState =
         rememberPullRefreshState(refreshing = false, onRefresh = { onAction(RefreshData) })
     val listState = rememberLazyListState()

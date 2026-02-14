@@ -43,6 +43,7 @@ struct iOSApp: App {
                 .animation(.spring(), value: toastManager.toast)
                 .onAppear {
                     setupAuthCoordinator()
+                    appDelegate.configureNotificationDelegate(rootPresenter: holder.component.rootPresenter)
                 }
                 .onChange(of: scenePhase) { newPhase in
                     handleScenePhaseChange(newPhase, lifecycle: holder.lifecycle)
