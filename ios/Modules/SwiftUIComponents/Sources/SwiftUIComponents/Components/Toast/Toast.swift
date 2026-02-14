@@ -6,7 +6,12 @@ public struct Toast: Equatable {
     public var message: String
     public var duration: Double
 
-    public init(type: ToastStyle, title: String, message: String, duration: Double = 3.5) {
+    public init(
+        type: ToastStyle,
+        title: String = "",
+        message: String,
+        duration: Double = 10.0
+    ) {
         self.type = type
         self.title = title
         self.message = message

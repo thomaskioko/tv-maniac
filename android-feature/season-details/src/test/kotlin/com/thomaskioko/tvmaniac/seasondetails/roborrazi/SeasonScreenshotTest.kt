@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.seasondetails.roborrazi
 
 import androidx.activity.ComponentActivity
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.core.view.UiMessage
@@ -31,7 +30,6 @@ class SeasonScreenshotTest {
             TvManiacBackground {
                 SeasonDetailsScreen(
                     state = seasonDetailsLoaded,
-                    snackBarHostState = SnackbarHostState(),
                     onAction = {},
                 )
             }
@@ -44,7 +42,6 @@ class SeasonScreenshotTest {
             TvManiacBackground {
                 SeasonDetailsScreen(
                     state = seasonDetailsLoaded.copy(message = UiMessage("Opps! Something went wrong")),
-                    snackBarHostState = SnackbarHostState(),
                     onAction = {},
                 )
             }

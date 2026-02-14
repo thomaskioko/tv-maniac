@@ -38,14 +38,9 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -79,9 +74,11 @@ import com.thomaskioko.tvmaniac.compose.components.KenBurnsViewImage
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
 import com.thomaskioko.tvmaniac.compose.components.SheetDragHandle
+import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.TextLoadingItem
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
+import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.actionIconWhen
 import com.thomaskioko.tvmaniac.compose.extensions.backgroundGradient
 import com.thomaskioko.tvmaniac.compose.extensions.copy
@@ -132,14 +129,12 @@ public fun ShowDetailsScreen(
 ) {
     val state by presenter.state.collectAsState()
 
-    val snackBarHostState = remember { SnackbarHostState() }
     val listState = rememberLazyListState()
 
     ShowDetailsScreen(
         modifier = modifier,
         state = state,
         title = state.showDetails.title,
-        snackBarHostState = snackBarHostState,
         listState = listState,
         onAction = presenter::dispatch,
     )
@@ -149,7 +144,6 @@ public fun ShowDetailsScreen(
 internal fun ShowDetailsScreen(
     state: ShowDetailsContent,
     title: String,
-    snackBarHostState: SnackbarHostState,
     listState: LazyListState,
     onAction: (ShowDetailsAction) -> Unit,
     modifier: Modifier = Modifier,
@@ -170,27 +164,7 @@ internal fun ShowDetailsScreen(
         sheetContent = {
             ShowListSheetContent(state, onAction)
         },
-        snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
         content = { contentPadding ->
-            LaunchedEffect(key1 = state.message) {
-                val message = state.message
-                if (message != null) {
-                    val actionResult = snackBarHostState.showSnackbar(
-                        message = message.message,
-                        actionLabel = "Dismiss",
-                        withDismissAction = false,
-                        duration = SnackbarDuration.Short,
-                    )
-                    when (actionResult) {
-                        SnackbarResult.ActionPerformed,
-                        SnackbarResult.Dismissed,
-                        -> {
-                            onAction(ShowDetailsMessageShown(message.id))
-                        }
-                    }
-                }
-            }
-
             Box(Modifier.fillMaxSize()) {
                 LazyColumnContent(
                     detailsContent = state,
@@ -228,6 +202,12 @@ internal fun ShowDetailsScreen(
                     isRefreshing = state.isRefreshing,
                     onNavIconClicked = { onAction(DetailBackClicked) },
                     onActionIconClicked = { onAction(ReloadShowDetails) },
+                )
+
+                TvManiacSnackBarHost(
+                    message = state.message?.message,
+                    style = SnackBarStyle.Error,
+                    onDismiss = { state.message?.let { onAction(ShowDetailsMessageShown(it.id)) } },
                 )
             }
         },
@@ -937,7 +917,6 @@ private fun ShowDetailScreenPreview(
             ShowDetailsScreen(
                 state = state,
                 title = "",
-                snackBarHostState = SnackbarHostState(),
                 listState = LazyListState(),
                 onAction = {},
             )

@@ -31,16 +31,11 @@ import androidx.compose.material.icons.outlined.Tv
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -58,8 +53,10 @@ import com.thomaskioko.tvmaniac.compose.components.CircularCard
 import com.thomaskioko.tvmaniac.compose.components.OutlinedVerticalIconButton
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
+import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
+import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_navigate_back
@@ -90,12 +87,10 @@ public fun ProfileScreen(
     modifier: Modifier = Modifier,
 ) {
     val state by presenter.state.collectAsState()
-    val snackbarHostState = remember { SnackbarHostState() }
 
     ProfileScreen(
         modifier = modifier,
         state = state,
-        snackbarHostState = snackbarHostState,
         onAction = presenter::dispatch,
     )
 }
@@ -103,21 +98,10 @@ public fun ProfileScreen(
 @Composable
 internal fun ProfileScreen(
     state: ProfileState,
-    snackbarHostState: SnackbarHostState,
     onAction: (ProfileAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
-
-    LaunchedEffect(key1 = state.errorMessage) {
-        state.errorMessage?.let { error ->
-            snackbarHostState.showSnackbar(
-                message = error.message,
-                duration = SnackbarDuration.Short,
-            )
-            onAction(MessageShown(error.id))
-        }
-    }
 
     TvManiacBottomSheetScaffold(
         modifier = modifier,
@@ -166,11 +150,10 @@ internal fun ProfileScreen(
                     onActionIconClicked = { onAction(SettingsClicked) },
                 )
 
-                SnackbarHost(
-                    hostState = snackbarHostState,
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(16.dp),
+                TvManiacSnackBarHost(
+                    message = state.errorMessage?.message,
+                    style = SnackBarStyle.Error,
+                    onDismiss = { state.errorMessage?.let { onAction(MessageShown(it.id)) } },
                 )
             }
         },
@@ -459,7 +442,6 @@ private fun ProfileScreenLoadingPreview() {
                     errorMessage = null,
                     authenticated = false,
                 ),
-                snackbarHostState = SnackbarHostState(),
                 onAction = {},
             )
         }
@@ -475,7 +457,6 @@ private fun ProfileScreenPreview(
         Surface {
             ProfileScreen(
                 state = state,
-                snackbarHostState = SnackbarHostState(),
                 onAction = {},
             )
         }

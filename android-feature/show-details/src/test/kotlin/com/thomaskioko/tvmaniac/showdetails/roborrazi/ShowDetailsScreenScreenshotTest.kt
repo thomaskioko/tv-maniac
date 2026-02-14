@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.showdetails.roborrazi
 
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
@@ -33,7 +32,6 @@ class ShowDetailsScreenScreenshotTest {
                 ShowDetailsScreen(
                     state = showDetailsContent,
                     title = "",
-                    snackBarHostState = SnackbarHostState(),
                     listState = LazyListState(),
                     onAction = {},
                 )
@@ -48,7 +46,6 @@ class ShowDetailsScreenScreenshotTest {
                 ShowDetailsScreen(
                     state = showDetailsContentWithError,
                     title = "",
-                    snackBarHostState = SnackbarHostState(),
                     listState = LazyListState(),
                     onAction = {},
                 )
