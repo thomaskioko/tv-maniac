@@ -188,7 +188,7 @@ public extension TvManiac.NextEpisodeUiModel {
         .init(
             showTraktId: showTraktId,
             showName: showName,
-            showPoster: showPoster,
+            imageUrl: imageUrl,
             episodeId: episodeId,
             episodeTitle: episodeTitle,
             episodeNumber: episodeNumberFormatted,
@@ -196,7 +196,6 @@ public extension TvManiac.NextEpisodeUiModel {
             seasonNumber: seasonNumber,
             episodeNumberValue: episodeNumber,
             runtime: runtime,
-            stillImage: stillImage,
             overview: overview,
             badge: isNew ? .new : .none
         )
@@ -251,7 +250,7 @@ public extension TvManiac.UpNextEpisodeItem {
         .init(
             showTraktId: showTraktId,
             showName: showName,
-            showPoster: showPoster,
+            imageUrl: showPoster,
             episodeId: episodeId,
             episodeTitle: episodeTitle,
             episodeNumber: episodeNumberFormatted,
@@ -259,7 +258,6 @@ public extension TvManiac.UpNextEpisodeItem {
             seasonNumber: seasonNumber,
             episodeNumberValue: episodeNumber,
             runtime: runtime,
-            stillImage: stillImage,
             overview: overview,
             badge: badge?.toSwift() ?? .none,
             remainingEpisodes: remainingEpisodes
@@ -283,7 +281,7 @@ public extension TvManiac.UpNextEpisodeUiModel {
         .init(
             showTraktId: showTraktId,
             showName: showName,
-            showPoster: showPoster,
+            imageUrl: imageUrl,
             episodeId: episodeId?.int64Value ?? 0,
             episodeTitle: episodeName ?? "",
             episodeNumber: formattedEpisodeNumber,
@@ -291,7 +289,6 @@ public extension TvManiac.UpNextEpisodeUiModel {
             seasonNumber: seasonNumber?.int64Value ?? 0,
             episodeNumberValue: episodeNumber?.int64Value ?? 0,
             runtime: formattedRuntime,
-            stillImage: stillPath,
             overview: overview ?? "",
             remainingEpisodes: Int32(remainingEpisodes),
             watchedCount: watchedCount,
