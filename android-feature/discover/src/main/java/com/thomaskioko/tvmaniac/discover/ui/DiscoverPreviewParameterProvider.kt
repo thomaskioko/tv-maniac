@@ -18,7 +18,7 @@ internal val discoverShow = DiscoverShow(
 internal val nextEpisodeUiModel = NextEpisodeUiModel(
     showTraktId = 1L,
     showName = "The Walking Dead: Daryl Dixon",
-    showPoster = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+    imageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
     episodeId = 123L,
     episodeTitle = "L'âme Perdue",
     episodeNumberFormatted = "S02E01",
@@ -26,7 +26,6 @@ internal val nextEpisodeUiModel = NextEpisodeUiModel(
     seasonNumber = 2,
     episodeNumber = 1,
     runtime = "45 min",
-    stillImage = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
     overview = "Daryl washes ashore in France and struggles to piece together how he got there and why.",
     isNew = true,
 )

@@ -56,7 +56,7 @@ internal fun UpNextListItem(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             PosterCard(
-                imageUrl = item.showPoster,
+                imageUrl = item.imageUrl,
                 title = item.showName,
                 imageWidth = 100.dp,
                 aspectRatio = 100f / 140f,
