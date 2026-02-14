@@ -18,6 +18,7 @@ kotlin {
                 implementation(projects.domain.episode)
                 implementation(projects.domain.genre)
                 implementation(projects.domain.user)
+                implementation(projects.domain.upnext)
                 implementation(projects.data.episode.api)
                 implementation(projects.data.followedshows.api)
                 implementation(projects.data.traktauth.api)

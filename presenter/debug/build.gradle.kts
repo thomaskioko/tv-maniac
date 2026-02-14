@@ -14,6 +14,8 @@ kotlin {
 
                 implementation(projects.core.base)
                 implementation(projects.core.logger.api)
+                implementation(projects.data.datastore.api)
+                implementation(projects.domain.notifications)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
