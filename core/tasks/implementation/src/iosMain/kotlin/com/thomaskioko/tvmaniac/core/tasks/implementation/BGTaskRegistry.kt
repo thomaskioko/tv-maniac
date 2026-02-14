@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.core.tasks.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTask
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskRegistry
@@ -22,6 +23,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 public class BGTaskRegistry(
     private val scheduler: BGTaskSchedulerWrapper,
     private val dispatchers: AppCoroutineDispatchers,
+    private val appCoroutineScope: AppCoroutineScope,
     private val logger: Logger,
 ) : BackgroundTaskRegistry {
     private val registeredTasks = mutableMapOf<String, BackgroundTask>()
@@ -43,16 +45,15 @@ public class BGTaskRegistry(
         schedule(taskId)
 
         val task = registeredTasks[taskId] ?: return
-        val scope = CoroutineScope(dispatchers.io + SupervisorJob())
-        scope.launch {
+        logger.debug(TAG, "Starting immediate execution of [$taskId]")
+        appCoroutineScope.io.launch {
             try {
                 task.execute()
+                logger.debug(TAG, "Immediate execution of [$taskId] completed")
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Throwable) {
                 logger.error(TAG, "Immediate execution of [$taskId] failed: ${e.message}")
-            } finally {
-                scope.cancel()
             }
         }
     }

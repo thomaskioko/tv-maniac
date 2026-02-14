@@ -4,9 +4,9 @@ import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.notifications.api.EpisodeNotification
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationChannel
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager
+import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Inject
 import platform.Foundation.NSDate
 import platform.Foundation.dateWithTimeIntervalSince1970
@@ -15,6 +15,7 @@ import platform.UserNotifications.UNAuthorizationStatusEphemeral
 import platform.UserNotifications.UNAuthorizationStatusProvisional
 import platform.UserNotifications.UNCalendarNotificationTrigger
 import platform.UserNotifications.UNMutableNotificationContent
+import platform.UserNotifications.UNNotificationCategory
 import platform.UserNotifications.UNNotificationRequest
 import platform.UserNotifications.UNNotificationTrigger
 import platform.UserNotifications.UNTimeIntervalNotificationTrigger
@@ -28,10 +29,15 @@ import kotlin.coroutines.resume
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class IosNotificationManager(
+    private val dateTimeProvider: DateTimeProvider,
     private val logger: Logger,
 ) : NotificationManager {
 
     private val notificationCenter = UNUserNotificationCenter.currentNotificationCenter()
+
+    init {
+        registerNotificationCategories()
+    }
 
     @OptIn(ExperimentalForeignApi::class)
     override suspend fun scheduleNotification(notification: EpisodeNotification) {
@@ -43,6 +49,8 @@ public class IosNotificationManager(
         val content = UNMutableNotificationContent().apply {
             setTitle(notification.title)
             setBody(notification.message)
+            setThreadIdentifier(NOTIFICATION_GROUP_KEY)
+            setCategoryIdentifier(CATEGORY_EPISODE_AIRING)
             setUserInfo(
                 mapOf(
                     KEY_NOTIFICATION_ID to notification.id,
@@ -59,10 +67,12 @@ public class IosNotificationManager(
             )
         }
 
-        val currentTime = Clock.System.now().toEpochMilliseconds()
-        val trigger: UNNotificationTrigger? = if (notification.scheduledTime <= currentTime + IMMEDIATE_THRESHOLD_MS) {
+        val currentTime = dateTimeProvider.nowMillis()
+        val delayMs = notification.scheduledTime - currentTime
+        val trigger: UNNotificationTrigger? = if (delayMs <= IMMEDIATE_THRESHOLD_MS) {
+            val intervalSeconds = (delayMs / 1000.0).coerceAtLeast(1.0)
             UNTimeIntervalNotificationTrigger.triggerWithTimeInterval(
-                timeInterval = 1.0,
+                timeInterval = intervalSeconds,
                 repeats = false,
             )
         } else {
@@ -178,9 +188,24 @@ public class IosNotificationManager(
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
+    private fun registerNotificationCategories() {
+        val episodeCategory = UNNotificationCategory.categoryWithIdentifier(
+            identifier = CATEGORY_EPISODE_AIRING,
+            actions = emptyList<Any>() as List<platform.UserNotifications.UNNotificationAction>,
+            intentIdentifiers = emptyList<Any>() as List<String>,
+            hiddenPreviewsBodyPlaceholder = "",
+            categorySummaryFormat = "%u more episodes",
+            options = 0uL,
+        )
+        notificationCenter.setNotificationCategories(setOf(episodeCategory))
+    }
+
     private companion object {
         private const val TAG = "IosNotificationManager"
-        private const val IMMEDIATE_THRESHOLD_MS = 5000L
+        private const val NOTIFICATION_GROUP_KEY = "tvmaniac_episodes"
+        private const val CATEGORY_EPISODE_AIRING = "tvmaniac_episode_airing"
+        private const val IMMEDIATE_THRESHOLD_MS = 10 * 60 * 1000L
         private const val KEY_NOTIFICATION_ID = "notification_id"
         private const val KEY_SHOW_ID = "show_id"
         private const val KEY_SEASON_ID = "season_id"

@@ -71,13 +71,22 @@ public class EpisodeNotificationReceiver : BroadcastReceiver() {
             .setContentText(notification.message)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true)
+            .setGroup(AndroidNotificationManager.NOTIFICATION_GROUP_KEY)
             .apply {
                 pendingContentIntent?.let { setContentIntent(it) }
             }
             .build()
 
+        val summaryNotification = NotificationCompat.Builder(context, notification.channel.id)
+            .setSmallIcon(iconResId)
+            .setGroup(AndroidNotificationManager.NOTIFICATION_GROUP_KEY)
+            .setGroupSummary(true)
+            .setAutoCancel(true)
+            .build()
+
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(notification.id.toInt(), androidNotification)
+        notificationManager.notify(AndroidNotificationManager.SUMMARY_NOTIFICATION_ID, summaryNotification)
     }
 
     internal companion object {

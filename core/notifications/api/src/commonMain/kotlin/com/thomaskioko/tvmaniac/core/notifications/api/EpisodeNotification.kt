@@ -14,6 +14,6 @@ public data class EpisodeNotification(
 ) {
     val title: String get() = showName
 
-    //TODO::Localize this.
+    // TODO::Localize this.
     val message: String get() = "New episode: $episodeTitle - S${seasonNumber}E$episodeNumber"
 }

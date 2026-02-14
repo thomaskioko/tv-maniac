@@ -12,6 +12,7 @@ import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.notifications.api.EpisodeNotification
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationChannel
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationIconProvider
+import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
@@ -25,6 +26,7 @@ import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager as Ap
 public class AndroidNotificationManager(
     private val context: Context,
     private val notificationIconProvider: NotificationIconProvider,
+    private val dateTimeProvider: DateTimeProvider,
     private val logger: Logger,
 ) : AppNotificationManager {
 
@@ -52,12 +54,15 @@ public class AndroidNotificationManager(
         createNotificationChannel(notification.channel)
         pendingNotificationsStore.addNotification(notification)
 
-        val windowStartTime = notification.scheduledTime - ALARM_WINDOW_LENGTH.inWholeMilliseconds
-        if (windowStartTime <= System.currentTimeMillis()) {
+        val now = dateTimeProvider.nowMillis()
+        if (notification.scheduledTime <= now) {
             showNotificationImmediately(notification)
             logger.debug(TAG, "Notification for ${notification.showName} is past-due, showing immediately")
             return
         }
+
+        val windowStartTime = (notification.scheduledTime - ALARM_WINDOW_LENGTH.inWholeMilliseconds)
+            .coerceAtLeast(now)
 
         logger.debug(TAG, "Scheduling notification for ${notification.showName} S${notification.seasonNumber}E${notification.episodeNumber}")
 
@@ -94,6 +99,7 @@ public class AndroidNotificationManager(
             .setContentText(notification.message)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true)
+            .setGroup(NOTIFICATION_GROUP_KEY)
             .apply {
                 pendingContentIntent?.let { setContentIntent(it) }
             }
@@ -101,6 +107,7 @@ public class AndroidNotificationManager(
 
         try {
             notificationManagerCompat.notify(notification.id.toInt(), androidNotification)
+            postGroupSummary(notification.channel)
             logger.debug(TAG, "Notification displayed successfully: ${notification.showName}")
         } catch (se: SecurityException) {
             logger.error(TAG, "Failed to post notification - missing POST_NOTIFICATIONS permission: ${se.message}")
@@ -170,6 +177,22 @@ public class AndroidNotificationManager(
         }
     }
 
+    @SuppressLint("MissingPermission")
+    private fun postGroupSummary(channel: NotificationChannel) {
+        val summaryNotification = NotificationCompat.Builder(context, channel.id)
+            .setSmallIcon(notificationIconProvider.smallIconResId)
+            .setGroup(NOTIFICATION_GROUP_KEY)
+            .setGroupSummary(true)
+            .setAutoCancel(true)
+            .build()
+
+        try {
+            notificationManagerCompat.notify(SUMMARY_NOTIFICATION_ID, summaryNotification)
+        } catch (se: SecurityException) {
+            logger.error(TAG, "Failed to post summary notification: ${se.message}")
+        }
+    }
+
     private fun createNotificationChannel(channel: NotificationChannel) {
         val androidChannel = NotificationChannelCompat.Builder(channel.id, NotificationManagerCompat.IMPORTANCE_DEFAULT)
             .apply {
@@ -192,6 +215,8 @@ public class AndroidNotificationManager(
 
     internal companion object {
         internal const val TAG = "AndroidNotificationManager"
+        internal const val NOTIFICATION_GROUP_KEY = "tvmaniac_episodes"
+        internal const val SUMMARY_NOTIFICATION_ID = Int.MAX_VALUE - 1
         private const val CHANNEL_NAME_EPISODES = "Episode Notifications"
         private const val CHANNEL_DESCRIPTION_EPISODES = "Notifications for upcoming episodes"
         private const val CHANNEL_NAME_DEVELOPER = "Developer Testing"
