@@ -224,6 +224,17 @@ public class DefaultDatastoreRepository(
             preferences[KEY_UPNEXT_SORT_OPTION] ?: "LAST_WATCHED"
         }
 
+    override suspend fun setLastUpNextSyncTimestamp(timestamp: Long) {
+        dataStore.edit { preferences ->
+            preferences[KEY_LAST_UPNEXT_SYNC_TIMESTAMP] = timestamp
+        }
+    }
+
+    override fun observeLastUpNextSyncTimestamp(): Flow<Long?> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_LAST_UPNEXT_SYNC_TIMESTAMP]
+        }
+
     public companion object {
         public val KEY_THEME: Preferences.Key<String> = stringPreferencesKey("app_theme")
         public val KEY_LANGUAGE: Preferences.Key<String> = stringPreferencesKey("app_language")
@@ -240,5 +251,6 @@ public class DefaultDatastoreRepository(
         public val KEY_REQUEST_NOTIFICATION_PERMISSION: Preferences.Key<Boolean> = booleanPreferencesKey("request_notification_permission")
         public val KEY_LIBRARY_SORT_OPTION: Preferences.Key<String> = stringPreferencesKey("library_sort_option")
         public val KEY_UPNEXT_SORT_OPTION: Preferences.Key<String> = stringPreferencesKey("upnext_sort_option")
+        public val KEY_LAST_UPNEXT_SYNC_TIMESTAMP: Preferences.Key<Long> = longPreferencesKey("last_upnext_sync_timestamp")
     }
 }

@@ -235,4 +235,8 @@ public interface DatastoreRepository {
      * @return A Flow of the sort option name, defaulting to "LAST_WATCHED".
      */
     public fun observeUpNextSortOption(): Flow<String>
+
+    public suspend fun setLastUpNextSyncTimestamp(timestamp: Long)
+
+    public fun observeLastUpNextSyncTimestamp(): Flow<Long?>
 }

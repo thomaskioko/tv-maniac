@@ -129,10 +129,17 @@ public class FakeDatastoreRepository : DatastoreRepository {
     override fun observeLibrarySortOption(): Flow<String> = librarySortOptionFlow.asStateFlow()
 
     private val upNextSortOptionFlow = MutableStateFlow("LAST_WATCHED")
+    private val lastUpNextSyncTimestampFlow: MutableStateFlow<Long?> = MutableStateFlow(null)
 
     override suspend fun saveUpNextSortOption(sortOption: String) {
         upNextSortOptionFlow.value = sortOption
     }
 
     override fun observeUpNextSortOption(): Flow<String> = upNextSortOptionFlow.asStateFlow()
+
+    override suspend fun setLastUpNextSyncTimestamp(timestamp: Long) {
+        lastUpNextSyncTimestampFlow.value = timestamp
+    }
+
+    override fun observeLastUpNextSyncTimestamp(): Flow<Long?> = lastUpNextSyncTimestampFlow.asStateFlow()
 }

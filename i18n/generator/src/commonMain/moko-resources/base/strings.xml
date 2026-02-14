@@ -312,4 +312,10 @@
     <string name="label_debug_section_background_tasks">Background Tasks</string>
     <string name="label_debug_section_notifications">Notifications</string>
     <string name="label_debug_coming_soon">Coming soon</string>
+    <string name="label_debug_section_data_sync">Data Sync</string>
+    <string name="label_debug_library_sync_title">Library Sync</string>
+    <string name="label_debug_library_sync_description">Force refresh library data</string>
+    <string name="label_debug_upnext_sync_title">UpNext Sync</string>
+    <string name="label_debug_upnext_sync_description">Force refresh up next data</string>
+    <string name="label_debug_never_synced">Never synced</string>
 </resources>
