@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.core.view.UiMessage
 
 public data class DebugState(
     val isLoading: Boolean = false,
+    val isLoggedIn: Boolean = false,
     val isSchedulingDebugNotification: Boolean = false,
     val isSyncingLibrary: Boolean = false,
     val isSyncingUpNext: Boolean = false,

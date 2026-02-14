@@ -16,6 +16,7 @@ kotlin {
                 implementation(projects.core.logger.api)
                 implementation(projects.core.util.api)
                 implementation(projects.data.datastore.api)
+                implementation(projects.data.traktauth.api)
                 implementation(projects.domain.library)
                 implementation(projects.domain.notifications)
                 implementation(projects.domain.upnext)
