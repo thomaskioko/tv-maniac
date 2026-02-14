@@ -9,11 +9,15 @@ import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.domain.library.SyncLibraryInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleDebugEpisodeNotificationInteractor
+import com.thomaskioko.tvmaniac.domain.upnext.RefreshUpNextInteractor
+import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
@@ -31,22 +35,41 @@ public class DefaultDebugPresenter(
     @Assisted private val backClicked: () -> Unit,
     private val datastoreRepository: DatastoreRepository,
     private val scheduleDebugEpisodeNotificationInteractor: ScheduleDebugEpisodeNotificationInteractor,
+    private val syncLibraryInteractor: SyncLibraryInteractor,
+    private val refreshUpNextInteractor: RefreshUpNextInteractor,
+    private val dateTimeProvider: DateTimeProvider,
     private val logger: Logger,
 ) : DebugPresenter, ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
     private val debugNotificationState = ObservableLoadingCounter()
+    private val librarySyncState = ObservableLoadingCounter()
+    private val upNextSyncState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
     private val snackbarMessage = MutableStateFlow<UiMessage?>(null)
 
+    private val lastLibrarySyncDate = datastoreRepository.observeLastSyncTimestamp()
+        .map { it?.let(dateTimeProvider::epochToDisplayDateTime) }
+
+    private val lastUpNextSyncDate = datastoreRepository.observeLastUpNextSyncTimestamp()
+        .map { it?.let(dateTimeProvider::epochToDisplayDateTime) }
+
     override val state: StateFlow<DebugState> = combine(
         debugNotificationState.observable,
+        librarySyncState.observable,
+        upNextSyncState.observable,
+        lastLibrarySyncDate,
+        lastUpNextSyncDate,
         uiMessageManager.message,
         snackbarMessage,
-    ) { isSchedulingDebug, _, message ->
+    ) { values ->
         DebugState(
-            isSchedulingDebugNotification = isSchedulingDebug,
-            message = message,
+            isSchedulingDebugNotification = values[0] as Boolean,
+            isSyncingLibrary = values[1] as Boolean,
+            isSyncingUpNext = values[2] as Boolean,
+            lastLibrarySyncDate = values[3] as String?,
+            lastUpNextSyncDate = values[4] as String?,
+            message = values[6] as UiMessage?,
         )
     }.stateIn(
         scope = coroutineScope,
@@ -62,6 +85,8 @@ public class DefaultDebugPresenter(
                 snackbarMessage.value = UiMessage(message = NOTIFICATION_SCHEDULED_MESSAGE)
                 scheduleDebugNotification(5.minutes)
             }
+            TriggerLibrarySync -> triggerLibrarySync()
+            TriggerUpNextSync -> triggerUpNextSync()
             is DismissSnackbar -> {
                 snackbarMessage.value = null
             }
@@ -77,6 +102,21 @@ public class DefaultDebugPresenter(
             }
             scheduleDebugEpisodeNotificationInteractor(DebugNotificationParams(delay = duration))
                 .collectStatus(debugNotificationState, logger, uiMessageManager)
+        }
+    }
+
+    private fun triggerLibrarySync() {
+        coroutineScope.launch {
+            syncLibraryInteractor(SyncLibraryInteractor.Param(forceRefresh = true))
+                .collectStatus(librarySyncState, logger, uiMessageManager)
+            datastoreRepository.setLastSyncTimestamp(dateTimeProvider.nowMillis())
+        }
+    }
+
+    private fun triggerUpNextSync() {
+        coroutineScope.launch {
+            refreshUpNextInteractor(true)
+                .collectStatus(upNextSyncState, logger, uiMessageManager)
         }
     }
 
