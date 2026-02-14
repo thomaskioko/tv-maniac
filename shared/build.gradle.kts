@@ -71,6 +71,10 @@ kotlin {
                 api(projects.data.followedshows.implementation)
                 api(projects.data.syncActivity.api)
                 api(projects.data.syncActivity.implementation)
+                api(projects.core.notifications.api)
+                api(projects.core.notifications.implementation)
+                api(projects.domain.notifications)
+                api(projects.domain.settings)
 
                 api(projects.data.watchlist.api)
                 api(projects.data.watchlist.implementation)
