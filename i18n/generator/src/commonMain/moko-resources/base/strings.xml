@@ -318,4 +318,5 @@
     <string name="label_debug_upnext_sync_title">UpNext Sync</string>
     <string name="label_debug_upnext_sync_description">Force refresh up next data</string>
     <string name="label_debug_never_synced">Never synced</string>
+    <string name="label_debug_sync_login_required">Sign in to Trakt to sync data</string>
 </resources>

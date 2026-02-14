@@ -311,6 +311,7 @@
     <string name="label_debug_upnext_sync_title">UpNext synchronisieren</string>
     <string name="label_debug_upnext_sync_description">UpNext-Daten erzwingen aktualisieren</string>
     <string name="label_debug_never_synced">Nie synchronisiert</string>
+    <string name="label_debug_sync_login_required">Melden Sie sich bei Trakt an, um Daten zu synchronisieren</string>
 
     <string name="notification_permission_denied_title">Benachrichtigungen deaktiviert</string>
     <string name="notification_permission_denied_message">Um Episodenbenachrichtigungen zu erhalten, aktivieren Sie bitte die Benachrichtigungen in Ihren Geräteeinstellungen.</string>

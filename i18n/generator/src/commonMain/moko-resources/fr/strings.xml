@@ -309,6 +309,7 @@
     <string name="label_debug_upnext_sync_title">Synchroniser UpNext</string>
     <string name="label_debug_upnext_sync_description">Forcer l\'actualisation des données UpNext</string>
     <string name="label_debug_never_synced">Jamais synchronisé</string>
+    <string name="label_debug_sync_login_required">Connectez-vous à Trakt pour synchroniser les données</string>
 
     <string name="notification_permission_denied_title">Notifications désactivées</string>
     <string name="notification_permission_denied_message">Pour recevoir les notifications d\'épisodes, veuillez activer les notifications dans les paramètres de votre appareil.</string>
