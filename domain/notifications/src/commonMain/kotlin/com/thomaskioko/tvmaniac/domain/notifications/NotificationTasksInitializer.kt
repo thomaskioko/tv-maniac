@@ -32,8 +32,9 @@ public class NotificationTasksInitializer(
             combine(
                 traktAuthRepository.value.state,
                 datastoreRepository.value.observeEpisodeNotificationsEnabled(),
-            ) { authState, notificationsEnabled ->
-                authState == TraktAuthState.LOGGED_IN && notificationsEnabled
+                datastoreRepository.value.observeBackgroundSyncEnabled(),
+            ) { authState, notificationsEnabled, syncEnabled ->
+                authState == TraktAuthState.LOGGED_IN && notificationsEnabled && syncEnabled
             }
                 .distinctUntilChanged()
                 .collect { shouldSchedule ->
