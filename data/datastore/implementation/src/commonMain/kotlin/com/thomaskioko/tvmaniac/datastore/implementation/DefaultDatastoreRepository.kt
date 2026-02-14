@@ -163,6 +163,9 @@ public class DefaultDatastoreRepository(
             preferences[KEY_EPISODE_NOTIFICATIONS_ENABLED] ?: false
         }
 
+    override suspend fun getEpisodeNotificationsEnabled(): Boolean =
+        dataStore.data.first()[KEY_EPISODE_NOTIFICATIONS_ENABLED] ?: false
+
     override suspend fun setNotificationPermissionAsked(asked: Boolean) {
         dataStore.edit { preferences ->
             preferences[KEY_NOTIFICATION_PERMISSION_ASKED] = asked

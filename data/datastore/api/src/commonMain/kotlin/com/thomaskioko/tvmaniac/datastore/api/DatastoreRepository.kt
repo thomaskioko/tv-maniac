@@ -152,6 +152,13 @@ public interface DatastoreRepository {
     public fun observeEpisodeNotificationsEnabled(): Flow<Boolean>
 
     /**
+     * Gets the user's preference for episode notifications.
+     *
+     * @return Boolean, true if episode notifications are enabled, false otherwise. Defaults to false.
+     */
+    public suspend fun getEpisodeNotificationsEnabled(): Boolean
+
+    /**
      * Saves whether the notification permission has been asked.
      * Used to ensure we only prompt once on first launch.
      *

@@ -100,6 +100,8 @@ public class FakeDatastoreRepository : DatastoreRepository {
 
     override fun observeEpisodeNotificationsEnabled(): Flow<Boolean> = episodeNotificationsEnabledFlow.asStateFlow()
 
+    override suspend fun getEpisodeNotificationsEnabled(): Boolean = episodeNotificationsEnabledFlow.value
+
     override suspend fun setNotificationPermissionAsked(asked: Boolean) {
         notificationPermissionAskedFlow.value = asked
     }
