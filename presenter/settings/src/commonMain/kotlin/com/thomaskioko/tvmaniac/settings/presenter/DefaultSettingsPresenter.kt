@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.settings.presenter
 
 import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
-import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
@@ -10,13 +9,15 @@ import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
+import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNotificationsInteractor
+import com.thomaskioko.tvmaniac.domain.settings.ObserveSettingsPreferencesInteractor
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.util.api.ApplicationInfo
-import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -31,45 +32,46 @@ public class DefaultSettingsPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val backClicked: () -> Unit,
     @Assisted private val onNavigateToDebugMenu: () -> Unit,
-    private val datastoreRepository: DatastoreRepository,
-    private val dateTimeProvider: DateTimeProvider,
-    private val logoutInteractor: LogoutInteractor,
-    private val logger: Logger,
-    traktAuthRepository: TraktAuthRepository,
     private val appInfo: ApplicationInfo,
+    private val datastoreRepository: DatastoreRepository,
+    private val logoutInteractor: LogoutInteractor,
+    private val toggleEpisodeNotificationsInteractor: ToggleEpisodeNotificationsInteractor,
+    private val logger: Logger,
+    observeSettingsPreferencesInteractor: ObserveSettingsPreferencesInteractor,
+    traktAuthRepository: TraktAuthRepository,
 ) : SettingsPresenter, ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
     private val logoutState = ObservableLoadingCounter()
+    private val notificationToggleState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
 
     private val _state: MutableStateFlow<SettingsState> =
         MutableStateFlow(SettingsState.DEFAULT_STATE)
 
+    init {
+        observeSettingsPreferencesInteractor(Unit)
+    }
+
     override val state: StateFlow<SettingsState> = combine(
         _state,
-        datastoreRepository.observeImageQuality(),
-        datastoreRepository.observeTheme(),
-        datastoreRepository.observeOpenTrailersInYoutube(),
-        datastoreRepository.observeIncludeSpecials(),
-        datastoreRepository.observeBackgroundSyncEnabled(),
-        datastoreRepository.observeLastSyncTimestamp(),
+        logoutState.observable,
+        notificationToggleState.observable,
+        observeSettingsPreferencesInteractor.flow,
         traktAuthRepository.state,
-    ) { currentState, imageQuality, appTheme, openInYoutube, includeSpecials, backgroundSyncEnabled,
-        lastSyncTimestamp, authState,
-        ->
-
-        val lastSyncDate = lastSyncTimestamp?.let { dateTimeProvider.epochToDisplayDateTime(it) }
+    ) { currentState, isLoggingOut, isTogglingNotifications, preferences, authState ->
         currentState.copy(
-            imageQuality = imageQuality,
-            theme = appTheme.toThemeModel(),
-            openTrailersInYoutube = openInYoutube,
-            includeSpecials = includeSpecials,
+            isUpdating = isLoggingOut || isTogglingNotifications,
+            imageQuality = preferences.imageQuality,
+            theme = preferences.theme.toThemeModel(),
+            openTrailersInYoutube = preferences.openTrailersInYoutube,
+            includeSpecials = preferences.includeSpecials,
             isAuthenticated = authState == TraktAuthState.LOGGED_IN,
-            backgroundSyncEnabled = backgroundSyncEnabled,
-            lastSyncDate = lastSyncDate,
-            showLastSyncDate = backgroundSyncEnabled && lastSyncDate != null,
+            backgroundSyncEnabled = preferences.backgroundSyncEnabled,
+            lastSyncDate = preferences.lastSyncDate,
+            showLastSyncDate = preferences.showLastSyncDate,
             versionName = appInfo.versionName,
+            episodeNotificationsEnabled = preferences.episodeNotificationsEnabled,
             isDebugBuild = appInfo.debugBuild,
         )
     }.stateIn(
@@ -120,21 +122,28 @@ public class DefaultSettingsPresenter(
                     datastoreRepository.setBackgroundSyncEnabled(action.enabled)
                 }
             }
-
             NavigateToDebugMenu -> onNavigateToDebugMenu()
+
+            is EpisodeNotificationsToggled -> {
+                coroutineScope.launch {
+                    toggleEpisodeNotificationsInteractor(
+                        ToggleEpisodeNotificationsInteractor.Params(enabled = action.enabled),
+                    ).collectStatus(notificationToggleState, logger, uiMessageManager)
+                }
+            }
         }
     }
 
     private fun updateThemeDialogState() {
-        coroutineScope.launch { _state.update { state -> state.copy(showthemePopup = !state.showthemePopup) } }
+        _state.update { state -> state.copy(showthemePopup = !state.showthemePopup) }
     }
 
     private fun updateTrackDialogState() {
-        coroutineScope.launch { _state.update { state -> state.copy(showTraktDialog = !state.showTraktDialog) } }
+        _state.update { state -> state.copy(showTraktDialog = !state.showTraktDialog) }
     }
 
     private fun updateAboutDialogState() {
-        coroutineScope.launch { _state.update { state -> state.copy(showAboutDialog = !state.showAboutDialog) } }
+        _state.update { state -> state.copy(showAboutDialog = !state.showAboutDialog) }
     }
 }
 

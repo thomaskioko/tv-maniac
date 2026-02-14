@@ -17,9 +17,16 @@ public data class SettingsState(
     val lastSyncDate: String? = null,
     val showLastSyncDate: Boolean = false,
     val versionName: String,
+    val episodeNotificationsEnabled: Boolean = false,
+    val isUpdating: Boolean = false,
     val isDebugBuild: Boolean = false,
+    val githubUrl: String = GITHUB_URL,
+    val privacyPolicyUrl: String = PRIVACY_POLICY_URL,
 ) {
     public companion object {
+        private const val GITHUB_URL = "https://github.com/c0de-wizard/tv-maniac"
+        private const val PRIVACY_POLICY_URL = "https://github.com/c0de-wizard/tv-maniac"
+
         public val DEFAULT_STATE: SettingsState = SettingsState(
             isAuthenticated = false,
             theme = ThemeModel.SYSTEM,
@@ -34,6 +41,8 @@ public data class SettingsState(
             lastSyncDate = null,
             showLastSyncDate = false,
             versionName = "0.0.0",
+            episodeNotificationsEnabled = false,
+            isDebugBuild = false,
         )
     }
 }
