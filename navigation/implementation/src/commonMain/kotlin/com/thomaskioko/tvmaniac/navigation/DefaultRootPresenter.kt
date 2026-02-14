@@ -28,11 +28,13 @@ import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -56,17 +58,30 @@ public class DefaultRootPresenter(
     private val traktAuthRepository: TraktAuthRepository,
     private val updateUserProfileData: UpdateUserProfileData,
     private val logoutInteractor: LogoutInteractor,
-    coroutineScope: CoroutineScope = componentContext.coroutineScope(),
+    private val coroutineScope: CoroutineScope = componentContext.coroutineScope(),
     private val datastoreRepository: DatastoreRepository,
 ) : RootPresenter, ComponentContext by componentContext {
 
     init {
+        coroutineScope.launch {
+            datastoreRepository.setShowNotificationRationale(false)
+        }
+
         coroutineScope.launch {
             traktAuthRepository.state
                 .debounce(200.milliseconds)
                 .distinctUntilChanged()
                 .filter { it == TraktAuthState.LOGGED_IN }
                 .collect { refreshUserProfile() }
+        }
+
+        coroutineScope.launch {
+            traktAuthRepository.state
+                .debounce(500.milliseconds)
+                .distinctUntilChanged()
+                .filter { it == TraktAuthState.LOGGED_IN }
+                .take(1)
+                .collect { showRationaleIfNeeded() }
         }
     }
 
@@ -101,6 +116,93 @@ public class DefaultRootPresenter(
                 initialValue = ThemeState(),
             )
 
+    override val notificationPermissionState: StateFlow<NotificationPermissionState> =
+        combine(
+            datastoreRepository.observeShowNotificationRationale(),
+            datastoreRepository.observeRequestNotificationPermission(),
+        ) { showRationale, requestPermission ->
+            NotificationPermissionState(
+                showRationale = showRationale,
+                requestPermission = requestPermission,
+            )
+        }
+            .stateIn(
+                scope = coroutineScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = NotificationPermissionState(),
+            )
+
+    override fun onShowFollowed() {
+        coroutineScope.launch {
+            showRationaleIfNeeded()
+        }
+    }
+
+    private suspend fun showRationaleIfNeeded() {
+        combine(
+            datastoreRepository.observeNotificationPermissionAsked(),
+            datastoreRepository.observeShowNotificationRationale(),
+        ) { hasAsked, isRationaleShowing ->
+            !hasAsked && !isRationaleShowing
+        }
+            .filter { it }
+            .take(1)
+            .collect { datastoreRepository.setShowNotificationRationale(true) }
+    }
+
+    override fun onRationaleAccepted() {
+        coroutineScope.launch {
+            datastoreRepository.setShowNotificationRationale(false)
+            datastoreRepository.setRequestNotificationPermission(true)
+        }
+    }
+
+    override fun onRationaleDismissed() {
+        coroutineScope.launch {
+            datastoreRepository.setShowNotificationRationale(false)
+        }
+    }
+
+    override fun onNotificationPermissionResult(granted: Boolean) {
+        coroutineScope.launch {
+            datastoreRepository.setRequestNotificationPermission(false)
+            datastoreRepository.setNotificationPermissionAsked(true)
+            if (granted) {
+                datastoreRepository.setEpisodeNotificationsEnabled(true)
+            }
+        }
+    }
+
+    override fun onDeepLink(destination: DeepLinkDestination) {
+        when (destination) {
+            is DeepLinkDestination.ShowDetails -> {
+                navigator.pushNew(
+                    RootDestinationConfig.ShowDetails(
+                        param = ShowDetailsParam(
+                            id = destination.showId,
+                            forceRefresh = destination.forceRefresh,
+                        ),
+                    ),
+                )
+            }
+            is DeepLinkDestination.SeasonDetails -> {
+                navigator.pushNew(
+                    RootDestinationConfig.SeasonDetails(
+                        param = SeasonDetailsUiParam(
+                            showTraktId = destination.showId,
+                            seasonNumber = destination.seasonNumber,
+                            seasonId = destination.seasonId,
+                            forceRefresh = destination.forceRefresh,
+                        ),
+                    ),
+                )
+            }
+            is DeepLinkDestination.DebugMenu -> {
+                navigator.pushNew(RootDestinationConfig.Debug)
+            }
+        }
+    }
+
     private fun createScreen(
         config: RootDestinationConfig,
         componentContext: ComponentContext,
@@ -113,7 +215,7 @@ public class DefaultRootPresenter(
                         onShowClicked = { id ->
                             navigator.pushNew(
                                 RootDestinationConfig.ShowDetails(
-                                    ShowDetailsParam(id = id),
+                                    param = ShowDetailsParam(id = id),
                                 ),
                             )
                         },
@@ -171,7 +273,7 @@ public class DefaultRootPresenter(
                         onNavigateToShow = { id ->
                             navigator.pushToFront(
                                 RootDestinationConfig.ShowDetails(
-                                    ShowDetailsParam(id),
+                                    param = ShowDetailsParam(id = id),
                                 ),
                             )
                         },
@@ -193,7 +295,7 @@ public class DefaultRootPresenter(
                                 ),
                             )
                         },
-                        onShowFollowed = { },
+                        onShowFollowed = ::onShowFollowed,
                     ),
                 )
 
@@ -224,7 +326,11 @@ public class DefaultRootPresenter(
                         id = config.id,
                         onBack = navigator::pop,
                         onNavigateToShowDetails = { id ->
-                            navigator.pushNew(RootDestinationConfig.ShowDetails(ShowDetailsParam(id)))
+                            navigator.pushNew(
+                                RootDestinationConfig.ShowDetails(
+                                    param = ShowDetailsParam(id = id),
+                                ),
+                            )
                         },
                     ),
                 )

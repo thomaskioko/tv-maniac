@@ -24,6 +24,18 @@ public interface RootPresenter {
 
     public val themeState: StateFlow<ThemeState>
 
+    public val notificationPermissionState: StateFlow<NotificationPermissionState>
+
+    public fun onShowFollowed()
+
+    public fun onRationaleAccepted()
+
+    public fun onRationaleDismissed()
+
+    public fun onNotificationPermissionResult(granted: Boolean)
+
+    public fun onDeepLink(destination: DeepLinkDestination)
+
     public sealed interface Child {
         public class Home(public val presenter: HomePresenter) : Child
 

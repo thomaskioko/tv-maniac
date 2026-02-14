@@ -183,6 +183,79 @@ abstract class DefaultRootComponentTest {
     }
 
     @Test
+    fun `should return default notification permission state`() = runTest {
+        presenter.notificationPermissionState.test {
+            awaitItem() shouldBe NotificationPermissionState()
+        }
+    }
+
+    @Test
+    fun `should set requestPermission given rationale accepted`() = runTest {
+        presenter.notificationPermissionState.test {
+            awaitItem() shouldBe NotificationPermissionState()
+
+            datastoreRepository.setShowNotificationRationale(true)
+            awaitItem() shouldBe NotificationPermissionState(showRationale = true)
+
+            presenter.onRationaleAccepted()
+            awaitItem() shouldBe NotificationPermissionState(showRationale = false, requestPermission = true)
+        }
+    }
+
+    @Test
+    fun `should not mark permission as asked given sheet dismissed without interaction`() = runTest {
+        presenter.notificationPermissionState.test {
+            awaitItem() shouldBe NotificationPermissionState()
+
+            datastoreRepository.setShowNotificationRationale(true)
+            awaitItem() shouldBe NotificationPermissionState(showRationale = true)
+
+            presenter.onRationaleDismissed()
+            awaitItem() shouldBe NotificationPermissionState(showRationale = false)
+        }
+    }
+
+    @Test
+    fun `should show rationale again given sheet was dismissed without interaction`() = runTest {
+        presenter.notificationPermissionState.test {
+            awaitItem() shouldBe NotificationPermissionState()
+
+            datastoreRepository.setShowNotificationRationale(true)
+            awaitItem() shouldBe NotificationPermissionState(showRationale = true)
+
+            presenter.onRationaleDismissed()
+            awaitItem() shouldBe NotificationPermissionState(showRationale = false)
+
+            datastoreRepository.setShowNotificationRationale(true)
+            awaitItem() shouldBe NotificationPermissionState(showRationale = true)
+        }
+    }
+
+    @Test
+    fun `should enable notifications given permission granted`() = runTest {
+        presenter.notificationPermissionState.test {
+            awaitItem() shouldBe NotificationPermissionState()
+
+            datastoreRepository.setRequestNotificationPermission(true)
+            awaitItem() shouldBe NotificationPermissionState(requestPermission = true)
+
+            presenter.onNotificationPermissionResult(granted = true)
+            awaitItem() shouldBe NotificationPermissionState(requestPermission = false)
+        }
+    }
+
+    @Test
+    fun `should navigate to Debug given DebugMenu deep link`() = runTest {
+        presenter.childStack.test {
+            awaitItem().active.instance.shouldBeInstanceOf<Home>()
+
+            presenter.onDeepLink(DeepLinkDestination.DebugMenu)
+
+            awaitItem().active.instance.shouldBeInstanceOf<RootPresenter.Child.Debug>()
+        }
+    }
+
+    @Test
     fun `should return initial theme state`() = runTest {
         presenter.themeState.value shouldBe ThemeState()
     }
