@@ -13,6 +13,7 @@ kotlin {
             dependencies {
                 implementation(projects.core.base)
                 implementation(projects.core.util.api)
+                implementation(projects.data.datastore.api)
                 implementation(projects.data.upnext.api)
 
                 implementation(libs.coroutines.core)

@@ -36,6 +36,8 @@ public class DefaultUserRepository(
         userDao.observeCurrentUser()
             .flowOn(appCoroutineDispatchers.databaseRead)
 
+    override suspend fun getCurrentUser(): UserProfile? = userDao.getCurrentUser()
+
     override suspend fun fetchUserProfile(username: String, forceRefresh: Boolean) {
         if (!traktAuthRepository.isLoggedIn()) return
 

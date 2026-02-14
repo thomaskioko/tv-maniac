@@ -73,7 +73,7 @@ internal fun NextEpisodeCard(
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             AsyncImageComposable(
-                model = episode.stillImage ?: episode.showPoster,
+                model = episode.imageUrl,
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxSize()
@@ -193,7 +193,7 @@ private fun NextEpisodeCardPreview() {
             episode = NextEpisodeUiModel(
                 showTraktId = 1L,
                 showName = "The Walking Dead: Daryl Dixon",
-                showPoster = "/poster.jpg",
+                imageUrl = "/still.jpg",
                 episodeId = 123L,
                 episodeTitle = "L'âme Perdue",
                 episodeNumberFormatted = "S02E01",
@@ -201,7 +201,6 @@ private fun NextEpisodeCardPreview() {
                 seasonNumber = 2,
                 episodeNumber = 1,
                 runtime = "45 min",
-                stillImage = "/still.jpg",
                 overview = "Daryl washes ashore in France and struggles to piece together how he got there and why.",
                 isNew = true,
             ),

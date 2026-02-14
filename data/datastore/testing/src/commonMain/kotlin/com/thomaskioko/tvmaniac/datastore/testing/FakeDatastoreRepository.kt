@@ -100,11 +100,15 @@ public class FakeDatastoreRepository : DatastoreRepository {
 
     override fun observeEpisodeNotificationsEnabled(): Flow<Boolean> = episodeNotificationsEnabledFlow.asStateFlow()
 
+    override suspend fun getEpisodeNotificationsEnabled(): Boolean = episodeNotificationsEnabledFlow.value
+
     override suspend fun setNotificationPermissionAsked(asked: Boolean) {
         notificationPermissionAskedFlow.value = asked
     }
 
     override fun observeNotificationPermissionAsked(): Flow<Boolean> = notificationPermissionAskedFlow.asStateFlow()
+
+    override suspend fun getNotificationPermissionAsked(): Boolean = notificationPermissionAskedFlow.value
 
     override suspend fun setShowNotificationRationale(show: Boolean) {
         showNotificationRationaleFlow.value = show
@@ -125,10 +129,17 @@ public class FakeDatastoreRepository : DatastoreRepository {
     override fun observeLibrarySortOption(): Flow<String> = librarySortOptionFlow.asStateFlow()
 
     private val upNextSortOptionFlow = MutableStateFlow("LAST_WATCHED")
+    private val lastUpNextSyncTimestampFlow: MutableStateFlow<Long?> = MutableStateFlow(null)
 
     override suspend fun saveUpNextSortOption(sortOption: String) {
         upNextSortOptionFlow.value = sortOption
     }
 
     override fun observeUpNextSortOption(): Flow<String> = upNextSortOptionFlow.asStateFlow()
+
+    override suspend fun setLastUpNextSyncTimestamp(timestamp: Long) {
+        lastUpNextSyncTimestampFlow.value = timestamp
+    }
+
+    override fun observeLastUpNextSyncTimestamp(): Flow<Long?> = lastUpNextSyncTimestampFlow.asStateFlow()
 }

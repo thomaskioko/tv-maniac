@@ -20,6 +20,8 @@ kotlin {
                 implementation(projects.data.datastore.api)
                 implementation(projects.data.traktauth.api)
                 implementation(projects.domain.logout)
+                implementation(projects.domain.notifications)
+                implementation(projects.domain.settings)
                 implementation(projects.domain.user)
 
                 api(libs.decompose.decompose)

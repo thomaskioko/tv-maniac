@@ -5,7 +5,6 @@ import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.model.ContinueTrackingResult
 import com.thomaskioko.tvmaniac.seasondetails.api.model.SeasonDetailsWithEpisodes
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,15 +29,21 @@ public class FakeSeasonDetailsRepository : SeasonDetailsRepository {
 
     private val continueTrackingResult = MutableStateFlow<ContinueTrackingResult?>(null)
 
-    public suspend fun setSeasonsResult(result: SeasonDetailsWithEpisodes) {
-        seasonsResult.emit(result)
-        continueTrackingResult.emit(
-            ContinueTrackingResult(
-                episodes = result.episodes.toImmutableList(),
-                currentSeasonNumber = result.seasonNumber,
-                currentSeasonId = result.seasonId,
-            ),
-        )
+    private val fetchedSeasons = mutableListOf<SeasonDetailsParam>()
+    private var fetchError: Throwable? = null
+
+    public fun setSeasonsResult(result: SeasonDetailsWithEpisodes) {
+        seasonsResult.value = result
+    }
+
+    public fun setFetchError(error: Throwable?) {
+        fetchError = error
+    }
+
+    public fun getFetchedSeasons(): List<SeasonDetailsParam> = fetchedSeasons.toList()
+
+    public fun clearFetchedSeasons() {
+        fetchedSeasons.clear()
     }
 
     public fun setContinueTrackingResult(result: ContinueTrackingResult?) {
@@ -49,6 +54,8 @@ public class FakeSeasonDetailsRepository : SeasonDetailsRepository {
         param: SeasonDetailsParam,
         forceRefresh: Boolean,
     ) {
+        fetchError?.let { throw it }
+        fetchedSeasons.add(param)
     }
 
     override suspend fun syncShowSeasonDetails(

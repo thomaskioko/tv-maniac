@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.domain.user
 import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.user.api.UserRepository
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
@@ -20,7 +19,7 @@ public class UpdateUserProfileData(
                 forceRefresh = params.forceRefresh,
             )
 
-            val slug = userRepository.observeCurrentUser().first()?.slug ?: return@withContext
+            val slug = userRepository.getCurrentUser()?.slug ?: return@withContext
 
             userRepository.fetchUserStats(
                 slug = slug,

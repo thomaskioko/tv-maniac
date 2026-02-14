@@ -23,8 +23,7 @@ public struct UpNextListItemView: View {
         self.onShowTitleClicked = onShowTitleClicked
         self.onMarkWatched = onMarkWatched
 
-        // Pre-compute values to reduce work during rendering
-        posterImageUrl = episode.stillImage ?? episode.showPoster
+        posterImageUrl = episode.imageUrl
 
         var text = episode.episodeNumber
         if episode.remainingEpisodes > 0 {
@@ -143,7 +142,7 @@ private enum UpNextListItemViewConstants {
             episode: SwiftNextEpisode(
                 showTraktId: 1,
                 showName: "The Walking Dead: Daryl Dixon",
-                showPoster: "/poster.jpg",
+                imageUrl: "/still.jpg",
                 episodeId: 123,
                 episodeTitle: "L'ame Perdue",
                 episodeNumber: "S02 | E01",
@@ -151,7 +150,6 @@ private enum UpNextListItemViewConstants {
                 seasonNumber: 2,
                 episodeNumberValue: 1,
                 runtime: "45 min",
-                stillImage: "/still.jpg",
                 overview: "Daryl washes ashore in France.",
                 badge: .premiere,
                 remainingEpisodes: 7,

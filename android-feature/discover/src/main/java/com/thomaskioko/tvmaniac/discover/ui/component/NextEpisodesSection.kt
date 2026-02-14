@@ -65,7 +65,13 @@ internal fun NextEpisodesSection(
                         onEpisodeClick = onEpisodeClick,
                         onMarkWatched = { onMarkWatched(episode) },
                         onUnfollowShow = { onUnfollowShow(episode.showTraktId) },
-                        onOpenSeason = { onOpenSeason(episode.showTraktId, episode.seasonId, episode.seasonNumber) },
+                        onOpenSeason = {
+                            onOpenSeason(
+                                episode.showTraktId,
+                                episode.seasonId,
+                                episode.seasonNumber,
+                            )
+                        },
                     )
                 }
             }
@@ -83,7 +89,7 @@ private fun NextEpisodesSectionPreview() {
                 NextEpisodeUiModel(
                     showTraktId = 1L,
                     showName = "The Walking Dead: Daryl Dixon",
-                    showPoster = "/poster1.jpg",
+                    imageUrl = "/still1.jpg",
                     episodeId = 123L,
                     episodeTitle = "L'âme Perdue",
                     episodeNumberFormatted = "S02E01",
@@ -91,14 +97,13 @@ private fun NextEpisodesSectionPreview() {
                     seasonNumber = 2,
                     episodeNumber = 1,
                     runtime = "45 min",
-                    stillImage = "/still1.jpg",
                     overview = "Daryl washes ashore in France and struggles to piece together how he got there and why.",
                     isNew = true,
                 ),
                 NextEpisodeUiModel(
                     showTraktId = 2L,
                     showName = "Wednesday",
-                    showPoster = "/poster2.jpg",
+                    imageUrl = "/still1.jpg",
                     episodeId = 124L,
                     episodeTitle = "Wednesday's Child Is Full of Woe",
                     episodeNumberFormatted = "S02E02",
@@ -106,14 +111,13 @@ private fun NextEpisodesSectionPreview() {
                     seasonNumber = 2,
                     episodeNumber = 2,
                     runtime = "50 min",
-                    stillImage = "/still2.jpg",
                     overview = "Wednesday arrives at Nevermore Academy and immediately gets off on the wrong foot.",
                     isNew = false,
                 ),
                 NextEpisodeUiModel(
                     showTraktId = 3L,
                     showName = "House of the Dragon",
-                    showPoster = "/poster3.jpg",
+                    imageUrl = "/still1.jpg",
                     episodeId = 125L,
                     episodeTitle = "The Heirs of the Dragon",
                     episodeNumberFormatted = "S03E01",
@@ -121,7 +125,6 @@ private fun NextEpisodesSectionPreview() {
                     seasonNumber = 3,
                     episodeNumber = 1,
                     runtime = "66 min",
-                    stillImage = "/still3.jpg",
                     overview = "King Viserys hosts a tournament to celebrate the birth of his second child.",
                     isNew = true,
                 ),

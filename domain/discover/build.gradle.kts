@@ -20,6 +20,7 @@ kotlin {
                 api(projects.data.upcomingshows.api)
                 implementation(projects.data.genre.api)
                 implementation(projects.data.upnext.api)
+                implementation(projects.domain.upnext)
 
                 implementation(projects.core.base)
 

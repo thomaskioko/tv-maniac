@@ -20,6 +20,8 @@ public class FakeUserRepository(
 
     override fun observeCurrentUser(): Flow<UserProfile?> = _userProfile
 
+    override suspend fun getCurrentUser(): UserProfile? = _userProfile.value
+
     override suspend fun fetchUserProfile(username: String, forceRefresh: Boolean) {
     }
 

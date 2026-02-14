@@ -146,8 +146,8 @@ public fun SeasonDetailsScreen(
 @Composable
 internal fun SeasonDetailsScreen(
     state: SeasonDetailsModel,
-    snackBarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
+    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
     onAction: (SeasonDetailsAction) -> Unit,
 ) {
     val listState = rememberLazyListState()

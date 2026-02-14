@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.data.popularshows.testing.FakePopularShowsReposi
 import com.thomaskioko.tvmaniac.data.topratedshows.testing.FakeTopRatedShowsRepository
 import com.thomaskioko.tvmaniac.data.trendingshows.testing.FakeTrendingShowsRepository
 import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepository
+import com.thomaskioko.tvmaniac.domain.upnext.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
@@ -46,6 +47,10 @@ class DiscoverShowsInteractorTest {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
 
+        val observeUpNextInteractor = ObserveUpNextInteractor(
+            repository = upNextRepository,
+        )
+
         interactor = DiscoverShowsInteractor(
             featuredShowsRepository = featuredShowsRepository,
             topRatedShowsRepository = topRatedShowsRepository,
@@ -53,7 +58,7 @@ class DiscoverShowsInteractorTest {
             trendingShowsRepository = trendingShowsRepository,
             upcomingShowsRepository = upcomingShowsRepository,
             genreRepository = genreRepository,
-            upNextRepository = upNextRepository,
+            observeUpNextInteractor = observeUpNextInteractor,
             dispatchers = coroutineDispatcher,
         )
     }

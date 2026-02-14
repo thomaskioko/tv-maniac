@@ -7,7 +7,9 @@ import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsDao
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.UPNEXT_FULL_SYNC
+import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.upnext.api.UpNextDao
 import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
@@ -30,8 +32,10 @@ public class DefaultUpNextRepository(
     private val followedShowsDao: FollowedShowsDao,
     private val tvShowsDao: TvShowsDao,
     private val showDetailsRepository: ShowDetailsRepository,
+    private val seasonDetailsRepository: SeasonDetailsRepository,
     private val requestManagerRepository: RequestManagerRepository,
     private val logger: Logger,
+    private val traktAuthRepository: TraktAuthRepository,
 ) : UpNextRepository {
 
     override fun observeNextEpisodesForWatchlist(): Flow<List<NextEpisodeWithShow>> =
@@ -63,6 +67,11 @@ public class DefaultUpNextRepository(
                     forceRefresh -> showUpNextStore.fresh(show.traktId)
                     else -> showUpNextStore.get(show.traktId)
                 }
+
+                seasonDetailsRepository.syncShowSeasonDetails(
+                    showTraktId = show.traktId,
+                    forceRefresh = forceRefresh,
+                )
             }
         }
 
@@ -87,9 +96,11 @@ public class DefaultUpNextRepository(
         } catch (e: Exception) {
             logger.error(TAG, "Failed to ensure show $showTraktId exists: ${e.message}")
         }
-        when {
-            forceRefresh -> showUpNextStore.fresh(showTraktId)
-            else -> showUpNextStore.get(showTraktId)
+        if (traktAuthRepository.isLoggedIn()) {
+            when {
+                forceRefresh -> showUpNextStore.fresh(showTraktId)
+                else -> showUpNextStore.get(showTraktId)
+            }
         }
     }
 
@@ -100,7 +111,9 @@ public class DefaultUpNextRepository(
     ) {
         try {
             ensureShowExists(showTraktId)
-            showUpNextStore.fresh(showTraktId)
+            if (traktAuthRepository.isLoggedIn()) {
+                showUpNextStore.fresh(showTraktId)
+            }
         } catch (e: Exception) {
             logger.error(TAG, "Remote UpNext refresh failed, advancing locally: ${e.message}")
             upNextDao.advanceAfterWatched(
@@ -108,6 +121,7 @@ public class DefaultUpNextRepository(
                 watchedSeason = seasonNumber,
                 watchedEpisode = episodeNumber,
             )
+            throw e
         }
     }
 

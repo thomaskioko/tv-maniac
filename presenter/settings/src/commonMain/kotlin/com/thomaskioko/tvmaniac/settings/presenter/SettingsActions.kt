@@ -40,4 +40,8 @@ public data class BackgroundSyncToggled(
     val enabled: Boolean,
 ) : SettingsActions
 
+public data class EpisodeNotificationsToggled(
+    val enabled: Boolean,
+) : SettingsActions
+
 public data object NavigateToDebugMenu : SettingsActions

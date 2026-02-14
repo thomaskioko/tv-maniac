@@ -8,6 +8,9 @@ import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
+import com.thomaskioko.tvmaniac.domain.notifications.NotificationTasks
+import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNotificationsInteractor
+import com.thomaskioko.tvmaniac.domain.settings.ObserveSettingsPreferencesInteractor
 import com.thomaskioko.tvmaniac.i18n.testing.util.IgnoreIos
 import com.thomaskioko.tvmaniac.settings.presenter.ChangeThemeClicked
 import com.thomaskioko.tvmaniac.settings.presenter.DefaultSettingsPresenter
@@ -43,6 +46,12 @@ class SettingsPresenterTest {
     private val traktAuthRepository = FakeTraktAuthRepository()
     private val userRepository = FakeUserRepository()
     private val fakeTraktActivityRepository = FakeTraktActivityRepository()
+    private val fakeLogger = FakeLogger()
+    private val fakeNotificationTasks = object : NotificationTasks {
+        override fun scheduleEpisodeNotifications() = Unit
+        override fun scheduleAndRunEpisodeNotifications() = Unit
+        override fun cancelEpisodeNotifications() = Unit
+    }
 
     private lateinit var presenter: SettingsPresenter
 
@@ -51,17 +60,25 @@ class SettingsPresenterTest {
         Dispatchers.setMain(testDispatcher)
         presenter = DefaultSettingsPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
+            appInfo = FakeApplicationInfo.DEFAULT,
             datastoreRepository = datastoreRepository,
-            dateTimeProvider = dateTimeProvider,
             traktAuthRepository = traktAuthRepository,
-            logger = FakeLogger(),
+            logger = fakeLogger,
             logoutInteractor = LogoutInteractor(
                 traktAuthRepository = traktAuthRepository,
                 userRepository = userRepository,
                 datastoreRepository = datastoreRepository,
                 traktActivityRepository = fakeTraktActivityRepository,
             ),
-            appInfo = FakeApplicationInfo.DEFAULT,
+            observeSettingsPreferencesInteractor = ObserveSettingsPreferencesInteractor(
+                datastoreRepository = datastoreRepository,
+                dateTimeProvider = dateTimeProvider,
+            ),
+            toggleEpisodeNotificationsInteractor = ToggleEpisodeNotificationsInteractor(
+                datastoreRepository = datastoreRepository,
+                notificationTasks = fakeNotificationTasks,
+                traktAuthRepository = traktAuthRepository,
+            ),
             backClicked = {},
             onNavigateToDebugMenu = {},
         )
@@ -85,20 +102,18 @@ class SettingsPresenterTest {
         presenter.state.test {
             val initialState = awaitItem()
             initialState.versionName shouldBe "0.0.0"
+            initialState.theme shouldBe ThemeModel.SYSTEM
+
+            datastoreRepository.setTheme(ThemeModel.DARK.toAppTheme())
 
             presenter.dispatch(ChangeThemeClicked)
             awaitItem().showthemePopup shouldBe true
 
-            datastoreRepository.setTheme(ThemeModel.DARK.toAppTheme())
             presenter.dispatch(ThemeSelected(ThemeModel.DARK))
 
-            val updatedState1 = awaitItem()
-            updatedState1.showthemePopup shouldBe true
-            updatedState1.theme shouldBe ThemeModel.DARK
-
-            val updatedState2 = awaitItem()
-            updatedState2.showthemePopup shouldBe false
-            updatedState2.theme shouldBe ThemeModel.DARK
+            val updatedState = awaitItem()
+            updatedState.showthemePopup shouldBe false
+            updatedState.theme shouldBe ThemeModel.DARK
         }
     }
 

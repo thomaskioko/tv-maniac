@@ -4,7 +4,6 @@ import com.thomaskioko.tvmaniac.domain.upnext.model.UpNextResult
 import com.thomaskioko.tvmaniac.domain.upnext.model.UpNextSortOption
 import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
-import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -15,7 +14,6 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 public class ObserveUpNextInteractor(
     private val repository: UpNextRepository,
-    private val dateTimeProvider: DateTimeProvider,
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
     public val flow: Flow<UpNextResult> = repository.observeUpNextSortOption()
@@ -26,23 +24,16 @@ public class ObserveUpNextInteractor(
                 .map { episodes ->
                     UpNextResult(
                         sortOption = sortOption,
-                        episodes = episodes
-                            .filterAired(dateTimeProvider.nowMillis(), sortOption),
+                        episodes = episodes.sortedBy(sortOption),
                     )
                 }
         }
 }
 
-private fun List<NextEpisodeWithShow>.filterAired(nowMillis: Long, option: UpNextSortOption): List<NextEpisodeWithShow> =
-    filter { episode ->
-        val airDate = episode.firstAired
-        airDate == null || airDate <= nowMillis
-    }.sortedBy(option)
-
 private fun List<NextEpisodeWithShow>.sortedBy(option: UpNextSortOption): List<NextEpisodeWithShow> =
     when (option) {
-        UpNextSortOption.LAST_WATCHED -> sortedByDescending { it.lastWatchedAt ?: it.followedAt ?: 0L }
-        UpNextSortOption.AIR_DATE -> sortedByDescending { it.firstAired ?: 0L }
+        UpNextSortOption.LAST_WATCHED -> sortedByDescending { it.lastWatchedAt ?: it.followedAt ?: Long.MAX_VALUE }
+        UpNextSortOption.AIR_DATE -> sortedByDescending { it.firstAired ?: Long.MAX_VALUE }
     }
 
 private fun String.toUpNextSortOption(): UpNextSortOption = when (this) {

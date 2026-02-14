@@ -33,6 +33,7 @@ kotlin {
             dependencies {
                 implementation(projects.core.logger.testing)
                 implementation(projects.core.util.testing)
+                implementation(projects.data.datastore.testing)
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.upnext.testing)
                 implementation(projects.data.traktauth.testing)

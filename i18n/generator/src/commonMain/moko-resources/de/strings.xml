@@ -254,10 +254,15 @@
 
     <string name="label_settings_episode_notifications">Episodenbenachrichtigungen</string>
     <string name="label_settings_episode_notifications_description">Benachrichtigt werden, wenn neue Episoden ausgestrahlt werden</string>
+    <string name="label_settings_section_developer">Entwickler</string>
+    <string name="label_settings_debug_notification_description">Löst eine Testbenachrichtigung aus</string>
+    <string name="label_settings_debug_notification_scheduled">Benachrichtigung geplant!</string>
+    <string name="label_settings_delayed_debug_notification_title">Verzögerte Benachrichtigung</string>
+    <string name="label_settings_delayed_debug_notification_description">Plant eine Benachrichtigung in 5 Minuten</string>
 
-    <string name="notification_rationale_title">Episodenbenachrichtigungen</string>
-    <string name="notification_rationale_message">Lassen Sie sich benachrichtigen, wenn neue Episoden Ihrer Lieblingssendungen bald ausgestrahlt werden, damit Sie sie nie verpassen.</string>
-    <string name="notification_rationale_enable">Aktivieren</string>
+    <string name="notification_rationale_title">Verpassen Sie keine neuen Episoden</string>
+    <string name="notification_rationale_message">Lassen Sie sich benachrichtigen, wenn Episoden Ihrer verfolgten Serien bald ausgestrahlt werden, damit Sie keine Premiere verpassen.</string>
+    <string name="notification_rationale_enable">Benachrichtigungen aktivieren</string>
     <string name="notification_rationale_not_now">Nicht jetzt</string>
 
     <string name="title_calendar">Kalender</string>
@@ -300,4 +305,15 @@
     <string name="label_debug_section_background_tasks">Hintergrundaufgaben</string>
     <string name="label_debug_section_notifications">Benachrichtigungen</string>
     <string name="label_debug_coming_soon">Demnächst verfügbar</string>
+    <string name="label_debug_section_data_sync">Datensynchronisierung</string>
+    <string name="label_debug_library_sync_title">Bibliothek synchronisieren</string>
+    <string name="label_debug_library_sync_description">Bibliotheksdaten erzwingen aktualisieren</string>
+    <string name="label_debug_upnext_sync_title">UpNext synchronisieren</string>
+    <string name="label_debug_upnext_sync_description">UpNext-Daten erzwingen aktualisieren</string>
+    <string name="label_debug_never_synced">Nie synchronisiert</string>
+
+    <string name="notification_permission_denied_title">Benachrichtigungen deaktiviert</string>
+    <string name="notification_permission_denied_message">Um Episodenbenachrichtigungen zu erhalten, aktivieren Sie bitte die Benachrichtigungen in Ihren Geräteeinstellungen.</string>
+    <string name="notification_permission_denied_settings">Einstellungen öffnen</string>
+    <string name="notification_permission_denied_cancel">Abbrechen</string>
 </resources>

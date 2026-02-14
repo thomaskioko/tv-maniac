@@ -55,7 +55,7 @@ SELECT
     next_ep.season_number,
     next_ep.episode_number,
     next_ep.runtime,
-    next_ep.image_url AS still_path,
+    episode.image_url AS still_path,
     next_ep.overview,
     next_ep.first_aired,
     next_ep.is_show_complete,
@@ -74,6 +74,9 @@ INNER JOIN tvshow ON tvshow.trakt_id = next_ep.show_trakt_id
 LEFT JOIN season ON season.show_trakt_id = next_ep.show_trakt_id
     AND season.season_number = next_ep.season_number
 LEFT JOIN show_metadata ON show_metadata.show_trakt_id = next_ep.show_trakt_id
+LEFT JOIN episode ON episode.show_trakt_id = next_ep.show_trakt_id
+    AND episode.season_id = season.id
+    AND episode.episode_number = next_ep.episode_number
 WHERE followed_shows.pending_action != 'DELETE'
   AND next_ep.is_show_complete = 0
 ORDER BY COALESCE(next_ep.trakt_last_watched_at, followed_shows.followed_at) DESC;
@@ -92,7 +95,7 @@ SELECT
     next_ep.season_number,
     next_ep.episode_number,
     next_ep.runtime,
-    next_ep.image_url AS still_path,
+    episode.image_url AS still_path,
     next_ep.overview,
     next_ep.first_aired,
     next_ep.is_show_complete,
@@ -111,6 +114,9 @@ INNER JOIN tvshow ON tvshow.trakt_id = next_ep.show_trakt_id
 LEFT JOIN season ON season.show_trakt_id = next_ep.show_trakt_id
     AND season.season_number = next_ep.season_number
 LEFT JOIN show_metadata ON show_metadata.show_trakt_id = next_ep.show_trakt_id
+LEFT JOIN episode ON episode.show_trakt_id = next_ep.show_trakt_id
+    AND episode.season_id = season.id
+    AND episode.episode_number = next_ep.episode_number
 WHERE next_ep.show_trakt_id = ?
   AND followed_shows.pending_action != 'DELETE';
 

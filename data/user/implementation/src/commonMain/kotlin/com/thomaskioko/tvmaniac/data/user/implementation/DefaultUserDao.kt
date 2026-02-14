@@ -11,9 +11,11 @@ import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.db.User
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
@@ -78,6 +80,22 @@ public class DefaultUserDao(
                     }
                 } ?: flowOf(null)
             }
+
+    override suspend fun getCurrentUser(): UserProfile? =
+        withContext(dispatchers.databaseRead) {
+            val user = database.userQueries.observeCurrentUser().executeAsOneOrNull()
+            user?.let {
+                val stats = userStatsDao.observeUserProfileStats(it.slug).first()
+                UserProfile(
+                    slug = it.slug,
+                    username = it.user_name,
+                    fullName = it.full_name,
+                    avatarUrl = it.profile_picture,
+                    backgroundUrl = it.background_url ?: getRandomWatchlistBackdrop(),
+                    stats = stats ?: UserProfileStats.Empty,
+                )
+            }
+        }
 
     override fun getRandomWatchlistBackdrop(): String? =
         database.userQueries.getRandomWatchlistBackdrop().executeAsOneOrNull()?.image_url

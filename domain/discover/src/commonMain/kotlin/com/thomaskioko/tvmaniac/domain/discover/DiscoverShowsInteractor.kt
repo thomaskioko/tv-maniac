@@ -7,10 +7,10 @@ import com.thomaskioko.tvmaniac.data.featuredshows.api.FeaturedShowsRepository
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsRepository
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsRepository
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
+import com.thomaskioko.tvmaniac.domain.upnext.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.genre.GenreRepository
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsRepository
-import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
@@ -24,7 +24,7 @@ public class DiscoverShowsInteractor(
     private val trendingShowsRepository: TrendingShowsRepository,
     private val upcomingShowsRepository: UpcomingShowsRepository,
     private val genreRepository: GenreRepository,
-    private val upNextRepository: UpNextRepository,
+    private val observeUpNextInteractor: ObserveUpNextInteractor,
     private val dispatchers: AppCoroutineDispatchers,
 ) : SubjectInteractor<Unit, DiscoverShowsData>() {
 
@@ -35,15 +35,15 @@ public class DiscoverShowsInteractor(
         popularShowsRepository.observePopularShows(),
         trendingShowsRepository.observeTrendingShows(),
         upcomingShowsRepository.observeUpcomingShows(),
-        upNextRepository.observeNextEpisodesForWatchlist(),
-    ) { _, featured, topRated, popular, trending, upcoming, nextEpisodes ->
+        observeUpNextInteractor.flow,
+    ) { _, featured, topRated, popular, trending, upcoming, upNextResult ->
         DiscoverShowsData(
             featuredShows = featured,
             topRatedShows = topRated,
             popularShows = popular,
             trendingShows = trending,
             upcomingShows = upcoming,
-            nextEpisodes = nextEpisodes,
+            nextEpisodes = upNextResult.episodes,
         )
     }.flowOn(dispatchers.io.limitedParallelism(6))
 }

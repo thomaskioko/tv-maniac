@@ -152,6 +152,13 @@ public interface DatastoreRepository {
     public fun observeEpisodeNotificationsEnabled(): Flow<Boolean>
 
     /**
+     * Gets the user's preference for episode notifications.
+     *
+     * @return Boolean, true if episode notifications are enabled, false otherwise. Defaults to false.
+     */
+    public suspend fun getEpisodeNotificationsEnabled(): Boolean
+
+    /**
      * Saves whether the notification permission has been asked.
      * Used to ensure we only prompt once on first launch.
      *
@@ -165,6 +172,13 @@ public interface DatastoreRepository {
      * @return A Flow of Boolean, true if permission has been asked, false otherwise. Defaults to false.
      */
     public fun observeNotificationPermissionAsked(): Flow<Boolean>
+
+    /**
+     * Gets whether the notification permission has been asked.
+     *
+     * @return Boolean, true if permission has been asked, false otherwise. Defaults to false.
+     */
+    public suspend fun getNotificationPermissionAsked(): Boolean
 
     /**
      * Sets whether to show the notification rationale dialog.
@@ -221,4 +235,8 @@ public interface DatastoreRepository {
      * @return A Flow of the sort option name, defaulting to "LAST_WATCHED".
      */
     public fun observeUpNextSortOption(): Flow<String>
+
+    public suspend fun setLastUpNextSyncTimestamp(timestamp: Long)
+
+    public fun observeLastUpNextSyncTimestamp(): Flow<Long?>
 }

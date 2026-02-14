@@ -285,7 +285,7 @@ private fun NextEpisodeWithShow.toUiModel(): NextEpisodeUiModel {
     return NextEpisodeUiModel(
         showTraktId = showTraktId,
         showName = showName,
-        showPoster = showPoster,
+        imageUrl = stillPath ?: showPoster,
         episodeId = episodeId,
         episodeTitle = episodeName ?: "",
         episodeNumberFormatted = "S${seasonNumber}E$episodeNumber",
@@ -293,7 +293,6 @@ private fun NextEpisodeWithShow.toUiModel(): NextEpisodeUiModel {
         seasonNumber = seasonNumber,
         episodeNumber = episodeNumber,
         runtime = runtime?.let { "$it min" },
-        stillImage = stillPath,
         overview = overview ?: "",
         isNew = false,
     )

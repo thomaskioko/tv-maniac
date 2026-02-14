@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
+import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.RefreshUpNextInteractor
@@ -33,6 +34,7 @@ internal class DefaultUpNextPresenterTest {
     private val upNextRepository = FakeUpNextRepository()
     private val traktAuthRepository = FakeTraktAuthRepository()
     private val dateTimeProvider = FakeDateTimeProvider()
+    private val datastoreRepository = FakeDatastoreRepository()
     private val logger = FakeLogger()
 
     @BeforeTest
@@ -140,7 +142,7 @@ internal class DefaultUpNextPresenterTest {
     }
 
     @Test
-    fun `should filter out future episodes given firstAired is after current time`() = runTest {
+    fun `should include future episodes given firstAired is after current time`() = runTest {
         dateTimeProvider.setCurrentTimeMillis(5000L)
 
         val episodes = listOf(
@@ -154,8 +156,9 @@ internal class DefaultUpNextPresenterTest {
         presenter.state.test {
             skipItems(1)
             val state = awaitItem()
-            state.episodes shouldHaveSize 1
+            state.episodes shouldHaveSize 2
             state.episodes[0].showName shouldBe "Aired Show"
+            state.episodes[1].showName shouldBe "Future Show"
         }
     }
 
@@ -312,10 +315,9 @@ internal class DefaultUpNextPresenterTest {
             uiModel.seasonNumber shouldBe 1L
             uiModel.episodeNumber shouldBe 1L
             uiModel.runtime shouldBe 60L
-            uiModel.stillPath shouldBe "/still.jpg"
+            uiModel.imageUrl shouldBe "/still.jpg"
             uiModel.overview shouldBe "A great episode"
             uiModel.showName shouldBe "Test Show"
-            uiModel.showPoster shouldBe "/poster.jpg"
             uiModel.showStatus shouldBe "Returning Series"
             uiModel.showYear shouldBe "2025"
             uiModel.firstAired shouldBe 1000L
@@ -383,11 +385,12 @@ internal class DefaultUpNextPresenterTest {
     ): UpNextPresenter {
         val observeUpNextInteractor = ObserveUpNextInteractor(
             repository = upNextRepository,
-            dateTimeProvider = dateTimeProvider,
         )
 
         val refreshUpNextInteractor = RefreshUpNextInteractor(
             upNextRepository = upNextRepository,
+            dateTimeProvider = dateTimeProvider,
+            datastoreRepository = datastoreRepository,
         )
 
         val markEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(

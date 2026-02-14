@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.discover.presenter.model
 public data class NextEpisodeUiModel(
     val showTraktId: Long,
     val showName: String,
-    val showPoster: String?,
+    val imageUrl: String?,
     val episodeId: Long,
     val episodeTitle: String,
     val episodeNumberFormatted: String, // "S1E5"
@@ -11,7 +11,6 @@ public data class NextEpisodeUiModel(
     val seasonNumber: Long,
     val episodeNumber: Long,
     val runtime: String?, // "45 min"
-    val stillImage: String?,
     val overview: String,
     val isNew: Boolean, // Aired in last 7 days
 )
