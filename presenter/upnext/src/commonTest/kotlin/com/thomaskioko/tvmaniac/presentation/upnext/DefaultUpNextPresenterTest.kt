@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
+import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.RefreshUpNextInteractor
@@ -33,6 +34,7 @@ internal class DefaultUpNextPresenterTest {
     private val upNextRepository = FakeUpNextRepository()
     private val traktAuthRepository = FakeTraktAuthRepository()
     private val dateTimeProvider = FakeDateTimeProvider()
+    private val datastoreRepository = FakeDatastoreRepository()
     private val logger = FakeLogger()
 
     @BeforeTest
@@ -387,6 +389,8 @@ internal class DefaultUpNextPresenterTest {
 
         val refreshUpNextInteractor = RefreshUpNextInteractor(
             upNextRepository = upNextRepository,
+            dateTimeProvider = dateTimeProvider,
+            datastoreRepository = datastoreRepository,
         )
 
         val markEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(
