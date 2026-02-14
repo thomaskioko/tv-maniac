@@ -3,6 +3,7 @@ import SwiftUI
 import SwiftUIComponents
 import TvManiac
 import UIKit
+import UserNotifications
 
 public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
     public lazy var appComponent = IosApplicationComponent.companion.create()
@@ -11,11 +12,14 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
     public lazy var logger = appComponent.logger
     public lazy var traktAuthManager = appComponent.traktAuthManager
 
+    public private(set) var notificationDelegate: NotificationDelegate?
+
     override public init() {
         super.init()
         ImageConfiguration.configure()
         appComponent.initializers.initialize()
         setupNotifications()
+        setupNotificationDelegate()
 
         let logBridge = KmpLoggerBridge(appComponent.logger)
         MemoryMonitor.shared.setLogger(logBridge)
@@ -26,6 +30,15 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
 
     public func setupAuthBridge(authCallback: @escaping () -> Void) {
         traktAuthManager.setAuthCallback(callback: authCallback)
+    }
+
+    private func setupNotificationDelegate() {
+        notificationDelegate = NotificationDelegate()
+        UNUserNotificationCenter.current().delegate = notificationDelegate
+    }
+
+    public func configureNotificationDelegate(rootPresenter: RootPresenter) {
+        notificationDelegate?.setRootPresenter(rootPresenter)
     }
 
     private func setupNotifications() {
@@ -68,6 +81,8 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
             message: "App entered background — caches cleared"
         )
         logger.debug(message: "[Memory] Background — cleared memory caches")
+
+        appComponent.notificationTasks.rescheduleBackgroundTask()
     }
 
     @objc private func applicationWillEnterForeground() {
