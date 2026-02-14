@@ -96,7 +96,6 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.title_season_overview
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.seasondetails.presenter.ConfirmDialogAction
 import com.thomaskioko.tvmaniac.seasondetails.presenter.DismissDialog
-import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsMessageShown
 import com.thomaskioko.tvmaniac.seasondetails.presenter.ReloadSeasonDetails
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsAction
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsBackClicked
@@ -167,7 +166,6 @@ internal fun SeasonDetailsScreen(
                 onClick = { onAction(DismissDialog) },
             )
         },
-        snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
         content = { contentPadding ->
             Box(Modifier.fillMaxSize()) {
                 if (state.showError) {
