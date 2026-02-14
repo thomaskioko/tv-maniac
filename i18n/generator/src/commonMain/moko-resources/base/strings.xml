@@ -73,6 +73,8 @@
     <string name="label_settings_section_developer">Developer</string>
     <string name="label_settings_debug_notification_description">Triggers a test notification</string>
     <string name="label_settings_debug_notification_scheduled">Notification scheduled!</string>
+    <string name="label_settings_delayed_debug_notification_title">Delayed Notification</string>
+    <string name="label_settings_delayed_debug_notification_description">Schedules a notification in 5 minutes</string>
 
     <string name="notification_rationale_title">Never miss new episodes</string>
     <string name="notification_rationale_message">Get notified when episodes from your followed shows are about to air so you never miss a premiere.</string>

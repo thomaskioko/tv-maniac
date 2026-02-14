@@ -255,6 +255,8 @@
     <string name="label_settings_section_developer">Développeur</string>
     <string name="label_settings_debug_notification_description">Déclenche une notification de test</string>
     <string name="label_settings_debug_notification_scheduled">Notification programmée !</string>
+    <string name="label_settings_delayed_debug_notification_title">Notification différée</string>
+    <string name="label_settings_delayed_debug_notification_description">Programme une notification dans 5 minutes</string>
 
     <string name="notification_rationale_title">Ne manquez aucun épisode</string>
     <string name="notification_rationale_message">Recevez une notification lorsque les épisodes de vos séries suivies sont sur le point d\'être diffusés pour ne jamais manquer une première.</string>
