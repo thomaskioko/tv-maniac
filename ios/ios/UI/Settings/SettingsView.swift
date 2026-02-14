@@ -61,7 +61,7 @@ struct SettingsView: View {
                 AboutSheet()
             }
             .sheet(isPresented: $showPolicy) {
-                if let url = URL(string: "https://github.com/c0de-wizard/tv-maniac") {
+                if let url = URL(string: uiState.privacyPolicyUrl) {
                     SFSafariViewWrapper(url: url)
                         .appTint()
                         .appTheme()
@@ -129,66 +129,7 @@ struct SettingsView: View {
                     .frame(height: theme.spacing.xLarge)
             }
             .padding(.horizontal, theme.spacing.medium)
-        }
-        .scrollContentBackground(.hidden)
-        .background(theme.colors.background)
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarColor(backgroundColor: .clear)
-        .navigationBarBackButtonHidden(true)
-        .swipeBackGesture {
-            presenter.dispatch(action: BackClicked_())
-        }
-        .overlay(
-            GlassToolbar(
-                title: String(\.label_settings_title),
-                opacity: 1.0,
-                leadingIcon: {
-                    GlassButton(icon: "chevron.left") {
-                        presenter.dispatch(action: BackClicked_())
-                    }
-                }
-            ),
-            alignment: .top
-        )
-        .edgesIgnoringSafeArea(.top)
-        .onChange(of: uiState.theme) { newTheme in
-            store.appTheme = newTheme.toDeviceAppTheme()
-        }
-        .onChange(of: uiState.imageQuality) { imageQuality in
-            store.imageQuality = imageQuality.toSwift()
-        }
-        .onChange(of: uiState.errorMessage) { errorMessage in
-            showingErrorAlert = errorMessage != nil
-        }
-        .alert(isPresented: $showingErrorAlert) {
-            Alert(
-                title: Text("Error"),
-                message: Text(uiState.errorMessage ?? "An error occurred"),
-                dismissButton: .default(Text("OK"))
-            )
-        }
-        .alert(isPresented: $showingLogoutAlert) {
-            Alert(
-                title: Text(String(\.trakt_dialog_logout_title)),
-                message: Text(String(\.trakt_dialog_logout_message)),
-                primaryButton: .destructive(Text(String(\.logout))) {
-                    presenter.dispatch(action: TraktLogoutClicked())
-                },
-                secondaryButton: .cancel()
-            )
-        }
-        .sheet(isPresented: $showAboutSheet) {
-            AboutSheet()
-        }
-        .sheet(isPresented: $showPolicy) {
-            if let url = URL(string: uiState.privacyPolicyUrl) {
-                SFSafariViewWrapper(url: url)
-                    .appTint()
-                    .appTheme()
-            }
-        }
-        .onAppear {
-            store.imageQuality = uiState.imageQuality.toSwift()
+            .padding(.top, DimensionConstants.toolbarInset)
         }
     }
 
