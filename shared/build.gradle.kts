@@ -33,6 +33,7 @@ scaffold {
             export(projects.presenter.library)
             export(projects.presenter.upnext)
             export(projects.presenter.debug)
+            export(projects.domain.notifications)
 
             export(libs.decompose.decompose)
             export(libs.essenty.lifecycle)
