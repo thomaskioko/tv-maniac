@@ -96,6 +96,7 @@ struct LibraryTab: View {
         return GlassToolbar(
             title: String(\.label_library_title),
             opacity: 1.0,
+            isLoading: uiState.isRefreshing,
             leadingIcon: {
                 GlassButton(icon: image) {
                     withAnimation {
