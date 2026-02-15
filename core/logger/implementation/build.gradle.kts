@@ -3,11 +3,18 @@ plugins {
 }
 
 scaffold {
+    addAndroidTarget()
     useKotlinInject()
 }
 
 kotlin {
     sourceSets {
+        androidMain {
+            dependencies {
+                implementation(libs.firebase.crashlytics)
+            }
+        }
+
         commonMain.dependencies {
             implementation(projects.core.base)
             implementation(projects.core.util.api)
