@@ -1,6 +1,6 @@
 [versions]
 app-version-code = "1"
-app-version-name = "1.0.0"
+app-version-name = "1001"
 
 android-compile = "36"
 android-min = "24"
