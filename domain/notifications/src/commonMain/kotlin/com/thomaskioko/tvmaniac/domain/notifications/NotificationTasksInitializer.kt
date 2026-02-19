@@ -40,7 +40,7 @@ public class NotificationTasksInitializer(
                 .collect { shouldSchedule ->
                     if (shouldSchedule) {
                         logger.debug(TAG, "Scheduling episode notifications")
-                        notificationTasks.value.scheduleEpisodeNotifications()
+                        notificationTasks.value.scheduleAndRunEpisodeNotifications()
                     } else {
                         logger.debug(TAG, "Cancelling episode notifications")
                         notificationTasks.value.cancelEpisodeNotifications()

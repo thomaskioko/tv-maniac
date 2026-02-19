@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.core.tasks.implementation.TaskResult.Failure
 import com.thomaskioko.tvmaniac.core.tasks.implementation.TaskResult.Success
 import kotlinx.cinterop.ExperimentalForeignApi
 import me.tatarka.inject.annotations.Inject
-import platform.BackgroundTasks.BGProcessingTaskRequest
+import platform.BackgroundTasks.BGAppRefreshTaskRequest
 import platform.BackgroundTasks.BGTask
 import platform.BackgroundTasks.BGTaskScheduler
 import platform.Foundation.NSDate
@@ -31,9 +31,7 @@ public class BGTaskSchedulerWrapper(
 
     @OptIn(ExperimentalForeignApi::class)
     public fun submit(taskId: String, interval: Double): TaskResult {
-        val request = BGProcessingTaskRequest(identifier = taskId).apply {
-            requiresNetworkConnectivity = true
-            requiresExternalPower = false
+        val request = BGAppRefreshTaskRequest(identifier = taskId).apply {
             earliestBeginDate = NSDate.dateWithTimeIntervalSinceNow(interval)
         }
 
