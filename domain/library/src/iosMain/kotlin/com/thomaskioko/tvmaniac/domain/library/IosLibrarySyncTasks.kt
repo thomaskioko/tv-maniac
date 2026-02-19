@@ -35,8 +35,8 @@ public class IosLibrarySyncTasks(
         registry.register(this)
     }
 
-    override fun scheduleLibrarySync() {
-        registry.schedule(taskId)
+    override fun scheduleAndRunLibrarySync() {
+        registry.scheduleAndExecute(taskId)
     }
 
     override fun cancelLibrarySync() {

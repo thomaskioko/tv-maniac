@@ -37,8 +37,8 @@ public class AndroidLibrarySyncTask(
         scheduler.register(this)
     }
 
-    override fun scheduleLibrarySync() {
-        scheduler.schedulePeriodic(workerName)
+    override fun scheduleAndRunLibrarySync() {
+        scheduler.scheduleAndExecute(workerName)
     }
 
     override fun cancelLibrarySync() {

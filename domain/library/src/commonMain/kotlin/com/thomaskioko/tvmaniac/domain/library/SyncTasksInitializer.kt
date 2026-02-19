@@ -65,7 +65,7 @@ public class SyncTasksInitializer(
                 .distinctUntilChanged()
                 .collect { shouldSync ->
                     when {
-                        shouldSync -> syncTask.scheduleLibrarySync()
+                        shouldSync -> syncTask.scheduleAndRunLibrarySync()
                         else -> syncTask.cancelLibrarySync()
                     }
                 }
