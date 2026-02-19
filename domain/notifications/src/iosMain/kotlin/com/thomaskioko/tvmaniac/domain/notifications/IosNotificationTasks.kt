@@ -78,7 +78,7 @@ public class IosNotificationTasks(
         private const val TASK_ID = "com.thomaskioko.tvmaniac.episodenotifications"
         private const val CHECK_INTERVAL_SECONDS = 6.0 * 60 * 60 // Task runs every 6 hours
         private val NOTIFICATION_CHECK_INTERVAL = 6.hours
-        private const val LOOKAHEAD_MULTIPLIER = 1.5 // 9-hour lookahead window, 3-hour overlap
+        private const val LOOKAHEAD_MULTIPLIER = 4.0 // 24-hour lookahead window, safe due to iOS dedup by identifier
         private val lookaheadLimit = NOTIFICATION_CHECK_INTERVAL * LOOKAHEAD_MULTIPLIER
         private val refreshParams = RefreshUpcomingSeasonDetailsInteractor.Params()
         private val scheduleParams = ScheduleEpisodeNotificationsInteractor.Params(

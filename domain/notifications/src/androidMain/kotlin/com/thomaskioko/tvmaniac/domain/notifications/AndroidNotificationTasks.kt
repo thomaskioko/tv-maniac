@@ -81,6 +81,6 @@ public class AndroidNotificationTasks(
         private const val TAG = "AndroidNotificationTasks"
         private const val WORKER_NAME = "episode_notification_worker"
         private val NOTIFICATION_CHECK_INTERVAL = 6.hours // Worker runs every 6 hours
-        private const val LOOKAHEAD_MULTIPLIER = 1.5 // 9-hour lookahead window, 3-hour overlap
+        private const val LOOKAHEAD_MULTIPLIER = 4.0 // 24-hour lookahead window, safe due to notification dedup by episode ID
     }
 }
