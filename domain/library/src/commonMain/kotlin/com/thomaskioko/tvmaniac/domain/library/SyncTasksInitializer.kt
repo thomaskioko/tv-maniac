@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.domain.library
 import com.thomaskioko.tvmaniac.core.base.AppInitializer
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
@@ -20,7 +21,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 @Inject
 @ContributesBinding(AppScope::class, multibinding = true)
 public class SyncTasksInitializer(
-    syncTasks: Lazy<SyncTasks>,
+    private val scheduler: BackgroundTaskScheduler,
     syncLibraryInteractor: Lazy<SyncLibraryInteractor>,
     datastoreRepo: Lazy<DatastoreRepository>,
     traktAuthRepo: Lazy<TraktAuthRepository>,
@@ -28,13 +29,11 @@ public class SyncTasksInitializer(
     private val logger: Logger,
 ) : AppInitializer {
 
-    private val syncTask by syncTasks
     private val syncInteractor by syncLibraryInteractor
     private val datastoreRepository by datastoreRepo
     private val traktAuthRepository by traktAuthRepo
 
     override fun init() {
-        syncTask.setup()
         observeDataSync()
         observeLibrarySync()
     }
@@ -65,8 +64,8 @@ public class SyncTasksInitializer(
                 .distinctUntilChanged()
                 .collect { shouldSync ->
                     when {
-                        shouldSync -> syncTask.scheduleAndRunLibrarySync()
-                        else -> syncTask.cancelLibrarySync()
+                        shouldSync -> scheduler.schedulePeriodic(LibrarySyncWorker.REQUEST)
+                        else -> scheduler.cancel(LibrarySyncWorker.WORKER_NAME)
                     }
                 }
         }

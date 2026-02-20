@@ -2,9 +2,8 @@ package com.thomaskioko.tvmaniac.domain.notifications
 
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundWorker
-import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundWorkerScheduler
-import com.thomaskioko.tvmaniac.core.tasks.api.NetworkRequirement
-import com.thomaskioko.tvmaniac.core.tasks.api.WorkerConstraints
+import com.thomaskioko.tvmaniac.core.tasks.api.PeriodicTaskRequest
+import com.thomaskioko.tvmaniac.core.tasks.api.TaskConstraints
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerResult
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.RefreshUpcomingSeasonDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
@@ -13,44 +12,22 @@ import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
-import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 
 @Inject
 @SingleIn(AppScope::class)
-@ContributesBinding(AppScope::class, boundType = NotificationTasks::class)
-public class AndroidNotificationTasks(
-    private val scheduler: BackgroundWorkerScheduler,
+@ContributesBinding(AppScope::class, boundType = BackgroundWorker::class, multibinding = true)
+public class EpisodeNotificationWorker(
     private val syncTraktCalendarInteractor: Lazy<SyncTraktCalendarInteractor>,
     private val refreshInteractor: Lazy<RefreshUpcomingSeasonDetailsInteractor>,
     private val scheduleInteractor: Lazy<ScheduleEpisodeNotificationsInteractor>,
     private val logger: Logger,
-) : NotificationTasks, BackgroundWorker {
+) : BackgroundWorker {
 
     override val workerName: String = WORKER_NAME
-    override val interval: Duration = NOTIFICATION_CHECK_INTERVAL
-    override val constraints: WorkerConstraints = WorkerConstraints(NetworkRequirement.CONNECTED)
 
-    override fun setup() {
-        scheduler.register(this)
-    }
-
-    override fun scheduleEpisodeNotifications() {
-        scheduler.schedulePeriodic(workerName)
-    }
-
-    override fun scheduleAndRunEpisodeNotifications() {
-        scheduler.scheduleAndExecute(workerName)
-    }
-
-    override fun cancelEpisodeNotifications() {
-        scheduler.cancel(workerName)
-    }
-
-    override suspend fun execute(): WorkerResult {
+    override suspend fun doWork(): WorkerResult {
         logger.debug(TAG, "Episode notification worker running")
-
-        val lookaheadLimit = NOTIFICATION_CHECK_INTERVAL * LOOKAHEAD_MULTIPLIER
 
         runCatching {
             refreshInteractor.value.executeSync(
@@ -66,21 +43,29 @@ public class AndroidNotificationTasks(
 
         return runCatching {
             scheduleInteractor.value.executeSync(
-                ScheduleEpisodeNotificationsInteractor.Params(limit = lookaheadLimit),
+                ScheduleEpisodeNotificationsInteractor.Params(limit = LOOKAHEAD_LIMIT),
             )
         }.fold(
             onSuccess = { WorkerResult.Success },
             onFailure = {
                 logger.error(TAG, "Notification scheduling failed: ${it.message}")
-                WorkerResult.Failure
+                WorkerResult.Failure(it.message)
             },
         )
     }
 
-    private companion object {
-        private const val TAG = "AndroidNotificationTasks"
-        private const val WORKER_NAME = "episode_notification_worker"
-        private val NOTIFICATION_CHECK_INTERVAL = 6.hours // Worker runs every 6 hours
-        private const val LOOKAHEAD_MULTIPLIER = 4.0 // 24-hour lookahead window, safe due to notification dedup by episode ID
+    internal companion object {
+        internal const val WORKER_NAME = "com.thomaskioko.tvmaniac.episodenotifications"
+        private const val TAG = "EpisodeNotificationWorker"
+        private val NOTIFICATION_CHECK_INTERVAL = 6.hours
+        private const val LOOKAHEAD_MULTIPLIER = 4.0
+        private val LOOKAHEAD_LIMIT = NOTIFICATION_CHECK_INTERVAL * LOOKAHEAD_MULTIPLIER
+        private const val SIX_HOURS_MS = 6L * 60 * 60 * 1000
+
+        internal val REQUEST = PeriodicTaskRequest(
+            id = WORKER_NAME,
+            intervalMs = SIX_HOURS_MS,
+            constraints = TaskConstraints(requiresNetwork = true),
+        )
     }
 }

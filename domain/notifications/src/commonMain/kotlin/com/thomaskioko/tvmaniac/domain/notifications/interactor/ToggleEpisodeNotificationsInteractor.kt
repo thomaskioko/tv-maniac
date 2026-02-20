@@ -1,8 +1,9 @@
 package com.thomaskioko.tvmaniac.domain.notifications.interactor
 
 import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
+import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
-import com.thomaskioko.tvmaniac.domain.notifications.NotificationTasks
+import com.thomaskioko.tvmaniac.domain.notifications.EpisodeNotificationWorker
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -12,7 +13,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 public class ToggleEpisodeNotificationsInteractor(
     private val datastoreRepository: DatastoreRepository,
-    private val notificationTasks: NotificationTasks,
+    private val scheduler: BackgroundTaskScheduler,
     private val traktAuthRepository: TraktAuthRepository,
 ) : Interactor<ToggleEpisodeNotificationsInteractor.Params>() {
 
@@ -32,7 +33,7 @@ public class ToggleEpisodeNotificationsInteractor(
 
         datastoreRepository.setEpisodeNotificationsEnabled(true)
         if (traktAuthRepository.isLoggedIn()) {
-            notificationTasks.scheduleAndRunEpisodeNotifications()
+            scheduler.scheduleAndExecute(EpisodeNotificationWorker.REQUEST)
         }
     }
 }
