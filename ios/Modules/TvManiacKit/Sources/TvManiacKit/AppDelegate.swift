@@ -82,7 +82,7 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
         )
         logger.debug(message: "[Memory] Background — cleared memory caches")
 
-        appComponent.notificationTasks.rescheduleBackgroundTask()
+        appComponent.backgroundTaskScheduler.rescheduleBackgroundTask()
     }
 
     @objc private func applicationWillEnterForeground() {
