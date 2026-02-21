@@ -60,9 +60,9 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_never_synced
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_sync_login_required
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_upnext_sync_title
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_debug_notification_description
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_debug_notification_scheduled
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_delayed_debug_notification_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_delayed_debug_notification_title
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_debug_notification_scheduled
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_episode_notifications
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_last_sync_date
 import com.thomaskioko.tvmaniac.i18n.resolve
