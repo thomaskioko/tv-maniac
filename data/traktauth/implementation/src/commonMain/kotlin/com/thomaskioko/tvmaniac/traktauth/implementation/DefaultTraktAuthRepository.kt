@@ -67,9 +67,6 @@ public class DefaultTraktAuthRepository(
         val cached = authState.value
 
         if (cached != null && cached.isAuthorized && dateTimeProvider.now() < authStateExpiry) {
-            if (cached.isExpiringSoon()) {
-                scope.launch { refreshTokens() }
-            }
             return cached
         }
 

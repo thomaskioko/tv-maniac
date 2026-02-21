@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.shared
 
 import com.thomaskioko.tvmaniac.core.base.AppInitializers
 import com.thomaskioko.tvmaniac.core.logger.Logger
-import com.thomaskioko.tvmaniac.domain.notifications.NotificationTasks
+import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -18,7 +18,7 @@ public abstract class IosApplicationComponent : IosViewPresenterComponent.Factor
     public abstract val componentFactory: IosViewPresenterComponent.Factory
     public abstract val traktAuthRepository: TraktAuthRepository
     public abstract val traktAuthManager: TraktAuthManager
-    public abstract val notificationTasks: NotificationTasks
+    public abstract val backgroundTaskScheduler: BackgroundTaskScheduler
     public abstract val logger: Logger
 
     public companion object {

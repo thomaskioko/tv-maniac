@@ -198,6 +198,10 @@ struct DebugMenuView: View {
     private var delayedDebugNotificationRow: some View {
         Button {
             presenter.dispatch(action: TriggerDelayedDebugNotification())
+            toast = Toast(
+                type: .info,
+                message: String(\.label_settings_debug_notification_scheduled)
+            )
         } label: {
             HStack(spacing: theme.spacing.medium) {
                 settingsIcon("clock", color: theme.colors.secondary)

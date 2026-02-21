@@ -33,6 +33,7 @@ kotlin {
 
         commonTest {
             dependencies {
+                implementation(projects.core.tasks.api)
                 implementation(projects.core.util.testing)
                 implementation(projects.data.datastore.testing)
                 implementation(projects.data.traktauth.testing)

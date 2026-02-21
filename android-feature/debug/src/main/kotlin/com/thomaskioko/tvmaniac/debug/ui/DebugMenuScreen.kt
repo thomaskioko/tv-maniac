@@ -60,6 +60,7 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_never_synced
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_sync_login_required
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_upnext_sync_title
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_debug_notification_description
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_debug_notification_scheduled
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_delayed_debug_notification_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_delayed_debug_notification_title
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_episode_notifications
@@ -97,7 +98,7 @@ internal fun DebugMenuScreen(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
-    var loginRequiredMessage by remember { mutableStateOf<String?>(null) }
+    var infoMessage by remember { mutableStateOf<String?>(null) }
 
     Box(modifier = modifier) {
         Scaffold(
@@ -164,7 +165,10 @@ internal fun DebugMenuScreen(
                         title = label_settings_delayed_debug_notification_title.resolve(context),
                         subtitle = label_settings_delayed_debug_notification_description.resolve(context),
                         isLoading = state.isSchedulingDebugNotification,
-                        onClick = onTriggerDelayedDebugNotification,
+                        onClick = {
+                            onTriggerDelayedDebugNotification()
+                            infoMessage = label_settings_debug_notification_scheduled.resolve(context)
+                        },
                     )
                 }
 
@@ -187,7 +191,7 @@ internal fun DebugMenuScreen(
                             if (state.isLoggedIn) {
                                 onTriggerLibrarySync()
                             } else {
-                                loginRequiredMessage = label_debug_sync_login_required.resolve(context)
+                                infoMessage = label_debug_sync_login_required.resolve(context)
                             }
                         },
                     )
@@ -212,7 +216,7 @@ internal fun DebugMenuScreen(
                             if (state.isLoggedIn) {
                                 onTriggerUpNextSync()
                             } else {
-                                loginRequiredMessage = label_debug_sync_login_required.resolve(context)
+                                infoMessage = label_debug_sync_login_required.resolve(context)
                             }
                         },
                     )
@@ -228,11 +232,11 @@ internal fun DebugMenuScreen(
             onDismiss = { state.message?.let { onDismissSnackbar(it.id) } },
         )
 
-        if (loginRequiredMessage != null) {
+        if (infoMessage != null) {
             TvManiacSnackBarHost(
-                message = loginRequiredMessage,
+                message = infoMessage,
                 style = SnackBarStyle.Info,
-                onDismiss = { loginRequiredMessage = null },
+                onDismiss = { infoMessage = null },
             )
         }
     }

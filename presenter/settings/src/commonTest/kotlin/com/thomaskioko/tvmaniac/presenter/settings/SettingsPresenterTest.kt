@@ -4,11 +4,12 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
+import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
+import com.thomaskioko.tvmaniac.core.tasks.api.PeriodicTaskRequest
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
-import com.thomaskioko.tvmaniac.domain.notifications.NotificationTasks
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.settings.ObserveSettingsPreferencesInteractor
 import com.thomaskioko.tvmaniac.i18n.testing.util.IgnoreIos
@@ -47,10 +48,11 @@ class SettingsPresenterTest {
     private val userRepository = FakeUserRepository()
     private val fakeTraktActivityRepository = FakeTraktActivityRepository()
     private val fakeLogger = FakeLogger()
-    private val fakeNotificationTasks = object : NotificationTasks {
-        override fun scheduleEpisodeNotifications() = Unit
-        override fun scheduleAndRunEpisodeNotifications() = Unit
-        override fun cancelEpisodeNotifications() = Unit
+    private val fakeScheduler = object : BackgroundTaskScheduler {
+        override fun schedulePeriodic(request: PeriodicTaskRequest) = Unit
+        override fun scheduleAndExecute(request: PeriodicTaskRequest) = Unit
+        override fun cancel(id: String) = Unit
+        override fun cancelAll() = Unit
     }
 
     private lateinit var presenter: SettingsPresenter
@@ -76,7 +78,7 @@ class SettingsPresenterTest {
             ),
             toggleEpisodeNotificationsInteractor = ToggleEpisodeNotificationsInteractor(
                 datastoreRepository = datastoreRepository,
-                notificationTasks = fakeNotificationTasks,
+                scheduler = fakeScheduler,
                 traktAuthRepository = traktAuthRepository,
             ),
             backClicked = {},
