@@ -13,6 +13,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import platform.BackgroundTasks.BGAppRefreshTaskRequest
+import platform.BackgroundTasks.BGProcessingTaskRequest
 import platform.BackgroundTasks.BGTask
 import platform.BackgroundTasks.BGTaskScheduler
 import platform.Foundation.NSDate
@@ -78,13 +79,24 @@ public class IosTaskScheduler(
     @OptIn(ExperimentalForeignApi::class)
     private fun submitRequest(request: PeriodicTaskRequest) {
         val intervalSeconds = request.intervalMs / 1000.0
-        val bgRequest = BGAppRefreshTaskRequest(identifier = request.id).apply {
-            earliestBeginDate = NSDate.dateWithTimeIntervalSinceNow(intervalSeconds)
+        val earliestBeginDate = NSDate.dateWithTimeIntervalSinceNow(intervalSeconds)
+
+        val bgRequest = if (request.longRunning) {
+            BGProcessingTaskRequest(identifier = request.id).apply {
+                this.earliestBeginDate = earliestBeginDate
+                requiresNetworkConnectivity = request.constraints.requiresNetwork
+                requiresExternalPower = false
+            }
+        } else {
+            BGAppRefreshTaskRequest(identifier = request.id).apply {
+                this.earliestBeginDate = earliestBeginDate
+            }
         }
 
         try {
             scheduler.submitTaskRequest(taskRequest = bgRequest, error = null)
-            logger.debug(TAG, "Scheduled task [${request.id}] for ${bgRequest.earliestBeginDate}")
+            val type = if (request.longRunning) "processing" else "refresh"
+            logger.debug(TAG, "Scheduled $type task [${request.id}] for $earliestBeginDate")
         } catch (t: Throwable) {
             logger.error(TAG, "Error scheduling task [${request.id}]: ${t.message}")
         }

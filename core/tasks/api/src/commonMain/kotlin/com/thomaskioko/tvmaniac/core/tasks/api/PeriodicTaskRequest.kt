@@ -23,9 +23,14 @@ package com.thomaskioko.tvmaniac.core.tasks.api
  *   On Android, WorkManager enforces a 15-minute minimum.
  * @property constraints Optional constraints that must be satisfied before
  *   the OS triggers execution.
+ * @property longRunning When `true`, requests extended execution time from the OS.
+ *   On iOS this uses `BGProcessingTaskRequest` (minutes of runtime, runs when idle)
+ *   instead of `BGAppRefreshTaskRequest` (~30s). On Android this is a no-op since
+ *   WorkManager handles execution time automatically.
  */
 public data class PeriodicTaskRequest(
     val id: String,
     val intervalMs: Long,
     val constraints: TaskConstraints = TaskConstraints(),
+    val longRunning: Boolean = false,
 )

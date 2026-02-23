@@ -66,6 +66,7 @@ public class EpisodeNotificationWorker(
             id = WORKER_NAME,
             intervalMs = SIX_HOURS_MS,
             constraints = TaskConstraints(requiresNetwork = true),
+            longRunning = true,
         )
     }
 }
