@@ -29,8 +29,6 @@ public class AndroidTaskScheduler(
     private val workManager by workManager
 
     override fun schedulePeriodic(request: PeriodicTaskRequest) {
-        logger.debug(TAG, "Scheduling periodic work: ${request.id}")
-
         val work = PeriodicWorkRequestBuilder<SchedulerDispatchWorker>(
             request.intervalMs,
             TimeUnit.MILLISECONDS,
@@ -44,6 +42,8 @@ public class AndroidTaskScheduler(
             ExistingPeriodicWorkPolicy.UPDATE,
             work,
         )
+
+        logger.debug(TAG, "Scheduled periodic task [${request.id}]")
     }
 
     override fun scheduleAndExecute(request: PeriodicTaskRequest) {
@@ -52,14 +52,14 @@ public class AndroidTaskScheduler(
     }
 
     override fun cancel(id: String) {
-        logger.debug(TAG, "Cancelling work: $id")
         workManager.cancelUniqueWork(id)
         workManager.cancelUniqueWork("${id}_immediate")
+        logger.debug(TAG, "Cancelled task [$id]")
     }
 
     override fun cancelAll() {
-        logger.debug(TAG, "Cancelling all work")
         workManager.cancelAllWork()
+        logger.debug(TAG, "Cancelled all tasks")
     }
 
     private fun scheduleImmediate(request: PeriodicTaskRequest) {
@@ -75,6 +75,8 @@ public class AndroidTaskScheduler(
             ExistingWorkPolicy.REPLACE,
             work,
         )
+
+        logger.debug(TAG, "Scheduled immediate execution of [${request.id}]")
     }
 
     private companion object {

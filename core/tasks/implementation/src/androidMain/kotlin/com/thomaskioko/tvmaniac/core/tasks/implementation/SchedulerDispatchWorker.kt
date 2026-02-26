@@ -30,12 +30,21 @@ public class SchedulerDispatchWorker(
             return Result.failure()
         }
 
-        logger.debug(TAG, "Dispatching work to: $workerName")
+        logger.debug(TAG, "Starting task [$workerName]")
 
         return when (val result = worker.doWork()) {
-            is WorkerResult.Success -> Result.success()
-            is WorkerResult.Retry -> Result.retry()
-            is WorkerResult.Failure -> Result.failure()
+            is WorkerResult.Success -> {
+                logger.debug(TAG, "Task [$workerName] completed successfully")
+                Result.success()
+            }
+            is WorkerResult.Retry -> {
+                logger.debug(TAG, "Task [$workerName] requested retry")
+                Result.retry()
+            }
+            is WorkerResult.Failure -> {
+                logger.error(TAG, "Task [$workerName] failed")
+                Result.failure()
+            }
         }
     }
 
