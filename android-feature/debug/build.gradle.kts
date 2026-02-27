@@ -16,6 +16,8 @@ dependencies {
     api(projects.presenter.debug)
 
     implementation(projects.androidDesignsystem)
+    implementation(projects.core.view)
+    implementation(projects.data.datastore.api)
     implementation(projects.i18n.generator)
 
     implementation(libs.androidx.compose.foundation)

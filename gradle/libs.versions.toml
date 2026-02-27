@@ -6,6 +6,7 @@ android-compile = "36"
 android-min = "24"
 android-target = "36"
 
+differ = "0.3.0"
 java-target = "21"
 java-toolchain = "21"
 
@@ -26,9 +27,10 @@ androidx-palette = "1.0.0"
 androidx-paging = "3.4.1"
 androidx-savedstate = "1.4.0"
 androidx-security-crypto = "1.1.0"
+androidx-lifecycle = "2.9.4"
 androidx-work = "2.11.1"
 appauth = "0.11.1"
-app-gradle-plugins = "0.5.0"
+app-gradle-plugins = "0.5.1"
 atomicfu = "0.31.0"
 baselineprofile = "1.5.0-alpha03"
 benchmarkMacroJunit4 = "1.4.1"
@@ -39,7 +41,6 @@ compose-runtime = "1.10.4"
 coroutines = "1.10.2"
 datetime = "0.7.1-0.6.x-compat"
 decompose = "3.4.0"
-dependency-analysis = "3.5.1"
 essenty = "2.5.0"
 desugar = "2.1.5"
 junit = "1.3.0"
@@ -60,8 +61,10 @@ okhttp = "5.3.2"
 robolectric = "4.16.1"
 roborazzi = "1.59.0"
 profileinstaller = "1.4.1"
+roborazziCore = "1.59.0"
 runner = "1.7.0"
 serialization = "1.10.0"
+shadowsFramework = "4.16.1"
 skie = "0.10.10"
 snapper = "0.3.0"
 sqldelight = "2.2.1"
@@ -103,6 +106,7 @@ androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
 androidx-savedstate = { group = "androidx.savedstate", name = "savedstate", version.ref = "androidx-savedstate" }
 androidx-security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "androidx-security-crypto" }
 androidx-work-runtime = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "androidx-work" }
+androidx-lifecycle-common = { module = "androidx.lifecycle:lifecycle-common", version.ref = "androidx-lifecycle" }
 androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junit" }
 androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileinstaller" }
@@ -121,6 +125,7 @@ coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", ve
 
 decompose-decompose = { group = "com.arkivanov.decompose", name = "decompose", version.ref = "decompose" }
 decompose-extensions-compose = { group = "com.arkivanov.decompose", name = "extensions-compose", version.ref = "decompose" }
+differ = { module = "com.dropbox.differ:differ", version.ref = "differ" }
 essenty-lifecycle = { module = "com.arkivanov.essenty:lifecycle", version.ref = "essenty" }
 
 kenburns = { module = "com.flaviofaria:kenburnsview", version.ref = "kenburns" }
@@ -160,8 +165,11 @@ multiplatformsettings-coroutines = { module = "com.russhwolf:multiplatform-setti
 
 
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
+robolectric-annotations = { group = "org.robolectric", name = "annotations", version.ref = "robolectric" }
 roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", version.ref = "roborazzi" }
 
+roborazzi-core = { module = "io.github.takahirom.roborazzi:roborazzi-core", version.ref = "roborazziCore" }
+shadows-framework = { module = "org.robolectric:shadows-framework", version.ref = "shadowsFramework" }
 snapper = { module = "dev.chrisbanes.snapper:snapper", version.ref = "snapper" }
 
 sqldelight-dialect = { module = "app.cash.sqldelight:sqlite-3-25-dialect", version.ref = "sqldelight" }
@@ -184,7 +192,6 @@ android-kotlin-multiplatform = { id ="com.android.kotlin.multiplatform.library",
 android-test = { id = "com.android.test", version.ref = "agp" }
 androidx-baselineprofile = { id = "androidx.baselineprofile", version.ref = "baselineprofile" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-dependency-analysis = { id = "com.autonomousapps.dependency-analysis", version.ref = "dependency-analysis" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
