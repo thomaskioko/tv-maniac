@@ -19,6 +19,8 @@ dependencies {
     api(projects.presenter.showDetails)
 
     implementation(projects.androidDesignsystem)
+    implementation(projects.core.view)
+    implementation(projects.data.datastore.api)
     implementation(projects.i18n.generator)
 
     implementation(libs.androidx.compose.foundation)
@@ -28,5 +30,6 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.snapper)
 
+    testImplementation(libs.robolectric.annotations)
     testImplementation(projects.core.screenshotTests)
 }

@@ -12,6 +12,7 @@ dependencies {
     api(projects.presenter.trailers)
 
     implementation(projects.androidDesignsystem)
+    implementation(projects.data.datastore.api)
     implementation(projects.i18n.generator)
 
     implementation(libs.androidx.compose.constraintlayout)

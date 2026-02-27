@@ -19,6 +19,7 @@ dependencies {
     api(projects.presenter.moreShows)
 
     implementation(projects.androidDesignsystem)
+    implementation(projects.data.datastore.api)
 
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.material)
@@ -26,5 +27,6 @@ dependencies {
     implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.paging.compose)
 
+    testImplementation(libs.robolectric.annotations)
     testImplementation(projects.core.screenshotTests)
 }

@@ -19,6 +19,8 @@ dependencies {
     api(projects.presenter.seasondetails)
 
     implementation(projects.androidDesignsystem)
+    implementation(projects.core.view)
+    implementation(projects.data.datastore.api)
     implementation(projects.i18n.generator)
 
     implementation(libs.androidx.compose.constraintlayout)
@@ -27,5 +29,6 @@ dependencies {
     implementation(libs.androidx.compose.runtime)
     implementation(libs.snapper)
 
+    testImplementation(libs.robolectric.annotations)
     testImplementation(projects.core.screenshotTests)
 }
