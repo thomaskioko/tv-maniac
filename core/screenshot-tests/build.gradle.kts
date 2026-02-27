@@ -10,12 +10,17 @@ scaffold {
 }
 
 dependencies {
+    api(libs.androidx.compose.runtime)
+
     implementation(projects.androidDesignsystem)
     implementation(projects.data.datastore.api)
 
     implementation(libs.androidx.compose.ui.test)
-    implementation(libs.robolectric)
+    implementation(libs.differ)
     implementation(libs.roborazzi)
+    implementation(libs.roborazzi.core)
+    implementation(libs.shadows.framework)
 
+    runtimeOnly(libs.robolectric)
     runtimeOnly(libs.androidx.compose.ui.test.manifest)
 }

@@ -18,10 +18,12 @@ dependencies {
     api(projects.presenter.upnext)
 
     implementation(projects.androidDesignsystem)
+    implementation(projects.core.view)
     implementation(projects.i18n.generator)
     implementation(projects.domain.upnext)
 
-    implementation(libs.androidx.compose.activity)
+    implementation(projects.data.datastore.api)
+
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.runtime)

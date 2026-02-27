@@ -18,9 +18,10 @@ dependencies {
     api(libs.androidx.compose.material.icons)
     api(libs.androidx.compose.runtime)
 
-    implementation(projects.data.datastore.api) // TODO:: RE-evaluate this dependency
+    api(projects.data.datastore.api)
     implementation(projects.i18n.generator)
 
+    api(libs.coil.base)
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.collections)
     implementation(libs.androidx.core.ktx)
@@ -33,5 +34,6 @@ dependencies {
     implementation(libs.coroutines.jvm)
     implementation(libs.kotlinx.collections)
 
+    testImplementation(libs.robolectric.annotations)
     testImplementation(projects.core.screenshotTests)
 }
