@@ -13,7 +13,6 @@ kotlin {
             dependencies {
                 implementation(libs.appauth)
                 implementation(libs.coroutines.core)
-                implementation(projects.core.tasks.api)
                 implementation(projects.data.traktauth.api)
                 implementation(projects.core.util.api)
 
@@ -29,6 +28,7 @@ kotlin {
             dependencies {
                 implementation(projects.core.base)
                 implementation(projects.core.logger.api)
+                implementation(projects.core.tasks.api)
                 implementation(projects.core.util.api)
                 implementation(projects.data.traktauth.api)
                 implementation(projects.data.requestManager.api)
@@ -40,7 +40,6 @@ kotlin {
 
         iosMain {
             dependencies {
-                implementation(projects.core.tasks.api)
                 implementation(libs.multiplatformsettings.core)
                 implementation(libs.multiplatformsettings.coroutines)
             }

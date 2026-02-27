@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.core.base.AppInitializer
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager
+import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
@@ -17,7 +18,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 @Inject
 @ContributesBinding(AppScope::class, multibinding = true)
 public class NotificationTasksInitializer(
-    private val notificationTasks: Lazy<NotificationTasks>,
+    private val scheduler: BackgroundTaskScheduler,
     private val notificationManager: Lazy<NotificationManager>,
     private val datastoreRepository: Lazy<DatastoreRepository>,
     private val traktAuthRepository: Lazy<TraktAuthRepository>,
@@ -26,8 +27,6 @@ public class NotificationTasksInitializer(
 ) : AppInitializer {
 
     override fun init() {
-        notificationTasks.value.setup()
-
         coroutineScope.io.launch {
             combine(
                 traktAuthRepository.value.state,
@@ -40,10 +39,10 @@ public class NotificationTasksInitializer(
                 .collect { shouldSchedule ->
                     if (shouldSchedule) {
                         logger.debug(TAG, "Scheduling episode notifications")
-                        notificationTasks.value.scheduleEpisodeNotifications()
+                        scheduler.schedulePeriodic(EpisodeNotificationWorker.REQUEST)
                     } else {
                         logger.debug(TAG, "Cancelling episode notifications")
-                        notificationTasks.value.cancelEpisodeNotifications()
+                        scheduler.cancel(EpisodeNotificationWorker.WORKER_NAME)
                         notificationManager.value.cancelAllNotifications()
                     }
                 }
