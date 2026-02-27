@@ -68,7 +68,7 @@ jobs:
 
             -   name: Upload Lint Report
                 if: ${{ !cancelled() }}
-                uses: actions/upload-artifact@v6
+                uses: actions/upload-artifact@v7
                 with:
                     name: android-lint-report
                     path: '**/build/reports/lint-results-*.html'
@@ -104,7 +104,7 @@ jobs:
                 run: ./gradlew buildHealth -Papp.debugOnly=false
 
             -   name: Upload Dependency health Report
-                uses: actions/upload-artifact@v6
+                uses: actions/upload-artifact@v7
                 if: always()
                 with:
                     name: dependency-health-report
@@ -126,7 +126,7 @@ jobs:
                 run: ./gradlew jvmTest -Papp.debugOnly=false
 
             -   name: Upload Test Reports
-                uses: actions/upload-artifact@v6
+                uses: actions/upload-artifact@v7
                 if: always()
                 with:
                     name: test-report
@@ -200,7 +200,7 @@ jobs:
                 run: bundle exec fastlane build_tvmaniac
 
             -   name: Upload build artifacts
-                uses: actions/upload-artifact@v6
+                uses: actions/upload-artifact@v7
                 if: always()
                 with:
                     name: ios-build
@@ -270,7 +270,7 @@ jobs:
                 run: bundle exec fastlane snapshot_tests
 
             -   name: Upload test results
-                uses: actions/upload-artifact@v6
+                uses: actions/upload-artifact@v7
                 if: always()
                 with:
                     name: snapshot-test-results
