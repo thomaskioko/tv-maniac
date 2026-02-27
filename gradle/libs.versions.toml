@@ -6,6 +6,7 @@ android-compile = "36"
 android-min = "24"
 android-target = "36"
 
+differ = "0.3.0"
 java-target = "21"
 java-toolchain = "21"
 
@@ -60,8 +61,10 @@ okhttp = "5.3.2"
 robolectric = "4.16.1"
 roborazzi = "1.59.0"
 profileinstaller = "1.4.1"
+roborazziCore = "1.59.0"
 runner = "1.7.0"
 serialization = "1.10.0"
+shadowsFramework = "4.16.1"
 skie = "0.10.10"
 snapper = "0.3.0"
 sqldelight = "2.2.1"
@@ -122,6 +125,7 @@ coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", ve
 
 decompose-decompose = { group = "com.arkivanov.decompose", name = "decompose", version.ref = "decompose" }
 decompose-extensions-compose = { group = "com.arkivanov.decompose", name = "extensions-compose", version.ref = "decompose" }
+differ = { module = "com.dropbox.differ:differ", version.ref = "differ" }
 essenty-lifecycle = { module = "com.arkivanov.essenty:lifecycle", version.ref = "essenty" }
 
 kenburns = { module = "com.flaviofaria:kenburnsview", version.ref = "kenburns" }
@@ -164,6 +168,8 @@ robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "
 robolectric-annotations = { group = "org.robolectric", name = "annotations", version.ref = "robolectric" }
 roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", version.ref = "roborazzi" }
 
+roborazzi-core = { module = "io.github.takahirom.roborazzi:roborazzi-core", version.ref = "roborazziCore" }
+shadows-framework = { module = "org.robolectric:shadows-framework", version.ref = "shadowsFramework" }
 snapper = { module = "dev.chrisbanes.snapper:snapper", version.ref = "snapper" }
 
 sqldelight-dialect = { module = "app.cash.sqldelight:sqlite-3-25-dialect", version.ref = "sqldelight" }
