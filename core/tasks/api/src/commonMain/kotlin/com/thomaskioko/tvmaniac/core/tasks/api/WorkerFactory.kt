@@ -10,6 +10,8 @@ package com.thomaskioko.tvmaniac.core.tasks.api
  */
 public interface WorkerFactory {
 
+    public val workerNames: Set<String>
+
     /**
      * Returns the [BackgroundWorker] registered under [workerName], or `null`
      * if no worker matches.

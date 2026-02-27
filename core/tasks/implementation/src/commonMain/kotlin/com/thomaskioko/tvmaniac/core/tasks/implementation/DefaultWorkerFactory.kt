@@ -15,5 +15,7 @@ public class DefaultWorkerFactory(
 ) : WorkerFactory {
     private val registry: Map<String, BackgroundWorker> = workers.associateBy { it.workerName }
 
+    override val workerNames: Set<String> get() = registry.keys
+
     override fun createWorker(workerName: String): BackgroundWorker? = registry[workerName]
 }
