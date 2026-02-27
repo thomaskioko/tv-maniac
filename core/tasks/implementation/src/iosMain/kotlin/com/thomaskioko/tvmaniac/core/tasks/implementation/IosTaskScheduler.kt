@@ -35,6 +35,12 @@ public class IosTaskScheduler(
     private val activeRequests = mutableMapOf<String, PeriodicTaskRequest>()
     private val registeredTaskIds = mutableSetOf<String>()
 
+    init {
+        val names = workerFactory.workerNames
+        names.forEach { taskId -> ensureRegistered(taskId) }
+        logger.debug(TAG, "Eagerly registered ${names.size} background task handlers")
+    }
+
     override fun schedulePeriodic(request: PeriodicTaskRequest) {
         ensureRegistered(request.id)
         activeRequests[request.id] = request

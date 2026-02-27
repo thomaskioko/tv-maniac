@@ -17,6 +17,9 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
     override public init() {
         super.init()
         ImageConfiguration.configure()
+        // Force IosTaskScheduler construction so BGTask handlers are registered
+        // synchronously during app launch — Apple silently discards late registrations.
+        _ = appComponent.backgroundTaskScheduler
         appComponent.initializers.initialize()
         setupNotifications()
         setupNotificationDelegate()
