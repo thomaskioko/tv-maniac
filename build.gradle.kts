@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.android.test) apply false
     alias(libs.plugins.androidx.baselineprofile) apply false
     alias(libs.plugins.compose.compiler) apply false
-    alias(libs.plugins.dependency.analysis)
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.jvm) apply false
     alias(libs.plugins.ksp) apply false
@@ -16,7 +15,7 @@ plugins {
     alias(libs.plugins.spotless) apply false
     alias(libs.plugins.sqldelight) apply false
     alias(libs.plugins.roborazzi) apply false
-    alias(libs.plugins.app.root) apply false
+    alias(libs.plugins.app.root)
     alias(libs.plugins.app.android) apply false
     alias(libs.plugins.app.application) apply false
     alias(libs.plugins.app.baseline.profile) apply false
