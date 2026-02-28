@@ -7,3 +7,7 @@ public data object MoreBackClicked : MoreShowsActions
 public data object RefreshMoreShows : MoreShowsActions
 
 public data class MoreShowClicked(val traktId: Long) : MoreShowsActions
+
+public data object RetryLoadMore : MoreShowsActions
+
+public data object DismissErrorMessage : MoreShowsActions

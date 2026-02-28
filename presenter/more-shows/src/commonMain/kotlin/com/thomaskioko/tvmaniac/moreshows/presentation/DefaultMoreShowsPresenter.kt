@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.moreshows.presentation
 
+import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.PagingDataEvent
 import androidx.paging.PagingDataPresenter
@@ -17,6 +18,7 @@ import com.thomaskioko.tvmaniac.shows.api.model.Category.TRENDING_TODAY
 import com.thomaskioko.tvmaniac.shows.api.model.Category.UPCOMING
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsRepository
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -47,7 +49,7 @@ public class DefaultMoreShowsPresenter(
 
     private val showsPagingDataPresenter = object : PagingDataPresenter<TvShow>() {
         override suspend fun presentPagingDataEvent(event: PagingDataEvent<TvShow>) {
-            updateCharactersSnapshotList()
+            updateItemsFromSnapshot()
         }
     }
 
@@ -58,6 +60,7 @@ public class DefaultMoreShowsPresenter(
             POPULAR.id -> getPopularPagedList()
             TOP_RATED.id -> getTopRatedPagedList()
         }
+        observeLoadStates()
     }
 
     override val state: StateFlow<MoreShowsState> = _state.asStateFlow()
@@ -74,7 +77,13 @@ public class DefaultMoreShowsPresenter(
                     TOP_RATED.id -> getTopRatedPagedList(forceRefresh = true)
                 }
             }
+            RetryLoadMore -> showsPagingDataPresenter.retry()
+            DismissErrorMessage -> _state.update { it.copy(errorMessage = null) }
         }
+    }
+
+    override fun onItemVisible(index: Int) {
+        showsPagingDataPresenter[index]
     }
 
     private fun getPopularPagedList(forceRefresh: Boolean = false) {
@@ -136,16 +145,32 @@ public class DefaultMoreShowsPresenter(
         pagingList.collectLatest { showsPagingDataPresenter.collectFrom(it) }
     }
 
-    private fun updateCharactersSnapshotList() {
-        _state.update {
-            it.copy(
-                snapshotList = showsPagingDataPresenter.snapshot(),
-            )
+    private fun updateItemsFromSnapshot() {
+        val newItems = showsPagingDataPresenter.snapshot().filterNotNull().toImmutableList()
+        _state.update { current ->
+            if (current.items == newItems) {
+                current
+            } else {
+                current.copy(items = newItems)
+            }
         }
     }
 
-    /** Helper method used to get a show object in iOS */
-    override fun getElement(index: Int): TvShow? = showsPagingDataPresenter[index]
+    private fun observeLoadStates() {
+        coroutineScope.launch {
+            showsPagingDataPresenter.loadStateFlow.collectLatest { loadStates ->
+                loadStates ?: return@collectLatest
+                _state.update {
+                    it.copy(
+                        isRefreshLoading = loadStates.refresh is LoadState.Loading,
+                        isAppendLoading = loadStates.append is LoadState.Loading,
+                        appendError = (loadStates.append as? LoadState.Error)?.error?.message,
+                        errorMessage = (loadStates.refresh as? LoadState.Error)?.error?.message,
+                    )
+                }
+            }
+        }
+    }
 
     private fun Flow<PagingData<ShowEntity>>.mapToTvShow(): Flow<PagingData<TvShow>> = map {
         it.map { show ->
