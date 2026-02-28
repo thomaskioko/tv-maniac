@@ -132,7 +132,7 @@ differ = { module = "com.dropbox.differ:differ", version.ref = "differ" }
 essenty-lifecycle = { module = "com.arkivanov.essenty:lifecycle", version.ref = "essenty" }
 
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
-firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version = "19.3.0" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version = "19.4.4" }
 
 kenburns = { module = "com.flaviofaria:kenburnsview", version.ref = "kenburns" }
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
