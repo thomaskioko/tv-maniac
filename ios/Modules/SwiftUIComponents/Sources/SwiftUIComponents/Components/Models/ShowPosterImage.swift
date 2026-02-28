@@ -1,7 +1,10 @@
 import Foundation
 
-public struct ShowPosterImage: Identifiable {
-    public let id: UUID = .init()
+public struct ShowPosterImage: Identifiable, Equatable {
+    public var id: Int64 {
+        traktId
+    }
+
     public let traktId: Int64
     public let title: String
     public let posterUrl: String?
