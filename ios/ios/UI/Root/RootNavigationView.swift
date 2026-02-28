@@ -53,8 +53,9 @@ struct RootNavigationView: View {
                 case let .debug(child):
                     DebugMenuView(presenter: child.presenter)
                         .id(ObjectIdentifier(child))
-                case .moreShows:
-                    EmptyView()
+                case let .moreShows(child):
+                    MoreShowsView(presenter: child.presenter)
+                        .id(ObjectIdentifier(child))
                 case .trailers:
                     EmptyView()
                 case .genreShows:
