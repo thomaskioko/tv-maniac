@@ -26,6 +26,7 @@ public interface AndroidUtilComponent {
             packageManager.getPackageInfo(context.packageName, 0)
         }
 
+        // TODO:: Read versionName and versionCode from BuildConfig
         return ApplicationInfo(
             versionName = packageInfo.versionName ?: "Unknown",
             versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
