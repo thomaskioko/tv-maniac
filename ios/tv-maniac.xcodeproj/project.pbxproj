@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 70;
+	objectVersion = 71;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -11,9 +11,8 @@
 		D60F8D272EC8060C00916042 /* TraktAuthKit in Frameworks */ = {isa = PBXBuildFile; productRef = D60F8D262EC8060C00916042 /* TraktAuthKit */; };
 		D636CE4D2B4487B1003F7876 /* MoreShowsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D636CE4C2B4487B1003F7876 /* MoreShowsView.swift */; };
 		D6619D372C89D37900D273E7 /* SwiftUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = D6619D362C89D37900D273E7 /* SwiftUIComponents */; };
-		D6619D382C89D37A00D273E8 /* config-dev.json in Resources */ = {isa = PBXBuildFile; fileRef = D6619D392C89D37A00D273E8 /* config-dev.json */; };
-		D6619D3A2C89D37A00D273E9 /* config-prod.json in Resources */ = {isa = PBXBuildFile; fileRef = D6619D3B2C89D37A00D273E9 /* config-prod.json */; };
 		D6A2A0EC2EC800000001CD83 /* CoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = D6A2A0ED2EC800000001CD83 /* CoreKit */; };
+		D6CDA52C2F417A810021240C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D6CDA52B2F417A810021240C /* GoogleService-Info.plist */; };
 		E9AC834C26CEE00D00829A0D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E9AC834B26CEE00D00829A0D /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -34,13 +33,13 @@
 		7555FF7B242A565900829871 /* tv-maniac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "tv-maniac.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D636CE4C2B4487B1003F7876 /* MoreShowsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreShowsView.swift; sourceTree = "<group>"; };
-		D6619D392C89D37A00D273E8 /* config-dev.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "config-dev.json"; sourceTree = "<group>"; };
-		D6619D3B2C89D37A00D273E9 /* config-prod.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "config-prod.json"; sourceTree = "<group>"; };
+		D6CDA52B2F417A810021240C /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E9AC834B26CEE00D00829A0D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D65009DC2CF644BE00394D67 /* App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = App; sourceTree = "<group>"; };
+		D68A22262F415DC30034550F /* Config */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Config; sourceTree = "<group>"; };
 		D6A2A0EB2EC7FD8C0001CD82 /* Modules */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Modules; sourceTree = "<group>"; };
 		D6FE248E2D060E7200AB7700 /* UI */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = UI; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -63,6 +62,7 @@
 		7555FF72242A565900829871 = {
 			isa = PBXGroup;
 			children = (
+				D68A22262F415DC30034550F /* Config */,
 				7555FF7D242A565900829871 /* ios */,
 				D6A2A0EB2EC7FD8C0001CD82 /* Modules */,
 				7555FF7C242A565900829871 /* Products */,
@@ -81,9 +81,8 @@
 		7555FF7D242A565900829871 /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				D6CDA52B2F417A810021240C /* GoogleService-Info.plist */,
 				E9AC834B26CEE00D00829A0D /* Assets.xcassets */,
-				D6619D392C89D37A00D273E8 /* config-dev.json */,
-				D6619D3B2C89D37A00D273E9 /* config-prod.json */,
 				7555FF8C242A565B00829871 /* Info.plist */,
 				D65009DC2CF644BE00394D67 /* App */,
 				D6FE248E2D060E7200AB7700 /* UI */,
@@ -127,6 +126,7 @@
 				9E9525AE31530CCB1C932286 /* Frameworks */,
 				7555FF79242A565900829871 /* Resources */,
 				7555FFB4242A642300829871 /* Embed Frameworks */,
+				D68A22332F4169A40034550F /* Crashlytics Upload dSYM */,
 			);
 			buildRules = (
 			);
@@ -188,15 +188,38 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D6619D382C89D37A00D273E8 /* config-dev.json in Resources */,
-				D6619D3A2C89D37A00D273E9 /* config-prod.json in Resources */,
 				E9AC834C26CEE00D00829A0D /* Assets.xcassets in Resources */,
+				D6CDA52C2F417A810021240C /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		D68A22332F4169A40034550F /* Crashlytics Upload dSYM */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/GoogleService-Info.plist",
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}.debug.dylib",
+			);
+			name = "Crashlytics Upload dSYM";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "GSP_CHECK=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleService-Info.plist\"\nif [ ! -f \"$GSP_CHECK\" ]; then\n  echo \"warning: GoogleService-Info.plist not found — skipping dSYM upload\"\n  exit 0\nfi\n\nUPLOAD_SYMBOLS=\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/upload-symbols\"\nGSP=\"$GSP_CHECK\"\nVERSION=\"${MARKETING_VERSION}\"\nBUILD_NUM=\"${CURRENT_PROJECT_VERSION}\"\n\nif [ ! -f \"$UPLOAD_SYMBOLS\" ]; then\n  echo \"error: upload-symbols not found at $UPLOAD_SYMBOLS\"\n  exit 1\nfi\n\necho \"Uploading dSYMs for version $VERSION ($BUILD_NUM)\"\n\n# Upload main app dSYM (sequential)\nif [ -d \"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}\" ]; then\n  echo \"Uploading app dSYM: ${DWARF_DSYM_FILE_NAME}\"\n  \"$UPLOAD_SYMBOLS\" -d -gsp \"$GSP\" -p ios -v \"$VERSION\" -b \"$BUILD_NUM\" \"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}\"\nfi\n\n# Upload KMP shared framework dSYMs from Gradle build output (sequential)\nKMP_FRAMEWORK_DIR=\"${SRCROOT}/../shared/build/xcode-frameworks/${CONFIGURATION}/${PLATFORM_NAME}${SDK_VERSION}\"\nif [ -d \"$KMP_FRAMEWORK_DIR\" ]; then\n  find \"$KMP_FRAMEWORK_DIR\" -name '*.dSYM' | while read dsym; do\n    echo \"Uploading KMP dSYM: $(basename \"$dsym\")\"\n    \"$UPLOAD_SYMBOLS\" -d -gsp \"$GSP\" -p ios -v \"$VERSION\" -b \"$BUILD_NUM\" \"$dsym\"\n  done\nfi\n\necho \"dSYM upload complete.\"\n";
+		};
 		D693F87E2DCB93950060350C /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -230,6 +253,8 @@
 /* Begin XCBuildConfiguration section */
 		7555FFA3242A565B00829871 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = D68A22262F415DC30034550F /* Config */;
+			baseConfigurationReferenceRelativePath = Debug.xcconfig;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -307,6 +332,8 @@
 		};
 		7555FFA4242A565B00829871 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = D68A22262F415DC30034550F /* Config */;
+			baseConfigurationReferenceRelativePath = Release.xcconfig;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -377,14 +404,18 @@
 		};
 		7555FFA6242A565B00829871 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = D68A22262F415DC30034550F /* Config */;
+			baseConfigurationReferenceRelativePath = Debug.xcconfig;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(EMBEDDED_CONTENT_CONTAINS_SWIFT)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1001;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 2M53227BD2;
+				ENABLE_DEBUG_DYLIB = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -395,12 +426,13 @@
 					"$(SRCROOT)/../i18n/generator/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
 				);
 				INFOPLIST_FILE = ios/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = TvManiac;
+				INFOPLIST_KEY_CFBundleDisplayName = "TvManiac Dev";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -409,7 +441,7 @@
 					TvManiac,
 					"-lsqlite3",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.thomaskioko.tvmaniac.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = com.thomaskioko.tvmaniac.debug;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -423,14 +455,18 @@
 		};
 		7555FFA7242A565B00829871 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = D68A22262F415DC30034550F /* Config */;
+			baseConfigurationReferenceRelativePath = Release.xcconfig;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(EMBEDDED_CONTENT_CONTAINS_SWIFT)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1001;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 2M53227BD2;
+				ENABLE_DEBUG_DYLIB = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				EXCLUDED_ARCHS = "";
@@ -446,6 +482,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -454,7 +491,7 @@
 					TvManiac,
 					"-lsqlite3",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.thomaskioko.tvmaniac.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = com.thomaskioko.tvmaniac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

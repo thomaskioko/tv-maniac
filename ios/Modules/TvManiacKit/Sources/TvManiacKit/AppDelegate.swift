@@ -16,8 +16,10 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
 
     override public init() {
         super.init()
-        FirebaseApp.configure()
-        CrashReportingBridgeHolder.shared.bridge = FirebaseCrashlyticsBridge()
+        if Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist") != nil {
+            FirebaseApp.configure()
+            CrashReportingBridgeHolder.shared.bridge = FirebaseCrashlyticsBridge()
+        }
         ImageCacheManager.configure()
         // Force IosTaskScheduler construction so BGTask handlers are registered
         // synchronously during app launch — Apple silently discards late registrations.
