@@ -1,7 +1,10 @@
 import SwiftUI
 
 public struct SwiftContinueTrackingEpisode: Identifiable {
-    public var id: Int64 { episodeId }
+    public var id: Int64 {
+        episodeId
+    }
+
     public let episodeId: Int64
     public let seasonId: Int64
     public let showTraktId: Int64

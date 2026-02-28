@@ -26,7 +26,6 @@ struct WatchlistListItem: View {
         .matchedGeometryEffect(id: item.traktId, in: namespace)
     }
 
-    @ViewBuilder
     private func watchlistItemDetails(item: TvManiac.WatchlistItem) -> some View {
         ZStack(alignment: .bottom) {
             VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {

@@ -167,7 +167,6 @@ struct LibraryTab: View {
         .frame(maxWidth: .infinity)
     }
 
-    @ViewBuilder
     private var gridContent: some View {
         ScrollView(showsIndicators: false) {
             LazyVGrid(columns: LibraryConstants.columns, spacing: LibraryConstants.spacing) {
@@ -190,7 +189,6 @@ struct LibraryTab: View {
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: uiState.isGridMode)
     }
 
-    @ViewBuilder
     private var listContent: some View {
         ScrollView(showsIndicators: false) {
             LazyVStack(spacing: theme.spacing.small) {

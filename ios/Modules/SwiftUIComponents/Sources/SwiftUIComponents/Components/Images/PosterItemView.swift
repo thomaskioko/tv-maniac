@@ -67,7 +67,6 @@ public struct PosterItemView: View {
     }
 }
 
-@ViewBuilder
 private func LibraryOverlay(libraryImageOverlay: String) -> some View {
     VStack {
         HStack {

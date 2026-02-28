@@ -151,7 +151,6 @@ struct SeasonDetailsView: View {
         .toastView(toast: $toast)
     }
 
-    @ViewBuilder
     private func SeasonDetailsContent(_ state: SeasonDetailsModel) -> some View {
         ParallaxView(
             imageHeight: DimensionConstants.imageHeight,
@@ -223,7 +222,6 @@ struct SeasonDetailsView: View {
         }
     }
 
-    @ViewBuilder
     private func HeaderContent(state: SeasonDetailsModel, progress: CGFloat, headerHeight: CGFloat) -> some View {
         ZStack(alignment: .bottom) {
             HeaderCoverArtWorkView(

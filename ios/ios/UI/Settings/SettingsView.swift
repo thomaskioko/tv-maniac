@@ -72,7 +72,6 @@ struct SettingsView: View {
             }
     }
 
-    @ViewBuilder
     private var settingsContent: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
@@ -139,7 +138,6 @@ struct SettingsView: View {
         }
     }
 
-    @ViewBuilder
     private func sectionHeader(
         _ title: String,
         icon: String? = nil,
@@ -164,7 +162,6 @@ struct SettingsView: View {
         }
     }
 
-    @ViewBuilder
     private var themeTitleSection: some View {
         VStack(alignment: .leading, spacing: theme.spacing.small) {
             HStack(spacing: theme.spacing.medium) {
@@ -192,7 +189,6 @@ struct SettingsView: View {
         }
     }
 
-    @ViewBuilder
     private var imageQualitySection: some View {
         VStack(alignment: .leading, spacing: theme.spacing.small) {
             HStack(spacing: theme.spacing.medium) {
@@ -225,7 +221,6 @@ struct SettingsView: View {
         }
     }
 
-    @ViewBuilder
     private var youtubeToggleRow: some View {
         HStack(spacing: theme.spacing.medium) {
             settingsIcon("tv", color: theme.colors.secondary)
@@ -252,7 +247,6 @@ struct SettingsView: View {
         }
     }
 
-    @ViewBuilder
     private var includeSpecialsToggleRow: some View {
         HStack(spacing: theme.spacing.medium) {
             settingsIcon("film.stack", color: theme.colors.secondary)
@@ -279,7 +273,6 @@ struct SettingsView: View {
         }
     }
 
-    @ViewBuilder
     private var syncToggleRow: some View {
         HStack(spacing: theme.spacing.medium) {
             settingsIcon("arrow.triangle.2.circlepath", color: theme.colors.secondary)
@@ -311,7 +304,6 @@ struct SettingsView: View {
         }
     }
 
-    @ViewBuilder
     private var notificationsToggleRow: some View {
         HStack(spacing: theme.spacing.medium) {
             settingsIcon("bell.fill", color: theme.colors.secondary)
@@ -369,7 +361,6 @@ struct SettingsView: View {
         }
     }
 
-    @ViewBuilder
     private var crashReportingToggleRow: some View {
         HStack(spacing: theme.spacing.medium) {
             settingsIcon("ladybug", color: theme.colors.secondary)
@@ -396,7 +387,6 @@ struct SettingsView: View {
         }
     }
 
-    @ViewBuilder
     private var aboutRow: some View {
         Button {
             showAboutSheet = true
@@ -424,7 +414,6 @@ struct SettingsView: View {
         .buttonStyle(.plain)
     }
 
-    @ViewBuilder
     private var privacyRow: some View {
         Button {
             showPolicy = true
@@ -447,7 +436,6 @@ struct SettingsView: View {
         .buttonStyle(.plain)
     }
 
-    @ViewBuilder
     private var traktLogoutRow: some View {
         Button {
             showingLogoutAlert = true
@@ -475,7 +463,6 @@ struct SettingsView: View {
         .buttonStyle(.plain)
     }
 
-    @ViewBuilder
     private var debugMenuRow: some View {
         Button {
             presenter.dispatch(action: NavigateToDebugMenu())
@@ -503,14 +490,12 @@ struct SettingsView: View {
         .buttonStyle(.plain)
     }
 
-    @ViewBuilder
     private func settingsIcon(_ systemName: String, color: Color) -> some View {
         Image(systemName: systemName)
             .foregroundColor(color)
             .frame(width: theme.spacing.large, height: theme.spacing.large)
     }
 
-    @ViewBuilder
     private func AboutSheet() -> some View {
         ZStack(alignment: .bottom) {
             ScrollView {

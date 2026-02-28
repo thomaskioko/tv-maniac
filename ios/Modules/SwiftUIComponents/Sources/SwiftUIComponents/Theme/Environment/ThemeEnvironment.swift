@@ -21,7 +21,9 @@ public extension View {
 public struct Theme: DynamicProperty {
     @Environment(\.tvManiacTheme) private var theme: TvManiacTheme
 
-    public var wrappedValue: TvManiacTheme { theme }
+    public var wrappedValue: TvManiacTheme {
+        theme
+    }
 
     public init() {}
 }
