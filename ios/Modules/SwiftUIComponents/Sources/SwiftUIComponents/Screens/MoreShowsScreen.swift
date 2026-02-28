@@ -36,7 +36,6 @@ public struct MoreShowsScreen: View {
     }
 
     @State private var scrollPosition: Int64?
-
     private let columns = [GridItem(.adaptive(minimum: 100), spacing: 4)]
 
     public var body: some View {
@@ -63,12 +62,11 @@ public struct MoreShowsScreen: View {
             .scrollTargetLayout()
             .padding(.all, theme.spacing.xSmall)
 
-            if isLoadingMore {
-                ProgressView()
-                    .tint(theme.colors.secondary)
-                    .padding(theme.spacing.large)
-                    .frame(maxWidth: .infinity)
-            }
+            ProgressView()
+                .tint(theme.colors.secondary)
+                .padding(theme.spacing.large)
+                .frame(maxWidth: .infinity)
+                .opacity(isLoadingMore ? 1 : 0)
 
             if let loadError {
                 VStack(spacing: theme.spacing.small) {
