@@ -24,4 +24,18 @@ public class FakeLogger : Logger {
     override fun verbose(message: String) {}
 
     override fun verbose(tag: String, message: String) {}
+
+    override fun recordException(throwable: Throwable, tag: String) {
+    }
+
+    override fun setUserId(userId: String) {
+    }
+
+    override fun setCustomKey(key: String, value: String) {
+    }
+
+    public data class RecordedException(
+        val throwable: Throwable,
+        val tag: String,
+    )
 }
