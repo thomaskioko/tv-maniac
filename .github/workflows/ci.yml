@@ -42,8 +42,7 @@ jobs:
 
             -   name: 🤖 Build Android App
                 run: |
-                    ./gradlew clean \
-                      :app:assembleRelease \
+                    ./gradlew :app:assembleRelease \
                       :app:bundleRelease \
                       -Pandroidx.baselineprofile.skipgeneration=true \
                         -Pcompose.enableCompilerMetrics=true \
