@@ -130,6 +130,7 @@ public class FakeDatastoreRepository : DatastoreRepository {
 
     private val upNextSortOptionFlow = MutableStateFlow("LAST_WATCHED")
     private val lastUpNextSyncTimestampFlow: MutableStateFlow<Long?> = MutableStateFlow(null)
+    private val crashReportingEnabledFlow = MutableStateFlow(true)
 
     override suspend fun saveUpNextSortOption(sortOption: String) {
         upNextSortOptionFlow.value = sortOption
@@ -142,4 +143,10 @@ public class FakeDatastoreRepository : DatastoreRepository {
     }
 
     override fun observeLastUpNextSyncTimestamp(): Flow<Long?> = lastUpNextSyncTimestampFlow.asStateFlow()
+
+    override suspend fun setCrashReportingEnabled(enabled: Boolean) {
+        crashReportingEnabledFlow.value = enabled
+    }
+
+    override fun observeCrashReportingEnabled(): Flow<Boolean> = crashReportingEnabledFlow.asStateFlow()
 }

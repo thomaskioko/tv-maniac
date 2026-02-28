@@ -36,6 +36,7 @@ public fun Flow<InvokeStatus>.onEachStatus(
         InvokeSuccess -> counter.removeLoader()
         is InvokeError -> {
             logger?.error("@InvokeError", status.throwable.message ?: "Unknown error")
+            logger?.recordException(status.throwable, sourceId ?: "Unknown")
             uiMessageManager?.emitMessageCombined(status.throwable, sourceId)
             counter.removeLoader()
         }

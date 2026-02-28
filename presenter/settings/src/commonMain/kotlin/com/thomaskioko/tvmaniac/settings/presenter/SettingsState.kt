@@ -18,6 +18,7 @@ public data class SettingsState(
     val showLastSyncDate: Boolean = false,
     val versionName: String,
     val episodeNotificationsEnabled: Boolean = false,
+    val crashReportingEnabled: Boolean = true,
     val isUpdating: Boolean = false,
     val isDebugBuild: Boolean = false,
     val githubUrl: String = GITHUB_URL,
@@ -42,6 +43,7 @@ public data class SettingsState(
             showLastSyncDate = false,
             versionName = "0.0.0",
             episodeNotificationsEnabled = false,
+            crashReportingEnabled = true,
             isDebugBuild = false,
         )
     }

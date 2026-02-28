@@ -24,8 +24,9 @@ public class ObserveSettingsPreferencesInteractor(
             datastoreRepository.observeBackgroundSyncEnabled(),
             datastoreRepository.observeLastSyncTimestamp(),
             datastoreRepository.observeEpisodeNotificationsEnabled(),
+            datastoreRepository.observeCrashReportingEnabled(),
         ) { imageQuality, theme, openTrailersInYoutube, includeSpecials, backgroundSyncEnabled,
-            lastSyncTimestamp, episodeNotificationsEnabled,
+            lastSyncTimestamp, episodeNotificationsEnabled, crashReportingEnabled,
             ->
             val lastSyncDate = lastSyncTimestamp?.let { dateTimeProvider.epochToDisplayDateTime(it) }
             SettingsPreferences(
@@ -37,6 +38,7 @@ public class ObserveSettingsPreferencesInteractor(
                 lastSyncDate = lastSyncDate,
                 showLastSyncDate = backgroundSyncEnabled && lastSyncDate != null,
                 episodeNotificationsEnabled = episodeNotificationsEnabled,
+                crashReportingEnabled = crashReportingEnabled,
             )
         }
     }
@@ -51,4 +53,5 @@ public data class SettingsPreferences(
     val lastSyncDate: String?,
     val showLastSyncDate: Boolean,
     val episodeNotificationsEnabled: Boolean,
+    val crashReportingEnabled: Boolean,
 )

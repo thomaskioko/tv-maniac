@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.settings.presenter
 import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
+import com.thomaskioko.tvmaniac.core.logger.CrashReporter
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
@@ -33,6 +34,7 @@ public class DefaultSettingsPresenter(
     @Assisted private val backClicked: () -> Unit,
     @Assisted private val onNavigateToDebugMenu: () -> Unit,
     private val appInfo: ApplicationInfo,
+    private val crashReporter: CrashReporter,
     private val datastoreRepository: DatastoreRepository,
     private val logoutInteractor: LogoutInteractor,
     private val toggleEpisodeNotificationsInteractor: ToggleEpisodeNotificationsInteractor,
@@ -72,6 +74,7 @@ public class DefaultSettingsPresenter(
             showLastSyncDate = preferences.showLastSyncDate,
             versionName = appInfo.versionName,
             episodeNotificationsEnabled = preferences.episodeNotificationsEnabled,
+            crashReportingEnabled = preferences.crashReportingEnabled,
             isDebugBuild = appInfo.debugBuild,
         )
     }.stateIn(
@@ -129,6 +132,13 @@ public class DefaultSettingsPresenter(
                     toggleEpisodeNotificationsInteractor(
                         ToggleEpisodeNotificationsInteractor.Params(enabled = action.enabled),
                     ).collectStatus(notificationToggleState, logger, uiMessageManager)
+                }
+            }
+
+            is CrashReportingToggled -> {
+                coroutineScope.launch {
+                    datastoreRepository.setCrashReportingEnabled(action.enabled)
+                    crashReporter.setCollectionEnabled(action.enabled)
                 }
             }
         }

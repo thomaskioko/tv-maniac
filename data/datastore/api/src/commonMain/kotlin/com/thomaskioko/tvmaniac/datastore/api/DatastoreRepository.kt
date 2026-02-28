@@ -239,4 +239,18 @@ public interface DatastoreRepository {
     public suspend fun setLastUpNextSyncTimestamp(timestamp: Long)
 
     public fun observeLastUpNextSyncTimestamp(): Flow<Long?>
+
+    /**
+     * Saves the user's preference for crash reporting.
+     *
+     * @param enabled Whether crash reporting is enabled.
+     */
+    public suspend fun setCrashReportingEnabled(enabled: Boolean)
+
+    /**
+     * Observes the user's preference for crash reporting.
+     *
+     * @return A Flow of Boolean, true if crash reporting is enabled, false otherwise. Defaults to true.
+     */
+    public fun observeCrashReportingEnabled(): Flow<Boolean>
 }
