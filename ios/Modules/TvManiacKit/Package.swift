@@ -18,7 +18,7 @@ let package = Package(
         .package(name: "CoreKit", path: "../CoreKit"),
         .package(name: "SwiftUIComponents", path: "../SwiftUIComponents"),
         .package(name: "TraktAuthKit", path: "../TraktAuthKit"),
-        .package(url: "https://github.com/firebase/firebase-ios-sdk", exact: "12.9.0"),
+        .package(url: "https://github.com/firebase/firebase-ios-sdk", exact: "12.10.0"),
     ],
     targets: [
         .target(
