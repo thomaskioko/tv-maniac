@@ -87,7 +87,7 @@ public class UpcomingShowsStore(
                         )
                     }
 
-                    response.forEach { result ->
+                    response.forEachIndexed { index, result ->
                         val traktId = result.traktShow!!.ids.trakt
                         val tmdbId = result.tmdbShow.id.toLong()
 
@@ -101,6 +101,7 @@ public class UpcomingShowsStore(
                                 name = result.tmdbShow.name,
                                 poster_path = result.tmdbShow.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
                                 overview = result.tmdbShow.overview,
+                                page_order = index.toLong(),
                             ),
                         )
                     }
