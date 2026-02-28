@@ -1,4 +1,5 @@
 import CoreKit
+import FirebaseCore
 import SwiftUI
 import SwiftUIComponents
 import TvManiac
@@ -16,6 +17,8 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
 
     override public init() {
         super.init()
+        FirebaseApp.configure()
+        CrashReportingBridgeHolder.shared.bridge = FirebaseCrashlyticsBridge()
         ImageConfiguration.configure()
         // Force IosTaskScheduler construction so BGTask handlers are registered
         // synchronously during app launch — Apple silently discards late registrations.
