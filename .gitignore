@@ -105,3 +105,9 @@ CLAUDE.md
 **/dev.yaml
 **/prod.yaml
 !**/*.yaml.template
+**/.build/
+**/Package.resolved
+
+# Firebase
+google-services.json
+GoogleService-Info.plist
