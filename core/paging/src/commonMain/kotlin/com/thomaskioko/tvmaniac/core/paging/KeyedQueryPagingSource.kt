@@ -64,7 +64,7 @@ internal class KeyedQueryPagingSource<Key : Any, RowType : Any>(
                 }
             } catch (e: Exception) {
                 if (e is IllegalArgumentException) throw e
-                LoadResult.Error<Key, RowType>(e)
+                LoadResult.Error(e)
             }
         }
     }

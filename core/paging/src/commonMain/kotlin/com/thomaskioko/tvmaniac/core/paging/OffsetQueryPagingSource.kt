@@ -52,7 +52,7 @@ internal class OffsetQueryPagingSource<RowType : Any>(
                 is SuspendingTransacter ->
                     transacter.transactionWithResult(bodyWithReturn = getPagingSourceLoadResult)
             }
-            (if (invalid) LoadResult.Invalid<Int, RowType>() else loadResult) as LoadResult<Int, RowType>
+            (if (invalid) LoadResult.Invalid<Int, RowType>() else loadResult)
         }
 
     override fun getRefreshKey(state: PagingState<Int, RowType>) =
