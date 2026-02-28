@@ -208,7 +208,6 @@
 				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}",
 				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist",
 				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
-				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}.debug.dylib",
 			);
 			name = "Crashlytics Upload dSYM";
 			outputFileListPaths = (
@@ -217,7 +216,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "GSP_CHECK=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleService-Info.plist\"\nif [ ! -f \"$GSP_CHECK\" ]; then\n  echo \"warning: GoogleService-Info.plist not found — skipping dSYM upload\"\n  exit 0\nfi\n\nUPLOAD_SYMBOLS=\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/upload-symbols\"\nGSP=\"$GSP_CHECK\"\nVERSION=\"${MARKETING_VERSION}\"\nBUILD_NUM=\"${CURRENT_PROJECT_VERSION}\"\n\nif [ ! -f \"$UPLOAD_SYMBOLS\" ]; then\n  echo \"error: upload-symbols not found at $UPLOAD_SYMBOLS\"\n  exit 1\nfi\n\necho \"Uploading dSYMs for version $VERSION ($BUILD_NUM)\"\n\n# Upload main app dSYM (sequential)\nif [ -d \"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}\" ]; then\n  echo \"Uploading app dSYM: ${DWARF_DSYM_FILE_NAME}\"\n  \"$UPLOAD_SYMBOLS\" -d -gsp \"$GSP\" -p ios -v \"$VERSION\" -b \"$BUILD_NUM\" \"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}\"\nfi\n\n# Upload KMP shared framework dSYMs from Gradle build output (sequential)\nKMP_FRAMEWORK_DIR=\"${SRCROOT}/../shared/build/xcode-frameworks/${CONFIGURATION}/${PLATFORM_NAME}${SDK_VERSION}\"\nif [ -d \"$KMP_FRAMEWORK_DIR\" ]; then\n  find \"$KMP_FRAMEWORK_DIR\" -name '*.dSYM' | while read dsym; do\n    echo \"Uploading KMP dSYM: $(basename \"$dsym\")\"\n    \"$UPLOAD_SYMBOLS\" -d -gsp \"$GSP\" -p ios -v \"$VERSION\" -b \"$BUILD_NUM\" \"$dsym\"\n  done\nfi\n\necho \"dSYM upload complete.\"\n";
+			shellScript = "GSP_CHECK=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleService-Info.plist\"\nif [ ! -f \"$GSP_CHECK\" ]; then\n  echo \"warning: GoogleService-Info.plist not found — skipping dSYM upload\"\n  exit 0\nfi\n\n\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\n";
 		};
 		D693F87E2DCB93950060350C /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
