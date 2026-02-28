@@ -216,7 +216,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "GSP_CHECK=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleService-Info.plist\"\nif [ ! -f \"$GSP_CHECK\" ]; then\n  echo \"warning: GoogleService-Info.plist not found — skipping dSYM upload\"\n  exit 0\nfi\n\n\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\n";
+			shellScript = "GSP_CHECK=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleService-Info.plist\"\nif [ ! -f \"$GSP_CHECK\" ]; then\n  echo \"warning: GoogleService-Info.plist not found — skipping dSYM upload\"\n  exit 0\nfi\n\nRUN_SCRIPT=\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\nif [ ! -f \"$RUN_SCRIPT\" ]; then\n  echo \"warning: Crashlytics run script not found at $RUN_SCRIPT — skipping dSYM upload\"\n  exit 0\nfi\n\n\"$RUN_SCRIPT\"\n";
 		};
 		D693F87E2DCB93950060350C /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
