@@ -254,6 +254,9 @@
 
     <string name="label_settings_episode_notifications">Episodenbenachrichtigungen</string>
     <string name="label_settings_episode_notifications_description">Benachrichtigt werden, wenn neue Episoden ausgestrahlt werden</string>
+    <string name="label_settings_section_privacy">Datenschutz</string>
+    <string name="label_settings_crash_reporting">Absturzberichte</string>
+    <string name="label_settings_crash_reporting_description">Anonyme Absturzberichte senden, um die App zu verbessern</string>
     <string name="label_settings_section_developer">Entwickler</string>
     <string name="label_settings_debug_notification_description">Löst eine Testbenachrichtigung aus</string>
     <string name="label_settings_debug_notification_scheduled">Benachrichtigung geplant!</string>

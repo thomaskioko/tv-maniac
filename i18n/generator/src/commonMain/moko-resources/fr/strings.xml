@@ -252,6 +252,9 @@
 
     <string name="label_settings_episode_notifications">Notifications d\'épisodes</string>
     <string name="label_settings_episode_notifications_description">Recevez une notification lors de la diffusion de nouveaux épisodes</string>
+    <string name="label_settings_section_privacy">Confidentialité</string>
+    <string name="label_settings_crash_reporting">Rapports de plantage</string>
+    <string name="label_settings_crash_reporting_description">Envoyer des rapports de plantage anonymes pour aider à améliorer l\'application</string>
     <string name="label_settings_section_developer">Développeur</string>
     <string name="label_settings_debug_notification_description">Déclenche une notification de test</string>
     <string name="label_settings_debug_notification_scheduled">Notification programmée !</string>
