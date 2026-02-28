@@ -16,35 +16,28 @@ struct DebugMenuView: View {
     }
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 0) {
+        List {
+            Section {
                 debugNotificationRow
-                    .padding(.top, theme.spacing.medium)
-
-                Divider()
-                    .overlay(theme.colors.onSurface.opacity(0.12))
-                    .padding(.horizontal, theme.spacing.large)
-
+                    .listRowSeparator(.hidden, edges: .top)
                 delayedDebugNotificationRow
-
-                Divider()
-                    .overlay(theme.colors.onSurface.opacity(0.12))
-                    .padding(.horizontal, theme.spacing.large)
-
                 librarySyncRow
-
-                Divider()
-                    .overlay(theme.colors.onSurface.opacity(0.12))
-                    .padding(.horizontal, theme.spacing.large)
-
                 upNextSyncRow
-
-                Spacer()
-                    .frame(height: theme.spacing.xLarge)
+                testCrashRow
             }
-            .padding(.horizontal, theme.spacing.medium)
-            .padding(.top, DimensionConstants.toolbarInset)
+            .listRowBackground(theme.colors.background)
+            .listRowSeparator(.visible)
+            .listRowSeparatorTint(theme.colors.onSurface.opacity(0.8))
+            .listRowInsets(EdgeInsets(top: 0, leading: theme.spacing.medium, bottom: 0, trailing: theme.spacing.medium))
+            .alignmentGuide(.listRowSeparatorLeading) { d in
+                d[.leading]
+            }
+            .alignmentGuide(.listRowSeparatorTrailing) { d in
+                d[.trailing]
+            }
         }
+        .listStyle(.plain)
+        .contentMargins(.top, DimensionConstants.toolbarInset + theme.spacing.medium)
         .scrollContentBackground(.hidden)
         .background(theme.colors.background)
         .navigationBarTitleDisplayMode(.inline)
@@ -80,7 +73,32 @@ struct DebugMenuView: View {
 
     @ViewBuilder
     private var librarySyncRow: some View {
-        Button {
+        HStack(spacing: theme.spacing.medium) {
+            settingsIcon("arrow.triangle.2.circlepath", color: theme.colors.secondary)
+
+            VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
+                Text(String(\.label_debug_library_sync_title))
+                    .textStyle(theme.typography.titleMedium)
+                    .foregroundColor(theme.colors.onSurface)
+                Text(syncSubtitle(for: uiState.lastLibrarySyncDate))
+                    .textStyle(theme.typography.bodySmall)
+                    .foregroundColor(theme.colors.onSurfaceVariant)
+            }
+
+            Spacer()
+
+            if uiState.isSyncingLibrary {
+                ProgressView()
+                    .tint(theme.colors.secondary)
+            } else {
+                Image(systemName: "chevron.right")
+                    .foregroundColor(theme.colors.onSurfaceVariant)
+            }
+        }
+        .padding(.vertical, theme.spacing.small)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            guard !uiState.isSyncingLibrary else { return }
             if uiState.isLoggedIn {
                 presenter.dispatch(action: TriggerLibrarySync())
             } else {
@@ -89,39 +107,38 @@ struct DebugMenuView: View {
                     message: String(\.label_debug_sync_login_required)
                 )
             }
-        } label: {
-            HStack(spacing: theme.spacing.medium) {
-                settingsIcon("arrow.triangle.2.circlepath", color: theme.colors.secondary)
-
-                VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
-                    Text(String(\.label_debug_library_sync_title))
-                        .textStyle(theme.typography.titleMedium)
-                        .foregroundColor(theme.colors.onSurface)
-                    Text(syncSubtitle(for: uiState.lastLibrarySyncDate))
-                        .textStyle(theme.typography.bodySmall)
-                        .foregroundColor(theme.colors.onSurfaceVariant)
-                }
-
-                Spacer()
-
-                if uiState.isSyncingLibrary {
-                    ProgressView()
-                        .tint(theme.colors.secondary)
-                } else {
-                    Image(systemName: "chevron.right")
-                        .foregroundColor(theme.colors.onSurfaceVariant)
-                }
-            }
-            .padding(.vertical, theme.spacing.small)
-            .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
-        .disabled(uiState.isSyncingLibrary)
+        .opacity(uiState.isSyncingLibrary ? 0.5 : 1.0)
     }
 
     @ViewBuilder
     private var upNextSyncRow: some View {
-        Button {
+        HStack(spacing: theme.spacing.medium) {
+            settingsIcon("arrow.clockwise", color: theme.colors.secondary)
+
+            VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
+                Text(String(\.label_debug_upnext_sync_title))
+                    .textStyle(theme.typography.titleMedium)
+                    .foregroundColor(theme.colors.onSurface)
+                Text(syncSubtitle(for: uiState.lastUpNextSyncDate))
+                    .textStyle(theme.typography.bodySmall)
+                    .foregroundColor(theme.colors.onSurfaceVariant)
+            }
+
+            Spacer()
+
+            if uiState.isSyncingUpNext {
+                ProgressView()
+                    .tint(theme.colors.secondary)
+            } else {
+                Image(systemName: "chevron.right")
+                    .foregroundColor(theme.colors.onSurfaceVariant)
+            }
+        }
+        .padding(.vertical, theme.spacing.small)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            guard !uiState.isSyncingUpNext else { return }
             if uiState.isLoggedIn {
                 presenter.dispatch(action: TriggerUpNextSync())
             } else {
@@ -130,106 +147,100 @@ struct DebugMenuView: View {
                     message: String(\.label_debug_sync_login_required)
                 )
             }
-        } label: {
-            HStack(spacing: theme.spacing.medium) {
-                settingsIcon("arrow.clockwise", color: theme.colors.secondary)
-
-                VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
-                    Text(String(\.label_debug_upnext_sync_title))
-                        .textStyle(theme.typography.titleMedium)
-                        .foregroundColor(theme.colors.onSurface)
-                    Text(syncSubtitle(for: uiState.lastUpNextSyncDate))
-                        .textStyle(theme.typography.bodySmall)
-                        .foregroundColor(theme.colors.onSurfaceVariant)
-                }
-
-                Spacer()
-
-                if uiState.isSyncingUpNext {
-                    ProgressView()
-                        .tint(theme.colors.secondary)
-                } else {
-                    Image(systemName: "chevron.right")
-                        .foregroundColor(theme.colors.onSurfaceVariant)
-                }
-            }
-            .padding(.vertical, theme.spacing.small)
-            .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
-        .disabled(uiState.isSyncingUpNext)
+        .opacity(uiState.isSyncingUpNext ? 0.5 : 1.0)
     }
 
     @ViewBuilder
     private var debugNotificationRow: some View {
-        Button {
-            presenter.dispatch(action: TriggerDebugNotification())
-        } label: {
-            HStack(spacing: theme.spacing.medium) {
-                settingsIcon("bell.fill", color: theme.colors.secondary)
+        HStack(spacing: theme.spacing.medium) {
+            settingsIcon("bell.fill", color: theme.colors.secondary)
 
-                VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
-                    Text(String(\.label_settings_episode_notifications))
-                        .textStyle(theme.typography.titleMedium)
-                        .foregroundColor(theme.colors.onSurface)
-                    Text(String(\.label_settings_debug_notification_description))
-                        .textStyle(theme.typography.bodySmall)
-                        .foregroundColor(theme.colors.onSurfaceVariant)
-                }
-
-                Spacer()
-
-                if uiState.isSchedulingDebugNotification {
-                    ProgressView()
-                        .tint(theme.colors.secondary)
-                } else {
-                    Image(systemName: "chevron.right")
-                        .foregroundColor(theme.colors.onSurfaceVariant)
-                }
+            VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
+                Text(String(\.label_settings_episode_notifications))
+                    .textStyle(theme.typography.titleMedium)
+                    .foregroundColor(theme.colors.onSurface)
+                Text(String(\.label_settings_debug_notification_description))
+                    .textStyle(theme.typography.bodySmall)
+                    .foregroundColor(theme.colors.onSurfaceVariant)
             }
-            .padding(.vertical, theme.spacing.small)
-            .contentShape(Rectangle())
+
+            Spacer()
+
+            if uiState.isSchedulingDebugNotification {
+                ProgressView()
+                    .tint(theme.colors.secondary)
+            } else {
+                Image(systemName: "chevron.right")
+                    .foregroundColor(theme.colors.onSurfaceVariant)
+            }
         }
-        .buttonStyle(.plain)
-        .disabled(uiState.isSchedulingDebugNotification)
+        .padding(.vertical, theme.spacing.small)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            guard !uiState.isSchedulingDebugNotification else { return }
+            presenter.dispatch(action: TriggerDebugNotification())
+        }
+        .opacity(uiState.isSchedulingDebugNotification ? 0.5 : 1.0)
     }
 
     @ViewBuilder
     private var delayedDebugNotificationRow: some View {
-        Button {
-            presenter.dispatch(action: TriggerDelayedDebugNotification())
-            toast = Toast(
-                type: .info,
-                message: String(\.label_settings_debug_notification_scheduled)
-            )
-        } label: {
-            HStack(spacing: theme.spacing.medium) {
-                settingsIcon("clock", color: theme.colors.secondary)
+        HStack(spacing: theme.spacing.medium) {
+            settingsIcon("clock", color: theme.colors.secondary)
 
-                VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
-                    Text(String(\.label_settings_delayed_debug_notification_title))
-                        .textStyle(theme.typography.titleMedium)
-                        .foregroundColor(theme.colors.onSurface)
-                    Text(String(\.label_settings_delayed_debug_notification_description))
-                        .textStyle(theme.typography.bodySmall)
-                        .foregroundColor(theme.colors.onSurfaceVariant)
-                }
-
-                Spacer()
-
-                if uiState.isSchedulingDebugNotification {
-                    ProgressView()
-                        .tint(theme.colors.secondary)
-                } else {
-                    Image(systemName: "chevron.right")
-                        .foregroundColor(theme.colors.onSurfaceVariant)
-                }
+            VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
+                Text(String(\.label_settings_delayed_debug_notification_title))
+                    .textStyle(theme.typography.titleMedium)
+                    .foregroundColor(theme.colors.onSurface)
+                Text(String(\.label_settings_delayed_debug_notification_description))
+                    .textStyle(theme.typography.bodySmall)
+                    .foregroundColor(theme.colors.onSurfaceVariant)
             }
-            .padding(.vertical, theme.spacing.small)
-            .contentShape(Rectangle())
+
+            Spacer()
+
+            if uiState.isSchedulingDebugNotification {
+                ProgressView()
+                    .tint(theme.colors.secondary)
+            } else {
+                Image(systemName: "chevron.right")
+                    .foregroundColor(theme.colors.onSurfaceVariant)
+            }
         }
-        .buttonStyle(.plain)
-        .disabled(uiState.isSchedulingDebugNotification)
+        .padding(.vertical, theme.spacing.small)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            guard !uiState.isSchedulingDebugNotification else { return }
+            presenter.dispatch(action: TriggerDelayedDebugNotification())
+        }
+        .opacity(uiState.isSchedulingDebugNotification ? 0.5 : 1.0)
+    }
+
+    @ViewBuilder
+    private var testCrashRow: some View {
+        HStack(spacing: theme.spacing.medium) {
+            settingsIcon("exclamationmark.triangle", color: theme.colors.error)
+
+            VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
+                Text(String(\.label_debug_trigger_crash_title))
+                    .textStyle(theme.typography.titleMedium)
+                    .foregroundColor(theme.colors.onSurface)
+                Text(String(\.label_debug_trigger_crash_description))
+                    .textStyle(theme.typography.bodySmall)
+                    .foregroundColor(theme.colors.onSurfaceVariant)
+            }
+
+            Spacer()
+
+            Image(systemName: "chevron.right")
+                .foregroundColor(theme.colors.onSurfaceVariant)
+        }
+        .padding(.vertical, theme.spacing.small)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            fatalError("Test crash triggered from Debug Menu")
+        }
     }
 
     @ViewBuilder

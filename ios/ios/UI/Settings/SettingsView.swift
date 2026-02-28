@@ -100,6 +100,12 @@ struct SettingsView: View {
                 youtubeToggleRow
                     .padding(.top, theme.spacing.medium)
 
+                sectionHeader(String(\.label_settings_section_privacy))
+                    .padding(.top, theme.spacing.xLarge)
+
+                crashReportingToggleRow
+                    .padding(.top, theme.spacing.medium)
+
                 sectionHeader(String(\.settings_title_info))
                     .padding(.top, theme.spacing.xLarge)
 
@@ -364,6 +370,33 @@ struct SettingsView: View {
     }
 
     @ViewBuilder
+    private var crashReportingToggleRow: some View {
+        HStack(spacing: theme.spacing.medium) {
+            settingsIcon("ladybug", color: theme.colors.secondary)
+
+            VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
+                Text(String(\.label_settings_crash_reporting))
+                    .textStyle(theme.typography.titleMedium)
+                    .foregroundColor(theme.colors.onSurface)
+                Text(String(\.label_settings_crash_reporting_description))
+                    .textStyle(theme.typography.bodySmall)
+                    .foregroundColor(theme.colors.onSurfaceVariant)
+            }
+
+            Spacer()
+
+            Toggle("", isOn: Binding(
+                get: { uiState.crashReportingEnabled },
+                set: { newValue in
+                    presenter.dispatch(action: CrashReportingToggled(enabled: newValue))
+                }
+            ))
+            .labelsHidden()
+            .tint(theme.colors.secondary)
+        }
+    }
+
+    @ViewBuilder
     private var aboutRow: some View {
         Button {
             showAboutSheet = true
@@ -448,7 +481,7 @@ struct SettingsView: View {
             presenter.dispatch(action: NavigateToDebugMenu())
         } label: {
             HStack(spacing: theme.spacing.medium) {
-                settingsIcon("ladybug", color: theme.colors.secondary)
+                settingsIcon("ellipsis.curlybraces", color: theme.colors.secondary)
 
                 VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
                     Text(String(\.label_debug_menu_title))
