@@ -254,6 +254,9 @@
 
     <string name="label_settings_episode_notifications">Episodenbenachrichtigungen</string>
     <string name="label_settings_episode_notifications_description">Benachrichtigt werden, wenn neue Episoden ausgestrahlt werden</string>
+    <string name="label_settings_section_privacy">Datenschutz</string>
+    <string name="label_settings_crash_reporting">Absturzberichte</string>
+    <string name="label_settings_crash_reporting_description">Anonyme Absturzberichte senden, um die App zu verbessern</string>
     <string name="label_settings_section_developer">Entwickler</string>
     <string name="label_settings_debug_notification_description">Löst eine Testbenachrichtigung aus</string>
     <string name="label_settings_debug_notification_scheduled">Benachrichtigung geplant!</string>
@@ -312,6 +315,8 @@
     <string name="label_debug_upnext_sync_description">UpNext-Daten erzwingen aktualisieren</string>
     <string name="label_debug_never_synced">Nie synchronisiert</string>
     <string name="label_debug_sync_login_required">Melden Sie sich bei Trakt an, um Daten zu synchronisieren</string>
+    <string name="label_debug_trigger_crash_title">Testabsturz</string>
+    <string name="label_debug_trigger_crash_description">Einen Testabsturz für Crashlytics auslösen</string>
 
     <string name="notification_permission_denied_title">Benachrichtigungen deaktiviert</string>
     <string name="notification_permission_denied_message">Um Episodenbenachrichtigungen zu erhalten, aktivieren Sie bitte die Benachrichtigungen in Ihren Geräteeinstellungen.</string>

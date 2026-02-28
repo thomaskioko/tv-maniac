@@ -39,7 +39,6 @@ struct DiscoverTab: View {
 
     // MARK: - Discover Content
 
-    @ViewBuilder
     private func discoverLoadedContent(state _: DiscoverViewState) -> some View {
         ZStack(alignment: .top) {
             discoverScrollView
@@ -182,7 +181,6 @@ struct DiscoverTab: View {
         }
     }
 
-    @ViewBuilder
     private func carouselItemView(item: SwiftShow) -> some View {
         GeometryReader { geometry in
             PosterItemView(
@@ -209,7 +207,6 @@ struct DiscoverTab: View {
         static let indicatorTopPadding: CGFloat = 100
     }
 
-    @ViewBuilder
     private func showInfoOverlay(_ shows: [SwiftShow]) -> some View {
         VStack(alignment: .leading) {
             Text(selectedShow?.title ?? "")
@@ -252,7 +249,6 @@ struct DiscoverTab: View {
         )
     }
 
-    @ViewBuilder
     private func customIndicator(_ shows: [SwiftShow]) -> some View {
         ZStack {
             Color.clear
@@ -272,7 +268,6 @@ struct DiscoverTab: View {
 
     // MARK: - Discover List Content
 
-    @ViewBuilder
     private func discoverListContent(state _: DiscoverViewState) -> some View {
         VStack {
             NextEpisodesSection(
@@ -349,7 +344,6 @@ struct DiscoverTab: View {
 
     // MARK: - Top Bar Icons
 
-    @ViewBuilder
     private func profileIcon(avatarUrl: String?) -> some View {
         GlassButton(action: {
             presenter.dispatch(action: ProfileIconClicked())
@@ -363,7 +357,6 @@ struct DiscoverTab: View {
 
     // MARK: - Empty View
 
-    @ViewBuilder
     private var emptyView: some View {
         VStack {
             Image(systemName: "list.bullet.below.rectangle")

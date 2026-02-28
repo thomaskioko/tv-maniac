@@ -6,7 +6,9 @@ struct AppThemeModifier: ViewModifier {
     @Environment(\.colorScheme) private var colorScheme
     @ObservedObject private var store = SettingsAppStorage.shared
 
-    private var appTheme: DeviceAppTheme { store.appTheme }
+    private var appTheme: DeviceAppTheme {
+        store.appTheme
+    }
 
     private var resolvedTheme: TvManiacTheme {
         appTheme.designSystemTheme

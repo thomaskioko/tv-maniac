@@ -86,7 +86,7 @@ public extension View {
     }
 }
 
-// Custom environment key for keyboard height
+/// Custom environment key for keyboard height
 private struct KeyboardHeightKey: EnvironmentKey {
     static let defaultValue: CGFloat = 0
 }

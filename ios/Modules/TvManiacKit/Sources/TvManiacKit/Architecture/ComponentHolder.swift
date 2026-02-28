@@ -1,6 +1,6 @@
 import TvManiac
 
-// This class is responsible for managing a root Decompose component at the application root.
+/// This class is responsible for managing a root Decompose component at the application root.
 public final class ComponentHolder<T> {
     public let lifecycle: LifecycleRegistry
     public let component: T

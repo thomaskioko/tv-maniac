@@ -23,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.BugReport
+import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
@@ -72,6 +73,8 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_back
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_menu_subtitle
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_menu_title
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_section_developer
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_crash_reporting
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_crash_reporting_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_episode_notifications
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_episode_notifications_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality
@@ -89,6 +92,7 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_last_sync_date
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_privacy_policy
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_section_appearance
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_section_behavior
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_section_privacy
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_sync_update
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_sync_update_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_trakt_dialog_button_secondary
@@ -109,6 +113,7 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_dialog_logout_title
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.settings.presenter.BackClicked
 import com.thomaskioko.tvmaniac.settings.presenter.BackgroundSyncToggled
+import com.thomaskioko.tvmaniac.settings.presenter.CrashReportingToggled
 import com.thomaskioko.tvmaniac.settings.presenter.DismissAboutDialog
 import com.thomaskioko.tvmaniac.settings.presenter.DismissTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.EpisodeNotificationsToggled
@@ -314,6 +319,24 @@ private fun SettingsContent(
         item { Spacer(modifier = Modifier.height(24.dp)) }
 
         item {
+            SectionHeader(title = label_settings_section_privacy.resolve(context))
+        }
+
+        item { Spacer(modifier = Modifier.height(16.dp)) }
+
+        item {
+            SettingsToggleItem(
+                icon = Icons.Filled.BugReport,
+                title = label_settings_crash_reporting.resolve(context),
+                subtitle = label_settings_crash_reporting_description.resolve(context),
+                checked = state.crashReportingEnabled,
+                onCheckedChange = { onAction(CrashReportingToggled(it)) },
+            )
+        }
+
+        item { Spacer(modifier = Modifier.height(24.dp)) }
+
+        item {
             SectionHeader(title = settings_title_info.resolve(context))
         }
 
@@ -366,7 +389,7 @@ private fun SettingsContent(
 
             item {
                 SettingsClickableItem(
-                    icon = Icons.Filled.BugReport,
+                    icon = Icons.Filled.Code,
                     title = label_debug_menu_title.resolve(context),
                     subtitle = label_debug_menu_subtitle.resolve(context),
                     onClick = { onAction(NavigateToDebugMenu) },

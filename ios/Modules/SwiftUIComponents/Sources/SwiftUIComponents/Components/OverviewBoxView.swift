@@ -73,11 +73,7 @@ public struct OverviewBoxView: View {
 }
 
 struct CustomContainer<Content: View>: View {
-    let content: Content
-
-    init(@ViewBuilder content: () -> Content) {
-        self.content = content()
-    }
+    @ViewBuilder let content: Content
 
     var body: some View {
         content

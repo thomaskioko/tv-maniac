@@ -70,6 +70,9 @@
     <string name="label_settings_last_sync_date">Last sync: %s</string>
     <string name="label_settings_episode_notifications">Episode Notifications</string>
     <string name="label_settings_episode_notifications_description">Get notified when new episodes air</string>
+    <string name="label_settings_section_privacy">Privacy</string>
+    <string name="label_settings_crash_reporting">Crash Reporting</string>
+    <string name="label_settings_crash_reporting_description">Send anonymous crash reports to help improve the app</string>
     <string name="label_settings_section_developer">Developer</string>
     <string name="label_settings_debug_notification_description">Triggers a test notification</string>
     <string name="label_settings_debug_notification_scheduled">Notification scheduled!</string>
@@ -319,4 +322,6 @@
     <string name="label_debug_upnext_sync_description">Force refresh up next data</string>
     <string name="label_debug_never_synced">Never synced</string>
     <string name="label_debug_sync_login_required">Sign in to Trakt to sync data</string>
+    <string name="label_debug_trigger_crash_title">Test Crash</string>
+    <string name="label_debug_trigger_crash_description">Trigger a test crash for Crashlytics</string>
 </resources>

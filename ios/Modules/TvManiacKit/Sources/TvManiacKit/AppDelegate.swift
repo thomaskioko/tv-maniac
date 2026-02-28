@@ -1,6 +1,6 @@
 import CoreKit
+import FirebaseCore
 import SwiftUI
-import SwiftUIComponents
 import TvManiac
 import UIKit
 import UserNotifications
@@ -16,7 +16,11 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
 
     override public init() {
         super.init()
-        ImageConfiguration.configure()
+        if Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist") != nil {
+            FirebaseApp.configure()
+            CrashReportingBridgeHolder.shared.bridge = FirebaseCrashlyticsBridge()
+        }
+        ImageCacheManager.configure()
         // Force IosTaskScheduler construction so BGTask handlers are registered
         // synchronously during app launch — Apple silently discards late registrations.
         _ = appComponent.backgroundTaskScheduler
@@ -72,12 +76,12 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
         logger.debug(
             message: "[Memory] Warning #\(level) — \(SystemMemory.memoryUsageDescription)"
         )
-        ImageConfiguration.handleMemoryWarning(escalationLevel: level)
+        ImageCacheManager.handleMemoryWarning(escalationLevel: level)
     }
 
     @objc private func applicationDidEnterBackground() {
         MemoryMonitor.shared.logMemoryState(event: "didEnterBackground")
-        ImageConfiguration.clearMemoryCache()
+        ImageCacheManager.clearMemoryCache()
         MemoryMonitor.shared.stop()
         DefaultDiagnosticLogger.shared.logBreadcrumb(
             category: "lifecycle",

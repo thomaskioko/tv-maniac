@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Sync
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -58,6 +59,8 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_library_sync_title
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_menu_title
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_never_synced
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_sync_login_required
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_trigger_crash_description
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_trigger_crash_title
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_upnext_sync_title
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_debug_notification_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_debug_notification_scheduled
@@ -81,6 +84,7 @@ public fun DebugMenuScreen(
         onTriggerDelayedDebugNotification = { presenter.dispatch(TriggerDelayedDebugNotification) },
         onTriggerLibrarySync = { presenter.dispatch(TriggerLibrarySync) },
         onTriggerUpNextSync = { presenter.dispatch(TriggerUpNextSync) },
+        onTriggerTestCrash = { throw RuntimeException("Test crash triggered from Debug Menu") },
         onDismissSnackbar = { presenter.dispatch(DismissSnackbar(it)) },
         modifier = modifier,
     )
@@ -94,6 +98,7 @@ internal fun DebugMenuScreen(
     onTriggerDelayedDebugNotification: () -> Unit,
     onTriggerLibrarySync: () -> Unit,
     onTriggerUpNextSync: () -> Unit,
+    onTriggerTestCrash: () -> Unit,
     onDismissSnackbar: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -222,6 +227,22 @@ internal fun DebugMenuScreen(
                     )
                 }
 
+                item {
+                    HorizontalDivider(
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+                        modifier = Modifier.padding(horizontal = 24.dp),
+                    )
+                }
+
+                item {
+                    DebugClickableItem(
+                        icon = Icons.Filled.Warning,
+                        title = label_debug_trigger_crash_title.resolve(context),
+                        subtitle = label_debug_trigger_crash_description.resolve(context),
+                        onClick = onTriggerTestCrash,
+                    )
+                }
+
                 item { Spacer(modifier = Modifier.height(32.dp)) }
             }
         }
@@ -307,6 +328,7 @@ private fun DebugMenuScreenPreview() {
                 onTriggerDelayedDebugNotification = {},
                 onTriggerLibrarySync = {},
                 onTriggerUpNextSync = {},
+                onTriggerTestCrash = {},
                 onDismissSnackbar = {},
             )
         }

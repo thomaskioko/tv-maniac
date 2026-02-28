@@ -1,7 +1,10 @@
 import Foundation
 
 public struct SwiftSeason: Identifiable, Equatable {
-    public var id: Int64 { seasonId }
+    public var id: Int64 {
+        seasonId
+    }
+
     public let tvShowId: Int64
     public let seasonId: Int64
     public let seasonNumber: Int64

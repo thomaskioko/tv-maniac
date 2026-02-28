@@ -216,7 +216,6 @@ struct WatchlistTab: View {
         .transition(.scale.combined(with: .opacity))
     }
 
-    @ViewBuilder
     private var sectionedListContent: some View {
         ScrollView(showsIndicators: false) {
             LazyVStack(spacing: theme.spacing.xSmall, pinnedViews: [.sectionHeaders]) {
@@ -298,7 +297,6 @@ struct WatchlistTab: View {
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: uiState.isGridMode)
     }
 
-    @ViewBuilder
     private var sectionedGridContent: some View {
         ScrollView(showsIndicators: false) {
             LazyVStack(spacing: theme.spacing.small, pinnedViews: [.sectionHeaders]) {
@@ -322,7 +320,6 @@ struct WatchlistTab: View {
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: uiState.isGridMode)
     }
 
-    @ViewBuilder
     private func gridItemsView(items: [WatchlistItem]) -> some View {
         LazyVGrid(columns: WatchlistConstants.columns, spacing: WatchlistConstants.spacing) {
             ForEach(items, id: \.traktId) { item in
@@ -362,7 +359,6 @@ struct WatchlistTab: View {
         }
     }
 
-    @ViewBuilder
     private var upNextEmptyView: some View {
         CenteredFullScreenView {
             FullScreenView(

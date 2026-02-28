@@ -58,7 +58,6 @@ public struct EpisodeListView: View {
         .padding(.top, theme.spacing.medium)
     }
 
-    @ViewBuilder
     private var verticalEpisodeListView: some View {
         VStack {
             ScrollView(.vertical, showsIndicators: false) {

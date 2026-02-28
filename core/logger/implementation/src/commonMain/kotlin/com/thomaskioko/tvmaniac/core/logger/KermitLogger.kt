@@ -9,7 +9,7 @@ import co.touchlab.kermit.Logger as KermitLogger
 
 @Inject
 @SingleIn(AppScope::class)
-@ContributesBinding(AppScope::class)
+@ContributesBinding(AppScope::class, multibinding = true)
 public class KermitLogger : Logger {
 
     override fun setup(debugMode: Boolean) {

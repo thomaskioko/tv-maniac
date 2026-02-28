@@ -13,9 +13,17 @@ let package = Package(
             targets: ["CoreKit"]
         ),
     ],
+    dependencies: [
+        .package(url: "https://github.com/firebase/firebase-ios-sdk", exact: "12.9.0"),
+        .package(url: "https://github.com/kean/Nuke", exact: "12.9.0"),
+    ],
     targets: [
         .target(
-            name: "CoreKit"
+            name: "CoreKit",
+            dependencies: [
+                .product(name: "FirebaseCrashlytics", package: "firebase-ios-sdk"),
+                .product(name: "Nuke", package: "Nuke"),
+            ]
         ),
     ]
 )

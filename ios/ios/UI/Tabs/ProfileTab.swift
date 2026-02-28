@@ -115,7 +115,6 @@ struct ProfileTab: View {
         .coordinateSpace(name: "profileScroll")
     }
 
-    @ViewBuilder
     private func headerContent(userProfile: ProfileInfo, height: CGFloat) -> some View {
         ZStack(alignment: .bottom) {
             HeaderCoverArtWorkView(
@@ -175,7 +174,6 @@ struct ProfileTab: View {
 
     // MARK: - Stats Section
 
-    @ViewBuilder
     private func statsSection(stats: ProfileStats) -> some View {
         VStack(alignment: .leading, spacing: theme.spacing.medium) {
             HStack {
@@ -218,7 +216,6 @@ struct ProfileTab: View {
         }
     }
 
-    @ViewBuilder
     private func statColumn(label: String, value: Int32) -> some View {
         VStack(spacing: theme.spacing.xxSmall) {
             Text("\(value)")
@@ -323,7 +320,6 @@ struct ProfileTab: View {
         }
     }
 
-    @ViewBuilder
     private func featureItem(iconName: String, title: String, description: String) -> some View {
         HStack(alignment: .top, spacing: theme.spacing.medium) {
             Image(systemName: iconName)

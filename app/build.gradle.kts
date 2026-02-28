@@ -153,4 +153,12 @@ dependencies {
     implementation(libs.ktor.core)
 
     testRuntimeOnly(projects.core.notifications.implementation)
+
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.crashlytics)
+}
+
+if (file("google-services.json").exists()) {
+    apply(plugin = libs.plugins.google.services.get().pluginId)
+    apply(plugin = libs.plugins.firebase.crashlytics.gradle.get().pluginId)
 }

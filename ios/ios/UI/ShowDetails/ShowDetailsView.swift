@@ -109,7 +109,6 @@ struct ShowDetailsView: View {
         .toastView(toast: $toast)
     }
 
-    @ViewBuilder
     private var showInfoDetails: some View {
         ShowInfoView(
             isFollowed: uiState.showDetails.isInLibrary,

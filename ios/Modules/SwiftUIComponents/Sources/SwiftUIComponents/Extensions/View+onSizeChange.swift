@@ -21,7 +21,8 @@ public extension View {
                 Color.clear
                     .onAppear { action(proxy.size) }
                     .onChange(of: proxy.size, perform: action)
-            })
+            }
+        )
     }
 
     /// Adds an action to perform when the view’s bounds rectangle, converted to a defined
@@ -48,6 +49,7 @@ public extension View {
                 Color.clear
                     .onAppear { action(proxy.frame(in: coordinateSpace)) }
                     .onChange(of: proxy.frame(in: coordinateSpace), perform: action)
-            })
+            }
+        )
     }
 }

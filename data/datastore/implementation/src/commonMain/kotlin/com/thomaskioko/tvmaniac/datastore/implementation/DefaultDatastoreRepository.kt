@@ -235,6 +235,17 @@ public class DefaultDatastoreRepository(
             preferences[KEY_LAST_UPNEXT_SYNC_TIMESTAMP]
         }
 
+    override suspend fun setCrashReportingEnabled(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[KEY_CRASH_REPORTING_ENABLED] = enabled
+        }
+    }
+
+    override fun observeCrashReportingEnabled(): Flow<Boolean> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_CRASH_REPORTING_ENABLED] ?: true
+        }
+
     public companion object {
         public val KEY_THEME: Preferences.Key<String> = stringPreferencesKey("app_theme")
         public val KEY_LANGUAGE: Preferences.Key<String> = stringPreferencesKey("app_language")
@@ -252,5 +263,6 @@ public class DefaultDatastoreRepository(
         public val KEY_LIBRARY_SORT_OPTION: Preferences.Key<String> = stringPreferencesKey("library_sort_option")
         public val KEY_UPNEXT_SORT_OPTION: Preferences.Key<String> = stringPreferencesKey("upnext_sort_option")
         public val KEY_LAST_UPNEXT_SYNC_TIMESTAMP: Preferences.Key<Long> = longPreferencesKey("last_upnext_sync_timestamp")
+        public val KEY_CRASH_REPORTING_ENABLED: Preferences.Key<Boolean> = booleanPreferencesKey("crash_reporting_enabled")
     }
 }

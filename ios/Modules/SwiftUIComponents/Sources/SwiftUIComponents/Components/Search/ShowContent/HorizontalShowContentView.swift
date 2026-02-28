@@ -43,7 +43,6 @@ public struct HorizontalShowContentView: View {
 
     // MARK: - Subviews
 
-    @ViewBuilder
     private var chevronView: some View {
         ChevronTitle(
             title: title,
@@ -54,7 +53,6 @@ public struct HorizontalShowContentView: View {
         .accessibilityAddTraits(.isHeader)
     }
 
-    @ViewBuilder
     private var scrollContent: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: spacing ?? theme.spacing.small) {

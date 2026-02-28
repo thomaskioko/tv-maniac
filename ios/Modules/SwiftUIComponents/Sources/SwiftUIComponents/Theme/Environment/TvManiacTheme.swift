@@ -9,12 +9,17 @@ public protocol TvManiacTheme {
 }
 
 public extension TvManiacTheme {
-    var scanlineConfig: ScanlineConfiguration { .disabled }
+    var scanlineConfig: ScanlineConfiguration {
+        .disabled
+    }
 }
 
 public struct LightTheme: TvManiacTheme {
     public let colors = TvManiacColorScheme.light
-    public var typography: TvManiacTypographyScheme { .shared }
+    public var typography: TvManiacTypographyScheme {
+        .shared
+    }
+
     public let spacing = TvManiacSpacingScheme.default
     public let shapes = TvManiacShapeScheme.default
 
@@ -23,7 +28,10 @@ public struct LightTheme: TvManiacTheme {
 
 public struct DarkTheme: TvManiacTheme {
     public let colors = TvManiacColorScheme.dark
-    public var typography: TvManiacTypographyScheme { .shared }
+    public var typography: TvManiacTypographyScheme {
+        .shared
+    }
+
     public let spacing = TvManiacSpacingScheme.default
     public let shapes = TvManiacShapeScheme.default
 
@@ -32,7 +40,10 @@ public struct DarkTheme: TvManiacTheme {
 
 public struct TerminalTheme: TvManiacTheme {
     public let colors = TvManiacColorScheme.terminal
-    public var typography: TvManiacTypographyScheme { .shared }
+    public var typography: TvManiacTypographyScheme {
+        .shared
+    }
+
     public let spacing = TvManiacSpacingScheme.default
     public let shapes = TvManiacShapeScheme.default
     public let scanlineConfig = ScanlineConfiguration.terminal()
@@ -42,7 +53,10 @@ public struct TerminalTheme: TvManiacTheme {
 
 public struct AutumnTheme: TvManiacTheme {
     public let colors = TvManiacColorScheme.autumn
-    public var typography: TvManiacTypographyScheme { .shared }
+    public var typography: TvManiacTypographyScheme {
+        .shared
+    }
+
     public let spacing = TvManiacSpacingScheme.default
     public let shapes = TvManiacShapeScheme.default
 
@@ -51,7 +65,10 @@ public struct AutumnTheme: TvManiacTheme {
 
 public struct AquaTheme: TvManiacTheme {
     public let colors = TvManiacColorScheme.aqua
-    public var typography: TvManiacTypographyScheme { .shared }
+    public var typography: TvManiacTypographyScheme {
+        .shared
+    }
+
     public let spacing = TvManiacSpacingScheme.default
     public let shapes = TvManiacShapeScheme.default
 
@@ -60,7 +77,10 @@ public struct AquaTheme: TvManiacTheme {
 
 public struct AmberTheme: TvManiacTheme {
     public let colors = TvManiacColorScheme.amber
-    public var typography: TvManiacTypographyScheme { .shared }
+    public var typography: TvManiacTypographyScheme {
+        .shared
+    }
+
     public let spacing = TvManiacSpacingScheme.default
     public let shapes = TvManiacShapeScheme.default
     public let scanlineConfig = ScanlineConfiguration.amber()
@@ -70,7 +90,10 @@ public struct AmberTheme: TvManiacTheme {
 
 public struct SnowTheme: TvManiacTheme {
     public let colors = TvManiacColorScheme.snow
-    public var typography: TvManiacTypographyScheme { .shared }
+    public var typography: TvManiacTypographyScheme {
+        .shared
+    }
+
     public let spacing = TvManiacSpacingScheme.default
     public let shapes = TvManiacShapeScheme.default
     public let scanlineConfig = ScanlineConfiguration.snow()
@@ -80,7 +103,10 @@ public struct SnowTheme: TvManiacTheme {
 
 public struct CrimsonTheme: TvManiacTheme {
     public let colors = TvManiacColorScheme.crimson
-    public var typography: TvManiacTypographyScheme { .shared }
+    public var typography: TvManiacTypographyScheme {
+        .shared
+    }
+
     public let spacing = TvManiacSpacingScheme.default
     public let shapes = TvManiacShapeScheme.default
     public let scanlineConfig = ScanlineConfiguration.crimson()

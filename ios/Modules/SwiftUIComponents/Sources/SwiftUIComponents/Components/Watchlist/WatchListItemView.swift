@@ -91,7 +91,6 @@ public struct WatchListItemView: View {
         .padding(.horizontal, theme.spacing.xSmall)
     }
 
-    @ViewBuilder
     private var badgeView: some View {
         HStack(spacing: 4) {
             switch episode.badge {

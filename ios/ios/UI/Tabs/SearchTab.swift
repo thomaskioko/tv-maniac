@@ -68,7 +68,6 @@ struct SearchTab: View {
         }
     }
 
-    @ViewBuilder
     private func genreSection(genres: [ShowGenre], isUpdating: Bool) -> some View {
         Section {
             let items = genres.map {
@@ -113,7 +112,6 @@ struct SearchTab: View {
         .padding(.horizontal)
     }
 
-    @ViewBuilder
     private func searchResultsView(results: [ShowItem], isUpdating: Bool) -> some View {
         VStack {
             if isUpdating {

@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.presenter.settings
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.thomaskioko.tvmaniac.core.logger.fixture.FakeCrashReporter
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.core.tasks.api.PeriodicTaskRequest
@@ -48,6 +49,7 @@ class SettingsPresenterTest {
     private val userRepository = FakeUserRepository()
     private val fakeTraktActivityRepository = FakeTraktActivityRepository()
     private val fakeLogger = FakeLogger()
+    private val fakeCrashReporter = FakeCrashReporter()
     private val fakeScheduler = object : BackgroundTaskScheduler {
         override fun schedulePeriodic(request: PeriodicTaskRequest) = Unit
         override fun scheduleAndExecute(request: PeriodicTaskRequest) = Unit
@@ -63,6 +65,7 @@ class SettingsPresenterTest {
         presenter = DefaultSettingsPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             appInfo = FakeApplicationInfo.DEFAULT,
+            crashReporter = fakeCrashReporter,
             datastoreRepository = datastoreRepository,
             traktAuthRepository = traktAuthRepository,
             logger = fakeLogger,

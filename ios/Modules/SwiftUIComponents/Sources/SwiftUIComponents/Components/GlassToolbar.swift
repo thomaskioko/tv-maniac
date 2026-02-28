@@ -63,7 +63,7 @@ public struct GlassToolbar<LeadingIcon: View, TrailingIcon: View>: View {
     }
 
     public var body: some View {
-        let toolbarHeight: CGFloat = 44
+        let toolbarHeight: CGFloat = 56
         let topPadding = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first?.safeAreaInsets
             .top ?? 0
         let blurStyle: UIBlurEffect.Style = colorScheme == .dark ? .systemThinMaterialDark : .systemThinMaterialLight
@@ -159,7 +159,7 @@ public struct NavigationBarModifier: ViewModifier {
     }
 }
 
-// Add this extension to make navigation bar transparent
+/// Add this extension to make navigation bar transparent
 public extension View {
     func navigationBarColor(backgroundColor: UIColor) -> some View {
         modifier(NavigationBarModifier(backgroundColor: backgroundColor))

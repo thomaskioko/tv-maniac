@@ -11,10 +11,7 @@ concurrency:
     cancel-in-progress: true
 
 env:
-    JDK_VERSION: 21
-    DISTRIBUTION: 'temurin'
     XCODE_VERSION: 16.4
-    SPM_CACHE_PATH: ios/SourcePackages
     TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
     TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
     TRAKT_CLIENT_SECRET: ${{ secrets.TRAKT_CLIENT_SECRET }}
@@ -30,19 +27,22 @@ jobs:
             -   name: 🚚 Checkout Code
                 uses: actions/checkout@v6
 
-            -   name: Set up JDK
-                uses: actions/setup-java@v5
-                with:
-                    distribution: ${{ env.DISTRIBUTION }}
-                    java-version: ${{ env.JDK_VERSION }}
+            -   name: 🐘 Setup Gradle Environment
+                uses: ./.github/actions/setup-gradle
 
-            -   name: 🐘 Setup Gradle
-                uses: gradle/actions/setup-gradle@v5
+            -   name: 🔥 Install google-services.json
+                env:
+                    GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+                run: |
+                    if [ -n "$GOOGLE_SERVICES_JSON" ]; then
+                      echo "$GOOGLE_SERVICES_JSON" | base64 --decode > app/google-services.json
+                    else
+                      echo "warning: GOOGLE_SERVICES_JSON secret not set — Firebase will be disabled"
+                    fi
 
             -   name: 🤖 Build Android App
                 run: |
-                    ./gradlew clean \
-                      :app:assembleRelease \
+                    ./gradlew :app:assembleRelease \
                       :app:bundleRelease \
                       -Pandroidx.baselineprofile.skipgeneration=true \
                         -Pcompose.enableCompilerMetrics=true \
@@ -55,13 +55,9 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v6
-            -   uses: actions/setup-java@v5
-                with:
-                    distribution: ${{ env.DISTRIBUTION }}
-                    java-version: ${{ env.JDK_VERSION }}
 
-            -   name: 🐘 Setup Gradle
-                uses: gradle/actions/setup-gradle@v5
+            -   name: 🐘 Setup Gradle Environment
+                uses: ./.github/actions/setup-gradle
 
             -   name: Lint Project
                 run: ./gradlew :app:lintRelease -Papp.debugOnly=false
@@ -77,13 +73,9 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v6
-            -   uses: actions/setup-java@v5
-                with:
-                    distribution: ${{ env.DISTRIBUTION }}
-                    java-version: ${{ env.JDK_VERSION }}
 
-            -   name: 🐘 Setup Gradle
-                uses: gradle/actions/setup-gradle@v5
+            -   name: 🐘 Setup Gradle Environment
+                uses: ./.github/actions/setup-gradle
 
             -   name: Run Spotless
                 run: ./gradlew spotlessCheck -Papp.debugOnly=false --no-configuration-cache
@@ -92,13 +84,9 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v6
-            -   uses: actions/setup-java@v5
-                with:
-                    distribution: ${{ env.DISTRIBUTION }}
-                    java-version: ${{ env.JDK_VERSION }}
 
-            -   name: 🐘 Setup Gradle
-                uses: gradle/actions/setup-gradle@v5
+            -   name: 🐘 Setup Gradle Environment
+                uses: ./.github/actions/setup-gradle
 
             -   name: Dependency Health
                 run: ./gradlew buildHealth -Papp.debugOnly=false
@@ -114,13 +102,9 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v6
-            -   uses: actions/setup-java@v5
-                with:
-                    distribution: ${{ env.DISTRIBUTION }}
-                    java-version: ${{ env.JDK_VERSION }}
 
-            -   name: 🐘 Setup Gradle
-                uses: gradle/actions/setup-gradle@v5
+            -   name: 🐘 Setup Gradle Environment
+                uses: ./.github/actions/setup-gradle
 
             -   name: Run JVM Tests
                 run: ./gradlew jvmTest -Papp.debugOnly=false
@@ -169,32 +153,20 @@ jobs:
             -   name: 🚚 Checkout project
                 uses: actions/checkout@v6
 
-            -   name: 📀 Setup Xcode version
-                uses: maxim-lobanov/setup-xcode@v1
+            -   name: 📱 Setup iOS Environment
+                uses: ./.github/actions/setup-ios
                 with:
                     xcode-version: ${{ env.XCODE_VERSION }}
 
-            -   name: 💎 Set up Ruby
-                uses: ruby/setup-ruby@v1
-                with:
-                    bundler-cache: true
-
-            -   name: Cache SPM dependencies
-                uses: actions/cache@v5
-                with:
-                    path: ${{ env.SPM_CACHE_PATH }}
-                    key: ${{ runner.os }}-spm-${{ github.sha }}
-                    restore-keys: |
-                        ${{ runner.os }}-spm-
-
-            -   name: 🐘 Setup Gradle
-                uses: gradle/actions/setup-gradle@v5
-
-            -   name: 🧹 Clear Derived Data
-                run: bundle exec fastlane clear_derived_data_lane
-
-            -   name: 📦 Install dependencies with Bundler
-                run: bundle install
+            -   name: 🔥 Install GoogleService-Info.plist
+                env:
+                    GOOGLE_SERVICE_INFO: ${{ secrets.GOOGLE_SERVICE_INFO_PLIST }}
+                run: |
+                    if [ -n "$GOOGLE_SERVICE_INFO" ]; then
+                      echo "$GOOGLE_SERVICE_INFO" | base64 --decode > ios/ios/GoogleService-Info.plist
+                    else
+                      echo "warning: GOOGLE_SERVICE_INFO_PLIST secret not set — Firebase will be disabled"
+                    fi
 
             -   name: 🧱 Build iOS App
                 run: bundle exec fastlane build_tvmaniac
@@ -223,9 +195,6 @@ jobs:
             -   name: 📦 Install Swift Lint
                 run: brew install swiftlint
 
-            -   name: 📦 Install dependencies with Bundler
-                run: bundle install
-
             -   name: 🔍 Run SwiftLint
                 run: bundle exec fastlane ios lint
 
@@ -239,32 +208,13 @@ jobs:
             -   name: 🚚 Checkout project
                 uses: actions/checkout@v6
 
-            -   name: 📀 Setup Xcode version
-                uses: maxim-lobanov/setup-xcode@v1
+            -   name: 📱 Setup iOS Environment
+                uses: ./.github/actions/setup-ios
                 with:
                     xcode-version: ${{ env.XCODE_VERSION }}
 
             -   name: 📱 List Available Simulators
                 run: xcrun simctl list devices
-
-            -   name: 💎 Set up Ruby
-                uses: ruby/setup-ruby@v1
-                with:
-                    bundler-cache: true
-
-            -   name: Cache SPM dependencies
-                uses: actions/cache@v5
-                with:
-                    path: ${{ env.SPM_CACHE_PATH }}
-                    key: ${{ runner.os }}-spm-${{ github.sha }}
-                    restore-keys: |
-                        ${{ runner.os }}-spm-
-
-            -   name: 🐘 Setup Gradle
-                uses: gradle/actions/setup-gradle@v5
-
-            -   name: Install dependencies with Bundler
-                run: bundle install
 
             -   name: 📸 Run Snapshot Tests
                 run: bundle exec fastlane snapshot_tests

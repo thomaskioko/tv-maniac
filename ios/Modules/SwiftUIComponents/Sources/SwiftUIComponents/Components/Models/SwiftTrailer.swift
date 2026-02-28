@@ -1,7 +1,10 @@
 import Foundation
 
 public struct SwiftTrailer: Identifiable, Equatable {
-    public var id: String { key }
+    public var id: String {
+        key
+    }
+
     public let showTmdbId: Int64
     public let key: String
     public let name: String

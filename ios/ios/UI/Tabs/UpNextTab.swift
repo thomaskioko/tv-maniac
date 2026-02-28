@@ -92,7 +92,6 @@ struct UpNextTab: View {
         }
     }
 
-    @ViewBuilder
     private var listContent: some View {
         ScrollViewReader { proxy in
             ScrollView(showsIndicators: false) {
@@ -140,7 +139,6 @@ struct UpNextTab: View {
         }
     }
 
-    @ViewBuilder
     private var emptyView: some View {
         VStack(spacing: 0) {
             CenteredFullScreenView {
