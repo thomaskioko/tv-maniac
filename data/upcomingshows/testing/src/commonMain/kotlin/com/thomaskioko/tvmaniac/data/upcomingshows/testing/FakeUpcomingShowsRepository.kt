@@ -15,7 +15,7 @@ public class FakeUpcomingShowsRepository : UpcomingShowsRepository {
         shows.value = result
     }
 
-    override suspend fun fetchUpcomingShows(forceRefresh: Boolean) {
+    override suspend fun fetchUpcomingShows(forceRefresh: Boolean, page: Long) {
     }
 
     override fun observeUpcomingShows(page: Long): Flow<List<ShowEntity>> {

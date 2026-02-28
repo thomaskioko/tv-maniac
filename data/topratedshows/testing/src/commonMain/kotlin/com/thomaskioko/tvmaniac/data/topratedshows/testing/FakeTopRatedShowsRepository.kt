@@ -15,7 +15,7 @@ public class FakeTopRatedShowsRepository : TopRatedShowsRepository {
         shows.value = result
     }
 
-    override suspend fun fetchTopRatedShows(forceRefresh: Boolean) {
+    override suspend fun fetchTopRatedShows(forceRefresh: Boolean, page: Long) {
     }
 
     override fun observeTopRatedShows(page: Long): Flow<List<ShowEntity>> {

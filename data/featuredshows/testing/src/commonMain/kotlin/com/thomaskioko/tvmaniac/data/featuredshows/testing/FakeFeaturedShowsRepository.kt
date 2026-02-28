@@ -14,7 +14,7 @@ public class FakeFeaturedShowsRepository : FeaturedShowsRepository {
         shows.value = result
     }
 
-    override suspend fun fetchFeaturedShows(forceRefresh: Boolean) {
+    override suspend fun fetchFeaturedShows(forceRefresh: Boolean, page: Long) {
     }
 
     override fun observeFeaturedShows(page: Long): Flow<List<ShowEntity>> {

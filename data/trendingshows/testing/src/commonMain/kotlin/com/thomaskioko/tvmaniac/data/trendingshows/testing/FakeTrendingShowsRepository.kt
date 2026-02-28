@@ -20,7 +20,7 @@ public class FakeTrendingShowsRepository : TrendingShowsRepository {
         pagedShows.value = result
     }
 
-    override suspend fun fetchTrendingShows(forceRefresh: Boolean) {
+    override suspend fun fetchTrendingShows(forceRefresh: Boolean, page: Long) {
     }
 
     override fun observeTrendingShows(page: Long): Flow<List<ShowEntity>> {

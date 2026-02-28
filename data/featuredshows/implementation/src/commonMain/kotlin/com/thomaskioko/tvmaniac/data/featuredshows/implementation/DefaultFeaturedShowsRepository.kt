@@ -27,9 +27,7 @@ public class DefaultFeaturedShowsRepository(
     override fun observeFeaturedShows(page: Long): Flow<List<ShowEntity>> = dao.observeFeaturedShows(page)
         .map { it.take(FEATURED_SHOWS_COUNT) }
 
-    override suspend fun fetchFeaturedShows(forceRefresh: Boolean) {
-        // TODO:: Get the page from the dao
-        val page = 1L
+    override suspend fun fetchFeaturedShows(forceRefresh: Boolean, page: Long) {
         when {
             forceRefresh -> store.fresh(page)
             else -> store.get(page)
