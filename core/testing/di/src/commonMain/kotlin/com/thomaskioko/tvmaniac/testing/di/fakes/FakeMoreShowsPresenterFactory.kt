@@ -29,4 +29,5 @@ internal class FakeMoreShowsPresenter : MoreShowsPresenter {
     }
 
     override fun onItemVisible(index: Int) {}
+    override fun loadMore() {}
 }

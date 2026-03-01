@@ -11,6 +11,8 @@ public interface MoreShowsPresenter {
 
     public fun onItemVisible(index: Int)
 
+    public fun loadMore()
+
     public interface Factory {
         public operator fun invoke(
             componentContext: ComponentContext,

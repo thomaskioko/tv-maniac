@@ -12,6 +12,7 @@ public data class MoreShowsState(
     val items: ImmutableList<TvShow> = persistentListOf(),
     val isRefreshLoading: Boolean = false,
     val isAppendLoading: Boolean = false,
+    val hasNextPage: Boolean = true,
     val appendError: String? = null,
     val errorMessage: String? = null,
 )

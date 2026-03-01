@@ -86,6 +86,11 @@ public class DefaultMoreShowsPresenter(
         showsPagingDataPresenter[index]
     }
 
+    override fun loadMore() {
+        val index = showsPagingDataPresenter.size - 1
+        showsPagingDataPresenter[index]
+    }
+
     private fun getPopularPagedList(forceRefresh: Boolean = false) {
         coroutineScope.launch {
             val pagingList: Flow<PagingData<TvShow>> =
@@ -145,13 +150,32 @@ public class DefaultMoreShowsPresenter(
         pagingList.collectLatest { showsPagingDataPresenter.collectFrom(it) }
     }
 
+    /**
+     * Syncs the UI item list from the [PagingDataPresenter] snapshot.
+     *
+     * When the paging library's underlying [PagingSource] is invalidated (e.g., by a SQLDelight
+     * query listener firing after a DB write), it recreates the source from scratch and loads
+     * only `initialLoadSize` items. This causes the snapshot to temporarily shrink (e.g., from
+     * 40 items back to 20).
+     *
+     * To prevent the UI from flickering or losing scroll position, this function:
+     * 1. **Ignores shrinking snapshots** — keeps the current (larger) item list in state.
+     * 2. **Re-pokes the presenter** — accesses the last item in the shrunk snapshot, which sends
+     *    a [ViewportHint] to the paging library, prompting it to load the remaining pages from
+     *    the database and restore the full list.
+     */
     private fun updateItemsFromSnapshot() {
         val newItems = showsPagingDataPresenter.snapshot().filterNotNull().toImmutableList()
         _state.update { current ->
-            if (current.items == newItems) {
-                current
-            } else {
-                current.copy(items = newItems)
+            when {
+                current.items == newItems -> current
+                newItems.size < current.items.size -> {
+                    if (newItems.isNotEmpty()) {
+                        showsPagingDataPresenter[newItems.size - 1]
+                    }
+                    current
+                }
+                else -> current.copy(items = newItems)
             }
         }
     }
