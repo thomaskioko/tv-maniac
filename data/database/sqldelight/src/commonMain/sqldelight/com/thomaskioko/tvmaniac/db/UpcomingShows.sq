@@ -94,7 +94,7 @@ pageExists:
 SELECT EXISTS(SELECT 1 FROM upcoming_shows WHERE page = :page LIMIT 1);
 
 count:
-SELECT count(*) FROM upcoming_shows;
+SELECT count(*) FROM upcoming_shows INNER JOIN tvshow ON tvshow.trakt_id = upcoming_shows.trakt_id;
 
 delete:
 DELETE FROM upcoming_shows
