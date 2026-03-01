@@ -43,7 +43,7 @@ public struct ParallaxView<Header: View, Content: View>: View {
                             .frame(width: proxy.size.width, height: proxy.getHeightForHeaderImage(proxy))
                             .background(GeometryGetter(rect: $headerImageRect))
                             .offset(y: getOffsetForHeaderImage(proxy))
-                            .onChange(of: offset) { newOffset in
+                            .onChange(of: offset) { _, newOffset in
                                 DispatchQueue.main.async {
                                     onScroll(newOffset)
                                 }

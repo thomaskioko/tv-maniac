@@ -612,13 +612,13 @@ private extension View {
         store: SettingsAppStorage,
         showingErrorAlert: Binding<Bool>
     ) -> some View {
-        onChange(of: uiState.theme) { newTheme in
+        onChange(of: uiState.theme) { _, newTheme in
             store.appTheme = newTheme.toDeviceAppTheme()
         }
-        .onChange(of: uiState.imageQuality) { imageQuality in
+        .onChange(of: uiState.imageQuality) { _, imageQuality in
             store.imageQuality = imageQuality.toSwift()
         }
-        .onChange(of: uiState.errorMessage) { errorMessage in
+        .onChange(of: uiState.errorMessage) { _, errorMessage in
             showingErrorAlert.wrappedValue = errorMessage != nil
         }
     }

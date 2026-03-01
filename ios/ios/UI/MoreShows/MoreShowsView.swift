@@ -43,12 +43,12 @@ struct MoreShowsView: View {
         .refreshable {
             presenter.dispatch(action: RefreshMoreShows())
         }
-        .onChange(of: uiState.errorMessage) { message in
+        .onChange(of: uiState.errorMessage) { _, message in
             if let message {
                 toast = Toast(type: .error, message: message)
             }
         }
-        .onChange(of: toast) { newValue in
+        .onChange(of: toast) { _, newValue in
             if newValue == nil, uiState.errorMessage != nil {
                 presenter.dispatch(action: DismissErrorMessage())
             }

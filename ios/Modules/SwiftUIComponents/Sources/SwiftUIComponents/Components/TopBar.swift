@@ -86,7 +86,7 @@ public struct TopBar: View {
             Spacer()
         }
         .ignoresSafeArea()
-        .onChange(of: isRefreshing) { newValue in
+        .onChange(of: isRefreshing) { _, newValue in
             if newValue {
                 withAnimation(Animation.linear(duration: 1).repeatForever(autoreverses: false)) {
                     rotation = .degrees(360)
