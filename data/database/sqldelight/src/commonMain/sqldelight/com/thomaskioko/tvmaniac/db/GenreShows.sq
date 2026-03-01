@@ -1,0 +1,38 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.TraktId;
+
+CREATE TABLE IF NOT EXISTS genre_shows (
+    genre_slug TEXT NOT NULL,
+    trakt_id INTEGER NOT NULL,
+    page_order INTEGER NOT NULL DEFAULT 0,
+    FOREIGN KEY(trakt_id) REFERENCES tvshow(trakt_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    PRIMARY KEY (genre_slug, trakt_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_genre_shows_genre_slug ON genre_shows(genre_slug);
+
+upsert:
+INSERT OR REPLACE INTO genre_shows (genre_slug, trakt_id, page_order)
+VALUES (?, ?, ?);
+
+showsByGenreSlug:
+SELECT
+    s.trakt_id,
+    s.tmdb_id,
+    s.name,
+    s.poster_path,
+    s.overview,
+    s.status,
+    s.ratings,
+    s.year,
+    gs.page_order
+FROM genre_shows gs
+INNER JOIN tvshow s ON gs.trakt_id = s.trakt_id
+WHERE gs.genre_slug = ?
+ORDER BY gs.page_order ASC;
+
+deleteByGenreSlug:
+DELETE FROM genre_shows WHERE genre_slug = ?;
+
+deleteAll:
+DELETE FROM genre_shows;

@@ -1,0 +1,14 @@
+CREATE TABLE IF NOT EXISTS trakt_genres (
+    slug TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL
+);
+
+upsert:
+INSERT OR REPLACE INTO trakt_genres (slug, name)
+VALUES (?, ?);
+
+allGenres:
+SELECT * FROM trakt_genres ORDER BY name ASC;
+
+deleteAll:
+DELETE FROM trakt_genres;
