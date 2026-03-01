@@ -6,9 +6,11 @@ public struct MoreShowsScreen: View {
     private let title: String
     private let items: [ShowPosterImage]
     private let isLoadingMore: Bool
+    private let hasNextPage: Bool
     private let loadError: String?
     @Binding private var toast: Toast?
     private let onItemAppear: (Int) -> Void
+    private let onLoadMore: () -> Void
     private let onAction: (Int64) -> Void
     private let onBack: () -> Void
     private let onRetry: () -> Void
@@ -17,9 +19,11 @@ public struct MoreShowsScreen: View {
         title: String,
         items: [ShowPosterImage],
         isLoadingMore: Bool,
+        hasNextPage: Bool,
         loadError: String?,
         toast: Binding<Toast?>,
         onItemAppear: @escaping (Int) -> Void,
+        onLoadMore: @escaping () -> Void,
         onAction: @escaping (Int64) -> Void,
         onBack: @escaping () -> Void,
         onRetry: @escaping () -> Void
@@ -27,9 +31,11 @@ public struct MoreShowsScreen: View {
         self.title = title
         self.items = items
         self.isLoadingMore = isLoadingMore
+        self.hasNextPage = hasNextPage
         self.loadError = loadError
         _toast = toast
         self.onItemAppear = onItemAppear
+        self.onLoadMore = onLoadMore
         self.onAction = onAction
         self.onBack = onBack
         self.onRetry = onRetry
@@ -55,6 +61,9 @@ public struct MoreShowsScreen: View {
                     .onAppear {
                         if let index = items.firstIndex(of: item) {
                             onItemAppear(index)
+                            if hasNextPage, index >= items.count - 6 {
+                                onLoadMore()
+                            }
                         }
                     }
                 }
@@ -62,11 +71,16 @@ public struct MoreShowsScreen: View {
             .scrollTargetLayout()
             .padding(.all, theme.spacing.xSmall)
 
-            ProgressView()
-                .tint(theme.colors.secondary)
-                .padding(theme.spacing.large)
-                .frame(maxWidth: .infinity)
-                .opacity(isLoadingMore ? 1 : 0)
+            if !items.isEmpty, hasNextPage {
+                ProgressView()
+                    .tint(theme.colors.secondary)
+                    .padding(theme.spacing.large)
+                    .frame(maxWidth: .infinity)
+                    .id(items.count)
+                    .onAppear {
+                        onLoadMore()
+                    }
+            }
 
             if let loadError {
                 VStack(spacing: theme.spacing.small) {
@@ -90,6 +104,14 @@ public struct MoreShowsScreen: View {
             }
         }
         .scrollPosition(id: $scrollPosition)
+        .onChange(of: scrollPosition) { _, newPosition in
+            guard let newPosition, hasNextPage, !isLoadingMore else { return }
+            if let index = items.firstIndex(where: { $0.traktId == newPosition }),
+               index >= items.count - 6
+            {
+                onLoadMore()
+            }
+        }
         .contentMargins(.top, toolbarInset + theme.spacing.medium)
         .background(theme.colors.background)
         .navigationBarTitleDisplayMode(.inline)
@@ -130,9 +152,11 @@ public struct MoreShowsScreen: View {
                 .init(traktId: 6, title: "Fallout", posterUrl: nil),
             ],
             isLoadingMore: false,
+            hasNextPage: false,
             loadError: nil,
             toast: .constant(nil),
             onItemAppear: { _ in },
+            onLoadMore: {},
             onAction: { _ in },
             onBack: {},
             onRetry: {}
@@ -151,9 +175,11 @@ public struct MoreShowsScreen: View {
                 .init(traktId: 3, title: "The Bear", posterUrl: nil),
             ],
             isLoadingMore: true,
+            hasNextPage: true,
             loadError: nil,
             toast: .constant(nil),
             onItemAppear: { _ in },
+            onLoadMore: {},
             onAction: { _ in },
             onBack: {},
             onRetry: {}
