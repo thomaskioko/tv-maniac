@@ -45,10 +45,11 @@ public class DefaultUpcomingShowsRepository(
             .toEpochMilliseconds()
             .let(dateTimeProvider::epochToIsoDate)
 
-    override suspend fun fetchUpcomingShows(forceRefresh: Boolean) {
+    override suspend fun fetchUpcomingShows(forceRefresh: Boolean, page: Long) {
         val params = UpcomingParams(
             startDate = dateTimeProvider.epochToIsoDate(startOfDay.toEpochMilliseconds()),
             endDate = validUntilIsoDate,
+            page = page,
         )
         when {
             forceRefresh -> store.fresh(params)

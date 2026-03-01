@@ -6,4 +6,5 @@ public data class TvShow(
     val title: String = "",
     val posterImageUrl: String? = null,
     val inLibrary: Boolean = false,
+    val page: Long = 0,
 )

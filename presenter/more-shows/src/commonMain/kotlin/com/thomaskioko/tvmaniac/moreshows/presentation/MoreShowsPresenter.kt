@@ -9,7 +9,9 @@ public interface MoreShowsPresenter {
 
     public fun dispatch(action: MoreShowsActions)
 
-    public fun getElement(index: Int): TvShow?
+    public fun onItemVisible(index: Int)
+
+    public fun loadMore()
 
     public interface Factory {
         public operator fun invoke(

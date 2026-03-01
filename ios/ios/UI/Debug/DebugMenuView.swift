@@ -20,7 +20,7 @@ struct DebugMenuView: View {
             toast: $toast,
             onBack: { presenter.dispatch(action: BackClicked()) }
         )
-        .onChange(of: uiState.message) { message in
+        .onChange(of: uiState.message) { _, message in
             if let message {
                 toast = Toast(type: .info, message: message.message)
                 presenter.dispatch(action: DismissSnackbar(messageId: message.id))

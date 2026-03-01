@@ -1,0 +1,17 @@
+CREATE TABLE upcoming_shows_new(
+    trakt_id INTEGER PRIMARY KEY NOT NULL,
+    tmdb_id INTEGER NOT NULL,
+    page INTEGER NOT NULL,
+    name TEXT,
+    poster_path TEXT,
+    overview TEXT,
+    page_order INTEGER NOT NULL DEFAULT 0
+);
+
+INSERT INTO upcoming_shows_new (trakt_id, tmdb_id, page, name, poster_path, overview, page_order)
+SELECT trakt_id, tmdb_id, page, name, poster_path, overview, 0 FROM upcoming_shows;
+
+DROP TABLE upcoming_shows;
+ALTER TABLE upcoming_shows_new RENAME TO upcoming_shows;
+CREATE UNIQUE INDEX IF NOT EXISTS `index_upcoming_shows_trakt_id` ON `upcoming_shows` (`trakt_id`);
+CREATE INDEX IF NOT EXISTS `index_upcoming_shows_tmdb_id` ON `upcoming_shows` (`tmdb_id`);

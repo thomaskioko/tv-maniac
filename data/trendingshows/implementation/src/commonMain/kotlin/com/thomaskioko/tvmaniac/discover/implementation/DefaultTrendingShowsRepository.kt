@@ -14,7 +14,6 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.TRENDING_SHOWS_TODAY
 import com.thomaskioko.tvmaniac.shows.api.model.DEFAULT_DAY_TIME_WINDOW
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
-import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
@@ -36,8 +35,7 @@ public class DefaultTrendingShowsRepository(
 
     override fun observeTrendingShows(page: Long): Flow<List<ShowEntity>> = dao.observeTrendingShows(page)
 
-    override suspend fun fetchTrendingShows(forceRefresh: Boolean) {
-        val page = DEFAULT_API_PAGE
+    override suspend fun fetchTrendingShows(forceRefresh: Boolean, page: Long) {
         val param = TrendingShowsParams(timeWindow = DEFAULT_DAY_TIME_WINDOW, page = page)
         when {
             forceRefresh -> store.fresh(param)

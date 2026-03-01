@@ -1,14 +1,14 @@
 package com.thomaskioko.tvmaniac.topratedshows.data.api
 
 import androidx.paging.PagingData
+import com.thomaskioko.tvmaniac.shows.api.model.DEFAULT_API_PAGE
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import kotlinx.coroutines.flow.Flow
-
-public const val DEFAULT_API_PAGE: Long = 1
 
 public interface TopRatedShowsRepository {
     public suspend fun fetchTopRatedShows(
         forceRefresh: Boolean,
+        page: Long = DEFAULT_API_PAGE,
     )
 
     public fun observeTopRatedShows(

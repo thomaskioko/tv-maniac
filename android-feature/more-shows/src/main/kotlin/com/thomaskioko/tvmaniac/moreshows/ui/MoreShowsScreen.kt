@@ -24,14 +24,11 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -42,15 +39,17 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
+import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.moreshows.presentation.DismissErrorMessage
 import com.thomaskioko.tvmaniac.moreshows.presentation.MoreBackClicked
 import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowClicked
 import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsActions
@@ -81,7 +80,6 @@ internal fun MoreShowsScreen(
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val pagedList = state.pagingDataFlow.collectAsLazyPagingItems()
-    val snackBarHostState = remember { SnackbarHostState() }
     val refreshing = remember { pagedList.loadState.refresh is LoadState.Loading }
 
     val refreshState = rememberPullRefreshState(
@@ -123,16 +121,21 @@ internal fun MoreShowsScreen(
                 ),
             )
         },
-        snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
     ) { contentPadding ->
         GridContent(
             contentPadding = contentPadding,
             lazyPagingItems = pagedList,
             scrollBehavior = scrollBehavior,
             refreshState = refreshState,
-            snackBarHostState = snackBarHostState,
             refreshing = refreshing,
             onAction = onAction,
+        )
+
+        TvManiacSnackBarHost(
+            modifier = Modifier.padding(contentPadding),
+            message = state.errorMessage,
+            style = SnackBarStyle.Error,
+            onDismiss = { onAction(DismissErrorMessage) },
         )
     }
 }
@@ -142,7 +145,6 @@ internal fun MoreShowsScreen(
 internal fun GridContent(
     lazyPagingItems: LazyPagingItems<TvShow>,
     scrollBehavior: TopAppBarScrollBehavior,
-    snackBarHostState: SnackbarHostState,
     contentPadding: PaddingValues,
     refreshing: Boolean,
     refreshState: PullRefreshState,
@@ -215,45 +217,6 @@ internal fun GridContent(
             contentColor = MaterialTheme.colorScheme.secondary,
         )
     }
-
-    HandleListLoadState(
-        loadState = lazyPagingItems.loadState,
-        snackBarHostState = snackBarHostState,
-    )
-}
-
-@Composable
-private fun HandleListLoadState(
-    loadState: CombinedLoadStates,
-    snackBarHostState: SnackbarHostState,
-) {
-    when (loadState.append) {
-        is LoadState.Error -> {
-            val errorMessage = (loadState.append as LoadState.Error).error.message
-            errorMessage?.let { ShowSnackBarError(errorMessage, snackBarHostState) }
-        }
-        else -> {
-            // No-op
-        }
-    }
-
-    when (loadState.prepend) {
-        is LoadState.Error -> {
-            val errorMessage = (loadState.prepend as LoadState.Error).error.message
-            errorMessage?.let { ShowSnackBarError(errorMessage, snackBarHostState) }
-        }
-        else -> {
-            // No-op
-        }
-    }
-}
-
-@Composable
-private fun ShowSnackBarError(
-    errorMessage: String,
-    snackBarHostState: SnackbarHostState,
-) {
-    LaunchedEffect(Unit) { snackBarHostState.showSnackbar(errorMessage) }
 }
 
 @ThemePreviews

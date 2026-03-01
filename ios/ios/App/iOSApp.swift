@@ -45,7 +45,7 @@ struct iOSApp: App {
                     setupAuthCoordinator()
                     appDelegate.configureNotificationDelegate(rootPresenter: holder.component.rootPresenter)
                 }
-                .onChange(of: scenePhase) { newPhase in
+                .onChange(of: scenePhase) { _, newPhase in
                     handleScenePhaseChange(newPhase, lifecycle: holder.lifecycle)
                 }
             } else {

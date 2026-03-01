@@ -65,12 +65,12 @@ struct ProfileTab: View {
             presenter.dispatch(action: ProfileActionBackClicked())
         }
         .edgesIgnoringSafeArea(.top)
-        .onChange(of: uiState.errorMessage) { errorMessage in
+        .onChange(of: uiState.errorMessage) { _, errorMessage in
             if let errorMessage {
                 toastManager.showError(title: "Error", message: errorMessage.message)
             }
         }
-        .onChange(of: toastManager.toast) { newValue in
+        .onChange(of: toastManager.toast) { _, newValue in
             if newValue == nil, let errorMessage = uiState.errorMessage {
                 presenter.dispatch(action: ProfileActionMessageShown(id: errorMessage.id))
             }

@@ -34,6 +34,7 @@ public class DefaultUpcomingShowsDao(
                 name = show.name,
                 poster_path = show.poster_path,
                 overview = show.overview,
+                page_order = show.page_order,
             )
         }
     }

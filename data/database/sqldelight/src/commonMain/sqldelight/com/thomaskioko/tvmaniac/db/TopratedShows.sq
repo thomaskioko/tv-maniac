@@ -40,7 +40,7 @@ INSERT OR REPLACE INTO toprated_shows(
 );
 
 count:
-SELECT count(*) FROM toprated_shows;
+SELECT count(*) FROM toprated_shows INNER JOIN tvshow ON tvshow.trakt_id = toprated_shows.trakt_id;
 
 entriesInPage:
 SELECT

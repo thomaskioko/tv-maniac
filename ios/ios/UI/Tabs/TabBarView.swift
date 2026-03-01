@@ -42,7 +42,7 @@ public struct TabBarView: View {
         .tint(theme.colors.accent)
         .toolbarBackground(theme.colors.surface, for: .tabBar)
         .toolbarBackground(.visible, for: .tabBar)
-        .onChange(of: selectedTab) { newTab in
+        .onChange(of: selectedTab) { _, newTab in
             switch newTab {
             case .discover: presenter.onDiscoverClicked()
             case .upNext: presenter.onUpNextClicked()
@@ -50,7 +50,7 @@ public struct TabBarView: View {
             case .library: presenter.onLibraryClicked()
             }
         }
-        .onChange(of: activeTab) { newTab in
+        .onChange(of: activeTab) { _, newTab in
             if selectedTab != newTab {
                 selectedTab = newTab
             }

@@ -91,7 +91,7 @@ struct SeasonDetailsView: View {
             }
         }
         .toastView(toast: $toast)
-        .onChange(of: uiState.isDialogVisible) { _ in
+        .onChange(of: uiState.isDialogVisible) { _, _ in
             let dialogState = uiState.dialogState
             showMarkPreviousAlert = dialogState is SeasonDialogStateMarkPreviousEpisodesConfirmation
             showUnwatchedConfirmAlert = dialogState is SeasonDialogStateUnwatchEpisodeConfirmation

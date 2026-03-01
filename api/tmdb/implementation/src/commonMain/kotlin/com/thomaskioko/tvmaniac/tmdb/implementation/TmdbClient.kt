@@ -66,7 +66,7 @@ internal fun tmdbHttpClient(
         }
 
         install(Logging) {
-            level = LogLevel.INFO
+            level = if (isDebug) LogLevel.BODY else LogLevel.NONE
             logger = if (isDebug) {
                 object : Logger {
                     override fun log(message: String) {

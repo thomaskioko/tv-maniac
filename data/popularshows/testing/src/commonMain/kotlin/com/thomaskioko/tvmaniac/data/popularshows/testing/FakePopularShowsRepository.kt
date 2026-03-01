@@ -15,7 +15,7 @@ public class FakePopularShowsRepository : PopularShowsRepository {
         _shows.value = result
     }
 
-    override suspend fun fetchPopularShows(forceRefresh: Boolean) {
+    override suspend fun fetchPopularShows(forceRefresh: Boolean, page: Long) {
     }
 
     override fun observePopularShows(page: Long): Flow<List<ShowEntity>> {

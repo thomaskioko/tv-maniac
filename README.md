@@ -46,6 +46,18 @@ probably doing a couple of things wrong. So a lot is changing, but that shouldn'
 >
 > **For CI/CD:** Set these as environment variables with the same names.
 >
+> #### 4. Firebase Crashlytics (Optional)
+> The app uses Firebase Crashlytics for crash reporting. It works without Firebase configured — crash reporting will simply be disabled.
+>
+> **Android:**
+> - Create a [Firebase project](https://console.firebase.google.com/) and register the Android app
+> - Download `google-services.json` and place it in the `app/` directory
+>
+> **iOS:**
+> - Register the iOS app in the same Firebase project
+> - Download `GoogleService-Info.plist` and place it in `ios/ios/Resources/`
+>
+> Both files are gitignored. **For CI/CD:** store them as base64-encoded secrets and decode them in your workflow before building.
 
 ## 🖥 Project Setup & Environment
 

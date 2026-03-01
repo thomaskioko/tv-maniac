@@ -20,7 +20,7 @@ public extension View {
                 proxy in
                 Color.clear
                     .onAppear { action(proxy.size) }
-                    .onChange(of: proxy.size, perform: action)
+                    .onChange(of: proxy.size) { _, newSize in action(newSize) }
             }
         )
     }
@@ -48,7 +48,7 @@ public extension View {
                 proxy in
                 Color.clear
                     .onAppear { action(proxy.frame(in: coordinateSpace)) }
-                    .onChange(of: proxy.frame(in: coordinateSpace), perform: action)
+                    .onChange(of: proxy.frame(in: coordinateSpace)) { _, newFrame in action(newFrame) }
             }
         )
     }

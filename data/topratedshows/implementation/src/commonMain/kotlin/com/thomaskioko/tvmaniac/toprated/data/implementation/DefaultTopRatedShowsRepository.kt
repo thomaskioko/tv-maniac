@@ -30,8 +30,7 @@ public class DefaultTopRatedShowsRepository(
     private val logger: Logger,
 ) : TopRatedShowsRepository {
 
-    override suspend fun fetchTopRatedShows(forceRefresh: Boolean) {
-        val page = 1L // Always fetch first page for non-paginated requests
+    override suspend fun fetchTopRatedShows(forceRefresh: Boolean, page: Long) {
         when {
             forceRefresh -> store.fresh(page)
             else -> store.get(page)

@@ -40,7 +40,7 @@ INSERT OR REPLACE INTO trending_shows(
 );
 
 count:
-SELECT count(*) FROM trending_shows;
+SELECT count(*) FROM trending_shows INNER JOIN tvshow ON tvshow.trakt_id = trending_shows.trakt_id;
 
 entriesInPage:
 SELECT

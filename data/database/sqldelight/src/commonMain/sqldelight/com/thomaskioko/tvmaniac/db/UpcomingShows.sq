@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS upcoming_shows(
     page INTEGER AS Id<PageId> NOT NULL,
     name TEXT,
     poster_path TEXT,
-    overview TEXT
+    overview TEXT,
+    page_order INTEGER NOT NULL DEFAULT 0
 );
 
 -- indices
@@ -26,14 +27,16 @@ INSERT OR REPLACE INTO upcoming_shows(
     page,
     name,
     poster_path,
-    overview
+    overview,
+    page_order
 ) VALUES (
     :traktId,
     :tmdbId,
     :page,
     :name,
     :poster_path,
-    :overview
+    :overview,
+    :page_order
 );
 
 entriesInPage:
@@ -49,7 +52,7 @@ FROM upcoming_shows
 LEFT OUTER JOIN followed_shows ON upcoming_shows.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
 WHERE upcoming_shows.page = :page
   AND upcoming_shows.name IS NOT NULL
-ORDER BY upcoming_shows.trakt_id ASC;
+ORDER BY upcoming_shows.page_order ASC;
 
 upcomingShowsByPage:
 SELECT
@@ -83,7 +86,7 @@ INNER JOIN
 LEFT OUTER JOIN
     followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
 ORDER BY
-    upcoming_shows.page ASC
+    upcoming_shows.page ASC, upcoming_shows.page_order ASC
 LIMIT
     :limit OFFSET :offset;
 
@@ -91,7 +94,7 @@ pageExists:
 SELECT EXISTS(SELECT 1 FROM upcoming_shows WHERE page = :page LIMIT 1);
 
 count:
-SELECT count(*) FROM upcoming_shows;
+SELECT count(*) FROM upcoming_shows INNER JOIN tvshow ON tvshow.trakt_id = upcoming_shows.trakt_id;
 
 delete:
 DELETE FROM upcoming_shows
