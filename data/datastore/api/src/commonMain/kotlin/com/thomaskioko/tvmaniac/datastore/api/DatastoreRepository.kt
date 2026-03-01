@@ -241,6 +241,20 @@ public interface DatastoreRepository {
     public fun observeLastUpNextSyncTimestamp(): Flow<Long?>
 
     /**
+     * Saves the user's preferred genre show category.
+     *
+     * @param category The category name (e.g., "POPULAR", "TRENDING").
+     */
+    public suspend fun saveGenreShowCategory(category: String)
+
+    /**
+     * Observes the user's preferred genre show category.
+     *
+     * @return A Flow of the category name, defaulting to "POPULAR".
+     */
+    public fun observeGenreShowCategory(): Flow<String>
+
+    /**
      * Saves the user's preference for crash reporting.
      *
      * @param enabled Whether crash reporting is enabled.
