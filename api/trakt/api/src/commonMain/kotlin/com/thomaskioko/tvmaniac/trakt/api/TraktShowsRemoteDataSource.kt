@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.trakt.api
 
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktEpisodesResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktGenreResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSearchResult
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonsResponse
@@ -32,7 +33,16 @@ public interface TraktShowsRemoteDataSource {
     public suspend fun getTrendingShows(
         page: Int = 1,
         limit: Int = 20,
+        genres: String? = null,
     ): ApiResponse<List<TraktShowsResponse>>
+
+    /**
+     * Fetches available show genres from Trakt.
+     *
+     * @return List of genre objects with name and slug
+     * @see [Trakt Genres](https://trakt.docs.apiary.io/#reference/genres)
+     */
+    public suspend fun getGenres(): ApiResponse<List<TraktGenreResponse>>
 
     /**
      * Fetches popular shows.
@@ -41,12 +51,14 @@ public interface TraktShowsRemoteDataSource {
      *
      * @param page Page number for pagination (1-indexed)
      * @param limit Number of results per page (max 100)
+     * @param genres Optional genre slug filter (e.g., "action", "comedy")
      * @return List of popular shows ordered by popularity score
      * @see [Trakt Popular Shows](https://trakt.docs.apiary.io/#reference/shows/popular)
      */
     public suspend fun getPopularShows(
         page: Int = 1,
         limit: Int = 20,
+        genres: String? = null,
     ): ApiResponse<List<TraktShowResponse>>
 
     /**
@@ -64,6 +76,7 @@ public interface TraktShowsRemoteDataSource {
         page: Int = 1,
         limit: Int = 20,
         period: TimePeriod = TimePeriod.WEEKLY,
+        genres: String? = null,
     ): ApiResponse<List<TraktShowsResponse>>
 
     /**
@@ -81,6 +94,7 @@ public interface TraktShowsRemoteDataSource {
         page: Int = 1,
         limit: Int = 20,
         period: TimePeriod = TimePeriod.WEEKLY,
+        genres: String? = null,
     ): ApiResponse<List<TraktShowsResponse>>
 
     /**
