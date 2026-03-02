@@ -83,6 +83,24 @@ public extension TvManiac.ShowGenre {
     }
 }
 
+public extension TvManiac.GenreRowModel {
+    func toSwift() -> SwiftGenreRow {
+        .init(
+            id: slug,
+            name: name,
+            subtitle: subtitle,
+            shows: shows.map { show in
+                SwiftShow(
+                    traktId: show.traktId,
+                    title: show.title,
+                    posterUrl: show.posterImageUrl,
+                    inLibrary: show.inLibrary
+                )
+            }
+        )
+    }
+}
+
 public extension TvManiac.ShowModel {
     func toSwift() -> SwiftShow {
         .init(

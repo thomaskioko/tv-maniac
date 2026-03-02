@@ -3,11 +3,13 @@ package com.thomaskioko.tvmaniac.search.roborrazi
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
+import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowState
 import com.thomaskioko.tvmaniac.search.ui.SearchScreen
 import com.thomaskioko.tvmaniac.search.ui.createDiscoverShowList
-import com.thomaskioko.tvmaniac.search.ui.createGenreShowList
+import com.thomaskioko.tvmaniac.search.ui.createGenreRowList
+import com.thomaskioko.tvmaniac.search.ui.previewCategories
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -32,7 +34,7 @@ class SearchScreenTest {
                 SearchScreen(
                     state = SearchShowState(
                         query = "test",
-                        isUpdating = false,
+                        isRefreshing = false,
                     ),
                     onAction = {},
                 )
@@ -46,8 +48,8 @@ class SearchScreenTest {
             TvManiacBackground {
                 SearchScreen(
                     state = SearchShowState(
-                        isUpdating = false,
-                        errorMessage = "Something went wrong",
+                        isRefreshing = false,
+                        message = UiMessage(message = "Oops! Something went wrong!"),
                     ),
                     onAction = {},
                 )
@@ -56,13 +58,15 @@ class SearchScreenTest {
     }
 
     @Test
-    fun searchShowContentAvailableState() {
-        composeTestRule.captureMultiDevice("SearchShowContentAvailable") {
+    fun searchScreenBrowsingGenres() {
+        composeTestRule.captureMultiDevice("SearchBrowsingGenres") {
             TvManiacBackground {
                 SearchScreen(
                     state = SearchShowState(
-                        isUpdating = false,
-                        genres = createGenreShowList(),
+                        isRefreshing = false,
+                        genreRows = createGenreRowList(),
+                        categoryTitle = "Category",
+                        categories = previewCategories(),
                     ),
                     onAction = {},
                 )
@@ -71,13 +75,47 @@ class SearchScreenTest {
     }
 
     @Test
-    fun searchResultAvailableState() {
-        composeTestRule.captureMultiDevice("SearchResultAvailable") {
+    fun searchScreenBrowsingGenresRefreshing() {
+        composeTestRule.captureMultiDevice("SearchBrowsingGenres_Refreshing") {
+            TvManiacBackground {
+                SearchScreen(
+                    state = SearchShowState(
+                        isRefreshing = true,
+                        genreRows = createGenreRowList(),
+                        categoryTitle = "Category",
+                        categories = previewCategories(),
+                    ),
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun searchScreenSearchResults() {
+        composeTestRule.captureMultiDevice("SearchResults") {
             TvManiacBackground {
                 SearchScreen(
                     state = SearchShowState(
                         query = "loki",
-                        isUpdating = false,
+                        isRefreshing = false,
+                        searchResults = createDiscoverShowList(),
+                    ),
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun searchScreenSearchResultsUpdating() {
+        composeTestRule.captureMultiDevice("SearchResults_Updating") {
+            TvManiacBackground {
+                SearchScreen(
+                    state = SearchShowState(
+                        query = "loki",
+                        isRefreshing = false,
+                        isUpdating = true,
                         searchResults = createDiscoverShowList(),
                     ),
                     onAction = {},
