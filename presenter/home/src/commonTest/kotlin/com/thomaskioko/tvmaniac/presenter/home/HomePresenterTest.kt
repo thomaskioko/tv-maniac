@@ -30,7 +30,7 @@ abstract class HomePresenterTest {
             onShowClicked = {},
             onMoreShowClicked = {},
             onShowGenreClicked = {},
-            onNavigateToProfile = {},
+            onNavigateToSearch = {},
             onSettingsClicked = {},
         )
     }
@@ -43,12 +43,12 @@ abstract class HomePresenterTest {
     }
 
     @Test
-    fun `should return Search as active instance when onSearchClicked`() = runTest {
+    fun `should return Profile as active instance when onProfileClicked`() = runTest {
         presenter.homeChildStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Discover>()
-            presenter.onSearchClicked()
+            presenter.onProfileClicked()
 
-            awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Search>()
+            awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Profile>()
         }
     }
 

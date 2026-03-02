@@ -21,7 +21,8 @@ kotlin {
                 implementation(projects.domain.discover)
                 implementation(projects.domain.genre)
                 implementation(projects.presenter.discover)
-                implementation(projects.presenter.search)
+                implementation(projects.presenter.profile)
+                implementation(projects.domain.user)
                 implementation(projects.presenter.library)
                 implementation(projects.presenter.upnext)
 
