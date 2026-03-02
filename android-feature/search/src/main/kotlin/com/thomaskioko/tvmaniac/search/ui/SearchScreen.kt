@@ -344,7 +344,7 @@ private fun GenreRowsContent(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(top = 16.dp),
+            .padding(top = 32.dp),
     ) {
         if (genreRows.isEmpty()) return
 
