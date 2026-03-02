@@ -16,12 +16,16 @@ kotlin {
             dependencies {
                 implementation(projects.core.base)
                 implementation(projects.core.util.api)
+                implementation(projects.core.logger.api)
+                implementation(projects.i18n.api)
                 implementation(projects.data.featuredshows.api)
                 implementation(projects.data.trendingshows.api)
                 implementation(projects.data.upcomingshows.api)
                 implementation(projects.data.search.api)
                 implementation(projects.data.genre.api)
+                implementation(projects.domain.genre)
 
+                api(projects.core.view)
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
                 api(libs.kotlinx.collections)
@@ -34,6 +38,8 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(projects.core.util.testing)
+                implementation(projects.core.logger.testing)
+                implementation(projects.i18n.testing)
                 implementation(projects.data.search.testing)
                 implementation(projects.data.genre.testing)
 
