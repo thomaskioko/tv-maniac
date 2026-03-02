@@ -153,7 +153,7 @@ public class DefaultSearchShowsPresenter(
             queryFlow
                 .distinctUntilChanged()
                 .debounce(300)
-                .filter { it.trim().length >= 3 }
+                .filter { it.trim().length >= SEARCH_QUERY_LENGTH }
                 .onEach { query ->
                     updateSearchLoadingState(query)
                 }
@@ -185,6 +185,10 @@ public class DefaultSearchShowsPresenter(
         private fun handleSearchResults(shows: List<ShowEntity>) {
             _state.update { it.copy(isUpdating = false, searchResults = mapper.toShowList(shows)) }
         }
+    }
+
+    internal companion object {
+        const val SEARCH_QUERY_LENGTH: Int = 2
     }
 }
 
