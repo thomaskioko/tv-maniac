@@ -160,6 +160,7 @@ public class DefaultRootPresenter(
     override fun onRationaleDismissed() {
         coroutineScope.launch {
             datastoreRepository.setShowNotificationRationale(false)
+            datastoreRepository.setNotificationPermissionAsked(true)
         }
     }
 
