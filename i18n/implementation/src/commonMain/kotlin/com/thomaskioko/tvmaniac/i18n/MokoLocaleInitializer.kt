@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.locale.api.LocaleProvider
 import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -22,9 +23,11 @@ public class MokoLocaleInitializer(
 
     override fun init() {
         localeJob = applicationScope.launch(dispatchers.main) {
-            localeProvider.currentLocale.collect { locale ->
-                StringDesc.localeType = StringDesc.LocaleType.Custom(locale)
-            }
+            localeProvider.currentLocale
+                .distinctUntilChanged()
+                .collect { locale ->
+                    StringDesc.localeType = StringDesc.LocaleType.Custom(locale)
+                }
         }
     }
 }
