@@ -44,8 +44,8 @@ struct RootNavigationView: View {
                 case let .seasonDetails(child):
                     SeasonDetailsView(presenter: child.presenter)
                         .id(ObjectIdentifier(child))
-                case let .profile(child):
-                    ProfileTab(presenter: child.presenter)
+                case let .search(child):
+                    SearchTab(presenter: child.presenter)
                         .id(ObjectIdentifier(child))
                 case let .settings(child):
                     SettingsView(presenter: child.presenter)

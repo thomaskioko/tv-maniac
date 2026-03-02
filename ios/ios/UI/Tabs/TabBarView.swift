@@ -7,12 +7,14 @@ public struct TabBarView: View {
 
     private let presenter: HomePresenter
     @StateObject @KotlinStateFlow private var stack: ChildStack<AnyObject, HomePresenterChild>
+    @StateObject @KotlinOptionalStateFlow private var avatarUrl: String?
     @State private var selectedTab: NavigationTab = .discover
     @EnvironmentObject private var appDelegate: AppDelegate
 
     init(presenter: HomePresenter) {
         self.presenter = presenter
         _stack = .init(presenter.homeChildStack)
+        _avatarUrl = .init(presenter.profileAvatarUrl)
     }
 
     public var body: some View {
@@ -20,7 +22,8 @@ public struct TabBarView: View {
             ForEach(NavigationTab.allCases, id: \.self) { tab in
                 TabContentView(
                     child: stack.items.first(where: { tabForChild($0.instance) == tab })?.instance,
-                    tab: tab
+                    tab: tab,
+                    avatarUrl: tab == .profile ? avatarUrl as String? : nil
                 ) { child in
                     switch onEnum(of: child) {
                     case let .discover(screen):
@@ -29,8 +32,8 @@ public struct TabBarView: View {
                     case let .upNext(screen):
                         UpNextTab(presenter: screen.presenter)
                             .id(ObjectIdentifier(screen))
-                    case let .search(screen):
-                        SearchTab(presenter: screen.presenter)
+                    case let .profile(screen):
+                        ProfileTab(presenter: screen.presenter)
                             .id(ObjectIdentifier(screen))
                     case let .library(screen):
                         LibraryTab(presenter: screen.presenter)
@@ -46,7 +49,7 @@ public struct TabBarView: View {
             switch newTab {
             case .discover: presenter.onDiscoverClicked()
             case .upNext: presenter.onUpNextClicked()
-            case .search: presenter.onSearchClicked()
+            case .profile: presenter.onProfileClicked()
             case .library: presenter.onLibraryClicked()
             }
         }
@@ -65,7 +68,7 @@ public struct TabBarView: View {
         switch onEnum(of: child) {
         case .discover: .discover
         case .upNext: .upNext
-        case .search: .search
+        case .profile: .profile
         case .library: .library
         }
     }
@@ -77,14 +80,14 @@ public enum NavigationTab: String, CaseIterable {
     case discover
     case upNext
     case library
-    case search
+    case profile
 
     var title: String {
         switch self {
         case .discover: String(\.label_tab_discover)
         case .upNext: String(\.label_discover_up_next)
         case .library: String(\.menu_item_library)
-        case .search: String(\.label_tab_search)
+        case .profile: String(\.menu_item_profile)
         }
     }
 
@@ -93,7 +96,7 @@ public enum NavigationTab: String, CaseIterable {
         case .discover: "tv"
         case .upNext: "play.circle"
         case .library: "square.stack"
-        case .search: "magnifyingglass"
+        case .profile: "person.circle"
         }
     }
 }

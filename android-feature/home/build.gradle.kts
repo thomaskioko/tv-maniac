@@ -16,11 +16,11 @@ dependencies {
 
     implementation(projects.androidFeature.discover)
     implementation(projects.androidFeature.library)
-    implementation(projects.androidFeature.search)
+    implementation(projects.androidFeature.profile)
     implementation(projects.androidFeature.upnext)
     implementation(projects.presenter.discover)
     implementation(projects.presenter.library)
-    implementation(projects.presenter.search)
+    implementation(projects.presenter.profile)
     implementation(projects.presenter.upnext)
 
     implementation(libs.androidx.compose.foundation)
