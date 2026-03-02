@@ -28,20 +28,33 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 public fun BoxTextItems(
     title: String,
     modifier: Modifier = Modifier,
+    subtitle: String? = null,
     label: String? = null,
     onMoreClicked: () -> Unit = {},
 ) {
     Box(
         modifier = modifier,
     ) {
-        Text(
-            text = title,
+        Column(
             modifier = Modifier.align(Alignment.CenterStart),
-            style = MaterialTheme.typography.titleMedium.copy(
-                color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = Bold,
-            ),
-        )
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium.copy(
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = Bold,
+                ),
+            )
+
+            subtitle?.let {
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    ),
+                )
+            }
+        }
 
         label?.let {
             Text(

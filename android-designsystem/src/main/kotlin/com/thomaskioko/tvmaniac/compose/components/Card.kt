@@ -214,6 +214,7 @@ public fun PosterBackdropCard(
     textAlign: TextAlign = TextAlign.Start,
     contentScale: ContentScale = ContentScale.Crop,
     imageWidth: Dp = 120.dp,
+    aspectRatio: Float = 2 / 3f,
     shape: Shape = RectangleShape,
     onClick: () -> Unit,
 ) {
@@ -234,7 +235,10 @@ public fun PosterBackdropCard(
         content = {
             Box(modifier = Modifier.fillMaxSize()) {
                 PlaceholderContent(
-                    modifier = Modifier.align(Alignment.Center),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .aspectRatio(aspectRatio)
+                        .align(Alignment.Center),
                     imageUrl = imageUrl,
                     imageSize = 84.dp,
                 )
@@ -242,7 +246,7 @@ public fun PosterBackdropCard(
                 AsyncImageComposable(
                     modifier = Modifier
                         .fillMaxSize()
-                        .aspectRatio(2 / 3f),
+                        .aspectRatio(aspectRatio),
                     model = imageUrl,
                     contentScale = contentScale,
                     contentDescription = stringResource(cd_show_poster.resourceId, title),
