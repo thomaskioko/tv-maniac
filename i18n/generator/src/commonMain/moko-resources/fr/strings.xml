@@ -316,6 +316,23 @@
     <string name="label_debug_trigger_crash_title">Test de crash</string>
     <string name="label_debug_trigger_crash_description">Déclencher un crash de test pour Crashlytics</string>
 
+    <string name="label_genre_category_popular">Populaire</string>
+    <string name="label_genre_category_trending">Tendance</string>
+    <string name="label_genre_category_top_rated">Les mieux notés</string>
+    <string name="label_genre_category_most_watched">Les plus regardés</string>
+    <string name="label_genre_category_title">Catégorie</string>
+
+    <string name="genre_desc_action">Action et sensations sans répit</string>
+    <string name="genre_desc_comedy">Fous rires garantis à chaque épisode</string>
+    <string name="genre_desc_drama">Émotions intenses, histoires captivantes</string>
+    <string name="genre_desc_fantasy">Des mondes au-delà de l\'imagination</string>
+    <string name="genre_desc_horror">Récits terrifiants à glacer le sang</string>
+    <string name="genre_desc_science_fiction">Explorer les frontières du possible</string>
+    <string name="genre_desc_thriller">Suspense à couper le souffle</string>
+    <string name="genre_desc_animation">Aventures animées pour tous</string>
+    <string name="genre_desc_mystery">Intrigues qui éveillent la curiosité</string>
+    <string name="genre_desc_romance">Histoires d\'amour et de connexion</string>
+
     <string name="notification_permission_denied_title">Notifications désactivées</string>
     <string name="notification_permission_denied_message">Pour recevoir les notifications d\'épisodes, veuillez activer les notifications dans les paramètres de votre appareil.</string>
     <string name="notification_permission_denied_settings">Ouvrir les paramètres</string>
