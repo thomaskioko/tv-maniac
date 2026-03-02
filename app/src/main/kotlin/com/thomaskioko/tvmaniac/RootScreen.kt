@@ -27,7 +27,7 @@ import com.thomaskioko.tvmaniac.debug.ui.DebugMenuScreen
 import com.thomaskioko.tvmaniac.home.ui.HomeScreen
 import com.thomaskioko.tvmaniac.moreshows.ui.MoreShowsScreen
 import com.thomaskioko.tvmaniac.navigation.RootPresenter
-import com.thomaskioko.tvmaniac.profile.ui.ProfileScreen
+import com.thomaskioko.tvmaniac.search.ui.SearchScreen
 import com.thomaskioko.tvmaniac.seasondetails.ui.SeasonDetailsScreen
 import com.thomaskioko.tvmaniac.settings.ui.SettingsScreen
 import com.thomaskioko.tvmaniac.showdetails.ui.ShowDetailsScreen
@@ -94,8 +94,8 @@ private fun ChildrenContent(rootPresenter: RootPresenter, modifier: Modifier = M
             is RootPresenter.Child.Home ->
                 HomeScreen(presenter = screen.presenter, modifier = fillMaxSizeModifier)
 
-            is RootPresenter.Child.Profile ->
-                ProfileScreen(
+            is RootPresenter.Child.Search ->
+                SearchScreen(
                     presenter = screen.presenter,
                     modifier = fillMaxSizeModifier,
                 )

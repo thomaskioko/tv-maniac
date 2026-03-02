@@ -23,7 +23,7 @@ dependencies {
     implementation(projects.androidFeature.debug)
     implementation(projects.androidFeature.home)
     implementation(projects.androidFeature.moreShows)
-    implementation(projects.androidFeature.profile)
+    implementation(projects.androidFeature.search)
     implementation(projects.androidFeature.settings)
     implementation(projects.androidFeature.seasonDetails)
     implementation(projects.androidFeature.showDetails)
