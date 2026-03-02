@@ -22,10 +22,12 @@ import androidx.compose.material.DismissValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material.icons.outlined.ErrorOutline
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberDismissState
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
@@ -40,9 +42,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.components.CircularCard
 import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
 import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
+import com.thomaskioko.tvmaniac.compose.components.ScrimButton
 import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
@@ -57,8 +59,8 @@ import com.thomaskioko.tvmaniac.discover.presenter.MessageShown
 import com.thomaskioko.tvmaniac.discover.presenter.NextEpisodeClicked
 import com.thomaskioko.tvmaniac.discover.presenter.OpenSeasonFromUpNext
 import com.thomaskioko.tvmaniac.discover.presenter.PopularClicked
-import com.thomaskioko.tvmaniac.discover.presenter.ProfileIconClicked
 import com.thomaskioko.tvmaniac.discover.presenter.RefreshData
+import com.thomaskioko.tvmaniac.discover.presenter.SearchIconClicked
 import com.thomaskioko.tvmaniac.discover.presenter.ShowClicked
 import com.thomaskioko.tvmaniac.discover.presenter.TopRatedClicked
 import com.thomaskioko.tvmaniac.discover.presenter.TrendingClicked
@@ -207,13 +209,18 @@ private fun DiscoverContent(
                         .padding(start = 16.dp),
                 )
             },
-            actions = { _ ->
-                CircularCard(
-                    imageUrl = state.userAvatarUrl,
-                    contentDescription = "Profile",
+            actions = { showAppBarBackground ->
+                ScrimButton(
+                    show = showAppBarBackground,
+                    onClick = { onAction(SearchIconClicked) },
                     modifier = Modifier.padding(end = 8.dp),
-                    onClick = { onAction(ProfileIconClicked) },
-                )
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Search,
+                        contentDescription = "Search",
+                        tint = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
             },
         )
     }

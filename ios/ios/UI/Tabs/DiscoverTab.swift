@@ -70,7 +70,9 @@ struct DiscoverTab: View {
                 opacity: showGlass,
                 isLoading: false,
                 trailingIcon: {
-                    profileIcon(avatarUrl: uiState.userAvatarUrl)
+                    GlassButton(icon: "magnifyingglass") {
+                        presenter.dispatch(action: SearchIconClicked())
+                    }
                 }
             )
             .animation(.easeInOut(duration: AnimationConstants.defaultDuration), value: showGlass)
@@ -340,19 +342,6 @@ struct DiscoverTab: View {
     private func triggerRefresh() {
         isRefreshing = true
         presenter.dispatch(action: RefreshData())
-    }
-
-    // MARK: - Top Bar Icons
-
-    private func profileIcon(avatarUrl: String?) -> some View {
-        GlassButton(action: {
-            presenter.dispatch(action: ProfileIconClicked())
-        }) {
-            AvatarView(
-                avatarUrl: avatarUrl,
-                size: 32
-            )
-        }
     }
 
     // MARK: - Empty View
