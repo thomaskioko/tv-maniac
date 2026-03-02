@@ -115,7 +115,8 @@ internal fun SearchScreen(
     val context = LocalContext.current
     val isBrowsingGenres = state.uiState is BrowsingGenres
 
-    LaunchedEffect(state.message) {
+    LaunchedEffect(state.message, state.uiState) {
+        if (state.uiState is Error) return@LaunchedEffect
         state.message?.let { message ->
             val snackBarResult = snackBarHostState.showSnackbar(
                 message = message.message,
@@ -242,6 +243,7 @@ private fun SearchScreenContent(
             }
 
             is SearchResults -> SearchResultsContent(
+                modifier = Modifier.padding(horizontal = 16.dp),
                 onAction = onAction,
                 results = uiState.results,
                 scrollState = lazyListState,
@@ -280,7 +282,6 @@ private fun SearchScreenHeader(
     Column(
         modifier = modifier
             .nestedScroll(scrollBehavior.nestedScrollConnection)
-            .padding(horizontal = 16.dp)
             .padding(paddingValues.copy(copyBottom = false)),
     ) {
         SearchTextContainer(
@@ -343,7 +344,7 @@ private fun GenreRowsContent(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(top = 4.dp),
+            .padding(top = 16.dp),
     ) {
         if (genreRows.isEmpty()) return
 
