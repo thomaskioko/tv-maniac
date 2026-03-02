@@ -356,6 +356,7 @@ class SearchShowsPresenterTest {
         componentContext = DefaultComponentContext(lifecycle = lifecycle),
         onNavigateToShowDetails = {},
         onNavigateToGenre = {},
+        onNavigateBack = {},
         searchRepository = fakeSearchRepository,
         genreRepository = genreRepository,
         fetchGenreContentInteractor = FetchGenreContentInteractor(

@@ -42,6 +42,7 @@ public class DefaultSearchShowsPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val onNavigateToShowDetails: (Long) -> Unit,
     @Assisted private val onNavigateToGenre: (Long) -> Unit,
+    @Assisted private val onNavigateBack: () -> Unit,
     private val mapper: Mapper,
     private val searchRepository: SearchRepository,
     private val genreRepository: GenreRepository,
@@ -107,6 +108,8 @@ public class DefaultSearchShowsPresenter(
 
         fun dispatch(action: SearchShowAction) {
             when (action) {
+                BackClicked -> onNavigateBack()
+
                 is MessageShown -> {
                     coroutineScope.launch { uiMessageManager.clearMessage(action.id) }
                 }
@@ -194,12 +197,14 @@ public class DefaultSearchPresenterFactory(
         componentContext: ComponentContext,
         onNavigateToShowDetails: (id: Long) -> Unit,
         onNavigateToGenre: (id: Long) -> Unit,
+        onNavigateBack: () -> Unit,
     ) -> SearchShowsPresenter,
 ) : SearchShowsPresenter.Factory {
     override fun invoke(
         componentContext: ComponentContext,
         onNavigateToShowDetails: (id: Long) -> Unit,
         onNavigateToGenre: (id: Long) -> Unit,
+        onNavigateBack: () -> Unit,
     ): SearchShowsPresenter =
-        presenter(componentContext, onNavigateToShowDetails, onNavigateToGenre)
+        presenter(componentContext, onNavigateToShowDetails, onNavigateToGenre, onNavigateBack)
 }
