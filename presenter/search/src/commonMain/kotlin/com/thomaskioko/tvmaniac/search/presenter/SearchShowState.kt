@@ -43,18 +43,22 @@ public data class SearchShowState(
     val categoryTitle: String = "",
     val categories: ImmutableList<CategoryItem> = persistentListOf(),
 ) {
+    private val isSearchableQuery: Boolean
+        get() = query.trim().length >= SEARCH_QUERY_LENGTH
+
     public val uiState: SearchUiState
         get() = when {
             message != null && genreRows.isEmpty() -> Error(message.message)
             isRefreshing && genreRows.isEmpty() -> InitialLoading
-            query.isNotEmpty() && searchResults.isNotEmpty() -> SearchResults(searchResults, isUpdating)
-            query.isNotEmpty() && isUpdating -> SearchLoading
-            query.isNotEmpty() && searchResults.isEmpty() -> SearchEmpty
+            isSearchableQuery && searchResults.isNotEmpty() -> SearchResults(searchResults, isUpdating)
+            isSearchableQuery && isUpdating && genreRows.isEmpty() -> SearchLoading
+            isSearchableQuery && !isUpdating && searchResults.isEmpty() -> SearchEmpty
             genreRows.isNotEmpty() -> BrowsingGenres(genreRows, selectedCategory, categoryTitle, categories, isRefreshing)
             else -> InitialLoading
         }
 
     public companion object {
+        public const val SEARCH_QUERY_LENGTH: Int = 2
         public val Empty: SearchShowState = SearchShowState()
     }
 }

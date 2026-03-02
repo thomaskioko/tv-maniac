@@ -153,11 +153,12 @@ public class DefaultSearchShowsPresenter(
             queryFlow
                 .distinctUntilChanged()
                 .debounce(300)
-                .filter { it.trim().length >= SEARCH_QUERY_LENGTH }
-                .onEach { query ->
-                    updateSearchLoadingState(query)
+                .filter { it.trim().length >= SearchShowState.SEARCH_QUERY_LENGTH }
+                .onEach { _state.update { it.copy(isUpdating = true) } }
+                .flatMapLatest { query ->
+                    coroutineScope.launch { searchRepository.search(query) }
+                    searchRepository.observeSearchResults(query)
                 }
-                .flatMapLatest { query -> searchRepository.observeSearchResults(query) }
                 .catch { error ->
                     uiMessageManager.emitMessageCombined(error, "Search")
                     _state.update { it.copy(isUpdating = false) }
@@ -167,16 +168,13 @@ public class DefaultSearchShowsPresenter(
                 }
         }
 
-        private suspend fun updateSearchLoadingState(query: String) {
-            _state.update { it.copy(isUpdating = true, query = query) }
-            searchRepository.search(query)
-        }
-
         private fun handleQueryChange(query: String) {
             coroutineScope.launch {
                 if (query.isEmpty()) {
                     _state.update { it.copy(query = "", searchResults = persistentListOf()) }
                 } else {
+                    val isSearchable = query.trim().length >= SearchShowState.SEARCH_QUERY_LENGTH
+                    _state.update { it.copy(query = query, isUpdating = isSearchable) }
                     queryFlow.emit(query)
                 }
             }
@@ -185,10 +183,6 @@ public class DefaultSearchShowsPresenter(
         private fun handleSearchResults(shows: List<ShowEntity>) {
             _state.update { it.copy(isUpdating = false, searchResults = mapper.toShowList(shows)) }
         }
-    }
-
-    internal companion object {
-        const val SEARCH_QUERY_LENGTH: Int = 2
     }
 }
 

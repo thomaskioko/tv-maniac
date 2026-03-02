@@ -102,12 +102,14 @@ class SearchShowsPresenterTest {
     }
 
     @Test
-    fun `should not perform search when query is less than 3 characters`() = runTest {
+    fun `should not trigger search given query below minimum length`() = runTest {
         presenter.state.test {
             awaitItem() shouldBe SearchShowState.Empty
 
-            presenter.dispatch(QueryChanged("te"))
-            expectNoEvents()
+            presenter.dispatch(QueryChanged("t"))
+            skipItems(1) // Skip init settled state
+
+            awaitItem() shouldBe settledState(query = "t")
         }
     }
 
@@ -124,7 +126,7 @@ class SearchShowsPresenterTest {
 
             presenter.dispatch(QueryChanged("test"))
             fakeSearchRepository.setSearchResult(emptyList())
-            skipItems(1)
+            skipItems(1) // Skip immediate query state update with isUpdating=true
 
             awaitItem() shouldBe settledState(
                 query = "test",
@@ -146,7 +148,7 @@ class SearchShowsPresenterTest {
             )
 
             presenter.dispatch(QueryChanged("test"))
-            skipItems(1)
+            skipItems(1) // Skip immediate query state update with isUpdating=true
 
             awaitItem() shouldBe settledState(
                 query = "test",
@@ -174,12 +176,13 @@ class SearchShowsPresenterTest {
 
             presenter.dispatch(QueryChanged("test"))
             fakeSearchRepository.setSearchResult(emptyList())
-            skipItems(1)
+            skipItems(1) // Skip immediate query state update with isUpdating=true
 
             awaitItem() shouldBe settledState(query = "test")
 
-            presenter.dispatch(QueryChanged("te"))
-            expectNoEvents()
+            presenter.dispatch(QueryChanged("t"))
+
+            awaitItem() shouldBe settledState(query = "t")
 
             presenter.dispatch(QueryChanged(""))
 
@@ -196,12 +199,13 @@ class SearchShowsPresenterTest {
             awaitItem() shouldBe SearchShowState.Empty
             skipItems(1)
 
-            presenter.dispatch(QueryChanged("ab"))
+            presenter.dispatch(QueryChanged("a"))
 
-            awaitItem() shouldBe settledState()
+            skipItems(1) // Skip init settled state
+            awaitItem() shouldBe settledState(query = "a")
 
             presenter.dispatch(QueryChanged("abc"))
-            skipItems(1)
+            skipItems(1) // Skip immediate query state update with isUpdating=true
 
             awaitItem() shouldBe settledState(query = "abc")
 
@@ -223,12 +227,13 @@ class SearchShowsPresenterTest {
             presenter.dispatch(QueryChanged(""))
             expectNoEvents()
 
-            presenter.dispatch(QueryChanged("ab"))
+            presenter.dispatch(QueryChanged("a"))
 
-            awaitItem() shouldBe settledState()
+            skipItems(1) // Skip init settled state
+            awaitItem() shouldBe settledState(query = "a")
 
             presenter.dispatch(QueryChanged("test"))
-            skipItems(1)
+            skipItems(1) // Skip immediate query state update with isUpdating=true
 
             awaitItem() shouldBe settledState(query = "test")
 
@@ -260,7 +265,7 @@ class SearchShowsPresenterTest {
             )
 
             presenter.dispatch(QueryChanged("test"))
-            skipItems(1)
+            skipItems(1) // Skip immediate query state update with isUpdating=true
 
             awaitItem() shouldBe settledState(
                 query = "test",
