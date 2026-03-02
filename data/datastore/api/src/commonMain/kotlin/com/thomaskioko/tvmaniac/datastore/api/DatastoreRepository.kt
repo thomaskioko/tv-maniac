@@ -248,6 +248,13 @@ public interface DatastoreRepository {
     public suspend fun saveGenreShowCategory(category: String)
 
     /**
+     * Gets the user's preferred genre show category.
+     *
+     * @return The category name, defaulting to "POPULAR".
+     */
+    public suspend fun getGenreShowCategory(): String
+
+    /**
      * Observes the user's preferred genre show category.
      *
      * @return A Flow of the category name, defaulting to "POPULAR".

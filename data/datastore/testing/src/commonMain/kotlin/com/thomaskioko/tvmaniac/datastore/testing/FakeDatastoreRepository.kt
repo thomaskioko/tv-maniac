@@ -137,6 +137,8 @@ public class FakeDatastoreRepository : DatastoreRepository {
         genreShowCategoryFlow.value = category
     }
 
+    override suspend fun getGenreShowCategory(): String = genreShowCategoryFlow.value
+
     override fun observeGenreShowCategory(): Flow<String> = genreShowCategoryFlow.asStateFlow()
 
     override suspend fun saveUpNextSortOption(sortOption: String) {

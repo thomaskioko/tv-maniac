@@ -241,6 +241,9 @@ public class DefaultDatastoreRepository(
         }
     }
 
+    override suspend fun getGenreShowCategory(): String =
+        dataStore.data.first()[KEY_GENRE_SHOW_CATEGORY] ?: "POPULAR"
+
     override fun observeGenreShowCategory(): Flow<String> =
         dataStore.data.map { preferences ->
             preferences[KEY_GENRE_SHOW_CATEGORY] ?: "POPULAR"
