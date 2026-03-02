@@ -324,4 +324,21 @@
     <string name="label_debug_sync_login_required">Sign in to Trakt to sync data</string>
     <string name="label_debug_trigger_crash_title">Test Crash</string>
     <string name="label_debug_trigger_crash_description">Trigger a test crash for Crashlytics</string>
+
+    <string name="label_genre_category_popular">Popular</string>
+    <string name="label_genre_category_trending">Trending</string>
+    <string name="label_genre_category_top_rated">Top Rated</string>
+    <string name="label_genre_category_most_watched">Most Watched</string>
+    <string name="label_genre_category_title">Category</string>
+
+    <string name="genre_desc_action">Non-stop thrill and action</string>
+    <string name="genre_desc_comedy">Guaranteed laughs in every episode</string>
+    <string name="genre_desc_drama">Intense emotions, compelling stories</string>
+    <string name="genre_desc_fantasy">Worlds beyond imagination</string>
+    <string name="genre_desc_horror">Spine-chilling tales of terror</string>
+    <string name="genre_desc_science_fiction">Exploring the frontiers of possibility</string>
+    <string name="genre_desc_thriller">Edge-of-your-seat suspense</string>
+    <string name="genre_desc_animation">Animated adventures for everyone</string>
+    <string name="genre_desc_mystery">Intrigue that sparks curiosity</string>
+    <string name="genre_desc_romance">Stories of love and connection</string>
 </resources>

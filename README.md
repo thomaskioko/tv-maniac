@@ -153,7 +153,7 @@ Android
 - [x] Implement Paging
 - [x] Implement Search
 - [ ] Add Episode detail screen
-- [ ] Create Design System
+- [x] Create Design System
 
 iOS
 
@@ -177,10 +177,10 @@ Shared
 - [x] Try out [Flow-Redux](https://github.com/freeletics/FlowRedux)
 - [x] Add test cases.
 - [x] Migrate to BuildConfig for unified configuration
-- [ ] Implement Trakt tracking
-    - [ ] Track Shows
-    - [ ] Track Episodes
-- [ ] Fix paging
+- [x] Implement Trakt tracking
+    - [x] Track Shows
+    - [x] Track Episodes
+- [x] Fix paging
 - [ ] Improve error handling.
 
 ### References & Inspiration

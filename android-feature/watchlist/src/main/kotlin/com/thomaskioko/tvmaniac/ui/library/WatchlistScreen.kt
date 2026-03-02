@@ -52,7 +52,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.components.EmptyContent
+import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ShowLinearProgressIndicator
@@ -63,6 +63,7 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.i18n.MR.strings.badge_new
 import com.thomaskioko.tvmaniac.i18n.MR.strings.badge_premiere
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_search
+import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_empty_content
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_discover_up_next
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_up_to_date
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_watchlist_empty_result
@@ -151,8 +152,9 @@ internal fun WatchlistScreen(
                             } else {
                                 null
                             }
-                            EmptyContent(
+                            EmptyStateView(
                                 imageVector = Icons.Outlined.Inbox,
+                                title = generic_empty_content.resolve(context),
                                 message = message,
                             )
                         } else {
@@ -168,9 +170,9 @@ internal fun WatchlistScreen(
                     }
                     else -> {
                         if (hasNoEpisodes) {
-                            EmptyContent(
+                            EmptyStateView(
                                 imageVector = Icons.Outlined.CheckCircle,
-                                message = label_up_to_date.resolve(context),
+                                title = label_up_to_date.resolve(context),
                             )
                         } else {
                             SectionedUpNextListContent(

@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.TimePeriod
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktEpisodesResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktGenreResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSearchResult
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonsResponse
@@ -32,6 +33,7 @@ public class DefaultTraktShowsRemoteDataSource(
     override suspend fun getTrendingShows(
         page: Int,
         limit: Int,
+        genres: String?,
     ): ApiResponse<List<TraktShowsResponse>> =
         httpClient.safeRequest {
             url {
@@ -41,11 +43,23 @@ public class DefaultTraktShowsRemoteDataSource(
             parameter("page", page)
             parameter("limit", limit)
             parameter("extended", "full")
+            if (genres != null) {
+                parameter("genres", genres)
+            }
+        }
+
+    override suspend fun getGenres(): ApiResponse<List<TraktGenreResponse>> =
+        httpClient.safeRequest {
+            url {
+                method = HttpMethod.Get
+                path("genres/shows")
+            }
         }
 
     override suspend fun getPopularShows(
         page: Int,
         limit: Int,
+        genres: String?,
     ): ApiResponse<List<TraktShowResponse>> =
         httpClient.safeRequest {
             url {
@@ -55,12 +69,16 @@ public class DefaultTraktShowsRemoteDataSource(
             parameter("page", page)
             parameter("limit", limit)
             parameter("extended", "full")
+            if (genres != null) {
+                parameter("genres", genres)
+            }
         }
 
     override suspend fun getFavoritedShows(
         page: Int,
         limit: Int,
         period: TimePeriod,
+        genres: String?,
     ): ApiResponse<List<TraktShowsResponse>> =
         httpClient.safeRequest {
             url {
@@ -70,12 +88,16 @@ public class DefaultTraktShowsRemoteDataSource(
             parameter("page", page)
             parameter("limit", limit)
             parameter("extended", "full")
+            if (genres != null) {
+                parameter("genres", genres)
+            }
         }
 
     override suspend fun getMostWatchedShows(
         page: Int,
         limit: Int,
         period: TimePeriod,
+        genres: String?,
     ): ApiResponse<List<TraktShowsResponse>> =
         httpClient.safeRequest {
             url {
@@ -85,6 +107,9 @@ public class DefaultTraktShowsRemoteDataSource(
             parameter("page", page)
             parameter("limit", limit)
             parameter("extended", "full")
+            if (genres != null) {
+                parameter("genres", genres)
+            }
         }
 
     override suspend fun getRelatedShows(

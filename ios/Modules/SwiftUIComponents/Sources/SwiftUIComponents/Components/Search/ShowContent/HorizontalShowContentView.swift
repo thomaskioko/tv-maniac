@@ -6,6 +6,7 @@ public struct HorizontalShowContentView: View {
     @Theme private var theme
 
     private let title: String
+    private let subtitle: String?
     private let chevronStyle: ChevronStyle
     private let items: [SwiftShow]
     private let onClick: (Int64) -> Void
@@ -16,6 +17,7 @@ public struct HorizontalShowContentView: View {
 
     public init(
         title: String,
+        subtitle: String? = nil,
         chevronStyle: ChevronStyle = .none,
         items: [SwiftShow],
         spacing: CGFloat? = nil,
@@ -26,6 +28,7 @@ public struct HorizontalShowContentView: View {
     ) {
         self.items = items
         self.title = title
+        self.subtitle = subtitle
         self.onClick = onClick
         self.chevronStyle = chevronStyle
         self.onMoreClicked = onMoreClicked
@@ -46,6 +49,7 @@ public struct HorizontalShowContentView: View {
     private var chevronView: some View {
         ChevronTitle(
             title: title,
+            subtitle: subtitle,
             chevronStyle: chevronStyle,
             action: onMoreClicked
         )

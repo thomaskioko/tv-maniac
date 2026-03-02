@@ -23,7 +23,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
@@ -59,7 +58,6 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_navigate_back
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_profile_pic
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_settings
 import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_edit_button
@@ -72,7 +70,6 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_title
 import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_watch_time
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction
-import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.BackClicked
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.LoginClicked
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.MessageShown
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.SettingsClicked
@@ -131,13 +128,6 @@ internal fun ProfileScreen(
                             overflow = TextOverflow.Ellipsis,
                         )
                     },
-                    navigationIcon = {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = cd_navigate_back.resolve(LocalContext.current),
-                            tint = MaterialTheme.colorScheme.onBackground,
-                        )
-                    },
                     actionIcon = {
                         Icon(
                             imageVector = Icons.Filled.Settings,
@@ -146,7 +136,6 @@ internal fun ProfileScreen(
                         )
                     },
                     isRefreshing = state.isLoading,
-                    onNavIconClicked = { onAction(BackClicked) },
                     onActionIconClicked = { onAction(SettingsClicked) },
                 )
 

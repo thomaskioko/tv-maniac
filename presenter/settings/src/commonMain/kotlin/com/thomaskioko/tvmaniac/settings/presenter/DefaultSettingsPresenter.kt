@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.settings.presenter
 import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
-import com.thomaskioko.tvmaniac.core.logger.CrashReporter
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
@@ -34,7 +33,6 @@ public class DefaultSettingsPresenter(
     @Assisted private val backClicked: () -> Unit,
     @Assisted private val onNavigateToDebugMenu: () -> Unit,
     private val appInfo: ApplicationInfo,
-    private val crashReporter: CrashReporter,
     private val datastoreRepository: DatastoreRepository,
     private val logoutInteractor: LogoutInteractor,
     private val toggleEpisodeNotificationsInteractor: ToggleEpisodeNotificationsInteractor,
@@ -138,7 +136,6 @@ public class DefaultSettingsPresenter(
             is CrashReportingToggled -> {
                 coroutineScope.launch {
                     datastoreRepository.setCrashReportingEnabled(action.enabled)
-                    crashReporter.setCollectionEnabled(action.enabled)
                 }
             }
         }

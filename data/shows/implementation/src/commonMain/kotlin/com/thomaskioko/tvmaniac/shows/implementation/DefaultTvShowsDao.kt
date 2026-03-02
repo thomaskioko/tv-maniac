@@ -44,8 +44,10 @@ public class DefaultTvShowsDao(
     }
 
     private fun upsertShowWithGenres(show: Tvshow) {
+        val existingTraktId = tvShowQueries.getTraktIdByTmdbId(show.tmdb_id).executeAsOneOrNull()
+        val resolvedTraktId = existingTraktId ?: show.trakt_id
         tvShowQueries.upsert(
-            trakt_id = show.trakt_id,
+            trakt_id = resolvedTraktId,
             tmdb_id = show.tmdb_id,
             name = show.name,
             overview = show.overview,

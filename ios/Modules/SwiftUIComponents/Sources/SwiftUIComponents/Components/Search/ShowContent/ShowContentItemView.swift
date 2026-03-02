@@ -14,8 +14,8 @@ public struct ShowContentItemView: View {
     public init(
         title: String,
         imageUrl: String?,
-        imageWidth: CGFloat = 260,
-        imageHeight: CGFloat = 200,
+        imageWidth: CGFloat = 240,
+        imageHeight: CGFloat = 180,
         shadowRadius: CGFloat = 2.5,
         cornerRadius: CGFloat? = nil,
         imageRadius: CGFloat? = nil

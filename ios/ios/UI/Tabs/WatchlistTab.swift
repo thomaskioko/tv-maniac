@@ -348,26 +348,17 @@ struct WatchlistTab: View {
     private var gridEmptyView: some View {
         let subtitle = uiState.query.isEmpty ? nil : String(\.label_watchlist_empty_result, parameter: uiState.query)
 
-        CenteredFullScreenView {
-            FullScreenView(
-                systemName: "tray",
-                message: String(\.generic_empty_content),
-                subtitle: subtitle,
-                color: theme.colors.onSurfaceVariant
-            )
-            .frame(maxWidth: .infinity)
-        }
+        EmptyStateView(
+            title: String(\.generic_empty_content),
+            message: subtitle
+        )
     }
 
     private var upNextEmptyView: some View {
-        CenteredFullScreenView {
-            FullScreenView(
-                systemName: "checkmark.circle",
-                message: String(\.label_up_to_date),
-                color: theme.colors.onSurfaceVariant
-            )
-            .frame(maxWidth: .infinity)
-        }
+        EmptyStateView(
+            systemName: "checkmark.circle",
+            title: String(\.label_up_to_date)
+        )
     }
 }
 

@@ -19,7 +19,6 @@ import com.thomaskioko.tvmaniac.domain.discover.DiscoverShowsInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
-import com.thomaskioko.tvmaniac.domain.user.ObserveUserProfileInteractor
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import com.thomaskioko.tvmaniac.shows.api.model.Category
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsInteractor
@@ -50,7 +49,7 @@ public class DefaultDiscoverShowsPresenter(
     @Assisted private val onNavigateToEpisode: (showTraktId: Long, episodeId: Long) -> Unit,
     @Assisted private val onNavigateToSeason: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
     @Assisted private val onNavigateToUpNext: () -> Unit,
-    @Assisted private val onNavigateToProfile: () -> Unit,
+    @Assisted private val onNavigateToSearch: () -> Unit,
     private val discoverShowsInteractor: DiscoverShowsInteractor,
     private val followedShowsRepository: FollowedShowsRepository,
     private val featuredShowsInteractor: FeaturedShowsInteractor,
@@ -60,7 +59,6 @@ public class DefaultDiscoverShowsPresenter(
     private val upcomingShowsInteractor: UpcomingShowsInteractor,
     private val genreShowsInteractor: GenreShowsInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
-    private val observeUserProfileInteractor: ObserveUserProfileInteractor,
     private val traktAuthRepository: TraktAuthRepository,
     private val logger: Logger,
     private val coroutineScope: CoroutineScope = componentContext.coroutineScope(),
@@ -133,21 +131,8 @@ public class DefaultDiscoverShowsPresenter(
 
         public fun init() {
             discoverShowsInteractor(Unit)
-            observeUserProfileInteractor(Unit)
             observeShowData()
             observeAuthState()
-            observeUserProfile()
-        }
-
-        private fun observeUserProfile() {
-            coroutineScope.launch {
-                observeUserProfileInteractor.flow.collect { userProfile ->
-                    _state.value = _state.value.copy(
-                        userAvatarUrl = userProfile?.avatarUrl,
-                        isSignedIn = userProfile != null,
-                    )
-                }
-            }
         }
 
         private fun observeAuthState() {
@@ -202,7 +187,7 @@ public class DefaultDiscoverShowsPresenter(
                 is OpenSeasonFromUpNext -> {
                     onNavigateToSeason(action.showTraktId, action.seasonId, action.seasonNumber)
                 }
-                ProfileIconClicked -> onNavigateToProfile()
+                SearchIconClicked -> onNavigateToSearch()
             }
         }
 
@@ -259,7 +244,7 @@ public class DefaultDiscoverPresenterFactory(
         onNavigateToEpisode: (showTraktId: Long, episodeId: Long) -> Unit,
         onNavigateToSeason: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
         onNavigateToUpNext: () -> Unit,
-        onNavigateToProfile: () -> Unit,
+        onNavigateToSearch: () -> Unit,
     ) -> DiscoverShowsPresenter,
 ) : DiscoverShowsPresenter.Factory {
     override fun invoke(
@@ -269,7 +254,7 @@ public class DefaultDiscoverPresenterFactory(
         onNavigateToEpisode: (showTraktId: Long, episodeId: Long) -> Unit,
         onNavigateToSeason: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
         onNavigateToUpNext: () -> Unit,
-        onNavigateToProfile: () -> Unit,
+        onNavigateToSearch: () -> Unit,
     ): DiscoverShowsPresenter = presenter(
         componentContext,
         onNavigateToShowDetails,
@@ -277,7 +262,7 @@ public class DefaultDiscoverPresenterFactory(
         onNavigateToEpisode,
         onNavigateToSeason,
         onNavigateToUpNext,
-        onNavigateToProfile,
+        onNavigateToSearch,
     )
 }
 

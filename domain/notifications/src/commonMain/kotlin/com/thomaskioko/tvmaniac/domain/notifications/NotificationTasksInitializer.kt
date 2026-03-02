@@ -39,7 +39,7 @@ public class NotificationTasksInitializer(
                 .collect { shouldSchedule ->
                     if (shouldSchedule) {
                         logger.debug(TAG, "Scheduling episode notifications")
-                        scheduler.schedulePeriodic(EpisodeNotificationWorker.REQUEST)
+                        scheduler.scheduleAndExecute(EpisodeNotificationWorker.REQUEST)
                     } else {
                         logger.debug(TAG, "Cancelling episode notifications")
                         scheduler.cancel(EpisodeNotificationWorker.WORKER_NAME)

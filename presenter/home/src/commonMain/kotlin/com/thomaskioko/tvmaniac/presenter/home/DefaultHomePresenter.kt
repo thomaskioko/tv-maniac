@@ -8,13 +8,19 @@ import com.arkivanov.decompose.router.stack.childStack
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asStateFlow
 import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
+import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowsPresenter
+import com.thomaskioko.tvmaniac.domain.user.ObserveUserProfileInteractor
 import com.thomaskioko.tvmaniac.presentation.library.LibraryPresenter
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextPresenter
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.Child
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.HomeConfig
-import com.thomaskioko.tvmaniac.search.presenter.SearchShowsPresenter
+import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
@@ -27,14 +33,16 @@ public class DefaultHomePresenter private constructor(
     @Assisted private val onShowClicked: (id: Long) -> Unit,
     @Assisted private val onMoreShowClicked: (id: Long) -> Unit,
     @Assisted private val onShowGenreClicked: (id: Long) -> Unit,
-    @Assisted private val onNavigateToProfile: () -> Unit,
+    @Assisted private val onNavigateToSearch: () -> Unit,
     @Assisted private val onSettingsClicked: () -> Unit,
     private val discoverPresenterFactory: DiscoverShowsPresenter.Factory,
     private val upNextPresenterFactory: UpNextPresenter.Factory,
     private val libraryPresenterFactory: LibraryPresenter.Factory,
-    private val searchPresenterFactory: SearchShowsPresenter.Factory,
+    private val profilePresenterFactory: ProfilePresenter.Factory,
+    private val observeUserProfileInteractor: ObserveUserProfileInteractor,
 ) : ComponentContext by componentContext, HomePresenter {
     private val navigation = StackNavigation<HomeConfig>()
+    private val coroutineScope: CoroutineScope = componentContext.coroutineScope()
 
     override val homeChildStack: StateFlow<ChildStack<*, Child>> = childStack(
         source = navigation,
@@ -44,6 +52,17 @@ public class DefaultHomePresenter private constructor(
         handleBackButton = true,
         childFactory = ::child,
     ).asStateFlow(componentContext.componentCoroutineScope())
+
+    override val profileAvatarUrl: StateFlow<String?> = run {
+        observeUserProfileInteractor(Unit)
+        observeUserProfileInteractor.flow
+            .map { it?.avatarUrl }
+            .stateIn(
+                scope = coroutineScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = null,
+            )
+    }
 
     override fun onDiscoverClicked() {
         onTabClicked(HomeConfig.Discover)
@@ -57,8 +76,8 @@ public class DefaultHomePresenter private constructor(
         onTabClicked(HomeConfig.Library)
     }
 
-    override fun onSearchClicked() {
-        onTabClicked(HomeConfig.Search)
+    override fun onProfileClicked() {
+        onTabClicked(HomeConfig.Profile)
     }
 
     override fun onTabClicked(config: HomeConfig) {
@@ -94,7 +113,7 @@ public class DefaultHomePresenter private constructor(
                             // TODO:: Add Navigation to episode detail
                         },
                         onNavigateToUpNext = { onUpNextClicked() },
-                        onNavigateToProfile = onNavigateToProfile,
+                        onNavigateToSearch = onNavigateToSearch,
                     ),
                 )
             }
@@ -119,12 +138,11 @@ public class DefaultHomePresenter private constructor(
                 )
             }
 
-            HomeConfig.Search -> {
-                Child.Search(
-                    presenter = searchPresenterFactory(
+            HomeConfig.Profile -> {
+                Child.Profile(
+                    presenter = profilePresenterFactory(
                         componentContext = componentContext,
-                        onNavigateToShowDetails = { id -> onShowClicked(id) },
-                        onNavigateToGenre = { id -> onShowGenreClicked(id) },
+                        navigateToSettings = onSettingsClicked,
                     ),
                 )
             }
@@ -137,26 +155,28 @@ public class DefaultHomePresenter private constructor(
         private val discoverPresenterFactory: DiscoverShowsPresenter.Factory,
         private val upNextPresenterFactory: UpNextPresenter.Factory,
         private val libraryPresenterFactory: LibraryPresenter.Factory,
-        private val searchPresenterFactory: SearchShowsPresenter.Factory,
+        private val profilePresenterFactory: ProfilePresenter.Factory,
+        private val observeUserProfileInteractor: ObserveUserProfileInteractor,
     ) : HomePresenter.Factory {
         override fun invoke(
             componentContext: ComponentContext,
             onShowClicked: (id: Long) -> Unit,
             onMoreShowClicked: (id: Long) -> Unit,
             onShowGenreClicked: (id: Long) -> Unit,
-            onNavigateToProfile: () -> Unit,
+            onNavigateToSearch: () -> Unit,
             onSettingsClicked: () -> Unit,
         ): HomePresenter = DefaultHomePresenter(
             componentContext = componentContext,
             onShowClicked = onShowClicked,
             onMoreShowClicked = onMoreShowClicked,
             onShowGenreClicked = onShowGenreClicked,
-            onNavigateToProfile = onNavigateToProfile,
+            onNavigateToSearch = onNavigateToSearch,
             onSettingsClicked = onSettingsClicked,
             discoverPresenterFactory = discoverPresenterFactory,
             upNextPresenterFactory = upNextPresenterFactory,
             libraryPresenterFactory = libraryPresenterFactory,
-            searchPresenterFactory = searchPresenterFactory,
+            profilePresenterFactory = profilePresenterFactory,
+            observeUserProfileInteractor = observeUserProfileInteractor,
         )
     }
 }

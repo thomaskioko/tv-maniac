@@ -3,10 +3,7 @@ package com.thomaskioko.tvmaniac.presenter.settings
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.thomaskioko.tvmaniac.core.logger.fixture.FakeCrashReporter
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
-import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
-import com.thomaskioko.tvmaniac.core.tasks.api.PeriodicTaskRequest
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
@@ -49,14 +46,6 @@ class SettingsPresenterTest {
     private val userRepository = FakeUserRepository()
     private val fakeTraktActivityRepository = FakeTraktActivityRepository()
     private val fakeLogger = FakeLogger()
-    private val fakeCrashReporter = FakeCrashReporter()
-    private val fakeScheduler = object : BackgroundTaskScheduler {
-        override fun schedulePeriodic(request: PeriodicTaskRequest) = Unit
-        override fun scheduleAndExecute(request: PeriodicTaskRequest) = Unit
-        override fun cancel(id: String) = Unit
-        override fun cancelAll() = Unit
-    }
-
     private lateinit var presenter: SettingsPresenter
 
     @BeforeTest
@@ -65,7 +54,6 @@ class SettingsPresenterTest {
         presenter = DefaultSettingsPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             appInfo = FakeApplicationInfo.DEFAULT,
-            crashReporter = fakeCrashReporter,
             datastoreRepository = datastoreRepository,
             traktAuthRepository = traktAuthRepository,
             logger = fakeLogger,
@@ -81,8 +69,6 @@ class SettingsPresenterTest {
             ),
             toggleEpisodeNotificationsInteractor = ToggleEpisodeNotificationsInteractor(
                 datastoreRepository = datastoreRepository,
-                scheduler = fakeScheduler,
-                traktAuthRepository = traktAuthRepository,
             ),
             backClicked = {},
             onNavigateToDebugMenu = {},

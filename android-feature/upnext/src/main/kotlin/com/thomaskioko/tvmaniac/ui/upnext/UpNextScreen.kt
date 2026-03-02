@@ -37,7 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.components.EmptyContent
+import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
 import com.thomaskioko.tvmaniac.compose.components.SelectableFilterChip
 import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
@@ -128,9 +128,9 @@ internal fun UpNextScreen(
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                 ) {
                                     item {
-                                        EmptyContent(
+                                        EmptyStateView(
                                             imageVector = Icons.Outlined.Inbox,
-                                            message = label_upnext_empty.resolve(context),
+                                            title = label_upnext_empty.resolve(context),
                                         )
                                     }
                                 }

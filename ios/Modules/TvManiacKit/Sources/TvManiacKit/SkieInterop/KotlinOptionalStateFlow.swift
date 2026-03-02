@@ -3,7 +3,7 @@ import TvManiac
 
 @MainActor
 @propertyWrapper
-public final class KotlinOptionalStateFlow<T: AnyObject>: ObservableObject {
+public final class KotlinOptionalStateFlow<T>: ObservableObject {
     private let stateFlow: SkieSwiftOptionalStateFlow<T>
 
     @Published public var wrappedValue: T?
@@ -39,5 +39,12 @@ public extension StateObject {
     @MainActor
     init<F>(_ stateFlow: SkieSwiftOptionalStateFlow<F>) where ObjectType == KotlinOptionalStateFlow<F> {
         self.init(wrappedValue: KotlinOptionalStateFlow(stateFlow))
+    }
+
+    @MainActor
+    init<F>(optionalStateFlow: SkieSwiftOptionalStateFlow<F>)
+        where ObjectType == KotlinOptionalStateFlow<F>
+    {
+        self.init(wrappedValue: KotlinOptionalStateFlow(optionalStateFlow))
     }
 }

@@ -5,7 +5,7 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.library.LibraryPresenter
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextPresenter
-import com.thomaskioko.tvmaniac.search.presenter.SearchShowsPresenter
+import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.Serializable
 
@@ -16,17 +16,19 @@ public interface HomePresenter {
             onShowClicked: (id: Long) -> Unit,
             onMoreShowClicked: (id: Long) -> Unit,
             onShowGenreClicked: (id: Long) -> Unit,
-            onNavigateToProfile: () -> Unit,
+            onNavigateToSearch: () -> Unit,
             onSettingsClicked: () -> Unit,
         ): HomePresenter
     }
 
     public val homeChildStack: StateFlow<ChildStack<*, Child>>
 
+    public val profileAvatarUrl: StateFlow<String?>
+
     public fun onDiscoverClicked()
     public fun onUpNextClicked()
     public fun onLibraryClicked()
-    public fun onSearchClicked()
+    public fun onProfileClicked()
     public fun onTabClicked(config: HomeConfig)
 
     public sealed interface Child {
@@ -36,7 +38,7 @@ public interface HomePresenter {
 
         public class Library(public val presenter: LibraryPresenter) : Child
 
-        public class Search(public val presenter: SearchShowsPresenter) : Child
+        public class Profile(public val presenter: ProfilePresenter) : Child
     }
 
     @Serializable
@@ -51,6 +53,6 @@ public interface HomePresenter {
         public data object Library : HomeConfig
 
         @Serializable
-        public data object Search : HomeConfig
+        public data object Profile : HomeConfig
     }
 }

@@ -43,12 +43,6 @@ struct ProfileTab: View {
             GlassToolbar(
                 title: String(\.profile_title),
                 opacity: showGlass,
-                leadingIcon: {
-                    GlassButton(icon: "chevron.left") {
-                        presenter.dispatch(action: ProfileActionBackClicked())
-                    }
-                    .opacity(1 - showGlass)
-                },
                 trailingIcon: {
                     GlassButton(icon: "gearshape") {
                         presenter.dispatch(action: ProfileActionSettingsClicked())
@@ -60,10 +54,6 @@ struct ProfileTab: View {
         .background(theme.colors.background)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarColor(backgroundColor: .clear)
-        .navigationBarBackButtonHidden(true)
-        .swipeBackGesture {
-            presenter.dispatch(action: ProfileActionBackClicked())
-        }
         .edgesIgnoringSafeArea(.top)
         .onChange(of: uiState.errorMessage) { _, errorMessage in
             if let errorMessage {

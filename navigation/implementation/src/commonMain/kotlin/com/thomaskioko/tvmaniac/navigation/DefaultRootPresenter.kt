@@ -18,7 +18,7 @@ import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.presenter.trailers.TrailersPresenter
-import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
+import com.thomaskioko.tvmaniac.search.presenter.SearchShowsPresenter
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
@@ -48,7 +48,7 @@ public class DefaultRootPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val navigator: RootNavigator,
     private val homePresenterFactory: HomePresenter.Factory,
-    private val profilePresenterFactory: ProfilePresenter.Factory,
+    private val searchPresenterFactory: SearchShowsPresenter.Factory,
     private val settingsPresenterFactory: SettingsPresenter.Factory,
     private val debugPresenterFactory: DebugPresenter.Factory,
     private val moreShowsPresenterFactory: MoreShowsPresenter.Factory,
@@ -160,6 +160,7 @@ public class DefaultRootPresenter(
     override fun onRationaleDismissed() {
         coroutineScope.launch {
             datastoreRepository.setShowNotificationRationale(false)
+            datastoreRepository.setNotificationPermissionAsked(true)
         }
     }
 
@@ -233,17 +234,28 @@ public class DefaultRootPresenter(
                                 ),
                             )
                         },
-                        onNavigateToProfile = { navigator.pushNew(RootDestinationConfig.Profile) },
+                        onNavigateToSearch = { navigator.pushNew(RootDestinationConfig.Search) },
                         onSettingsClicked = { navigator.pushNew(RootDestinationConfig.Settings) },
                     ),
                 )
 
-            is RootDestinationConfig.Profile ->
-                Child.Profile(
-                    presenter = profilePresenterFactory(
+            is RootDestinationConfig.Search ->
+                Child.Search(
+                    presenter = searchPresenterFactory(
                         componentContext = componentContext,
-                        navigateBack = { navigator.pop() },
-                        navigateToSettings = { navigator.pushNew(RootDestinationConfig.Settings) },
+                        onNavigateToShowDetails = { id ->
+                            navigator.pushNew(
+                                RootDestinationConfig.ShowDetails(
+                                    param = ShowDetailsParam(id = id),
+                                ),
+                            )
+                        },
+                        onNavigateToGenre = { id ->
+                            navigator.pushNew(
+                                RootDestinationConfig.GenreShows(id),
+                            )
+                        },
+                        onNavigateBack = navigator::pop,
                     ),
                 )
 
@@ -343,7 +355,7 @@ public class DefaultRootPresenter(
     @ContributesBinding(ActivityScope::class, RootPresenter.Factory::class)
     public class Factory(
         private val homePresenterFactory: HomePresenter.Factory,
-        private val profilePresenterFactory: ProfilePresenter.Factory,
+        private val searchPresenterFactory: SearchShowsPresenter.Factory,
         private val settingsPresenterFactory: SettingsPresenter.Factory,
         private val debugPresenterFactory: DebugPresenter.Factory,
         private val moreShowsPresenterFactory: MoreShowsPresenter.Factory,
@@ -362,7 +374,7 @@ public class DefaultRootPresenter(
             componentContext = componentContext,
             navigator = navigator,
             homePresenterFactory = homePresenterFactory,
-            profilePresenterFactory = profilePresenterFactory,
+            searchPresenterFactory = searchPresenterFactory,
             settingsPresenterFactory = settingsPresenterFactory,
             debugPresenterFactory = debugPresenterFactory,
             moreShowsPresenterFactory = moreShowsPresenterFactory,

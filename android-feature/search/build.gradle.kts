@@ -19,7 +19,9 @@ dependencies {
 
     implementation(projects.androidDesignsystem)
     implementation(projects.data.datastore.api)
+    implementation(projects.data.genre.api)
     implementation(projects.i18n.generator)
+    implementation(projects.core.view)
 
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.material3)

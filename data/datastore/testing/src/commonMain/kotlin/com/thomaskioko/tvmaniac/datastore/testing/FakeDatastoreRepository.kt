@@ -128,9 +128,18 @@ public class FakeDatastoreRepository : DatastoreRepository {
 
     override fun observeLibrarySortOption(): Flow<String> = librarySortOptionFlow.asStateFlow()
 
+    private val genreShowCategoryFlow = MutableStateFlow("POPULAR")
     private val upNextSortOptionFlow = MutableStateFlow("LAST_WATCHED")
     private val lastUpNextSyncTimestampFlow: MutableStateFlow<Long?> = MutableStateFlow(null)
     private val crashReportingEnabledFlow = MutableStateFlow(true)
+
+    override suspend fun saveGenreShowCategory(category: String) {
+        genreShowCategoryFlow.value = category
+    }
+
+    override suspend fun getGenreShowCategory(): String = genreShowCategoryFlow.value
+
+    override fun observeGenreShowCategory(): Flow<String> = genreShowCategoryFlow.asStateFlow()
 
     override suspend fun saveUpNextSortOption(sortOption: String) {
         upNextSortOptionFlow.value = sortOption

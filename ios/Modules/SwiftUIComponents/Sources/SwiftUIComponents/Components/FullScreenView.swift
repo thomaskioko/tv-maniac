@@ -1,91 +1,78 @@
-//
-//  FullScreenView.swift
-//  tv-maniac
-//
-//  Created by Thomas Kioko on 07.11.22.
-//  Copyright © 2022 orgName. All rights reserved.
-//
-
 import SwiftUI
 
-public struct FullScreenView: View {
+public struct EmptyStateView: View {
     @Theme private var theme
 
     private let systemName: String
-    private let message: String
-    private let subtitle: String?
+    private let title: String
+    private let message: String?
     private let buttonText: String?
-    private let color: Color?
     private let action: () -> Void
 
     public init(
-        systemName: String = "exclamationmark.triangle.fill",
-        message: String = "Something went wrong",
-        subtitle: String? = nil,
+        systemName: String = "tray",
+        title: String,
+        message: String? = nil,
         buttonText: String? = nil,
-        action: @escaping () -> Void = {},
-        color: Color? = nil
+        action: @escaping () -> Void = {}
     ) {
         self.systemName = systemName
+        self.title = title
         self.message = message
-        self.subtitle = subtitle
         self.buttonText = buttonText
         self.action = action
-        self.color = color
     }
 
     public var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             Image(systemName: systemName)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .foregroundColor(color ?? theme.colors.accent)
-                .textStyle(theme.typography.titleLarge)
-                .frame(width: 120, height: 120)
-                .padding(theme.spacing.medium)
+                .foregroundColor(theme.colors.onSurfaceVariant)
+                .frame(width: 64, height: 64)
 
-            Text(message)
-                .textStyle(theme.typography.titleLarge)
+            Spacer().frame(height: theme.spacing.large)
+
+            Text(title)
+                .textStyle(theme.typography.titleMedium)
                 .foregroundColor(theme.colors.onSurface)
                 .multilineTextAlignment(.center)
-                .padding([.horizontal], theme.spacing.xSmall)
 
-            if let subtitle {
-                Text(subtitle)
-                    .textStyle(theme.typography.bodySmall)
+            if let message {
+                Spacer().frame(height: theme.spacing.xSmall)
+
+                Text(message)
+                    .textStyle(theme.typography.bodyMedium)
                     .foregroundColor(theme.colors.onSurfaceVariant)
+                    .multilineTextAlignment(.center)
             }
 
             if let buttonText {
-                FilledImageButton(
+                Spacer().frame(height: theme.spacing.large)
+
+                OutlinedButton(
                     text: buttonText,
-                    verticalPadding: theme.spacing.xSmall,
                     action: action
                 )
-                .background(theme.colors.accent)
-                .cornerRadius(theme.shapes.small)
-                .padding([.top], theme.spacing.xxSmall)
             }
         }
+        .padding(.horizontal, theme.spacing.medium)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
 #Preview {
-    VStack {
-        FullScreenView(
-            systemName: "exclamationmark.triangle.fill",
-            message: "Something went wrong"
-        )
-    }
+    EmptyStateView(
+        title: "Nothing here yet",
+        message: "Shows you follow will appear here."
+    )
 }
 
 #Preview {
-    VStack {
-        FullScreenView(
-            systemName: "exclamationmark.triangle.fill",
-            message: "Something went wrong",
-            buttonText: "Retry"
-        )
-    }
+    EmptyStateView(
+        systemName: "exclamationmark.triangle",
+        title: "Something went wrong",
+        message: "We couldn't load the data.",
+        buttonText: "Retry"
+    )
 }

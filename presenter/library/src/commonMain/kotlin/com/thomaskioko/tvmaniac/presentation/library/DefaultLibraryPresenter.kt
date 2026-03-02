@@ -111,7 +111,6 @@ public class DefaultLibraryPresenter(
             is ToggleSearchActive -> toggleSearchActive()
             is ChangeListStyleClicked -> toggleListStyle(action.isGridMode)
             is ChangeSortOption -> changeSortOption(action.sortOption)
-            is ToggleFollowedOnly -> toggleFollowedOnly()
             is ToggleGenreFilter -> toggleGenreFilter(action.genre)
             is ToggleStatusFilter -> toggleStatusFilter(action.status)
             is ClearFilters -> clearFilters()
@@ -230,13 +229,6 @@ public class DefaultLibraryPresenter(
         coroutineScope.launch {
             sortOptionFlow.emit(sortOption)
             repository.saveSortOption(sortOption.toData())
-        }
-    }
-
-    private fun toggleFollowedOnly() {
-        coroutineScope.launch {
-            followedOnlyFlow.emit(!followedOnlyFlow.value)
-            observeLibrary()
         }
     }
 

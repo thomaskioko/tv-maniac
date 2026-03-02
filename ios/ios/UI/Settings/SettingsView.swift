@@ -31,7 +31,7 @@ struct SettingsView: View {
             .navigationBarBackButtonHidden(true)
             .navigationBarColor(backgroundColor: .clear)
             .swipeBackGesture {
-                presenter.dispatch(action: BackClicked_())
+                presenter.dispatch(action: BackClicked__())
             }
             .overlay(
                 GlassToolbar(
@@ -39,7 +39,7 @@ struct SettingsView: View {
                     opacity: 1.0,
                     leadingIcon: {
                         GlassButton(icon: "chevron.left") {
-                            presenter.dispatch(action: BackClicked_())
+                            presenter.dispatch(action: BackClicked__())
                         }
                     }
                 ),

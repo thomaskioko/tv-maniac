@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.compose.components
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -33,6 +34,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_clear_text
 import com.thomaskioko.tvmaniac.i18n.resolve
@@ -117,6 +119,7 @@ private fun SearchTextFieldContent(
 ) {
     Column(modifier = modifier) {
         SearchTextField(
+            modifier = Modifier.padding(horizontal = 16.dp),
             onFocusChanged = onFocusChanged,
             textFieldValue = textFieldValue,
             onTextChanged = onTextChanged,
@@ -139,10 +142,11 @@ private fun SearchTextField(
     keyboardType: KeyboardType,
     onSubmit: () -> Unit,
     onClearClick: () -> Unit,
+    modifier: Modifier = Modifier,
     shape: Shape = MaterialTheme.shapes.medium,
 ) {
     OutlinedTextField(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .onFocusChanged { onFocusChanged(it.isFocused) },
         value = textFieldValue,

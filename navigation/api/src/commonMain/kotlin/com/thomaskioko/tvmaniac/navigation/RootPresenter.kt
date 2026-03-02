@@ -7,7 +7,7 @@ import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsPresenter
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenter
 import com.thomaskioko.tvmaniac.presenter.trailers.TrailersPresenter
-import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
+import com.thomaskioko.tvmaniac.search.presenter.SearchShowsPresenter
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import kotlinx.coroutines.flow.StateFlow
@@ -39,7 +39,7 @@ public interface RootPresenter {
     public sealed interface Child {
         public class Home(public val presenter: HomePresenter) : Child
 
-        public class Profile(public val presenter: ProfilePresenter) : Child
+        public class Search(public val presenter: SearchShowsPresenter) : Child
 
         public class Settings(public val presenter: SettingsPresenter) : Child
 

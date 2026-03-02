@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -34,6 +35,7 @@ public class DefaultEpisodeRepository(
     private val episodesDao: EpisodesDao,
     private val dispatchers: AppCoroutineDispatchers,
     private val upcomingEpisodesStore: UpcomingEpisodesStore,
+    private val traktAuthRepository: TraktAuthRepository,
 ) : EpisodeRepository {
 
     override suspend fun markEpisodeAsWatched(
@@ -176,6 +178,8 @@ public class DefaultEpisodeRepository(
         days: Int,
         forceRefresh: Boolean,
     ) {
+        if (!traktAuthRepository.isLoggedIn()) return
+
         val params = UpcomingEpisodesParams(startDate, days)
         when {
             forceRefresh -> upcomingEpisodesStore.fresh(params)

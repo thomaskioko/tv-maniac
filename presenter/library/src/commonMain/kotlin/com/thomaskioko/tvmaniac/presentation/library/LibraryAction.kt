@@ -17,8 +17,6 @@ public data class ChangeListStyleClicked(val isGridMode: Boolean) : LibraryActio
 
 public data class ChangeSortOption(val sortOption: LibrarySortOption) : LibraryAction
 
-public data object ToggleFollowedOnly : LibraryAction
-
 public data class ToggleGenreFilter(val genre: String) : LibraryAction
 
 public data class ToggleStatusFilter(val status: ShowStatus) : LibraryAction

@@ -235,6 +235,20 @@ public class DefaultDatastoreRepository(
             preferences[KEY_LAST_UPNEXT_SYNC_TIMESTAMP]
         }
 
+    override suspend fun saveGenreShowCategory(category: String) {
+        dataStore.edit { preferences ->
+            preferences[KEY_GENRE_SHOW_CATEGORY] = category
+        }
+    }
+
+    override suspend fun getGenreShowCategory(): String =
+        dataStore.data.first()[KEY_GENRE_SHOW_CATEGORY] ?: "POPULAR"
+
+    override fun observeGenreShowCategory(): Flow<String> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_GENRE_SHOW_CATEGORY] ?: "POPULAR"
+        }
+
     override suspend fun setCrashReportingEnabled(enabled: Boolean) {
         dataStore.edit { preferences ->
             preferences[KEY_CRASH_REPORTING_ENABLED] = enabled
@@ -263,6 +277,7 @@ public class DefaultDatastoreRepository(
         public val KEY_LIBRARY_SORT_OPTION: Preferences.Key<String> = stringPreferencesKey("library_sort_option")
         public val KEY_UPNEXT_SORT_OPTION: Preferences.Key<String> = stringPreferencesKey("upnext_sort_option")
         public val KEY_LAST_UPNEXT_SYNC_TIMESTAMP: Preferences.Key<Long> = longPreferencesKey("last_upnext_sync_timestamp")
+        public val KEY_GENRE_SHOW_CATEGORY: Preferences.Key<String> = stringPreferencesKey("genre_show_category")
         public val KEY_CRASH_REPORTING_ENABLED: Preferences.Key<Boolean> = booleanPreferencesKey("crash_reporting_enabled")
     }
 }

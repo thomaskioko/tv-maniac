@@ -260,7 +260,6 @@ internal class ProfilePresenterTest {
     private fun createPresenter(): ProfilePresenter {
         return DefaultProfilePresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
-            onBack = { },
             onSettings = { },
             traktAuthManager = traktAuthManager,
             traktAuthRepository = traktAuthRepository,

@@ -37,9 +37,9 @@ struct SeasonDetailsView: View {
             theme.colors.background.edgesIgnoringSafeArea(.all)
 
             if uiState.showError {
-                FullScreenView(
-                    systemName: "exclamationmark.triangle.fill",
-                    message: String(\.generic_error_message),
+                EmptyStateView(
+                    systemName: "exclamationmark.triangle",
+                    title: String(\.generic_error_message),
                     buttonText: String(\.button_error_retry),
                     action: { presenter.dispatch(action: ReloadSeasonDetails()) }
                 )

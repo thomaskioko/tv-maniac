@@ -10,7 +10,7 @@ public sealed interface RootDestinationConfig {
     public data object Home : RootDestinationConfig
 
     @Serializable
-    public data object Profile : RootDestinationConfig
+    public data object Search : RootDestinationConfig
 
     @Serializable
     public data object Settings : RootDestinationConfig

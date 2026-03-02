@@ -12,7 +12,7 @@ import com.thomaskioko.tvmaniac.navigation.RootPresenter
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenter
 import com.thomaskioko.tvmaniac.presenter.trailers.TrailersPresenter
-import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
+import com.thomaskioko.tvmaniac.search.presenter.SearchShowsPresenter
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.testing.di.TestScope
@@ -26,7 +26,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @ContributesBinding(TestScope::class, RootPresenter.Factory::class)
 public class FakeRootPresenterFactory(
     private val homePresenterFactory: HomePresenter.Factory,
-    private val profilePresenterFactory: ProfilePresenter.Factory,
+    private val searchPresenterFactory: SearchShowsPresenter.Factory,
     private val settingsPresenterFactory: SettingsPresenter.Factory,
     private val debugPresenterFactory: DebugPresenter.Factory,
     private val moreShowsPresenterFactory: MoreShowsPresenter.Factory,
@@ -46,7 +46,7 @@ public class FakeRootPresenterFactory(
             componentContext = componentContext,
             navigator = navigator,
             homePresenterFactory = homePresenterFactory,
-            profilePresenterFactory = profilePresenterFactory,
+            searchPresenterFactory = searchPresenterFactory,
             settingsPresenterFactory = settingsPresenterFactory,
             debugPresenterFactory = debugPresenterFactory,
             moreShowsPresenterFactory = moreShowsPresenterFactory,

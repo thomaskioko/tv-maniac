@@ -46,7 +46,7 @@ public struct HorizontalItemListView: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     LazyHStack {
                         ForEach(items, id: \.traktId) { item in
-                            PosterItemView(
+                            BackdropPosterCard(
                                 title: item.title,
                                 posterUrl: item.posterUrl,
                                 isInLibrary: item.inLibrary
