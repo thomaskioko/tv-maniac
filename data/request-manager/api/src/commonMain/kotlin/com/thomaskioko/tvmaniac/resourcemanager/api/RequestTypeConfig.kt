@@ -29,4 +29,6 @@ public enum class RequestTypeConfig(public val requestId: Long, public val durat
     NEXT_EPISODES_SYNC(26, 1.hours),
     WATCH_PROVIDERS(27, 30.days),
     UPNEXT_FULL_SYNC(28, 1.hours),
+    TRAKT_GENRES(29, 7.days),
+    GENRE_SHOWS(30, 3.days),
 }

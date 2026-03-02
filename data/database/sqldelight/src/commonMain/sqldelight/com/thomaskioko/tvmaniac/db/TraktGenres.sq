@@ -10,5 +10,8 @@ VALUES (?, ?);
 allGenres:
 SELECT * FROM trakt_genres ORDER BY name ASC;
 
+allSlugs:
+SELECT slug FROM trakt_genres ORDER BY name ASC;
+
 deleteAll:
 DELETE FROM trakt_genres;
