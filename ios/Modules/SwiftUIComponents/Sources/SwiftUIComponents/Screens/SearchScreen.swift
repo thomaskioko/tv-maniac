@@ -11,9 +11,10 @@ public enum SearchScreenState {
 public struct SearchScreen: View {
     @Theme private var theme
 
+    private let title: String
     private let state: SearchScreenState
     @Binding private var query: String
-    private let searchPrompt: String
+    private let searchPlaceholder: String
     private let emptyResultsMessage: String
     private let retryButtonText: String
     private let selectedCategory: String
@@ -21,14 +22,17 @@ public struct SearchScreen: View {
     private let categoryTitle: String
     private let onShowClicked: (Int64) -> Void
     private let onRetry: () -> Void
+    private let onBack: () -> Void
     private let onCategoryChanged: (String) -> Void
 
+    @FocusState private var isSearchFocused: Bool
     @State private var showFilterSheet = false
 
     public init(
+        title: String,
         state: SearchScreenState,
         query: Binding<String>,
-        searchPrompt: String,
+        searchPlaceholder: String,
         emptyResultsMessage: String,
         retryButtonText: String,
         selectedCategory: String = "",
@@ -36,11 +40,13 @@ public struct SearchScreen: View {
         categoryTitle: String = "Category",
         onShowClicked: @escaping (Int64) -> Void,
         onRetry: @escaping () -> Void,
+        onBack: @escaping () -> Void,
         onCategoryChanged: @escaping (String) -> Void = { _ in }
     ) {
+        self.title = title
         self.state = state
         _query = query
-        self.searchPrompt = searchPrompt
+        self.searchPlaceholder = searchPlaceholder
         self.emptyResultsMessage = emptyResultsMessage
         self.retryButtonText = retryButtonText
         self.selectedCategory = selectedCategory
@@ -48,6 +54,7 @@ public struct SearchScreen: View {
         self.categoryTitle = categoryTitle
         self.onShowClicked = onShowClicked
         self.onRetry = onRetry
+        self.onBack = onBack
         self.onCategoryChanged = onCategoryChanged
     }
 
@@ -57,7 +64,7 @@ public struct SearchScreen: View {
     }
 
     public var body: some View {
-        ZStack {
+        ZStack(alignment: .top) {
             theme.colors.background
                 .ignoresSafeArea()
 
@@ -65,33 +72,103 @@ public struct SearchScreen: View {
                 contentView
                     .padding(.top, theme.spacing.medium)
             }
+            .contentMargins(.top, totalHeaderHeight)
+
+            headerOverlay
         }
-        .searchable(
-            text: $query,
-            placement: .navigationBarDrawer(displayMode: .always),
-            prompt: searchPrompt
-        )
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
+        .navigationBarColor(backgroundColor: .clear)
+        .edgesIgnoringSafeArea(.top)
         .disableAutocorrection(true)
         .textInputAutocapitalization(.never)
-        .scrollContentBackground(.hidden)
-        .toolbarBackground(.visible, for: .navigationBar)
-        .toolbarBackground(theme.colors.surface, for: .navigationBar)
-        .toolbar {
-            if isBrowsingGenres {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
+        .sheet(isPresented: $showFilterSheet) {
+            filterSheetContent
+                .presentationDetents([.height(200)])
+        }
+    }
+
+    @Environment(\.colorScheme) private var colorScheme
+
+    private var headerOverlay: some View {
+        let toolbarHeight: CGFloat = 56
+        let searchBarPadding: CGFloat = theme.spacing.xxSmall * 2
+        let searchBarFieldHeight: CGFloat = 40
+        let safeAreaTop = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?
+            .windows.first?.safeAreaInsets.top ?? 0
+        let totalHeight = toolbarHeight + safeAreaTop + searchBarFieldHeight + searchBarPadding
+        let blurStyle: UIBlurEffect.Style = colorScheme == .dark ? .systemThinMaterialDark : .systemThinMaterialLight
+
+        return ZStack(alignment: .top) {
+            theme.colors.surface
+                .frame(height: totalHeight)
+                .ignoresSafeArea()
+                .allowsHitTesting(false)
+
+            VisualEffectView(effect: UIBlurEffect(style: blurStyle))
+                .frame(height: totalHeight)
+                .opacity(0.8)
+                .ignoresSafeArea()
+                .allowsHitTesting(false)
+
+            VStack(spacing: 0) {
+                searchToolbar
+                searchBar
+                    .padding(.horizontal, theme.spacing.medium)
+                    .padding(.vertical, theme.spacing.xxSmall)
+            }
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private var searchToolbar: some View {
+        GlassToolbar(
+            title: title,
+            opacity: 1.0,
+            leadingIcon: {
+                GlassButton(icon: "chevron.left", action: onBack)
+            },
+            trailingIcon: {
+                if isBrowsingGenres {
+                    GlassButton(icon: "line.3.horizontal.decrease") {
                         showFilterSheet = true
-                    } label: {
-                        Image(systemName: "line.3.horizontal.decrease")
-                            .foregroundColor(theme.colors.onSurface)
                     }
+                } else {
+                    Rectangle()
+                        .fill(Color.clear)
+                        .frame(width: 44)
+                }
+            }
+        )
+    }
+
+    private var searchBar: some View {
+        HStack {
+            Image(systemName: "magnifyingglass")
+                .foregroundColor(theme.colors.onSurfaceVariant)
+
+            TextField(searchPlaceholder, text: $query)
+                .textStyle(theme.typography.bodyMedium)
+                .focused($isSearchFocused)
+                .submitLabel(.search)
+
+            if !query.isEmpty {
+                Button {
+                    query = ""
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(theme.colors.onSurfaceVariant)
                 }
             }
         }
-        .sheet(isPresented: $showFilterSheet) {
-            filterSheetContent
-                .presentationDetents([.medium])
-        }
+        .padding(.horizontal, theme.spacing.small)
+        .padding(.vertical, 10)
+        .background(theme.colors.surfaceVariant.opacity(0.8))
+        .clipShape(RoundedRectangle(cornerRadius: theme.shapes.medium))
+        .overlay(
+            RoundedRectangle(cornerRadius: theme.shapes.medium)
+                .strokeBorder(theme.colors.onSurface.opacity(0.15), lineWidth: 1)
+        )
     }
 
     private var filterSheetContent: some View {
@@ -195,139 +272,139 @@ public struct SearchScreen: View {
         )
         .frame(height: 200)
     }
+
+    private var totalHeaderHeight: CGFloat {
+        let toolbarHeight: CGFloat = 56
+        let searchBarHeight: CGFloat = 44
+        let safeAreaTop = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?
+            .windows.first?.safeAreaInsets.top ?? 0
+        return toolbarHeight + safeAreaTop + searchBarHeight + 16
+    }
 }
 
 #Preview("Loading") {
     ThemedPreview {
-        NavigationStack {
-            SearchScreen(
-                state: .loading,
-                query: .constant(""),
-                searchPrompt: "Search for shows",
-                emptyResultsMessage: "No results found",
-                retryButtonText: "Retry",
-                onShowClicked: { _ in },
-                onRetry: {}
-            )
-            .navigationTitle("Search")
-            .navigationBarTitleDisplayMode(.large)
-        }
+        SearchScreen(
+            title: "Search",
+            state: .loading,
+            query: .constant(""),
+            searchPlaceholder: "Enter Show Title",
+            emptyResultsMessage: "No results found",
+            retryButtonText: "Retry",
+            onShowClicked: { _ in },
+            onRetry: {},
+            onBack: {}
+        )
     }
     .preferredColorScheme(.dark)
 }
 
 #Preview("Browsing Genres") {
     ThemedPreview {
-        NavigationStack {
-            SearchScreen(
-                state: .browsingGenres(
-                    genres: [
-                        SwiftGenreRow(
-                            id: "action",
-                            name: "Action",
-                            subtitle: "High-octane thrills",
-                            shows: [
-                                .init(traktId: 1, title: "Arcane", posterUrl: nil, backdropUrl: nil, inLibrary: false),
-                                .init(traktId: 2, title: "The Penguin", posterUrl: nil, backdropUrl: nil, inLibrary: false),
-                            ]
-                        ),
-                        SwiftGenreRow(
-                            id: "drama",
-                            name: "Drama",
-                            subtitle: "Compelling stories",
-                            shows: [
-                                .init(traktId: 3, title: "Kaos", posterUrl: nil, backdropUrl: nil, inLibrary: false),
-                                .init(traktId: 4, title: "One Piece", posterUrl: nil, backdropUrl: nil, inLibrary: false),
-                            ]
-                        ),
-                    ],
-                    isRefreshing: false
-                ),
-                query: .constant(""),
-                searchPrompt: "Search for shows",
-                emptyResultsMessage: "No results found",
-                retryButtonText: "Retry",
-                onShowClicked: { _ in },
-                onRetry: {}
-            )
-            .navigationTitle("Search")
-            .navigationBarTitleDisplayMode(.large)
-        }
+        SearchScreen(
+            title: "Search",
+            state: .browsingGenres(
+                genres: [
+                    SwiftGenreRow(
+                        id: "action",
+                        name: "Action",
+                        subtitle: "High-octane thrills",
+                        shows: [
+                            .init(traktId: 1, title: "Arcane", posterUrl: nil, backdropUrl: nil, inLibrary: false),
+                            .init(traktId: 2, title: "The Penguin", posterUrl: nil, backdropUrl: nil, inLibrary: false),
+                        ]
+                    ),
+                    SwiftGenreRow(
+                        id: "drama",
+                        name: "Drama",
+                        subtitle: "Compelling stories",
+                        shows: [
+                            .init(traktId: 3, title: "Kaos", posterUrl: nil, backdropUrl: nil, inLibrary: false),
+                            .init(traktId: 4, title: "One Piece", posterUrl: nil, backdropUrl: nil, inLibrary: false),
+                        ]
+                    ),
+                ],
+                isRefreshing: false
+            ),
+            query: .constant(""),
+            searchPlaceholder: "Enter Show Title",
+            emptyResultsMessage: "No results found",
+            retryButtonText: "Retry",
+            selectedCategory: "Popular",
+            categories: ["Popular", "Trending", "Top Rated"],
+            onShowClicked: { _ in },
+            onRetry: {},
+            onBack: {}
+        )
     }
     .preferredColorScheme(.dark)
 }
 
 #Preview("Search Results") {
     ThemedPreview {
-        NavigationStack {
-            SearchScreen(
-                state: .searchResults(
-                    results: [
-                        .init(
-                            tmdbId: 44234, traktId: 44234, title: "The Penguin",
-                            overview: "Follow Oswald Oz Cobb's quest for control.",
-                            status: "Ended",
-                            imageUrl: "https://image.tmdb.org/t/p/w780/VSRmtRlYgd0pBISf7d34TAwWgB.jpg",
-                            year: "2024", voteAverage: 8.5
-                        ),
-                        .init(
-                            tmdbId: 1234, traktId: 1234, title: "Kaos",
-                            overview: "A renegade fighter battles a powerful robot.",
-                            status: "Ended",
-                            imageUrl: "https://image.tmdb.org/t/p/w780/9Piw6Zju39bn3enIDLZzPfjMTBR.jpg",
-                            year: "2024", voteAverage: 7.2
-                        ),
-                    ],
-                    isUpdating: false
-                ),
-                query: .constant("penguin"),
-                searchPrompt: "Search for shows",
-                emptyResultsMessage: "No results found",
-                retryButtonText: "Retry",
-                onShowClicked: { _ in },
-                onRetry: {}
-            )
-            .navigationTitle("Search")
-            .navigationBarTitleDisplayMode(.large)
-        }
+        SearchScreen(
+            title: "Search",
+            state: .searchResults(
+                results: [
+                    .init(
+                        tmdbId: 44234, traktId: 44234, title: "The Penguin",
+                        overview: "Follow Oswald Oz Cobb's quest for control.",
+                        status: "Ended",
+                        imageUrl: "https://image.tmdb.org/t/p/w780/VSRmtRlYgd0pBISf7d34TAwWgB.jpg",
+                        year: "2024", voteAverage: 8.5
+                    ),
+                    .init(
+                        tmdbId: 1234, traktId: 1234, title: "Kaos",
+                        overview: "A renegade fighter battles a powerful robot.",
+                        status: "Ended",
+                        imageUrl: "https://image.tmdb.org/t/p/w780/9Piw6Zju39bn3enIDLZzPfjMTBR.jpg",
+                        year: "2024", voteAverage: 7.2
+                    ),
+                ],
+                isUpdating: false
+            ),
+            query: .constant("penguin"),
+            searchPlaceholder: "Enter Show Title",
+            emptyResultsMessage: "No results found",
+            retryButtonText: "Retry",
+            onShowClicked: { _ in },
+            onRetry: {},
+            onBack: {}
+        )
     }
     .preferredColorScheme(.dark)
 }
 
 #Preview("Empty Results") {
     ThemedPreview {
-        NavigationStack {
-            SearchScreen(
-                state: .empty,
-                query: .constant("xyzabc"),
-                searchPrompt: "Search for shows",
-                emptyResultsMessage: "No results found",
-                retryButtonText: "Retry",
-                onShowClicked: { _ in },
-                onRetry: {}
-            )
-            .navigationTitle("Search")
-            .navigationBarTitleDisplayMode(.large)
-        }
+        SearchScreen(
+            title: "Search",
+            state: .empty,
+            query: .constant("xyzabc"),
+            searchPlaceholder: "Enter Show Title",
+            emptyResultsMessage: "No results found",
+            retryButtonText: "Retry",
+            onShowClicked: { _ in },
+            onRetry: {},
+            onBack: {}
+        )
     }
     .preferredColorScheme(.dark)
 }
 
 #Preview("Error") {
     ThemedPreview {
-        NavigationStack {
-            SearchScreen(
-                state: .error(message: "Something went wrong. Please try again."),
-                query: .constant(""),
-                searchPrompt: "Search for shows",
-                emptyResultsMessage: "No results found",
-                retryButtonText: "Retry",
-                onShowClicked: { _ in },
-                onRetry: {}
-            )
-            .navigationTitle("Search")
-            .navigationBarTitleDisplayMode(.large)
-        }
+        SearchScreen(
+            title: "Search",
+            state: .error(message: "Something went wrong. Please try again."),
+            query: .constant(""),
+            searchPlaceholder: "Enter Show Title",
+            emptyResultsMessage: "No results found",
+            retryButtonText: "Retry",
+            onShowClicked: { _ in },
+            onRetry: {},
+            onBack: {}
+        )
     }
     .preferredColorScheme(.dark)
 }

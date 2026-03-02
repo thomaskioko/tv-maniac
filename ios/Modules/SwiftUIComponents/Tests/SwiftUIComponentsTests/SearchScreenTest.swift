@@ -84,23 +84,21 @@ class SearchScreenTest: SnapshotTestCase {
         selectedCategory: String = "Popular",
         categories: [String] = ["Popular", "Trending", "Top Rated", "Most Watched"]
     ) -> some View {
-        NavigationStack {
-            SearchScreen(
-                state: state,
-                query: .constant(query),
-                searchPrompt: "Search for shows",
-                emptyResultsMessage: "No results found",
-                retryButtonText: "Retry",
-                selectedCategory: selectedCategory,
-                categories: categories,
-                categoryTitle: "Category",
-                onShowClicked: { _ in },
-                onRetry: {},
-                onCategoryChanged: { _ in }
-            )
-            .navigationTitle("Search")
-            .navigationBarTitleDisplayMode(.large)
-        }
+        SearchScreen(
+            title: "Search",
+            state: state,
+            query: .constant(query),
+            searchPlaceholder: "Enter Show Title",
+            emptyResultsMessage: "No results found",
+            retryButtonText: "Retry",
+            selectedCategory: selectedCategory,
+            categories: categories,
+            categoryTitle: "Category",
+            onShowClicked: { _ in },
+            onRetry: {},
+            onBack: {},
+            onCategoryChanged: { _ in }
+        )
         .themedPreview()
     }
 }

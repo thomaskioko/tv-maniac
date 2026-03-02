@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.SearchOff
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.FilterList
@@ -63,6 +64,7 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.missing_api_key
 import com.thomaskioko.tvmaniac.i18n.MR.strings.msg_search_show_hint
 import com.thomaskioko.tvmaniac.i18n.MR.strings.search_no_results
 import com.thomaskioko.tvmaniac.i18n.resolve
+import com.thomaskioko.tvmaniac.search.presenter.BackClicked
 import com.thomaskioko.tvmaniac.search.presenter.CategoryChanged
 import com.thomaskioko.tvmaniac.search.presenter.ClearQuery
 import com.thomaskioko.tvmaniac.search.presenter.MessageShown
@@ -145,6 +147,15 @@ internal fun SearchScreen(
                             .fillMaxWidth()
                             .padding(start = 16.dp),
                     )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { onAction(BackClicked) }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = MaterialTheme.colorScheme.onSurface,
+                        )
+                    }
                 },
                 actions = {
                     if (isBrowsingGenres) {

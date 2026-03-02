@@ -21,12 +21,13 @@ struct SearchTab: View {
     }
 
     var body: some View {
-        let categoryLabels = Array(uiState.categories).map { ($0 as! TvManiac.CategoryItem) }
+        let categoryLabels = Array(uiState.categories).map { $0 as CategoryItem }
 
         SearchScreen(
+            title: String(\.label_search_title),
             state: mapState(uiState.uiState),
             query: searchQueryBinding,
-            searchPrompt: String(\.label_search_placeholder),
+            searchPlaceholder: String(\.label_search_placeholder),
             emptyResultsMessage: String(\.label_search_empty_results),
             retryButtonText: String(\.button_error_retry),
             selectedCategory: categoryLabels.first { $0.category == uiState.selectedCategory }?.label ?? "",
@@ -34,14 +35,13 @@ struct SearchTab: View {
             categoryTitle: uiState.categoryTitle,
             onShowClicked: { id in presenter.dispatch(action: SearchShowClicked(id: id)) },
             onRetry: { presenter.dispatch(action: ReloadShowContent()) },
+            onBack: { presenter.dispatch(action: BackClicked_()) },
             onCategoryChanged: { label in
                 if let item = categoryLabels.first(where: { $0.label == label }) {
                     presenter.dispatch(action: CategoryChanged(category: item.category))
                 }
             }
         )
-        .navigationTitle(String(\.label_search_title))
-        .navigationBarTitleDisplayMode(.large)
     }
 
     private func mapState(_ uiState: SearchUiState) -> SearchScreenState {
@@ -52,7 +52,7 @@ struct SearchTab: View {
             .empty
         case let .searchResults(state):
             .searchResults(
-                results: state.results.map { ($0 as! ShowItem).toSwift() },
+                results: state.results.map { ($0 as ShowItem).toSwift() },
                 isUpdating: state.isUpdating
             )
         case let .browsingGenres(state):
