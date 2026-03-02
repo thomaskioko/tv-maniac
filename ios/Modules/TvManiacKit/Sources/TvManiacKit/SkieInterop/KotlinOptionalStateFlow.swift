@@ -43,7 +43,8 @@ public extension StateObject {
 
     @MainActor
     init<F>(optionalStateFlow: SkieSwiftOptionalStateFlow<F>)
-    where ObjectType == KotlinOptionalStateFlow<F> {
+        where ObjectType == KotlinOptionalStateFlow<F>
+    {
         self.init(wrappedValue: KotlinOptionalStateFlow(optionalStateFlow))
     }
 }
