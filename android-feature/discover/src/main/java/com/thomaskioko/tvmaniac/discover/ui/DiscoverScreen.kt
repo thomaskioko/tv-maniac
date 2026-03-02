@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.discover.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -10,11 +9,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -39,14 +36,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.CircularCard
-import com.thomaskioko.tvmaniac.compose.components.EmptyContent
-import com.thomaskioko.tvmaniac.compose.components.ErrorUi
+import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
 import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
 import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
@@ -73,6 +68,7 @@ import com.thomaskioko.tvmaniac.discover.ui.component.DiscoverHeaderContent
 import com.thomaskioko.tvmaniac.discover.ui.component.HorizontalRowContent
 import com.thomaskioko.tvmaniac.discover.ui.component.NextEpisodesSection
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_empty_content
+import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_error_message
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_retry
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_discover_up_next
 import com.thomaskioko.tvmaniac.i18n.MR.strings.missing_api_key
@@ -132,7 +128,7 @@ internal fun DiscoverScreen(
         val context = LocalContext.current
         when {
             state.isEmpty ->
-                EmptyContent(
+                EmptyStateView(
                     modifier = Modifier
                         .padding(paddingValues.copy(copyBottom = false)),
                     imageVector = Icons.Filled.Movie,
@@ -142,24 +138,11 @@ internal fun DiscoverScreen(
                     onClick = { onAction(RefreshData) },
                 )
 
-            state.showError -> ErrorUi(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .wrapContentSize(Alignment.Center),
-                errorIcon = {
-                    Image(
-                        modifier = Modifier.size(120.dp),
-                        imageVector = Icons.Outlined.ErrorOutline,
-                        colorFilter = ColorFilter.tint(
-                            MaterialTheme.colorScheme.secondary.copy(
-                                alpha = 0.8F,
-                            ),
-                        ),
-                        contentDescription = null,
-                    )
-                },
-                errorMessage = state.message?.message,
-                onRetry = { onAction(RefreshData) },
+            state.showError -> EmptyStateView(
+                imageVector = Icons.Outlined.ErrorOutline,
+                title = state.message?.message ?: generic_error_message.resolve(context),
+                buttonText = generic_retry.resolve(context),
+                onClick = { onAction(RefreshData) },
             )
 
             else -> DiscoverContent(

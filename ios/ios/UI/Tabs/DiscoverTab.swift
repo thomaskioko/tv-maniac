@@ -28,9 +28,9 @@ struct DiscoverTab: View {
         if uiState.isEmpty {
             emptyView
         } else if uiState.showError {
-            FullScreenView(
+            EmptyStateView(
                 systemName: "exclamationmark.arrow.triangle.2.circlepath",
-                message: uiState.message?.message ?? String(\.generic_error_message)
+                title: uiState.message?.message ?? String(\.generic_error_message)
             )
         } else {
             discoverLoadedContent(state: uiState)

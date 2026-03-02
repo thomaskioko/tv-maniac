@@ -33,6 +33,7 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.AutoAwesomeMotion
+import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -65,7 +66,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.CastCard
-import com.thomaskioko.tvmaniac.compose.components.ErrorUi
+import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
 import com.thomaskioko.tvmaniac.compose.components.FilledHorizontalIconButton
 import com.thomaskioko.tvmaniac.compose.components.FilledTextButton
@@ -89,6 +90,7 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_navigate_back
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_show_images
 import com.thomaskioko.tvmaniac.i18n.MR.strings.following
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_error_message
+import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_retry
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_casts
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_providers
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_providers_label
@@ -326,12 +328,12 @@ internal fun LazyColumnContent(
 
         item {
             if (!detailsContent.isRefreshing && detailsContent.showDetails == ShowDetailsModel.Empty && detailsContent.message != null) {
-                ErrorUi(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 16.dp),
-                    errorMessage = generic_error_message.resolve(LocalContext.current),
-                    onRetry = { onAction(ReloadShowDetails) },
+                EmptyStateView(
+                    modifier = Modifier.padding(top = 16.dp),
+                    imageVector = Icons.Outlined.ErrorOutline,
+                    title = generic_error_message.resolve(LocalContext.current),
+                    buttonText = generic_retry.resolve(LocalContext.current),
+                    onClick = { onAction(ReloadShowDetails) },
                 )
             } else {
                 ShowInfoContent(

@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.seasondetails.ui
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -42,7 +41,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -52,7 +50,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.CastCard
-import com.thomaskioko.tvmaniac.compose.components.ErrorUi
+import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
@@ -87,8 +85,10 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_title_mark_previous
 import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_title_mark_previous_seasons
 import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_title_unwatched
 import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_title_watched
+import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_retry
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_casts
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_season_overview
+import com.thomaskioko.tvmaniac.i18n.MR.strings.unexpected_error_retry
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.seasondetails.presenter.ConfirmDialogAction
 import com.thomaskioko.tvmaniac.seasondetails.presenter.DismissDialog
@@ -145,18 +145,11 @@ internal fun SeasonDetailsScreen(
         content = { contentPadding ->
             Box(Modifier.fillMaxSize()) {
                 if (state.showError) {
-                    ErrorUi(
-                        errorIcon = {
-                            Image(
-                                modifier = Modifier.size(120.dp),
-                                imageVector = Icons.Outlined.ErrorOutline,
-                                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F)),
-                                contentDescription = null,
-                            )
-                        },
-                        modifier = Modifier.fillMaxSize(),
-                        errorMessage = state.message?.message,
-                        onRetry = { onAction(ReloadSeasonDetails) },
+                    EmptyStateView(
+                        imageVector = Icons.Outlined.ErrorOutline,
+                        title = state.message?.message ?: unexpected_error_retry.resolve(LocalContext.current),
+                        buttonText = generic_retry.resolve(LocalContext.current),
+                        onClick = { onAction(ReloadSeasonDetails) },
                     )
                 } else {
                     LazyColumnContent(

@@ -211,15 +211,10 @@ struct LibraryTab: View {
     private var emptyView: some View {
         let subtitle = uiState.query.isEmpty ? nil : String(\.label_watchlist_empty_result, parameter: uiState.query)
 
-        CenteredFullScreenView {
-            FullScreenView(
-                systemName: "tray",
-                message: String(\.generic_empty_content),
-                subtitle: subtitle,
-                color: theme.colors.onSurfaceVariant
-            )
-            .frame(maxWidth: .infinity)
-        }
+        EmptyStateView(
+            title: String(\.generic_empty_content),
+            message: subtitle
+        )
     }
 }
 

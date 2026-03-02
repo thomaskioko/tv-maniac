@@ -141,14 +141,9 @@ struct UpNextTab: View {
 
     private var emptyView: some View {
         VStack(spacing: 0) {
-            CenteredFullScreenView {
-                FullScreenView(
-                    systemName: "tray",
-                    message: String(\.label_upnext_empty),
-                    subtitle: nil,
-                    color: theme.colors.onSurfaceVariant
-                )
-            }
+            EmptyStateView(
+                title: String(\.label_upnext_empty)
+            )
         }
     }
 }
