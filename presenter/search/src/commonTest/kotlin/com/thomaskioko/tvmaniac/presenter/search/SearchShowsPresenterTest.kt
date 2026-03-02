@@ -3,15 +3,24 @@ package com.thomaskioko.tvmaniac.presenter.search
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
+import com.thomaskioko.tvmaniac.domain.genre.FetchGenreContentInteractor
 import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
-import com.thomaskioko.tvmaniac.genre.ShowGenresEntity
+import com.thomaskioko.tvmaniac.genre.model.GenreShowCategory
+import com.thomaskioko.tvmaniac.genre.model.GenreWithShowsEntity
+import com.thomaskioko.tvmaniac.genre.model.TraktGenreEntity
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey
+import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
+import com.thomaskioko.tvmaniac.search.presenter.CategoryChanged
 import com.thomaskioko.tvmaniac.search.presenter.ClearQuery
 import com.thomaskioko.tvmaniac.search.presenter.DefaultSearchShowsPresenter
 import com.thomaskioko.tvmaniac.search.presenter.Mapper
 import com.thomaskioko.tvmaniac.search.presenter.QueryChanged
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowState
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowsPresenter
-import com.thomaskioko.tvmaniac.search.presenter.model.ShowGenre
+import com.thomaskioko.tvmaniac.search.presenter.model.CategoryItem
+import com.thomaskioko.tvmaniac.search.presenter.model.GenreRowModel
 import com.thomaskioko.tvmaniac.search.presenter.model.ShowItem
 import com.thomaskioko.tvmaniac.search.testing.FakeSearchRepository
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
@@ -49,7 +58,8 @@ class SearchShowsPresenterTest {
     fun `should return loading state when initialized`() = runTest {
         presenter.state.test {
             awaitItem() shouldBe SearchShowState.Empty
-            awaitItem() shouldBe SearchShowState(isUpdating = false)
+            skipItems(1)
+            awaitItem() shouldBe settledState()
         }
     }
 
@@ -57,7 +67,8 @@ class SearchShowsPresenterTest {
     fun `should return initial state when query is blank`() = runTest {
         presenter.state.test {
             awaitItem() shouldBe SearchShowState.Empty
-            awaitItem() shouldBe SearchShowState(isUpdating = false)
+            skipItems(1)
+            awaitItem() shouldBe settledState()
 
             presenter.dispatch(QueryChanged(""))
             expectNoEvents()
@@ -65,26 +76,27 @@ class SearchShowsPresenterTest {
     }
 
     @Test
-    fun `should return empty state when show content is empty`() = runTest {
+    fun `should return empty state when genre rows are empty`() = runTest {
         presenter.state.test {
             awaitItem() shouldBe SearchShowState.Empty
 
-            setList(emptyList())
+            setGenreRows(emptyList())
+            skipItems(1)
 
-            awaitItem() shouldBe SearchShowState(isUpdating = false)
+            awaitItem() shouldBe settledState()
         }
     }
 
     @Test
-    fun `should return show content when show content is not empty`() = runTest {
+    fun `should return genre rows when genre content is available`() = runTest {
         presenter.state.test {
             awaitItem() shouldBe SearchShowState.Empty
 
-            setList(createGenreShowList())
+            setGenreRows(createGenreWithShowsList())
+            skipItems(1)
 
-            awaitItem() shouldBe SearchShowState(
-                isUpdating = false,
-                genres = genreList(),
+            awaitItem() shouldBe settledState(
+                genreRows = genreRowModelList(),
             )
         }
     }
@@ -104,20 +116,19 @@ class SearchShowsPresenterTest {
         presenter.state.test {
             awaitItem() shouldBe SearchShowState.Empty
 
-            setList(createGenreShowList())
-            awaitItem() shouldBe SearchShowState(
-                isUpdating = false,
-                genres = genreList(),
+            setGenreRows(createGenreWithShowsList())
+            skipItems(1)
+            awaitItem() shouldBe settledState(
+                genreRows = genreRowModelList(),
             )
 
             presenter.dispatch(QueryChanged("test"))
-
             fakeSearchRepository.setSearchResult(emptyList())
+            skipItems(1)
 
-            awaitItem() shouldBe SearchShowState(
-                isUpdating = false,
+            awaitItem() shouldBe settledState(
                 query = "test",
-                genres = genreList(),
+                genreRows = genreRowModelList(),
             )
         }
     }
@@ -127,28 +138,26 @@ class SearchShowsPresenterTest {
         presenter.state.test {
             awaitItem() shouldBe SearchShowState.Empty
 
-            setList(createGenreShowList())
+            setGenreRows(createGenreWithShowsList())
+            skipItems(1)
 
-            awaitItem() shouldBe SearchShowState(
-                isUpdating = false,
-                genres = genreList(),
+            awaitItem() shouldBe settledState(
+                genreRows = genreRowModelList(),
             )
 
-            // Dispatch first query change
             presenter.dispatch(QueryChanged("test"))
+            skipItems(1)
 
-            awaitItem() shouldBe SearchShowState(
-                isUpdating = false,
+            awaitItem() shouldBe settledState(
                 query = "test",
-                genres = genreList(),
+                genreRows = genreRowModelList(),
             )
 
             fakeSearchRepository.setSearchResult(createDiscoverShowList())
 
-            awaitItem() shouldBe SearchShowState(
-                isUpdating = false,
+            awaitItem() shouldBe settledState(
                 query = "test",
-                genres = genreList(),
+                genreRows = genreRowModelList(),
                 searchResults = uiModelList(),
             )
         }
@@ -158,28 +167,23 @@ class SearchShowsPresenterTest {
     fun `should handle transition from valid to short query to empty query`() = runTest {
         presenter.state.test {
             awaitItem() shouldBe SearchShowState.Empty
-            setList(emptyList())
+            setGenreRows(emptyList())
+            skipItems(1)
 
-            awaitItem() shouldBe SearchShowState(
-                isUpdating = false,
-            )
+            awaitItem() shouldBe settledState()
 
             presenter.dispatch(QueryChanged("test"))
-
             fakeSearchRepository.setSearchResult(emptyList())
+            skipItems(1)
 
-            awaitItem() shouldBe SearchShowState(
-                isUpdating = false,
-                query = "test",
-            )
+            awaitItem() shouldBe settledState(query = "test")
 
             presenter.dispatch(QueryChanged("te"))
             expectNoEvents()
 
             presenter.dispatch(QueryChanged(""))
 
-            awaitItem() shouldBe SearchShowState(
-                isUpdating = false,
+            awaitItem() shouldBe settledState(
                 query = "",
                 searchResults = persistentListOf(),
             )
@@ -190,22 +194,20 @@ class SearchShowsPresenterTest {
     fun `should handle transition from short to valid query`() = runTest {
         presenter.state.test {
             awaitItem() shouldBe SearchShowState.Empty
+            skipItems(1)
 
             presenter.dispatch(QueryChanged("ab"))
 
-            awaitItem() shouldBe SearchShowState(
-                isUpdating = false,
-            )
+            awaitItem() shouldBe settledState()
 
-            // Valid query
             presenter.dispatch(QueryChanged("abc"))
+            skipItems(1)
 
-            awaitItem() shouldBe SearchShowState(isUpdating = false, query = "abc")
+            awaitItem() shouldBe settledState(query = "abc")
 
             fakeSearchRepository.setSearchResult(createDiscoverShowList())
 
-            awaitItem() shouldBe SearchShowState(
-                isUpdating = false,
+            awaitItem() shouldBe settledState(
                 query = "abc",
                 searchResults = uiModelList(),
             )
@@ -216,32 +218,30 @@ class SearchShowsPresenterTest {
     fun `should handle empty short and valid query transitions correctly`() = runTest {
         presenter.state.test {
             awaitItem() shouldBe SearchShowState.Empty
+            skipItems(1)
 
             presenter.dispatch(QueryChanged(""))
             expectNoEvents()
 
             presenter.dispatch(QueryChanged("ab"))
 
-            awaitItem() shouldBe SearchShowState(
-                isUpdating = false,
-            )
+            awaitItem() shouldBe settledState()
 
             presenter.dispatch(QueryChanged("test"))
+            skipItems(1)
 
-            awaitItem() shouldBe SearchShowState(isUpdating = false, query = "test")
+            awaitItem() shouldBe settledState(query = "test")
 
             fakeSearchRepository.setSearchResult(createDiscoverShowList())
 
-            awaitItem() shouldBe SearchShowState(
-                isUpdating = false,
+            awaitItem() shouldBe settledState(
                 query = "test",
                 searchResults = uiModelList(),
             )
 
             presenter.dispatch(QueryChanged(""))
 
-            awaitItem() shouldBe SearchShowState(
-                isUpdating = false,
+            awaitItem() shouldBe settledState(
                 query = "",
                 searchResults = persistentListOf(),
             )
@@ -249,43 +249,101 @@ class SearchShowsPresenterTest {
     }
 
     @Test
-    fun `should update state when on clear query and show content is available`() = runTest {
+    fun `should update state when on clear query and genre rows are available`() = runTest {
         presenter.state.test {
             awaitItem() shouldBe SearchShowState.Empty
-            setList(createGenreShowList())
+            setGenreRows(createGenreWithShowsList())
+            skipItems(1)
 
-            awaitItem() shouldBe SearchShowState(
-                isUpdating = false,
-                genres = genreList(),
+            awaitItem() shouldBe settledState(
+                genreRows = genreRowModelList(),
             )
 
             presenter.dispatch(QueryChanged("test"))
+            skipItems(1)
 
-            awaitItem() shouldBe SearchShowState(
-                isUpdating = false,
+            awaitItem() shouldBe settledState(
                 query = "test",
-                genres = genreList(),
+                genreRows = genreRowModelList(),
             )
 
             fakeSearchRepository.setSearchResult(createDiscoverShowList())
 
-            awaitItem() shouldBe SearchShowState(
-                isUpdating = false,
+            awaitItem() shouldBe settledState(
                 query = "test",
-                genres = genreList(),
+                genreRows = genreRowModelList(),
                 searchResults = uiModelList(),
             )
 
             presenter.dispatch(ClearQuery)
 
-            awaitItem() shouldBe SearchShowState(
-                isUpdating = false,
+            awaitItem() shouldBe settledState(
                 query = "",
                 searchResults = persistentListOf(),
-                genres = genreList(),
+                genreRows = genreRowModelList(),
             )
         }
     }
+
+    @Test
+    fun `should update selected category when category is changed`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe SearchShowState.Empty
+
+            setGenreRows(createGenreWithShowsList())
+            skipItems(1)
+
+            awaitItem() shouldBe settledState(
+                genreRows = genreRowModelList(),
+            )
+
+            genreRepository.setGenreShowCategory(GenreShowCategory.TRENDING)
+            skipItems(2)
+
+            awaitItem() shouldBe settledState(
+                genreRows = genreRowModelList(),
+                selectedCategory = GenreShowCategory.TRENDING,
+            )
+        }
+    }
+
+    @Test
+    fun `should display category-specific genre rows when filter changes`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe SearchShowState.Empty
+
+            setGenreRows(createGenreWithShowsForCategory("Loki", 84958))
+            skipItems(1)
+
+            awaitItem() shouldBe settledState(
+                genreRows = toExpectedGenreRowModels("Loki", 84958),
+            )
+
+            presenter.dispatch(CategoryChanged(GenreShowCategory.TRENDING))
+            setGenreRows(createGenreWithShowsForCategory("Breaking Bad", 1388))
+            skipItems(2)
+
+            awaitItem() shouldBe settledState(
+                selectedCategory = GenreShowCategory.TRENDING,
+                genreRows = toExpectedGenreRowModels("Breaking Bad", 1388),
+            )
+        }
+    }
+
+    private fun settledState(
+        query: String = "",
+        genreRows: kotlinx.collections.immutable.ImmutableList<GenreRowModel> = persistentListOf(),
+        searchResults: kotlinx.collections.immutable.ImmutableList<ShowItem> = persistentListOf(),
+        selectedCategory: GenreShowCategory = GenreShowCategory.POPULAR,
+    ) = SearchShowState(
+        query = query,
+        isRefreshing = false,
+        genreRows = genreRows,
+        searchResults = searchResults,
+        selectedCategory = selectedCategory,
+        categoryTitle = expectedCategoryTitle,
+        categories = expectedCategories,
+    )
 
     private fun buildPresenter(
         lifecycle: LifecycleRegistry = LifecycleRegistry(),
@@ -295,13 +353,25 @@ class SearchShowsPresenterTest {
         onNavigateToGenre = {},
         searchRepository = fakeSearchRepository,
         genreRepository = genreRepository,
+        fetchGenreContentInteractor = FetchGenreContentInteractor(
+            repository = genreRepository,
+            dispatchers = AppCoroutineDispatchers(
+                io = testDispatcher,
+                computation = testDispatcher,
+                databaseWrite = testDispatcher,
+                databaseRead = testDispatcher,
+                main = testDispatcher,
+            ),
+        ),
+        logger = FakeLogger(),
         mapper = Mapper(
             formatterUtil = FakeFormatterUtil(),
+            localizer = FakeLocalizer(),
         ),
     )
 
-    private suspend fun setList(list: List<ShowGenresEntity>) {
-        genreRepository.setGenreResult(list)
+    private suspend fun setGenreRows(list: List<GenreWithShowsEntity>) {
+        genreRepository.setGenreWithShowsResult(list)
     }
 
     private fun createDiscoverShowList(size: Int = LIST_SIZE) = List(size) {
@@ -334,22 +404,83 @@ class SearchShowsPresenterTest {
         }
         .toImmutableList()
 
-    private fun createGenreShowList(size: Int = LIST_SIZE) = List(size) {
-        ShowGenresEntity(
-            id = 84958,
-            name = "Horror",
-            posterUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        )
-    }
-        .toImmutableList()
+    private fun createGenreWithShowsList() = listOf(
+        GenreWithShowsEntity(
+            genre = TraktGenreEntity(slug = "horror", name = "Horror"),
+            shows = List(LIST_SIZE) {
+                ShowEntity(
+                    traktId = 84958,
+                    tmdbId = 84958,
+                    title = "Loki",
+                    posterPath = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+                    inLibrary = false,
+                )
+            },
+        ),
+    )
 
-    private fun genreList(size: Int = LIST_SIZE) = List(size) {
-        ShowGenre(
-            id = 84958,
+    private fun genreRowModelList() = listOf(
+        GenreRowModel(
+            slug = "horror",
             name = "Horror",
-            posterUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        )
+            subtitle = FakeLocalizer().getString(StringResourceKey.GenreDescHorror),
+            shows = List(LIST_SIZE) {
+                ShowItem(
+                    tmdbId = 84958,
+                    traktId = 84958,
+                    title = "Loki",
+                    posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+                    inLibrary = false,
+                )
+            }.toImmutableList(),
+        ),
+    ).toImmutableList()
+
+    private val fakeLocalizer = FakeLocalizer()
+    private val expectedCategoryTitle = fakeLocalizer.getString(
+        StringResourceKey.LabelGenreCategoryTitle,
+    )
+    private val expectedCategories = GenreShowCategory.entries.map { category ->
+        val key = when (category) {
+            GenreShowCategory.POPULAR -> StringResourceKey.LabelGenreCategoryPopular
+            GenreShowCategory.TRENDING -> StringResourceKey.LabelGenreCategoryTrending
+            GenreShowCategory.TOP_RATED -> StringResourceKey.LabelGenreCategoryTopRated
+            GenreShowCategory.MOST_WATCHED -> StringResourceKey.LabelGenreCategoryMostWatched
+        }
+        CategoryItem(category = category, label = fakeLocalizer.getString(key))
     }.toImmutableList()
+
+    private fun createGenreWithShowsForCategory(title: String, id: Long) = listOf(
+        GenreWithShowsEntity(
+            genre = TraktGenreEntity(slug = "horror", name = "Horror"),
+            shows = List(LIST_SIZE) {
+                ShowEntity(
+                    traktId = id,
+                    tmdbId = id,
+                    title = title,
+                    posterPath = "/poster.jpg",
+                    inLibrary = false,
+                )
+            },
+        ),
+    )
+
+    private fun toExpectedGenreRowModels(title: String, id: Long) = listOf(
+        GenreRowModel(
+            slug = "horror",
+            name = "Horror",
+            subtitle = FakeLocalizer().getString(StringResourceKey.GenreDescHorror),
+            shows = List(LIST_SIZE) {
+                ShowItem(
+                    tmdbId = id,
+                    traktId = id,
+                    title = title,
+                    posterImageUrl = "/poster.jpg",
+                    inLibrary = false,
+                )
+            }.toImmutableList(),
+        ),
+    ).toImmutableList()
 
     companion object {
         const val LIST_SIZE = 5
