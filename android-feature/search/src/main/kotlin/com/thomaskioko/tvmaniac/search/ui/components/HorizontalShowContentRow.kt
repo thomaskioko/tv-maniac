@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.search.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
@@ -26,6 +25,7 @@ internal fun HorizontalShowContentRow(
     title: String,
     tvShows: ImmutableList<ShowItem>?,
     modifier: Modifier = Modifier,
+    description: String? = null,
     onItemClicked: (Long) -> Unit,
 ) {
     val lazyListState = rememberLazyListState()
@@ -34,7 +34,8 @@ internal fun HorizontalShowContentRow(
     Column(modifier = modifier) {
         BoxTextItems(
             modifier = Modifier.padding(vertical = 8.dp),
-            title = title,
+            title = "$title >",
+            subtitle = description,
         )
 
         LazyRow(
@@ -49,9 +50,8 @@ internal fun HorizontalShowContentRow(
                 PosterBackdropCard(
                     imageUrl = tvShow.posterImageUrl,
                     title = tvShow.title,
-                    modifier = Modifier
-                        .width(260.dp)
-                        .heightIn(160.dp, 220.dp),
+                    imageWidth = 240.dp,
+                    aspectRatio = 4 / 3f,
                     onClick = { onItemClicked(tvShow.traktId) },
                 )
             }
@@ -70,14 +70,15 @@ private fun HorizontalRowContentPreview() {
                         traktId = 84958,
                         tmdbId = 84958,
                         title = "Loki",
-                        posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-                        overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” an ",
+                        posterImageUrl = null,
+                        overview = "After stealing the Tesseract during the events of Avengers: Endgame.",
                         status = "Ended",
                         inLibrary = false,
                     )
                 }.toImmutableList(),
                 onItemClicked = {},
                 title = "Being watched",
+                description = "Non-stop thrill and action",
             )
         }
     }
