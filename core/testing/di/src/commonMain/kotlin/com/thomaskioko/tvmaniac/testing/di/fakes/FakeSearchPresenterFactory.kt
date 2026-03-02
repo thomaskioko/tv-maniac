@@ -19,6 +19,7 @@ public class FakeSearchPresenterFactory : SearchShowsPresenter.Factory {
         componentContext: ComponentContext,
         onNavigateToShowDetails: (id: Long) -> Unit,
         onNavigateToGenre: (id: Long) -> Unit,
+        onNavigateBack: () -> Unit,
     ): SearchShowsPresenter = FakeSearchShowsPresenter()
 }
 
