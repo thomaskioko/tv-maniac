@@ -53,3 +53,13 @@ WHERE COALESCE(t.backdrop_path, t.poster_path) IS NOT NULL
   AND fs.pending_action != 'DELETE'
 ORDER BY fs.followed_at DESC
 LIMIT 1;
+
+observeWatchlistBackdrop:
+SELECT
+    COALESCE(t.backdrop_path, t.poster_path) AS image_url
+FROM followed_shows fs
+INNER JOIN tvshow t ON fs.trakt_id = t.trakt_id
+WHERE COALESCE(t.backdrop_path, t.poster_path) IS NOT NULL
+  AND fs.pending_action != 'DELETE'
+ORDER BY fs.followed_at DESC
+LIMIT 1;
