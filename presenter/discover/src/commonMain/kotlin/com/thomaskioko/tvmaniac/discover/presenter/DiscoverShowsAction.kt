@@ -20,7 +20,11 @@ public data class MessageShown(val id: Long) : DiscoverShowAction
 
 public data class UpdateShowInLibrary(val traktId: Long, val inLibrary: Boolean) : DiscoverShowAction
 
-public data class NextEpisodeClicked(val showTraktId: Long, val episodeId: Long) : DiscoverShowAction
+public data class NextEpisodeClicked(
+    val showTraktId: Long,
+    val seasonId: Long,
+    val seasonNumber: Long,
+) : DiscoverShowAction
 
 public data class MarkNextEpisodeWatched(
     val showTraktId: Long,
@@ -36,5 +40,7 @@ public data class OpenSeasonFromUpNext(
     val seasonId: Long,
     val seasonNumber: Long,
 ) : DiscoverShowAction
+
+public data class OpenShowFromUpNext(val showTraktId: Long) : DiscoverShowAction
 
 public data object SearchIconClicked : DiscoverShowAction

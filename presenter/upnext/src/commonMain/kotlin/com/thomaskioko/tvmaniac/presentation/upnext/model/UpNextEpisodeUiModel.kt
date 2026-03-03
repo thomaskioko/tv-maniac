@@ -22,4 +22,6 @@ public data class UpNextEpisodeUiModel(
     val formattedEpisodeNumber: String,
     val remainingEpisodes: Long,
     val formattedRuntime: String?,
+    val rating: Double? = null,
+    val voteCount: Long? = null,
 )

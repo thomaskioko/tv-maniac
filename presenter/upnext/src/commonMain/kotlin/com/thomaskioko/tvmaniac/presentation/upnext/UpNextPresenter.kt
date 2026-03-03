@@ -11,6 +11,7 @@ public interface UpNextPresenter {
         public operator fun invoke(
             componentContext: ComponentContext,
             navigateToShowDetails: (showTraktId: Long) -> Unit,
+            navigateToSeasonDetails: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
         ): UpNextPresenter
     }
 }

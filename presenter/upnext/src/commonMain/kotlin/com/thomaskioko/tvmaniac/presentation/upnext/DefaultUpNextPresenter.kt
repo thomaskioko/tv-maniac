@@ -12,6 +12,7 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.upnext.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.RefreshUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.model.UpNextSortOption
+import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import com.thomaskioko.tvmaniac.presentation.upnext.model.UpNextEpisodeUiModel
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
@@ -37,9 +38,11 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 public class DefaultUpNextPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val navigateToShowDetails: (showTraktId: Long) -> Unit,
+    @Assisted private val navigateToSeasonDetails: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
     private val refreshUpNextInteractor: RefreshUpNextInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val upNextRepository: UpNextRepository,
+    private val followedShowsRepository: FollowedShowsRepository,
     private val traktAuthRepository: TraktAuthRepository,
     private val logger: Logger,
     private val coroutineScope: CoroutineScope = componentContext.coroutineScope(),
@@ -77,11 +80,14 @@ public class DefaultUpNextPresenter(
 
     override fun dispatch(action: UpNextAction) {
         when (action) {
-            is UpNextShowClicked -> navigateToShowDetails(action.showTraktId)
+            is UpNextShowClicked -> navigateToSeasonFromEpisode(action.showTraktId)
             is MarkWatched -> markEpisodeWatched(action)
             is UpNextChangeSortOption -> changeSortOption(action.sortOption)
             is RefreshUpNext -> refreshUpNext(isUserInitiated = true)
             is UpNextMessageShown -> clearMessage(action.id)
+            is OpenShow -> navigateToShowDetails(action.showTraktId)
+            is OpenSeason -> navigateToSeasonDetails(action.showTraktId, action.seasonId, action.seasonNumber)
+            is UnfollowShow -> unfollowShow(action.showTraktId)
         }
     }
 
@@ -132,6 +138,19 @@ public class DefaultUpNextPresenter(
         }
     }
 
+    private fun navigateToSeasonFromEpisode(showTraktId: Long) {
+        val episode = state.value.episodes.firstOrNull { it.showTraktId == showTraktId }
+        if (episode?.seasonId != null && episode.seasonNumber != null) {
+            navigateToSeasonDetails(showTraktId, episode.seasonId, episode.seasonNumber)
+        }
+    }
+
+    private fun unfollowShow(showTraktId: Long) {
+        coroutineScope.launch {
+            followedShowsRepository.removeFollowedShow(showTraktId)
+        }
+    }
+
     private fun clearMessage(id: Long) {
         coroutineScope.launch {
             uiMessageManager.clearMessage(id)
@@ -164,6 +183,8 @@ private fun NextEpisodeWithShow.toUiModel(): UpNextEpisodeUiModel {
         formattedEpisodeNumber = "S${season}E$episode",
         remainingEpisodes = totalCount - watchedCount,
         formattedRuntime = runtime?.let { "${it}m" },
+        rating = rating,
+        voteCount = voteCount,
     )
 }
 
@@ -174,10 +195,12 @@ public class DefaultUpNextPresenterFactory(
     private val presenter: (
         componentContext: ComponentContext,
         navigateToShowDetails: (showTraktId: Long) -> Unit,
+        navigateToSeasonDetails: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
     ) -> UpNextPresenter,
 ) : UpNextPresenter.Factory {
     override fun invoke(
         componentContext: ComponentContext,
         navigateToShowDetails: (showTraktId: Long) -> Unit,
-    ): UpNextPresenter = presenter(componentContext, navigateToShowDetails)
+        navigateToSeasonDetails: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
+    ): UpNextPresenter = presenter(componentContext, navigateToShowDetails, navigateToSeasonDetails)
 }
