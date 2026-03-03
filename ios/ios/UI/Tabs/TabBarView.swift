@@ -9,6 +9,7 @@ public struct TabBarView: View {
     @StateObject @KotlinStateFlow private var stack: ChildStack<AnyObject, HomePresenterChild>
     @StateObject @KotlinOptionalStateFlow private var avatarUrl: String?
     @State private var selectedTab: NavigationTab = .discover
+    @State private var avatarImage: UIImage?
     @EnvironmentObject private var appDelegate: AppDelegate
 
     init(presenter: HomePresenter) {
@@ -23,7 +24,7 @@ public struct TabBarView: View {
                 TabContentView(
                     child: stack.items.first(where: { tabForChild($0.instance) == tab })?.instance,
                     tab: tab,
-                    avatarUrl: tab == .profile ? avatarUrl as String? : nil
+                    avatarImage: tab == .profile ? avatarImage : nil
                 ) { child in
                     switch onEnum(of: child) {
                     case let .discover(screen):
@@ -45,6 +46,9 @@ public struct TabBarView: View {
         .tint(theme.colors.accent)
         .toolbarBackground(theme.colors.surface, for: .tabBar)
         .toolbarBackground(.visible, for: .tabBar)
+        .task(id: avatarUrl) {
+            await loadAvatar()
+        }
         .onChange(of: selectedTab) { _, newTab in
             switch newTab {
             case .discover: presenter.onDiscoverClicked()
@@ -57,6 +61,26 @@ public struct TabBarView: View {
             if selectedTab != newTab {
                 selectedTab = newTab
             }
+        }
+    }
+
+    private func loadAvatar() async {
+        guard let avatarUrl, !avatarUrl.isEmpty, let url = URL(string: avatarUrl) else {
+            avatarImage = nil
+            return
+        }
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            guard let downloaded = UIImage(data: data) else { return }
+            let pointSize = CGSize(width: 25, height: 25)
+            let renderer = UIGraphicsImageRenderer(size: pointSize)
+            avatarImage = renderer.image { _ in
+                let rect = CGRect(origin: .zero, size: pointSize)
+                UIBezierPath(ovalIn: rect).addClip()
+                downloaded.draw(in: rect)
+            }
+        } catch {
+            avatarImage = nil
         }
     }
 
