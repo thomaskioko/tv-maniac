@@ -31,4 +31,5 @@ public enum class RequestTypeConfig(public val requestId: Long, public val durat
     UPNEXT_FULL_SYNC(28, 1.hours),
     TRAKT_GENRES(29, 7.days),
     GENRE_SHOWS(30, 3.days),
+    CALENDAR_SHOWS(31, 1.days),
 }
