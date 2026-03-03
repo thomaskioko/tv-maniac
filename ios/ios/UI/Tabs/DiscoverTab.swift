@@ -104,66 +104,70 @@ struct DiscoverTab: View {
         }
         .toastView(toast: $toast)
         .sheet(item: $selectedEpisode) { episode in
-            EpisodeDetailSheetContent(
-                episode: EpisodeDetailInfo(
-                    title: episode.showName,
-                    imageUrl: episode.imageUrl,
-                    episodeInfo: {
-                        var text = episode.episodeNumber
-                        if let runtime = episode.runtime {
-                            text += " \u{2022} \(runtime)"
-                        }
-                        return text
-                    }(),
-                    overview: episode.overview.isEmpty ? nil : episode.overview,
-                    rating: episode.rating,
-                    voteCount: episode.voteCount
-                )
-            ) {
-                SheetActionItem(
-                    icon: "checkmark.circle",
-                    label: String(\.menu_mark_watched),
-                    action: {
-                        presenter.dispatch(action: MarkNextEpisodeWatched(
-                            showTraktId: episode.showTraktId,
-                            episodeId: episode.episodeId,
-                            seasonNumber: episode.seasonNumber,
-                            episodeNumber: episode.episodeNumberValue
-                        ))
-                        selectedEpisode = nil
-                    }
-                )
-                SheetActionItem(
-                    icon: "tv",
-                    label: String(\.menu_open_show),
-                    action: {
-                        presenter.dispatch(action: OpenShowFromUpNext(showTraktId: episode.showTraktId))
-                        selectedEpisode = nil
-                    }
-                )
-                SheetActionItem(
-                    icon: "list.bullet",
-                    label: String(\.menu_open_season),
-                    action: {
-                        presenter.dispatch(action: OpenSeasonFromUpNext(
-                            showTraktId: episode.showTraktId,
-                            seasonId: episode.seasonId,
-                            seasonNumber: episode.seasonNumber
-                        ))
-                        selectedEpisode = nil
-                    }
-                )
-                SheetActionItem(
-                    icon: "minus.circle",
-                    label: String(\.menu_unfollow_show),
-                    action: {
-                        presenter.dispatch(action: UnfollowShowFromUpNext(showTraktId: episode.showTraktId))
-                        selectedEpisode = nil
-                    }
-                )
-            }
-            .presentationDetents([.large])
+            episodeDetailSheet(episode: episode)
         }
+    }
+
+    private func episodeDetailSheet(episode: SwiftNextEpisode) -> some View {
+        EpisodeDetailSheetContent(
+            episode: EpisodeDetailInfo(
+                title: episode.showName,
+                imageUrl: episode.imageUrl,
+                episodeInfo: {
+                    var text = episode.episodeNumber
+                    if let runtime = episode.runtime {
+                        text += " \u{2022} \(runtime)"
+                    }
+                    return text
+                }(),
+                overview: episode.overview.isEmpty ? nil : episode.overview,
+                rating: episode.rating,
+                voteCount: episode.voteCount
+            )
+        ) {
+            SheetActionItem(
+                icon: "checkmark.circle",
+                label: String(\.menu_mark_watched),
+                action: {
+                    presenter.dispatch(action: MarkNextEpisodeWatched(
+                        showTraktId: episode.showTraktId,
+                        episodeId: episode.episodeId,
+                        seasonNumber: episode.seasonNumber,
+                        episodeNumber: episode.episodeNumberValue
+                    ))
+                    selectedEpisode = nil
+                }
+            )
+            SheetActionItem(
+                icon: "tv",
+                label: String(\.menu_open_show),
+                action: {
+                    presenter.dispatch(action: OpenShowFromUpNext(showTraktId: episode.showTraktId))
+                    selectedEpisode = nil
+                }
+            )
+            SheetActionItem(
+                icon: "list.bullet",
+                label: String(\.menu_open_season),
+                action: {
+                    presenter.dispatch(action: OpenSeasonFromUpNext(
+                        showTraktId: episode.showTraktId,
+                        seasonId: episode.seasonId,
+                        seasonNumber: episode.seasonNumber
+                    ))
+                    selectedEpisode = nil
+                }
+            )
+            SheetActionItem(
+                icon: "minus.circle",
+                label: String(\.menu_unfollow_show),
+                action: {
+                    presenter.dispatch(action: UnfollowShowFromUpNext(showTraktId: episode.showTraktId))
+                    selectedEpisode = nil
+                }
+            )
+        }
+        .presentationDetents([.large])
     }
 
     @ViewBuilder

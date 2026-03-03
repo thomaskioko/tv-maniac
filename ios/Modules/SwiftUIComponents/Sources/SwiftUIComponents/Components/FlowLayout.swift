@@ -76,11 +76,9 @@ public struct FlowLayout<Item, ItemView: View>: View {
         var rowHeight: CGFloat = 0
 
         return ZStack(alignment: .topLeading) {
-            ForEach(Array(items.enumerated()), id: \.offset) {
-                itemIndex, item in
+            ForEach(Array(items.enumerated()), id: \.offset) { itemIndex, item in
                 itemView(item)
-                    .alignmentGuide(.leading) {
-                        itemDimensions in
+                    .alignmentGuide(.leading) { itemDimensions in
                         // Reset values on first item
                         if itemIndex == 0 {
                             position = .zero
@@ -107,8 +105,7 @@ public struct FlowLayout<Item, ItemView: View>: View {
 
                         return newLeading
                     }
-                    .alignmentGuide(.top) {
-                        itemDimensions in
+                    .alignmentGuide(.top) { itemDimensions in
                         let verticalOffset: CGFloat = switch verticalAlignment {
                         case .top: 0
                         case .center: (rowHeight - itemDimensions.height) / 2
