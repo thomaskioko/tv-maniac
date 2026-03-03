@@ -18,6 +18,8 @@ public data class TraktCalendarEpisode(
     @SerialName("ids") val ids: EpisodeIds,
     @SerialName("overview") val overview: String? = null,
     @SerialName("runtime") val runtime: Int? = null,
+    @SerialName("rating") val rating: Double? = null,
+    @SerialName("votes") val votes: Int? = null,
 )
 
 @Serializable
