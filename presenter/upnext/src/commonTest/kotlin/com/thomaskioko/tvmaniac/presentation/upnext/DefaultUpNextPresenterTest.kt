@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.domain.upnext.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.RefreshUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.model.UpNextSortOption
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
+import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
@@ -32,6 +33,7 @@ internal class DefaultUpNextPresenterTest {
     private val testDispatcher = StandardTestDispatcher()
     private val episodeRepository = FakeEpisodeRepository()
     private val upNextRepository = FakeUpNextRepository()
+    private val followedShowsRepository = FakeFollowedShowsRepository()
     private val traktAuthRepository = FakeTraktAuthRepository()
     private val dateTimeProvider = FakeDateTimeProvider()
     private val datastoreRepository = FakeDatastoreRepository()
@@ -226,15 +228,26 @@ internal class DefaultUpNextPresenterTest {
     }
 
     @Test
-    fun `should navigate to show details given ShowClicked action is dispatched`() = runTest {
-        var navigatedToShowId: Long? = null
+    fun `should navigate to season details given ShowClicked action is dispatched`() = runTest {
+        var navigatedParams: Triple<Long, Long, Long>? = null
+        val episode = createTestNextEpisode(showTraktId = 999, showName = "Test Show")
+        upNextRepository.setNextEpisodesForWatchlist(listOf(episode))
+
         val presenterWithNav = createPresenter(
-            navigateToShowDetails = { navigatedToShowId = it },
+            navigateToSeasonDetails = { showTraktId, seasonId, seasonNumber ->
+                navigatedParams = Triple(showTraktId, seasonId, seasonNumber)
+            },
         )
 
-        presenterWithNav.dispatch(UpNextShowClicked(showTraktId = 999L))
+        presenterWithNav.state.test {
+            skipItems(1)
+            awaitItem()
 
-        navigatedToShowId shouldBe 999L
+            presenterWithNav.dispatch(UpNextShowClicked(showTraktId = 999L))
+
+            navigatedParams shouldBe Triple(999L, 9990L, 1L)
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test
@@ -382,6 +395,7 @@ internal class DefaultUpNextPresenterTest {
 
     private fun createPresenter(
         navigateToShowDetails: (Long) -> Unit = { },
+        navigateToSeasonDetails: (Long, Long, Long) -> Unit = { _, _, _ -> },
     ): UpNextPresenter {
         val observeUpNextInteractor = ObserveUpNextInteractor(
             repository = upNextRepository,
@@ -400,10 +414,12 @@ internal class DefaultUpNextPresenterTest {
         return DefaultUpNextPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             navigateToShowDetails = navigateToShowDetails,
+            navigateToSeasonDetails = navigateToSeasonDetails,
             observeUpNextInteractor = observeUpNextInteractor,
             refreshUpNextInteractor = refreshUpNextInteractor,
             markEpisodeWatchedInteractor = markEpisodeWatchedInteractor,
             upNextRepository = upNextRepository,
+            followedShowsRepository = followedShowsRepository,
             traktAuthRepository = traktAuthRepository,
             logger = logger,
         )

@@ -266,19 +266,17 @@ class DiscoverShowsPresenterTest {
     }
 
     @Test
-    fun `should handle next episode click navigation`() = runTest {
-        var navigatedShowId: Long? = null
-        var navigatedEpisodeId: Long? = null
+    fun `should navigate to season given next episode is clicked`() = runTest {
+        var navigatedParams: Triple<Long, Long, Long>? = null
 
         val testPresenter = DefaultDiscoverShowsPresenter(
             componentContext = DefaultComponentContext(lifecycle = LifecycleRegistry()),
             onNavigateToShowDetails = {},
             onNavigateToMore = {},
-            onNavigateToEpisode = { showId, episodeId ->
-                navigatedShowId = showId
-                navigatedEpisodeId = episodeId
+            onNavigateToEpisode = { _, _ -> },
+            onNavigateToSeason = { showId, seasonId, seasonNumber ->
+                navigatedParams = Triple(showId, seasonId, seasonNumber)
             },
-            onNavigateToSeason = { _, _, _ -> },
             onNavigateToUpNext = {},
             onNavigateToSearch = {},
             discoverShowsInteractor = DiscoverShowsInteractor(
@@ -323,10 +321,9 @@ class DiscoverShowsPresenterTest {
             logger = FakeLogger(),
         )
 
-        testPresenter.dispatch(NextEpisodeClicked(showTraktId = 123L, episodeId = 456L))
+        testPresenter.dispatch(NextEpisodeClicked(showTraktId = 123L, seasonId = 10L, seasonNumber = 2L))
 
-        navigatedShowId shouldBe 123L
-        navigatedEpisodeId shouldBe 456L
+        navigatedParams shouldBe Triple(123L, 10L, 2L)
     }
 
     private suspend fun setList(list: List<ShowEntity>) {
