@@ -1,0 +1,22 @@
+-- Migration 20: Add calendar_entry table
+-- Stores upcoming episode air dates for followed shows from Trakt calendar API
+
+CREATE TABLE IF NOT EXISTS calendar_entry (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    show_trakt_id INTEGER NOT NULL,
+    episode_trakt_id INTEGER NOT NULL,
+    season_number INTEGER NOT NULL,
+    episode_number INTEGER NOT NULL,
+    episode_title TEXT,
+    air_date INTEGER NOT NULL,
+    show_title TEXT NOT NULL,
+    show_poster_path TEXT,
+    network TEXT,
+    runtime INTEGER,
+    overview TEXT,
+    rating REAL,
+    votes INTEGER,
+    UNIQUE(show_trakt_id, season_number, episode_number)
+);
+
+CREATE INDEX IF NOT EXISTS idx_calendar_air_date ON calendar_entry(air_date);
