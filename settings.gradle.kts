@@ -197,6 +197,7 @@ include(
     ":i18n:testing",
     ":navigation:api",
     ":navigation:implementation",
+    ":presenter:calendar",
     ":presenter:debug",
     ":presenter:discover",
     ":presenter:home",
