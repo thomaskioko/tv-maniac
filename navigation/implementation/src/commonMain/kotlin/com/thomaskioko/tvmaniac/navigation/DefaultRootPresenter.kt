@@ -236,6 +236,17 @@ public class DefaultRootPresenter(
                         },
                         onNavigateToSearch = { navigator.pushNew(RootDestinationConfig.Search) },
                         onSettingsClicked = { navigator.pushNew(RootDestinationConfig.Settings) },
+                        onSeasonClicked = { showTraktId, seasonId, seasonNumber ->
+                            navigator.pushNew(
+                                RootDestinationConfig.SeasonDetails(
+                                    param = SeasonDetailsUiParam(
+                                        showTraktId = showTraktId,
+                                        seasonId = seasonId,
+                                        seasonNumber = seasonNumber,
+                                    ),
+                                ),
+                            )
+                        },
                     ),
                 )
 

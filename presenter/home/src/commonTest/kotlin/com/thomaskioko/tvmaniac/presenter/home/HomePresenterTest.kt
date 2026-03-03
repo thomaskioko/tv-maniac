@@ -32,6 +32,7 @@ abstract class HomePresenterTest {
             onShowGenreClicked = {},
             onNavigateToSearch = {},
             onSettingsClicked = {},
+            onSeasonClicked = { _, _, _ -> },
         )
     }
 

@@ -12,7 +12,7 @@ import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.domain.user.ObserveUserProfileInteractor
 import com.thomaskioko.tvmaniac.presentation.library.LibraryPresenter
-import com.thomaskioko.tvmaniac.presentation.upnext.UpNextPresenter
+import com.thomaskioko.tvmaniac.presentation.progress.ProgressPresenter
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.Child
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.HomeConfig
 import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
@@ -35,8 +35,9 @@ public class DefaultHomePresenter private constructor(
     @Assisted private val onShowGenreClicked: (id: Long) -> Unit,
     @Assisted private val onNavigateToSearch: () -> Unit,
     @Assisted private val onSettingsClicked: () -> Unit,
+    @Assisted private val onSeasonClicked: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
     private val discoverPresenterFactory: DiscoverShowsPresenter.Factory,
-    private val upNextPresenterFactory: UpNextPresenter.Factory,
+    private val progressPresenterFactory: ProgressPresenter.Factory,
     private val libraryPresenterFactory: LibraryPresenter.Factory,
     private val profilePresenterFactory: ProfilePresenter.Factory,
     private val observeUserProfileInteractor: ObserveUserProfileInteractor,
@@ -68,8 +69,8 @@ public class DefaultHomePresenter private constructor(
         onTabClicked(HomeConfig.Discover)
     }
 
-    override fun onUpNextClicked() {
-        onTabClicked(HomeConfig.UpNext)
+    override fun onProgressClicked() {
+        onTabClicked(HomeConfig.Progress)
     }
 
     override fun onLibraryClicked() {
@@ -112,17 +113,18 @@ public class DefaultHomePresenter private constructor(
                         onNavigateToEpisode = { showId, episodeId ->
                             // TODO:: Add Navigation to episode detail
                         },
-                        onNavigateToUpNext = { onUpNextClicked() },
+                        onNavigateToUpNext = { onProgressClicked() },
                         onNavigateToSearch = onNavigateToSearch,
                     ),
                 )
             }
 
-            HomeConfig.UpNext -> {
-                Child.UpNext(
-                    presenter = upNextPresenterFactory(
+            HomeConfig.Progress -> {
+                Child.Progress(
+                    presenter = progressPresenterFactory(
                         componentContext = componentContext,
                         navigateToShowDetails = { id -> onShowClicked(id) },
+                        navigateToSeasonDetails = onSeasonClicked,
                     ),
                 )
             }
@@ -153,7 +155,7 @@ public class DefaultHomePresenter private constructor(
     @ContributesBinding(ActivityScope::class, HomePresenter.Factory::class)
     public class Factory(
         private val discoverPresenterFactory: DiscoverShowsPresenter.Factory,
-        private val upNextPresenterFactory: UpNextPresenter.Factory,
+        private val progressPresenterFactory: ProgressPresenter.Factory,
         private val libraryPresenterFactory: LibraryPresenter.Factory,
         private val profilePresenterFactory: ProfilePresenter.Factory,
         private val observeUserProfileInteractor: ObserveUserProfileInteractor,
@@ -165,6 +167,7 @@ public class DefaultHomePresenter private constructor(
             onShowGenreClicked: (id: Long) -> Unit,
             onNavigateToSearch: () -> Unit,
             onSettingsClicked: () -> Unit,
+            onSeasonClicked: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
         ): HomePresenter = DefaultHomePresenter(
             componentContext = componentContext,
             onShowClicked = onShowClicked,
@@ -172,8 +175,9 @@ public class DefaultHomePresenter private constructor(
             onShowGenreClicked = onShowGenreClicked,
             onNavigateToSearch = onNavigateToSearch,
             onSettingsClicked = onSettingsClicked,
+            onSeasonClicked = onSeasonClicked,
             discoverPresenterFactory = discoverPresenterFactory,
-            upNextPresenterFactory = upNextPresenterFactory,
+            progressPresenterFactory = progressPresenterFactory,
             libraryPresenterFactory = libraryPresenterFactory,
             profilePresenterFactory = profilePresenterFactory,
             observeUserProfileInteractor = observeUserProfileInteractor,
