@@ -49,11 +49,13 @@ develocity {
 include(
     ":android-designsystem",
     ":android-feature:debug",
+    ":android-feature:calendar",
     ":android-feature:discover",
     ":android-feature:home",
     ":android-feature:library",
     ":android-feature:more-shows",
     ":android-feature:profile",
+    ":android-feature:progress",
     ":android-feature:search",
     ":android-feature:season-details",
     ":android-feature:settings",
