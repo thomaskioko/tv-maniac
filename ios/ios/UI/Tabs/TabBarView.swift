@@ -29,8 +29,8 @@ public struct TabBarView: View {
                     case let .discover(screen):
                         DiscoverTab(presenter: screen.presenter)
                             .id(ObjectIdentifier(screen))
-                    case let .upNext(screen):
-                        UpNextTab(presenter: screen.presenter)
+                    case let .progress(screen):
+                        ProgressTab(presenter: screen.presenter)
                             .id(ObjectIdentifier(screen))
                     case let .profile(screen):
                         ProfileTab(presenter: screen.presenter)
@@ -48,7 +48,7 @@ public struct TabBarView: View {
         .onChange(of: selectedTab) { _, newTab in
             switch newTab {
             case .discover: presenter.onDiscoverClicked()
-            case .upNext: presenter.onUpNextClicked()
+            case .progress: presenter.onProgressClicked()
             case .profile: presenter.onProfileClicked()
             case .library: presenter.onLibraryClicked()
             }
@@ -67,7 +67,7 @@ public struct TabBarView: View {
     private func tabForChild(_ child: HomePresenterChild) -> NavigationTab {
         switch onEnum(of: child) {
         case .discover: .discover
-        case .upNext: .upNext
+        case .progress: .progress
         case .profile: .profile
         case .library: .library
         }
@@ -78,14 +78,14 @@ public struct TabBarView: View {
 
 public enum NavigationTab: String, CaseIterable {
     case discover
-    case upNext
+    case progress
     case library
     case profile
 
     var title: String {
         switch self {
         case .discover: String(\.label_tab_discover)
-        case .upNext: String(\.label_discover_up_next)
+        case .progress: String(\.menu_item_progress)
         case .library: String(\.menu_item_library)
         case .profile: String(\.menu_item_profile)
         }
@@ -94,7 +94,7 @@ public enum NavigationTab: String, CaseIterable {
     var icon: String {
         switch self {
         case .discover: "tv"
-        case .upNext: "play.circle"
+        case .progress: "play.circle"
         case .library: "square.stack"
         case .profile: "person.circle"
         }
