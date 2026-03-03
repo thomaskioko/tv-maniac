@@ -88,7 +88,8 @@ public class UpcomingShowsStore(
                     }
 
                     response.forEachIndexed { index, result ->
-                        val traktId = result.traktShow!!.ids.trakt
+                        val traktShow = result.traktShow ?: return@forEachIndexed
+                        val traktId = traktShow.ids.trakt
                         val tmdbId = result.tmdbShow.id.toLong()
 
                         tvShowsDao.upsertMerging(result.toTvshow(traktId, tmdbId, formatterUtil, dateTimeProvider))
