@@ -1,7 +1,9 @@
 package com.thomaskioko.tvmaniac.ui.upnext
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,22 +39,26 @@ import com.thomaskioko.tvmaniac.compose.theme.grey
 import com.thomaskioko.tvmaniac.presentation.upnext.model.UpNextEpisodeUiModel
 import com.thomaskioko.tvmaniac.ui.upnext.preview.UpNextEpisodePreviewParameterProvider
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun UpNextListItem(
     item: UpNextEpisodeUiModel,
     onItemClicked: (Long) -> Unit,
     onMarkWatched: () -> Unit,
     modifier: Modifier = Modifier,
+    onLongPress: () -> Unit = {},
 ) {
     Surface(
         modifier = modifier
             .fillMaxWidth()
             .height(140.dp),
         color = MaterialTheme.colorScheme.surface,
-        onClick = { onItemClicked(item.showTraktId) },
     ) {
         Row(
-            modifier = Modifier.clickable(onClick = { onItemClicked(item.showTraktId) }),
+            modifier = Modifier.combinedClickable(
+                onClick = { onItemClicked(item.showTraktId) },
+                onLongClick = onLongPress,
+            ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             PosterCard(

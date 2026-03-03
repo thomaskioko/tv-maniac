@@ -16,6 +16,7 @@ struct DiscoverTab: View {
     @State private var isRefreshing: Bool = false
     @State private var isScrollInteracting: Bool = false
     @State private var toast: Toast?
+    @State private var selectedEpisode: SwiftNextEpisode?
     private let title = String(\.label_discover_title)
 
     init(presenter: DiscoverShowsPresenter) {
@@ -102,6 +103,67 @@ struct DiscoverTab: View {
             }
         }
         .toastView(toast: $toast)
+        .sheet(item: $selectedEpisode) { episode in
+            EpisodeDetailSheetContent(
+                episode: EpisodeDetailInfo(
+                    title: episode.showName,
+                    imageUrl: episode.imageUrl,
+                    episodeInfo: {
+                        var text = episode.episodeNumber
+                        if let runtime = episode.runtime {
+                            text += " \u{2022} \(runtime)"
+                        }
+                        return text
+                    }(),
+                    overview: episode.overview.isEmpty ? nil : episode.overview,
+                    rating: episode.rating,
+                    voteCount: episode.voteCount
+                )
+            ) {
+                SheetActionItem(
+                    icon: "checkmark.circle",
+                    label: String(\.menu_mark_watched),
+                    action: {
+                        presenter.dispatch(action: MarkNextEpisodeWatched(
+                            showTraktId: episode.showTraktId,
+                            episodeId: episode.episodeId,
+                            seasonNumber: episode.seasonNumber,
+                            episodeNumber: episode.episodeNumberValue
+                        ))
+                        selectedEpisode = nil
+                    }
+                )
+                SheetActionItem(
+                    icon: "tv",
+                    label: String(\.menu_open_show),
+                    action: {
+                        presenter.dispatch(action: OpenShowFromUpNext(showTraktId: episode.showTraktId))
+                        selectedEpisode = nil
+                    }
+                )
+                SheetActionItem(
+                    icon: "list.bullet",
+                    label: String(\.menu_open_season),
+                    action: {
+                        presenter.dispatch(action: OpenSeasonFromUpNext(
+                            showTraktId: episode.showTraktId,
+                            seasonId: episode.seasonId,
+                            seasonNumber: episode.seasonNumber
+                        ))
+                        selectedEpisode = nil
+                    }
+                )
+                SheetActionItem(
+                    icon: "minus.circle",
+                    label: String(\.menu_unfollow_show),
+                    action: {
+                        presenter.dispatch(action: UnfollowShowFromUpNext(showTraktId: episode.showTraktId))
+                        selectedEpisode = nil
+                    }
+                )
+            }
+            .presentationDetents([.large])
+        }
     }
 
     @ViewBuilder
@@ -276,29 +338,15 @@ struct DiscoverTab: View {
                 title: String(\.label_discover_up_next),
                 episodes: uiState.nextEpisodesSwift,
                 chevronStyle: .chevronOnly,
-                markWatchedLabel: String(\.menu_mark_watched),
-                unfollowShowLabel: String(\.menu_unfollow_show),
-                openSeasonLabel: String(\.menu_open_season),
-                onEpisodeClick: { showTraktId, episodeId in
-                    presenter.dispatch(action: NextEpisodeClicked(showTraktId: showTraktId, episodeId: episodeId))
-                },
-                onMarkWatched: { episode in
-                    presenter.dispatch(action: MarkNextEpisodeWatched(
-                        showTraktId: episode.showTraktId,
-                        episodeId: episode.episodeId,
-                        seasonNumber: episode.seasonNumber,
-                        episodeNumber: episode.episodeNumberValue
-                    ))
-                },
-                onUnfollowShow: { episode in
-                    presenter.dispatch(action: UnfollowShowFromUpNext(showTraktId: episode.showTraktId))
-                },
-                onOpenSeason: { episode in
-                    presenter.dispatch(action: OpenSeasonFromUpNext(
+                onEpisodeClick: { episode in
+                    presenter.dispatch(action: NextEpisodeClicked(
                         showTraktId: episode.showTraktId,
                         seasonId: episode.seasonId,
                         seasonNumber: episode.seasonNumber
                     ))
+                },
+                onEpisodeLongPress: { episode in
+                    selectedEpisode = episode
                 }
             )
 

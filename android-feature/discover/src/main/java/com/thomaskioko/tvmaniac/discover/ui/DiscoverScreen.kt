@@ -21,7 +21,11 @@ import androidx.compose.material.DismissState
 import androidx.compose.material.DismissValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Movie
+import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.ErrorOutline
+import androidx.compose.material.icons.outlined.Folder
+import androidx.compose.material.icons.outlined.Movie
+import androidx.compose.material.icons.outlined.RemoveCircleOutline
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -32,10 +36,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -43,8 +50,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
+import com.thomaskioko.tvmaniac.compose.components.EpisodeDetailBottomSheet
+import com.thomaskioko.tvmaniac.compose.components.EpisodeDetailInfo
 import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
 import com.thomaskioko.tvmaniac.compose.components.ScrimButton
+import com.thomaskioko.tvmaniac.compose.components.SheetAction
 import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
@@ -58,6 +68,7 @@ import com.thomaskioko.tvmaniac.discover.presenter.MarkNextEpisodeWatched
 import com.thomaskioko.tvmaniac.discover.presenter.MessageShown
 import com.thomaskioko.tvmaniac.discover.presenter.NextEpisodeClicked
 import com.thomaskioko.tvmaniac.discover.presenter.OpenSeasonFromUpNext
+import com.thomaskioko.tvmaniac.discover.presenter.OpenShowFromUpNext
 import com.thomaskioko.tvmaniac.discover.presenter.PopularClicked
 import com.thomaskioko.tvmaniac.discover.presenter.RefreshData
 import com.thomaskioko.tvmaniac.discover.presenter.SearchIconClicked
@@ -66,6 +77,7 @@ import com.thomaskioko.tvmaniac.discover.presenter.TopRatedClicked
 import com.thomaskioko.tvmaniac.discover.presenter.TrendingClicked
 import com.thomaskioko.tvmaniac.discover.presenter.UnfollowShowFromUpNext
 import com.thomaskioko.tvmaniac.discover.presenter.UpComingClicked
+import com.thomaskioko.tvmaniac.discover.presenter.model.NextEpisodeUiModel
 import com.thomaskioko.tvmaniac.discover.ui.component.DiscoverHeaderContent
 import com.thomaskioko.tvmaniac.discover.ui.component.HorizontalRowContent
 import com.thomaskioko.tvmaniac.discover.ui.component.NextEpisodesSection
@@ -73,6 +85,10 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_empty_content
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_error_message
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_retry
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_discover_up_next
+import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_mark_watched
+import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_open_season
+import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_open_show
+import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_unfollow_show
 import com.thomaskioko.tvmaniac.i18n.MR.strings.missing_api_key
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_category_popular
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_category_top_rated
@@ -169,6 +185,8 @@ private fun DiscoverContent(
     val pullRefreshState =
         rememberPullRefreshState(refreshing = false, onRefresh = { onAction(RefreshData) })
     val listState = rememberLazyListState()
+    var selectedEpisode by remember { mutableStateOf<NextEpisodeUiModel?>(null) }
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     Box(
         modifier = Modifier
@@ -181,6 +199,7 @@ private fun DiscoverContent(
             dataLoadedState = state,
             listState = listState,
             onAction = onAction,
+            onEpisodeLongPress = { selectedEpisode = it },
         )
 
         PullRefreshIndicator(
@@ -224,6 +243,66 @@ private fun DiscoverContent(
             },
         )
     }
+
+    selectedEpisode?.let { episode ->
+        val context = LocalContext.current
+        EpisodeDetailBottomSheet(
+            episode = EpisodeDetailInfo(
+                title = episode.showName,
+                imageUrl = episode.imageUrl,
+                episodeInfo = buildString {
+                    append(episode.episodeNumberFormatted)
+                    episode.runtime?.let { append(" \u2022 $it") }
+                },
+                overview = episode.overview.ifEmpty { null },
+                rating = episode.rating,
+                voteCount = episode.voteCount,
+            ),
+            sheetState = sheetState,
+            onDismiss = { selectedEpisode = null },
+            actions = listOf(
+                SheetAction(
+                    icon = Icons.Outlined.Check,
+                    label = menu_mark_watched.resolve(context),
+                    onClick = {
+                        onAction(
+                            MarkNextEpisodeWatched(
+                                showTraktId = episode.showTraktId,
+                                episodeId = episode.episodeId,
+                                seasonNumber = episode.seasonNumber,
+                                episodeNumber = episode.episodeNumber,
+                            ),
+                        )
+                        selectedEpisode = null
+                    },
+                ),
+                SheetAction(
+                    icon = Icons.Outlined.Movie,
+                    label = menu_open_show.resolve(context),
+                    onClick = {
+                        onAction(OpenShowFromUpNext(episode.showTraktId))
+                        selectedEpisode = null
+                    },
+                ),
+                SheetAction(
+                    icon = Icons.Outlined.Folder,
+                    label = menu_open_season.resolve(context),
+                    onClick = {
+                        onAction(OpenSeasonFromUpNext(episode.showTraktId, episode.seasonId, episode.seasonNumber))
+                        selectedEpisode = null
+                    },
+                ),
+                SheetAction(
+                    icon = Icons.Outlined.RemoveCircleOutline,
+                    label = menu_unfollow_show.resolve(context),
+                    onClick = {
+                        onAction(UnfollowShowFromUpNext(episode.showTraktId))
+                        selectedEpisode = null
+                    },
+                ),
+            ),
+        )
+    }
 }
 
 @Composable
@@ -233,6 +312,7 @@ private fun LazyColumnContent(
     listState: LazyListState,
     modifier: Modifier = Modifier,
     onAction: (DiscoverShowAction) -> Unit,
+    onEpisodeLongPress: (NextEpisodeUiModel) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -260,25 +340,10 @@ private fun LazyColumnContent(
             NextEpisodesSection(
                 title = label_discover_up_next.resolve(context),
                 nextEpisodes = dataLoadedState.nextEpisodes,
-                onEpisodeClick = { showId, episodeId ->
-                    onAction(NextEpisodeClicked(showId, episodeId))
+                onEpisodeClick = { episode ->
+                    onAction(NextEpisodeClicked(episode.showTraktId, episode.seasonId, episode.seasonNumber))
                 },
-                onMarkWatched = { episode ->
-                    onAction(
-                        MarkNextEpisodeWatched(
-                            showTraktId = episode.showTraktId,
-                            episodeId = episode.episodeId,
-                            seasonNumber = episode.seasonNumber,
-                            episodeNumber = episode.episodeNumber,
-                        ),
-                    )
-                },
-                onUnfollowShow = { showId ->
-                    onAction(UnfollowShowFromUpNext(showId))
-                },
-                onOpenSeason = { showId, seasonId, seasonNumber ->
-                    onAction(OpenSeasonFromUpNext(showId, seasonId, seasonNumber))
-                },
+                onEpisodeLongPress = onEpisodeLongPress,
             )
         }
 
