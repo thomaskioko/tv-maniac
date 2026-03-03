@@ -88,9 +88,9 @@ public class CalendarStore(
         writeDispatcher = dispatchers.databaseWrite,
     ),
 ).validator(
-    Validator.by {
+    Validator.by { cachedData ->
         withContext(dispatchers.io) {
-            requestManagerRepository.isRequestValid(
+            cachedData.isNotEmpty() && requestManagerRepository.isRequestValid(
                 requestType = CALENDAR_SHOWS.name,
                 threshold = CALENDAR_SHOWS.duration,
             )
