@@ -14,7 +14,9 @@ SELECT
     tvshow.poster_path AS show_poster,
     ((1000 * season.season_number) + episode.episode_number) AS next_ep_abs_number,
     episode.first_aired,
-    last_watched.last_watched_at
+    last_watched.last_watched_at,
+    episode.ratings,
+    episode.vote_count
 FROM tvshow
 INNER JOIN season ON tvshow.trakt_id = season.show_trakt_id
 INNER JOIN episode ON episode.season_id = season.id AND episode.show_trakt_id = tvshow.trakt_id
@@ -76,7 +78,9 @@ SELECT
     COALESCE(show_metadata.season_count, 0) AS season_count,
     COALESCE(show_metadata.episode_count, 0) AS episode_count,
     COALESCE(show_watch_progress.watched_count, 0) AS watched_count,
-    COALESCE(show_watch_progress.total_count, 0) AS total_count
+    COALESCE(show_watch_progress.total_count, 0) AS total_count,
+    next_episode.ratings,
+    next_episode.vote_count
 FROM followed_shows AS followed_show
 INNER JOIN tvshow ON followed_show.trakt_id = tvshow.trakt_id
 LEFT JOIN show_metadata ON tvshow.trakt_id = show_metadata.show_trakt_id
