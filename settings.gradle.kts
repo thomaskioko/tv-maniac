@@ -204,6 +204,7 @@ include(
     ":presenter:library",
     ":presenter:more-shows",
     ":presenter:profile",
+    ":presenter:progress",
     ":presenter:search",
     ":presenter:seasondetails",
     ":presenter:settings",
