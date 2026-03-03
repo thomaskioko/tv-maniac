@@ -74,6 +74,7 @@
     <string name="menu_item_library">Bibliothèque</string>
     <string name="menu_item_settings">Paramètres</string>
     <string name="menu_item_profile">Profil</string>
+    <string name="menu_item_progress">Progrès</string>
 
     <string name="cd_show_poster">Image d'affiche</string>
     <string name="cd_show_poster_image">Image d'affiche pour %s</string>
@@ -267,9 +268,12 @@
     <string name="notification_rationale_not_now">Pas maintenant</string>
 
     <string name="title_calendar">Calendrier</string>
+    <string name="label_calendar_no_data">Rien à voir ici</string>
     <string name="label_calendar_empty">Aucun épisode à venir</string>
     <string name="label_calendar_login_required">Connectez-vous à Trakt pour voir votre calendrier</string>
     <string name="label_calendar_more_episodes">+%d épisodes</string>
+    <string name="label_calendar_today">Aujourd&#8217;hui</string>
+    <string name="label_calendar_tomorrow">Demain</string>
 
     <string name="label_library_title">Bibliothèque</string>
     <string name="label_library_filter_title">Filtrer</string>

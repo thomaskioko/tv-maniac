@@ -73,6 +73,7 @@
     <string name="menu_item_library">Bibliothek</string>
     <string name="menu_item_settings">Einstellungen</string>
     <string name="menu_item_profile">Profil</string>
+    <string name="menu_item_progress">Fortschritt</string>
 
     <string name="cd_show_poster">Posterbild</string>
     <string name="cd_show_poster_image">Posterbild für %s</string>
@@ -269,9 +270,12 @@
     <string name="notification_rationale_not_now">Nicht jetzt</string>
 
     <string name="title_calendar">Kalender</string>
+    <string name="label_calendar_no_data">Nichts zu sehen hier</string>
     <string name="label_calendar_empty">Keine kommenden Episoden</string>
     <string name="label_calendar_login_required">Melden Sie sich bei Trakt an, um Ihren Kalender zu sehen</string>
     <string name="label_calendar_more_episodes">+%d Episoden</string>
+    <string name="label_calendar_today">Heute</string>
+    <string name="label_calendar_tomorrow">Morgen</string>
 
     <string name="label_library_title">Bibliothek</string>
     <string name="label_library_filter_title">Filter</string>
