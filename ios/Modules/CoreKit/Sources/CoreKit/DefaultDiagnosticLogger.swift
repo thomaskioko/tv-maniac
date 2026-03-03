@@ -1,12 +1,18 @@
 import Foundation
 
 public final class DefaultDiagnosticLogger: DiagnosticLogger, @unchecked Sendable {
+    private struct Breadcrumb {
+        let timestamp: Date
+        let category: String
+        let message: String
+    }
+
     public static let shared = DefaultDiagnosticLogger()
 
     private let lock = NSLock()
     private var _logger: CoreLogger?
     private var _lastMemoryWarningDate: Date?
-    private var _breadcrumbs: [(timestamp: Date, category: String, message: String)] = []
+    private var _breadcrumbs: [Breadcrumb] = []
     private let maxBreadcrumbs = 50
 
     private init() {}
@@ -76,7 +82,7 @@ public final class DefaultDiagnosticLogger: DiagnosticLogger, @unchecked Sendabl
     }
 
     private func appendBreadcrumbLocked(category: String, message: String) {
-        _breadcrumbs.append((timestamp: Date(), category: category, message: message))
+        _breadcrumbs.append(Breadcrumb(timestamp: Date(), category: category, message: message))
         if _breadcrumbs.count > maxBreadcrumbs {
             _breadcrumbs.removeFirst(_breadcrumbs.count - maxBreadcrumbs)
         }

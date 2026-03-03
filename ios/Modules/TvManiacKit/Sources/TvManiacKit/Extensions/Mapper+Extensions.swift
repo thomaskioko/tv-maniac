@@ -374,7 +374,7 @@ public extension TvManiac.CalendarDateGroup {
     func toSwift() -> SwiftCalendarDateGroup {
         .init(
             dateLabel: dateLabel,
-            episodes: episodes.map { ($0 as! TvManiac.CalendarEpisodeItem).toSwift() }
+            episodes: episodes.compactMap { ($0 as? TvManiac.CalendarEpisodeItem)?.toSwift() }
         )
     }
 }
