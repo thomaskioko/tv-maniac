@@ -18,6 +18,7 @@ public class FakeUpNextPresenterFactory : UpNextPresenter.Factory {
     override fun invoke(
         componentContext: ComponentContext,
         navigateToShowDetails: (showTraktId: Long) -> Unit,
+        navigateToSeasonDetails: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
     ): UpNextPresenter = FakeUpNextPresenter()
 }
 
