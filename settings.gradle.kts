@@ -174,6 +174,7 @@ include(
     ":data:watchproviders:api",
     ":data:watchproviders:implementation",
     ":data:watchproviders:testing",
+    ":domain:calendar",
     ":domain:discover",
     ":domain:episode",
     ":domain:upnext",
