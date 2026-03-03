@@ -137,10 +137,10 @@ public struct EpisodeDetailSheetContent<Actions: View>: View {
     }
 }
 
-extension EpisodeDetailSheetContent where Actions == EmptyView {
-    public init(episode: EpisodeDetailInfo) {
+public extension EpisodeDetailSheetContent where Actions == EmptyView {
+    init(episode: EpisodeDetailInfo) {
         self.episode = episode
-        self.actions = nil
+        actions = nil
     }
 }
 
