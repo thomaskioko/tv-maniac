@@ -10,7 +10,7 @@ differ = "0.3.0"
 java-target = "21"
 java-toolchain = "21"
 
-agp = "9.0.1"
+agp = "9.1.0"
 google-services = "4.4.4"
 android-lint = "32.0.1"
 androidx-activity = "1.12.4"
