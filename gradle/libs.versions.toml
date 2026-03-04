@@ -11,7 +11,7 @@ java-target = "21"
 java-toolchain = "21"
 
 agp = "9.0.1"
-google-services = "4.4.2"
+google-services = "4.4.4"
 android-lint = "32.0.1"
 androidx-activity = "1.12.4"
 androidx-annotation = "1.9.1"
