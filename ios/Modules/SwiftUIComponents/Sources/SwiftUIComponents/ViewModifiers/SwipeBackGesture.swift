@@ -60,8 +60,12 @@ private struct SwipeBackGestureHandler: UIViewControllerRepresentable {
         }
 
         func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-            if let nav = gestureRecognizer.view as? UINavigationController {
-                return nav.viewControllers.count > 1
+            var responder: UIResponder? = gestureRecognizer.view
+            while let current = responder {
+                if let nav = current as? UINavigationController {
+                    return nav.viewControllers.count > 1
+                }
+                responder = current.next
             }
             return true
         }
