@@ -5,18 +5,18 @@ import TvManiac
 public struct TabContentView<Child: HomePresenterChild, Content: View>: View {
     private let child: Child?
     private let tab: NavigationTab
-    private let avatarUrl: String?
+    private let avatarImage: UIImage?
     @ViewBuilder let content: (Child) -> Content
 
     public init(
         child: Child?,
         tab: NavigationTab,
-        avatarUrl: String? = nil,
+        avatarImage: UIImage? = nil,
         @ViewBuilder content: @escaping (Child) -> Content
     ) {
         self.child = child
         self.tab = tab
-        self.avatarUrl = avatarUrl
+        self.avatarImage = avatarImage
         self.content = content
     }
 
@@ -31,12 +31,9 @@ public struct TabContentView<Child: HomePresenterChild, Content: View>: View {
         }
         .tag(tab)
         .tabItem {
-            if let avatarUrl, !avatarUrl.isEmpty {
-                Label {
-                    Text(tab.title)
-                } icon: {
-                    AvatarView(avatarUrl: avatarUrl, size: 24)
-                }
+            if let avatarImage {
+                Image(uiImage: avatarImage.withRenderingMode(.alwaysOriginal))
+                Text(tab.title)
             } else {
                 Label(tab.title, systemImage: tab.icon)
             }

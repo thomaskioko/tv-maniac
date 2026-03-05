@@ -51,7 +51,7 @@ public fun CircularCard(
     size: Dp = 38.dp,
     contentDescription: String? = null,
     placeholderIcon: ImageVector = Icons.Filled.AccountCircle,
-    onClick: () -> Unit = {},
+    onClick: (() -> Unit)? = null,
 ) {
     Box(
         modifier = modifier
@@ -61,7 +61,7 @@ public fun CircularCard(
                 color = MaterialTheme.colorScheme.surfaceVariant,
                 shape = CircleShape,
             )
-            .clickable(onClick = onClick),
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
         contentAlignment = Alignment.Center,
     ) {
         if (imageUrl.isNullOrEmpty()) {

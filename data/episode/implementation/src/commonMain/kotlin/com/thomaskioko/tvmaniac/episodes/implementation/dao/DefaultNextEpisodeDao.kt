@@ -59,5 +59,7 @@ private fun NextEpisodesForWatchlist.toNextEpisodeWithShow(): NextEpisodeWithSho
         episodeCount = episode_count,
         watchedCount = watched_count,
         totalCount = total_count,
+        rating = ratings,
+        voteCount = vote_count,
     )
 }

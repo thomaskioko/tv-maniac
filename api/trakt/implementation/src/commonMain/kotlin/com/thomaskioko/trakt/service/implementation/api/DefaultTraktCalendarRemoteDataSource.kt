@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.safeRequest
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.TraktCalendarRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktCalendarResponse
+import io.ktor.client.request.parameter
 import io.ktor.http.HttpMethod
 import io.ktor.http.path
 import me.tatarka.inject.annotations.Inject
@@ -28,5 +29,6 @@ public class DefaultTraktCalendarRemoteDataSource(
                 method = HttpMethod.Get
                 path("calendars/my/shows/$startDate/$days")
             }
+            parameter("extended", "full")
         }
 }

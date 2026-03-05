@@ -7,8 +7,8 @@ public struct UpNextListItemView: View {
     let onItemClicked: (Int64, Int64) -> Void
     let onShowTitleClicked: (Int64) -> Void
     let onMarkWatched: () -> Void
+    let onLongPress: () -> Void
 
-    // Cache computed values to avoid recalculation
     private let posterImageUrl: String?
     private let episodeInfoText: String
 
@@ -16,12 +16,14 @@ public struct UpNextListItemView: View {
         episode: SwiftNextEpisode,
         onItemClicked: @escaping (Int64, Int64) -> Void,
         onShowTitleClicked: @escaping (Int64) -> Void,
-        onMarkWatched: @escaping () -> Void
+        onMarkWatched: @escaping () -> Void,
+        onLongPress: @escaping () -> Void = {}
     ) {
         self.episode = episode
         self.onItemClicked = onItemClicked
         self.onShowTitleClicked = onShowTitleClicked
         self.onMarkWatched = onMarkWatched
+        self.onLongPress = onLongPress
 
         posterImageUrl = episode.imageUrl
 
@@ -36,20 +38,22 @@ public struct UpNextListItemView: View {
     }
 
     public var body: some View {
-        Button(action: {
-            onItemClicked(episode.showTraktId, episode.episodeId)
-        }) {
-            HStack(alignment: .top, spacing: 0) {
-                posterView
-                episodeDetails
-                watchedButton
-            }
-            .frame(height: UpNextListItemViewConstants.height)
-            .frame(maxWidth: .infinity)
-            .background(theme.colors.surface)
-            .cornerRadius(UpNextListItemViewConstants.cornerRadius)
+        HStack(alignment: .top, spacing: 0) {
+            posterView
+            episodeDetails
+            watchedButton
         }
-        .buttonStyle(PlainButtonStyle())
+        .frame(height: UpNextListItemViewConstants.height)
+        .frame(maxWidth: .infinity)
+        .background(theme.colors.surface)
+        .cornerRadius(UpNextListItemViewConstants.cornerRadius)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            onItemClicked(episode.showTraktId, episode.episodeId)
+        }
+        .onLongPressGesture {
+            onLongPress()
+        }
         .padding(.horizontal, theme.spacing.xSmall)
     }
 

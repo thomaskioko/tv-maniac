@@ -51,6 +51,12 @@
         "org.jetbrains.compose.material3"
       ],
       "groupName": "Compose"
+    },
+    {
+      "matchPackagePatterns": [
+        "com.google.firebase"
+      ],
+      "groupName": "Firebase"
     }
   ]
 }

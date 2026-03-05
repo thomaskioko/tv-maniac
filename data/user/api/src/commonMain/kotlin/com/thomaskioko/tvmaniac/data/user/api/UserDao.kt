@@ -13,6 +13,8 @@ public interface UserDao {
 
     public suspend fun getCurrentUser(): UserProfile?
 
+    public fun observeWatchlistBackdrop(): Flow<String?>
+
     public fun getRandomWatchlistBackdrop(): String?
 
     public suspend fun upsertUser(

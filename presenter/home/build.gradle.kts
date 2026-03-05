@@ -24,7 +24,7 @@ kotlin {
                 implementation(projects.presenter.profile)
                 implementation(projects.domain.user)
                 implementation(projects.presenter.library)
-                implementation(projects.presenter.upnext)
+                implementation(projects.presenter.progress)
 
                 implementation(libs.decompose.decompose)
                 implementation(libs.essenty.lifecycle)

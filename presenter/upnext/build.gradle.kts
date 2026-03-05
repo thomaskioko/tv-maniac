@@ -14,6 +14,7 @@ kotlin {
                 api(projects.core.view)
                 implementation(projects.data.episode.api)
                 implementation(projects.data.upnext.api)
+                implementation(projects.data.followedshows.api)
                 implementation(projects.data.traktauth.api)
                 implementation(projects.core.base)
                 implementation(projects.core.logger.api)
@@ -35,6 +36,7 @@ kotlin {
                 implementation(projects.core.util.testing)
                 implementation(projects.data.datastore.testing)
                 implementation(projects.data.episode.testing)
+                implementation(projects.data.followedshows.testing)
                 implementation(projects.data.upnext.testing)
                 implementation(projects.data.traktauth.testing)
 

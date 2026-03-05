@@ -18,3 +18,13 @@ public data class UpNextChangeSortOption(val sortOption: UpNextSortOption) : UpN
 public data object RefreshUpNext : UpNextAction
 
 public data class UpNextMessageShown(val id: Long) : UpNextAction
+
+public data class OpenShow(val showTraktId: Long) : UpNextAction
+
+public data class OpenSeason(
+    val showTraktId: Long,
+    val seasonId: Long,
+    val seasonNumber: Long,
+) : UpNextAction
+
+public data class UnfollowShow(val showTraktId: Long) : UpNextAction

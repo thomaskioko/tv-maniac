@@ -16,8 +16,7 @@ public extension View {
     ///
     func onSizeChange(perform action: @escaping (_ size: CGSize) -> Void) -> some View {
         background(
-            GeometryReader {
-                proxy in
+            GeometryReader { proxy in
                 Color.clear
                     .onAppear { action(proxy.size) }
                     .onChange(of: proxy.size) { _, newSize in action(newSize) }
@@ -44,8 +43,7 @@ public extension View {
         -> some View
     {
         background(
-            GeometryReader {
-                proxy in
+            GeometryReader { proxy in
                 Color.clear
                     .onAppear { action(proxy.frame(in: coordinateSpace)) }
                     .onChange(of: proxy.frame(in: coordinateSpace)) { _, newFrame in action(newFrame) }

@@ -67,7 +67,9 @@ SELECT
     COALESCE(show_metadata.episode_count, 0) AS episode_count,
     COALESCE(show_metadata.cached_watched_count, 0) AS watched_count,
     COALESCE(show_metadata.cached_total_count, 0) AS total_count,
-    next_ep.trakt_last_watched_at AS last_watched_at
+    next_ep.trakt_last_watched_at AS last_watched_at,
+    episode.ratings,
+    episode.vote_count
 FROM next_episodes AS next_ep
 INNER JOIN followed_shows ON followed_shows.trakt_id = next_ep.show_trakt_id
 INNER JOIN tvshow ON tvshow.trakt_id = next_ep.show_trakt_id
@@ -107,7 +109,9 @@ SELECT
     COALESCE(show_metadata.episode_count, 0) AS episode_count,
     COALESCE(show_metadata.cached_watched_count, 0) AS watched_count,
     COALESCE(show_metadata.cached_total_count, 0) AS total_count,
-    next_ep.trakt_last_watched_at AS last_watched_at
+    next_ep.trakt_last_watched_at AS last_watched_at,
+    episode.ratings,
+    episode.vote_count
 FROM next_episodes AS next_ep
 INNER JOIN followed_shows ON followed_shows.trakt_id = next_ep.show_trakt_id
 INNER JOIN tvshow ON tvshow.trakt_id = next_ep.show_trakt_id

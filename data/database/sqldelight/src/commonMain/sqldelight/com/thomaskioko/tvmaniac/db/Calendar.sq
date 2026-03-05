@@ -1,0 +1,77 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.TraktId;
+import kotlin.String;
+
+CREATE TABLE IF NOT EXISTS calendar_entry (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    show_trakt_id INTEGER AS Id<TraktId> NOT NULL,
+    episode_trakt_id INTEGER NOT NULL,
+    season_number INTEGER NOT NULL,
+    episode_number INTEGER NOT NULL,
+    episode_title TEXT,
+    air_date INTEGER NOT NULL,
+    show_title TEXT NOT NULL,
+    show_poster_path TEXT,
+    network TEXT,
+    runtime INTEGER,
+    overview TEXT,
+    rating REAL,
+    votes INTEGER,
+    UNIQUE(show_trakt_id, season_number, episode_number)
+);
+
+CREATE INDEX IF NOT EXISTS idx_calendar_air_date ON calendar_entry(air_date);
+
+upsert:
+INSERT OR REPLACE INTO calendar_entry(
+    show_trakt_id,
+    episode_trakt_id,
+    season_number,
+    episode_number,
+    episode_title,
+    air_date,
+    show_title,
+    show_poster_path,
+    network,
+    runtime,
+    overview,
+    rating,
+    votes
+)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+observeEntriesBetweenDates:
+SELECT
+    id AS entry_id,
+    show_trakt_id,
+    episode_trakt_id,
+    season_number,
+    episode_number,
+    episode_title,
+    air_date,
+    show_title,
+    show_poster_path,
+    network,
+    runtime,
+    overview,
+    rating,
+    votes
+FROM calendar_entry
+WHERE air_date >= :startDate AND air_date < :endDate
+ORDER BY air_date ASC, show_title ASC;
+
+hasEntriesInRange:
+SELECT COUNT(*) > 0
+FROM calendar_entry
+WHERE air_date >= :startDate AND air_date < :endDate;
+
+deleteEntriesInRange:
+DELETE FROM calendar_entry
+WHERE air_date >= :startDate AND air_date < :endDate;
+
+deleteOldEntries:
+DELETE FROM calendar_entry
+WHERE air_date < :cutoffDate;
+
+deleteAll:
+DELETE FROM calendar_entry;

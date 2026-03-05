@@ -28,10 +28,8 @@ internal fun NextEpisodesSection(
     title: String,
     modifier: Modifier = Modifier,
     nextEpisodes: ImmutableList<NextEpisodeUiModel>,
-    onEpisodeClick: (Long, Long) -> Unit,
-    onMarkWatched: (NextEpisodeUiModel) -> Unit,
-    onUnfollowShow: (Long) -> Unit,
-    onOpenSeason: (Long, Long, Long) -> Unit,
+    onEpisodeClick: (NextEpisodeUiModel) -> Unit,
+    onEpisodeLongPress: (NextEpisodeUiModel) -> Unit,
     onSeeAllClick: () -> Unit = {},
 ) {
     AnimatedVisibility(
@@ -62,16 +60,8 @@ internal fun NextEpisodesSection(
                 ) { _, episode ->
                     NextEpisodeCard(
                         episode = episode,
-                        onEpisodeClick = onEpisodeClick,
-                        onMarkWatched = { onMarkWatched(episode) },
-                        onUnfollowShow = { onUnfollowShow(episode.showTraktId) },
-                        onOpenSeason = {
-                            onOpenSeason(
-                                episode.showTraktId,
-                                episode.seasonId,
-                                episode.seasonNumber,
-                            )
-                        },
+                        onClick = { onEpisodeClick(episode) },
+                        onLongPress = { onEpisodeLongPress(episode) },
                     )
                 }
             }
@@ -129,10 +119,8 @@ private fun NextEpisodesSectionPreview() {
                     isNew = true,
                 ),
             ),
-            onEpisodeClick = { _, _ -> },
-            onMarkWatched = {},
-            onUnfollowShow = {},
-            onOpenSeason = { _, _, _ -> },
+            onEpisodeClick = {},
+            onEpisodeLongPress = {},
         )
     }
 }

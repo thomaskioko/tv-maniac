@@ -27,19 +27,19 @@ import com.thomaskioko.tvmaniac.compose.components.CircularCard
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomNavigationItem
 import com.thomaskioko.tvmaniac.compose.components.TvManiacNavigationBar
 import com.thomaskioko.tvmaniac.discover.ui.DiscoverScreen
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_discover_up_next
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_discover
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_library
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_profile
+import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_progress
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.Child.Discover
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.Child.Library
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.Child.Profile
-import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.Child.UpNext
+import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.Child.Progress
 import com.thomaskioko.tvmaniac.profile.ui.ProfileScreen
 import com.thomaskioko.tvmaniac.ui.library.LibraryScreen
-import com.thomaskioko.tvmaniac.ui.upnext.UpNextScreen
+import com.thomaskioko.tvmaniac.ui.progress.ProgressScreen
 
 @Composable
 public fun HomeScreen(
@@ -68,8 +68,8 @@ private fun ChildrenContent(homePresenter: HomePresenter, modifier: Modifier = M
                     modifier = fillMaxSizeModifier,
                 )
             }
-            is UpNext -> {
-                UpNextScreen(
+            is Progress -> {
+                ProgressScreen(
                     presenter = screen.presenter,
                     modifier = fillMaxSizeModifier,
                 )
@@ -112,9 +112,9 @@ internal fun BottomNavigationContent(
 
         TvManiacBottomNavigationItem(
             imageVector = Icons.Outlined.PlayCircleOutline,
-            title = label_discover_up_next.resolve(context),
-            selected = activeComponent is UpNext,
-            onClick = { component.onUpNextClicked() },
+            title = menu_item_progress.resolve(context),
+            selected = activeComponent is Progress,
+            onClick = { component.onProgressClicked() },
         )
 
         TvManiacBottomNavigationItem(

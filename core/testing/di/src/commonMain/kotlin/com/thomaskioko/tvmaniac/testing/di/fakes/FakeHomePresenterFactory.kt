@@ -4,7 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.domain.user.ObserveUserProfileInteractor
 import com.thomaskioko.tvmaniac.presentation.library.LibraryPresenter
-import com.thomaskioko.tvmaniac.presentation.upnext.UpNextPresenter
+import com.thomaskioko.tvmaniac.presentation.progress.ProgressPresenter
 import com.thomaskioko.tvmaniac.presenter.home.DefaultHomePresenter
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
@@ -18,9 +18,9 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @ContributesBinding(TestScope::class, HomePresenter.Factory::class)
 public class FakeHomePresenterFactory(
     private val discoverPresenterFactory: DiscoverShowsPresenter.Factory,
+    private val progressPresenterFactory: ProgressPresenter.Factory,
     private val libraryPresenterFactory: LibraryPresenter.Factory,
     private val profilePresenterFactory: ProfilePresenter.Factory,
-    private val upNextPresenterFactory: UpNextPresenter.Factory,
     private val observeUserProfileInteractor: ObserveUserProfileInteractor,
 ) : HomePresenter.Factory {
     override fun invoke(
@@ -30,14 +30,15 @@ public class FakeHomePresenterFactory(
         onShowGenreClicked: (id: Long) -> Unit,
         onNavigateToSearch: () -> Unit,
         onSettingsClicked: () -> Unit,
+        onSeasonClicked: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
     ): HomePresenter {
         val factory = DefaultHomePresenter.Factory(
             discoverPresenterFactory = discoverPresenterFactory,
+            progressPresenterFactory = progressPresenterFactory,
             libraryPresenterFactory = libraryPresenterFactory,
             profilePresenterFactory = profilePresenterFactory,
-            upNextPresenterFactory = upNextPresenterFactory,
             observeUserProfileInteractor = observeUserProfileInteractor,
         )
-        return factory(componentContext, onShowClicked, onMoreShowClicked, onShowGenreClicked, onNavigateToSearch, onSettingsClicked)
+        return factory(componentContext, onShowClicked, onMoreShowClicked, onShowGenreClicked, onNavigateToSearch, onSettingsClicked, onSeasonClicked)
     }
 }

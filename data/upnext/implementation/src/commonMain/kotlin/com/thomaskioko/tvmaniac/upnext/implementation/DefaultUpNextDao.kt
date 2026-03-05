@@ -159,6 +159,8 @@ private fun NextEpisodeWithShowInfoByShowId.toNextEpisodeWithShow(): NextEpisode
         episodeCount = episode_count,
         watchedCount = watched_count,
         totalCount = total_count,
+        rating = ratings,
+        voteCount = vote_count,
     )
 }
 
@@ -199,5 +201,7 @@ private fun NextEpisodesWithShowInfo.toNextEpisodeWithShow(): NextEpisodeWithSho
         episodeCount = episode_count,
         watchedCount = watched_count,
         totalCount = total_count,
+        rating = ratings,
+        voteCount = vote_count,
     )
 }

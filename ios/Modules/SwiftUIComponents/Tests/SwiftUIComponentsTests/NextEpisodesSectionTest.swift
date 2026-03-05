@@ -8,10 +8,7 @@ class NextEpisodesSectionTest: SnapshotTestCase {
         NextEpisodesSection(
             title: "Up Next",
             episodes: [],
-            markWatchedLabel: "Mark as Watched",
-            unfollowShowLabel: "Unfollow Show",
-            openSeasonLabel: "Open Season",
-            onEpisodeClick: { _, _ in }
+            onEpisodeClick: { _ in }
         )
         .padding()
         .themedPreview()
@@ -33,10 +30,7 @@ class NextEpisodesSectionTest: SnapshotTestCase {
                     overview: "Daryl washes ashore in France and struggles to piece together how he got there and why."
                 ),
             ],
-            markWatchedLabel: "Mark as Watched",
-            unfollowShowLabel: "Unfollow Show",
-            openSeasonLabel: "Open Season",
-            onEpisodeClick: { _, _ in }
+            onEpisodeClick: { _ in }
         )
         .padding()
         .themedPreview()
@@ -78,10 +72,7 @@ class NextEpisodesSectionTest: SnapshotTestCase {
                     overview: "King Viserys hosts a tournament to celebrate the birth of his second child."
                 ),
             ],
-            markWatchedLabel: "Mark as Watched",
-            unfollowShowLabel: "Unfollow Show",
-            openSeasonLabel: "Open Season",
-            onEpisodeClick: { _, _ in }
+            onEpisodeClick: { _ in }
         )
         .padding()
         .themedPreview()
@@ -114,10 +105,7 @@ class NextEpisodesSectionTest: SnapshotTestCase {
                 ),
             ],
             chevronStyle: .chevronOnly,
-            markWatchedLabel: "Mark as Watched",
-            unfollowShowLabel: "Unfollow Show",
-            openSeasonLabel: "Open Season",
-            onEpisodeClick: { _, _ in }
+            onEpisodeClick: { _ in }
         )
         .padding()
         .themedPreview()
@@ -140,10 +128,7 @@ class NextEpisodesSectionTest: SnapshotTestCase {
                 ),
             ],
             chevronStyle: .withTitle("See All"),
-            markWatchedLabel: "Mark as Watched",
-            unfollowShowLabel: "Unfollow Show",
-            openSeasonLabel: "Open Season",
-            onEpisodeClick: { _, _ in }
+            onEpisodeClick: { _ in }
         )
         .padding()
         .themedPreview()

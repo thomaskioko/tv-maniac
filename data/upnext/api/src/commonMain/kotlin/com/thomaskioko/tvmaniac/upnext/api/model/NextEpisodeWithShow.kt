@@ -22,4 +22,6 @@ public data class NextEpisodeWithShow(
     val episodeCount: Long = 0,
     val watchedCount: Long = 0,
     val totalCount: Long = 0,
+    val rating: Double? = null,
+    val voteCount: Long? = null,
 )

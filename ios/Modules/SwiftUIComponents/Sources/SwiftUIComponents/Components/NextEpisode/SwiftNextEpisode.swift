@@ -23,6 +23,8 @@ public struct SwiftNextEpisode: Identifiable {
     public let remainingEpisodes: Int32
     public let watchedCount: Int64
     public let totalCount: Int64
+    public let rating: Double?
+    public let voteCount: Int64?
 
     public init(
         showTraktId: Int64,
@@ -39,7 +41,9 @@ public struct SwiftNextEpisode: Identifiable {
         badge: SwiftEpisodeBadge = .none,
         remainingEpisodes: Int32 = 0,
         watchedCount: Int64 = 0,
-        totalCount: Int64 = 0
+        totalCount: Int64 = 0,
+        rating: Double? = nil,
+        voteCount: Int64? = nil
     ) {
         self.showTraktId = showTraktId
         self.showName = showName
@@ -56,5 +60,7 @@ public struct SwiftNextEpisode: Identifiable {
         self.remainingEpisodes = remainingEpisodes
         self.watchedCount = watchedCount
         self.totalCount = totalCount
+        self.rating = rating
+        self.voteCount = voteCount
     }
 }

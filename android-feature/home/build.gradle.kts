@@ -17,11 +17,11 @@ dependencies {
     implementation(projects.androidFeature.discover)
     implementation(projects.androidFeature.library)
     implementation(projects.androidFeature.profile)
-    implementation(projects.androidFeature.upnext)
+    implementation(projects.androidFeature.progress)
     implementation(projects.presenter.discover)
     implementation(projects.presenter.library)
     implementation(projects.presenter.profile)
-    implementation(projects.presenter.upnext)
+    implementation(projects.presenter.progress)
 
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.material3)

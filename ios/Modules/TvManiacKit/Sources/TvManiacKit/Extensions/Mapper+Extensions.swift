@@ -215,7 +215,9 @@ public extension TvManiac.NextEpisodeUiModel {
             episodeNumberValue: episodeNumber,
             runtime: runtime,
             overview: overview,
-            badge: isNew ? .new : .none
+            badge: isNew ? .new : .none,
+            rating: rating?.doubleValue,
+            voteCount: voteCount?.int64Value
         )
     }
 }
@@ -310,7 +312,9 @@ public extension TvManiac.UpNextEpisodeUiModel {
             overview: overview ?? "",
             remainingEpisodes: Int32(remainingEpisodes),
             watchedCount: watchedCount,
-            totalCount: totalCount
+            totalCount: totalCount,
+            rating: rating?.doubleValue,
+            voteCount: voteCount?.int64Value
         )
     }
 }
@@ -361,5 +365,36 @@ public extension TvManiac.LibraryShowItem {
 public extension TvManiac.WatchProviderUiModel {
     func toSwift() -> SwiftProviders {
         .init(providerId: id, logoUrl: logoUrl)
+    }
+}
+
+// MARK: - Calendar Mapping
+
+public extension TvManiac.CalendarDateGroup {
+    func toSwift() -> SwiftCalendarDateGroup {
+        .init(
+            dateLabel: dateLabel,
+            episodes: episodes.compactMap { ($0 as? TvManiac.CalendarEpisodeItem)?.toSwift() }
+        )
+    }
+}
+
+public extension TvManiac.CalendarEpisodeItem {
+    func toSwift() -> SwiftCalendarEpisodeItem {
+        .init(
+            showTraktId: showTraktId,
+            episodeTraktId: episodeTraktId,
+            showTitle: showTitle,
+            posterUrl: posterUrl,
+            episodeInfo: episodeInfo,
+            airTime: airTime,
+            network: network,
+            additionalEpisodesCount: additionalEpisodesCount,
+            overview: overview,
+            rating: rating?.doubleValue,
+            votes: votes?.int32Value,
+            runtime: runtime?.int32Value,
+            formattedAirDate: formattedAirDate
+        )
     }
 }

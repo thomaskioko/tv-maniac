@@ -166,7 +166,7 @@ public class DefaultDiscoverShowsPresenter(
                 is MessageShown -> {
                     clearMessage(action.id)
                 }
-                is NextEpisodeClicked -> onNavigateToEpisode(action.showTraktId, action.episodeId)
+                is NextEpisodeClicked -> onNavigateToSeason(action.showTraktId, action.seasonId, action.seasonNumber)
                 is MarkNextEpisodeWatched -> {
                     coroutineScope.launch {
                         markEpisodeWatchedInteractor(
@@ -187,6 +187,7 @@ public class DefaultDiscoverShowsPresenter(
                 is OpenSeasonFromUpNext -> {
                     onNavigateToSeason(action.showTraktId, action.seasonId, action.seasonNumber)
                 }
+                is OpenShowFromUpNext -> onNavigateToShowDetails(action.showTraktId)
                 SearchIconClicked -> onNavigateToSearch()
             }
         }
@@ -280,5 +281,7 @@ private fun NextEpisodeWithShow.toUiModel(): NextEpisodeUiModel {
         runtime = runtime?.let { "$it min" },
         overview = overview ?: "",
         isNew = false,
+        rating = rating,
+        voteCount = voteCount,
     )
 }
