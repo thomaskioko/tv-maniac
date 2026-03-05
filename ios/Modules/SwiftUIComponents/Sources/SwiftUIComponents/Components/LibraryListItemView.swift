@@ -44,23 +44,12 @@ public struct LibraryListItemView: View {
     public var body: some View {
         Button(action: onItemClicked) {
             HStack(alignment: .top, spacing: theme.spacing.medium) {
-                LazyResizableImage(
-                    url: item.posterUrl,
-                    imageType: .poster,
-                    size: CGSize(width: 120, height: 200)
-                ) { state in
-                    if let image = state.image {
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    } else {
-                        Rectangle()
-                            .fill(theme.colors.surfaceVariant)
-                    }
-                }
-                .frame(width: 120)
-                .frame(maxHeight: .infinity)
-                .clipped()
+                PosterItemView(
+                    title: item.title,
+                    posterUrl: item.posterUrl,
+                    posterWidth: 120,
+                    posterHeight: 200
+                )
 
                 VStack(alignment: .leading, spacing: theme.spacing.xSmall) {
                     Text(item.title)
