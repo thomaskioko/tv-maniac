@@ -50,9 +50,16 @@ public struct EmptyStateView: View {
             if let buttonText {
                 Spacer().frame(height: theme.spacing.large)
 
-                OutlinedButton(
-                    text: buttonText,
-                    action: action
+                Button(action: action) {
+                    Text(buttonText)
+                        .textStyle(theme.typography.labelMedium)
+                        .foregroundColor(theme.colors.accent)
+                        .padding(.vertical, theme.spacing.xSmall)
+                        .padding(.horizontal, theme.spacing.large)
+                }
+                .overlay(
+                    RoundedRectangle(cornerRadius: theme.shapes.small)
+                        .stroke(theme.colors.accent, lineWidth: 1.5)
                 )
             }
         }

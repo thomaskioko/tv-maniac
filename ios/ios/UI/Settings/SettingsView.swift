@@ -5,8 +5,6 @@ import TvManiacKit
 import UserNotifications
 
 struct SettingsView: View {
-    @Theme private var theme
-
     private let presenter: SettingsPresenter
     @StateObject @KotlinStateFlow private var uiState: SettingsState
     @StateObject private var store = SettingsAppStorage.shared
@@ -24,310 +22,28 @@ struct SettingsView: View {
     }
 
     var body: some View {
-        settingsContent
-            .scrollContentBackground(.hidden)
-            .background(theme.colors.background)
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarBackButtonHidden(true)
-            .navigationBarColor(backgroundColor: .clear)
-            .swipeBackGesture {
-                presenter.dispatch(action: BackClicked__())
-            }
-            .overlay(
-                GlassToolbar(
-                    title: String(\.label_settings_title),
-                    opacity: 1.0,
-                    leadingIcon: {
-                        GlassButton(icon: "chevron.left") {
-                            presenter.dispatch(action: BackClicked__())
-                        }
-                    }
-                ),
-                alignment: .top
-            )
-            .edgesIgnoringSafeArea(.top)
-            .settingsObservers(
-                uiState: uiState,
-                store: store,
-                showingErrorAlert: $showingErrorAlert
-            )
-            .settingsAlerts(
-                uiState: uiState,
-                showingErrorAlert: $showingErrorAlert,
-                showingLogoutAlert: $showingLogoutAlert,
-                onLogout: { presenter.dispatch(action: TraktLogoutClicked()) }
-            )
-            .sheet(isPresented: $showAboutSheet) {
-                AboutSheet()
-            }
-            .sheet(isPresented: $showPolicy) {
-                if let url = URL(string: uiState.privacyPolicyUrl) {
-                    SFSafariViewWrapper(url: url)
-                        .appTint()
-                        .appTheme()
-                }
-            }
-            .onAppear {
-                store.imageQuality = uiState.imageQuality.toSwift()
-            }
-    }
-
-    private var settingsContent: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 0) {
-                sectionHeader(String(\.label_settings_section_appearance))
-                    .padding(.top, theme.spacing.medium)
-
-                themeTitleSection
-                    .padding(.top, theme.spacing.medium)
-
-                imageQualitySection
-                    .padding(.top, theme.spacing.large)
-
-                sectionHeader(String(\.label_settings_section_behavior))
-                    .padding(.top, theme.spacing.xLarge)
-
-                notificationsToggleRow
-                    .padding(.top, theme.spacing.medium)
-
-                syncToggleRow
-                    .padding(.top, theme.spacing.medium)
-
-                includeSpecialsToggleRow
-                    .padding(.top, theme.spacing.medium)
-
-                youtubeToggleRow
-                    .padding(.top, theme.spacing.medium)
-
-                sectionHeader(String(\.label_settings_section_privacy))
-                    .padding(.top, theme.spacing.xLarge)
-
-                crashReportingToggleRow
-                    .padding(.top, theme.spacing.medium)
-
-                sectionHeader(String(\.settings_title_info))
-                    .padding(.top, theme.spacing.xLarge)
-
-                aboutRow
-                    .padding(.top, theme.spacing.medium)
-
-                privacyRow
-                    .padding(.top, theme.spacing.xSmall)
-
-                if uiState.isAuthenticated {
-                    sectionHeader(String(\.settings_title_trakt))
-                        .padding(.top, theme.spacing.xLarge)
-
-                    traktLogoutRow
-                        .padding(.top, theme.spacing.medium)
-                }
-
-                #if DEBUG
-                    sectionHeader(String(\.label_debug_section_developer))
-                        .padding(.top, theme.spacing.xLarge)
-
-                    debugMenuRow
-                        .padding(.top, theme.spacing.medium)
-                #endif
-
-                Spacer()
-                    .frame(height: theme.spacing.xLarge)
-            }
-            .padding(.horizontal, theme.spacing.medium)
-            .padding(.top, DimensionConstants.toolbarInset)
-        }
-    }
-
-    private func sectionHeader(
-        _ title: String,
-        icon: String? = nil,
-        subtitle: String? = nil
-    ) -> some View {
-        HStack(spacing: theme.spacing.medium) {
-            if let icon {
-                Image(systemName: icon)
-                    .foregroundColor(theme.colors.secondary)
-                    .frame(width: theme.spacing.large, height: theme.spacing.large)
-            }
-            VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
-                Text(title)
-                    .textStyle(theme.typography.titleMedium)
-                    .foregroundColor(theme.colors.onSurface)
-                if let subtitle {
-                    Text(subtitle)
-                        .textStyle(theme.typography.bodySmall)
-                        .foregroundColor(theme.colors.onSurfaceVariant)
-                }
-            }
-        }
-    }
-
-    private var themeTitleSection: some View {
-        VStack(alignment: .leading, spacing: theme.spacing.small) {
-            HStack(spacing: theme.spacing.medium) {
-                settingsIcon("paintpalette", color: theme.colors.secondary)
-
-                VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
-                    Text(String(\.settings_theme_selector_title))
-                        .textStyle(theme.typography.titleMedium)
-                        .foregroundColor(theme.colors.onSurface)
-                    Text(String(\.settings_theme_selector_subtitle))
-                        .textStyle(theme.typography.bodySmall)
-                        .foregroundColor(theme.colors.onSurfaceVariant)
-                }
-            }
-
-            ThemeSelectorView(
-                themes: DeviceAppTheme.sortedThemes,
-                selectedTheme: store.appTheme,
-                onThemeSelected: { selectedTheme in
-                    store.appTheme = selectedTheme
-                    let appTheme = selectedTheme.toAppTheme()
-                    presenter.dispatch(action: ThemeSelected(theme: appTheme.toThemeModel()))
-                }
-            )
-        }
-    }
-
-    private var imageQualitySection: some View {
-        VStack(alignment: .leading, spacing: theme.spacing.small) {
-            HStack(spacing: theme.spacing.medium) {
-                settingsIcon("photo", color: theme.colors.secondary)
-
-                VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
-                    Text(String(\.label_settings_image_quality))
-                        .textStyle(theme.typography.titleMedium)
-                        .foregroundColor(theme.colors.onSurface)
-                    Text(imageQualityDescription(for: uiState.imageQuality.toSwift()))
-                        .textStyle(theme.typography.bodySmall)
-                        .foregroundColor(theme.colors.onSurfaceVariant)
-                }
-            }
-
-            HStack(spacing: theme.spacing.small) {
-                ForEach(SwiftImageQuality.allCases, id: \.self) { quality in
-                    SelectionChip(
-                        label: imageQualityTitle(for: quality),
-                        isSelected: uiState.imageQuality.toSwift() == quality,
-                        action: {
-                            let kmpQuality = TvManiac.ImageQuality.fromSwift(quality)
-                            presenter.dispatch(action: ImageQualitySelected(quality: kmpQuality))
-                            store.imageQuality = quality
-                        }
-                    )
-                }
-            }
-            .padding(.leading, 40)
-        }
-    }
-
-    private var youtubeToggleRow: some View {
-        HStack(spacing: theme.spacing.medium) {
-            settingsIcon("tv", color: theme.colors.secondary)
-
-            VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
-                Text(String(\.label_settings_youtube))
-                    .textStyle(theme.typography.titleMedium)
-                    .foregroundColor(theme.colors.onSurface)
-                Text(String(\.label_settings_youtube_description))
-                    .textStyle(theme.typography.bodySmall)
-                    .foregroundColor(theme.colors.onSurfaceVariant)
-            }
-
-            Spacer()
-
-            Toggle("", isOn: Binding(
-                get: { uiState.openTrailersInYoutube },
-                set: { newValue in
-                    presenter.dispatch(action: YoutubeToggled(enabled: newValue))
-                }
-            ))
-            .labelsHidden()
-            .tint(theme.colors.secondary)
-        }
-    }
-
-    private var includeSpecialsToggleRow: some View {
-        HStack(spacing: theme.spacing.medium) {
-            settingsIcon("film.stack", color: theme.colors.secondary)
-
-            VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
-                Text(String(\.label_settings_include_specials))
-                    .textStyle(theme.typography.titleMedium)
-                    .foregroundColor(theme.colors.onSurface)
-                Text(String(\.label_settings_include_specials_description))
-                    .textStyle(theme.typography.bodySmall)
-                    .foregroundColor(theme.colors.onSurfaceVariant)
-            }
-
-            Spacer()
-
-            Toggle("", isOn: Binding(
-                get: { uiState.includeSpecials },
-                set: { newValue in
-                    presenter.dispatch(action: IncludeSpecialsToggled(enabled: newValue))
-                }
-            ))
-            .labelsHidden()
-            .tint(theme.colors.secondary)
-        }
-    }
-
-    private var syncToggleRow: some View {
-        HStack(spacing: theme.spacing.medium) {
-            settingsIcon("arrow.triangle.2.circlepath", color: theme.colors.secondary)
-
-            VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
-                Text(String(\.label_settings_sync_update))
-                    .textStyle(theme.typography.titleMedium)
-                    .foregroundColor(theme.colors.onSurface)
-                Text(String(\.label_settings_sync_update_description))
-                    .textStyle(theme.typography.bodySmall)
-                    .foregroundColor(theme.colors.onSurfaceVariant)
-                if uiState.showLastSyncDate, let lastSyncDate = uiState.lastSyncDate {
-                    Text(String(\.label_settings_last_sync_date, parameter: lastSyncDate))
-                        .textStyle(theme.typography.bodySmall)
-                        .foregroundColor(theme.colors.onSurfaceVariant)
-                }
-            }
-
-            Spacer()
-
-            Toggle("", isOn: Binding(
-                get: { uiState.backgroundSyncEnabled },
-                set: { newValue in
-                    presenter.dispatch(action: BackgroundSyncToggled(enabled: newValue))
-                }
-            ))
-            .labelsHidden()
-            .tint(theme.colors.secondary)
-        }
-    }
-
-    private var notificationsToggleRow: some View {
-        HStack(spacing: theme.spacing.medium) {
-            settingsIcon("bell.fill", color: theme.colors.secondary)
-
-            VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
-                Text(String(\.label_settings_episode_notifications))
-                    .textStyle(theme.typography.titleMedium)
-                    .foregroundColor(theme.colors.onSurface)
-                Text(String(\.label_settings_episode_notifications_description))
-                    .textStyle(theme.typography.bodySmall)
-                    .foregroundColor(theme.colors.onSurfaceVariant)
-            }
-
-            Spacer()
-
-            Toggle("", isOn: Binding(
-                get: { uiState.episodeNotificationsEnabled },
-                set: { newValue in
-                    handleNotificationToggle(enabled: newValue)
-                }
-            ))
-            .labelsHidden()
-            .tint(theme.colors.secondary)
-        }
+        SettingsScreen(
+            title: String(\.label_settings_title),
+            themeItem: themeItem,
+            imageQualityItem: imageQualityItem,
+            behaviorToggles: behaviorToggles,
+            privacyToggles: privacyToggles,
+            infoItems: infoItems,
+            traktItems: traktItems,
+            debugItems: debugItems,
+            onBack: { presenter.dispatch(action: BackClicked__()) }
+        )
+        .settingsObservers(
+            uiState: uiState,
+            store: store,
+            showingErrorAlert: $showingErrorAlert
+        )
+        .settingsAlerts(
+            uiState: uiState,
+            showingErrorAlert: $showingErrorAlert,
+            showingLogoutAlert: $showingLogoutAlert,
+            onLogout: { presenter.dispatch(action: TraktLogoutClicked()) }
+        )
         .alert(
             String(\.notification_permission_denied_title),
             isPresented: $showNotificationPermissionDeniedAlert
@@ -341,7 +57,179 @@ struct SettingsView: View {
         } message: {
             Text(String(\.notification_permission_denied_message))
         }
+        .sheet(isPresented: $showAboutSheet) {
+            AboutSheet()
+        }
+        .sheet(isPresented: $showPolicy) {
+            if let url = URL(string: uiState.privacyPolicyUrl) {
+                SFSafariViewWrapper(url: url)
+                    .appTint()
+                    .appTheme()
+            }
+        }
+        .onAppear {
+            store.imageQuality = uiState.imageQuality.toSwift()
+        }
     }
+
+    // MARK: - Theme
+
+    private var themeItem: SettingsThemeItem<DeviceAppTheme> {
+        SettingsThemeItem(
+            icon: "paintpalette",
+            title: String(\.settings_theme_selector_title),
+            subtitle: String(\.settings_theme_selector_subtitle),
+            themes: DeviceAppTheme.sortedThemes,
+            selectedTheme: store.appTheme,
+            onThemeSelected: { selectedTheme in
+                store.appTheme = selectedTheme
+                let appTheme = selectedTheme.toAppTheme()
+                presenter.dispatch(action: ThemeSelected(theme: appTheme.toThemeModel()))
+            }
+        )
+    }
+
+    // MARK: - Image Quality
+
+    private var imageQualityItem: SettingsImageQualityItem {
+        let currentQuality = uiState.imageQuality.toSwift()
+        return SettingsImageQualityItem(
+            icon: "photo",
+            title: String(\.label_settings_image_quality),
+            subtitle: imageQualityDescription(for: currentQuality),
+            options: SwiftImageQuality.allCases.map { quality in
+                SettingsImageQualityOption(
+                    id: quality.rawValue,
+                    label: imageQualityTitle(for: quality),
+                    onSelect: {
+                        let kmpQuality = TvManiac.ImageQuality.fromSwift(quality)
+                        presenter.dispatch(action: ImageQualitySelected(quality: kmpQuality))
+                        store.imageQuality = quality
+                    }
+                )
+            },
+            selectedOptionId: currentQuality.rawValue
+        )
+    }
+
+    // MARK: - Behavior Toggles
+
+    private var behaviorToggles: [SettingsToggleItem] {
+        var toggles: [SettingsToggleItem] = []
+
+        toggles.append(SettingsToggleItem(
+            id: "notifications",
+            icon: "bell.fill",
+            title: String(\.label_settings_episode_notifications),
+            subtitle: String(\.label_settings_episode_notifications_description),
+            isOn: uiState.episodeNotificationsEnabled,
+            onToggle: { handleNotificationToggle(enabled: $0) }
+        ))
+
+        var syncSubtitle: String?
+        if uiState.showLastSyncDate, let lastSyncDate = uiState.lastSyncDate {
+            syncSubtitle = String(\.label_settings_last_sync_date, parameter: lastSyncDate)
+        }
+        toggles.append(SettingsToggleItem(
+            id: "sync",
+            icon: "arrow.triangle.2.circlepath",
+            title: String(\.label_settings_sync_update),
+            subtitle: String(\.label_settings_sync_update_description),
+            secondarySubtitle: syncSubtitle,
+            isOn: uiState.backgroundSyncEnabled,
+            onToggle: { presenter.dispatch(action: BackgroundSyncToggled(enabled: $0)) }
+        ))
+
+        toggles.append(SettingsToggleItem(
+            id: "specials",
+            icon: "film.stack",
+            title: String(\.label_settings_include_specials),
+            subtitle: String(\.label_settings_include_specials_description),
+            isOn: uiState.includeSpecials,
+            onToggle: { presenter.dispatch(action: IncludeSpecialsToggled(enabled: $0)) }
+        ))
+
+        toggles.append(SettingsToggleItem(
+            id: "youtube",
+            icon: "tv",
+            title: String(\.label_settings_youtube),
+            subtitle: String(\.label_settings_youtube_description),
+            isOn: uiState.openTrailersInYoutube,
+            onToggle: { presenter.dispatch(action: YoutubeToggled(enabled: $0)) }
+        ))
+
+        return toggles
+    }
+
+    // MARK: - Privacy Toggles
+
+    private var privacyToggles: [SettingsToggleItem] {
+        [
+            SettingsToggleItem(
+                id: "crash-reporting",
+                icon: "ladybug",
+                title: String(\.label_settings_crash_reporting),
+                subtitle: String(\.label_settings_crash_reporting_description),
+                isOn: uiState.crashReportingEnabled,
+                onToggle: { presenter.dispatch(action: CrashReportingToggled(enabled: $0)) }
+            ),
+        ]
+    }
+
+    // MARK: - Info Items
+
+    private var infoItems: [SettingsNavigationItem] {
+        [
+            SettingsNavigationItem(
+                id: "about",
+                icon: "info.circle",
+                title: String(\.settings_about_section_title),
+                subtitle: String(\.settings_title_about),
+                onTap: { showAboutSheet = true }
+            ),
+            SettingsNavigationItem(
+                id: "privacy",
+                icon: "hand.raised",
+                title: String(\.label_settings_privacy_policy),
+                onTap: { showPolicy = true }
+            ),
+        ]
+    }
+
+    // MARK: - Trakt Items
+
+    private var traktItems: [SettingsNavigationItem] {
+        guard uiState.isAuthenticated else { return [] }
+        return [
+            SettingsNavigationItem(
+                id: "logout",
+                icon: "person.fill",
+                title: String(\.logout),
+                subtitle: String(\.trakt_description),
+                onTap: { showingLogoutAlert = true }
+            ),
+        ]
+    }
+
+    // MARK: - Debug Items
+
+    private var debugItems: [SettingsNavigationItem] {
+        #if DEBUG
+            return [
+                SettingsNavigationItem(
+                    id: "debug",
+                    icon: "ellipsis.curlybraces",
+                    title: String(\.label_debug_menu_title),
+                    subtitle: String(\.label_debug_menu_subtitle),
+                    onTap: { presenter.dispatch(action: NavigateToDebugMenu()) }
+                ),
+            ]
+        #else
+            return []
+        #endif
+    }
+
+    // MARK: - Notification Handling
 
     private func handleNotificationToggle(enabled: Bool) {
         guard enabled else {
@@ -361,146 +249,13 @@ struct SettingsView: View {
         }
     }
 
-    private var crashReportingToggleRow: some View {
-        HStack(spacing: theme.spacing.medium) {
-            settingsIcon("ladybug", color: theme.colors.secondary)
-
-            VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
-                Text(String(\.label_settings_crash_reporting))
-                    .textStyle(theme.typography.titleMedium)
-                    .foregroundColor(theme.colors.onSurface)
-                Text(String(\.label_settings_crash_reporting_description))
-                    .textStyle(theme.typography.bodySmall)
-                    .foregroundColor(theme.colors.onSurfaceVariant)
-            }
-
-            Spacer()
-
-            Toggle("", isOn: Binding(
-                get: { uiState.crashReportingEnabled },
-                set: { newValue in
-                    presenter.dispatch(action: CrashReportingToggled(enabled: newValue))
-                }
-            ))
-            .labelsHidden()
-            .tint(theme.colors.secondary)
-        }
-    }
-
-    private var aboutRow: some View {
-        Button {
-            showAboutSheet = true
-        } label: {
-            HStack(spacing: theme.spacing.medium) {
-                settingsIcon("info.circle", color: theme.colors.secondary)
-
-                VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
-                    Text(String(\.settings_about_section_title))
-                        .textStyle(theme.typography.titleMedium)
-                        .foregroundColor(theme.colors.onSurface)
-                    Text(String(\.settings_title_about))
-                        .textStyle(theme.typography.bodySmall)
-                        .foregroundColor(theme.colors.onSurfaceVariant)
-                }
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                    .foregroundColor(theme.colors.onSurfaceVariant)
-            }
-            .padding(.vertical, theme.spacing.small)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-    }
-
-    private var privacyRow: some View {
-        Button {
-            showPolicy = true
-        } label: {
-            HStack(spacing: theme.spacing.medium) {
-                settingsIcon("hand.raised", color: theme.colors.secondary)
-
-                Text(String(\.label_settings_privacy_policy))
-                    .textStyle(theme.typography.titleMedium)
-                    .foregroundColor(theme.colors.onSurface)
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                    .foregroundColor(theme.colors.onSurfaceVariant)
-            }
-            .padding(.vertical, theme.spacing.small)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-    }
-
-    private var traktLogoutRow: some View {
-        Button {
-            showingLogoutAlert = true
-        } label: {
-            HStack(spacing: theme.spacing.medium) {
-                settingsIcon("person.fill", color: theme.colors.secondary)
-
-                VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
-                    Text(String(\.logout))
-                        .textStyle(theme.typography.titleMedium)
-                        .foregroundColor(theme.colors.onSurface)
-                    Text(String(\.trakt_description))
-                        .textStyle(theme.typography.bodySmall)
-                        .foregroundColor(theme.colors.onSurfaceVariant)
-                }
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                    .foregroundColor(theme.colors.onSurfaceVariant)
-            }
-            .padding(.vertical, theme.spacing.small)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-    }
-
-    private var debugMenuRow: some View {
-        Button {
-            presenter.dispatch(action: NavigateToDebugMenu())
-        } label: {
-            HStack(spacing: theme.spacing.medium) {
-                settingsIcon("ellipsis.curlybraces", color: theme.colors.secondary)
-
-                VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
-                    Text(String(\.label_debug_menu_title))
-                        .textStyle(theme.typography.titleMedium)
-                        .foregroundColor(theme.colors.onSurface)
-                    Text(String(\.label_debug_menu_subtitle))
-                        .textStyle(theme.typography.bodySmall)
-                        .foregroundColor(theme.colors.onSurfaceVariant)
-                }
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                    .foregroundColor(theme.colors.onSurfaceVariant)
-            }
-            .padding(.vertical, theme.spacing.small)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-    }
-
-    private func settingsIcon(_ systemName: String, color: Color) -> some View {
-        Image(systemName: systemName)
-            .foregroundColor(color)
-            .frame(width: theme.spacing.large, height: theme.spacing.large)
-    }
+    // MARK: - About Sheet
 
     private func AboutSheet() -> some View {
         ZStack(alignment: .bottom) {
             ScrollView {
                 VStack(spacing: 0) {
-                    VStack(spacing: theme.spacing.medium) {
+                    VStack(spacing: 16) {
                         Image("TvManiacIcon")
                             .resizable()
                             .scaledToFit()
@@ -508,33 +263,27 @@ struct SettingsView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 16))
 
                         Text("TvManiac")
-                            .textStyle(theme.typography.headlineLarge)
-                            .foregroundColor(theme.colors.onSurface)
+                            .font(.title)
+                            .bold()
 
                         Text(String(\.settings_about_version, parameter: uiState.versionName))
-                            .textStyle(theme.typography.bodyLarge)
-                            .foregroundColor(theme.colors.secondary)
+                            .font(.body)
                     }
-                    .padding(.vertical, theme.spacing.xLarge)
+                    .padding(.vertical, 32)
 
                     Divider()
-                        .overlay(theme.colors.outline)
 
-                    VStack(alignment: .leading, spacing: theme.spacing.xSmall) {
+                    VStack(alignment: .leading, spacing: 8) {
                         Text(String(\.settings_about_section_title))
-                            .textStyle(theme.typography.titleMedium)
-                            .foregroundColor(theme.colors.onSurface)
-
+                            .font(.headline)
                         Text(String(\.settings_about_description))
-                            .textStyle(theme.typography.bodyMedium)
-                            .foregroundColor(theme.colors.onSurfaceVariant)
+                            .font(.body)
+                            .foregroundColor(.secondary)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, theme.spacing.medium)
-                    .padding(.vertical, theme.spacing.medium)
+                    .padding(16)
 
                     Divider()
-                        .overlay(theme.colors.outline)
 
                     Button {
                         if let url = URL(string: uiState.githubUrl) {
@@ -543,22 +292,15 @@ struct SettingsView: View {
                     } label: {
                         HStack {
                             Text(String(\.settings_about_source_code))
-                                .textStyle(theme.typography.bodyLarge)
-                                .foregroundColor(theme.colors.onSurface)
-
                             Spacer()
-
                             Text(String(\.settings_about_github))
-                                .textStyle(theme.typography.bodyLarge)
-                                .foregroundColor(theme.colors.secondary)
+                                .foregroundColor(.accentColor)
                         }
-                        .padding(.horizontal, theme.spacing.medium)
-                        .padding(.vertical, theme.spacing.medium)
+                        .padding(16)
                     }
                     .buttonStyle(.plain)
 
                     Divider()
-                        .overlay(theme.colors.outline)
 
                     Spacer()
                         .frame(height: 80)
@@ -566,18 +308,18 @@ struct SettingsView: View {
             }
 
             Text(String(\.settings_about_api_disclaimer))
-                .textStyle(theme.typography.bodySmall)
-                .foregroundColor(theme.colors.onSurfaceVariant)
+                .font(.caption)
+                .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, theme.spacing.large)
-                .padding(.vertical, theme.spacing.large)
+                .padding(24)
                 .frame(maxWidth: .infinity)
-                .background(theme.colors.surface)
+                .background(Color(.systemBackground))
         }
         .frame(maxWidth: .infinity)
-        .background(theme.colors.surface)
         .presentationDetents([.large])
     }
+
+    // MARK: - Helpers
 
     private func imageQualityTitle(for quality: SwiftImageQuality) -> String {
         switch quality {
@@ -646,13 +388,5 @@ private extension View {
                 secondaryButton: .cancel()
             )
         }
-    }
-}
-
-private enum DimensionConstants {
-    static var toolbarInset: CGFloat {
-        let safeAreaTop = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?
-            .windows.first?.safeAreaInsets.top ?? 0
-        return 44 + safeAreaTop
     }
 }

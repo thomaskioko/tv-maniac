@@ -171,14 +171,13 @@ public struct ShowInfoView: View {
 
     private var watchlistButton: some View {
         Button(action: onAddToLibrary) {
-            VStack {
+            VStack(spacing: theme.spacing.xxxSmall) {
                 Image(systemName: isFollowed ? "minus.circle.fill" : "plus.circle.fill")
                     .foregroundColor(theme.colors.onButtonBackground)
                     .symbolEffect(isFollowed ? .bounce.down : .bounce.up, value: isFollowed)
 
                 Text(isFollowed ? stopTrackingLabel : trackLabel)
                     .lineLimit(1)
-                    .padding(.top, theme.spacing.xxxSmall)
                     .textStyle(theme.typography.labelSmall)
                     .foregroundColor(theme.colors.onButtonBackground)
             }
@@ -193,12 +192,11 @@ public struct ShowInfoView: View {
 
     private var listButton: some View {
         Button(action: onAddToCustomList) {
-            VStack {
+            VStack(spacing: theme.spacing.xxxSmall) {
                 Image(systemName: false ? "rectangle.on.rectangle.angled.fill" : "rectangle.on.rectangle.angled")
                     .foregroundColor(theme.colors.onButtonBackground)
 
                 Text(addToListLabel)
-                    .padding(.top, theme.spacing.xxxSmall)
                     .textStyle(theme.typography.labelSmall)
                     .foregroundColor(theme.colors.onButtonBackground)
                     .lineLimit(1)
