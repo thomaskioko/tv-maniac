@@ -4,12 +4,12 @@ import YouTubePlayerKit
 public struct YoutubeItemView: View {
     @Theme private var theme
     @State private var isLoading = false
+    @State private var player: YouTubePlayer?
 
     private let openInYouTube: Bool
     private let key: String
     private let name: String
     private let thumbnailUrl: String
-    private let player: YouTubePlayer
     private let onError: ((Error) -> Void)?
 
     public init(
@@ -24,30 +24,17 @@ public struct YoutubeItemView: View {
         self.name = name
         self.thumbnailUrl = thumbnailUrl
         self.onError = onError
-
-        player = YouTubePlayer(
-            source: .video(id: key),
-            parameters: .init(
-                autoPlay: false,
-                loopEnabled: true,
-                showControls: true
-            ),
-            configuration: .init(
-                fullscreenMode: .system,
-                allowsPictureInPictureMediaPlayback: false,
-                automaticallyAdjustsContentInsets: true
-            )
-        )
     }
 
     public var body: some View {
         ZStack {
-            YouTubePlayerView(player)
-                .frame(
-                    width: DimensionConstants.imageWidth,
-                    height: DimensionConstants.imageHeight
-                )
-                .opacity(0)
+            if let player {
+                YouTubePlayerView(player)
+                    .frame(
+                        width: DimensionConstants.imageWidth,
+                        height: DimensionConstants.imageHeight
+                    )
+            }
 
             VStack {
                 LazyResizableImage(
@@ -167,9 +154,23 @@ public struct YoutubeItemView: View {
             }
         } else {
             isLoading = true
+            let newPlayer = YouTubePlayer(
+                source: .video(id: key),
+                parameters: .init(
+                    autoPlay: false,
+                    loopEnabled: true,
+                    showControls: true
+                ),
+                configuration: .init(
+                    fullscreenMode: .system,
+                    allowsPictureInPictureMediaPlayback: false,
+                    automaticallyAdjustsContentInsets: true
+                )
+            )
+            player = newPlayer
             Task { @MainActor in
                 do {
-                    try await player.play()
+                    try await newPlayer.play()
                 } catch {
                     print("Failed to play video: \(error)")
                     isLoading = false
