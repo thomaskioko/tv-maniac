@@ -17,7 +17,6 @@ import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
@@ -48,18 +47,12 @@ public class DefaultDebugPresenter(
     private val upNextSyncState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
 
-    private val lastLibrarySyncDate = datastoreRepository.observeLastSyncTimestamp()
-        .map { it?.let(dateTimeProvider::epochToDisplayDateTime) }
-
-    private val lastUpNextSyncDate = datastoreRepository.observeLastUpNextSyncTimestamp()
-        .map { it?.let(dateTimeProvider::epochToDisplayDateTime) }
-
     override val state: StateFlow<DebugState> = combine(
         debugNotificationState.observable,
         librarySyncState.observable,
         upNextSyncState.observable,
-        lastLibrarySyncDate,
-        lastUpNextSyncDate,
+        datastoreRepository.observeLastSyncTimestamp(),
+        datastoreRepository.observeLastUpNextSyncTimestamp(),
         uiMessageManager.message,
         traktAuthRepository.state,
     ) {
@@ -70,8 +63,8 @@ public class DefaultDebugPresenter(
             isSchedulingDebugNotification = isSchedulingDebugNotification,
             isSyncingLibrary = isSyncingLibrary,
             isSyncingUpNext = isSyncingUpNext,
-            lastLibrarySyncDate = lastLibrarySyncDate,
-            lastUpNextSyncDate = lastUpNextSyncDate,
+            lastLibrarySyncDate = lastLibrarySyncDate?.let(dateTimeProvider::epochToDisplayDateTime),
+            lastUpNextSyncDate = lastUpNextSyncDate?.let(dateTimeProvider::epochToDisplayDateTime),
             message = message,
             isLoggedIn = isLoggedIn == TraktAuthState.LOGGED_IN,
         )
@@ -108,7 +101,6 @@ public class DefaultDebugPresenter(
         coroutineScope.launch {
             syncLibraryInteractor(SyncLibraryInteractor.Param(forceRefresh = true))
                 .collectStatus(librarySyncState, logger, uiMessageManager)
-            datastoreRepository.setLastSyncTimestamp(dateTimeProvider.nowMillis())
         }
     }
 
