@@ -37,11 +37,11 @@ public class TokenRefreshWorker(
     internal companion object {
         internal const val WORKER_NAME = "com.thomaskioko.tvmaniac.tokenrefresh"
         private const val TAG = "TokenRefreshWorker"
-        private const val FIVE_DAYS_MS = 5L * 24 * 60 * 60 * 1000
+        private const val FIVE_HOURS_MS = 5L * 60 * 60 * 1000
 
         internal val REQUEST = PeriodicTaskRequest(
             id = WORKER_NAME,
-            intervalMs = FIVE_DAYS_MS,
+            intervalMs = FIVE_HOURS_MS,
             constraints = TaskConstraints(requiresNetwork = true),
         )
     }
