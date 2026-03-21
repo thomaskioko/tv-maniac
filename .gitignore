@@ -95,9 +95,8 @@ ios/SourcePackages/
 derived_data/
 *.xcresult
 
-#.junie/*
 /.junie/guidelines.md
-/docs
+/tasks
 CLAUDE.md
 .claude/
 
