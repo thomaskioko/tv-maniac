@@ -13,7 +13,7 @@ public class FakeLocalizer : Localizer {
     override fun getString(
         key: StringResourceKey,
         vararg args: Any,
-    ): String = key.getString(args)
+    ): String = key.getString(*args)
 
     override fun getPlural(key: PluralsResourceKey, quantity: Int): String =
         key.getPlural(quantity)
@@ -22,5 +22,5 @@ public class FakeLocalizer : Localizer {
         key: PluralsResourceKey,
         quantity: Int,
         vararg args: Any,
-    ): String = key.getPlural(quantity, args)
+    ): String = key.getPlural(quantity, *args)
 }
