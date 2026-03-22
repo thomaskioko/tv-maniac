@@ -31,12 +31,15 @@ public struct EpisodeDetailSheetContent<Actions: View>: View {
 
     private let episode: EpisodeDetailInfo
     private let actions: (() -> Actions)?
+    private let detents: Set<PresentationDetent>
 
     public init(
         episode: EpisodeDetailInfo,
+        detents: Set<PresentationDetent> = [.medium, .large],
         @ViewBuilder actions: @escaping () -> Actions
     ) {
         self.episode = episode
+        self.detents = detents
         self.actions = actions
     }
 
@@ -74,6 +77,7 @@ public struct EpisodeDetailSheetContent<Actions: View>: View {
                 }
             }
         }
+        .presentationDetents(detents)
         .presentationDragIndicator(.hidden)
     }
 
@@ -103,7 +107,7 @@ public struct EpisodeDetailSheetContent<Actions: View>: View {
                     }
                 }
             }
-            .frame(height: 280)
+            .frame(maxWidth: .infinity, maxHeight: 280)
             .clipped()
 
             RoundedRectangle(cornerRadius: 2)
@@ -138,8 +142,12 @@ public struct EpisodeDetailSheetContent<Actions: View>: View {
 }
 
 public extension EpisodeDetailSheetContent where Actions == EmptyView {
-    init(episode: EpisodeDetailInfo) {
+    init(
+        episode: EpisodeDetailInfo,
+        detents: Set<PresentationDetent> = [.medium, .large]
+    ) {
         self.episode = episode
+        self.detents = detents
         actions = nil
     }
 }

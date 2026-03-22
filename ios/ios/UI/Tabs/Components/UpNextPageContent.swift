@@ -82,7 +82,6 @@ struct UpNextPageContent: View {
                         }
                     )
                 }
-                .presentationDetents([.large])
             }
     }
 
