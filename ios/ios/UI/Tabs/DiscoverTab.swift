@@ -131,6 +131,5 @@ struct DiscoverTab: View {
                 }
             )
         }
-        .presentationDetents([.large])
     }
 }

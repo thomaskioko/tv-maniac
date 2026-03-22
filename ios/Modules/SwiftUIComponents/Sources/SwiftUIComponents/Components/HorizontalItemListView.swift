@@ -8,12 +8,18 @@
 
 import SwiftUI
 
+public enum CardStyle {
+    case poster
+    case backdrop
+}
+
 public struct HorizontalItemListView: View {
     @Theme private var theme
 
     private let title: String
     private let subtitle: String
     private let chevronStyle: ChevronStyle
+    private let cardStyle: CardStyle
     private let items: [SwiftShow]
     private let onClick: (Int64) -> Void
     private let onMoreClicked: () -> Void
@@ -22,6 +28,7 @@ public struct HorizontalItemListView: View {
         title: String,
         subtitle: String = "",
         chevronStyle: ChevronStyle = .none,
+        cardStyle: CardStyle = .backdrop,
         items: [SwiftShow],
         onClick: @escaping (Int64) -> Void,
         onMoreClicked: @escaping () -> Void = {}
@@ -31,6 +38,7 @@ public struct HorizontalItemListView: View {
         self.subtitle = subtitle
         self.onClick = onClick
         self.chevronStyle = chevronStyle
+        self.cardStyle = cardStyle
         self.onMoreClicked = onMoreClicked
     }
 
@@ -46,15 +54,11 @@ public struct HorizontalItemListView: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     LazyHStack {
                         ForEach(items, id: \.traktId) { item in
-                            BackdropPosterCard(
-                                title: item.title,
-                                posterUrl: item.posterUrl,
-                                isInLibrary: item.inLibrary
-                            )
-                            .padding([.leading, .trailing], theme.spacing.xxxSmall)
-                            .padding(.leading, item.traktId == items.first?.traktId ? theme.spacing.small - 2 : 0)
-                            .padding(.trailing, item.traktId == items.last?.traktId ? theme.spacing.xSmall : 0)
-                            .onTapGesture { onClick(item.traktId) }
+                            cardView(for: item)
+                                .padding([.leading, .trailing], theme.spacing.xxxSmall)
+                                .padding(.leading, item.traktId == items.first?.traktId ? theme.spacing.small - 2 : 0)
+                                .padding(.trailing, item.traktId == items.last?.traktId ? theme.spacing.xSmall : 0)
+                                .onTapGesture { onClick(item.traktId) }
                         }
                     }
                 }
@@ -62,12 +66,31 @@ public struct HorizontalItemListView: View {
         }
         .padding(.bottom, theme.spacing.medium)
     }
+
+    @ViewBuilder
+    private func cardView(for item: SwiftShow) -> some View {
+        switch cardStyle {
+        case .poster:
+            PosterItemView(
+                title: item.title,
+                posterUrl: item.posterUrl,
+                isInLibrary: item.inLibrary
+            )
+        case .backdrop:
+            BackdropPosterCard(
+                title: item.title,
+                posterUrl: item.posterUrl,
+                isInLibrary: item.inLibrary
+            )
+        }
+    }
 }
 
 #Preview {
     VStack {
         HorizontalItemListView(
             title: "Coming Soon",
+            cardStyle: .backdrop,
             items: [
                 .init(
                     traktId: 1234,
@@ -98,6 +121,7 @@ public struct HorizontalItemListView: View {
         HorizontalItemListView(
             title: "Trending Today",
             chevronStyle: .chevronOnly,
+            cardStyle: .poster,
             items: [
                 .init(
                     traktId: 124,
