@@ -82,9 +82,26 @@ public class IosTaskScheduler(
         logger.debug(TAG, "Registered background task [$taskId]")
     }
 
+    /**
+     * Submits a background task request to the system scheduler.
+     *
+     * @param request the periodic task configuration (id, interval, constraints).
+     * @param useFullInterval controls the `earliestBeginDate` strategy:
+     *  - `false` (default): uses a short 5-minute delay. Used for initial scheduling
+     *    ([schedulePeriodic]) and background re-registration ([rescheduleBackgroundTask]) so
+     *    the task becomes eligible soon. Without this, every app-open-close cycle would push
+     *    the begin date forward by the full interval (e.g. 6 hours), preventing the task
+     *    from ever becoming eligible.
+     *  - `true`: uses the full [PeriodicTaskRequest.intervalMs]. Used only when re-scheduling
+     *    after a task has actually executed ([handleTask]), establishing the real periodic cadence.
+     */
     @OptIn(ExperimentalForeignApi::class)
-    private fun submitRequest(request: PeriodicTaskRequest) {
-        val intervalSeconds = request.intervalMs / 1000.0
+    private fun submitRequest(request: PeriodicTaskRequest, useFullInterval: Boolean = false) {
+        val intervalSeconds = if (useFullInterval) {
+            request.intervalMs / 1000.0
+        } else {
+            INITIAL_DELAY_SECONDS
+        }
         val earliestBeginDate = NSDate.dateWithTimeIntervalSinceNow(intervalSeconds)
 
         val bgRequest = if (request.longRunning) {
@@ -140,7 +157,7 @@ public class IosTaskScheduler(
         executeWithinWindow(bgTask, worker)
 
         if (request != null) {
-            submitRequest(request)
+            submitRequest(request, useFullInterval = true)
         }
     }
 
@@ -178,5 +195,6 @@ public class IosTaskScheduler(
 
     private companion object {
         private const val TAG = "IosTaskScheduler"
+        private const val INITIAL_DELAY_SECONDS = 300.0
     }
 }

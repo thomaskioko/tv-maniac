@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.traktauth.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.traktauth.api.AuthError
 import com.thomaskioko.tvmaniac.traktauth.api.AuthState
@@ -35,11 +36,12 @@ public class DefaultTraktAuthRepository(
     private val authStore: AuthStore,
     private val refreshTokenAction: Lazy<TraktRefreshTokenAction>,
     private val dateTimeProvider: DateTimeProvider,
+    private val datastoreRepository: DatastoreRepository,
     private val requestManagerRepository: RequestManagerRepository,
     private val logger: Logger,
 ) : TraktAuthRepository {
 
-    private val authState = MutableStateFlow<AuthState?>(null)
+    private val _authState = MutableStateFlow<AuthState?>(null)
     private var authStateExpiry: Instant = Instant.DISTANT_PAST
     private val scope = CoroutineScope(SupervisorJob() + dispatchers.io)
 
@@ -51,7 +53,7 @@ public class DefaultTraktAuthRepository(
         }
     }
 
-    override val state: Flow<TraktAuthState> = authState.map { state ->
+    override val state: Flow<TraktAuthState> = _authState.map { state ->
         if (state?.isAuthorized == true) {
             TraktAuthState.LOGGED_IN
         } else {
@@ -59,12 +61,14 @@ public class DefaultTraktAuthRepository(
         }
     }
 
+    override val authState: Flow<AuthState?> = _authState
+
     override val authError: Flow<AuthError?> = _authError
 
-    override fun isLoggedIn(): Boolean = authState.value?.isAuthorized == true
+    override fun isLoggedIn(): Boolean = _authState.value?.isAuthorized == true
 
     override suspend fun getAuthState(): AuthState? {
-        val cached = authState.value
+        val cached = _authState.value
 
         if (cached != null && cached.isAuthorized && dateTimeProvider.now() < authStateExpiry) {
             return cached
@@ -82,6 +86,7 @@ public class DefaultTraktAuthRepository(
             is RefreshTokenResult.Success -> {
                 _authError.value = null
                 updateAuthState(result.authState)
+                datastoreRepository.setLastTokenRefreshTimestamp(dateTimeProvider.nowMillis())
                 TokenRefreshResult.Success(result.authState)
             }
             is RefreshTokenResult.TokenExpired -> {
@@ -114,14 +119,14 @@ public class DefaultTraktAuthRepository(
     ) {
         requestManagerRepository.clearSyncRelatedRequests()
 
-        val authState = AuthState(
+        val newAuthState = AuthState(
             accessToken = accessToken,
             refreshToken = refreshToken,
             isAuthorized = true,
             expiresAt = Instant.fromEpochSeconds(expiresAtSeconds),
         )
 
-        updateAuthState(authState, persist = true)
+        updateAuthState(newAuthState, persist = true)
     }
 
     override suspend fun setAuthError(error: AuthError?) {
@@ -129,7 +134,7 @@ public class DefaultTraktAuthRepository(
     }
 
     private fun cacheAuthState(authState: AuthState) {
-        this.authState.update { authState }
+        this._authState.update { authState }
         authStateExpiry = when {
             authState.isAuthorized -> dateTimeProvider.now() + 1.hours
             else -> Instant.DISTANT_PAST

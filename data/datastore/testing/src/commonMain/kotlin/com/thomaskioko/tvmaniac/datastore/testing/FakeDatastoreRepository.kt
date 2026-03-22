@@ -131,6 +131,7 @@ public class FakeDatastoreRepository : DatastoreRepository {
     private val genreShowCategoryFlow = MutableStateFlow("POPULAR")
     private val upNextSortOptionFlow = MutableStateFlow("LAST_WATCHED")
     private val lastUpNextSyncTimestampFlow: MutableStateFlow<Long?> = MutableStateFlow(null)
+    private val lastTokenRefreshTimestampFlow: MutableStateFlow<Long?> = MutableStateFlow(null)
     private val crashReportingEnabledFlow = MutableStateFlow(true)
 
     override suspend fun saveGenreShowCategory(category: String) {
@@ -152,6 +153,12 @@ public class FakeDatastoreRepository : DatastoreRepository {
     }
 
     override fun observeLastUpNextSyncTimestamp(): Flow<Long?> = lastUpNextSyncTimestampFlow.asStateFlow()
+
+    override suspend fun setLastTokenRefreshTimestamp(timestamp: Long) {
+        lastTokenRefreshTimestampFlow.value = timestamp
+    }
+
+    override fun observeLastTokenRefreshTimestamp(): Flow<Long?> = lastTokenRefreshTimestampFlow.asStateFlow()
 
     override suspend fun setCrashReportingEnabled(enabled: Boolean) {
         crashReportingEnabledFlow.value = enabled

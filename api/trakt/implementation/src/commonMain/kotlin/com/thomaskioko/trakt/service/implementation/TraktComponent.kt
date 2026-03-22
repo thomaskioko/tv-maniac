@@ -36,6 +36,6 @@ public interface TraktComponent {
         json = json,
         httpClientEngine = httpClientEngine,
         kermitLogger = logger,
-        traktAuthRepository = { traktAuthRepository },
+        traktAuthRepository = traktAuthRepository,
     )
 }

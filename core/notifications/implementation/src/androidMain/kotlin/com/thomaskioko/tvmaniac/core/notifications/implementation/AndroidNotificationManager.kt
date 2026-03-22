@@ -61,8 +61,7 @@ public class AndroidNotificationManager(
             return
         }
 
-        val windowStartTime = (notification.scheduledTime - ALARM_WINDOW_LENGTH.inWholeMilliseconds)
-            .coerceAtLeast(now)
+        val windowStartTime = notification.scheduledTime.coerceAtLeast(now)
 
         logger.debug(TAG, "Scheduling notification for ${notification.showName} S${notification.seasonNumber}E${notification.episodeNumber}")
 

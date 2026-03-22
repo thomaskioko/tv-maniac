@@ -48,8 +48,13 @@ public class DefaultTraktRefreshTokenAction(
                 )
             }
             is ApiResponse.Error.HttpError -> {
-                if (response.code == HTTP_UNAUTHORIZED) {
-                    logger.error("TraktRefreshTokenAction", "Token expired (401) - user needs to re-authenticate")
+                val isInvalidGrant = response.errorBody?.contains("invalid_grant") == true ||
+                    response.errorMessage?.contains("invalid_grant") == true
+                val isTokenRevoked = response.code == HTTP_UNAUTHORIZED ||
+                    (response.code == HTTP_BAD_REQUEST && isInvalidGrant)
+
+                if (isTokenRevoked) {
+                    logger.error("TraktRefreshTokenAction", "Token revoked (${response.code}) - user needs to re-authenticate")
                     RefreshTokenResult.TokenExpired
                 } else {
                     logger.error("TraktRefreshTokenAction", "HTTP error: ${response.code}")
@@ -68,6 +73,7 @@ public class DefaultTraktRefreshTokenAction(
     }
 
     private companion object {
+        const val HTTP_BAD_REQUEST = 400
         const val HTTP_UNAUTHORIZED = 401
     }
 }

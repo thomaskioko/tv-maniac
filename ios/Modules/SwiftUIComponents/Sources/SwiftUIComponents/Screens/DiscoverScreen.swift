@@ -351,6 +351,7 @@ public struct DiscoverScreen: View {
             HorizontalItemListView(
                 title: trendingTitle,
                 chevronStyle: .chevronOnly,
+                cardStyle: .poster,
                 items: trendingToday,
                 onClick: onShowClicked,
                 onMoreClicked: onTrendingClicked
@@ -359,6 +360,7 @@ public struct DiscoverScreen: View {
             HorizontalItemListView(
                 title: upcomingTitle,
                 chevronStyle: .chevronOnly,
+                cardStyle: .poster,
                 items: upcomingShows,
                 onClick: onShowClicked,
                 onMoreClicked: onUpcomingClicked
@@ -367,6 +369,7 @@ public struct DiscoverScreen: View {
             HorizontalItemListView(
                 title: popularTitle,
                 chevronStyle: .chevronOnly,
+                cardStyle: .poster,
                 items: popularShows,
                 onClick: onShowClicked,
                 onMoreClicked: onPopularClicked
@@ -375,6 +378,7 @@ public struct DiscoverScreen: View {
             HorizontalItemListView(
                 title: topRatedTitle,
                 chevronStyle: .chevronOnly,
+                cardStyle: .poster,
                 items: topRatedShows,
                 onClick: onShowClicked,
                 onMoreClicked: onTopRatedClicked

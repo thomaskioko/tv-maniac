@@ -7,9 +7,11 @@ import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.data.library.LibraryRepository
 import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderRepository
+import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.LIBRARY_SYNC
 import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityRepository
+import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
@@ -21,6 +23,8 @@ public class SyncLibraryInteractor(
     private val showDetailsRepository: ShowDetailsRepository,
     private val watchProviderRepository: WatchProviderRepository,
     private val traktActivityRepository: TraktActivityRepository,
+    private val datastoreRepository: DatastoreRepository,
+    private val dateTimeProvider: DateTimeProvider,
     private val dispatchers: AppCoroutineDispatchers,
     private val logger: Logger,
 ) : Interactor<SyncLibraryInteractor.Param>() {
@@ -60,6 +64,8 @@ public class SyncLibraryInteractor(
 
             logger.debug(TAG, "Library sync complete")
         }
+
+        datastoreRepository.setLastSyncTimestamp(dateTimeProvider.nowMillis())
     }
 
     public data class Param(

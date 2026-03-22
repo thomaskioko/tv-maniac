@@ -53,7 +53,8 @@ public class ScheduleEpisodeNotificationsInteractor(
                 val notificationTime = episode.firstAired - params.bufferTime.inWholeMilliseconds
 
                 if (notificationTime <= currentTime) {
-                    logger.debug(TAG, "Skipping ${episode.showName} - notification time already passed")
+                    newNotificationIds.add(episode.episodeId)
+                    logger.debug(TAG, "Preserving existing alarm for ${episode.showName} - notification time already passed")
                     return@forEach
                 }
 

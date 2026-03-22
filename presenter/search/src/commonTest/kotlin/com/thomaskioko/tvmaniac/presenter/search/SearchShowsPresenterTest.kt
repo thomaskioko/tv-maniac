@@ -37,10 +37,11 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-class SearchShowsPresenterTest {
+internal class SearchShowsPresenterTest {
     private val testDispatcher = StandardTestDispatcher()
     private val fakeSearchRepository = FakeSearchRepository()
     private val genreRepository = FakeGenreRepository()
+    private val fakeLocalizer = FakeLocalizer()
     private lateinit var presenter: SearchShowsPresenter
 
     @BeforeTest
@@ -372,7 +373,7 @@ class SearchShowsPresenterTest {
         logger = FakeLogger(),
         mapper = Mapper(
             formatterUtil = FakeFormatterUtil(),
-            localizer = FakeLocalizer(),
+            localizer = fakeLocalizer,
         ),
     )
 
@@ -429,7 +430,7 @@ class SearchShowsPresenterTest {
         GenreRowModel(
             slug = "horror",
             name = "Horror",
-            subtitle = FakeLocalizer().getString(StringResourceKey.GenreDescHorror),
+            subtitle = fakeLocalizer.getString(StringResourceKey.GenreDescHorror),
             shows = List(LIST_SIZE) {
                 ShowItem(
                     tmdbId = 84958,
@@ -442,7 +443,6 @@ class SearchShowsPresenterTest {
         ),
     ).toImmutableList()
 
-    private val fakeLocalizer = FakeLocalizer()
     private val expectedCategoryTitle = fakeLocalizer.getString(
         StringResourceKey.LabelGenreCategoryTitle,
     )
@@ -475,7 +475,7 @@ class SearchShowsPresenterTest {
         GenreRowModel(
             slug = "horror",
             name = "Horror",
-            subtitle = FakeLocalizer().getString(StringResourceKey.GenreDescHorror),
+            subtitle = fakeLocalizer.getString(StringResourceKey.GenreDescHorror),
             shows = List(LIST_SIZE) {
                 ShowItem(
                     tmdbId = id,

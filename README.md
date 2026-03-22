@@ -84,11 +84,17 @@ This will install the following hooks:
 - **pre-commit**: Runs code formatting checks using Spotless before allowing a commit. If the checks fail, the commit
   will be aborted.
 
-## Architecture Overview
+## Architecture
 
-- [ ] TODO: Add detail architecture
+The project follows Clean Architecture with a modular design organized by feature and layer. Business logic and state management live in shared KMP code, while Android (Compose) and iOS (SwiftUI) contain only UI rendering.
 
-![TvManiac Architecture](https://github.com/thomaskioko/tv-maniac/assets/841885/84e314fc-71a5-40e5-b034-213e6b546f9a)
+For detailed documentation, see [docs/architecture](docs/architecture/README.md):
+
+- [Modularization](docs/architecture/MODULARIZATION.md) — Module archetypes and dependency rules
+- [Presentation Layer](docs/architecture/PRESENTATION_LAYER.md) — Shared presenters and platform UI binding
+- [Data Layer](docs/architecture/DATA_LAYER.md) — Store pattern, caching, and hybrid API strategy
+- [Navigation](docs/architecture/NAVIGATION.md) — Decompose-based shared navigation
+- [Dependency Injection](docs/architecture/DI.md) — Scope hierarchy and wiring principles
 
 ## Gradle Convention Plugins
 

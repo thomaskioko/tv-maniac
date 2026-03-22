@@ -29,7 +29,7 @@ struct DebugMenuView: View {
     }
 
     private var menuItems: [DebugMenuItem] {
-        [
+        var items: [DebugMenuItem] = [
             DebugMenuItem(
                 id: "notification",
                 icon: "bell.fill",
@@ -66,6 +66,22 @@ struct DebugMenuView: View {
                 isEnabled: !uiState.isSyncingUpNext,
                 onTap: { [self] in handleSyncTap { presenter.dispatch(action: TriggerUpNextSync()) } }
             ),
+        ]
+
+        if let tokenSubtitle = uiState.tokenStatusSubtitle {
+            items.append(
+                DebugMenuItem(
+                    id: "token-status",
+                    icon: "key.fill",
+                    title: String(\.label_debug_token_status_title),
+                    subtitle: tokenSubtitle,
+                    isEnabled: false,
+                    onTap: {}
+                )
+            )
+        }
+
+        items.append(
             DebugMenuItem(
                 id: "test-crash",
                 icon: "exclamationmark.triangle",
@@ -73,8 +89,10 @@ struct DebugMenuView: View {
                 title: String(\.label_debug_trigger_crash_title),
                 subtitle: String(\.label_debug_trigger_crash_description),
                 onTap: { fatalError("Test crash triggered from Debug Menu") }
-            ),
-        ]
+            )
+        )
+
+        return items
     }
 
     private func handleSyncTap(action: @escaping () -> Void) {

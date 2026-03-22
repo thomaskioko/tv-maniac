@@ -5,9 +5,7 @@ import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundWorker
 import com.thomaskioko.tvmaniac.core.tasks.api.PeriodicTaskRequest
 import com.thomaskioko.tvmaniac.core.tasks.api.TaskConstraints
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerResult
-import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import kotlinx.coroutines.CancellationException
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -18,10 +16,8 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class, boundType = BackgroundWorker::class, multibinding = true)
 public class UpNextSyncWorker(
-    private val upNextRepository: Lazy<com.thomaskioko.tvmaniac.upnext.api.UpNextRepository>,
+    private val refreshUpNextInteractor: Lazy<RefreshUpNextInteractor>,
     private val traktAuthRepository: Lazy<TraktAuthRepository>,
-    private val datastoreRepository: Lazy<DatastoreRepository>,
-    private val dateTimeProvider: Lazy<DateTimeProvider>,
     private val logger: Logger,
 ) : BackgroundWorker {
 
@@ -36,8 +32,7 @@ public class UpNextSyncWorker(
         }
 
         return try {
-            upNextRepository.value.fetchUpNextEpisodes(forceRefresh = true)
-            datastoreRepository.value.setLastUpNextSyncTimestamp(dateTimeProvider.value.nowMillis())
+            refreshUpNextInteractor.value.executeSync(true)
             logger.debug(TAG, "Up next sync completed successfully")
             WorkerResult.Success
         } catch (e: CancellationException) {

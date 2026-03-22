@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 public class FakeTraktAuthRepository : TraktAuthRepository {
 
     private val _state = MutableStateFlow(TraktAuthState.LOGGED_OUT)
-    private var authState: AuthState? = null
+    private val _authState = MutableStateFlow<AuthState?>(null)
     private var refreshOutcome: TokenRefreshResult = TokenRefreshResult.NotLoggedIn
     private val _authError = MutableStateFlow<AuthError?>(null)
 
@@ -21,7 +21,7 @@ public class FakeTraktAuthRepository : TraktAuthRepository {
     }
 
     public fun setAuthState(state: AuthState?) {
-        authState = state
+        _authState.value = state
     }
 
     public fun setRefreshOutcome(outcome: TokenRefreshResult) {
@@ -30,17 +30,19 @@ public class FakeTraktAuthRepository : TraktAuthRepository {
 
     override val state: Flow<TraktAuthState> = _state.asStateFlow()
 
+    override val authState: Flow<AuthState?> = _authState.asStateFlow()
+
     override val authError: Flow<AuthError?> = _authError.asStateFlow()
 
     override fun isLoggedIn(): Boolean = _state.value == TraktAuthState.LOGGED_IN
 
-    override suspend fun getAuthState(): AuthState? = authState
+    override suspend fun getAuthState(): AuthState? = _authState.value
 
     override suspend fun refreshTokens(): TokenRefreshResult = refreshOutcome
 
     override suspend fun logout() {
         _state.emit(TraktAuthState.LOGGED_OUT)
-        authState = null
+        _authState.value = null
     }
 
     override suspend fun saveTokens(
