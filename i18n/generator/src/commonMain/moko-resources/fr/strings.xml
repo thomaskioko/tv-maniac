@@ -319,6 +319,10 @@
     <string name="label_debug_sync_login_required">Connectez-vous à Trakt pour synchroniser les données</string>
     <string name="label_debug_trigger_crash_title">Test de crash</string>
     <string name="label_debug_trigger_crash_description">Déclencher un crash de test pour Crashlytics</string>
+    <string name="label_debug_token_status_title">Statut du token</string>
+    <string name="label_debug_token_refresh_valid">Dernière actualisation : %s · Le token est valide</string>
+    <string name="label_debug_token_refresh_expired">Dernière actualisation : %s · Le token a expiré</string>
+    <string name="label_debug_never_refreshed">Jamais actualisé</string>
 
     <string name="label_genre_category_popular">Populaire</string>
     <string name="label_genre_category_trending">Tendance</string>
