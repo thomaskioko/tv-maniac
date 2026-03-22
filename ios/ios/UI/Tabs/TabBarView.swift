@@ -10,6 +10,7 @@ public struct TabBarView: View {
     @StateObject @KotlinOptionalStateFlow private var avatarUrl: String?
     @State private var selectedTab: NavigationTab = .discover
     @State private var avatarImage: UIImage?
+    @State private var downloadedAvatar: UIImage?
     @EnvironmentObject private var appDelegate: AppDelegate
 
     init(presenter: HomePresenter) {
@@ -50,6 +51,9 @@ public struct TabBarView: View {
             await loadAvatar()
         }
         .onChange(of: selectedTab) { _, newTab in
+            if let circular = downloadedAvatar {
+                avatarImage = buildAvatarImage(circular: circular, showRing: newTab == .profile)
+            }
             switch newTab {
             case .discover: presenter.onDiscoverClicked()
             case .progress: presenter.onProgressClicked()
@@ -66,6 +70,7 @@ public struct TabBarView: View {
 
     private func loadAvatar() async {
         guard let avatarUrl, !avatarUrl.isEmpty, let url = URL(string: avatarUrl) else {
+            downloadedAvatar = nil
             avatarImage = nil
             return
         }
@@ -74,13 +79,39 @@ public struct TabBarView: View {
             guard let downloaded = UIImage(data: data) else { return }
             let pointSize = CGSize(width: 25, height: 25)
             let renderer = UIGraphicsImageRenderer(size: pointSize)
-            avatarImage = renderer.image { _ in
+            let circular = renderer.image { _ in
                 let rect = CGRect(origin: .zero, size: pointSize)
                 UIBezierPath(ovalIn: rect).addClip()
                 downloaded.draw(in: rect)
             }
+            downloadedAvatar = circular
+            avatarImage = buildAvatarImage(circular: circular, showRing: selectedTab == .profile)
         } catch {
+            downloadedAvatar = nil
             avatarImage = nil
+        }
+    }
+
+    private func buildAvatarImage(circular: UIImage, showRing: Bool) -> UIImage {
+        guard showRing else { return circular }
+        let strokeWidth: CGFloat = 2
+        let padding: CGFloat = 1
+        let totalSize = CGSize(
+            width: circular.size.width + (strokeWidth + padding) * 2,
+            height: circular.size.height + (strokeWidth + padding) * 2
+        )
+        let accentUIColor = UIColor(theme.colors.accent)
+        let renderer = UIGraphicsImageRenderer(size: totalSize)
+        return renderer.image { _ in
+            let ringRect = CGRect(origin: .zero, size: totalSize)
+                .insetBy(dx: strokeWidth / 2, dy: strokeWidth / 2)
+            accentUIColor.setStroke()
+            let ringPath = UIBezierPath(ovalIn: ringRect)
+            ringPath.lineWidth = strokeWidth
+            ringPath.stroke()
+
+            let imageOrigin = CGPoint(x: strokeWidth + padding, y: strokeWidth + padding)
+            circular.draw(at: imageOrigin)
         }
     }
 
