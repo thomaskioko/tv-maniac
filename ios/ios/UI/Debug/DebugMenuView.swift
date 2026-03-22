@@ -109,5 +109,4 @@ struct DebugMenuView: View {
         }
         return String(\.label_debug_never_synced)
     }
-
 }
