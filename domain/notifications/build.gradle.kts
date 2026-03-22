@@ -29,5 +29,16 @@ kotlin {
                 implementation(libs.kotlinx.datetime)
             }
         }
+
+        commonTest {
+            dependencies {
+                implementation(libs.bundles.unittest)
+                implementation(projects.core.logger.testing)
+                implementation(projects.core.notifications.testing)
+                implementation(projects.core.util.testing)
+                implementation(projects.data.datastore.testing)
+                implementation(projects.data.episode.testing)
+            }
+        }
     }
 }
