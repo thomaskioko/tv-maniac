@@ -12,6 +12,9 @@ import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.domain.library.SyncLibraryInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleDebugEpisodeNotificationInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.RefreshUpNextInteractor
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey
+import com.thomaskioko.tvmaniac.i18n.api.Localizer
+import com.thomaskioko.tvmaniac.traktauth.api.AuthState
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
@@ -37,6 +40,7 @@ public class DefaultDebugPresenter(
     private val syncLibraryInteractor: SyncLibraryInteractor,
     private val refreshUpNextInteractor: RefreshUpNextInteractor,
     private val dateTimeProvider: DateTimeProvider,
+    private val localizer: Localizer,
     private val logger: Logger,
     traktAuthRepository: TraktAuthRepository,
 ) : DebugPresenter, ComponentContext by componentContext {
@@ -53,20 +57,28 @@ public class DefaultDebugPresenter(
         upNextSyncState.observable,
         datastoreRepository.observeLastSyncTimestamp(),
         datastoreRepository.observeLastUpNextSyncTimestamp(),
+        datastoreRepository.observeLastTokenRefreshTimestamp(),
         uiMessageManager.message,
         traktAuthRepository.state,
+        traktAuthRepository.authState,
     ) {
             isSchedulingDebugNotification, isSyncingLibrary, isSyncingUpNext, lastLibrarySyncDate, lastUpNextSyncDate,
-            message, isLoggedIn,
+            lastTokenRefreshDate, message, isLoggedIn, authState,
         ->
+        val isUserLoggedIn = isLoggedIn == TraktAuthState.LOGGED_IN
         DebugState(
             isSchedulingDebugNotification = isSchedulingDebugNotification,
             isSyncingLibrary = isSyncingLibrary,
             isSyncingUpNext = isSyncingUpNext,
             lastLibrarySyncDate = lastLibrarySyncDate?.let(dateTimeProvider::epochToDisplayDateTime),
             lastUpNextSyncDate = lastUpNextSyncDate?.let(dateTimeProvider::epochToDisplayDateTime),
+            tokenStatusSubtitle = formatTokenStatus(
+                isLoggedIn = isUserLoggedIn,
+                lastTokenRefreshTimestamp = lastTokenRefreshDate,
+                authState = authState,
+            ),
             message = message,
-            isLoggedIn = isLoggedIn == TraktAuthState.LOGGED_IN,
+            isLoggedIn = isUserLoggedIn,
         )
     }.stateIn(
         scope = coroutineScope,
@@ -109,6 +121,24 @@ public class DefaultDebugPresenter(
             refreshUpNextInteractor(true)
                 .collectStatus(upNextSyncState, logger, uiMessageManager)
         }
+    }
+
+    private fun formatTokenStatus(
+        isLoggedIn: Boolean,
+        lastTokenRefreshTimestamp: Long?,
+        authState: AuthState?,
+    ): String? {
+        if (!isLoggedIn) return null
+
+        val formattedDate = lastTokenRefreshTimestamp?.let(dateTimeProvider::epochToDisplayDateTime)
+            ?: return localizer.getString(StringResourceKey.LabelDebugNeverRefreshed)
+
+        val key = if (authState?.isAuthorized == true) {
+            StringResourceKey.LabelDebugTokenRefreshValid
+        } else {
+            StringResourceKey.LabelDebugTokenRefreshExpired
+        }
+        return localizer.getString(key, formattedDate)
     }
 }
 

@@ -240,6 +240,10 @@ public interface DatastoreRepository {
 
     public fun observeLastUpNextSyncTimestamp(): Flow<Long?>
 
+    public suspend fun setLastTokenRefreshTimestamp(timestamp: Long)
+
+    public fun observeLastTokenRefreshTimestamp(): Flow<Long?>
+
     /**
      * Saves the user's preferred genre show category.
      *

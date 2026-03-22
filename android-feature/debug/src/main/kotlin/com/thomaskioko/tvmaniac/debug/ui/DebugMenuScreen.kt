@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Sync
+import androidx.compose.material.icons.filled.VpnKey
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -59,6 +60,7 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_library_sync_title
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_menu_title
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_never_synced
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_sync_login_required
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_token_status_title
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_trigger_crash_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_trigger_crash_title
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_upnext_sync_title
@@ -234,6 +236,24 @@ internal fun DebugMenuScreen(
                     )
                 }
 
+                val tokenSubtitle = state.tokenStatusSubtitle
+                if (tokenSubtitle != null) {
+                    item {
+                        DebugDisplayItem(
+                            icon = Icons.Filled.VpnKey,
+                            title = label_debug_token_status_title.resolve(context),
+                            subtitle = tokenSubtitle,
+                        )
+                    }
+
+                    item {
+                        HorizontalDivider(
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+                            modifier = Modifier.padding(horizontal = 24.dp),
+                        )
+                    }
+                }
+
                 item {
                     DebugClickableItem(
                         icon = Icons.Filled.Warning,
@@ -311,6 +331,42 @@ private fun DebugClickableItem(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+@Composable
+private fun DebugDisplayItem(
+    icon: ImageVector,
+    title: String,
+    subtitle: String,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            imageVector = icon,
+            tint = MaterialTheme.colorScheme.secondary,
+            contentDescription = null,
+            modifier = Modifier.size(24.dp),
+        )
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+            )
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
