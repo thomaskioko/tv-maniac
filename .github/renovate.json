@@ -1,7 +1,7 @@
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "extends": [
-        "config:base",
+        "config:recommended",
         ":disableRateLimiting",
         ":semanticCommitsDisabled"
     ],
@@ -27,32 +27,30 @@
         },
         {
             "groupName": "Kotlin, KSP and Skie",
-            "matchPackagePatterns": [
-                "org.jetbrains.kotlin",
-                "com.google.devtools.ksp",
-                "co.touchlab.skie"
-            ],
-            "excludePackagePatterns": [
-                "org.jetbrains.kotlinx"
+            "matchPackageNames": [
+                "/org.jetbrains.kotlin/",
+                "/com.google.devtools.ksp/",
+                "/co.touchlab.skie/",
+                "!/org.jetbrains.kotlinx/"
             ]
         },
         {
-            "matchPackagePatterns": [
-                "androidx.compose.runtime",
-                "androidx.compose.ui",
-                "androidx.compose.foundation",
-                "androidx.compose.animation",
-                "androidx.compose.material",
-                "androidx.compose.material3",
-                "org.jetbrains.compose$",
-                "org.jetbrains.compose.runtime",
-                "org.jetbrains.compose.ui",
-                "org.jetbrains.compose.foundation",
-                "org.jetbrains.compose.animation",
-                "org.jetbrains.compose.material",
-                "org.jetbrains.compose.material3"
-            ],
-            "groupName": "Compose"
+            "groupName": "Compose",
+            "matchPackageNames": [
+                "/androidx.compose.runtime/",
+                "/androidx.compose.ui/",
+                "/androidx.compose.foundation/",
+                "/androidx.compose.animation/",
+                "/androidx.compose.material/",
+                "/androidx.compose.material3/",
+                "/org.jetbrains.compose$/",
+                "/org.jetbrains.compose.runtime/",
+                "/org.jetbrains.compose.ui/",
+                "/org.jetbrains.compose.foundation/",
+                "/org.jetbrains.compose.animation/",
+                "/org.jetbrains.compose.material/",
+                "/org.jetbrains.compose.material3/"
+            ]
         }
     ],
     "dependencyDashboard": true,
