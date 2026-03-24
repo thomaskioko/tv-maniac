@@ -22,6 +22,7 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.URLProtocol
+import io.ktor.http.encodedPath
 import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
 import com.thomaskioko.tvmaniac.core.logger.Logger as KermitLogger
@@ -96,7 +97,7 @@ internal fun traktHttpClient(
                 }
 
                 sendWithoutRequest { request ->
-                    !request.url.buildString().contains(OAUTH_PATH)
+                    !request.url.encodedPath.startsWith("/$OAUTH_PATH")
                 }
             }
         }

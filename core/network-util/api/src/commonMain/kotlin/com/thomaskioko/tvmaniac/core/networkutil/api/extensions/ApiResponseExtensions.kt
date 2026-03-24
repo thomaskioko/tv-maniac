@@ -23,11 +23,7 @@ public suspend inline fun <reified T> HttpClient.safeRequest(
         val response = request { block() }
         ApiResponse.Success(response.body())
     } catch (e: AuthenticationException) {
-        ApiResponse.Error.HttpError(
-            code = HttpStatusCode.Unauthorized.value,
-            errorBody = null,
-            errorMessage = e.message,
-        )
+        ApiResponse.Unauthenticated
     } catch (exception: ClientRequestException) {
         val errorBody: String = exception.response.bodyAsText()
         val url = exception.response.call.request.url
@@ -58,7 +54,8 @@ public suspend inline fun <reified T> HttpClient.authSafeRequest(
     block: HttpRequestBuilder.() -> Unit,
 ): ApiResponse<T> {
     val isAuthenticated = attributes.getOrNull(IsAuthenticated)
-    if (isAuthenticated?.invoke() == false) return ApiResponse.Unauthenticated
+        ?: return ApiResponse.Unauthenticated
+    if (!isAuthenticated()) return ApiResponse.Unauthenticated
     return safeRequest {
         attributes.put(RequiresAuth, true)
         block()

@@ -26,9 +26,9 @@ public sealed class ApiResponse<out T> {
 public fun <T> ApiResponse<T>.getOrThrow(): T = when (this) {
     is ApiResponse.Success -> body
     is ApiResponse.Unauthenticated -> throw AuthenticationException("Not authenticated")
-    is ApiResponse.Error.HttpError -> throw Throwable("HTTP $code: $errorMessage")
-    is ApiResponse.Error.SerializationError -> throw Throwable("Serialization error: $message")
-    is ApiResponse.Error.GenericError -> throw Throwable("Error: $message")
+    is ApiResponse.Error.HttpError -> throw ApiHttpException(code, "HTTP $code: $errorMessage")
+    is ApiResponse.Error.SerializationError -> throw ApiSerializationException("Serialization error: $message")
+    is ApiResponse.Error.GenericError -> throw Exception("Error: $message")
 }
 
 public fun <T> ApiResponse<T>.getOrNull(): T? = when (this) {

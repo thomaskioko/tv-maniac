@@ -60,11 +60,18 @@ public inline fun <Key : Any, reified Output : Any> apiFetcher(
  * Note: Token expiry for authenticated users is handled upstream by Ktor's Auth plugin,
  * which triggers [TraktAuthRepository.refreshTokens] and emits [AuthError.TokenExpired]
  * for the presentation layer to handle.
+ *
+ * @param onSkipped Optional callback invoked with a message when a fetch is skipped
+ *   due to missing authentication. Useful for debug logging.
  */
-public suspend fun <Key : Any, Output : Any> Store<Key, Output>.get(key: Key) {
+public suspend fun <Key : Any, Output : Any> Store<Key, Output>.get(
+    key: Key,
+    onSkipped: ((String) -> Unit)? = null,
+) {
     try {
         get(key)
-    } catch (_: AuthenticationException) {
+    } catch (e: AuthenticationException) {
+        onSkipped?.invoke("Skipping Store.get: ${e.message}")
     }
 }
 
@@ -77,11 +84,18 @@ public suspend fun <Key : Any, Output : Any> Store<Key, Output>.get(key: Key) {
  * Note: Token expiry for authenticated users is handled upstream by Ktor's Auth plugin,
  * which triggers [TraktAuthRepository.refreshTokens] and emits [AuthError.TokenExpired]
  * for the presentation layer to handle.
+ *
+ * @param onSkipped Optional callback invoked with a message when a fetch is skipped
+ *   due to missing authentication. Useful for debug logging.
  */
-public suspend fun <Key : Any, Output : Any> Store<Key, Output>.fresh(key: Key) {
+public suspend fun <Key : Any, Output : Any> Store<Key, Output>.fresh(
+    key: Key,
+    onSkipped: ((String) -> Unit)? = null,
+) {
     try {
         fresh(key)
-    } catch (_: AuthenticationException) {
+    } catch (e: AuthenticationException) {
+        onSkipped?.invoke("Skipping Store.fresh: ${e.message}")
     }
 }
 

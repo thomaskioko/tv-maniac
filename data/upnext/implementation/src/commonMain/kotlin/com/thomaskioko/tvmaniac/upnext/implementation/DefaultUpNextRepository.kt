@@ -74,8 +74,14 @@ public class DefaultUpNextRepository(
 
                 if (isLoggedIn) {
                     when {
-                        forceRefresh -> showUpNextStore.fresh(show.traktId)
-                        else -> showUpNextStore.get(show.traktId)
+                        forceRefresh -> showUpNextStore.fresh(show.traktId) {
+                            logger.debug(
+                                TAG,
+                                it,
+                            )
+                        }
+
+                        else -> showUpNextStore.get(show.traktId) { logger.debug(TAG, it) }
                     }
 
                     seasonDetailsRepository.syncShowSeasonDetails(
@@ -85,85 +91,88 @@ public class DefaultUpNextRepository(
                 } else {
                     populateUpNextFromLocal(show.traktId)
                 }
+                }
             }
+
+            requestManagerRepository.upsert(
+                entityId = UPNEXT_FULL_SYNC.requestId,
+                requestType = UPNEXT_FULL_SYNC.name,
+            )
+
+            logger.debug(TAG, "UpNext refresh complete")
         }
 
-        requestManagerRepository.upsert(
-            entityId = UPNEXT_FULL_SYNC.requestId,
-            requestType = UPNEXT_FULL_SYNC.name,
-        )
-
-        logger.debug(TAG, "UpNext refresh complete")
-    }
-
-    override suspend fun saveUpNextSortOption(sortOption: String) {
-        datastoreRepository.saveUpNextSortOption(sortOption)
-    }
-
-    override fun observeUpNextSortOption(): Flow<String> =
-        datastoreRepository.observeUpNextSortOption()
-
-    override suspend fun updateUpNextForShow(showTraktId: Long, forceRefresh: Boolean) {
-        try {
-            ensureShowExists(showTraktId)
-        } catch (e: Exception) {
-            logger.error(TAG, "Failed to ensure show $showTraktId exists: ${e.message}")
+        override suspend fun saveUpNextSortOption(sortOption: String) {
+            datastoreRepository.saveUpNextSortOption(sortOption)
         }
-        if (traktAuthRepository.isLoggedIn()) {
-            when {
-                forceRefresh -> showUpNextStore.fresh(showTraktId)
-                else -> showUpNextStore.get(showTraktId)
+
+        override fun observeUpNextSortOption(): Flow<String> =
+            datastoreRepository.observeUpNextSortOption()
+
+        override suspend fun updateUpNextForShow(showTraktId: Long, forceRefresh: Boolean) {
+            try {
+                ensureShowExists(showTraktId)
+            } catch (e: Exception) {
+                logger.error(TAG, "Failed to ensure show $showTraktId exists: ${e.message}")
             }
-        } else {
-            populateUpNextFromLocal(showTraktId)
-        }
-    }
-
-    override suspend fun fetchUpNext(
-        showTraktId: Long,
-        seasonNumber: Long,
-        episodeNumber: Long,
-    ) {
-        try {
-            ensureShowExists(showTraktId)
             if (traktAuthRepository.isLoggedIn()) {
-                showUpNextStore.fresh(showTraktId)
+                when {
+                    forceRefresh -> showUpNextStore.fresh(showTraktId) { logger.debug(TAG, it) }
+                    else -> showUpNextStore.get(showTraktId) { logger.debug(TAG, it) }
+                }
             } else {
-                populateUpNextFromLocal(showTraktId, lastWatchedAt = dateTimeProvider.nowMillis())
+                populateUpNextFromLocal(showTraktId)
             }
-        } catch (e: Exception) {
-            logger.error(TAG, "Remote UpNext refresh failed, advancing locally: ${e.message}")
-            upNextDao.advanceAfterWatched(
-                showTraktId = showTraktId,
-                watchedSeason = seasonNumber,
-                watchedEpisode = episodeNumber,
-            )
-            throw e
         }
-    }
 
-    private suspend fun isSyncValid(): Boolean {
-        val hasCachedData = upNextDao.getNextEpisodesFromCache().isNotEmpty()
-        val isSyncFresh = requestManagerRepository.isRequestValid(
-            requestType = UPNEXT_FULL_SYNC.name,
-            threshold = UPNEXT_FULL_SYNC.duration,
-        )
-        if (hasCachedData && isSyncFresh) {
-            logger.debug(TAG, "UpNext full sync still valid, skipping refresh")
-            return true
+        override suspend fun fetchUpNext(
+            showTraktId: Long,
+            seasonNumber: Long,
+            episodeNumber: Long,
+        ) {
+            try {
+                ensureShowExists(showTraktId)
+                if (traktAuthRepository.isLoggedIn()) {
+                    showUpNextStore.fresh(showTraktId)  { logger.debug(TAG, it) }
+                } else {
+                    populateUpNextFromLocal(
+                        showTraktId,
+                        lastWatchedAt = dateTimeProvider.nowMillis(),
+                    )
+                }
+            } catch (e: Exception) {
+                logger.error(TAG, "Remote UpNext refresh failed, advancing locally: ${e.message}")
+                upNextDao.advanceAfterWatched(
+                    showTraktId = showTraktId,
+                    watchedSeason = seasonNumber,
+                    watchedEpisode = episodeNumber,
+                )
+                throw e
+            }
         }
-        return false
-    }
 
-    private suspend fun ensureShowExists(showTraktId: Long) {
-        if (!tvShowsDao.existsByTraktId(showTraktId)) {
-            logger.debug(TAG, "Show $showTraktId not in cache, fetching details")
-            showDetailsRepository.fetchShowDetails(
-                id = showTraktId,
-                forceRefresh = true,
+        private suspend fun isSyncValid(): Boolean {
+            val hasCachedData = upNextDao.getNextEpisodesFromCache().isNotEmpty()
+            val isSyncFresh = requestManagerRepository.isRequestValid(
+                requestType = UPNEXT_FULL_SYNC.name,
+                threshold = UPNEXT_FULL_SYNC.duration,
             )
+            if (hasCachedData && isSyncFresh) {
+                logger.debug(TAG, "UpNext full sync still valid, skipping refresh")
+                return true
+            }
+            return false
         }
-    }
+
+        private suspend fun ensureShowExists(showTraktId: Long) {
+            if (!tvShowsDao.existsByTraktId(showTraktId)) {
+                logger.debug(TAG, "Show $showTraktId not in cache, fetching details")
+                showDetailsRepository.fetchShowDetails(
+                    id = showTraktId,
+                    forceRefresh = true,
+                )
+            }
+        }
 
     private suspend fun populateUpNextFromLocal(showTraktId: Long, lastWatchedAt: Long? = null) {
         val includeSpecials = datastoreRepository.getIncludeSpecials()
@@ -191,7 +200,7 @@ public class DefaultUpNextRepository(
         }
     }
 
-    private companion object {
-        private const val TAG = "DefaultUpNextRepository"
+        private companion object {
+            private const val TAG = "DefaultUpNextRepository"
+        }
     }
-}

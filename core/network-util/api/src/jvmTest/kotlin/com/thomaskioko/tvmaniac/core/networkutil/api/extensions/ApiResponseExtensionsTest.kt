@@ -105,7 +105,7 @@ class ApiResponseExtensionsTest {
     }
 
     @Test
-    fun `should return HttpError given AuthenticationException is thrown`() = runTest {
+    fun `should return Unauthenticated given AuthenticationException is thrown`() = runTest {
         val engine = MockEngine { _ ->
             throw AuthenticationException(message = "User is not authenticated")
         }
@@ -116,8 +116,7 @@ class ApiResponseExtensionsTest {
             method = HttpMethod.Get
         }
 
-        result.shouldBeInstanceOf<ApiResponse.Error.HttpError<JsonObject>>()
-        result.code shouldBe 401
+        result.shouldBeInstanceOf<ApiResponse.Unauthenticated>()
     }
 
     @Test
@@ -152,6 +151,7 @@ class ApiResponseExtensionsTest {
             )
         }
         val client = createClient(engine)
+        client.attributes.put(IsAuthenticated) { true }
 
         client.authSafeRequest<JsonObject> {
             url { path("test") }
@@ -159,6 +159,26 @@ class ApiResponseExtensionsTest {
         }
 
         capturedRequiresAuth shouldBe true
+    }
+
+    @Test
+    fun `should return Unauthenticated given IsAuthenticated attribute is missing`() = runTest {
+        val engine = MockEngine { _ ->
+            respond(
+                content = loadJson("success_response.json"),
+                status = HttpStatusCode.OK,
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
+            )
+        }
+        val client = createClient(engine)
+
+        val result: ApiResponse<JsonObject> = client.authSafeRequest {
+            url { path("test") }
+            method = HttpMethod.Get
+        }
+
+        result.shouldBeInstanceOf<ApiResponse.Unauthenticated>()
+        engine.requestHistory.size shouldBe 0
     }
 
     @Test

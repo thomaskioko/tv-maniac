@@ -2,6 +2,7 @@ package com.thomaskioko.trakt.service.implementation.api
 
 import com.thomaskioko.trakt.service.implementation.TraktAuthGuard
 import com.thomaskioko.trakt.service.implementation.loadJson
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.IsAuthenticated
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
 import io.kotest.matchers.shouldBe
@@ -34,6 +35,7 @@ class DefaultTraktListRemoteDataSourceTest {
         val client = HttpClient(engine) {
             install(ContentNegotiation) { json(json = json) }
         }
+        client.attributes.put(IsAuthenticated) { true }
         return DefaultTraktListRemoteDataSource(httpClient = client)
     }
 
@@ -140,6 +142,7 @@ class DefaultTraktListRemoteDataSourceTest {
             install(ContentNegotiation) { json(json = json) }
             expectSuccess = true
         }
+        client.attributes.put(IsAuthenticated) { true }
         val dataSource = DefaultTraktListRemoteDataSource(httpClient = client)
 
         val result = dataSource.getUser("me")
@@ -163,6 +166,7 @@ class DefaultTraktListRemoteDataSourceTest {
                 isAuthenticated = { true }
             }
         }
+        client.attributes.put(IsAuthenticated) { true }
         val dataSource = DefaultTraktListRemoteDataSource(httpClient = client)
 
         val result = dataSource.getUserList("sean")
@@ -171,7 +175,7 @@ class DefaultTraktListRemoteDataSourceTest {
     }
 
     @Test
-    fun `should return HttpError given auth guard rejects unauthenticated request`() = runTest {
+    fun `should return Unauthenticated given user is not authenticated`() = runTest {
         val engine = MockEngine { _ ->
             respond(
                 content = """{}""",
@@ -185,11 +189,11 @@ class DefaultTraktListRemoteDataSourceTest {
                 isAuthenticated = { false }
             }
         }
+        client.attributes.put(IsAuthenticated) { false }
         val dataSource = DefaultTraktListRemoteDataSource(httpClient = client)
 
         val result = dataSource.getUserList("sean")
 
-        result.shouldBeInstanceOf<ApiResponse.Error.HttpError<*>>()
-        result.code shouldBe 401
+        result.shouldBeInstanceOf<ApiResponse.Unauthenticated>()
     }
 }

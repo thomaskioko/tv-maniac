@@ -25,8 +25,8 @@ public class DefaultTraktActivityRepository(
 
     override suspend fun fetchLatestActivities(forceRefresh: Boolean) {
         when {
-            forceRefresh -> store.fresh(Unit)
-            else -> store.get(Unit)
+            forceRefresh -> store.fresh(Unit) { logger.debug(TAG, it) }
+            else -> store.get(Unit) { logger.debug(TAG, it) }
         }
     }
 
