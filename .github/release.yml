@@ -1,0 +1,28 @@
+changelog:
+  exclude:
+    labels:
+      - skip-changelog
+    authors:
+      - renovate[bot]
+      - dependabot[bot]
+  categories:
+    - title: "Features"
+      labels:
+        - feature
+        - enhancement
+    - title: "Bug Fixes"
+      labels:
+        - bug
+        - fix
+    - title: "Dependencies"
+      labels:
+        - dependencies
+    - title: "Other Changes"
+      exclude:
+        labels:
+          - feature
+          - enhancement
+          - bug
+          - fix
+          - dependencies
+          - skip-changelog
