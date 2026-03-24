@@ -77,17 +77,17 @@ internal fun traktHttpClient(
                         ?.takeIf { it.isAuthorized && it.accessToken.isNotBlank() }
                         ?: return@loadTokens null
 
-                    if (state.isExpiringSoon()) {
-                        val result = traktAuthRepository.refreshTokens()
-                        if (result is TokenRefreshResult.Success) {
-                            return@loadTokens BearerTokens(result.authState.accessToken, result.authState.refreshToken)
-                        }
-                    }
-
                     BearerTokens(state.accessToken, state.refreshToken)
                 }
 
                 refreshTokens {
+                    val currentState = traktAuthRepository.getAuthState()
+                        ?: return@refreshTokens null
+
+                    if (oldTokens?.refreshToken != null && oldTokens?.refreshToken != currentState.refreshToken) {
+                        return@refreshTokens BearerTokens(currentState.accessToken, currentState.refreshToken)
+                    }
+
                     val result = traktAuthRepository.refreshTokens()
                     if (result is TokenRefreshResult.Success) {
                         BearerTokens(result.authState.accessToken, result.authState.refreshToken)

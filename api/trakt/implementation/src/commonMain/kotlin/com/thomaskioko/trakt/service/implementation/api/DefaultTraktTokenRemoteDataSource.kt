@@ -2,6 +2,7 @@ package com.thomaskioko.trakt.service.implementation.api
 
 import com.thomaskioko.trakt.service.implementation.TraktHttpClient
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.safeRequest
+import io.ktor.client.plugins.auth.AuthCircuitBreaker
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.TraktTokenRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.AccessTokenBody
@@ -52,6 +53,7 @@ public class DefaultTraktTokenRemoteDataSource(
         refreshToken: String,
     ): ApiResponse<TraktAccessRefreshTokenResponse> =
         httpClient.safeRequest {
+            attributes.put(AuthCircuitBreaker, Unit)
             url {
                 method = HttpMethod.Post
                 path("oauth/token")
