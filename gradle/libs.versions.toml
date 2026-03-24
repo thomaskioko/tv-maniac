@@ -1,7 +1,4 @@
 [versions]
-app-version-code = "1"
-app-version-name = "1001"
-
 android-compile = "36"
 android-min = "24"
 android-target = "36"
@@ -31,7 +28,7 @@ androidx-security-crypto = "1.1.0"
 androidx-lifecycle = "2.10.0"
 androidx-work = "2.11.1"
 appauth = "0.11.1"
-app-gradle-plugins = "0.5.1"
+app-gradle-plugins = "0.6.1"
 atomicfu = "0.32.0"
 baselineprofile = "1.5.0-alpha04"
 benchmarkMacroJunit4 = "1.4.1"
