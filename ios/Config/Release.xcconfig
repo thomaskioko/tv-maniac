@@ -1,3 +1,8 @@
+#include "../../version.txt"
+
+MARKETING_VERSION = $(VERSION_NUMBER)
+CURRENT_PROJECT_VERSION = $(BUILD_NUMBER)
+
 BUNDLE_ID = com.thomaskioko.tvmaniac
-APP_NAME = TvManic
+APP_NAME = TvManiac
 APPICON_NAME = AppIcon

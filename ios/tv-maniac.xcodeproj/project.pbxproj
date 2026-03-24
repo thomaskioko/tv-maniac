@@ -12,6 +12,7 @@
 		D6619D372C89D37900D273E7 /* SwiftUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = D6619D362C89D37900D273E7 /* SwiftUIComponents */; };
 		D6A2A0EC2EC800000001CD83 /* CoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = D6A2A0ED2EC800000001CD83 /* CoreKit */; };
 		D6CDA52C2F417A810021240C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D6CDA52B2F417A810021240C /* GoogleService-Info.plist */; };
+		D6F1A0012F61B0A100000001 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = D6F1A0002F61B0A100000001 /* PrivacyInfo.xcprivacy */; };
 		E9AC834C26CEE00D00829A0D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E9AC834B26CEE00D00829A0D /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -32,6 +33,7 @@
 		7555FF7B242A565900829871 /* tv-maniac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "tv-maniac.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D6CDA52B2F417A810021240C /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		D6F1A0002F61B0A100000001 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		E9AC834B26CEE00D00829A0D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -80,6 +82,7 @@
 			isa = PBXGroup;
 			children = (
 				D6CDA52B2F417A810021240C /* GoogleService-Info.plist */,
+				D6F1A0002F61B0A100000001 /* PrivacyInfo.xcprivacy */,
 				E9AC834B26CEE00D00829A0D /* Assets.xcassets */,
 				7555FF8C242A565B00829871 /* Info.plist */,
 				D65009DC2CF644BE00394D67 /* App */,
@@ -170,6 +173,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E9AC834C26CEE00D00829A0D /* Assets.xcassets in Resources */,
+				D6F1A0012F61B0A100000001 /* PrivacyInfo.xcprivacy in Resources */,
 				D6CDA52C2F417A810021240C /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
