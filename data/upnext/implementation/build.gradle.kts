@@ -27,7 +27,6 @@ kotlin {
                 implementation(projects.data.seasondetails.api)
                 implementation(projects.data.showdetails.api)
                 implementation(projects.data.shows.api)
-                implementation(projects.data.traktauth.api)
                 implementation(projects.data.upnext.api)
 
                 implementation(libs.kotlinx.datetime)

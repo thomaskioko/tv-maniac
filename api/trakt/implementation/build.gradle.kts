@@ -36,6 +36,18 @@ kotlin {
             }
         }
 
+        commonTest {
+            dependencies {
+                implementation(libs.bundles.unittest)
+                implementation(libs.ktor.mock)
+                implementation(libs.ktor.negotiation)
+                implementation(libs.ktor.serialization.json)
+                implementation(projects.api.trakt.api)
+                implementation(projects.core.base)
+                implementation(projects.core.networkUtil.api)
+            }
+        }
+
         iosMain {
             dependencies {
                 implementation(projects.api.trakt.api)

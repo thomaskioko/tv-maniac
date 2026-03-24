@@ -41,6 +41,7 @@ public class TraktEpisodeWatchesDataSource(
                     )
                 }
             }
+            is ApiResponse.Unauthenticated -> emptyList()
             is ApiResponse.Error -> emptyList()
         }
     }
@@ -80,6 +81,7 @@ public class TraktEpisodeWatchesDataSource(
 
         when (remoteDataSource.addEpisodeWatches(items)) {
             is ApiResponse.Success -> Unit
+            is ApiResponse.Unauthenticated -> return
             is ApiResponse.Error -> throw Exception("Failed to add episodes to history")
         }
     }
@@ -91,6 +93,7 @@ public class TraktEpisodeWatchesDataSource(
 
         when (remoteDataSource.removeEpisodeWatches(items)) {
             is ApiResponse.Success -> Unit
+            is ApiResponse.Unauthenticated -> return
             is ApiResponse.Error -> throw Exception("Failed to remove episodes from history")
         }
     }

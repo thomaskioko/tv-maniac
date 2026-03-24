@@ -655,14 +655,14 @@ class ShowDetailsPresenterTest {
     }
 
     @Test
-    fun `should not sync watch progress on initial load given user is logged out`() = runTest {
+    fun `should always attempt sync on initial load given user is logged out`() = runTest {
         traktAuthRepository.setState(TraktAuthState.LOGGED_OUT)
         buildMockData(seasonResult = seasons)
 
         val _ = buildShowDetailsPresenter()
         testDispatcher.scheduler.advanceUntilIdle()
 
-        watchedEpisodeSyncRepository.getLastSyncedShowId() shouldBe null
+        watchedEpisodeSyncRepository.getLastSyncedShowId() shouldBe 84958L
     }
 
     private suspend fun buildMockData(

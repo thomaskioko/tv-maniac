@@ -12,7 +12,10 @@ import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asStateFlow
 import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
-import com.thomaskioko.tvmaniac.core.view.InvokeError
+import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
+import com.thomaskioko.tvmaniac.core.view.UiMessageManager
+import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.debug.presenter.DebugPresenter
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
@@ -30,6 +33,7 @@ import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.traktauth.api.AuthError
+import com.thomaskioko.tvmaniac.traktauth.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import kotlinx.coroutines.CoroutineScope
@@ -39,6 +43,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
@@ -66,9 +71,13 @@ public class DefaultRootPresenter(
     private val traktAuthRepository: TraktAuthRepository,
     private val updateUserProfileData: UpdateUserProfileData,
     private val logoutInteractor: LogoutInteractor,
+    private val logger: Logger,
     private val coroutineScope: CoroutineScope = componentContext.coroutineScope(),
     private val datastoreRepository: DatastoreRepository,
 ) : RootPresenter, ComponentContext by componentContext {
+
+    private val profileLoadingState = ObservableLoadingCounter()
+    private val uiMessageManager = UiMessageManager()
 
     init {
         coroutineScope.launch {
@@ -84,6 +93,17 @@ public class DefaultRootPresenter(
         }
 
         coroutineScope.launch {
+            traktAuthRepository.authError
+                .filterIsInstance<AuthError.TokenExpired>()
+                .collect {
+                    when (traktAuthRepository.refreshTokens()) {
+                        is TokenRefreshResult.Success -> traktAuthRepository.setAuthError(null)
+                        else -> logoutInteractor.executeSync(Unit)
+                    }
+                }
+        }
+
+        coroutineScope.launch {
             traktAuthRepository.state
                 .debounce(500.milliseconds)
                 .distinctUntilChanged()
@@ -95,14 +115,7 @@ public class DefaultRootPresenter(
 
     private suspend fun refreshUserProfile() {
         updateUserProfileData(UpdateUserProfileData.Params(forceRefresh = false))
-            .collect { status ->
-                if (status is InvokeError) {
-                    if (status.throwable.message?.contains("401") == true) {
-                        traktAuthRepository.setAuthError(AuthError.TokenExpired)
-                        logoutInteractor.executeSync(Unit)
-                    }
-                }
-            }
+            .collectStatus(profileLoadingState, logger, uiMessageManager)
     }
 
     override val childStack: StateFlow<ChildStack<*, Child>> = childStack(
@@ -434,6 +447,7 @@ public class DefaultRootPresenter(
         private val traktAuthRepository: TraktAuthRepository,
         private val updateUserProfileData: UpdateUserProfileData,
         private val logoutInteractor: LogoutInteractor,
+        private val logger: Logger,
         private val datastoreRepository: DatastoreRepository,
     ) : RootPresenter.Factory {
         override fun invoke(
@@ -454,6 +468,7 @@ public class DefaultRootPresenter(
             traktAuthRepository = traktAuthRepository,
             updateUserProfileData = updateUserProfileData,
             logoutInteractor = logoutInteractor,
+            logger = logger,
             datastoreRepository = datastoreRepository,
         )
     }

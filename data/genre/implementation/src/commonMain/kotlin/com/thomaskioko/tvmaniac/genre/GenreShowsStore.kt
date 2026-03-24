@@ -74,7 +74,9 @@ public class GenreShowsStore(
                                 pageOrder = index,
                             )
 
-                            is ApiResponse.Error -> GenreShowWithImages(
+                            is ApiResponse.Unauthenticated,
+                            is ApiResponse.Error,
+                            -> GenreShowWithImages(
                                 traktShow = show,
                                 tmdbId = tmdbId,
                                 tmdbPosterPath = null,

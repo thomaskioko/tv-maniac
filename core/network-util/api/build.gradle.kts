@@ -8,7 +8,17 @@ kotlin {
             api(libs.coroutines.core)
             api(libs.store5)
 
+            implementation(projects.core.base)
             implementation(libs.ktor.core)
+        }
+
+        commonTest.dependencies {
+            implementation(libs.bundles.unittest)
+            implementation(libs.ktor.mock)
+            implementation(libs.ktor.negotiation)
+            implementation(libs.ktor.serialization.json)
+            implementation(libs.kotlinx.serialization.json)
+            implementation(projects.core.base)
         }
     }
 }

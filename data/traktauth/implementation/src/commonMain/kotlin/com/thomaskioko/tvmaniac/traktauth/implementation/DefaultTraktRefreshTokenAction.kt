@@ -69,6 +69,10 @@ public class DefaultTraktRefreshTokenAction(
                 logger.error("TraktRefreshTokenAction", "Network error: ${response.message}")
                 RefreshTokenResult.NetworkError(response.message)
             }
+            is ApiResponse.Unauthenticated -> {
+                logger.error("TraktRefreshTokenAction", "Not authenticated")
+                RefreshTokenResult.TokenExpired
+            }
         }
     }
 

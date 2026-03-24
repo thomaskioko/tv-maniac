@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.core.networkutil.api.extensions
 
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.AuthenticationException
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.HttpExceptions
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -8,7 +9,12 @@ import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.request
 import io.ktor.client.statement.bodyAsText
+import io.ktor.http.HttpStatusCode
+import io.ktor.util.AttributeKey
 import kotlinx.serialization.SerializationException
+
+public val RequiresAuth: AttributeKey<Boolean> = AttributeKey("RequiresAuth")
+public val IsAuthenticated: AttributeKey<() -> Boolean> = AttributeKey("IsAuthenticated")
 
 public suspend inline fun <reified T> HttpClient.safeRequest(
     block: HttpRequestBuilder.() -> Unit,
@@ -16,6 +22,12 @@ public suspend inline fun <reified T> HttpClient.safeRequest(
     try {
         val response = request { block() }
         ApiResponse.Success(response.body())
+    } catch (e: AuthenticationException) {
+        ApiResponse.Error.HttpError(
+            code = HttpStatusCode.Unauthorized.value,
+            errorBody = null,
+            errorMessage = e.message,
+        )
     } catch (exception: ClientRequestException) {
         val errorBody: String = exception.response.bodyAsText()
         val url = exception.response.call.request.url
@@ -41,3 +53,14 @@ public suspend inline fun <reified T> HttpClient.safeRequest(
             errorMessage = "Something went wrong",
         )
     }
+
+public suspend inline fun <reified T> HttpClient.authSafeRequest(
+    block: HttpRequestBuilder.() -> Unit,
+): ApiResponse<T> {
+    val isAuthenticated = attributes.getOrNull(IsAuthenticated)
+    if (isAuthenticated?.invoke() == false) return ApiResponse.Unauthenticated
+    return safeRequest {
+        attributes.put(RequiresAuth, true)
+        block()
+    }
+}

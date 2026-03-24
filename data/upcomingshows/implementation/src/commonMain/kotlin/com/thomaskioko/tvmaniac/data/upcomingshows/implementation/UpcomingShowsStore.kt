@@ -70,6 +70,7 @@ public class UpcomingShowsStore(
                         }
                         .awaitAll()
                 }
+                is ApiResponse.Unauthenticated -> throw Exception("Not authenticated")
                 is ApiResponse.Error -> throw tmdbResult.toException()
             }
         }

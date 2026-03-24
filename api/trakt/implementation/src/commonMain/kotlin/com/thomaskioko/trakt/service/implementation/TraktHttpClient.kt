@@ -1,5 +1,6 @@
 package com.thomaskioko.trakt.service.implementation
 
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.IsAuthenticated
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.HttpExceptions
 import com.thomaskioko.tvmaniac.traktauth.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
@@ -36,109 +37,117 @@ internal fun traktHttpClient(
     httpClientEngine: TraktHttpClientEngine,
     kermitLogger: KermitLogger,
     traktAuthRepository: TraktAuthRepository,
-): HttpClient = HttpClient(httpClientEngine) {
-    install(ContentNegotiation) { json(json = json) }
+): HttpClient {
+    val client = HttpClient(httpClientEngine) {
+        install(ContentNegotiation) { json(json = json) }
 
-    install(HttpRequestRetry) {
-        retryIf(5) { _, httpResponse ->
-            when {
-                httpResponse.status.value in 500..599 -> true
-                httpResponse.status == HttpStatusCode.TooManyRequests -> true
-                else -> false
+        install(HttpRequestRetry) {
+            retryIf(5) { _, httpResponse ->
+                when {
+                    httpResponse.status.value in 500..599 -> true
+                    httpResponse.status == HttpStatusCode.TooManyRequests -> true
+                    else -> false
+                }
+            }
+            exponentialDelay(
+                base = 2.0,
+                maxDelayMs = 60_000L,
+                randomizationMs = 1000L,
+            )
+        }
+
+        install(DefaultRequest) {
+            url {
+                protocol = URLProtocol.HTTPS
+                host = "api.trakt.tv"
+            }
+
+            headers {
+                append(HttpHeaders.ContentType, "application/json")
+                append("trakt-api-version", "2")
+                append("trakt-api-key", traktClientId)
             }
         }
-        exponentialDelay(
-            base = 2.0,
-            maxDelayMs = 60_000L,
-            randomizationMs = 1000L,
-        )
-    }
 
-    install(DefaultRequest) {
-        url {
-            protocol = URLProtocol.HTTPS
-            host = "api.trakt.tv"
-        }
+        install(Auth) {
+            bearer {
+                loadTokens {
+                    val state = traktAuthRepository.getAuthState()
+                        ?.takeIf { it.isAuthorized && it.accessToken.isNotBlank() }
+                        ?: return@loadTokens null
 
-        headers {
-            append(HttpHeaders.ContentType, "application/json")
-            append("trakt-api-version", "2")
-            append("trakt-api-key", traktClientId)
-        }
-    }
+                    if (state.isExpiringSoon()) {
+                        val result = traktAuthRepository.refreshTokens()
+                        if (result is TokenRefreshResult.Success) {
+                            return@loadTokens BearerTokens(result.authState.accessToken, result.authState.refreshToken)
+                        }
+                    }
 
-    install(Auth) {
-        bearer {
-            loadTokens {
-                val state = traktAuthRepository.getAuthState()
-                    ?.takeIf { it.isAuthorized && it.accessToken.isNotBlank() }
-                    ?: return@loadTokens null
+                    BearerTokens(state.accessToken, state.refreshToken)
+                }
 
-                if (state.isExpiringSoon()) {
+                refreshTokens {
                     val result = traktAuthRepository.refreshTokens()
                     if (result is TokenRefreshResult.Success) {
-                        return@loadTokens BearerTokens(result.authState.accessToken, result.authState.refreshToken)
+                        BearerTokens(result.authState.accessToken, result.authState.refreshToken)
+                    } else {
+                        null
                     }
                 }
 
-                BearerTokens(state.accessToken, state.refreshToken)
-            }
-
-            refreshTokens {
-                val result = traktAuthRepository.refreshTokens()
-                if (result is TokenRefreshResult.Success) {
-                    BearerTokens(result.authState.accessToken, result.authState.refreshToken)
-                } else {
-                    null
+                sendWithoutRequest { request ->
+                    !request.url.buildString().contains(OAUTH_PATH)
                 }
             }
+        }
 
-            sendWithoutRequest { request ->
-                !request.url.buildString().contains(OAUTH_PATH)
+        HttpResponseValidator {
+            validateResponse { response ->
+                if (!response.status.isSuccess() && response.status != HttpStatusCode.Unauthorized) {
+                    val failureReason =
+                        when (response.status) {
+                            HttpStatusCode.Forbidden -> "${response.status.value} Missing API key."
+                            HttpStatusCode.NotFound -> "Invalid Request"
+                            HttpStatusCode.TooManyRequests -> "Rate limited. Please try again in a moment."
+                            HttpStatusCode.UpgradeRequired -> "Upgrade to VIP"
+                            HttpStatusCode.RequestTimeout -> "Network Timeout"
+                            in HttpStatusCode.InternalServerError..HttpStatusCode.GatewayTimeout ->
+                                "${response.status.value} Server Error"
+                            else -> "Network error!"
+                        }
+
+                    throw HttpExceptions(
+                        response = response,
+                        failureReason = failureReason,
+                        cachedResponseText = response.bodyAsText(),
+                    )
+                }
             }
         }
-    }
 
-    HttpResponseValidator {
-        validateResponse { response ->
-            if (!response.status.isSuccess() && response.status != HttpStatusCode.Unauthorized) {
-                val failureReason =
-                    when (response.status) {
-                        HttpStatusCode.Forbidden -> "${response.status.value} Missing API key."
-                        HttpStatusCode.NotFound -> "Invalid Request"
-                        HttpStatusCode.TooManyRequests -> "Rate limited. Please try again in a moment."
-                        HttpStatusCode.UpgradeRequired -> "Upgrade to VIP"
-                        HttpStatusCode.RequestTimeout -> "Network Timeout"
-                        in HttpStatusCode.InternalServerError..HttpStatusCode.GatewayTimeout ->
-                            "${response.status.value} Server Error"
-                        else -> "Network error!"
+        install(TraktAuthGuard) {
+            isAuthenticated = { traktAuthRepository.isLoggedIn() }
+        }
+
+        install(HttpTimeout) {
+            requestTimeoutMillis = TIMEOUT_DURATION
+            connectTimeoutMillis = TIMEOUT_DURATION
+            socketTimeoutMillis = TIMEOUT_DURATION
+        }
+
+        install(Logging) {
+            level = if (isDebug) LogLevel.BODY else LogLevel.NONE
+            logger = if (isDebug) {
+                object : Logger {
+                    override fun log(message: String) {
+                        kermitLogger.info("TraktHttp", message)
                     }
-
-                throw HttpExceptions(
-                    response = response,
-                    failureReason = failureReason,
-                    cachedResponseText = response.bodyAsText(),
-                )
-            }
-        }
-    }
-
-    install(HttpTimeout) {
-        requestTimeoutMillis = TIMEOUT_DURATION
-        connectTimeoutMillis = TIMEOUT_DURATION
-        socketTimeoutMillis = TIMEOUT_DURATION
-    }
-
-    install(Logging) {
-        level = if (isDebug) LogLevel.BODY else LogLevel.NONE
-        logger = if (isDebug) {
-            object : Logger {
-                override fun log(message: String) {
-                    kermitLogger.info("TraktHttp", message)
                 }
+            } else {
+                Logger.EMPTY
             }
-        } else {
-            Logger.EMPTY
         }
     }
+    client.attributes.put(IsAuthenticated) { traktAuthRepository.isLoggedIn() }
+    return client
 }
