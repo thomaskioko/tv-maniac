@@ -16,6 +16,9 @@ runs:
         distribution: 'temurin'
         java-version: '21'
 
+    - name: Install git-cliff
+      uses: kenji-miyake/setup-git-cliff@v2
+
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v5
       with:
