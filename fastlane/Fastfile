@@ -94,7 +94,9 @@ platform :ios do
   end
 
   desc "Submit to App Store review"
-  lane :deploy_app_store do
+  lane :deploy_app_store do |options|
+    submit = options[:submit_for_review] || ENV["IOS_SUBMIT_FOR_REVIEW"] == "true"
+
     api_key = app_store_connect_api_key(
       key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
       issuer_id: ENV["APP_STORE_CONNECT_ISSUER_ID"],
@@ -103,7 +105,7 @@ platform :ios do
 
     deliver(
       api_key: api_key,
-      submit_for_review: false,
+      submit_for_review: submit,
       automatic_release: false,
       skip_metadata: true,
       skip_screenshots: true,
