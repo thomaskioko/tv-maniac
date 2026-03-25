@@ -1,6 +1,7 @@
 default_platform(:ios)
 
 TEST_DEVICE = "iPhone 16 Pro"
+PACKAGE_NAME = "com.thomaskioko.tvmaniac"
 
 platform :ios do
 
@@ -179,6 +180,7 @@ platform :android do
     track = options[:track] || "internal"
 
     supply(
+      package_name: PACKAGE_NAME,
       track: track,
       aab: "app/build/outputs/bundle/release/app-release.aab",
       json_key_data: ENV["PLAY_STORE_SERVICE_ACCOUNT_JSON"],
@@ -212,6 +214,7 @@ platform :android do
     rollout = options[:rollout] || "1.0"
 
     supply(
+      package_name: PACKAGE_NAME,
       track: from_track,
       track_promote_to: to_track,
       rollout: rollout,
