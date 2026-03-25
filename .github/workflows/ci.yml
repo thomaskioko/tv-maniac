@@ -153,7 +153,7 @@ jobs:
     #                    path: '**/build/reports/*'
 
     build-ios:
-        needs: [static-analysis, swift-lint]
+        needs: [swift-lint]
         runs-on: macos-15
         timeout-minutes: 60
         environment:
@@ -193,7 +193,7 @@ jobs:
                         fastlane/logs
 
     ios-snapshot-test:
-        needs: [static-analysis, swift-lint]
+        needs: [swift-lint]
         runs-on: macos-15
         timeout-minutes: 60
         environment:
