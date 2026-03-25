@@ -38,7 +38,7 @@ jobs:
                 uses: actions/upload-artifact@v7
                 with:
                     name: android-lint-report
-                    path: 'build/reports/lint/app/lint-result.html'
+                    path: 'build/reports/lint/'
 
             -   name: Dependency Health
                 run: ./gradlew buildHealth -Papp.debugOnly=false
