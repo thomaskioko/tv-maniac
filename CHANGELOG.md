@@ -2,44 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.1.0] - 2026-03-25
+## [0.1.2] - 2026-03-25
 
-Initial beta release of TvManiac.
+### Bug Fixes
 
+- **Android**: Fix SnackBar shown in error state.
+- **auth**: Update Trakt token endpoint and client authentication method
+- update Firebase distribution path to use release APK
+- fix linting
+### CI/CD
+
+- Ignore iOS tests in watchlist module
 ### Features
 
-- **Discover** — Browse trending, popular, top-rated, and upcoming TV shows from TMDB
-- **Show Details** — View show info, seasons, cast, trailers, watch providers, and similar shows
-- **Season Details** — Episode list with air dates, ratings, and watch status tracking
-- **Search** — Search shows by title with genre-based content categories
-- **Library** — Track followed shows with status filters (Returning, Ended, etc.)
-- **Watchlist** — Manage shows you plan to watch
-- **Up Next** — Track next episodes to watch across all followed shows
-- **Trakt Integration** — Full OAuth2 authentication with automatic token refresh
-- **Profile** — View Trakt profile and sync activity
-- **Settings** — Theme selection (light/dark/system) and app preferences
-- **Trailers** — Watch show trailers via embedded YouTube player
+- **i18n**: Add new strings for marking episodes
+- **ios**: Configure background processing and fetch modes
+- enable experimental R8 optimized resource shrinking
+- enable mapping file upload for Firebase Crashlytics in release build
+- Add query to get the latest season for followed shows
+- Add episode notification scheduling tasks
+- Add 'Auto' image quality setting and optimize image loading
+- Add `season_numbers` to `TvShow` SQL queries
+- Refactor theme implementation in settings
+### Miscellaneous
 
-### Platform Support
-
-- **Android** — Jetpack Compose UI with Material 3 design system
-- **iOS** — SwiftUI with native navigation and platform conventions
-- **Shared** — Business logic, data layer, and presenters in Kotlin Multiplatform
-
-### Architecture
-
-- Clean Architecture with modular design organized by feature and layer
-- Store pattern for data fetching with offline-first caching
-- Decompose for shared navigation across platforms
-- SQLDelight for local database with 20 migrations
-- Ktor for networking with exponential backoff and rate limiting
-- kotlin-inject for dependency injection with compile-time safety
-
-### Infrastructure
-
-- CI pipeline with Android build, lint, JVM tests, iOS build, SwiftLint, and snapshot tests
-- Release automation with version bumping, changelog generation, and store deployment
-- Single `version.txt` source of truth for both platforms
-- Firebase Crashlytics for crash reporting
-- Background tasks for token refresh and library sync (WorkManager + BGTaskScheduler)
-- Localization support for English, German, and French
+- update release workflow to use release-specific secrets and add signing files to .gitignore
+- add encrypted signing keys
