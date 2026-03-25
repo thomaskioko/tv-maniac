@@ -1,9 +1,6 @@
 name: Compare Screenshot
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
 
 permissions: {}
