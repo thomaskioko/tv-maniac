@@ -11,6 +11,7 @@ on:
           - patch
           - minor
           - major
+          - beta
       skip_android:
         description: 'Skip Android build'
         type: boolean
