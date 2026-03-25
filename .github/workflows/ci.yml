@@ -19,8 +19,52 @@ env:
     TRAKT_REDIRECT_URI: ${{ secrets.TRAKT_REDIRECT_URI }}
 
 jobs:
-    build-android:
+    quality-gate:
         runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v6
+
+            -   name: 🐘 Setup Gradle Environment
+                uses: ./.github/actions/setup-gradle
+
+            -   name: Run Spotless
+                run: ./gradlew spotlessCheck -Papp.debugOnly=false
+
+            -   name: Lint Project
+                run: ./gradlew :app:lintRelease -Papp.debugOnly=false
+
+            -   name: Upload Lint Report
+                if: ${{ !cancelled() }}
+                uses: actions/upload-artifact@v7
+                with:
+                    name: android-lint-report
+                    path: '**/build/reports/lint-results-*.html'
+
+            -   name: Dependency Health
+                run: ./gradlew buildHealth -Papp.debugOnly=false
+
+            -   name: Upload Dependency Health Report
+                if: ${{ !cancelled() }}
+                uses: actions/upload-artifact@v7
+                with:
+                    name: dependency-health-report
+                    path: '**/build/reports/dependency-analysis/build-health-report.txt'
+
+    swift-lint:
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v6
+
+            -   name: 🔍 Run SwiftLint
+                uses: norio-nomura/action-swiftlint@3.2.1
+                with:
+                    args: --config .swiftlint.yml
+
+    build-android:
+        needs: [quality-gate]
+        runs-on: ubuntu-latest
+        environment:
+            name: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')) && 'Protected' || '' }}
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -48,59 +92,22 @@ jobs:
                       -Pandroidx.baselineprofile.skipgeneration=true \
                       -Pcompose.enableCompilerMetrics=true \
                       -Pcompose.enableCompilerReports=true \
-                      -Papp.debugOnly=false \
-                      --no-configuration-cache
+                      -Papp.debugOnly=false
 
-
-    android-lint:
-        runs-on: ubuntu-latest
-        steps:
-            -   uses: actions/checkout@v6
-
-            -   name: 🐘 Setup Gradle Environment
-                uses: ./.github/actions/setup-gradle
-
-            -   name: Lint Project
-                run: ./gradlew :app:lintRelease -Papp.debugOnly=false
-
-            -   name: Upload Lint Report
+            -   name: Upload Compose Compiler Metrics
                 if: ${{ !cancelled() }}
                 uses: actions/upload-artifact@v7
                 with:
-                    name: android-lint-report
-                    path: '**/build/reports/lint-results-*.html'
-
-    spotless:
-        runs-on: ubuntu-latest
-        steps:
-            -   uses: actions/checkout@v6
-
-            -   name: 🐘 Setup Gradle Environment
-                uses: ./.github/actions/setup-gradle
-
-            -   name: Run Spotless
-                run: ./gradlew spotlessCheck -Papp.debugOnly=false --no-configuration-cache
-
-    dependency-health:
-        runs-on: ubuntu-latest
-        steps:
-            -   uses: actions/checkout@v6
-
-            -   name: 🐘 Setup Gradle Environment
-                uses: ./.github/actions/setup-gradle
-
-            -   name: Dependency Health
-                run: ./gradlew buildHealth -Papp.debugOnly=false
-
-            -   name: Upload Dependency health Report
-                uses: actions/upload-artifact@v7
-                if: always()
-                with:
-                    name: dependency-health-report
-                    path: '**/build/reports/dependency-analysis/build-health-report.txt'
+                    name: compose-compiler-metrics
+                    path: |
+                        **/build/compose_metrics/
+                        **/build/compose_reports/
 
     jvm-test:
+        needs: [quality-gate]
         runs-on: ubuntu-latest
+        environment:
+            name: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')) && 'Protected' || '' }}
         steps:
             -   uses: actions/checkout@v6
 
@@ -112,7 +119,7 @@ jobs:
 
             -   name: Upload Test Reports
                 uses: actions/upload-artifact@v7
-                if: always()
+                if: ${{ !cancelled() }}
                 with:
                     name: test-report
                     path: '**/build/reports/*'
@@ -145,8 +152,11 @@ jobs:
     #                    path: '**/build/reports/*'
 
     build-ios:
+        needs: [quality-gate, swift-lint]
         runs-on: macos-15
         timeout-minutes: 60
+        environment:
+            name: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')) && 'Protected' || '' }}
         env:
             FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
 
@@ -174,34 +184,19 @@ jobs:
 
             -   name: Upload build artifacts
                 uses: actions/upload-artifact@v7
-                if: always()
+                if: ${{ !cancelled() }}
                 with:
                     name: ios-build
                     path: |
-                        build/
+                        derived_data/Build/Products/
                         fastlane/logs
 
-    swift-lint:
-        runs-on: macos-latest
-
-        steps:
-            -   name: 🚚 Checkout project
-                uses: actions/checkout@v6
-
-            -   name: 💎 Set up Ruby
-                uses: ruby/setup-ruby@v1
-                with:
-                    bundler-cache: true
-
-            -   name: 📦 Install Swift Lint
-                run: brew install swiftlint
-
-            -   name: 🔍 Run SwiftLint
-                run: bundle exec fastlane ios lint
-
     ios-snapshot-test:
+        needs: [quality-gate, swift-lint]
         runs-on: macos-15
         timeout-minutes: 60
+        environment:
+            name: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')) && 'Protected' || '' }}
         env:
             FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
 
@@ -214,15 +209,12 @@ jobs:
                 with:
                     xcode-version: ${{ env.XCODE_VERSION }}
 
-            -   name: 📱 List Available Simulators
-                run: xcrun simctl list devices
-
             -   name: 📸 Run Snapshot Tests
                 run: bundle exec fastlane snapshot_tests
 
             -   name: Upload test results
                 uses: actions/upload-artifact@v7
-                if: always()
+                if: ${{ !cancelled() }}
                 with:
                     name: snapshot-test-results
                     path: |
