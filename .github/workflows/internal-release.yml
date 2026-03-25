@@ -1,0 +1,182 @@
+name: Internal Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      skip_android:
+        description: 'Skip Android build'
+        type: boolean
+        default: false
+      skip_ios:
+        description: 'Skip iOS build'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+env:
+  XCODE_VERSION: 16.4
+  TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+  TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
+  TRAKT_CLIENT_SECRET: ${{ secrets.TRAKT_CLIENT_SECRET }}
+  TRAKT_REDIRECT_URI: ${{ secrets.TRAKT_REDIRECT_URI }}
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.bump.outputs.version }}
+      build: ${{ steps.bump.outputs.build }}
+      sha: ${{ steps.push.outputs.sha }}
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v6
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ secrets.RELEASE_TOKEN }}
+
+      - name: Setup Gradle Environment
+        uses: ./.github/actions/setup-gradle
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump beta version
+        id: bump
+        run: |
+          ./gradlew bumpVersion -Ptype=beta
+          version=$(grep 'VERSION_NUMBER' version.txt | sed 's/.*= *//')
+          build=$(grep 'BUILD_NUMBER' version.txt | sed 's/.*= *//')
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "build=$build" >> "$GITHUB_OUTPUT"
+          echo "Version: $version, BUILD_NUMBER: $build"
+
+      - name: Commit and push
+        id: push
+        run: |
+          git add version.txt
+          git commit -m "chore: bump beta build number to ${{ steps.bump.outputs.build }}"
+          git push origin main
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+  build-android:
+    needs: prepare
+    if: ${{ !inputs.skip_android }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.prepare.outputs.sha }}
+
+      - name: Setup Gradle Environment
+        uses: ./.github/actions/setup-gradle
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Install google-services.json
+        env:
+          GOOGLE_SERVICES_JSON_RELEASE: ${{ secrets.GOOGLE_SERVICES_JSON_RELEASE }}
+        run: |
+          if [ -n "$GOOGLE_SERVICES_JSON_RELEASE" ]; then
+            mkdir -p app/src/release
+            echo "$GOOGLE_SERVICES_JSON_RELEASE" | base64 --decode > app/src/release/google-services.json
+          else
+            echo "warning: GOOGLE_SERVICES_JSON_RELEASE secret not set - Firebase will be disabled"
+          fi
+
+      - name: Decrypt signing keys
+        env:
+          SIGNING_ENCRYPT_KEY: ${{ secrets.SIGNING_ENCRYPT_KEY }}
+        run: |
+          openssl aes-256-cbc -d -pbkdf2 -in release/app-release.aes -out release/app-release.jks -k "$SIGNING_ENCRYPT_KEY"
+          openssl aes-256-cbc -d -pbkdf2 -in release/play-service-account.aes -out release/play-service-account.json -k "$SIGNING_ENCRYPT_KEY"
+
+      - name: Build release AAB and APK
+        env:
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        run: |
+          ./gradlew :app:bundleRelease :app:assembleRelease \
+            -Pandroidx.baselineprofile.skipgeneration=true \
+            -Papp.debugOnly=false \
+            -Papp.versionSuffix=-beta \
+            -PreleaseStoreFile=release/app-release.jks \
+            -PreleaseStorePassword="$SIGNING_STORE_PASSWORD" \
+            -PreleaseKeyAlias=tvmaniac \
+            -PreleaseKeyPassword="$SIGNING_KEY_PASSWORD" \
+            --no-configuration-cache
+
+      - name: Print build info
+        run: |
+          echo "Version: $(grep 'VERSION_NUMBER' version.txt | sed 's/.*= *//')-beta"
+          echo "Build:   $(grep 'BUILD_NUMBER' version.txt | sed 's/.*= *//')"
+
+      - name: Generate release notes
+        run: |
+          body=$(git cliff --unreleased --strip header 2>/dev/null || echo "Internal beta build")
+          mkdir -p fastlane/metadata/android/en-US/changelogs
+          echo "$body" > fastlane/metadata/android/en-US/changelogs/default.txt
+
+      - name: Deploy to Play Store internal track
+        run: |
+          export PLAY_STORE_SERVICE_ACCOUNT_JSON=$(cat release/play-service-account.json)
+          bundle exec fastlane android deploy_play_store
+
+  build-ios:
+    needs: prepare
+    if: ${{ !inputs.skip_ios }}
+    runs-on: macos-15
+    timeout-minutes: 60
+    env:
+      FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.prepare.outputs.sha }}
+
+      - name: Setup iOS Environment
+        uses: ./.github/actions/setup-ios
+        with:
+          xcode-version: ${{ env.XCODE_VERSION }}
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Install GoogleService-Info.plist
+        env:
+          GOOGLE_SERVICE_INFO: ${{ secrets.GOOGLE_SERVICE_INFO_PLIST }}
+        run: |
+          if [ -n "$GOOGLE_SERVICE_INFO" ]; then
+            echo "$GOOGLE_SERVICE_INFO" | base64 --decode > ios/ios/GoogleService-Info.plist
+          else
+            echo "warning: GOOGLE_SERVICE_INFO_PLIST secret not set - Firebase will be disabled"
+          fi
+
+      - name: Build and upload to TestFlight
+        env:
+          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+        run: bundle exec fastlane ios build_release
+
+      - name: Upload iOS artifacts
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: ios-internal
+          path: |
+            build/
+            fastlane/logs
