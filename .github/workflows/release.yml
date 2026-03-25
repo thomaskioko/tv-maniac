@@ -32,12 +32,7 @@ env:
   TRAKT_REDIRECT_URI: ${{ secrets.TRAKT_REDIRECT_URI }}
 
 jobs:
-  validate:
-    uses: ./.github/workflows/ci.yml
-    secrets: inherit
-
   prepare-release:
-    needs: validate
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.bump.outputs.version }}
@@ -63,17 +58,28 @@ jobs:
         id: current
         run: |
           current=$(grep 'VERSION_NUMBER' version.txt | sed 's/.*= *//')
+          build=$(grep 'BUILD_NUMBER' version.txt | sed 's/.*= *//')
           echo "version=$current" >> "$GITHUB_OUTPUT"
+          echo "build=$build" >> "$GITHUB_OUTPUT"
 
       - name: Bump version
         id: bump
         run: |
           ./gradlew bumpVersion -Ptype=${{ inputs.bump_type }}
           new_version=$(grep 'VERSION_NUMBER' version.txt | sed 's/.*= *//')
-          tag="v${new_version}"
+          new_build=$(grep 'BUILD_NUMBER' version.txt | sed 's/.*= *//')
+
+          if [ "${{ inputs.bump_type }}" = "beta" ]; then
+            base_build=$(( ($(echo "$new_version" | cut -d. -f1) * 10000000) + ($(echo "$new_version" | cut -d. -f2) * 100000) + ($(echo "$new_version" | cut -d. -f3) * 1000) ))
+            beta_iteration=$(( new_build - base_build ))
+            tag="v${new_version}-beta.${beta_iteration}"
+          else
+            tag="v${new_version}"
+          fi
+
           echo "version=$new_version" >> "$GITHUB_OUTPUT"
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
-          echo "Bumped ${{ steps.current.outputs.version }} → $new_version"
+          echo "Bumped ${{ steps.current.outputs.version }} -> $new_version (BUILD_NUMBER = $new_build, tag = $tag)"
 
       - name: Generate changelog
         id: changelog
@@ -101,8 +107,6 @@ jobs:
     needs: prepare-release
     if: ${{ !inputs.skip_android }}
     runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout release tag
         uses: actions/checkout@v6
@@ -112,6 +116,11 @@ jobs:
       - name: Setup Gradle Environment
         uses: ./.github/actions/setup-gradle
 
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
       - name: Install google-services.json
         env:
           GOOGLE_SERVICES_JSON_RELEASE: ${{ secrets.GOOGLE_SERVICES_JSON_RELEASE }}
@@ -120,7 +129,7 @@ jobs:
             mkdir -p app/src/release
             echo "$GOOGLE_SERVICES_JSON_RELEASE" | base64 --decode > app/src/release/google-services.json
           else
-            echo "warning: GOOGLE_SERVICES_JSON_RELEASE secret not set — Firebase will be disabled"
+            echo "warning: GOOGLE_SERVICES_JSON_RELEASE secret not set - Firebase will be disabled"
           fi
 
       - name: Decrypt signing keys
@@ -155,17 +164,9 @@ jobs:
 
       - name: Deploy to Play Store internal track
         if: ${{ hashFiles('release/play-service-account.json') != '' }}
-        env:
-          PLAY_STORE_SERVICE_ACCOUNT_JSON: ${{ hashFiles('release/play-service-account.json') != '' && 'true' || '' }}
         run: |
           export PLAY_STORE_SERVICE_ACCOUNT_JSON=$(cat release/play-service-account.json)
           bundle exec fastlane android deploy_play_store
-
-      - name: Promote to production (0.1% rollout)
-        if: ${{ hashFiles('release/play-service-account.json') != '' }}
-        run: |
-          export PLAY_STORE_SERVICE_ACCOUNT_JSON=$(cat release/play-service-account.json)
-          bundle exec fastlane android promote from:internal to:production rollout:0.001
 
       - name: Upload Android artifacts
         uses: actions/upload-artifact@v7
@@ -193,6 +194,11 @@ jobs:
         with:
           xcode-version: ${{ env.XCODE_VERSION }}
 
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
       - name: Install GoogleService-Info.plist
         env:
           GOOGLE_SERVICE_INFO: ${{ secrets.GOOGLE_SERVICE_INFO_PLIST }}
@@ -200,7 +206,7 @@ jobs:
           if [ -n "$GOOGLE_SERVICE_INFO" ]; then
             echo "$GOOGLE_SERVICE_INFO" | base64 --decode > ios/ios/GoogleService-Info.plist
           else
-            echo "warning: GOOGLE_SERVICE_INFO_PLIST secret not set — Firebase will be disabled"
+            echo "warning: GOOGLE_SERVICE_INFO_PLIST secret not set - Firebase will be disabled"
           fi
 
       - name: Build and upload to TestFlight

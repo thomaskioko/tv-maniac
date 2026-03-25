@@ -1,0 +1,103 @@
+name: Promote Release
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Platform to promote'
+        required: true
+        type: choice
+        options:
+          - android
+          - ios
+          - both
+      android_from_track:
+        description: 'Android: promote from track'
+        type: choice
+        default: internal
+        options:
+          - internal
+          - beta
+          - production
+      android_to_track:
+        description: 'Android: promote to track'
+        type: choice
+        default: production
+        options:
+          - beta
+          - production
+      android_rollout:
+        description: 'Android: rollout percentage (0.001 = 0.1%, 0.5 = 50%, 1.0 = 100%)'
+        type: string
+        default: '0.001'
+      ios_submit_for_review:
+        description: 'iOS: submit to App Store review'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+env:
+  TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+  TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
+  TRAKT_CLIENT_SECRET: ${{ secrets.TRAKT_CLIENT_SECRET }}
+  TRAKT_REDIRECT_URI: ${{ secrets.TRAKT_REDIRECT_URI }}
+
+jobs:
+  promote-android:
+    if: ${{ inputs.platform == 'android' || inputs.platform == 'both' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Decrypt Play Store service account
+        env:
+          SIGNING_ENCRYPT_KEY: ${{ secrets.SIGNING_ENCRYPT_KEY }}
+        run: |
+          openssl aes-256-cbc -d -pbkdf2 -in release/play-service-account.aes -out release/play-service-account.json -k "$SIGNING_ENCRYPT_KEY"
+
+      - name: Promote Android release
+        run: |
+          export PLAY_STORE_SERVICE_ACCOUNT_JSON=$(cat release/play-service-account.json)
+          bundle exec fastlane android promote \
+            from:${{ inputs.android_from_track }} \
+            to:${{ inputs.android_to_track }} \
+            rollout:${{ inputs.android_rollout }}
+
+      - name: Summary
+        run: |
+          echo "### Android Promotion" >> $GITHUB_STEP_SUMMARY
+          echo "- **From**: ${{ inputs.android_from_track }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **To**: ${{ inputs.android_to_track }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Rollout**: ${{ inputs.android_rollout }}" >> $GITHUB_STEP_SUMMARY
+
+  promote-ios:
+    if: ${{ inputs.platform == 'ios' || inputs.platform == 'both' }}
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Submit to App Store
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+          IOS_SUBMIT_FOR_REVIEW: ${{ inputs.ios_submit_for_review }}
+        run: bundle exec fastlane ios deploy_app_store
+
+      - name: Summary
+        run: |
+          echo "### iOS Promotion" >> $GITHUB_STEP_SUMMARY
+          echo "- **Submit for review**: ${{ inputs.ios_submit_for_review }}" >> $GITHUB_STEP_SUMMARY
