@@ -113,12 +113,13 @@ jobs:
 
       - name: Install google-services.json
         env:
-          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+          GOOGLE_SERVICES_JSON_RELEASE: ${{ secrets.GOOGLE_SERVICES_JSON_RELEASE }}
         run: |
-          if [ -n "$GOOGLE_SERVICES_JSON" ]; then
-            echo "$GOOGLE_SERVICES_JSON" | base64 --decode > app/google-services.json
+          if [ -n "$GOOGLE_SERVICES_JSON_RELEASE" ]; then
+            mkdir -p app/src/release
+            echo "$GOOGLE_SERVICES_JSON_RELEASE" | base64 --decode > app/src/release/google-services.json
           else
-            echo "warning: GOOGLE_SERVICES_JSON secret not set — Firebase will be disabled"
+            echo "warning: GOOGLE_SERVICES_JSON_RELEASE secret not set — Firebase will be disabled"
           fi
 
       - name: Decrypt signing keys
@@ -126,8 +127,8 @@ jobs:
           SIGNING_ENCRYPT_KEY: ${{ secrets.SIGNING_ENCRYPT_KEY }}
         if: ${{ env.SIGNING_ENCRYPT_KEY != '' }}
         run: |
-          openssl aes-256-cbc -d -in release/app-release.aes -out release/app-release.jks -k "$SIGNING_ENCRYPT_KEY"
-          openssl aes-256-cbc -d -in release/play-service-account.aes -out release/play-service-account.json -k "$SIGNING_ENCRYPT_KEY"
+          openssl aes-256-cbc -d -pbkdf2 -in release/app-release.aes -out release/app-release.jks -k "$SIGNING_ENCRYPT_KEY"
+          openssl aes-256-cbc -d -pbkdf2 -in release/play-service-account.aes -out release/play-service-account.json -k "$SIGNING_ENCRYPT_KEY"
 
       - name: Build release AAB and APK
         env:
