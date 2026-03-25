@@ -19,6 +19,7 @@
 -keepattributes SourceFile,
                 LineNumberTable,
                 InnerClasses,
+                EnclosingMethod,
                 *Annotation*,
                 AnnotationDefault,
                 Signature,
@@ -100,6 +101,22 @@
 -dontwarn kotlinx.coroutines.**
 -keepclassmembers class kotlinx.coroutines.** {
     volatile <fields>;
+}
+
+# --- Strip Android Logs from production ---
+-assumenosideeffects class android.util.Log {
+    public static int v(...);
+    public static int d(...);
+    public static int i(...);
+    public static int w(...);
+    public static int e(...);
+}
+
+# --- Strip Jetpack Compose tracing from production ---
+-assumenosideeffects class androidx.compose.runtime.ComposerKt {
+    boolean isTraceInProgress();
+    void traceEventStart(int, int, int, java.lang.String);
+    void traceEventEnd();
 }
 
 # --- General Kotlin ---
