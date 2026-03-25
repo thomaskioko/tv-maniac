@@ -62,7 +62,7 @@ platform :ios do
     if ENV["MATCH_GIT_URL"]
       match(
         type: "appstore",
-        app_identifier: "com.thomaskioko.tvmaniac",
+        app_identifier: PACKAGE_NAME,
         git_url: ENV["MATCH_GIT_URL"],
         readonly: true,
         api_key: api_key,
@@ -177,21 +177,36 @@ platform :android do
 
   desc "Deploy AAB to Play Store internal track"
   lane :deploy_play_store do |options|
-    track = options[:track] || "internal"
-
     supply(
       package_name: PACKAGE_NAME,
-      track: track,
+      track: "internal",
       aab: "app/build/outputs/bundle/release/app-release.aab",
       json_key_data: ENV["PLAY_STORE_SERVICE_ACCOUNT_JSON"],
-      release_status: "draft",
+      release_status: "completed",
       skip_upload_metadata: true,
       skip_upload_images: true,
       skip_upload_screenshots: true,
     )
   end
 
-  desc "Distribute debug APK via Firebase App Distribution"
+  desc "Deploy AAB to Play Store production track (0.1% rollout)"
+  lane :deploy_production do |options|
+    rollout = options[:rollout] || "0.001"
+
+    supply(
+      package_name: PACKAGE_NAME,
+      track: "production",
+      rollout: rollout,
+      aab: "app/build/outputs/bundle/release/app-release.aab",
+      json_key_data: ENV["PLAY_STORE_SERVICE_ACCOUNT_JSON"],
+      release_status: "inProgress",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+    )
+  end
+
+  desc "Distribute release APK via Firebase App Distribution"
   lane :distribute_alpha do |options|
     groups = options[:groups] || "internal"
 
