@@ -193,7 +193,7 @@ platform :android do
 
     firebase_app_distribution(
       app: ENV["FIREBASE_APP_ID"],
-      android_artifact_path: "app/build/outputs/apk/debug/app-debug.apk",
+      android_artifact_path: "app/build/outputs/apk/release/app-release.apk",
       service_credentials_file: ENV["FIREBASE_APP_DISTRIBUTION_SA"],
       groups: groups,
       release_notes: changelog_from_git_commits(
