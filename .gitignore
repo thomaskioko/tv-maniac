@@ -114,4 +114,5 @@ GoogleService-Info.plist
 # Release signing
 release/app-release.jks
 release/play-service-account.json
+release/firebase-sa.json
 release/signing.properties
