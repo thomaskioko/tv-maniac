@@ -1,3 +1,5 @@
+import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
+
 plugins {
     alias(libs.plugins.app.application)
 }
@@ -169,4 +171,14 @@ dependencies {
 if (file("google-services.json").exists()) {
     apply(plugin = libs.plugins.google.services.get().pluginId)
     apply(plugin = libs.plugins.firebase.crashlytics.gradle.get().pluginId)
+}
+
+afterEvaluate {
+    if (pluginManager.hasPlugin("com.google.firebase.crashlytics")) {
+        android.buildTypes.getByName("release") {
+            configure<CrashlyticsExtension> {
+                mappingFileUploadEnabled = true
+            }
+        }
+    }
 }

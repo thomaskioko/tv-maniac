@@ -1,0 +1,59 @@
+# git-cliff configuration
+# https://git-cliff.org/docs/configuration
+
+[changelog]
+header = """# Changelog\n
+All notable changes to this project will be documented in this file.\n
+"""
+body = """
+{% if version -%}
+  ## [{{ version | trim_start_matches(pat="v") }}] - {{ timestamp | date(format="%Y-%m-%d") }}
+{% else -%}
+  ## [Unreleased]
+{% endif -%}
+
+{% for group, commits in commits | group_by(attribute="group") %}
+### {{ group | striptags | trim | upper_first }}
+{% for commit in commits
+| filter(attribute="scope")
+| sort(attribute="scope") %}
+  - **{{ commit.scope }}**: {{ commit.message }}
+    {%- if commit.breaking %} [**breaking**]{% endif -%}
+{%- endfor -%}
+{% for commit in commits %}
+  {%- if not commit.scope %}
+  - {{ commit.message }}
+    {%- if commit.breaking %} [**breaking**]{% endif -%}
+  {% endif -%}
+{%- endfor -%}
+{% endfor %}
+"""
+trim = true
+footer = ""
+
+[git]
+conventional_commits = true
+filter_unconventional = false
+split_commits = false
+protect_breaking_commits = false
+filter_commits = true
+tag_pattern = "v[0-9].*"
+sort_commits = "newest"
+
+commit_parsers = [
+  { message = "^feat", group = "Features" },
+  { message = "^fix", group = "Bug Fixes" },
+  { message = "^perf", group = "Performance" },
+  { message = "^refactor", group = "Refactoring" },
+  { message = "^doc", group = "Documentation" },
+  { message = "^test", group = "Testing" },
+  { message = "^style", group = "Styling" },
+  { message = "^chore\\(release\\)", skip = true },
+  { message = "^release:", skip = true },
+  { message = "^chore\\(deps\\)", group = "Dependencies" },
+  { message = "^chore", group = "Miscellaneous" },
+  { message = "^ci", group = "CI/CD" },
+  { message = "^build", group = "Build" },
+  { message = "^revert", group = "Reverted" },
+  { body = ".*security", group = "Security" },
+]

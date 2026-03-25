@@ -1,6 +1,5 @@
 default_platform(:ios)
 
-# Set timeout for xcodebuild commands
 TEST_DEVICE = "iPhone 16 Pro"
 
 platform :ios do
@@ -14,10 +13,8 @@ platform :ios do
 
   desc "Run Snapshot Tests"
   lane :snapshot_tests do
-    # Clear derived data first for clean state
     clear_derived_data_lane
 
-    # Run SwiftUI Components snapshot tests
     run_tests(
       project: "ios/tv-maniac.xcodeproj",
       scheme: "SwiftUIComponents",
@@ -30,29 +27,97 @@ platform :ios do
       derived_data_path: "derived_data",
       cloned_source_packages_path: "ios/SourcePackages"
     )
-
   end
 
-  desc "Build iOS App"
+  desc "Build iOS App (Debug, simulator)"
   lane :build_tvmaniac do
-
-      sh("xcodebuild -project ../ios/tv-maniac.xcodeproj \
-        -scheme tv-maniac \
-        -destination 'platform=iOS Simulator,OS=18.5,name=#{TEST_DEVICE}' \
-        -configuration Debug \
-        -clonedSourcePackagesDirPath ../ios/SourcePackages \
-        clean build \
-        COMPILER_INDEX_STORE_ENABLE=NO"
-        )
+    sh("xcodebuild -project ../ios/tv-maniac.xcodeproj \
+      -scheme tv-maniac \
+      -destination 'platform=iOS Simulator,OS=18.5,name=#{TEST_DEVICE}' \
+      -configuration Debug \
+      -clonedSourcePackagesDirPath ../ios/SourcePackages \
+      clean build \
+      COMPILER_INDEX_STORE_ENABLE=NO"
+    )
   end
 
+  # ---------------------------------------------------------------------------
+  # Release lanes
+  # ---------------------------------------------------------------------------
 
-  desc "Build TvManiac IPA"
-  lane :build_tvmaniac_ipa do
-    # Clear derived data first
+  desc "Build and upload to TestFlight"
+  lane :build_release do |options|
     clear_derived_data_lane
 
-    # Build the app
+    api_key = nil
+    if ENV["APP_STORE_CONNECT_API_KEY_ID"] && ENV["APP_STORE_CONNECT_ISSUER_ID"] && ENV["APP_STORE_CONNECT_API_KEY"]
+      api_key = app_store_connect_api_key(
+        key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
+        issuer_id: ENV["APP_STORE_CONNECT_ISSUER_ID"],
+        key_content: ENV["APP_STORE_CONNECT_API_KEY"],
+      )
+    end
+
+    if ENV["MATCH_GIT_URL"]
+      match(
+        type: "appstore",
+        app_identifier: "com.thomaskioko.tvmaniac",
+        git_url: ENV["MATCH_GIT_URL"],
+        readonly: true,
+        api_key: api_key,
+      )
+    else
+      UI.important("MATCH_GIT_URL not set — skipping certificate download. Build may fail without signing.")
+    end
+
+    build_ios_app(
+      project: "ios/tv-maniac.xcodeproj",
+      scheme: "tv-maniac",
+      configuration: "Release",
+      export_method: "app-store",
+      output_directory: "build",
+      output_name: "tv-maniac",
+      buildlog_path: "fastlane/logs",
+      clean: true,
+      derived_data_path: "derived_data",
+      cloned_source_packages_path: "ios/SourcePackages",
+    )
+
+    if api_key
+      upload_to_testflight(
+        api_key: api_key,
+        skip_waiting_for_build_processing: true,
+      )
+    else
+      UI.important("App Store Connect API key not configured — skipping TestFlight upload.")
+    end
+  end
+
+  desc "Submit to App Store review"
+  lane :deploy_app_store do
+    api_key = app_store_connect_api_key(
+      key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
+      issuer_id: ENV["APP_STORE_CONNECT_ISSUER_ID"],
+      key_content: ENV["APP_STORE_CONNECT_API_KEY"],
+    )
+
+    deliver(
+      api_key: api_key,
+      submit_for_review: false,
+      automatic_release: false,
+      skip_metadata: true,
+      skip_screenshots: true,
+    )
+  end
+
+  # ---------------------------------------------------------------------------
+  # Utility lanes
+  # ---------------------------------------------------------------------------
+
+  desc "Build TvManiac IPA (Debug, simulator)"
+  lane :build_tvmaniac_ipa do
+    clear_derived_data_lane
+
     build_ios_app(
       project: "ios/tv-maniac.xcodeproj",
       scheme: "tv-maniac",
@@ -87,11 +152,11 @@ platform :ios do
 
   desc "Run SwiftLint"
   lane :lint do
-      swiftlint(
-          mode: :lint,
-          raise_if_swiftlint_error: true,
-          config_file: ".swiftlint.yml"
-        )
+    swiftlint(
+      mode: :lint,
+      raise_if_swiftlint_error: true,
+      config_file: ".swiftlint.yml"
+    )
   end
 
   desc "Format Swift code with SwiftFormat"
@@ -102,5 +167,56 @@ platform :ios do
   desc "Check Swift code formatting with SwiftFormat"
   lane :check_swift_format do
     sh "cd .. && swiftformat ios --config .swiftformat --lint --swiftversion 5.9"
+  end
+end
+
+platform :android do
+
+  desc "Deploy AAB to Play Store internal track"
+  lane :deploy_play_store do |options|
+    track = options[:track] || "internal"
+
+    supply(
+      track: track,
+      aab: "app/build/outputs/bundle/release/app-release.aab",
+      json_key_data: ENV["PLAY_STORE_SERVICE_ACCOUNT_JSON"],
+      release_status: "draft",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+    )
+  end
+
+  desc "Distribute debug APK via Firebase App Distribution"
+  lane :distribute_alpha do |options|
+    groups = options[:groups] || "internal"
+
+    firebase_app_distribution(
+      app: ENV["FIREBASE_APP_ID"],
+      android_artifact_path: "app/build/outputs/apk/release/app-release.apk",
+      service_credentials_file: ENV["FIREBASE_APP_DISTRIBUTION_SA"],
+      groups: groups,
+      release_notes: changelog_from_git_commits(
+        commits_count: 10,
+        merge_commit_filtering: "exclude_merges",
+      ),
+    )
+  end
+
+  desc "Promote a release between tracks"
+  lane :promote do |options|
+    from_track = options[:from] || "internal"
+    to_track = options[:to] || "beta"
+    rollout = options[:rollout] || "1.0"
+
+    supply(
+      track: from_track,
+      track_promote_to: to_track,
+      rollout: rollout,
+      json_key_data: ENV["PLAY_STORE_SERVICE_ACCOUNT_JSON"],
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+    )
   end
 end

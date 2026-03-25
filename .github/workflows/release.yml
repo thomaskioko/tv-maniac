@@ -1,0 +1,256 @@
+name: Create Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump_type:
+        description: 'Version bump type'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+      skip_android:
+        description: 'Skip Android build'
+        type: boolean
+        default: false
+      skip_ios:
+        description: 'Skip iOS build'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+env:
+  XCODE_VERSION: 16.4
+  TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+  TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
+  TRAKT_CLIENT_SECRET: ${{ secrets.TRAKT_CLIENT_SECRET }}
+  TRAKT_REDIRECT_URI: ${{ secrets.TRAKT_REDIRECT_URI }}
+
+jobs:
+  validate:
+    uses: ./.github/workflows/ci.yml
+    secrets: inherit
+
+  prepare-release:
+    needs: validate
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.bump.outputs.version }}
+      tag: ${{ steps.bump.outputs.tag }}
+      changelog: ${{ steps.changelog.outputs.body }}
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v6
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ secrets.RELEASE_TOKEN }}
+
+      - name: Setup Gradle Environment
+        uses: ./.github/actions/setup-gradle
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Read current version
+        id: current
+        run: |
+          current=$(grep 'VERSION_NUMBER' version.txt | sed 's/.*= *//')
+          echo "version=$current" >> "$GITHUB_OUTPUT"
+
+      - name: Bump version
+        id: bump
+        run: |
+          ./gradlew bumpVersion -Ptype=${{ inputs.bump_type }}
+          new_version=$(grep 'VERSION_NUMBER' version.txt | sed 's/.*= *//')
+          tag="v${new_version}"
+          echo "version=$new_version" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "Bumped ${{ steps.current.outputs.version }} → $new_version"
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          tag="${{ steps.bump.outputs.tag }}"
+          git cliff --tag "$tag" -o CHANGELOG.md
+          body=$(git cliff --tag "$tag" --unreleased --strip header)
+          {
+            echo 'body<<CHANGELOG_EOF'
+            echo "$body"
+            echo 'CHANGELOG_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Commit and tag
+        run: |
+          tag="${{ steps.bump.outputs.tag }}"
+          git add version.txt CHANGELOG.md
+          git commit -m "release: $tag"
+          git tag -a "$tag" -m "Release $tag"
+
+      - name: Push release
+        run: git push origin main --tags
+
+  build-android:
+    needs: prepare-release
+    if: ${{ !inputs.skip_android }}
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout release tag
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.prepare-release.outputs.tag }}
+
+      - name: Setup Gradle Environment
+        uses: ./.github/actions/setup-gradle
+
+      - name: Install google-services.json
+        env:
+          GOOGLE_SERVICES_JSON_RELEASE: ${{ secrets.GOOGLE_SERVICES_JSON_RELEASE }}
+        run: |
+          if [ -n "$GOOGLE_SERVICES_JSON_RELEASE" ]; then
+            mkdir -p app/src/release
+            echo "$GOOGLE_SERVICES_JSON_RELEASE" | base64 --decode > app/src/release/google-services.json
+          else
+            echo "warning: GOOGLE_SERVICES_JSON_RELEASE secret not set — Firebase will be disabled"
+          fi
+
+      - name: Decrypt signing keys
+        env:
+          SIGNING_ENCRYPT_KEY: ${{ secrets.SIGNING_ENCRYPT_KEY }}
+        if: ${{ env.SIGNING_ENCRYPT_KEY != '' }}
+        run: |
+          openssl aes-256-cbc -d -pbkdf2 -in release/app-release.aes -out release/app-release.jks -k "$SIGNING_ENCRYPT_KEY"
+          openssl aes-256-cbc -d -pbkdf2 -in release/play-service-account.aes -out release/play-service-account.json -k "$SIGNING_ENCRYPT_KEY"
+
+      - name: Build release AAB and APK
+        env:
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        run: |
+          SIGNING_ARGS=()
+          if [ -f "release/app-release.jks" ]; then
+            SIGNING_ARGS=(
+              "-PreleaseStoreFile=release/app-release.jks"
+              "-PreleaseStorePassword=$SIGNING_STORE_PASSWORD"
+              "-PreleaseKeyAlias=tvmaniac"
+              "-PreleaseKeyPassword=$SIGNING_KEY_PASSWORD"
+            )
+          fi
+
+          ./gradlew :app:bundleRelease :app:assembleRelease \
+            -Pandroidx.baselineprofile.skipgeneration=true \
+            -Papp.debugOnly=false \
+            -Papp.versionSuffix= \
+            --no-configuration-cache \
+            "${SIGNING_ARGS[@]}"
+
+      - name: Deploy to Play Store internal track
+        if: ${{ hashFiles('release/play-service-account.json') != '' }}
+        env:
+          PLAY_STORE_SERVICE_ACCOUNT_JSON: ${{ hashFiles('release/play-service-account.json') != '' && 'true' || '' }}
+        run: |
+          export PLAY_STORE_SERVICE_ACCOUNT_JSON=$(cat release/play-service-account.json)
+          bundle exec fastlane android deploy_play_store
+
+      - name: Promote to production (0.1% rollout)
+        if: ${{ hashFiles('release/play-service-account.json') != '' }}
+        run: |
+          export PLAY_STORE_SERVICE_ACCOUNT_JSON=$(cat release/play-service-account.json)
+          bundle exec fastlane android promote from:internal to:production rollout:0.001
+
+      - name: Upload Android artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-release
+          path: |
+            app/build/outputs/bundle/release/*.aab
+            app/build/outputs/apk/release/*.apk
+
+  build-ios:
+    needs: prepare-release
+    if: ${{ !inputs.skip_ios }}
+    runs-on: macos-15
+    timeout-minutes: 60
+    env:
+      FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
+    steps:
+      - name: Checkout release tag
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.prepare-release.outputs.tag }}
+
+      - name: Setup iOS Environment
+        uses: ./.github/actions/setup-ios
+        with:
+          xcode-version: ${{ env.XCODE_VERSION }}
+
+      - name: Install GoogleService-Info.plist
+        env:
+          GOOGLE_SERVICE_INFO: ${{ secrets.GOOGLE_SERVICE_INFO_PLIST }}
+        run: |
+          if [ -n "$GOOGLE_SERVICE_INFO" ]; then
+            echo "$GOOGLE_SERVICE_INFO" | base64 --decode > ios/ios/GoogleService-Info.plist
+          else
+            echo "warning: GOOGLE_SERVICE_INFO_PLIST secret not set — Firebase will be disabled"
+          fi
+
+      - name: Build and upload to TestFlight
+        env:
+          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+        run: bundle exec fastlane ios build_release
+
+      - name: Upload iOS artifacts
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: ios-release
+          path: |
+            build/
+            fastlane/logs
+
+  create-github-release:
+    needs: [prepare-release, build-android, build-ios]
+    if: ${{ always() && needs.prepare-release.result == 'success' && (needs.build-android.result == 'success' || needs.build-android.result == 'skipped' || needs.build-ios.result == 'success' || needs.build-ios.result == 'skipped') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Android artifacts
+        if: ${{ needs.build-android.result == 'success' }}
+        uses: actions/download-artifact@v7
+        with:
+          name: android-release
+          path: artifacts/android
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ needs.prepare-release.outputs.tag }}
+          RELEASE_VERSION: ${{ needs.prepare-release.outputs.version }}
+          RELEASE_CHANGELOG: ${{ needs.prepare-release.outputs.changelog }}
+        run: |
+          release_args=(
+            "$RELEASE_TAG"
+            --title "Release $RELEASE_VERSION"
+            --notes "$RELEASE_CHANGELOG"
+            --generate-notes
+          )
+
+          if [ -d "artifacts/android" ]; then
+            apk=$(find artifacts/android -name "*.apk" -type f | head -1)
+            if [ -n "$apk" ]; then
+              release_args+=("$apk")
+            fi
+          fi
+
+          gh release create "${release_args[@]}"

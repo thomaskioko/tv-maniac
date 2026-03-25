@@ -5,10 +5,11 @@ on:
         branches: [ main ]
     pull_request:
         types: [ opened, synchronize ]
+    workflow_call:
 
 concurrency:
-    group: ci-${{ github.ref }}-${{ github.head_ref }}
-    cancel-in-progress: true
+    group: ci-${{ github.ref }}-${{ github.head_ref }}-${{ github.workflow }}
+    cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
     XCODE_VERSION: 16.4
@@ -45,9 +46,9 @@ jobs:
                     ./gradlew :app:assembleRelease \
                       :app:bundleRelease \
                       -Pandroidx.baselineprofile.skipgeneration=true \
-                        -Pcompose.enableCompilerMetrics=true \
-                        -Pcompose.enableCompilerReports=true \
-                        -Papp.debugOnly=false \
+                      -Pcompose.enableCompilerMetrics=true \
+                      -Pcompose.enableCompilerReports=true \
+                      -Papp.debugOnly=false \
                       --no-configuration-cache
 
 

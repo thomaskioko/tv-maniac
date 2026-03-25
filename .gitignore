@@ -110,3 +110,8 @@ CLAUDE.md
 # Firebase
 google-services.json
 GoogleService-Info.plist
+
+# Release signing
+release/app-release.jks
+release/play-service-account.json
+release/signing.properties
