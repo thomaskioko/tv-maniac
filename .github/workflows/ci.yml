@@ -19,7 +19,7 @@ env:
     TRAKT_REDIRECT_URI: ${{ secrets.TRAKT_REDIRECT_URI }}
 
 jobs:
-    quality-gate:
+    static-analysis:
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v6
@@ -61,7 +61,7 @@ jobs:
                     args: --config .swiftlint.yml
 
     build-android:
-        needs: [quality-gate]
+        needs: [static-analysis]
         runs-on: ubuntu-latest
         environment:
             name: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')) && 'Protected' || '' }}
@@ -104,7 +104,7 @@ jobs:
                         **/build/compose_reports/
 
     jvm-test:
-        needs: [quality-gate]
+        needs: [static-analysis]
         runs-on: ubuntu-latest
         environment:
             name: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')) && 'Protected' || '' }}
@@ -152,7 +152,7 @@ jobs:
     #                    path: '**/build/reports/*'
 
     build-ios:
-        needs: [quality-gate, swift-lint]
+        needs: [static-analysis, swift-lint]
         runs-on: macos-15
         timeout-minutes: 60
         environment:
@@ -192,7 +192,7 @@ jobs:
                         fastlane/logs
 
     ios-snapshot-test:
-        needs: [quality-gate, swift-lint]
+        needs: [static-analysis, swift-lint]
         runs-on: macos-15
         timeout-minutes: 60
         environment:
