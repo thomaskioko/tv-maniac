@@ -45,7 +45,7 @@ public extension Snapshotting where Value == UIViewController, Format == UIImage
 
 public extension View {
     func assertSnapshot(
-        record recording: Bool = false,
+        record recording: SnapshotTestingConfiguration.Record? = nil,
         layout: SwiftUISnapshotLayout = .defaultDevice,
         styles: SnapshotStyles = .all,
         timeout: TimeInterval = {
