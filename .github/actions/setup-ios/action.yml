@@ -18,6 +18,15 @@ runs:
       with:
         xcode-version: ${{ inputs.xcode-version }}
 
+    - name: 📱 Verify Simulator Availability
+      shell: bash
+      run: |
+        echo "Xcode: $(xcodebuild -version | head -1)"
+        echo "Available iOS runtimes:"
+        xcrun simctl list runtimes iOS
+        echo "Available iPhone simulators:"
+        xcrun simctl list devices available iPhone
+
     - name: 💎 Set up Ruby
       uses: ruby/setup-ruby@v1
       with:

@@ -25,7 +25,9 @@
 
 Download the latest APK from [GitHub Releases](https://github.com/thomaskioko/tv-maniac/releases).
 
-Or stay up to date with the latest alpha builds via [Firebase App Distribution](https://appdistribution.firebase.dev/i/564c934cc970634b).
+Or stay up to date with the latest alpha builds:
+
+[<img width=400 src="art/FirebaseAppDistribution.svg"/>](https://appdistribution.firebase.dev/i/564c934cc970634b)
 
 ---
 
