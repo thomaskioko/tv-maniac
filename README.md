@@ -1,3 +1,7 @@
+<p align="center">
+<img src="art/TvManiacBanner.png" width="100%" />
+</p>
+
 # TvManiac
 
 ![Check](https://github.com/thomaskioko/tv-maniac/actions/workflows/ci.yml/badge.svg)
@@ -16,6 +20,12 @@
 > **Under Heavy Development**
 >
 > This is my playground for learning Kotlin Multiplatform. With that said, I'm sure it's filled with bugs crawling everywhere, and I'm probably doing a couple of things wrong. So a lot is changing, but that shouldn't stop you from checking it out.
+
+## Install
+
+Download the latest APK from [GitHub Releases](https://github.com/thomaskioko/tv-maniac/releases).
+
+Or stay up to date with the latest alpha builds via [Firebase App Distribution](https://appdistribution.firebase.dev/i/564c934cc970634b).
 
 ---
 
@@ -40,7 +50,11 @@ TRAKT_CLIENT_SECRET=your_trakt_client_secret
 TRAKT_REDIRECT_URI=tvmaniac://callback
 ```
 
-### Build & Run
+### Setup & Build
+
+```bash
+./scripts/install-git-hooks.sh
+```
 
 **Android:**
 ```bash
@@ -49,14 +63,6 @@ TRAKT_REDIRECT_URI=tvmaniac://callback
 
 **iOS:**
 Open `ios/tv-maniac.xcodeproj` in Xcode and run.
-
-### Git Hooks
-
-```bash
-./scripts/install-git-hooks.sh
-```
-
-Installs a pre-commit hook that runs Spotless formatting checks.
 
 ---
 
@@ -97,21 +103,9 @@ For detailed documentation:
 
 ---
 
-## Releases
-
-Production releases will be published to the Google Play Store and App Store once the release pipeline is fully configured.
-
-Alpha builds are distributed daily via [Firebase App Distribution](https://firebase.google.com/docs/app-distribution) to internal testers. Contributors can request access by opening an issue.
-
-APKs for each production release are attached to [GitHub Releases](https://github.com/thomaskioko/tv-maniac/releases).
-
-For the full release process, see [release/RELEASE.md](release/RELEASE.md).
-
----
-
 ## Gradle Convention Plugins
 
-The project uses custom Gradle convention plugins to maintain consistent build configurations across modules. For an in-depth guide, see [Publishing Gradle Convention Plugins](https://thomaskioko.me/posts/publishing_gradle_plugins/).
+Build configurations are managed by [app-gradle-plugins](https://github.com/thomaskioko/app-gradle-plugins), a set of custom Gradle convention plugins published to Maven Central. They handle Android/KMP module setup, versioning, release automation, and R8 optimization. For a deep dive into how they work, see [Publishing Gradle Convention Plugins](https://thomaskioko.me/posts/publishing_gradle_plugins/).
 
 ---
 
