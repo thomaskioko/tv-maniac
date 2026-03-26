@@ -54,6 +54,6 @@
         }
     ],
     "dependencyDashboard": true,
-    "rebaseWhen": "behind-base-branch",
+    "rebaseWhen": "conflicted",
     "configMigration": true
 }

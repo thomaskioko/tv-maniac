@@ -108,6 +108,7 @@ platform :ios do
       api_key: api_key,
       submit_for_review: submit,
       automatic_release: false,
+      phased_release: true,
       skip_metadata: true,
       skip_screenshots: true,
     )

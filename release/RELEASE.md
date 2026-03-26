@@ -7,7 +7,7 @@ TvManiac uses an automated release pipeline that builds, signs, and deploys to b
 - [Prerequisites](#prerequisites)
 - [Create a Production Release](#create-a-production-release)
 - [Create an Internal Release on CI](#create-an-internal-release-on-ci)
-- [Promote a Release on CI](#promote-a-release-on-ci)
+- [Gradual Rollout](#gradual-rollout)
 - [Promote a Release Locally](#promote-a-release-locally)
 - [Version Bumping](#version-bumping)
 - [Beta Releases](#beta-releases)
@@ -55,8 +55,8 @@ Production releases are created locally and triggered on CI by pushing a version
 When the tag (e.g., `v0.1.3`) is pushed, CI automatically:
 
 1. **Build Android**: Builds a signed release AAB + APK, deploys to Play Store production at 0.1% rollout, and distributes to Firebase App Distribution
-2. **Build iOS**: Builds a signed release IPA via Fastlane Match and uploads to TestFlight
-3. **GitHub Release**: Creates a GitHub Release with the changelog and APK attached
+2. **Build iOS**: Builds a signed release IPA via Fastlane Match and uploads to TestFlight. Use the promote workflow to submit to App Store review after TestFlight testing.
+3. **GitHub Release**: Creates a draft GitHub Release with the changelog and APK attached. Review and publish when ready.
 
 Platform builds are independent. If one platform fails, the other still deploys.
 
@@ -88,40 +88,35 @@ gh workflow run internal-release.yml -f skip_ios=true
 
 ---
 
-## Promote a Release on CI
+## Gradual Rollout
 
-After a release is deployed, use promotion to ramp up the rollout percentage or submit for App Store review.
+After a production release deploys at 0.1%, the rollout automatically ramps over a week. A scheduled workflow runs daily at 9:00 UTC and determines the next rollout tier based on how many days have passed since the release tag was created.
 
-Go to **Actions > Promote Release > Run workflow**, or use the CLI:
+Each ramp requires **manual approval** via the GitHub Actions UI (using the `production` environment with required reviewers). You get a notification when it's time to approve.
+
+| Day | Android | iOS |
+|---|---|---|
+| 0 (release) | 0.1% (automatic) | TestFlight |
+| 1 | 1% | Submitted for App Store review (phased release enabled) |
+| 3 | 10% | Apple manages phased rollout |
+| 5 | 50% | Apple manages phased rollout |
+| 7 | 100% | Phased rollout complete |
+
+iOS is submitted for App Store review on Day 1, alongside the first Android ramp. Apple's phased release handles the iOS rollout automatically (1% > 2% > 5% > 10% > 20% > 50% > 100% over 7 days).
+
+To manually override the rollout percentage:
 
 ```bash
-# Ramp Android rollout to 50%
-gh workflow run promote-release.yml \
-  -f platform=android \
-  -f android_from_track=production \
-  -f android_to_track=production \
-  -f android_rollout=0.5
-
-# Full rollout (100%)
-gh workflow run promote-release.yml \
-  -f platform=android \
-  -f android_from_track=production \
-  -f android_to_track=production \
-  -f android_rollout=1.0
-
-# Submit iOS to App Store review
-gh workflow run promote-release.yml \
-  -f platform=ios \
-  -f ios_submit_for_review=true
+gh workflow run promote-release.yml -f android_rollout=0.5
 ```
 
-| Input | Options | Default |
-|---|---|---|
-| platform | `android`, `ios`, `both` | required |
-| android_from_track | `internal`, `beta`, `production` | `internal` |
-| android_to_track | `beta`, `production` | `production` |
-| android_rollout | `0.001` to `1.0` | `0.001` (0.1%) |
-| ios_submit_for_review | boolean | false |
+To manually submit iOS for App Store review:
+
+```bash
+gh workflow run promote-release.yml -f ios_submit_for_review=true
+```
+
+**Setup required**: Create a `production` environment in **GitHub > Repository > Settings > Environments** with yourself as a required reviewer.
 
 ---
 
