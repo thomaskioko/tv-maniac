@@ -193,6 +193,7 @@ jobs:
             "$tag"
             --title "Release $version"
             --notes "${{ steps.changelog.outputs.body }}"
+            --draft
           )
 
           if [ -d "artifacts/android" ]; then

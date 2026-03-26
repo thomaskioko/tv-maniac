@@ -119,12 +119,6 @@ jobs:
           echo "Version: $(grep 'VERSION_NUMBER' version.txt | sed 's/.*= *//')-beta"
           echo "Build:   $(grep 'BUILD_NUMBER' version.txt | sed 's/.*= *//')"
 
-      - name: Generate release notes
-        run: |
-          body=$(git cliff --unreleased --strip header 2>/dev/null || echo "Internal beta build")
-          mkdir -p fastlane/metadata/android/en-US/changelogs
-          echo "$body" > fastlane/metadata/android/en-US/changelogs/default.txt
-
       - name: Deploy to Play Store internal track
         run: |
           export PLAY_STORE_SERVICE_ACCOUNT_JSON=$(cat release/play-service-account.json)
