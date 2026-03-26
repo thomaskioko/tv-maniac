@@ -34,7 +34,7 @@ platform :ios do
   lane :build_tvmaniac do
     sh("xcodebuild -project ../ios/tv-maniac.xcodeproj \
       -scheme tv-maniac \
-      -destination 'platform=iOS Simulator,OS=18.5,name=#{TEST_DEVICE}' \
+      -destination 'generic/platform=iOS Simulator' \
       -configuration Debug \
       -clonedSourcePackagesDirPath ../ios/SourcePackages \
       clean build \
