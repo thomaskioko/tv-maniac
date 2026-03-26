@@ -16,7 +16,41 @@ env:
   TRAKT_REDIRECT_URI: ${{ secrets.TRAKT_REDIRECT_URI }}
 
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.info.outputs.version }}
+      changelog: ${{ steps.changelog.outputs.body }}
+    steps:
+      - name: Checkout tag
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Gradle Environment
+        uses: ./.github/actions/setup-gradle
+
+      - name: Read version info
+        id: info
+        run: |
+          version=$(grep 'VERSION_NUMBER' version.txt | sed 's/.*= *//')
+          build=$(grep 'BUILD_NUMBER' version.txt | sed 's/.*= *//')
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "build=$build" >> "$GITHUB_OUTPUT"
+          echo "Version: $version, Build: $build, Tag: ${{ github.ref_name }}"
+
+      - name: Generate release notes
+        id: changelog
+        run: |
+          body=$(git cliff --current --strip header 2>/dev/null || echo "Release ${{ github.ref_name }}")
+          {
+            echo 'body<<CHANGELOG_EOF'
+            echo "$body"
+            echo 'CHANGELOG_EOF'
+          } >> "$GITHUB_OUTPUT"
+
   build-android:
+    needs: prepare
     runs-on: ubuntu-latest
     steps:
       - name: Checkout tag
@@ -68,23 +102,12 @@ jobs:
             -PreleaseKeyPassword="$SIGNING_KEY_PASSWORD" \
             --no-configuration-cache
 
-      - name: Print build info
+      - name: Write release notes
+        env:
+          RELEASE_CHANGELOG: ${{ needs.prepare.outputs.changelog }}
         run: |
-          echo "Version: $(grep 'VERSION_NUMBER' version.txt | sed 's/.*= *//')"
-          echo "Build:   $(grep 'BUILD_NUMBER' version.txt | sed 's/.*= *//')"
-          echo "Tag:     ${{ github.ref_name }}"
-
-      - name: Generate release notes
-        id: changelog
-        run: |
-          body=$(git cliff --current --strip header 2>/dev/null || echo "Release ${{ github.ref_name }}")
-          {
-            echo 'body<<CHANGELOG_EOF'
-            echo "$body"
-            echo 'CHANGELOG_EOF'
-          } >> "$GITHUB_OUTPUT"
           mkdir -p fastlane/metadata/android/en-US/changelogs
-          echo "$body" > fastlane/metadata/android/en-US/changelogs/default.txt
+          echo "$RELEASE_CHANGELOG" > fastlane/metadata/android/en-US/changelogs/default.txt
 
       - name: Deploy to Play Store production (0.1% rollout)
         run: |
@@ -111,6 +134,7 @@ jobs:
             app/build/outputs/apk/release/*.apk
 
   build-ios:
+    needs: prepare
     runs-on: macos-15
     timeout-minutes: 60
     env:
@@ -158,22 +182,12 @@ jobs:
             fastlane/logs
 
   create-github-release:
-    needs: [build-android, build-ios]
+    needs: [prepare, build-android, build-ios]
     if: ${{ always() && (needs.build-android.result == 'success' || needs.build-ios.result == 'success') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-
-      - name: Generate changelog
-        id: changelog
-        run: |
-          body=$(git cliff --current --strip header 2>/dev/null || echo "Release ${{ github.ref_name }}")
-          echo 'body<<CHANGELOG_EOF' >> "$GITHUB_OUTPUT"
-          echo "$body" >> "$GITHUB_OUTPUT"
-          echo 'CHANGELOG_EOF' >> "$GITHUB_OUTPUT"
 
       - name: Download Android artifacts
         if: ${{ needs.build-android.result == 'success' }}
@@ -192,7 +206,7 @@ jobs:
           release_args=(
             "$tag"
             --title "Release $version"
-            --notes "${{ steps.changelog.outputs.body }}"
+            --notes "${{ needs.prepare.outputs.changelog }}"
             --draft
           )
 
