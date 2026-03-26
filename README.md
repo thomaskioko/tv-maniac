@@ -1,201 +1,125 @@
-TvManiac
--------------------------
+# TvManiac
+
 ![Check](https://github.com/thomaskioko/tv-maniac/actions/workflows/ci.yml/badge.svg)
-[![Download APK](https://img.shields.io/github/v/release/thomaskioko/tv-maniac?label=Download%20APK&logo=android&style=for-the-badge)](https://github.com/thomaskioko/tv-maniac/releases/latest)
 ![kmp](https://img.shields.io/badge/multiplatform-%237F52FF.svg?style=for-the-badge&logo=kotlin&logoColor=white)
 ![compose](https://img.shields.io/badge/jetpack_compose-2bab6b.svg?style=for-the-badge&logo=android&logoColor=white)
 ![swiftui](https://img.shields.io/badge/swiftui-%23000000.svg?style=for-the-badge&logo=swift&logoColor=white)
 
-**TvManiac** is a personalized entertainment tracking and recommendation Multiplatform app. By utilizing
-[TMDB](https://developer.themoviedb.org/docs), we can view shows, create a watchlist get statistics, and much more. This project aims to
-demonstrate KMP development capabilities. This is currently running on:
+[![Download APK](https://img.shields.io/github/v/release/thomaskioko/tv-maniac?label=Download%20APK&logo=android&style=for-the-badge)](https://github.com/thomaskioko/tv-maniac/releases/latest)
 
-- Android: Compose
-- iOS: SwiftUI
+**TvManiac** is a personalized entertainment tracking and recommendation Multiplatform app (Android & iOS) for tracking TV Shows. By utilizing [Trakt](https://trakt.tv) and [TMDB](https://developer.themoviedb.org/docs), you can discover shows, manage your watchlist, track watch progress, and get personalized recommendations.
 
-## 🚧 Under Heavy Development 🚧
-
-This is my playground for learning Kotlin Multiplatform. With that said, I'm sure it's filled with bugs crawling everywhere, and I'm
-probably doing a couple of things wrong. So a lot is changing, but that shouldn't stop you from checking it out.
-
-| Android                                                                                                  | iOS                                                                                                      |
-|----------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
+| Android | iOS |
+|---|---|
 | <video src="https://github.com/user-attachments/assets/90ec7924-7d50-40a4-bb0b-89d79aa9bbcd" width=350/> | <video src="https://github.com/user-attachments/assets/69f101b7-e100-4775-9893-6687e455560c" width=350/> |
 
-> [!IMPORTANT]
-> ### API Keys & Configuration Setup
+> **Under Heavy Development**
 >
-> The app requires both TMDB and Trakt API credentials to function properly.
->
-> #### 1. TMDB API Key
-> - [Create a TMDB API app](https://www.themoviedb.org/settings/api) and generate an API key
->
-> #### 2. Trakt OAuth Credentials
-> - [Create a Trakt API app](https://trakt.tv/oauth/applications/new)
-> - Set the **Redirect URI** to: `tvmaniac://callback`
-> - Copy your **Client ID** and **Client Secret**
->
-> #### 3. Add to local.properties
-> Create a `local.properties` file in the project root (if it doesn't exist) and add your credentials:
->
-> ```properties
-> TMDB_API_KEY=your_tmdb_api_key_here
-> TRAKT_CLIENT_ID=your_trakt_client_id_here
-> TRAKT_CLIENT_SECRET=your_trakt_client_secret_here
-> TRAKT_REDIRECT_URI=tvmaniac://callback
-> ```
->
-> **For CI/CD:** Set these as environment variables with the same names.
->
-> #### 4. Firebase Crashlytics (Optional)
-> The app uses Firebase Crashlytics for crash reporting. It works without Firebase configured — crash reporting will simply be disabled.
->
-> **Android:**
-> - Create a [Firebase project](https://console.firebase.google.com/) and register the Android app
-> - Download `google-services.json` and place it in the `app/` directory
->
-> **iOS:**
-> - Register the iOS app in the same Firebase project
-> - Download `GoogleService-Info.plist` and place it in `ios/ios/Resources/`
->
-> Both files are gitignored. **For CI/CD:** store them as base64-encoded secrets and decode them in your workflow before building.
+> This is my playground for learning Kotlin Multiplatform. With that said, I'm sure it's filled with bugs crawling everywhere, and I'm probably doing a couple of things wrong. So a lot is changing, but that shouldn't stop you from checking it out.
 
-## 🖥 Project Setup & Environment
+---
 
-#### Requirements
+## Getting Started
+
+### Requirements
 
 - [Zulu Java 21](https://www.azul.com/downloads/?package=jdk#zulu)
-- You require the latest [Android Studio](https://developer.android.com/studio/preview) release to be able to build the app.
-- Install KMM Plugin. Checkout [this setup guide](https://kotlinlang.org/docs/multiplatform-mobile-setup.html).
+- Latest [Android Studio](https://developer.android.com/studio/preview)
+- [KMM Plugin](https://kotlinlang.org/docs/multiplatform-mobile-setup.html)
 
-### Opening iOS Project
+### API Keys
 
-- Navigate to the ios directory & open `.xcodeproj`
+The app requires TMDB and Trakt API credentials. See [docs/setup.md](docs/setup.md) for detailed instructions.
+
+Create `local.properties` in the project root:
+
+```properties
+TMDB_API_KEY=your_tmdb_api_key
+TRAKT_CLIENT_ID=your_trakt_client_id
+TRAKT_CLIENT_SECRET=your_trakt_client_secret
+TRAKT_REDIRECT_URI=tvmaniac://callback
+```
+
+### Build & Run
+
+**Android:**
+```bash
+./gradlew :app:assembleDebug
+```
+
+**iOS:**
+Open `ios/tv-maniac.xcodeproj` in Xcode and run.
 
 ### Git Hooks
-
-The project uses Git hooks to enforce code quality checks before commits. To install the hooks, run:
 
 ```bash
 ./scripts/install-git-hooks.sh
 ```
 
-This will install the following hooks:
+Installs a pre-commit hook that runs Spotless formatting checks.
 
-- **pre-commit**: Runs code formatting checks using Spotless before allowing a commit. If the checks fail, the commit
-  will be aborted.
+---
 
 ## Architecture
 
 The project follows Clean Architecture with a modular design organized by feature and layer. Business logic and state management live in shared KMP code, while Android (Compose) and iOS (SwiftUI) contain only UI rendering.
 
-For detailed documentation, see [docs/architecture](docs/architecture/README.md):
+For detailed documentation:
 
-- [Modularization](docs/architecture/MODULARIZATION.md) — Module archetypes and dependency rules
-- [Presentation Layer](docs/architecture/PRESENTATION_LAYER.md) — Shared presenters and platform UI binding
-- [Data Layer](docs/architecture/DATA_LAYER.md) — Store pattern, caching, and hybrid API strategy
-- [Navigation](docs/architecture/NAVIGATION.md) — Decompose-based shared navigation
-- [Dependency Injection](docs/architecture/DI.md) — Scope hierarchy and wiring principles
+- [Modularization](docs/architecture/MODULARIZATION.md)
+- [Presentation Layer](docs/architecture/PRESENTATION_LAYER.md)
+- [Data Layer](docs/architecture/DATA_LAYER.md)
+- [Navigation](docs/architecture/NAVIGATION.md)
+- [Dependency Injection](docs/architecture/DI.md)
+
+---
+
+## Tech Stack
+
+**Shared (KMP)**
+- [Kotlin Coroutines](https://github.com/Kotlin/kotlinx.coroutines) - Concurrency
+- [Ktor](https://ktor.io/) - Networking
+- [SQLDelight](https://github.com/cashapp/sqldelight) - Local database
+- [Decompose](https://arkivanov.github.io/Decompose/) - Navigation and lifecycle
+- [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) - JSON serialization
+- [kotlin-inject-anvil](https://github.com/amzn/kotlin-inject-anvil) - Dependency injection
+- [Multiplatform Paging](https://github.com/cashapp/multiplatform-paging) - Pagination
+
+**Android**
+- [Jetpack Compose](https://developer.android.com/jetpack/compose) - UI toolkit
+- [Coil](https://coil-kt.github.io/coil/) - Image loading
+- [AppAuth](https://openid.github.io/AppAuth-Android/) - OAuth authentication
+
+**iOS**
+- [SwiftUI](https://developer.apple.com/xcode/swiftui/) - UI framework
+- [Nuke](https://github.com/kean/Nuke) - Image loading
+- [OAuthSwift](https://github.com/OAuthSwift/OAuthSwift) - OAuth authentication
+
+---
+
+## Releases
+
+Production releases will be published to the Google Play Store and App Store once the release pipeline is fully configured.
+
+Alpha builds are distributed daily via [Firebase App Distribution](https://firebase.google.com/docs/app-distribution) to internal testers. Contributors can request access by opening an issue.
+
+APKs for each production release are attached to [GitHub Releases](https://github.com/thomaskioko/tv-maniac/releases).
+
+For the full release process, see [release/RELEASE.md](release/RELEASE.md).
+
+---
 
 ## Gradle Convention Plugins
 
-The project uses custom Gradle convention plugins to maintain consistent build configurations across modules. These plugins help standardize dependencies,
-compiler settings, and build logic throughout the codebase. For an in-depth guide on how these convention plugins are created, structured, and published to Maven Central,
-check out the article: [Publishing Gradle Convention Plugins](https://thomaskioko.me/posts/publishing_gradle_plugins/).
+The project uses custom Gradle convention plugins to maintain consistent build configurations across modules. For an in-depth guide, see [Publishing Gradle Convention Plugins](https://thomaskioko.me/posts/publishing_gradle_plugins/).
 
-## Libraries Used
+---
 
-### Android
-
-* [Accompanist](https://github.com/google/accompanist)
-  * [Insets](https://google.github.io/accompanist/insets/)
-  * [Pager Layouts](https://google.github.io/accompanist/pager/)
-* [Android-youtube-player](https://github.com/PierfrancescoSoffritti/android-youtube-player) - Youtube Player
-* [AppAuth](https://openid.github.io/AppAuth-Android/) - AppAuth for Android is a client SDK for communicating with OAuth 2.0 and OpenID
-  Connect providers.
-* [Compose Lints](https://slackhq.github.io/compose-lints/) - Custom lint checks for Jetpack Compose.
-* [Jetpack Compose](https://developer.android.com/jetpack/compose)
-  * [Coil](https://coil-kt.github.io/coil/compose/) - Image loading
-* [KenBurnsView](https://github.com/flavioarfaria/KenBurnsView) - Immersive image.
-* [Leakcanary](https://github.com/square/leakcanary) - Memory leak detection.
-
-### Kmp - Common
-
-* [Coroutines](https://github.com/Kotlin/kotlinx.coroutines#multiplatform) - Concurrency & Threading
-* [DataStore Preferences](https://android-developers.googleblog.com/2022/10/announcing-experimental-preview-of-jetpack-multiplatform-libraries.html) -
-  Data storage
-* [DateTime](https://github.com/Kotlin/kotlinx-datetime) - Date & Time
-* [Decompose](https://arkivanov.github.io/Decompose/) - Kotlin Multiplatform library for breaking down your code into lifecycle-aware
-  business logic components (aka BLoC).
-* [Kermit](https://kermit.touchlab.co/) - Logging
-* [kotlin-inject-anvil](https://github.com/amzn/kotlin-inject-anvil?tab=readme-ov-file) - Dependency Injection library.
-* [Kotlinx Serialization](https://ktor.io/docs/kotlin-serialization.html) - De/Serializing JSON
-* [Ktor](https://ktor.io/) - Networking
-* [Kotest Assertions](https://kotest.io/docs/assertions/assertions.html) - Testing
-* [Multiplatform Paging](https://github.com/cashapp/multiplatform-paging) A library that adds additional Kotlin/Multiplatform targets to
-  AndroidX Paging, and provides UI components to use Paging on iOS.
-* [SQLDelight](https://github.com/cashapp/sqldelight/) - Local storage
-  - [Coroutines Extensions](https://cashapp.github.io/sqldelight/js_sqlite/coroutines/) Consume queries as Flow
-* [Paging](https://developer.android.com/jetpack/androidx/releases/paging) -
-
-### iOS
-
-* [AppAuth](https://github.com/openid/AppAuth-iOS) - OAuth 2.0 and OpenID Connect client SDK for iOS
-* [SDWebImage](https://github.com/SDWebImage/SDWebImage) - Async image downloader.
-* [Youtube PlayerKit](https://github.com/SvenTiigi/YouTubePlayerKit) - Swift Youtube Player
-
-## Roadmap
-
-Android
-
-- [x] Implement Watchlist
-- [x] Add `More` screen. Shows GridView
-- [x] Recommended Shows
-- [x] Implement pagination.
-- [x] Add Settings panel.
-  - Dynamic theme change.
-- [x] Add Seasons UI
-- [x] Implement trakt auth & sign in
-- [x] Migrate to Material3
-- [x] Implement Paging
-- [x] Implement Search
-- [ ] Add Episode detail screen
-- [x] Create Design System
-
-iOS
-
-- [x] Add HomeScreen: Tabs & Empty UI
-- [x] Implement Discover UI
-- [x] Show Detail Screen
-- [x] Add Settings panel.
-- [x] Implement trakt auth & sign in
-- [x] Update show detail UI
-- [x] Add Seasons Detail UI
-- [x] Implement Paging
-- [x] Implement Search
-- [ ] Add Episode detail screen
-
-Shared
-
-- [x] Use SQLDelight extensions to consume queries as Flow
-- [x] Refactor interactor implementation.
-- [x] Use koin for injection
-- [x] Modularize `shared` module
-- [x] Try out [Flow-Redux](https://github.com/freeletics/FlowRedux)
-- [x] Add test cases.
-- [x] Migrate to BuildConfig for unified configuration
-- [x] Implement Trakt tracking
-    - [x] Track Shows
-    - [x] Track Episodes
-- [x] Fix paging
-- [ ] Improve error handling.
-
-### References & Inspiration
+## References & Inspiration
 
 - [Design Inspiration](https://dribbble.com/shots/7591814-HBO-Max-Companion-App-Animation)
-- [Code Snippets](https://github.com/android/compose-samples)
-- [Touchlab KaMPKit project](https://github.com/touchlab/KaMPKit)
 - [Tivi](https://github.com/chrisbanes/tivi)
+- [Compose Samples](https://github.com/android/compose-samples)
 
 ## License
 

@@ -1,36 +1,16 @@
 name: Promote Release
+
 on:
+  schedule:
+    - cron: '0 5 * * *'
   workflow_dispatch:
     inputs:
-      platform:
-        description: 'Platform to promote'
-        required: true
-        type: choice
-        options:
-          - android
-          - ios
-          - both
-      android_from_track:
-        description: 'Android: promote from track'
-        type: choice
-        default: internal
-        options:
-          - internal
-          - beta
-          - production
-      android_to_track:
-        description: 'Android: promote to track'
-        type: choice
-        default: production
-        options:
-          - beta
-          - production
       android_rollout:
-        description: 'Android: rollout percentage (0.001 = 0.1%, 0.5 = 50%, 1.0 = 100%)'
+        description: 'Android rollout percentage override (e.g., 0.5 for 50%)'
         type: string
-        default: '0.001'
+        required: false
       ios_submit_for_review:
-        description: 'iOS: submit to App Store review'
+        description: 'Submit iOS to App Store review'
         type: boolean
         default: false
 
@@ -44,9 +24,70 @@ env:
   TRAKT_REDIRECT_URI: ${{ secrets.TRAKT_REDIRECT_URI }}
 
 jobs:
-  promote-android:
-    if: ${{ inputs.platform == 'android' || inputs.platform == 'both' }}
+  check-rollout:
     runs-on: ubuntu-latest
+    outputs:
+      should_promote: ${{ steps.check.outputs.should_promote }}
+      next_rollout: ${{ steps.check.outputs.next_rollout }}
+      current_rollout: ${{ steps.check.outputs.current_rollout }}
+      release_tag: ${{ steps.check.outputs.release_tag }}
+      days_since_release: ${{ steps.check.outputs.days_since_release }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Determine rollout state
+        id: check
+        run: |
+          if [ -n "${{ inputs.android_rollout }}" ]; then
+            echo "should_promote=true" >> "$GITHUB_OUTPUT"
+            echo "next_rollout=${{ inputs.android_rollout }}" >> "$GITHUB_OUTPUT"
+            echo "current_rollout=manual" >> "$GITHUB_OUTPUT"
+            echo "days_since_release=manual" >> "$GITHUB_OUTPUT"
+            latest_tag=$(git tag --list 'v[0-9]*.[0-9]*.[0-9]*' --sort=-version:refname | head -1)
+            echo "release_tag=$latest_tag" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          latest_tag=$(git tag --list 'v[0-9]*.[0-9]*.[0-9]*' --sort=-version:refname | head -1)
+          if [ -z "$latest_tag" ]; then
+            echo "No release tags found"
+            echo "should_promote=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          tag_date=$(git log -1 --format=%ci "$latest_tag" | cut -d' ' -f1)
+          today=$(date +%Y-%m-%d)
+          days_since=$(( ($(date -d "$today" +%s) - $(date -d "$tag_date" +%s)) / 86400 ))
+
+          # Rollout schedule: Day 0=0.1%, Day 1=1%, Day 3=10%, Day 5=50%, Day 7=100%
+          if [ "$days_since" -ge 7 ]; then
+            next_rollout="1.0"
+          elif [ "$days_since" -ge 5 ]; then
+            next_rollout="0.5"
+          elif [ "$days_since" -ge 3 ]; then
+            next_rollout="0.1"
+          elif [ "$days_since" -ge 1 ]; then
+            next_rollout="0.01"
+          else
+            echo "Day 0: release just deployed at 0.1%, no promotion needed yet"
+            echo "should_promote=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "should_promote=true" >> "$GITHUB_OUTPUT"
+          echo "next_rollout=$next_rollout" >> "$GITHUB_OUTPUT"
+          echo "days_since_release=$days_since" >> "$GITHUB_OUTPUT"
+          echo "release_tag=$latest_tag" >> "$GITHUB_OUTPUT"
+          echo "Release: $latest_tag, Days since: $days_since, Next rollout: $next_rollout"
+
+  promote-android:
+    needs: check-rollout
+    if: ${{ needs.check-rollout.outputs.should_promote == 'true' }}
+    runs-on: ubuntu-latest
+    environment: production
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -66,20 +107,22 @@ jobs:
         run: |
           export PLAY_STORE_SERVICE_ACCOUNT_JSON=$(cat release/play-service-account.json)
           bundle exec fastlane android promote \
-            from:${{ inputs.android_from_track }} \
-            to:${{ inputs.android_to_track }} \
-            rollout:${{ inputs.android_rollout }}
+            from:production \
+            to:production \
+            rollout:${{ needs.check-rollout.outputs.next_rollout }}
 
       - name: Summary
         run: |
           echo "### Android Promotion" >> $GITHUB_STEP_SUMMARY
-          echo "- **From**: ${{ inputs.android_from_track }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **To**: ${{ inputs.android_to_track }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Rollout**: ${{ inputs.android_rollout }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Release**: ${{ needs.check-rollout.outputs.release_tag }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Days since release**: ${{ needs.check-rollout.outputs.days_since_release }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Rollout**: ${{ needs.check-rollout.outputs.next_rollout }}" >> $GITHUB_STEP_SUMMARY
 
   promote-ios:
-    if: ${{ inputs.platform == 'ios' || inputs.platform == 'both' }}
-    runs-on: macos-15
+    needs: check-rollout
+    if: ${{ inputs.ios_submit_for_review == true || needs.check-rollout.outputs.next_rollout == '0.01' }}
+    runs-on: ubuntu-latest
+    environment: production
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -94,10 +137,11 @@ jobs:
           APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
-          IOS_SUBMIT_FOR_REVIEW: ${{ inputs.ios_submit_for_review }}
+          IOS_SUBMIT_FOR_REVIEW: "true"
         run: bundle exec fastlane ios deploy_app_store
 
       - name: Summary
         run: |
           echo "### iOS Promotion" >> $GITHUB_STEP_SUMMARY
-          echo "- **Submit for review**: ${{ inputs.ios_submit_for_review }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Release**: ${{ needs.check-rollout.outputs.release_tag }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Action**: Submitted for App Store review" >> $GITHUB_STEP_SUMMARY

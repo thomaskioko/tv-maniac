@@ -100,13 +100,21 @@ Check Swift code formatting with SwiftFormat
 
 Deploy AAB to Play Store internal track
 
+### android deploy_production
+
+```sh
+[bundle exec] fastlane android deploy_production
+```
+
+Deploy AAB to Play Store production track (0.1% rollout)
+
 ### android distribute_alpha
 
 ```sh
 [bundle exec] fastlane android distribute_alpha
 ```
 
-Distribute debug APK via Firebase App Distribution
+Distribute release APK via Firebase App Distribution
 
 ### android promote
 
