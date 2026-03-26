@@ -7,7 +7,7 @@ TvManiac uses an automated release pipeline that builds, signs, and deploys to b
 - [Prerequisites](#prerequisites)
 - [Create a Production Release](#create-a-production-release)
 - [Create an Internal Release on CI](#create-an-internal-release-on-ci)
-- [Promote a Release on CI](#promote-a-release-on-ci)
+- [Gradual Rollout](#gradual-rollout)
 - [Promote a Release Locally](#promote-a-release-locally)
 - [Version Bumping](#version-bumping)
 - [Beta Releases](#beta-releases)
