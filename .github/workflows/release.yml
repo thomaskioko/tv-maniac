@@ -191,7 +191,7 @@ jobs:
 
       - name: Download Android artifacts
         if: ${{ needs.build-android.result == 'success' }}
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: android-release
           path: artifacts/android
