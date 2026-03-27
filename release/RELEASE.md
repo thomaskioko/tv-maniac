@@ -75,10 +75,10 @@ gh workflow run internal-release.yml
 gh workflow run internal-release.yml -f skip_ios=true
 ```
 
-| Input | Required | Options |
-|---|---|---|
-| skip_android | no | default: false |
-| skip_ios | no | default: false |
+| Input        | Required | Options        |
+|--------------|----------|----------------|
+| skip_android | no       | default: false |
+| skip_ios     | no       | default: false |
 
 **What happens:**
 
@@ -94,13 +94,13 @@ After a production release deploys at 0.1%, the rollout automatically ramps over
 
 Each ramp requires **manual approval** via the GitHub Actions UI (using the `production` environment with required reviewers). You get a notification when it's time to approve.
 
-| Day | Android | iOS |
-|---|---|---|
-| 0 (release) | 0.1% (automatic) | TestFlight |
-| 1 | 1% | Submitted for App Store review (phased release enabled) |
-| 3 | 10% | Apple manages phased rollout |
-| 5 | 50% | Apple manages phased rollout |
-| 7 | 100% | Phased rollout complete |
+| Day         | Android          | iOS                                                     |
+|-------------|------------------|---------------------------------------------------------|
+| 0 (release) | 0.1% (automatic) | TestFlight                                              |
+| 1           | 1%               | Submitted for App Store review (phased release enabled) |
+| 3           | 10%              | Apple manages phased rollout                            |
+| 5           | 50%              | Apple manages phased rollout                            |
+| 7           | 100%             | Phased rollout complete                                 |
 
 iOS is submitted for App Store review on Day 1, alongside the first Android ramp. Apple's phased release handles the iOS rollout automatically (1% > 2% > 5% > 10% > 20% > 50% > 100% over 7 days).
 
@@ -176,14 +176,14 @@ All versioning is driven by `version.txt` at the project root, which contains `V
 
 **Build number formula:** `(major * 10,000,000) + (minor * 100,000) + (patch * 1,000)`
 
-| | Production | Internal/Beta |
-|---|---|---|
-| Version name | `0.1.3` | `0.1.2-beta` |
-| Build number | `103000` | `102001`, `102002`... |
-| Tag | `v0.1.3` | No tag |
-| Play Store | production (0.1% rollout) | internal track |
-| Firebase | Yes | Yes |
-| Trigger | Tag push | `workflow_dispatch` |
+|              | Production                | Internal/Beta         |
+|--------------|---------------------------|-----------------------|
+| Version name | `0.1.3`                   | `0.1.2-beta`          |
+| Build number | `103000`                  | `102001`, `102002`... |
+| Tag          | `v0.1.3`                  | No tag                |
+| Play Store   | production (0.1% rollout) | internal track        |
+| Firebase     | Yes                       | Yes                   |
+| Trigger      | Tag push                  | `workflow_dispatch`   |
 
 The `-beta` suffix is controlled by `app.versionSuffix` in `gradle.properties` (default: `-beta`). Production releases override it to empty via `-Papp.versionSuffix=`.
 
