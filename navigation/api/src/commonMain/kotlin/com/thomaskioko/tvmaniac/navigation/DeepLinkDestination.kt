@@ -14,4 +14,9 @@ public sealed class DeepLinkDestination {
     ) : DeepLinkDestination()
 
     public data object DebugMenu : DeepLinkDestination()
+
+    public companion object {
+        public const val EXTRA_DEEP_LINK: String = "extra_deep_link"
+        public const val DEEP_LINK_DEBUG_MENU: String = "debug_menu"
+    }
 }

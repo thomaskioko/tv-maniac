@@ -22,7 +22,6 @@ import com.thomaskioko.tvmaniac.RootScreen
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager.Companion.EXTRA_FROM_NOTIFICATION
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager.Companion.EXTRA_SHOW_ID
-import com.thomaskioko.tvmaniac.core.notifications.implementation.DebugNotificationManager
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.inject.ActivityComponent
 import com.thomaskioko.tvmaniac.navigation.DeepLinkDestination
@@ -95,9 +94,8 @@ public class MainActivity : ComponentActivity() {
     }
 
     private fun handleNotificationIntent(intent: Intent?) {
-        // TODO:: Create Platform Intent handler and move this code.
-        val deepLink = intent?.getStringExtra(DebugNotificationManager.EXTRA_DEEP_LINK)
-        if (deepLink == DebugNotificationManager.DEEP_LINK_DEBUG_MENU) {
+        val deepLink = intent?.getStringExtra(DeepLinkDestination.EXTRA_DEEP_LINK)
+        if (deepLink == DeepLinkDestination.DEEP_LINK_DEBUG_MENU) {
             component.rootPresenter.onDeepLink(DeepLinkDestination.DebugMenu)
             return
         }
