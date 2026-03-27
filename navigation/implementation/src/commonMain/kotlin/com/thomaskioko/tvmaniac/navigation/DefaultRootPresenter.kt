@@ -275,7 +275,6 @@ public class DefaultRootPresenter(
                     presenter = settingsPresenterFactory(
                         componentContext = componentContext,
                         backClicked = navigator::pop,
-                        onNavigateToDebugMenu = { navigator.pushNew(RootDestinationConfig.Debug) },
                     ),
                 )
 

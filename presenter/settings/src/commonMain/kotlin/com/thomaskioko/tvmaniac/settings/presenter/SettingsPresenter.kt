@@ -11,7 +11,6 @@ public interface SettingsPresenter {
         public operator fun invoke(
             componentContext: ComponentContext,
             backClicked: () -> Unit,
-            onNavigateToDebugMenu: () -> Unit,
         ): SettingsPresenter
     }
 }

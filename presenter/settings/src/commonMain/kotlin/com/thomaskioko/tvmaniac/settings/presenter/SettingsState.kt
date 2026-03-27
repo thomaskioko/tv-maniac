@@ -20,7 +20,6 @@ public data class SettingsState(
     val episodeNotificationsEnabled: Boolean = false,
     val crashReportingEnabled: Boolean = true,
     val isUpdating: Boolean = false,
-    val isDebugBuild: Boolean = false,
     val githubUrl: String = GITHUB_URL,
     val privacyPolicyUrl: String = PRIVACY_POLICY_URL,
 ) {
@@ -44,7 +43,6 @@ public data class SettingsState(
             versionName = "0.0.0",
             episodeNotificationsEnabled = false,
             crashReportingEnabled = true,
-            isDebugBuild = false,
         )
     }
 }

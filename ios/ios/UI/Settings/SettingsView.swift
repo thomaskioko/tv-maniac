@@ -30,7 +30,6 @@ struct SettingsView: View {
             privacyToggles: privacyToggles,
             infoItems: infoItems,
             traktItems: traktItems,
-            debugItems: debugItems,
             onBack: { presenter.dispatch(action: BackClicked__()) }
         )
         .settingsObservers(
@@ -211,23 +210,6 @@ struct SettingsView: View {
         ]
     }
 
-    // MARK: - Debug Items
-
-    private var debugItems: [SettingsNavigationItem] {
-        #if DEBUG
-            return [
-                SettingsNavigationItem(
-                    id: "debug",
-                    icon: "ellipsis.curlybraces",
-                    title: String(\.label_debug_menu_title),
-                    subtitle: String(\.label_debug_menu_subtitle),
-                    onTap: { presenter.dispatch(action: NavigateToDebugMenu()) }
-                ),
-            ]
-        #else
-            return []
-        #endif
-    }
 
     // MARK: - Notification Handling
 

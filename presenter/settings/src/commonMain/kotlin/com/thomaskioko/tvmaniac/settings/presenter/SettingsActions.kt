@@ -47,5 +47,3 @@ public data class EpisodeNotificationsToggled(
 public data class CrashReportingToggled(
     val enabled: Boolean,
 ) : SettingsActions
-
-public data object NavigateToDebugMenu : SettingsActions

@@ -31,7 +31,6 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 public class DefaultSettingsPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val backClicked: () -> Unit,
-    @Assisted private val onNavigateToDebugMenu: () -> Unit,
     private val appInfo: ApplicationInfo,
     private val datastoreRepository: DatastoreRepository,
     private val logoutInteractor: LogoutInteractor,
@@ -73,7 +72,6 @@ public class DefaultSettingsPresenter(
             versionName = appInfo.versionName,
             episodeNotificationsEnabled = preferences.episodeNotificationsEnabled,
             crashReportingEnabled = preferences.crashReportingEnabled,
-            isDebugBuild = appInfo.debugBuild,
         )
     }.stateIn(
         scope = coroutineScope,
@@ -123,8 +121,6 @@ public class DefaultSettingsPresenter(
                     datastoreRepository.setBackgroundSyncEnabled(action.enabled)
                 }
             }
-            NavigateToDebugMenu -> onNavigateToDebugMenu()
-
             is EpisodeNotificationsToggled -> {
                 coroutineScope.launch {
                     toggleEpisodeNotificationsInteractor(
@@ -161,12 +157,10 @@ public class DefaultSettingsPresenterFactory(
     private val presenter: (
         componentContext: ComponentContext,
         backClicked: () -> Unit,
-        onNavigateToDebugMenu: () -> Unit,
     ) -> SettingsPresenter,
 ) : SettingsPresenter.Factory {
     override fun invoke(
         componentContext: ComponentContext,
         backClicked: () -> Unit,
-        onNavigateToDebugMenu: () -> Unit,
-    ): SettingsPresenter = presenter(componentContext, backClicked, onNavigateToDebugMenu)
+    ): SettingsPresenter = presenter(componentContext, backClicked)
 }
