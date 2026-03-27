@@ -31,13 +31,29 @@ Run Snapshot Tests
 
 Build iOS App (Debug, simulator)
 
+### ios certs
+
+```sh
+[bundle exec] fastlane ios certs
+```
+
+Download signing certificates
+
+### ios build_beta
+
+```sh
+[bundle exec] fastlane ios build_beta
+```
+
+Build beta and upload to TestFlight
+
 ### ios build_release
 
 ```sh
 [bundle exec] fastlane ios build_release
 ```
 
-Build and upload to TestFlight
+Build production release and upload to TestFlight
 
 ### ios deploy_app_store
 
@@ -54,14 +70,6 @@ Submit to App Store review
 ```
 
 Build TvManiac IPA (Debug, simulator)
-
-### ios clear_derived_data_lane
-
-```sh
-[bundle exec] fastlane ios clear_derived_data_lane
-```
-
-Clear derived data
 
 ### ios lint
 
