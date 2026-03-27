@@ -42,7 +42,3 @@ runs:
 
     - name: 🐘 Setup Gradle
       uses: ./.github/actions/setup-gradle
-
-    - name: 🧹 Clear Derived Data
-      shell: bash
-      run: bundle exec fastlane clear_derived_data_lane
