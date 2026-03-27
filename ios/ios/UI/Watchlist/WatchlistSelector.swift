@@ -68,9 +68,6 @@ public struct WatchlistSelector: View {
                     )
                 }
 
-                ToolbarItem(placement: .topBarTrailing) {
-                    // TODO: Custom list
-                }
             }
             .background(theme.colors.background)
         }
