@@ -9,6 +9,7 @@ import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Provides
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
+import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 public typealias TraktHttpClient = HttpClient
 public typealias TraktHttpClientEngine = HttpClientEngine
@@ -18,6 +19,7 @@ public typealias TraktJson = Json
 public interface TraktComponent {
 
     @Provides
+    @SingleIn(AppScope::class)
     public fun provideJson(): TraktJson = Json {
         ignoreUnknownKeys = true
         prettyPrint = true
@@ -25,6 +27,7 @@ public interface TraktComponent {
     }
 
     @Provides
+    @SingleIn(AppScope::class)
     public fun provideHttpClient(
         json: TraktJson,
         httpClientEngine: TraktHttpClientEngine,
