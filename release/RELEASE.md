@@ -6,7 +6,7 @@ TvManiac uses an automated release pipeline that builds, signs, and deploys to b
 
 - [Prerequisites](#prerequisites)
 - [Create a Production Release](#create-a-production-release)
-- [Create an Internal Release on CI](#create-an-internal-release-on-ci)
+- [Trigger Internal Release on CI](#trigger-internal-release-on-ci)
 - [Gradual Rollout](#gradual-rollout)
 - [Promote a Release Locally](#promote-a-release-locally)
 - [Version Bumping](#version-bumping)
@@ -64,7 +64,7 @@ Platform builds are independent. If one platform fails, the other still deploys.
 
 ---
 
-## Create an Internal Release on CI
+## Trigger Internal Release on CI
 
 Internal releases deploy beta builds to Play Store internal track and TestFlight for testing. The workflow bumps the beta build number, commits to `main`, then builds and deploys.
 
@@ -176,14 +176,14 @@ All versioning is driven by `version.txt` at the project root, which contains `V
 
 **Build number formula:** `(major * 10,000,000) + (minor * 100,000) + (patch * 1,000)`
 
-| | Production | Internal/Beta | Alpha |
-|---|---|---|---|
-| Version name | `0.1.3` | `0.1.2-beta` | `0.1.2-alpha` |
-| Build number | `103000` | `102001`, `102002`... | from `version.txt` |
-| Tag | `v0.1.3` | No tag | No tag |
-| Play Store | production (0.1% rollout) | internal track | Not uploaded |
-| Firebase | Yes | No | Yes |
-| Trigger | Tag push | `workflow_dispatch` | Push to `main` |
+| | Production | Internal/Beta |
+|---|---|---|
+| Version name | `0.1.3` | `0.1.2-beta` |
+| Build number | `103000` | `102001`, `102002`... |
+| Tag | `v0.1.3` | No tag |
+| Play Store | production (0.1% rollout) | internal track |
+| Firebase | Yes | Yes |
+| Trigger | Tag push | `workflow_dispatch` |
 
 The `-beta` suffix is controlled by `app.versionSuffix` in `gradle.properties` (default: `-beta`). Production releases override it to empty via `-Papp.versionSuffix=`.
 
