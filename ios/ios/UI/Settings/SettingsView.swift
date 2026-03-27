@@ -256,7 +256,7 @@ struct SettingsView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     VStack(spacing: 16) {
-                        Image("TvManiacIcon")
+                        Image(AppIcon.tvManiacIcon)
                             .resizable()
                             .scaledToFit()
                             .frame(width: 72, height: 72)
