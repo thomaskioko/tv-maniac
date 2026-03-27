@@ -250,6 +250,7 @@ struct SettingsView: View {
 
                         Text(String(\.settings_about_version, parameter: uiState.versionName))
                             .font(.body)
+                            .onTapGesture { presenter.dispatch(action: VersionClicked()) }
                     }
                     .padding(.vertical, 32)
 

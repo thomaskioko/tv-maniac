@@ -123,6 +123,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.ShowTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
 import com.thomaskioko.tvmaniac.settings.presenter.TraktLogoutClicked
+import com.thomaskioko.tvmaniac.settings.presenter.VersionClicked
 import com.thomaskioko.tvmaniac.settings.presenter.YoutubeToggled
 
 @Composable
@@ -220,6 +221,7 @@ internal fun SettingsScreen(
             AboutSheetContent(
                 versionName = state.versionName,
                 onGitHubClick = { openInCustomTab(context, state.githubUrl) },
+                onVersionClick = { onAction(VersionClicked) },
             )
         }
     }

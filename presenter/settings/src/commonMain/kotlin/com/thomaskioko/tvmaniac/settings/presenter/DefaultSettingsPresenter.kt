@@ -31,6 +31,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 public class DefaultSettingsPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val backClicked: () -> Unit,
+    @Assisted private val onNavigateToDebugMenu: () -> Unit,
     private val appInfo: ApplicationInfo,
     private val datastoreRepository: DatastoreRepository,
     private val logoutInteractor: LogoutInteractor,
@@ -84,6 +85,7 @@ public class DefaultSettingsPresenter(
             ChangeThemeClicked, DismissThemeClicked -> updateThemeDialogState()
             DismissTraktDialog, ShowTraktDialog -> updateTrackDialogState()
             ShowAboutDialog, DismissAboutDialog -> updateAboutDialogState()
+            VersionClicked -> handleVersionTap()
             BackClicked -> backClicked()
             TraktLogoutClicked -> {
                 coroutineScope.launch {
@@ -145,8 +147,29 @@ public class DefaultSettingsPresenter(
         _state.update { state -> state.copy(showTraktDialog = !state.showTraktDialog) }
     }
 
+    private fun handleVersionTap() {
+        _state.update { state ->
+            val newCount = state.hiddenTapCount + 1
+            if (newCount >= HIDDEN_TAP_THRESHOLD) {
+                onNavigateToDebugMenu()
+                state.copy(hiddenTapCount = 0)
+            } else {
+                state.copy(hiddenTapCount = newCount)
+            }
+        }
+    }
+
     private fun updateAboutDialogState() {
-        _state.update { state -> state.copy(showAboutDialog = !state.showAboutDialog) }
+        _state.update { state ->
+            state.copy(
+                showAboutDialog = !state.showAboutDialog,
+                hiddenTapCount = 0,
+            )
+        }
+    }
+
+    private companion object {
+        const val HIDDEN_TAP_THRESHOLD = 6
     }
 }
 
@@ -157,10 +180,12 @@ public class DefaultSettingsPresenterFactory(
     private val presenter: (
         componentContext: ComponentContext,
         backClicked: () -> Unit,
+        onNavigateToDebugMenu: () -> Unit,
     ) -> SettingsPresenter,
 ) : SettingsPresenter.Factory {
     override fun invoke(
         componentContext: ComponentContext,
         backClicked: () -> Unit,
-    ): SettingsPresenter = presenter(componentContext, backClicked)
+        onNavigateToDebugMenu: () -> Unit,
+    ): SettingsPresenter = presenter(componentContext, backClicked, onNavigateToDebugMenu)
 }

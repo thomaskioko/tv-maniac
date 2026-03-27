@@ -20,6 +20,7 @@ public data class SettingsState(
     val episodeNotificationsEnabled: Boolean = false,
     val crashReportingEnabled: Boolean = true,
     val isUpdating: Boolean = false,
+    val hiddenTapCount: Int = 0,
     val githubUrl: String = GITHUB_URL,
     val privacyPolicyUrl: String = PRIVACY_POLICY_URL,
 ) {

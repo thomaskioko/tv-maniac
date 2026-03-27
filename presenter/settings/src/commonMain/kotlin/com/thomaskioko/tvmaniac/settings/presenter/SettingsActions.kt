@@ -32,6 +32,8 @@ public data object ShowAboutDialog : SettingsActions
 
 public data object DismissAboutDialog : SettingsActions
 
+public data object VersionClicked : SettingsActions
+
 public data class IncludeSpecialsToggled(
     val enabled: Boolean,
 ) : SettingsActions

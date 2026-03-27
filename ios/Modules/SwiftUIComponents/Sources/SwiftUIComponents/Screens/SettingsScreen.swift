@@ -10,7 +10,6 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
     private let privacyToggles: [SettingsToggleItem]
     private let infoItems: [SettingsNavigationItem]
     private let traktItems: [SettingsNavigationItem]
-    private let debugItems: [SettingsNavigationItem]
     private let onBack: () -> Void
 
     public init(
@@ -21,7 +20,6 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
         privacyToggles: [SettingsToggleItem],
         infoItems: [SettingsNavigationItem],
         traktItems: [SettingsNavigationItem] = [],
-        debugItems: [SettingsNavigationItem] = [],
         onBack: @escaping () -> Void
     ) {
         self.title = title
@@ -31,7 +29,6 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
         self.privacyToggles = privacyToggles
         self.infoItems = infoItems
         self.traktItems = traktItems
-        self.debugItems = debugItems
         self.onBack = onBack
     }
 
@@ -82,16 +79,6 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
                         .padding(.top, appTheme.spacing.xLarge)
 
                     ForEach(traktItems) { item in
-                        navigationRow(item)
-                            .padding(.top, appTheme.spacing.medium)
-                    }
-                }
-
-                if !debugItems.isEmpty {
-                    sectionHeader("Developer")
-                        .padding(.top, appTheme.spacing.xLarge)
-
-                    ForEach(debugItems) { item in
                         navigationRow(item)
                             .padding(.top, appTheme.spacing.medium)
                     }

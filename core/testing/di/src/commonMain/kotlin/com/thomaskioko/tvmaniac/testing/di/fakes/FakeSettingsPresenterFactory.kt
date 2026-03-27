@@ -18,6 +18,7 @@ public class FakeSettingsPresenterFactory : SettingsPresenter.Factory {
     override fun invoke(
         componentContext: ComponentContext,
         backClicked: () -> Unit,
+        onNavigateToDebugMenu: () -> Unit,
     ): SettingsPresenter = FakeSettingsPresenter()
 }
 

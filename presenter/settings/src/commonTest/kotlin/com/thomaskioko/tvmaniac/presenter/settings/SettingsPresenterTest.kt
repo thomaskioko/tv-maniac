@@ -71,6 +71,7 @@ class SettingsPresenterTest {
                 datastoreRepository = datastoreRepository,
             ),
             backClicked = {},
+            onNavigateToDebugMenu = {},
         )
     }
 
