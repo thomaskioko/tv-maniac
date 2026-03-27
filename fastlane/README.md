@@ -31,13 +31,29 @@ Run Snapshot Tests
 
 Build iOS App (Debug, simulator)
 
+### ios certs
+
+```sh
+[bundle exec] fastlane ios certs
+```
+
+Download signing certificates
+
+### ios build_beta
+
+```sh
+[bundle exec] fastlane ios build_beta
+```
+
+Build beta and upload to TestFlight
+
 ### ios build_release
 
 ```sh
 [bundle exec] fastlane ios build_release
 ```
 
-Build and upload to TestFlight
+Build production release and upload to TestFlight
 
 ### ios deploy_app_store
 
@@ -54,14 +70,6 @@ Submit to App Store review
 ```
 
 Build TvManiac IPA (Debug, simulator)
-
-### ios clear_derived_data_lane
-
-```sh
-[bundle exec] fastlane ios clear_derived_data_lane
-```
-
-Clear derived data
 
 ### ios lint
 
@@ -100,13 +108,21 @@ Check Swift code formatting with SwiftFormat
 
 Deploy AAB to Play Store internal track
 
+### android deploy_production
+
+```sh
+[bundle exec] fastlane android deploy_production
+```
+
+Deploy AAB to Play Store production track (0.1% rollout)
+
 ### android distribute_alpha
 
 ```sh
 [bundle exec] fastlane android distribute_alpha
 ```
 
-Distribute debug APK via Firebase App Distribution
+Distribute release APK via Firebase App Distribution
 
 ### android promote
 

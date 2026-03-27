@@ -2,20 +2,29 @@ default_platform(:ios)
 
 TEST_DEVICE = "iPhone 16 Pro"
 PACKAGE_NAME = "com.thomaskioko.tvmaniac"
+PROJECT_DIR = File.expand_path('..', Dir.pwd)
+DERIVED_DATA_PATH = "#{PROJECT_DIR}/derived_data"
 
 platform :ios do
 
-  before_all do
-    setup_ci
+  before_all do |lane|
+    cleanup_ci_keychain if is_ci
+    setup_ci if is_ci
     ENV["FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT"] = "180"
     ENV["ORG_GRADLE_PROJECT_app_debugOnly"] = "false"
     ENV["ORG_GRADLE_PROJECT_app_enableIos"] = "true"
   end
 
+  after_all do |lane|
+    cleanup_ci_keychain if is_ci
+  end
+
+  error do |lane, exception|
+    cleanup_ci_keychain if is_ci
+  end
+
   desc "Run Snapshot Tests"
   lane :snapshot_tests do
-    clear_derived_data_lane
-
     run_tests(
       project: "ios/tv-maniac.xcodeproj",
       scheme: "SwiftUIComponents",
@@ -25,7 +34,7 @@ platform :ios do
       xcargs: "-retry-tests-on-failure -skipPackagePluginValidation",
       number_of_retries: 2,
       fail_build: true,
-      derived_data_path: "derived_data",
+      derived_data_path: DERIVED_DATA_PATH,
       cloned_source_packages_path: "ios/SourcePackages"
     )
   end
@@ -46,20 +55,12 @@ platform :ios do
   # Release lanes
   # ---------------------------------------------------------------------------
 
-  desc "Build and upload to TestFlight"
-  lane :build_release do |options|
-    clear_derived_data_lane
+  desc "Download signing certificates"
+  lane :certs do |options|
+    skip_certs = env_nil_or_blank("MATCH_PASSWORD")
 
-    api_key = nil
-    if ENV["APP_STORE_CONNECT_API_KEY_ID"] && ENV["APP_STORE_CONNECT_ISSUER_ID"] && ENV["APP_STORE_CONNECT_API_KEY"]
-      api_key = app_store_connect_api_key(
-        key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
-        issuer_id: ENV["APP_STORE_CONNECT_ISSUER_ID"],
-        key_content: ENV["APP_STORE_CONNECT_API_KEY"],
-      )
-    end
-
-    if ENV["MATCH_GIT_URL"]
+    unless skip_certs
+      api_key = get_api_key
       match(
         type: "appstore",
         app_identifier: PACKAGE_NAME,
@@ -67,22 +68,12 @@ platform :ios do
         readonly: true,
         api_key: api_key,
       )
-    else
-      UI.important("MATCH_GIT_URL not set — skipping certificate download. Build may fail without signing.")
     end
+  end
 
-    build_ios_app(
-      project: "ios/tv-maniac.xcodeproj",
-      scheme: "tv-maniac",
-      configuration: "Release",
-      export_method: "app-store",
-      output_directory: "build",
-      output_name: "tv-maniac",
-      buildlog_path: "fastlane/logs",
-      clean: true,
-      derived_data_path: "derived_data",
-      cloned_source_packages_path: "ios/SourcePackages",
-    )
+  desc "Build beta and upload to TestFlight"
+  lane :build_beta do |options|
+    api_key = build_signed_app
 
     if api_key
       upload_to_testflight(
@@ -94,20 +85,62 @@ platform :ios do
     end
   end
 
+  desc "Build production release and upload to TestFlight"
+  lane :build_release do |options|
+    api_key = build_signed_app
+
+    if api_key
+      upload_to_testflight(
+        api_key: api_key,
+        skip_waiting_for_build_processing: true,
+        changelog: options[:changelog] || changelog_from_git_commits(
+          commits_count: 10,
+          merge_commit_filtering: "exclude_merges",
+        ),
+      )
+    else
+      UI.important("App Store Connect API key not configured — skipping TestFlight upload.")
+    end
+  end
+
+  private_lane :build_signed_app do
+    api_key = get_api_key
+
+    certs
+
+    version_file = File.read("#{PROJECT_DIR}/version.txt")
+    version = version_file[/VERSION_NUMBER\s*=\s*(.+)/, 1].strip
+    build = version_file[/BUILD_NUMBER\s*=\s*(.+)/, 1].strip
+    UI.message("Building version #{version} (#{build})")
+
+    build_ios_app(
+      project: "ios/tv-maniac.xcodeproj",
+      scheme: "tv-maniac",
+      configuration: "Release",
+      export_method: "app-store",
+      output_directory: "build",
+      output_name: "tv-maniac",
+      buildlog_path: "fastlane/logs",
+      clean: true,
+      derived_data_path: DERIVED_DATA_PATH,
+      cloned_source_packages_path: "ios/SourcePackages",
+      use_system_scm: true,
+    )
+
+    api_key
+  end
+
   desc "Submit to App Store review"
   lane :deploy_app_store do |options|
     submit = options[:submit_for_review] || ENV["IOS_SUBMIT_FOR_REVIEW"] == "true"
 
-    api_key = app_store_connect_api_key(
-      key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
-      issuer_id: ENV["APP_STORE_CONNECT_ISSUER_ID"],
-      key_content: ENV["APP_STORE_CONNECT_API_KEY"],
-    )
+    api_key = get_api_key
 
     deliver(
       api_key: api_key,
       submit_for_review: submit,
       automatic_release: false,
+      phased_release: true,
       skip_metadata: true,
       skip_screenshots: true,
     )
@@ -119,14 +152,12 @@ platform :ios do
 
   desc "Build TvManiac IPA (Debug, simulator)"
   lane :build_tvmaniac_ipa do
-    clear_derived_data_lane
-
     build_ios_app(
       project: "ios/tv-maniac.xcodeproj",
       scheme: "tv-maniac",
       configuration: "Debug",
       destination: "platform=iOS Simulator,OS=18.5,name=#{TEST_DEVICE}",
-      derived_data_path: "derived_data",
+      derived_data_path: DERIVED_DATA_PATH,
       cloned_source_packages_path: "ios/SourcePackages",
       xcargs: "-skipPackagePluginValidation -resolvePackageDependencies",
       output_directory: "build",
@@ -143,13 +174,6 @@ platform :ios do
         compileBitcode: false,
         provisioningProfiles: {}
       }
-    )
-  end
-
-  desc "Clear derived data"
-  lane :clear_derived_data_lane do
-    clear_derived_data(
-      derived_data_path: "derived_data"
     )
   end
 
@@ -239,4 +263,28 @@ platform :android do
       skip_upload_screenshots: true,
     )
   end
+end
+
+def get_api_key
+  return nil unless ENV["APP_STORE_CONNECT_API_KEY_ID"] && ENV["APP_STORE_CONNECT_ISSUER_ID"] && ENV["APP_STORE_CONNECT_API_KEY"]
+
+  app_store_connect_api_key(
+    key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
+    issuer_id: ENV["APP_STORE_CONNECT_ISSUER_ID"],
+    key_content: ENV["APP_STORE_CONNECT_API_KEY"],
+    is_key_content_base64: true,
+    in_house: false,
+  )
+end
+
+def cleanup_ci_keychain(name = "fastlane_tmp_keychain")
+  if File.exist? File.expand_path("~/Library/Keychains/#{name}-db")
+    delete_keychain(name: name)
+    sh("security default-keychain -s ~/Library/Keychains/login.keychain-db")
+  end
+end
+
+def env_nil_or_blank(name)
+  value = ENV[name]
+  return value.nil? || value.empty?
 end

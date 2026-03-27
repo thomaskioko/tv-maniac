@@ -11,7 +11,7 @@ scaffold {
     ) { framework ->
         with(framework) {
             isStatic = true
-            freeCompilerArgs += if (debuggable) "-Xadd-light-debug=enable" else ""
+            if (debuggable) freeCompilerArgs += "-Xadd-light-debug=enable"
             freeCompilerArgs += listOf("-Xbinary=bundleId=Kotlin", "-Xexport-kdoc")
 
             export(projects.i18n.api)
