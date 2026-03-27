@@ -20,6 +20,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -44,6 +46,7 @@ public class DefaultTraktAuthRepository(
     private val _authState = MutableStateFlow<AuthState?>(null)
     private var authStateExpiry: Instant = Instant.DISTANT_PAST
     private val scope = CoroutineScope(SupervisorJob() + dispatchers.io)
+    private val refreshMutex = Mutex()
 
     private val _authError = MutableStateFlow<AuthError?>(null)
 
@@ -79,10 +82,10 @@ public class DefaultTraktAuthRepository(
         }?.also { cacheAuthState(it) }
     }
 
-    override suspend fun refreshTokens(): TokenRefreshResult {
-        val currentState = getAuthState() ?: return TokenRefreshResult.NotLoggedIn
+    override suspend fun refreshTokens(): TokenRefreshResult = refreshMutex.withLock {
+        val currentState = getAuthState() ?: return@withLock TokenRefreshResult.NotLoggedIn
 
-        return when (val result = refreshTokenAction.value.invoke(currentState)) {
+        when (val result = refreshTokenAction.value.invoke(currentState)) {
             is RefreshTokenResult.Success -> {
                 _authError.value = null
                 updateAuthState(result.authState)
