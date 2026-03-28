@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.seasondetails.roborrazi
 
 import androidx.activity.ComponentActivity
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
@@ -31,7 +30,6 @@ class SettingsScreenshotTest {
             TvManiacBackground {
                 SettingsScreen(
                     state = defaultState,
-                    snackbarHostState = SnackbarHostState(),
                     onAction = {},
                 )
             }
@@ -44,7 +42,6 @@ class SettingsScreenshotTest {
             TvManiacBackground {
                 SettingsScreen(
                     state = loggedInState,
-                    snackbarHostState = SnackbarHostState(),
                     onAction = {},
                 )
             }
