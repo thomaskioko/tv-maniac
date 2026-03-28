@@ -215,7 +215,6 @@ struct SettingsView: View {
         ]
     }
 
-
     // MARK: - Notification Handling
 
     private func handleNotificationToggle(enabled: Bool) {

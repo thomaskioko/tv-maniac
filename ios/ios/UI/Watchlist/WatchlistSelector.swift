@@ -67,7 +67,6 @@ public struct WatchlistSelector: View {
                         action: { showView.toggle() }
                     )
                 }
-
             }
             .background(theme.colors.background)
         }
