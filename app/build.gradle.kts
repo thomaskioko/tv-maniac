@@ -121,6 +121,7 @@ dependencies {
     implementation(projects.presenter.upnext)
     implementation(projects.presenter.watchlist)
 
+    implementation(projects.core.view)
     implementation(projects.core.imageloading.api)
     implementation(projects.core.networkUtil.api)
     implementation(projects.core.networkUtil.implementation)

@@ -18,7 +18,9 @@ dependencies {
 
     implementation(projects.androidDesignsystem)
     implementation(projects.core.view)
+    implementation(projects.data.datastore.api)
 
+    implementation(libs.androidx.lifecycle.common)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.runtime)

@@ -20,6 +20,7 @@ dependencies {
     implementation(projects.data.datastore.api)
 
     implementation(projects.androidDesignsystem)
+    implementation(projects.core.view)
     implementation(projects.i18n.generator)
 
     implementation(libs.androidx.browser)
