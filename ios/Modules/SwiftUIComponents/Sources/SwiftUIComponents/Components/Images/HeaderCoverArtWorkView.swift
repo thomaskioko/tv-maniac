@@ -22,33 +22,10 @@ public struct HeaderCoverArtWorkView: View {
             url: imageUrl,
             imageType: .backdrop,
             size: CGSize(width: DimensionConstants.posterWidth, height: DimensionConstants.fixedImageHeight)
-        ) { state in
-            if let image = state.image {
-                image.resizable()
-            } else {
-                headerPosterPlaceholder
-            }
-        }
+        )
         .scaledToFill()
         .frame(width: DimensionConstants.posterWidth, height: posterHeight)
         .clipped()
-    }
-
-    private var headerPosterPlaceholder: some View {
-        ZStack {
-            Rectangle().fill(.gray.gradient)
-            VStack {
-                Image(systemName: "popcorn.fill")
-                    .textStyle(theme.typography.titleLarge)
-                    .fontWidth(.expanded)
-                    .foregroundColor(theme.colors.onPrimary.opacity(0.8))
-                    .frame(width: 120, height: 120)
-                    .padding()
-            }
-        }
-        .frame(width: DimensionConstants.posterWidth, height: DimensionConstants.fixedImageHeight)
-        .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
-        .shadow(radius: DimensionConstants.shadowRadius)
     }
 }
 

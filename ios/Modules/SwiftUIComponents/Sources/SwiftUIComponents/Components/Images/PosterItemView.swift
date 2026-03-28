@@ -42,19 +42,9 @@ public struct PosterItemView: View {
         LazyResizableImage(
             url: posterUrl,
             imageType: imageType,
-            size: CGSize(width: posterWidth, height: imageHeight)
-        ) { state in
-            if let image = state.image {
-                image.resizable()
-            } else {
-                PosterPlaceholder(
-                    title: title,
-                    posterWidth: posterWidth,
-                    posterHeight: imageHeight,
-                    posterRadius: resolvedRadius
-                )
-            }
-        }
+            size: CGSize(width: posterWidth, height: imageHeight),
+            placeholderTitle: title
+        )
         .scaledToFill()
         .clipShape(RoundedRectangle(cornerRadius: resolvedRadius, style: .continuous))
         .frame(width: posterWidth, height: posterHeight)

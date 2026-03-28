@@ -39,14 +39,9 @@ public struct YoutubeItemView: View {
             VStack {
                 LazyResizableImage(
                     url: thumbnailUrl,
-                    size: CGSize(width: DimensionConstants.imageWidth, height: DimensionConstants.imageHeight)
-                ) { state in
-                    if let image = state.image {
-                        image.resizable()
-                    } else {
-                        placeholder
-                    }
-                }
+                    size: CGSize(width: DimensionConstants.imageWidth, height: DimensionConstants.imageHeight),
+                    placeholderIcon: "play.fill"
+                )
                 .aspectRatio(contentMode: .fill)
                 .frame(
                     width: DimensionConstants.imageWidth,
@@ -79,26 +74,6 @@ public struct YoutubeItemView: View {
         .accessibilityElement(children: .combine)
         .accessibilityLabel(name)
         .onTapGesture(perform: openVideo)
-    }
-
-    private var placeholder: some View {
-        ZStack {
-            theme.colors.surfaceVariant
-            Image(systemName: "play.fill")
-                .foregroundColor(theme.colors.onPrimary)
-                .imageScale(.medium)
-        }
-        .transition(.opacity)
-        .frame(
-            width: DimensionConstants.imageWidth,
-            height: DimensionConstants.imageHeight
-        )
-        .clipShape(
-            RoundedRectangle(
-                cornerRadius: theme.shapes.medium,
-                style: .continuous
-            )
-        )
     }
 
     private var overlay: some View {

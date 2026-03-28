@@ -25,14 +25,9 @@ public struct AvatarView: View {
 
         LazyResizableImage(
             url: avatarUrl,
-            size: CGSize(width: size, height: size)
-        ) { state in
-            if let image = state.image {
-                image.resizable()
-            } else {
-                placeholderView(resolvedBorderColor)
-            }
-        }
+            size: CGSize(width: size, height: size),
+            placeholderIcon: "person"
+        )
         .scaledToFill()
         .frame(width: size, height: size)
         .clipShape(Circle())
@@ -40,19 +35,6 @@ public struct AvatarView: View {
             Circle()
                 .stroke(resolvedBorderColor, lineWidth: borderWidth)
         )
-    }
-
-    private func placeholderView(_ borderColor: Color) -> some View {
-        Image(systemName: "person")
-            .font(.system(size: size * 0.5))
-            .foregroundColor(borderColor)
-            .frame(width: size, height: size)
-            .background(theme.colors.surfaceVariant.opacity(0.3))
-            .clipShape(Circle())
-            .overlay(
-                Circle()
-                    .stroke(borderColor, lineWidth: borderWidth)
-            )
     }
 }
 

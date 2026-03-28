@@ -31,14 +31,9 @@ public struct ProviderItemView: View {
         VStack(alignment: .leading) {
             LazyResizableImage(
                 url: logoUrl,
-                size: CGSize(width: imageWidth, height: imageHeight)
-            ) { state in
-                if let image = state.image {
-                    image.resizable()
-                } else {
-                    providerPlaceholder
-                }
-            }
+                size: CGSize(width: imageWidth, height: imageHeight),
+                placeholderIcon: "tv"
+            )
             .padding(.horizontal, theme.spacing.xxSmall)
             .aspectRatio(contentMode: .fill)
             .frame(
@@ -48,22 +43,6 @@ public struct ProviderItemView: View {
             .clipped()
             .cornerRadius(resolvedRadius)
             .shadow(color: theme.colors.surfaceVariant.opacity(0.3), radius: shadowRadius, x: 0, y: 2)
-        }
-    }
-
-    private var providerPlaceholder: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: resolvedRadius, style: .continuous)
-                .fill(.gray.gradient)
-                .frame(
-                    width: imageWidth,
-                    height: imageHeight
-                )
-            Image(systemName: "tv")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 24, height: 24)
-                .foregroundColor(theme.colors.onPrimary)
         }
     }
 }

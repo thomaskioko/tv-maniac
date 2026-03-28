@@ -83,16 +83,7 @@ public struct LibraryListItemView: View {
                                 LazyResizableImage(
                                     url: provider.logoUrl,
                                     size: CGSize(width: 32, height: 32)
-                                ) { state in
-                                    if let image = state.image {
-                                        image
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                    } else {
-                                        Rectangle()
-                                            .fill(theme.colors.surfaceVariant)
-                                    }
-                                }
+                                )
                                 .frame(width: 32, height: 32)
                                 .clipShape(RoundedRectangle(cornerRadius: theme.shapes.small))
                             }
