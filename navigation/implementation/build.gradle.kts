@@ -28,6 +28,7 @@ kotlin {
 
             implementation(projects.presenter.debug)
             implementation(projects.presenter.discover)
+            implementation(projects.presenter.episodeDetail)
             implementation(projects.presenter.home)
             implementation(projects.presenter.moreShows)
             implementation(projects.presenter.search)

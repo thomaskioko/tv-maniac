@@ -1,9 +1,11 @@
 package com.thomaskioko.tvmaniac.navigation
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.router.slot.ChildSlot
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.thomaskioko.tvmaniac.debug.presenter.DebugPresenter
 import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsPresenter
+import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeDetailSheetPresenter
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenter
 import com.thomaskioko.tvmaniac.presenter.trailers.TrailersPresenter
@@ -21,6 +23,8 @@ public interface RootPresenter {
     }
 
     public val childStack: StateFlow<ChildStack<*, Child>>
+
+    public val episodeSheetSlot: StateFlow<ChildSlot<*, EpisodeDetailSheetPresenter>>
 
     public val themeState: StateFlow<ThemeState>
 
