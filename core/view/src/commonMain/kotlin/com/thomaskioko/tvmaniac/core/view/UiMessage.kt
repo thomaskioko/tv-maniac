@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlin.uuid.Uuid
@@ -18,11 +19,14 @@ public fun UiMessage(
     t: Throwable,
     id: Long = Uuid.random().getMostSignificantBitsFromBytes(),
     sourceId: String? = null,
+    fallbackMessage: String = DEFAULT_ERROR_MESSAGE,
 ): UiMessage = UiMessage(
-    message = t.message ?: "Error occurred: $t",
+    message = t.message ?: fallbackMessage,
     id = id,
     sourceId = sourceId,
 )
+
+internal const val DEFAULT_ERROR_MESSAGE = "Something went wrong. Please try again."
 
 internal fun Uuid.getMostSignificantBitsFromBytes(): Long {
     val bytes = this.toByteArray()
@@ -38,9 +42,13 @@ public class UiMessageManager {
 
     public val message: Flow<UiMessage?> = _messages.map { it.firstOrNull() }.distinctUntilChanged()
 
+    public fun emitMessage(message: UiMessage) {
+        _messages.update { it + message }
+    }
+
     public suspend fun emitMessageCombined(throwable: Throwable, sourceId: String? = null) {
         mutex.withLock {
-            val errorMessage = throwable.message ?: "Error occurred: $throwable"
+            val errorMessage = throwable.message ?: DEFAULT_ERROR_MESSAGE
 
             // Check if we already have messages with the same error type
             val existingMessages = _messages.value.filter {

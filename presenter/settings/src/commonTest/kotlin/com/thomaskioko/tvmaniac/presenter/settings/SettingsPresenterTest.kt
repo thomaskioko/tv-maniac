@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
@@ -56,6 +57,7 @@ class SettingsPresenterTest {
             appInfo = FakeApplicationInfo.DEFAULT,
             datastoreRepository = datastoreRepository,
             traktAuthRepository = traktAuthRepository,
+            errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = fakeLogger,
             logoutInteractor = LogoutInteractor(
                 traktAuthRepository = traktAuthRepository,

@@ -90,7 +90,7 @@ public struct MoreShowsScreen: View {
                         .multilineTextAlignment(.center)
 
                     Button(action: onRetry) {
-                        Text("Retry")
+                        Text(String(\.button_error_retry))
                             .textStyle(theme.typography.labelLarge)
                             .foregroundColor(theme.colors.onPrimary)
                             .padding(.horizontal, theme.spacing.medium)

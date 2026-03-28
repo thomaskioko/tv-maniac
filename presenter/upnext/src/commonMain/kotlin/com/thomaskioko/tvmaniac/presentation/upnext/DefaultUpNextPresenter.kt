@@ -4,6 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
@@ -44,6 +45,7 @@ public class DefaultUpNextPresenter(
     private val upNextRepository: UpNextRepository,
     private val followedShowsRepository: FollowedShowsRepository,
     private val traktAuthRepository: TraktAuthRepository,
+    private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
     private val coroutineScope: CoroutineScope = componentContext.coroutineScope(),
     observeUpNextInteractor: ObserveUpNextInteractor,
@@ -115,7 +117,7 @@ public class DefaultUpNextPresenter(
         val counter = if (isUserInitiated) refreshingState else loadingState
         coroutineScope.launch {
             refreshUpNextInteractor(isUserInitiated)
-                .collectStatus(counter, logger, uiMessageManager, "Up Next")
+                .collectStatus(counter, logger, uiMessageManager, "Up Next", errorToStringMapper)
         }
     }
 
@@ -128,7 +130,7 @@ public class DefaultUpNextPresenter(
                     seasonNumber = action.seasonNumber,
                     episodeNumber = action.episodeNumber,
                 ),
-            ).collectStatus(markWatchedLoadingState, logger, uiMessageManager, "Mark Watched")
+            ).collectStatus(markWatchedLoadingState, logger, uiMessageManager, "Mark Watched", errorToStringMapper)
         }
     }
 

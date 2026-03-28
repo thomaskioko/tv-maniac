@@ -15,6 +15,7 @@ kotlin {
                 api(projects.core.view)
                 implementation(projects.core.base)
                 implementation(projects.core.logger.api)
+                implementation(projects.i18n.api)
                 implementation(projects.domain.user)
                 implementation(projects.data.traktauth.api)
                 implementation(projects.data.user.api)
@@ -32,6 +33,7 @@ kotlin {
                 implementation(projects.core.util.testing)
                 implementation(projects.data.traktauth.testing)
                 implementation(projects.data.user.testing)
+                implementation(projects.i18n.testing)
 
                 implementation(libs.bundles.unittest)
             }

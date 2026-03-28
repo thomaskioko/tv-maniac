@@ -65,7 +65,9 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_filter
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_search
+import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_toggle_list_style
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_empty_content
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_watchlist_empty_result
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_library
@@ -285,7 +287,7 @@ private fun CollapsedTopBarContent(
             }
             Icon(
                 imageVector = image,
-                contentDescription = "Toggle list style",
+                contentDescription = cd_toggle_list_style.resolve(context),
                 tint = MaterialTheme.colorScheme.onSurface,
             )
         }
@@ -315,7 +317,7 @@ private fun CollapsedTopBarContent(
             IconButton(onClick = onFilterClick) {
                 Icon(
                     imageVector = Icons.Outlined.FilterList,
-                    contentDescription = "Filter",
+                    contentDescription = cd_filter.resolve(context),
                     tint = MaterialTheme.colorScheme.onSurface,
                 )
             }

@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.green
+import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_connectivity_icon
 import com.thomaskioko.tvmaniac.i18n.MR.strings.status_connected
 import com.thomaskioko.tvmaniac.i18n.MR.strings.status_no_connection
 import com.thomaskioko.tvmaniac.i18n.MR.strings.unexpected_error_retry
@@ -63,7 +64,7 @@ public fun ConnectionStatus(
         ) {
             Icon(
                 imageVector = icon,
-                contentDescription = "Connectivity Icon",
+                contentDescription = cd_connectivity_icon.resolve(LocalContext.current),
                 tint = Color.White,
             )
 

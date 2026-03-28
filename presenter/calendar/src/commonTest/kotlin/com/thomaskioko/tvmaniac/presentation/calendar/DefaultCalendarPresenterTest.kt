@@ -5,6 +5,7 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.calendar.CalendarEntry
 import com.thomaskioko.tvmaniac.data.calendar.testing.FakeCalendarRepository
 import com.thomaskioko.tvmaniac.domain.calendar.CalendarEpisodeFormatter
@@ -486,6 +487,7 @@ internal class DefaultCalendarPresenterTest {
             traktAuthRepository = traktAuthRepository,
             calendarWeekCalculator = calendarWeekCalculator,
             calendarStateMapper = calendarStateMapper,
+            errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = logger,
         )
     }

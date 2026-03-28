@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
@@ -60,6 +61,7 @@ public class DefaultDiscoverShowsPresenter(
     private val genreShowsInteractor: GenreShowsInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val traktAuthRepository: TraktAuthRepository,
+    private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
     private val coroutineScope: CoroutineScope = componentContext.coroutineScope(),
 ) : DiscoverShowsPresenter, ComponentContext by componentContext {
@@ -176,7 +178,7 @@ public class DefaultDiscoverShowsPresenter(
                                 seasonNumber = action.seasonNumber,
                                 episodeNumber = action.episodeNumber,
                             ),
-                        ).collectStatus(upNextActionLoadingState, logger, uiMessageManager)
+                        ).collectStatus(upNextActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
                     }
                 }
                 is UnfollowShowFromUpNext -> {
@@ -201,31 +203,31 @@ public class DefaultDiscoverShowsPresenter(
         private fun observeShowData(forceRefresh: Boolean = false) {
             coroutineScope.launch {
                 genreShowsInteractor(forceRefresh)
-                    .collectStatus(genreState, logger, uiMessageManager, "Genres")
+                    .collectStatus(genreState, logger, uiMessageManager, "Genres", errorToStringMapper)
             }
             coroutineScope.launch {
                 featuredShowsInteractor(forceRefresh)
-                    .collectStatus(featuredLoadingState, logger, uiMessageManager, "Featured Shows")
+                    .collectStatus(featuredLoadingState, logger, uiMessageManager, "Featured Shows", errorToStringMapper)
             }
 
             coroutineScope.launch {
                 topRatedShowsInteractor(forceRefresh)
-                    .collectStatus(topRatedLoadingState, logger, uiMessageManager, "Top Rated Shows")
+                    .collectStatus(topRatedLoadingState, logger, uiMessageManager, "Top Rated Shows", errorToStringMapper)
             }
 
             coroutineScope.launch {
                 popularShowsInteractor(forceRefresh)
-                    .collectStatus(popularLoadingState, logger, uiMessageManager, "Popular Shows")
+                    .collectStatus(popularLoadingState, logger, uiMessageManager, "Popular Shows", errorToStringMapper)
             }
 
             coroutineScope.launch {
                 trendingShowsInteractor(forceRefresh)
-                    .collectStatus(trendingLoadingState, logger, uiMessageManager, "Trending Shows")
+                    .collectStatus(trendingLoadingState, logger, uiMessageManager, "Trending Shows", errorToStringMapper)
             }
 
             coroutineScope.launch {
                 upcomingShowsInteractor(forceRefresh)
-                    .collectStatus(upcomingLoadingState, logger, uiMessageManager, "Upcoming Shows")
+                    .collectStatus(upcomingLoadingState, logger, uiMessageManager, "Upcoming Shows", errorToStringMapper)
             }
         }
 

@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.ObserveUpNextInteractor
@@ -421,6 +422,7 @@ internal class DefaultUpNextPresenterTest {
             upNextRepository = upNextRepository,
             followedShowsRepository = followedShowsRepository,
             traktAuthRepository = traktAuthRepository,
+            errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = logger,
         )
     }

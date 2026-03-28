@@ -81,9 +81,11 @@ import com.thomaskioko.tvmaniac.discover.presenter.model.NextEpisodeUiModel
 import com.thomaskioko.tvmaniac.discover.ui.component.DiscoverHeaderContent
 import com.thomaskioko.tvmaniac.discover.ui.component.HorizontalRowContent
 import com.thomaskioko.tvmaniac.discover.ui.component.NextEpisodesSection
+import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_search
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_empty_content
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_error_message
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_retry
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_discover_title
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_discover_up_next
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_mark_watched
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_open_season
@@ -187,6 +189,7 @@ private fun DiscoverContent(
     val listState = rememberLazyListState()
     var selectedEpisode by remember { mutableStateOf<NextEpisodeUiModel?>(null) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val context = LocalContext.current
 
     Box(
         modifier = Modifier
@@ -217,7 +220,7 @@ private fun DiscoverContent(
             listState = listState,
             title = {
                 Text(
-                    text = "Discover",
+                    text = label_discover_title.resolve(context),
                     style = MaterialTheme.typography.titleLarge.copy(
                         color = MaterialTheme.colorScheme.onSurface,
                     ),
@@ -236,7 +239,7 @@ private fun DiscoverContent(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Search,
-                        contentDescription = "Search",
+                        contentDescription = cd_search.resolve(context),
                         tint = MaterialTheme.colorScheme.onSurface,
                     )
                 }

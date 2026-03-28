@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
@@ -66,6 +67,7 @@ public class DefaultShowDetailsPresenter(
     observableShowDetailsInteractor: ObservableShowDetailsInteractor,
     observeShowWatchProgressInteractor: ObserveShowWatchProgressInteractor,
     private val traktAuthRepository: TraktAuthRepository,
+    private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
     dispatchers: AppCoroutineDispatchers,
 ) : ShowDetailsPresenter, ComponentContext by componentContext {
@@ -140,10 +142,10 @@ public class DefaultShowDetailsPresenter(
                         syncShowContent(isUserInitiated = true, loadingState = episodeActionLoadingState)
 
                         syncTraktCalendarInteractor(SyncTraktCalendarInteractor.Params(forceRefresh = true))
-                            .collectStatus(episodeActionLoadingState, logger, uiMessageManager)
+                            .collectStatus(episodeActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
 
                         scheduleEpisodeNotificationsInteractor(ScheduleEpisodeNotificationsInteractor.Params())
-                            .collectStatus(episodeActionLoadingState, logger, uiMessageManager)
+                            .collectStatus(episodeActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
 
                         onShowFollowed()
                     }
@@ -169,7 +171,7 @@ public class DefaultShowDetailsPresenter(
                             episodeNumber = action.episodeNumber,
                             markPreviousEpisodes = false,
                         ),
-                    ).collectStatus(episodeActionLoadingState, logger, uiMessageManager)
+                    ).collectStatus(episodeActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
                 }
             }
 
@@ -180,7 +182,7 @@ public class DefaultShowDetailsPresenter(
                             showTraktId = action.showTraktId,
                             episodeId = action.episodeId,
                         ),
-                    ).collectStatus(episodeActionLoadingState, logger, uiMessageManager)
+                    ).collectStatus(episodeActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
                 }
             }
         }
@@ -189,7 +191,7 @@ public class DefaultShowDetailsPresenter(
     private fun observeShowDetails(forceReload: Boolean = false, isUserInitiated: Boolean = false) {
         coroutineScope.launch {
             showDetailsInteractor(ShowDetailsInteractor.Param(showTraktId, forceReload))
-                .collectStatus(showDetailsLoadingState, logger, uiMessageManager)
+                .collectStatus(showDetailsLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
 
             if (traktAuthRepository.isLoggedIn()) {
                 syncShowContent(
@@ -202,12 +204,12 @@ public class DefaultShowDetailsPresenter(
 
         coroutineScope.launch {
             similarShowsInteractor(SimilarShowsInteractor.Param(showTraktId, forceReload))
-                .collectStatus(similarShowsLoadingState, logger, uiMessageManager)
+                .collectStatus(similarShowsLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         }
 
         coroutineScope.launch {
             watchProvidersInteractor(WatchProvidersInteractor.Param(showTraktId, forceReload))
-                .collectStatus(watchProvidersLoadingState, logger, uiMessageManager)
+                .collectStatus(watchProvidersLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         }
     }
 
@@ -226,7 +228,7 @@ public class DefaultShowDetailsPresenter(
                 forceRefresh = forceRefresh,
                 isUserInitiated = isUserInitiated,
             ),
-        ).collectStatus(loadingState, logger, uiMessageManager)
+        ).collectStatus(loadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
     }
 
     private fun clearMessage(id: Long) {

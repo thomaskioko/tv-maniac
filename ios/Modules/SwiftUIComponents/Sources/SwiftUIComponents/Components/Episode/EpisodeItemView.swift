@@ -135,7 +135,7 @@ public struct EpisodeItemView: View {
             }
             .padding(.trailing, theme.spacing.medium)
         } else {
-            Text("TBD")
+            Text(String(\.label_tbd))
                 .textStyle(theme.typography.titleMedium)
                 .foregroundColor(theme.colors.onSurfaceVariant)
                 .padding(.trailing, theme.spacing.medium)

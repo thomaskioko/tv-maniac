@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="button_error_retry">Wiederholen</string>
+    <string name="label_tbd">TBD</string>
+    <string name="label_error">Fehler</string>
+    <string name="label_ok">OK</string>
 
     <string name="label_tab_discover">Entdecken</string>
     <string name="label_discover_upcoming">Kommende</string>
@@ -86,6 +89,12 @@
     <string name="cd_show_images">%s Bilder</string>
     <string name="cd_clear_text">Text löschen</string>
     <string name="cd_search">Suche</string>
+    <string name="cd_toggle_list_style">Listenstil umschalten</string>
+    <string name="cd_filter">Filtern</string>
+    <string name="cd_previous_week">Vorherige Woche</string>
+    <string name="cd_next_week">Nächste Woche</string>
+    <string name="cd_expand_collapse">Auf- oder zuklappen</string>
+    <string name="cd_connectivity_icon">Verbindungssymbol</string>
 
     <string name="details_episodes">Episoden</string>
     <string name="details_cast">Besetzung</string>
@@ -347,4 +356,26 @@
     <string name="notification_permission_denied_message">Um Episodenbenachrichtigungen zu erhalten, aktivieren Sie bitte die Benachrichtigungen in Ihren Geräteeinstellungen.</string>
     <string name="notification_permission_denied_settings">Einstellungen öffnen</string>
     <string name="notification_permission_denied_cancel">Abbrechen</string>
+
+    <string name="error_generic">Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.</string>
+    <string name="error_unknown">Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.</string>
+    <string name="error_network">Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung.</string>
+    <string name="error_timeout">Zeitüberschreitung der Anfrage. Bitte versuchen Sie es erneut.</string>
+    <string name="error_rate_limited">Zu viele Anfragen. Bitte versuchen Sie es später erneut.</string>
+    <string name="error_auth_failed">Authentifizierung fehlgeschlagen. Bitte melden Sie sich erneut an.</string>
+    <string name="error_not_found">Ressource nicht gefunden.</string>
+    <string name="error_forbidden">Zugriff verweigert.</string>
+    <string name="error_parse">Datenverarbeitung fehlgeschlagen. Bitte versuchen Sie es erneut.</string>
+    <string name="error_server">Serverfehler. Bitte versuchen Sie es später erneut.</string>
+
+    <string name="error_login_failed">Anmeldung fehlgeschlagen: %s</string>
+    <string name="error_login_cancelled">Anmeldung abgebrochen.</string>
+    <string name="error_login_exchange">Anmeldung konnte nicht abgeschlossen werden. Bitte versuchen Sie es erneut.</string>
+    <string name="error_session_expired">Sitzung abgelaufen. Bitte melden Sie sich erneut an.</string>
+
+    <string name="notification_new_episode">Neue Folge: %1$s - S%2$dE%3$d</string>
+    <string name="notification_channel_episodes">Episodenbenachrichtigungen</string>
+    <string name="notification_channel_episodes_description">Benachrichtigungen für kommende Episoden</string>
+    <string name="notification_channel_developer">Entwicklertests</string>
+    <string name="notification_channel_developer_description">Benachrichtigungen zum Testen</string>
 </resources>

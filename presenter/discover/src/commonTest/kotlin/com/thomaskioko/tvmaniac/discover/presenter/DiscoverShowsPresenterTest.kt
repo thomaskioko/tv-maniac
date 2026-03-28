@@ -6,6 +6,7 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.featuredshows.api.interactor.FeaturedShowsInteractor
 import com.thomaskioko.tvmaniac.data.featuredshows.testing.FakeFeaturedShowsRepository
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsInteractor
@@ -318,6 +319,7 @@ class DiscoverShowsPresenterTest {
                 episodeRepository = episodeRepository,
             ),
             traktAuthRepository = traktAuthRepository,
+            errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = FakeLogger(),
         )
 
@@ -454,6 +456,7 @@ class DiscoverShowsPresenterTest {
             episodeRepository = episodeRepository,
         ),
         traktAuthRepository = traktAuthRepository,
+        errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
         logger = FakeLogger(),
     ).also { lifecycle.resume() }
 }

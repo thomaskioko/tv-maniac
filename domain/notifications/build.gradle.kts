@@ -20,6 +20,7 @@ kotlin {
                 implementation(projects.data.seasons.api)
                 implementation(projects.core.logger.api)
                 implementation(projects.core.networkUtil.api)
+                implementation(projects.i18n.api)
                 implementation(projects.core.notifications.api)
                 implementation(projects.core.util.api)
                 implementation(projects.data.seasondetails.api)
@@ -38,6 +39,7 @@ kotlin {
                 implementation(projects.core.util.testing)
                 implementation(projects.data.datastore.testing)
                 implementation(projects.data.episode.testing)
+                implementation(projects.i18n.testing)
             }
         }
     }

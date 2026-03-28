@@ -2,6 +2,9 @@
 <resources>
 
     <string name="button_error_retry">Retry</string>
+    <string name="label_tbd">TBD</string>
+    <string name="label_error">Error</string>
+    <string name="label_ok">OK</string>
 
     <string name="label_tab_discover">Discover</string>
     <string name="label_tab_search">Search</string>
@@ -110,6 +113,12 @@
     <string name="cd_show_images">%s Images</string>
     <string name="cd_clear_text">Clear Text</string>
     <string name="cd_search">Search</string>
+    <string name="cd_toggle_list_style">Toggle list style</string>
+    <string name="cd_filter">Filter</string>
+    <string name="cd_previous_week">Previous week</string>
+    <string name="cd_next_week">Next week</string>
+    <string name="cd_expand_collapse">Expand or collapse</string>
+    <string name="cd_connectivity_icon">Connectivity icon</string>
 
     <string name="details_episodes">Episodes</string>
     <string name="details_cast">Casts</string>
@@ -350,4 +359,26 @@
     <string name="genre_desc_animation">Animated adventures for everyone</string>
     <string name="genre_desc_mystery">Intrigue that sparks curiosity</string>
     <string name="genre_desc_romance">Stories of love and connection</string>
+
+    <string name="error_generic">Something went wrong. Please try again.</string>
+    <string name="error_unknown">An unexpected error occurred. Please try again.</string>
+    <string name="error_network">Network error. Please check your connection.</string>
+    <string name="error_timeout">Request timed out. Please try again.</string>
+    <string name="error_rate_limited">Too many requests. Please try again later.</string>
+    <string name="error_auth_failed">Authentication failed. Please sign in again.</string>
+    <string name="error_not_found">Resource not found.</string>
+    <string name="error_forbidden">Access forbidden.</string>
+    <string name="error_parse">Failed to process data. Please try again.</string>
+    <string name="error_server">Server error. Please try again later.</string>
+
+    <string name="error_login_failed">Login failed: %s</string>
+    <string name="error_login_cancelled">Login cancelled.</string>
+    <string name="error_login_exchange">Failed to complete login. Please try again.</string>
+    <string name="error_session_expired">Session expired. Please login again.</string>
+
+    <string name="notification_new_episode">New episode: %1$s - S%2$dE%3$d</string>
+    <string name="notification_channel_episodes">Episode Notifications</string>
+    <string name="notification_channel_episodes_description">Notifications for upcoming episodes</string>
+    <string name="notification_channel_developer">Developer Testing</string>
+    <string name="notification_channel_developer_description">Notifications for testing</string>
 </resources>

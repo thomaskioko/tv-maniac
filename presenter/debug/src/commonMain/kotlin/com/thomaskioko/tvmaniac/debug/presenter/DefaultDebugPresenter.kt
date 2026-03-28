@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
@@ -41,6 +42,7 @@ public class DefaultDebugPresenter(
     private val refreshUpNextInteractor: RefreshUpNextInteractor,
     private val dateTimeProvider: DateTimeProvider,
     private val localizer: Localizer,
+    private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
     traktAuthRepository: TraktAuthRepository,
 ) : DebugPresenter, ComponentContext by componentContext {
@@ -105,21 +107,21 @@ public class DefaultDebugPresenter(
                 return@launch
             }
             scheduleDebugEpisodeNotificationInteractor(DebugNotificationParams(delay = duration))
-                .collectStatus(debugNotificationState, logger, uiMessageManager)
+                .collectStatus(debugNotificationState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         }
     }
 
     private fun triggerLibrarySync() {
         coroutineScope.launch {
             syncLibraryInteractor(SyncLibraryInteractor.Param(forceRefresh = true))
-                .collectStatus(librarySyncState, logger, uiMessageManager)
+                .collectStatus(librarySyncState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         }
     }
 
     private fun triggerUpNextSync() {
         coroutineScope.launch {
             refreshUpNextInteractor(true)
-                .collectStatus(upNextSyncState, logger, uiMessageManager)
+                .collectStatus(upNextSyncState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         }
     }
 

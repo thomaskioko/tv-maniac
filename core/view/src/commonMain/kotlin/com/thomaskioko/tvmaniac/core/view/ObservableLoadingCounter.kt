@@ -30,6 +30,7 @@ public fun Flow<InvokeStatus>.onEachStatus(
     logger: Logger? = null,
     uiMessageManager: UiMessageManager? = null,
     sourceId: String? = null,
+    errorToStringMapper: ErrorToStringMapper? = null,
 ): Flow<InvokeStatus> = onEach { status ->
     when (status) {
         InvokeStarted -> counter.addLoader()
@@ -37,7 +38,12 @@ public fun Flow<InvokeStatus>.onEachStatus(
         is InvokeError -> {
             logger?.error("@InvokeError", status.throwable.message ?: "Unknown error")
             logger?.recordException(status.throwable, sourceId ?: "Unknown")
-            uiMessageManager?.emitMessageCombined(status.throwable, sourceId)
+            if (uiMessageManager != null) {
+                val message = errorToStringMapper?.mapError(status.throwable)
+                    ?: status.throwable.message
+                    ?: DEFAULT_ERROR_MESSAGE
+                uiMessageManager.emitMessage(UiMessage(message = message, sourceId = sourceId))
+            }
             counter.removeLoader()
         }
     }
@@ -48,4 +54,5 @@ public suspend inline fun Flow<InvokeStatus>.collectStatus(
     logger: Logger? = null,
     uiMessageManager: UiMessageManager? = null,
     sourceId: String? = null,
-): Unit = onEachStatus(counter, logger, uiMessageManager, sourceId).collect()
+    errorToStringMapper: ErrorToStringMapper? = null,
+): Unit = onEachStatus(counter, logger, uiMessageManager, sourceId, errorToStringMapper).collect()

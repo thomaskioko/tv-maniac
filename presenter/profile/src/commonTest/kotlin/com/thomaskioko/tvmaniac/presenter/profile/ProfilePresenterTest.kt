@@ -5,6 +5,7 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.user.api.model.UserProfile
 import com.thomaskioko.tvmaniac.data.user.api.model.UserProfileStats
 import com.thomaskioko.tvmaniac.data.user.api.model.UserWatchTime
@@ -12,6 +13,8 @@ import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.data.user.testing.createTestProfile
 import com.thomaskioko.tvmaniac.domain.user.ObserveUserProfileInteractor
 import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey
+import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.profile.presenter.DefaultProfilePresenter
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction
 import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
@@ -225,7 +228,7 @@ internal class ProfilePresenterTest {
             traktAuthRepository.setAuthError(AuthError.OAuthCancelled)
 
             val errorState = awaitItem()
-            errorState.errorMessage?.message shouldBe "Login cancelled"
+            errorState.errorMessage?.message shouldBe FakeLocalizer().getString(StringResourceKey.ErrorLoginCancelled)
             errorState.showLoading shouldBe false
 
             val messageId = errorState.errorMessage!!.id
@@ -261,9 +264,11 @@ internal class ProfilePresenterTest {
         return DefaultProfilePresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             onSettings = { },
+            localizer = com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer(),
             traktAuthManager = traktAuthManager,
             traktAuthRepository = traktAuthRepository,
             updateUserProfileData = updateUserProfileData,
+            errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = logger,
             observeUserProfileInteractor = observeUserProfileInteractor,
         )

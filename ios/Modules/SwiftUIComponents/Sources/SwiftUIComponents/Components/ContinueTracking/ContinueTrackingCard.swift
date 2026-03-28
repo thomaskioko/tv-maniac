@@ -67,7 +67,7 @@ public struct ContinueTrackingCard: View {
                     }
                     .padding(.trailing, theme.spacing.small)
                 } else {
-                    Text("TBD")
+                    Text(String(\.label_tbd))
                         .textStyle(theme.typography.titleMedium)
                         .foregroundColor(theme.colors.onSurfaceVariant)
                         .padding(.trailing, theme.spacing.small)

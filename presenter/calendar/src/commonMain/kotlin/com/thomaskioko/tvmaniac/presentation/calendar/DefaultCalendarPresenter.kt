@@ -4,6 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
@@ -44,6 +45,7 @@ public class DefaultCalendarPresenter(
     private val traktAuthRepository: TraktAuthRepository,
     private val calendarWeekCalculator: CalendarWeekCalculator,
     private val calendarStateMapper: CalendarStateMapper,
+    private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
     private val coroutineScope: CoroutineScope = componentContext.coroutineScope(),
 ) : CalendarPresenter, ComponentContext by componentContext {
@@ -150,6 +152,7 @@ public class DefaultCalendarPresenter(
                 logger = logger,
                 uiMessageManager = uiMessageManager,
                 sourceId = "Calendar",
+                errorToStringMapper = errorToStringMapper,
             )
         }
     }

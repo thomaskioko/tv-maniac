@@ -362,9 +362,9 @@ private extension View {
     ) -> some View {
         alert(isPresented: showingErrorAlert) {
             Alert(
-                title: Text("Error"),
+                title: Text(String(\.label_error)),
                 message: Text(uiState.errorMessage ?? "An error occurred"),
-                dismissButton: .default(Text("OK"))
+                dismissButton: .default(Text(String(\.label_ok)))
             )
         }
         .alert(isPresented: showingLogoutAlert) {

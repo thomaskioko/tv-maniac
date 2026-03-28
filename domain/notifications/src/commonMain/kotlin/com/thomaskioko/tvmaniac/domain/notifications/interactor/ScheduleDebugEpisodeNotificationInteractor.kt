@@ -8,6 +8,8 @@ import com.thomaskioko.tvmaniac.core.notifications.api.NotificationChannel
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey
+import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
@@ -22,6 +24,7 @@ public class ScheduleDebugEpisodeNotificationInteractor(
     private val datastoreRepository: DatastoreRepository,
     private val episodeRepository: EpisodeRepository,
     private val notificationManager: NotificationManager,
+    private val localizer: Localizer,
     private val dateTimeProvider: DateTimeProvider,
     private val logger: Logger,
     private val dispatchers: AppCoroutineDispatchers,
@@ -41,29 +44,43 @@ public class ScheduleDebugEpisodeNotificationInteractor(
 
             val notification = if (upcomingEpisodes.isNotEmpty()) {
                 val episode = upcomingEpisodes.random()
+                val episodeTitle = episode.title ?: "Episode ${episode.episodeNumber}"
                 EpisodeNotification(
                     id = episode.episodeId,
                     showId = episode.showId,
                     seasonId = episode.seasonId,
                     showName = episode.showName,
-                    episodeTitle = episode.title ?: "Episode ${episode.episodeNumber}",
+                    episodeTitle = episodeTitle,
                     seasonNumber = episode.seasonNumber,
                     episodeNumber = episode.episodeNumber,
                     imageUrl = episode.showPoster,
                     scheduledTime = scheduledTime,
+                    message = localizer.getString(
+                        StringResourceKey.NotificationNewEpisode,
+                        episodeTitle,
+                        episode.seasonNumber,
+                        episode.episodeNumber,
+                    ),
                     channel = NotificationChannel.DEVELOPER,
                 )
             } else {
+                val episodeTitle = "Test Episode"
                 EpisodeNotification(
                     id = dateTimeProvider.nowMillis(),
                     showId = 0L,
                     seasonId = 0L,
                     showName = "Test Show",
-                    episodeTitle = "Test Episode - Debug Notification",
+                    episodeTitle = episodeTitle,
                     seasonNumber = 1,
                     episodeNumber = 1,
                     imageUrl = null,
                     scheduledTime = scheduledTime,
+                    message = localizer.getString(
+                        StringResourceKey.NotificationNewEpisode,
+                        episodeTitle,
+                        1L,
+                        1L,
+                    ),
                     channel = NotificationChannel.DEVELOPER,
                 )
             }

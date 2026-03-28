@@ -57,6 +57,7 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_back
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_empty_content
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_retry
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_search
@@ -153,7 +154,7 @@ internal fun SearchScreen(
                     IconButton(onClick = { onAction(BackClicked) }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = cd_back.resolve(context),
                             tint = MaterialTheme.colorScheme.onSurface,
                         )
                     }

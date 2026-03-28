@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="button_error_retry">Réessayer</string>
+    <string name="label_tbd">À déterminer</string>
+    <string name="label_error">Erreur</string>
+    <string name="label_ok">OK</string>
 
     <string name="label_tab_discover">Découvrir</string>
     <string name="label_discover_upcoming">À venir</string>
@@ -87,6 +90,12 @@
     <string name="cd_show_images">%s Images</string>
     <string name="cd_clear_text">Effacer le texte</string>
     <string name="cd_search">Rechercher</string>
+    <string name="cd_toggle_list_style">Changer le style de liste</string>
+    <string name="cd_filter">Filtrer</string>
+    <string name="cd_previous_week">Semaine précédente</string>
+    <string name="cd_next_week">Semaine suivante</string>
+    <string name="cd_expand_collapse">Agrandir ou réduire</string>
+    <string name="cd_connectivity_icon">Icône de connectivité</string>
 
     <string name="details_episodes">Épisodes</string>
     <string name="details_cast">Distribution</string>
@@ -345,4 +354,26 @@
     <string name="notification_permission_denied_message">Pour recevoir les notifications d\'épisodes, veuillez activer les notifications dans les paramètres de votre appareil.</string>
     <string name="notification_permission_denied_settings">Ouvrir les paramètres</string>
     <string name="notification_permission_denied_cancel">Annuler</string>
+
+    <string name="error_generic">Une erreur s\'est produite. Veuillez réessayer.</string>
+    <string name="error_unknown">Une erreur inattendue s\'est produite. Veuillez réessayer.</string>
+    <string name="error_network">Erreur réseau. Veuillez vérifier votre connexion.</string>
+    <string name="error_timeout">Délai d\'attente dépassé. Veuillez réessayer.</string>
+    <string name="error_rate_limited">Trop de requêtes. Veuillez réessayer plus tard.</string>
+    <string name="error_auth_failed">Échec de l\'authentification. Veuillez vous reconnecter.</string>
+    <string name="error_not_found">Ressource introuvable.</string>
+    <string name="error_forbidden">Accès interdit.</string>
+    <string name="error_parse">Échec du traitement des données. Veuillez réessayer.</string>
+    <string name="error_server">Erreur serveur. Veuillez réessayer plus tard.</string>
+
+    <string name="error_login_failed">Échec de la connexion : %s</string>
+    <string name="error_login_cancelled">Connexion annulée.</string>
+    <string name="error_login_exchange">La connexion n\'a pas pu être complétée. Veuillez réessayer.</string>
+    <string name="error_session_expired">Session expirée. Veuillez vous reconnecter.</string>
+
+    <string name="notification_new_episode">Nouvel épisode : %1$s - S%2$dE%3$d</string>
+    <string name="notification_channel_episodes">Notifications d\'épisodes</string>
+    <string name="notification_channel_episodes_description">Notifications pour les épisodes à venir</string>
+    <string name="notification_channel_developer">Tests développeur</string>
+    <string name="notification_channel_developer_description">Notifications pour les tests</string>
 </resources>

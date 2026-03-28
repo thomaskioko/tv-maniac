@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
@@ -38,6 +39,7 @@ public class DefaultWatchlistPresenter(
     private val observeUpNextSectionsInteractor: ObserveUpNextSectionsInteractor,
     private val watchlistSyncInteractor: WatchlistSyncInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
+    private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
 ) : WatchlistPresenter, ComponentContext by componentContext {
 
@@ -108,7 +110,7 @@ public class DefaultWatchlistPresenter(
                     seasonNumber = action.seasonNumber,
                     episodeNumber = action.episodeNumber,
                 ),
-            ).collectStatus(upNextActionLoadingState, logger, uiMessageManager)
+            ).collectStatus(upNextActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         }
     }
 
@@ -153,7 +155,7 @@ public class DefaultWatchlistPresenter(
     private fun syncWatchlist(forceRefresh: Boolean = false) {
         coroutineScope.launch {
             watchlistSyncInteractor(WatchlistSyncInteractor.Param(forceRefresh))
-                .collectStatus(watchlistLoadingState, logger, uiMessageManager)
+                .collectStatus(watchlistLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         }
     }
 }

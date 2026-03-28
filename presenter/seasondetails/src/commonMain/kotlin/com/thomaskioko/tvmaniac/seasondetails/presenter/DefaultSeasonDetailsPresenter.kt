@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
@@ -54,6 +55,7 @@ public class DefaultSeasonDetailsPresenter(
     private val fetchPreviousSeasonsInteractor: FetchPreviousSeasonsInteractor,
     observeSeasonWatchProgressInteractor: ObserveSeasonWatchProgressInteractor,
     observeUnwatchedInPreviousSeasonsInteractor: ObserveUnwatchedInPreviousSeasonsInteractor,
+    private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
 ) : SeasonDetailsPresenter, ComponentContext by componentContext {
 
@@ -272,7 +274,7 @@ public class DefaultSeasonDetailsPresenter(
                 markSeasonUnwatchedInteractor(
                     MarkSeasonUnwatchedParams(operation.showTraktId, operation.seasonNumber),
                 )
-        }.collectStatus(episodeLoadingState, logger, uiMessageManager)
+        }.collectStatus(episodeLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
 
         updateState { copy(dialogState = SeasonDialogState.Hidden) }
     }
@@ -284,7 +286,7 @@ public class DefaultSeasonDetailsPresenter(
     private fun observeSeasonDetails(forceReload: Boolean = false) {
         coroutineScope.launch {
             seasonDetailsInteractor(SeasonDetailsInteractor.Param(seasonDetailsParam, forceReload))
-                .collectStatus(seasonDetailsLoadingState, logger, uiMessageManager)
+                .collectStatus(seasonDetailsLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         }
     }
 
@@ -296,7 +298,7 @@ public class DefaultSeasonDetailsPresenter(
                     showTraktId = param.showTraktId,
                     seasonNumber = param.seasonNumber,
                 ),
-            ).collectStatus(checkingPreviousSeasonsLoadingState, logger, uiMessageManager)
+            ).collectStatus(checkingPreviousSeasonsLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         }
     }
 }

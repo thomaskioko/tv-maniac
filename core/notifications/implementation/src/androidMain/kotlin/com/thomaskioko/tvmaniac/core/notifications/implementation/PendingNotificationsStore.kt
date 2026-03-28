@@ -25,6 +25,7 @@ internal class PendingNotificationsStore(context: Context) {
             episodeNumber = notification.episodeNumber,
             imageUrl = notification.imageUrl,
             scheduledTime = notification.scheduledTime,
+            message = notification.message,
             channelId = notification.channel.id,
         )
         val notifications = getStoredNotifications().toMutableList()
@@ -97,6 +98,7 @@ internal class PendingNotificationsStore(context: Context) {
             episodeNumber = episodeNumber,
             imageUrl = imageUrl,
             scheduledTime = scheduledTime,
+            message = message,
             channel = NotificationChannel.fromId(channelId),
         )
 

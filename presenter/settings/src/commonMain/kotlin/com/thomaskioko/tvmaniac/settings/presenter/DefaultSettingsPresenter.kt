@@ -4,6 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
@@ -36,6 +37,7 @@ public class DefaultSettingsPresenter(
     private val datastoreRepository: DatastoreRepository,
     private val logoutInteractor: LogoutInteractor,
     private val toggleEpisodeNotificationsInteractor: ToggleEpisodeNotificationsInteractor,
+    private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
     observeSettingsPreferencesInteractor: ObserveSettingsPreferencesInteractor,
     traktAuthRepository: TraktAuthRepository,
@@ -90,7 +92,7 @@ public class DefaultSettingsPresenter(
             TraktLogoutClicked -> {
                 coroutineScope.launch {
                     logoutInteractor(Unit)
-                        .collectStatus(logoutState, logger, uiMessageManager)
+                        .collectStatus(logoutState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
                 }
                 updateTrackDialogState()
             }
@@ -127,7 +129,7 @@ public class DefaultSettingsPresenter(
                 coroutineScope.launch {
                     toggleEpisodeNotificationsInteractor(
                         ToggleEpisodeNotificationsInteractor.Params(enabled = action.enabled),
-                    ).collectStatus(notificationToggleState, logger, uiMessageManager)
+                    ).collectStatus(notificationToggleState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
                 }
             }
 

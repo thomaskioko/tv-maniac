@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.notifications.api.EpisodeNotification
 import com.thomaskioko.tvmaniac.core.notifications.testing.FakeNotificationManager
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
@@ -33,6 +34,8 @@ import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepositor
 import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeUnwatchedCall
 import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey
+import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.i18n.testing.util.IgnoreIos
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ProviderModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsParam
@@ -81,6 +84,7 @@ class ShowDetailsPresenterTest {
     private val episodeRepository = FakeEpisodeRepository()
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
     private val traktAuthRepository = FakeTraktAuthRepository()
+    private val fakeLocalizer = FakeLocalizer()
     private val fakeFormatterUtil = FakeFormatterUtil()
     private val fakeNotificationManager = FakeNotificationManager()
     private val fakeDatastoreRepository = FakeDatastoreRepository()
@@ -431,6 +435,7 @@ class ShowDetailsPresenterTest {
                 episodeNumber = 1,
                 imageUrl = null,
                 scheduledTime = 1000L,
+                message = fakeLocalizer.getString(StringResourceKey.NotificationNewEpisode, "Episode 1", 1L, 1L),
             ),
         )
         fakeNotificationManager.addPendingNotification(
@@ -444,6 +449,7 @@ class ShowDetailsPresenterTest {
                 episodeNumber = 1,
                 imageUrl = null,
                 scheduledTime = 2000L,
+                message = fakeLocalizer.getString(StringResourceKey.NotificationNewEpisode, "Episode 1", 1L, 1L),
             ),
         )
 
@@ -744,12 +750,14 @@ class ShowDetailsPresenterTest {
                 datastoreRepository = fakeDatastoreRepository,
                 episodeRepository = episodeRepository,
                 notificationManager = fakeNotificationManager,
+                localizer = fakeLocalizer,
                 dateTimeProvider = fakeDateTimeProvider,
                 logger = FakeLogger(),
                 dispatchers = coroutineDispatcher,
             ),
             notificationManager = fakeNotificationManager,
             traktAuthRepository = traktAuthRepository,
+            errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             dispatchers = coroutineDispatcher,
             logger = fakeLogger,
         )
