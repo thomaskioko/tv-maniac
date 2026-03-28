@@ -141,7 +141,7 @@ public class DefaultSettingsPresenter(
                 }
             }
 
-            is MessageShown -> {
+            is SettingsMessageShown -> {
                 coroutineScope.launch {
                     uiMessageManager.clearMessage(action.id)
                 }

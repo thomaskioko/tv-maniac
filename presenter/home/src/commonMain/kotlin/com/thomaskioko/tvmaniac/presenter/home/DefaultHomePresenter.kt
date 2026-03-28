@@ -36,6 +36,9 @@ public class DefaultHomePresenter private constructor(
     @Assisted private val onNavigateToSearch: () -> Unit,
     @Assisted private val onSettingsClicked: () -> Unit,
     @Assisted private val onSeasonClicked: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
+    @Assisted private val onDiscoverEpisodeLongPressed: (Long) -> Unit,
+    @Assisted private val onUpNextEpisodeLongPressed: (Long) -> Unit,
+    @Assisted private val onCalendarEpisodeLongPressed: (Long) -> Unit,
     private val discoverPresenterFactory: DiscoverShowsPresenter.Factory,
     private val progressPresenterFactory: ProgressPresenter.Factory,
     private val libraryPresenterFactory: LibraryPresenter.Factory,
@@ -110,9 +113,7 @@ public class DefaultHomePresenter private constructor(
                         componentContext = componentContext,
                         onNavigateToShowDetails = { id -> onShowClicked(id) },
                         onNavigateToMore = { id -> onMoreShowClicked(id) },
-                        onNavigateToEpisode = { showId, episodeId ->
-                            // TODO:: Add Navigation to episode detail
-                        },
+                        onNavigateToEpisode = { _, episodeId -> onDiscoverEpisodeLongPressed(episodeId) },
                         onNavigateToUpNext = { onProgressClicked() },
                         onNavigateToSearch = onNavigateToSearch,
                     ),
@@ -125,6 +126,8 @@ public class DefaultHomePresenter private constructor(
                         componentContext = componentContext,
                         navigateToShowDetails = { id -> onShowClicked(id) },
                         navigateToSeasonDetails = onSeasonClicked,
+                        onUpNextEpisodeLongPressed = onUpNextEpisodeLongPressed,
+                        onCalendarEpisodeLongPressed = onCalendarEpisodeLongPressed,
                     ),
                 )
             }
@@ -168,6 +171,9 @@ public class DefaultHomePresenter private constructor(
             onNavigateToSearch: () -> Unit,
             onSettingsClicked: () -> Unit,
             onSeasonClicked: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
+            onDiscoverEpisodeLongPressed: (episodeId: Long) -> Unit,
+            onUpNextEpisodeLongPressed: (episodeId: Long) -> Unit,
+            onCalendarEpisodeLongPressed: (episodeId: Long) -> Unit,
         ): HomePresenter = DefaultHomePresenter(
             componentContext = componentContext,
             onShowClicked = onShowClicked,
@@ -176,6 +182,9 @@ public class DefaultHomePresenter private constructor(
             onNavigateToSearch = onNavigateToSearch,
             onSettingsClicked = onSettingsClicked,
             onSeasonClicked = onSeasonClicked,
+            onDiscoverEpisodeLongPressed = onDiscoverEpisodeLongPressed,
+            onUpNextEpisodeLongPressed = onUpNextEpisodeLongPressed,
+            onCalendarEpisodeLongPressed = onCalendarEpisodeLongPressed,
             discoverPresenterFactory = discoverPresenterFactory,
             progressPresenterFactory = progressPresenterFactory,
             libraryPresenterFactory = libraryPresenterFactory,

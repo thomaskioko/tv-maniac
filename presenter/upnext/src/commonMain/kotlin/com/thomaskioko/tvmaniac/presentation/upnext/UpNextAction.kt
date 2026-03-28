@@ -28,3 +28,5 @@ public data class OpenSeason(
 ) : UpNextAction
 
 public data class UnfollowShow(val showTraktId: Long) : UpNextAction
+
+public data class UpNextEpisodeLongPressed(val episodeId: Long) : UpNextAction

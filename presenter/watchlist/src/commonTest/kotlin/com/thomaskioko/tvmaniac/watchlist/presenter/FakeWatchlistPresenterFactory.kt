@@ -73,6 +73,7 @@ class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
         navigateToSeason = navigateToSeason,
         repository = repository,
         followedShowsRepository = fakeFollowedShowsRepository,
+        unfollowShowInteractor = com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor(fakeFollowedShowsRepository),
         observeWatchlistSectionsInteractor = observeWatchlistSectionsInteractor,
         observeUpNextSectionsInteractor = observeUpNextSectionsInteractor,
         markEpisodeWatchedInteractor = fakeMarkEpisodeWatchedInteractor,

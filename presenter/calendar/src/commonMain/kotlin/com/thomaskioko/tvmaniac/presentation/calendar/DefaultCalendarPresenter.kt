@@ -40,6 +40,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 public class DefaultCalendarPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val navigateToShowDetails: (Long) -> Unit,
+    @Assisted private val onEpisodeLongPressed: (Long) -> Unit,
     private val observeCalendarInteractor: ObserveCalendarInteractor,
     private val fetchCalendarInteractor: FetchCalendarInteractor,
     private val traktAuthRepository: TraktAuthRepository,
@@ -98,14 +99,7 @@ public class DefaultCalendarPresenter(
 
             is NavigateToPreviousWeek -> navigateToPreviousWeek()
             is NavigateToNextWeek -> navigateToNextWeek()
-            is EpisodeCardClicked -> {
-                val episode = state.value.dateGroups
-                    .flatMap { it.episodes }
-                    .firstOrNull { it.episodeTraktId == action.episodeTraktId }
-                _state.update { it.copy(selectedEpisode = episode) }
-            }
-
-            is EpisodeDetailDismissed -> _state.update { it.copy(selectedEpisode = null) }
+            is EpisodeCardClicked -> onEpisodeLongPressed(action.episodeTraktId)
             is MessageShown -> clearMessage(action.id)
         }
     }
@@ -183,10 +177,12 @@ public class DefaultCalendarPresenterFactory(
     private val presenter: (
         componentContext: ComponentContext,
         navigateToShowDetails: (Long) -> Unit,
+        onEpisodeLongPressed: (Long) -> Unit,
     ) -> CalendarPresenter,
 ) : CalendarPresenter.Factory {
     override fun invoke(
         componentContext: ComponentContext,
         navigateToShowDetails: (showId: Long) -> Unit,
-    ): CalendarPresenter = presenter(componentContext, navigateToShowDetails)
+        onEpisodeLongPressed: (episodeId: Long) -> Unit,
+    ): CalendarPresenter = presenter(componentContext, navigateToShowDetails, onEpisodeLongPressed)
 }

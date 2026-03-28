@@ -50,4 +50,4 @@ public data class CrashReportingToggled(
     val enabled: Boolean,
 ) : SettingsActions
 
-public data class MessageShown(val id: Long) : SettingsActions
+public data class SettingsMessageShown(val id: Long) : SettingsActions

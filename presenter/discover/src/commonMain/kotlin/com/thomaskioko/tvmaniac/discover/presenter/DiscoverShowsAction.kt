@@ -44,3 +44,5 @@ public data class OpenSeasonFromUpNext(
 public data class OpenShowFromUpNext(val showTraktId: Long) : DiscoverShowAction
 
 public data object SearchIconClicked : DiscoverShowAction
+
+public data class DiscoverEpisodeLongPressed(val showTraktId: Long, val episodeId: Long) : DiscoverShowAction

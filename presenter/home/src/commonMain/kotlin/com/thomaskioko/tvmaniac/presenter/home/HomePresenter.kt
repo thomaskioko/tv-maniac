@@ -19,6 +19,9 @@ public interface HomePresenter {
             onNavigateToSearch: () -> Unit,
             onSettingsClicked: () -> Unit,
             onSeasonClicked: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
+            onDiscoverEpisodeLongPressed: (episodeId: Long) -> Unit = {},
+            onUpNextEpisodeLongPressed: (episodeId: Long) -> Unit = {},
+            onCalendarEpisodeLongPressed: (episodeId: Long) -> Unit = {},
         ): HomePresenter
     }
 

@@ -19,6 +19,7 @@ import com.thomaskioko.tvmaniac.discover.presenter.model.NextEpisodeUiModel
 import com.thomaskioko.tvmaniac.domain.discover.DiscoverShowsInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
+import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import com.thomaskioko.tvmaniac.shows.api.model.Category
@@ -53,6 +54,7 @@ public class DefaultDiscoverShowsPresenter(
     @Assisted private val onNavigateToSearch: () -> Unit,
     private val discoverShowsInteractor: DiscoverShowsInteractor,
     private val followedShowsRepository: FollowedShowsRepository,
+    private val unfollowShowInteractor: UnfollowShowInteractor,
     private val featuredShowsInteractor: FeaturedShowsInteractor,
     private val topRatedShowsInteractor: TopRatedShowsInteractor,
     private val popularShowsInteractor: PopularShowsInteractor,
@@ -159,7 +161,7 @@ public class DefaultDiscoverShowsPresenter(
                 is UpdateShowInLibrary -> {
                     coroutineScope.launch {
                         if (action.inLibrary) {
-                            followedShowsRepository.removeFollowedShow(action.traktId)
+                            unfollowShowInteractor.executeSync(action.traktId)
                         } else {
                             followedShowsRepository.addFollowedShow(action.traktId)
                         }
@@ -183,7 +185,7 @@ public class DefaultDiscoverShowsPresenter(
                 }
                 is UnfollowShowFromUpNext -> {
                     coroutineScope.launch {
-                        followedShowsRepository.removeFollowedShow(action.showTraktId)
+                        unfollowShowInteractor.executeSync(action.showTraktId)
                     }
                 }
                 is OpenSeasonFromUpNext -> {
@@ -191,6 +193,7 @@ public class DefaultDiscoverShowsPresenter(
                 }
                 is OpenShowFromUpNext -> onNavigateToShowDetails(action.showTraktId)
                 SearchIconClicked -> onNavigateToSearch()
+                is DiscoverEpisodeLongPressed -> onNavigateToEpisode(action.showTraktId, action.episodeId)
             }
         }
 

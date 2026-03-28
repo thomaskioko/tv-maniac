@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
+import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.ObserveUpNextSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.ObserveWatchlistSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.WatchlistSyncInteractor
@@ -35,6 +36,7 @@ public class DefaultWatchlistPresenter(
     @Assisted private val navigateToSeason: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
     private val repository: WatchlistRepository,
     private val followedShowsRepository: FollowedShowsRepository,
+    private val unfollowShowInteractor: UnfollowShowInteractor,
     private val observeWatchlistSectionsInteractor: ObserveWatchlistSectionsInteractor,
     private val observeUpNextSectionsInteractor: ObserveUpNextSectionsInteractor,
     private val watchlistSyncInteractor: WatchlistSyncInteractor,
@@ -116,7 +118,7 @@ public class DefaultWatchlistPresenter(
 
     private fun unfollowShow(showTraktId: Long) {
         coroutineScope.launch {
-            followedShowsRepository.removeFollowedShow(showTraktId)
+            unfollowShowInteractor.executeSync(showTraktId)
         }
     }
 

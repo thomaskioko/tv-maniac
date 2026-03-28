@@ -11,6 +11,7 @@ public interface CalendarPresenter {
         public operator fun invoke(
             componentContext: ComponentContext,
             navigateToShowDetails: (showId: Long) -> Unit,
+            onEpisodeLongPressed: (episodeId: Long) -> Unit = {},
         ): CalendarPresenter
     }
 }

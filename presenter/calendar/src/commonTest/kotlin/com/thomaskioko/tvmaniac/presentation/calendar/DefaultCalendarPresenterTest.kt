@@ -18,8 +18,6 @@ import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
-import io.kotest.matchers.nulls.shouldBeNull
-import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -64,7 +62,6 @@ internal class DefaultCalendarPresenterTest {
             initialState.isLoading shouldBe true
             initialState.dateGroups.shouldBeEmpty()
             initialState.isLoggedIn shouldBe false
-            initialState.selectedEpisode.shouldBeNull()
         }
     }
 
@@ -290,86 +287,34 @@ internal class DefaultCalendarPresenterTest {
     }
 
     @Test
-    fun `should select episode given EpisodeCardClicked is dispatched`() = runTest {
-        val airDate = todayEpochMillis()
-        calendarRepository.setCalendarEntries(
-            listOf(
-                createTestEntry(
-                    showTraktId = 1,
-                    episodeTraktId = 42,
-                    showTitle = "Test Show",
-                    airDate = airDate,
-                ),
-            ),
+    fun `should invoke callback given EpisodeCardClicked is dispatched`() = runTest {
+        var clickedEpisodeId: Long? = null
+        val presenter = createPresenter(
+            onEpisodeLongPressed = { clickedEpisodeId = it },
         )
 
-        val presenter = createPresenter()
-
         presenter.state.test {
-            skipItems(1) // Skip initial loading state
             awaitItem()
 
             presenter.dispatch(EpisodeCardClicked(episodeTraktId = 42))
-            testDispatcher.scheduler.advanceUntilIdle()
 
-            val state = awaitItem()
-            val selected = state.selectedEpisode
-            selected.shouldNotBeNull()
-            selected.episodeTraktId shouldBe 42
-            selected.showTitle shouldBe "Test Show"
+            clickedEpisodeId shouldBe 42
         }
     }
 
     @Test
-    fun `should clear selected episode given EpisodeDetailDismissed is dispatched`() = runTest {
-        val airDate = todayEpochMillis()
-        calendarRepository.setCalendarEntries(
-            listOf(
-                createTestEntry(showTraktId = 1, episodeTraktId = 42, airDate = airDate),
-            ),
+    fun `should invoke callback with episode id given EpisodeCardClicked with unknown id`() = runTest {
+        var clickedEpisodeId: Long? = null
+        val presenter = createPresenter(
+            onEpisodeLongPressed = { clickedEpisodeId = it },
         )
 
-        val presenter = createPresenter()
-
         presenter.state.test {
-            skipItems(1) // Skip initial loading state
             awaitItem()
-
-            presenter.dispatch(EpisodeCardClicked(episodeTraktId = 42))
-            testDispatcher.scheduler.advanceUntilIdle()
-
-            val withSelection = awaitItem()
-            withSelection.selectedEpisode.shouldNotBeNull()
-
-            presenter.dispatch(EpisodeDetailDismissed)
-            testDispatcher.scheduler.advanceUntilIdle()
-
-            val afterDismiss = awaitItem()
-            afterDismiss.selectedEpisode.shouldBeNull()
-        }
-    }
-
-    @Test
-    fun `should not set selected episode given episode id does not exist`() = runTest {
-        val airDate = todayEpochMillis()
-        calendarRepository.setCalendarEntries(
-            listOf(
-                createTestEntry(showTraktId = 1, episodeTraktId = 42, airDate = airDate),
-            ),
-        )
-
-        val presenter = createPresenter()
-
-        presenter.state.test {
-            skipItems(1) // Skip initial loading state
-            val state = awaitItem()
-            state.selectedEpisode.shouldBeNull()
 
             presenter.dispatch(EpisodeCardClicked(episodeTraktId = 999))
-//            testDispatcher.scheduler.advanceUntilIdle()
 
-            // No new emission — selectedEpisode remains null since no episode matches the ID
-            state.selectedEpisode.shouldBeNull()
+            clickedEpisodeId shouldBe 999
         }
     }
 
@@ -445,6 +390,7 @@ internal class DefaultCalendarPresenterTest {
 
     private fun createPresenter(
         navigateToShowDetails: (Long) -> Unit = {},
+        onEpisodeLongPressed: (Long) -> Unit = {},
     ): CalendarPresenter {
         val dispatchers = AppCoroutineDispatchers(
             main = testDispatcher,
@@ -482,6 +428,7 @@ internal class DefaultCalendarPresenterTest {
         return DefaultCalendarPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             navigateToShowDetails = navigateToShowDetails,
+            onEpisodeLongPressed = onEpisodeLongPressed,
             observeCalendarInteractor = observeCalendarInteractor,
             fetchCalendarInteractor = fetchCalendarInteractor,
             traktAuthRepository = traktAuthRepository,

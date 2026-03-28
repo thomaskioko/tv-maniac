@@ -20,6 +20,7 @@ import com.thomaskioko.tvmaniac.discover.presenter.model.DiscoverShow
 import com.thomaskioko.tvmaniac.discover.presenter.model.NextEpisodeUiModel
 import com.thomaskioko.tvmaniac.domain.discover.DiscoverShowsInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
+import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
@@ -318,6 +319,7 @@ class DiscoverShowsPresenterTest {
             markEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(
                 episodeRepository = episodeRepository,
             ),
+            unfollowShowInteractor = UnfollowShowInteractor(followedShowsRepository),
             traktAuthRepository = traktAuthRepository,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = FakeLogger(),
@@ -455,6 +457,7 @@ class DiscoverShowsPresenterTest {
         markEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(
             episodeRepository = episodeRepository,
         ),
+        unfollowShowInteractor = UnfollowShowInteractor(followedShowsRepository),
         traktAuthRepository = traktAuthRepository,
         errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
         logger = FakeLogger(),
