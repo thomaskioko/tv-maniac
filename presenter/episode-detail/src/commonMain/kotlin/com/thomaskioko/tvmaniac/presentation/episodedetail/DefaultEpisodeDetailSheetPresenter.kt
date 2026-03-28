@@ -96,6 +96,7 @@ public class DefaultEpisodeDetailSheetPresenter(
                     ),
                 ).collectStatus(actionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
             }
+            dismissSheet()
         }
     }
 
