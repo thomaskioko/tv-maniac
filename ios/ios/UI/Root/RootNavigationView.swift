@@ -78,8 +78,6 @@ struct RootNavigationView: View {
         ) {
             if let presenter = episodeSheetSlot.child?.instance {
                 EpisodeDetailSheetView(presenter: presenter)
-                    .presentationDetents([.medium, .large])
-                    .presentationDragIndicator(.visible)
             }
         }
         .onChange(of: themeState.appTheme) { _, newTheme in

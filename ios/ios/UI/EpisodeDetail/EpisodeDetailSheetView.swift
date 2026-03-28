@@ -5,6 +5,7 @@ import TvManiacKit
 struct EpisodeDetailSheetView: View {
     private let presenter: EpisodeDetailSheetPresenter
     @StateObject @KotlinStateFlow private var state: EpisodeDetailSheetState
+    @State private var selectedDetent: PresentationDetent = .large
 
     init(presenter: EpisodeDetailSheetPresenter) {
         self.presenter = presenter
@@ -33,6 +34,10 @@ struct EpisodeDetailSheetView: View {
                     actionView(for: action)
                 }
             }
+            .presentationDetents([.medium, .large], selection: $selectedDetent)
+            .presentationDragIndicator(.visible)
+            .presentationCornerRadius(16)
+            .appTheme()
         }
     }
 

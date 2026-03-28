@@ -1,4 +1,3 @@
-import NukeUI
 import SwiftUI
 
 public struct EpisodeDetailInfo: Equatable {
@@ -31,15 +30,12 @@ public struct EpisodeDetailSheetContent<Actions: View>: View {
 
     private let episode: EpisodeDetailInfo
     private let actions: (() -> Actions)?
-    private let detents: Set<PresentationDetent>
 
     public init(
         episode: EpisodeDetailInfo,
-        detents: Set<PresentationDetent> = [.medium, .large],
         @ViewBuilder actions: @escaping () -> Actions
     ) {
         self.episode = episode
-        self.detents = detents
         self.actions = actions
     }
 
@@ -77,36 +73,17 @@ public struct EpisodeDetailSheetContent<Actions: View>: View {
                 }
             }
         }
-        .presentationDetents(detents)
-        .presentationDragIndicator(.hidden)
+        .scrollBounceBehavior(.basedOnSize)
+        .background(theme.colors.surface)
     }
 
     private var headerImage: some View {
         ZStack(alignment: .top) {
             LazyResizableImage(
                 url: episode.imageUrl,
+                imageType: .backdrop,
                 size: CGSize(width: UIScreen.main.bounds.width, height: 280)
-            ) { state in
-                if let image = state.image {
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                } else {
-                    ZStack {
-                        Rectangle()
-                            .fill(
-                                LinearGradient(
-                                    colors: [Color.gray.opacity(0.8), Color.gray],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                            )
-                        Image(systemName: "popcorn.fill")
-                            .font(.system(size: 40))
-                            .foregroundColor(.white.opacity(0.8))
-                    }
-                }
-            }
+            )
             .frame(maxWidth: .infinity, maxHeight: 280)
             .clipped()
 
@@ -142,12 +119,8 @@ public struct EpisodeDetailSheetContent<Actions: View>: View {
 }
 
 public extension EpisodeDetailSheetContent where Actions == EmptyView {
-    init(
-        episode: EpisodeDetailInfo,
-        detents: Set<PresentationDetent> = [.medium, .large]
-    ) {
+    init(episode: EpisodeDetailInfo) {
         self.episode = episode
-        self.detents = detents
         actions = nil
     }
 }
