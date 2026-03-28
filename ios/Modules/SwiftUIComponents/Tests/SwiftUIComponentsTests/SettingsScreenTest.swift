@@ -214,7 +214,6 @@ class SettingsScreenTest: SnapshotTestCase {
             behaviorToggles: defaultBehaviorToggles,
             privacyToggles: defaultPrivacyToggles,
             infoItems: defaultInfoItems,
-            debugItems: debugItems,
             onBack: {}
         )
         .themedPreview()
