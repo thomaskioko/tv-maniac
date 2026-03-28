@@ -31,6 +31,9 @@ public class FakeHomePresenterFactory(
         onNavigateToSearch: () -> Unit,
         onSettingsClicked: () -> Unit,
         onSeasonClicked: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
+        onDiscoverEpisodeLongPressed: (episodeId: Long) -> Unit,
+        onUpNextEpisodeLongPressed: (episodeId: Long) -> Unit,
+        onCalendarEpisodeLongPressed: (episodeId: Long) -> Unit,
     ): HomePresenter {
         val factory = DefaultHomePresenter.Factory(
             discoverPresenterFactory = discoverPresenterFactory,
@@ -39,6 +42,17 @@ public class FakeHomePresenterFactory(
             profilePresenterFactory = profilePresenterFactory,
             observeUserProfileInteractor = observeUserProfileInteractor,
         )
-        return factory(componentContext, onShowClicked, onMoreShowClicked, onShowGenreClicked, onNavigateToSearch, onSettingsClicked, onSeasonClicked)
+        return factory(
+            componentContext,
+            onShowClicked,
+            onMoreShowClicked,
+            onShowGenreClicked,
+            onNavigateToSearch,
+            onSettingsClicked,
+            onSeasonClicked,
+            onDiscoverEpisodeLongPressed,
+            onUpNextEpisodeLongPressed,
+            onCalendarEpisodeLongPressed,
+        )
     }
 }

@@ -24,6 +24,7 @@ kotlin {
             implementation(projects.presenter.home)
             implementation(projects.presenter.progress)
             implementation(projects.presenter.discover)
+            implementation(projects.presenter.episodeDetail)
             implementation(projects.presenter.profile)
             implementation(projects.presenter.search)
             implementation(projects.presenter.settings)
