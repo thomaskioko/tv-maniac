@@ -59,6 +59,11 @@ struct SettingsView: View {
         .sheet(isPresented: $showAboutSheet) {
             AboutSheet()
         }
+        .onChange(of: uiState.hiddenTapCount) { _, newCount in
+            if newCount == 0, showAboutSheet {
+                showAboutSheet = false
+            }
+        }
         .sheet(isPresented: $showPolicy) {
             if let url = URL(string: uiState.privacyPolicyUrl) {
                 SFSafariViewWrapper(url: url)
@@ -250,6 +255,7 @@ struct SettingsView: View {
 
                         Text(String(\.settings_about_version, parameter: uiState.versionName))
                             .font(.body)
+                            .contentShape(Rectangle())
                             .onTapGesture { presenter.dispatch(action: VersionClicked()) }
                     }
                     .padding(.vertical, 32)
