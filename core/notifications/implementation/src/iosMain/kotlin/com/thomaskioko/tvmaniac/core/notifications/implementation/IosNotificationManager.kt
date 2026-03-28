@@ -62,6 +62,7 @@ public class IosNotificationManager(
                     KEY_EPISODE_NUMBER to notification.episodeNumber,
                     KEY_IMAGE_URL to (notification.imageUrl ?: ""),
                     KEY_SCHEDULED_TIME to notification.scheduledTime,
+                    KEY_MESSAGE to notification.message,
                     KEY_CHANNEL_ID to notification.channel.id,
                 ),
             )
@@ -150,6 +151,7 @@ public class IosNotificationManager(
                     val episodeNumber = userInfo.getLongValue(KEY_EPISODE_NUMBER) ?: 0L
                     val imageUrl = (userInfo[KEY_IMAGE_URL] as? String)?.takeIf { it.isNotEmpty() }
                     val scheduledTime = userInfo.getLongValue(KEY_SCHEDULED_TIME) ?: 0L
+                    val message = (userInfo[KEY_MESSAGE] as? String) ?: req.content.body
                     val channelId = (userInfo[KEY_CHANNEL_ID] as? String) ?: NotificationChannel.EPISODES_AIRING.id
 
                     EpisodeNotification(
@@ -162,6 +164,7 @@ public class IosNotificationManager(
                         episodeNumber = episodeNumber,
                         imageUrl = imageUrl,
                         scheduledTime = scheduledTime,
+                        message = message,
                         channel = NotificationChannel.fromId(channelId),
                     )
                 } ?: emptyList()
@@ -215,6 +218,7 @@ public class IosNotificationManager(
         private const val KEY_EPISODE_NUMBER = "episode_number"
         private const val KEY_IMAGE_URL = "image_url"
         private const val KEY_SCHEDULED_TIME = "scheduled_time"
+        private const val KEY_MESSAGE = "message"
         private const val KEY_CHANNEL_ID = "channel_id"
     }
 }
