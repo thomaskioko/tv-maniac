@@ -20,6 +20,7 @@ public struct ShowInfoView: View {
     private let continueTrackingScrollIndex: Int
     private let continueTrackingTitle: String
     private let dayLabelFormat: (_ count: Int) -> String
+    private let tbdLabel: String
     private let trackLabel: String
     private let stopTrackingLabel: String
     private let addToListLabel: String
@@ -53,6 +54,7 @@ public struct ShowInfoView: View {
         continueTrackingScrollIndex: Int = 0,
         continueTrackingTitle: String,
         dayLabelFormat: @escaping (_ count: Int) -> String,
+        tbdLabel: String,
         trackLabel: String,
         stopTrackingLabel: String,
         addToListLabel: String,
@@ -85,6 +87,7 @@ public struct ShowInfoView: View {
         self.continueTrackingScrollIndex = continueTrackingScrollIndex
         self.continueTrackingTitle = continueTrackingTitle
         self.dayLabelFormat = dayLabelFormat
+        self.tbdLabel = tbdLabel
         self.trackLabel = trackLabel
         self.stopTrackingLabel = stopTrackingLabel
         self.addToListLabel = addToListLabel
@@ -125,6 +128,7 @@ public struct ShowInfoView: View {
                 episodes: continueTrackingEpisodes,
                 scrollIndex: continueTrackingScrollIndex,
                 dayLabelFormat: dayLabelFormat,
+                tbdLabel: tbdLabel,
                 onMarkWatched: onMarkEpisodeWatched
             )
 
@@ -309,6 +313,7 @@ public struct ShowInfoView: View {
             ],
             continueTrackingTitle: "Continue tracking",
             dayLabelFormat: { count in count == 1 ? "day" : "days" },
+            tbdLabel: "TBD",
             trackLabel: "Track",
             stopTrackingLabel: "Stop Tracking",
             addToListLabel: "Add To List",

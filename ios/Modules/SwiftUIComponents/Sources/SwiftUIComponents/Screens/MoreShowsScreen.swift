@@ -12,6 +12,7 @@ public struct MoreShowsScreen: View {
     private let onItemAppear: (Int) -> Void
     private let onLoadMore: () -> Void
     private let onAction: (Int64) -> Void
+    private let retryLabel: String
     private let onBack: () -> Void
     private let onRetry: () -> Void
 
@@ -21,6 +22,7 @@ public struct MoreShowsScreen: View {
         isLoadingMore: Bool,
         hasNextPage: Bool,
         loadError: String?,
+        retryLabel: String,
         toast: Binding<Toast?>,
         onItemAppear: @escaping (Int) -> Void,
         onLoadMore: @escaping () -> Void,
@@ -33,6 +35,7 @@ public struct MoreShowsScreen: View {
         self.isLoadingMore = isLoadingMore
         self.hasNextPage = hasNextPage
         self.loadError = loadError
+        self.retryLabel = retryLabel
         _toast = toast
         self.onItemAppear = onItemAppear
         self.onLoadMore = onLoadMore
@@ -90,7 +93,7 @@ public struct MoreShowsScreen: View {
                         .multilineTextAlignment(.center)
 
                     Button(action: onRetry) {
-                        Text(String(\.button_error_retry))
+                        Text(retryLabel)
                             .textStyle(theme.typography.labelLarge)
                             .foregroundColor(theme.colors.onPrimary)
                             .padding(.horizontal, theme.spacing.medium)
@@ -154,6 +157,7 @@ public struct MoreShowsScreen: View {
             isLoadingMore: false,
             hasNextPage: false,
             loadError: nil,
+            retryLabel: "Retry",
             toast: .constant(nil),
             onItemAppear: { _ in },
             onLoadMore: {},
@@ -177,6 +181,7 @@ public struct MoreShowsScreen: View {
             isLoadingMore: true,
             hasNextPage: true,
             loadError: nil,
+            retryLabel: "Retry",
             toast: .constant(nil),
             onItemAppear: { _ in },
             onLoadMore: {},

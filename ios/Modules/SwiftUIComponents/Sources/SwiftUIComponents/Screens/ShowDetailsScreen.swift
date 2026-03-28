@@ -27,6 +27,7 @@ public struct ShowDetailsScreen: View {
     private let continueTrackingScrollIndex: Int
     private let continueTrackingTitle: String
     private let dayLabelFormat: (Int) -> String
+    private let tbdLabel: String
     private let trackLabel: String
     private let stopTrackingLabel: String
     private let addToListLabel: String
@@ -71,6 +72,7 @@ public struct ShowDetailsScreen: View {
         continueTrackingScrollIndex: Int,
         continueTrackingTitle: String,
         dayLabelFormat: @escaping (Int) -> String,
+        tbdLabel: String,
         trackLabel: String,
         stopTrackingLabel: String,
         addToListLabel: String,
@@ -114,6 +116,7 @@ public struct ShowDetailsScreen: View {
         self.continueTrackingScrollIndex = continueTrackingScrollIndex
         self.continueTrackingTitle = continueTrackingTitle
         self.dayLabelFormat = dayLabelFormat
+        self.tbdLabel = tbdLabel
         self.trackLabel = trackLabel
         self.stopTrackingLabel = stopTrackingLabel
         self.addToListLabel = addToListLabel
@@ -177,6 +180,7 @@ public struct ShowDetailsScreen: View {
                     continueTrackingScrollIndex: continueTrackingScrollIndex,
                     continueTrackingTitle: continueTrackingTitle,
                     dayLabelFormat: dayLabelFormat,
+                    tbdLabel: tbdLabel,
                     trackLabel: trackLabel,
                     stopTrackingLabel: stopTrackingLabel,
                     addToListLabel: addToListLabel,

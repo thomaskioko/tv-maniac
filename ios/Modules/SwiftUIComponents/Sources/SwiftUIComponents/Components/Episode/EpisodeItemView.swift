@@ -19,6 +19,7 @@ public struct EpisodeItemView: View {
     private let daysUntilAir: Int64?
     private let hasAired: Bool
     private let dayLabelFormat: (_ count: Int) -> String
+    private let tbdLabel: String
     private let episodeWidth: CGFloat
     private let episodeHeight: CGFloat
     private let shadowRadius: CGFloat
@@ -35,6 +36,7 @@ public struct EpisodeItemView: View {
         daysUntilAir: Int64? = nil,
         hasAired: Bool = true,
         dayLabelFormat: @escaping (_ count: Int) -> String = { count in count == 1 ? "day" : "days" },
+        tbdLabel: String = "TBD",
         episodeWidth: CGFloat = Constants.defaultEpisodeWidth,
         episodeHeight: CGFloat = Constants.defaultEpisodeHeight,
         shadowRadius: CGFloat = Constants.defaultShadowRadius,
@@ -50,6 +52,7 @@ public struct EpisodeItemView: View {
         self.daysUntilAir = daysUntilAir
         self.hasAired = hasAired
         self.dayLabelFormat = dayLabelFormat
+        self.tbdLabel = tbdLabel
         self.episodeWidth = episodeWidth
         self.episodeHeight = episodeHeight
         self.shadowRadius = shadowRadius
@@ -135,7 +138,7 @@ public struct EpisodeItemView: View {
             }
             .padding(.trailing, theme.spacing.medium)
         } else {
-            Text(String(\.label_tbd))
+            Text(tbdLabel)
                 .textStyle(theme.typography.titleMedium)
                 .foregroundColor(theme.colors.onSurfaceVariant)
                 .padding(.trailing, theme.spacing.medium)

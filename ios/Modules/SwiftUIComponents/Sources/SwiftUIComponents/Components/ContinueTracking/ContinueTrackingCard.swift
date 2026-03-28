@@ -5,15 +5,18 @@ public struct ContinueTrackingCard: View {
 
     private let episode: SwiftContinueTrackingEpisode
     private let dayLabelFormat: (_ count: Int) -> String
+    private let tbdLabel: String
     private let onMarkWatched: () -> Void
 
     public init(
         episode: SwiftContinueTrackingEpisode,
         dayLabelFormat: @escaping (_ count: Int) -> String,
+        tbdLabel: String,
         onMarkWatched: @escaping () -> Void
     ) {
         self.episode = episode
         self.dayLabelFormat = dayLabelFormat
+        self.tbdLabel = tbdLabel
         self.onMarkWatched = onMarkWatched
     }
 
@@ -67,7 +70,7 @@ public struct ContinueTrackingCard: View {
                     }
                     .padding(.trailing, theme.spacing.small)
                 } else {
-                    Text(String(\.label_tbd))
+                    Text(tbdLabel)
                         .textStyle(theme.typography.titleMedium)
                         .foregroundColor(theme.colors.onSurfaceVariant)
                         .padding(.trailing, theme.spacing.small)
@@ -108,6 +111,7 @@ private enum DimensionConstants {
                 hasAired: true
             ),
             dayLabelFormat: { count in count == 1 ? "day" : "days" },
+            tbdLabel: "TBD",
             onMarkWatched: {}
         )
 
@@ -126,6 +130,7 @@ private enum DimensionConstants {
                 hasAired: true
             ),
             dayLabelFormat: { count in count == 1 ? "day" : "days" },
+            tbdLabel: "TBD",
             onMarkWatched: {}
         )
 
@@ -144,6 +149,7 @@ private enum DimensionConstants {
                 hasAired: false
             ),
             dayLabelFormat: { count in count == 1 ? "day" : "days" },
+            tbdLabel: "TBD",
             onMarkWatched: {}
         )
 
@@ -162,6 +168,7 @@ private enum DimensionConstants {
                 hasAired: false
             ),
             dayLabelFormat: { count in count == 1 ? "day" : "days" },
+            tbdLabel: "TBD",
             onMarkWatched: {}
         )
     }

@@ -41,7 +41,8 @@ struct SettingsView: View {
             uiState: uiState,
             showingErrorAlert: $showingErrorAlert,
             showingLogoutAlert: $showingLogoutAlert,
-            onLogout: { presenter.dispatch(action: TraktLogoutClicked()) }
+            onLogout: { presenter.dispatch(action: TraktLogoutClicked()) },
+            onDismissError: { id in presenter.dispatch(action: SettingsMessageShown(id: id)) }
         )
         .alert(
             String(\.notification_permission_denied_title),
@@ -357,7 +358,8 @@ private extension View {
         uiState: SettingsState,
         showingErrorAlert: Binding<Bool>,
         showingLogoutAlert: Binding<Bool>,
-        onLogout: @escaping () -> Void
+        onLogout: @escaping () -> Void,
+        onDismissError: @escaping (Int64) -> Void
     ) -> some View {
         alert(isPresented: showingErrorAlert) {
             Alert(
@@ -365,7 +367,7 @@ private extension View {
                 message: Text(uiState.message?.message ?? String(\.error_generic)),
                 dismissButton: .default(Text(String(\.label_ok))) {
                     if let message = uiState.message {
-                        presenter.dispatch(action: MessageShown(id: message.id))
+                        onDismissError(message.id)
                     }
                 }
             )
