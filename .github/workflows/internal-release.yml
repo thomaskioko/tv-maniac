@@ -171,7 +171,7 @@ jobs:
           GOOGLE_SERVICE_INFO: ${{ secrets.GOOGLE_SERVICE_INFO_PLIST_RELEASE }}
         run: |
           if [ -n "$GOOGLE_SERVICE_INFO" ]; then
-            echo "$GOOGLE_SERVICE_INFO" | base64 --decode > ios/ios/GoogleService-Info.plist
+            echo "$GOOGLE_SERVICE_INFO" | base64 --decode > ios/ios/Firebase/Release/GoogleService-Info.plist
           else
             echo "warning: GOOGLE_SERVICE_INFO_PLIST_RELEASE secret not set - Firebase will be disabled"
           fi
