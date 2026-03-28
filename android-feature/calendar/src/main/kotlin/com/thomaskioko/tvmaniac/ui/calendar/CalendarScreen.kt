@@ -32,7 +32,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -61,7 +60,6 @@ import com.thomaskioko.tvmaniac.presentation.calendar.CalendarAction
 import com.thomaskioko.tvmaniac.presentation.calendar.CalendarPresenter
 import com.thomaskioko.tvmaniac.presentation.calendar.CalendarState
 import com.thomaskioko.tvmaniac.presentation.calendar.EpisodeCardClicked
-import com.thomaskioko.tvmaniac.presentation.calendar.EpisodeDetailDismissed
 import com.thomaskioko.tvmaniac.presentation.calendar.MessageShown
 import com.thomaskioko.tvmaniac.presentation.calendar.NavigateToNextWeek
 import com.thomaskioko.tvmaniac.presentation.calendar.NavigateToPreviousWeek
@@ -147,14 +145,6 @@ public fun CalendarPageContent(
             }
         }
     }
-
-    state.selectedEpisode?.let { episode ->
-        EpisodeDetailBottomSheet(
-            episode = episode,
-            sheetState = sheetState,
-            onDismiss = { onAction(EpisodeDetailDismissed) },
-        )
-    }
 }
 
 @Composable
@@ -228,14 +218,6 @@ internal fun CalendarScreen(
                 )
             }
         }
-    }
-
-    state.selectedEpisode?.let { episode ->
-        EpisodeDetailBottomSheet(
-            episode = episode,
-            sheetState = sheetState,
-            onDismiss = { onAction(EpisodeDetailDismissed) },
-        )
     }
 }
 
@@ -451,31 +433,6 @@ private fun CalendarEpisodeCard(
             }
         }
     }
-}
-
-@Composable
-internal fun EpisodeDetailBottomSheet(
-    episode: CalendarEpisodeItem,
-    sheetState: SheetState,
-    onDismiss: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    com.thomaskioko.tvmaniac.compose.components.EpisodeDetailBottomSheet(
-        episode = com.thomaskioko.tvmaniac.compose.components.EpisodeDetailInfo(
-            title = episode.showTitle,
-            imageUrl = episode.posterUrl,
-            episodeInfo = buildString {
-                append(episode.episodeInfo)
-                episode.formattedAirDate?.let { append(" \u2022 $it") }
-            },
-            overview = episode.overview,
-            rating = episode.rating,
-            voteCount = episode.votes?.toLong(),
-        ),
-        sheetState = sheetState,
-        onDismiss = onDismiss,
-        modifier = modifier,
-    )
 }
 
 @Preview

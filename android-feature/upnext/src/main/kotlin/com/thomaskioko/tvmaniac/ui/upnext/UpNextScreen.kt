@@ -18,11 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Check
-import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.outlined.Inbox
-import androidx.compose.material.icons.outlined.Movie
-import androidx.compose.material.icons.outlined.RemoveCircleOutline
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -30,13 +26,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,10 +39,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
-import com.thomaskioko.tvmaniac.compose.components.EpisodeDetailBottomSheet
-import com.thomaskioko.tvmaniac.compose.components.EpisodeDetailInfo
 import com.thomaskioko.tvmaniac.compose.components.SelectableFilterChip
-import com.thomaskioko.tvmaniac.compose.components.SheetAction
 import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
@@ -61,23 +51,16 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.label_discover_up_next
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_upnext_empty
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_upnext_sort_air_date
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_upnext_sort_last_watched
-import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_mark_watched
-import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_open_season
-import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_open_show
-import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_unfollow_show
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presentation.upnext.MarkWatched
-import com.thomaskioko.tvmaniac.presentation.upnext.OpenSeason
-import com.thomaskioko.tvmaniac.presentation.upnext.OpenShow
 import com.thomaskioko.tvmaniac.presentation.upnext.RefreshUpNext
-import com.thomaskioko.tvmaniac.presentation.upnext.UnfollowShow
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextAction
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextChangeSortOption
+import com.thomaskioko.tvmaniac.presentation.upnext.UpNextEpisodeLongPressed
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextMessageShown
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextPresenter
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextShowClicked
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextState
-import com.thomaskioko.tvmaniac.presentation.upnext.model.UpNextEpisodeUiModel
 import com.thomaskioko.tvmaniac.ui.upnext.preview.UpNextStatePreviewParameterProvider
 
 @Composable
@@ -103,8 +86,6 @@ public fun UpNextPageContent(
 ) {
     val listState = rememberLazyListState()
     val context = LocalContext.current
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var selectedEpisode by remember { mutableStateOf<UpNextEpisodeUiModel?>(null) }
 
     LaunchedEffect(state.episodes.firstOrNull()?.showTraktId, state.sortOption) {
         listState.animateScrollToItem(0)
@@ -164,7 +145,9 @@ public fun UpNextPageContent(
                                             ),
                                         )
                                     },
-                                    onLongPress = { selectedEpisode = episode },
+                                    onLongPress = {
+                                        episode.episodeId?.let { onAction(UpNextEpisodeLongPressed(it)) }
+                                    },
                                 )
                             }
 
@@ -183,72 +166,6 @@ public fun UpNextPageContent(
             onDismiss = { state.message?.let { onAction(UpNextMessageShown(it.id)) } },
         )
     }
-
-    selectedEpisode?.let { episode ->
-        val context = LocalContext.current
-        EpisodeDetailBottomSheet(
-            episode = EpisodeDetailInfo(
-                title = episode.showName,
-                imageUrl = episode.imageUrl,
-                episodeInfo = buildString {
-                    append(episode.formattedEpisodeNumber)
-                    episode.formattedRuntime?.let { append(" \u2022 $it") }
-                },
-                overview = episode.overview,
-                rating = episode.rating,
-                voteCount = episode.voteCount,
-            ),
-            sheetState = sheetState,
-            onDismiss = { selectedEpisode = null },
-            actions = listOf(
-                SheetAction(
-                    icon = Icons.Outlined.Check,
-                    label = menu_mark_watched.resolve(context),
-                    onClick = {
-                        onAction(
-                            MarkWatched(
-                                showTraktId = episode.showTraktId,
-                                episodeId = episode.episodeId!!,
-                                seasonNumber = episode.seasonNumber!!,
-                                episodeNumber = episode.episodeNumber!!,
-                            ),
-                        )
-                        selectedEpisode = null
-                    },
-                ),
-                SheetAction(
-                    icon = Icons.Outlined.Movie,
-                    label = menu_open_show.resolve(context),
-                    onClick = {
-                        onAction(OpenShow(episode.showTraktId))
-                        selectedEpisode = null
-                    },
-                ),
-                SheetAction(
-                    icon = Icons.Outlined.Folder,
-                    label = menu_open_season.resolve(context),
-                    onClick = {
-                        onAction(
-                            OpenSeason(
-                                showTraktId = episode.showTraktId,
-                                seasonId = episode.seasonId!!,
-                                seasonNumber = episode.seasonNumber!!,
-                            ),
-                        )
-                        selectedEpisode = null
-                    },
-                ),
-                SheetAction(
-                    icon = Icons.Outlined.RemoveCircleOutline,
-                    label = menu_unfollow_show.resolve(context),
-                    onClick = {
-                        onAction(UnfollowShow(episode.showTraktId))
-                        selectedEpisode = null
-                    },
-                ),
-            ),
-        )
-    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -261,9 +178,6 @@ internal fun UpNextScreen(
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val listState = rememberLazyListState()
     val context = LocalContext.current
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var selectedEpisode by remember { mutableStateOf<UpNextEpisodeUiModel?>(null) }
-
     LaunchedEffect(state.episodes.firstOrNull()?.showTraktId, state.sortOption) {
         listState.animateScrollToItem(0)
     }
@@ -340,7 +254,9 @@ internal fun UpNextScreen(
                                                     ),
                                                 )
                                             },
-                                            onLongPress = { selectedEpisode = episode },
+                                            onLongPress = {
+                                                episode.episodeId?.let { onAction(UpNextEpisodeLongPressed(it)) }
+                                            },
                                         )
                                     }
 
@@ -359,72 +275,6 @@ internal fun UpNextScreen(
             message = state.message?.message,
             style = SnackBarStyle.Error,
             onDismiss = { state.message?.let { onAction(UpNextMessageShown(it.id)) } },
-        )
-    }
-
-    selectedEpisode?.let { episode ->
-        val context = LocalContext.current
-        EpisodeDetailBottomSheet(
-            episode = EpisodeDetailInfo(
-                title = episode.showName,
-                imageUrl = episode.imageUrl,
-                episodeInfo = buildString {
-                    append(episode.formattedEpisodeNumber)
-                    episode.formattedRuntime?.let { append(" \u2022 $it") }
-                },
-                overview = episode.overview,
-                rating = episode.rating,
-                voteCount = episode.voteCount,
-            ),
-            sheetState = sheetState,
-            onDismiss = { selectedEpisode = null },
-            actions = listOf(
-                SheetAction(
-                    icon = Icons.Outlined.Check,
-                    label = menu_mark_watched.resolve(context),
-                    onClick = {
-                        onAction(
-                            MarkWatched(
-                                showTraktId = episode.showTraktId,
-                                episodeId = episode.episodeId!!,
-                                seasonNumber = episode.seasonNumber!!,
-                                episodeNumber = episode.episodeNumber!!,
-                            ),
-                        )
-                        selectedEpisode = null
-                    },
-                ),
-                SheetAction(
-                    icon = Icons.Outlined.Movie,
-                    label = menu_open_show.resolve(context),
-                    onClick = {
-                        onAction(OpenShow(episode.showTraktId))
-                        selectedEpisode = null
-                    },
-                ),
-                SheetAction(
-                    icon = Icons.Outlined.Folder,
-                    label = menu_open_season.resolve(context),
-                    onClick = {
-                        onAction(
-                            OpenSeason(
-                                showTraktId = episode.showTraktId,
-                                seasonId = episode.seasonId!!,
-                                seasonNumber = episode.seasonNumber!!,
-                            ),
-                        )
-                        selectedEpisode = null
-                    },
-                ),
-                SheetAction(
-                    icon = Icons.Outlined.RemoveCircleOutline,
-                    label = menu_unfollow_show.resolve(context),
-                    onClick = {
-                        onAction(UnfollowShow(episode.showTraktId))
-                        selectedEpisode = null
-                    },
-                ),
-            ),
         )
     }
 }

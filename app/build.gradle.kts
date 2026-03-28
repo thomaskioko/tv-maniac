@@ -23,6 +23,7 @@ scaffold {
 dependencies {
     implementation(projects.androidDesignsystem)
     implementation(projects.androidFeature.debug)
+    implementation(projects.androidFeature.episodeDetail)
     implementation(projects.androidFeature.home)
     implementation(projects.androidFeature.moreShows)
     implementation(projects.androidFeature.search)
@@ -91,6 +92,7 @@ dependencies {
     implementation(projects.domain.calendar)
     implementation(projects.domain.discover)
     implementation(projects.domain.episode)
+    implementation(projects.domain.followedshows)
     implementation(projects.domain.genre)
     implementation(projects.domain.notifications)
     implementation(projects.domain.seasondetails)
@@ -105,6 +107,7 @@ dependencies {
     implementation(projects.presenter.debug)
     implementation(projects.presenter.calendar)
     implementation(projects.presenter.discover)
+    implementation(projects.presenter.episodeDetail)
     implementation(projects.presenter.library)
     implementation(projects.presenter.home)
     implementation(projects.presenter.moreShows)

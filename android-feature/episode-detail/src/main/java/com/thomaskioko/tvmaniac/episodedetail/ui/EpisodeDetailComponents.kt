@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.compose.components
+package com.thomaskioko.tvmaniac.episodedetail.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -34,8 +34,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 
-public data class EpisodeDetailInfo(
+internal data class EpisodeDetailInfo(
     val title: String,
     val imageUrl: String?,
     val episodeInfo: String,
@@ -44,14 +45,14 @@ public data class EpisodeDetailInfo(
     val voteCount: Long? = null,
 )
 
-public data class SheetAction(
+internal data class SheetAction(
     val icon: ImageVector,
     val label: String,
     val onClick: () -> Unit,
 )
 
 @Composable
-public fun EpisodeDetailBottomSheet(
+internal fun EpisodeDetailBottomSheet(
     episode: EpisodeDetailInfo,
     sheetState: SheetState,
     onDismiss: () -> Unit,
@@ -76,7 +77,7 @@ public fun EpisodeDetailBottomSheet(
                 contentDescription = episode.title,
             )
 
-            EpisodeDetailContent(
+            EpisodeDetailContentLayout(
                 title = episode.title,
                 episodeInfo = episode.episodeInfo,
                 overview = episode.overview,
@@ -107,7 +108,7 @@ public fun EpisodeDetailBottomSheet(
 }
 
 @Composable
-public fun EpisodeDetailSheetContent(
+internal fun EpisodeDetailSheetContent(
     episode: EpisodeDetailInfo,
     modifier: Modifier = Modifier,
     actions: @Composable (ColumnScope.() -> Unit)? = null,
@@ -123,7 +124,7 @@ public fun EpisodeDetailSheetContent(
             contentDescription = episode.title,
         )
 
-        EpisodeDetailContent(
+        EpisodeDetailContentLayout(
             title = episode.title,
             episodeInfo = episode.episodeInfo,
             overview = episode.overview,
@@ -199,7 +200,7 @@ private fun EpisodeDetailHeader(
 }
 
 @Composable
-private fun EpisodeDetailContent(
+private fun EpisodeDetailContentLayout(
     title: String,
     episodeInfo: String,
     overview: String?,
@@ -261,7 +262,7 @@ private fun EpisodeDetailContent(
 }
 
 @Composable
-public fun SheetActionItem(
+internal fun SheetActionItem(
     icon: ImageVector,
     label: String,
     onClick: () -> Unit,
@@ -285,72 +286,6 @@ public fun SheetActionItem(
             text = label,
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurface,
-        )
-    }
-}
-
-@ThemePreviews
-@Composable
-private fun EpisodeDetailSheetContentPreview() {
-    com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme {
-        EpisodeDetailSheetContent(
-            episode = EpisodeDetailInfo(
-                title = "The Walking Dead: Daryl Dixon",
-                imageUrl = null,
-                episodeInfo = "S02E01 \u2022 45m",
-                overview = "Daryl washes ashore in France and struggles to piece together how he got there and why.",
-                rating = 8.5,
-                voteCount = 1234,
-            ),
-        )
-    }
-}
-
-@ThemePreviews
-@Composable
-private fun EpisodeDetailSheetContentWithActionsPreview() {
-    com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme {
-        EpisodeDetailSheetContent(
-            episode = EpisodeDetailInfo(
-                title = "Wednesday",
-                imageUrl = null,
-                episodeInfo = "S02E03 \u2022 50m",
-                overview = "Wednesday arrives at Nevermore Academy and begins investigating a series of mysterious events.",
-                rating = 7.9,
-                voteCount = 856,
-            ),
-            actions = {
-                SheetActionItem(
-                    icon = Icons.Outlined.Movie,
-                    label = "Mark as Watched",
-                    onClick = {},
-                )
-                SheetActionItem(
-                    icon = Icons.Outlined.Movie,
-                    label = "Open Show",
-                    onClick = {},
-                )
-                SheetActionItem(
-                    icon = Icons.Outlined.Movie,
-                    label = "Open Season",
-                    onClick = {},
-                )
-            },
-        )
-    }
-}
-
-@ThemePreviews
-@Composable
-private fun EpisodeDetailSheetContentNoRatingPreview() {
-    com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme {
-        EpisodeDetailSheetContent(
-            episode = EpisodeDetailInfo(
-                title = "House of the Dragon",
-                imageUrl = null,
-                episodeInfo = "S03E01",
-                overview = "King Viserys hosts a tournament to celebrate the birth of his heir.",
-            ),
         )
     }
 }

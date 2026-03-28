@@ -45,7 +45,6 @@ import com.thomaskioko.tvmaniac.compose.theme.green
 import com.thomaskioko.tvmaniac.compose.theme.grey
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_episodes
 import com.thomaskioko.tvmaniac.i18n.resolve
-import com.thomaskioko.tvmaniac.seasondetails.presenter.EpisodeClicked
 import com.thomaskioko.tvmaniac.seasondetails.presenter.OnEpisodeHeaderClicked
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsAction
 import com.thomaskioko.tvmaniac.seasondetails.presenter.ToggleEpisodeWatched
@@ -62,6 +61,7 @@ internal fun CollapsableContent(
     collapsed: Boolean,
     isSeasonWatched: Boolean,
     onAction: (SeasonDetailsAction) -> Unit,
+    onEpisodeLongPress: (EpisodeDetailsModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -95,7 +95,7 @@ internal fun CollapsableContent(
                     hasAired = episode.hasAired,
                     daysUntilAir = episode.daysUntilAir,
                     onWatchedToggle = { onAction(ToggleEpisodeWatched(episode.id)) },
-                    onEpisodeClicked = { onAction(EpisodeClicked(episode.id)) },
+                    onEpisodeClicked = { onEpisodeLongPress(episode) },
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -253,6 +253,7 @@ private fun CollapsableContentPreview() {
                 collapsed = false,
                 isSeasonWatched = false,
                 onAction = {},
+                onEpisodeLongPress = {},
             )
         }
     }
