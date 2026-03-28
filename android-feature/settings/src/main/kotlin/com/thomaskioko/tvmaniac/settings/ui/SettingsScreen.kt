@@ -112,8 +112,8 @@ import com.thomaskioko.tvmaniac.settings.presenter.DismissTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.EpisodeNotificationsToggled
 import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
 import com.thomaskioko.tvmaniac.settings.presenter.IncludeSpecialsToggled
-import com.thomaskioko.tvmaniac.settings.presenter.MessageShown
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsActions
+import com.thomaskioko.tvmaniac.settings.presenter.SettingsMessageShown
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
 import com.thomaskioko.tvmaniac.settings.presenter.ShowAboutDialog
@@ -140,7 +140,7 @@ public fun SettingsScreen(
     TvManiacSnackBarHost(
         message = state.message?.message,
         style = SnackBarStyle.Error,
-        onDismiss = { state.message?.let { presenter.dispatch(MessageShown(it.id)) } },
+        onDismiss = { state.message?.let { presenter.dispatch(SettingsMessageShown(it.id)) } },
     )
 }
 
