@@ -123,13 +123,15 @@ public struct UpNextListItemView: View {
                     .fill(theme.colors.grey)
                     .frame(width: UpNextListItemViewConstants.checkmarkSize, height: UpNextListItemViewConstants.checkmarkSize)
                 Image(systemName: "checkmark")
-                    .font(.system(size: 12, weight: .bold))
+                    .font(.system(size: 14, weight: .bold))
                     .foregroundColor(.white)
             }
+            .frame(width: UpNextListItemViewConstants.tapTargetSize, height: UpNextListItemViewConstants.height)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .frame(maxHeight: .infinity)
-        .padding(.trailing, theme.spacing.medium)
+        .padding(.trailing, theme.spacing.small)
     }
 }
 
@@ -137,7 +139,8 @@ private enum UpNextListItemViewConstants {
     static let height: CGFloat = 140
     static let imageWidth: CGFloat = 120
     static let cornerRadius: CGFloat = 2
-    static let checkmarkSize: CGFloat = 32
+    static let checkmarkSize: CGFloat = 36
+    static let tapTargetSize: CGFloat = 48
 }
 
 #Preview {

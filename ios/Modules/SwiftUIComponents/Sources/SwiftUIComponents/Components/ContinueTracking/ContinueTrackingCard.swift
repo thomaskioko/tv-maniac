@@ -46,19 +46,19 @@ public struct ContinueTrackingCard: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
 
                 if episode.hasAired {
-                    ZStack {
-                        Circle()
-                            .fill(episode.isWatched ? theme.colors.success : theme.colors.grey)
-                            .frame(width: DimensionConstants.checkmarkSize, height: DimensionConstants.checkmarkSize)
-                        Image(systemName: "checkmark")
-                            .font(.system(size: 12, weight: .bold))
-                            .foregroundColor(.white)
+                    Button(action: onMarkWatched) {
+                        ZStack {
+                            Circle()
+                                .fill(episode.isWatched ? theme.colors.success : theme.colors.grey)
+                                .frame(width: DimensionConstants.checkmarkSize, height: DimensionConstants.checkmarkSize)
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundColor(.white)
+                        }
+                        .frame(width: DimensionConstants.tapTargetSize, height: DimensionConstants.cardHeight)
+                        .contentShape(Rectangle())
                     }
-                    .frame(width: DimensionConstants.tapTargetSize, height: DimensionConstants.tapTargetSize)
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        onMarkWatched()
-                    }
+                    .buttonStyle(.plain)
                 } else if let daysUntilAir = episode.daysUntilAir, daysUntilAir > 0 {
                     VStack(spacing: 0) {
                         Text("\(daysUntilAir)")
@@ -90,8 +90,8 @@ private enum DimensionConstants {
     static let cardWidth: CGFloat = 300
     static let cardHeight: CGFloat = 120
     static let imageWidth: CGFloat = 100
-    static let checkmarkSize: CGFloat = 24
-    static let tapTargetSize: CGFloat = 50
+    static let checkmarkSize: CGFloat = 32
+    static let tapTargetSize: CGFloat = 48
 }
 
 #Preview {
