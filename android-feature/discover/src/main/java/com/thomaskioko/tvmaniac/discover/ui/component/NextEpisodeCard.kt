@@ -1,8 +1,6 @@
 package com.thomaskioko.tvmaniac.discover.ui.component
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,22 +26,17 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.discover.presenter.model.NextEpisodeUiModel
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun NextEpisodeCard(
     episode: NextEpisodeUiModel,
     onClick: () -> Unit,
-    onLongPress: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
+        onClick = onClick,
         modifier = modifier
             .width(300.dp)
-            .height(160.dp)
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = onLongPress,
-            ),
+            .height(160.dp),
         shape = MaterialTheme.shapes.small,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
@@ -139,7 +132,6 @@ private fun NextEpisodeCardPreview() {
                 isNew = true,
             ),
             onClick = {},
-            onLongPress = {},
         )
     }
 }

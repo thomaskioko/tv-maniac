@@ -46,13 +46,6 @@ struct DiscoverTab: View {
             onPopularClicked: { presenter.dispatch(action: PopularClicked()) },
             onTopRatedClicked: { presenter.dispatch(action: TopRatedClicked()) },
             onNextEpisodeClicked: { episode in
-                presenter.dispatch(action: NextEpisodeClicked(
-                    showTraktId: episode.showTraktId,
-                    seasonId: episode.seasonId,
-                    seasonNumber: episode.seasonNumber
-                ))
-            },
-            onNextEpisodeLongPress: { episode in
                 presenter.dispatch(action: DiscoverEpisodeLongPressed(
                     showTraktId: episode.showTraktId,
                     episodeId: episode.episodeId

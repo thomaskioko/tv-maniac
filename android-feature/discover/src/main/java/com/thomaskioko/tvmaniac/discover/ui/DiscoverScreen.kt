@@ -58,7 +58,6 @@ import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowAction
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverViewState
 import com.thomaskioko.tvmaniac.discover.presenter.MessageShown
-import com.thomaskioko.tvmaniac.discover.presenter.NextEpisodeClicked
 import com.thomaskioko.tvmaniac.discover.presenter.PopularClicked
 import com.thomaskioko.tvmaniac.discover.presenter.RefreshData
 import com.thomaskioko.tvmaniac.discover.presenter.SearchIconClicked
@@ -184,9 +183,6 @@ private fun DiscoverContent(
             dataLoadedState = state,
             listState = listState,
             onAction = onAction,
-            onEpisodeLongPress = { episode ->
-                onAction(DiscoverEpisodeLongPressed(showTraktId = episode.showTraktId, episodeId = episode.episodeId))
-            },
         )
 
         PullRefreshIndicator(
@@ -239,7 +235,6 @@ private fun LazyColumnContent(
     listState: LazyListState,
     modifier: Modifier = Modifier,
     onAction: (DiscoverShowAction) -> Unit,
-    onEpisodeLongPress: (NextEpisodeUiModel) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -268,9 +263,8 @@ private fun LazyColumnContent(
                 title = label_discover_up_next.resolve(context),
                 nextEpisodes = dataLoadedState.nextEpisodes,
                 onEpisodeClick = { episode ->
-                    onAction(NextEpisodeClicked(episode.showTraktId, episode.seasonId, episode.seasonNumber))
+                    onAction(DiscoverEpisodeLongPressed(showTraktId = episode.showTraktId, episodeId = episode.episodeId))
                 },
-                onEpisodeLongPress = onEpisodeLongPress,
             )
         }
 
