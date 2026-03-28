@@ -49,3 +49,5 @@ public data class EpisodeNotificationsToggled(
 public data class CrashReportingToggled(
     val enabled: Boolean,
 ) : SettingsActions
+
+public data class MessageShown(val id: Long) : SettingsActions

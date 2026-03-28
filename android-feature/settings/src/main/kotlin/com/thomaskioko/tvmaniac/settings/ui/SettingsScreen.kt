@@ -40,9 +40,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -50,10 +47,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -63,8 +58,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacAlertDialog
+import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
@@ -115,6 +112,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.DismissTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.EpisodeNotificationsToggled
 import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
 import com.thomaskioko.tvmaniac.settings.presenter.IncludeSpecialsToggled
+import com.thomaskioko.tvmaniac.settings.presenter.MessageShown
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsActions
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
@@ -132,13 +130,17 @@ public fun SettingsScreen(
     modifier: Modifier = Modifier,
 ) {
     val state by presenter.state.collectAsState()
-    val snackbarHostState = remember { SnackbarHostState() }
 
     SettingsScreen(
         modifier = modifier,
         state = state,
-        snackbarHostState = snackbarHostState,
         onAction = presenter::dispatch,
+    )
+
+    TvManiacSnackBarHost(
+        message = state.message?.message,
+        style = SnackBarStyle.Error,
+        onDismiss = { state.message?.let { presenter.dispatch(MessageShown(it.id)) } },
     )
 }
 
@@ -146,7 +148,6 @@ public fun SettingsScreen(
 @Composable
 internal fun SettingsScreen(
     state: SettingsState,
-    snackbarHostState: SnackbarHostState,
     onAction: (SettingsActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -185,18 +186,8 @@ internal fun SettingsScreen(
                 ),
             )
         },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         modifier = modifier,
         content = { innerPadding ->
-            LaunchedEffect(key1 = state.errorMessage) {
-                if (state.errorMessage != null) {
-                    snackbarHostState.showSnackbar(
-                        message = state.errorMessage!!,
-                        duration = SnackbarDuration.Short,
-                    )
-                }
-            }
-
             SettingsContent(
                 state = state,
                 onAction = onAction,
@@ -837,7 +828,6 @@ private fun SettingsScreenPreview(
         Surface {
             SettingsScreen(
                 state = state,
-                snackbarHostState = SnackbarHostState(),
                 onAction = {},
             )
         }

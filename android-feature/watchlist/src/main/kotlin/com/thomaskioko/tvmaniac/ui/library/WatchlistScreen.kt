@@ -56,7 +56,9 @@ import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ShowLinearProgressIndicator
+import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
@@ -77,6 +79,7 @@ import com.thomaskioko.tvmaniac.ui.library.component.Searchbar
 import com.thomaskioko.tvmaniac.watchlist.presenter.ChangeListStyleClicked
 import com.thomaskioko.tvmaniac.watchlist.presenter.ClearWatchlistQuery
 import com.thomaskioko.tvmaniac.watchlist.presenter.MarkUpNextEpisodeWatched
+import com.thomaskioko.tvmaniac.watchlist.presenter.MessageShown
 import com.thomaskioko.tvmaniac.watchlist.presenter.ShowTitleClicked
 import com.thomaskioko.tvmaniac.watchlist.presenter.ToggleSearchActive
 import com.thomaskioko.tvmaniac.watchlist.presenter.UpNextEpisodeClicked
@@ -101,6 +104,12 @@ public fun WatchlistScreen(
         modifier = modifier,
         state = libraryState,
         onAction = presenter::dispatch,
+    )
+
+    TvManiacSnackBarHost(
+        message = libraryState.message?.message,
+        style = SnackBarStyle.Error,
+        onDismiss = { libraryState.message?.let { presenter.dispatch(MessageShown(it.id)) } },
     )
 }
 

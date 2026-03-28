@@ -50,6 +50,8 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
+import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
+import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_next_week
@@ -60,6 +62,7 @@ import com.thomaskioko.tvmaniac.presentation.calendar.CalendarPresenter
 import com.thomaskioko.tvmaniac.presentation.calendar.CalendarState
 import com.thomaskioko.tvmaniac.presentation.calendar.EpisodeCardClicked
 import com.thomaskioko.tvmaniac.presentation.calendar.EpisodeDetailDismissed
+import com.thomaskioko.tvmaniac.presentation.calendar.MessageShown
 import com.thomaskioko.tvmaniac.presentation.calendar.NavigateToNextWeek
 import com.thomaskioko.tvmaniac.presentation.calendar.NavigateToPreviousWeek
 import com.thomaskioko.tvmaniac.presentation.calendar.model.CalendarDateGroup
@@ -78,6 +81,12 @@ public fun CalendarScreen(
         modifier = modifier,
         state = state,
         onAction = presenter::dispatch,
+    )
+
+    TvManiacSnackBarHost(
+        message = state.message?.message,
+        style = SnackBarStyle.Error,
+        onDismiss = { state.message?.let { presenter.dispatch(MessageShown(it.id)) } },
     )
 }
 

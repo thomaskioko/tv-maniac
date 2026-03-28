@@ -55,13 +55,14 @@ public class DefaultSettingsPresenter(
         observeSettingsPreferencesInteractor(Unit)
     }
 
-    override val state: StateFlow<SettingsState> = combine(
+    override val state: StateFlow<SettingsState> = com.thomaskioko.tvmaniac.core.base.extensions.combine(
         _state,
         logoutState.observable,
         notificationToggleState.observable,
         observeSettingsPreferencesInteractor.flow,
         traktAuthRepository.state,
-    ) { currentState, isLoggingOut, isTogglingNotifications, preferences, authState ->
+        uiMessageManager.message,
+    ) { currentState, isLoggingOut, isTogglingNotifications, preferences, authState, message ->
         currentState.copy(
             isUpdating = isLoggingOut || isTogglingNotifications,
             imageQuality = preferences.imageQuality,
@@ -75,6 +76,7 @@ public class DefaultSettingsPresenter(
             versionName = appInfo.versionName,
             episodeNotificationsEnabled = preferences.episodeNotificationsEnabled,
             crashReportingEnabled = preferences.crashReportingEnabled,
+            message = message,
         )
     }.stateIn(
         scope = coroutineScope,
@@ -136,6 +138,12 @@ public class DefaultSettingsPresenter(
             is CrashReportingToggled -> {
                 coroutineScope.launch {
                     datastoreRepository.setCrashReportingEnabled(action.enabled)
+                }
+            }
+
+            is MessageShown -> {
+                coroutineScope.launch {
+                    uiMessageManager.clearMessage(action.id)
                 }
             }
         }

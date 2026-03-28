@@ -349,8 +349,8 @@ private extension View {
         .onChange(of: uiState.imageQuality) { _, imageQuality in
             store.imageQuality = imageQuality.toSwift()
         }
-        .onChange(of: uiState.errorMessage) { _, errorMessage in
-            showingErrorAlert.wrappedValue = errorMessage != nil
+        .onChange(of: uiState.message) { _, message in
+            showingErrorAlert.wrappedValue = message != nil
         }
     }
 
@@ -363,8 +363,12 @@ private extension View {
         alert(isPresented: showingErrorAlert) {
             Alert(
                 title: Text(String(\.label_error)),
-                message: Text(uiState.errorMessage ?? "An error occurred"),
-                dismissButton: .default(Text(String(\.label_ok)))
+                message: Text(uiState.message?.message ?? String(\.error_generic)),
+                dismissButton: .default(Text(String(\.label_ok))) {
+                    if let message = uiState.message {
+                        presenter.dispatch(action: MessageShown(id: message.id))
+                    }
+                }
             )
         }
         .alert(isPresented: showingLogoutAlert) {

@@ -61,7 +61,9 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
+import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
@@ -82,6 +84,7 @@ import com.thomaskioko.tvmaniac.presentation.library.LibraryPresenter
 import com.thomaskioko.tvmaniac.presentation.library.LibraryQueryChanged
 import com.thomaskioko.tvmaniac.presentation.library.LibraryShowClicked
 import com.thomaskioko.tvmaniac.presentation.library.LibraryState
+import com.thomaskioko.tvmaniac.presentation.library.MessageShown
 import com.thomaskioko.tvmaniac.presentation.library.ToggleGenreFilter
 import com.thomaskioko.tvmaniac.presentation.library.ToggleSearchActive
 import com.thomaskioko.tvmaniac.presentation.library.ToggleStatusFilter
@@ -101,6 +104,12 @@ public fun LibraryScreen(
         modifier = modifier,
         state = libraryState,
         onAction = presenter::dispatch,
+    )
+
+    TvManiacSnackBarHost(
+        message = libraryState.message?.message,
+        style = SnackBarStyle.Error,
+        onDismiss = { libraryState.message?.let { presenter.dispatch(MessageShown(it.id)) } },
     )
 }
 
