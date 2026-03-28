@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.episodes.testing
 
+import com.thomaskioko.tvmaniac.db.EpisodeById
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
@@ -37,6 +38,7 @@ public data class SyncParams(
 
 public class FakeEpisodeRepository : EpisodeRepository {
     private val nextEpisodesForWatchlist = MutableStateFlow<List<NextEpisodeWithShow>>(emptyList())
+    private val episodeByIdFlow = MutableStateFlow<EpisodeById?>(null)
     private val seasonWatchProgressFlow = MutableStateFlow(SeasonWatchProgress(0, 0, 0, 0))
     private val showWatchProgressFlow = MutableStateFlow(ShowWatchProgress(0, 0, 0))
     private val allSeasonsWatchProgressFlow = MutableStateFlow<List<SeasonWatchProgress>>(emptyList())
@@ -51,6 +53,10 @@ public class FakeEpisodeRepository : EpisodeRepository {
 
     public var lastMarkEpisodeUnwatchedCall: MarkEpisodeUnwatchedCall? = null
         private set
+
+    public fun setEpisodeById(episode: EpisodeById?) {
+        episodeByIdFlow.value = episode
+    }
 
     public fun setSeasonWatchProgress(progress: SeasonWatchProgress) {
         seasonWatchProgressFlow.value = progress
@@ -71,6 +77,9 @@ public class FakeEpisodeRepository : EpisodeRepository {
     public fun setUpcomingEpisodes(episodes: List<UpcomingEpisode>) {
         upcomingEpisodesFlow.value = episodes
     }
+
+    override fun observeEpisodeById(episodeId: Long): Flow<EpisodeById?> =
+        episodeByIdFlow.asStateFlow()
 
     override suspend fun markEpisodeAsWatched(
         showTraktId: Long,

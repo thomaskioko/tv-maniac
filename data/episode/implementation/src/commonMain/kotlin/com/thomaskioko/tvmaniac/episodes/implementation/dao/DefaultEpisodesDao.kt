@@ -4,6 +4,8 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.db.EpisodeById
+import com.thomaskioko.tvmaniac.db.EpisodeId
 import com.thomaskioko.tvmaniac.db.GetEpisodeByShowSeasonEpisodeNumber
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.NextEpisodeForShow
@@ -64,6 +66,11 @@ public class DefaultEpisodesDao(
     override fun deleteAll() {
         database.transaction { episodeQueries.deleteAll() }
     }
+
+    override fun observeEpisodeById(episodeId: Long): Flow<EpisodeById?> =
+        episodeQueries.episodeById(Id<EpisodeId>(episodeId))
+            .asFlow()
+            .mapToOneOrNull(dispatchers.databaseRead)
 
     override suspend fun getEpisodeByShowSeasonEpisodeNumber(
         showTraktId: Long,
