@@ -1,0 +1,44 @@
+name: 'Setup Android Release'
+description: 'Common setup for Android release builds: Gradle, Ruby, google-services.json, and signing key decryption'
+
+inputs:
+  google-services-json:
+    description: 'Base64-encoded google-services.json for release'
+    required: false
+  signing-encrypt-key:
+    description: 'Encryption key for decrypting signing keystores'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Gradle Environment
+      uses: ./.github/actions/setup-gradle
+
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        bundler-cache: true
+
+    - name: Install google-services.json
+      shell: bash
+      env:
+        GOOGLE_SERVICES_JSON_RELEASE: ${{ inputs.google-services-json }}
+      run: |
+        if [ -n "$GOOGLE_SERVICES_JSON_RELEASE" ]; then
+          mkdir -p app/src/release
+          echo "$GOOGLE_SERVICES_JSON_RELEASE" | base64 --decode > app/src/release/google-services.json
+        else
+          echo "warning: google-services.json not provided - Firebase will be disabled"
+        fi
+
+    - name: Decrypt signing keys
+      shell: bash
+      env:
+        SIGNING_ENCRYPT_KEY: ${{ inputs.signing-encrypt-key }}
+      run: |
+        openssl aes-256-cbc -d -pbkdf2 -in release/app-release.aes -out release/app-release.jks -k "$SIGNING_ENCRYPT_KEY"
+        openssl aes-256-cbc -d -pbkdf2 -in release/play-service-account.aes -out release/play-service-account.json -k "$SIGNING_ENCRYPT_KEY"
+        if [ -f "release/firebase-sa.aes" ]; then
+          openssl aes-256-cbc -d -pbkdf2 -in release/firebase-sa.aes -out release/firebase-sa.json -k "$SIGNING_ENCRYPT_KEY"
+        fi

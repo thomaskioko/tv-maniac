@@ -58,34 +58,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Gradle Environment
-        uses: ./.github/actions/setup-gradle
-
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
+      - name: Setup Android Release
+        uses: ./.github/actions/setup-android-release
         with:
-          bundler-cache: true
-
-      - name: Install google-services.json
-        env:
-          GOOGLE_SERVICES_JSON_RELEASE: ${{ secrets.GOOGLE_SERVICES_JSON_RELEASE }}
-        run: |
-          if [ -n "$GOOGLE_SERVICES_JSON_RELEASE" ]; then
-            mkdir -p app/src/release
-            echo "$GOOGLE_SERVICES_JSON_RELEASE" | base64 --decode > app/src/release/google-services.json
-          else
-            echo "warning: GOOGLE_SERVICES_JSON_RELEASE secret not set - Firebase will be disabled"
-          fi
-
-      - name: Decrypt signing keys
-        env:
-          SIGNING_ENCRYPT_KEY: ${{ secrets.SIGNING_ENCRYPT_KEY }}
-        run: |
-          openssl aes-256-cbc -d -pbkdf2 -in release/app-release.aes -out release/app-release.jks -k "$SIGNING_ENCRYPT_KEY"
-          openssl aes-256-cbc -d -pbkdf2 -in release/play-service-account.aes -out release/play-service-account.json -k "$SIGNING_ENCRYPT_KEY"
-          if [ -f "release/firebase-sa.aes" ]; then
-            openssl aes-256-cbc -d -pbkdf2 -in release/firebase-sa.aes -out release/firebase-sa.json -k "$SIGNING_ENCRYPT_KEY"
-          fi
+          google-services-json: ${{ secrets.GOOGLE_SERVICES_JSON_RELEASE }}
+          signing-encrypt-key: ${{ secrets.SIGNING_ENCRYPT_KEY }}
 
       - name: Build release AAB and APK
         env:
@@ -143,25 +120,11 @@ jobs:
       - name: Checkout tag
         uses: actions/checkout@v6
 
-      - name: Setup iOS Environment
-        uses: ./.github/actions/setup-ios
+      - name: Setup iOS Release
+        uses: ./.github/actions/setup-ios-release
         with:
           xcode-version: ${{ env.XCODE_VERSION }}
-
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-
-      - name: Install GoogleService-Info.plist
-        env:
-          GOOGLE_SERVICE_INFO: ${{ secrets.GOOGLE_SERVICE_INFO_PLIST_RELEASE }}
-        run: |
-          if [ -n "$GOOGLE_SERVICE_INFO" ]; then
-            echo "$GOOGLE_SERVICE_INFO" | base64 --decode > ios/ios/Firebase/Release/GoogleService-Info.plist
-          else
-            echo "warning: GOOGLE_SERVICE_INFO_PLIST_RELEASE secret not set - Firebase will be disabled"
-          fi
+          google-service-info-plist: ${{ secrets.GOOGLE_SERVICE_INFO_PLIST_RELEASE }}
 
       - name: Build and upload to TestFlight
         env:
