@@ -21,6 +21,7 @@ kotlin {
                 implementation(projects.core.util.api)
                 implementation(projects.data.database.sqldelight)
                 implementation(projects.data.datastore.api)
+                implementation(projects.data.episode.api)
                 implementation(projects.data.followedshows.api)
                 implementation(projects.data.requestManager.api)
                 implementation(projects.data.seasondetails.api)
@@ -38,8 +39,17 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)
+                implementation(projects.core.logger.testing)
                 implementation(projects.core.util.testing)
                 implementation(projects.data.database.testing)
+                implementation(projects.data.datastore.testing)
+                implementation(projects.data.episode.implementation)
+                implementation(projects.data.followedshows.implementation)
+                implementation(projects.data.requestManager.testing)
+                implementation(projects.data.showdetails.testing)
+                implementation(projects.data.seasondetails.testing)
+                implementation(projects.data.shows.implementation)
+                implementation(projects.data.traktauth.testing)
             }
         }
     }

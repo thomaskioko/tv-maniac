@@ -23,6 +23,7 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncTraktCalendarInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
@@ -50,6 +51,7 @@ import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
+import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
 import io.kotest.matchers.shouldBe
@@ -83,6 +85,7 @@ class ShowDetailsPresenterTest {
     private val showDetailsRepository = FakeShowDetailsRepository()
     private val episodeRepository = FakeEpisodeRepository()
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
+    private val upNextRepository = FakeUpNextRepository()
     private val traktAuthRepository = FakeTraktAuthRepository()
     private val fakeLocalizer = FakeLocalizer()
     private val fakeFormatterUtil = FakeFormatterUtil()
@@ -697,6 +700,19 @@ class ShowDetailsPresenterTest {
             onNavigateToTrailer = onNavigateToTrailer,
             onShowFollowed = onShowFollowed,
             followedShowsRepository = followedShowsRepository,
+            followShowInteractor = FollowShowInteractor(
+                followedShowsRepository = followedShowsRepository,
+                showContentSyncInteractor = ShowContentSyncInteractor(
+                    showDetailsRepository = showDetailsRepository,
+                    seasonDetailsRepository = seasonDetailsRepository,
+                    dispatchers = coroutineDispatcher,
+                    logger = fakeLogger,
+                    watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
+                ),
+                upNextRepository = upNextRepository,
+                dispatchers = coroutineDispatcher,
+                logger = fakeLogger,
+            ),
             showDetailsInteractor = ShowDetailsInteractor(
                 showDetailsRepository = showDetailsRepository,
                 castRepository = castRepository,

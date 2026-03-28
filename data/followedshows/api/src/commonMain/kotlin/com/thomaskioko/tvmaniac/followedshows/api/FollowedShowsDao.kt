@@ -7,6 +7,7 @@ public interface FollowedShowsDao {
     public fun entriesObservable(): Flow<List<FollowedShowEntry>>
     public fun entryWithTraktId(traktId: Long): FollowedShowEntry?
     public fun entriesWithNoPendingAction(): List<FollowedShowEntry>
+    public fun entriesExcludingDeleted(): List<FollowedShowEntry>
     public fun entriesWithUploadPendingAction(): List<FollowedShowEntry>
     public fun entriesWithDeletePendingAction(): List<FollowedShowEntry>
     public fun upsert(entry: FollowedShowEntry): Long

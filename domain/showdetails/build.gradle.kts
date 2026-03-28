@@ -14,6 +14,8 @@ kotlin {
 
                 implementation(projects.data.cast.api)
                 implementation(projects.data.episode.api)
+                implementation(projects.data.followedshows.api)
+                implementation(projects.data.upnext.api)
                 implementation(projects.data.seasondetails.api)
                 implementation(projects.data.seasons.api)
                 implementation(projects.data.showdetails.api)

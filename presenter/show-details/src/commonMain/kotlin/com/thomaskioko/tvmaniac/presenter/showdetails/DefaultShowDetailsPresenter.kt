@@ -18,6 +18,7 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncTraktCalendarInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor.Param
@@ -55,6 +56,7 @@ public class DefaultShowDetailsPresenter(
     @Assisted private val onNavigateToTrailer: (id: Long) -> Unit,
     @Assisted private val onShowFollowed: () -> Unit,
     private val followedShowsRepository: FollowedShowsRepository,
+    private val followShowInteractor: FollowShowInteractor,
     private val showDetailsInteractor: ShowDetailsInteractor,
     private val similarShowsInteractor: SimilarShowsInteractor,
     private val watchProvidersInteractor: WatchProvidersInteractor,
@@ -138,8 +140,8 @@ public class DefaultShowDetailsPresenter(
                         followedShowsRepository.removeFollowedShow(showTraktId)
                         notificationManager.cancelNotificationsForShow(showTraktId)
                     } else {
-                        followedShowsRepository.addFollowedShow(showTraktId)
-                        syncShowContent(isUserInitiated = true, loadingState = episodeActionLoadingState)
+                        followShowInteractor(FollowShowInteractor.Param(traktId = showTraktId))
+                            .collectStatus(episodeActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
 
                         syncTraktCalendarInteractor(SyncTraktCalendarInteractor.Params(forceRefresh = true))
                             .collectStatus(episodeActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
