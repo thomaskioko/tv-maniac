@@ -807,7 +807,7 @@ internal fun ShowDetailButtons(
             shape = MaterialTheme.shapes.medium,
             text = if (isFollowed) unfollow.resolve(context) else following.resolve(context),
             imageVector = if (isFollowed) Icons.Filled.RemoveCircle else Icons.Filled.AddCircle,
-            containerColor = if (isFollowed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.secondary,
+            containerColor = if (isFollowed) MaterialTheme.colorScheme.error.copy(alpha = 0.65f) else MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.labelMedium,
             onClick = { onTrackShowClicked(isFollowed) },
         )
