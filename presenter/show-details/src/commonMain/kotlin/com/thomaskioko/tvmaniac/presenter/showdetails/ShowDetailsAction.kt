@@ -8,6 +8,8 @@ public data object DismissShowsListSheet : ShowDetailsAction
 
 public data object ShowShowsListSheet : ShowDetailsAction
 
+public data object DismissLoginPrompt : ShowDetailsAction
+
 public data class CreateListSubmitted(val name: String) : ShowDetailsAction
 
 public data class ShowDetailsMessageShown(val id: Long) : ShowDetailsAction

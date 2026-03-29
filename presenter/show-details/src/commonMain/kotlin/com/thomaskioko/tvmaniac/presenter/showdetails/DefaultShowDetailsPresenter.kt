@@ -168,7 +168,16 @@ public class DefaultShowDetailsPresenter(
             ReloadShowDetails -> refreshShowContent(isUserInitiated = true)
             is ShowDetailsMessageShown -> coroutineScope.launch { uiMessageManager.clearMessage(action.id) }
             DismissShowsListSheet -> coroutineScope.launch { _state.update { it.copy(showListSheet = false) } }
-            ShowShowsListSheet -> coroutineScope.launch { _state.update { it.copy(showListSheet = true) } }
+            ShowShowsListSheet -> {
+                coroutineScope.launch {
+                    if (traktAuthRepository.isLoggedIn()) {
+                        _state.update { it.copy(showListSheet = true) }
+                    } else {
+                        _state.update { it.copy(showLoginPrompt = true) }
+                    }
+                }
+            }
+            DismissLoginPrompt -> coroutineScope.launch { _state.update { it.copy(showLoginPrompt = false) } }
             is CreateListSubmitted -> {
                 coroutineScope.launch {
                     createTraktListInteractor(CreateTraktListInteractor.Params(name = action.name))

@@ -12,6 +12,7 @@ public data class ShowDetailsContent(
     val similarShowsRefreshing: Boolean = false,
     val watchProvidersRefreshing: Boolean = false,
     val showListSheet: Boolean = false,
+    val showLoginPrompt: Boolean = false,
     val showDetails: ShowDetailsModel = ShowDetailsModel.Empty,
     val selectedSeasonIndex: Int = -1,
     val continueTrackingEpisodes: ImmutableList<ContinueTrackingEpisodeModel> = persistentListOf(),
