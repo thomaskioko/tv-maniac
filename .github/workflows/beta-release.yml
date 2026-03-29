@@ -1,4 +1,4 @@
-name: Internal Release
+name: Beta Release
 
 on:
   workflow_dispatch:
@@ -99,10 +99,10 @@ jobs:
           echo "Version: $(grep 'VERSION_NUMBER' version.txt | sed 's/.*= *//')-beta"
           echo "Build:   $(grep 'BUILD_NUMBER' version.txt | sed 's/.*= *//')"
 
-      - name: Deploy to Play Store internal track
+      - name: Deploy to Play Store open testing track
         run: |
           export PLAY_STORE_SERVICE_ACCOUNT_JSON=$(cat release/play-service-account.json)
-          bundle exec fastlane android deploy_play_store
+          bundle exec fastlane android deploy_play_store track:open
 
       - name: Distribute to Firebase App Distribution
         env:
@@ -110,7 +110,7 @@ jobs:
         run: |
           if [ -n "$FIREBASE_APP_ID" ] && [ -f "release/firebase-sa.json" ]; then
             export FIREBASE_APP_DISTRIBUTION_SA=release/firebase-sa.json
-            bundle exec fastlane android distribute_alpha
+            bundle exec fastlane android distribute_firebase
           else
             echo "warning: Firebase not configured — skipping distribution"
           fi

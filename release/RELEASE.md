@@ -64,15 +64,15 @@ Platform builds are independent. If one platform fails, the other still deploys.
 
 ---
 
-## Trigger Internal Release on CI
+## Trigger Beta Release on CI
 
-Internal releases deploy beta builds to Play Store internal track and TestFlight for testing. The workflow bumps the beta build number, commits to `main`, then builds and deploys.
+Beta releases deploy builds to Play Store open testing track and TestFlight for wider testing. The workflow bumps the beta build number, commits to `main`, then builds and deploys.
 
-Go to **Actions > Internal Release > Run workflow**, or use the CLI:
+Go to **Actions > Beta Release > Run workflow**, or use the CLI:
 
 ```bash
-gh workflow run internal-release.yml
-gh workflow run internal-release.yml -f skip_ios=true
+gh workflow run beta-release.yml
+gh workflow run beta-release.yml -f skip_ios=true
 ```
 
 | Input        | Required | Options        |
@@ -83,26 +83,40 @@ gh workflow run internal-release.yml -f skip_ios=true
 **What happens:**
 
 1. **Prepare**: Runs `bumpVersion -Ptype=beta`, increments `BUILD_NUMBER`, commits and pushes to `main`
-2. **Build Android**: Builds a signed release AAB with `-beta` suffix, deploys to Play Store internal track
+2. **Build Android**: Builds a signed release AAB with `-beta` suffix, deploys to Play Store open testing track
+3. **Build iOS**: Builds a signed release IPA, uploads to TestFlight
+
+## Trigger Daily Build on CI
+
+Daily builds deploy to Play Store internal track and TestFlight for team testing. The schedule is inactive by default — trigger manually or uncomment the cron schedule in `daily-build.yml` to enable.
+
+```bash
+gh workflow run daily-build.yml
+```
+
+**What happens:**
+
+1. **Prepare**: Bumps build number, commits and pushes to `main`
+2. **Build Android**: Builds a signed release AAB with `-dev` suffix, deploys to Play Store internal track
 3. **Build iOS**: Builds a signed release IPA, uploads to TestFlight
 
 ---
 
 ## Gradual Rollout
 
-After a production release deploys at 0.1%, the rollout automatically ramps over a week. A scheduled workflow runs daily at 9:00 UTC and determines the next rollout tier based on how many days have passed since the release tag was created.
+After a production release deploys at 0.1%, the rollout ramps over a week. The promote workflow checks Play Vitals crash-free rate before allowing promotion (gracefully skips if the Reporting API isn't enabled).
 
 Each ramp requires **manual approval** via the GitHub Actions UI (using the `production` environment with required reviewers). You get a notification when it's time to approve.
 
-| Day         | Android          | iOS                                                     |
-|-------------|------------------|---------------------------------------------------------|
-| 0 (release) | 0.1% (automatic) | TestFlight                                              |
-| 1           | 1%               | Submitted for App Store review (phased release enabled) |
-| 3           | 10%              | Apple manages phased rollout                            |
-| 5           | 50%              | Apple manages phased rollout                            |
-| 7           | 100%             | Phased rollout complete                                 |
+| Day         | Android          | iOS                                |
+|-------------|------------------|------------------------------------|
+| 0 (release) | 0.1% (automatic) | TestFlight                         |
+| 1           | 1%               | Submitted for App Store review     |
+| 3           | 10%              | Apple manages phased rollout       |
+| 5           | 50%              | Apple manages phased rollout       |
+| 7           | 100%             | Phased rollout complete            |
 
-iOS is submitted for App Store review on Day 1, alongside the first Android ramp. Apple's phased release handles the iOS rollout automatically (1% > 2% > 5% > 10% > 20% > 50% > 100% over 7 days).
+iOS is submitted for App Store review on every promote run by default. Use `skip_ios=true` to skip if already submitted. Apple's phased release handles the iOS rollout automatically (1% > 2% > 5% > 10% > 20% > 50% > 100% over 7 days).
 
 To manually override the rollout percentage:
 
@@ -110,13 +124,19 @@ To manually override the rollout percentage:
 gh workflow run promote-release.yml -f android_rollout=0.5
 ```
 
-To manually submit iOS for App Store review:
+To skip iOS submission (e.g., already in review):
 
 ```bash
-gh workflow run promote-release.yml -f ios_submit_for_review=true
+gh workflow run promote-release.yml -f skip_ios=true
 ```
 
-**Setup required**: Create a `production` environment in **GitHub > Repository > Settings > Environments** with yourself as a required reviewer.
+To adjust the crash-free threshold (default 99%):
+
+```bash
+gh workflow run promote-release.yml -f crash_free_threshold=98.5
+```
+
+**Setup required**: Create a `production` environment in **GitHub > Repository > Settings > Environments** with yourself as a required reviewer. For crash gating, enable the [Play Developer Reporting API](https://console.cloud.google.com/apis/library/playdeveloperreporting.googleapis.com) and grant the Play Store service account "View app information" permission.
 
 ---
 
@@ -176,14 +196,14 @@ All versioning is driven by `version.txt` at the project root, which contains `V
 
 **Build number formula:** `(major * 10,000,000) + (minor * 100,000) + (patch * 1,000)`
 
-|              | Production                | Internal/Beta         |
-|--------------|---------------------------|-----------------------|
-| Version name | `0.1.3`                   | `0.1.2-beta`          |
-| Build number | `103000`                  | `102001`, `102002`... |
-| Tag          | `v0.1.3`                  | No tag                |
-| Play Store   | production (0.1% rollout) | internal track        |
-| Firebase     | Yes                       | Yes                   |
-| Trigger      | Tag push                  | `workflow_dispatch`   |
+|              | Production                | Beta                  | Daily               |
+|--------------|---------------------------|-----------------------|---------------------|
+| Version name | `0.1.3`                   | `0.1.2-beta`          | `0.1.2-dev`         |
+| Build number | `103000`                  | `102001`, `102002`... | `102003`, `102004`… |
+| Tag          | `v0.1.3`                  | No tag                | No tag              |
+| Play Store   | production (0.1% rollout) | open testing track    | internal track      |
+| Firebase     | Yes                       | Yes                   | Yes                 |
+| Trigger      | Tag push                  | `workflow_dispatch`   | Schedule / manual   |
 
 The `-beta` suffix is controlled by `app.versionSuffix` in `gradle.properties` (default: `-beta`). Production releases override it to empty via `-Papp.versionSuffix=`.
 
