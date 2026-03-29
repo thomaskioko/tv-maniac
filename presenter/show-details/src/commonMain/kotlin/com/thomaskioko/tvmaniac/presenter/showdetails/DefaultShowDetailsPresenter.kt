@@ -19,6 +19,7 @@ import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteracto
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncTraktCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
+import com.thomaskioko.tvmaniac.domain.traktlists.ObserveTraktListsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor.Param
@@ -30,6 +31,7 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -68,6 +70,7 @@ public class DefaultShowDetailsPresenter(
     private val notificationManager: NotificationManager,
     observableShowDetailsInteractor: ObservableShowDetailsInteractor,
     observeShowWatchProgressInteractor: ObserveShowWatchProgressInteractor,
+    observeTraktListsInteractor: ObserveTraktListsInteractor,
     private val traktAuthRepository: TraktAuthRepository,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
@@ -87,6 +90,7 @@ public class DefaultShowDetailsPresenter(
     init {
         observableShowDetailsInteractor(showTraktId)
         observeShowWatchProgressInteractor(showTraktId)
+        observeTraktListsInteractor(Unit)
         observeShowDetails(forceReload = param.forceRefresh)
         observeAuthState()
     }
@@ -97,10 +101,11 @@ public class DefaultShowDetailsPresenter(
         watchProvidersLoadingState.observable,
         observableShowDetailsInteractor.flow,
         observeShowWatchProgressInteractor.flow,
+        observeTraktListsInteractor.flow,
         uiMessageManager.message,
         _state,
     ) { showDetailsUpdating, similarShowsUpdating, watchProvidersUpdating,
-        showDetails, watchProgress, message, currentState,
+        showDetails, watchProgress, traktLists, message, currentState,
         ->
         currentState.copy(
             showDetails = showDetails.toShowDetails(
@@ -113,6 +118,7 @@ public class DefaultShowDetailsPresenter(
             watchProvidersRefreshing = watchProvidersUpdating,
             continueTrackingEpisodes = mapContinueTrackingEpisodes(showDetails.continueTrackingEpisodes, showTraktId),
             continueTrackingScrollIndex = showDetails.continueTrackingScrollIndex,
+            traktLists = traktLists.toImmutableList(),
             message = message,
         )
     }

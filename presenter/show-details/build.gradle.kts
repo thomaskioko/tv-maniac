@@ -27,7 +27,9 @@ kotlin {
                 implementation(projects.data.followedshows.api)
                 implementation(projects.data.seasondetails.api)
                 implementation(projects.data.traktauth.api)
+                implementation(projects.data.traktlists.api)
                 implementation(projects.domain.notifications)
+                implementation(projects.domain.traktlists)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
@@ -53,6 +55,7 @@ kotlin {
                 implementation(projects.data.trailers.testing)
                 implementation(projects.data.traktauth.api)
                 implementation(projects.data.traktauth.testing)
+                implementation(projects.data.traktlists.testing)
                 implementation(projects.data.upnext.testing)
                 implementation(projects.data.watchproviders.testing)
                 implementation(projects.i18n.testing)

@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.presenter.showdetails
 import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ContinueTrackingEpisodeModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsModel
+import com.thomaskioko.tvmaniac.traktlists.api.TraktListEntity
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -15,6 +16,7 @@ public data class ShowDetailsContent(
     val selectedSeasonIndex: Int = -1,
     val continueTrackingEpisodes: ImmutableList<ContinueTrackingEpisodeModel> = persistentListOf(),
     val continueTrackingScrollIndex: Int = 0,
+    val traktLists: ImmutableList<TraktListEntity> = persistentListOf(),
     val message: UiMessage? = null,
 ) {
     public val isRefreshing: Boolean
