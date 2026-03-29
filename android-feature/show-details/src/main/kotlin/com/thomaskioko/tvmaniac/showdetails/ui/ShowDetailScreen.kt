@@ -102,7 +102,10 @@ import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presenter.showdetails.DetailBackClicked
 import com.thomaskioko.tvmaniac.presenter.showdetails.DetailShowClicked
 import com.thomaskioko.tvmaniac.presenter.showdetails.CreateListSubmitted
+import com.thomaskioko.tvmaniac.presenter.showdetails.DismissCreateListField
 import com.thomaskioko.tvmaniac.presenter.showdetails.DismissShowsListSheet
+import com.thomaskioko.tvmaniac.presenter.showdetails.ShowCreateListField
+import com.thomaskioko.tvmaniac.presenter.showdetails.UpdateCreateListName
 import com.thomaskioko.tvmaniac.presenter.showdetails.FollowShowClicked
 import com.thomaskioko.tvmaniac.presenter.showdetails.ToggleShowInList
 import com.thomaskioko.tvmaniac.presenter.showdetails.MarkEpisodeUnwatched
@@ -273,7 +276,7 @@ internal fun ShowListSheetContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        CreateListField(onAction)
+        CreateListSection(state, onAction)
     }
 }
 
@@ -334,39 +337,83 @@ private fun EmptyListContent(
 }
 
 @Composable
-private fun CreateListField(
+private fun CreateListSection(
+    state: ShowDetailsContent,
     onAction: (ShowDetailsAction) -> Unit,
 ) {
-    var listName by remember { androidx.compose.runtime.mutableStateOf("") }
+    Column(modifier = Modifier.fillMaxWidth()) {
+        androidx.compose.animation.AnimatedVisibility(visible = !state.showCreateListField) {
+            FilledTextButton(
+                onClick = { onAction(ShowCreateListField) },
+                modifier = Modifier.fillMaxWidth(),
+                buttonColors = ButtonDefaults.textButtonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary,
+                ),
+                shape = MaterialTheme.shapes.medium,
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.AddCircle,
+                    contentDescription = null,
+                    modifier = Modifier.padding(end = 8.dp),
+                )
+                Text("Create List")
+            }
+        }
 
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        androidx.compose.material3.OutlinedTextField(
-            value = listName,
-            onValueChange = { if (it.length <= 50) listName = it },
-            modifier = Modifier.weight(1f),
-            placeholder = { Text("New list name") },
-            singleLine = true,
-            textStyle = MaterialTheme.typography.bodyMedium,
-        )
-
-        FilledTextButton(
-            onClick = {
-                if (listName.isNotBlank()) {
-                    onAction(CreateListSubmitted(name = listName))
-                    listName = ""
+        androidx.compose.animation.AnimatedVisibility(visible = state.showCreateListField) {
+            Column {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    androidx.compose.material3.IconButton(
+                        onClick = { onAction(DismissCreateListField) },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Cancel,
+                            contentDescription = "Close",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
                 }
-            },
-            buttonColors = ButtonDefaults.textButtonColors(
-                containerColor = MaterialTheme.colorScheme.secondary,
-                contentColor = MaterialTheme.colorScheme.onSecondary,
-            ),
-            shape = MaterialTheme.shapes.medium,
-        ) {
-            Text("Create")
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    androidx.compose.material3.OutlinedTextField(
+                        value = state.createListName,
+                        onValueChange = { if (it.length <= 50) onAction(UpdateCreateListName(it)) },
+                        modifier = Modifier.weight(1f),
+                        placeholder = { Text("New list name") },
+                        singleLine = true,
+                        enabled = !state.isCreatingList,
+                        textStyle = MaterialTheme.typography.bodyMedium,
+                    )
+
+                    FilledTextButton(
+                        onClick = { onAction(CreateListSubmitted) },
+                        enabled = state.createListName.isNotBlank() && !state.isCreatingList,
+                        buttonColors = ButtonDefaults.textButtonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
+                        ),
+                        shape = MaterialTheme.shapes.medium,
+                    ) {
+                        if (state.isCreatingList) {
+                            androidx.compose.material3.CircularProgressIndicator(
+                                modifier = Modifier.size(16.dp),
+                                strokeWidth = 2.dp,
+                                color = MaterialTheme.colorScheme.onSecondary,
+                            )
+                        } else {
+                            Text("Done")
+                        }
+                    }
+                }
+            }
         }
     }
 }

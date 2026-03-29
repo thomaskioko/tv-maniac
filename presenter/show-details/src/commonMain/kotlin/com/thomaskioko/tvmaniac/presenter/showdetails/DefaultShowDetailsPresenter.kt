@@ -178,10 +178,29 @@ public class DefaultShowDetailsPresenter(
                 }
             }
             DismissLoginPrompt -> coroutineScope.launch { _state.update { it.copy(showLoginPrompt = false) } }
-            is CreateListSubmitted -> {
+            ShowCreateListField -> _state.update { it.copy(showCreateListField = true) }
+            DismissCreateListField -> _state.update {
+                it.copy(showCreateListField = false, createListName = "", createListError = null)
+            }
+            is UpdateCreateListName -> _state.update { it.copy(createListName = action.name) }
+            CreateListSubmitted -> {
+                val name = _state.value.createListName
                 coroutineScope.launch {
-                    createTraktListInteractor(CreateTraktListInteractor.Params(name = action.name))
-                        .collectStatus(showDetailsLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+                    _state.update { it.copy(isCreatingList = true) }
+                    createTraktListInteractor(CreateTraktListInteractor.Params(name = name))
+                        .collectStatus(
+                            episodeActionLoadingState,
+                            logger,
+                            uiMessageManager,
+                            errorToStringMapper = errorToStringMapper,
+                        )
+                    _state.update {
+                        if (it.message == null) {
+                            it.copy(isCreatingList = false, showCreateListField = false, createListName = "")
+                        } else {
+                            it.copy(isCreatingList = false)
+                        }
+                    }
                 }
             }
 

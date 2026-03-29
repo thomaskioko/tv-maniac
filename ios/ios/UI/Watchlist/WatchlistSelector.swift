@@ -8,22 +8,40 @@ public struct WatchlistSelector: View {
     private let title: String
     private let posterUrl: String?
     private let traktLists: [TraktListWithMembership]
+    private let showCreateField: Bool
+    private let isCreatingList: Bool
+    private let createListName: String
     private let onToggle: (Int64, Bool) -> Void
-    private let onCreate: (String) -> Void
+    private let onShowCreateField: () -> Void
+    private let onDismissCreateField: () -> Void
+    private let onCreateListNameChanged: (String) -> Void
+    private let onCreateSubmitted: () -> Void
 
     public init(
         showView: Binding<Bool>,
         title: String,
         posterUrl: String?,
         traktLists: [TraktListWithMembership],
+        showCreateField: Bool,
+        isCreatingList: Bool,
+        createListName: String,
         onToggle: @escaping (Int64, Bool) -> Void,
-        onCreate: @escaping (String) -> Void
+        onShowCreateField: @escaping () -> Void,
+        onDismissCreateField: @escaping () -> Void,
+        onCreateListNameChanged: @escaping (String) -> Void,
+        onCreateSubmitted: @escaping () -> Void
     ) {
         self.title = title
         self.posterUrl = posterUrl
         self.traktLists = traktLists
+        self.showCreateField = showCreateField
+        self.isCreatingList = isCreatingList
+        self.createListName = createListName
         self.onToggle = onToggle
-        self.onCreate = onCreate
+        self.onShowCreateField = onShowCreateField
+        self.onDismissCreateField = onDismissCreateField
+        self.onCreateListNameChanged = onCreateListNameChanged
+        self.onCreateSubmitted = onCreateSubmitted
         _showView = showView
     }
 
@@ -41,8 +59,14 @@ public struct WatchlistSelector: View {
                     isShowInList: list.isShowInList
                 )
             },
+            showCreateField: showCreateField,
+            isCreatingList: isCreatingList,
+            createListName: createListName,
             onToggle: onToggle,
-            onCreate: onCreate,
+            onShowCreateField: onShowCreateField,
+            onDismissCreateField: onDismissCreateField,
+            onCreateListNameChanged: onCreateListNameChanged,
+            onCreateSubmitted: onCreateSubmitted,
             onDismiss: { showView.toggle() }
         )
         .appTint()

@@ -5,36 +5,50 @@ public struct TraktListSelectorContent: View {
     private let title: String
     private let posterUrl: String?
     private let traktLists: [SwiftTraktListItem]
+    private let showCreateField: Bool
+    private let isCreatingList: Bool
+    private let createListName: String
     private let emptyListText: String
-    private let createButtonText: String
     private let newListPlaceholder: String
     private let listsHeaderText: String
     private let onToggle: (Int64, Bool) -> Void
-    private let onCreate: (String) -> Void
+    private let onShowCreateField: () -> Void
+    private let onDismissCreateField: () -> Void
+    private let onCreateListNameChanged: (String) -> Void
+    private let onCreateSubmitted: () -> Void
     private let onDismiss: () -> Void
-    @State private var newListName = ""
 
     public init(
         title: String,
         posterUrl: String?,
         traktLists: [SwiftTraktListItem],
+        showCreateField: Bool = false,
+        isCreatingList: Bool = false,
+        createListName: String = "",
         emptyListText: String = "You don't have any lists yet.",
-        createButtonText: String = "Create",
         newListPlaceholder: String = "New list name",
         listsHeaderText: String = "Your Lists",
         onToggle: @escaping (Int64, Bool) -> Void,
-        onCreate: @escaping (String) -> Void,
+        onShowCreateField: @escaping () -> Void,
+        onDismissCreateField: @escaping () -> Void,
+        onCreateListNameChanged: @escaping (String) -> Void,
+        onCreateSubmitted: @escaping () -> Void,
         onDismiss: @escaping () -> Void
     ) {
         self.title = title
         self.posterUrl = posterUrl
         self.traktLists = traktLists
+        self.showCreateField = showCreateField
+        self.isCreatingList = isCreatingList
+        self.createListName = createListName
         self.emptyListText = emptyListText
-        self.createButtonText = createButtonText
         self.newListPlaceholder = newListPlaceholder
         self.listsHeaderText = listsHeaderText
         self.onToggle = onToggle
-        self.onCreate = onCreate
+        self.onShowCreateField = onShowCreateField
+        self.onDismissCreateField = onDismissCreateField
+        self.onCreateListNameChanged = onCreateListNameChanged
+        self.onCreateSubmitted = onCreateSubmitted
         self.onDismiss = onDismiss
     }
 
@@ -135,26 +149,53 @@ public struct TraktListSelectorContent: View {
 
     private var createSection: some View {
         Section {
-            HStack {
-                TextField(newListPlaceholder, text: $newListName)
-                    .textFieldStyle(.roundedBorder)
-                    .onChange(of: newListName) { _, newValue in
-                        if newValue.count > 50 {
-                            newListName = String(newValue.prefix(50))
-                        }
+            if !showCreateField {
+                Button(action: onShowCreateField) {
+                    HStack {
+                        Image(systemName: "plus.circle.fill")
+                        Text("Create List")
                     }
-
-                Button(action: {
-                    if !newListName.trimmingCharacters(in: .whitespaces).isEmpty {
-                        onCreate(newListName)
-                        newListName = ""
-                    }
-                }) {
-                    Text(createButtonText)
+                    .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
                 .tint(theme.colors.accent)
-                .disabled(newListName.trimmingCharacters(in: .whitespaces).isEmpty)
+            } else {
+                VStack(spacing: theme.spacing.xSmall) {
+                    HStack {
+                        Spacer()
+                        Button(action: onDismissCreateField) {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(theme.colors.onSurfaceVariant)
+                        }
+                        .buttonStyle(.plain)
+                    }
+
+                    HStack {
+                        TextField(newListPlaceholder, text: Binding(
+                            get: { createListName },
+                            set: { newValue in
+                                if newValue.count <= 50 {
+                                    onCreateListNameChanged(newValue)
+                                }
+                            }
+                        ))
+                        .textFieldStyle(.roundedBorder)
+                        .disabled(isCreatingList)
+
+                        Button(action: onCreateSubmitted) {
+                            if isCreatingList {
+                                ProgressView()
+                                    .progressViewStyle(.circular)
+                                    .scaleEffect(0.8)
+                            } else {
+                                Text("Done")
+                            }
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(theme.colors.accent)
+                        .disabled(createListName.trimmingCharacters(in: .whitespaces).isEmpty || isCreatingList)
+                    }
+                }
             }
         }
     }

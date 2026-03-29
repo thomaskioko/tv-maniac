@@ -18,6 +18,8 @@ public data class ShowDetailsContent(
     val continueTrackingEpisodes: ImmutableList<ContinueTrackingEpisodeModel> = persistentListOf(),
     val continueTrackingScrollIndex: Int = 0,
     val traktLists: ImmutableList<TraktListWithMembership> = persistentListOf(),
+    val showCreateListField: Boolean = false,
+    val isCreatingList: Boolean = false,
     val createListName: String = "",
     val createListError: String? = null,
     val message: UiMessage? = null,

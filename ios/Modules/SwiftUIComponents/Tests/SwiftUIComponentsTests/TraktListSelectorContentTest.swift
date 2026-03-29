@@ -37,11 +37,32 @@ class TraktListSelectorContentTest: SnapshotTestCase {
             posterUrl: nil,
             traktLists: sampleLists,
             onToggle: { _, _ in },
-            onCreate: { _ in },
+            onShowCreateField: {},
+            onDismissCreateField: {},
+            onCreateListNameChanged: { _ in },
+            onCreateSubmitted: {},
             onDismiss: {}
         )
         .themedPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "TraktListSelector_WithLists")
+    }
+
+    func test_TraktListSelector_WithCreateField() {
+        TraktListSelectorContent(
+            title: "Loki",
+            posterUrl: nil,
+            traktLists: sampleLists,
+            showCreateField: true,
+            createListName: "My New List",
+            onToggle: { _, _ in },
+            onShowCreateField: {},
+            onDismissCreateField: {},
+            onCreateListNameChanged: { _ in },
+            onCreateSubmitted: {},
+            onDismiss: {}
+        )
+        .themedPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "TraktListSelector_WithCreateField")
     }
 
     func test_TraktListSelector_Empty() {
@@ -50,7 +71,10 @@ class TraktListSelectorContentTest: SnapshotTestCase {
             posterUrl: nil,
             traktLists: [],
             onToggle: { _, _ in },
-            onCreate: { _ in },
+            onShowCreateField: {},
+            onDismissCreateField: {},
+            onCreateListNameChanged: { _ in },
+            onCreateSubmitted: {},
             onDismiss: {}
         )
         .themedPreview()

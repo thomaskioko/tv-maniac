@@ -10,7 +10,13 @@ public data object ShowShowsListSheet : ShowDetailsAction
 
 public data object DismissLoginPrompt : ShowDetailsAction
 
-public data class CreateListSubmitted(val name: String) : ShowDetailsAction
+public data object ShowCreateListField : ShowDetailsAction
+
+public data object DismissCreateListField : ShowDetailsAction
+
+public data class UpdateCreateListName(val name: String) : ShowDetailsAction
+
+public data object CreateListSubmitted : ShowDetailsAction
 
 public data class ShowDetailsMessageShown(val id: Long) : ShowDetailsAction
 

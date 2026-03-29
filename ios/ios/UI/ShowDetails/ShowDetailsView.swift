@@ -111,11 +111,23 @@ struct ShowDetailsView: View {
                 title: uiState.showDetails.title,
                 posterUrl: uiState.showDetails.posterImageUrl,
                 traktLists: uiState.traktLists.map { $0 as! TraktListWithMembership },
+                showCreateField: uiState.showCreateListField,
+                isCreatingList: uiState.isCreatingList,
+                createListName: uiState.createListName,
                 onToggle: { listId, isInList in
                     presenter.dispatch(action: ToggleShowInList(listId: listId, isCurrentlyInList: isInList))
                 },
-                onCreate: { name in
-                    presenter.dispatch(action: CreateListSubmitted(name: name))
+                onShowCreateField: {
+                    presenter.dispatch(action: ShowCreateListField())
+                },
+                onDismissCreateField: {
+                    presenter.dispatch(action: DismissCreateListField())
+                },
+                onCreateListNameChanged: { name in
+                    presenter.dispatch(action: UpdateCreateListName(name: name))
+                },
+                onCreateSubmitted: {
+                    presenter.dispatch(action: CreateListSubmitted())
                 }
             )
         }

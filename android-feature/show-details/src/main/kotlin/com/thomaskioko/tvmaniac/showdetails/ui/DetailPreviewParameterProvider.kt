@@ -158,6 +158,11 @@ internal val showDetailsWithEmptyTraktLists = showDetailsContent.copy(
     traktLists = persistentListOf(),
 )
 
+internal val showDetailsWithCreateFieldExpanded = showDetailsWithTraktLists.copy(
+    showCreateListField = true,
+    createListName = "My New List",
+)
+
 internal class DetailPreviewParameterProvider : PreviewParameterProvider<ShowDetailsContent> {
     override val values: Sequence<ShowDetailsContent>
         get() {
