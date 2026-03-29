@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.model.SeasonModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.TrailerModel
+import com.thomaskioko.tvmaniac.traktlists.api.TraktListWithMembership
 import kotlinx.collections.immutable.persistentListOf
 
 internal val showDetailsContent = ShowDetailsContent(
@@ -120,6 +121,41 @@ internal val showDetailsContentWithError = showDetailsContent.copy(
     message = UiMessage(
         message = "Opps! Something went wrong",
     ),
+)
+
+internal val showDetailsWithTraktLists = showDetailsContent.copy(
+    showListSheet = true,
+    traktLists = persistentListOf(
+        TraktListWithMembership(
+            id = 1,
+            slug = "favorites",
+            name = "Favorites",
+            description = "My favorite shows",
+            itemCount = 12,
+            isShowInList = true,
+        ),
+        TraktListWithMembership(
+            id = 2,
+            slug = "watch-later",
+            name = "Watch Later",
+            description = "Shows to watch later",
+            itemCount = 5,
+            isShowInList = false,
+        ),
+        TraktListWithMembership(
+            id = 3,
+            slug = "sci-fi-marathon",
+            name = "Sci-Fi Marathon",
+            description = null,
+            itemCount = 23,
+            isShowInList = true,
+        ),
+    ),
+)
+
+internal val showDetailsWithEmptyTraktLists = showDetailsContent.copy(
+    showListSheet = true,
+    traktLists = persistentListOf(),
 )
 
 internal class DetailPreviewParameterProvider : PreviewParameterProvider<ShowDetailsContent> {

@@ -220,7 +220,7 @@ internal fun ShowDetailsScreen(
 }
 
 @Composable
-private fun ShowListSheetContent(
+internal fun ShowListSheetContent(
     state: ShowDetailsContent,
     onAction: (ShowDetailsAction) -> Unit,
 ) {
