@@ -15,7 +15,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/kean/Nuke", exact: "12.9.0"),
+        .package(url: "https://github.com/kean/Nuke", exact: "13.0.1"),
         .package(url: "https://github.com/SvenTiigi/YouTubePlayerKit.git", from: "2.0.5"),
         .package(name: "SnapshotTestingLib", path: "../SnapshotTestingLib"),
     ],
