@@ -24,9 +24,13 @@ import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteracto
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncTraktCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
+import com.thomaskioko.tvmaniac.presenter.showdetails.CreateListSubmitted
 import com.thomaskioko.tvmaniac.presenter.showdetails.DismissCreateListField
+import com.thomaskioko.tvmaniac.presenter.showdetails.DismissLoginPrompt
+import com.thomaskioko.tvmaniac.presenter.showdetails.DismissShowsListSheet
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowCreateListField
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowShowsListSheet
+import com.thomaskioko.tvmaniac.presenter.showdetails.ToggleShowInList
 import com.thomaskioko.tvmaniac.presenter.showdetails.UpdateCreateListName
 import com.thomaskioko.tvmaniac.domain.traktlists.CreateTraktListInteractor
 import com.thomaskioko.tvmaniac.domain.traktlists.ObserveTraktListsInteractor
@@ -753,6 +757,73 @@ class ShowDetailsPresenterTest {
         val state = presenter.state.value
         state.showListSheet shouldBe true
         state.showLoginPrompt shouldBe false
+    }
+
+    @Test
+    fun `should set isCreatingList given CreateListSubmitted is dispatched`() = runTest {
+        buildMockData()
+
+        val presenter = buildShowDetailsPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(ShowCreateListField)
+        presenter.dispatch(UpdateCreateListName("My List"))
+        presenter.dispatch(CreateListSubmitted)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val state = presenter.state.value
+        state.isCreatingList shouldBe false
+        state.showCreateListField shouldBe false
+        state.createListName shouldBe ""
+    }
+
+    @Test
+    fun `should dispatch toggle action given ToggleShowInList is dispatched`() = runTest {
+        buildMockData()
+
+        val presenter = buildShowDetailsPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(ToggleShowInList(listId = 1, isCurrentlyInList = false))
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.state.value.message shouldBe null
+    }
+
+    @Test
+    fun `should dismiss login prompt given DismissLoginPrompt is dispatched`() = runTest {
+        traktAuthRepository.setState(TraktAuthState.LOGGED_OUT)
+        buildMockData()
+
+        val presenter = buildShowDetailsPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(ShowShowsListSheet)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.state.value.showLoginPrompt shouldBe true
+
+        presenter.dispatch(DismissLoginPrompt)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.state.value.showLoginPrompt shouldBe false
+    }
+
+    @Test
+    fun `should dismiss list sheet given DismissShowsListSheet is dispatched`() = runTest {
+        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        buildMockData()
+
+        val presenter = buildShowDetailsPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(ShowShowsListSheet)
+        testDispatcher.scheduler.advanceUntilIdle()
+        presenter.state.value.showListSheet shouldBe true
+
+        presenter.dispatch(DismissShowsListSheet)
+        testDispatcher.scheduler.advanceUntilIdle()
+        presenter.state.value.showListSheet shouldBe false
     }
 
     private suspend fun buildMockData(
