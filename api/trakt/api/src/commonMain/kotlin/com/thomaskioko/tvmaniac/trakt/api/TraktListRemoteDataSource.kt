@@ -16,6 +16,8 @@ public interface TraktListRemoteDataSource {
 
     public suspend fun createFollowingList(userSlug: String): ApiResponse<TraktCreateListResponse>
 
+    public suspend fun createList(userSlug: String, name: String): ApiResponse<TraktCreateListResponse>
+
     public suspend fun getFollowedList(listId: Long, userSlug: String): ApiResponse<List<TraktFollowedShowResponse>>
 
     public suspend fun getWatchList(sortBy: String, sortHow: String): ApiResponse<List<TraktFollowedShowResponse>>
@@ -33,4 +35,10 @@ public interface TraktListRemoteDataSource {
         listId: Long,
         traktShowId: Long,
     ): ApiResponse<TraktAddShowToListResponse>
+
+    public suspend fun removeShowFromList(
+        userSlug: String,
+        listId: Long,
+        traktShowId: Long,
+    ): ApiResponse<TraktAddRemoveShowFromListResponse>
 }

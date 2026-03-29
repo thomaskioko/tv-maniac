@@ -19,7 +19,9 @@ import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteracto
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncTraktCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
+import com.thomaskioko.tvmaniac.domain.traktlists.CreateTraktListInteractor
 import com.thomaskioko.tvmaniac.domain.traktlists.ObserveTraktListsInteractor
+import com.thomaskioko.tvmaniac.domain.traktlists.ToggleShowInListInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor.Param
@@ -68,6 +70,8 @@ public class DefaultShowDetailsPresenter(
     private val syncTraktCalendarInteractor: SyncTraktCalendarInteractor,
     private val scheduleEpisodeNotificationsInteractor: ScheduleEpisodeNotificationsInteractor,
     private val notificationManager: NotificationManager,
+    private val createTraktListInteractor: CreateTraktListInteractor,
+    private val toggleShowInListInteractor: ToggleShowInListInteractor,
     observableShowDetailsInteractor: ObservableShowDetailsInteractor,
     observeShowWatchProgressInteractor: ObserveShowWatchProgressInteractor,
     observeTraktListsInteractor: ObserveTraktListsInteractor,
@@ -90,7 +94,7 @@ public class DefaultShowDetailsPresenter(
     init {
         observableShowDetailsInteractor(showTraktId)
         observeShowWatchProgressInteractor(showTraktId)
-        observeTraktListsInteractor(Unit)
+        observeTraktListsInteractor(showTraktId)
         observeShowDetails(forceReload = param.forceRefresh)
         observeAuthState()
     }
@@ -165,8 +169,11 @@ public class DefaultShowDetailsPresenter(
             is ShowDetailsMessageShown -> coroutineScope.launch { uiMessageManager.clearMessage(action.id) }
             DismissShowsListSheet -> coroutineScope.launch { _state.update { it.copy(showListSheet = false) } }
             ShowShowsListSheet -> coroutineScope.launch { _state.update { it.copy(showListSheet = true) } }
-            CreateCustomList -> {
-                // TODO:: Add implementation
+            is CreateListSubmitted -> {
+                coroutineScope.launch {
+                    createTraktListInteractor(CreateTraktListInteractor.Params(name = action.name))
+                        .collectStatus(showDetailsLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+                }
             }
 
             is MarkEpisodeWatched -> {
@@ -189,6 +196,18 @@ public class DefaultShowDetailsPresenter(
                         MarkEpisodeUnwatchedParams(
                             showTraktId = action.showTraktId,
                             episodeId = action.episodeId,
+                        ),
+                    ).collectStatus(episodeActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+                }
+            }
+
+            is ToggleShowInList -> {
+                coroutineScope.launch {
+                    toggleShowInListInteractor(
+                        ToggleShowInListInteractor.Params(
+                            listId = action.listId,
+                            traktShowId = showTraktId,
+                            isCurrentlyInList = action.isCurrentlyInList,
                         ),
                     ).collectStatus(episodeActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
                 }

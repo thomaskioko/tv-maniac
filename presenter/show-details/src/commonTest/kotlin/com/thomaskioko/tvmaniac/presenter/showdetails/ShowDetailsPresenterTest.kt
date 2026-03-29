@@ -24,7 +24,9 @@ import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteracto
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncTraktCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
+import com.thomaskioko.tvmaniac.domain.traktlists.CreateTraktListInteractor
 import com.thomaskioko.tvmaniac.domain.traktlists.ObserveTraktListsInteractor
+import com.thomaskioko.tvmaniac.domain.traktlists.ToggleShowInListInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
@@ -779,6 +781,12 @@ class ShowDetailsPresenterTest {
                 dispatchers = coroutineDispatcher,
             ),
             notificationManager = fakeNotificationManager,
+            createTraktListInteractor = CreateTraktListInteractor(
+                repository = traktListRepository,
+            ),
+            toggleShowInListInteractor = ToggleShowInListInteractor(
+                repository = traktListRepository,
+            ),
             observeTraktListsInteractor = ObserveTraktListsInteractor(
                 repository = traktListRepository,
             ),
