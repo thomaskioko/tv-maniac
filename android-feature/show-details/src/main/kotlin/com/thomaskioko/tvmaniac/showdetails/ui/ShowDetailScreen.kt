@@ -80,6 +80,7 @@ import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.TextLoadingItem
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
+import com.thomaskioko.tvmaniac.compose.components.TvManiacAlertDialog
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.actionIconWhen
 import com.thomaskioko.tvmaniac.compose.extensions.backgroundGradient
@@ -222,17 +223,12 @@ internal fun ShowDetailsScreen(
     )
 
     if (state.showLoginPrompt) {
-        androidx.compose.material3.AlertDialog(
-            onDismissRequest = { onAction(DismissLoginPrompt) },
-            title = { Text(state.loginRequiredTitle) },
-            text = { Text(state.loginRequiredMessage) },
-            confirmButton = {
-                androidx.compose.material3.TextButton(
-                    onClick = { onAction(DismissLoginPrompt) },
-                ) {
-                    Text("OK")
-                }
-            },
+        TvManiacAlertDialog(
+            title = state.loginRequiredTitle,
+            message = state.loginRequiredMessage,
+            confirmButtonText = state.loginRequiredConfirmText,
+            onConfirm = { onAction(DismissLoginPrompt) },
+            onDismiss = { onAction(DismissLoginPrompt) },
         )
     }
 }

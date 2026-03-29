@@ -136,6 +136,7 @@ public class DefaultShowDetailsPresenter(
             listsHeaderText = localizer.getString(StringResourceKey.LabelWatchlistYourLists),
             loginRequiredTitle = localizer.getString(StringResourceKey.LabelWatchlistLoginRequiredTitle),
             loginRequiredMessage = localizer.getString(StringResourceKey.LabelWatchlistLoginRequiredMessage),
+            loginRequiredConfirmText = localizer.getString(StringResourceKey.LabelOk),
             message = message,
         )
     }

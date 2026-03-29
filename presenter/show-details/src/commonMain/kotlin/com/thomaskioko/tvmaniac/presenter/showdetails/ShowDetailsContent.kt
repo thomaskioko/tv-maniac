@@ -30,6 +30,7 @@ public data class ShowDetailsContent(
     val listsHeaderText: String = "",
     val loginRequiredTitle: String = "",
     val loginRequiredMessage: String = "",
+    val loginRequiredConfirmText: String = "",
     val message: UiMessage? = null,
 ) {
     public val isRefreshing: Boolean
