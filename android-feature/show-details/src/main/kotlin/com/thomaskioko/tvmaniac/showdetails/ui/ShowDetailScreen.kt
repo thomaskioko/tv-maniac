@@ -239,11 +239,13 @@ internal fun ShowListSheetContent(
         ) {
             androidx.compose.material3.IconButton(
                 onClick = { onAction(DismissShowsListSheet) },
+                modifier = Modifier.size(48.dp),
             ) {
                 Icon(
                     imageVector = Icons.Filled.Cancel,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(28.dp),
                 )
             }
         }

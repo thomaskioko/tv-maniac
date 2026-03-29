@@ -82,12 +82,12 @@ public struct TraktListSelectorContent: View {
             .toolbarBackground(theme.colors.surface, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    RoundedButton(
-                        imageName: "xmark",
-                        tintColor: theme.colors.accent,
-                        action: onDismiss
-                    )
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: onDismiss) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.title2)
+                            .foregroundColor(theme.colors.onSurfaceVariant)
+                    }
                 }
             }
             .background(theme.colors.background)
@@ -169,18 +169,8 @@ public struct TraktListSelectorContent: View {
                 .buttonStyle(.borderedProminent)
                 .tint(theme.colors.accent)
             } else {
-                VStack(spacing: theme.spacing.xSmall) {
-                    HStack {
-                        Spacer()
-                        Button(action: onDismissCreateField) {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(theme.colors.onSurfaceVariant)
-                        }
-                        .buttonStyle(.plain)
-                    }
-
-                    HStack {
-                        TextField(newListPlaceholder, text: Binding(
+                HStack {
+                    TextField(newListPlaceholder, text: Binding(
                             get: { createListName },
                             set: { newValue in
                                 if newValue.count <= 50 {
@@ -203,7 +193,6 @@ public struct TraktListSelectorContent: View {
                         .buttonStyle(.borderedProminent)
                         .tint(theme.colors.accent)
                         .disabled(createListName.trimmingCharacters(in: .whitespaces).isEmpty || isCreatingList)
-                    }
                 }
             }
         }
