@@ -1,4 +1,4 @@
-name: Android and iOS CI Pipeline
+name: build
 
 on:
     push:
