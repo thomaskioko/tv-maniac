@@ -55,17 +55,17 @@ public class DefaultTraktListRepository(
             }
         }.distinctUntilChanged()
 
-    override suspend fun syncLists(forceRefresh: Boolean) {
+    override suspend fun syncLists(slug: String, forceRefresh: Boolean) {
         if (forceRefresh) {
-            traktListsStore.fresh(key = STORE_KEY)
+            traktListsStore.fresh(key = slug)
         } else {
-            traktListsStore.get(key = STORE_KEY)
+            traktListsStore.get(key = slug)
         }
     }
 
-    override suspend fun createList(name: String) {
+    override suspend fun createList(slug: String, name: String) {
         withContext(dispatchers.io) {
-            when (val response = traktListRemoteDataSource.createList(userSlug = STORE_KEY, name = name)) {
+            when (val response = traktListRemoteDataSource.createList(userSlug = slug, name = name)) {
                 is ApiResponse.Success -> {
                     traktListDao.upsert(
                         TraktListEntity(
@@ -86,7 +86,7 @@ public class DefaultTraktListRepository(
         }
     }
 
-    override suspend fun toggleShowInList(listId: Long, traktShowId: Long, isCurrentlyInList: Boolean) {
+    override suspend fun toggleShowInList(slug: String, listId: Long, traktShowId: Long, isCurrentlyInList: Boolean) {
         withContext(dispatchers.io) {
             if (isCurrentlyInList) {
                 traktListShowDao.updatePendingAction(
@@ -94,7 +94,7 @@ public class DefaultTraktListRepository(
                     showTraktId = traktShowId,
                     pendingAction = PendingAction.DELETE.value,
                 )
-                when (traktListRemoteDataSource.removeShowFromList(STORE_KEY, listId, traktShowId)) {
+                when (traktListRemoteDataSource.removeShowFromList(slug, listId, traktShowId)) {
                     is ApiResponse.Success -> {
                         traktListShowDao.deleteByListIdAndShowId(
                             listId = listId,
@@ -116,7 +116,7 @@ public class DefaultTraktListRepository(
                     listedAt = "",
                     pendingAction = PendingAction.UPLOAD.value,
                 )
-                when (traktListRemoteDataSource.addShowToList(STORE_KEY, listId, traktShowId)) {
+                when (traktListRemoteDataSource.addShowToList(slug, listId, traktShowId)) {
                     is ApiResponse.Success -> {
                         traktListShowDao.updatePendingAction(
                             listId = listId,
@@ -133,9 +133,5 @@ public class DefaultTraktListRepository(
                 }
             }
         }
-    }
-
-    private companion object {
-        private const val STORE_KEY = "me"
     }
 }

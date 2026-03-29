@@ -25,12 +25,12 @@ public class FakeTraktListRepository : TraktListRepository {
     override fun observeListsForShow(traktShowId: Long): Flow<List<TraktListWithMembership>> =
         listsWithMembershipFlow.asStateFlow()
 
-    override suspend fun syncLists(forceRefresh: Boolean) {
+    override suspend fun syncLists(slug: String, forceRefresh: Boolean) {
     }
 
-    override suspend fun createList(name: String) {
+    override suspend fun createList(slug: String, name: String) {
     }
 
-    override suspend fun toggleShowInList(listId: Long, traktShowId: Long, isCurrentlyInList: Boolean) {
+    override suspend fun toggleShowInList(slug: String, listId: Long, traktShowId: Long, isCurrentlyInList: Boolean) {
     }
 }

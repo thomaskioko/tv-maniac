@@ -8,9 +8,9 @@ public interface TraktListRepository {
 
     public fun observeListsForShow(traktShowId: Long): Flow<List<TraktListWithMembership>>
 
-    public suspend fun syncLists(forceRefresh: Boolean = false)
+    public suspend fun syncLists(slug: String, forceRefresh: Boolean = false)
 
-    public suspend fun createList(name: String)
+    public suspend fun createList(slug: String, name: String)
 
-    public suspend fun toggleShowInList(listId: Long, traktShowId: Long, isCurrentlyInList: Boolean)
+    public suspend fun toggleShowInList(slug: String, listId: Long, traktShowId: Long, isCurrentlyInList: Boolean)
 }

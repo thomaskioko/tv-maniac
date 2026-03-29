@@ -57,6 +57,8 @@ kotlin {
                 implementation(projects.data.traktauth.api)
                 implementation(projects.data.traktauth.testing)
                 implementation(projects.data.traktlists.testing)
+                implementation(projects.data.user.api)
+                implementation(projects.data.user.testing)
                 implementation(projects.data.upnext.testing)
                 implementation(projects.data.watchproviders.testing)
                 implementation(projects.i18n.testing)

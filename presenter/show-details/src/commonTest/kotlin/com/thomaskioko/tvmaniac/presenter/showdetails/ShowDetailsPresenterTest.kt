@@ -32,6 +32,7 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.ShowCreateListField
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowShowsListSheet
 import com.thomaskioko.tvmaniac.presenter.showdetails.ToggleShowInList
 import com.thomaskioko.tvmaniac.presenter.showdetails.UpdateCreateListName
+import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.domain.traktlists.CreateTraktListInteractor
 import com.thomaskioko.tvmaniac.domain.traktlists.ObserveTraktListsInteractor
 import com.thomaskioko.tvmaniac.domain.traktlists.SyncTraktListsInteractor
@@ -103,6 +104,7 @@ class ShowDetailsPresenterTest {
     private val upNextRepository = FakeUpNextRepository()
     private val traktAuthRepository = FakeTraktAuthRepository()
     private val traktListRepository = FakeTraktListRepository()
+    private val userRepository = FakeUserRepository()
     private val fakeLocalizer = FakeLocalizer()
     private val fakeFormatterUtil = FakeFormatterUtil()
     private val fakeNotificationManager = FakeNotificationManager()
@@ -935,12 +937,15 @@ class ShowDetailsPresenterTest {
             notificationManager = fakeNotificationManager,
             createTraktListInteractor = CreateTraktListInteractor(
                 repository = traktListRepository,
+                userRepository = userRepository,
             ),
             toggleShowInListInteractor = ToggleShowInListInteractor(
                 repository = traktListRepository,
+                userRepository = userRepository,
             ),
             syncTraktListsInteractor = SyncTraktListsInteractor(
                 repository = traktListRepository,
+                userRepository = userRepository,
             ),
             observeTraktListsInteractor = ObserveTraktListsInteractor(
                 repository = traktListRepository,
