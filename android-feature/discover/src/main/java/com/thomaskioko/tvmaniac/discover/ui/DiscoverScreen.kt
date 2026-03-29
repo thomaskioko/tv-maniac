@@ -65,7 +65,6 @@ import com.thomaskioko.tvmaniac.discover.presenter.ShowClicked
 import com.thomaskioko.tvmaniac.discover.presenter.TopRatedClicked
 import com.thomaskioko.tvmaniac.discover.presenter.TrendingClicked
 import com.thomaskioko.tvmaniac.discover.presenter.UpComingClicked
-import com.thomaskioko.tvmaniac.discover.presenter.model.NextEpisodeUiModel
 import com.thomaskioko.tvmaniac.discover.ui.component.DiscoverHeaderContent
 import com.thomaskioko.tvmaniac.discover.ui.component.HorizontalRowContent
 import com.thomaskioko.tvmaniac.discover.ui.component.NextEpisodesSection
