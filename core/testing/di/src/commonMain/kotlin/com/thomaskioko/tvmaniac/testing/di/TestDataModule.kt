@@ -15,6 +15,8 @@ import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
+import com.thomaskioko.tvmaniac.traktlists.api.TraktListRepository
+import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
 import kotlinx.coroutines.Dispatchers
 import me.tatarka.inject.annotations.Provides
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
@@ -41,6 +43,10 @@ public interface TestDataModule {
     @Provides
     @SingleIn(TestScope::class)
     public fun provideUserRepository(): UserRepository = FakeUserRepository()
+
+    @Provides
+    @SingleIn(TestScope::class)
+    public fun provideTraktListRepository(): TraktListRepository = FakeTraktListRepository()
 
     @Provides
     @SingleIn(TestScope::class)
