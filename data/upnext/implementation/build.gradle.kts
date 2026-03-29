@@ -48,7 +48,6 @@ kotlin {
                 implementation(projects.data.showdetails.testing)
                 implementation(projects.data.seasondetails.testing)
                 implementation(projects.data.shows.implementation)
-                implementation(projects.data.traktauth.testing)
             }
         }
     }

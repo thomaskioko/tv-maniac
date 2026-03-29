@@ -96,6 +96,12 @@ public class FakeUpNextDao : UpNextDao {
         }
     }
 
+    override suspend fun existsForShow(showTraktId: Long): Boolean =
+        upsertedEpisodes.containsKey(showTraktId)
+
+    override suspend fun hasAnyEpisodes(): Boolean =
+        upsertedEpisodes.isNotEmpty()
+
     override suspend fun deleteForShow(showTraktId: Long) {
         upsertedEpisodes.remove(showTraktId)
         showProgressMap.remove(showTraktId)

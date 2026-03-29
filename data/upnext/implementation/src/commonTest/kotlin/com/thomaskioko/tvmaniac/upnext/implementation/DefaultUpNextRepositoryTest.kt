@@ -15,10 +15,7 @@ import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepositor
 import com.thomaskioko.tvmaniac.shows.implementation.DefaultTvShowsDao
 import com.thomaskioko.tvmaniac.trakt.api.TimePeriod
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
-import com.thomaskioko.tvmaniac.trakt.api.model.EpisodeIds
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktNextEpisodeResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedProgressResponse
-import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
@@ -49,7 +46,6 @@ internal class DefaultUpNextRepositoryTest : BaseDatabaseTest() {
         databaseRead = testDispatcher,
     )
     private val dateTimeProvider = FakeDateTimeProvider()
-    private val traktAuthRepository = FakeTraktAuthRepository()
     private val requestManagerRepository = FakeRequestManagerRepository()
     private val showDetailsRepository = FakeShowDetailsRepository()
     private val seasonDetailsRepository = FakeSeasonDetailsRepository()
@@ -92,7 +88,6 @@ internal class DefaultUpNextRepositoryTest : BaseDatabaseTest() {
             requestManagerRepository = requestManagerRepository,
             dateTimeProvider = dateTimeProvider,
             logger = FakeLogger(),
-            traktAuthRepository = traktAuthRepository,
         )
     }
 
@@ -163,6 +158,28 @@ internal class DefaultUpNextRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should set lastWatchedAt given episode is marked as watched and user is unauthenticated`() = runTest {
+        insertShow(id = 1L, name = "Severance")
+        insertFollowedShow(showId = 1L, pendingAction = "UPLOAD")
+        insertSeason(showId = 1L, seasonNumber = 1)
+        insertEpisode(showId = 1L, seasonId = 101L, episodeNumber = 1, title = "Good News About Hell")
+        insertEpisode(showId = 1L, seasonId = 101L, episodeNumber = 2, title = "Half Loop")
+
+        repository.updateUpNextForShow(showTraktId = 1L)
+
+        insertWatchedEpisode(showId = 1L, episodeId = 1001L, seasonNumber = 1, episodeNumber = 1)
+
+        repository.fetchUpNext(showTraktId = 1L, seasonNumber = 1, episodeNumber = 1)
+
+        upNextDao.observeNextEpisodesFromCache().test {
+            val items = awaitItem()
+            items.size shouldBe 1
+            items[0].episodeNumber shouldBe 2L
+            items[0].lastWatchedAt shouldBe NOW
+        }
+    }
+
+    @Test
     fun `should count followed shows excluding deleted entries`() = runTest {
         insertShow(id = 1L, name = "Show A")
         insertShow(id = 2L, name = "Show B")
@@ -195,12 +212,16 @@ internal class DefaultUpNextRepositoryTest : BaseDatabaseTest() {
         )
     }
 
-    private fun insertFollowedShow(showId: Long, pendingAction: String = "NOTHING") {
+    private fun insertFollowedShow(
+        showId: Long,
+        followedAt: Long = NOW - 10_000,
+        pendingAction: String = "NOTHING",
+    ) {
         database.followedShowsQueries.upsert(
             id = null,
             traktId = Id(showId),
             tmdbId = Id(showId),
-            followedAt = NOW - 10_000,
+            followedAt = followedAt,
             pendingAction = pendingAction,
         )
     }
@@ -239,31 +260,31 @@ internal class DefaultUpNextRepositoryTest : BaseDatabaseTest() {
         )
     }
 
+    private fun insertWatchedEpisode(
+        showId: Long,
+        episodeId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+    ) {
+        database.watchedEpisodesQueries.upsert(
+            show_trakt_id = Id(showId),
+            episode_id = Id(episodeId),
+            season_number = seasonNumber,
+            episode_number = episodeNumber,
+            watched_at = NOW,
+            pending_action = "UPLOAD",
+        )
+    }
+
     private companion object {
         private val NOW = LocalDate(2025, 6, 15).toEpochMillis()
     }
 }
 
 private class FakeRemoteDataSource : TraktShowsRemoteDataSource {
-    var watchedProgressResponse: TraktWatchedProgressResponse = TraktWatchedProgressResponse(
-        aired = 10,
-        completed = 5,
-        nextEpisode = TraktNextEpisodeResponse(
-            seasonNumber = 1,
-            episodeNumber = 6,
-            title = "Next Episode",
-            ids = EpisodeIds(trakt = 6001, tmdb = 6001),
-        ),
-        lastEpisode = TraktNextEpisodeResponse(
-            seasonNumber = 1,
-            episodeNumber = 5,
-            title = "Last Episode",
-            ids = EpisodeIds(trakt = 5001, tmdb = 5001),
-        ),
-    )
+    var watchedProgressResponse: ApiResponse<TraktWatchedProgressResponse> = ApiResponse.Unauthenticated
 
-    override suspend fun getWatchedProgress(traktId: Long) =
-        ApiResponse.Success(watchedProgressResponse)
+    override suspend fun getWatchedProgress(traktId: Long) = watchedProgressResponse
 
     override suspend fun getTrendingShows(page: Int, limit: Int, genres: String?) = notImplemented()
     override suspend fun getGenres() = notImplemented()
