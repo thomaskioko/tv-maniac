@@ -161,12 +161,11 @@ internal fun ShowDetailsScreen(
         showBottomSheet = state.showListSheet,
         onDismissBottomSheet = { onAction(DismissShowsListSheet) },
         sheetDragHandle = {
-            SheetDragHandle(
+            ListSheetTopBar(
                 title = state.sheetTitle,
-                textAlign = TextAlign.Start,
-                imageVector = Icons.Filled.Cancel,
-                onClick = { onAction(DismissShowsListSheet) },
-                tint = MaterialTheme.colorScheme.secondary,
+                showCreateField = state.showCreateListField,
+                onClose = { onAction(DismissShowsListSheet) },
+                onCreateClicked = { onAction(ShowCreateListField) },
             )
         },
         sheetContent = {
@@ -233,22 +232,7 @@ internal fun ShowListSheetContent(
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End,
-        ) {
-            androidx.compose.material3.IconButton(
-                onClick = { onAction(DismissShowsListSheet) },
-                modifier = Modifier.size(48.dp),
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Cancel,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(28.dp),
-                )
-            }
-        }
+        Spacer(modifier = Modifier.height(8.dp))
 
         val title = stringResource(id = cd_show_images.resourceId, state.showDetails.title)
 
@@ -291,7 +275,7 @@ internal fun ShowListSheetContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        CreateListSection(state, onAction)
+        CreateListInlineField(state, onAction)
     }
 }
 
@@ -352,64 +336,87 @@ private fun EmptyListContent(
 }
 
 @Composable
-private fun CreateListSection(
+private fun ListSheetTopBar(
+    title: String,
+    showCreateField: Boolean,
+    onClose: () -> Unit,
+    onCreateClicked: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        androidx.compose.material3.IconButton(onClick = onClose) {
+            Icon(
+                imageVector = Icons.Filled.Cancel,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.secondary,
+            )
+        }
+
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.weight(1f),
+            textAlign = TextAlign.Center,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+
+        if (!showCreateField) {
+            androidx.compose.material3.IconButton(onClick = onCreateClicked) {
+                Icon(
+                    imageVector = Icons.Filled.LibraryAddCheck,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.secondary,
+                )
+            }
+        } else {
+            Spacer(modifier = Modifier.size(48.dp))
+        }
+    }
+}
+
+@Composable
+private fun CreateListInlineField(
     state: ShowDetailsContent,
     onAction: (ShowDetailsAction) -> Unit,
 ) {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        androidx.compose.animation.AnimatedVisibility(visible = !state.showCreateListField) {
-            FilledTextButton(
-                onClick = { onAction(ShowCreateListField) },
-                modifier = Modifier.fillMaxWidth(),
-                buttonColors = ButtonDefaults.textButtonColors(
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary,
-                ),
-                shape = MaterialTheme.shapes.medium,
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.AddCircle,
-                    contentDescription = null,
-                    modifier = Modifier.padding(end = 8.dp),
-                )
-                Text(state.createListButtonText)
-            }
-        }
+    androidx.compose.animation.AnimatedVisibility(visible = state.showCreateListField) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            androidx.compose.material3.OutlinedTextField(
+                value = state.createListName,
+                onValueChange = { if (it.length <= 50) onAction(UpdateCreateListName(it)) },
+                modifier = Modifier.weight(1f),
+                placeholder = { Text(state.createListPlaceholder) },
+                singleLine = true,
+                enabled = !state.isCreatingList,
+                textStyle = MaterialTheme.typography.bodyMedium,
+            )
 
-        androidx.compose.animation.AnimatedVisibility(visible = state.showCreateListField) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                androidx.compose.material3.OutlinedTextField(
-                    value = state.createListName,
-                    onValueChange = { if (it.length <= 50) onAction(UpdateCreateListName(it)) },
-                    modifier = Modifier.weight(1f),
-                    placeholder = { Text(state.createListPlaceholder) },
-                    singleLine = true,
-                    enabled = !state.isCreatingList,
-                    textStyle = MaterialTheme.typography.bodyMedium,
+            if (state.isCreatingList) {
+                androidx.compose.material3.CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    strokeWidth = 2.dp,
+                    color = MaterialTheme.colorScheme.secondary,
                 )
-
-                if (state.isCreatingList) {
-                    androidx.compose.material3.CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        strokeWidth = 2.dp,
-                        color = MaterialTheme.colorScheme.secondary,
-                    )
-                } else {
-                    FilledTextButton(
-                        onClick = { onAction(CreateListSubmitted) },
-                        enabled = state.createListName.isNotBlank(),
-                        buttonColors = ButtonDefaults.textButtonColors(
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary,
-                        ),
-                        shape = MaterialTheme.shapes.medium,
-                    ) {
-                        Text(state.createListDoneText)
-                    }
+            } else {
+                FilledTextButton(
+                    onClick = { onAction(CreateListSubmitted) },
+                    enabled = state.createListName.isNotBlank(),
+                    buttonColors = ButtonDefaults.textButtonColors(
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary,
+                    ),
+                    shape = MaterialTheme.shapes.medium,
+                ) {
+                    Text(state.createListDoneText)
                 }
             }
         }

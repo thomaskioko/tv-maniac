@@ -82,11 +82,20 @@ public struct TraktListSelectorContent: View {
             .toolbarBackground(theme.colors.surface, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItem(placement: .topBarLeading) {
                     Button(action: onDismiss) {
                         Image(systemName: "xmark.circle.fill")
                             .font(.title2)
-                            .foregroundColor(theme.colors.onSurfaceVariant)
+                            .foregroundColor(theme.colors.accent)
+                    }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    if !showCreateField {
+                        Button(action: onShowCreateField) {
+                            Image(systemName: "plus.rectangle.on.rectangle")
+                                .font(.title3)
+                                .foregroundColor(theme.colors.accent)
+                        }
                     }
                 }
             }
@@ -156,43 +165,34 @@ public struct TraktListSelectorContent: View {
         .listRowBackground(Color.clear)
     }
 
+    @ViewBuilder
     private var createSection: some View {
-        Section {
-            if !showCreateField {
-                Button(action: onShowCreateField) {
-                    HStack {
-                        Image(systemName: "plus.circle.fill")
-                        Text(createButtonText)
-                    }
-                    .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .tint(theme.colors.accent)
-            } else {
+        if showCreateField {
+            Section {
                 HStack {
                     TextField(newListPlaceholder, text: Binding(
-                            get: { createListName },
-                            set: { newValue in
-                                if newValue.count <= 50 {
-                                    onCreateListNameChanged(newValue)
-                                }
-                            }
-                        ))
-                        .textFieldStyle(.roundedBorder)
-                        .disabled(isCreatingList)
-
-                        Button(action: onCreateSubmitted) {
-                            if isCreatingList {
-                                ProgressView()
-                                    .progressViewStyle(.circular)
-                                    .scaleEffect(0.8)
-                            } else {
-                                Text(doneButtonText)
+                        get: { createListName },
+                        set: { newValue in
+                            if newValue.count <= 50 {
+                                onCreateListNameChanged(newValue)
                             }
                         }
-                        .buttonStyle(.borderedProminent)
-                        .tint(theme.colors.accent)
-                        .disabled(createListName.trimmingCharacters(in: .whitespaces).isEmpty || isCreatingList)
+                    ))
+                    .textFieldStyle(.roundedBorder)
+                    .disabled(isCreatingList)
+
+                    Button(action: onCreateSubmitted) {
+                        if isCreatingList {
+                            ProgressView()
+                                .progressViewStyle(.circular)
+                                .scaleEffect(0.8)
+                        } else {
+                            Text(doneButtonText)
+                        }
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(theme.colors.accent)
+                    .disabled(createListName.trimmingCharacters(in: .whitespaces).isEmpty || isCreatingList)
                 }
             }
         }
