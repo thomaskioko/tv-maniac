@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import com.thomaskioko.tvmaniac.showdetails.ui.ShowListSheetContent
 import com.thomaskioko.tvmaniac.showdetails.ui.showDetailsWithCreateFieldExpanded
+import com.thomaskioko.tvmaniac.showdetails.ui.showDetailsWithCreateListLoading
 import com.thomaskioko.tvmaniac.showdetails.ui.showDetailsWithEmptyTraktLists
 import com.thomaskioko.tvmaniac.showdetails.ui.showDetailsWithTraktLists
 import org.junit.Rule
@@ -43,6 +44,18 @@ class ShowListSheetScreenshotTest {
             TvManiacBackground {
                 ShowListSheetContent(
                     state = showDetailsWithCreateFieldExpanded,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun showListSheetCreatingList() {
+        composeTestRule.captureMultiDevice("ShowListSheetCreatingList") {
+            TvManiacBackground {
+                ShowListSheetContent(
+                    state = showDetailsWithCreateListLoading,
                     onAction = {},
                 )
             }

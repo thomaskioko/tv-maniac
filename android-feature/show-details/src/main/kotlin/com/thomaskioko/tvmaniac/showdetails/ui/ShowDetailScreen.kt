@@ -233,7 +233,20 @@ internal fun ShowListSheetContent(
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(modifier = Modifier.height(24.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End,
+        ) {
+            androidx.compose.material3.IconButton(
+                onClick = { onAction(DismissShowsListSheet) },
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Cancel,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
 
         val title = stringResource(id = cd_show_images.resourceId, state.showDetails.title)
 
@@ -362,55 +375,38 @@ private fun CreateListSection(
         }
 
         androidx.compose.animation.AnimatedVisibility(visible = state.showCreateListField) {
-            Column {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End,
-                ) {
-                    androidx.compose.material3.IconButton(
-                        onClick = { onAction(DismissCreateListField) },
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Cancel,
-                            contentDescription = "Close",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                androidx.compose.material3.OutlinedTextField(
+                    value = state.createListName,
+                    onValueChange = { if (it.length <= 50) onAction(UpdateCreateListName(it)) },
+                    modifier = Modifier.weight(1f),
+                    placeholder = { Text(state.createListPlaceholder) },
+                    singleLine = true,
+                    enabled = !state.isCreatingList,
+                    textStyle = MaterialTheme.typography.bodyMedium,
+                )
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    androidx.compose.material3.OutlinedTextField(
-                        value = state.createListName,
-                        onValueChange = { if (it.length <= 50) onAction(UpdateCreateListName(it)) },
-                        modifier = Modifier.weight(1f),
-                        placeholder = { Text(state.createListPlaceholder) },
-                        singleLine = true,
-                        enabled = !state.isCreatingList,
-                        textStyle = MaterialTheme.typography.bodyMedium,
+                if (state.isCreatingList) {
+                    androidx.compose.material3.CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.secondary,
                     )
-
+                } else {
                     FilledTextButton(
                         onClick = { onAction(CreateListSubmitted) },
-                        enabled = state.createListName.isNotBlank() && !state.isCreatingList,
+                        enabled = state.createListName.isNotBlank(),
                         buttonColors = ButtonDefaults.textButtonColors(
                             containerColor = MaterialTheme.colorScheme.secondary,
                             contentColor = MaterialTheme.colorScheme.onSecondary,
                         ),
                         shape = MaterialTheme.shapes.medium,
                     ) {
-                        if (state.isCreatingList) {
-                            androidx.compose.material3.CircularProgressIndicator(
-                                modifier = Modifier.size(16.dp),
-                                strokeWidth = 2.dp,
-                                color = MaterialTheme.colorScheme.onSecondary,
-                            )
-                        } else {
-                            Text(state.createListDoneText)
-                        }
+                        Text(state.createListDoneText)
                     }
                 }
             }

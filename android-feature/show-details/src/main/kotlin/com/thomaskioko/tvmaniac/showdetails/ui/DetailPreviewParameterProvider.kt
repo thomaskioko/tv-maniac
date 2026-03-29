@@ -163,6 +163,12 @@ internal val showDetailsWithCreateFieldExpanded = showDetailsWithTraktLists.copy
     createListName = "My New List",
 )
 
+internal val showDetailsWithCreateListLoading = showDetailsWithTraktLists.copy(
+    showCreateListField = true,
+    isCreatingList = true,
+    createListName = "Sci-Fi Picks",
+)
+
 internal class DetailPreviewParameterProvider : PreviewParameterProvider<ShowDetailsContent> {
     override val values: Sequence<ShowDetailsContent>
         get() {
