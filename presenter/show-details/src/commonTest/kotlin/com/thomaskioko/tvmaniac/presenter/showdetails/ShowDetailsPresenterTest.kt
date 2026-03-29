@@ -30,6 +30,7 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.ShowShowsListSheet
 import com.thomaskioko.tvmaniac.presenter.showdetails.UpdateCreateListName
 import com.thomaskioko.tvmaniac.domain.traktlists.CreateTraktListInteractor
 import com.thomaskioko.tvmaniac.domain.traktlists.ObserveTraktListsInteractor
+import com.thomaskioko.tvmaniac.domain.traktlists.SyncTraktListsInteractor
 import com.thomaskioko.tvmaniac.domain.traktlists.ToggleShowInListInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
@@ -865,6 +866,9 @@ class ShowDetailsPresenterTest {
                 repository = traktListRepository,
             ),
             toggleShowInListInteractor = ToggleShowInListInteractor(
+                repository = traktListRepository,
+            ),
+            syncTraktListsInteractor = SyncTraktListsInteractor(
                 repository = traktListRepository,
             ),
             observeTraktListsInteractor = ObserveTraktListsInteractor(

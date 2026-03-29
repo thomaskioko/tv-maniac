@@ -23,6 +23,7 @@ import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.domain.traktlists.CreateTraktListInteractor
 import com.thomaskioko.tvmaniac.domain.traktlists.ObserveTraktListsInteractor
+import com.thomaskioko.tvmaniac.domain.traktlists.SyncTraktListsInteractor
 import com.thomaskioko.tvmaniac.domain.traktlists.ToggleShowInListInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
@@ -74,6 +75,7 @@ public class DefaultShowDetailsPresenter(
     private val notificationManager: NotificationManager,
     private val createTraktListInteractor: CreateTraktListInteractor,
     private val toggleShowInListInteractor: ToggleShowInListInteractor,
+    private val syncTraktListsInteractor: SyncTraktListsInteractor,
     observableShowDetailsInteractor: ObservableShowDetailsInteractor,
     observeShowWatchProgressInteractor: ObserveShowWatchProgressInteractor,
     observeTraktListsInteractor: ObserveTraktListsInteractor,
@@ -181,6 +183,8 @@ public class DefaultShowDetailsPresenter(
                 coroutineScope.launch {
                     if (traktAuthRepository.isLoggedIn()) {
                         _state.update { it.copy(showListSheet = true) }
+                        syncTraktListsInteractor(SyncTraktListsInteractor.Params())
+                            .collectStatus(showDetailsLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
                     } else {
                         _state.update { it.copy(showLoginPrompt = true) }
                     }
