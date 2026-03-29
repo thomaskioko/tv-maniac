@@ -28,6 +28,8 @@ public data class ShowDetailsContent(
     val createListPlaceholder: String = "",
     val emptyListText: String = "",
     val listsHeaderText: String = "",
+    val loginRequiredTitle: String = "",
+    val loginRequiredMessage: String = "",
     val message: UiMessage? = null,
 ) {
     public val isRefreshing: Boolean

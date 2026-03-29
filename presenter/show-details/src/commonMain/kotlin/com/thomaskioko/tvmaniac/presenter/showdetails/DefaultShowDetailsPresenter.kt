@@ -134,6 +134,8 @@ public class DefaultShowDetailsPresenter(
             createListPlaceholder = localizer.getString(StringResourceKey.LabelWatchlistNewListPlaceholder),
             emptyListText = localizer.getString(StringResourceKey.LabelWatchlistEmptyList),
             listsHeaderText = localizer.getString(StringResourceKey.LabelWatchlistYourLists),
+            loginRequiredTitle = localizer.getString(StringResourceKey.LabelWatchlistLoginRequiredTitle),
+            loginRequiredMessage = localizer.getString(StringResourceKey.LabelWatchlistLoginRequiredMessage),
             message = message,
         )
     }

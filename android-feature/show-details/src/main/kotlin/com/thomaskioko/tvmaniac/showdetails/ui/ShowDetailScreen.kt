@@ -103,6 +103,7 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.DetailBackClicked
 import com.thomaskioko.tvmaniac.presenter.showdetails.DetailShowClicked
 import com.thomaskioko.tvmaniac.presenter.showdetails.CreateListSubmitted
 import com.thomaskioko.tvmaniac.presenter.showdetails.DismissCreateListField
+import com.thomaskioko.tvmaniac.presenter.showdetails.DismissLoginPrompt
 import com.thomaskioko.tvmaniac.presenter.showdetails.DismissShowsListSheet
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowCreateListField
 import com.thomaskioko.tvmaniac.presenter.showdetails.UpdateCreateListName
@@ -219,6 +220,21 @@ internal fun ShowDetailsScreen(
             }
         },
     )
+
+    if (state.showLoginPrompt) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { onAction(DismissLoginPrompt) },
+            title = { Text(state.loginRequiredTitle) },
+            text = { Text(state.loginRequiredMessage) },
+            confirmButton = {
+                androidx.compose.material3.TextButton(
+                    onClick = { onAction(DismissLoginPrompt) },
+                ) {
+                    Text("OK")
+                }
+            },
+        )
+    }
 }
 
 @Composable

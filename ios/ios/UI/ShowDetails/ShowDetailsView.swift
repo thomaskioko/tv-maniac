@@ -137,12 +137,12 @@ struct ShowDetailsView: View {
                 }
             )
         }
-        .alert("Login Required", isPresented: $showLoginPrompt) {
+        .alert(uiState.loginRequiredTitle, isPresented: $showLoginPrompt) {
             Button("OK") {
                 presenter.dispatch(action: DismissLoginPrompt())
             }
         } message: {
-            Text("Please log in with Trakt to manage your lists.")
+            Text(uiState.loginRequiredMessage)
         }
     }
 }

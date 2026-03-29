@@ -31,6 +31,8 @@
     <string name="label_watchlist_new_list_placeholder">Nouveau nom de liste</string>
     <string name="label_watchlist_save_to_list">Enregistrer dans la liste</string>
     <string name="label_watchlist_your_lists">Vos listes</string>
+    <string name="label_watchlist_login_required_title">Connexion requise</string>
+    <string name="label_watchlist_login_required_message">Veuillez vous connecter à Trakt pour gérer vos listes.</string>
     <string name="label_watchlist_list_style">Style de liste</string>
     <string name="label_watchlist_search_hint">Entrez un titre d'émission pour rechercher une émission</string>
     <string name="label_watchlist_sort_list">Trier la liste</string>
