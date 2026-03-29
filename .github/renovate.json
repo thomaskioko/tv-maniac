@@ -55,5 +55,6 @@
     ],
     "dependencyDashboard": true,
     "rebaseWhen": "conflicted",
-    "configMigration": true
+    "configMigration": true,
+    "commitMessagePrefix": "chore(deps):"
 }
