@@ -10,7 +10,7 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.model.SeasonModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.TrailerModel
-import com.thomaskioko.tvmaniac.traktlists.api.TraktListWithMembership
+import com.thomaskioko.tvmaniac.presenter.showdetails.model.TraktListModel
 import kotlinx.collections.immutable.persistentListOf
 
 internal val showDetailsContent = ShowDetailsContent(
@@ -126,7 +126,7 @@ internal val showDetailsContentWithError = showDetailsContent.copy(
 internal val showDetailsWithTraktLists = showDetailsContent.copy(
     showListSheet = true,
     traktLists = persistentListOf(
-        TraktListWithMembership(
+        TraktListModel(
             id = 1,
             slug = "favorites",
             name = "Favorites",
@@ -134,7 +134,7 @@ internal val showDetailsWithTraktLists = showDetailsContent.copy(
             itemCount = 12,
             isShowInList = true,
         ),
-        TraktListWithMembership(
+        TraktListModel(
             id = 2,
             slug = "watch-later",
             name = "Watch Later",
@@ -142,7 +142,7 @@ internal val showDetailsWithTraktLists = showDetailsContent.copy(
             itemCount = 5,
             isShowInList = false,
         ),
-        TraktListWithMembership(
+        TraktListModel(
             id = 3,
             slug = "sci-fi-marathon",
             name = "Sci-Fi Marathon",

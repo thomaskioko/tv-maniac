@@ -129,7 +129,16 @@ public class DefaultShowDetailsPresenter(
             watchProvidersRefreshing = watchProvidersUpdating,
             continueTrackingEpisodes = mapContinueTrackingEpisodes(showDetails.continueTrackingEpisodes, showTraktId),
             continueTrackingScrollIndex = showDetails.continueTrackingScrollIndex,
-            traktLists = traktLists.toImmutableList(),
+            traktLists = traktLists.map { list ->
+                com.thomaskioko.tvmaniac.presenter.showdetails.model.TraktListModel(
+                    id = list.id,
+                    slug = list.slug,
+                    name = list.name,
+                    description = list.description,
+                    itemCount = list.itemCount,
+                    isShowInList = list.isShowInList,
+                )
+            }.toImmutableList(),
             sheetTitle = localizer.getString(StringResourceKey.LabelWatchlistSaveToList),
             createListButtonText = localizer.getString(StringResourceKey.LabelWatchlistCreateCustomList),
             createListDoneText = localizer.getString(StringResourceKey.LabelWatchlistDone),
