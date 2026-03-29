@@ -110,7 +110,7 @@ struct ShowDetailsView: View {
                 showView: $showCustomList,
                 title: uiState.showDetails.title,
                 posterUrl: uiState.showDetails.posterImageUrl,
-                traktLists: uiState.traktLists.compactMap { ($0 as? TraktListModel)?.toSwift() },
+                traktLists: uiState.traktLists.map { $0.toSwift() },
                 showCreateField: uiState.showCreateListField,
                 isCreatingList: uiState.isCreatingList,
                 createListName: uiState.createListName,
