@@ -7,7 +7,7 @@ public struct WatchlistSelector: View {
     @Binding var showView: Bool
     private let title: String
     private let posterUrl: String?
-    private let traktLists: [TraktListModel]
+    private let traktLists: [SwiftTraktListItem]
     private let showCreateField: Bool
     private let isCreatingList: Bool
     private let createListName: String
@@ -27,7 +27,7 @@ public struct WatchlistSelector: View {
         showView: Binding<Bool>,
         title: String,
         posterUrl: String?,
-        traktLists: [TraktListModel],
+        traktLists: [SwiftTraktListItem],
         showCreateField: Bool,
         isCreatingList: Bool,
         createListName: String,
@@ -67,16 +67,7 @@ public struct WatchlistSelector: View {
         TraktListSelectorContent(
             title: title,
             posterUrl: posterUrl,
-            traktLists: traktLists.map { list in
-                SwiftTraktListItem(
-                    listId: list.id,
-                    slug: list.slug,
-                    name: list.name,
-                    description: list.description_,
-                    itemCount: list.itemCount,
-                    isShowInList: list.isShowInList
-                )
-            },
+            traktLists: traktLists,
             showCreateField: showCreateField,
             isCreatingList: isCreatingList,
             createListName: createListName,
