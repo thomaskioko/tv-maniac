@@ -1,6 +1,11 @@
 package com.thomaskioko.tvmaniac.navigation
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.router.slot.ChildSlot
+import com.arkivanov.decompose.router.slot.SlotNavigation
+import com.arkivanov.decompose.router.slot.activate
+import com.arkivanov.decompose.router.slot.childSlot
+import com.arkivanov.decompose.router.slot.dismiss
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.childStack
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
@@ -14,6 +19,8 @@ import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
 import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsPresenter
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child
+import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeDetailSheetPresenter
+import com.thomaskioko.tvmaniac.presentation.episodedetail.ScreenSource
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsParam
@@ -55,6 +62,7 @@ public class DefaultRootPresenter(
     private val showDetailsPresenterFactory: ShowDetailsPresenter.Factory,
     private val seasonDetailsPresenterFactory: SeasonDetailsPresenter.Factory,
     private val trailersPresenterFactory: TrailersPresenter.Factory,
+    private val episodeDetailSheetPresenterFactory: EpisodeDetailSheetPresenter.Factory,
     private val traktAuthRepository: TraktAuthRepository,
     private val updateUserProfileData: UpdateUserProfileData,
     private val logoutInteractor: LogoutInteractor,
@@ -105,6 +113,46 @@ public class DefaultRootPresenter(
         handleBackButton = true,
         childFactory = ::createScreen,
     ).asStateFlow(componentContext.componentCoroutineScope())
+
+    private val slotNavigation = SlotNavigation<EpisodeSheetConfig>()
+
+    override val episodeSheetSlot: StateFlow<ChildSlot<*, EpisodeDetailSheetPresenter>> = childSlot(
+        source = slotNavigation,
+        key = "EpisodeSheetSlotKey",
+        serializer = EpisodeSheetConfig.serializer(),
+        handleBackButton = true,
+    ) { config, childComponentContext ->
+        episodeDetailSheetPresenterFactory(
+            componentContext = childComponentContext,
+            episodeId = config.episodeId,
+            source = config.source,
+            navigateToShowDetails = { showTraktId ->
+                slotNavigation.dismiss()
+                navigator.pushToFront(
+                    RootDestinationConfig.ShowDetails(
+                        param = ShowDetailsParam(id = showTraktId),
+                    ),
+                )
+            },
+            navigateToSeasonDetails = { showTraktId, seasonId, seasonNumber ->
+                slotNavigation.dismiss()
+                navigator.pushNew(
+                    RootDestinationConfig.SeasonDetails(
+                        param = SeasonDetailsUiParam(
+                            showTraktId = showTraktId,
+                            seasonId = seasonId,
+                            seasonNumber = seasonNumber,
+                        ),
+                    ),
+                )
+            },
+            dismissSheet = { slotNavigation.dismiss() },
+        )
+    }.asStateFlow(componentContext.componentCoroutineScope())
+
+    private fun showEpisodeSheet(episodeId: Long, source: ScreenSource) {
+        slotNavigation.activate(EpisodeSheetConfig(episodeId = episodeId, source = source))
+    }
 
     override val themeState: StateFlow<ThemeState> =
         datastoreRepository
@@ -247,6 +295,15 @@ public class DefaultRootPresenter(
                                 ),
                             )
                         },
+                        onDiscoverEpisodeLongPressed = { episodeId ->
+                            showEpisodeSheet(episodeId, ScreenSource.DISCOVER)
+                        },
+                        onUpNextEpisodeLongPressed = { episodeId ->
+                            showEpisodeSheet(episodeId, ScreenSource.UP_NEXT)
+                        },
+                        onCalendarEpisodeLongPressed = { episodeId ->
+                            showEpisodeSheet(episodeId, ScreenSource.CALENDAR)
+                        },
                     ),
                 )
 
@@ -328,8 +385,8 @@ public class DefaultRootPresenter(
                         componentContext,
                         param = config.param,
                         onBack = navigator::pop,
-                        onNavigateToEpisodeDetails = { _ ->
-                            // TODO:: Navigate to episode details
+                        onNavigateToEpisodeDetails = { episodeId ->
+                            showEpisodeSheet(episodeId, ScreenSource.SEASON_DETAILS)
                         },
                     ),
                 )
@@ -373,6 +430,7 @@ public class DefaultRootPresenter(
         private val showDetailsPresenterFactory: ShowDetailsPresenter.Factory,
         private val seasonDetailsPresenterFactory: SeasonDetailsPresenter.Factory,
         private val trailersPresenterFactory: TrailersPresenter.Factory,
+        private val episodeDetailSheetPresenterFactory: EpisodeDetailSheetPresenter.Factory,
         private val traktAuthRepository: TraktAuthRepository,
         private val updateUserProfileData: UpdateUserProfileData,
         private val logoutInteractor: LogoutInteractor,
@@ -392,6 +450,7 @@ public class DefaultRootPresenter(
             showDetailsPresenterFactory = showDetailsPresenterFactory,
             seasonDetailsPresenterFactory = seasonDetailsPresenterFactory,
             trailersPresenterFactory = trailersPresenterFactory,
+            episodeDetailSheetPresenterFactory = episodeDetailSheetPresenterFactory,
             traktAuthRepository = traktAuthRepository,
             updateUserProfileData = updateUserProfileData,
             logoutInteractor = logoutInteractor,

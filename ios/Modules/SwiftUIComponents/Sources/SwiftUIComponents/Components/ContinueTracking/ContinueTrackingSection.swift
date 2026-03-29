@@ -7,6 +7,7 @@ public struct ContinueTrackingSection: View {
     private let episodes: [SwiftContinueTrackingEpisode]
     private let scrollIndex: Int
     private let dayLabelFormat: (_ count: Int) -> String
+    private let tbdLabel: String
     private let onMarkWatched: (SwiftContinueTrackingEpisode) -> Void
 
     public init(
@@ -14,12 +15,14 @@ public struct ContinueTrackingSection: View {
         episodes: [SwiftContinueTrackingEpisode],
         scrollIndex: Int,
         dayLabelFormat: @escaping (_ count: Int) -> String,
+        tbdLabel: String,
         onMarkWatched: @escaping (SwiftContinueTrackingEpisode) -> Void
     ) {
         self.title = title
         self.episodes = episodes
         self.scrollIndex = scrollIndex
         self.dayLabelFormat = dayLabelFormat
+        self.tbdLabel = tbdLabel
         self.onMarkWatched = onMarkWatched
     }
 
@@ -38,6 +41,7 @@ public struct ContinueTrackingSection: View {
                                 ContinueTrackingCard(
                                     episode: episode,
                                     dayLabelFormat: dayLabelFormat,
+                                    tbdLabel: tbdLabel,
                                     onMarkWatched: { onMarkWatched(episode) }
                                 )
                                 .id(episode.id)
@@ -128,6 +132,7 @@ public struct ContinueTrackingSection: View {
             ],
             scrollIndex: 2,
             dayLabelFormat: { count in count == 1 ? "day" : "days" },
+            tbdLabel: "TBD",
             onMarkWatched: { _ in }
         )
     }

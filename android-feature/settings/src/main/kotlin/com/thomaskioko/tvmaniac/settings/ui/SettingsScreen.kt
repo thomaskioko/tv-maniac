@@ -23,7 +23,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.BugReport
-import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
@@ -41,9 +40,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -51,10 +47,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -64,15 +58,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacAlertDialog
+import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_back
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_menu_subtitle
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_menu_title
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_debug_section_developer
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_crash_reporting
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_crash_reporting_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_episode_notifications
@@ -119,8 +112,8 @@ import com.thomaskioko.tvmaniac.settings.presenter.DismissTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.EpisodeNotificationsToggled
 import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
 import com.thomaskioko.tvmaniac.settings.presenter.IncludeSpecialsToggled
-import com.thomaskioko.tvmaniac.settings.presenter.NavigateToDebugMenu
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsActions
+import com.thomaskioko.tvmaniac.settings.presenter.SettingsMessageShown
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
 import com.thomaskioko.tvmaniac.settings.presenter.ShowAboutDialog
@@ -128,6 +121,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.ShowTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
 import com.thomaskioko.tvmaniac.settings.presenter.TraktLogoutClicked
+import com.thomaskioko.tvmaniac.settings.presenter.VersionClicked
 import com.thomaskioko.tvmaniac.settings.presenter.YoutubeToggled
 
 @Composable
@@ -136,13 +130,17 @@ public fun SettingsScreen(
     modifier: Modifier = Modifier,
 ) {
     val state by presenter.state.collectAsState()
-    val snackbarHostState = remember { SnackbarHostState() }
 
     SettingsScreen(
         modifier = modifier,
         state = state,
-        snackbarHostState = snackbarHostState,
         onAction = presenter::dispatch,
+    )
+
+    TvManiacSnackBarHost(
+        message = state.message?.message,
+        style = SnackBarStyle.Error,
+        onDismiss = { state.message?.let { presenter.dispatch(SettingsMessageShown(it.id)) } },
     )
 }
 
@@ -150,7 +148,6 @@ public fun SettingsScreen(
 @Composable
 internal fun SettingsScreen(
     state: SettingsState,
-    snackbarHostState: SnackbarHostState,
     onAction: (SettingsActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -189,18 +186,8 @@ internal fun SettingsScreen(
                 ),
             )
         },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         modifier = modifier,
         content = { innerPadding ->
-            LaunchedEffect(key1 = state.errorMessage) {
-                if (state.errorMessage != null) {
-                    snackbarHostState.showSnackbar(
-                        message = state.errorMessage!!,
-                        duration = SnackbarDuration.Short,
-                    )
-                }
-            }
-
             SettingsContent(
                 state = state,
                 onAction = onAction,
@@ -225,6 +212,7 @@ internal fun SettingsScreen(
             AboutSheetContent(
                 versionName = state.versionName,
                 onGitHubClick = { openInCustomTab(context, state.githubUrl) },
+                onVersionClick = { onAction(VersionClicked) },
             )
         }
     }
@@ -374,25 +362,6 @@ private fun SettingsContent(
                 TraktAccountSection(
                     showTraktDialog = state.showTraktDialog,
                     onAction = onAction,
-                )
-            }
-        }
-
-        if (state.isDebugBuild) {
-            item { Spacer(modifier = Modifier.height(24.dp)) }
-
-            item {
-                SectionHeader(title = label_debug_section_developer.resolve(context))
-            }
-
-            item { Spacer(modifier = Modifier.height(16.dp)) }
-
-            item {
-                SettingsClickableItem(
-                    icon = Icons.Filled.Code,
-                    title = label_debug_menu_title.resolve(context),
-                    subtitle = label_debug_menu_subtitle.resolve(context),
-                    onClick = { onAction(NavigateToDebugMenu) },
                 )
             }
         }
@@ -859,7 +828,6 @@ private fun SettingsScreenPreview(
         Surface {
             SettingsScreen(
                 state = state,
-                snackbarHostState = SnackbarHostState(),
                 onAction = {},
             )
         }

@@ -127,7 +127,7 @@ internal class SyncErrorTest {
         val result = error.toSyncError()
 
         result.shouldBeInstanceOf<SyncError.Permanent.InvalidData>()
-        result.message shouldBe "Failed to parse response data."
+        result.message shouldBe "Failed to process data. Please try again."
     }
 
     @Test

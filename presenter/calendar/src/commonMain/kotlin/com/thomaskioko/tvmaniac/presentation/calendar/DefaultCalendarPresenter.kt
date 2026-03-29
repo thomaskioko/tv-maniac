@@ -4,6 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
@@ -39,11 +40,13 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 public class DefaultCalendarPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val navigateToShowDetails: (Long) -> Unit,
+    @Assisted private val onEpisodeLongPressed: (Long) -> Unit,
     private val observeCalendarInteractor: ObserveCalendarInteractor,
     private val fetchCalendarInteractor: FetchCalendarInteractor,
     private val traktAuthRepository: TraktAuthRepository,
     private val calendarWeekCalculator: CalendarWeekCalculator,
     private val calendarStateMapper: CalendarStateMapper,
+    private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
     private val coroutineScope: CoroutineScope = componentContext.coroutineScope(),
 ) : CalendarPresenter, ComponentContext by componentContext {
@@ -96,14 +99,7 @@ public class DefaultCalendarPresenter(
 
             is NavigateToPreviousWeek -> navigateToPreviousWeek()
             is NavigateToNextWeek -> navigateToNextWeek()
-            is EpisodeCardClicked -> {
-                val episode = state.value.dateGroups
-                    .flatMap { it.episodes }
-                    .firstOrNull { it.episodeTraktId == action.episodeTraktId }
-                _state.update { it.copy(selectedEpisode = episode) }
-            }
-
-            is EpisodeDetailDismissed -> _state.update { it.copy(selectedEpisode = null) }
+            is EpisodeCardClicked -> onEpisodeLongPressed(action.episodeTraktId)
             is MessageShown -> clearMessage(action.id)
         }
     }
@@ -150,6 +146,7 @@ public class DefaultCalendarPresenter(
                 logger = logger,
                 uiMessageManager = uiMessageManager,
                 sourceId = "Calendar",
+                errorToStringMapper = errorToStringMapper,
             )
         }
     }
@@ -180,10 +177,12 @@ public class DefaultCalendarPresenterFactory(
     private val presenter: (
         componentContext: ComponentContext,
         navigateToShowDetails: (Long) -> Unit,
+        onEpisodeLongPressed: (Long) -> Unit,
     ) -> CalendarPresenter,
 ) : CalendarPresenter.Factory {
     override fun invoke(
         componentContext: ComponentContext,
         navigateToShowDetails: (showId: Long) -> Unit,
-    ): CalendarPresenter = presenter(componentContext, navigateToShowDetails)
+        onEpisodeLongPressed: (episodeId: Long) -> Unit,
+    ): CalendarPresenter = presenter(componentContext, navigateToShowDetails, onEpisodeLongPressed)
 }

@@ -6,7 +6,9 @@ import com.arkivanov.essenty.instancekeeper.getOrCreate
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
+import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.domain.genre.FetchGenreContentInteractor
@@ -47,6 +49,7 @@ public class DefaultSearchShowsPresenter(
     private val searchRepository: SearchRepository,
     private val genreRepository: GenreRepository,
     private val fetchGenreContentInteractor: FetchGenreContentInteractor,
+    private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
     private val coroutineScope: CoroutineScope = componentContext.coroutineScope(),
 ) : SearchShowsPresenter, ComponentContext by componentContext {
@@ -148,7 +151,7 @@ public class DefaultSearchShowsPresenter(
         ) {
             coroutineScope.launch {
                 fetchGenreContentInteractor(FetchGenreContentInteractor.Params(category, forceRefresh))
-                    .collectStatus(genreLoadingState, logger, uiMessageManager, "Genre Content")
+                    .collectStatus(genreLoadingState, logger, uiMessageManager, "Genre Content", errorToStringMapper)
             }
         }
 
@@ -163,7 +166,7 @@ public class DefaultSearchShowsPresenter(
                     searchRepository.observeSearchResults(query)
                 }
                 .catch { error ->
-                    uiMessageManager.emitMessageCombined(error, "Search")
+                    uiMessageManager.emitMessage(UiMessage(message = errorToStringMapper.mapError(error), sourceId = "Search"))
                     _state.update { it.copy(isUpdating = false) }
                 }
                 .collect { result ->

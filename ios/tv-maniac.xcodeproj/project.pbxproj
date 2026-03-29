@@ -11,7 +11,6 @@
 		D60F8D272EC8060C00916042 /* TraktAuthKit in Frameworks */ = {isa = PBXBuildFile; productRef = D60F8D262EC8060C00916042 /* TraktAuthKit */; };
 		D6619D372C89D37900D273E7 /* SwiftUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = D6619D362C89D37900D273E7 /* SwiftUIComponents */; };
 		D6A2A0EC2EC800000001CD83 /* CoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = D6A2A0ED2EC800000001CD83 /* CoreKit */; };
-		D6CDA52C2F417A810021240C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D6CDA52B2F417A810021240C /* GoogleService-Info.plist */; };
 		D6F1A0012F61B0A100000001 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = D6F1A0002F61B0A100000001 /* PrivacyInfo.xcprivacy */; };
 		E9AC834C26CEE00D00829A0D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E9AC834B26CEE00D00829A0D /* Assets.xcassets */; };
 /* End PBXBuildFile section */
@@ -32,12 +31,12 @@
 /* Begin PBXFileReference section */
 		7555FF7B242A565900829871 /* tv-maniac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "tv-maniac.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D6CDA52B2F417A810021240C /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D6F1A0002F61B0A100000001 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		E9AC834B26CEE00D00829A0D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		D639FA9E2F77530500F3C67B /* Firebase */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Firebase; sourceTree = "<group>"; };
 		D65009DC2CF644BE00394D67 /* App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = App; sourceTree = "<group>"; };
 		D68A22262F415DC30034550F /* Config */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Config; sourceTree = "<group>"; };
 		D6A2A0EB2EC7FD8C0001CD82 /* Modules */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Modules; sourceTree = "<group>"; };
@@ -81,12 +80,12 @@
 		7555FF7D242A565900829871 /* ios */ = {
 			isa = PBXGroup;
 			children = (
-				D6CDA52B2F417A810021240C /* GoogleService-Info.plist */,
 				D6F1A0002F61B0A100000001 /* PrivacyInfo.xcprivacy */,
 				E9AC834B26CEE00D00829A0D /* Assets.xcassets */,
 				7555FF8C242A565B00829871 /* Info.plist */,
 				D65009DC2CF644BE00394D67 /* App */,
 				D6FE248E2D060E7200AB7700 /* UI */,
+				D639FA9E2F77530500F3C67B /* Firebase */,
 			);
 			path = ios;
 			sourceTree = "<group>";
@@ -109,6 +108,7 @@
 				7555FF77242A565900829871 /* Sources */,
 				9E9525AE31530CCB1C932286 /* Frameworks */,
 				7555FF79242A565900829871 /* Resources */,
+				D6CDA52D2F417A820021240C /* Copy GoogleService-Info.plist */,
 				7555FFB4242A642300829871 /* Embed Frameworks */,
 				D68A22332F4169A40034550F /* Crashlytics Upload dSYM */,
 			);
@@ -174,7 +174,6 @@
 			files = (
 				E9AC834C26CEE00D00829A0D /* Assets.xcassets in Resources */,
 				D6F1A0012F61B0A100000001 /* PrivacyInfo.xcprivacy in Resources */,
-				D6CDA52C2F417A810021240C /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -219,6 +218,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint --config \"$SRCROOT/../.swiftlint.yml\" --no-cache\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n\ncd \"$SRCROOT/..\"\n\n\"$SRCROOT/../gradlew\" -p \"$SRCROOT/../\" \\\n    :i18n:generator:copyFrameworkResourcesToApp \\\n    -Pmoko.resources.PLATFORM_NAME=\"$PLATFORM_NAME\" \\\n    -Pmoko.resources.CONFIGURATION=\"$CONFIGURATION\" \\\n    -Pmoko.resources.ARCHS=\"$ARCHS\" \\\n    -Pmoko.resources.BUILT_PRODUCTS_DIR=\"$BUILT_PRODUCTS_DIR\" \\\n    -Pmoko.resources.CONTENTS_FOLDER_PATH=\"$CONTENTS_FOLDER_PATH\" \n";
+		};
+		D6CDA52D2F417A820021240C /* Copy GoogleService-Info.plist */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy GoogleService-Info.plist";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/GoogleService-Info.plist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "FIREBASE_DIR=\"${SRCROOT}/ios/Firebase\"\nPLIST_SRC=\"${FIREBASE_DIR}/${CONFIGURATION}/GoogleService-Info.plist\"\nPLIST_DST=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleService-Info.plist\"\n\nif [ ! -f \"$PLIST_SRC\" ]; then\n  echo \"warning: GoogleService-Info.plist not found for configuration ${CONFIGURATION} at ${PLIST_SRC}\"\n  exit 0\nfi\n\ncp \"$PLIST_SRC\" \"$PLIST_DST\"\necho \"Copied GoogleService-Info.plist for ${CONFIGURATION}\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

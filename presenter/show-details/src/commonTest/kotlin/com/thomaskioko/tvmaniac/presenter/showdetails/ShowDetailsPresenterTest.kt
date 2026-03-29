@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.notifications.api.EpisodeNotification
 import com.thomaskioko.tvmaniac.core.notifications.testing.FakeNotificationManager
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
@@ -22,6 +23,7 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncTraktCalendarInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
@@ -33,6 +35,8 @@ import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepositor
 import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeUnwatchedCall
 import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey
+import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.i18n.testing.util.IgnoreIos
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ProviderModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsParam
@@ -47,6 +51,7 @@ import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
+import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
 import io.kotest.matchers.shouldBe
@@ -80,7 +85,9 @@ class ShowDetailsPresenterTest {
     private val showDetailsRepository = FakeShowDetailsRepository()
     private val episodeRepository = FakeEpisodeRepository()
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
+    private val upNextRepository = FakeUpNextRepository()
     private val traktAuthRepository = FakeTraktAuthRepository()
+    private val fakeLocalizer = FakeLocalizer()
     private val fakeFormatterUtil = FakeFormatterUtil()
     private val fakeNotificationManager = FakeNotificationManager()
     private val fakeDatastoreRepository = FakeDatastoreRepository()
@@ -431,6 +438,7 @@ class ShowDetailsPresenterTest {
                 episodeNumber = 1,
                 imageUrl = null,
                 scheduledTime = 1000L,
+                message = fakeLocalizer.getString(StringResourceKey.NotificationNewEpisode, "Episode 1", 1L, 1L),
             ),
         )
         fakeNotificationManager.addPendingNotification(
@@ -444,6 +452,7 @@ class ShowDetailsPresenterTest {
                 episodeNumber = 1,
                 imageUrl = null,
                 scheduledTime = 2000L,
+                message = fakeLocalizer.getString(StringResourceKey.NotificationNewEpisode, "Episode 1", 1L, 1L),
             ),
         )
 
@@ -691,6 +700,19 @@ class ShowDetailsPresenterTest {
             onNavigateToTrailer = onNavigateToTrailer,
             onShowFollowed = onShowFollowed,
             followedShowsRepository = followedShowsRepository,
+            followShowInteractor = FollowShowInteractor(
+                followedShowsRepository = followedShowsRepository,
+                showContentSyncInteractor = ShowContentSyncInteractor(
+                    showDetailsRepository = showDetailsRepository,
+                    seasonDetailsRepository = seasonDetailsRepository,
+                    dispatchers = coroutineDispatcher,
+                    logger = fakeLogger,
+                    watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
+                ),
+                upNextRepository = upNextRepository,
+                dispatchers = coroutineDispatcher,
+                logger = fakeLogger,
+            ),
             showDetailsInteractor = ShowDetailsInteractor(
                 showDetailsRepository = showDetailsRepository,
                 castRepository = castRepository,
@@ -744,12 +766,14 @@ class ShowDetailsPresenterTest {
                 datastoreRepository = fakeDatastoreRepository,
                 episodeRepository = episodeRepository,
                 notificationManager = fakeNotificationManager,
+                localizer = fakeLocalizer,
                 dateTimeProvider = fakeDateTimeProvider,
                 logger = FakeLogger(),
                 dispatchers = coroutineDispatcher,
             ),
             notificationManager = fakeNotificationManager,
             traktAuthRepository = traktAuthRepository,
+            errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             dispatchers = coroutineDispatcher,
             logger = fakeLogger,
         )

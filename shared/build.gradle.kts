@@ -35,6 +35,7 @@ scaffold {
             export(projects.presenter.library)
             export(projects.presenter.upnext)
             export(projects.presenter.debug)
+            export(projects.presenter.episodeDetail)
             export(projects.domain.notifications)
 
             export(libs.decompose.decompose)
@@ -71,6 +72,7 @@ kotlin {
                 api(projects.presenter.library)
                 api(projects.presenter.upnext)
                 api(projects.presenter.debug)
+                api(projects.presenter.episodeDetail)
 
                 api(projects.domain.calendar)
                 api(projects.domain.followedshows)

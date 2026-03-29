@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.settings.presenter
 
+import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 
 public data class SettingsState(
@@ -9,7 +10,7 @@ public data class SettingsState(
     val showTraktDialog: Boolean,
     val showthemePopup: Boolean,
     val showAboutDialog: Boolean,
-    val errorMessage: String?,
+    val message: UiMessage? = null,
     val showLogoutDialog: Boolean,
     val openTrailersInYoutube: Boolean = false,
     val includeSpecials: Boolean = false,
@@ -20,7 +21,7 @@ public data class SettingsState(
     val episodeNotificationsEnabled: Boolean = false,
     val crashReportingEnabled: Boolean = true,
     val isUpdating: Boolean = false,
-    val isDebugBuild: Boolean = false,
+    val hiddenTapCount: Int = 0,
     val githubUrl: String = GITHUB_URL,
     val privacyPolicyUrl: String = PRIVACY_POLICY_URL,
 ) {
@@ -35,7 +36,7 @@ public data class SettingsState(
             showTraktDialog = false,
             showthemePopup = false,
             showAboutDialog = false,
-            errorMessage = null,
+            message = null,
             showLogoutDialog = false,
             includeSpecials = false,
             backgroundSyncEnabled = true,
@@ -44,7 +45,6 @@ public data class SettingsState(
             versionName = "0.0.0",
             episodeNotificationsEnabled = false,
             crashReportingEnabled = true,
-            isDebugBuild = false,
         )
     }
 }

@@ -5,6 +5,7 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.domain.genre.FetchGenreContentInteractor
 import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
 import com.thomaskioko.tvmaniac.genre.model.GenreShowCategory
@@ -370,6 +371,7 @@ internal class SearchShowsPresenterTest {
                 main = testDispatcher,
             ),
         ),
+        errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
         logger = FakeLogger(),
         mapper = Mapper(
             formatterUtil = FakeFormatterUtil(),

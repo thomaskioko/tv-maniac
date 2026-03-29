@@ -7,7 +7,6 @@ public struct NextEpisodesSection: View {
     private let episodes: [SwiftNextEpisode]
     private let chevronStyle: ChevronStyle
     private let onEpisodeClick: (SwiftNextEpisode) -> Void
-    private let onEpisodeLongPress: (SwiftNextEpisode) -> Void
     private let onSeeAllClick: () -> Void
 
     public init(
@@ -15,14 +14,12 @@ public struct NextEpisodesSection: View {
         episodes: [SwiftNextEpisode],
         chevronStyle: ChevronStyle = .none,
         onEpisodeClick: @escaping (SwiftNextEpisode) -> Void,
-        onEpisodeLongPress: @escaping (SwiftNextEpisode) -> Void = { _ in },
         onSeeAllClick: @escaping () -> Void = {}
     ) {
         self.title = title
         self.episodes = episodes
         self.chevronStyle = chevronStyle
         self.onEpisodeClick = onEpisodeClick
-        self.onEpisodeLongPress = onEpisodeLongPress
         self.onSeeAllClick = onSeeAllClick
     }
 
@@ -40,8 +37,7 @@ public struct NextEpisodesSection: View {
                         ForEach(episodes, id: \.episodeId) { episode in
                             NextEpisodeCard(
                                 episode: episode,
-                                onEpisodeClick: { onEpisodeClick(episode) },
-                                onLongPress: { onEpisodeLongPress(episode) }
+                                onEpisodeClick: { onEpisodeClick(episode) }
                             )
                             .padding([.leading, .trailing], theme.spacing.xxSmall + 2)
                             .padding(.leading, episode.episodeId == episodes.first?.episodeId ? theme.spacing.small - 2 : 0)

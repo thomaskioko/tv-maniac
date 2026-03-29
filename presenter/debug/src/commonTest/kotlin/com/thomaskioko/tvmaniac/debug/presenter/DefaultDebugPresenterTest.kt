@@ -6,6 +6,7 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.notifications.testing.FakeNotificationManager
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
@@ -178,6 +179,7 @@ class DefaultDebugPresenterTest {
                 datastoreRepository = datastoreRepository,
                 episodeRepository = FakeEpisodeRepository(),
                 notificationManager = FakeNotificationManager(),
+                localizer = localizer,
                 dateTimeProvider = dateTimeProvider,
                 logger = logger,
                 dispatchers = dispatchers,
@@ -200,6 +202,7 @@ class DefaultDebugPresenterTest {
             ),
             dateTimeProvider = dateTimeProvider,
             localizer = localizer,
+            errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = logger,
             traktAuthRepository = traktAuthRepository,
         )

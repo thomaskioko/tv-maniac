@@ -11,7 +11,7 @@ internal val defaultState = SettingsState(
     showthemePopup = false,
     showTraktDialog = false,
     showAboutDialog = false,
-    errorMessage = null,
+
     showLogoutDialog = false,
     isAuthenticated = false,
     openTrailersInYoutube = false,
@@ -25,7 +25,7 @@ internal val loggedInState = SettingsState(
     showthemePopup = false,
     showTraktDialog = false,
     showAboutDialog = false,
-    errorMessage = null,
+
     showLogoutDialog = false,
     isAuthenticated = true,
     openTrailersInYoutube = true,

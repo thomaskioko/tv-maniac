@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.episodes.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.db.EpisodeById
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeDao
@@ -37,6 +38,9 @@ public class DefaultEpisodeRepository(
     private val upcomingEpisodesStore: UpcomingEpisodesStore,
     private val traktAuthRepository: TraktAuthRepository,
 ) : EpisodeRepository {
+
+    override fun observeEpisodeById(episodeId: Long): Flow<EpisodeById?> =
+        episodesDao.observeEpisodeById(episodeId)
 
     override suspend fun markEpisodeAsWatched(
         showTraktId: Long,

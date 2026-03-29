@@ -3,6 +3,8 @@
 package com.thomaskioko.tvmaniac.core.networkutil.api.extensions
 
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.SyncException
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.toSyncError
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
@@ -22,9 +24,7 @@ public inline fun <Key : Any, reified Output : Any> apiFetcher(
 ): Fetcher<Key, Output> = Fetcher.ofResult { key: Key ->
     when (val response = apiCall(key)) {
         is ApiResponse.Success -> FetcherResult.Data(response.body)
-        is ApiResponse.Error.GenericError -> FetcherResult.Error.Message("API Error: ${response.message ?: response.errorMessage}")
-        is ApiResponse.Error.HttpError -> FetcherResult.Error.Message("HTTP Error ${response.code}: ${response.errorMessage}")
-        is ApiResponse.Error.SerializationError -> FetcherResult.Error.Message("Serialization Error: ${response.message ?: response.errorMessage}")
+        is ApiResponse.Error -> FetcherResult.Error.Exception(SyncException(response.toSyncError()))
     }
 }
 

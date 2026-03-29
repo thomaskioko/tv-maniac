@@ -11,9 +11,11 @@ public struct EpisodeListView: View {
     private let isSeasonWatched: Bool
     private let items: [SwiftEpisode]
     private let dayLabelFormat: (_ count: Int) -> String
+    private let tbdLabel: String
     private let onEpisodeHeaderClicked: () -> Void
     private let onWatchedStateClicked: () -> Void
     private let onEpisodeWatchToggle: (SwiftEpisode) -> Void
+    private let onEpisodeTapped: (SwiftEpisode) -> Void
 
     public init(
         title: String,
@@ -24,9 +26,11 @@ public struct EpisodeListView: View {
         isSeasonWatched: Bool,
         items: [SwiftEpisode],
         dayLabelFormat: @escaping (_ count: Int) -> String = { count in count == 1 ? "day" : "days" },
+        tbdLabel: String = "TBD",
         onEpisodeHeaderClicked: @escaping () -> Void,
         onWatchedStateClicked: @escaping () -> Void,
-        onEpisodeWatchToggle: @escaping (SwiftEpisode) -> Void = { _ in }
+        onEpisodeWatchToggle: @escaping (SwiftEpisode) -> Void = { _ in },
+        onEpisodeTapped: @escaping (SwiftEpisode) -> Void = { _ in }
     ) {
         self.title = title
         self.episodeCount = episodeCount
@@ -36,9 +40,11 @@ public struct EpisodeListView: View {
         self.isSeasonWatched = isSeasonWatched
         self.items = items
         self.dayLabelFormat = dayLabelFormat
+        self.tbdLabel = tbdLabel
         self.onEpisodeHeaderClicked = onEpisodeHeaderClicked
         self.onWatchedStateClicked = onWatchedStateClicked
         self.onEpisodeWatchToggle = onEpisodeWatchToggle
+        self.onEpisodeTapped = onEpisodeTapped
     }
 
     public var body: some View {
@@ -72,8 +78,11 @@ public struct EpisodeListView: View {
                             daysUntilAir: item.daysUntilAir,
                             hasAired: item.hasAired,
                             dayLabelFormat: dayLabelFormat,
+                            tbdLabel: tbdLabel,
                             onWatchedToggle: { onEpisodeWatchToggle(item) }
                         )
+                        .contentShape(Rectangle())
+                        .onTapGesture { onEpisodeTapped(item) }
                     }
                 }
             }

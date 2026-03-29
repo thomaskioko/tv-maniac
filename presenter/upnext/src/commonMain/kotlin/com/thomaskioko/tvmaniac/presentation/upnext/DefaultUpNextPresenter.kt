@@ -4,15 +4,16 @@ import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
+import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.RefreshUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.model.UpNextSortOption
-import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import com.thomaskioko.tvmaniac.presentation.upnext.model.UpNextEpisodeUiModel
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
@@ -39,11 +40,13 @@ public class DefaultUpNextPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val navigateToShowDetails: (showTraktId: Long) -> Unit,
     @Assisted private val navigateToSeasonDetails: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
+    @Assisted private val onEpisodeLongPressed: (Long) -> Unit,
     private val refreshUpNextInteractor: RefreshUpNextInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val upNextRepository: UpNextRepository,
-    private val followedShowsRepository: FollowedShowsRepository,
+    private val unfollowShowInteractor: UnfollowShowInteractor,
     private val traktAuthRepository: TraktAuthRepository,
+    private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
     private val coroutineScope: CoroutineScope = componentContext.coroutineScope(),
     observeUpNextInteractor: ObserveUpNextInteractor,
@@ -88,6 +91,7 @@ public class DefaultUpNextPresenter(
             is OpenShow -> navigateToShowDetails(action.showTraktId)
             is OpenSeason -> navigateToSeasonDetails(action.showTraktId, action.seasonId, action.seasonNumber)
             is UnfollowShow -> unfollowShow(action.showTraktId)
+            is UpNextEpisodeLongPressed -> onEpisodeLongPressed(action.episodeId)
         }
     }
 
@@ -115,7 +119,7 @@ public class DefaultUpNextPresenter(
         val counter = if (isUserInitiated) refreshingState else loadingState
         coroutineScope.launch {
             refreshUpNextInteractor(isUserInitiated)
-                .collectStatus(counter, logger, uiMessageManager, "Up Next")
+                .collectStatus(counter, logger, uiMessageManager, "Up Next", errorToStringMapper)
         }
     }
 
@@ -128,7 +132,7 @@ public class DefaultUpNextPresenter(
                     seasonNumber = action.seasonNumber,
                     episodeNumber = action.episodeNumber,
                 ),
-            ).collectStatus(markWatchedLoadingState, logger, uiMessageManager, "Mark Watched")
+            ).collectStatus(markWatchedLoadingState, logger, uiMessageManager, "Mark Watched", errorToStringMapper)
         }
     }
 
@@ -147,7 +151,7 @@ public class DefaultUpNextPresenter(
 
     private fun unfollowShow(showTraktId: Long) {
         coroutineScope.launch {
-            followedShowsRepository.removeFollowedShow(showTraktId)
+            unfollowShowInteractor.executeSync(showTraktId)
         }
     }
 
@@ -196,11 +200,13 @@ public class DefaultUpNextPresenterFactory(
         componentContext: ComponentContext,
         navigateToShowDetails: (showTraktId: Long) -> Unit,
         navigateToSeasonDetails: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
+        onEpisodeLongPressed: (Long) -> Unit,
     ) -> UpNextPresenter,
 ) : UpNextPresenter.Factory {
     override fun invoke(
         componentContext: ComponentContext,
         navigateToShowDetails: (showTraktId: Long) -> Unit,
         navigateToSeasonDetails: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
-    ): UpNextPresenter = presenter(componentContext, navigateToShowDetails, navigateToSeasonDetails)
+        onEpisodeLongPressed: (episodeId: Long) -> Unit,
+    ): UpNextPresenter = presenter(componentContext, navigateToShowDetails, navigateToSeasonDetails, onEpisodeLongPressed)
 }

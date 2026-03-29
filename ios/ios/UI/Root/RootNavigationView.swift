@@ -17,6 +17,7 @@ struct RootNavigationView: View {
     private let rootNavigator: RootNavigator
     @StateObject @KotlinStateFlow private var themeState: ThemeState
     @StateObject @KotlinStateFlow private var notificationPermissionState: NotificationPermissionState
+    @StateObject @KotlinStateFlow private var episodeSheetSlot: ChildSlot<AnyObject, EpisodeDetailSheetPresenter>
     @StateObject private var store = SettingsAppStorage.shared
     @EnvironmentObject private var appDelegate: AppDelegate
     @State private var rationaleActionTaken = false
@@ -26,6 +27,7 @@ struct RootNavigationView: View {
         self.rootNavigator = rootNavigator
         _themeState = .init(rootPresenter.themeState)
         _notificationPermissionState = .init(rootPresenter.notificationPermissionState)
+        _episodeSheetSlot = .init(rootPresenter.episodeSheetSlot)
     }
 
     var body: some View {
@@ -64,6 +66,20 @@ struct RootNavigationView: View {
             }
         }
         .appTheme()
+        .sheet(
+            isPresented: Binding(
+                get: { episodeSheetSlot.child != nil },
+                set: { isPresented in
+                    if !isPresented, let presenter = episodeSheetSlot.child?.instance {
+                        presenter.dispatch(action: EpisodeDetailSheetActionDismiss())
+                    }
+                }
+            )
+        ) {
+            if let presenter = episodeSheetSlot.child?.instance {
+                EpisodeDetailSheetView(presenter: presenter)
+            }
+        }
         .onChange(of: themeState.appTheme) { _, newTheme in
             store.appTheme = newTheme.toDeviceAppTheme()
         }

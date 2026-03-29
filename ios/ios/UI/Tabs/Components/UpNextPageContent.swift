@@ -7,8 +7,6 @@ struct UpNextPageContent: View {
 
     private let presenter: UpNextPresenter
     private let uiState: UpNextState
-    @State private var selectedEpisode: SwiftNextEpisode?
-
     private var episodesSwift: [SwiftNextEpisode] {
         uiState.episodes.map { $0.toSwift() }
     }
@@ -22,66 +20,6 @@ struct UpNextPageContent: View {
         contentView
             .refreshable {
                 presenter.dispatch(action: RefreshUpNext())
-            }
-            .sheet(item: $selectedEpisode) { episode in
-                EpisodeDetailSheetContent(
-                    episode: EpisodeDetailInfo(
-                        title: episode.showName,
-                        imageUrl: episode.imageUrl,
-                        episodeInfo: {
-                            var text = episode.episodeNumber
-                            if let runtime = episode.runtime {
-                                text += " \u{2022} \(runtime)"
-                            }
-                            return text
-                        }(),
-                        overview: episode.overview.isEmpty ? nil : episode.overview,
-                        rating: episode.rating,
-                        voteCount: episode.voteCount
-                    )
-                ) {
-                    SheetActionItem(
-                        icon: "checkmark.circle",
-                        label: String(\.menu_mark_watched),
-                        action: {
-                            presenter.dispatch(action: MarkWatched(
-                                showTraktId: episode.showTraktId,
-                                episodeId: episode.episodeId,
-                                seasonNumber: episode.seasonNumber,
-                                episodeNumber: episode.episodeNumberValue
-                            ))
-                            selectedEpisode = nil
-                        }
-                    )
-                    SheetActionItem(
-                        icon: "tv",
-                        label: String(\.menu_open_show),
-                        action: {
-                            presenter.dispatch(action: OpenShow(showTraktId: episode.showTraktId))
-                            selectedEpisode = nil
-                        }
-                    )
-                    SheetActionItem(
-                        icon: "list.bullet",
-                        label: String(\.menu_open_season),
-                        action: {
-                            presenter.dispatch(action: OpenSeason(
-                                showTraktId: episode.showTraktId,
-                                seasonId: episode.seasonId,
-                                seasonNumber: episode.seasonNumber
-                            ))
-                            selectedEpisode = nil
-                        }
-                    )
-                    SheetActionItem(
-                        icon: "minus.circle",
-                        label: String(\.menu_unfollow_show),
-                        action: {
-                            presenter.dispatch(action: UnfollowShow(showTraktId: episode.showTraktId))
-                            selectedEpisode = nil
-                        }
-                    )
-                }
             }
     }
 
@@ -121,7 +59,7 @@ struct UpNextPageContent: View {
                                     ))
                                 },
                                 onLongPress: {
-                                    selectedEpisode = episode
+                                    presenter.dispatch(action: UpNextEpisodeLongPressed(episodeId: episode.episodeId))
                                 }
                             )
                         }

@@ -6,6 +6,7 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.featuredshows.api.interactor.FeaturedShowsInteractor
 import com.thomaskioko.tvmaniac.data.featuredshows.testing.FakeFeaturedShowsRepository
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsInteractor
@@ -19,6 +20,7 @@ import com.thomaskioko.tvmaniac.discover.presenter.model.DiscoverShow
 import com.thomaskioko.tvmaniac.discover.presenter.model.NextEpisodeUiModel
 import com.thomaskioko.tvmaniac.domain.discover.DiscoverShowsInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
+import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
@@ -317,7 +319,9 @@ class DiscoverShowsPresenterTest {
             markEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(
                 episodeRepository = episodeRepository,
             ),
+            unfollowShowInteractor = UnfollowShowInteractor(followedShowsRepository),
             traktAuthRepository = traktAuthRepository,
+            errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = FakeLogger(),
         )
 
@@ -453,7 +457,9 @@ class DiscoverShowsPresenterTest {
         markEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(
             episodeRepository = episodeRepository,
         ),
+        unfollowShowInteractor = UnfollowShowInteractor(followedShowsRepository),
         traktAuthRepository = traktAuthRepository,
+        errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
         logger = FakeLogger(),
     ).also { lifecycle.resume() }
 }

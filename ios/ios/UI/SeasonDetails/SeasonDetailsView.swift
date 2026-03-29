@@ -12,7 +12,6 @@ struct SeasonDetailsView: View {
     @State private var showUnwatchedConfirmAlert = false
     @State private var showMarkPreviousSeasonsAlert = false
     @State private var showSeasonUnwatchAlert = false
-
     init(presenter: SeasonDetailsPresenter) {
         self.presenter = presenter
         _uiState = .init(presenter.state)
@@ -45,6 +44,7 @@ struct SeasonDetailsView: View {
             episodesTitle: String(\.title_episodes),
             seasonImagesCountFormat: { count in String(\.season_images_count, quantity: count) },
             dayLabelFormat: { count in String(\.day_label, quantity: count) },
+            tbdLabel: String(\.label_tbd),
             toast: $toast,
             showGallery: $showGallery,
             onBack: { presenter.dispatch(action: SeasonDetailsBackClicked()) },
@@ -57,6 +57,9 @@ struct SeasonDetailsView: View {
             onWatchedStateClicked: { presenter.dispatch(action: ToggleSeasonWatched()) },
             onEpisodeWatchToggle: { episode in
                 presenter.dispatch(action: ToggleEpisodeWatched(episodeId: episode.episodeId))
+            },
+            onEpisodeTapped: { episode in
+                presenter.dispatch(action: EpisodeClicked(id: Int64(episode.episodeId)))
             }
         )
         .onChange(of: uiState.message) { _, newValue in

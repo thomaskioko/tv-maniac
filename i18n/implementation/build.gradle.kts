@@ -26,6 +26,7 @@ kotlin {
             dependencies {
                 implementation(projects.core.base)
                 implementation(projects.core.locale.api)
+                implementation(projects.core.networkUtil.api)
                 implementation(projects.i18n.api)
 
                 implementation(libs.coroutines.core)

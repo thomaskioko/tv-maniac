@@ -41,6 +41,7 @@ import com.thomaskioko.tvmaniac.i18n.resolve
 internal fun AboutSheetContent(
     versionName: String,
     onGitHubClick: () -> Unit,
+    onVersionClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -83,6 +84,7 @@ internal fun AboutSheetContent(
                     text = settings_about_version.resolve(context).format(versionName),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.clickable(onClick = onVersionClick),
                 )
             }
 
@@ -170,6 +172,7 @@ private fun AboutSheetContentPreview() {
             AboutSheetContent(
                 versionName = "1.0.0",
                 onGitHubClick = {},
+                onVersionClick = {},
             )
         }
     }

@@ -20,6 +20,7 @@ struct MoreShowsView: View {
             isLoadingMore: uiState.isAppendLoading,
             hasNextPage: uiState.hasNextPage,
             loadError: uiState.appendError,
+            retryLabel: String(\.button_error_retry),
             toast: $toast,
             onItemAppear: { index in
                 presenter.onItemVisible(index: Int32(index))

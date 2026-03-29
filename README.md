@@ -25,7 +25,7 @@
 
 Download the latest APK from [GitHub Releases](https://github.com/thomaskioko/tv-maniac/releases).
 
-Or stay up to date with the latest alpha builds:
+Join the open beta on [Google Play](https://play.google.com/store/apps/details?id=com.thomaskioko.tvmaniac&hl=en_US) or stay up to date with daily builds via Firebase:
 
 [<img width=400 src="art/FirebaseAppDistribution.svg"/>](https://appdistribution.firebase.dev/i/564c934cc970634b)
 

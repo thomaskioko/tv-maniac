@@ -6,20 +6,20 @@ public sealed class SyncError {
 
     public sealed class Retryable : SyncError() {
         public data class RateLimited(
-            override val message: String = "Rate limited. Please try again later.",
+            override val message: String = "Too many requests. Please try again later.",
         ) : Retryable()
 
         public data class ServerError(
             val statusCode: Int,
-            override val message: String,
+            override val message: String = "Server error. Please try again later.",
         ) : Retryable()
 
         public data class NetworkError(
-            override val message: String,
+            override val message: String = "Network error. Please check your connection.",
         ) : Retryable()
 
         public data class Timeout(
-            override val message: String = "Request timed out.",
+            override val message: String = "Request timed out. Please try again.",
         ) : Retryable()
     }
 
@@ -33,7 +33,7 @@ public sealed class SyncError {
         ) : Permanent()
 
         public data class InvalidData(
-            override val message: String,
+            override val message: String = "Failed to process data. Please try again.",
         ) : Permanent()
 
         public data class Forbidden(
@@ -42,7 +42,7 @@ public sealed class SyncError {
     }
 
     public data class Unknown(
-        override val message: String,
+        override val message: String = "Something went wrong. Please try again.",
     ) : SyncError()
 }
 
@@ -56,7 +56,7 @@ public fun <T> ApiResponse.Error<T>.toSyncError(): SyncError {
     return when (this) {
         is ApiResponse.Error.HttpError -> classifyHttpError(code, errorMessage)
         is ApiResponse.Error.SerializationError -> SyncError.Permanent.InvalidData(
-            message = message ?: "Failed to parse response data.",
+            message = message ?: "Failed to process data. Please try again.",
         )
         is ApiResponse.Error.GenericError -> classifyGenericError(message)
     }

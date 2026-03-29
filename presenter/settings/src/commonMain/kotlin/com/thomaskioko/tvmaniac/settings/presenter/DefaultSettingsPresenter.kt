@@ -4,6 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
@@ -36,6 +37,7 @@ public class DefaultSettingsPresenter(
     private val datastoreRepository: DatastoreRepository,
     private val logoutInteractor: LogoutInteractor,
     private val toggleEpisodeNotificationsInteractor: ToggleEpisodeNotificationsInteractor,
+    private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
     observeSettingsPreferencesInteractor: ObserveSettingsPreferencesInteractor,
     traktAuthRepository: TraktAuthRepository,
@@ -53,13 +55,14 @@ public class DefaultSettingsPresenter(
         observeSettingsPreferencesInteractor(Unit)
     }
 
-    override val state: StateFlow<SettingsState> = combine(
+    override val state: StateFlow<SettingsState> = com.thomaskioko.tvmaniac.core.base.extensions.combine(
         _state,
         logoutState.observable,
         notificationToggleState.observable,
         observeSettingsPreferencesInteractor.flow,
         traktAuthRepository.state,
-    ) { currentState, isLoggingOut, isTogglingNotifications, preferences, authState ->
+        uiMessageManager.message,
+    ) { currentState, isLoggingOut, isTogglingNotifications, preferences, authState, message ->
         currentState.copy(
             isUpdating = isLoggingOut || isTogglingNotifications,
             imageQuality = preferences.imageQuality,
@@ -73,7 +76,7 @@ public class DefaultSettingsPresenter(
             versionName = appInfo.versionName,
             episodeNotificationsEnabled = preferences.episodeNotificationsEnabled,
             crashReportingEnabled = preferences.crashReportingEnabled,
-            isDebugBuild = appInfo.debugBuild,
+            message = message,
         )
     }.stateIn(
         scope = coroutineScope,
@@ -86,11 +89,12 @@ public class DefaultSettingsPresenter(
             ChangeThemeClicked, DismissThemeClicked -> updateThemeDialogState()
             DismissTraktDialog, ShowTraktDialog -> updateTrackDialogState()
             ShowAboutDialog, DismissAboutDialog -> updateAboutDialogState()
+            VersionClicked -> handleVersionTap()
             BackClicked -> backClicked()
             TraktLogoutClicked -> {
                 coroutineScope.launch {
                     logoutInteractor(Unit)
-                        .collectStatus(logoutState, logger, uiMessageManager)
+                        .collectStatus(logoutState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
                 }
                 updateTrackDialogState()
             }
@@ -123,19 +127,23 @@ public class DefaultSettingsPresenter(
                     datastoreRepository.setBackgroundSyncEnabled(action.enabled)
                 }
             }
-            NavigateToDebugMenu -> onNavigateToDebugMenu()
-
             is EpisodeNotificationsToggled -> {
                 coroutineScope.launch {
                     toggleEpisodeNotificationsInteractor(
                         ToggleEpisodeNotificationsInteractor.Params(enabled = action.enabled),
-                    ).collectStatus(notificationToggleState, logger, uiMessageManager)
+                    ).collectStatus(notificationToggleState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
                 }
             }
 
             is CrashReportingToggled -> {
                 coroutineScope.launch {
                     datastoreRepository.setCrashReportingEnabled(action.enabled)
+                }
+            }
+
+            is SettingsMessageShown -> {
+                coroutineScope.launch {
+                    uiMessageManager.clearMessage(action.id)
                 }
             }
         }
@@ -149,8 +157,29 @@ public class DefaultSettingsPresenter(
         _state.update { state -> state.copy(showTraktDialog = !state.showTraktDialog) }
     }
 
+    private fun handleVersionTap() {
+        _state.update { state ->
+            val newCount = state.hiddenTapCount + 1
+            if (newCount >= HIDDEN_TAP_THRESHOLD) {
+                onNavigateToDebugMenu()
+                state.copy(hiddenTapCount = 0)
+            } else {
+                state.copy(hiddenTapCount = newCount)
+            }
+        }
+    }
+
     private fun updateAboutDialogState() {
-        _state.update { state -> state.copy(showAboutDialog = !state.showAboutDialog) }
+        _state.update { state ->
+            state.copy(
+                showAboutDialog = !state.showAboutDialog,
+                hiddenTapCount = 0,
+            )
+        }
+    }
+
+    private companion object {
+        const val HIDDEN_TAP_THRESHOLD = 6
     }
 }
 

@@ -5,11 +5,13 @@ import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
+import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.ObserveUpNextSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.ObserveWatchlistSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.WatchlistSyncInteractor
@@ -34,10 +36,12 @@ public class DefaultWatchlistPresenter(
     @Assisted private val navigateToSeason: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
     private val repository: WatchlistRepository,
     private val followedShowsRepository: FollowedShowsRepository,
+    private val unfollowShowInteractor: UnfollowShowInteractor,
     private val observeWatchlistSectionsInteractor: ObserveWatchlistSectionsInteractor,
     private val observeUpNextSectionsInteractor: ObserveUpNextSectionsInteractor,
     private val watchlistSyncInteractor: WatchlistSyncInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
+    private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
 ) : WatchlistPresenter, ComponentContext by componentContext {
 
@@ -108,13 +112,13 @@ public class DefaultWatchlistPresenter(
                     seasonNumber = action.seasonNumber,
                     episodeNumber = action.episodeNumber,
                 ),
-            ).collectStatus(upNextActionLoadingState, logger, uiMessageManager)
+            ).collectStatus(upNextActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         }
     }
 
     private fun unfollowShow(showTraktId: Long) {
         coroutineScope.launch {
-            followedShowsRepository.removeFollowedShow(showTraktId)
+            unfollowShowInteractor.executeSync(showTraktId)
         }
     }
 
@@ -153,7 +157,7 @@ public class DefaultWatchlistPresenter(
     private fun syncWatchlist(forceRefresh: Boolean = false) {
         coroutineScope.launch {
             watchlistSyncInteractor(WatchlistSyncInteractor.Param(forceRefresh))
-                .collectStatus(watchlistLoadingState, logger, uiMessageManager)
+                .collectStatus(watchlistLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         }
     }
 }

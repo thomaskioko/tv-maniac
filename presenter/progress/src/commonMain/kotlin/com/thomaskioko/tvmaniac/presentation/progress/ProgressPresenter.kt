@@ -16,6 +16,8 @@ public interface ProgressPresenter {
             componentContext: ComponentContext,
             navigateToShowDetails: (showId: Long) -> Unit,
             navigateToSeasonDetails: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
+            onUpNextEpisodeLongPressed: (episodeId: Long) -> Unit = {},
+            onCalendarEpisodeLongPressed: (episodeId: Long) -> Unit = {},
         ): ProgressPresenter
     }
 }

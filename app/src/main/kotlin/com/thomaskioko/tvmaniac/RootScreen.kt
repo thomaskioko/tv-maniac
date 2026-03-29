@@ -24,6 +24,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.thomaskioko.tvmaniac.compose.components.NotificationRationaleContent
 import com.thomaskioko.tvmaniac.debug.ui.DebugMenuScreen
+import com.thomaskioko.tvmaniac.episodedetail.ui.EpisodeDetailSheet
 import com.thomaskioko.tvmaniac.home.ui.HomeScreen
 import com.thomaskioko.tvmaniac.moreshows.ui.MoreShowsScreen
 import com.thomaskioko.tvmaniac.navigation.RootPresenter
@@ -68,6 +69,11 @@ public fun RootScreen(
                 rootPresenter.onNotificationPermissionResult(true)
             }
         }
+    }
+
+    val episodeSheetSlot by rootPresenter.episodeSheetSlot.collectAsStateWithLifecycle()
+    episodeSheetSlot.child?.instance?.let { presenter ->
+        EpisodeDetailSheet(presenter = presenter)
     }
 
     Surface(modifier = modifier, color = MaterialTheme.colorScheme.background) {

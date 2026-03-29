@@ -32,7 +32,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -43,19 +42,25 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
+import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
+import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_next_week
+import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_previous_week
+import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presentation.calendar.CalendarAction
 import com.thomaskioko.tvmaniac.presentation.calendar.CalendarPresenter
 import com.thomaskioko.tvmaniac.presentation.calendar.CalendarState
 import com.thomaskioko.tvmaniac.presentation.calendar.EpisodeCardClicked
-import com.thomaskioko.tvmaniac.presentation.calendar.EpisodeDetailDismissed
+import com.thomaskioko.tvmaniac.presentation.calendar.MessageShown
 import com.thomaskioko.tvmaniac.presentation.calendar.NavigateToNextWeek
 import com.thomaskioko.tvmaniac.presentation.calendar.NavigateToPreviousWeek
 import com.thomaskioko.tvmaniac.presentation.calendar.model.CalendarDateGroup
@@ -74,6 +79,12 @@ public fun CalendarScreen(
         modifier = modifier,
         state = state,
         onAction = presenter::dispatch,
+    )
+
+    TvManiacSnackBarHost(
+        message = state.message?.message,
+        style = SnackBarStyle.Error,
+        onDismiss = { state.message?.let { presenter.dispatch(MessageShown(it.id)) } },
     )
 }
 
@@ -133,14 +144,6 @@ public fun CalendarPageContent(
                 )
             }
         }
-    }
-
-    state.selectedEpisode?.let { episode ->
-        EpisodeDetailBottomSheet(
-            episode = episode,
-            sheetState = sheetState,
-            onDismiss = { onAction(EpisodeDetailDismissed) },
-        )
     }
 }
 
@@ -216,14 +219,6 @@ internal fun CalendarScreen(
             }
         }
     }
-
-    state.selectedEpisode?.let { episode ->
-        EpisodeDetailBottomSheet(
-            episode = episode,
-            sheetState = sheetState,
-            onDismiss = { onAction(EpisodeDetailDismissed) },
-        )
-    }
 }
 
 @Composable
@@ -236,6 +231,8 @@ internal fun WeekNavigationHeader(
     onNextClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -247,7 +244,7 @@ internal fun WeekNavigationHeader(
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                contentDescription = "Previous week",
+                contentDescription = cd_previous_week.resolve(context),
                 tint = if (canNavigatePrevious) {
                     MaterialTheme.colorScheme.onSurface
                 } else {
@@ -281,7 +278,7 @@ internal fun WeekNavigationHeader(
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = "Next week",
+                contentDescription = cd_next_week.resolve(context),
                 tint = if (canNavigateNext) {
                     MaterialTheme.colorScheme.onSurface
                 } else {
@@ -436,31 +433,6 @@ private fun CalendarEpisodeCard(
             }
         }
     }
-}
-
-@Composable
-internal fun EpisodeDetailBottomSheet(
-    episode: CalendarEpisodeItem,
-    sheetState: SheetState,
-    onDismiss: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    com.thomaskioko.tvmaniac.compose.components.EpisodeDetailBottomSheet(
-        episode = com.thomaskioko.tvmaniac.compose.components.EpisodeDetailInfo(
-            title = episode.showTitle,
-            imageUrl = episode.posterUrl,
-            episodeInfo = buildString {
-                append(episode.episodeInfo)
-                episode.formattedAirDate?.let { append(" \u2022 $it") }
-            },
-            overview = episode.overview,
-            rating = episode.rating,
-            voteCount = episode.votes?.toLong(),
-        ),
-        sheetState = sheetState,
-        onDismiss = onDismiss,
-        modifier = modifier,
-    )
 }
 
 @Preview

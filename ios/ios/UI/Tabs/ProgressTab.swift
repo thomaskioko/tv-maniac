@@ -73,35 +73,6 @@ struct ProgressTab: View {
                 presenter.calendarPresenter.dispatch(action: EpisodeCardClicked(episodeTraktId: episodeTraktId))
             }
         )
-        .sheet(
-            isPresented: Binding(
-                get: { calendarState.showEpisodeDetail },
-                set: { isPresented in
-                    if !isPresented {
-                        presenter.calendarPresenter.dispatch(action: EpisodeDetailDismissed())
-                    }
-                }
-            )
-        ) {
-            if let episode = calendarState.selectedEpisode {
-                let swiftEpisode = episode.toSwift()
-                EpisodeDetailSheetContent(
-                    episode: EpisodeDetailInfo(
-                        title: swiftEpisode.showTitle,
-                        imageUrl: swiftEpisode.posterUrl,
-                        episodeInfo: {
-                            if let formattedDate = swiftEpisode.formattedAirDate {
-                                return "\(swiftEpisode.episodeInfo) \u{2022} \(formattedDate)"
-                            }
-                            return swiftEpisode.episodeInfo
-                        }(),
-                        overview: swiftEpisode.overview,
-                        rating: swiftEpisode.rating,
-                        voteCount: swiftEpisode.votes.map { Int64($0) }
-                    )
-                )
-            }
-        }
     }
 
     private func mapCalendarScreenState() -> CalendarScreenState {

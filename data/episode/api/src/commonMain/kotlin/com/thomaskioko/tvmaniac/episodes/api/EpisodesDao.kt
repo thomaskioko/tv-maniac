@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.episodes.api
 
+import com.thomaskioko.tvmaniac.db.EpisodeById
 import com.thomaskioko.tvmaniac.db.GetEpisodeByShowSeasonEpisodeNumber
 import com.thomaskioko.tvmaniac.db.NextEpisodeForShow
 import com.thomaskioko.tvmaniac.db.UpcomingEpisodesFromFollowedShows
@@ -16,6 +17,8 @@ public interface EpisodesDao {
     public fun delete(id: Long)
 
     public fun deleteAll()
+
+    public fun observeEpisodeById(episodeId: Long): Flow<EpisodeById?>
 
     public suspend fun getEpisodeByShowSeasonEpisodeNumber(
         showTraktId: Long,

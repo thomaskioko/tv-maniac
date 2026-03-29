@@ -53,6 +53,12 @@ public class DefaultFollowedShowsDao(
             .map { toEntry(it.followed_id, it.trakt_id.id, it.tmdb_id?.id, it.followed_at, it.pending_action) }
     }
 
+    override fun entriesExcludingDeleted(): List<FollowedShowEntry> {
+        return queries.entriesExcludingDeleted()
+            .executeAsList()
+            .map { toEntry(it.followed_id, it.trakt_id.id, it.tmdb_id?.id, it.followed_at, it.pending_action) }
+    }
+
     override fun entriesWithUploadPendingAction(): List<FollowedShowEntry> {
         return queries.entriesWithUploadPendingAction()
             .executeAsList()

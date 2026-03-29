@@ -152,6 +152,29 @@ WHERE season.season_number > 0
   AND watched_episodes.id IS NULL
 ORDER BY episode.first_aired ASC;
 
+episodeById:
+SELECT
+    episode.id AS episode_id,
+    episode.season_id,
+    episode.show_trakt_id,
+    episode.episode_number,
+    episode.title,
+    episode.overview,
+    episode.vote_count,
+    episode.ratings,
+    episode.image_url,
+    season.season_number,
+    tvshow.name AS show_name,
+    CASE WHEN watched_episodes.id IS NOT NULL THEN 1 ELSE 0 END AS is_watched
+FROM episode
+JOIN season ON season.id = episode.season_id
+JOIN tvshow ON tvshow.trakt_id = episode.show_trakt_id
+LEFT OUTER JOIN watched_episodes
+    ON watched_episodes.episode_id = episode.id
+    AND watched_episodes.show_trakt_id = episode.show_trakt_id
+    AND watched_episodes.pending_action != 'DELETE'
+WHERE episode.id = :episodeId;
+
 episodesBySeasonId:
 SELECT
     episode.id AS episode_id,

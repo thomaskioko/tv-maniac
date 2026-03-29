@@ -30,7 +30,6 @@ struct SettingsView: View {
             privacyToggles: privacyToggles,
             infoItems: infoItems,
             traktItems: traktItems,
-            debugItems: debugItems,
             onBack: { presenter.dispatch(action: BackClicked__()) }
         )
         .settingsObservers(
@@ -42,7 +41,8 @@ struct SettingsView: View {
             uiState: uiState,
             showingErrorAlert: $showingErrorAlert,
             showingLogoutAlert: $showingLogoutAlert,
-            onLogout: { presenter.dispatch(action: TraktLogoutClicked()) }
+            onLogout: { presenter.dispatch(action: TraktLogoutClicked()) },
+            onDismissError: { id in presenter.dispatch(action: SettingsMessageShown(id: id)) }
         )
         .alert(
             String(\.notification_permission_denied_title),
@@ -59,6 +59,11 @@ struct SettingsView: View {
         }
         .sheet(isPresented: $showAboutSheet) {
             AboutSheet()
+        }
+        .onChange(of: uiState.hiddenTapCount) { _, newCount in
+            if newCount == 0, showAboutSheet {
+                showAboutSheet = false
+            }
         }
         .sheet(isPresented: $showPolicy) {
             if let url = URL(string: uiState.privacyPolicyUrl) {
@@ -211,24 +216,6 @@ struct SettingsView: View {
         ]
     }
 
-    // MARK: - Debug Items
-
-    private var debugItems: [SettingsNavigationItem] {
-        #if DEBUG
-            return [
-                SettingsNavigationItem(
-                    id: "debug",
-                    icon: "ellipsis.curlybraces",
-                    title: String(\.label_debug_menu_title),
-                    subtitle: String(\.label_debug_menu_subtitle),
-                    onTap: { presenter.dispatch(action: NavigateToDebugMenu()) }
-                ),
-            ]
-        #else
-            return []
-        #endif
-    }
-
     // MARK: - Notification Handling
 
     private func handleNotificationToggle(enabled: Bool) {
@@ -268,6 +255,8 @@ struct SettingsView: View {
 
                         Text(String(\.settings_about_version, parameter: uiState.versionName))
                             .font(.body)
+                            .contentShape(Rectangle())
+                            .onTapGesture { presenter.dispatch(action: VersionClicked()) }
                     }
                     .padding(.vertical, 32)
 
@@ -360,8 +349,8 @@ private extension View {
         .onChange(of: uiState.imageQuality) { _, imageQuality in
             store.imageQuality = imageQuality.toSwift()
         }
-        .onChange(of: uiState.errorMessage) { _, errorMessage in
-            showingErrorAlert.wrappedValue = errorMessage != nil
+        .onChange(of: uiState.message) { _, message in
+            showingErrorAlert.wrappedValue = message != nil
         }
     }
 
@@ -369,13 +358,18 @@ private extension View {
         uiState: SettingsState,
         showingErrorAlert: Binding<Bool>,
         showingLogoutAlert: Binding<Bool>,
-        onLogout: @escaping () -> Void
+        onLogout: @escaping () -> Void,
+        onDismissError: @escaping (Int64) -> Void
     ) -> some View {
         alert(isPresented: showingErrorAlert) {
             Alert(
-                title: Text("Error"),
-                message: Text(uiState.errorMessage ?? "An error occurred"),
-                dismissButton: .default(Text("OK"))
+                title: Text(String(\.label_error)),
+                message: Text(uiState.message?.message ?? String(\.error_generic)),
+                dismissButton: .default(Text(String(\.label_ok))) {
+                    if let message = uiState.message {
+                        onDismissError(message.id)
+                    }
+                }
             )
         }
         .alert(isPresented: showingLogoutAlert) {

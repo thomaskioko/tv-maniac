@@ -24,27 +24,11 @@ public struct CastCardView: View {
         LazyResizableImage(
             url: profileUrl,
             imageType: .profile,
-            size: CGSize(width: DimensionConstants.profileWidth, height: DimensionConstants.profileHeight)
-        ) { state in
-            if let image = state.image {
-                image.resizable()
-            } else {
-                profilePlaceholder
-            }
-        }
+            size: CGSize(width: DimensionConstants.profileWidth, height: DimensionConstants.profileHeight),
+            placeholderIcon: "person"
+        )
         .aspectRatio(contentMode: .fill)
         .frame(width: DimensionConstants.profileWidth, height: DimensionConstants.profileHeight)
-    }
-
-    private var profilePlaceholder: some View {
-        ZStack {
-            Rectangle().fill(.gray.gradient)
-            Image(systemName: "person")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 50, height: 50)
-                .foregroundColor(.white)
-        }
     }
 
     private var nameOverlay: some View {

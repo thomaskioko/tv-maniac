@@ -5,15 +5,18 @@ public struct ContinueTrackingCard: View {
 
     private let episode: SwiftContinueTrackingEpisode
     private let dayLabelFormat: (_ count: Int) -> String
+    private let tbdLabel: String
     private let onMarkWatched: () -> Void
 
     public init(
         episode: SwiftContinueTrackingEpisode,
         dayLabelFormat: @escaping (_ count: Int) -> String,
+        tbdLabel: String,
         onMarkWatched: @escaping () -> Void
     ) {
         self.episode = episode
         self.dayLabelFormat = dayLabelFormat
+        self.tbdLabel = tbdLabel
         self.onMarkWatched = onMarkWatched
     }
 
@@ -43,19 +46,19 @@ public struct ContinueTrackingCard: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
 
                 if episode.hasAired {
-                    ZStack {
-                        Circle()
-                            .fill(episode.isWatched ? theme.colors.success : theme.colors.grey)
-                            .frame(width: DimensionConstants.checkmarkSize, height: DimensionConstants.checkmarkSize)
-                        Image(systemName: "checkmark")
-                            .font(.system(size: 12, weight: .bold))
-                            .foregroundColor(.white)
+                    Button(action: onMarkWatched) {
+                        ZStack {
+                            Circle()
+                                .fill(episode.isWatched ? theme.colors.success : theme.colors.grey)
+                                .frame(width: DimensionConstants.checkmarkSize, height: DimensionConstants.checkmarkSize)
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundColor(.white)
+                        }
+                        .frame(width: DimensionConstants.tapTargetSize, height: DimensionConstants.cardHeight)
+                        .contentShape(Rectangle())
                     }
-                    .frame(width: DimensionConstants.tapTargetSize, height: DimensionConstants.tapTargetSize)
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        onMarkWatched()
-                    }
+                    .buttonStyle(.plain)
                 } else if let daysUntilAir = episode.daysUntilAir, daysUntilAir > 0 {
                     VStack(spacing: 0) {
                         Text("\(daysUntilAir)")
@@ -67,7 +70,7 @@ public struct ContinueTrackingCard: View {
                     }
                     .padding(.trailing, theme.spacing.small)
                 } else {
-                    Text("TBD")
+                    Text(tbdLabel)
                         .textStyle(theme.typography.titleMedium)
                         .foregroundColor(theme.colors.onSurfaceVariant)
                         .padding(.trailing, theme.spacing.small)
@@ -87,8 +90,8 @@ private enum DimensionConstants {
     static let cardWidth: CGFloat = 300
     static let cardHeight: CGFloat = 120
     static let imageWidth: CGFloat = 100
-    static let checkmarkSize: CGFloat = 24
-    static let tapTargetSize: CGFloat = 50
+    static let checkmarkSize: CGFloat = 32
+    static let tapTargetSize: CGFloat = 48
 }
 
 #Preview {
@@ -108,6 +111,7 @@ private enum DimensionConstants {
                 hasAired: true
             ),
             dayLabelFormat: { count in count == 1 ? "day" : "days" },
+            tbdLabel: "TBD",
             onMarkWatched: {}
         )
 
@@ -126,6 +130,7 @@ private enum DimensionConstants {
                 hasAired: true
             ),
             dayLabelFormat: { count in count == 1 ? "day" : "days" },
+            tbdLabel: "TBD",
             onMarkWatched: {}
         )
 
@@ -144,6 +149,7 @@ private enum DimensionConstants {
                 hasAired: false
             ),
             dayLabelFormat: { count in count == 1 ? "day" : "days" },
+            tbdLabel: "TBD",
             onMarkWatched: {}
         )
 
@@ -162,6 +168,7 @@ private enum DimensionConstants {
                 hasAired: false
             ),
             dayLabelFormat: { count in count == 1 ? "day" : "days" },
+            tbdLabel: "TBD",
             onMarkWatched: {}
         )
     }

@@ -20,6 +20,8 @@ public class DefaultProgressPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val navigateToShowDetails: (showId: Long) -> Unit,
     @Assisted private val navigateToSeasonDetails: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
+    @Assisted private val onUpNextEpisodeLongPressed: (Long) -> Unit,
+    @Assisted private val onCalendarEpisodeLongPressed: (Long) -> Unit,
     private val upNextPresenterFactory: UpNextPresenter.Factory,
     private val calendarPresenterFactory: CalendarPresenter.Factory,
 ) : ProgressPresenter, ComponentContext by componentContext {
@@ -31,11 +33,13 @@ public class DefaultProgressPresenter(
         componentContext = childContext(key = "UpNext"),
         navigateToShowDetails = navigateToShowDetails,
         navigateToSeasonDetails = navigateToSeasonDetails,
+        onEpisodeLongPressed = onUpNextEpisodeLongPressed,
     )
 
     override val calendarPresenter: CalendarPresenter = calendarPresenterFactory(
         componentContext = childContext(key = "Calendar"),
         navigateToShowDetails = navigateToShowDetails,
+        onEpisodeLongPressed = onCalendarEpisodeLongPressed,
     )
 
     override fun dispatch(action: ProgressAction) {
@@ -55,11 +59,21 @@ public class DefaultProgressPresenterFactory(
         componentContext: ComponentContext,
         navigateToShowDetails: (showId: Long) -> Unit,
         navigateToSeasonDetails: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
+        onUpNextEpisodeLongPressed: (Long) -> Unit,
+        onCalendarEpisodeLongPressed: (Long) -> Unit,
     ) -> ProgressPresenter,
 ) : ProgressPresenter.Factory {
     override fun invoke(
         componentContext: ComponentContext,
         navigateToShowDetails: (showId: Long) -> Unit,
         navigateToSeasonDetails: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
-    ): ProgressPresenter = presenter(componentContext, navigateToShowDetails, navigateToSeasonDetails)
+        onUpNextEpisodeLongPressed: (episodeId: Long) -> Unit,
+        onCalendarEpisodeLongPressed: (episodeId: Long) -> Unit,
+    ): ProgressPresenter = presenter(
+        componentContext,
+        navigateToShowDetails,
+        navigateToSeasonDetails,
+        onUpNextEpisodeLongPressed,
+        onCalendarEpisodeLongPressed,
+    )
 }

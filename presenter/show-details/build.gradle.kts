@@ -53,6 +53,7 @@ kotlin {
                 implementation(projects.data.trailers.testing)
                 implementation(projects.data.traktauth.api)
                 implementation(projects.data.traktauth.testing)
+                implementation(projects.data.upnext.testing)
                 implementation(projects.data.watchproviders.testing)
                 implementation(projects.i18n.testing)
                 implementation(projects.core.notifications.testing)

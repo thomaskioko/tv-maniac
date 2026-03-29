@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.upnext.implementation
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsDao
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
@@ -13,6 +14,7 @@ import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.upnext.api.UpNextDao
 import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
+import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
@@ -29,11 +31,13 @@ public class DefaultUpNextRepository(
     private val upNextDao: UpNextDao,
     private val showUpNextStore: ShowUpNextStore,
     private val datastoreRepository: DatastoreRepository,
+    private val episodesDao: EpisodesDao,
     private val followedShowsDao: FollowedShowsDao,
     private val tvShowsDao: TvShowsDao,
     private val showDetailsRepository: ShowDetailsRepository,
     private val seasonDetailsRepository: SeasonDetailsRepository,
     private val requestManagerRepository: RequestManagerRepository,
+    private val dateTimeProvider: DateTimeProvider,
     private val logger: Logger,
     private val traktAuthRepository: TraktAuthRepository,
 ) : UpNextRepository {
@@ -43,12 +47,18 @@ public class DefaultUpNextRepository(
 
     override fun observeFollowedShowsCount(): Flow<Int> =
         followedShowsDao.entriesObservable()
-            .map { entries -> entries.count { it.pendingAction == PendingAction.NOTHING } }
+            .map { entries -> entries.count { it.pendingAction != PendingAction.DELETE } }
 
     override suspend fun fetchUpNextEpisodes(forceRefresh: Boolean) {
         if (!forceRefresh && isSyncValid()) return
 
-        val followedShows = followedShowsDao.entriesWithNoPendingAction()
+        val isLoggedIn = traktAuthRepository.isLoggedIn()
+        val followedShows = if (isLoggedIn) {
+            followedShowsDao.entriesWithNoPendingAction()
+        } else {
+            followedShowsDao.entriesExcludingDeleted()
+        }
+
         if (followedShows.isEmpty()) {
             logger.debug(TAG, "No followed shows found, skipping UpNext refresh")
             return
@@ -56,22 +66,26 @@ public class DefaultUpNextRepository(
 
         logger.debug(
             TAG,
-            "Refreshing UpNext for ${followedShows.size} followed shows (forceRefresh=$forceRefresh)",
+            "Refreshing UpNext for ${followedShows.size} followed shows (forceRefresh=$forceRefresh, loggedIn=$isLoggedIn)",
         )
 
         followedShows.chunked(10).forEach { batch ->
             batch.forEach { show ->
                 ensureShowExists(show.traktId)
 
-                when {
-                    forceRefresh -> showUpNextStore.fresh(show.traktId)
-                    else -> showUpNextStore.get(show.traktId)
-                }
+                if (isLoggedIn) {
+                    when {
+                        forceRefresh -> showUpNextStore.fresh(show.traktId)
+                        else -> showUpNextStore.get(show.traktId)
+                    }
 
-                seasonDetailsRepository.syncShowSeasonDetails(
-                    showTraktId = show.traktId,
-                    forceRefresh = forceRefresh,
-                )
+                    seasonDetailsRepository.syncShowSeasonDetails(
+                        showTraktId = show.traktId,
+                        forceRefresh = forceRefresh,
+                    )
+                } else {
+                    populateUpNextFromLocal(show.traktId)
+                }
             }
         }
 
@@ -101,6 +115,8 @@ public class DefaultUpNextRepository(
                 forceRefresh -> showUpNextStore.fresh(showTraktId)
                 else -> showUpNextStore.get(showTraktId)
             }
+        } else {
+            populateUpNextFromLocal(showTraktId)
         }
     }
 
@@ -113,6 +129,8 @@ public class DefaultUpNextRepository(
             ensureShowExists(showTraktId)
             if (traktAuthRepository.isLoggedIn()) {
                 showUpNextStore.fresh(showTraktId)
+            } else {
+                populateUpNextFromLocal(showTraktId, lastWatchedAt = dateTimeProvider.nowMillis())
             }
         } catch (e: Exception) {
             logger.error(TAG, "Remote UpNext refresh failed, advancing locally: ${e.message}")
@@ -145,6 +163,32 @@ public class DefaultUpNextRepository(
                 id = showTraktId,
                 forceRefresh = true,
             )
+        }
+    }
+
+    private suspend fun populateUpNextFromLocal(showTraktId: Long, lastWatchedAt: Long? = null) {
+        val includeSpecials = datastoreRepository.getIncludeSpecials()
+        val nextEpisode = episodesDao.getNextEpisodeForShow(showTraktId, includeSpecials)
+        if (nextEpisode != null) {
+            upNextDao.upsert(
+                showTraktId = showTraktId,
+                episodeTraktId = nextEpisode.episode_id.id,
+                seasonNumber = nextEpisode.season_number,
+                episodeNumber = nextEpisode.episode_number,
+                title = nextEpisode.episode_name,
+                overview = nextEpisode.overview,
+                runtime = nextEpisode.runtime,
+                firstAired = nextEpisode.first_aired,
+                imageUrl = nextEpisode.still_path,
+                isShowComplete = false,
+                lastEpisodeSeason = null,
+                lastEpisodeNumber = null,
+                traktLastWatchedAt = lastWatchedAt,
+                updatedAt = dateTimeProvider.nowMillis(),
+            )
+            logger.debug(TAG, "Populated local up next for show $showTraktId: S${nextEpisode.season_number}E${nextEpisode.episode_number}")
+        } else {
+            logger.debug(TAG, "No next episode found locally for show $showTraktId")
         }
     }
 

@@ -1,0 +1,30 @@
+name: 'Setup iOS Release'
+description: 'Common setup for iOS release builds: Xcode, Ruby, SPM cache, Gradle, and GoogleService-Info.plist'
+
+inputs:
+  xcode-version:
+    description: 'Xcode version to use'
+    required: true
+  google-service-info-plist:
+    description: 'Base64-encoded GoogleService-Info.plist for release'
+    required: false
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup iOS Environment
+      uses: ./.github/actions/setup-ios
+      with:
+        xcode-version: ${{ inputs.xcode-version }}
+
+    - name: Install GoogleService-Info.plist
+      shell: bash
+      env:
+        GOOGLE_SERVICE_INFO: ${{ inputs.google-service-info-plist }}
+      run: |
+        if [ -n "$GOOGLE_SERVICE_INFO" ]; then
+          mkdir -p ios/ios/Firebase/Release
+          echo "$GOOGLE_SERVICE_INFO" | base64 --decode > ios/ios/Firebase/Release/GoogleService-Info.plist
+        else
+          echo "warning: GoogleService-Info.plist not provided - Firebase will be disabled"
+        fi

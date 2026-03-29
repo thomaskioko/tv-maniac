@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsPresenter
 import com.thomaskioko.tvmaniac.navigation.DefaultRootPresenter
 import com.thomaskioko.tvmaniac.navigation.RootNavigator
 import com.thomaskioko.tvmaniac.navigation.RootPresenter
+import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeDetailSheetPresenter
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenter
 import com.thomaskioko.tvmaniac.presenter.trailers.TrailersPresenter
@@ -33,6 +34,7 @@ public class FakeRootPresenterFactory(
     private val showDetailsPresenterFactory: ShowDetailsPresenter.Factory,
     private val seasonDetailsPresenterFactory: SeasonDetailsPresenter.Factory,
     private val trailersPresenterFactory: TrailersPresenter.Factory,
+    private val episodeDetailSheetPresenterFactory: EpisodeDetailSheetPresenter.Factory,
     private val traktAuthRepository: TraktAuthRepository,
     private val updateUserProfileData: UpdateUserProfileData,
     private val logoutInteractor: LogoutInteractor,
@@ -53,6 +55,7 @@ public class FakeRootPresenterFactory(
             showDetailsPresenterFactory = showDetailsPresenterFactory,
             seasonDetailsPresenterFactory = seasonDetailsPresenterFactory,
             trailersPresenterFactory = trailersPresenterFactory,
+            episodeDetailSheetPresenterFactory = episodeDetailSheetPresenterFactory,
             traktAuthRepository = traktAuthRepository,
             updateUserProfileData = updateUserProfileData,
             logoutInteractor = logoutInteractor,

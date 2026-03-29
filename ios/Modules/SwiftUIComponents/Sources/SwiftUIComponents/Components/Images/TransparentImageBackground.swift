@@ -18,16 +18,7 @@ public struct TransparentImageBackground: View {
                 width: UIScreen.main.bounds.width,
                 height: UIScreen.main.bounds.height
             )
-        ) { state in
-            if let image = state.image {
-                image.resizable()
-            } else {
-                Rectangle()
-                    .fill(theme.colors.background)
-                    .ignoresSafeArea()
-                    .padding(.zero)
-            }
-        }
+        )
         .aspectRatio(contentMode: .fill)
         .ignoresSafeArea()
         .padding(.zero)

@@ -10,6 +10,8 @@ import com.thomaskioko.tvmaniac.core.view.InvokeSuccess
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey
+import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.maps.shouldBeEmpty
@@ -39,10 +41,13 @@ class ScheduleEpisodeNotificationsInteractorTest {
         main = testDispatcher,
     )
 
+    private val localizer = FakeLocalizer()
+
     private val interactor = ScheduleEpisodeNotificationsInteractor(
         datastoreRepository = datastoreRepository,
         episodeRepository = episodeRepository,
         notificationManager = notificationManager,
+        localizer = localizer,
         dateTimeProvider = dateTimeProvider,
         logger = logger,
         dispatchers = dispatchers,
@@ -67,6 +72,7 @@ class ScheduleEpisodeNotificationsInteractorTest {
             episodeNumber = 1,
             imageUrl = null,
             scheduledTime = episodeAirTime - bufferTime.inWholeMilliseconds,
+            message = localizer.getString(StringResourceKey.NotificationNewEpisode, "Episode 1", 1L, 1L),
         )
         notificationManager.addPendingNotification(existingNotification)
 
@@ -152,6 +158,7 @@ class ScheduleEpisodeNotificationsInteractorTest {
             episodeNumber = 1,
             imageUrl = null,
             scheduledTime = currentTime + 1.hours.inWholeMilliseconds,
+            message = localizer.getString(StringResourceKey.NotificationNewEpisode, "Old Episode", 1L, 1L),
         )
         notificationManager.addPendingNotification(staleNotification)
 
@@ -185,6 +192,7 @@ class ScheduleEpisodeNotificationsInteractorTest {
             episodeNumber = 5,
             imageUrl = null,
             scheduledTime = episodeAirTime - bufferTime.inWholeMilliseconds,
+            message = localizer.getString(StringResourceKey.NotificationNewEpisode, "Imminent Episode", 2L, 5L),
         )
         notificationManager.addPendingNotification(previouslyScheduled)
 
@@ -198,6 +206,7 @@ class ScheduleEpisodeNotificationsInteractorTest {
             episodeNumber = 1,
             imageUrl = null,
             scheduledTime = currentTime + 2.hours.inWholeMilliseconds,
+            message = localizer.getString(StringResourceKey.NotificationNewEpisode, "Old Episode", 1L, 1L),
         )
         notificationManager.addPendingNotification(staleNotification)
 

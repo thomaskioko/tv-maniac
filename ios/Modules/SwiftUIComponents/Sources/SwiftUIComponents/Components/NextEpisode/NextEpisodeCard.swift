@@ -5,16 +5,13 @@ public struct NextEpisodeCard: View {
 
     private let episode: SwiftNextEpisode
     private let onEpisodeClick: () -> Void
-    private let onLongPress: () -> Void
 
     public init(
         episode: SwiftNextEpisode,
-        onEpisodeClick: @escaping () -> Void,
-        onLongPress: @escaping () -> Void = {}
+        onEpisodeClick: @escaping () -> Void
     ) {
         self.episode = episode
         self.onEpisodeClick = onEpisodeClick
-        self.onLongPress = onLongPress
     }
 
     public var body: some View {
@@ -23,19 +20,7 @@ public struct NextEpisodeCard: View {
                 url: episode.imageUrl,
                 imageType: .backdrop,
                 size: CGSize(width: DimensionConstants.imageWidth, height: DimensionConstants.imageHeight)
-            ) { state in
-                if let image = state.image {
-                    image.resizable()
-                } else {
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.3))
-                        .overlay(
-                            Image(systemName: "tv")
-                                .textStyle(theme.typography.titleLarge)
-                                .foregroundColor(theme.colors.onSurfaceVariant)
-                        )
-                }
-            }
+            )
             .scaledToFill()
             .frame(width: DimensionConstants.imageWidth, height: DimensionConstants.imageHeight)
             .clipped()
@@ -91,9 +76,6 @@ public struct NextEpisodeCard: View {
         .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
         .onTapGesture {
             onEpisodeClick()
-        }
-        .onLongPressGesture {
-            onLongPress()
         }
     }
 }

@@ -78,7 +78,6 @@ class DiscoverScreenTest: SnapshotTestCase {
             onPopularClicked: {},
             onTopRatedClicked: {},
             onNextEpisodeClicked: { _ in },
-            onNextEpisodeLongPress: { _ in },
             onCarouselIndexChanged: { _ in }
         )
         .themedPreview()
@@ -117,7 +116,6 @@ class DiscoverScreenTest: SnapshotTestCase {
             onPopularClicked: {},
             onTopRatedClicked: {},
             onNextEpisodeClicked: { _ in },
-            onNextEpisodeLongPress: { _ in },
             onCarouselIndexChanged: { _ in }
         )
         .themedPreview()
@@ -156,7 +154,6 @@ class DiscoverScreenTest: SnapshotTestCase {
             onPopularClicked: {},
             onTopRatedClicked: {},
             onNextEpisodeClicked: { _ in },
-            onNextEpisodeLongPress: { _ in },
             onCarouselIndexChanged: { _ in }
         )
         .themedPreview()

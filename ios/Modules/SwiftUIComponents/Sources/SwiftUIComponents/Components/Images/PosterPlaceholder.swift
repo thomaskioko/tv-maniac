@@ -4,6 +4,7 @@ public struct PosterPlaceholder: View {
     @Theme private var theme
 
     private let title: String?
+    private let icon: String
     private let posterWidth: CGFloat
     private let posterHeight: CGFloat
     private let posterRadius: CGFloat?
@@ -11,12 +12,14 @@ public struct PosterPlaceholder: View {
 
     public init(
         title: String? = nil,
-        posterWidth: CGFloat = 160,
-        posterHeight: CGFloat = 240,
+        icon: String = "popcorn.fill",
+        posterWidth: CGFloat = 120,
+        posterHeight: CGFloat = 180,
         posterRadius: CGFloat? = nil,
         shadowRadius: CGFloat = 8
     ) {
         self.title = title
+        self.icon = icon
         self.posterWidth = posterWidth
         self.posterHeight = posterHeight
         self.posterRadius = posterRadius
@@ -27,7 +30,7 @@ public struct PosterPlaceholder: View {
         ZStack {
             Rectangle().fill(.gray.gradient)
             VStack {
-                Image(systemName: "popcorn.fill")
+                Image(systemName: icon)
                     .textStyle(theme.typography.titleLarge)
                     .fontWidth(.expanded)
                     .foregroundColor(theme.colors.onPrimary.opacity(0.8))
@@ -55,5 +58,9 @@ public struct PosterPlaceholder: View {
         PosterPlaceholder(title: "Arcane")
 
         PosterPlaceholder()
+
+        PosterPlaceholder(icon: "person", posterWidth: 120, posterHeight: 160)
+
+        PosterPlaceholder(icon: "tv", posterWidth: 80, posterHeight: 70)
     }
 }

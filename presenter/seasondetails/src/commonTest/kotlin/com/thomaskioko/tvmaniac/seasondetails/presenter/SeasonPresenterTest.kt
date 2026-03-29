@@ -5,6 +5,7 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.SeasonCast
@@ -1214,6 +1215,7 @@ class SeasonPresenterTest {
             observeUnwatchedInPreviousSeasonsInteractor = ObserveUnwatchedInPreviousSeasonsInteractor(
                 episodeRepository = episodeRepository,
             ),
+            errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = FakeLogger(),
         )
     }

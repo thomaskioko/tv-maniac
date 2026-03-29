@@ -4,8 +4,10 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
+import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.RefreshUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.model.UpNextSortOption
@@ -415,12 +417,14 @@ internal class DefaultUpNextPresenterTest {
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             navigateToShowDetails = navigateToShowDetails,
             navigateToSeasonDetails = navigateToSeasonDetails,
+            onEpisodeLongPressed = {},
             observeUpNextInteractor = observeUpNextInteractor,
             refreshUpNextInteractor = refreshUpNextInteractor,
             markEpisodeWatchedInteractor = markEpisodeWatchedInteractor,
             upNextRepository = upNextRepository,
-            followedShowsRepository = followedShowsRepository,
+            unfollowShowInteractor = UnfollowShowInteractor(followedShowsRepository),
             traktAuthRepository = traktAuthRepository,
+            errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = logger,
         )
     }

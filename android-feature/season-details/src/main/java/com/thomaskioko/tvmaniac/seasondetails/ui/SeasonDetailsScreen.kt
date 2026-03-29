@@ -38,6 +38,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -92,6 +93,7 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.unexpected_error_retry
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.seasondetails.presenter.ConfirmDialogAction
 import com.thomaskioko.tvmaniac.seasondetails.presenter.DismissDialog
+import com.thomaskioko.tvmaniac.seasondetails.presenter.EpisodeClicked
 import com.thomaskioko.tvmaniac.seasondetails.presenter.ReloadSeasonDetails
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsAction
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsBackClicked
@@ -102,6 +104,7 @@ import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDialogState
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SecondaryDialogAction
 import com.thomaskioko.tvmaniac.seasondetails.presenter.ShowGallery
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.Cast
+import com.thomaskioko.tvmaniac.seasondetails.presenter.model.EpisodeDetailsModel
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonImagesModel
 import com.thomaskioko.tvmaniac.seasondetails.ui.components.CollapsableContent
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
@@ -118,6 +121,7 @@ public fun SeasonDetailsScreen(
         modifier = modifier,
         state = state,
         onAction = presenter::dispatch,
+        onEpisodeLongPress = { presenter.dispatch(EpisodeClicked(it.id)) },
     )
 }
 
@@ -126,6 +130,7 @@ internal fun SeasonDetailsScreen(
     state: SeasonDetailsModel,
     modifier: Modifier = Modifier,
     onAction: (SeasonDetailsAction) -> Unit,
+    onEpisodeLongPress: (EpisodeDetailsModel) -> Unit = {},
 ) {
     val listState = rememberLazyListState()
 
@@ -157,6 +162,7 @@ internal fun SeasonDetailsScreen(
                         isLoading = state.isRefreshing,
                         contentPadding = contentPadding,
                         onAction = onAction,
+                        onEpisodeLongPress = onEpisodeLongPress,
                         listState = listState,
                     )
                 }
@@ -209,6 +215,7 @@ internal fun LazyColumnContent(
     seasonDetailsModel: SeasonDetailsModel,
     contentPadding: PaddingValues,
     onAction: (SeasonDetailsAction) -> Unit,
+    onEpisodeLongPress: (EpisodeDetailsModel) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
@@ -235,6 +242,7 @@ internal fun LazyColumnContent(
             BodyContent(
                 seasonDetailsModel = seasonDetailsModel,
                 onAction = onAction,
+                onEpisodeLongPress = onEpisodeLongPress,
             )
         }
 
@@ -398,6 +406,7 @@ private fun HeaderContent(
 private fun BodyContent(
     seasonDetailsModel: SeasonDetailsModel,
     onAction: (SeasonDetailsAction) -> Unit,
+    onEpisodeLongPress: (EpisodeDetailsModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -435,6 +444,7 @@ private fun BodyContent(
             episodeDetailsModelList = seasonDetailsModel.episodeDetailsList,
             collapsed = seasonDetailsModel.expandEpisodeItems,
             onAction = onAction,
+            onEpisodeLongPress = onEpisodeLongPress,
         )
 
         CastContent(seasonDetailsModel.seasonCast)

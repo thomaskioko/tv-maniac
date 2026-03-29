@@ -39,6 +39,7 @@ struct ShowDetailsView: View {
             continueTrackingScrollIndex: Int(uiState.continueTrackingScrollIndex),
             continueTrackingTitle: String(\.title_continue_tracking),
             dayLabelFormat: { count in String(\.day_label, quantity: count) },
+            tbdLabel: String(\.label_tbd),
             trackLabel: String(\.following),
             stopTrackingLabel: String(\.unfollow),
             addToListLabel: String(\.btn_add_to_list),

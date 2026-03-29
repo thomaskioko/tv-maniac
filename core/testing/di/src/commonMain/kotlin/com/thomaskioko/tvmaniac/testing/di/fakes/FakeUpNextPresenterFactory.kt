@@ -19,6 +19,7 @@ public class FakeUpNextPresenterFactory : UpNextPresenter.Factory {
         componentContext: ComponentContext,
         navigateToShowDetails: (showTraktId: Long) -> Unit,
         navigateToSeasonDetails: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
+        onEpisodeLongPressed: (episodeId: Long) -> Unit,
     ): UpNextPresenter = FakeUpNextPresenter()
 }
 

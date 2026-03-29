@@ -199,11 +199,13 @@ end
 
 platform :android do
 
-  desc "Deploy AAB to Play Store internal track"
+  desc "Deploy AAB to a Play Store track (default: internal)"
   lane :deploy_play_store do |options|
+    track = options[:track] || "internal"
+
     supply(
       package_name: PACKAGE_NAME,
-      track: "internal",
+      track: track,
       aab: "app/build/outputs/bundle/release/app-release.aab",
       json_key_data: ENV["PLAY_STORE_SERVICE_ACCOUNT_JSON"],
       release_status: "completed",
@@ -213,9 +215,10 @@ platform :android do
     )
   end
 
-  desc "Deploy AAB to Play Store production track (0.1% rollout)"
+  desc "Deploy AAB to Play Store production track"
   lane :deploy_production do |options|
-    rollout = options[:rollout] || "0.001"
+    rollout = options[:rollout]
+    UI.user_error!("Missing required 'rollout' parameter (e.g., rollout:0.001)") unless rollout
 
     supply(
       package_name: PACKAGE_NAME,
@@ -231,7 +234,7 @@ platform :android do
   end
 
   desc "Distribute release APK via Firebase App Distribution"
-  lane :distribute_alpha do |options|
+  lane :distribute_firebase do |options|
     groups = options[:groups] || "internal"
 
     firebase_app_distribution(
@@ -252,16 +255,26 @@ platform :android do
     to_track = options[:to] || "beta"
     rollout = options[:rollout] || "1.0"
 
-    supply(
-      package_name: PACKAGE_NAME,
-      track: from_track,
-      track_promote_to: to_track,
-      rollout: rollout,
-      json_key_data: ENV["PLAY_STORE_SERVICE_ACCOUNT_JSON"],
-      skip_upload_metadata: true,
-      skip_upload_images: true,
-      skip_upload_screenshots: true,
-    )
+    begin
+      supply(
+        package_name: PACKAGE_NAME,
+        track: from_track,
+        track_promote_to: to_track,
+        rollout: rollout,
+        json_key_data: ENV["PLAY_STORE_SERVICE_ACCOUNT_JSON"],
+        skip_upload_metadata: true,
+        skip_upload_images: true,
+        skip_upload_screenshots: true,
+      )
+    rescue => e
+      if e.message.match?(/rollout|percentage|already/i)
+        rollout_pct = (rollout.to_f * 100).round(1)
+        track_info = from_track == to_track ? from_track : "#{from_track} → #{to_track}"
+        UI.important("Promotion skipped — #{track_info} at #{rollout_pct}% rollout: #{e.message}")
+      else
+        raise e
+      end
+    end
   end
 end
 

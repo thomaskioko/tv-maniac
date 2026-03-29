@@ -16,6 +16,7 @@ kotlin {
                 implementation(projects.core.logger.api)
                 implementation(projects.domain.discover)
                 implementation(projects.domain.episode)
+                implementation(projects.domain.followedshows)
                 implementation(projects.domain.genre)
                 implementation(projects.domain.upnext)
                 implementation(projects.data.episode.api)

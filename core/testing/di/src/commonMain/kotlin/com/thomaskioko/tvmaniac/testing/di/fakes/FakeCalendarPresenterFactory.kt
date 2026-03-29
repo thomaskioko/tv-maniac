@@ -18,6 +18,7 @@ public class FakeCalendarPresenterFactory : CalendarPresenter.Factory {
     override fun invoke(
         componentContext: ComponentContext,
         navigateToShowDetails: (showId: Long) -> Unit,
+        onEpisodeLongPressed: (episodeId: Long) -> Unit,
     ): CalendarPresenter = FakeCalendarPresenter()
 }
 

@@ -29,7 +29,6 @@ internal fun NextEpisodesSection(
     modifier: Modifier = Modifier,
     nextEpisodes: ImmutableList<NextEpisodeUiModel>,
     onEpisodeClick: (NextEpisodeUiModel) -> Unit,
-    onEpisodeLongPress: (NextEpisodeUiModel) -> Unit,
     onSeeAllClick: () -> Unit = {},
 ) {
     AnimatedVisibility(
@@ -61,7 +60,6 @@ internal fun NextEpisodesSection(
                     NextEpisodeCard(
                         episode = episode,
                         onClick = { onEpisodeClick(episode) },
-                        onLongPress = { onEpisodeLongPress(episode) },
                     )
                 }
             }
@@ -120,7 +118,6 @@ private fun NextEpisodesSectionPreview() {
                 ),
             ),
             onEpisodeClick = {},
-            onEpisodeLongPress = {},
         )
     }
 }

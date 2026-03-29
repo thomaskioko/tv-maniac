@@ -32,6 +32,8 @@ public data object ShowAboutDialog : SettingsActions
 
 public data object DismissAboutDialog : SettingsActions
 
+public data object VersionClicked : SettingsActions
+
 public data class IncludeSpecialsToggled(
     val enabled: Boolean,
 ) : SettingsActions
@@ -48,4 +50,4 @@ public data class CrashReportingToggled(
     val enabled: Boolean,
 ) : SettingsActions
 
-public data object NavigateToDebugMenu : SettingsActions
+public data class SettingsMessageShown(val id: Long) : SettingsActions

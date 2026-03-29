@@ -21,6 +21,7 @@ public struct SeasonDetailsScreen: View {
     private let episodesTitle: String
     private let seasonImagesCountFormat: (Int) -> String
     private let dayLabelFormat: (Int) -> String
+    private let tbdLabel: String
     @Binding private var toast: Toast?
     @Binding private var showGallery: Bool
     private let onBack: () -> Void
@@ -29,6 +30,7 @@ public struct SeasonDetailsScreen: View {
     private let onEpisodeHeaderClicked: () -> Void
     private let onWatchedStateClicked: () -> Void
     private let onEpisodeWatchToggle: (SwiftEpisode) -> Void
+    private let onEpisodeTapped: (SwiftEpisode) -> Void
 
     public init(
         seasonName: String,
@@ -49,6 +51,7 @@ public struct SeasonDetailsScreen: View {
         episodesTitle: String,
         seasonImagesCountFormat: @escaping (Int) -> String,
         dayLabelFormat: @escaping (Int) -> String,
+        tbdLabel: String,
         toast: Binding<Toast?>,
         showGallery: Binding<Bool>,
         onBack: @escaping () -> Void,
@@ -56,7 +59,8 @@ public struct SeasonDetailsScreen: View {
         onGalleryTap: @escaping () -> Void,
         onEpisodeHeaderClicked: @escaping () -> Void,
         onWatchedStateClicked: @escaping () -> Void,
-        onEpisodeWatchToggle: @escaping (SwiftEpisode) -> Void
+        onEpisodeWatchToggle: @escaping (SwiftEpisode) -> Void,
+        onEpisodeTapped: @escaping (SwiftEpisode) -> Void = { _ in }
     ) {
         self.seasonName = seasonName
         self.imageUrl = imageUrl
@@ -76,6 +80,7 @@ public struct SeasonDetailsScreen: View {
         self.episodesTitle = episodesTitle
         self.seasonImagesCountFormat = seasonImagesCountFormat
         self.dayLabelFormat = dayLabelFormat
+        self.tbdLabel = tbdLabel
         _toast = toast
         _showGallery = showGallery
         self.onBack = onBack
@@ -84,6 +89,7 @@ public struct SeasonDetailsScreen: View {
         self.onEpisodeHeaderClicked = onEpisodeHeaderClicked
         self.onWatchedStateClicked = onWatchedStateClicked
         self.onEpisodeWatchToggle = onEpisodeWatchToggle
+        self.onEpisodeTapped = onEpisodeTapped
     }
 
     @State private var showGlass: Double = 0
@@ -171,9 +177,11 @@ public struct SeasonDetailsScreen: View {
                     isSeasonWatched: isSeasonWatched,
                     items: episodes,
                     dayLabelFormat: dayLabelFormat,
+                    tbdLabel: tbdLabel,
                     onEpisodeHeaderClicked: onEpisodeHeaderClicked,
                     onWatchedStateClicked: onWatchedStateClicked,
-                    onEpisodeWatchToggle: onEpisodeWatchToggle
+                    onEpisodeWatchToggle: onEpisodeWatchToggle,
+                    onEpisodeTapped: onEpisodeTapped
                 )
 
                 Spacer().frame(height: appTheme.spacing.large)

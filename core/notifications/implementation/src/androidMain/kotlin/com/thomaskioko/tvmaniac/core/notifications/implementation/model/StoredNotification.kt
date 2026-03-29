@@ -13,5 +13,6 @@ internal data class StoredNotification(
     val episodeNumber: Long,
     val imageUrl: String?,
     val scheduledTime: Long,
+    val message: String = "",
     val channelId: String = "episodes_airing",
 )

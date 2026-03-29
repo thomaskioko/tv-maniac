@@ -33,7 +33,6 @@ public struct DiscoverScreen: View {
     private let onPopularClicked: () -> Void
     private let onTopRatedClicked: () -> Void
     private let onNextEpisodeClicked: (SwiftNextEpisode) -> Void
-    private let onNextEpisodeLongPress: (SwiftNextEpisode) -> Void
     private let onCarouselIndexChanged: (Int) -> Void
     private let episodeSheetContent: ((SwiftNextEpisode) -> AnyView)?
 
@@ -68,7 +67,6 @@ public struct DiscoverScreen: View {
         onPopularClicked: @escaping () -> Void,
         onTopRatedClicked: @escaping () -> Void,
         onNextEpisodeClicked: @escaping (SwiftNextEpisode) -> Void,
-        onNextEpisodeLongPress: @escaping (SwiftNextEpisode) -> Void,
         onCarouselIndexChanged: @escaping (Int) -> Void,
         episodeSheetContent: ((SwiftNextEpisode) -> AnyView)? = nil
     ) {
@@ -102,7 +100,6 @@ public struct DiscoverScreen: View {
         self.onPopularClicked = onPopularClicked
         self.onTopRatedClicked = onTopRatedClicked
         self.onNextEpisodeClicked = onNextEpisodeClicked
-        self.onNextEpisodeLongPress = onNextEpisodeLongPress
         self.onCarouselIndexChanged = onCarouselIndexChanged
         self.episodeSheetContent = episodeSheetContent
     }
@@ -344,8 +341,7 @@ public struct DiscoverScreen: View {
                 title: upNextTitle,
                 episodes: nextEpisodes,
                 chevronStyle: .chevronOnly,
-                onEpisodeClick: onNextEpisodeClicked,
-                onEpisodeLongPress: onNextEpisodeLongPress
+                onEpisodeClick: onNextEpisodeClicked
             )
 
             HorizontalItemListView(

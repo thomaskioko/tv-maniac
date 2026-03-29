@@ -21,6 +21,9 @@ public class FakeFollowedShowsDao : FollowedShowsDao {
     override fun entriesWithNoPendingAction(): List<FollowedShowEntry> =
         entriesFlow.value.filter { it.pendingAction == PendingAction.NOTHING }
 
+    override fun entriesExcludingDeleted(): List<FollowedShowEntry> =
+        entriesFlow.value.filter { it.pendingAction != PendingAction.DELETE }
+
     override fun entriesWithUploadPendingAction(): List<FollowedShowEntry> =
         entriesFlow.value.filter { it.pendingAction == PendingAction.UPLOAD }
 

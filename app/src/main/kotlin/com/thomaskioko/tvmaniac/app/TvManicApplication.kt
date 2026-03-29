@@ -20,9 +20,12 @@ public class TvManicApplication : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
-        setupStrictMode()
-
         workerFactory = component.workerFactory
+
+        if (component.appInfo.debugBuild) {
+            setupStrictMode()
+        }
+
         component.initializers.initialize()
     }
 

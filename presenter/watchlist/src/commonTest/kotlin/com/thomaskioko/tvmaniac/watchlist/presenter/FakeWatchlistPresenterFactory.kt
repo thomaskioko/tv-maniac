@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.watchlist.presenter
 import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.ObserveUpNextSectionsInteractor
@@ -72,10 +73,12 @@ class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
         navigateToSeason = navigateToSeason,
         repository = repository,
         followedShowsRepository = fakeFollowedShowsRepository,
+        unfollowShowInteractor = com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor(fakeFollowedShowsRepository),
         observeWatchlistSectionsInteractor = observeWatchlistSectionsInteractor,
         observeUpNextSectionsInteractor = observeUpNextSectionsInteractor,
         markEpisodeWatchedInteractor = fakeMarkEpisodeWatchedInteractor,
         watchlistSyncInteractor = watchlistSyncInteractor,
+        errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
         logger = fakeLogger,
     )
 }

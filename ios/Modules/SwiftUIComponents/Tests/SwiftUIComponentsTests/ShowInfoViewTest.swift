@@ -19,6 +19,7 @@ class ShowInfoViewTest: SnapshotTestCase {
             similarShows: showList,
             continueTrackingTitle: "Continue tracking",
             dayLabelFormat: { count in count == 1 ? "day" : "days" },
+            tbdLabel: "TBD",
             trackLabel: "Track",
             stopTrackingLabel: "Stop Tracking",
             addToListLabel: "Add To List",

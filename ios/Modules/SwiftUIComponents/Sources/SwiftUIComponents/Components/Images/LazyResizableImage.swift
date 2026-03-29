@@ -2,10 +2,11 @@ import Nuke
 import NukeUI
 import SwiftUI
 
-public struct LazyResizableImage<Content: View>: View {
+public struct LazyResizableImage: View {
     private let url: URL?
     private let fixedSize: CGSize?
-    @ViewBuilder private let content: (LazyImageState) -> Content
+    private let placeholderIcon: String
+    private let placeholderTitle: String?
 
     @State private var resizeProcessor: ImageProcessors.Resize?
     @State private var debouncedTask: Task<Void, Never>?
@@ -14,23 +15,25 @@ public struct LazyResizableImage<Content: View>: View {
         url: String?,
         imageType: TmdbImageType? = nil,
         size: CGSize? = nil,
-        @ViewBuilder content: @escaping (LazyImageState) -> Content
+        placeholderIcon: String = "popcorn.fill",
+        placeholderTitle: String? = nil
     ) {
         self.url = ImageConfiguration.transformURL(url ?? "", imageType: imageType)
         fixedSize = size
-        self.content = content
+        self.placeholderIcon = placeholderIcon
+        self.placeholderTitle = placeholderTitle
     }
 
     public var body: some View {
         if let fixedSize {
             LazyImage(url: url) { state in
-                content(state)
+                imageContent(state, size: fixedSize)
             }
             .processors([.resize(size: fixedSize, unit: .points)])
         } else {
             GeometryReader { proxy in
                 LazyImage(url: url) { state in
-                    content(state)
+                    imageContent(state, size: proxy.size)
                 }
                 .processors([
                     resizeProcessor ?? .resize(size: proxy.size),
@@ -40,11 +43,26 @@ public struct LazyResizableImage<Content: View>: View {
                     updateResizing(with: newValue)
                 }
                 .onDisappear {
-                    // Cancel pending task when view disappears to prevent memory leaks
                     debouncedTask?.cancel()
                     debouncedTask = nil
                 }
             }
+        }
+    }
+
+    @ViewBuilder
+    private func imageContent(_ state: LazyImageState, size: CGSize) -> some View {
+        if let image = state.image {
+            image.resizable()
+        } else {
+            PosterPlaceholder(
+                title: placeholderTitle,
+                icon: placeholderIcon,
+                posterWidth: size.width,
+                posterHeight: size.height,
+                posterRadius: 0,
+                shadowRadius: 0
+            )
         }
     }
 
@@ -55,28 +73,11 @@ public struct LazyResizableImage<Content: View>: View {
                 try await Task.sleep(for: .milliseconds(200))
             } catch { return }
 
-            // Check if task was cancelled during sleep
             guard !Task.isCancelled else { return }
 
             await MainActor.run {
                 resizeProcessor = .resize(size: newSize)
             }
-        }
-    }
-}
-
-public extension LazyResizableImage {
-    init(url: String?, imageType: TmdbImageType? = nil, size: CGSize? = nil) where Content == AnyView {
-        self.init(url: url, imageType: imageType, size: size) { state in
-            AnyView(
-                Group {
-                    if let image = state.image {
-                        image.resizable()
-                    } else {
-                        Rectangle().fill(.gray.opacity(0.3))
-                    }
-                }
-            )
         }
     }
 }

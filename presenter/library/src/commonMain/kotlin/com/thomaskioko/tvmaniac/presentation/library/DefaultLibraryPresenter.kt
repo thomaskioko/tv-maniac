@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
@@ -44,6 +45,7 @@ public class DefaultLibraryPresenter(
     private val observeLibraryInteractor: ObserveLibraryInteractor,
     private val syncLibraryInteractor: SyncLibraryInteractor,
     private val traktAuthRepository: TraktAuthRepository,
+    private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
 ) : LibraryPresenter, ComponentContext by componentContext {
 
@@ -175,7 +177,7 @@ public class DefaultLibraryPresenter(
     private fun syncLibrary(forceRefresh: Boolean = false) {
         coroutineScope.launch {
             syncLibraryInteractor(SyncLibraryInteractor.Param(forceRefresh = forceRefresh))
-                .collectStatus(loadingState, logger, uiMessageManager, "Library")
+                .collectStatus(loadingState, logger, uiMessageManager, "Library", errorToStringMapper)
         }
     }
 

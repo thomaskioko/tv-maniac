@@ -9,10 +9,14 @@ on:
         description: 'Android rollout percentage override (e.g., 0.5 for 50%)'
         type: string
         required: false
-      ios_submit_for_review:
-        description: 'Submit iOS to App Store review'
+      skip_ios:
+        description: 'Skip iOS App Store submission'
         type: boolean
         default: false
+      crash_free_threshold:
+        description: 'Minimum crash-free rate (%) to allow promotion'
+        type: string
+        default: '99.0'
 
 permissions:
   contents: read
@@ -58,9 +62,9 @@ jobs:
             exit 0
           fi
 
-          tag_date=$(git log -1 --format=%ci "$latest_tag" | cut -d' ' -f1)
-          today=$(date +%Y-%m-%d)
-          days_since=$(( ($(date -d "$today" +%s) - $(date -d "$tag_date" +%s)) / 86400 ))
+          tag_epoch=$(git log -1 --format=%ct "$latest_tag")
+          now_epoch=$(date +%s)
+          days_since=$(( (now_epoch - tag_epoch) / 86400 ))
 
           # Rollout schedule: Day 0=0.1%, Day 1=1%, Day 3=10%, Day 5=50%, Day 7=100%
           if [ "$days_since" -ge 7 ]; then
@@ -83,9 +87,100 @@ jobs:
           echo "release_tag=$latest_tag" >> "$GITHUB_OUTPUT"
           echo "Release: $latest_tag, Days since: $days_since, Next rollout: $next_rollout"
 
-  promote-android:
+  check-vitals:
     needs: check-rollout
     if: ${{ needs.check-rollout.outputs.should_promote == 'true' }}
+    runs-on: ubuntu-latest
+    outputs:
+      passed: ${{ steps.vitals.outputs.passed }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Decrypt Play Store service account
+        env:
+          SIGNING_ENCRYPT_KEY: ${{ secrets.SIGNING_ENCRYPT_KEY }}
+        run: |
+          openssl aes-256-cbc -d -pbkdf2 \
+            -in release/play-service-account.aes \
+            -out release/play-service-account.json \
+            -k "$SIGNING_ENCRYPT_KEY"
+
+      - name: Check Play Vitals crash-free Rate
+        id: vitals
+        run: |
+          THRESHOLD="${{ inputs.crash_free_threshold }}"
+          THRESHOLD="${THRESHOLD:-99.0}"
+          APP_PACKAGE="com.thomaskioko.tvmaniac"
+
+          if ! gcloud auth activate-service-account --key-file=release/play-service-account.json 2>/dev/null; then
+            echo "::warning::Could not authenticate — skipping vitals check"
+            echo "passed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          ACCESS_TOKEN=$(gcloud auth print-access-token 2>/dev/null || true)
+          if [ -z "$ACCESS_TOKEN" ]; then
+            echo "::warning::Could not obtain access token — skipping vitals check"
+            echo "passed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          END_DATE=$(date -u +%Y-%m-%d)
+          START_DATE=$(date -u -d "7 days ago" +%Y-%m-%d)
+
+          RESPONSE=$(curl -sf \
+            -H "Authorization: Bearer $ACCESS_TOKEN" \
+            -H "Content-Type: application/json" \
+            -X POST \
+            "https://playdeveloperreporting.googleapis.com/v1beta1/apps/${APP_PACKAGE}/crashRateMetricSet:query" \
+            -d "{
+              \"timelineSpec\": {
+                \"aggregationPeriod\": \"DAILY\",
+                \"startTime\": {
+                  \"year\": $(date -u -d "$START_DATE" +%Y),
+                  \"month\": $(date -u -d "$START_DATE" +%-m),
+                  \"day\": $(date -u -d "$START_DATE" +%-d)
+                },
+                \"endTime\": {
+                  \"year\": $(date -u -d "$END_DATE" +%Y),
+                  \"month\": $(date -u -d "$END_DATE" +%-m),
+                  \"day\": $(date -u -d "$END_DATE" +%-d)
+                }
+              },
+              \"metrics\": [\"crashRate\"],
+              \"dimensions\": []
+            }" 2>/dev/null) || true
+
+          if [ -z "$RESPONSE" ]; then
+            echo "::warning::Play Vitals API unavailable — skipping crash check"
+            echo "::warning::To enable: activate the Play Developer Reporting API and grant the service account 'View app information' permission"
+            echo "passed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          CRASH_RATE=$(echo "$RESPONSE" | jq -r '[.rows[].metrics[0].decimalValue.value // "0"] | last' 2>/dev/null || echo "")
+
+          if [ -z "$CRASH_RATE" ] || [ "$CRASH_RATE" = "null" ]; then
+            echo "::warning::Could not parse crash rate — skipping check"
+            echo "passed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          CRASH_FREE=$(echo "scale=2; (1 - $CRASH_RATE) * 100" | bc -l)
+          echo "Crash-free rate: ${CRASH_FREE}% (threshold: ${THRESHOLD}%)"
+          echo "crash_free_rate=${CRASH_FREE}" >> "$GITHUB_OUTPUT"
+
+          if (( $(echo "$CRASH_FREE < $THRESHOLD" | bc -l) )); then
+            echo "::error::Crash-free rate ${CRASH_FREE}% is below threshold ${THRESHOLD}% — blocking promotion"
+            echo "passed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "passed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  promote-android:
+    needs: [check-rollout, check-vitals]
+    if: ${{ needs.check-rollout.outputs.should_promote == 'true' && needs.check-vitals.outputs.passed == 'true' }}
     runs-on: ubuntu-latest
     environment: production
     steps:
@@ -117,10 +212,11 @@ jobs:
           echo "- **Release**: ${{ needs.check-rollout.outputs.release_tag }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Days since release**: ${{ needs.check-rollout.outputs.days_since_release }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Rollout**: ${{ needs.check-rollout.outputs.next_rollout }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Vitals**: crash-free ${{ needs.check-vitals.outputs.crash_free_rate || 'N/A' }}%" >> $GITHUB_STEP_SUMMARY
 
   promote-ios:
-    needs: check-rollout
-    if: ${{ inputs.ios_submit_for_review == true || needs.check-rollout.outputs.next_rollout == '0.01' }}
+    needs: [check-rollout, check-vitals]
+    if: ${{ needs.check-rollout.outputs.should_promote == 'true' && !inputs.skip_ios }}
     runs-on: ubuntu-latest
     environment: production
     steps:

@@ -4,6 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
@@ -11,6 +12,8 @@ import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.domain.user.ObserveUserProfileInteractor
 import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
 import com.thomaskioko.tvmaniac.domain.user.model.UserProfile
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey
+import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.LoginClicked
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.MessageShown
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.RefreshProfile
@@ -40,9 +43,11 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 public class DefaultProfilePresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val onSettings: () -> Unit,
+    private val localizer: Localizer,
     private val traktAuthManager: TraktAuthManager,
     private val traktAuthRepository: TraktAuthRepository,
     private val updateUserProfileData: UpdateUserProfileData,
+    private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
     observeUserProfileInteractor: ObserveUserProfileInteractor,
     private val coroutineScope: CoroutineScope = componentContext.coroutineScope(),
@@ -65,7 +70,7 @@ public class DefaultProfilePresenter(
         uiMessageManager.message,
     ) { userProfile, authState, authError, isLoading, uiMessage ->
         val authenticated = authState == TraktAuthState.LOGGED_IN
-        val errorMessage = authError?.toUiMessage() ?: uiMessage
+        val errorMessage = authError?.toUiMessage(localizer) ?: uiMessage
 
         ProfileState(
             userProfile = userProfile?.toPresentation(),
@@ -98,7 +103,7 @@ public class DefaultProfilePresenter(
     private fun fetchUserData(forceRefresh: Boolean = false) {
         coroutineScope.launch {
             updateUserProfileData(UpdateUserProfileData.Params(forceRefresh = forceRefresh))
-                .collectStatus(profileLoadingState, logger, uiMessageManager)
+                .collectStatus(profileLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         }
     }
 
@@ -139,13 +144,13 @@ private fun UserProfile.toPresentation(): ProfileInfo {
     )
 }
 
-private fun AuthError.toUiMessage(): UiMessage = when (this) {
-    is AuthError.OAuthFailed -> UiMessage("Login failed: $message")
-    AuthError.OAuthCancelled -> UiMessage("Login cancelled")
-    AuthError.TokenExchangeFailed -> UiMessage("Failed to complete login. Please try again.")
-    AuthError.TokenExpired -> UiMessage("Session expired. Please login again.")
-    AuthError.NetworkError -> UiMessage("Network error. Please check your connection.")
-    AuthError.Unknown -> UiMessage("An unexpected error occurred. Please try again.")
+private fun AuthError.toUiMessage(localizer: Localizer): UiMessage = when (this) {
+    is AuthError.OAuthFailed -> UiMessage(localizer.getString(StringResourceKey.ErrorLoginFailed, message))
+    AuthError.OAuthCancelled -> UiMessage(localizer.getString(StringResourceKey.ErrorLoginCancelled))
+    AuthError.TokenExchangeFailed -> UiMessage(localizer.getString(StringResourceKey.ErrorLoginExchange))
+    AuthError.TokenExpired -> UiMessage(localizer.getString(StringResourceKey.ErrorSessionExpired))
+    AuthError.NetworkError -> UiMessage(localizer.getString(StringResourceKey.ErrorNetwork))
+    AuthError.Unknown -> UiMessage(localizer.getString(StringResourceKey.ErrorUnknown))
 }
 
 @Inject
