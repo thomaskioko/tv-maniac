@@ -946,6 +946,7 @@ class ShowDetailsPresenterTest {
                 repository = traktListRepository,
             ),
             traktAuthRepository = traktAuthRepository,
+            traktAuthManager = com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager(),
             localizer = fakeLocalizer,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             dispatchers = coroutineDispatcher,

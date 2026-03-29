@@ -139,7 +139,7 @@ struct ShowDetailsView: View {
         }
         .alert(uiState.loginRequiredTitle, isPresented: $showLoginPrompt) {
             Button(uiState.loginRequiredConfirmText) {
-                presenter.dispatch(action: DismissLoginPrompt())
+                presenter.dispatch(action: LoginClicked())
             }
         } message: {
             Text(uiState.loginRequiredMessage)

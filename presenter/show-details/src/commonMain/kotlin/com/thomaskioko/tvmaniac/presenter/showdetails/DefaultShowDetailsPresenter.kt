@@ -34,6 +34,7 @@ import com.thomaskioko.tvmaniac.domain.watchproviders.WatchProvidersInteractor
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowSeasonDetailsParam
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import kotlinx.collections.immutable.toImmutableList
@@ -80,6 +81,7 @@ public class DefaultShowDetailsPresenter(
     observeShowWatchProgressInteractor: ObserveShowWatchProgressInteractor,
     observeTraktListsInteractor: ObserveTraktListsInteractor,
     private val traktAuthRepository: TraktAuthRepository,
+    private val traktAuthManager: TraktAuthManager,
     private val localizer: Localizer,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
@@ -194,6 +196,10 @@ public class DefaultShowDetailsPresenter(
                 }
             }
             DismissLoginPrompt -> coroutineScope.launch { _state.update { it.copy(showLoginPrompt = false) } }
+            LoginClicked -> {
+                _state.update { it.copy(showLoginPrompt = false) }
+                traktAuthManager.launchWebView()
+            }
             ShowCreateListField -> _state.update { it.copy(showCreateListField = true) }
             DismissCreateListField -> _state.update {
                 it.copy(showCreateListField = false, createListName = "", createListError = null)

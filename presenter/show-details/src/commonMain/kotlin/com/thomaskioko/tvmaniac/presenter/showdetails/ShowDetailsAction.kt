@@ -10,6 +10,8 @@ public data object ShowShowsListSheet : ShowDetailsAction
 
 public data object DismissLoginPrompt : ShowDetailsAction
 
+public data object LoginClicked : ShowDetailsAction
+
 public data object ShowCreateListField : ShowDetailsAction
 
 public data object DismissCreateListField : ShowDetailsAction

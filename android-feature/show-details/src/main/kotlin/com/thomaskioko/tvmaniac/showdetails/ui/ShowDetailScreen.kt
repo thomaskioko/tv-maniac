@@ -106,6 +106,7 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.CreateListSubmitted
 import com.thomaskioko.tvmaniac.presenter.showdetails.DismissCreateListField
 import com.thomaskioko.tvmaniac.presenter.showdetails.DismissLoginPrompt
 import com.thomaskioko.tvmaniac.presenter.showdetails.DismissShowsListSheet
+import com.thomaskioko.tvmaniac.presenter.showdetails.LoginClicked
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowCreateListField
 import com.thomaskioko.tvmaniac.presenter.showdetails.UpdateCreateListName
 import com.thomaskioko.tvmaniac.presenter.showdetails.FollowShowClicked
@@ -227,7 +228,7 @@ internal fun ShowDetailsScreen(
             title = state.loginRequiredTitle,
             message = state.loginRequiredMessage,
             confirmButtonText = state.loginRequiredConfirmText,
-            onConfirm = { onAction(DismissLoginPrompt) },
+            onConfirm = { onAction(LoginClicked) },
             onDismiss = { onAction(DismissLoginPrompt) },
         )
     }
