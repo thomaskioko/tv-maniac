@@ -42,6 +42,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
@@ -95,7 +96,7 @@ public class DefaultRootPresenter(
         coroutineScope.launch {
             traktAuthRepository.authError
                 .filterIsInstance<AuthError.TokenExpired>()
-                .collect {
+                .collectLatest {
                     when (traktAuthRepository.refreshTokens()) {
                         is TokenRefreshResult.Success -> traktAuthRepository.setAuthError(null)
                         else -> logoutInteractor.executeSync(Unit)

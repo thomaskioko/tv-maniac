@@ -8,3 +8,7 @@ public class ApiHttpException(
 public class ApiSerializationException(
     override val message: String,
 ) : Exception(message)
+
+public class ApiGenericException(
+    override val message: String,
+) : Exception(message)

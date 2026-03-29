@@ -28,7 +28,7 @@ public fun <T> ApiResponse<T>.getOrThrow(): T = when (this) {
     is ApiResponse.Unauthenticated -> throw AuthenticationException("Not authenticated")
     is ApiResponse.Error.HttpError -> throw ApiHttpException(code, "HTTP $code: $errorMessage")
     is ApiResponse.Error.SerializationError -> throw ApiSerializationException("Serialization error: $message")
-    is ApiResponse.Error.GenericError -> throw Exception("Error: $message")
+    is ApiResponse.Error.GenericError -> throw ApiGenericException("Error: $message")
 }
 
 public fun <T> ApiResponse<T>.getOrNull(): T? = when (this) {
