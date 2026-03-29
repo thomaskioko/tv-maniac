@@ -45,6 +45,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -100,8 +101,10 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.unfollow
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presenter.showdetails.DetailBackClicked
 import com.thomaskioko.tvmaniac.presenter.showdetails.DetailShowClicked
+import com.thomaskioko.tvmaniac.presenter.showdetails.CreateListSubmitted
 import com.thomaskioko.tvmaniac.presenter.showdetails.DismissShowsListSheet
 import com.thomaskioko.tvmaniac.presenter.showdetails.FollowShowClicked
+import com.thomaskioko.tvmaniac.presenter.showdetails.ToggleShowInList
 import com.thomaskioko.tvmaniac.presenter.showdetails.MarkEpisodeUnwatched
 import com.thomaskioko.tvmaniac.presenter.showdetails.MarkEpisodeWatched
 import com.thomaskioko.tvmaniac.presenter.showdetails.ReloadShowDetails
@@ -251,21 +254,6 @@ private fun ShowListSheetContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        EmptyListContent(title, onAction)
-    }
-}
-
-@Composable
-private fun EmptyListContent(
-    title: String,
-    onAction: (ShowDetailsAction) -> Unit,
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium.copy(
@@ -275,33 +263,111 @@ private fun EmptyListContent(
             overflow = TextOverflow.Ellipsis,
         )
 
-        Spacer(modifier = Modifier.height(48.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
-            text = "Create List",
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface,
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 1,
-        )
+        if (state.traktLists.isEmpty()) {
+            EmptyListContent(onAction)
+        } else {
+            TraktListItems(state, onAction)
+        }
 
-        Text(
+        Spacer(modifier = Modifier.height(16.dp))
+
+        CreateListField(onAction)
+    }
+}
+
+@Composable
+private fun TraktListItems(
+    state: ShowDetailsContent,
+    onAction: (ShowDetailsAction) -> Unit,
+) {
+    state.traktLists.forEach { list ->
+        Row(
             modifier = Modifier
-                .padding(top = 8.dp, bottom = 16.dp),
-            text = "You don't have any list. Create a new one?",
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurface,
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = list.name,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = "${list.itemCount} items",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+
+            androidx.compose.material3.Switch(
+                checked = list.isShowInList,
+                onCheckedChange = {
+                    onAction(ToggleShowInList(listId = list.id, isCurrentlyInList = list.isShowInList))
+                },
+            )
+        }
+    }
+}
+
+@Composable
+private fun EmptyListContent(
+    onAction: (ShowDetailsAction) -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = "You don't have any lists yet.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+@Composable
+private fun CreateListField(
+    onAction: (ShowDetailsAction) -> Unit,
+) {
+    var listName by remember { androidx.compose.runtime.mutableStateOf("") }
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        androidx.compose.material3.OutlinedTextField(
+            value = listName,
+            onValueChange = { if (it.length <= 50) listName = it },
+            modifier = Modifier.weight(1f),
+            placeholder = { Text("New list name") },
+            singleLine = true,
+            textStyle = MaterialTheme.typography.bodyMedium,
         )
 
-        FilledHorizontalIconButton(
+        FilledTextButton(
+            onClick = {
+                if (listName.isNotBlank()) {
+                    onAction(CreateListSubmitted(name = listName))
+                    listName = ""
+                }
+            },
+            buttonColors = ButtonDefaults.textButtonColors(
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.onSecondary,
+            ),
             shape = MaterialTheme.shapes.medium,
-            text = "Create",
-            imageVector = Icons.Filled.LibraryAddCheck,
-            containerColor = MaterialTheme.colorScheme.secondary,
-            style = MaterialTheme.typography.labelMedium,
-            onClick = { onAction(DismissShowsListSheet) },
-        )
+        ) {
+            Text("Create")
+        }
     }
 }
 

@@ -1,16 +1,30 @@
 import SwiftUI
 import SwiftUIComponents
+import TvManiacKit
 
 public struct WatchlistSelector: View {
     @Theme private var theme
     @Binding var showView: Bool
     private let title: String
     private let posterUrl: String?
-    private let customLists: [String] = []
+    private let traktLists: [TraktListWithMembership]
+    private let onToggle: (Int64, Bool) -> Void
+    private let onCreate: (String) -> Void
+    @State private var newListName = ""
 
-    public init(showView: Binding<Bool>, title: String, posterUrl: String?) {
+    public init(
+        showView: Binding<Bool>,
+        title: String,
+        posterUrl: String?,
+        traktLists: [TraktListWithMembership],
+        onToggle: @escaping (Int64, Bool) -> Void,
+        onCreate: @escaping (String) -> Void
+    ) {
         self.title = title
         self.posterUrl = posterUrl
+        self.traktLists = traktLists
+        self.onToggle = onToggle
+        self.onCreate = onCreate
         _showView = showView
     }
 
@@ -40,16 +54,54 @@ public struct WatchlistSelector: View {
                 .listRowInsets(EdgeInsets())
                 .listRowBackground(Color.clear)
 
-                if !customLists.isEmpty {
+                if !traktLists.isEmpty {
                     Section {
-                        List {
-                            // Add Custom list
+                        ForEach(traktLists, id: \.id) { list in
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Text(list.name)
+                                        .textStyle(theme.typography.bodyMedium)
+                                    Text("\(list.itemCount) items")
+                                        .textStyle(theme.typography.bodySmall)
+                                        .foregroundColor(theme.colors.onSurfaceVariant)
+                                }
+                                Spacer()
+                                Toggle("", isOn: Binding(
+                                    get: { list.isShowInList },
+                                    set: { _ in onToggle(list.id, list.isShowInList) }
+                                ))
+                                .labelsHidden()
+                            }
                         }
                     } header: {
                         Text(String(\.label_watchlist_lists))
                     }
                 } else {
                     emptyList
+                }
+
+                Section {
+                    HStack {
+                        TextField("New list name", text: $newListName)
+                            .textFieldStyle(.roundedBorder)
+                            .onChange(of: newListName) { _, newValue in
+                                if newValue.count > 50 {
+                                    newListName = String(newValue.prefix(50))
+                                }
+                            }
+
+                        Button(action: {
+                            if !newListName.trimmingCharacters(in: .whitespaces).isEmpty {
+                                onCreate(newListName)
+                                newListName = ""
+                            }
+                        }) {
+                            Text(String(\.label_watchlist_create))
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(theme.colors.accent)
+                        .disabled(newListName.trimmingCharacters(in: .whitespaces).isEmpty)
+                    }
                 }
             }
             .scrollBounceBehavior(.basedOnSize, axes: .vertical)
@@ -80,33 +132,9 @@ public struct WatchlistSelector: View {
     private var emptyList: some View {
         Section {
             VStack {
-                Text(String(\.label_watchlist_create_custom_list))
-                    .textStyle(theme.typography.titleLarge)
-                    .foregroundColor(theme.colors.onSurface)
-                    .multilineTextAlignment(.center)
-                    .padding([.horizontal], theme.spacing.xSmall)
-
                 Text(String(\.label_watchlist_empty_list))
                     .textStyle(theme.typography.bodySmall)
-
-                Button(action: {}) {
-                    VStack {
-                        Image(systemName: "plus.rectangle.on.rectangle.fill")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(height: 24)
-
-                        Text(String(\.label_watchlist_create))
-                            .textStyle(theme.typography.bodySmall)
-                    }
-                    .padding(.vertical, theme.spacing.xxSmall)
-                    .frame(width: 120, height: 45)
-                }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.small)
-                .tint(theme.colors.accent)
-                .buttonBorderShape(.roundedRectangle(radius: theme.shapes.large))
-                .padding(.top, theme.spacing.xSmall)
+                    .multilineTextAlignment(.center)
             }
             .frame(maxWidth: .infinity)
         }

@@ -6,6 +6,7 @@ struct ShowDetailsView: View {
     private let presenter: ShowDetailsPresenter
     @StateObject @KotlinStateFlow private var uiState: ShowDetailsContent
     @State private var showCustomList = false
+    @State private var showLoginPrompt = false
     @State private var toast: Toast?
 
     init(presenter: ShowDetailsPresenter) {
@@ -55,7 +56,7 @@ struct ShowDetailsView: View {
             toast: $toast,
             onBack: { presenter.dispatch(action: DetailBackClicked()) },
             onRefresh: { presenter.dispatch(action: ReloadShowDetails()) },
-            onAddToCustomList: { showCustomList.toggle() },
+            onAddToCustomList: { presenter.dispatch(action: ShowShowsListSheet()) },
             onAddToLibrary: {
                 presenter.dispatch(action: FollowShowClicked(isInLibrary: uiState.showDetails.isInLibrary))
             },
@@ -93,12 +94,37 @@ struct ShowDetailsView: View {
                 presenter.dispatch(action: ShowDetailsMessageShown(id: message.id))
             }
         }
+        .onChange(of: uiState.showListSheet) { _, newValue in
+            showCustomList = newValue
+        }
+        .onChange(of: showCustomList) { _, newValue in
+            if !newValue {
+                presenter.dispatch(action: DismissShowsListSheet())
+            }
+        }
+        .onChange(of: uiState.showLoginPrompt) { _, newValue in
+            showLoginPrompt = newValue
+        }
         .sheet(isPresented: $showCustomList) {
             WatchlistSelector(
                 showView: $showCustomList,
                 title: uiState.showDetails.title,
-                posterUrl: uiState.showDetails.posterImageUrl
+                posterUrl: uiState.showDetails.posterImageUrl,
+                traktLists: uiState.traktLists.map { $0 as! TraktListWithMembership },
+                onToggle: { listId, isInList in
+                    presenter.dispatch(action: ToggleShowInList(listId: listId, isCurrentlyInList: isInList))
+                },
+                onCreate: { name in
+                    presenter.dispatch(action: CreateListSubmitted(name: name))
+                }
             )
+        }
+        .alert("Login Required", isPresented: $showLoginPrompt) {
+            Button("OK") {
+                presenter.dispatch(action: DismissLoginPrompt())
+            }
+        } message: {
+            Text("Please log in with Trakt to manage your lists.")
         }
     }
 }
