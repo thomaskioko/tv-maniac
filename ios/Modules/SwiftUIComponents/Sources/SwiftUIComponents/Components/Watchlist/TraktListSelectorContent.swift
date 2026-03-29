@@ -8,6 +8,9 @@ public struct TraktListSelectorContent: View {
     private let showCreateField: Bool
     private let isCreatingList: Bool
     private let createListName: String
+    private let sheetTitle: String
+    private let createButtonText: String
+    private let doneButtonText: String
     private let emptyListText: String
     private let newListPlaceholder: String
     private let listsHeaderText: String
@@ -25,6 +28,9 @@ public struct TraktListSelectorContent: View {
         showCreateField: Bool = false,
         isCreatingList: Bool = false,
         createListName: String = "",
+        sheetTitle: String = "Save to List",
+        createButtonText: String = "Create a List",
+        doneButtonText: String = "Done",
         emptyListText: String = "You don't have any lists yet.",
         newListPlaceholder: String = "New list name",
         listsHeaderText: String = "Your Lists",
@@ -41,6 +47,9 @@ public struct TraktListSelectorContent: View {
         self.showCreateField = showCreateField
         self.isCreatingList = isCreatingList
         self.createListName = createListName
+        self.sheetTitle = sheetTitle
+        self.createButtonText = createButtonText
+        self.doneButtonText = doneButtonText
         self.emptyListText = emptyListText
         self.newListPlaceholder = newListPlaceholder
         self.listsHeaderText = listsHeaderText
@@ -68,7 +77,7 @@ public struct TraktListSelectorContent: View {
             .scrollBounceBehavior(.basedOnSize, axes: .vertical)
             .scrollContentBackground(.hidden)
             .background(theme.colors.background)
-            .navigationTitle("Save to List")
+            .navigationTitle(sheetTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(theme.colors.surface, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
@@ -153,7 +162,7 @@ public struct TraktListSelectorContent: View {
                 Button(action: onShowCreateField) {
                     HStack {
                         Image(systemName: "plus.circle.fill")
-                        Text("Create List")
+                        Text(createButtonText)
                     }
                     .frame(maxWidth: .infinity)
                 }
@@ -188,7 +197,7 @@ public struct TraktListSelectorContent: View {
                                     .progressViewStyle(.circular)
                                     .scaleEffect(0.8)
                             } else {
-                                Text("Done")
+                                Text(doneButtonText)
                             }
                         }
                         .buttonStyle(.borderedProminent)

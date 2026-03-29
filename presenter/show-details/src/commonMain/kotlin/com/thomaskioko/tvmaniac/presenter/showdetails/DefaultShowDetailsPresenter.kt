@@ -19,6 +19,8 @@ import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteracto
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncTraktCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey
+import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.domain.traktlists.CreateTraktListInteractor
 import com.thomaskioko.tvmaniac.domain.traktlists.ObserveTraktListsInteractor
 import com.thomaskioko.tvmaniac.domain.traktlists.ToggleShowInListInteractor
@@ -76,6 +78,7 @@ public class DefaultShowDetailsPresenter(
     observeShowWatchProgressInteractor: ObserveShowWatchProgressInteractor,
     observeTraktListsInteractor: ObserveTraktListsInteractor,
     private val traktAuthRepository: TraktAuthRepository,
+    private val localizer: Localizer,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
     dispatchers: AppCoroutineDispatchers,
@@ -123,6 +126,12 @@ public class DefaultShowDetailsPresenter(
             continueTrackingEpisodes = mapContinueTrackingEpisodes(showDetails.continueTrackingEpisodes, showTraktId),
             continueTrackingScrollIndex = showDetails.continueTrackingScrollIndex,
             traktLists = traktLists.toImmutableList(),
+            sheetTitle = localizer.getString(StringResourceKey.LabelWatchlistSaveToList),
+            createListButtonText = localizer.getString(StringResourceKey.LabelWatchlistCreateCustomList),
+            createListDoneText = localizer.getString(StringResourceKey.LabelWatchlistDone),
+            createListPlaceholder = localizer.getString(StringResourceKey.LabelWatchlistNewListPlaceholder),
+            emptyListText = localizer.getString(StringResourceKey.LabelWatchlistEmptyList),
+            listsHeaderText = localizer.getString(StringResourceKey.LabelWatchlistYourLists),
             message = message,
         )
     }

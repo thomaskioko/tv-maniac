@@ -30,6 +30,7 @@ kotlin {
                 implementation(projects.data.traktlists.api)
                 implementation(projects.domain.notifications)
                 implementation(projects.domain.traktlists)
+                implementation(projects.i18n.api)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)

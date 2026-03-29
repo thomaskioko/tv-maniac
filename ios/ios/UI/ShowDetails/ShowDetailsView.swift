@@ -114,6 +114,12 @@ struct ShowDetailsView: View {
                 showCreateField: uiState.showCreateListField,
                 isCreatingList: uiState.isCreatingList,
                 createListName: uiState.createListName,
+                sheetTitle: uiState.sheetTitle,
+                createButtonText: uiState.createListButtonText,
+                doneButtonText: uiState.createListDoneText,
+                emptyListText: uiState.emptyListText,
+                createListPlaceholder: uiState.createListPlaceholder,
+                listsHeaderText: uiState.listsHeaderText,
                 onToggle: { listId, isInList in
                     presenter.dispatch(action: ToggleShowInList(listId: listId, isCurrentlyInList: isInList))
                 },

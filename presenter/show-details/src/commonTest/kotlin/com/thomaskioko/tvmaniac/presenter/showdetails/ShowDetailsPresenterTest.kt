@@ -24,6 +24,10 @@ import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteracto
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncTraktCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
+import com.thomaskioko.tvmaniac.presenter.showdetails.DismissCreateListField
+import com.thomaskioko.tvmaniac.presenter.showdetails.ShowCreateListField
+import com.thomaskioko.tvmaniac.presenter.showdetails.ShowShowsListSheet
+import com.thomaskioko.tvmaniac.presenter.showdetails.UpdateCreateListName
 import com.thomaskioko.tvmaniac.domain.traktlists.CreateTraktListInteractor
 import com.thomaskioko.tvmaniac.domain.traktlists.ObserveTraktListsInteractor
 import com.thomaskioko.tvmaniac.domain.traktlists.ToggleShowInListInteractor
@@ -674,6 +678,82 @@ class ShowDetailsPresenterTest {
         watchedEpisodeSyncRepository.getLastSyncedShowId() shouldBe 84958L
     }
 
+    @Test
+    fun `should show create field given ShowCreateListField is dispatched`() = runTest {
+        buildMockData()
+
+        val presenter = buildShowDetailsPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(ShowCreateListField)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.state.value.showCreateListField shouldBe true
+    }
+
+    @Test
+    fun `should dismiss create field and clear state given DismissCreateListField is dispatched`() = runTest {
+        buildMockData()
+
+        val presenter = buildShowDetailsPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(ShowCreateListField)
+        presenter.dispatch(UpdateCreateListName("My List"))
+        presenter.dispatch(DismissCreateListField)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val state = presenter.state.value
+        state.showCreateListField shouldBe false
+        state.createListName shouldBe ""
+        state.createListError shouldBe null
+    }
+
+    @Test
+    fun `should update create list name given UpdateCreateListName is dispatched`() = runTest {
+        buildMockData()
+
+        val presenter = buildShowDetailsPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(UpdateCreateListName("My List"))
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.state.value.createListName shouldBe "My List"
+    }
+
+    @Test
+    fun `should show login prompt given ShowShowsListSheet dispatched and not logged in`() = runTest {
+        traktAuthRepository.setState(TraktAuthState.LOGGED_OUT)
+        buildMockData()
+
+        val presenter = buildShowDetailsPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(ShowShowsListSheet)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val state = presenter.state.value
+        state.showLoginPrompt shouldBe true
+        state.showListSheet shouldBe false
+    }
+
+    @Test
+    fun `should show list sheet given ShowShowsListSheet dispatched and logged in`() = runTest {
+        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        buildMockData()
+
+        val presenter = buildShowDetailsPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(ShowShowsListSheet)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val state = presenter.state.value
+        state.showListSheet shouldBe true
+        state.showLoginPrompt shouldBe false
+    }
+
     private suspend fun buildMockData(
         isYoutubeInstalled: Boolean = false,
         castList: List<ShowCast> = emptyList(),
@@ -791,6 +871,7 @@ class ShowDetailsPresenterTest {
                 repository = traktListRepository,
             ),
             traktAuthRepository = traktAuthRepository,
+            localizer = fakeLocalizer,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             dispatchers = coroutineDispatcher,
             logger = fakeLogger,

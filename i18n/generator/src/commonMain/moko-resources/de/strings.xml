@@ -25,8 +25,12 @@
     <string name="label_watchlist_title">Hinzufügen zu …</string>
     <string name="label_watchlist_lists">Listen</string>
     <string name="label_watchlist_create_custom_list">Eine Liste erstellen</string>
-    <string name="label_watchlist_empty_list">Sie haben keine Listen. Möchten Sie eine neue erstellen?</string>
+    <string name="label_watchlist_empty_list">Sie haben noch keine Listen.</string>
     <string name="label_watchlist_create">Erstellen</string>
+    <string name="label_watchlist_done">Fertig</string>
+    <string name="label_watchlist_new_list_placeholder">Neuer Listenname</string>
+    <string name="label_watchlist_save_to_list">Zur Liste speichern</string>
+    <string name="label_watchlist_your_lists">Ihre Listen</string>
     <string name="label_watchlist_list_style">Listenstil</string>
     <string name="label_watchlist_search_hint">Geben Sie einen Sendungstitel ein, um nach einer Sendung zu suchen
     </string>

@@ -22,6 +22,12 @@ public data class ShowDetailsContent(
     val isCreatingList: Boolean = false,
     val createListName: String = "",
     val createListError: String? = null,
+    val sheetTitle: String = "",
+    val createListButtonText: String = "",
+    val createListDoneText: String = "",
+    val createListPlaceholder: String = "",
+    val emptyListText: String = "",
+    val listsHeaderText: String = "",
     val message: UiMessage? = null,
 ) {
     public val isRefreshing: Boolean

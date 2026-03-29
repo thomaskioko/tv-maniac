@@ -162,7 +162,7 @@ internal fun ShowDetailsScreen(
         onDismissBottomSheet = { onAction(DismissShowsListSheet) },
         sheetDragHandle = {
             SheetDragHandle(
-                title = "Add To ...",
+                title = state.sheetTitle,
                 textAlign = TextAlign.Start,
                 imageVector = Icons.Filled.Cancel,
                 onClick = { onAction(DismissShowsListSheet) },
@@ -269,7 +269,7 @@ internal fun ShowListSheetContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         if (state.traktLists.isEmpty()) {
-            EmptyListContent(onAction)
+            EmptyListContent(state)
         } else {
             TraktListItems(state, onAction)
         }
@@ -302,7 +302,7 @@ private fun TraktListItems(
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
-                    text = "${list.itemCount} items",
+                    text = "${list.itemCount}",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -320,7 +320,7 @@ private fun TraktListItems(
 
 @Composable
 private fun EmptyListContent(
-    onAction: (ShowDetailsAction) -> Unit,
+    state: ShowDetailsContent,
 ) {
     Column(
         modifier = Modifier
@@ -329,7 +329,7 @@ private fun EmptyListContent(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = "You don't have any lists yet.",
+            text = state.emptyListText,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -357,7 +357,7 @@ private fun CreateListSection(
                     contentDescription = null,
                     modifier = Modifier.padding(end = 8.dp),
                 )
-                Text("Create List")
+                Text(state.createListButtonText)
             }
         }
 
@@ -387,7 +387,7 @@ private fun CreateListSection(
                         value = state.createListName,
                         onValueChange = { if (it.length <= 50) onAction(UpdateCreateListName(it)) },
                         modifier = Modifier.weight(1f),
-                        placeholder = { Text("New list name") },
+                        placeholder = { Text(state.createListPlaceholder) },
                         singleLine = true,
                         enabled = !state.isCreatingList,
                         textStyle = MaterialTheme.typography.bodyMedium,
@@ -409,7 +409,7 @@ private fun CreateListSection(
                                 color = MaterialTheme.colorScheme.onSecondary,
                             )
                         } else {
-                            Text("Done")
+                            Text(state.createListDoneText)
                         }
                     }
                 }
