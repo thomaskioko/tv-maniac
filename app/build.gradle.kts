@@ -120,6 +120,9 @@ dependencies {
     implementation(projects.presenter.trailers)
     implementation(projects.presenter.upnext)
     implementation(projects.presenter.watchlist)
+    implementation(projects.data.traktlists.api)
+    implementation(projects.data.traktlists.implementation)
+    implementation(projects.domain.traktlists)
 
     implementation(projects.core.view)
     implementation(projects.core.imageloading.api)

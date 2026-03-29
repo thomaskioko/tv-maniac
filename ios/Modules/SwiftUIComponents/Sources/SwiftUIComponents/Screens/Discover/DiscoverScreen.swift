@@ -336,53 +336,24 @@ public struct DiscoverScreen: View {
     }
 
     private var discoverListContent: some View {
-        VStack {
-            NextEpisodesSection(
-                title: upNextTitle,
-                episodes: nextEpisodes,
-                chevronStyle: .chevronOnly,
-                onEpisodeClick: onNextEpisodeClicked
-            )
-
-            HorizontalItemListView(
-                title: trendingTitle,
-                chevronStyle: .chevronOnly,
-                cardStyle: .poster,
-                items: trendingToday,
-                onClick: onShowClicked,
-                onMoreClicked: onTrendingClicked
-            )
-
-            HorizontalItemListView(
-                title: upcomingTitle,
-                chevronStyle: .chevronOnly,
-                cardStyle: .poster,
-                items: upcomingShows,
-                onClick: onShowClicked,
-                onMoreClicked: onUpcomingClicked
-            )
-
-            HorizontalItemListView(
-                title: popularTitle,
-                chevronStyle: .chevronOnly,
-                cardStyle: .poster,
-                items: popularShows,
-                onClick: onShowClicked,
-                onMoreClicked: onPopularClicked
-            )
-
-            HorizontalItemListView(
-                title: topRatedTitle,
-                chevronStyle: .chevronOnly,
-                cardStyle: .poster,
-                items: topRatedShows,
-                onClick: onShowClicked,
-                onMoreClicked: onTopRatedClicked
-            )
-        }
-        .padding(.top, appTheme.spacing.medium)
-        .background(appTheme.colors.background)
-        .offset(y: -10)
+        DiscoverListContent(
+            upNextTitle: upNextTitle,
+            trendingTitle: trendingTitle,
+            upcomingTitle: upcomingTitle,
+            popularTitle: popularTitle,
+            topRatedTitle: topRatedTitle,
+            nextEpisodes: nextEpisodes,
+            trendingToday: trendingToday,
+            upcomingShows: upcomingShows,
+            popularShows: popularShows,
+            topRatedShows: topRatedShows,
+            onShowClicked: onShowClicked,
+            onTrendingClicked: onTrendingClicked,
+            onUpcomingClicked: onUpcomingClicked,
+            onPopularClicked: onPopularClicked,
+            onTopRatedClicked: onTopRatedClicked,
+            onNextEpisodeClicked: onNextEpisodeClicked
+        )
     }
 
     private var emptyView: some View {

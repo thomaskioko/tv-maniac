@@ -94,6 +94,9 @@ kotlin {
                 api(projects.domain.upnext)
                 api(projects.data.calendar.api)
                 implementation(projects.data.calendar.implementation)
+                implementation(projects.data.traktlists.api)
+                implementation(projects.data.traktlists.implementation)
+                implementation(projects.domain.traktlists)
 
                 implementation(projects.api.tmdb.api)
                 implementation(projects.api.tmdb.implementation)
