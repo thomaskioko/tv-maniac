@@ -13,6 +13,7 @@ import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.data.user.testing.createTestProfile
 import com.thomaskioko.tvmaniac.domain.user.ObserveUserProfileInteractor
 import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
+import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.profile.presenter.DefaultProfilePresenter
@@ -70,6 +71,7 @@ internal class ProfilePresenterTest {
 
     private val updateUserProfileData = UpdateUserProfileData(
         userRepository = userRepository,
+        traktListRepository = FakeTraktListRepository(),
         dispatchers = testDispatchers,
     )
 

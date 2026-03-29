@@ -32,6 +32,7 @@ kotlin {
                 implementation(projects.core.logger.testing)
                 implementation(projects.core.util.testing)
                 implementation(projects.data.traktauth.testing)
+                implementation(projects.data.traktlists.testing)
                 implementation(projects.data.user.testing)
                 implementation(projects.i18n.testing)
 
