@@ -217,6 +217,7 @@ public class DefaultLibraryRepository(
         is ApiResponse.Error.HttpError -> "HTTP $code: $errorMessage"
         is ApiResponse.Error.SerializationError -> "Serialization error: $errorMessage"
         is ApiResponse.Error.GenericError -> errorMessage ?: "Unknown error"
+        is ApiResponse.Error.OfflineError -> "No internet connection"
     }
 
     private suspend fun currentSortOption(): LibrarySortOption {

@@ -20,6 +20,10 @@ public sealed class ApiResponse<out T> {
             val message: String?,
             val errorMessage: String?,
         ) : Error<Nothing>()
+
+        public data class OfflineError(
+            val errorMessage: String = "No internet connection",
+        ) : Error<Nothing>()
     }
 }
 
@@ -29,6 +33,7 @@ public fun <T> ApiResponse<T>.getOrThrow(): T = when (this) {
     is ApiResponse.Error.HttpError -> throw ApiHttpException(code, "HTTP $code: $errorMessage")
     is ApiResponse.Error.SerializationError -> throw ApiSerializationException("Serialization error: $message")
     is ApiResponse.Error.GenericError -> throw ApiGenericException("Error: $message")
+    is ApiResponse.Error.OfflineError -> throw ApiGenericException(errorMessage)
 }
 
 public fun <T> ApiResponse<T>.getOrNull(): T? = when (this) {

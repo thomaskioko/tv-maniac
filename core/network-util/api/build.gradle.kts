@@ -9,6 +9,7 @@ kotlin {
             api(libs.store5)
 
             implementation(projects.core.base)
+            implementation(projects.core.connectivity.api)
             implementation(libs.ktor.core)
         }
 

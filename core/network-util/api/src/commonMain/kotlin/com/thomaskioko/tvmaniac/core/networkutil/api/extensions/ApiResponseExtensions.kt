@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.core.networkutil.api.extensions
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.AuthenticationException
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.HttpExceptions
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.NoInternetException
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.ClientRequestException
@@ -21,7 +22,9 @@ public suspend inline fun <reified T> HttpClient.safeRequest(
     try {
         val response = request { block() }
         ApiResponse.Success(response.body())
-    } catch (e: AuthenticationException) {
+    } catch (e: NoInternetException) {
+        ApiResponse.Error.OfflineError(errorMessage = e.message ?: "No internet connection")
+    } catch (_: AuthenticationException) {
         ApiResponse.Unauthenticated
     } catch (exception: ClientRequestException) {
         val errorBody: String = exception.response.bodyAsText()
