@@ -1,5 +1,6 @@
 package com.thomaskioko.trakt.service.implementation
 
+import com.thomaskioko.tvmaniac.core.connectivity.api.InternetConnectionChecker
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.util.api.BuildConfig
@@ -33,6 +34,7 @@ public interface TraktComponent {
         httpClientEngine: TraktHttpClientEngine,
         logger: Logger,
         traktAuthRepository: TraktAuthRepository,
+        internetConnectionChecker: InternetConnectionChecker,
     ): TraktHttpClient = traktHttpClient(
         isDebug = BuildConfig.IS_DEBUG,
         traktClientId = BuildConfig.TRAKT_CLIENT_ID,
@@ -40,5 +42,6 @@ public interface TraktComponent {
         httpClientEngine = httpClientEngine,
         kermitLogger = logger,
         traktAuthRepository = traktAuthRepository,
+        internetConnectionChecker = internetConnectionChecker,
     )
 }

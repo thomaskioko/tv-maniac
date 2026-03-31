@@ -1,5 +1,7 @@
 package com.thomaskioko.trakt.service.implementation
 
+import com.thomaskioko.tvmaniac.core.connectivity.api.InternetConnectionChecker
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.InternetConnectionPlugin
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.IsAuthenticated
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.HttpExceptions
 import com.thomaskioko.tvmaniac.traktauth.api.TokenRefreshResult
@@ -38,9 +40,14 @@ internal fun traktHttpClient(
     httpClientEngine: TraktHttpClientEngine,
     kermitLogger: KermitLogger,
     traktAuthRepository: TraktAuthRepository,
+    internetConnectionChecker: InternetConnectionChecker,
 ): HttpClient {
     val client = HttpClient(httpClientEngine) {
         install(ContentNegotiation) { json(json = json) }
+
+        install(InternetConnectionPlugin) {
+            this.internetConnectionChecker = internetConnectionChecker
+        }
 
         install(HttpRequestRetry) {
             retryIf(5) { _, httpResponse ->
