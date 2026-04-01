@@ -1,6 +1,7 @@
 package com.thomaskioko.trakt.service.implementation.api
 
 import com.thomaskioko.trakt.service.implementation.TraktHttpClient
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.authSafeRequest
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.safeRequest
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.TimePeriod
@@ -209,7 +210,7 @@ public class DefaultTraktShowsRemoteDataSource(
         }
 
     override suspend fun getWatchedProgress(traktId: Long): ApiResponse<TraktWatchedProgressResponse> =
-        httpClient.safeRequest {
+        httpClient.authSafeRequest {
             url {
                 method = HttpMethod.Get
                 path("shows/$traktId/progress/watched")

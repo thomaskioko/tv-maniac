@@ -1,7 +1,7 @@
 package com.thomaskioko.trakt.service.implementation.api
 
 import com.thomaskioko.trakt.service.implementation.TraktHttpClient
-import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.safeRequest
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.authSafeRequest
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.TraktSyncRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktLastActivitiesResponse
@@ -20,7 +20,7 @@ public class DefaultTraktSyncRemoteDataSource(
 ) : TraktSyncRemoteDataSource {
 
     override suspend fun getLastActivities(): ApiResponse<TraktLastActivitiesResponse> =
-        httpClient.safeRequest {
+        httpClient.authSafeRequest {
             url {
                 method = HttpMethod.Get
                 path("sync/last_activities")

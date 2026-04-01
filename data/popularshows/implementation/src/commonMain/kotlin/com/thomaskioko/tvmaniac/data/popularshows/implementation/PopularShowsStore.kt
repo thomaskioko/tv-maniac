@@ -57,7 +57,9 @@ public class PopularShowsStore(
                                 pageOrder = index,
                             )
 
-                            is ApiResponse.Error -> PopularShowWithImages(
+                            is ApiResponse.Unauthenticated,
+                            is ApiResponse.Error,
+                            -> PopularShowWithImages(
                                 traktShow = show,
                                 tmdbId = tmdbId,
                                 tmdbPosterPath = null,

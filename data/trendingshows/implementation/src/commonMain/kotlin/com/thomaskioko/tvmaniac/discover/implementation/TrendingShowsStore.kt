@@ -58,7 +58,9 @@ public class TrendingShowsStore(
                                 pageOrder = index,
                             )
 
-                            is ApiResponse.Error -> TrendingShowWithImages(
+                            is ApiResponse.Unauthenticated,
+                            is ApiResponse.Error,
+                            -> TrendingShowWithImages(
                                 traktShow = traktResponse,
                                 tmdbId = tmdbId,
                                 tmdbPosterPath = null,

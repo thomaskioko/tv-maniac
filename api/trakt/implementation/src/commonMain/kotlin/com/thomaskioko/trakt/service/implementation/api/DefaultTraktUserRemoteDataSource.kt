@@ -1,7 +1,7 @@
 package com.thomaskioko.trakt.service.implementation.api
 
 import com.thomaskioko.trakt.service.implementation.TraktHttpClient
-import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.safeRequest
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.authSafeRequest
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.TraktUserRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktPersonalListsResponse
@@ -25,7 +25,7 @@ public class DefaultTraktUserRemoteDataSource(
 ) : TraktUserRemoteDataSource {
 
     override suspend fun getUser(userId: String): ApiResponse<TraktUserResponse> =
-        httpClient.safeRequest {
+        httpClient.authSafeRequest {
             url {
                 method = HttpMethod.Get
                 path("users/$userId")
@@ -34,7 +34,7 @@ public class DefaultTraktUserRemoteDataSource(
         }
 
     override suspend fun getUserStats(userId: String): ApiResponse<TraktUserStatsResponse> =
-        httpClient.safeRequest {
+        httpClient.authSafeRequest {
             url {
                 method = HttpMethod.Get
                 path("users/$userId/stats")

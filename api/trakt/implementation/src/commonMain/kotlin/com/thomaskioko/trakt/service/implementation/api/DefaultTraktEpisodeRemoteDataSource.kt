@@ -1,7 +1,7 @@
 package com.thomaskioko.trakt.service.implementation.api
 
 import com.thomaskioko.trakt.service.implementation.TraktHttpClient
-import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.safeRequest
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.authSafeRequest
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.TraktEpisodeHistoryRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktHistoryEntry
@@ -25,7 +25,7 @@ public class DefaultTraktEpisodeRemoteDataSource(
 ) : TraktEpisodeHistoryRemoteDataSource {
 
     override suspend fun getShowEpisodeWatches(showTraktId: Long): ApiResponse<List<TraktHistoryEntry>> =
-        httpClient.safeRequest {
+        httpClient.authSafeRequest {
             url {
                 method = HttpMethod.Get
                 path("users/me/history/shows/$showTraktId")
@@ -35,7 +35,7 @@ public class DefaultTraktEpisodeRemoteDataSource(
         }
 
     override suspend fun addEpisodeWatches(items: TraktSyncItems): ApiResponse<TraktSyncResponse> =
-        httpClient.safeRequest {
+        httpClient.authSafeRequest {
             url {
                 method = HttpMethod.Post
                 path("sync/history")
@@ -45,7 +45,7 @@ public class DefaultTraktEpisodeRemoteDataSource(
         }
 
     override suspend fun removeEpisodeWatches(items: TraktSyncItems): ApiResponse<TraktSyncResponse> =
-        httpClient.safeRequest {
+        httpClient.authSafeRequest {
             url {
                 method = HttpMethod.Post
                 path("sync/history/remove")

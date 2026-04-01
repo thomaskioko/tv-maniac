@@ -195,13 +195,11 @@ public class DefaultShowDetailsPresenter(
             showDetailsInteractor(ShowDetailsInteractor.Param(showTraktId, forceReload))
                 .collectStatus(showDetailsLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
 
-            if (traktAuthRepository.isLoggedIn()) {
-                syncShowContent(
-                    forceRefresh = forceReload,
-                    isUserInitiated = isUserInitiated,
-                    loadingState = showDetailsLoadingState,
-                )
-            }
+            syncShowContent(
+                forceRefresh = forceReload,
+                isUserInitiated = isUserInitiated,
+                loadingState = showDetailsLoadingState,
+            )
         }
 
         coroutineScope.launch {

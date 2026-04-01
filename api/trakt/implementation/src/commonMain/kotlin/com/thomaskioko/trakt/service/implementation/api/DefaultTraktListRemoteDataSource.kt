@@ -1,7 +1,7 @@
 package com.thomaskioko.trakt.service.implementation.api
 
 import com.thomaskioko.trakt.service.implementation.TraktHttpClient
-import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.safeRequest
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.authSafeRequest
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAddRemoveShowFromListResponse
@@ -14,10 +14,7 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktPersonalListsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShow
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowIds
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
-import io.ktor.client.call.body
-import io.ktor.client.request.get
 import io.ktor.client.request.parameter
-import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
@@ -36,7 +33,7 @@ public class DefaultTraktListRemoteDataSource(
 ) : TraktListRemoteDataSource {
 
     override suspend fun getUser(userId: String): ApiResponse<TraktUserResponse> =
-        httpClient.safeRequest {
+        httpClient.authSafeRequest {
             url {
                 method = HttpMethod.Get
                 path("users/$userId")
@@ -44,22 +41,38 @@ public class DefaultTraktListRemoteDataSource(
             }
         }
 
-    override suspend fun getUserList(userId: String): List<TraktPersonalListsResponse> =
-        httpClient.get("users/$userId/lists").body()
+    override suspend fun getUserList(userId: String): ApiResponse<List<TraktPersonalListsResponse>> =
+        httpClient.authSafeRequest {
+            url {
+                method = HttpMethod.Get
+                path("users/$userId/lists")
+            }
+        }
 
-    override suspend fun createFollowingList(userSlug: String): TraktCreateListResponse =
-        httpClient.post("users/$userSlug/lists") { setBody(TraktCreateListRequest()) }.body()
+    override suspend fun createFollowingList(userSlug: String): ApiResponse<TraktCreateListResponse> =
+        httpClient.authSafeRequest {
+            url {
+                method = HttpMethod.Post
+                path("users/$userSlug/lists")
+            }
+            contentType(ContentType.Application.Json)
+            setBody(TraktCreateListRequest())
+        }
 
     override suspend fun getFollowedList(
         listId: Long,
         userSlug: String,
-    ): List<TraktFollowedShowResponse> =
-        httpClient
-            .get("users/$userSlug/lists/$listId/items/shows") { parameter("sort_by", "added") }
-            .body()
+    ): ApiResponse<List<TraktFollowedShowResponse>> =
+        httpClient.authSafeRequest {
+            url {
+                method = HttpMethod.Get
+                path("users/$userSlug/lists/$listId/items/shows")
+                parameter("sort_by", "added")
+            }
+        }
 
     override suspend fun getWatchList(sortBy: String, sortHow: String): ApiResponse<List<TraktFollowedShowResponse>> =
-        httpClient.safeRequest {
+        httpClient.authSafeRequest {
             url {
                 method = HttpMethod.Get
                 path("users/me/watchlist/shows")
@@ -72,7 +85,7 @@ public class DefaultTraktListRemoteDataSource(
     override suspend fun addShowToWatchListByTmdbId(
         tmdbId: Long,
     ): ApiResponse<TraktAddShowToListResponse> =
-        httpClient.safeRequest {
+        httpClient.authSafeRequest {
             url {
                 method = HttpMethod.Post
                 path("sync/watchlist")
@@ -88,7 +101,7 @@ public class DefaultTraktListRemoteDataSource(
     override suspend fun removeShowFromWatchListByTmdbId(
         tmdbId: Long,
     ): ApiResponse<TraktAddRemoveShowFromListResponse> =
-        httpClient.safeRequest {
+        httpClient.authSafeRequest {
             url {
                 method = HttpMethod.Post
                 path("sync/watchlist/remove")
@@ -104,7 +117,7 @@ public class DefaultTraktListRemoteDataSource(
     override suspend fun addShowToWatchListByTraktId(
         traktId: Long,
     ): ApiResponse<TraktAddShowToListResponse> =
-        httpClient.safeRequest {
+        httpClient.authSafeRequest {
             url {
                 method = HttpMethod.Post
                 path("sync/watchlist")
@@ -120,7 +133,7 @@ public class DefaultTraktListRemoteDataSource(
     override suspend fun removeShowFromWatchListByTraktId(
         traktId: Long,
     ): ApiResponse<TraktAddRemoveShowFromListResponse> =
-        httpClient.safeRequest {
+        httpClient.authSafeRequest {
             url {
                 method = HttpMethod.Post
                 path("sync/watchlist/remove")
@@ -137,22 +150,23 @@ public class DefaultTraktListRemoteDataSource(
         userSlug: String,
         listId: Long,
         traktShowId: Long,
-    ): TraktAddShowToListResponse =
-        httpClient
-            .post("users/$userSlug/lists/$listId/items") {
-                setBody(
-                    TraktAddShowRequest(
-                        shows =
-                        listOf(
-                            TraktShow(
-                                ids =
-                                TraktShowIds(
-                                    traktId = traktShowId,
-                                ),
+    ): ApiResponse<TraktAddShowToListResponse> =
+        httpClient.authSafeRequest {
+            url {
+                method = HttpMethod.Post
+                path("users/$userSlug/lists/$listId/items")
+            }
+            contentType(ContentType.Application.Json)
+            setBody(
+                TraktAddShowRequest(
+                    shows = listOf(
+                        TraktShow(
+                            ids = TraktShowIds(
+                                traktId = traktShowId,
                             ),
                         ),
                     ),
-                )
-            }
-            .body()
+                ),
+            )
+        }
 }

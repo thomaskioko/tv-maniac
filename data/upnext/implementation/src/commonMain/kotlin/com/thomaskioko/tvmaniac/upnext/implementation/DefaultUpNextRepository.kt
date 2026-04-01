@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.upnext.implementation
 
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.fresh
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.get
 import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
@@ -10,7 +12,6 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.UPNEXT_FULL_SYNC
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.upnext.api.UpNextDao
 import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
@@ -18,8 +19,6 @@ import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
-import org.mobilenativefoundation.store.store5.impl.extensions.fresh
-import org.mobilenativefoundation.store.store5.impl.extensions.get
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
@@ -39,7 +38,6 @@ public class DefaultUpNextRepository(
     private val requestManagerRepository: RequestManagerRepository,
     private val dateTimeProvider: DateTimeProvider,
     private val logger: Logger,
-    private val traktAuthRepository: TraktAuthRepository,
 ) : UpNextRepository {
 
     override fun observeNextEpisodesForWatchlist(): Flow<List<NextEpisodeWithShow>> =
@@ -52,13 +50,7 @@ public class DefaultUpNextRepository(
     override suspend fun fetchUpNextEpisodes(forceRefresh: Boolean) {
         if (!forceRefresh && isSyncValid()) return
 
-        val isLoggedIn = traktAuthRepository.isLoggedIn()
-        val followedShows = if (isLoggedIn) {
-            followedShowsDao.entriesWithNoPendingAction()
-        } else {
-            followedShowsDao.entriesExcludingDeleted()
-        }
-
+        val followedShows = followedShowsDao.entriesExcludingDeleted()
         if (followedShows.isEmpty()) {
             logger.debug(TAG, "No followed shows found, skipping UpNext refresh")
             return
@@ -66,27 +58,21 @@ public class DefaultUpNextRepository(
 
         logger.debug(
             TAG,
-            "Refreshing UpNext for ${followedShows.size} followed shows (forceRefresh=$forceRefresh, loggedIn=$isLoggedIn)",
+            "Refreshing UpNext for ${followedShows.size} followed shows (forceRefresh=$forceRefresh)",
         )
 
-        followedShows.chunked(10).forEach { batch ->
-            batch.forEach { show ->
-                ensureShowExists(show.traktId)
+        val includeSpecials = datastoreRepository.getIncludeSpecials()
 
-                if (isLoggedIn) {
-                    when {
-                        forceRefresh -> showUpNextStore.fresh(show.traktId)
-                        else -> showUpNextStore.get(show.traktId)
-                    }
+        followedShows.forEach { show ->
+            ensureShowExists(show.traktId)
+            fetchShowUpNext(show.traktId, forceRefresh)
 
-                    seasonDetailsRepository.syncShowSeasonDetails(
-                        showTraktId = show.traktId,
-                        forceRefresh = forceRefresh,
-                    )
-                } else {
-                    populateUpNextFromLocal(show.traktId)
-                }
-            }
+            seasonDetailsRepository.syncShowSeasonDetails(
+                showTraktId = show.traktId,
+                forceRefresh = forceRefresh,
+            )
+
+            populateUpNextIfMissing(show.traktId, includeSpecials)
         }
 
         requestManagerRepository.upsert(
@@ -105,19 +91,9 @@ public class DefaultUpNextRepository(
         datastoreRepository.observeUpNextSortOption()
 
     override suspend fun updateUpNextForShow(showTraktId: Long, forceRefresh: Boolean) {
-        try {
-            ensureShowExists(showTraktId)
-        } catch (e: Exception) {
-            logger.error(TAG, "Failed to ensure show $showTraktId exists: ${e.message}")
-        }
-        if (traktAuthRepository.isLoggedIn()) {
-            when {
-                forceRefresh -> showUpNextStore.fresh(showTraktId)
-                else -> showUpNextStore.get(showTraktId)
-            }
-        } else {
-            populateUpNextFromLocal(showTraktId)
-        }
+        ensureShowExists(showTraktId)
+        fetchShowUpNext(showTraktId, forceRefresh)
+        populateUpNextIfMissing(showTraktId)
     }
 
     override suspend fun fetchUpNext(
@@ -127,11 +103,8 @@ public class DefaultUpNextRepository(
     ) {
         try {
             ensureShowExists(showTraktId)
-            if (traktAuthRepository.isLoggedIn()) {
-                showUpNextStore.fresh(showTraktId)
-            } else {
-                populateUpNextFromLocal(showTraktId, lastWatchedAt = dateTimeProvider.nowMillis())
-            }
+            showUpNextStore.fresh(showTraktId) { logger.debug(TAG, it) }
+            populateUpNextFromLocal(showTraktId, lastWatchedAt = dateTimeProvider.nowMillis())
         } catch (e: Exception) {
             logger.error(TAG, "Remote UpNext refresh failed, advancing locally: ${e.message}")
             upNextDao.advanceAfterWatched(
@@ -143,8 +116,15 @@ public class DefaultUpNextRepository(
         }
     }
 
+    private suspend fun fetchShowUpNext(showTraktId: Long, forceRefresh: Boolean) {
+        when {
+            forceRefresh -> showUpNextStore.fresh(showTraktId) { logger.debug(TAG, it) }
+            else -> showUpNextStore.get(showTraktId) { logger.debug(TAG, it) }
+        }
+    }
+
     private suspend fun isSyncValid(): Boolean {
-        val hasCachedData = upNextDao.getNextEpisodesFromCache().isNotEmpty()
+        val hasCachedData = upNextDao.hasAnyEpisodes()
         val isSyncFresh = requestManagerRepository.isRequestValid(
             requestType = UPNEXT_FULL_SYNC.name,
             threshold = UPNEXT_FULL_SYNC.duration,
@@ -166,8 +146,28 @@ public class DefaultUpNextRepository(
         }
     }
 
-    private suspend fun populateUpNextFromLocal(showTraktId: Long, lastWatchedAt: Long? = null) {
-        val includeSpecials = datastoreRepository.getIncludeSpecials()
+    private suspend fun populateUpNextIfMissing(showTraktId: Long) {
+        if (upNextDao.existsForShow(showTraktId)) return
+        populateUpNextFromLocal(showTraktId)
+    }
+
+    private suspend fun populateUpNextIfMissing(showTraktId: Long, includeSpecials: Boolean) {
+        if (upNextDao.existsForShow(showTraktId)) return
+        populateUpNextFromLocal(showTraktId, includeSpecials)
+    }
+
+    private suspend fun populateUpNextFromLocal(
+        showTraktId: Long,
+        lastWatchedAt: Long? = null,
+    ) {
+        populateUpNextFromLocal(showTraktId, datastoreRepository.getIncludeSpecials(), lastWatchedAt)
+    }
+
+    private suspend fun populateUpNextFromLocal(
+        showTraktId: Long,
+        includeSpecials: Boolean,
+        lastWatchedAt: Long? = null,
+    ) {
         val nextEpisode = episodesDao.getNextEpisodeForShow(showTraktId, includeSpecials)
         if (nextEpisode != null) {
             upNextDao.upsert(

@@ -158,6 +158,12 @@ WHERE show_trakt_id = :show_trakt_id
     AND season_number = :watched_season
     AND episode_number = :watched_episode;
 
+existsForShow:
+SELECT EXISTS(SELECT 1 FROM next_episodes WHERE show_trakt_id = ? LIMIT 1);
+
+hasAnyEpisodes:
+SELECT EXISTS(SELECT 1 FROM next_episodes LIMIT 1);
+
 deleteForShow:
 DELETE FROM next_episodes WHERE show_trakt_id = ?;
 

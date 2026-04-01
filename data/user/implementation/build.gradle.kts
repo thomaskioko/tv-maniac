@@ -17,7 +17,6 @@ kotlin {
                 implementation(projects.data.database.sqldelight)
                 implementation(projects.data.requestManager.api)
                 implementation(projects.data.user.api)
-                implementation(projects.data.traktauth.api)
 
                 api(libs.coroutines.core)
 

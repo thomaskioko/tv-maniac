@@ -15,6 +15,7 @@ import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 
@@ -43,9 +44,10 @@ public class ScheduleEpisodeNotificationsInteractor(
         withContext(dispatchers.io) {
             val oldNotificationIds = notificationManager.getPendingNotifications().map { it.id }
 
+            val endOfDayMillis = dateTimeProvider.startOfDay().toEpochMilliseconds() + 1.days.inWholeMilliseconds
             val upcomingEpisodes = episodeRepository.getUpcomingEpisodesFromFollowedShows(
                 limit = params.limit,
-            )
+            ).filter { it.firstAired < endOfDayMillis }
 
             logger.debug(TAG, "Found ${upcomingEpisodes.size} upcoming episodes")
 

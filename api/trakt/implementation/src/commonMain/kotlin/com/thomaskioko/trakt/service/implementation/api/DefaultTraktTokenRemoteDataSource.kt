@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.trakt.api.model.RefreshAccessTokenBody
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAccessRefreshTokenResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAccessTokenResponse
 import com.thomaskioko.tvmaniac.util.api.BuildConfig
+import io.ktor.client.plugins.auth.AuthCircuitBreaker
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
@@ -52,6 +53,7 @@ public class DefaultTraktTokenRemoteDataSource(
         refreshToken: String,
     ): ApiResponse<TraktAccessRefreshTokenResponse> =
         httpClient.safeRequest {
+            attributes.put(AuthCircuitBreaker, Unit)
             url {
                 method = HttpMethod.Post
                 path("oauth/token")

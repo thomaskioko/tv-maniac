@@ -242,6 +242,114 @@ class ScheduleEpisodeNotificationsInteractorTest {
     }
 
     @Test
+    fun `should schedule both episodes given two episodes air today for same show`() = runTest(testDispatcher) {
+        val currentTime = 1_000_000L
+        val todayEp1AirTime = currentTime + 1.hours.inWholeMilliseconds
+        val todayEp2AirTime = currentTime + 2.hours.inWholeMilliseconds
+
+        dateTimeProvider.setCurrentTimeMillis(currentTime)
+        datastoreRepository.setEpisodeNotificationsEnabled(true)
+
+        episodeRepository.setUpcomingEpisodes(
+            listOf(
+                UpcomingEpisode(
+                    episodeId = 501,
+                    seasonId = 50,
+                    showId = 5,
+                    episodeNumber = 1,
+                    seasonNumber = 1,
+                    title = "First Episode",
+                    overview = null,
+                    runtime = null,
+                    imageUrl = null,
+                    firstAired = todayEp1AirTime,
+                    showName = "Binge Show",
+                    showPoster = null,
+                ),
+                UpcomingEpisode(
+                    episodeId = 502,
+                    seasonId = 50,
+                    showId = 5,
+                    episodeNumber = 2,
+                    seasonNumber = 1,
+                    title = "Second Episode",
+                    overview = null,
+                    runtime = null,
+                    imageUrl = null,
+                    firstAired = todayEp2AirTime,
+                    showName = "Binge Show",
+                    showPoster = null,
+                ),
+            ),
+        )
+
+        interactor(ScheduleEpisodeNotificationsInteractor.Params()).test {
+            awaitItem() shouldBe InvokeStarted
+            awaitItem() shouldBe InvokeSuccess
+            awaitComplete()
+        }
+
+        val scheduled = notificationManager.getScheduledNotifications()
+        scheduled.size shouldBe 2
+        scheduled shouldContainKey 501L
+        scheduled shouldContainKey 502L
+    }
+
+    @Test
+    fun `should skip future episodes given they air after today`() = runTest(testDispatcher) {
+        val currentTime = 1_000_000L
+        val todayEpAirTime = currentTime + 1.hours.inWholeMilliseconds
+        val tomorrowEpAirTime = currentTime + 25.hours.inWholeMilliseconds
+
+        dateTimeProvider.setCurrentTimeMillis(currentTime)
+        datastoreRepository.setEpisodeNotificationsEnabled(true)
+
+        episodeRepository.setUpcomingEpisodes(
+            listOf(
+                UpcomingEpisode(
+                    episodeId = 601,
+                    seasonId = 60,
+                    showId = 6,
+                    episodeNumber = 1,
+                    seasonNumber = 1,
+                    title = "Today Episode",
+                    overview = null,
+                    runtime = null,
+                    imageUrl = null,
+                    firstAired = todayEpAirTime,
+                    showName = "Weekly Show",
+                    showPoster = null,
+                ),
+                UpcomingEpisode(
+                    episodeId = 602,
+                    seasonId = 60,
+                    showId = 6,
+                    episodeNumber = 2,
+                    seasonNumber = 1,
+                    title = "Tomorrow Episode",
+                    overview = null,
+                    runtime = null,
+                    imageUrl = null,
+                    firstAired = tomorrowEpAirTime,
+                    showName = "Weekly Show",
+                    showPoster = null,
+                ),
+            ),
+        )
+
+        interactor(ScheduleEpisodeNotificationsInteractor.Params()).test {
+            awaitItem() shouldBe InvokeStarted
+            awaitItem() shouldBe InvokeSuccess
+            awaitComplete()
+        }
+
+        val scheduled = notificationManager.getScheduledNotifications()
+        scheduled.size shouldBe 1
+        scheduled shouldContainKey 601L
+        scheduled shouldNotContainKey 602L
+    }
+
+    @Test
     fun `should skip scheduling given notifications are disabled`() = runTest(testDispatcher) {
         datastoreRepository.setEpisodeNotificationsEnabled(false)
 

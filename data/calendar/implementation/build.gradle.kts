@@ -13,7 +13,6 @@ kotlin {
                 api(libs.coroutines.core)
 
                 implementation(projects.api.trakt.api)
-                implementation(projects.data.traktauth.api)
                 implementation(projects.core.base)
                 implementation(projects.core.networkUtil.api)
                 implementation(projects.core.util.api)
