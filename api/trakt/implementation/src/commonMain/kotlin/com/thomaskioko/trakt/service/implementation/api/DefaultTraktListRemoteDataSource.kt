@@ -49,16 +49,6 @@ public class DefaultTraktListRemoteDataSource(
             }
         }
 
-    override suspend fun createFollowingList(userSlug: String): ApiResponse<TraktCreateListResponse> =
-        httpClient.authSafeRequest {
-            url {
-                method = HttpMethod.Post
-                path("users/$userSlug/lists")
-            }
-            contentType(ContentType.Application.Json)
-            setBody(TraktCreateListRequest())
-        }
-
     override suspend fun createList(userSlug: String, name: String): ApiResponse<TraktCreateListResponse> =
         httpClient.authSafeRequest {
             url {
@@ -67,18 +57,6 @@ public class DefaultTraktListRemoteDataSource(
             }
             contentType(ContentType.Application.Json)
             setBody(TraktCreateListRequest(name = name))
-        }
-
-    override suspend fun getFollowedList(
-        listId: Long,
-        userSlug: String,
-    ): ApiResponse<List<TraktFollowedShowResponse>> =
-        httpClient.authSafeRequest {
-            url {
-                method = HttpMethod.Get
-                path("users/$userSlug/lists/$listId/items/shows")
-                parameter("sort_by", "added")
-            }
         }
 
     override suspend fun getWatchList(sortBy: String, sortHow: String): ApiResponse<List<TraktFollowedShowResponse>> =

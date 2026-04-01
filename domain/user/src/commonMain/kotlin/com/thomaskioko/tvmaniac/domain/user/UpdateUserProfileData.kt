@@ -28,7 +28,7 @@ public class UpdateUserProfileData(
                 forceRefresh = params.forceRefresh,
             )
 
-            traktListRepository.syncLists(slug = slug, forceRefresh = params.forceRefresh)
+            traktListRepository.fetchUserLists(slug = slug, forceRefresh = params.forceRefresh)
         }
     }
 

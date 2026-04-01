@@ -14,11 +14,7 @@ public interface TraktListRemoteDataSource {
 
     public suspend fun getUserList(userId: String): ApiResponse<List<TraktPersonalListsResponse>>
 
-    public suspend fun createFollowingList(userSlug: String): ApiResponse<TraktCreateListResponse>
-
     public suspend fun createList(userSlug: String, name: String): ApiResponse<TraktCreateListResponse>
-
-    public suspend fun getFollowedList(listId: Long, userSlug: String): ApiResponse<List<TraktFollowedShowResponse>>
 
     public suspend fun getWatchList(sortBy: String, sortHow: String): ApiResponse<List<TraktFollowedShowResponse>>
 

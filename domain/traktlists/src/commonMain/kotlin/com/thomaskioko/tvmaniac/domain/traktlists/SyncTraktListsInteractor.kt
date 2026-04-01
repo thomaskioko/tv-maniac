@@ -13,7 +13,7 @@ public class SyncTraktListsInteractor(
 
     override suspend fun doWork(params: Params) {
         val slug = userRepository.getCurrentUser()?.slug ?: return
-        repository.syncLists(slug = slug, forceRefresh = params.forceRefresh)
+        repository.fetchUserLists(slug = slug, forceRefresh = params.forceRefresh)
     }
 
     public data class Params(val forceRefresh: Boolean = false)
