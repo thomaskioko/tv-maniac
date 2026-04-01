@@ -10,7 +10,7 @@ class TraktListSelectorContentTest: SnapshotTestCase {
             slug: "favorites",
             name: "Favorites",
             description: "My favorite shows",
-            itemCount: 12,
+            showCountText: "12 shows",
             isShowInList: true
         ),
         SwiftTraktListItem(
@@ -18,7 +18,7 @@ class TraktListSelectorContentTest: SnapshotTestCase {
             slug: "watch-later",
             name: "Watch Later",
             description: "Shows to watch later",
-            itemCount: 5,
+            showCountText: "5 shows",
             isShowInList: false
         ),
         SwiftTraktListItem(
@@ -26,7 +26,7 @@ class TraktListSelectorContentTest: SnapshotTestCase {
             slug: "sci-fi-marathon",
             name: "Sci-Fi Marathon",
             description: nil,
-            itemCount: 23,
+            showCountText: "23 shows",
             isShowInList: true
         ),
     ]
