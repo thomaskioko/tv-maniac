@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.traktlists.implementation
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.fresh
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.get
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiGenericException
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
@@ -82,6 +83,7 @@ public class DefaultTraktListRepository(
                 is ApiResponse.Error.SerializationError -> throw Exception("Serialization error: ${response.message}")
                 is ApiResponse.Error.GenericError -> throw Exception("Error: ${response.message}")
                 is ApiResponse.Unauthenticated -> throw Exception("Not authenticated")
+                is ApiResponse.Error.OfflineError -> throw ApiGenericException(response.errorMessage)
             }
         }
     }
