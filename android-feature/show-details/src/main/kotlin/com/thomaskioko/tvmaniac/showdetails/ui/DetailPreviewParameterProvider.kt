@@ -125,13 +125,14 @@ internal val showDetailsContentWithError = showDetailsContent.copy(
 
 internal val showDetailsWithTraktLists = showDetailsContent.copy(
     showListSheet = true,
+    listsHeaderText = "Your Lists",
     traktLists = persistentListOf(
         TraktListModel(
             id = 1,
             slug = "favorites",
             name = "Favorites",
             description = "My favorite shows",
-            itemCount = 12,
+            showCountText = "12 shows",
             isShowInList = true,
         ),
         TraktListModel(
@@ -139,7 +140,7 @@ internal val showDetailsWithTraktLists = showDetailsContent.copy(
             slug = "watch-later",
             name = "Watch Later",
             description = "Shows to watch later",
-            itemCount = 5,
+            showCountText = "5 shows",
             isShowInList = false,
         ),
         TraktListModel(
@@ -147,7 +148,7 @@ internal val showDetailsWithTraktLists = showDetailsContent.copy(
             slug = "sci-fi-marathon",
             name = "Sci-Fi Marathon",
             description = null,
-            itemCount = 23,
+            showCountText = "23 shows",
             isShowInList = true,
         ),
     ),
@@ -155,6 +156,7 @@ internal val showDetailsWithTraktLists = showDetailsContent.copy(
 
 internal val showDetailsWithEmptyTraktLists = showDetailsContent.copy(
     showListSheet = true,
+    listsHeaderText = "Your Lists",
     traktLists = persistentListOf(),
 )
 

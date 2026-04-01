@@ -377,7 +377,7 @@ public extension TvManiac.TraktListModel {
             slug: slug,
             name: name,
             description: description_,
-            itemCount: itemCount,
+            showCountText: showCountText,
             isShowInList: isShowInList
         )
     }

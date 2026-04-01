@@ -9,7 +9,7 @@ public struct SwiftTraktListItem: Identifiable, Equatable {
     public let slug: String
     public let name: String
     public let description: String?
-    public let itemCount: Int64
+    public let showCountText: String
     public let isShowInList: Bool
 
     public init(
@@ -17,14 +17,14 @@ public struct SwiftTraktListItem: Identifiable, Equatable {
         slug: String,
         name: String,
         description: String?,
-        itemCount: Int64,
+        showCountText: String,
         isShowInList: Bool
     ) {
         self.listId = listId
         self.slug = slug
         self.name = name
         self.description = description
-        self.itemCount = itemCount
+        self.showCountText = showCountText
         self.isShowInList = isShowInList
     }
 }

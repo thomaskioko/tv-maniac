@@ -92,9 +92,12 @@ public struct TraktListSelectorContent: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     if !showCreateField {
                         Button(action: onShowCreateField) {
-                            Image(systemName: "plus.rectangle.on.rectangle")
-                                .font(.title3)
-                                .foregroundColor(theme.colors.accent)
+                            Image(systemName: "plus")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(theme.colors.onAccent)
+                                .frame(width: 28, height: 28)
+                                .background(theme.colors.accent)
+                                .clipShape(Circle())
                         }
                     }
                 }
@@ -119,6 +122,8 @@ public struct TraktListSelectorContent: View {
                 }
                 .frame(maxWidth: .infinity)
 
+                Spacer().frame(height: 16)
+
                 Text(title)
                     .textStyle(theme.typography.titleMedium)
                     .multilineTextAlignment(.center)
@@ -135,7 +140,7 @@ public struct TraktListSelectorContent: View {
                     VStack(alignment: .leading) {
                         Text(list.name)
                             .textStyle(theme.typography.bodyMedium)
-                        Text("\(list.itemCount) items")
+                        Text(list.showCountText)
                             .textStyle(theme.typography.bodySmall)
                             .foregroundColor(theme.colors.onSurfaceVariant)
                     }
@@ -145,7 +150,15 @@ public struct TraktListSelectorContent: View {
                         set: { _ in onToggle(list.listId, list.isShowInList) }
                     ))
                     .labelsHidden()
+                    .tint(theme.colors.secondary)
                 }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(theme.colors.surfaceVariant.opacity(0.5))
+                .clipShape(RoundedRectangle(cornerRadius: theme.shapes.medium, style: .continuous))
+                .listRowInsets(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
             }
         } header: {
             Text(listsHeaderText)
@@ -169,7 +182,7 @@ public struct TraktListSelectorContent: View {
     private var createSection: some View {
         if showCreateField {
             Section {
-                HStack {
+                HStack(spacing: 8) {
                     TextField(newListPlaceholder, text: Binding(
                         get: { createListName },
                         set: { newValue in
@@ -178,8 +191,16 @@ public struct TraktListSelectorContent: View {
                             }
                         }
                     ))
-                    .textFieldStyle(.roundedBorder)
+                    .textStyle(theme.typography.bodyMedium)
                     .disabled(isCreatingList)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 10)
+                    .background(theme.colors.surface)
+                    .clipShape(RoundedRectangle(cornerRadius: theme.shapes.medium))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: theme.shapes.medium)
+                            .stroke(theme.colors.outline.opacity(0.3), lineWidth: 1)
+                    )
 
                     Button(action: onCreateSubmitted) {
                         if isCreatingList {
@@ -194,6 +215,9 @@ public struct TraktListSelectorContent: View {
                     .tint(theme.colors.accent)
                     .disabled(createListName.trimmingCharacters(in: .whitespaces).isEmpty || isCreatingList)
                 }
+                .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
             }
         }
     }

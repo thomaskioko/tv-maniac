@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,7 +27,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.LibraryAddCheck
 import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.Refresh
@@ -41,6 +42,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -275,7 +277,18 @@ internal fun ShowListSheetContent(
             overflow = TextOverflow.Ellipsis,
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+            text = state.listsHeaderText,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp),
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         if (state.traktLists.isEmpty()) {
             EmptyListContent(state)
@@ -295,34 +308,51 @@ private fun TraktListItems(
     onAction: (ShowDetailsAction) -> Unit,
 ) {
     state.traktLists.forEach { list ->
-        Row(
+        Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 4.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
+                .padding(horizontal = 8.dp, vertical = 4.dp),
+            shape = MaterialTheme.shapes.medium,
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+            ),
         ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = list.name,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Text(
-                    text = "${list.itemCount}",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 10.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = list.name,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    Text(
+                        text = list.showCountText,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+
+                androidx.compose.material3.Switch(
+                    checked = list.isShowInList,
+                    onCheckedChange = {
+                        onAction(ToggleShowInList(listId = list.id, isCurrentlyInList = list.isShowInList))
+                    },
+                    colors = androidx.compose.material3.SwitchDefaults.colors(
+                        checkedThumbColor = MaterialTheme.colorScheme.secondary,
+                        checkedTrackColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f),
+                        uncheckedThumbColor = MaterialTheme.colorScheme.onSurface,
+                        uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+                        uncheckedBorderColor = MaterialTheme.colorScheme.outline,
+                    ),
                 )
             }
-
-            androidx.compose.material3.Switch(
-                checked = list.isShowInList,
-                onCheckedChange = {
-                    onAction(ToggleShowInList(listId = list.id, isCurrentlyInList = list.isShowInList))
-                },
-            )
         }
     }
 }
@@ -355,14 +385,22 @@ private fun ListSheetTopBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 4.dp),
+            .statusBarsPadding()
+            .padding(horizontal = 24.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        androidx.compose.material3.IconButton(onClick = onClose) {
+        androidx.compose.material3.FilledIconButton(
+            onClick = onClose,
+            modifier = Modifier.size(36.dp),
+            colors = androidx.compose.material3.IconButtonDefaults.filledIconButtonColors(
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.onSecondary,
+            ),
+        ) {
             Icon(
-                imageVector = Icons.Filled.Cancel,
+                imageVector = Icons.Filled.Close,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier.size(20.dp),
             )
         }
 
@@ -376,15 +414,22 @@ private fun ListSheetTopBar(
         )
 
         if (!showCreateField) {
-            androidx.compose.material3.IconButton(onClick = onCreateClicked) {
+            androidx.compose.material3.FilledIconButton(
+                onClick = onCreateClicked,
+                modifier = Modifier.size(36.dp),
+                colors = androidx.compose.material3.IconButtonDefaults.filledIconButtonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary,
+                ),
+            ) {
                 Icon(
                     imageVector = Icons.Filled.LibraryAddCheck,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.size(20.dp),
                 )
             }
         } else {
-            Spacer(modifier = Modifier.size(48.dp))
+            Spacer(modifier = Modifier.size(36.dp))
         }
     }
 }
@@ -404,10 +449,25 @@ private fun CreateListInlineField(
                 value = state.createListName,
                 onValueChange = { if (it.length <= 50) onAction(UpdateCreateListName(it)) },
                 modifier = Modifier.weight(1f),
-                placeholder = { Text(state.createListPlaceholder) },
+                placeholder = {
+                    Text(
+                        text = state.createListPlaceholder,
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                        ),
+                    )
+                },
                 singleLine = true,
                 enabled = !state.isCreatingList,
                 textStyle = MaterialTheme.typography.bodyMedium,
+                shape = MaterialTheme.shapes.medium,
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                    unfocusedIndicatorColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                    cursorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                ),
             )
 
             if (state.isCreatingList) {
