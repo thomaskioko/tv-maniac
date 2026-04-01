@@ -3,15 +3,14 @@ package com.thomaskioko.tvmaniac.traktlists.implementation
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.fresh
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.get
-import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiGenericException
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
+import com.thomaskioko.tvmaniac.traktlists.api.TraktList
 import com.thomaskioko.tvmaniac.traktlists.api.TraktListDao
 import com.thomaskioko.tvmaniac.traktlists.api.TraktListEntity
 import com.thomaskioko.tvmaniac.traktlists.api.TraktListRepository
 import com.thomaskioko.tvmaniac.traktlists.api.TraktListShowDao
-import com.thomaskioko.tvmaniac.traktlists.api.TraktListWithMembership
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -26,6 +25,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @ContributesBinding(AppScope::class)
 public class DefaultTraktListRepository(
     private val traktListsStore: TraktListsStore,
+    private val createTraktListStore: CreateTraktListStore,
     private val traktListDao: TraktListDao,
     private val traktListShowDao: TraktListShowDao,
     private val traktListRemoteDataSource: TraktListRemoteDataSource,
@@ -35,57 +35,39 @@ public class DefaultTraktListRepository(
     override fun observeLists(): Flow<List<TraktListEntity>> =
         traktListDao.observeAll().distinctUntilChanged()
 
-    override fun observeListsForShow(traktShowId: Long): Flow<List<TraktListWithMembership>> =
+    override fun observeListsForShow(traktShowId: Long): Flow<List<TraktList>> =
         combine(
             traktListDao.observeAll(),
             traktListShowDao.observeByShowTraktId(traktShowId),
-        ) { lists, showEntries ->
+            traktListShowDao.observeActiveCountByListId(),
+        ) { lists, showEntries, activeCounts ->
             val activeEntryListIds = showEntries
                 .filter { it.pendingAction != PendingAction.DELETE.value }
                 .map { it.listId }
                 .toSet()
             lists.map { list ->
-                TraktListWithMembership(
+                TraktList(
                     id = list.id,
                     slug = list.slug,
                     name = list.name,
                     description = list.description,
-                    itemCount = list.itemCount,
+                    itemCount = activeCounts[list.id] ?: 0,
                     isShowInList = list.id in activeEntryListIds,
                 )
             }
         }.distinctUntilChanged()
 
-    override suspend fun syncLists(slug: String, forceRefresh: Boolean) {
-        if (forceRefresh) {
+    override suspend fun fetchUserLists(slug: String, forceRefresh: Boolean) {
+       /* if (forceRefresh) {
             traktListsStore.fresh(key = slug)
         } else {
             traktListsStore.get(key = slug)
-        }
+        }*/
+        traktListsStore.fresh(key = slug)
     }
 
     override suspend fun createList(slug: String, name: String) {
-        withContext(dispatchers.io) {
-            when (val response = traktListRemoteDataSource.createList(userSlug = slug, name = name)) {
-                is ApiResponse.Success -> {
-                    traktListDao.upsert(
-                        TraktListEntity(
-                            id = response.body.ids.trakt.toLong(),
-                            slug = response.body.ids.slug,
-                            name = response.body.name,
-                            description = response.body.description,
-                            itemCount = 0,
-                            createdAt = "",
-                        ),
-                    )
-                }
-                is ApiResponse.Error.HttpError -> throw Exception("HTTP ${response.code}: ${response.errorMessage}")
-                is ApiResponse.Error.SerializationError -> throw Exception("Serialization error: ${response.message}")
-                is ApiResponse.Error.GenericError -> throw Exception("Error: ${response.message}")
-                is ApiResponse.Unauthenticated -> throw Exception("Not authenticated")
-                is ApiResponse.Error.OfflineError -> throw ApiGenericException(response.errorMessage)
-            }
-        }
+        createTraktListStore.fresh(key = CreateTraktListParams(slug = slug, name = name))
     }
 
     override suspend fun toggleShowInList(slug: String, listId: Long, traktShowId: Long, isCurrentlyInList: Boolean) {

@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.traktlists.api
 
-public data class TraktListWithMembership(
+public data class TraktList(
     val id: Long,
     val slug: String,
     val name: String,

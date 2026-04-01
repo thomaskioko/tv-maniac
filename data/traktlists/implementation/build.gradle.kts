@@ -16,6 +16,7 @@ kotlin {
                 implementation(projects.core.base)
                 implementation(projects.core.logger.api)
                 implementation(projects.core.networkUtil.api)
+                implementation(projects.core.util.api)
                 implementation(projects.data.followedshows.api)
                 implementation(projects.data.traktlists.api)
                 implementation(projects.data.database.sqldelight)
