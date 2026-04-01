@@ -48,4 +48,8 @@
         <item quantity="one">%d episode left to watch</item>
         <item quantity="other">%d episodes left to watch</item>
     </plurals>
+    <plurals name="show_count">
+        <item quantity="one">%d show</item>
+        <item quantity="other">%d shows</item>
+    </plurals>
 </resources>

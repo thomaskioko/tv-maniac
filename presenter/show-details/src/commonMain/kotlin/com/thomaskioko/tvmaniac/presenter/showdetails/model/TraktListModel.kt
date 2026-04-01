@@ -5,6 +5,6 @@ public data class TraktListModel(
     val slug: String,
     val name: String,
     val description: String?,
-    val itemCount: Long,
+    val showCountText: String,
     val isShowInList: Boolean,
 )

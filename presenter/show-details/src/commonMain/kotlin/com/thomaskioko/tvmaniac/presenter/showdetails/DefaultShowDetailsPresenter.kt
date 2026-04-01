@@ -30,6 +30,7 @@ import com.thomaskioko.tvmaniac.domain.traktlists.SyncTraktListsInteractor
 import com.thomaskioko.tvmaniac.domain.traktlists.ToggleShowInListInteractor
 import com.thomaskioko.tvmaniac.domain.watchproviders.WatchProvidersInteractor
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
+import com.thomaskioko.tvmaniac.i18n.PluralsResourceKey
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsParam
@@ -135,7 +136,7 @@ public class DefaultShowDetailsPresenter(
                     slug = list.slug,
                     name = list.name,
                     description = list.description,
-                    itemCount = list.itemCount,
+                    showCountText = localizer.getPlural(PluralsResourceKey.ShowCount, list.itemCount.toInt(), list.itemCount.toInt()),
                     isShowInList = list.isShowInList,
                 )
             }.toImmutableList(),
