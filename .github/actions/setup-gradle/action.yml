@@ -24,7 +24,7 @@ runs:
       uses: kenji-miyake/setup-git-cliff@v2
 
     - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v6
+      uses: gradle/actions/setup-gradle@v5
       with:
         cache-disabled: ${{ inputs.gradle-cache-disabled }}
         cache-read-only: ${{ inputs.gradle-cache-read-only }}
