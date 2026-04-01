@@ -101,13 +101,16 @@ public class DefaultEpisodesDao(
     override fun observeUpcomingEpisodesFromFollowedShows(
         limit: Duration,
     ): Flow<List<UpcomingEpisodesFromFollowedShows>> {
-        val now = dateTimeProvider.nowMillis()
-        val toEpoch = now + limit.inWholeMilliseconds
-        return episodeQueries.upcomingEpisodesFromFollowedShows(now, toEpoch)
+        val limitMs = limit.inWholeMilliseconds
+        return episodeQueries.upcomingEpisodesFromFollowedShows(
+            dateTimeProvider.nowMillis(),
+            dateTimeProvider.nowMillis() + limitMs,
+        )
             .asFlow()
             .mapToList(dispatchers.databaseRead)
             .map { episodes ->
-                episodes.filter { it.first_aired in now..toEpoch }
+                val now = dateTimeProvider.nowMillis()
+                episodes.filter { it.first_aired in now..(now + limitMs) }
             }
     }
 
