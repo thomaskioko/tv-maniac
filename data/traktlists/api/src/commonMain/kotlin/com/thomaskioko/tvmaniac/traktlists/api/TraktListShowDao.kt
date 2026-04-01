@@ -6,6 +6,8 @@ public interface TraktListShowDao {
 
     public fun observeByShowTraktId(showTraktId: Long): Flow<List<TraktListShowEntry>>
 
+    public fun observeActiveCountByListId(): Flow<Map<Long, Long>>
+
     public fun upsert(listId: Long, showTraktId: Long, listedAt: String, pendingAction: String)
 
     public fun updatePendingAction(listId: Long, showTraktId: Long, pendingAction: String)

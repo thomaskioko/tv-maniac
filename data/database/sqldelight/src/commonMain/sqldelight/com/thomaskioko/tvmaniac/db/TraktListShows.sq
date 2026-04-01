@@ -25,5 +25,11 @@ deleteByListIdAndShowId:
 DELETE FROM trakt_list_shows
 WHERE list_id = ? AND show_trakt_id = ?;
 
+countActiveByListId:
+SELECT list_id, COUNT(*) AS show_count
+FROM trakt_list_shows
+WHERE pending_action != 'DELETE'
+GROUP BY list_id;
+
 deleteAll:
 DELETE FROM trakt_list_shows;

@@ -21,6 +21,12 @@ public class DefaultTraktListShowDao(
     private val dispatchers: AppCoroutineDispatchers,
 ) : TraktListShowDao {
 
+    override fun observeActiveCountByListId(): Flow<Map<Long, Long>> =
+        database.traktListShowsQueries.countActiveByListId()
+            .asFlow()
+            .mapToList(dispatchers.io)
+            .map { rows -> rows.associate { it.list_id to it.show_count } }
+
     override fun observeByShowTraktId(showTraktId: Long): Flow<List<TraktListShowEntry>> =
         database.traktListShowsQueries.selectByShowTraktId(showTraktId)
             .asFlow()
