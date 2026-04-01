@@ -63,8 +63,10 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.toInstant
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -370,7 +372,9 @@ class ShowDetailsPresenterTest {
         buildMockData()
         fakeDatastoreRepository.setEpisodeNotificationsEnabled(true)
 
-        fakeDateTimeProvider.setCurrentTimeMillis(LocalDate(2025, 1, 1).toEpochMillis())
+        fakeDateTimeProvider.setCurrentTimeMillis(
+            LocalDateTime(2025, 1, 1, 8, 0).toInstant(TimeZone.UTC).toEpochMilliseconds(),
+        )
 
         episodeRepository.setUpcomingEpisodes(
             listOf(
@@ -384,7 +388,7 @@ class ShowDetailsPresenterTest {
                     overview = "Overview",
                     runtime = 45,
                     imageUrl = "/still.jpg",
-                    firstAired = LocalDate(2025, 1, 20).toEpochMillis(),
+                    firstAired = LocalDateTime(2025, 1, 1, 20, 0).toInstant(TimeZone.UTC).toEpochMilliseconds(),
                     showName = "Loki",
                     showPoster = "/poster.jpg",
                 ),
