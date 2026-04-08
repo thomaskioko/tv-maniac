@@ -1,3 +1,9 @@
+@file:OptIn(KotlinNativeCacheApi::class)
+
+import org.jetbrains.kotlin.gradle.plugin.mpp.DisableCacheInKotlinVersion
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCacheApi
+import java.net.URI
+
 plugins {
     alias(libs.plugins.app.kmp)
 }
@@ -13,6 +19,12 @@ scaffold {
             isStatic = true
             if (debuggable) freeCompilerArgs += "-Xadd-light-debug=enable"
             freeCompilerArgs += listOf("-Xbinary=bundleId=Kotlin", "-Xexport-kdoc")
+
+            disableNativeCache(
+                version = DisableCacheInKotlinVersion.`2_3_20`,
+                reason = "cache bug causes double runtime injection when linking multiple frameworks, see KT-42254",
+                issueUrl = URI("https://youtrack.jetbrains.com/issue/KT-42254")
+            )
 
             export(projects.i18n.api)
             export(projects.core.logger.api)
