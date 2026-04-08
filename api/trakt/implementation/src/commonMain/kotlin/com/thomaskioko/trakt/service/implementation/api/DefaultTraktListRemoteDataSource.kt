@@ -49,26 +49,14 @@ public class DefaultTraktListRemoteDataSource(
             }
         }
 
-    override suspend fun createFollowingList(userSlug: String): ApiResponse<TraktCreateListResponse> =
+    override suspend fun createList(userSlug: String, name: String): ApiResponse<TraktCreateListResponse> =
         httpClient.authSafeRequest {
             url {
                 method = HttpMethod.Post
                 path("users/$userSlug/lists")
             }
             contentType(ContentType.Application.Json)
-            setBody(TraktCreateListRequest())
-        }
-
-    override suspend fun getFollowedList(
-        listId: Long,
-        userSlug: String,
-    ): ApiResponse<List<TraktFollowedShowResponse>> =
-        httpClient.authSafeRequest {
-            url {
-                method = HttpMethod.Get
-                path("users/$userSlug/lists/$listId/items/shows")
-                parameter("sort_by", "added")
-            }
+            setBody(TraktCreateListRequest(name = name))
         }
 
     override suspend fun getWatchList(sortBy: String, sortHow: String): ApiResponse<List<TraktFollowedShowResponse>> =
@@ -155,6 +143,30 @@ public class DefaultTraktListRemoteDataSource(
             url {
                 method = HttpMethod.Post
                 path("users/$userSlug/lists/$listId/items")
+            }
+            contentType(ContentType.Application.Json)
+            setBody(
+                TraktAddShowRequest(
+                    shows = listOf(
+                        TraktShow(
+                            ids = TraktShowIds(
+                                traktId = traktShowId,
+                            ),
+                        ),
+                    ),
+                ),
+            )
+        }
+
+    override suspend fun removeShowFromList(
+        userSlug: String,
+        listId: Long,
+        traktShowId: Long,
+    ): ApiResponse<TraktAddRemoveShowFromListResponse> =
+        httpClient.authSafeRequest {
+            url {
+                method = HttpMethod.Post
+                path("users/$userSlug/lists/$listId/items/remove")
             }
             contentType(ContentType.Application.Json)
             setBody(

@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.core.notifications.testing.FakeNotificationManag
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
+import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.SelectByShowTraktId
@@ -28,6 +29,10 @@ import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteract
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
+import com.thomaskioko.tvmaniac.domain.traktlists.CreateTraktListInteractor
+import com.thomaskioko.tvmaniac.domain.traktlists.ObserveTraktListsInteractor
+import com.thomaskioko.tvmaniac.domain.traktlists.SyncTraktListsInteractor
+import com.thomaskioko.tvmaniac.domain.traktlists.ToggleShowInListInteractor
 import com.thomaskioko.tvmaniac.domain.watchproviders.WatchProvidersInteractor
 import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
@@ -38,6 +43,14 @@ import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepositor
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.i18n.testing.util.IgnoreIos
+import com.thomaskioko.tvmaniac.presenter.showdetails.CreateListSubmitted
+import com.thomaskioko.tvmaniac.presenter.showdetails.DismissCreateListField
+import com.thomaskioko.tvmaniac.presenter.showdetails.DismissLoginPrompt
+import com.thomaskioko.tvmaniac.presenter.showdetails.DismissShowsListSheet
+import com.thomaskioko.tvmaniac.presenter.showdetails.ShowCreateListField
+import com.thomaskioko.tvmaniac.presenter.showdetails.ShowShowsListSheet
+import com.thomaskioko.tvmaniac.presenter.showdetails.ToggleShowInList
+import com.thomaskioko.tvmaniac.presenter.showdetails.UpdateCreateListName
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ProviderModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowModel
@@ -51,6 +64,7 @@ import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
+import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
@@ -89,6 +103,8 @@ class ShowDetailsPresenterTest {
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
     private val upNextRepository = FakeUpNextRepository()
     private val traktAuthRepository = FakeTraktAuthRepository()
+    private val traktListRepository = FakeTraktListRepository()
+    private val userRepository = FakeUserRepository()
     private val fakeLocalizer = FakeLocalizer()
     private val fakeFormatterUtil = FakeFormatterUtil()
     private val fakeNotificationManager = FakeNotificationManager()
@@ -669,6 +685,149 @@ class ShowDetailsPresenterTest {
         watchedEpisodeSyncRepository.getLastSyncedShowId() shouldBe 84958L
     }
 
+    @Test
+    fun `should show create field given ShowCreateListField is dispatched`() = runTest {
+        buildMockData()
+
+        val presenter = buildShowDetailsPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(ShowCreateListField)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.state.value.showCreateListField shouldBe true
+    }
+
+    @Test
+    fun `should dismiss create field and clear state given DismissCreateListField is dispatched`() = runTest {
+        buildMockData()
+
+        val presenter = buildShowDetailsPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(ShowCreateListField)
+        presenter.dispatch(UpdateCreateListName("My List"))
+        presenter.dispatch(DismissCreateListField)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val state = presenter.state.value
+        state.showCreateListField shouldBe false
+        state.createListName shouldBe ""
+        state.createListError shouldBe null
+    }
+
+    @Test
+    fun `should update create list name given UpdateCreateListName is dispatched`() = runTest {
+        buildMockData()
+
+        val presenter = buildShowDetailsPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(UpdateCreateListName("My List"))
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.state.value.createListName shouldBe "My List"
+    }
+
+    @Test
+    fun `should show login prompt given ShowShowsListSheet dispatched and not logged in`() = runTest {
+        traktAuthRepository.setState(TraktAuthState.LOGGED_OUT)
+        buildMockData()
+
+        val presenter = buildShowDetailsPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(ShowShowsListSheet)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val state = presenter.state.value
+        state.showLoginPrompt shouldBe true
+        state.showListSheet shouldBe false
+    }
+
+    @Test
+    fun `should show list sheet given ShowShowsListSheet dispatched and logged in`() = runTest {
+        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        buildMockData()
+
+        val presenter = buildShowDetailsPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(ShowShowsListSheet)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val state = presenter.state.value
+        state.showListSheet shouldBe true
+        state.showLoginPrompt shouldBe false
+    }
+
+    @Test
+    fun `should set isCreatingList given CreateListSubmitted is dispatched`() = runTest {
+        buildMockData()
+
+        val presenter = buildShowDetailsPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(ShowCreateListField)
+        presenter.dispatch(UpdateCreateListName("My List"))
+        presenter.dispatch(CreateListSubmitted)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val state = presenter.state.value
+        state.isCreatingList shouldBe false
+        state.showCreateListField shouldBe false
+        state.createListName shouldBe ""
+    }
+
+    @Test
+    fun `should dispatch toggle action given ToggleShowInList is dispatched`() = runTest {
+        buildMockData()
+
+        val presenter = buildShowDetailsPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(ToggleShowInList(listId = 1, isCurrentlyInList = false))
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.state.value.message shouldBe null
+    }
+
+    @Test
+    fun `should dismiss login prompt given DismissLoginPrompt is dispatched`() = runTest {
+        traktAuthRepository.setState(TraktAuthState.LOGGED_OUT)
+        buildMockData()
+
+        val presenter = buildShowDetailsPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(ShowShowsListSheet)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.state.value.showLoginPrompt shouldBe true
+
+        presenter.dispatch(DismissLoginPrompt)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.state.value.showLoginPrompt shouldBe false
+    }
+
+    @Test
+    fun `should dismiss list sheet given DismissShowsListSheet is dispatched`() = runTest {
+        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        buildMockData()
+
+        val presenter = buildShowDetailsPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(ShowShowsListSheet)
+        testDispatcher.scheduler.advanceUntilIdle()
+        presenter.state.value.showListSheet shouldBe true
+
+        presenter.dispatch(DismissShowsListSheet)
+        testDispatcher.scheduler.advanceUntilIdle()
+        presenter.state.value.showListSheet shouldBe false
+    }
+
     private suspend fun buildMockData(
         isYoutubeInstalled: Boolean = false,
         castList: List<ShowCast> = emptyList(),
@@ -776,7 +935,24 @@ class ShowDetailsPresenterTest {
                 dispatchers = coroutineDispatcher,
             ),
             notificationManager = fakeNotificationManager,
+            createTraktListInteractor = CreateTraktListInteractor(
+                repository = traktListRepository,
+                userRepository = userRepository,
+            ),
+            toggleShowInListInteractor = ToggleShowInListInteractor(
+                repository = traktListRepository,
+                userRepository = userRepository,
+            ),
+            syncTraktListsInteractor = SyncTraktListsInteractor(
+                repository = traktListRepository,
+                userRepository = userRepository,
+            ),
+            observeTraktListsInteractor = ObserveTraktListsInteractor(
+                repository = traktListRepository,
+            ),
             traktAuthRepository = traktAuthRepository,
+            traktAuthManager = com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager(),
+            localizer = fakeLocalizer,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             dispatchers = coroutineDispatcher,
             logger = fakeLogger,

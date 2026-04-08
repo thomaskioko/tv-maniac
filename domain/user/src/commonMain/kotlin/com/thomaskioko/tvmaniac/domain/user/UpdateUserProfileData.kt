@@ -3,12 +3,14 @@ package com.thomaskioko.tvmaniac.domain.user
 import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.user.api.UserRepository
+import com.thomaskioko.tvmaniac.traktlists.api.TraktListRepository
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 public class UpdateUserProfileData(
     private val userRepository: UserRepository,
+    private val traktListRepository: TraktListRepository,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<UpdateUserProfileData.Params>() {
 
@@ -25,6 +27,8 @@ public class UpdateUserProfileData(
                 slug = slug,
                 forceRefresh = params.forceRefresh,
             )
+
+            traktListRepository.fetchUserLists(slug = slug, forceRefresh = params.forceRefresh)
         }
     }
 

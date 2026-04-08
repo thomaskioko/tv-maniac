@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,7 +27,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.LibraryAddCheck
 import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.Refresh
@@ -41,10 +42,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -68,16 +71,15 @@ import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.CastCard
 import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
-import com.thomaskioko.tvmaniac.compose.components.FilledHorizontalIconButton
 import com.thomaskioko.tvmaniac.compose.components.FilledTextButton
 import com.thomaskioko.tvmaniac.compose.components.FilledVerticalIconButton
 import com.thomaskioko.tvmaniac.compose.components.KenBurnsViewImage
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
-import com.thomaskioko.tvmaniac.compose.components.SheetDragHandle
 import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.TextLoadingItem
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacAlertDialog
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.actionIconWhen
@@ -98,19 +100,25 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.title_similar
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_trailer
 import com.thomaskioko.tvmaniac.i18n.MR.strings.unfollow
 import com.thomaskioko.tvmaniac.i18n.resolve
+import com.thomaskioko.tvmaniac.presenter.showdetails.CreateListSubmitted
 import com.thomaskioko.tvmaniac.presenter.showdetails.DetailBackClicked
 import com.thomaskioko.tvmaniac.presenter.showdetails.DetailShowClicked
+import com.thomaskioko.tvmaniac.presenter.showdetails.DismissLoginPrompt
 import com.thomaskioko.tvmaniac.presenter.showdetails.DismissShowsListSheet
 import com.thomaskioko.tvmaniac.presenter.showdetails.FollowShowClicked
+import com.thomaskioko.tvmaniac.presenter.showdetails.LoginClicked
 import com.thomaskioko.tvmaniac.presenter.showdetails.MarkEpisodeUnwatched
 import com.thomaskioko.tvmaniac.presenter.showdetails.MarkEpisodeWatched
 import com.thomaskioko.tvmaniac.presenter.showdetails.ReloadShowDetails
 import com.thomaskioko.tvmaniac.presenter.showdetails.SeasonClicked
+import com.thomaskioko.tvmaniac.presenter.showdetails.ShowCreateListField
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsAction
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsContent
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsMessageShown
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowShowsListSheet
+import com.thomaskioko.tvmaniac.presenter.showdetails.ToggleShowInList
+import com.thomaskioko.tvmaniac.presenter.showdetails.UpdateCreateListName
 import com.thomaskioko.tvmaniac.presenter.showdetails.WatchTrailerClicked
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.CastModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ContinueTrackingEpisodeModel
@@ -155,12 +163,11 @@ internal fun ShowDetailsScreen(
         showBottomSheet = state.showListSheet,
         onDismissBottomSheet = { onAction(DismissShowsListSheet) },
         sheetDragHandle = {
-            SheetDragHandle(
-                title = "Add To ...",
-                textAlign = TextAlign.Start,
-                imageVector = Icons.Filled.Cancel,
-                onClick = { onAction(DismissShowsListSheet) },
-                tint = MaterialTheme.colorScheme.secondary,
+            ListSheetTopBar(
+                title = state.sheetTitle,
+                showCreateField = state.showCreateListField,
+                onClose = { onAction(DismissShowsListSheet) },
+                onCreateClicked = { onAction(ShowCreateListField) },
             )
         },
         sheetContent = {
@@ -214,10 +221,20 @@ internal fun ShowDetailsScreen(
             }
         },
     )
+
+    if (state.showLoginPrompt) {
+        TvManiacAlertDialog(
+            title = state.loginRequiredTitle,
+            message = state.loginRequiredMessage,
+            confirmButtonText = state.loginRequiredConfirmText,
+            onConfirm = { onAction(LoginClicked) },
+            onDismiss = { onAction(DismissLoginPrompt) },
+        )
+    }
 }
 
 @Composable
-private fun ShowListSheetContent(
+internal fun ShowListSheetContent(
     state: ShowDetailsContent,
     onAction: (ShowDetailsAction) -> Unit,
 ) {
@@ -227,7 +244,7 @@ private fun ShowListSheetContent(
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         val title = stringResource(id = cd_show_images.resourceId, state.showDetails.title)
 
@@ -251,21 +268,6 @@ private fun ShowListSheetContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        EmptyListContent(title, onAction)
-    }
-}
-
-@Composable
-private fun EmptyListContent(
-    title: String,
-    onAction: (ShowDetailsAction) -> Unit,
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium.copy(
@@ -275,33 +277,219 @@ private fun EmptyListContent(
             overflow = TextOverflow.Ellipsis,
         )
 
-        Spacer(modifier = Modifier.height(48.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Create List",
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface,
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 1,
-        )
-
-        Text(
+            text = state.listsHeaderText,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier
-                .padding(top = 8.dp, bottom = 16.dp),
-            text = "You don't have any list. Create a new one?",
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurface,
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp),
         )
 
-        FilledHorizontalIconButton(
+        Spacer(modifier = Modifier.height(8.dp))
+
+        if (state.traktLists.isEmpty()) {
+            EmptyListContent(state)
+        } else {
+            TraktListItems(state, onAction)
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        CreateListInlineField(state, onAction)
+    }
+}
+
+@Composable
+private fun TraktListItems(
+    state: ShowDetailsContent,
+    onAction: (ShowDetailsAction) -> Unit,
+) {
+    state.traktLists.forEach { list ->
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp, vertical = 4.dp),
             shape = MaterialTheme.shapes.medium,
-            text = "Create",
-            imageVector = Icons.Filled.LibraryAddCheck,
-            containerColor = MaterialTheme.colorScheme.secondary,
-            style = MaterialTheme.typography.labelMedium,
-            onClick = { onAction(DismissShowsListSheet) },
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+            ),
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 10.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = list.name,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    Text(
+                        text = list.showCountText,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+
+                androidx.compose.material3.Switch(
+                    checked = list.isShowInList,
+                    onCheckedChange = {
+                        onAction(ToggleShowInList(listId = list.id, isCurrentlyInList = list.isShowInList))
+                    },
+                    colors = androidx.compose.material3.SwitchDefaults.colors(
+                        checkedThumbColor = MaterialTheme.colorScheme.secondary,
+                        checkedTrackColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f),
+                        uncheckedThumbColor = MaterialTheme.colorScheme.onSurface,
+                        uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+                        uncheckedBorderColor = MaterialTheme.colorScheme.outline,
+                    ),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun EmptyListContent(
+    state: ShowDetailsContent,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = state.emptyListText,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
+    }
+}
+
+@Composable
+private fun ListSheetTopBar(
+    title: String,
+    showCreateField: Boolean,
+    onClose: () -> Unit,
+    onCreateClicked: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .statusBarsPadding()
+            .padding(horizontal = 24.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        androidx.compose.material3.FilledIconButton(
+            onClick = onClose,
+            modifier = Modifier.size(36.dp),
+            colors = androidx.compose.material3.IconButtonDefaults.filledIconButtonColors(
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.onSecondary,
+            ),
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Close,
+                contentDescription = null,
+                modifier = Modifier.size(20.dp),
+            )
+        }
+
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.weight(1f),
+            textAlign = TextAlign.Center,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+
+        if (!showCreateField) {
+            androidx.compose.material3.FilledIconButton(
+                onClick = onCreateClicked,
+                modifier = Modifier.size(36.dp),
+                colors = androidx.compose.material3.IconButtonDefaults.filledIconButtonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary,
+                ),
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.LibraryAddCheck,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                )
+            }
+        } else {
+            Spacer(modifier = Modifier.size(36.dp))
+        }
+    }
+}
+
+@Composable
+private fun CreateListInlineField(
+    state: ShowDetailsContent,
+    onAction: (ShowDetailsAction) -> Unit,
+) {
+    androidx.compose.animation.AnimatedVisibility(visible = state.showCreateListField) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            androidx.compose.material3.OutlinedTextField(
+                value = state.createListName,
+                onValueChange = { if (it.length <= 50) onAction(UpdateCreateListName(it)) },
+                modifier = Modifier.weight(1f),
+                placeholder = {
+                    Text(
+                        text = state.createListPlaceholder,
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                        ),
+                    )
+                },
+                singleLine = true,
+                enabled = !state.isCreatingList,
+                textStyle = MaterialTheme.typography.bodyMedium,
+                shape = MaterialTheme.shapes.medium,
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                    unfocusedIndicatorColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                    cursorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                ),
+            )
+
+            if (state.isCreatingList) {
+                androidx.compose.material3.CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    strokeWidth = 2.dp,
+                    color = MaterialTheme.colorScheme.secondary,
+                )
+            } else {
+                FilledTextButton(
+                    onClick = { onAction(CreateListSubmitted) },
+                    enabled = state.createListName.isNotBlank(),
+                    buttonColors = ButtonDefaults.textButtonColors(
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary,
+                    ),
+                    shape = MaterialTheme.shapes.medium,
+                ) {
+                    Text(state.createListDoneText)
+                }
+            }
+        }
     }
 }
 
@@ -677,7 +865,7 @@ internal fun ShowDetailButtons(
             shape = MaterialTheme.shapes.medium,
             text = if (isFollowed) unfollow.resolve(context) else following.resolve(context),
             imageVector = if (isFollowed) Icons.Filled.RemoveCircle else Icons.Filled.AddCircle,
-            containerColor = if (isFollowed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.secondary,
+            containerColor = if (isFollowed) MaterialTheme.colorScheme.error.copy(alpha = 0.65f) else MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.labelMedium,
             onClick = { onTrackShowClicked(isFollowed) },
         )

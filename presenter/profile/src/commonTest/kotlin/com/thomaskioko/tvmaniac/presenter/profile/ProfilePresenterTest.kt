@@ -25,6 +25,7 @@ import com.thomaskioko.tvmaniac.traktauth.api.AuthError
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
+import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -70,6 +71,7 @@ internal class ProfilePresenterTest {
 
     private val updateUserProfileData = UpdateUserProfileData(
         userRepository = userRepository,
+        traktListRepository = FakeTraktListRepository(),
         dispatchers = testDispatchers,
     )
 

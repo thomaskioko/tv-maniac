@@ -6,6 +6,7 @@ struct ShowDetailsView: View {
     private let presenter: ShowDetailsPresenter
     @StateObject @KotlinStateFlow private var uiState: ShowDetailsContent
     @State private var showCustomList = false
+    @State private var showLoginPrompt = false
     @State private var toast: Toast?
 
     init(presenter: ShowDetailsPresenter) {
@@ -55,7 +56,7 @@ struct ShowDetailsView: View {
             toast: $toast,
             onBack: { presenter.dispatch(action: DetailBackClicked()) },
             onRefresh: { presenter.dispatch(action: ReloadShowDetails()) },
-            onAddToCustomList: { showCustomList.toggle() },
+            onAddToCustomList: { presenter.dispatch(action: ShowShowsListSheet()) },
             onAddToLibrary: {
                 presenter.dispatch(action: FollowShowClicked(isInLibrary: uiState.showDetails.isInLibrary))
             },
@@ -93,12 +94,55 @@ struct ShowDetailsView: View {
                 presenter.dispatch(action: ShowDetailsMessageShown(id: message.id))
             }
         }
+        .onChange(of: uiState.showListSheet) { _, newValue in
+            showCustomList = newValue
+        }
+        .onChange(of: showCustomList) { _, newValue in
+            if !newValue {
+                presenter.dispatch(action: DismissShowsListSheet())
+            }
+        }
+        .onChange(of: uiState.showLoginPrompt) { _, newValue in
+            showLoginPrompt = newValue
+        }
         .sheet(isPresented: $showCustomList) {
             WatchlistSelector(
                 showView: $showCustomList,
                 title: uiState.showDetails.title,
-                posterUrl: uiState.showDetails.posterImageUrl
+                posterUrl: uiState.showDetails.posterImageUrl,
+                traktLists: uiState.traktLists.map { $0.toSwift() },
+                showCreateField: uiState.showCreateListField,
+                isCreatingList: uiState.isCreatingList,
+                createListName: uiState.createListName,
+                sheetTitle: uiState.sheetTitle,
+                createButtonText: uiState.createListButtonText,
+                doneButtonText: uiState.createListDoneText,
+                emptyListText: uiState.emptyListText,
+                createListPlaceholder: uiState.createListPlaceholder,
+                listsHeaderText: uiState.listsHeaderText,
+                onToggle: { listId, isInList in
+                    presenter.dispatch(action: ToggleShowInList(listId: listId, isCurrentlyInList: isInList))
+                },
+                onShowCreateField: {
+                    presenter.dispatch(action: ShowCreateListField())
+                },
+                onDismissCreateField: {
+                    presenter.dispatch(action: DismissCreateListField())
+                },
+                onCreateListNameChanged: { name in
+                    presenter.dispatch(action: UpdateCreateListName(name: name))
+                },
+                onCreateSubmitted: {
+                    presenter.dispatch(action: CreateListSubmitted())
+                }
             )
+        }
+        .alert(uiState.loginRequiredTitle, isPresented: $showLoginPrompt) {
+            Button(uiState.loginRequiredConfirmText) {
+                presenter.dispatch(action: LoginClicked())
+            }
+        } message: {
+            Text(uiState.loginRequiredMessage)
         }
     }
 }

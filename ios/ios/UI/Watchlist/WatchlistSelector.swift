@@ -1,116 +1,93 @@
 import SwiftUI
 import SwiftUIComponents
+import TvManiacKit
 
 public struct WatchlistSelector: View {
     @Theme private var theme
     @Binding var showView: Bool
     private let title: String
     private let posterUrl: String?
-    private let customLists: [String] = []
+    private let traktLists: [SwiftTraktListItem]
+    private let showCreateField: Bool
+    private let isCreatingList: Bool
+    private let createListName: String
+    private let sheetTitle: String
+    private let createButtonText: String
+    private let doneButtonText: String
+    private let emptyListText: String
+    private let createListPlaceholder: String
+    private let listsHeaderText: String
+    private let onToggle: (Int64, Bool) -> Void
+    private let onShowCreateField: () -> Void
+    private let onDismissCreateField: () -> Void
+    private let onCreateListNameChanged: (String) -> Void
+    private let onCreateSubmitted: () -> Void
 
-    public init(showView: Binding<Bool>, title: String, posterUrl: String?) {
+    public init(
+        showView: Binding<Bool>,
+        title: String,
+        posterUrl: String?,
+        traktLists: [SwiftTraktListItem],
+        showCreateField: Bool,
+        isCreatingList: Bool,
+        createListName: String,
+        sheetTitle: String,
+        createButtonText: String,
+        doneButtonText: String,
+        emptyListText: String,
+        createListPlaceholder: String,
+        listsHeaderText: String,
+        onToggle: @escaping (Int64, Bool) -> Void,
+        onShowCreateField: @escaping () -> Void,
+        onDismissCreateField: @escaping () -> Void,
+        onCreateListNameChanged: @escaping (String) -> Void,
+        onCreateSubmitted: @escaping () -> Void
+    ) {
         self.title = title
         self.posterUrl = posterUrl
+        self.traktLists = traktLists
+        self.showCreateField = showCreateField
+        self.isCreatingList = isCreatingList
+        self.createListName = createListName
+        self.sheetTitle = sheetTitle
+        self.createButtonText = createButtonText
+        self.doneButtonText = doneButtonText
+        self.emptyListText = emptyListText
+        self.createListPlaceholder = createListPlaceholder
+        self.listsHeaderText = listsHeaderText
+        self.onToggle = onToggle
+        self.onShowCreateField = onShowCreateField
+        self.onDismissCreateField = onDismissCreateField
+        self.onCreateListNameChanged = onCreateListNameChanged
+        self.onCreateSubmitted = onCreateSubmitted
         _showView = showView
     }
 
     public var body: some View {
-        NavigationStack {
-            Form {
-                Section {
-                    VStack(alignment: .center) {
-                        HStack(alignment: .center) {
-                            PosterItemView(
-                                title: title,
-                                posterUrl: posterUrl,
-                                posterWidth: 150,
-                                posterHeight: 220
-                            )
-                            .frame(width: 150, height: 220)
-                            .clipShape(RoundedRectangle(cornerRadius: theme.shapes.large, style: .continuous))
-                            .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 10)
-                        }
-                        .frame(maxWidth: .infinity)
-
-                        Text(title)
-                            .textStyle(theme.typography.titleMedium)
-                            .multilineTextAlignment(.center)
-                    }
-                }
-                .listRowInsets(EdgeInsets())
-                .listRowBackground(Color.clear)
-
-                if !customLists.isEmpty {
-                    Section {
-                        List {
-                            // Add Custom list
-                        }
-                    } header: {
-                        Text(String(\.label_watchlist_lists))
-                    }
-                } else {
-                    emptyList
-                }
-            }
-            .scrollBounceBehavior(.basedOnSize, axes: .vertical)
-            .scrollContentBackground(.hidden)
-            .background(theme.colors.background)
-            .navigationTitle(Text(String(\.label_watchlist_title)))
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(theme.colors.surface, for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    RoundedButton(
-                        imageName: "xmark",
-                        tintColor: theme.colors.accent,
-                        action: { showView.toggle() }
-                    )
-                }
-            }
-            .background(theme.colors.background)
-        }
+        TraktListSelectorContent(
+            title: title,
+            posterUrl: posterUrl,
+            traktLists: traktLists,
+            showCreateField: showCreateField,
+            isCreatingList: isCreatingList,
+            createListName: createListName,
+            sheetTitle: sheetTitle,
+            createButtonText: createButtonText,
+            doneButtonText: doneButtonText,
+            emptyListText: emptyListText,
+            newListPlaceholder: createListPlaceholder,
+            listsHeaderText: listsHeaderText,
+            onToggle: onToggle,
+            onShowCreateField: onShowCreateField,
+            onDismissCreateField: onDismissCreateField,
+            onCreateListNameChanged: onCreateListNameChanged,
+            onCreateSubmitted: onCreateSubmitted,
+            onDismiss: { showView.toggle() }
+        )
         .appTint()
         .appTheme()
         .presentationDetents([.large])
         .presentationDragIndicator(.visible)
         .presentationCornerRadius(theme.shapes.large)
-    }
-
-    private var emptyList: some View {
-        Section {
-            VStack {
-                Text(String(\.label_watchlist_create_custom_list))
-                    .textStyle(theme.typography.titleLarge)
-                    .foregroundColor(theme.colors.onSurface)
-                    .multilineTextAlignment(.center)
-                    .padding([.horizontal], theme.spacing.xSmall)
-
-                Text(String(\.label_watchlist_empty_list))
-                    .textStyle(theme.typography.bodySmall)
-
-                Button(action: {}) {
-                    VStack {
-                        Image(systemName: "plus.rectangle.on.rectangle.fill")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(height: 24)
-
-                        Text(String(\.label_watchlist_create))
-                            .textStyle(theme.typography.bodySmall)
-                    }
-                    .padding(.vertical, theme.spacing.xxSmall)
-                    .frame(width: 120, height: 45)
-                }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.small)
-                .tint(theme.colors.accent)
-                .buttonBorderShape(.roundedRectangle(radius: theme.shapes.large))
-                .padding(.top, theme.spacing.xSmall)
-            }
-            .frame(maxWidth: .infinity)
-        }
-        .listRowInsets(EdgeInsets())
-        .listRowBackground(Color.clear)
     }
 }

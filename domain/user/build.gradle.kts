@@ -18,6 +18,7 @@ kotlin {
                 api(projects.core.util.api)
 
                 implementation(projects.core.base)
+                implementation(projects.data.traktlists.api)
                 implementation(projects.domain.logout)
 
                 implementation(libs.coroutines.core)

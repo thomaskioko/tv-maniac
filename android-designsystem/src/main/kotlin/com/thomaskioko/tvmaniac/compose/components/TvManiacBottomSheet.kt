@@ -33,6 +33,7 @@ public fun TvManiacBottomSheetScaffold(
     initialSheetState: SheetValue = SheetValue.Hidden,
     sheetShape: Shape = RoundedCornerShape(5.dp),
     containerColor: Color = MaterialTheme.colorScheme.background,
+    sheetContainerColor: Color = MaterialTheme.colorScheme.background,
     snackbarHost: @Composable (SnackbarHostState) -> Unit = { SnackbarHost(it) },
     sheetDragHandle: @Composable (() -> Unit)? = { BottomSheetDefaults.DragHandle() },
 ) {
@@ -65,6 +66,7 @@ public fun TvManiacBottomSheetScaffold(
         sheetShape = sheetShape,
         sheetShadowElevation = sheetShadowElevation,
         sheetContent = sheetContent,
+        sheetContainerColor = sheetContainerColor,
         snackbarHost = snackbarHost,
         containerColor = containerColor,
         sheetDragHandle = sheetDragHandle,
