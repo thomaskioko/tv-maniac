@@ -23,7 +23,7 @@ scaffold {
             disableNativeCache(
                 version = DisableCacheInKotlinVersion.`2_3_20`,
                 reason = "cache bug causes double runtime injection when linking multiple frameworks, see KT-42254",
-                issueUrl = URI("https://youtrack.jetbrains.com/issue/KT-42254")
+                issueUrl = URI("https://youtrack.jetbrains.com/issue/KT-42254"),
             )
 
             export(projects.i18n.api)
