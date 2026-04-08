@@ -1,13 +1,12 @@
 package com.thomaskioko.tvmaniac.data.calendar.implementation
 
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.fresh
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.get
 import com.thomaskioko.tvmaniac.data.calendar.CalendarDao
 import com.thomaskioko.tvmaniac.data.calendar.CalendarEntry
 import com.thomaskioko.tvmaniac.data.calendar.CalendarRepository
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
-import org.mobilenativefoundation.store.store5.impl.extensions.fresh
-import org.mobilenativefoundation.store.store5.impl.extensions.get
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
@@ -19,15 +18,12 @@ import kotlin.time.Instant
 public class DefaultCalendarRepository(
     private val store: CalendarStore,
     private val calendarDao: CalendarDao,
-    private val traktAuthRepository: TraktAuthRepository,
 ) : CalendarRepository {
 
     override fun observeCalendarEntries(startDate: Long, endDate: Long): Flow<List<CalendarEntry>> =
         calendarDao.observeEntriesBetweenDates(startDate, endDate)
 
     override suspend fun fetchCalendar(startDate: String, days: Int, forceRefresh: Boolean) {
-        if (!traktAuthRepository.isLoggedIn()) return
-
         val params = createParams(startDate, days)
         when {
             forceRefresh -> store.fresh(params)

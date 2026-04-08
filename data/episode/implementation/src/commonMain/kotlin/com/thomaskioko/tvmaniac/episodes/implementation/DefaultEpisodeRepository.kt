@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.fresh
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.get
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.db.EpisodeById
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
@@ -10,7 +12,6 @@ import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -18,8 +19,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
-import org.mobilenativefoundation.store.store5.impl.extensions.fresh
-import org.mobilenativefoundation.store.store5.impl.extensions.get
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
@@ -36,7 +35,6 @@ public class DefaultEpisodeRepository(
     private val episodesDao: EpisodesDao,
     private val dispatchers: AppCoroutineDispatchers,
     private val upcomingEpisodesStore: UpcomingEpisodesStore,
-    private val traktAuthRepository: TraktAuthRepository,
 ) : EpisodeRepository {
 
     override fun observeEpisodeById(episodeId: Long): Flow<EpisodeById?> =
@@ -182,8 +180,6 @@ public class DefaultEpisodeRepository(
         days: Int,
         forceRefresh: Boolean,
     ) {
-        if (!traktAuthRepository.isLoggedIn()) return
-
         val params = UpcomingEpisodesParams(startDate, days)
         when {
             forceRefresh -> upcomingEpisodesStore.fresh(params)

@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.tmdb.implementation
 
+import com.thomaskioko.tvmaniac.core.connectivity.api.InternetConnectionChecker
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.InternetConnectionPlugin
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.DefaultRequest
@@ -26,9 +28,14 @@ internal fun tmdbHttpClient(
     json: Json,
     httpClientEngine: HttpClientEngine,
     kermitLogger: KermitLogger,
+    internetConnectionChecker: InternetConnectionChecker,
 ) =
     HttpClient(httpClientEngine) {
         install(ContentNegotiation) { json(json = json) }
+
+        install(InternetConnectionPlugin) {
+            this.internetConnectionChecker = internetConnectionChecker
+        }
 
         install(DefaultRequest) {
             url {

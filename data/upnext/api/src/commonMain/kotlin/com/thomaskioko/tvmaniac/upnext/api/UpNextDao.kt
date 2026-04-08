@@ -40,6 +40,10 @@ public interface UpNextDao {
         watchedEpisode: Long,
     )
 
+    public suspend fun existsForShow(showTraktId: Long): Boolean
+
+    public suspend fun hasAnyEpisodes(): Boolean
+
     public suspend fun deleteForShow(showTraktId: Long)
 
     public suspend fun deleteAll()

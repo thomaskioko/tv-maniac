@@ -107,6 +107,8 @@ kotlin {
                 implementation(projects.core.util.implementation)
                 implementation(projects.core.tasks.api)
                 implementation(projects.core.tasks.implementation)
+                implementation(projects.core.connectivity.api)
+                implementation(projects.core.connectivity.implementation)
                 implementation(projects.data.cast.api)
                 implementation(projects.data.cast.implementation)
                 implementation(projects.data.genre.api)

@@ -57,7 +57,9 @@ public class TopRatedShowsStore(
                                 pageOrder = index,
                             )
 
-                            is ApiResponse.Error -> TopRatedShowWithImages(
+                            is ApiResponse.Unauthenticated,
+                            is ApiResponse.Error,
+                            -> TopRatedShowWithImages(
                                 traktShow = traktResponse.show,
                                 tmdbId = tmdbId,
                                 tmdbPosterPath = null,

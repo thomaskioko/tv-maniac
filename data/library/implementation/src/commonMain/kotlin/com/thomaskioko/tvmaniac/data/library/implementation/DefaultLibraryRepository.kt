@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.data.library.implementation
 
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.fresh
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.get
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.library.LibraryDao
 import com.thomaskioko.tvmaniac.data.library.LibraryRepository
@@ -28,8 +30,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
-import org.mobilenativefoundation.store.store5.impl.extensions.fresh
-import org.mobilenativefoundation.store.store5.impl.extensions.get
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
@@ -154,8 +154,8 @@ public class DefaultLibraryRepository(
 
         val sortOption = currentSortOption()
         when {
-            forceRefresh -> libraryStore.fresh(sortOption)
-            else -> libraryStore.get(sortOption)
+            forceRefresh -> libraryStore.fresh(sortOption) { logger.debug(TAG, it) }
+            else -> libraryStore.get(sortOption) { logger.debug(TAG, it) }
         }
 
         logger.debug(TAG, "Sync completed")
@@ -183,6 +183,7 @@ public class DefaultLibraryRepository(
                         }
                     }
                 }
+                is ApiResponse.Unauthenticated -> return
                 is ApiResponse.Error -> {
                     logger.error(TAG, "Failed to upload show $traktId: ${response.toErrorMessage()}")
                 }
@@ -204,6 +205,7 @@ public class DefaultLibraryRepository(
                         followedShowsDao.deleteById(entry.id)
                     }
                 }
+                is ApiResponse.Unauthenticated -> return
                 is ApiResponse.Error -> {
                     logger.error(TAG, "Failed to delete show ${entry.traktId}: ${response.toErrorMessage()}")
                 }
@@ -215,6 +217,7 @@ public class DefaultLibraryRepository(
         is ApiResponse.Error.HttpError -> "HTTP $code: $errorMessage"
         is ApiResponse.Error.SerializationError -> "Serialization error: $errorMessage"
         is ApiResponse.Error.GenericError -> errorMessage ?: "Unknown error"
+        is ApiResponse.Error.OfflineError -> "No internet connection"
     }
 
     private suspend fun currentSortOption(): LibrarySortOption {

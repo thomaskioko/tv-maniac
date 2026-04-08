@@ -59,6 +59,7 @@ public fun <T> ApiResponse.Error<T>.toSyncError(): SyncError {
             message = message ?: "Failed to process data. Please try again.",
         )
         is ApiResponse.Error.GenericError -> classifyGenericError(message)
+        is ApiResponse.Error.OfflineError -> SyncError.Retryable.NetworkError("No internet connection")
     }
 }
 

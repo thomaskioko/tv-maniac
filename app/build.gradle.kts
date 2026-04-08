@@ -127,6 +127,8 @@ dependencies {
     implementation(projects.core.networkUtil.implementation)
     implementation(projects.core.notifications.api)
     implementation(projects.core.notifications.implementation)
+    implementation(projects.core.connectivity.api)
+    implementation(projects.core.connectivity.implementation)
     implementation(projects.core.tasks.api)
     implementation(projects.data.followedshows.api)
     implementation(projects.data.followedshows.implementation)

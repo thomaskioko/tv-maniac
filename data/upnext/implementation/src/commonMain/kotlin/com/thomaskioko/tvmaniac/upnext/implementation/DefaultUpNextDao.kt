@@ -119,6 +119,18 @@ public class DefaultUpNextDao(
         }
     }
 
+    override suspend fun existsForShow(showTraktId: Long): Boolean {
+        return withContext(dispatchers.databaseRead) {
+            database.nextEpisodesQueries.existsForShow(Id(showTraktId)).executeAsOne()
+        }
+    }
+
+    override suspend fun hasAnyEpisodes(): Boolean {
+        return withContext(dispatchers.databaseRead) {
+            database.nextEpisodesQueries.hasAnyEpisodes().executeAsOne()
+        }
+    }
+
     override suspend fun deleteForShow(showTraktId: Long) {
         withContext(dispatchers.databaseWrite) {
             database.nextEpisodesQueries.deleteForShow(Id(showTraktId))

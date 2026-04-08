@@ -43,9 +43,11 @@ public class WatchProvidersStore(
                 )
                 WatchProvidersFetchResult(tmdbId, response.body)
             }
+            is ApiResponse.Unauthenticated -> throw Throwable("Not authenticated")
             is ApiResponse.Error.GenericError -> throw Throwable("${response.errorMessage}")
             is ApiResponse.Error.HttpError -> throw Throwable("${response.code} - ${response.errorMessage}")
             is ApiResponse.Error.SerializationError -> throw Throwable("${response.errorMessage}")
+            is ApiResponse.Error.OfflineError -> throw Throwable("No internet connection")
         }
     },
     sourceOfTruth = SourceOfTruth.of<Long, WatchProvidersFetchResult, List<WatchProvidersByTraktId>>(

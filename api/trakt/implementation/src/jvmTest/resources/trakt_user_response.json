@@ -1,0 +1,12 @@
+{
+  "username": "sean",
+  "name": "Sean Rudford",
+  "images": {
+    "avatar": {
+      "full": "https://example.com/avatar.jpg"
+    }
+  },
+  "ids": {
+    "slug": "sean"
+  }
+}

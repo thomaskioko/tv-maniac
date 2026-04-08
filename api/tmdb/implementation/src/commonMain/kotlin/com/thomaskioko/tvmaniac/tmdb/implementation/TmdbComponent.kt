@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.tmdb.implementation
 
+import com.thomaskioko.tvmaniac.core.connectivity.api.InternetConnectionChecker
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.util.api.BuildConfig
 import io.ktor.client.HttpClient
@@ -34,11 +35,13 @@ public interface TmdbComponent {
         json: TmdbJson,
         httpClientEngine: TmdbHttpClientEngine,
         logger: Logger,
+        internetConnectionChecker: InternetConnectionChecker,
     ): TmdbHttpClient = tmdbHttpClient(
         tmdbApiKey = BuildConfig.TMDB_API_KEY,
         json = json,
         httpClientEngine = httpClientEngine,
         kermitLogger = logger,
         isDebug = BuildConfig.IS_DEBUG,
+        internetConnectionChecker = internetConnectionChecker,
     )
 }

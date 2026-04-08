@@ -21,6 +21,7 @@ kotlin {
             dependencies {
                 implementation(projects.api.trakt.api)
                 implementation(projects.core.base)
+                implementation(projects.core.connectivity.api)
                 implementation(projects.core.networkUtil.api)
                 implementation(projects.core.util.api)
                 implementation(projects.core.logger.api)
@@ -33,6 +34,18 @@ kotlin {
                 implementation(libs.ktor.negotiation)
                 implementation(libs.ktor.serialization.json)
                 implementation(libs.sqldelight.extensions)
+            }
+        }
+
+        commonTest {
+            dependencies {
+                implementation(libs.bundles.unittest)
+                implementation(libs.ktor.mock)
+                implementation(libs.ktor.negotiation)
+                implementation(libs.ktor.serialization.json)
+                implementation(projects.api.trakt.api)
+                implementation(projects.core.base)
+                implementation(projects.core.networkUtil.api)
             }
         }
 

@@ -57,7 +57,9 @@ public class FeaturedShowsStore(
                                 pageOrder = index,
                             )
 
-                            is ApiResponse.Error -> FeaturedShowWithImages(
+                            is ApiResponse.Unauthenticated,
+                            is ApiResponse.Error,
+                            -> FeaturedShowWithImages(
                                 traktShow = traktResponse.show,
                                 tmdbId = tmdbId,
                                 tmdbPosterPath = null,

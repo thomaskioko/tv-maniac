@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.testing.di.fakes
 
 import com.arkivanov.decompose.ComponentContext
+import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.debug.presenter.DebugPresenter
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
@@ -38,6 +39,7 @@ public class FakeRootPresenterFactory(
     private val traktAuthRepository: TraktAuthRepository,
     private val updateUserProfileData: UpdateUserProfileData,
     private val logoutInteractor: LogoutInteractor,
+    private val logger: Logger,
     private val datastoreRepository: DatastoreRepository,
 ) : RootPresenter.Factory {
     override fun invoke(
@@ -59,6 +61,7 @@ public class FakeRootPresenterFactory(
             traktAuthRepository = traktAuthRepository,
             updateUserProfileData = updateUserProfileData,
             logoutInteractor = logoutInteractor,
+            logger = logger,
             datastoreRepository = datastoreRepository,
         )
 }

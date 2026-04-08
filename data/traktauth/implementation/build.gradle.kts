@@ -30,6 +30,7 @@ kotlin {
                 implementation(projects.core.logger.api)
                 implementation(projects.core.tasks.api)
                 implementation(projects.core.util.api)
+                implementation(projects.data.datastore.api)
                 implementation(projects.data.traktauth.api)
                 implementation(projects.data.requestManager.api)
                 implementation(projects.api.trakt.api)

@@ -197,6 +197,93 @@ internal class DefaultUpNextDaoTest : BaseDatabaseTest() {
         }
     }
 
+    @Test
+    fun `should sort by lastWatchedAt descending given entries have watch timestamps`() = runTest {
+        insertShow(id = 1L, name = "Old Watch")
+        insertShow(id = 2L, name = "Recent Watch")
+        insertFollowedShow(showId = 1L, followedAt = NOW - 20_000)
+        insertFollowedShow(showId = 2L, followedAt = NOW - 20_000)
+        insertSeason(showId = 1L, seasonNumber = 1)
+        insertSeason(showId = 2L, seasonNumber = 1)
+        dao.upsert(
+            showTraktId = 1L, episodeTraktId = 1001L, seasonNumber = 1L, episodeNumber = 2L,
+            title = "Ep 2", overview = null, runtime = 45L, firstAired = NOW - 86_400_000L,
+            imageUrl = null, isShowComplete = false, lastEpisodeSeason = null,
+            lastEpisodeNumber = null, traktLastWatchedAt = NOW - 5000, updatedAt = NOW,
+        )
+        dao.upsert(
+            showTraktId = 2L, episodeTraktId = 2001L, seasonNumber = 1L, episodeNumber = 3L,
+            title = "Ep 3", overview = null, runtime = 45L, firstAired = NOW - 86_400_000L,
+            imageUrl = null, isShowComplete = false, lastEpisodeSeason = null,
+            lastEpisodeNumber = null, traktLastWatchedAt = NOW - 1000, updatedAt = NOW,
+        )
+
+        dao.observeNextEpisodesFromCache().test {
+            val items = awaitItem()
+            items.size shouldBe 2
+            items[0].showName shouldBe "Recent Watch"
+            items[1].showName shouldBe "Old Watch"
+        }
+    }
+
+    @Test
+    fun `should fall back to followedAt given lastWatchedAt is null`() = runTest {
+        insertShow(id = 1L, name = "Old Follow")
+        insertShow(id = 2L, name = "New Follow")
+        insertFollowedShow(showId = 1L, followedAt = NOW - 20_000)
+        insertFollowedShow(showId = 2L, followedAt = NOW - 5_000)
+        insertSeason(showId = 1L, seasonNumber = 1)
+        insertSeason(showId = 2L, seasonNumber = 1)
+        dao.upsert(
+            showTraktId = 1L, episodeTraktId = 1001L, seasonNumber = 1L, episodeNumber = 1L,
+            title = "Ep 1", overview = null, runtime = 45L, firstAired = NOW - 86_400_000L,
+            imageUrl = null, isShowComplete = false, lastEpisodeSeason = null,
+            lastEpisodeNumber = null, traktLastWatchedAt = null, updatedAt = NOW,
+        )
+        dao.upsert(
+            showTraktId = 2L, episodeTraktId = 2001L, seasonNumber = 1L, episodeNumber = 1L,
+            title = "Ep 1", overview = null, runtime = 45L, firstAired = NOW - 86_400_000L,
+            imageUrl = null, isShowComplete = false, lastEpisodeSeason = null,
+            lastEpisodeNumber = null, traktLastWatchedAt = null, updatedAt = NOW,
+        )
+
+        dao.observeNextEpisodesFromCache().test {
+            val items = awaitItem()
+            items.size shouldBe 2
+            items[0].showName shouldBe "New Follow"
+            items[1].showName shouldBe "Old Follow"
+        }
+    }
+
+    @Test
+    fun `should sort watched show before unwatched show given lastWatchedAt beats followedAt`() = runTest {
+        insertShow(id = 1L, name = "Watched Show")
+        insertShow(id = 2L, name = "Unwatched Show")
+        insertFollowedShow(showId = 1L, followedAt = NOW - 20_000)
+        insertFollowedShow(showId = 2L, followedAt = NOW - 5_000)
+        insertSeason(showId = 1L, seasonNumber = 1)
+        insertSeason(showId = 2L, seasonNumber = 1)
+        dao.upsert(
+            showTraktId = 1L, episodeTraktId = 1001L, seasonNumber = 1L, episodeNumber = 2L,
+            title = "Ep 2", overview = null, runtime = 45L, firstAired = NOW - 86_400_000L,
+            imageUrl = null, isShowComplete = false, lastEpisodeSeason = null,
+            lastEpisodeNumber = null, traktLastWatchedAt = NOW - 1000, updatedAt = NOW,
+        )
+        dao.upsert(
+            showTraktId = 2L, episodeTraktId = 2001L, seasonNumber = 1L, episodeNumber = 1L,
+            title = "Ep 1", overview = null, runtime = 45L, firstAired = NOW - 86_400_000L,
+            imageUrl = null, isShowComplete = false, lastEpisodeSeason = null,
+            lastEpisodeNumber = null, traktLastWatchedAt = null, updatedAt = NOW,
+        )
+
+        dao.observeNextEpisodesFromCache().test {
+            val items = awaitItem()
+            items.size shouldBe 2
+            items[0].showName shouldBe "Watched Show"
+            items[1].showName shouldBe "Unwatched Show"
+        }
+    }
+
     private fun insertShow(id: Long, name: String) {
         val _ = database.tvShowQueries.upsert(
             trakt_id = Id(id),
@@ -216,12 +303,12 @@ internal class DefaultUpNextDaoTest : BaseDatabaseTest() {
         )
     }
 
-    private fun insertFollowedShow(showId: Long) {
+    private fun insertFollowedShow(showId: Long, followedAt: Long = NOW - 10_000) {
         val _ = database.followedShowsQueries.upsert(
             id = null,
             traktId = Id(showId),
             tmdbId = Id(showId),
-            followedAt = NOW - 10_000,
+            followedAt = followedAt,
             pendingAction = "NOTHING",
         )
     }
