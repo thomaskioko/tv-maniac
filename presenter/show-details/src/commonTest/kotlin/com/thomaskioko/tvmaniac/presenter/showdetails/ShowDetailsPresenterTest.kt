@@ -42,7 +42,6 @@ import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
-import com.thomaskioko.tvmaniac.i18n.testing.util.IgnoreIos
 import com.thomaskioko.tvmaniac.presenter.showdetails.CreateListSubmitted
 import com.thomaskioko.tvmaniac.presenter.showdetails.DismissCreateListField
 import com.thomaskioko.tvmaniac.presenter.showdetails.DismissLoginPrompt
@@ -88,7 +87,6 @@ import kotlin.test.Test
 private fun LocalDate.toEpochMillis(): Long =
     atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
 
-@IgnoreIos
 class ShowDetailsPresenterTest {
 
     private val seasonsRepository = FakeSeasonsRepository()
