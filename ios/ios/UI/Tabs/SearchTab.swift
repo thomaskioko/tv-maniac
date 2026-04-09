@@ -5,18 +5,18 @@ import TvManiacKit
 
 struct SearchTab: View {
     private let presenter: SearchShowsPresenter
-    @StateObject @KotlinStateFlow private var uiState: SearchShowState
+    @StateValue private var uiState: SearchShowState
 
     init(presenter: SearchShowsPresenter) {
         self.presenter = presenter
-        _uiState = .init(presenter.state)
+        _uiState = .init(presenter.stateValue)
     }
 
     private var searchQueryBinding: Binding<String> {
         BindingFactories.searchQuery(
             get: { uiState.query },
-            onChanged: { presenter.dispatch(action: QueryChanged(query: $0)) },
-            onCleared: { presenter.dispatch(action: ClearQuery()) }
+            onChanged: { presenter.dispatch(action___________: QueryChanged(query: $0)) },
+            onCleared: { presenter.dispatch(action___________: ClearQuery()) }
         )
     }
 
@@ -33,35 +33,37 @@ struct SearchTab: View {
             selectedCategory: categoryLabels.first { $0.category == uiState.selectedCategory }?.label ?? "",
             categories: categoryLabels.map(\.label),
             categoryTitle: uiState.categoryTitle,
-            onShowClicked: { id in presenter.dispatch(action: SearchShowClicked(id: id)) },
-            onRetry: { presenter.dispatch(action: ReloadShowContent()) },
-            onBack: { presenter.dispatch(action: BackClicked_()) },
+            onShowClicked: { id in presenter.dispatch(action___________: SearchShowClicked(id: id)) },
+            onRetry: { presenter.dispatch(action___________: ReloadShowContent()) },
+            onBack: { presenter.dispatch(action___________: BackClicked_()) },
             onCategoryChanged: { label in
                 if let item = categoryLabels.first(where: { $0.label == label }) {
-                    presenter.dispatch(action: CategoryChanged(category: item.category))
+                    presenter.dispatch(action___________: CategoryChanged(category: item.category))
                 }
             }
         )
     }
 
     private func mapState(_ uiState: SearchUiState) -> SearchScreenState {
-        switch onEnum(of: uiState) {
-        case .initialLoading, .searchLoading:
+        switch uiState {
+        case is SearchUiStateInitialLoading, is SearchUiStateSearchLoading:
             .loading
-        case .searchEmpty:
+        case is SearchUiStateSearchEmpty:
             .empty
-        case let .searchResults(state):
+        case let state as SearchUiStateSearchResults:
             .searchResults(
                 results: state.results.map { ($0 as ShowItem).toSwift() },
                 isUpdating: state.isUpdating
             )
-        case let .browsingGenres(state):
+        case let state as SearchUiStateBrowsingGenres:
             .browsingGenres(
                 genres: Array(state.genreRows).map { $0.toSwift() },
                 isRefreshing: state.isRefreshing
             )
-        case let .error(state):
+        case let state as SearchUiStateError:
             .error(message: state.message)
+        default:
+            .loading
         }
     }
 }

@@ -5,8 +5,10 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.StackNavigator
 import com.arkivanov.decompose.router.stack.childStack
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asStateFlow
+import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowsPresenter
@@ -48,14 +50,20 @@ public class DefaultHomePresenter private constructor(
     private val navigation = StackNavigation<HomeConfig>()
     private val coroutineScope: CoroutineScope = componentContext.coroutineScope()
 
-    override val homeChildStack: StateFlow<ChildStack<*, Child>> = childStack(
+    private val homeChildStackRouter: Value<ChildStack<*, Child>> = childStack(
         source = navigation,
         key = "HomeChildStackKey",
         initialConfiguration = HomeConfig.Discover,
         serializer = HomeConfig.serializer(),
         handleBackButton = true,
         childFactory = ::child,
-    ).asStateFlow(componentContext.componentCoroutineScope())
+    )
+
+    override val homeChildStack: StateFlow<ChildStack<*, Child>> =
+        homeChildStackRouter.asStateFlow(componentContext.componentCoroutineScope())
+
+    override val homeChildStackValue: Value<ChildStack<*, Child>> =
+        homeChildStack.asValue(coroutineScope)
 
     override val profileAvatarUrl: StateFlow<String?> = run {
         observeUserProfileInteractor(Unit)
@@ -67,6 +75,16 @@ public class DefaultHomePresenter private constructor(
                 initialValue = null,
             )
     }
+
+    override val profileAvatarUrlValue: Value<ProfileAvatar> =
+        profileAvatarUrl
+            .map { ProfileAvatar(url = it) }
+            .stateIn(
+                scope = coroutineScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = ProfileAvatar(),
+            )
+            .asValue(coroutineScope)
 
     override fun onDiscoverClicked() {
         onTabClicked(HomeConfig.Discover)

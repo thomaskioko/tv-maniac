@@ -1,10 +1,12 @@
 package com.thomaskioko.tvmaniac.settings.presenter
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.Value
 import kotlinx.coroutines.flow.StateFlow
 
 public interface SettingsPresenter {
     public val state: StateFlow<SettingsState>
+    public val stateValue: Value<SettingsState>
     public fun dispatch(action: SettingsActions)
 
     public interface Factory {

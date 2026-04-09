@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.testing.di.fakes
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.MutableValue
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.debug.presenter.DebugActions
 import com.thomaskioko.tvmaniac.debug.presenter.DebugPresenter
 import com.thomaskioko.tvmaniac.debug.presenter.DebugState
@@ -23,6 +25,7 @@ public class FakeDebugPresenterFactory : DebugPresenter.Factory {
 
 internal class FakeDebugPresenter : DebugPresenter {
     override val state: StateFlow<DebugState> = MutableStateFlow(DebugState.DEFAULT_STATE)
+    override val stateValue: Value<DebugState> = MutableValue(DebugState.DEFAULT_STATE)
 
     override fun dispatch(action: DebugActions) {
     }

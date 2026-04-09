@@ -133,55 +133,29 @@ public enum DeviceAppTheme: String, CaseIterable, ThemeItem {
 
 public extension AppTheme {
     func toDeviceAppTheme() -> DeviceAppTheme {
-        switch self {
-        case .darkTheme:
-            .dark
-        case .lightTheme:
-            .light
-        case .terminalTheme:
-            .terminal
-        case .autumnTheme:
-            .autumn
-        case .aquaTheme:
-            .aqua
-        case .amberTheme:
-            .amber
-        case .snowTheme:
-            .snow
-        case .crimsonTheme:
-            .crimson
-        case .systemTheme:
-            .system
-        default:
-            .system
-        }
+        if self == AppTheme.darkTheme { return .dark }
+        if self == AppTheme.lightTheme { return .light }
+        if self == AppTheme.terminalTheme { return .terminal }
+        if self == AppTheme.autumnTheme { return .autumn }
+        if self == AppTheme.aquaTheme { return .aqua }
+        if self == AppTheme.amberTheme { return .amber }
+        if self == AppTheme.snowTheme { return .snow }
+        if self == AppTheme.crimsonTheme { return .crimson }
+        return .system
     }
 }
 
 public extension ThemeModel {
     func toDeviceAppTheme() -> DeviceAppTheme {
-        switch self {
-        case .dark:
-            .dark
-        case .light:
-            .light
-        case .terminal:
-            .terminal
-        case .autumn:
-            .autumn
-        case .aqua:
-            .aqua
-        case .amber:
-            .amber
-        case .snow:
-            .snow
-        case .crimson:
-            .crimson
-        case .system:
-            .system
-        default:
-            .system
-        }
+        if self == ThemeModel.dark { return .dark }
+        if self == ThemeModel.light { return .light }
+        if self == ThemeModel.terminal { return .terminal }
+        if self == ThemeModel.autumn { return .autumn }
+        if self == ThemeModel.aqua { return .aqua }
+        if self == ThemeModel.amber { return .amber }
+        if self == ThemeModel.snow { return .snow }
+        if self == ThemeModel.crimson { return .crimson }
+        return .system
     }
 }
 
@@ -211,47 +185,29 @@ public extension DeviceAppTheme {
 
     func toAppTheme() -> AppTheme {
         switch self {
-        case .system:
-            .systemTheme
-        case .light:
-            .lightTheme
-        case .dark:
-            .darkTheme
-        case .terminal:
-            .terminalTheme
-        case .autumn:
-            .autumnTheme
-        case .aqua:
-            .aquaTheme
-        case .amber:
-            .amberTheme
-        case .snow:
-            .snowTheme
-        case .crimson:
-            .crimsonTheme
+        case .system: AppTheme.systemTheme
+        case .light: AppTheme.lightTheme
+        case .dark: AppTheme.darkTheme
+        case .terminal: AppTheme.terminalTheme
+        case .autumn: AppTheme.autumnTheme
+        case .aqua: AppTheme.aquaTheme
+        case .amber: AppTheme.amberTheme
+        case .snow: AppTheme.snowTheme
+        case .crimson: AppTheme.crimsonTheme
         }
     }
 
     func toThemeModel() -> ThemeModel {
         switch self {
-        case .system:
-            .system
-        case .light:
-            .light
-        case .dark:
-            .dark
-        case .terminal:
-            .terminal
-        case .autumn:
-            .autumn
-        case .aqua:
-            .aqua
-        case .amber:
-            .amber
-        case .snow:
-            .snow
-        case .crimson:
-            .crimson
+        case .system: ThemeModel.system
+        case .light: ThemeModel.light
+        case .dark: ThemeModel.dark
+        case .terminal: ThemeModel.terminal
+        case .autumn: ThemeModel.autumn
+        case .aqua: ThemeModel.aqua
+        case .amber: ThemeModel.amber
+        case .snow: ThemeModel.snow
+        case .crimson: ThemeModel.crimson
         }
     }
 }

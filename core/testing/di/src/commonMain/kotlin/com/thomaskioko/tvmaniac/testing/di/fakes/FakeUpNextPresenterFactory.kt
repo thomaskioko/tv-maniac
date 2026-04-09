@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.testing.di.fakes
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.MutableValue
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextAction
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextPresenter
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextState
@@ -25,6 +27,7 @@ public class FakeUpNextPresenterFactory : UpNextPresenter.Factory {
 
 internal class FakeUpNextPresenter : UpNextPresenter {
     override val state: StateFlow<UpNextState> = MutableStateFlow(UpNextState())
+    override val stateValue: Value<UpNextState> = MutableValue(UpNextState())
 
     override fun dispatch(action: UpNextAction) {
     }

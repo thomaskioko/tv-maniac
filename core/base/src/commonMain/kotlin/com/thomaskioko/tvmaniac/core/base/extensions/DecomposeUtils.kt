@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.core.base.extensions
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.essenty.lifecycle.doOnDestroy
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -38,6 +40,18 @@ public fun LifecycleOwner.componentCoroutineScope(): CoroutineScope =
     MainScope().also { coroutineScope ->
         lifecycle.doOnDestroy { coroutineScope.cancel() }
     }
+
+/**
+ * Converts this Kotlin [StateFlow] to a Decompose [Value].
+ * Collects on [Dispatchers.Main.immediate] to ensure thread-safe [MutableValue] updates.
+ */
+public fun <T : Any> StateFlow<T>.asValue(scope: CoroutineScope): Value<T> {
+    val mutableValue = MutableValue(value)
+    scope.launch(Dispatchers.Main.immediate) {
+        collect { mutableValue.value = it }
+    }
+    return mutableValue
+}
 
 /**
  * Converts this Decompose [Value] to Kotlin [StateFlow].

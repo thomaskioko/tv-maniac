@@ -4,13 +4,13 @@ import TvManiacKit
 
 struct DiscoverTab: View {
     private let presenter: DiscoverShowsPresenter
-    @StateObject @KotlinStateFlow private var uiState: DiscoverViewState
+    @StateValue private var uiState: DiscoverViewState
     @StateObject private var store = SettingsAppStorage.shared
     @State private var currentIndex: Int
     @State private var toast: Toast?
     init(presenter: DiscoverShowsPresenter) {
         self.presenter = presenter
-        _uiState = .init(presenter.state)
+        _uiState = .init(presenter.stateValue)
         _currentIndex = State(initialValue: SettingsAppStorage.shared.savedIndex)
     }
 
@@ -38,15 +38,15 @@ struct DiscoverTab: View {
             currentIndex: $currentIndex,
             toast: $toast,
             selectedEpisode: .constant(nil),
-            onShowClicked: { id in presenter.dispatch(action: ShowClicked(traktId: id)) },
-            onSearchClicked: { presenter.dispatch(action: SearchIconClicked()) },
-            onRefresh: { presenter.dispatch(action: RefreshData()) },
-            onTrendingClicked: { presenter.dispatch(action: TrendingClicked()) },
-            onUpcomingClicked: { presenter.dispatch(action: UpComingClicked()) },
-            onPopularClicked: { presenter.dispatch(action: PopularClicked()) },
-            onTopRatedClicked: { presenter.dispatch(action: TopRatedClicked()) },
+            onShowClicked: { id in presenter.dispatch(action_: ShowClicked(traktId: id)) },
+            onSearchClicked: { presenter.dispatch(action_: SearchIconClicked()) },
+            onRefresh: { presenter.dispatch(action_: RefreshData()) },
+            onTrendingClicked: { presenter.dispatch(action_: TrendingClicked()) },
+            onUpcomingClicked: { presenter.dispatch(action_: UpComingClicked()) },
+            onPopularClicked: { presenter.dispatch(action_: PopularClicked()) },
+            onTopRatedClicked: { presenter.dispatch(action_: TopRatedClicked()) },
             onNextEpisodeClicked: { episode in
-                presenter.dispatch(action: DiscoverEpisodeLongPressed(
+                presenter.dispatch(action_: DiscoverEpisodeLongPressed(
                     showTraktId: episode.showTraktId,
                     episodeId: episode.episodeId
                 ))
@@ -59,7 +59,7 @@ struct DiscoverTab: View {
         .onChange(of: uiState.message) { _, newValue in
             if let message = newValue {
                 toast = Toast(type: .error, title: "Error", message: message.message)
-                presenter.dispatch(action: MessageShown(id: message.id))
+                presenter.dispatch(action_: MessageShown(id: message.id))
             }
         }
     }

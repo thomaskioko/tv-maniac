@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.testing.di.fakes
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.MutableValue
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowAction
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowState
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowsPresenter
@@ -25,6 +27,7 @@ public class FakeSearchPresenterFactory : SearchShowsPresenter.Factory {
 
 internal class FakeSearchShowsPresenter : SearchShowsPresenter {
     override val state: StateFlow<SearchShowState> = MutableStateFlow(SearchShowState.Empty)
+    override val stateValue: Value<SearchShowState> = MutableValue(SearchShowState.Empty)
 
     override fun dispatch(action: SearchShowAction) {
         // No-op for testing

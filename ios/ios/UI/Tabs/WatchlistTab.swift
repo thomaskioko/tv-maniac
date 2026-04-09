@@ -4,14 +4,14 @@ import TvManiacKit
 
 struct WatchlistTab: View {
     private let presenter: WatchlistPresenter
-    @StateObject @KotlinStateFlow private var uiState: WatchlistState
+    @StateValue private var uiState: WatchlistState
 
     @State private var watchNextEpisodesSwift: [SwiftNextEpisode] = []
     @State private var staleEpisodesSwift: [SwiftNextEpisode] = []
 
     init(presenter: WatchlistPresenter) {
         self.presenter = presenter
-        _uiState = .init(presenter.state)
+        _uiState = .init(presenter.stateValue)
     }
 
     var body: some View {
@@ -49,21 +49,21 @@ struct WatchlistTab: View {
             },
             watchNextEpisodes: watchNextEpisodesSwift,
             staleEpisodes: staleEpisodesSwift,
-            onQueryChanged: { presenter.dispatch(action: WatchlistQueryChanged(query: $0)) },
-            onQueryCleared: { presenter.dispatch(action: ClearWatchlistQuery()) },
+            onQueryChanged: { presenter.dispatch(action______________: WatchlistQueryChanged(query: $0)) },
+            onQueryCleared: { presenter.dispatch(action______________: ClearWatchlistQuery()) },
             onToggleListStyle: {
-                presenter.dispatch(action: ChangeListStyleClicked_(isGridMode: uiState.isGridMode))
+                presenter.dispatch(action______________: ChangeListStyleClicked_(isGridMode: uiState.isGridMode))
             },
-            onToggleSearch: { presenter.dispatch(action: ToggleSearchActive_()) },
-            onShowClicked: { id in presenter.dispatch(action: WatchlistShowClicked(traktId: id)) },
+            onToggleSearch: { presenter.dispatch(action______________: ToggleSearchActive_()) },
+            onShowClicked: { id in presenter.dispatch(action______________: WatchlistShowClicked(traktId: id)) },
             onEpisodeClicked: { showTraktId, episodeId in
-                presenter.dispatch(action: UpNextEpisodeClicked(showTraktId: showTraktId, episodeId: episodeId))
+                presenter.dispatch(action______________: UpNextEpisodeClicked(showTraktId: showTraktId, episodeId: episodeId))
             },
             onShowTitleClicked: { showTraktId in
-                presenter.dispatch(action: ShowTitleClicked(showTraktId: showTraktId))
+                presenter.dispatch(action______________: ShowTitleClicked(showTraktId: showTraktId))
             },
             onMarkWatched: { episode in
-                presenter.dispatch(action: MarkUpNextEpisodeWatched(
+                presenter.dispatch(action______________: MarkUpNextEpisodeWatched(
                     showTraktId: episode.showTraktId,
                     episodeId: episode.episodeId,
                     seasonNumber: episode.seasonNumber,

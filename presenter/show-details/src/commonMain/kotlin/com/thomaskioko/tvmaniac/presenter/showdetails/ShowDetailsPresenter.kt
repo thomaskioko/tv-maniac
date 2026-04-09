@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.presenter.showdetails
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowSeasonDetailsParam
 import kotlinx.coroutines.flow.StateFlow
@@ -8,6 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 public interface ShowDetailsPresenter {
 
     public val state: StateFlow<ShowDetailsContent>
+    public val stateValue: Value<ShowDetailsContent>
     public fun dispatch(action: ShowDetailsAction)
 
     public interface Factory {

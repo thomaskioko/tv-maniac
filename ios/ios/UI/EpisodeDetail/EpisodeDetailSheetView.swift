@@ -4,12 +4,12 @@ import TvManiacKit
 
 struct EpisodeDetailSheetView: View {
     private let presenter: EpisodeDetailSheetPresenter
-    @StateObject @KotlinStateFlow private var state: EpisodeDetailSheetState
+    @StateValue private var state: EpisodeDetailSheetState
     @State private var selectedDetent: PresentationDetent = .large
 
     init(presenter: EpisodeDetailSheetPresenter) {
         self.presenter = presenter
-        _state = .init(presenter.state)
+        _state = .init(presenter.stateValue)
     }
 
     var body: some View {
@@ -48,25 +48,25 @@ struct EpisodeDetailSheetView: View {
             SheetActionItem(
                 icon: state.isWatched ? "checkmark.circle.fill" : "checkmark.circle",
                 label: state.isWatched ? String(\.dialog_title_unwatched) : String(\.menu_mark_watched),
-                action: { presenter.dispatch(action: EpisodeDetailSheetActionToggleWatched()) }
+                action: { presenter.dispatch(action____: EpisodeDetailSheetActionToggleWatched()) }
             )
         case .openShow:
             SheetActionItem(
                 icon: "tv",
                 label: String(\.menu_open_show),
-                action: { presenter.dispatch(action: EpisodeDetailSheetActionOpenShow()) }
+                action: { presenter.dispatch(action____: EpisodeDetailSheetActionOpenShow()) }
             )
         case .openSeason:
             SheetActionItem(
                 icon: "list.bullet",
                 label: String(\.menu_open_season),
-                action: { presenter.dispatch(action: EpisodeDetailSheetActionOpenSeason()) }
+                action: { presenter.dispatch(action____: EpisodeDetailSheetActionOpenSeason()) }
             )
         case .unfollow:
             SheetActionItem(
                 icon: "minus.circle",
                 label: String(\.menu_unfollow_show),
-                action: { presenter.dispatch(action: EpisodeDetailSheetActionUnfollow()) }
+                action: { presenter.dispatch(action____: EpisodeDetailSheetActionUnfollow()) }
             )
         default:
             EmptyView()

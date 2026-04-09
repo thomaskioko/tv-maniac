@@ -19,7 +19,7 @@ struct UpNextPageContent: View {
     var body: some View {
         contentView
             .refreshable {
-                presenter.dispatch(action: RefreshUpNext())
+                presenter.dispatch(action_______: RefreshUpNext())
             }
     }
 
@@ -45,13 +45,13 @@ struct UpNextPageContent: View {
                             UpNextListItemView(
                                 episode: episode,
                                 onItemClicked: { showTraktId, _ in
-                                    presenter.dispatch(action: UpNextShowClicked(showTraktId: showTraktId))
+                                    presenter.dispatch(action_______: UpNextShowClicked(showTraktId: showTraktId))
                                 },
                                 onShowTitleClicked: { showTraktId in
-                                    presenter.dispatch(action: UpNextShowClicked(showTraktId: showTraktId))
+                                    presenter.dispatch(action_______: UpNextShowClicked(showTraktId: showTraktId))
                                 },
                                 onMarkWatched: {
-                                    presenter.dispatch(action: MarkWatched(
+                                    presenter.dispatch(action_______: MarkWatched(
                                         showTraktId: episode.showTraktId,
                                         episodeId: episode.episodeId,
                                         seasonNumber: episode.seasonNumber,
@@ -59,7 +59,7 @@ struct UpNextPageContent: View {
                                     ))
                                 },
                                 onLongPress: {
-                                    presenter.dispatch(action: UpNextEpisodeLongPressed(episodeId: episode.episodeId))
+                                    presenter.dispatch(action_______: UpNextEpisodeLongPressed(episodeId: episode.episodeId))
                                 }
                             )
                         }
@@ -92,12 +92,12 @@ struct UpNextPageContent: View {
                 FilterChip(
                     label: String(\.label_upnext_sort_last_watched),
                     isSelected: uiState.sortOption == .lastWatched,
-                    onTap: { presenter.dispatch(action: UpNextChangeSortOption(sortOption: .lastWatched)) }
+                    onTap: { presenter.dispatch(action_______: UpNextChangeSortOption(sortOption: .lastWatched)) }
                 )
                 FilterChip(
                     label: String(\.label_upnext_sort_air_date),
                     isSelected: uiState.sortOption == .airDate,
-                    onTap: { presenter.dispatch(action: UpNextChangeSortOption(sortOption: .airDate)) }
+                    onTap: { presenter.dispatch(action_______: UpNextChangeSortOption(sortOption: .airDate)) }
                 )
             }
             .padding(.horizontal)

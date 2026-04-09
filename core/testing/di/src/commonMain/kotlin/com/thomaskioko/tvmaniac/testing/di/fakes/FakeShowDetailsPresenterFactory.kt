@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.testing.di.fakes
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.MutableValue
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsAction
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsContent
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenter
@@ -30,6 +32,7 @@ public class FakeShowDetailsPresenterFactory : ShowDetailsPresenter.Factory {
 
 internal class FakeShowDetailsPresenter : ShowDetailsPresenter {
     override val state: StateFlow<ShowDetailsContent> = MutableStateFlow(ShowDetailsContent.Empty)
+    override val stateValue: Value<ShowDetailsContent> = MutableValue(ShowDetailsContent.Empty)
 
     override fun dispatch(action: ShowDetailsAction) {
         // No-op for testing

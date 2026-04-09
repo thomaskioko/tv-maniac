@@ -1,10 +1,12 @@
 package com.thomaskioko.tvmaniac.watchlist.presenter
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.Value
 import kotlinx.coroutines.flow.StateFlow
 
 public interface WatchlistPresenter {
     public val state: StateFlow<WatchlistState>
+    public val stateValue: Value<WatchlistState>
     public fun dispatch(action: WatchlistAction)
 
     public interface Factory {

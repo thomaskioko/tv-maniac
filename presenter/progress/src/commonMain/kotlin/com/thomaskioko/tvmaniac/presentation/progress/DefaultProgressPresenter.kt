@@ -2,7 +2,10 @@ package com.thomaskioko.tvmaniac.presentation.progress
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.childContext
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
+import com.thomaskioko.tvmaniac.core.base.extensions.asValue
+import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.presentation.calendar.CalendarPresenter
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextPresenter
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,9 +28,11 @@ public class DefaultProgressPresenter(
     private val upNextPresenterFactory: UpNextPresenter.Factory,
     private val calendarPresenterFactory: CalendarPresenter.Factory,
 ) : ProgressPresenter, ComponentContext by componentContext {
+    private val coroutineScope = coroutineScope()
     private val _state = MutableStateFlow(ProgressState())
 
     override val state: StateFlow<ProgressState> = _state.asStateFlow()
+    override val stateValue: Value<ProgressState> = state.asValue(coroutineScope)
 
     override val upNextPresenter: UpNextPresenter = upNextPresenterFactory(
         componentContext = childContext(key = "UpNext"),

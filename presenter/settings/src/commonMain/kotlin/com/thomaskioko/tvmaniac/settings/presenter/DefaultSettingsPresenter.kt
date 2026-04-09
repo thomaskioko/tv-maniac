@@ -1,7 +1,9 @@
 package com.thomaskioko.tvmaniac.settings.presenter
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
+import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
@@ -83,6 +85,8 @@ public class DefaultSettingsPresenter(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = _state.value,
     )
+
+    override val stateValue: Value<SettingsState> = state.asValue(coroutineScope)
 
     override fun dispatch(action: SettingsActions) {
         when (action) {

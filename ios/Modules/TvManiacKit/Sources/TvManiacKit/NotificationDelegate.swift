@@ -45,14 +45,11 @@ public class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
     private func navigateToLibrary() {
         guard let rootPresenter else { return }
 
-        let childStack = rootPresenter.childStack.value
+        let childStack = rootPresenter.childStackValue.value
         let activeChild = childStack.active.instance
 
-        switch onEnum(of: activeChild) {
-        case let .home(homeChild):
+        if let homeChild = activeChild as? RootPresenterChildHome {
             homeChild.presenter.onLibraryClicked()
-        default:
-            break
         }
     }
 }

@@ -1,8 +1,9 @@
 import SwiftUI
 import TvManiac
+import TvManiacKit
 
 public struct DecomposeNavigationStack<T: AnyObject, Content: View>: View {
-    @StateObject @KotlinStateFlow private var childStack: ChildStack<AnyObject, T>
+    @StateValue private var childStack: ChildStack<AnyObject, T>
     private let content: (T) -> Content
     private let onBack: (_ toIndex: Int32) -> Void
 
@@ -11,7 +12,7 @@ public struct DecomposeNavigationStack<T: AnyObject, Content: View>: View {
     }
 
     public init(
-        stack: SkieSwiftStateFlow<ChildStack<AnyObject, T>>,
+        stack: Value<ChildStack<AnyObject, T>>,
         onBack: @escaping (_ toIndex: Int32) -> Void,
         @ViewBuilder content: @escaping (T) -> Content
     ) {
