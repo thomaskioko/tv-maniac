@@ -38,7 +38,7 @@ internal fun HorizontalShowContentRow(
 ) {
     val lazyListState = rememberLazyListState()
 
-    tvShows?.takeIf { it.isNotEmpty() } ?: return
+    if (tvShows.isNullOrEmpty()) return
     Column(modifier = modifier) {
         Row(
             modifier = Modifier
