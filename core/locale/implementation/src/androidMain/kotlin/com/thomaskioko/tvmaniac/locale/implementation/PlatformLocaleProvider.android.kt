@@ -24,7 +24,7 @@ public actual class PlatformLocaleProvider(
     public actual suspend fun setLocale(languageCode: String) {
         require(languageCode.isNotEmpty()) { "Language code cannot be empty" }
 
-        val newLocale = Locale(languageCode)
+        val newLocale = Locale.forLanguageTag(languageCode)
         Locale.setDefault(newLocale)
 
         val configuration = context.resources.configuration
@@ -48,11 +48,10 @@ public actual class PlatformLocaleProvider(
             val javaLocale = locales.get(index)
             val language = javaLocale.language
             val country = javaLocale.country.toCountryOrNull()
-            if (country != null) {
-                Locale(language, country)
-            } else {
-                Locale(language)
-            }
+            Locale.Builder()
+                .setLanguage(language)
+                .apply { if (country != null) setRegion(country) }
+                .build()
         }
     }
 
