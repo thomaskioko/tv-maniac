@@ -5,12 +5,12 @@ import TvManiacKit
 
 struct DebugMenuView: View {
     private let presenter: DebugPresenter
-    @StateObject @KotlinStateFlow private var uiState: DebugState
+    @StateValue private var uiState: DebugState
     @State private var toast: Toast?
 
     init(presenter: DebugPresenter) {
         self.presenter = presenter
-        _uiState = .init(presenter.state)
+        _uiState = .init(presenter.stateValue)
     }
 
     var body: some View {

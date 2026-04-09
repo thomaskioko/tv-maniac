@@ -4,7 +4,6 @@ import SwiftUIComponents
 import XCTest
 
 class EpisodeDetailSheetContentTest: SnapshotTestCase {
-
     func test_EpisodeDetailSheetContent_AllActions() {
         makeSheet(
             title: "The Walking Dead: Daryl Dixon",

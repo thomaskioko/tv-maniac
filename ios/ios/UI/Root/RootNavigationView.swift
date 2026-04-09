@@ -15,9 +15,9 @@ import UserNotifications
 struct RootNavigationView: View {
     private let rootPresenter: RootPresenter
     private let rootNavigator: RootNavigator
-    @StateObject @KotlinStateFlow private var themeState: ThemeState
-    @StateObject @KotlinStateFlow private var notificationPermissionState: NotificationPermissionState
-    @StateObject @KotlinStateFlow private var episodeSheetSlot: ChildSlot<AnyObject, EpisodeDetailSheetPresenter>
+    @StateValue private var themeState: ThemeState
+    @StateValue private var notificationPermissionState: NotificationPermissionState
+    @StateValue private var episodeSheetSlot: ChildSlot<AnyObject, EpisodeDetailSheetPresenter>
     @StateObject private var store = SettingsAppStorage.shared
     @EnvironmentObject private var appDelegate: AppDelegate
     @State private var rationaleActionTaken = false
@@ -25,42 +25,40 @@ struct RootNavigationView: View {
     init(rootPresenter: RootPresenter, rootNavigator: RootNavigator) {
         self.rootPresenter = rootPresenter
         self.rootNavigator = rootNavigator
-        _themeState = .init(rootPresenter.themeState)
-        _notificationPermissionState = .init(rootPresenter.notificationPermissionState)
-        _episodeSheetSlot = .init(rootPresenter.episodeSheetSlot)
+        _themeState = .init(rootPresenter.themeStateValue)
+        _notificationPermissionState = .init(rootPresenter.notificationPermissionStateValue)
+        _episodeSheetSlot = .init(rootPresenter.episodeSheetSlotValue)
     }
 
     var body: some View {
         SplashView {
             DecomposeNavigationStack(
-                stack: rootPresenter.childStack,
+                stack: rootPresenter.childStackValue,
                 onBack: rootNavigator.popTo
             ) { child in
-                switch onEnum(of: child) {
-                case let .home(child):
+                switch child {
+                case let child as RootPresenterChildHome:
                     TabBarView(presenter: child.presenter)
                         .id(ObjectIdentifier(child))
-                case let .showDetails(child):
+                case let child as RootPresenterChildShowDetails:
                     ShowDetailsView(presenter: child.presenter)
                         .id(ObjectIdentifier(child))
-                case let .seasonDetails(child):
+                case let child as RootPresenterChildSeasonDetails:
                     SeasonDetailsView(presenter: child.presenter)
                         .id(ObjectIdentifier(child))
-                case let .search(child):
+                case let child as RootPresenterChildSearch:
                     SearchTab(presenter: child.presenter)
                         .id(ObjectIdentifier(child))
-                case let .settings(child):
+                case let child as RootPresenterChildSettings:
                     SettingsView(presenter: child.presenter)
                         .id(ObjectIdentifier(child))
-                case let .debug(child):
+                case let child as RootPresenterChildDebug:
                     DebugMenuView(presenter: child.presenter)
                         .id(ObjectIdentifier(child))
-                case let .moreShows(child):
+                case let child as RootPresenterChildMoreShows:
                     MoreShowsView(presenter: child.presenter)
                         .id(ObjectIdentifier(child))
-                case .trailers:
-                    EmptyView()
-                case .genreShows:
+                default:
                     EmptyView()
                 }
             }
@@ -71,7 +69,7 @@ struct RootNavigationView: View {
                 get: { episodeSheetSlot.child != nil },
                 set: { isPresented in
                     if !isPresented, let presenter = episodeSheetSlot.child?.instance {
-                        presenter.dispatch(action: EpisodeDetailSheetActionDismiss())
+                        presenter.dispatch(action____: EpisodeDetailSheetActionDismiss())
                     }
                 }
             )

@@ -75,11 +75,11 @@ struct iOSApp: App {
     private func handleScenePhaseChange(_ phase: ScenePhase, lifecycle: LifecycleRegistry) {
         switch phase {
         case .background:
-            lifecycle.stop()
+            LifecycleRegistryExtKt.stop(lifecycle)
         case .inactive:
-            lifecycle.pause()
+            LifecycleRegistryExtKt.pause(lifecycle)
         case .active:
-            lifecycle.resume()
+            LifecycleRegistryExtKt.resume(lifecycle)
         @unknown default:
             break
         }

@@ -4,14 +4,14 @@ import TvManiacKit
 
 struct ShowDetailsView: View {
     private let presenter: ShowDetailsPresenter
-    @StateObject @KotlinStateFlow private var uiState: ShowDetailsContent
+    @StateValue private var uiState: ShowDetailsContent
     @State private var showCustomList = false
     @State private var showLoginPrompt = false
     @State private var toast: Toast?
 
     init(presenter: ShowDetailsPresenter) {
         self.presenter = presenter
-        _uiState = .init(presenter.state)
+        _uiState = .init(presenter.stateValue)
     }
 
     var body: some View {
@@ -54,11 +54,11 @@ struct ShowDetailsView: View {
             episodesLeftFormat: { count in String(\.episodes_left, quantity: Int(count), Int(count)) },
             upToDateLabel: String(\.label_up_to_date),
             toast: $toast,
-            onBack: { presenter.dispatch(action: DetailBackClicked()) },
-            onRefresh: { presenter.dispatch(action: ReloadShowDetails()) },
-            onAddToCustomList: { presenter.dispatch(action: ShowShowsListSheet()) },
+            onBack: { presenter.dispatch(action________: DetailBackClicked()) },
+            onRefresh: { presenter.dispatch(action________: ReloadShowDetails()) },
+            onAddToCustomList: { presenter.dispatch(action________: ShowShowsListSheet()) },
             onAddToLibrary: {
-                presenter.dispatch(action: FollowShowClicked(isInLibrary: uiState.showDetails.isInLibrary))
+                presenter.dispatch(action________: FollowShowClicked(isInLibrary: uiState.showDetails.isInLibrary))
             },
             onSeasonClicked: { index, season in
                 let params = ShowSeasonDetailsParam(
@@ -67,19 +67,19 @@ struct ShowDetailsView: View {
                     seasonNumber: season.seasonNumber,
                     selectedSeasonIndex: Int32(index)
                 )
-                presenter.dispatch(action: SeasonClicked(params: params))
+                presenter.dispatch(action________: SeasonClicked(params: params))
             },
             onShowClicked: { id in
-                presenter.dispatch(action: DetailShowClicked(id: id))
+                presenter.dispatch(action________: DetailShowClicked(id: id))
             },
             onMarkEpisodeWatched: { episode in
                 if episode.isWatched {
-                    presenter.dispatch(action: MarkEpisodeUnwatched(
+                    presenter.dispatch(action________: MarkEpisodeUnwatched(
                         showTraktId: episode.showTraktId,
                         episodeId: episode.episodeId
                     ))
                 } else {
-                    presenter.dispatch(action: MarkEpisodeWatched(
+                    presenter.dispatch(action________: MarkEpisodeWatched(
                         showTraktId: episode.showTraktId,
                         episodeId: episode.episodeId,
                         seasonNumber: episode.seasonNumber,
@@ -91,7 +91,7 @@ struct ShowDetailsView: View {
         .onChange(of: uiState.message) { _, newValue in
             if let message = newValue {
                 toast = Toast(type: .error, title: "Error", message: message.message)
-                presenter.dispatch(action: ShowDetailsMessageShown(id: message.id))
+                presenter.dispatch(action________: ShowDetailsMessageShown(id: message.id))
             }
         }
         .onChange(of: uiState.showListSheet) { _, newValue in
@@ -99,7 +99,7 @@ struct ShowDetailsView: View {
         }
         .onChange(of: showCustomList) { _, newValue in
             if !newValue {
-                presenter.dispatch(action: DismissShowsListSheet())
+                presenter.dispatch(action________: DismissShowsListSheet())
             }
         }
         .onChange(of: uiState.showLoginPrompt) { _, newValue in
@@ -121,25 +121,25 @@ struct ShowDetailsView: View {
                 createListPlaceholder: uiState.createListPlaceholder,
                 listsHeaderText: uiState.listsHeaderText,
                 onToggle: { listId, isInList in
-                    presenter.dispatch(action: ToggleShowInList(listId: listId, isCurrentlyInList: isInList))
+                    presenter.dispatch(action________: ToggleShowInList(listId: listId, isCurrentlyInList: isInList))
                 },
                 onShowCreateField: {
-                    presenter.dispatch(action: ShowCreateListField())
+                    presenter.dispatch(action________: ShowCreateListField())
                 },
                 onDismissCreateField: {
-                    presenter.dispatch(action: DismissCreateListField())
+                    presenter.dispatch(action________: DismissCreateListField())
                 },
                 onCreateListNameChanged: { name in
-                    presenter.dispatch(action: UpdateCreateListName(name: name))
+                    presenter.dispatch(action________: UpdateCreateListName(name: name))
                 },
                 onCreateSubmitted: {
-                    presenter.dispatch(action: CreateListSubmitted())
+                    presenter.dispatch(action________: CreateListSubmitted())
                 }
             )
         }
         .alert(uiState.loginRequiredTitle, isPresented: $showLoginPrompt) {
             Button(uiState.loginRequiredConfirmText) {
-                presenter.dispatch(action: LoginClicked())
+                presenter.dispatch(action________: LoginClicked())
             }
         } message: {
             Text(uiState.loginRequiredMessage)

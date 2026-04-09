@@ -5,12 +5,12 @@ import TvManiacKit
 
 struct MoreShowsView: View {
     private let presenter: MoreShowsPresenter
-    @StateObject @KotlinStateFlow private var uiState: MoreShowsState
+    @StateValue private var uiState: MoreShowsState
     @State private var toast: Toast?
 
     init(presenter: MoreShowsPresenter) {
         self.presenter = presenter
-        _uiState = .init(presenter.state)
+        _uiState = .init(presenter.stateValue)
     }
 
     var body: some View {
@@ -29,17 +29,17 @@ struct MoreShowsView: View {
                 presenter.loadMore()
             },
             onAction: { id in
-                presenter.dispatch(action: MoreShowClicked(traktId: id))
+                presenter.dispatch(action__: MoreShowClicked(traktId: id))
             },
             onBack: {
-                presenter.dispatch(action: MoreBackClicked())
+                presenter.dispatch(action__: MoreBackClicked())
             },
             onRetry: {
-                presenter.dispatch(action: RetryLoadMore())
+                presenter.dispatch(action__: RetryLoadMore())
             }
         )
         .refreshable {
-            presenter.dispatch(action: RefreshMoreShows())
+            presenter.dispatch(action__: RefreshMoreShows())
         }
         .onChange(of: uiState.errorMessage) { _, message in
             if let message {
@@ -48,7 +48,7 @@ struct MoreShowsView: View {
         }
         .onChange(of: toast) { _, newValue in
             if newValue == nil, uiState.errorMessage != nil {
-                presenter.dispatch(action: DismissErrorMessage())
+                presenter.dispatch(action__: DismissErrorMessage())
             }
         }
     }

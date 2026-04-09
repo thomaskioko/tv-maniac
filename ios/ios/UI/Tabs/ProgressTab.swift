@@ -4,16 +4,16 @@ import TvManiacKit
 
 struct ProgressTab: View {
     private let presenter: ProgressPresenter
-    @StateObject @KotlinStateFlow private var progressState: ProgressState
-    @StateObject @KotlinStateFlow private var upNextState: UpNextState
-    @StateObject @KotlinStateFlow private var calendarState: CalendarState
+    @StateValue private var progressState: ProgressState
+    @StateValue private var upNextState: UpNextState
+    @StateValue private var calendarState: CalendarState
     @State private var toast: Toast?
 
     init(presenter: ProgressPresenter) {
         self.presenter = presenter
-        _progressState = .init(presenter.state)
-        _upNextState = .init(presenter.upNextPresenter.state)
-        _calendarState = .init(presenter.calendarPresenter.state)
+        _progressState = .init(presenter.stateValue)
+        _upNextState = .init(presenter.upNextPresenter.stateValue)
+        _calendarState = .init(presenter.calendarPresenter.stateValue)
     }
 
     var body: some View {
@@ -24,7 +24,7 @@ struct ProgressTab: View {
             upNextTabTitle: String(\.label_discover_up_next),
             calendarTabTitle: String(\.title_calendar),
             onPageChanged: { page in
-                presenter.dispatch(action: ProgressActionSelectPage(index: Int32(page)))
+                presenter.dispatch(action______: ProgressActionSelectPage(index: Int32(page)))
             },
             upNextContent: {
                 upNextContent
@@ -40,7 +40,7 @@ struct ProgressTab: View {
                     title: "Error",
                     message: message.message
                 )
-                presenter.upNextPresenter.dispatch(action: UpNextMessageShown(id: message.id))
+                presenter.upNextPresenter.dispatch(action_______: UpNextMessageShown(id: message.id))
             }
         }
         .toastView(toast: $toast)
@@ -64,13 +64,13 @@ struct ProgressTab: View {
                 String(format: calendarState.moreEpisodesFormat, count)
             },
             onPreviousWeek: {
-                presenter.calendarPresenter.dispatch(action: NavigateToPreviousWeek())
+                presenter.calendarPresenter.dispatch(action___: NavigateToPreviousWeek())
             },
             onNextWeek: {
-                presenter.calendarPresenter.dispatch(action: NavigateToNextWeek())
+                presenter.calendarPresenter.dispatch(action___: NavigateToNextWeek())
             },
             onEpisodeCardClicked: { episodeTraktId in
-                presenter.calendarPresenter.dispatch(action: EpisodeCardClicked(episodeTraktId: episodeTraktId))
+                presenter.calendarPresenter.dispatch(action___: EpisodeCardClicked(episodeTraktId: episodeTraktId))
             }
         )
     }
