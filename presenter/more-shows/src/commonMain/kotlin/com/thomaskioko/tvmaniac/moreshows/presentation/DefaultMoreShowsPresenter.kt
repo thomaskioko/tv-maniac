@@ -7,7 +7,9 @@ import androidx.paging.PagingDataPresenter
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
+import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsRepository
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsRepository
@@ -64,6 +66,7 @@ public class DefaultMoreShowsPresenter(
     }
 
     override val state: StateFlow<MoreShowsState> = _state.asStateFlow()
+    override val stateValue: Value<MoreShowsState> = state.asValue(coroutineScope)
 
     override fun dispatch(action: MoreShowsActions) {
         when (action) {

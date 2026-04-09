@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.navigation
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.slot.ChildSlot
 import com.arkivanov.decompose.router.stack.ChildStack
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.debug.presenter.DebugPresenter
 import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeDetailSheetPresenter
@@ -24,11 +25,19 @@ public interface RootPresenter {
 
     public val childStack: StateFlow<ChildStack<*, Child>>
 
+    public val childStackValue: Value<ChildStack<*, Child>>
+
     public val episodeSheetSlot: StateFlow<ChildSlot<*, EpisodeDetailSheetPresenter>>
+
+    public val episodeSheetSlotValue: Value<ChildSlot<*, EpisodeDetailSheetPresenter>>
 
     public val themeState: StateFlow<ThemeState>
 
+    public val themeStateValue: Value<ThemeState>
+
     public val notificationPermissionState: StateFlow<NotificationPermissionState>
+
+    public val notificationPermissionStateValue: Value<NotificationPermissionState>
 
     public fun onShowFollowed()
 

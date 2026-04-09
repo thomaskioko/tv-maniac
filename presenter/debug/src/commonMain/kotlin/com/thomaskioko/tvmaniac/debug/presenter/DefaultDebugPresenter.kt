@@ -1,7 +1,9 @@
 package com.thomaskioko.tvmaniac.debug.presenter
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
+import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
@@ -87,6 +89,8 @@ public class DefaultDebugPresenter(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = DebugState.DEFAULT_STATE,
     )
+
+    override val stateValue: Value<DebugState> = state.asValue(coroutineScope)
 
     override fun dispatch(action: DebugActions) {
         when (action) {

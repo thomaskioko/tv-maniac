@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.testing.di.fakes
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.MutableValue
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsActions
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
@@ -24,6 +26,7 @@ public class FakeSettingsPresenterFactory : SettingsPresenter.Factory {
 
 internal class FakeSettingsPresenter : SettingsPresenter {
     override val state: StateFlow<SettingsState> = MutableStateFlow(SettingsState.DEFAULT_STATE)
+    override val stateValue: Value<SettingsState> = MutableValue(SettingsState.DEFAULT_STATE)
 
     override fun dispatch(action: SettingsActions) {
         // No-op for testing

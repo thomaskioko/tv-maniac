@@ -8,8 +8,10 @@ import com.arkivanov.decompose.router.slot.childSlot
 import com.arkivanov.decompose.router.slot.dismiss
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.childStack
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asStateFlow
+import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
@@ -119,18 +121,24 @@ public class DefaultRootPresenter(
             .collectStatus(profileLoadingState, logger, uiMessageManager)
     }
 
-    override val childStack: StateFlow<ChildStack<*, Child>> = childStack(
+    private val childStackRouter: Value<ChildStack<*, Child>> = childStack(
         source = navigator.getStackNavigation(),
         key = "RootChildStackKey",
         initialConfiguration = RootDestinationConfig.Home,
         serializer = RootDestinationConfig.serializer(),
         handleBackButton = true,
         childFactory = ::createScreen,
-    ).asStateFlow(componentContext.componentCoroutineScope())
+    )
+
+    override val childStack: StateFlow<ChildStack<*, Child>> =
+        childStackRouter.asStateFlow(componentContext.componentCoroutineScope())
+
+    override val childStackValue: Value<ChildStack<*, Child>> =
+        childStack.asValue(coroutineScope)
 
     private val slotNavigation = SlotNavigation<EpisodeSheetConfig>()
 
-    override val episodeSheetSlot: StateFlow<ChildSlot<*, EpisodeDetailSheetPresenter>> = childSlot(
+    private val episodeSheetSlotRouter: Value<ChildSlot<*, EpisodeDetailSheetPresenter>> = childSlot(
         source = slotNavigation,
         key = "EpisodeSheetSlotKey",
         serializer = EpisodeSheetConfig.serializer(),
@@ -162,7 +170,13 @@ public class DefaultRootPresenter(
             },
             dismissSheet = { slotNavigation.dismiss() },
         )
-    }.asStateFlow(componentContext.componentCoroutineScope())
+    }
+
+    override val episodeSheetSlot: StateFlow<ChildSlot<*, EpisodeDetailSheetPresenter>> =
+        episodeSheetSlotRouter.asStateFlow(componentContext.componentCoroutineScope())
+
+    override val episodeSheetSlotValue: Value<ChildSlot<*, EpisodeDetailSheetPresenter>> =
+        episodeSheetSlot.asValue(coroutineScope)
 
     private fun showEpisodeSheet(episodeId: Long, source: ScreenSource) {
         slotNavigation.activate(EpisodeSheetConfig(episodeId = episodeId, source = source))
@@ -177,6 +191,8 @@ public class DefaultRootPresenter(
                 started = SharingStarted.WhileSubscribed(5_000),
                 initialValue = ThemeState(),
             )
+
+    override val themeStateValue: Value<ThemeState> = themeState.asValue(coroutineScope)
 
     override val notificationPermissionState: StateFlow<NotificationPermissionState> =
         combine(
@@ -193,6 +209,9 @@ public class DefaultRootPresenter(
                 started = SharingStarted.WhileSubscribed(5_000),
                 initialValue = NotificationPermissionState(),
             )
+
+    override val notificationPermissionStateValue: Value<NotificationPermissionState> =
+        notificationPermissionState.asValue(coroutineScope)
 
     override fun onShowFollowed() {
         coroutineScope.launch {

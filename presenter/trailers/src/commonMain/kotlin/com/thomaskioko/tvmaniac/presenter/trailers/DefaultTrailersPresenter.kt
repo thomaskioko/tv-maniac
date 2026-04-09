@@ -1,7 +1,9 @@
 package com.thomaskioko.tvmaniac.presenter.trailers
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
+import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,6 +33,7 @@ public class DefaultTrailersPresenter(
     }
 
     override val state: StateFlow<TrailersState> = _state.asStateFlow()
+    override val stateValue: Value<TrailersState> = state.asValue(coroutineScope)
 
     override fun dispatch(action: TrailersAction) {
         coroutineScope.launch {

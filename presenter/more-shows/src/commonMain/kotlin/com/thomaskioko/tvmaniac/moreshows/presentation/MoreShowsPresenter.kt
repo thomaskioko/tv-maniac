@@ -1,11 +1,13 @@
 package com.thomaskioko.tvmaniac.moreshows.presentation
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.Value
 import kotlinx.coroutines.flow.StateFlow
 
 public interface MoreShowsPresenter {
 
     public val state: StateFlow<MoreShowsState>
+    public val stateValue: Value<MoreShowsState>
 
     public fun dispatch(action: MoreShowsActions)
 

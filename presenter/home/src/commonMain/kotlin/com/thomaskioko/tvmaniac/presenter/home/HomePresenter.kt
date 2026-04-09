@@ -2,12 +2,16 @@ package com.thomaskioko.tvmaniac.presenter.home
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.library.LibraryPresenter
 import com.thomaskioko.tvmaniac.presentation.progress.ProgressPresenter
 import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.Serializable
+
+@Serializable
+public data class ProfileAvatar(val url: String? = null)
 
 public interface HomePresenter {
     public interface Factory {
@@ -27,7 +31,11 @@ public interface HomePresenter {
 
     public val homeChildStack: StateFlow<ChildStack<*, Child>>
 
+    public val homeChildStackValue: Value<ChildStack<*, Child>>
+
     public val profileAvatarUrl: StateFlow<String?>
+
+    public val profileAvatarUrlValue: Value<ProfileAvatar>
 
     public fun onDiscoverClicked()
     public fun onProgressClicked()

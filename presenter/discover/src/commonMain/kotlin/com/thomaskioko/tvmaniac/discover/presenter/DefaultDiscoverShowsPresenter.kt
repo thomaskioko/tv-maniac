@@ -1,9 +1,11 @@
 package com.thomaskioko.tvmaniac.discover.presenter
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.instancekeeper.InstanceKeeper
 import com.arkivanov.essenty.instancekeeper.getOrCreate
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
+import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
@@ -71,6 +73,7 @@ public class DefaultDiscoverShowsPresenter(
     override val presenterInstance: PresenterInstance = instanceKeeper.getOrCreate { PresenterInstance() }
 
     override val state: StateFlow<DiscoverViewState> = presenterInstance.state
+    override val stateValue: Value<DiscoverViewState> = state.asValue(coroutineScope)
 
     init {
         presenterInstance.init()

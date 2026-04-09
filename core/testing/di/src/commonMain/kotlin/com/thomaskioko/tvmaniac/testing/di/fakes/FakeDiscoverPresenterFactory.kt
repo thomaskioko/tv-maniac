@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.testing.di.fakes
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.MutableValue
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.discover.presenter.DefaultDiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowAction
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowsPresenter
@@ -29,6 +31,7 @@ public class FakeDiscoverPresenterFactory : DiscoverShowsPresenter.Factory {
 
 internal class FakeDiscoverShowsPresenter : DiscoverShowsPresenter {
     override val state: StateFlow<DiscoverViewState> = MutableStateFlow(DiscoverViewState())
+    override val stateValue: Value<DiscoverViewState> = MutableValue(DiscoverViewState())
 
     override val presenterInstance: DefaultDiscoverShowsPresenter.PresenterInstance
         get() = throw UnsupportedOperationException("FakeDiscoverShowsPresenter does not support presenterInstance")

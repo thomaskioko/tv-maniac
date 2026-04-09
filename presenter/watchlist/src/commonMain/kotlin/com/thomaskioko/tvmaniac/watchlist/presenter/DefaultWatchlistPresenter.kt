@@ -1,7 +1,9 @@
 package com.thomaskioko.tvmaniac.watchlist.presenter
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
+import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
@@ -85,6 +87,8 @@ public class DefaultWatchlistPresenter(
         started = SharingStarted.WhileSubscribed(),
         initialValue = WatchlistState(),
     )
+
+    override val stateValue: Value<WatchlistState> = state.asValue(coroutineScope)
 
     override fun dispatch(action: WatchlistAction) {
         when (action) {

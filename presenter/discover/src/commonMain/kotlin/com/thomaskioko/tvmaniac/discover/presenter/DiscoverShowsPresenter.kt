@@ -1,11 +1,13 @@
 package com.thomaskioko.tvmaniac.discover.presenter
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.discover.presenter.DefaultDiscoverShowsPresenter.PresenterInstance
 import kotlinx.coroutines.flow.StateFlow
 
 public interface DiscoverShowsPresenter {
     public val state: StateFlow<DiscoverViewState>
+    public val stateValue: Value<DiscoverViewState>
 
     public val presenterInstance: PresenterInstance
 

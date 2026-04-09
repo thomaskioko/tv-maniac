@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.testing.di.fakes
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.MutableValue
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.presentation.calendar.CalendarAction
 import com.thomaskioko.tvmaniac.presentation.calendar.CalendarPresenter
 import com.thomaskioko.tvmaniac.presentation.calendar.CalendarState
@@ -32,14 +34,17 @@ public class FakeProgressPresenterFactory : ProgressPresenter.Factory {
 
 internal class FakeProgressPresenter : ProgressPresenter {
     override val state: StateFlow<ProgressState> = MutableStateFlow(ProgressState())
+    override val stateValue: Value<ProgressState> = MutableValue(ProgressState())
 
     override val upNextPresenter: UpNextPresenter = object : UpNextPresenter {
         override val state: StateFlow<UpNextState> = MutableStateFlow(UpNextState())
+        override val stateValue: Value<UpNextState> = MutableValue(UpNextState())
         override fun dispatch(action: UpNextAction) {}
     }
 
     override val calendarPresenter: CalendarPresenter = object : CalendarPresenter {
         override val state: StateFlow<CalendarState> = MutableStateFlow(CalendarState())
+        override val stateValue: Value<CalendarState> = MutableValue(CalendarState())
         override fun dispatch(action: CalendarAction) {}
     }
 

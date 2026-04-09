@@ -1,7 +1,9 @@
 package com.thomaskioko.tvmaniac.presentation.library
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
+import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
@@ -104,6 +106,8 @@ public class DefaultLibraryPresenter(
         started = SharingStarted.WhileSubscribed(),
         initialValue = LibraryState(),
     )
+
+    override val stateValue: Value<LibraryState> = state.asValue(coroutineScope)
 
     override fun dispatch(action: LibraryAction) {
         when (action) {

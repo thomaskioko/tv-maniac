@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.testing.di.fakes
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.MutableValue
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction
 import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileState
@@ -23,6 +25,7 @@ public class FakeProfilePresenterFactory : ProfilePresenter.Factory {
 
 internal class FakeProfilePresenter : ProfilePresenter {
     override val state: StateFlow<ProfileState> = MutableStateFlow(ProfileState.DEFAULT_STATE)
+    override val stateValue: Value<ProfileState> = MutableValue(ProfileState.DEFAULT_STATE)
 
     override fun dispatch(action: ProfileAction) {
         // No-op for testing

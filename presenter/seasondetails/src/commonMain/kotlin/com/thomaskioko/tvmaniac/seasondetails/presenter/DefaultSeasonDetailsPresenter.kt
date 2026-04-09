@@ -1,7 +1,9 @@
 package com.thomaskioko.tvmaniac.seasondetails.presenter
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
+import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
@@ -108,6 +110,8 @@ public class DefaultSeasonDetailsPresenter(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = SeasonDetailsModel.Empty,
     )
+
+    override val stateValue: Value<SeasonDetailsModel> = state.asValue(coroutineScope)
 
     init {
         observableSeasonDetailsInteractor(seasonDetailsParam)

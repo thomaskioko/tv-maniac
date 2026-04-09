@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.testing.di.fakes
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.MutableValue
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeDetailSheetAction
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeDetailSheetPresenter
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeDetailSheetState
@@ -28,6 +30,7 @@ public class FakeEpisodeDetailSheetPresenterFactory : EpisodeDetailSheetPresente
 
 internal class FakeEpisodeDetailSheetPresenter : EpisodeDetailSheetPresenter {
     override val state: StateFlow<EpisodeDetailSheetState> = MutableStateFlow(EpisodeDetailSheetState())
+    override val stateValue: Value<EpisodeDetailSheetState> = MutableValue(EpisodeDetailSheetState())
 
     override fun dispatch(action: EpisodeDetailSheetAction) {
     }

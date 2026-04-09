@@ -1,7 +1,9 @@
 package com.thomaskioko.tvmaniac.presentation.upnext
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
+import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
@@ -80,6 +82,8 @@ public class DefaultUpNextPresenter(
         started = SharingStarted.WhileSubscribed(),
         initialValue = UpNextState(),
     )
+
+    override val stateValue: Value<UpNextState> = state.asValue(coroutineScope)
 
     override fun dispatch(action: UpNextAction) {
         when (action) {

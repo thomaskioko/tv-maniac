@@ -1,9 +1,11 @@
 package com.thomaskioko.tvmaniac.search.presenter
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.instancekeeper.InstanceKeeper
 import com.arkivanov.essenty.instancekeeper.getOrCreate
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
+import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
@@ -56,6 +58,7 @@ public class DefaultSearchShowsPresenter(
 
     private val presenterInstance = instanceKeeper.getOrCreate { PresenterInstance() }
     override val state: StateFlow<SearchShowState> = presenterInstance.state
+    override val stateValue: Value<SearchShowState> = state.asValue(coroutineScope)
 
     init {
         presenterInstance.init()

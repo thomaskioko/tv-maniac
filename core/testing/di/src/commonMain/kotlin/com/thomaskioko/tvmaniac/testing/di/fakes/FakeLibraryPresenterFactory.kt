@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.testing.di.fakes
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.MutableValue
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.presentation.library.LibraryAction
 import com.thomaskioko.tvmaniac.presentation.library.LibraryPresenter
 import com.thomaskioko.tvmaniac.presentation.library.LibraryState
@@ -23,6 +25,7 @@ public class FakeLibraryPresenterFactory : LibraryPresenter.Factory {
 
 internal class FakeLibraryPresenter : LibraryPresenter {
     override val state: StateFlow<LibraryState> = MutableStateFlow(LibraryState())
+    override val stateValue: Value<LibraryState> = MutableValue(LibraryState())
 
     override fun dispatch(action: LibraryAction) {
     }

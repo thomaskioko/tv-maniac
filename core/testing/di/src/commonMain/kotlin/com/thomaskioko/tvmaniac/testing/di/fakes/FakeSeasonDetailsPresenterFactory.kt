@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.testing.di.fakes
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.MutableValue
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsAction
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsModel
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsPresenter
@@ -25,19 +27,20 @@ public class FakeSeasonDetailsPresenterFactory : SeasonDetailsPresenter.Factory 
     ): SeasonDetailsPresenter = FakeSeasonDetailsPresenter()
 }
 
+private val initialSeasonDetailsModel = SeasonDetailsModel(
+    episodeCount = 0,
+    seasonImages = persistentListOf(),
+    seasonId = 0,
+    seasonName = "",
+    seasonOverview = "",
+    imageUrl = null,
+    episodeDetailsList = persistentListOf(),
+    seasonCast = persistentListOf(),
+)
+
 internal class FakeSeasonDetailsPresenter : SeasonDetailsPresenter {
-    override val state: StateFlow<SeasonDetailsModel> = MutableStateFlow(
-        SeasonDetailsModel(
-            episodeCount = 0,
-            seasonImages = persistentListOf(),
-            seasonId = 0,
-            seasonName = "",
-            seasonOverview = "",
-            imageUrl = null,
-            episodeDetailsList = persistentListOf(),
-            seasonCast = persistentListOf(),
-        ),
-    )
+    override val state: StateFlow<SeasonDetailsModel> = MutableStateFlow(initialSeasonDetailsModel)
+    override val stateValue: Value<SeasonDetailsModel> = MutableValue(initialSeasonDetailsModel)
 
     override fun dispatch(action: SeasonDetailsAction) {
         // No-op for testing

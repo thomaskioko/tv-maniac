@@ -1,11 +1,13 @@
 package com.thomaskioko.tvmaniac.search.presenter
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.Value
 import kotlinx.coroutines.flow.StateFlow
 
 public interface SearchShowsPresenter {
 
     public val state: StateFlow<SearchShowState>
+    public val stateValue: Value<SearchShowState>
     public fun dispatch(action: SearchShowAction)
 
     public interface Factory {

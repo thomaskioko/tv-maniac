@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.testing.di.fakes
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.MutableValue
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.testing.di.TestScope
 import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistAction
 import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistPresenter
@@ -24,6 +26,7 @@ public class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
 
 internal class FakeWatchlistPresenter : WatchlistPresenter {
     override val state: StateFlow<WatchlistState> = MutableStateFlow(WatchlistState())
+    override val stateValue: Value<WatchlistState> = MutableValue(WatchlistState())
 
     override fun dispatch(action: WatchlistAction) {
         // No-op for testing

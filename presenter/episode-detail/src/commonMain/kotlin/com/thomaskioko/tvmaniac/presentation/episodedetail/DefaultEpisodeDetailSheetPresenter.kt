@@ -1,7 +1,9 @@
 package com.thomaskioko.tvmaniac.presentation.episodedetail
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
+import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
@@ -60,6 +62,8 @@ public class DefaultEpisodeDetailSheetPresenter(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = EpisodeDetailSheetState(),
     )
+
+    override val stateValue: Value<EpisodeDetailSheetState> = state.asValue(coroutineScope)
 
     init {
         observeEpisodeByIdInteractor(episodeId)

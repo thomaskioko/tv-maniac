@@ -1,7 +1,9 @@
 package com.thomaskioko.tvmaniac.presenter.showdetails
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
+import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
@@ -158,6 +160,8 @@ public class DefaultShowDetailsPresenter(
             started = SharingStarted.Eagerly,
             initialValue = _state.value,
         )
+
+    override val stateValue: Value<ShowDetailsContent> = state.asValue(coroutineScope)
 
     override fun dispatch(action: ShowDetailsAction) {
         when (action) {
