@@ -65,7 +65,6 @@ roborazziCore = "1.59.0"
 runner = "1.7.0"
 serialization = "1.10.0"
 shadowsFramework = "4.16.1"
-skie = "0.10.11"
 snapper = "0.3.0"
 sqldelight = "2.3.2"
 spotless = "8.4.0"
@@ -205,7 +204,6 @@ moko-resources = { id = "dev.icerock.mobile.multiplatform-resources", version.re
 multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-skie = { id = "co.touchlab.skie", version.ref = "skie" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 
