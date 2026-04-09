@@ -12,7 +12,7 @@ public actual class PlatformLocalizer(
 ) {
 
     public actual fun localized(stringDesc: StringDesc): String {
-        val locale = Locale(Locale.getDefault().language)
+        val locale = Locale.forLanguageTag(Locale.getDefault().language)
         val configuration = Configuration(context.resources.configuration)
         configuration.setLocale(locale)
 
