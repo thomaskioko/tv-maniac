@@ -48,7 +48,6 @@ scaffold {
             export(projects.presenter.upnext)
             export(projects.presenter.debug)
             export(projects.presenter.episodeDetail)
-            export(projects.domain.notifications)
 
             export(libs.decompose.decompose)
             export(libs.essenty.lifecycle)
