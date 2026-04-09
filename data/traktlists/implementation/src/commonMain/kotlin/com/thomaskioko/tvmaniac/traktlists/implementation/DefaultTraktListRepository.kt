@@ -39,8 +39,7 @@ public class DefaultTraktListRepository(
         combine(
             traktListDao.observeAll(),
             traktListShowDao.observeByShowTraktId(traktShowId),
-            traktListShowDao.observeActiveCountByListId(),
-        ) { lists, showEntries, activeCounts ->
+        ) { lists, showEntries ->
             val activeEntryListIds = showEntries
                 .filter { it.pendingAction != PendingAction.DELETE.value }
                 .map { it.listId }
@@ -51,7 +50,7 @@ public class DefaultTraktListRepository(
                     slug = list.slug,
                     name = list.name,
                     description = list.description,
-                    itemCount = activeCounts[list.id] ?: 0,
+                    itemCount = list.itemCount,
                     isShowInList = list.id in activeEntryListIds,
                 )
             }
