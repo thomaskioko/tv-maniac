@@ -9,14 +9,13 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.implementation.DefaultDatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.implementation.DefaultDatastoreRepository.Companion.KEY_THEME
-import com.thomaskioko.tvmaniac.datastore.implementation.IgnoreIos
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
-import okio.Path.Companion.toPath
+import okio.FileSystem
 import kotlin.test.AfterTest
 import kotlin.test.Test
 
@@ -24,11 +23,12 @@ internal class DatastoreRepositoryImplTest {
 
     private val testDispatcher = UnconfinedTestDispatcher()
     private var preferencesScope: CoroutineScope = CoroutineScope(testDispatcher + Job())
+    private val testFile = FileSystem.SYSTEM_TEMPORARY_DIRECTORY / "test.preferences_pb"
     private val dataStore: DataStore<Preferences> = PreferenceDataStoreFactory.createWithPath(
         corruptionHandler = null,
         migrations = emptyList(),
         scope = preferencesScope,
-        produceFile = { "test.preferences_pb".toPath() },
+        produceFile = { testFile },
     )
 
     private val coroutineScope = AppCoroutineScope(
@@ -48,13 +48,11 @@ internal class DatastoreRepositoryImplTest {
         preferencesScope.cancel()
     }
 
-    @IgnoreIos
     @Test
     fun default_theme_is_emitted() = runTest {
         repository.observeTheme().test { awaitItem() shouldBe AppTheme.SYSTEM_THEME }
     }
 
-    @IgnoreIos
     @Test
     fun when_theme_is_changed_correct_value_is_set() = runTest {
         repository.observeTheme().test {
@@ -64,7 +62,6 @@ internal class DatastoreRepositoryImplTest {
         }
     }
 
-    @IgnoreIos
     @Test
     fun `should emit terminal theme when updated`() = runTest {
         repository.observeTheme().test {
@@ -74,7 +71,6 @@ internal class DatastoreRepositoryImplTest {
         }
     }
 
-    @IgnoreIos
     @Test
     fun `should emit aqua theme when updated`() = runTest {
         repository.observeTheme().test {
