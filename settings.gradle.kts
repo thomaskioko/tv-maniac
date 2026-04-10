@@ -92,6 +92,7 @@ include(
     ":core:screenshot-tests",
     ":core:tasks:api",
     ":core:tasks:implementation",
+    ":core:tasks:testing",
     ":core:util",
     ":core:util:api",
     ":core:util:implementation",
