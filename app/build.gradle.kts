@@ -13,7 +13,7 @@ scaffold {
     }
 
     android {
-        useKotlinInject()
+        useMetro()
         useCompose()
         useBaselineProfile(projects.benchmark)
         useManagedDevices()

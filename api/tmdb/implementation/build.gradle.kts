@@ -5,7 +5,7 @@ plugins {
 scaffold {
     addAndroidTarget()
     useSerialization()
-    useKotlinInject()
+    useMetro()
 }
 
 kotlin {

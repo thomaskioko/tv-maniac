@@ -6,7 +6,7 @@ scaffold {
     android {
         useCompose()
     }
-    useKotlinInject()
+    useMetro()
 }
 
 dependencies {

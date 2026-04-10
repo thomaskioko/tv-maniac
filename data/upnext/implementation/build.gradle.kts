@@ -3,7 +3,7 @@ plugins {
 }
 
 scaffold {
-    useKotlinInject()
+    useMetro()
 
     optIn("kotlinx.coroutines.DelicateCoroutinesApi")
 }

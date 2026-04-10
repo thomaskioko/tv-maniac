@@ -4,7 +4,7 @@ plugins {
 
 scaffold {
     addAndroidTarget()
-    useKotlinInject()
+    useMetro()
 
     optIn(
         "kotlinx.coroutines.ExperimentalCoroutinesApi",

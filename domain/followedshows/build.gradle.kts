@@ -3,7 +3,7 @@ plugins {
 }
 
 scaffold {
-    useKotlinInject()
+    useMetro()
     optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
     optIn("kotlinx.coroutines.FlowPreview")
 }
@@ -27,7 +27,6 @@ kotlin {
                 implementation(projects.domain.showdetails)
 
                 implementation(libs.coroutines.core)
-                implementation(libs.kotlinInject.runtime)
             }
         }
 
