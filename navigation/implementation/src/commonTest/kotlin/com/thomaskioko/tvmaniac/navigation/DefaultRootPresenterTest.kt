@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.navigation
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.arkivanov.essenty.lifecycle.destroy
 import com.arkivanov.essenty.lifecycle.resume
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
@@ -22,7 +23,7 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-abstract class DefaultRootComponentTest {
+abstract class DefaultRootPresenterTest {
     abstract val rootPresenterFactory: RootPresenter.Factory
     abstract val datastoreRepository: DatastoreRepository
 
@@ -44,6 +45,7 @@ abstract class DefaultRootComponentTest {
 
     @AfterTest
     fun tearDown() {
+        lifecycle.destroy()
         Dispatchers.resetMain()
     }
 
