@@ -19,7 +19,7 @@ import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 
-class FakeWatchlistPresenterFactory {
+class FakeWatchlistPresenterBuilder {
     val repository = FakeWatchlistRepository()
     val episodeRepository = FakeEpisodeRepository()
     val upNextRepository = FakeUpNextRepository()
