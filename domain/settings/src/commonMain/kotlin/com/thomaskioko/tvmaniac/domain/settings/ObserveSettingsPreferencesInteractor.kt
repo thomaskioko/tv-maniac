@@ -6,8 +6,8 @@ import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.Flow
-import me.tatarka.inject.annotations.Inject
 
 @Inject
 public class ObserveSettingsPreferencesInteractor(

@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.domain.seasondetails
 
 import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 
 @Inject
 public class MarkSeasonUnwatchedInteractor(

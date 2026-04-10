@@ -8,15 +8,15 @@ import com.thomaskioko.tvmaniac.core.tasks.api.WorkerResult
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.RefreshUpcomingSeasonDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncTraktCalendarInteractor
-import me.tatarka.inject.annotations.Inject
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesIntoSet
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlin.time.Duration.Companion.hours
 
 @Inject
 @SingleIn(AppScope::class)
-@ContributesBinding(AppScope::class, boundType = BackgroundWorker::class, multibinding = true)
+@ContributesIntoSet(AppScope::class)
 public class EpisodeNotificationWorker(
     private val syncTraktCalendarInteractor: Lazy<SyncTraktCalendarInteractor>,
     private val refreshInteractor: Lazy<RefreshUpcomingSeasonDetailsInteractor>,

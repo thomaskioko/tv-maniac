@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.domain.watchlist.model.UpNextEpisodeInfo
 import com.thomaskioko.tvmaniac.domain.watchlist.model.UpNextSections
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 
 private const val SIXTEEN_DAYS_MILLIS: Long = 16 * 24 * 60 * 60 * 1000L
 

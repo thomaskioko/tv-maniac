@@ -1,22 +1,24 @@
 package com.thomaskioko.tvmaniac.domain.notifications
 
-import com.thomaskioko.tvmaniac.core.base.AppInitializer
-import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
+import com.thomaskioko.tvmaniac.core.base.di.AsyncInitializers
+import com.thomaskioko.tvmaniac.core.base.di.IoCoroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.IntoSet
+import dev.zacsweers.metro.Provides
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 
 @Inject
-@ContributesBinding(AppScope::class, multibinding = true)
 public class NotificationTasksInitializer(
     private val scheduler: BackgroundTaskScheduler,
     private val notificationManager: Lazy<NotificationManager>,

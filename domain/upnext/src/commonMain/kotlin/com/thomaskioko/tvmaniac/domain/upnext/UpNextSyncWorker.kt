@@ -6,15 +6,13 @@ import com.thomaskioko.tvmaniac.core.tasks.api.PeriodicTaskRequest
 import com.thomaskioko.tvmaniac.core.tasks.api.TaskConstraints
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerResult
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesIntoSet
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CancellationException
-import me.tatarka.inject.annotations.Inject
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
-@Inject
 @SingleIn(AppScope::class)
-@ContributesBinding(AppScope::class, boundType = BackgroundWorker::class, multibinding = true)
+@ContributesIntoSet(AppScope::class)
 public class UpNextSyncWorker(
     private val refreshUpNextInteractor: Lazy<RefreshUpNextInteractor>,
     private val traktAuthRepository: Lazy<TraktAuthRepository>,

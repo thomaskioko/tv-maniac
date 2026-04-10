@@ -1,13 +1,13 @@
 package com.thomaskioko.tvmaniac.domain.upnext
 
-import com.thomaskioko.tvmaniac.core.base.AppInitializer
-import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.core.view.InvokeError
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
+import dev.zacsweers.metro.Inject
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -15,18 +15,14 @@ import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 
 @Inject
-@ContributesBinding(AppScope::class, multibinding = true)
 public class UpNextTasksInitializer(
     private val scheduler: BackgroundTaskScheduler,
     refreshUpNextInteractor: Lazy<RefreshUpNextInteractor>,
     datastoreRepo: Lazy<DatastoreRepository>,
     traktAuthRepo: Lazy<TraktAuthRepository>,
-    private val coroutineScope: AppCoroutineScope,
+    private val coroutineScope: CoroutineScope,
     private val logger: Logger,
 ) : AppInitializer {
 

@@ -3,13 +3,13 @@ package com.thomaskioko.tvmaniac.domain.calendar
 import com.thomaskioko.tvmaniac.domain.calendar.model.DateLabel
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
+import dev.zacsweers.metro.Inject
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
-import me.tatarka.inject.annotations.Inject
 
 @Inject
 public class CalendarWeekCalculator(
