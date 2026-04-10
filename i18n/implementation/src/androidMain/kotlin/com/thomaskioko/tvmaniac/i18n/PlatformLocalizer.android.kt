@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.i18n
 import android.content.Context
 import android.content.res.Configuration
 import dev.icerock.moko.resources.desc.StringDesc
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 import java.util.Locale
 
 @Inject
