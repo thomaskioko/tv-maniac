@@ -33,7 +33,7 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-internal class DefaultCalendarPresenterTest {
+internal class CalendarPresenterTest {
 
     private val lifecycle = LifecycleRegistry()
     private val testDispatcher = StandardTestDispatcher()
@@ -425,7 +425,7 @@ internal class DefaultCalendarPresenterTest {
             localizer = com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer(),
         )
 
-        return DefaultCalendarPresenter(
+        return CalendarPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             navigateToShowDetails = navigateToShowDetails,
             onEpisodeLongPressed = onEpisodeLongPressed,

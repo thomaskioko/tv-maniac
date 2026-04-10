@@ -29,7 +29,7 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-internal class DefaultEpisodeDetailSheetPresenterTest {
+internal class EpisodeDetailSheetPresenterTest {
 
     private val lifecycle = LifecycleRegistry()
     private val testDispatcher = StandardTestDispatcher()
@@ -328,7 +328,7 @@ internal class DefaultEpisodeDetailSheetPresenterTest {
             databaseRead = testDispatcher,
         )
 
-        return DefaultEpisodeDetailSheetPresenter(
+        return EpisodeDetailSheetPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             episodeId = 1L,
             source = source,

@@ -1,11 +1,13 @@
 package com.thomaskioko.tvmaniac.navigation
 
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
-import com.thomaskioko.tvmaniac.testing.di.TestJvmComponent
-import com.thomaskioko.tvmaniac.testing.di.create
+import com.thomaskioko.tvmaniac.testing.di.TestJvmGraph
+import dev.zacsweers.metro.createGraphFactory
 
-internal class DefaultRootComponentJvmTest : DefaultRootComponentTest() {
-    private val testComponent: TestJvmComponent = TestJvmComponent::class.create()
+internal class DefaultRootPresenterJvmTest : DefaultRootPresenterTest() {
+    private val testComponent: TestJvmGraph by lazy {
+        createGraphFactory<TestJvmGraph.Factory>().create()
+    }
 
     override val rootPresenterFactory: RootPresenter.Factory
         get() = testComponent.rootPresenterFactory

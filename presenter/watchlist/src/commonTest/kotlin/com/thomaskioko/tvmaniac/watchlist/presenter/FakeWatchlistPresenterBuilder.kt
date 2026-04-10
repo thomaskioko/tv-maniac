@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
+import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.ObserveUpNextSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.ObserveWatchlistSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.UpNextSectionsMapper
@@ -18,7 +19,7 @@ import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 
-class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
+class FakeWatchlistPresenterFactory {
     val repository = FakeWatchlistRepository()
     val episodeRepository = FakeEpisodeRepository()
     val upNextRepository = FakeUpNextRepository()
@@ -63,17 +64,16 @@ class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
         dispatchers = coroutineDispatcher,
     )
 
-    override fun invoke(
+    fun create(
         componentContext: ComponentContext,
         navigateToShowDetails: (showDetails: Long) -> Unit,
         navigateToSeason: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
-    ): WatchlistPresenter = DefaultWatchlistPresenter(
+    ): WatchlistPresenter = WatchlistPresenter(
         componentContext = componentContext,
         navigateToShowDetails = navigateToShowDetails,
         navigateToSeason = navigateToSeason,
         repository = repository,
-        followedShowsRepository = fakeFollowedShowsRepository,
-        unfollowShowInteractor = com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor(fakeFollowedShowsRepository),
+        unfollowShowInteractor = UnfollowShowInteractor(fakeFollowedShowsRepository),
         observeWatchlistSectionsInteractor = observeWatchlistSectionsInteractor,
         observeUpNextSectionsInteractor = observeUpNextSectionsInteractor,
         markEpisodeWatchedInteractor = fakeMarkEpisodeWatchedInteractor,

@@ -271,7 +271,7 @@ class DiscoverShowsPresenterTest {
     fun `should navigate to season given next episode is clicked`() = runTest {
         var navigatedParams: Triple<Long, Long, Long>? = null
 
-        val testPresenter = DefaultDiscoverShowsPresenter(
+        val testPresenter = DiscoverShowsPresenter(
             componentContext = DefaultComponentContext(lifecycle = LifecycleRegistry()),
             onNavigateToShowDetails = {},
             onNavigateToMore = {},
@@ -411,7 +411,7 @@ class DiscoverShowsPresenterTest {
 
     private fun buildPresenter(
         lifecycle: LifecycleRegistry = LifecycleRegistry(),
-    ): DiscoverShowsPresenter = DefaultDiscoverShowsPresenter(
+    ): DiscoverShowsPresenter = DiscoverShowsPresenter(
         componentContext = DefaultComponentContext(lifecycle = lifecycle),
         onNavigateToShowDetails = {},
         onNavigateToMore = {},

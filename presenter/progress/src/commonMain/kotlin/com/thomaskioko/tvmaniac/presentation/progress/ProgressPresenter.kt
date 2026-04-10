@@ -1,25 +1,67 @@
 package com.thomaskioko.tvmaniac.presentation.progress
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.childContext
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.tvmaniac.core.base.extensions.asValue
+import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.presentation.calendar.CalendarPresenter
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextPresenter
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.AssistedInject
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
-public interface ProgressPresenter {
-    public val state: StateFlow<ProgressState>
-    public val stateValue: Value<ProgressState>
-    public val upNextPresenter: UpNextPresenter
-    public val calendarPresenter: CalendarPresenter
-    public fun dispatch(action: ProgressAction)
+@AssistedInject
+public class ProgressPresenter(
+    @Assisted componentContext: ComponentContext,
+    @Assisted private val navigateToShowDetails: (showId: Long) -> Unit,
+    @Assisted private val navigateToSeasonDetails: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
+    @Assisted private val onUpNextEpisodeLongPressed: (Long) -> Unit,
+    @Assisted private val onCalendarEpisodeLongPressed: (Long) -> Unit,
+    upNextPresenterFactory: UpNextPresenter.Factory,
+    calendarPresenterFactory: CalendarPresenter.Factory,
+) : ComponentContext by componentContext {
 
-    public interface Factory {
-        public operator fun invoke(
+    private val coroutineScope = coroutineScope()
+    private val _state = MutableStateFlow(ProgressState())
+
+    public val state: StateFlow<ProgressState> = _state.asStateFlow()
+
+    public val stateValue: Value<ProgressState> = state.asValue(coroutineScope)
+
+    public val upNextPresenter: UpNextPresenter = upNextPresenterFactory.create(
+        componentContext = childContext(key = "UpNext"),
+        navigateToShowDetails = navigateToShowDetails,
+        navigateToSeasonDetails = navigateToSeasonDetails,
+        onEpisodeLongPressed = onUpNextEpisodeLongPressed,
+    )
+
+    public val calendarPresenter: CalendarPresenter = calendarPresenterFactory.create(
+        componentContext = childContext(key = "Calendar"),
+        navigateToShowDetails = navigateToShowDetails,
+        onEpisodeLongPressed = onCalendarEpisodeLongPressed,
+    )
+
+    public fun dispatch(action: ProgressAction) {
+        when (action) {
+            is ProgressAction.SelectPage -> {
+                _state.update { it.copy(selectedPage = action.index) }
+            }
+        }
+    }
+
+    @AssistedFactory
+    public fun interface Factory {
+        public fun create(
             componentContext: ComponentContext,
             navigateToShowDetails: (showId: Long) -> Unit,
             navigateToSeasonDetails: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
-            onUpNextEpisodeLongPressed: (episodeId: Long) -> Unit = {},
-            onCalendarEpisodeLongPressed: (episodeId: Long) -> Unit = {},
+            onUpNextEpisodeLongPressed: (Long) -> Unit,
+            onCalendarEpisodeLongPressed: (Long) -> Unit,
         ): ProgressPresenter
     }
 }

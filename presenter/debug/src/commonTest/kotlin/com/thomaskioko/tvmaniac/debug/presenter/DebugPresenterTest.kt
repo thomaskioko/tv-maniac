@@ -6,7 +6,6 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.notifications.testing.FakeNotificationManager
-import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
@@ -37,7 +36,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
-class DefaultDebugPresenterTest {
+class DebugPresenterTest {
 
     private val lifecycle = LifecycleRegistry()
     private val testDispatcher = StandardTestDispatcher()
@@ -169,7 +168,7 @@ class DefaultDebugPresenterTest {
             databaseRead = testDispatcher,
         )
 
-        return DefaultDebugPresenter(
+        return DebugPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             backClicked = {},
             datastoreRepository = datastoreRepository,
@@ -200,7 +199,7 @@ class DefaultDebugPresenterTest {
             ),
             dateTimeProvider = dateTimeProvider,
             localizer = localizer,
-            errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
+            errorToStringMapper = { it.message ?: "Test error" },
             logger = logger,
             traktAuthRepository = traktAuthRepository,
         )

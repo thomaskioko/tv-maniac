@@ -25,7 +25,7 @@ abstract class HomePresenterTest {
         Dispatchers.setMain(testDispatcher)
         lifecycle.resume()
 
-        presenter = homePresenterFactory(
+        presenter = homePresenterFactory.create(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             onShowClicked = {},
             onMoreShowClicked = {},
@@ -33,6 +33,9 @@ abstract class HomePresenterTest {
             onNavigateToSearch = {},
             onSettingsClicked = {},
             onSeasonClicked = { _, _, _ -> },
+            onDiscoverEpisodeLongPressed = {},
+            onUpNextEpisodeLongPressed = {},
+            onCalendarEpisodeLongPressed = {},
         )
     }
 

@@ -31,7 +31,7 @@ internal class TrailersPresenterTest {
 
         lifecycle.resume()
 
-        presenter = DefaultTrailersPresenter(
+        presenter = TrailersPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             traktShowId = 84958,
             repository = repository,

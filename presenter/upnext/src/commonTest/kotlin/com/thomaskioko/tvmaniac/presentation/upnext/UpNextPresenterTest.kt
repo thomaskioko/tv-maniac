@@ -29,7 +29,7 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-internal class DefaultUpNextPresenterTest {
+internal class UpNextPresenterTest {
 
     private val lifecycle = LifecycleRegistry()
     private val testDispatcher = StandardTestDispatcher()
@@ -413,7 +413,7 @@ internal class DefaultUpNextPresenterTest {
             episodeRepository = episodeRepository,
         )
 
-        return DefaultUpNextPresenter(
+        return UpNextPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             navigateToShowDetails = navigateToShowDetails,
             navigateToSeasonDetails = navigateToSeasonDetails,
