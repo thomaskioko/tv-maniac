@@ -7,9 +7,9 @@ import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.UPCOMING_EPISODES
 import com.thomaskioko.tvmaniac.trakt.api.TraktCalendarRemoteDataSource
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.withContext
-import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.Validator

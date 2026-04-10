@@ -4,18 +4,17 @@ import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.lifecycle.lifecycleScope
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
-import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.traktauth.api.AuthError
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 import net.openid.appauth.AuthorizationService
 import net.openid.appauth.ClientAuthentication
 import net.openid.appauth.TokenRequest
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 

@@ -7,14 +7,14 @@ import com.thomaskioko.tvmaniac.core.tasks.api.TaskConstraints
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerResult
 import com.thomaskioko.tvmaniac.traktauth.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import me.tatarka.inject.annotations.Inject
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesIntoSet
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 
 @Inject
 @SingleIn(AppScope::class)
-@ContributesBinding(AppScope::class, boundType = BackgroundWorker::class, multibinding = true)
+@ContributesIntoSet(AppScope::class)
 public class TokenRefreshWorker(
     private val traktAuthRepository: Lazy<TraktAuthRepository>,
     private val logger: Logger,

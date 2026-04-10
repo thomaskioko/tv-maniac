@@ -11,8 +11,8 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedProgressResponse
 import com.thomaskioko.tvmaniac.upnext.api.UpNextDao
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.withContext
-import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.Validator

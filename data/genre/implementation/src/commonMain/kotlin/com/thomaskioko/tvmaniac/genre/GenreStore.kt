@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.genre
 
+import com.thomaskioko.tvmaniac.core.base.di.IoCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.apiFetcher
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.storeBuilder
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.usingDispatchers
@@ -9,19 +9,20 @@ import com.thomaskioko.tvmaniac.db.Genres
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbGenreResult
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
-import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
 @SingleIn(AppScope::class)
 public class GenreStore(
     private val genreDao: GenreDao,
     private val tmdbRemoteDataSource: TmdbShowsNetworkDataSource,
-    private val scope: AppCoroutineScope,
+    @IoCoroutineScope private val scope: CoroutineScope,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<Unit, List<ShowGenresEntity>> by storeBuilder(
     fetcher = apiFetcher { tmdbRemoteDataSource.getShowGenres() },
@@ -54,5 +55,5 @@ public class GenreStore(
         writeDispatcher = dispatchers.databaseWrite,
     ),
 )
-    .scope(scope.io)
+    .scope(scope)
     .build()

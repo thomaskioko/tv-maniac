@@ -16,8 +16,8 @@ import com.thomaskioko.tvmaniac.seasons.api.SeasonsDao
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.withContext
-import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
