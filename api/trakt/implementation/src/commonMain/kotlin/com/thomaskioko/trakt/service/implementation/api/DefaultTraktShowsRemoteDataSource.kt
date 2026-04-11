@@ -1,6 +1,6 @@
 package com.thomaskioko.trakt.service.implementation.api
 
-import com.thomaskioko.tvmaniac.core.base.di.TraktApi
+import com.thomaskioko.tvmaniac.core.base.TraktApi
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.authSafeRequest
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.safeRequest
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse

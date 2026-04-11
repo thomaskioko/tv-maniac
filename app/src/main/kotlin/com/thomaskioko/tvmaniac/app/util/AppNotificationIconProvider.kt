@@ -1,13 +1,11 @@
-package com.thomaskioko.tvmaniac.inject
+package com.thomaskioko.tvmaniac.app.util
 
 import com.thomaskioko.tvmaniac.app.R
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationIconProvider
-import me.tatarka.inject.annotations.Inject
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.SingleIn
 
-@Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class AppNotificationIconProvider : NotificationIconProvider {
