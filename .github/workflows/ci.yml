@@ -104,7 +104,7 @@ jobs:
                         **/build/compose_metrics/
                         **/build/compose_reports/
 
-    jvm-test:
+    linux-test:
         needs: [static-analysis]
         runs-on: ubuntu-latest
         environment:
@@ -115,42 +115,36 @@ jobs:
             -   name: 🐘 Setup Gradle Environment
                 uses: ./.github/actions/setup-gradle
 
-            -   name: Run JVM Tests
-                run: ./gradlew jvmTest -Papp.debugOnly=false
+            -   name: Run Linux Tests
+                run: ./gradlew linuxTest -Papp.debugOnly=false
 
             -   name: Upload Test Reports
                 uses: actions/upload-artifact@v7
                 if: ${{ !cancelled() }}
                 with:
-                    name: test-report
+                    name: linux-test-report
                     path: '**/build/reports/*'
 
-    # TODO:: Investigate Freezing test
-    #    common-ios-test:
-    #        runs-on: macos-latest
-    #
-    #        steps:
-    #            -   name: Checkout
-    #                uses: actions/checkout@v6
-    #
-    #            -   name: Set up JDK
-    #                uses: actions/setup-java@v5
-    #                with:
-    #                    distribution: ${{ env.DISTRIBUTION }}
-    #                    java-version: ${{ env.JDK_VERSION }}
-    #
-    #            -   name: 🐘 Setup Gradle
-    #                uses: gradle/actions/setup-gradle@v5
-    #
-    #            -   name: Run Common iOS Unit Tests
-    #                run: ./gradlew iosSimulatorArm64Test -Papp.enableIos=true -Papp.debugOnly=false
-    #
-    #            -   name: Upload Common Test Report
-    #                uses: actions/upload-artifact@v6
-    #                if: always()
-    #                with:
-    #                    name: common-ios-test-report
-    #                    path: '**/build/reports/*'
+#    ios-test:
+#        needs: [static-analysis]
+#        runs-on: macos-15
+#        environment:
+#            name: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')) && 'Protected' || '' }}
+#        steps:
+#            -   uses: actions/checkout@v6
+#
+#            -   name: 🐘 Setup Gradle Environment
+#                uses: ./.github/actions/setup-gradle
+#
+#            -   name: Run iOS Tests
+#                run: ./gradlew iosTest -Papp.enableIos=true -Papp.debugOnly=false
+#
+#            -   name: Upload Test Reports
+#                uses: actions/upload-artifact@v7
+#                if: ${{ !cancelled() }}
+#                with:
+#                    name: ios-test-report
+#                    path: '**/build/reports/*'
 
     build-ios:
         needs: [swift-lint]
