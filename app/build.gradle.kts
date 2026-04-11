@@ -134,7 +134,6 @@ dependencies {
     implementation(libs.androidx.datastore.core)
     implementation(libs.androidx.savedstate)
     implementation(libs.sqldelight.runtime)
-    implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.compose.ui.ui)
