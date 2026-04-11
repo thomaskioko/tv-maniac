@@ -1,5 +1,6 @@
 package com.thomaskioko.trakt.service.implementation.api
 
+import com.thomaskioko.tvmaniac.core.base.di.TraktApi
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.authSafeRequest
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
@@ -16,6 +17,7 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
+import io.ktor.client.HttpClient
 import io.ktor.client.request.parameter
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
@@ -26,7 +28,8 @@ import io.ktor.http.path
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class DefaultTraktListRemoteDataSource(
-    private val httpClient: TraktHttpClient,
+    @TraktApi
+    private val httpClient: HttpClient,
 ) : TraktListRemoteDataSource {
 
     override suspend fun getUser(userId: String): ApiResponse<TraktUserResponse> =
