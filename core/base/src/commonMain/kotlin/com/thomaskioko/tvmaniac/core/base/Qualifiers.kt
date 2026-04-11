@@ -9,10 +9,6 @@ public annotation class ApplicationContext
 
 @Qualifier
 @Retention(BINARY)
-public annotation class ActivityContext
-
-@Qualifier
-@Retention(BINARY)
 public annotation class Initializers
 
 @Qualifier
