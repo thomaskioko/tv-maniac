@@ -70,6 +70,8 @@ include(
     ":api:trakt:implementation",
     ":app",
     ":benchmark",
+    ":core:appconfig:api",
+    ":core:appconfig:implementation",
     ":core:base",
     ":core:connectivity:api",
     ":core:connectivity:implementation",

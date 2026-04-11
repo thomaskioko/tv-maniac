@@ -9,6 +9,10 @@ scaffold {
 kotlin {
     sourceSets {
         commonMain.dependencies {
+            api(projects.core.appconfig.api)
+            api(projects.core.appconfig.implementation)
+            api(projects.api.tmdb.api)
+            api(projects.api.trakt.api)
             api(projects.core.base)
             api(projects.core.logger.api)
             api(projects.core.logger.implementation)

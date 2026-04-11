@@ -9,6 +9,7 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
     public lazy var appGraph = IosApplicationGraphCompanion.shared.create()
 
     public lazy var traktAuthRepository = appGraph.traktAuthRepository
+    public lazy var traktConfig = appGraph.traktConfig
     public lazy var logger = appGraph.logger
     public lazy var traktAuthManager = appGraph.traktAuthManager
 

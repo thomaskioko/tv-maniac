@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.testing.di
 
 import com.thomaskioko.trakt.service.implementation.TraktPlatformBindingContainer
+import com.thomaskioko.tvmaniac.appconfig.IosAppConfigBindingContainer
 import com.thomaskioko.tvmaniac.core.logger.IosCrashReporter
 import com.thomaskioko.tvmaniac.core.logger.IosCrashReporterBindingContainer
 import com.thomaskioko.tvmaniac.core.notifications.implementation.IosNotificationManager
@@ -9,7 +10,6 @@ import com.thomaskioko.tvmaniac.tmdb.implementation.TmdbPlatformBindingContainer
 import com.thomaskioko.tvmaniac.traktauth.implementation.DefaultIOSTraktAuthManager
 import com.thomaskioko.tvmaniac.util.IosAppUtils
 import com.thomaskioko.tvmaniac.util.IosFormatterUtil
-import com.thomaskioko.tvmaniac.util.IosUtilBindingContainer
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
@@ -18,7 +18,7 @@ import dev.zacsweers.metro.ContributesTo
 @ContributesTo(
     AppScope::class,
     replaces = [
-        IosUtilBindingContainer::class,
+        IosAppConfigBindingContainer::class,
         TmdbPlatformBindingContainer::class,
         TraktPlatformBindingContainer::class,
         IosFormatterUtil::class,
@@ -30,4 +30,4 @@ import dev.zacsweers.metro.ContributesTo
         IosTaskScheduler::class,
     ],
 )
-public object FakeIosPlatformBindings
+internal object FakeIosPlatformBindings

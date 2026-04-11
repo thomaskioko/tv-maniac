@@ -27,10 +27,10 @@ scaffold {
 
             export(projects.i18n.api)
             export(projects.core.logger.api)
-            export(projects.core.util.api)
             export(projects.navigation.api)
             export(projects.data.datastore.api)
             export(projects.data.traktauth.api)
+            export(projects.api.trakt.api)
             export(projects.presenter.calendar)
             export(projects.presenter.discover)
             export(projects.presenter.home)
@@ -61,6 +61,9 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                api(projects.core.appconfig.api)
+                api(projects.core.appconfig.implementation)
+                api(projects.api.trakt.api)
                 api(projects.core.util.api)
                 api(projects.core.networkUtil.api)
                 api(projects.core.networkUtil.implementation)
@@ -111,7 +114,6 @@ kotlin {
 
                 implementation(projects.api.tmdb.api)
                 implementation(projects.api.tmdb.implementation)
-                implementation(projects.api.trakt.api)
                 implementation(projects.api.trakt.implementation)
                 implementation(projects.core.base)
                 implementation(projects.core.locale.api)

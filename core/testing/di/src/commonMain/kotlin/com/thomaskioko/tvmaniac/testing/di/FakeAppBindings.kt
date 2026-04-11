@@ -1,6 +1,10 @@
 package com.thomaskioko.tvmaniac.testing.di
 
 import com.arkivanov.decompose.ComponentContext
+import com.thomaskioko.tvmaniac.appconfig.ApplicationInfo
+import com.thomaskioko.tvmaniac.appconfig.DefaultTmdbConfig
+import com.thomaskioko.tvmaniac.appconfig.DefaultTraktConfig
+import com.thomaskioko.tvmaniac.appconfig.Platform
 import com.thomaskioko.tvmaniac.core.base.ComputationCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.MainCoroutineScope
@@ -38,6 +42,8 @@ import com.thomaskioko.tvmaniac.resourcemanager.implementation.DefaultRequestMan
 import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityRepository
 import com.thomaskioko.tvmaniac.syncactivity.implementation.DefaultTraktActivityRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
+import com.thomaskioko.tvmaniac.tmdb.api.TmdbConfig
+import com.thomaskioko.tvmaniac.trakt.api.TraktConfig
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.implementation.DefaultTraktAuthRepository
@@ -48,9 +54,7 @@ import com.thomaskioko.tvmaniac.traktlists.api.TraktListRepository
 import com.thomaskioko.tvmaniac.traktlists.implementation.DefaultTraktListRepository
 import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
 import com.thomaskioko.tvmaniac.util.api.AppUtils
-import com.thomaskioko.tvmaniac.util.api.ApplicationInfo
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
-import com.thomaskioko.tvmaniac.util.api.Platform
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
@@ -80,8 +84,10 @@ import kotlinx.coroutines.flow.flowOf
         DefaultDatastoreRepository::class,
         DefaultUserRepository::class,
         DefaultRequestManagerRepository::class,
+        DefaultTmdbConfig::class,
         DefaultTraktActivityRepository::class,
         DefaultTraktAuthRepository::class,
+        DefaultTraktConfig::class,
         DefaultTraktListRepository::class,
         CompositeLogger::class,
         KermitLogger::class,
@@ -168,6 +174,20 @@ public object FakeAppBindings {
             packageName = "com.thomaskioko.tvmaniac.test",
             platform = Platform.ANDROID,
         )
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideTmdbConfig(): TmdbConfig = object : TmdbConfig {
+        override val apiKey: String = "fake-tmdb-api-key"
+    }
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideTraktConfig(): TraktConfig = object : TraktConfig {
+        override val clientId: String = "fake-trakt-client-id"
+        override val clientSecret: String = "fake-trakt-client-secret"
+        override val redirectUri: String = "tvmaniac://auth"
+    }
 
     @Provides
     @SingleIn(AppScope::class)

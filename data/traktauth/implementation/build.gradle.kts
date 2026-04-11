@@ -26,7 +26,9 @@ kotlin {
 
         commonMain {
             dependencies {
+                implementation(projects.core.appconfig.api)
                 implementation(projects.core.base)
+                implementation(projects.api.trakt.api)
                 implementation(projects.core.logger.api)
                 implementation(projects.core.tasks.api)
                 implementation(projects.core.util.api)

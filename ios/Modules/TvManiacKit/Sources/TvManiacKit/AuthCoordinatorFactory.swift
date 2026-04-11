@@ -3,23 +3,24 @@ import Foundation
 public enum AuthCoordinatorFactory {
     public static func create(
         authRepository: TraktAuthRepository,
+        traktConfig: TraktConfig,
         logger: Logger
     ) -> TraktAuthCoordinator {
-        let redirectURL = URL(string: BuildConfig.shared.TRAKT_REDIRECT_URI)
+        let redirectURL = URL(string: traktConfig.redirectUri)
             ?? URL(string: "about:blank")!
 
         if redirectURL.absoluteString == "about:blank" {
             logger.error(
                 tag: "TraktAuthCoordinator",
-                message: "Invalid Trakt redirect URI in BuildConfig"
+                message: "Invalid Trakt redirect URI in TraktConfig"
             )
         }
 
         return TraktAuthCoordinator(
             authRepository: authRepository,
             logger: logger,
-            clientId: BuildConfig.shared.TRAKT_CLIENT_ID,
-            clientSecret: BuildConfig.shared.TRAKT_CLIENT_SECRET,
+            clientId: traktConfig.clientId,
+            clientSecret: traktConfig.clientSecret,
             redirectURL: redirectURL
         )
     }

@@ -64,6 +64,7 @@ struct iOSApp: App {
         if authCoordinator == nil {
             authCoordinator = AuthCoordinatorFactory.create(
                 authRepository: appDelegate.traktAuthRepository,
+                traktConfig: appDelegate.traktConfig,
                 logger: appDelegate.logger
             )
         }
