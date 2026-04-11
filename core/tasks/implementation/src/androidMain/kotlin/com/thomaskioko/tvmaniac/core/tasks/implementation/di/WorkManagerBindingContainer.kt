@@ -2,13 +2,15 @@ package com.thomaskioko.tvmaniac.core.tasks.implementation.di
 
 import android.app.Application
 import androidx.work.WorkManager
-import me.tatarka.inject.annotations.Provides
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.BindingContainer
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.SingleIn
 
+@BindingContainer
 @ContributesTo(AppScope::class)
-public interface WorkManagerComponent {
+public object WorkManagerBindingContainer {
 
     @Provides
     @SingleIn(AppScope::class)

@@ -3,13 +3,15 @@ package com.thomaskioko.tvmaniac.util
 import com.thomaskioko.tvmaniac.util.api.ApplicationInfo
 import com.thomaskioko.tvmaniac.util.api.BuildConfig
 import com.thomaskioko.tvmaniac.util.api.Platform
-import me.tatarka.inject.annotations.Provides
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.BindingContainer
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Provides
 import platform.Foundation.NSBundle
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
 
+@BindingContainer
 @ContributesTo(AppScope::class)
-public interface IosUtilIComponent {
+public object IosUtilBindingContainer {
 
     @Provides
     public fun provideApplicationInfo(): ApplicationInfo {

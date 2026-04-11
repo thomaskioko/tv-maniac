@@ -3,12 +3,14 @@ package com.thomaskioko.tvmaniac.core.logger
 import android.app.Application
 import com.google.firebase.FirebaseApp
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import me.tatarka.inject.annotations.Provides
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.BindingContainer
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Provides
 
+@BindingContainer
 @ContributesTo(AppScope::class)
-public interface AndroidLoggerComponent {
+public object AndroidLoggerBindingContainer {
 
     @Provides
     public fun provideFirebaseApp(
