@@ -49,21 +49,21 @@ struct WatchlistTab: View {
             },
             watchNextEpisodes: watchNextEpisodesSwift,
             staleEpisodes: staleEpisodesSwift,
-            onQueryChanged: { presenter.dispatch(action______________: WatchlistQueryChanged(query: $0)) },
-            onQueryCleared: { presenter.dispatch(action______________: ClearWatchlistQuery()) },
+            onQueryChanged: { presenter.dispatch(action: WatchlistQueryChanged(query: $0)) },
+            onQueryCleared: { presenter.dispatch(action: ClearWatchlistQuery()) },
             onToggleListStyle: {
-                presenter.dispatch(action______________: ChangeListStyleClicked_(isGridMode: uiState.isGridMode))
+                presenter.dispatch(action: ChangeListStyleClicked_(isGridMode: uiState.isGridMode))
             },
-            onToggleSearch: { presenter.dispatch(action______________: ToggleSearchActive_()) },
-            onShowClicked: { id in presenter.dispatch(action______________: WatchlistShowClicked(traktId: id)) },
+            onToggleSearch: { presenter.dispatch(action: ToggleSearchActive_()) },
+            onShowClicked: { id in presenter.dispatch(action: WatchlistShowClicked(traktId: id)) },
             onEpisodeClicked: { showTraktId, episodeId in
-                presenter.dispatch(action______________: UpNextEpisodeClicked(showTraktId: showTraktId, episodeId: episodeId))
+                presenter.dispatch(action: UpNextEpisodeClicked(showTraktId: showTraktId, episodeId: episodeId))
             },
             onShowTitleClicked: { showTraktId in
-                presenter.dispatch(action______________: ShowTitleClicked(showTraktId: showTraktId))
+                presenter.dispatch(action: ShowTitleClicked(showTraktId: showTraktId))
             },
             onMarkWatched: { episode in
-                presenter.dispatch(action______________: MarkUpNextEpisodeWatched(
+                presenter.dispatch(action: MarkUpNextEpisodeWatched(
                     showTraktId: episode.showTraktId,
                     episodeId: episode.episodeId,
                     seasonNumber: episode.seasonNumber,

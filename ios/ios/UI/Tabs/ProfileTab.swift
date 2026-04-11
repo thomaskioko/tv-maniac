@@ -67,8 +67,8 @@ struct ProfileTab: View {
                     description: String(\.profile_feature_more_description)
                 ),
             ],
-            onSettingsClicked: { presenter.dispatch(action__________: ProfileActionSettingsClicked()) },
-            onLoginClicked: { presenter.dispatch(action__________: ProfileActionLoginClicked()) }
+            onSettingsClicked: { presenter.dispatch(action: ProfileActionSettingsClicked()) },
+            onLoginClicked: { presenter.dispatch(action: ProfileActionLoginClicked()) }
         )
         .onChange(of: uiState.errorMessage) { _, errorMessage in
             if let errorMessage {
@@ -77,7 +77,7 @@ struct ProfileTab: View {
         }
         .onChange(of: toastManager.toast) { _, newValue in
             if newValue == nil, let errorMessage = uiState.errorMessage {
-                presenter.dispatch(action__________: ProfileActionMessageShown(id: errorMessage.id))
+                presenter.dispatch(action: ProfileActionMessageShown(id: errorMessage.id))
             }
         }
     }

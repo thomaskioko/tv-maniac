@@ -8,7 +8,7 @@ plugins {
     alias(libs.plugins.google.services) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.jvm) apply false
-    alias(libs.plugins.ksp) apply false
+    alias(libs.plugins.metro) apply false
     alias(libs.plugins.multiplatform) apply false
     alias(libs.plugins.android.kotlin.multiplatform) apply false
     alias(libs.plugins.moko.resources) apply false

@@ -1,17 +1,26 @@
 package com.thomaskioko.tvmaniac.core.base
 
-import me.tatarka.inject.annotations.Inject
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Inject
 @SingleIn(AppScope::class)
 public class AppInitializers(
-    private val initializers: Set<AppInitializer>,
+    @Initializers private val initializers: Set<() -> Unit>,
+    @AsyncInitializers private val asyncInitializers: Set<() -> Unit>,
+    @IoCoroutineScope private val scope: CoroutineScope,
 ) {
     public fun initialize() {
         for (initializer in initializers) {
-            initializer.init()
+            initializer()
+        }
+        scope.launch {
+            for (initializer in asyncInitializers) {
+                initializer()
+            }
         }
     }
 }

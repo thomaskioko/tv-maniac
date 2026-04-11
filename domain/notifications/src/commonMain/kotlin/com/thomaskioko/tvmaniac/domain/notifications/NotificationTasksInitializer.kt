@@ -1,33 +1,30 @@
 package com.thomaskioko.tvmaniac.domain.notifications
 
-import com.thomaskioko.tvmaniac.core.base.AppInitializer
-import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
+import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
+import dev.zacsweers.metro.Inject
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 
 @Inject
-@ContributesBinding(AppScope::class, multibinding = true)
 public class NotificationTasksInitializer(
     private val scheduler: BackgroundTaskScheduler,
     private val notificationManager: Lazy<NotificationManager>,
     private val datastoreRepository: Lazy<DatastoreRepository>,
     private val traktAuthRepository: Lazy<TraktAuthRepository>,
-    private val coroutineScope: AppCoroutineScope,
     private val logger: Logger,
-) : AppInitializer {
+    @IoCoroutineScope private val coroutineScope: CoroutineScope,
+) {
 
-    override fun init() {
-        coroutineScope.io.launch {
+    public fun init() {
+        coroutineScope.launch {
             combine(
                 traktAuthRepository.value.state,
                 datastoreRepository.value.observeEpisodeNotificationsEnabled(),

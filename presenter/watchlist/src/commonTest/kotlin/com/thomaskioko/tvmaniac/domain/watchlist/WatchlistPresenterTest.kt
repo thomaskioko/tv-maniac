@@ -6,7 +6,7 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.watchlist.presenter.ChangeListStyleClicked
-import com.thomaskioko.tvmaniac.watchlist.presenter.FakeWatchlistPresenterFactory
+import com.thomaskioko.tvmaniac.watchlist.presenter.FakeWatchlistPresenterBuilder
 import com.thomaskioko.tvmaniac.watchlist.presenter.ToggleSearchActive
 import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistPresenter
 import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistQueryChanged
@@ -32,7 +32,7 @@ class WatchlistPresenterTest {
 
     private val lifecycle = LifecycleRegistry()
     private val testDispatcher = StandardTestDispatcher()
-    private val factory = FakeWatchlistPresenterFactory()
+    private val factory = FakeWatchlistPresenterBuilder()
 
     private lateinit var presenter: WatchlistPresenter
 
@@ -41,7 +41,7 @@ class WatchlistPresenterTest {
         Dispatchers.setMain(testDispatcher)
 
         lifecycle.resume()
-        presenter = factory.invoke(
+        presenter = factory.create(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             navigateToShowDetails = { },
             navigateToSeason = { _, _, _ -> },

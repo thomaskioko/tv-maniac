@@ -1,6 +1,6 @@
 package com.thomaskioko.trakt.service.implementation.api
 
-import com.thomaskioko.trakt.service.implementation.TraktHttpClient
+import com.thomaskioko.tvmaniac.core.base.TraktApi
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.safeRequest
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.TraktTokenRemoteDataSource
@@ -9,6 +9,10 @@ import com.thomaskioko.tvmaniac.trakt.api.model.RefreshAccessTokenBody
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAccessRefreshTokenResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAccessTokenResponse
 import com.thomaskioko.tvmaniac.util.api.BuildConfig
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.SingleIn
+import io.ktor.client.HttpClient
 import io.ktor.client.plugins.auth.AuthCircuitBreaker
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -16,16 +20,12 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
 import io.ktor.http.path
-import me.tatarka.inject.annotations.Inject
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
-@Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class DefaultTraktTokenRemoteDataSource(
-    private val httpClient: TraktHttpClient,
+    @TraktApi
+    private val httpClient: HttpClient,
 ) : TraktTokenRemoteDataSource {
 
     private val traktClientId: String = BuildConfig.TRAKT_CLIENT_ID

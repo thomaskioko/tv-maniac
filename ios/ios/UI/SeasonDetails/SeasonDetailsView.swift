@@ -47,25 +47,25 @@ struct SeasonDetailsView: View {
             tbdLabel: String(\.label_tbd),
             toast: $toast,
             showGallery: $showGallery,
-            onBack: { presenter.dispatch(action____________: SeasonDetailsBackClicked()) },
-            onRetry: { presenter.dispatch(action____________: ReloadSeasonDetails()) },
+            onBack: { presenter.dispatch(action: SeasonDetailsBackClicked()) },
+            onRetry: { presenter.dispatch(action: ReloadSeasonDetails()) },
             onGalleryTap: {
-                presenter.dispatch(action____________: ShowGallery())
+                presenter.dispatch(action: ShowGallery())
                 showGallery.toggle()
             },
-            onEpisodeHeaderClicked: { presenter.dispatch(action____________: OnEpisodeHeaderClicked()) },
-            onWatchedStateClicked: { presenter.dispatch(action____________: ToggleSeasonWatched()) },
+            onEpisodeHeaderClicked: { presenter.dispatch(action: OnEpisodeHeaderClicked()) },
+            onWatchedStateClicked: { presenter.dispatch(action: ToggleSeasonWatched()) },
             onEpisodeWatchToggle: { episode in
-                presenter.dispatch(action____________: ToggleEpisodeWatched(episodeId: episode.episodeId))
+                presenter.dispatch(action: ToggleEpisodeWatched(episodeId: episode.episodeId))
             },
             onEpisodeTapped: { episode in
-                presenter.dispatch(action____________: EpisodeClicked(id: Int64(episode.episodeId)))
+                presenter.dispatch(action: EpisodeClicked(id: Int64(episode.episodeId)))
             }
         )
         .onChange(of: uiState.message) { _, newValue in
             if let message = newValue {
                 toast = Toast(type: .error, title: "Error", message: message.message)
-                presenter.dispatch(action____________: SeasonDetailsMessageShown(id: message.id))
+                presenter.dispatch(action: SeasonDetailsMessageShown(id: message.id))
             }
         }
         .onChange(of: uiState.isDialogVisible) { _, _ in
@@ -80,40 +80,40 @@ struct SeasonDetailsView: View {
         }
         .alert(String(\.dialog_title_unwatched), isPresented: $showSeasonUnwatchAlert) {
             Button(String(\.dialog_button_yes)) {
-                presenter.dispatch(action____________: ConfirmDialogAction())
+                presenter.dispatch(action: ConfirmDialogAction())
             }
             Button(String(\.dialog_button_no), role: .cancel) {
-                presenter.dispatch(action____________: DismissDialog())
+                presenter.dispatch(action: DismissDialog())
             }
         } message: {
             Text(String(\.dialog_message_unwatched))
         }
         .alert(String(\.dialog_title_mark_previous), isPresented: $showMarkPreviousAlert) {
             Button(String(\.dialog_button_mark_all)) {
-                presenter.dispatch(action____________: ConfirmDialogAction())
+                presenter.dispatch(action: ConfirmDialogAction())
             }
             Button(String(\.dialog_button_just_this), role: .cancel) {
-                presenter.dispatch(action____________: SecondaryDialogAction())
+                presenter.dispatch(action: SecondaryDialogAction())
             }
         } message: {
             Text(String(\.dialog_message_mark_previous))
         }
         .alert(String(\.dialog_title_episode_unwatched), isPresented: $showUnwatchedConfirmAlert) {
             Button(String(\.dialog_button_yes)) {
-                presenter.dispatch(action____________: ConfirmDialogAction())
+                presenter.dispatch(action: ConfirmDialogAction())
             }
             Button(String(\.dialog_button_no), role: .cancel) {
-                presenter.dispatch(action____________: DismissDialog())
+                presenter.dispatch(action: DismissDialog())
             }
         } message: {
             Text(String(\.dialog_message_episode_unwatched))
         }
         .alert(String(\.dialog_title_mark_previous_seasons), isPresented: $showMarkPreviousSeasonsAlert) {
             Button(String(\.dialog_button_mark_all_seasons)) {
-                presenter.dispatch(action____________: ConfirmDialogAction())
+                presenter.dispatch(action: ConfirmDialogAction())
             }
             Button(String(\.dialog_button_just_this_season), role: .cancel) {
-                presenter.dispatch(action____________: SecondaryDialogAction())
+                presenter.dispatch(action: SecondaryDialogAction())
             }
         } message: {
             Text(String(\.dialog_message_mark_previous_seasons))

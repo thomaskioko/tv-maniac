@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.domain.traktlists
 import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
 import com.thomaskioko.tvmaniac.data.user.api.UserRepository
 import com.thomaskioko.tvmaniac.traktlists.api.TraktListRepository
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 
 @Inject
 public class CreateTraktListInteractor(

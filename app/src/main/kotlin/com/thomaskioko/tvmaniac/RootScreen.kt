@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac
+package com.thomaskioko.tvmaniac.app.ui
 
 import android.Manifest
 import android.os.Build

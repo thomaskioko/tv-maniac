@@ -69,7 +69,7 @@ struct RootNavigationView: View {
                 get: { episodeSheetSlot.child != nil },
                 set: { isPresented in
                     if !isPresented, let presenter = episodeSheetSlot.child?.instance {
-                        presenter.dispatch(action____: EpisodeDetailSheetActionDismiss())
+                        presenter.dispatch(action: EpisodeDetailSheetActionDismiss())
                     }
                 }
             )

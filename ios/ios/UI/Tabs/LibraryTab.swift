@@ -28,29 +28,29 @@ struct LibraryTab: View {
             },
             listItems: Array(uiState.items).map { $0.toSwift() },
             emptySearchResultFormat: { query in String(\.label_watchlist_empty_result, parameter: query) },
-            onQueryChanged: { presenter.dispatch(action_____: LibraryQueryChanged(query: $0)) },
-            onQueryCleared: { presenter.dispatch(action_____: ClearLibraryQuery()) },
+            onQueryChanged: { presenter.dispatch(action: LibraryQueryChanged(query: $0)) },
+            onQueryCleared: { presenter.dispatch(action: ClearLibraryQuery()) },
             onToggleListStyle: {
-                presenter.dispatch(action_____: ChangeListStyleClicked(isGridMode: uiState.isGridMode))
+                presenter.dispatch(action: ChangeListStyleClicked(isGridMode: uiState.isGridMode))
             },
-            onToggleSearch: { presenter.dispatch(action_____: ToggleSearchActive()) },
+            onToggleSearch: { presenter.dispatch(action: ToggleSearchActive()) },
             onSortClicked: { showSortOptions = true },
-            onShowClicked: { id in presenter.dispatch(action_____: LibraryShowClicked(traktId: id)) }
+            onShowClicked: { id in presenter.dispatch(action: LibraryShowClicked(traktId: id)) }
         )
         .sheet(isPresented: $showSortOptions) {
             SortOptionsSheet(
                 state: uiState,
                 onSortOptionSelected: { sortOption in
-                    presenter.dispatch(action_____: ChangeSortOption(sortOption: sortOption))
+                    presenter.dispatch(action: ChangeSortOption(sortOption: sortOption))
                 },
                 onGenreToggle: { genre in
-                    presenter.dispatch(action_____: ToggleGenreFilter(genre: genre))
+                    presenter.dispatch(action: ToggleGenreFilter(genre: genre))
                 },
                 onStatusToggle: { status in
-                    presenter.dispatch(action_____: ToggleStatusFilter(status: status))
+                    presenter.dispatch(action: ToggleStatusFilter(status: status))
                 },
                 onClearFilters: {
-                    presenter.dispatch(action_____: ClearFilters())
+                    presenter.dispatch(action: ClearFilters())
                 },
                 onApplyFilters: {
                     showSortOptions = false

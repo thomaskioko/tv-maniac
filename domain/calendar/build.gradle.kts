@@ -2,6 +2,10 @@ plugins {
     alias(libs.plugins.app.kmp)
 }
 
+scaffold {
+    useMetro()
+}
+
 kotlin {
     sourceSets {
         commonMain {
@@ -12,7 +16,6 @@ kotlin {
                 api(projects.data.calendar.api)
 
                 implementation(libs.coroutines.core)
-                implementation(libs.kotlinInject.runtime)
                 implementation(libs.kotlinx.datetime)
             }
         }

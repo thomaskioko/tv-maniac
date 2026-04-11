@@ -6,13 +6,13 @@ import com.thomaskioko.tvmaniac.data.calendar.CalendarRepository
 import com.thomaskioko.tvmaniac.domain.calendar.model.GroupedCalendarEntry
 import com.thomaskioko.tvmaniac.domain.calendar.model.GroupedEpisodeEntry
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
-import me.tatarka.inject.annotations.Inject
 import kotlin.time.Instant
 
 @Inject

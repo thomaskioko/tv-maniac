@@ -4,11 +4,11 @@ package com.thomaskioko.tvmaniac.core.tasks.api
  * A unit of background work that can be executed by the task scheduler.
  *
  * Workers contain the shared business logic that runs on both platforms.
- * Each worker is registered via kotlin-inject multibinding and looked up
+ * Each worker is registered via Metro multibinding and looked up
  * at runtime by [workerName] through [WorkerFactory].
  *
  * To add a new background job, implement this interface in `commonMain` and
- * annotate with `@ContributesBinding(AppScope::class, boundType = BackgroundWorker::class, multibinding = true)`.
+ * annotate with `@ContributesIntoSet(AppScope::class)`.
  */
 public interface BackgroundWorker {
 

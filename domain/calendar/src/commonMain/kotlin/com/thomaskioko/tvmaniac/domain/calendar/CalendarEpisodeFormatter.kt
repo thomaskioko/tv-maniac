@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.domain.calendar
 
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 
 @Inject
 public class CalendarEpisodeFormatter(

@@ -9,7 +9,6 @@ import com.arkivanov.decompose.router.slot.dismiss
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.value.Value
-import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asStateFlow
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
@@ -38,7 +37,9 @@ import com.thomaskioko.tvmaniac.traktauth.api.AuthError
 import com.thomaskioko.tvmaniac.traktauth.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
-import kotlinx.coroutines.CoroutineScope
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.AssistedInject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -51,14 +52,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(kotlinx.coroutines.FlowPreview::class)
-@Inject
+@AssistedInject
 public class DefaultRootPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val navigator: RootNavigator,
@@ -75,9 +72,10 @@ public class DefaultRootPresenter(
     private val updateUserProfileData: UpdateUserProfileData,
     private val logoutInteractor: LogoutInteractor,
     private val logger: Logger,
-    private val coroutineScope: CoroutineScope = componentContext.coroutineScope(),
     private val datastoreRepository: DatastoreRepository,
 ) : RootPresenter, ComponentContext by componentContext {
+
+    private val coroutineScope = coroutineScope()
 
     private val profileLoadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
@@ -144,7 +142,7 @@ public class DefaultRootPresenter(
         serializer = EpisodeSheetConfig.serializer(),
         handleBackButton = true,
     ) { config, childComponentContext ->
-        episodeDetailSheetPresenterFactory(
+        episodeDetailSheetPresenterFactory.create(
             componentContext = childComponentContext,
             episodeId = config.episodeId,
             source = config.source,
@@ -292,7 +290,7 @@ public class DefaultRootPresenter(
         when (config) {
             is RootDestinationConfig.Home ->
                 Child.Home(
-                    presenter = homePresenterFactory(
+                    presenter = homePresenterFactory.create(
                         componentContext = componentContext,
                         onShowClicked = { id ->
                             navigator.pushNew(
@@ -342,7 +340,7 @@ public class DefaultRootPresenter(
 
             is RootDestinationConfig.Search ->
                 Child.Search(
-                    presenter = searchPresenterFactory(
+                    presenter = searchPresenterFactory.create(
                         componentContext = componentContext,
                         onNavigateToShowDetails = { id ->
                             navigator.pushNew(
@@ -362,7 +360,7 @@ public class DefaultRootPresenter(
 
             is RootDestinationConfig.Settings ->
                 Child.Settings(
-                    presenter = settingsPresenterFactory(
+                    presenter = settingsPresenterFactory.create(
                         componentContext = componentContext,
                         backClicked = navigator::pop,
                         onNavigateToDebugMenu = { navigator.pushNew(RootDestinationConfig.Debug) },
@@ -371,7 +369,7 @@ public class DefaultRootPresenter(
 
             is RootDestinationConfig.Debug ->
                 Child.Debug(
-                    presenter = debugPresenterFactory(
+                    presenter = debugPresenterFactory.create(
                         componentContext = componentContext,
                         backClicked = navigator::pop,
                     ),
@@ -379,7 +377,7 @@ public class DefaultRootPresenter(
 
             is RootDestinationConfig.ShowDetails ->
                 Child.ShowDetails(
-                    presenter = showDetailsPresenterFactory(
+                    presenter = showDetailsPresenterFactory.create(
                         componentContext = componentContext,
                         param = config.param,
                         onBack = navigator::pop,
@@ -414,11 +412,11 @@ public class DefaultRootPresenter(
 
             is RootDestinationConfig.SeasonDetails ->
                 Child.SeasonDetails(
-                    presenter = seasonDetailsPresenterFactory(
+                    presenter = seasonDetailsPresenterFactory.create(
                         componentContext,
                         param = config.param,
                         onBack = navigator::pop,
-                        onNavigateToEpisodeDetails = { episodeId ->
+                        onEpisodeClick = { episodeId ->
                             showEpisodeSheet(episodeId, ScreenSource.SEASON_DETAILS)
                         },
                     ),
@@ -426,7 +424,7 @@ public class DefaultRootPresenter(
 
             is RootDestinationConfig.Trailers ->
                 Child.Trailers(
-                    presenter = trailersPresenterFactory(
+                    presenter = trailersPresenterFactory.create(
                         componentContext = componentContext,
                         traktShowId = config.id,
                     ),
@@ -434,9 +432,9 @@ public class DefaultRootPresenter(
 
             is RootDestinationConfig.MoreShows ->
                 Child.MoreShows(
-                    presenter = moreShowsPresenterFactory(
+                    presenter = moreShowsPresenterFactory.create(
                         componentContext = componentContext,
-                        id = config.id,
+                        categoryId = config.id,
                         onBack = navigator::pop,
                         onNavigateToShowDetails = { id ->
                             navigator.pushNew(
@@ -451,45 +449,8 @@ public class DefaultRootPresenter(
             is RootDestinationConfig.GenreShows -> Child.GenreShows
         }
 
-    @Inject
-    @SingleIn(ActivityScope::class)
-    @ContributesBinding(ActivityScope::class, RootPresenter.Factory::class)
-    public class Factory(
-        private val homePresenterFactory: HomePresenter.Factory,
-        private val searchPresenterFactory: SearchShowsPresenter.Factory,
-        private val settingsPresenterFactory: SettingsPresenter.Factory,
-        private val debugPresenterFactory: DebugPresenter.Factory,
-        private val moreShowsPresenterFactory: MoreShowsPresenter.Factory,
-        private val showDetailsPresenterFactory: ShowDetailsPresenter.Factory,
-        private val seasonDetailsPresenterFactory: SeasonDetailsPresenter.Factory,
-        private val trailersPresenterFactory: TrailersPresenter.Factory,
-        private val episodeDetailSheetPresenterFactory: EpisodeDetailSheetPresenter.Factory,
-        private val traktAuthRepository: TraktAuthRepository,
-        private val updateUserProfileData: UpdateUserProfileData,
-        private val logoutInteractor: LogoutInteractor,
-        private val logger: Logger,
-        private val datastoreRepository: DatastoreRepository,
-    ) : RootPresenter.Factory {
-        override fun invoke(
-            componentContext: ComponentContext,
-            navigator: RootNavigator,
-        ): RootPresenter = DefaultRootPresenter(
-            componentContext = componentContext,
-            navigator = navigator,
-            homePresenterFactory = homePresenterFactory,
-            searchPresenterFactory = searchPresenterFactory,
-            settingsPresenterFactory = settingsPresenterFactory,
-            debugPresenterFactory = debugPresenterFactory,
-            moreShowsPresenterFactory = moreShowsPresenterFactory,
-            showDetailsPresenterFactory = showDetailsPresenterFactory,
-            seasonDetailsPresenterFactory = seasonDetailsPresenterFactory,
-            trailersPresenterFactory = trailersPresenterFactory,
-            episodeDetailSheetPresenterFactory = episodeDetailSheetPresenterFactory,
-            traktAuthRepository = traktAuthRepository,
-            updateUserProfileData = updateUserProfileData,
-            logoutInteractor = logoutInteractor,
-            logger = logger,
-            datastoreRepository = datastoreRepository,
-        )
+    @AssistedFactory
+    public fun interface Factory {
+        public fun create(componentContext: ComponentContext, navigator: RootNavigator): DefaultRootPresenter
     }
 }

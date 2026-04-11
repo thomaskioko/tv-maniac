@@ -3,8 +3,8 @@ package com.thomaskioko.tvmaniac.domain.episode
 import com.thomaskioko.tvmaniac.core.base.interactor.SubjectInteractor
 import com.thomaskioko.tvmaniac.db.EpisodeById
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.Flow
-import me.tatarka.inject.annotations.Inject
 
 @Inject
 public class ObserveEpisodeByIdInteractor(

@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.domain.followedshows
 
 import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 
 @Inject
 public class UnfollowShowInteractor(

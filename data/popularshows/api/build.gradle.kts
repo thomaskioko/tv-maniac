@@ -2,6 +2,10 @@ plugins {
     alias(libs.plugins.app.kmp)
 }
 
+scaffold {
+    useMetro()
+}
+
 kotlin {
     sourceSets {
         commonMain {
@@ -14,8 +18,6 @@ kotlin {
 
                 api(libs.androidx.paging.common)
                 api(libs.coroutines.core)
-
-                implementation(libs.kotlinInject.runtime)
             }
         }
     }

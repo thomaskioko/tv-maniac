@@ -6,9 +6,9 @@ import com.thomaskioko.tvmaniac.domain.user.model.UserProfile
 import com.thomaskioko.tvmaniac.domain.user.model.UserStats
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import me.tatarka.inject.annotations.Inject
 import com.thomaskioko.tvmaniac.data.user.api.model.UserProfile as DataUserProfile
 
 @Inject

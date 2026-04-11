@@ -42,14 +42,6 @@ import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
-import com.thomaskioko.tvmaniac.presenter.showdetails.CreateListSubmitted
-import com.thomaskioko.tvmaniac.presenter.showdetails.DismissCreateListField
-import com.thomaskioko.tvmaniac.presenter.showdetails.DismissLoginPrompt
-import com.thomaskioko.tvmaniac.presenter.showdetails.DismissShowsListSheet
-import com.thomaskioko.tvmaniac.presenter.showdetails.ShowCreateListField
-import com.thomaskioko.tvmaniac.presenter.showdetails.ShowShowsListSheet
-import com.thomaskioko.tvmaniac.presenter.showdetails.ToggleShowInList
-import com.thomaskioko.tvmaniac.presenter.showdetails.UpdateCreateListName
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ProviderModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowModel
@@ -75,17 +67,12 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.toInstant
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
-
-private fun LocalDate.toEpochMillis(): Long =
-    atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
 
 class ShowDetailsPresenterTest {
 
@@ -852,7 +839,7 @@ class ShowDetailsPresenterTest {
         onNavigateToShow: (id: Long) -> Unit = {},
         onShowFollowed: () -> Unit = {},
     ): ShowDetailsPresenter {
-        return DefaultShowDetailsPresenter(
+        return ShowDetailsPresenter(
             param = param,
             componentContext = DefaultComponentContext(lifecycle = LifecycleRegistry()),
             onBack = onBack,

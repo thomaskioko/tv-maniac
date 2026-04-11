@@ -15,8 +15,8 @@ struct SearchTab: View {
     private var searchQueryBinding: Binding<String> {
         BindingFactories.searchQuery(
             get: { uiState.query },
-            onChanged: { presenter.dispatch(action___________: QueryChanged(query: $0)) },
-            onCleared: { presenter.dispatch(action___________: ClearQuery()) }
+            onChanged: { presenter.dispatch(action: QueryChanged(query: $0)) },
+            onCleared: { presenter.dispatch(action: ClearQuery()) }
         )
     }
 
@@ -33,12 +33,12 @@ struct SearchTab: View {
             selectedCategory: categoryLabels.first { $0.category == uiState.selectedCategory }?.label ?? "",
             categories: categoryLabels.map(\.label),
             categoryTitle: uiState.categoryTitle,
-            onShowClicked: { id in presenter.dispatch(action___________: SearchShowClicked(id: id)) },
-            onRetry: { presenter.dispatch(action___________: ReloadShowContent()) },
-            onBack: { presenter.dispatch(action___________: BackClicked_()) },
+            onShowClicked: { id in presenter.dispatch(action: SearchShowClicked(id: id)) },
+            onRetry: { presenter.dispatch(action: ReloadShowContent()) },
+            onBack: { presenter.dispatch(action: BackClicked_()) },
             onCategoryChanged: { label in
                 if let item = categoryLabels.first(where: { $0.label == label }) {
-                    presenter.dispatch(action___________: CategoryChanged(category: item.category))
+                    presenter.dispatch(action: CategoryChanged(category: item.category))
                 }
             }
         )

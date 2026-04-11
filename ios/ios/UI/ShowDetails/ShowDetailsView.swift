@@ -54,11 +54,11 @@ struct ShowDetailsView: View {
             episodesLeftFormat: { count in String(\.episodes_left, quantity: Int(count), Int(count)) },
             upToDateLabel: String(\.label_up_to_date),
             toast: $toast,
-            onBack: { presenter.dispatch(action________: DetailBackClicked()) },
-            onRefresh: { presenter.dispatch(action________: ReloadShowDetails()) },
-            onAddToCustomList: { presenter.dispatch(action________: ShowShowsListSheet()) },
+            onBack: { presenter.dispatch(action: DetailBackClicked()) },
+            onRefresh: { presenter.dispatch(action: ReloadShowDetails()) },
+            onAddToCustomList: { presenter.dispatch(action: ShowShowsListSheet()) },
             onAddToLibrary: {
-                presenter.dispatch(action________: FollowShowClicked(isInLibrary: uiState.showDetails.isInLibrary))
+                presenter.dispatch(action: FollowShowClicked(isInLibrary: uiState.showDetails.isInLibrary))
             },
             onSeasonClicked: { index, season in
                 let params = ShowSeasonDetailsParam(
@@ -67,19 +67,19 @@ struct ShowDetailsView: View {
                     seasonNumber: season.seasonNumber,
                     selectedSeasonIndex: Int32(index)
                 )
-                presenter.dispatch(action________: SeasonClicked(params: params))
+                presenter.dispatch(action: SeasonClicked(params: params))
             },
             onShowClicked: { id in
-                presenter.dispatch(action________: DetailShowClicked(id: id))
+                presenter.dispatch(action: DetailShowClicked(id: id))
             },
             onMarkEpisodeWatched: { episode in
                 if episode.isWatched {
-                    presenter.dispatch(action________: MarkEpisodeUnwatched(
+                    presenter.dispatch(action: MarkEpisodeUnwatched(
                         showTraktId: episode.showTraktId,
                         episodeId: episode.episodeId
                     ))
                 } else {
-                    presenter.dispatch(action________: MarkEpisodeWatched(
+                    presenter.dispatch(action: MarkEpisodeWatched(
                         showTraktId: episode.showTraktId,
                         episodeId: episode.episodeId,
                         seasonNumber: episode.seasonNumber,
@@ -91,7 +91,7 @@ struct ShowDetailsView: View {
         .onChange(of: uiState.message) { _, newValue in
             if let message = newValue {
                 toast = Toast(type: .error, title: "Error", message: message.message)
-                presenter.dispatch(action________: ShowDetailsMessageShown(id: message.id))
+                presenter.dispatch(action: ShowDetailsMessageShown(id: message.id))
             }
         }
         .onChange(of: uiState.showListSheet) { _, newValue in
@@ -99,7 +99,7 @@ struct ShowDetailsView: View {
         }
         .onChange(of: showCustomList) { _, newValue in
             if !newValue {
-                presenter.dispatch(action________: DismissShowsListSheet())
+                presenter.dispatch(action: DismissShowsListSheet())
             }
         }
         .onChange(of: uiState.showLoginPrompt) { _, newValue in
@@ -121,25 +121,25 @@ struct ShowDetailsView: View {
                 createListPlaceholder: uiState.createListPlaceholder,
                 listsHeaderText: uiState.listsHeaderText,
                 onToggle: { listId, isInList in
-                    presenter.dispatch(action________: ToggleShowInList(listId: listId, isCurrentlyInList: isInList))
+                    presenter.dispatch(action: ToggleShowInList(listId: listId, isCurrentlyInList: isInList))
                 },
                 onShowCreateField: {
-                    presenter.dispatch(action________: ShowCreateListField())
+                    presenter.dispatch(action: ShowCreateListField())
                 },
                 onDismissCreateField: {
-                    presenter.dispatch(action________: DismissCreateListField())
+                    presenter.dispatch(action: DismissCreateListField())
                 },
                 onCreateListNameChanged: { name in
-                    presenter.dispatch(action________: UpdateCreateListName(name: name))
+                    presenter.dispatch(action: UpdateCreateListName(name: name))
                 },
                 onCreateSubmitted: {
-                    presenter.dispatch(action________: CreateListSubmitted())
+                    presenter.dispatch(action: CreateListSubmitted())
                 }
             )
         }
         .alert(uiState.loginRequiredTitle, isPresented: $showLoginPrompt) {
             Button(uiState.loginRequiredConfirmText) {
-                presenter.dispatch(action________: LoginClicked())
+                presenter.dispatch(action: LoginClicked())
             }
         } message: {
             Text(uiState.loginRequiredMessage)
