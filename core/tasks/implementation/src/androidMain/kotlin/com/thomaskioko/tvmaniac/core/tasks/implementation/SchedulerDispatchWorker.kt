@@ -6,16 +6,21 @@ import androidx.work.WorkerParameters
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerFactory
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerResult
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.AssistedInject
 
-@Inject
-public class SchedulerDispatchWorker(
+public class SchedulerDispatchWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val workerFactory: WorkerFactory,
     private val logger: Logger,
 ) : CoroutineWorker(context, params) {
+
+    @AssistedFactory
+    public fun interface Factory {
+        public fun create(context: Context, params: WorkerParameters): SchedulerDispatchWorker
+    }
 
     override suspend fun doWork(): Result {
         val workerName = inputData.getString(KEY_WORKER_NAME)

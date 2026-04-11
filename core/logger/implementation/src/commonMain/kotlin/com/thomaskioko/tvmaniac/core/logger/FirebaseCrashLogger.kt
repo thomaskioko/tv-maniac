@@ -1,13 +1,12 @@
 package com.thomaskioko.tvmaniac.core.logger
 
-import me.tatarka.inject.annotations.Inject
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesIntoSet
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 
-@Inject
 @SingleIn(AppScope::class)
-@ContributesBinding(AppScope::class, multibinding = true)
+@ContributesIntoSet(AppScope::class)
 public class FirebaseCrashLogger(
     private val crashReporter: CrashReporter,
 ) : Logger {

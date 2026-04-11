@@ -10,10 +10,10 @@ import coil.memory.MemoryCache
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.imageloading.api.ImageQualityProvider
 import com.thomaskioko.tvmaniac.imageloading.implementation.interceptors.TmdbInterceptor
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import okhttp3.OkHttpClient
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
 @SingleIn(AppScope::class)
