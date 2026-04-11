@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.iosframework
 import com.thomaskioko.tvmaniac.core.base.AppInitializers
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
+import com.thomaskioko.tvmaniac.trakt.api.TraktConfig
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import dev.zacsweers.metro.AppScope
@@ -15,6 +16,7 @@ public interface IosApplicationGraph {
     public val viewPresenterGraphFactory: IosViewPresenterGraph.Factory
     public val traktAuthRepository: TraktAuthRepository
     public val traktAuthManager: TraktAuthManager
+    public val traktConfig: TraktConfig
     public val backgroundTaskScheduler: BackgroundTaskScheduler
     public val logger: Logger
 
