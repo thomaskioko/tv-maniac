@@ -12,7 +12,7 @@ scaffold {
 dependencies {
     api(projects.core.imageloading.api)
     api(projects.data.datastore.api)
-    api(projects.core.base)
+    implementation(projects.core.base)
 
     api(libs.coil.base)
     implementation(libs.androidx.compose.foundation)

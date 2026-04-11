@@ -10,6 +10,8 @@ scaffold {
 
 kotlin {
     sourceSets {
+        androidMain { dependencies { implementation(libs.ktor.okhttp) } }
+
         commonMain {
             dependencies {
                 implementation(projects.core.base)
@@ -29,5 +31,7 @@ kotlin {
         }
 
         commonTest { dependencies { implementation(libs.ktor.serialization) } }
+
+        iosMain { dependencies { implementation(libs.ktor.darwin) } }
     }
 }
