@@ -8,7 +8,7 @@ import android.content.Intent
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.thomaskioko.tvmaniac.core.base.di.ApplicationContext
+import com.thomaskioko.tvmaniac.core.base.ApplicationContext
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.notifications.api.EpisodeNotification
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationChannel

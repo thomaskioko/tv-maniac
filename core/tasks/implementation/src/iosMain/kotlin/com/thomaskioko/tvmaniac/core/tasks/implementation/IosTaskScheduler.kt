@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.core.tasks.implementation
 
-import com.thomaskioko.tvmaniac.core.base.di.IoCoroutineScope
+import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundWorker

@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.core.logger
 import co.touchlab.kermit.Severity
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoSet
-import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import co.touchlab.kermit.Logger as KermitLogger
 

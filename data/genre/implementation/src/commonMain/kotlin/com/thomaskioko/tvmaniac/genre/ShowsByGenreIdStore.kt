@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.genre
 
-import com.thomaskioko.tvmaniac.core.base.di.IoCoroutineScope
+import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.apiFetcher
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.storeBuilder

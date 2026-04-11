@@ -6,7 +6,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.thomaskioko.tvmaniac.core.base.di.ApplicationContext
+import com.thomaskioko.tvmaniac.core.base.ApplicationContext
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationChannel
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationIconProvider
 import dev.zacsweers.metro.AppScope

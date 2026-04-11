@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.imageloading.implementation
 
-import com.thomaskioko.tvmaniac.core.base.di.IoCoroutineScope
+import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.imageloading.api.ImageQualityProvider

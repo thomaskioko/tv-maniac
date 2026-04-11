@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.i18n
 
 import android.content.Context
 import android.content.res.Configuration
-import com.thomaskioko.tvmaniac.core.base.di.ApplicationContext
+import com.thomaskioko.tvmaniac.core.base.ApplicationContext
 import dev.icerock.moko.resources.desc.StringDesc
 import dev.zacsweers.metro.Inject
 import java.util.Locale

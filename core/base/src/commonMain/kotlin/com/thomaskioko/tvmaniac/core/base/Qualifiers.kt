@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.core.base.di
+package com.thomaskioko.tvmaniac.core.base
 
 import dev.zacsweers.metro.Qualifier
 import kotlin.annotation.AnnotationRetention.BINARY

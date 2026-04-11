@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.core.connectivity.implementation
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import com.thomaskioko.tvmaniac.core.base.di.ApplicationContext
+import com.thomaskioko.tvmaniac.core.base.ApplicationContext
 import com.thomaskioko.tvmaniac.core.connectivity.api.InternetConnectionChecker
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding

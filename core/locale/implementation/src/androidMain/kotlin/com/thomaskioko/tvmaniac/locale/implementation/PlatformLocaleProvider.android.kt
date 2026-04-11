@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.locale.implementation
 
 import android.content.Context
 import android.os.LocaleList
-import com.thomaskioko.tvmaniac.core.base.di.ApplicationContext
+import com.thomaskioko.tvmaniac.core.base.ApplicationContext
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
