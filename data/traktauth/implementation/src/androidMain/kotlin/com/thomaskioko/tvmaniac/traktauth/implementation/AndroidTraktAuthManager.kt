@@ -4,6 +4,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.lifecycle.lifecycleScope
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
+import com.thomaskioko.tvmaniac.core.base.di.IoCoroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.traktauth.api.AuthError
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
@@ -11,6 +12,7 @@ import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import net.openid.appauth.AuthorizationService
 import net.openid.appauth.ClientAuthentication
@@ -30,7 +32,7 @@ public class AndroidTraktAuthManager(
     private val clientAuth: Lazy<ClientAuthentication>,
     private val authService: Lazy<AuthorizationService>,
     private val logger: Logger,
-    private val coroutineScope: AppCoroutineScope,
+    @IoCoroutineScope private val coroutineScope: CoroutineScope,
 ) : TraktAuthManager {
 
     private lateinit var launcher: ActivityResultLauncher<Unit>
@@ -38,7 +40,7 @@ public class AndroidTraktAuthManager(
     override fun registerResult() {
         launcher = activity.registerForActivityResult(traktActivityResultContract) { result ->
             if (result != null) {
-                coroutineScope.io.launch {
+                coroutineScope.launch {
                     onLoginResult(result)
                 }
             }

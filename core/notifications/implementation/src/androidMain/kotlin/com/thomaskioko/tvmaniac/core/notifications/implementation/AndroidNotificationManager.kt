@@ -8,6 +8,7 @@ import android.content.Intent
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.thomaskioko.tvmaniac.core.base.di.ApplicationContext
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.notifications.api.EpisodeNotification
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationChannel
@@ -22,7 +23,7 @@ import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager as Ap
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class AndroidNotificationManager(
-    private val context: Context,
+    @ApplicationContext private val context: Context,
     private val notificationIconProvider: NotificationIconProvider,
     private val dateTimeProvider: DateTimeProvider,
     private val logger: Logger,

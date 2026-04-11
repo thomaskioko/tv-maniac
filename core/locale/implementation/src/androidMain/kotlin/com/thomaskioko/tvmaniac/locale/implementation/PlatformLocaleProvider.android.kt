@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.locale.implementation
 
 import android.content.Context
 import android.os.LocaleList
+import com.thomaskioko.tvmaniac.core.base.di.ApplicationContext
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -10,7 +11,7 @@ import java.util.Locale
 
 @Inject
 public actual class PlatformLocaleProvider(
-    private val context: Context,
+    @ApplicationContext private val context: Context,
 ) {
 
     private val locale = MutableSharedFlow<String>(replay = 1)

@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.core.tasks.implementation
 
+import com.thomaskioko.tvmaniac.core.base.di.IoCoroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundWorker
@@ -12,6 +13,7 @@ import dev.zacsweers.metro.SingleIn
 import kotlinx.atomicfu.atomic
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import platform.BackgroundTasks.BGAppRefreshTaskRequest
 import platform.BackgroundTasks.BGProcessingTaskRequest
@@ -24,7 +26,7 @@ import platform.Foundation.dateWithTimeIntervalSinceNow
 @ContributesBinding(AppScope::class)
 public class IosTaskScheduler(
     private val workerFactory: WorkerFactory,
-    private val appCoroutineScope: AppCoroutineScope,
+    @IoCoroutineScope private val appCoroutineScope: CoroutineScope,
     private val logger: Logger,
 ) : BackgroundTaskScheduler {
 
@@ -129,7 +131,7 @@ public class IosTaskScheduler(
         }
 
         logger.debug(TAG, "Starting immediate execution of [$taskId]")
-        appCoroutineScope.io.launch {
+        appCoroutineScope.launch {
             try {
                 worker.doWork()
                 logger.debug(TAG, "Immediate execution of [$taskId] completed")
@@ -175,7 +177,7 @@ public class IosTaskScheduler(
             completeTask(false)
         }
 
-        appCoroutineScope.io.launch {
+        appCoroutineScope.launch {
             try {
                 val result = worker.doWork()
                 val success = result is WorkerResult.Success

@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.thomaskioko.tvmaniac.core.base.di.IoCoroutineScope
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
@@ -13,6 +14,7 @@ import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -21,12 +23,12 @@ import kotlinx.coroutines.launch
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class DefaultDatastoreRepository(
-    private val coroutineScope: AppCoroutineScope,
+    @IoCoroutineScope private val coroutineScope: CoroutineScope,
     private val dataStore: DataStore<Preferences>,
 ) : DatastoreRepository {
 
     override fun saveTheme(appTheme: AppTheme) {
-        coroutineScope.io.launch {
+        coroutineScope.launch {
             dataStore.edit { preferences -> preferences[KEY_THEME] = appTheme.name }
         }
     }
