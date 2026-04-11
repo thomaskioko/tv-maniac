@@ -30,7 +30,7 @@ struct SettingsView: View {
             privacyToggles: privacyToggles,
             infoItems: infoItems,
             traktItems: traktItems,
-            onBack: { presenter.dispatch(action_____________: BackClicked__()) }
+            onBack: { presenter.dispatch(action: BackClicked__()) }
         )
         .settingsObservers(
             uiState: uiState,
@@ -41,8 +41,8 @@ struct SettingsView: View {
             uiState: uiState,
             showingErrorAlert: $showingErrorAlert,
             showingLogoutAlert: $showingLogoutAlert,
-            onLogout: { presenter.dispatch(action_____________: TraktLogoutClicked()) },
-            onDismissError: { id in presenter.dispatch(action_____________: SettingsMessageShown(id: id)) }
+            onLogout: { presenter.dispatch(action: TraktLogoutClicked()) },
+            onDismissError: { id in presenter.dispatch(action: SettingsMessageShown(id: id)) }
         )
         .alert(
             String(\.notification_permission_denied_title),
@@ -89,7 +89,7 @@ struct SettingsView: View {
             onThemeSelected: { selectedTheme in
                 store.appTheme = selectedTheme
                 let appTheme = selectedTheme.toAppTheme()
-                presenter.dispatch(action_____________: ThemeSelected(theme: appTheme.toThemeModel()))
+                presenter.dispatch(action: ThemeSelected(theme: appTheme.toThemeModel()))
             }
         )
     }
@@ -108,7 +108,7 @@ struct SettingsView: View {
                     label: imageQualityTitle(for: quality),
                     onSelect: {
                         let kmpQuality = TvManiac.ImageQuality.fromSwift(quality)
-                        presenter.dispatch(action_____________: ImageQualitySelected(quality: kmpQuality))
+                        presenter.dispatch(action: ImageQualitySelected(quality: kmpQuality))
                         store.imageQuality = quality
                     }
                 )
@@ -142,7 +142,7 @@ struct SettingsView: View {
             subtitle: String(\.label_settings_sync_update_description),
             secondarySubtitle: syncSubtitle,
             isOn: uiState.backgroundSyncEnabled,
-            onToggle: { presenter.dispatch(action_____________: BackgroundSyncToggled(enabled: $0)) }
+            onToggle: { presenter.dispatch(action: BackgroundSyncToggled(enabled: $0)) }
         ))
 
         toggles.append(SettingsToggleItem(
@@ -151,7 +151,7 @@ struct SettingsView: View {
             title: String(\.label_settings_include_specials),
             subtitle: String(\.label_settings_include_specials_description),
             isOn: uiState.includeSpecials,
-            onToggle: { presenter.dispatch(action_____________: IncludeSpecialsToggled(enabled: $0)) }
+            onToggle: { presenter.dispatch(action: IncludeSpecialsToggled(enabled: $0)) }
         ))
 
         toggles.append(SettingsToggleItem(
@@ -160,7 +160,7 @@ struct SettingsView: View {
             title: String(\.label_settings_youtube),
             subtitle: String(\.label_settings_youtube_description),
             isOn: uiState.openTrailersInYoutube,
-            onToggle: { presenter.dispatch(action_____________: YoutubeToggled(enabled: $0)) }
+            onToggle: { presenter.dispatch(action: YoutubeToggled(enabled: $0)) }
         ))
 
         return toggles
@@ -176,7 +176,7 @@ struct SettingsView: View {
                 title: String(\.label_settings_crash_reporting),
                 subtitle: String(\.label_settings_crash_reporting_description),
                 isOn: uiState.crashReportingEnabled,
-                onToggle: { presenter.dispatch(action_____________: CrashReportingToggled(enabled: $0)) }
+                onToggle: { presenter.dispatch(action: CrashReportingToggled(enabled: $0)) }
             ),
         ]
     }
@@ -220,7 +220,7 @@ struct SettingsView: View {
 
     private func handleNotificationToggle(enabled: Bool) {
         guard enabled else {
-            presenter.dispatch(action_____________: EpisodeNotificationsToggled(enabled: false))
+            presenter.dispatch(action: EpisodeNotificationsToggled(enabled: false))
             return
         }
 
@@ -230,7 +230,7 @@ struct SettingsView: View {
                 if settings.authorizationStatus == .denied {
                     showNotificationPermissionDeniedAlert = true
                 } else {
-                    presenter.dispatch(action_____________: EpisodeNotificationsToggled(enabled: true))
+                    presenter.dispatch(action: EpisodeNotificationsToggled(enabled: true))
                 }
             }
         }
@@ -256,7 +256,7 @@ struct SettingsView: View {
                         Text(String(\.settings_about_version, parameter: uiState.versionName))
                             .font(.body)
                             .contentShape(Rectangle())
-                            .onTapGesture { presenter.dispatch(action_____________: VersionClicked()) }
+                            .onTapGesture { presenter.dispatch(action: VersionClicked()) }
                     }
                     .padding(.vertical, 32)
 

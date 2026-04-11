@@ -29,17 +29,17 @@ struct MoreShowsView: View {
                 presenter.loadMore()
             },
             onAction: { id in
-                presenter.dispatch(action__: MoreShowClicked(traktId: id))
+                presenter.dispatch(action: MoreShowClicked(traktId: id))
             },
             onBack: {
-                presenter.dispatch(action__: MoreBackClicked())
+                presenter.dispatch(action: MoreBackClicked())
             },
             onRetry: {
-                presenter.dispatch(action__: RetryLoadMore())
+                presenter.dispatch(action: RetryLoadMore())
             }
         )
         .refreshable {
-            presenter.dispatch(action__: RefreshMoreShows())
+            presenter.dispatch(action: RefreshMoreShows())
         }
         .onChange(of: uiState.errorMessage) { _, message in
             if let message {
@@ -48,7 +48,7 @@ struct MoreShowsView: View {
         }
         .onChange(of: toast) { _, newValue in
             if newValue == nil, uiState.errorMessage != nil {
-                presenter.dispatch(action__: DismissErrorMessage())
+                presenter.dispatch(action: DismissErrorMessage())
             }
         }
     }

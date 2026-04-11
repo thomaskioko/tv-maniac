@@ -24,7 +24,7 @@ struct ProgressTab: View {
             upNextTabTitle: String(\.label_discover_up_next),
             calendarTabTitle: String(\.title_calendar),
             onPageChanged: { page in
-                presenter.dispatch(action______: ProgressActionSelectPage(index: Int32(page)))
+                presenter.dispatch(action: ProgressActionSelectPage(index: Int32(page)))
             },
             upNextContent: {
                 upNextContent
@@ -40,7 +40,7 @@ struct ProgressTab: View {
                     title: "Error",
                     message: message.message
                 )
-                presenter.upNextPresenter.dispatch(action_______: UpNextMessageShown(id: message.id))
+                presenter.upNextPresenter.dispatch(action: UpNextMessageShown(id: message.id))
             }
         }
         .toastView(toast: $toast)
@@ -64,13 +64,13 @@ struct ProgressTab: View {
                 String(format: calendarState.moreEpisodesFormat, count)
             },
             onPreviousWeek: {
-                presenter.calendarPresenter.dispatch(action___: NavigateToPreviousWeek())
+                presenter.calendarPresenter.dispatch(action: NavigateToPreviousWeek())
             },
             onNextWeek: {
-                presenter.calendarPresenter.dispatch(action___: NavigateToNextWeek())
+                presenter.calendarPresenter.dispatch(action: NavigateToNextWeek())
             },
             onEpisodeCardClicked: { episodeTraktId in
-                presenter.calendarPresenter.dispatch(action___: EpisodeCardClicked(episodeTraktId: episodeTraktId))
+                presenter.calendarPresenter.dispatch(action: EpisodeCardClicked(episodeTraktId: episodeTraktId))
             }
         )
     }
