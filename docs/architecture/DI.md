@@ -1,8 +1,26 @@
 # Dependency Injection
 
-The project uses compile-time dependency injection. This document covers the scope hierarchy and wiring principles that apply regardless of the specific DI framework or annotations in use.
+The project uses compile-time dependency injection. This document covers the scope hierarchy, naming conventions, and wiring principles that apply regardless of the specific DI framework or annotations in use.
 
-> **Note:** The project is migrating from kotlin-inject to Metro (kotlin-inject-anvil). The concepts below are stable across this migration — specific annotations may change.
+> The project uses [Metro](https://github.com/ZacSweers/metro) for compile-time dependency injection — a Kotlin compiler plugin with aggregation support.
+
+## Naming Conventions
+
+Metro distinguishes three DI concepts that used to collapse into a single `*Component` name under kotlin-inject / Dagger. This project maps them to explicit suffixes:
+
+| Metro annotation                    | Suffix              | Purpose                                                                                                                                                    | Example                                                                          |
+|-------------------------------------|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
+| `@DependencyGraph`                  | `*Graph`            | A root dependency graph — the object an app/activity/test creates to get its wired dependencies.                                                           | `ApplicationGraph`, `IosApplicationGraph`, `TestJvmGraph`                        |
+| `@GraphExtension`                   | `*Graph`            | A child graph scoped to a narrower lifetime that inherits bindings from a parent graph.                                                                    | `ActivityGraph`, `IosViewPresenterGraph`                                         |
+| `@ContributesTo` provider interface | `*BindingContainer` | An interface with `@Provides` methods contributed to a scope, used to supply bindings that can't be expressed via `@Inject` / `@ContributesBinding` alone. | `DatabaseBindingContainer`, `TmdbBindingContainer`, `NavigationBindingContainer` |
+
+**Why the split matters here:** Decompose (the navigation/presenter library this project uses) has its own `Component` and `ComponentContext` concept. Using `*Component` for DI classes as well would create constant ambiguity at every reference site. The Metro-aligned naming keeps the two domains disjoint: DI classes are always `*Graph` or `*BindingContainer`, and anything named `Component` (`ComponentContext`, `DefaultComponentContext`, the Swift `ComponentHolder<T>` helper) belongs to Decompose.
+
+When adding new DI code:
+- **New root graph?** Use `@DependencyGraph(SomeScope::class)` and name it `*Graph`.
+- **New child graph (e.g. a new screen-scoped surface)?** Use `@GraphExtension(SomeScope::class)` and name it `*Graph`.
+- **New provider interface for bindings Metro can't figure out on its own?** Use `@ContributesTo(SomeScope::class)` with `@Provides` methods, and name it `*BindingContainer`.
+- **Binding a new implementation to an interface?** Prefer `@ContributesBinding` on the implementation class itself — no new file needed.
 
 ## Scope Hierarchy
 

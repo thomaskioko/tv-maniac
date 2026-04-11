@@ -26,15 +26,6 @@
             ]
         },
         {
-            "groupName": "Kotlin, KSP and Skie",
-            "matchPackageNames": [
-                "/org.jetbrains.kotlin/",
-                "/com.google.devtools.ksp/",
-                "/co.touchlab.skie/",
-                "!/org.jetbrains.kotlinx/"
-            ]
-        },
-        {
             "groupName": "Compose",
             "matchPackageNames": [
                 "/androidx.compose.runtime/",
