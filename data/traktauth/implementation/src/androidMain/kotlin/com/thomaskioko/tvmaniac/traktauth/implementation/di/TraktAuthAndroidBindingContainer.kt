@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.traktauth.implementation.di
 import android.app.Application
 import androidx.core.net.toUri
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
-import com.thomaskioko.tvmaniac.util.api.BuildConfig
+import com.thomaskioko.tvmaniac.trakt.api.TraktConfig
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Provides
@@ -32,18 +32,19 @@ public object TraktAuthAndroidBindingContainer {
     @SingleIn(ActivityScope::class)
     public fun provideAuthRequest(
         configuration: AuthorizationServiceConfiguration,
+        traktConfig: TraktConfig,
     ): AuthorizationRequest = AuthorizationRequest.Builder(
         configuration,
-        BuildConfig.TRAKT_CLIENT_ID,
+        traktConfig.clientId,
         ResponseTypeValues.CODE,
-        BuildConfig.TRAKT_REDIRECT_URI.toUri(),
+        traktConfig.redirectUri.toUri(),
     )
         .apply { setCodeVerifier(null) }
         .build()
 
     @Provides
-    public fun provideClientAuth(): ClientAuthentication =
-        ClientSecretPost(BuildConfig.TRAKT_CLIENT_SECRET)
+    public fun provideClientAuth(traktConfig: TraktConfig): ClientAuthentication =
+        ClientSecretPost(traktConfig.clientSecret)
 
     @Provides
     @SingleIn(ActivityScope::class)

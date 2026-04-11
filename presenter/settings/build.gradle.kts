@@ -14,6 +14,7 @@ kotlin {
             dependencies {
                 api(projects.core.view)
 
+                implementation(projects.core.appconfig.api)
                 implementation(projects.core.base)
                 implementation(projects.core.logger.api)
                 implementation(projects.core.util.api)

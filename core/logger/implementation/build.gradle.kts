@@ -16,6 +16,7 @@ kotlin {
         }
 
         commonMain.dependencies {
+            implementation(projects.core.appconfig.api)
             implementation(projects.core.base)
             implementation(projects.core.util.api)
             implementation(projects.core.logger.api)
