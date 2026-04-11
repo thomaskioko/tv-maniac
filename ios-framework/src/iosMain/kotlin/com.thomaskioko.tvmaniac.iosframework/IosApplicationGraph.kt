@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.shared
+package com.thomaskioko.tvmaniac.iosframework
 
 import com.thomaskioko.tvmaniac.core.base.AppInitializers
 import com.thomaskioko.tvmaniac.core.logger.Logger

@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.shared
+package com.thomaskioko.tvmaniac.iosframework
 
 import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.ActivityScope

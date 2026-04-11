@@ -224,5 +224,5 @@ include(
     ":presenter:trailers",
     ":presenter:upnext",
     ":presenter:watchlist",
-    ":shared",
+    ":ios-framework",
 )
