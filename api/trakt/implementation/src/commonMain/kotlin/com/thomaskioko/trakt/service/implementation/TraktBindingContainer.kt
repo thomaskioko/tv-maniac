@@ -1,10 +1,11 @@
 package com.thomaskioko.trakt.service.implementation
 
+import com.thomaskioko.tvmaniac.appconfig.ApplicationInfo
 import com.thomaskioko.tvmaniac.core.base.TraktApi
 import com.thomaskioko.tvmaniac.core.connectivity.api.InternetConnectionChecker
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.trakt.api.TraktConfig
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.util.api.BuildConfig
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
@@ -29,12 +30,14 @@ public object TraktBindingContainer {
     @TraktApi
     public fun provideHttpClient(
         @TraktApi httpClientEngine: HttpClientEngine,
+        applicationInfo: ApplicationInfo,
+        traktConfig: TraktConfig,
         logger: Logger,
         traktAuthRepository: TraktAuthRepository,
         internetConnectionChecker: InternetConnectionChecker,
     ): HttpClient = traktHttpClient(
-        isDebug = BuildConfig.IS_DEBUG,
-        traktClientId = BuildConfig.TRAKT_CLIENT_ID,
+        isDebug = applicationInfo.debugBuild,
+        traktClientId = traktConfig.clientId,
         json = json,
         httpClientEngine = httpClientEngine,
         kermitLogger = logger,

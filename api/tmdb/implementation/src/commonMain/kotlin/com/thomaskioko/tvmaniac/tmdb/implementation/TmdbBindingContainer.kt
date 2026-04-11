@@ -1,9 +1,10 @@
 package com.thomaskioko.tvmaniac.tmdb.implementation
 
+import com.thomaskioko.tvmaniac.appconfig.ApplicationInfo
 import com.thomaskioko.tvmaniac.core.base.TmdbApi
 import com.thomaskioko.tvmaniac.core.connectivity.api.InternetConnectionChecker
 import com.thomaskioko.tvmaniac.core.logger.Logger
-import com.thomaskioko.tvmaniac.util.api.BuildConfig
+import com.thomaskioko.tvmaniac.tmdb.api.TmdbConfig
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
@@ -29,14 +30,16 @@ public object TmdbBindingContainer {
     @TmdbApi
     public fun provideTmdbHttpClient(
         @TmdbApi httpClientEngine: HttpClientEngine,
+        applicationInfo: ApplicationInfo,
+        tmdbConfig: TmdbConfig,
         logger: Logger,
         internetConnectionChecker: InternetConnectionChecker,
     ): HttpClient = tmdbHttpClient(
-        tmdbApiKey = BuildConfig.TMDB_API_KEY,
+        tmdbApiKey = tmdbConfig.apiKey,
         json = json,
         httpClientEngine = httpClientEngine,
         kermitLogger = logger,
-        isDebug = BuildConfig.IS_DEBUG,
+        isDebug = applicationInfo.debugBuild,
         internetConnectionChecker = internetConnectionChecker,
     )
 }
