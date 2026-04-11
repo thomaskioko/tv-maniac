@@ -11,7 +11,7 @@ struct iOSApp: App {
     @Environment(\.scenePhase)
     var scenePhase: ScenePhase
 
-    @State private var componentHolder: ComponentHolder<IosViewPresenterComponent>?
+    @State private var componentHolder: ComponentHolder<IosViewPresenterGraph>?
     @State private var authCoordinator: TraktAuthCoordinator?
     @State private var toastManager = ToastManager()
 
@@ -51,7 +51,7 @@ struct iOSApp: App {
             } else {
                 Color.clear.onAppear {
                     componentHolder = ComponentHolder { context in
-                        appDelegate.appComponent.componentFactory.createComponent(
+                        appDelegate.appGraph.viewPresenterGraphFactory.createGraph(
                             componentContext: context
                         )
                     }
