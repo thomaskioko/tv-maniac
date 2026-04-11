@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.util.api
+package com.thomaskioko.tvmaniac.appconfig
 
 public data class ApplicationInfo(
     val versionName: String,

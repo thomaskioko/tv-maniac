@@ -1,12 +1,9 @@
-package com.thomaskioko.tvmaniac.util
+package com.thomaskioko.tvmaniac.appconfig
 
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import com.thomaskioko.tvmaniac.core.base.ApplicationContext
-import com.thomaskioko.tvmaniac.util.api.ApplicationInfo
-import com.thomaskioko.tvmaniac.util.api.BuildConfig
-import com.thomaskioko.tvmaniac.util.api.Platform
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
@@ -14,7 +11,7 @@ import dev.zacsweers.metro.Provides
 
 @BindingContainer
 @ContributesTo(AppScope::class)
-public object AndroidUtilBindingContainer {
+public object AndroidAppConfigBindingContainer {
 
     @Provides
     public fun provideApplicationInfo(@ApplicationContext context: Context): ApplicationInfo {
