@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.domain.library
 
+import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
@@ -18,24 +19,24 @@ import kotlinx.coroutines.withContext
 @Inject
 public class SyncTasksInitializer(
     private val scheduler: BackgroundTaskScheduler,
+    private val logger: Logger,
+    @IoCoroutineScope private val coroutineScope: CoroutineScope,
     syncLibraryInteractor: Lazy<SyncLibraryInteractor>,
     datastoreRepo: Lazy<DatastoreRepository>,
     traktAuthRepo: Lazy<TraktAuthRepository>,
-    private val coroutineScope: CoroutineScope,
-    private val logger: Logger,
-) : AppInitializer {
+) {
 
     private val syncInteractor by syncLibraryInteractor
     private val datastoreRepository by datastoreRepo
     private val traktAuthRepository by traktAuthRepo
 
-    override fun init() {
+    public fun init() {
         observeDataSync()
         observeLibrarySync()
     }
 
     private fun observeDataSync() {
-        coroutineScope.io.launch {
+        coroutineScope.launch {
             traktAuthRepository.state
                 .distinctUntilChanged()
                 .drop(1)
@@ -50,7 +51,7 @@ public class SyncTasksInitializer(
     }
 
     private fun observeLibrarySync() {
-        coroutineScope.io.launch {
+        coroutineScope.launch {
             combine(
                 traktAuthRepository.state,
                 datastoreRepository.observeBackgroundSyncEnabled(),

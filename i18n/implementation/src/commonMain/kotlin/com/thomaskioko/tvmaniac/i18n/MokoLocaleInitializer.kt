@@ -14,10 +14,10 @@ public class MokoLocaleInitializer(
     private val localeProvider: LocaleProvider,
     private val dispatchers: AppCoroutineDispatchers,
     private val applicationScope: CoroutineScope,
-) : AppInitializer {
+) {
     private var localeJob: Job? = null
 
-    override fun init() {
+    public fun init() {
         localeJob = applicationScope.launch(dispatchers.main) {
             localeProvider.currentLocale
                 .distinctUntilChanged()
