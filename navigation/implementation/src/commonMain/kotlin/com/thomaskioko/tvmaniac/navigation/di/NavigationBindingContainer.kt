@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.navigation.di
 
 import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
+import com.thomaskioko.tvmaniac.core.base.ShowFollowedNotifier
 import com.thomaskioko.tvmaniac.navigation.DefaultRootPresenter
 import com.thomaskioko.tvmaniac.navigation.RootNavigator
 import com.thomaskioko.tvmaniac.navigation.RootPresenter
@@ -21,4 +22,10 @@ public object NavigationBindingContainer {
         factory: DefaultRootPresenter.Factory,
         navigator: RootNavigator,
     ): RootPresenter = factory.create(componentContext, navigator)
+
+    @Provides
+    @SingleIn(ActivityScope::class)
+    public fun provideShowFollowedNotifier(
+        rootPresenter: RootPresenter,
+    ): ShowFollowedNotifier = rootPresenter
 }

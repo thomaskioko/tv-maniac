@@ -40,9 +40,7 @@ import kotlinx.coroutines.launch
 @AssistedInject
 public class SearchShowsPresenter(
     @Assisted componentContext: ComponentContext,
-    @Assisted private val onNavigateToShowDetails: (Long) -> Unit,
-    @Assisted private val onNavigateToGenre: (Long) -> Unit,
-    @Assisted private val onNavigateBack: () -> Unit,
+    private val navigator: SearchNavigator,
     private val mapper: Mapper,
     private val searchRepository: SearchRepository,
     private val genreRepository: GenreRepository,
@@ -64,6 +62,11 @@ public class SearchShowsPresenter(
 
     public fun dispatch(action: SearchShowAction) {
         presenterInstance.dispatch(action)
+    }
+
+    @AssistedFactory
+    public interface Factory {
+        public fun create(componentContext: ComponentContext): SearchShowsPresenter
     }
 
     internal inner class PresenterInstance : InstanceKeeper.Instance {
@@ -112,7 +115,7 @@ public class SearchShowsPresenter(
 
         fun dispatch(action: SearchShowAction) {
             when (action) {
-                BackClicked -> onNavigateBack()
+                BackClicked -> navigator.goBack()
 
                 is MessageShown -> {
                     coroutineScope.launch { uiMessageManager.clearMessage(action.id) }
@@ -134,7 +137,7 @@ public class SearchShowsPresenter(
                 }
 
                 is QueryChanged -> handleQueryChange(action.query)
-                is SearchShowClicked -> onNavigateToShowDetails(action.id)
+                is SearchShowClicked -> navigator.showDetails(action.id)
             }
         }
 
@@ -190,15 +193,5 @@ public class SearchShowsPresenter(
         private fun handleSearchResults(shows: List<ShowEntity>) {
             _state.update { it.copy(isUpdating = false, searchResults = mapper.toShowList(shows)) }
         }
-    }
-
-    @AssistedFactory
-    public fun interface Factory {
-        public fun create(
-            componentContext: ComponentContext,
-            onNavigateToShowDetails: (Long) -> Unit,
-            onNavigateToGenre: (Long) -> Unit,
-            onNavigateBack: () -> Unit,
-        ): SearchShowsPresenter
     }
 }

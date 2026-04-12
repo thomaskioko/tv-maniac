@@ -60,15 +60,6 @@ internal class TestJvmGraphTest {
         val componentContext = DefaultComponentContext(lifecycle = lifecycle)
         val presenter = component.homePresenterFactory.create(
             componentContext = componentContext,
-            onShowClicked = {},
-            onMoreShowClicked = {},
-            onShowGenreClicked = {},
-            onNavigateToSearch = {},
-            onSettingsClicked = {},
-            onSeasonClicked = { _, _, _ -> },
-            onDiscoverEpisodeLongPressed = {},
-            onUpNextEpisodeLongPressed = {},
-            onCalendarEpisodeLongPressed = {},
         )
 
         presenter.shouldBeInstanceOf<HomePresenter>()

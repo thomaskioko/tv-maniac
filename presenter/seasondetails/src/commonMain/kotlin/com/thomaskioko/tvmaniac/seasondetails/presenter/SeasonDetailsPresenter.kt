@@ -43,8 +43,7 @@ import kotlinx.coroutines.launch
 public class SeasonDetailsPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val param: SeasonDetailsUiParam,
-    @Assisted private val onBack: () -> Unit,
-    @Assisted private val onEpisodeClick: (id: Long) -> Unit,
+    private val navigator: SeasonDetailsNavigator,
     observableSeasonDetailsInteractor: ObservableSeasonDetailsInteractor,
     private val seasonDetailsInteractor: SeasonDetailsInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
@@ -131,8 +130,8 @@ public class SeasonDetailsPresenter(
     public fun dispatch(action: SeasonDetailsAction) {
         coroutineScope.launch {
             when (action) {
-                is EpisodeClicked -> onEpisodeClick(action.id)
-                SeasonDetailsBackClicked -> onBack()
+                is EpisodeClicked -> navigator.showEpisodeSheet(action.id)
+                SeasonDetailsBackClicked -> navigator.goBack()
                 ReloadSeasonDetails -> observeSeasonDetails()
                 OnEpisodeHeaderClicked -> updateState { copy(expandEpisodeItems = !expandEpisodeItems) }
                 ShowGallery -> updateState { copy(dialogState = SeasonDialogState.Gallery) }
@@ -305,11 +304,6 @@ public class SeasonDetailsPresenter(
 
     @AssistedFactory
     public fun interface Factory {
-        public fun create(
-            componentContext: ComponentContext,
-            param: SeasonDetailsUiParam,
-            onBack: () -> Unit,
-            onEpisodeClick: (id: Long) -> Unit,
-        ): SeasonDetailsPresenter
+        public fun create(componentContext: ComponentContext, param: SeasonDetailsUiParam): SeasonDetailsPresenter
     }
 }

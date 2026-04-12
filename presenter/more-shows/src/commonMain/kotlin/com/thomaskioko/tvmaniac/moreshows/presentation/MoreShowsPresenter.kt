@@ -36,8 +36,7 @@ import kotlinx.coroutines.launch
 public class MoreShowsPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val categoryId: Long,
-    @Assisted private val onBack: () -> Unit,
-    @Assisted private val onNavigateToShowDetails: (Long) -> Unit,
+    private val navigator: MoreShowsNavigator,
     private val popularShowsRepository: PopularShowsRepository,
     private val upcomingShowsRepository: UpcomingShowsRepository,
     private val trendingShowsRepository: TrendingShowsRepository,
@@ -69,8 +68,8 @@ public class MoreShowsPresenter(
 
     public fun dispatch(action: MoreShowsActions) {
         when (action) {
-            is MoreShowClicked -> onNavigateToShowDetails(action.traktId)
-            MoreBackClicked -> onBack()
+            is MoreShowClicked -> navigator.showDetails(action.traktId)
+            MoreBackClicked -> navigator.goBack()
             RefreshMoreShows -> {
                 when (categoryId) {
                     UPCOMING.id -> getUpcomingPagedList(forceRefresh = true)
@@ -198,11 +197,6 @@ public class MoreShowsPresenter(
 
     @AssistedFactory
     public fun interface Factory {
-        public fun create(
-            componentContext: ComponentContext,
-            categoryId: Long,
-            onBack: () -> Unit,
-            onNavigateToShowDetails: (Long) -> Unit,
-        ): MoreShowsPresenter
+        public fun create(componentContext: ComponentContext, categoryId: Long): MoreShowsPresenter
     }
 }

@@ -36,6 +36,21 @@ import com.thomaskioko.tvmaniac.locale.testing.FakeLocaleProvider
 import com.thomaskioko.tvmaniac.navigation.DefaultRootPresenter
 import com.thomaskioko.tvmaniac.navigation.RootNavigator
 import com.thomaskioko.tvmaniac.navigation.RootPresenter
+import com.thomaskioko.tvmaniac.navigation.controllers.DefaultEpisodeSheetController
+import com.thomaskioko.tvmaniac.navigation.controllers.DefaultHomeTabController
+import com.thomaskioko.tvmaniac.navigation.navigators.DefaultCalendarNavigator
+import com.thomaskioko.tvmaniac.navigation.navigators.DefaultDebugNavigator
+import com.thomaskioko.tvmaniac.navigation.navigators.DefaultDiscoverNavigator
+import com.thomaskioko.tvmaniac.navigation.navigators.DefaultEpisodeDetailNavigator
+import com.thomaskioko.tvmaniac.navigation.navigators.DefaultLibraryNavigator
+import com.thomaskioko.tvmaniac.navigation.navigators.DefaultMoreShowsNavigator
+import com.thomaskioko.tvmaniac.navigation.navigators.DefaultProfileNavigator
+import com.thomaskioko.tvmaniac.navigation.navigators.DefaultSearchNavigator
+import com.thomaskioko.tvmaniac.navigation.navigators.DefaultSeasonDetailsNavigator
+import com.thomaskioko.tvmaniac.navigation.navigators.DefaultSettingsNavigator
+import com.thomaskioko.tvmaniac.navigation.navigators.DefaultShowDetailsNavigator
+import com.thomaskioko.tvmaniac.navigation.navigators.DefaultUpNextNavigator
+import com.thomaskioko.tvmaniac.navigation.navigators.DefaultWatchlistNavigator
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.implementation.DefaultRequestManagerRepository
@@ -96,6 +111,21 @@ import kotlinx.coroutines.flow.flowOf
         LibrarySyncWorker::class,
         TokenRefreshWorker::class,
         UpNextSyncWorker::class,
+        DefaultEpisodeSheetController::class,
+        DefaultSearchNavigator::class,
+        DefaultDebugNavigator::class,
+        DefaultSettingsNavigator::class,
+        DefaultMoreShowsNavigator::class,
+        DefaultShowDetailsNavigator::class,
+        DefaultSeasonDetailsNavigator::class,
+        DefaultEpisodeDetailNavigator::class,
+        DefaultLibraryNavigator::class,
+        DefaultProfileNavigator::class,
+        DefaultDiscoverNavigator::class,
+        DefaultUpNextNavigator::class,
+        DefaultCalendarNavigator::class,
+        DefaultHomeTabController::class,
+        DefaultWatchlistNavigator::class,
     ],
 )
 public object FakeAppBindings {
@@ -227,6 +257,139 @@ public object FakeAppBindings {
     @Provides
     public fun provideFormatterUtil(): FormatterUtil =
         FakeFormatterUtil()
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideShowFollowedNotifier(): com.thomaskioko.tvmaniac.core.base.ShowFollowedNotifier =
+        object : com.thomaskioko.tvmaniac.core.base.ShowFollowedNotifier {
+            override fun onShowFollowed() {}
+        }
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideEpisodeSheetController(): com.thomaskioko.tvmaniac.navigation.EpisodeSheetController =
+        object : com.thomaskioko.tvmaniac.navigation.EpisodeSheetController {
+            override fun showEpisodeSheet(episodeId: Long, source: com.thomaskioko.tvmaniac.presentation.episodedetail.ScreenSource) {}
+            override fun dismissEpisodeSheet() {}
+            override fun getSlotNavigation(): com.arkivanov.decompose.router.slot.SlotNavigation<com.thomaskioko.tvmaniac.navigation.EpisodeSheetConfig> =
+                com.arkivanov.decompose.router.slot.SlotNavigation()
+        }
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideSearchNavigator(): com.thomaskioko.tvmaniac.search.presenter.SearchNavigator =
+        object : com.thomaskioko.tvmaniac.search.presenter.SearchNavigator {
+            override fun showDetails(traktId: Long) {}
+            override fun showGenre(genreId: Long) {}
+            override fun goBack() {}
+        }
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideDebugNavigator(): com.thomaskioko.tvmaniac.debug.presenter.DebugNavigator =
+        object : com.thomaskioko.tvmaniac.debug.presenter.DebugNavigator {
+            override fun goBack() {}
+        }
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideSettingsNavigator(): com.thomaskioko.tvmaniac.settings.presenter.SettingsNavigator =
+        object : com.thomaskioko.tvmaniac.settings.presenter.SettingsNavigator {
+            override fun goBack() {}
+            override fun showDebugMenu() {}
+        }
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideMoreShowsNavigator(): com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsNavigator =
+        object : com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsNavigator {
+            override fun goBack() {}
+            override fun showDetails(traktId: Long) {}
+        }
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideShowDetailsNavigator(): com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsNavigator =
+        object : com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsNavigator {
+            override fun goBack() {}
+            override fun showDetails(traktId: Long) {}
+            override fun showSeasonDetails(param: com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowSeasonDetailsParam) {}
+            override fun showTrailers(traktShowId: Long) {}
+        }
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideSeasonDetailsNavigator(): com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsNavigator =
+        object : com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsNavigator {
+            override fun goBack() {}
+            override fun showEpisodeSheet(episodeId: Long) {}
+        }
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideEpisodeDetailNavigator(): com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeDetailNavigator =
+        object : com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeDetailNavigator {
+            override fun showDetails(showTraktId: Long) {}
+            override fun showSeasonDetails(showTraktId: Long, seasonId: Long, seasonNumber: Long) {}
+            override fun dismiss() {}
+        }
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideLibraryNavigator(): com.thomaskioko.tvmaniac.presentation.library.LibraryNavigator =
+        object : com.thomaskioko.tvmaniac.presentation.library.LibraryNavigator {
+            override fun showDetails(traktId: Long) {}
+        }
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideProfileNavigator(): com.thomaskioko.tvmaniac.profile.presenter.ProfileNavigator =
+        object : com.thomaskioko.tvmaniac.profile.presenter.ProfileNavigator {
+            override fun showSettings() {}
+        }
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideDiscoverNavigator(): com.thomaskioko.tvmaniac.discover.presenter.DiscoverNavigator =
+        object : com.thomaskioko.tvmaniac.discover.presenter.DiscoverNavigator {
+            override fun showDetails(traktId: Long) {}
+            override fun showMoreShows(categoryId: Long) {}
+            override fun showSearch() {}
+            override fun showUpNext() {}
+            override fun showEpisodeSheet(showTraktId: Long, episodeId: Long) {}
+            override fun showSeason(showTraktId: Long, seasonId: Long, seasonNumber: Long) {}
+        }
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideUpNextNavigator(): com.thomaskioko.tvmaniac.presentation.upnext.UpNextNavigator =
+        object : com.thomaskioko.tvmaniac.presentation.upnext.UpNextNavigator {
+            override fun showDetails(traktId: Long) {}
+            override fun showSeasonDetails(showTraktId: Long, seasonId: Long, seasonNumber: Long) {}
+            override fun showEpisodeSheet(episodeId: Long) {}
+        }
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideCalendarNavigator(): com.thomaskioko.tvmaniac.presentation.calendar.CalendarNavigator =
+        object : com.thomaskioko.tvmaniac.presentation.calendar.CalendarNavigator {
+            override fun showEpisodeSheet(episodeId: Long) {}
+        }
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideHomeTabController(): com.thomaskioko.tvmaniac.presenter.home.HomeTabController =
+        object : com.thomaskioko.tvmaniac.presenter.home.HomeTabController {
+            override fun switchToProgressTab() {}
+        }
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideWatchlistNavigator(): com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistNavigator =
+        object : com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistNavigator {
+            override fun showDetails(traktId: Long) {}
+            override fun showSeasonDetails(showTraktId: Long, seasonId: Long, seasonNumber: Long) {}
+        }
 
     @Provides
     public fun provideRootPresenterFactory(

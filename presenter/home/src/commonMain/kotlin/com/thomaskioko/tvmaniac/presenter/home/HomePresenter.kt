@@ -30,15 +30,7 @@ public data class ProfileAvatar(val url: String? = null)
 @AssistedInject
 public class HomePresenter(
     @Assisted componentContext: ComponentContext,
-    @Assisted private val onShowClicked: (id: Long) -> Unit,
-    @Assisted private val onMoreShowClicked: (id: Long) -> Unit,
-    @Assisted private val onShowGenreClicked: (id: Long) -> Unit,
-    @Assisted private val onNavigateToSearch: () -> Unit,
-    @Assisted private val onSettingsClicked: () -> Unit,
-    @Assisted private val onSeasonClicked: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
-    @Assisted private val onDiscoverEpisodeLongPressed: (Long) -> Unit,
-    @Assisted private val onUpNextEpisodeLongPressed: (Long) -> Unit,
-    @Assisted private val onCalendarEpisodeLongPressed: (Long) -> Unit,
+    private val homeTabController: HomeTabController,
     private val discoverPresenterFactory: DiscoverShowsPresenter.Factory,
     private val progressPresenterFactory: ProgressPresenter.Factory,
     private val libraryPresenterFactory: LibraryPresenter.Factory,
@@ -124,51 +116,10 @@ public class HomePresenter(
 
     private fun child(config: HomeConfig, componentContext: ComponentContext): Child =
         when (config) {
-            is HomeConfig.Discover -> {
-                Child.Discover(
-                    presenter = discoverPresenterFactory.create(
-                        componentContext = componentContext,
-                        onNavigateToShowDetails = { id -> onShowClicked(id) },
-                        onNavigateToMore = { id -> onMoreShowClicked(id) },
-                        onNavigateToEpisode = { _, episodeId -> onDiscoverEpisodeLongPressed(episodeId) },
-                        onNavigateToSeason = { _, _, _ -> },
-                        onNavigateToUpNext = { onProgressClicked() },
-                        onNavigateToSearch = onNavigateToSearch,
-                    ),
-                )
-            }
-
-            HomeConfig.Progress -> {
-                Child.Progress(
-                    presenter = progressPresenterFactory.create(
-                        componentContext = componentContext,
-                        navigateToShowDetails = { id -> onShowClicked(id) },
-                        navigateToSeasonDetails = onSeasonClicked,
-                        onUpNextEpisodeLongPressed = onUpNextEpisodeLongPressed,
-                        onCalendarEpisodeLongPressed = onCalendarEpisodeLongPressed,
-                    ),
-                )
-            }
-
-            HomeConfig.Library -> {
-                Child.Library(
-                    presenter = libraryPresenterFactory.create(
-                        componentContext = componentContext,
-                        navigateToShowDetails = { id ->
-                            onShowClicked(id)
-                        },
-                    ),
-                )
-            }
-
-            HomeConfig.Profile -> {
-                Child.Profile(
-                    presenter = profilePresenterFactory.create(
-                        componentContext = componentContext,
-                        onSettings = onSettingsClicked,
-                    ),
-                )
-            }
+            is HomeConfig.Discover -> Child.Discover(discoverPresenterFactory.create(componentContext))
+            HomeConfig.Progress -> Child.Progress(progressPresenterFactory.create(componentContext))
+            HomeConfig.Library -> Child.Library(libraryPresenterFactory.create(componentContext))
+            HomeConfig.Profile -> Child.Profile(profilePresenterFactory.create(componentContext))
         }
 
     public sealed interface Child {
@@ -197,18 +148,7 @@ public class HomePresenter(
     }
 
     @AssistedFactory
-    public fun interface Factory {
-        public fun create(
-            componentContext: ComponentContext,
-            onShowClicked: (id: Long) -> Unit,
-            onMoreShowClicked: (id: Long) -> Unit,
-            onShowGenreClicked: (id: Long) -> Unit,
-            onNavigateToSearch: () -> Unit,
-            onSettingsClicked: () -> Unit,
-            onSeasonClicked: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
-            onDiscoverEpisodeLongPressed: (Long) -> Unit,
-            onUpNextEpisodeLongPressed: (Long) -> Unit,
-            onCalendarEpisodeLongPressed: (Long) -> Unit,
-        ): HomePresenter
+    public interface Factory {
+        public fun create(componentContext: ComponentContext): HomePresenter
     }
 }

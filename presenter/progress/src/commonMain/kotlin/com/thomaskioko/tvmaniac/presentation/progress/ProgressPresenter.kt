@@ -18,10 +18,6 @@ import kotlinx.coroutines.flow.update
 @AssistedInject
 public class ProgressPresenter(
     @Assisted componentContext: ComponentContext,
-    @Assisted private val navigateToShowDetails: (showId: Long) -> Unit,
-    @Assisted private val navigateToSeasonDetails: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
-    @Assisted private val onUpNextEpisodeLongPressed: (Long) -> Unit,
-    @Assisted private val onCalendarEpisodeLongPressed: (Long) -> Unit,
     upNextPresenterFactory: UpNextPresenter.Factory,
     calendarPresenterFactory: CalendarPresenter.Factory,
 ) : ComponentContext by componentContext {
@@ -35,15 +31,10 @@ public class ProgressPresenter(
 
     public val upNextPresenter: UpNextPresenter = upNextPresenterFactory.create(
         componentContext = childContext(key = "UpNext"),
-        navigateToShowDetails = navigateToShowDetails,
-        navigateToSeasonDetails = navigateToSeasonDetails,
-        onEpisodeLongPressed = onUpNextEpisodeLongPressed,
     )
 
     public val calendarPresenter: CalendarPresenter = calendarPresenterFactory.create(
         componentContext = childContext(key = "Calendar"),
-        navigateToShowDetails = navigateToShowDetails,
-        onEpisodeLongPressed = onCalendarEpisodeLongPressed,
     )
 
     public fun dispatch(action: ProgressAction) {
@@ -56,12 +47,6 @@ public class ProgressPresenter(
 
     @AssistedFactory
     public fun interface Factory {
-        public fun create(
-            componentContext: ComponentContext,
-            navigateToShowDetails: (showId: Long) -> Unit,
-            navigateToSeasonDetails: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
-            onUpNextEpisodeLongPressed: (Long) -> Unit,
-            onCalendarEpisodeLongPressed: (Long) -> Unit,
-        ): ProgressPresenter
+        public fun create(componentContext: ComponentContext): ProgressPresenter
     }
 }

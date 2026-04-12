@@ -43,8 +43,6 @@ class WatchlistPresenterTest {
         lifecycle.resume()
         presenter = factory.create(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
-            navigateToShowDetails = { },
-            navigateToSeason = { _, _, _ -> },
         )
     }
 

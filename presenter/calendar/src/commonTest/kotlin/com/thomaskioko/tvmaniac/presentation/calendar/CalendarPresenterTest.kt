@@ -12,6 +12,7 @@ import com.thomaskioko.tvmaniac.domain.calendar.CalendarEpisodeFormatter
 import com.thomaskioko.tvmaniac.domain.calendar.CalendarWeekCalculator
 import com.thomaskioko.tvmaniac.domain.calendar.FetchCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.calendar.ObserveCalendarInteractor
+import com.thomaskioko.tvmaniac.presentation.calendar.CalendarNavigator
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
@@ -389,7 +390,6 @@ internal class CalendarPresenterTest {
     }
 
     private fun createPresenter(
-        navigateToShowDetails: (Long) -> Unit = {},
         onEpisodeLongPressed: (Long) -> Unit = {},
     ): CalendarPresenter {
         val dispatchers = AppCoroutineDispatchers(
@@ -427,8 +427,11 @@ internal class CalendarPresenterTest {
 
         return CalendarPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
-            navigateToShowDetails = navigateToShowDetails,
-            onEpisodeLongPressed = onEpisodeLongPressed,
+            navigator = object : CalendarNavigator {
+                override fun showEpisodeSheet(episodeId: Long) {
+                    onEpisodeLongPressed(episodeId)
+                }
+            },
             observeCalendarInteractor = observeCalendarInteractor,
             fetchCalendarInteractor = fetchCalendarInteractor,
             traktAuthRepository = traktAuthRepository,

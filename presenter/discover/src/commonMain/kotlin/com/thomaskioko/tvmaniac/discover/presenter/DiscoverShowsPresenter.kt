@@ -45,12 +45,7 @@ import kotlinx.coroutines.launch
 @AssistedInject
 public class DiscoverShowsPresenter(
     @Assisted componentContext: ComponentContext,
-    @Assisted private val onNavigateToShowDetails: (Long) -> Unit,
-    @Assisted private val onNavigateToMore: (Long) -> Unit,
-    @Assisted private val onNavigateToEpisode: (showTraktId: Long, episodeId: Long) -> Unit,
-    @Assisted private val onNavigateToSeason: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
-    @Assisted private val onNavigateToUpNext: () -> Unit,
-    @Assisted private val onNavigateToSearch: () -> Unit,
+    private val navigator: DiscoverNavigator,
     private val discoverShowsInteractor: DiscoverShowsInteractor,
     private val followedShowsRepository: FollowedShowsRepository,
     private val unfollowShowInteractor: UnfollowShowInteractor,
@@ -153,12 +148,12 @@ public class DiscoverShowsPresenter(
 
         public fun dispatch(action: DiscoverShowAction) {
             when (action) {
-                is ShowClicked -> onNavigateToShowDetails(action.traktId)
-                PopularClicked -> onNavigateToMore(Category.POPULAR.id)
-                TopRatedClicked -> onNavigateToMore(Category.TOP_RATED.id)
-                TrendingClicked -> onNavigateToMore(Category.TRENDING_TODAY.id)
-                UpComingClicked -> onNavigateToMore(Category.UPCOMING.id)
-                UpNextMoreClicked -> onNavigateToUpNext()
+                is ShowClicked -> navigator.showDetails(action.traktId)
+                PopularClicked -> navigator.showMoreShows(Category.POPULAR.id)
+                TopRatedClicked -> navigator.showMoreShows(Category.TOP_RATED.id)
+                TrendingClicked -> navigator.showMoreShows(Category.TRENDING_TODAY.id)
+                UpComingClicked -> navigator.showMoreShows(Category.UPCOMING.id)
+                UpNextMoreClicked -> navigator.showUpNext()
                 RefreshData -> observeShowData(forceRefresh = true)
                 is UpdateShowInLibrary -> {
                     coroutineScope.launch {
@@ -172,7 +167,7 @@ public class DiscoverShowsPresenter(
                 is MessageShown -> {
                     clearMessage(action.id)
                 }
-                is NextEpisodeClicked -> onNavigateToSeason(action.showTraktId, action.seasonId, action.seasonNumber)
+                is NextEpisodeClicked -> navigator.showSeason(action.showTraktId, action.seasonId, action.seasonNumber)
                 is MarkNextEpisodeWatched -> {
                     coroutineScope.launch {
                         markEpisodeWatchedInteractor(
@@ -190,12 +185,10 @@ public class DiscoverShowsPresenter(
                         unfollowShowInteractor.executeSync(action.showTraktId)
                     }
                 }
-                is OpenSeasonFromUpNext -> {
-                    onNavigateToSeason(action.showTraktId, action.seasonId, action.seasonNumber)
-                }
-                is OpenShowFromUpNext -> onNavigateToShowDetails(action.showTraktId)
-                SearchIconClicked -> onNavigateToSearch()
-                is DiscoverEpisodeLongPressed -> onNavigateToEpisode(action.showTraktId, action.episodeId)
+                is OpenSeasonFromUpNext -> navigator.showSeason(action.showTraktId, action.seasonId, action.seasonNumber)
+                is OpenShowFromUpNext -> navigator.showDetails(action.showTraktId)
+                SearchIconClicked -> navigator.showSearch()
+                is DiscoverEpisodeLongPressed -> navigator.showEpisodeSheet(action.showTraktId, action.episodeId)
             }
         }
 
@@ -243,15 +236,7 @@ public class DiscoverShowsPresenter(
 
     @AssistedFactory
     public fun interface Factory {
-        public fun create(
-            componentContext: ComponentContext,
-            onNavigateToShowDetails: (Long) -> Unit,
-            onNavigateToMore: (Long) -> Unit,
-            onNavigateToEpisode: (showTraktId: Long, episodeId: Long) -> Unit,
-            onNavigateToSeason: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
-            onNavigateToUpNext: () -> Unit,
-            onNavigateToSearch: () -> Unit,
-        ): DiscoverShowsPresenter
+        public fun create(componentContext: ComponentContext): DiscoverShowsPresenter
     }
 }
 

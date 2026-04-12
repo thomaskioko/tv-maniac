@@ -29,8 +29,7 @@ import kotlinx.coroutines.launch
 @AssistedInject
 public class SettingsPresenter(
     @Assisted componentContext: ComponentContext,
-    @Assisted private val backClicked: () -> Unit,
-    @Assisted private val onNavigateToDebugMenu: () -> Unit,
+    private val navigator: SettingsNavigator,
     private val appInfo: ApplicationInfo,
     private val datastoreRepository: DatastoreRepository,
     private val logoutInteractor: LogoutInteractor,
@@ -90,7 +89,7 @@ public class SettingsPresenter(
             DismissTraktDialog, ShowTraktDialog -> updateTrackDialogState()
             ShowAboutDialog, DismissAboutDialog -> updateAboutDialogState()
             VersionClicked -> handleVersionTap()
-            BackClicked -> backClicked()
+            BackClicked -> navigator.goBack()
             TraktLogoutClicked -> {
                 coroutineScope.launch {
                     logoutInteractor(Unit)
@@ -161,7 +160,7 @@ public class SettingsPresenter(
         _state.update { state ->
             val newCount = state.hiddenTapCount + 1
             if (newCount >= HIDDEN_TAP_THRESHOLD) {
-                onNavigateToDebugMenu()
+                navigator.showDebugMenu()
                 state.copy(hiddenTapCount = 0)
             } else {
                 state.copy(hiddenTapCount = newCount)
@@ -183,11 +182,7 @@ public class SettingsPresenter(
     }
 
     @AssistedFactory
-    public fun interface Factory {
-        public fun create(
-            componentContext: ComponentContext,
-            backClicked: () -> Unit,
-            onNavigateToDebugMenu: () -> Unit,
-        ): SettingsPresenter
+    public interface Factory {
+        public fun create(componentContext: ComponentContext): SettingsPresenter
     }
 }

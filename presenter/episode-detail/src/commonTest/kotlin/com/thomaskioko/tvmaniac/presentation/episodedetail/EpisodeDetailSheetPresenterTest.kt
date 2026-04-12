@@ -224,7 +224,6 @@ internal class EpisodeDetailSheetPresenterTest {
             presenter.dispatch(EpisodeDetailSheetAction.OpenShow)
 
             navigatedToShowId shouldBe 100L
-            sheetDismissed shouldBe true
         }
     }
 
@@ -242,7 +241,6 @@ internal class EpisodeDetailSheetPresenterTest {
             presenter.dispatch(EpisodeDetailSheetAction.OpenSeason)
 
             navigatedToSeason shouldBe Triple(100L, 10L, 1L)
-            sheetDismissed shouldBe true
         }
     }
 
@@ -332,11 +330,17 @@ internal class EpisodeDetailSheetPresenterTest {
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             episodeId = 1L,
             source = source,
-            navigateToShowDetails = { navigatedToShowId = it },
-            navigateToSeasonDetails = { showId, seasonId, seasonNumber ->
-                navigatedToSeason = Triple(showId, seasonId, seasonNumber)
+            navigator = object : EpisodeDetailNavigator {
+                override fun showDetails(showTraktId: Long) {
+                    navigatedToShowId = showTraktId
+                }
+                override fun showSeasonDetails(showTraktId: Long, seasonId: Long, seasonNumber: Long) {
+                    navigatedToSeason = Triple(showTraktId, seasonId, seasonNumber)
+                }
+                override fun dismiss() {
+                    sheetDismissed = true
+                }
             },
-            dismissSheet = { sheetDismissed = true },
             observeEpisodeByIdInteractor = ObserveEpisodeByIdInteractor(episodeRepository),
             markEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(episodeRepository),
             markEpisodeUnwatchedInteractor = MarkEpisodeUnwatchedInteractor(episodeRepository),

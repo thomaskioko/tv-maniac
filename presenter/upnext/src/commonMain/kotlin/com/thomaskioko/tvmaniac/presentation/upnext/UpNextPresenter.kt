@@ -36,9 +36,7 @@ import kotlinx.coroutines.launch
 @AssistedInject
 public class UpNextPresenter(
     @Assisted componentContext: ComponentContext,
-    @Assisted private val navigateToShowDetails: (showTraktId: Long) -> Unit,
-    @Assisted private val navigateToSeasonDetails: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
-    @Assisted private val onEpisodeLongPressed: (Long) -> Unit,
+    private val navigator: UpNextNavigator,
     private val refreshUpNextInteractor: RefreshUpNextInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val upNextRepository: UpNextRepository,
@@ -89,10 +87,10 @@ public class UpNextPresenter(
             is UpNextChangeSortOption -> changeSortOption(action.sortOption)
             is RefreshUpNext -> refreshUpNext(isUserInitiated = true)
             is UpNextMessageShown -> clearMessage(action.id)
-            is OpenShow -> navigateToShowDetails(action.showTraktId)
-            is OpenSeason -> navigateToSeasonDetails(action.showTraktId, action.seasonId, action.seasonNumber)
+            is OpenShow -> navigator.showDetails(action.showTraktId)
+            is OpenSeason -> navigator.showSeasonDetails(action.showTraktId, action.seasonId, action.seasonNumber)
             is UnfollowShow -> unfollowShow(action.showTraktId)
-            is UpNextEpisodeLongPressed -> onEpisodeLongPressed(action.episodeId)
+            is UpNextEpisodeLongPressed -> navigator.showEpisodeSheet(action.episodeId)
         }
     }
 
@@ -146,7 +144,7 @@ public class UpNextPresenter(
     private fun navigateToSeasonFromEpisode(showTraktId: Long) {
         val episode = state.value.episodes.firstOrNull { it.showTraktId == showTraktId }
         if (episode?.seasonId != null && episode.seasonNumber != null) {
-            navigateToSeasonDetails(showTraktId, episode.seasonId, episode.seasonNumber)
+            navigator.showSeasonDetails(showTraktId, episode.seasonId, episode.seasonNumber)
         }
     }
 
@@ -166,9 +164,6 @@ public class UpNextPresenter(
     public fun interface Factory {
         public fun create(
             componentContext: ComponentContext,
-            navigateToShowDetails: (showTraktId: Long) -> Unit,
-            navigateToSeasonDetails: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
-            onEpisodeLongPressed: (Long) -> Unit,
         ): UpNextPresenter
     }
 }

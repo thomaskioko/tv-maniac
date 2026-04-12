@@ -40,7 +40,7 @@ import kotlinx.coroutines.launch
 @AssistedInject
 public class ProfilePresenter(
     @Assisted componentContext: ComponentContext,
-    @Assisted private val onSettings: () -> Unit,
+    private val navigator: ProfileNavigator,
     private val localizer: Localizer,
     private val traktAuthManager: TraktAuthManager,
     private val traktAuthRepository: TraktAuthRepository,
@@ -92,7 +92,7 @@ public class ProfilePresenter(
                     traktAuthManager.launchWebView()
                 }
             }
-            SettingsClicked -> onSettings()
+            SettingsClicked -> navigator.showSettings()
             RefreshProfile -> fetchUserData(forceRefresh = true)
             is MessageShown -> {
                 clearMessage(action.id)
@@ -125,7 +125,7 @@ public class ProfilePresenter(
 
     @AssistedFactory
     public fun interface Factory {
-        public fun create(componentContext: ComponentContext, onSettings: () -> Unit): ProfilePresenter
+        public fun create(componentContext: ComponentContext): ProfilePresenter
     }
 }
 

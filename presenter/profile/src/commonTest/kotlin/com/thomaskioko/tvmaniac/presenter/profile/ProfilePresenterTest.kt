@@ -16,6 +16,7 @@ import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction
+import com.thomaskioko.tvmaniac.profile.presenter.ProfileNavigator
 import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileInfo
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileState
@@ -264,7 +265,9 @@ internal class ProfilePresenterTest {
     private fun createPresenter(): ProfilePresenter {
         return ProfilePresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
-            onSettings = { },
+            navigator = object : ProfileNavigator {
+                override fun showSettings() {}
+            },
             localizer = com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer(),
             traktAuthManager = traktAuthManager,
             traktAuthRepository = traktAuthRepository,

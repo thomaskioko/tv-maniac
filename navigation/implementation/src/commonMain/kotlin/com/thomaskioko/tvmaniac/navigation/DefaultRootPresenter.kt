@@ -2,10 +2,7 @@ package com.thomaskioko.tvmaniac.navigation
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.slot.ChildSlot
-import com.arkivanov.decompose.router.slot.SlotNavigation
-import com.arkivanov.decompose.router.slot.activate
 import com.arkivanov.decompose.router.slot.childSlot
-import com.arkivanov.decompose.router.slot.dismiss
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.value.Value
@@ -24,7 +21,6 @@ import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
 import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsPresenter
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeDetailSheetPresenter
-import com.thomaskioko.tvmaniac.presentation.episodedetail.ScreenSource
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsParam
@@ -68,6 +64,7 @@ public class DefaultRootPresenter(
     private val seasonDetailsPresenterFactory: SeasonDetailsPresenter.Factory,
     private val trailersPresenterFactory: TrailersPresenter.Factory,
     private val episodeDetailSheetPresenterFactory: EpisodeDetailSheetPresenter.Factory,
+    private val episodeSheetController: EpisodeSheetController,
     private val traktAuthRepository: TraktAuthRepository,
     private val updateUserProfileData: UpdateUserProfileData,
     private val logoutInteractor: LogoutInteractor,
@@ -134,40 +131,13 @@ public class DefaultRootPresenter(
     override val childStackValue: Value<ChildStack<*, Child>> =
         childStack.asValue(coroutineScope)
 
-    private val slotNavigation = SlotNavigation<EpisodeSheetConfig>()
-
     private val episodeSheetSlotRouter: Value<ChildSlot<*, EpisodeDetailSheetPresenter>> = childSlot(
-        source = slotNavigation,
+        source = episodeSheetController.getSlotNavigation(),
         key = "EpisodeSheetSlotKey",
         serializer = EpisodeSheetConfig.serializer(),
         handleBackButton = true,
     ) { config, childComponentContext ->
-        episodeDetailSheetPresenterFactory.create(
-            componentContext = childComponentContext,
-            episodeId = config.episodeId,
-            source = config.source,
-            navigateToShowDetails = { showTraktId ->
-                slotNavigation.dismiss()
-                navigator.pushToFront(
-                    RootDestinationConfig.ShowDetails(
-                        param = ShowDetailsParam(id = showTraktId),
-                    ),
-                )
-            },
-            navigateToSeasonDetails = { showTraktId, seasonId, seasonNumber ->
-                slotNavigation.dismiss()
-                navigator.pushNew(
-                    RootDestinationConfig.SeasonDetails(
-                        param = SeasonDetailsUiParam(
-                            showTraktId = showTraktId,
-                            seasonId = seasonId,
-                            seasonNumber = seasonNumber,
-                        ),
-                    ),
-                )
-            },
-            dismissSheet = { slotNavigation.dismiss() },
-        )
+        episodeDetailSheetPresenterFactory.create(childComponentContext, config.episodeId, config.source)
     }
 
     override val episodeSheetSlot: StateFlow<ChildSlot<*, EpisodeDetailSheetPresenter>> =
@@ -175,10 +145,6 @@ public class DefaultRootPresenter(
 
     override val episodeSheetSlotValue: Value<ChildSlot<*, EpisodeDetailSheetPresenter>> =
         episodeSheetSlot.asValue(coroutineScope)
-
-    private fun showEpisodeSheet(episodeId: Long, source: ScreenSource) {
-        slotNavigation.activate(EpisodeSheetConfig(episodeId = episodeId, source = source))
-    }
 
     override val themeState: StateFlow<ThemeState> =
         datastoreRepository
@@ -289,162 +255,28 @@ public class DefaultRootPresenter(
     ): Child =
         when (config) {
             is RootDestinationConfig.Home ->
-                Child.Home(
-                    presenter = homePresenterFactory.create(
-                        componentContext = componentContext,
-                        onShowClicked = { id ->
-                            navigator.pushNew(
-                                RootDestinationConfig.ShowDetails(
-                                    param = ShowDetailsParam(id = id),
-                                ),
-                            )
-                        },
-                        onMoreShowClicked = { id ->
-                            navigator.pushNew(
-                                RootDestinationConfig.MoreShows(
-                                    id,
-                                ),
-                            )
-                        },
-                        onShowGenreClicked = { id ->
-                            navigator.pushNew(
-                                RootDestinationConfig.GenreShows(
-                                    id,
-                                ),
-                            )
-                        },
-                        onNavigateToSearch = { navigator.pushNew(RootDestinationConfig.Search) },
-                        onSettingsClicked = { navigator.pushNew(RootDestinationConfig.Settings) },
-                        onSeasonClicked = { showTraktId, seasonId, seasonNumber ->
-                            navigator.pushNew(
-                                RootDestinationConfig.SeasonDetails(
-                                    param = SeasonDetailsUiParam(
-                                        showTraktId = showTraktId,
-                                        seasonId = seasonId,
-                                        seasonNumber = seasonNumber,
-                                    ),
-                                ),
-                            )
-                        },
-                        onDiscoverEpisodeLongPressed = { episodeId ->
-                            showEpisodeSheet(episodeId, ScreenSource.DISCOVER)
-                        },
-                        onUpNextEpisodeLongPressed = { episodeId ->
-                            showEpisodeSheet(episodeId, ScreenSource.UP_NEXT)
-                        },
-                        onCalendarEpisodeLongPressed = { episodeId ->
-                            showEpisodeSheet(episodeId, ScreenSource.CALENDAR)
-                        },
-                    ),
-                )
+                Child.Home(presenter = homePresenterFactory.create(componentContext))
 
             is RootDestinationConfig.Search ->
-                Child.Search(
-                    presenter = searchPresenterFactory.create(
-                        componentContext = componentContext,
-                        onNavigateToShowDetails = { id ->
-                            navigator.pushNew(
-                                RootDestinationConfig.ShowDetails(
-                                    param = ShowDetailsParam(id = id),
-                                ),
-                            )
-                        },
-                        onNavigateToGenre = { id ->
-                            navigator.pushNew(
-                                RootDestinationConfig.GenreShows(id),
-                            )
-                        },
-                        onNavigateBack = navigator::pop,
-                    ),
-                )
+                Child.Search(presenter = searchPresenterFactory.create(componentContext))
 
             is RootDestinationConfig.Settings ->
-                Child.Settings(
-                    presenter = settingsPresenterFactory.create(
-                        componentContext = componentContext,
-                        backClicked = navigator::pop,
-                        onNavigateToDebugMenu = { navigator.pushNew(RootDestinationConfig.Debug) },
-                    ),
-                )
+                Child.Settings(presenter = settingsPresenterFactory.create(componentContext))
 
             is RootDestinationConfig.Debug ->
-                Child.Debug(
-                    presenter = debugPresenterFactory.create(
-                        componentContext = componentContext,
-                        backClicked = navigator::pop,
-                    ),
-                )
+                Child.Debug(presenter = debugPresenterFactory.create(componentContext))
 
             is RootDestinationConfig.ShowDetails ->
-                Child.ShowDetails(
-                    presenter = showDetailsPresenterFactory.create(
-                        componentContext = componentContext,
-                        param = config.param,
-                        onBack = navigator::pop,
-                        onNavigateToShow = { id ->
-                            navigator.pushToFront(
-                                RootDestinationConfig.ShowDetails(
-                                    param = ShowDetailsParam(id = id),
-                                ),
-                            )
-                        },
-                        onNavigateToSeason = { params ->
-                            navigator.pushNew(
-                                config = RootDestinationConfig.SeasonDetails(
-                                    param = SeasonDetailsUiParam(
-                                        showTraktId = params.showTraktId,
-                                        seasonNumber = params.seasonNumber,
-                                        seasonId = params.seasonId,
-                                    ),
-                                ),
-                            )
-                        },
-                        onNavigateToTrailer = { id ->
-                            navigator.pushNew(
-                                RootDestinationConfig.Trailers(
-                                    id,
-                                ),
-                            )
-                        },
-                        onShowFollowed = ::onShowFollowed,
-                    ),
-                )
+                Child.ShowDetails(presenter = showDetailsPresenterFactory.create(componentContext, config.param))
 
             is RootDestinationConfig.SeasonDetails ->
-                Child.SeasonDetails(
-                    presenter = seasonDetailsPresenterFactory.create(
-                        componentContext,
-                        param = config.param,
-                        onBack = navigator::pop,
-                        onEpisodeClick = { episodeId ->
-                            showEpisodeSheet(episodeId, ScreenSource.SEASON_DETAILS)
-                        },
-                    ),
-                )
+                Child.SeasonDetails(presenter = seasonDetailsPresenterFactory.create(componentContext, config.param))
 
             is RootDestinationConfig.Trailers ->
-                Child.Trailers(
-                    presenter = trailersPresenterFactory.create(
-                        componentContext = componentContext,
-                        traktShowId = config.id,
-                    ),
-                )
+                Child.Trailers(presenter = trailersPresenterFactory.create(componentContext, config.id))
 
             is RootDestinationConfig.MoreShows ->
-                Child.MoreShows(
-                    presenter = moreShowsPresenterFactory.create(
-                        componentContext = componentContext,
-                        categoryId = config.id,
-                        onBack = navigator::pop,
-                        onNavigateToShowDetails = { id ->
-                            navigator.pushNew(
-                                RootDestinationConfig.ShowDetails(
-                                    param = ShowDetailsParam(id = id),
-                                ),
-                            )
-                        },
-                    ),
-                )
+                Child.MoreShows(presenter = moreShowsPresenterFactory.create(componentContext, config.id))
 
             is RootDestinationConfig.GenreShows -> Child.GenreShows
         }

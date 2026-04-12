@@ -24,6 +24,7 @@ import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeUnwatchedCall
 import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall
 import com.thomaskioko.tvmaniac.episodes.testing.MarkSeasonWatchedCall
 import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
+import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsNavigator
 import com.thomaskioko.tvmaniac.seasondetails.presenter.data.buildSeasonDetailsLoaded
 import com.thomaskioko.tvmaniac.seasondetails.presenter.data.buildSeasonDetailsWithEpisodes
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.EpisodeDetailsModel
@@ -1184,8 +1185,14 @@ class SeasonPresenterTest {
                 seasonId = 1,
                 seasonNumber = 1,
             ),
-            onBack = onBack,
-            onEpisodeClick = onEpisodeClick,
+            navigator = object : SeasonDetailsNavigator {
+                override fun goBack() {
+                    onBack()
+                }
+                override fun showEpisodeSheet(episodeId: Long) {
+                    onEpisodeClick(episodeId)
+                }
+            },
             observableSeasonDetailsInteractor = ObservableSeasonDetailsInteractor(
                 seasonDetailsRepository = seasonDetailsRepository,
                 castRepository = castRepository,

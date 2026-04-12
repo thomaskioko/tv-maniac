@@ -170,7 +170,9 @@ class DebugPresenterTest {
 
         return DebugPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
-            backClicked = {},
+            navigator = object : DebugNavigator {
+                override fun goBack() {}
+            },
             datastoreRepository = datastoreRepository,
             scheduleDebugEpisodeNotificationInteractor = ScheduleDebugEpisodeNotificationInteractor(
                 datastoreRepository = datastoreRepository,

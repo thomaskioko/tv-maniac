@@ -39,7 +39,7 @@ import com.thomaskioko.tvmaniac.data.library.model.LibrarySortOption as DataLibr
 @AssistedInject
 public class LibraryPresenter(
     @Assisted componentContext: ComponentContext,
-    @Assisted private val navigateToShowDetails: (id: Long) -> Unit,
+    private val navigator: LibraryNavigator,
     private val repository: LibraryRepository,
     private val observeLibraryInteractor: ObserveLibraryInteractor,
     private val syncLibraryInteractor: SyncLibraryInteractor,
@@ -107,7 +107,7 @@ public class LibraryPresenter(
 
     public fun dispatch(action: LibraryAction) {
         when (action) {
-            is LibraryShowClicked -> navigateToShowDetails(action.traktId)
+            is LibraryShowClicked -> navigator.showDetails(action.traktId)
             is LibraryQueryChanged -> updateQuery(action.query)
             is ClearLibraryQuery -> clearQuery()
             is ToggleSearchActive -> toggleSearchActive()
@@ -275,10 +275,7 @@ public class LibraryPresenter(
 
     @AssistedFactory
     public fun interface Factory {
-        public fun create(
-            componentContext: ComponentContext,
-            navigateToShowDetails: (id: Long) -> Unit,
-        ): LibraryPresenter
+        public fun create(componentContext: ComponentContext): LibraryPresenter
     }
 }
 

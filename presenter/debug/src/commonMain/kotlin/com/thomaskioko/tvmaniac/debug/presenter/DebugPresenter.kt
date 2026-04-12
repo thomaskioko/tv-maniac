@@ -34,7 +34,7 @@ import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleDebugEpi
 @AssistedInject
 public class DebugPresenter(
     @Assisted componentContext: ComponentContext,
-    @Assisted private val backClicked: () -> Unit,
+    private val navigator: DebugNavigator,
     private val datastoreRepository: DatastoreRepository,
     private val scheduleDebugEpisodeNotificationInteractor: ScheduleDebugEpisodeNotificationInteractor,
     private val syncLibraryInteractor: SyncLibraryInteractor,
@@ -91,7 +91,7 @@ public class DebugPresenter(
 
     public fun dispatch(action: DebugActions) {
         when (action) {
-            BackClicked -> backClicked()
+            BackClicked -> navigator.goBack()
             TriggerDebugNotification -> scheduleDebugNotification()
             TriggerDelayedDebugNotification -> scheduleDebugNotification(5.minutes)
             TriggerLibrarySync -> triggerLibrarySync()
@@ -126,6 +126,11 @@ public class DebugPresenter(
         }
     }
 
+    @AssistedFactory
+    public interface Factory {
+        public fun create(componentContext: ComponentContext): DebugPresenter
+    }
+
     private fun formatTokenStatus(
         isLoggedIn: Boolean,
         lastTokenRefreshTimestamp: Long?,
@@ -142,10 +147,5 @@ public class DebugPresenter(
             StringResourceKey.LabelDebugTokenRefreshExpired
         }
         return localizer.getString(key, formattedDate)
-    }
-
-    @AssistedFactory
-    public fun interface Factory {
-        public fun create(componentContext: ComponentContext, backClicked: () -> Unit): DebugPresenter
     }
 }

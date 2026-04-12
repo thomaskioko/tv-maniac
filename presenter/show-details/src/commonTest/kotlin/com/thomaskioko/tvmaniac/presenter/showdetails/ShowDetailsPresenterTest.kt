@@ -833,20 +833,25 @@ class ShowDetailsPresenterTest {
 
     private fun buildShowDetailsPresenter(
         param: ShowDetailsParam = ShowDetailsParam(id = 84958),
-        onBack: () -> Unit = {},
         onNavigateToSeason: (param: ShowSeasonDetailsParam) -> Unit = {},
-        onNavigateToTrailer: (id: Long) -> Unit = {},
-        onNavigateToShow: (id: Long) -> Unit = {},
         onShowFollowed: () -> Unit = {},
     ): ShowDetailsPresenter {
         return ShowDetailsPresenter(
             param = param,
             componentContext = DefaultComponentContext(lifecycle = LifecycleRegistry()),
-            onBack = onBack,
-            onNavigateToSeason = onNavigateToSeason,
-            onNavigateToShow = onNavigateToShow,
-            onNavigateToTrailer = onNavigateToTrailer,
-            onShowFollowed = onShowFollowed,
+            navigator = object : ShowDetailsNavigator {
+                override fun goBack() {}
+                override fun showDetails(traktId: Long) {}
+                override fun showSeasonDetails(param: ShowSeasonDetailsParam) {
+                    onNavigateToSeason(param)
+                }
+                override fun showTrailers(traktShowId: Long) {}
+            },
+            showFollowedNotifier = object : com.thomaskioko.tvmaniac.core.base.ShowFollowedNotifier {
+                override fun onShowFollowed() {
+                    onShowFollowed()
+                }
+            },
             followedShowsRepository = followedShowsRepository,
             followShowInteractor = FollowShowInteractor(
                 followedShowsRepository = followedShowsRepository,

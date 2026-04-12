@@ -4,6 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.slot.ChildSlot
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.tvmaniac.core.base.ShowFollowedNotifier
 import com.thomaskioko.tvmaniac.debug.presenter.DebugPresenter
 import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeDetailSheetPresenter
@@ -15,7 +16,7 @@ import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import kotlinx.coroutines.flow.StateFlow
 
-public interface RootPresenter {
+public interface RootPresenter : ShowFollowedNotifier {
     public interface Factory {
         public operator fun invoke(
             componentContext: ComponentContext,
@@ -39,7 +40,7 @@ public interface RootPresenter {
 
     public val notificationPermissionStateValue: Value<NotificationPermissionState>
 
-    public fun onShowFollowed()
+    override fun onShowFollowed()
 
     public fun onRationaleAccepted()
 

@@ -37,8 +37,7 @@ import kotlinx.coroutines.launch
 @AssistedInject
 public class CalendarPresenter(
     @Assisted componentContext: ComponentContext,
-    @Assisted private val navigateToShowDetails: (Long) -> Unit,
-    @Assisted private val onEpisodeLongPressed: (Long) -> Unit,
+    private val navigator: CalendarNavigator,
     private val observeCalendarInteractor: ObserveCalendarInteractor,
     private val fetchCalendarInteractor: FetchCalendarInteractor,
     private val traktAuthRepository: TraktAuthRepository,
@@ -100,7 +99,7 @@ public class CalendarPresenter(
 
             is NavigateToPreviousWeek -> navigateToPreviousWeek()
             is NavigateToNextWeek -> navigateToNextWeek()
-            is EpisodeCardClicked -> onEpisodeLongPressed(action.episodeTraktId)
+            is EpisodeCardClicked -> navigator.showEpisodeSheet(action.episodeTraktId)
             is MessageShown -> clearMessage(action.id)
         }
     }
@@ -174,8 +173,6 @@ public class CalendarPresenter(
     public fun interface Factory {
         public fun create(
             componentContext: ComponentContext,
-            navigateToShowDetails: (Long) -> Unit,
-            onEpisodeLongPressed: (Long) -> Unit,
         ): CalendarPresenter
     }
 }

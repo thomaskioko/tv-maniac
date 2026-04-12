@@ -27,15 +27,6 @@ abstract class HomePresenterTest {
 
         presenter = homePresenterFactory.create(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
-            onShowClicked = {},
-            onMoreShowClicked = {},
-            onShowGenreClicked = {},
-            onNavigateToSearch = {},
-            onSettingsClicked = {},
-            onSeasonClicked = { _, _, _ -> },
-            onDiscoverEpisodeLongPressed = {},
-            onUpNextEpisodeLongPressed = {},
-            onCalendarEpisodeLongPressed = {},
         )
     }
 
