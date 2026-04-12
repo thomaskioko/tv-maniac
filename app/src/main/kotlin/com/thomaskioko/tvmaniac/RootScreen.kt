@@ -27,9 +27,9 @@ import com.thomaskioko.tvmaniac.debug.ui.DebugMenuScreen
 import com.thomaskioko.tvmaniac.episodedetail.ui.EpisodeDetailSheet
 import com.thomaskioko.tvmaniac.home.ui.HomeScreen
 import com.thomaskioko.tvmaniac.moreshows.ui.MoreShowsScreen
+import com.thomaskioko.tvmaniac.navigation.EpisodeSheetChild
 import com.thomaskioko.tvmaniac.navigation.RootPresenter
 import com.thomaskioko.tvmaniac.navigation.RootScreen
-import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeDetailSheetPresenter
 import com.thomaskioko.tvmaniac.search.ui.SearchScreen
 import com.thomaskioko.tvmaniac.seasondetails.ui.SeasonDetailsScreen
 import com.thomaskioko.tvmaniac.settings.ui.SettingsScreen
@@ -74,9 +74,8 @@ public fun RootScreen(
     }
 
     val episodeSheetSlot by rootPresenter.episodeSheetSlot.collectAsStateWithLifecycle()
-    // TODO:: Scope-di-binding :: Look into this casting
-    (episodeSheetSlot.child?.instance as? EpisodeDetailSheetPresenter)?.let { presenter ->
-        EpisodeDetailSheet(presenter = presenter)
+    (episodeSheetSlot.child?.instance as? EpisodeSheetChild)?.let { child ->
+        EpisodeDetailSheet(presenter = child.presenter)
     }
 
     Surface(modifier = modifier, color = MaterialTheme.colorScheme.background) {

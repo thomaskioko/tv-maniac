@@ -113,19 +113,22 @@ public class DefaultRootPresenter(
     override val childStackValue: Value<ChildStack<*, RootChild>> =
         childStack.asValue(coroutineScope)
 
-    private val episodeSheetSlotRouter: Value<ChildSlot<*, Any>> = childSlot(
+    private val episodeSheetSlotRouter: Value<ChildSlot<*, SheetChild>> = childSlot(
         source = episodeSheetController.getSlotNavigation(),
         key = "EpisodeSheetSlotKey",
         serializer = EpisodeSheetConfig.serializer(),
         handleBackButton = true,
     ) { config, childComponentContext ->
-        screenGraphFactory.createGraph(childComponentContext).episodeDetailFactory.create(config.episodeId, config.source)
+        EpisodeSheetChild(
+            presenter = screenGraphFactory.createGraph(childComponentContext)
+                .episodeDetailFactory.create(config.episodeId, config.source),
+        )
     }
 
-    override val episodeSheetSlot: StateFlow<ChildSlot<*, Any>> =
+    override val episodeSheetSlot: StateFlow<ChildSlot<*, SheetChild>> =
         episodeSheetSlotRouter.asStateFlow(componentContext.componentCoroutineScope())
 
-    override val episodeSheetSlotValue: Value<ChildSlot<*, Any>> =
+    override val episodeSheetSlotValue: Value<ChildSlot<*, SheetChild>> =
         episodeSheetSlot.asValue(coroutineScope)
 
     override val themeState: StateFlow<ThemeState> =

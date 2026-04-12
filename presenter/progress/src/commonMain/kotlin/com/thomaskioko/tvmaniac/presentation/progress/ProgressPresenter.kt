@@ -26,7 +26,6 @@ public class ProgressPresenter(
 
     public val stateValue: Value<ProgressState> = state.asValue(coroutineScope)
 
-    // TODO:: Scope-di-binding :: Can we access the presenter without going through the graph?
     public val upNextPresenter: UpNextPresenter =
         progressChildGraphFactory.createGraph(childContext(key = "UpNext")).upNextPresenter
 

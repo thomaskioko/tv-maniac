@@ -17,7 +17,7 @@ struct RootNavigationView: View {
     private let rootNavigator: RootNavigator
     @StateValue private var themeState: ThemeState
     @StateValue private var notificationPermissionState: NotificationPermissionState
-    @StateValue private var episodeSheetSlot: ChildSlot<AnyObject, AnyObject>
+    @StateValue private var episodeSheetSlot: ChildSlot<AnyObject, SheetChild>
     @StateObject private var store = SettingsAppStorage.shared
     @EnvironmentObject private var appDelegate: AppDelegate
     @State private var rationaleActionTaken = false
@@ -68,14 +68,14 @@ struct RootNavigationView: View {
             isPresented: Binding(
                 get: { episodeSheetSlot.child != nil },
                 set: { isPresented in
-                    if !isPresented, let presenter = episodeSheetSlot.child?.instance as? EpisodeDetailSheetPresenter {
-                        presenter.dispatch(action: EpisodeDetailSheetActionDismiss())
+                    if !isPresented, let child = episodeSheetSlot.child?.instance as? EpisodeSheetChild {
+                        child.presenter.dispatch(action: EpisodeDetailSheetActionDismiss())
                     }
                 }
             )
         ) {
-            if let presenter = episodeSheetSlot.child?.instance as? EpisodeDetailSheetPresenter {
-                EpisodeDetailSheetView(presenter: presenter)
+            if let child = episodeSheetSlot.child?.instance as? EpisodeSheetChild {
+                EpisodeDetailSheetView(presenter: child.presenter)
             }
         }
         .onChange(of: themeState.appTheme) { _, newTheme in

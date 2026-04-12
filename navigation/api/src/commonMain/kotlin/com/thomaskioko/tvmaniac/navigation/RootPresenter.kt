@@ -19,10 +19,9 @@ public interface RootPresenter : ShowFollowedNotifier {
 
     public val childStackValue: Value<ChildStack<*, RootChild>>
 
-    // TODO:: Scope-di-binding :: Instead of any we can create our own type PresenterWrapper<*>
-    public val episodeSheetSlot: StateFlow<ChildSlot<*, Any>>
+    public val episodeSheetSlot: StateFlow<ChildSlot<*, SheetChild>>
 
-    public val episodeSheetSlotValue: Value<ChildSlot<*, Any>>
+    public val episodeSheetSlotValue: Value<ChildSlot<*, SheetChild>>
 
     public val themeState: StateFlow<ThemeState>
 
