@@ -17,7 +17,6 @@ graph TD
         direction LR
         RN["RootNavigator"]
         RP["RootPresenter"]
-        EC["EpisodeSheetController"]
         NAV["DefaultXxxNavigator (per feature)"]
     end
 
@@ -25,7 +24,6 @@ graph TD
         direction LR
         HP["HomePresenter"]
         SP["SearchPresenter"]
-        DP["DebugPresenter"]
         SDP["ShowDetailsPresenter.Factory"]
     end
 
@@ -34,7 +32,6 @@ graph TD
         DIS["DiscoverPresenter"]
         LIB["LibraryPresenter"]
         PRG["ProgressPresenter"]
-        PRF["ProfilePresenter"]
     end
 
     subgraph PCS["ProgressChildScope"]
@@ -64,17 +61,17 @@ Each scope provides `ComponentContext` via `@GraphExtension.Factory`:
 
 ### RootPresenter
 
-The main navigation controller. Lives in `navigation/api` with zero presenter module dependencies. Manages a `ChildStack<RootDestinationConfig, RootChild>` and exposes global state (theme, notification permissions).
+The main navigation controller. Lives in `features/root/presenter` as the `RootPresenter` interface (package `com.thomaskioko.tvmaniac.presenter.root`). `DefaultRootPresenter` implements it in the same module. Manages a `ChildStack<RootDestinationConfig, RootChild>` and exposes global state (theme, notification permissions).
 
-`RootChild` is a marker interface in `navigation/api`. The concrete screen types are in the `RootScreen` sealed interface in `navigation/implementation`.
+`RootChild` is a marker interface in `navigation/api`. Each feature defines its own destination class extending `RootChild` (e.g., `HomeDestination`, `SearchDestination`).
 
 ### RootDestinationConfig
 
-A `@Serializable` sealed interface where each subclass represents a screen destination. Parameters needed by a screen are embedded in its config class. Serialization enables automatic state restoration across process death.
+A `@Serializable` sealed interface in `navigation/api` where each subclass represents a screen destination. Parameters needed by a screen are embedded in its config class. Serialization enables automatic state restoration across process death.
 
 ### RootNavigator
 
-The navigation interface exposed to navigator implementations. Lives in `navigation/api` so feature navigation modules can depend on it.
+The navigation interface in `navigation/api`. Feature nav modules depend on it for routing.
 
 | Method | Purpose |
 |---|---|
@@ -86,77 +83,84 @@ The navigation interface exposed to navigator implementations. Lives in `navigat
 
 ### ScreenGraph
 
-A `@GraphExtension(ScreenScope)` in `navigation/api` that resolves presenters from a `ComponentContext`. Eliminates the need for presenter factories for presenters with no screen-specific parameters.
+A `@GraphExtension(ScreenScope)` in `features/root/presenter` that resolves presenters from a `ComponentContext`. Eliminates the need for presenter factories for presenters with no screen-specific parameters.
 
 ```kotlin
 @GraphExtension(ScreenScope::class)
 public interface ScreenGraph {
     val homePresenter: HomePresenter          // resolved directly
-    val searchPresenter: SearchShowsPresenter // resolved directly
     val showDetailsFactory: ShowDetailsPresenter.Factory // still needs screen params
     // ...
 }
 ```
 
-`DefaultRootPresenter` holds a single `ScreenGraph.Factory` instead of individual presenter factories.
-
 ## Navigator Pattern
 
-Each presenter defines its own navigator interface. Implementations live in `navigation/implementation` and delegate to `RootNavigator`.
+Each feature owns its navigator interface and implementation:
 
 ```
-presenter/search/
-  SearchNavigator.kt          (interface: showDetails, showGenre, goBack)
-  SearchShowsPresenter.kt     (injects SearchNavigator)
-
-navigation/implementation/navigators/
-  DefaultSearchNavigator.kt   (implements SearchNavigator, delegates to RootNavigator)
+features/search/
+  nav/
+    api/             SearchNavigator (interface)
+    implementation/  DefaultSearchNavigator (delegates to RootNavigator)
+  presenter/         SearchShowsPresenter (injects SearchNavigator)
+  ui/                SearchScreen (Android Compose)
 ```
 
 Presenters never see `RootNavigator` or `RootDestinationConfig` directly. They call typed methods on their own navigator interface.
 
 ### Cross-Cutting Controllers
 
-Two coordination interfaces handle navigation that spans multiple features:
-
 | Controller | Location | Purpose |
 |---|---|---|
-| `EpisodeSheetController` | `navigation/api` | Show/dismiss the episode detail bottom sheet. Owns the `SlotNavigation`. |
-| `HomeTabController` | `presenter/home` | Switch Home tabs (used by Discover's "Up Next" action). |
+| `EpisodeSheetNavigator` | `features/root/nav` | Show/dismiss the episode detail bottom sheet. Owns the `SlotNavigation`. |
+| `HomeTabController` | `features/home/presenter` | Switch Home tabs (used by Discover's "Up Next" action). |
 
-## Simultaneous Children
+### Destination Classes
 
-For screens with tabs or pagers where multiple children must stay alive:
+Each feature defines a `XxxDestination` class in its presenter module that extends `RootChild`:
 
-- **`childStack`**: Only the top child is active. Others are paused/destroyed. Used for sequential navigation.
-- **`childContext(key)`**: All children remain alive with their own lifecycle. Used for parallel navigation (Home tabs).
+```kotlin
+// In features/home/presenter
+class HomeDestination(val presenter: HomePresenter) : RootChild
+```
 
-`HomePresenter` uses `childStack` with a custom `switchTab` transformer that brings existing tabs to the top rather than pushing duplicates.
+Platform UI pattern-matches on these types. This keeps `navigation/api` free of presenter dependencies.
 
-`ProgressPresenter` uses `childContext(key)` to keep UpNext and Calendar alive simultaneously.
+`SheetChild` is a parallel marker for modal sheets. `EpisodeDetailDestination` extends it.
 
 ## Module Structure
 
 ```
 navigation/
-  api/             RootPresenter, RootNavigator, RootDestinationConfig,
-                   ScreenGraph, EpisodeSheetController, SheetChild, RootChild
-                   (zero presenter module dependencies)
+  api/             RootNavigator, RootDestinationConfig, RootChild, SheetChild,
+                   GenreShowsDestination (zero presenter deps)
+  implementation/  DefaultRootNavigator, DefaultEpisodeSheetNavigator,
+                   NavigationBindingContainer
 
-  implementation/  DefaultRootPresenter, DefaultRootNavigator,
-                   RootScreen (concrete children), EpisodeSheetChild,
-                   DefaultXxxNavigator (all feature navigators),
-                   DefaultEpisodeSheetController, DefaultHomeTabController
+features/root/
+  presenter/       RootPresenter (interface), DefaultRootPresenter, ScreenGraph
+  ui/              RootScreen composable (Android, routes to feature screens)
+  nav/             EpisodeSheetNavigator, DeepLinkDestination, ThemeState,
+                   NotificationPermissionState, ScreenSource, EpisodeSheetConfig
+
+features/{name}/
+  presenter/       XxxPresenter, XxxDestination : RootChild, state/actions/models
+  ui/              XxxScreen composable (Android)
+  nav/
+    api/           XxxNavigator (interface)
+    implementation/ DefaultXxxNavigator
 ```
-
-`navigation/api` depends on all presenter modules (for `ScreenGraph` type references) but contains no concrete presenter types in its public API. `RootPresenter` uses `RootChild` (marker) and `SheetChild` (marker) to avoid importing presenter classes.
 
 ## Adding a New Screen
 
-1. Add a config to `RootDestinationConfig` (serializable, with parameters)
-2. Add a `RootScreen` subclass in `navigation/implementation`
-3. Create a `XxxNavigator` interface in the presenter module
-4. Create `DefaultXxxNavigator` in `navigation/implementation/navigators/`
-5. Add the presenter to `ScreenGraph` (directly if no params, as a Factory if it has params)
-6. Add the mapping in `DefaultRootPresenter.createScreen()`
-7. Add a no-op fake navigator in `FakeAppBindings`
+1. Create `features/{name}/presenter` with the presenter, state, and `XxxDestination : RootChild`
+2. Create `features/{name}/ui` with the Android Compose screen
+3. Create `features/{name}/nav/api` with the `XxxNavigator` interface
+4. Create `features/{name}/nav/implementation` with `DefaultXxxNavigator`
+5. Add a config to `RootDestinationConfig` in `navigation/api`
+6. Add the presenter to `ScreenGraph` (directly if no params, as a Factory if it has params)
+7. Add the mapping in `DefaultRootPresenter.createScreen()`
+8. Add a no-op fake navigator in `FakeAppBindings`
+9. Register modules in `settings.gradle.kts`
+10. Add nav implementation deps to `:app` and `:ios-framework`

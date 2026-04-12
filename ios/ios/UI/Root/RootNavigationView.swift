@@ -37,25 +37,25 @@ struct RootNavigationView: View {
                 onBack: rootNavigator.popTo
             ) { child in
                 switch child {
-                case let child as RootScreenHome:
+                case let child as HomeDestination:
                     TabBarView(presenter: child.presenter)
                         .id(ObjectIdentifier(child))
-                case let child as RootScreenShowDetails:
+                case let child as ShowDetailsDestination:
                     ShowDetailsView(presenter: child.presenter)
                         .id(ObjectIdentifier(child))
-                case let child as RootScreenSeasonDetails:
+                case let child as SeasonDetailsDestination:
                     SeasonDetailsView(presenter: child.presenter)
                         .id(ObjectIdentifier(child))
-                case let child as RootScreenSearch:
+                case let child as SearchDestination:
                     SearchTab(presenter: child.presenter)
                         .id(ObjectIdentifier(child))
-                case let child as RootScreenSettings:
+                case let child as SettingsDestination:
                     SettingsView(presenter: child.presenter)
                         .id(ObjectIdentifier(child))
-                case let child as RootScreenDebug:
+                case let child as DebugDestination:
                     DebugMenuView(presenter: child.presenter)
                         .id(ObjectIdentifier(child))
-                case let child as RootScreenMoreShows:
+                case let child as MoreShowsDestination:
                     MoreShowsView(presenter: child.presenter)
                         .id(ObjectIdentifier(child))
                 default:
@@ -68,13 +68,13 @@ struct RootNavigationView: View {
             isPresented: Binding(
                 get: { episodeSheetSlot.child != nil },
                 set: { isPresented in
-                    if !isPresented, let child = episodeSheetSlot.child?.instance as? EpisodeSheetChild {
+                    if !isPresented, let child = episodeSheetSlot.child?.instance as? EpisodeDetailDestination {
                         child.presenter.dispatch(action: EpisodeDetailSheetActionDismiss())
                     }
                 }
             )
         ) {
-            if let child = episodeSheetSlot.child?.instance as? EpisodeSheetChild {
+            if let child = episodeSheetSlot.child?.instance as? EpisodeDetailDestination {
                 EpisodeDetailSheetView(presenter: child.presenter)
             }
         }

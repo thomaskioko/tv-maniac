@@ -10,28 +10,38 @@ This document covers the concepts that matter when adding or touching DI code in
 
 ```mermaid
 graph TD
-    subgraph AS["AppScope (Application Singleton)"]
+    subgraph AS["AppScope"]
         direction LR
-        R["Repositories"]
-        DS["Data Sources"]
-        HC["HTTP Clients"]
-        DB["Database"]
-        U["Logger / Localizer / Utils"]
+        R["Repositories / Stores / Clients / Database"]
     end
 
-    subgraph ACS["ActivityScope (Screen)"]
+    subgraph ACS["ActivityScope"]
         direction LR
-        PF["Presenter Factories"]
-        P["Presenters"]
+        RN["RootNavigator / Navigators"]
+    end
+
+    subgraph SS["ScreenScope"]
+        direction LR
+        P["Presenters (no-param)"]
+        PF["Presenter Factories (with-param)"]
+    end
+
+    subgraph TS["TabScope"]
+        direction LR
+        TP["Tab Presenters"]
     end
 
     AS ==> ACS
+    ACS ==> SS
+    SS ==> TS
 
     style AS fill:#FF9800,color:#fff,stroke:#E65100,stroke-width:2px
     style ACS fill:#4CAF50,color:#fff,stroke:#1B5E20,stroke-width:2px
+    style SS fill:#2196F3,color:#fff,stroke:#0D47A1,stroke-width:2px
+    style TS fill:#9C27B0,color:#fff,stroke:#4A148C,stroke-width:2px
 ```
 
-`ActivityScope` is a child of `AppScope`. It inherits every binding in the parent graph and layers screen-scoped bindings on top.
+Scopes form a hierarchy. Each child scope inherits every binding from its parent. See [Navigation](NAVIGATION.md) for the full scope tree including `ProgressChildScope`.
 
 ### AppScope
 

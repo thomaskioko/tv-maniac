@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.testing.di
 
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
-import com.thomaskioko.tvmaniac.navigation.RootPresenter
-import com.thomaskioko.tvmaniac.navigation.di.ScreenGraph
+import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
+import com.thomaskioko.tvmaniac.presenter.root.di.ScreenGraph
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.DependencyGraph

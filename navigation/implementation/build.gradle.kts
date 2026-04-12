@@ -12,7 +12,7 @@ scaffold {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.features.nav)
+            implementation(projects.features.root.nav)
             implementation(projects.core.base)
             implementation(projects.core.logger.api)
             implementation(projects.data.traktauth.api)
@@ -26,23 +26,27 @@ kotlin {
             implementation(projects.domain.user)
             implementation(projects.domain.watchproviders)
             implementation(projects.navigation.api)
+            implementation(projects.features.root.presenter)
 
-            implementation(projects.presenter.calendar)
-            implementation(projects.presenter.debug)
-            implementation(projects.presenter.discover)
-            implementation(projects.presenter.episodeDetail)
-            implementation(projects.presenter.home)
-            implementation(projects.presenter.library)
-            implementation(projects.presenter.moreShows)
-            implementation(projects.presenter.profile)
-            implementation(projects.presenter.progress)
-            implementation(projects.presenter.search)
-            implementation(projects.presenter.seasondetails)
-            implementation(projects.presenter.settings)
-            implementation(projects.presenter.showDetails)
-            implementation(projects.presenter.trailers)
-            implementation(projects.presenter.upnext)
-            implementation(projects.presenter.watchlist)
+            implementation(projects.features.showDetails.nav.api)
+            implementation(projects.features.seasonDetails.nav.api)
+
+            implementation(projects.features.calendar.presenter)
+            implementation(projects.features.debug.presenter)
+            implementation(projects.features.discover.presenter)
+            implementation(projects.features.episodeDetail.presenter)
+            implementation(projects.features.home.presenter)
+            implementation(projects.features.library.presenter)
+            implementation(projects.features.moreShows.presenter)
+            implementation(projects.features.profile.presenter)
+            implementation(projects.features.progress.presenter)
+            implementation(projects.features.search.presenter)
+            implementation(projects.features.seasonDetails.presenter)
+            implementation(projects.features.settings.presenter)
+            implementation(projects.features.showDetails.presenter)
+            implementation(projects.features.trailers.presenter)
+            implementation(projects.features.upnext.presenter)
+            implementation(projects.features.watchlist.presenter)
         }
 
         commonTest.dependencies {

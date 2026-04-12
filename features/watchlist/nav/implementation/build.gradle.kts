@@ -1,0 +1,22 @@
+plugins {
+    alias(libs.plugins.app.kmp)
+}
+
+scaffold {
+    useMetro()
+}
+
+kotlin {
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation(projects.core.base)
+                implementation(projects.features.showDetails.nav.api)
+                implementation(projects.features.seasonDetails.nav.api)
+                implementation(projects.features.watchlist.nav.api)
+                implementation(projects.features.watchlist.presenter)
+                implementation(projects.navigation.api)
+            }
+        }
+    }
+}

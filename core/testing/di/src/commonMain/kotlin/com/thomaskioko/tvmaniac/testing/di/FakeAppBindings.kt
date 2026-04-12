@@ -2,7 +2,9 @@ package com.thomaskioko.tvmaniac.testing.di
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.slot.SlotNavigation
-import com.thomaskioko.nav.model.ScreenSource
+import com.thomaskioko.root.model.EpisodeSheetConfig
+import com.thomaskioko.root.model.ScreenSource
+import com.thomaskioko.root.nav.EpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.appconfig.ApplicationInfo
 import com.thomaskioko.tvmaniac.appconfig.DefaultTmdbConfig
 import com.thomaskioko.tvmaniac.appconfig.DefaultTraktConfig
@@ -38,13 +40,9 @@ import com.thomaskioko.tvmaniac.domain.upnext.UpNextSyncWorker
 import com.thomaskioko.tvmaniac.locale.api.LocaleProvider
 import com.thomaskioko.tvmaniac.locale.testing.FakeLocaleProvider
 import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsNavigator
-import com.thomaskioko.tvmaniac.navigation.DefaultRootPresenter
-import com.thomaskioko.tvmaniac.navigation.EpisodeSheetController
 import com.thomaskioko.tvmaniac.navigation.RootNavigator
-import com.thomaskioko.tvmaniac.navigation.RootPresenter
-import com.thomaskioko.tvmaniac.navigation.controllers.DefaultEpisodeSheetController
-import com.thomaskioko.tvmaniac.navigation.controllers.DefaultHomeTabController
-import com.thomaskioko.tvmaniac.navigation.model.EpisodeSheetConfig
+import com.thomaskioko.tvmaniac.navigation.controllers.DefaultEpisodeSheetNavigator
+import com.thomaskioko.tvmaniac.navigation.controllers.DefaultHomeTabNavigator
 import com.thomaskioko.tvmaniac.navigation.navigators.DefaultCalendarNavigator
 import com.thomaskioko.tvmaniac.navigation.navigators.DefaultDebugNavigator
 import com.thomaskioko.tvmaniac.navigation.navigators.DefaultDiscoverNavigator
@@ -62,9 +60,11 @@ import com.thomaskioko.tvmaniac.presentation.calendar.CalendarNavigator
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeDetailNavigator
 import com.thomaskioko.tvmaniac.presentation.library.LibraryNavigator
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextNavigator
-import com.thomaskioko.tvmaniac.presenter.home.HomeTabController
+import com.thomaskioko.tvmaniac.presenter.home.HomeTabNavigator
+import com.thomaskioko.tvmaniac.presenter.root.DefaultRootPresenter
+import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsNavigator
-import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowSeasonDetailsParam
+import com.thomaskioko.tvmaniac.presenter.showdetails.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileNavigator
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
@@ -130,7 +130,7 @@ import kotlinx.coroutines.flow.flowOf
         LibrarySyncWorker::class,
         TokenRefreshWorker::class,
         UpNextSyncWorker::class,
-        DefaultEpisodeSheetController::class,
+        DefaultEpisodeSheetNavigator::class,
         DefaultSearchNavigator::class,
         DefaultDebugNavigator::class,
         DefaultSettingsNavigator::class,
@@ -143,7 +143,7 @@ import kotlinx.coroutines.flow.flowOf
         DefaultDiscoverNavigator::class,
         DefaultUpNextNavigator::class,
         DefaultCalendarNavigator::class,
-        DefaultHomeTabController::class,
+        DefaultHomeTabNavigator::class,
         DefaultWatchlistNavigator::class,
     ],
 )
@@ -279,8 +279,8 @@ public object FakeAppBindings {
 
     @Provides
     @SingleIn(AppScope::class)
-    public fun provideEpisodeSheetController(): EpisodeSheetController =
-        object : EpisodeSheetController {
+    public fun provideEpisodeSheetController(): EpisodeSheetNavigator =
+        object : EpisodeSheetNavigator {
             override fun showEpisodeSheet(
                 episodeId: Long,
                 source: ScreenSource,
@@ -394,8 +394,8 @@ public object FakeAppBindings {
 
     @Provides
     @SingleIn(AppScope::class)
-    public fun provideHomeTabController(): HomeTabController =
-        object : HomeTabController {
+    public fun provideHomeTabController(): HomeTabNavigator =
+        object : HomeTabNavigator {
             override fun switchToProgressTab() {}
         }
 

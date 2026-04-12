@@ -6,7 +6,7 @@ import com.arkivanov.decompose.defaultComponentContext
 import com.thomaskioko.tvmaniac.app.TvManicApplication
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.navigation.RootNavigator
-import com.thomaskioko.tvmaniac.navigation.RootPresenter
+import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesTo

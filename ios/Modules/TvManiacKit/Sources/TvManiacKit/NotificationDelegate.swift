@@ -48,7 +48,7 @@ public class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
         let childStack = rootPresenter.childStackValue.value
         let activeChild = childStack.active.instance
 
-        if let homeChild = activeChild as? RootScreenHome {
+        if let homeChild = activeChild as? HomeDestination {
             homeChild.presenter.onLibraryClicked()
         }
     }
