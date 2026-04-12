@@ -121,33 +121,44 @@ public class DefaultTraktAuthRepository(
 
 ## Assisted Injection
 
-Metro describes assisted injection as the mechanism "for types that require dynamic dependencies at instantiation". Presenters in this project are the canonical case: most of their dependencies come from the graph, but some parameters only exist at runtime.
+Metro describes assisted injection as the mechanism "for types that require dynamic dependencies at instantiation". Presenters that have screen-specific parameters (show ID, season params) use assisted injection. Metro matches assisted parameters by parameter name, so no explicit `@Assisted("id")` values are needed.
 
-- **ComponentContext**: Decompose lifecycle context, handed in when the screen is created.
-- **Navigation callbacks**: lambdas like `onShowClicked: (Long) -> Unit`, wired by the parent presenter.
+### Presenters without screen parameters
 
-Each presenter is a single `@AssistedInject` class with an `@AssistedFactory fun interface Factory` that produces fully-injected instances. Metro matches assisted parameters by parameter name, so no explicit `@Assisted("id")` values are needed.
+Most presenters use plain `@Inject`. Their `ComponentContext` is provided by a `@GraphExtension` scope (see [Navigation](NAVIGATION.md) for the scope hierarchy). No Factory interface needed.
+
+```kotlin
+@Inject
+public class HomePresenter(
+    componentContext: ComponentContext,              // provided by ScreenScope
+    private val homeTabGraphFactory: HomeTabGraph.Factory,
+    private val observeUserProfileInteractor: ObserveUserProfileInteractor,
+) : ComponentContext by componentContext
+```
+
+Parent code resolves these directly from the graph: `screenGraph.homePresenter`.
+
+### Presenters with screen parameters
+
+Presenters that need runtime parameters beyond `ComponentContext` use `@AssistedInject` with a Factory. Only the screen-specific params are `@Assisted`. `ComponentContext` comes from the scope.
 
 ```kotlin
 @AssistedInject
-public class HomePresenter(
-    @Assisted componentContext: ComponentContext,
-    @Assisted private val onShowClicked: (id: Long) -> Unit,
-    private val discoverPresenterFactory: DiscoverShowsPresenter.Factory,
-    private val observeUserProfileInteractor: ObserveUserProfileInteractor,
+public class ShowDetailsPresenter(
+    componentContext: ComponentContext,              // provided by ScreenScope
+    @Assisted private val param: ShowDetailsParam,  // screen-specific
+    private val navigator: ShowDetailsNavigator,
+    private val showDetailsInteractor: ShowDetailsInteractor,
 ) : ComponentContext by componentContext {
 
     @AssistedFactory
     public fun interface Factory {
-        public fun create(
-            componentContext: ComponentContext,
-            onShowClicked: (id: Long) -> Unit,
-        ): HomePresenter
+        public fun create(param: ShowDetailsParam): ShowDetailsPresenter
     }
 }
 ```
 
-Parent presenters inject `HomePresenter.Factory` and call `.create(...)` with the runtime arguments.
+Parent code gets the factory from the graph: `screenGraph.showDetailsFactory.create(param)`.
 
 ## App Initializers
 

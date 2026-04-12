@@ -106,6 +106,13 @@ dependencies {
     implementation(projects.presenter.upnext)
     implementation(projects.data.traktlists.implementation)
     implementation(projects.domain.traktlists)
+    implementation(projects.core.util.api)
+    implementation(projects.core.view)
+    implementation(projects.data.calendar.api)
+    implementation(projects.data.followedshows.api)
+    implementation(projects.data.genre.api)
+    implementation(projects.data.user.api)
+    implementation(projects.i18n.api)
 
     implementation(projects.core.networkUtil.implementation)
     implementation(projects.core.notifications.api)

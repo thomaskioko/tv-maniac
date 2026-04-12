@@ -56,21 +56,10 @@ internal class TestJvmGraphTest {
     }
 
     @Test
-    fun `should resolve HomePresenter factory`() {
+    fun `should resolve ScreenGraph factory and HomePresenter`() {
         val componentContext = DefaultComponentContext(lifecycle = lifecycle)
-        val presenter = component.homePresenterFactory.create(
-            componentContext = componentContext,
-            onShowClicked = {},
-            onMoreShowClicked = {},
-            onShowGenreClicked = {},
-            onNavigateToSearch = {},
-            onSettingsClicked = {},
-            onSeasonClicked = { _, _, _ -> },
-            onDiscoverEpisodeLongPressed = {},
-            onUpNextEpisodeLongPressed = {},
-            onCalendarEpisodeLongPressed = {},
-        )
+        val screenGraph = component.screenGraphFactory.createGraph(componentContext)
 
-        presenter.shouldBeInstanceOf<HomePresenter>()
+        screenGraph.homePresenter.shouldBeInstanceOf<HomePresenter>()
     }
 }

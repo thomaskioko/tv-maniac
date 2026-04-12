@@ -20,9 +20,7 @@ import com.thomaskioko.tvmaniac.traktauth.api.AuthState
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
-import dev.zacsweers.metro.Assisted
-import dev.zacsweers.metro.AssistedFactory
-import dev.zacsweers.metro.AssistedInject
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -31,10 +29,10 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleDebugEpisodeNotificationInteractor.Params as DebugNotificationParams
 
-@AssistedInject
+@Inject
 public class DebugPresenter(
-    @Assisted componentContext: ComponentContext,
-    @Assisted private val backClicked: () -> Unit,
+    componentContext: ComponentContext,
+    private val navigator: DebugNavigator,
     private val datastoreRepository: DatastoreRepository,
     private val scheduleDebugEpisodeNotificationInteractor: ScheduleDebugEpisodeNotificationInteractor,
     private val syncLibraryInteractor: SyncLibraryInteractor,
@@ -91,7 +89,7 @@ public class DebugPresenter(
 
     public fun dispatch(action: DebugActions) {
         when (action) {
-            BackClicked -> backClicked()
+            BackClicked -> navigator.goBack()
             TriggerDebugNotification -> scheduleDebugNotification()
             TriggerDelayedDebugNotification -> scheduleDebugNotification(5.minutes)
             TriggerLibrarySync -> triggerLibrarySync()
@@ -142,10 +140,5 @@ public class DebugPresenter(
             StringResourceKey.LabelDebugTokenRefreshExpired
         }
         return localizer.getString(key, formattedDate)
-    }
-
-    @AssistedFactory
-    public fun interface Factory {
-        public fun create(componentContext: ComponentContext, backClicked: () -> Unit): DebugPresenter
     }
 }

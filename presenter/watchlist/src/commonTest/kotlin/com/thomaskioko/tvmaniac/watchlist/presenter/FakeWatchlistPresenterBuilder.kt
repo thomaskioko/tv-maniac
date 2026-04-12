@@ -66,12 +66,13 @@ class FakeWatchlistPresenterBuilder {
 
     fun create(
         componentContext: ComponentContext,
-        navigateToShowDetails: (showDetails: Long) -> Unit,
-        navigateToSeason: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
+        navigator: WatchlistNavigator = object : WatchlistNavigator {
+            override fun showDetails(traktId: Long) {}
+            override fun showSeasonDetails(showTraktId: Long, seasonId: Long, seasonNumber: Long) {}
+        },
     ): WatchlistPresenter = WatchlistPresenter(
         componentContext = componentContext,
-        navigateToShowDetails = navigateToShowDetails,
-        navigateToSeason = navigateToSeason,
+        navigator = navigator,
         repository = repository,
         unfollowShowInteractor = UnfollowShowInteractor(fakeFollowedShowsRepository),
         observeWatchlistSectionsInteractor = observeWatchlistSectionsInteractor,

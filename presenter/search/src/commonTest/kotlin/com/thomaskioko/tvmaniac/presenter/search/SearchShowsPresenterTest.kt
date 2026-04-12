@@ -17,6 +17,7 @@ import com.thomaskioko.tvmaniac.search.presenter.CategoryChanged
 import com.thomaskioko.tvmaniac.search.presenter.ClearQuery
 import com.thomaskioko.tvmaniac.search.presenter.Mapper
 import com.thomaskioko.tvmaniac.search.presenter.QueryChanged
+import com.thomaskioko.tvmaniac.search.presenter.SearchNavigator
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowState
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowsPresenter
 import com.thomaskioko.tvmaniac.search.presenter.model.CategoryItem
@@ -355,9 +356,11 @@ internal class SearchShowsPresenterTest {
         lifecycle: LifecycleRegistry = LifecycleRegistry(),
     ): SearchShowsPresenter = SearchShowsPresenter(
         componentContext = DefaultComponentContext(lifecycle = lifecycle),
-        onNavigateToShowDetails = {},
-        onNavigateToGenre = {},
-        onNavigateBack = {},
+        navigator = object : SearchNavigator {
+            override fun showDetails(traktId: Long) {}
+            override fun showGenre(genreId: Long) {}
+            override fun goBack() {}
+        },
         searchRepository = fakeSearchRepository,
         genreRepository = genreRepository,
         fetchGenreContentInteractor = FetchGenreContentInteractor(

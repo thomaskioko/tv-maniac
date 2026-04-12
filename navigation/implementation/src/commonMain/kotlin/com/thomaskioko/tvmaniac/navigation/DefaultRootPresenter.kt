@@ -2,13 +2,12 @@ package com.thomaskioko.tvmaniac.navigation
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.slot.ChildSlot
-import com.arkivanov.decompose.router.slot.SlotNavigation
-import com.arkivanov.decompose.router.slot.activate
 import com.arkivanov.decompose.router.slot.childSlot
-import com.arkivanov.decompose.router.slot.dismiss
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.nav.model.SeasonDetailsUiParam
+import com.thomaskioko.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.core.base.extensions.asStateFlow
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
@@ -18,21 +17,15 @@ import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
-import com.thomaskioko.tvmaniac.debug.presenter.DebugPresenter
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
-import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsPresenter
-import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child
-import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeDetailSheetPresenter
-import com.thomaskioko.tvmaniac.presentation.episodedetail.ScreenSource
-import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
-import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenter
-import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsParam
-import com.thomaskioko.tvmaniac.presenter.trailers.TrailersPresenter
-import com.thomaskioko.tvmaniac.search.presenter.SearchShowsPresenter
-import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsPresenter
-import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonDetailsUiParam
-import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
+import com.thomaskioko.tvmaniac.navigation.di.ScreenGraph
+import com.thomaskioko.tvmaniac.navigation.model.DeepLinkDestination
+import com.thomaskioko.tvmaniac.navigation.model.EpisodeSheetChild
+import com.thomaskioko.tvmaniac.navigation.model.EpisodeSheetConfig
+import com.thomaskioko.tvmaniac.navigation.model.NotificationPermissionState
+import com.thomaskioko.tvmaniac.navigation.model.RootDestinationConfig
+import com.thomaskioko.tvmaniac.navigation.model.ThemeState
 import com.thomaskioko.tvmaniac.traktauth.api.AuthError
 import com.thomaskioko.tvmaniac.traktauth.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
@@ -59,15 +52,8 @@ import kotlin.time.Duration.Companion.milliseconds
 public class DefaultRootPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val navigator: RootNavigator,
-    private val homePresenterFactory: HomePresenter.Factory,
-    private val searchPresenterFactory: SearchShowsPresenter.Factory,
-    private val settingsPresenterFactory: SettingsPresenter.Factory,
-    private val debugPresenterFactory: DebugPresenter.Factory,
-    private val moreShowsPresenterFactory: MoreShowsPresenter.Factory,
-    private val showDetailsPresenterFactory: ShowDetailsPresenter.Factory,
-    private val seasonDetailsPresenterFactory: SeasonDetailsPresenter.Factory,
-    private val trailersPresenterFactory: TrailersPresenter.Factory,
-    private val episodeDetailSheetPresenterFactory: EpisodeDetailSheetPresenter.Factory,
+    private val screenGraphFactory: ScreenGraph.Factory,
+    private val episodeSheetController: EpisodeSheetController,
     private val traktAuthRepository: TraktAuthRepository,
     private val updateUserProfileData: UpdateUserProfileData,
     private val logoutInteractor: LogoutInteractor,
@@ -119,7 +105,7 @@ public class DefaultRootPresenter(
             .collectStatus(profileLoadingState, logger, uiMessageManager)
     }
 
-    private val childStackRouter: Value<ChildStack<*, Child>> = childStack(
+    private val childStackRouter: Value<ChildStack<*, RootChild>> = childStack(
         source = navigator.getStackNavigation(),
         key = "RootChildStackKey",
         initialConfiguration = RootDestinationConfig.Home,
@@ -128,57 +114,29 @@ public class DefaultRootPresenter(
         childFactory = ::createScreen,
     )
 
-    override val childStack: StateFlow<ChildStack<*, Child>> =
+    override val childStack: StateFlow<ChildStack<*, RootChild>> =
         childStackRouter.asStateFlow(componentContext.componentCoroutineScope())
 
-    override val childStackValue: Value<ChildStack<*, Child>> =
+    override val childStackValue: Value<ChildStack<*, RootChild>> =
         childStack.asValue(coroutineScope)
 
-    private val slotNavigation = SlotNavigation<EpisodeSheetConfig>()
-
-    private val episodeSheetSlotRouter: Value<ChildSlot<*, EpisodeDetailSheetPresenter>> = childSlot(
-        source = slotNavigation,
+    private val episodeSheetSlotRouter: Value<ChildSlot<*, SheetChild>> = childSlot(
+        source = episodeSheetController.getSlotNavigation(),
         key = "EpisodeSheetSlotKey",
         serializer = EpisodeSheetConfig.serializer(),
         handleBackButton = true,
     ) { config, childComponentContext ->
-        episodeDetailSheetPresenterFactory.create(
-            componentContext = childComponentContext,
-            episodeId = config.episodeId,
-            source = config.source,
-            navigateToShowDetails = { showTraktId ->
-                slotNavigation.dismiss()
-                navigator.pushToFront(
-                    RootDestinationConfig.ShowDetails(
-                        param = ShowDetailsParam(id = showTraktId),
-                    ),
-                )
-            },
-            navigateToSeasonDetails = { showTraktId, seasonId, seasonNumber ->
-                slotNavigation.dismiss()
-                navigator.pushNew(
-                    RootDestinationConfig.SeasonDetails(
-                        param = SeasonDetailsUiParam(
-                            showTraktId = showTraktId,
-                            seasonId = seasonId,
-                            seasonNumber = seasonNumber,
-                        ),
-                    ),
-                )
-            },
-            dismissSheet = { slotNavigation.dismiss() },
+        EpisodeSheetChild(
+            presenter = screenGraphFactory.createGraph(childComponentContext)
+                .episodeDetailFactory.create(config.episodeId, config.source),
         )
     }
 
-    override val episodeSheetSlot: StateFlow<ChildSlot<*, EpisodeDetailSheetPresenter>> =
+    override val episodeSheetSlot: StateFlow<ChildSlot<*, SheetChild>> =
         episodeSheetSlotRouter.asStateFlow(componentContext.componentCoroutineScope())
 
-    override val episodeSheetSlotValue: Value<ChildSlot<*, EpisodeDetailSheetPresenter>> =
+    override val episodeSheetSlotValue: Value<ChildSlot<*, SheetChild>> =
         episodeSheetSlot.asValue(coroutineScope)
-
-    private fun showEpisodeSheet(episodeId: Long, source: ScreenSource) {
-        slotNavigation.activate(EpisodeSheetConfig(episodeId = episodeId, source = source))
-    }
 
     override val themeState: StateFlow<ThemeState> =
         datastoreRepository
@@ -286,168 +244,20 @@ public class DefaultRootPresenter(
     private fun createScreen(
         config: RootDestinationConfig,
         componentContext: ComponentContext,
-    ): Child =
-        when (config) {
-            is RootDestinationConfig.Home ->
-                Child.Home(
-                    presenter = homePresenterFactory.create(
-                        componentContext = componentContext,
-                        onShowClicked = { id ->
-                            navigator.pushNew(
-                                RootDestinationConfig.ShowDetails(
-                                    param = ShowDetailsParam(id = id),
-                                ),
-                            )
-                        },
-                        onMoreShowClicked = { id ->
-                            navigator.pushNew(
-                                RootDestinationConfig.MoreShows(
-                                    id,
-                                ),
-                            )
-                        },
-                        onShowGenreClicked = { id ->
-                            navigator.pushNew(
-                                RootDestinationConfig.GenreShows(
-                                    id,
-                                ),
-                            )
-                        },
-                        onNavigateToSearch = { navigator.pushNew(RootDestinationConfig.Search) },
-                        onSettingsClicked = { navigator.pushNew(RootDestinationConfig.Settings) },
-                        onSeasonClicked = { showTraktId, seasonId, seasonNumber ->
-                            navigator.pushNew(
-                                RootDestinationConfig.SeasonDetails(
-                                    param = SeasonDetailsUiParam(
-                                        showTraktId = showTraktId,
-                                        seasonId = seasonId,
-                                        seasonNumber = seasonNumber,
-                                    ),
-                                ),
-                            )
-                        },
-                        onDiscoverEpisodeLongPressed = { episodeId ->
-                            showEpisodeSheet(episodeId, ScreenSource.DISCOVER)
-                        },
-                        onUpNextEpisodeLongPressed = { episodeId ->
-                            showEpisodeSheet(episodeId, ScreenSource.UP_NEXT)
-                        },
-                        onCalendarEpisodeLongPressed = { episodeId ->
-                            showEpisodeSheet(episodeId, ScreenSource.CALENDAR)
-                        },
-                    ),
-                )
-
-            is RootDestinationConfig.Search ->
-                Child.Search(
-                    presenter = searchPresenterFactory.create(
-                        componentContext = componentContext,
-                        onNavigateToShowDetails = { id ->
-                            navigator.pushNew(
-                                RootDestinationConfig.ShowDetails(
-                                    param = ShowDetailsParam(id = id),
-                                ),
-                            )
-                        },
-                        onNavigateToGenre = { id ->
-                            navigator.pushNew(
-                                RootDestinationConfig.GenreShows(id),
-                            )
-                        },
-                        onNavigateBack = navigator::pop,
-                    ),
-                )
-
-            is RootDestinationConfig.Settings ->
-                Child.Settings(
-                    presenter = settingsPresenterFactory.create(
-                        componentContext = componentContext,
-                        backClicked = navigator::pop,
-                        onNavigateToDebugMenu = { navigator.pushNew(RootDestinationConfig.Debug) },
-                    ),
-                )
-
-            is RootDestinationConfig.Debug ->
-                Child.Debug(
-                    presenter = debugPresenterFactory.create(
-                        componentContext = componentContext,
-                        backClicked = navigator::pop,
-                    ),
-                )
-
-            is RootDestinationConfig.ShowDetails ->
-                Child.ShowDetails(
-                    presenter = showDetailsPresenterFactory.create(
-                        componentContext = componentContext,
-                        param = config.param,
-                        onBack = navigator::pop,
-                        onNavigateToShow = { id ->
-                            navigator.pushToFront(
-                                RootDestinationConfig.ShowDetails(
-                                    param = ShowDetailsParam(id = id),
-                                ),
-                            )
-                        },
-                        onNavigateToSeason = { params ->
-                            navigator.pushNew(
-                                config = RootDestinationConfig.SeasonDetails(
-                                    param = SeasonDetailsUiParam(
-                                        showTraktId = params.showTraktId,
-                                        seasonNumber = params.seasonNumber,
-                                        seasonId = params.seasonId,
-                                    ),
-                                ),
-                            )
-                        },
-                        onNavigateToTrailer = { id ->
-                            navigator.pushNew(
-                                RootDestinationConfig.Trailers(
-                                    id,
-                                ),
-                            )
-                        },
-                        onShowFollowed = ::onShowFollowed,
-                    ),
-                )
-
-            is RootDestinationConfig.SeasonDetails ->
-                Child.SeasonDetails(
-                    presenter = seasonDetailsPresenterFactory.create(
-                        componentContext,
-                        param = config.param,
-                        onBack = navigator::pop,
-                        onEpisodeClick = { episodeId ->
-                            showEpisodeSheet(episodeId, ScreenSource.SEASON_DETAILS)
-                        },
-                    ),
-                )
-
-            is RootDestinationConfig.Trailers ->
-                Child.Trailers(
-                    presenter = trailersPresenterFactory.create(
-                        componentContext = componentContext,
-                        traktShowId = config.id,
-                    ),
-                )
-
-            is RootDestinationConfig.MoreShows ->
-                Child.MoreShows(
-                    presenter = moreShowsPresenterFactory.create(
-                        componentContext = componentContext,
-                        categoryId = config.id,
-                        onBack = navigator::pop,
-                        onNavigateToShowDetails = { id ->
-                            navigator.pushNew(
-                                RootDestinationConfig.ShowDetails(
-                                    param = ShowDetailsParam(id = id),
-                                ),
-                            )
-                        },
-                    ),
-                )
-
-            is RootDestinationConfig.GenreShows -> Child.GenreShows
+    ): RootChild {
+        val screen = screenGraphFactory.createGraph(componentContext)
+        return when (config) {
+            is RootDestinationConfig.Home -> RootScreen.Home(screen.homePresenter)
+            is RootDestinationConfig.Search -> RootScreen.Search(screen.searchPresenter)
+            is RootDestinationConfig.Settings -> RootScreen.Settings(screen.settingsPresenter)
+            is RootDestinationConfig.Debug -> RootScreen.Debug(screen.debugPresenter)
+            is RootDestinationConfig.ShowDetails -> RootScreen.ShowDetails(screen.showDetailsFactory.create(config.param))
+            is RootDestinationConfig.SeasonDetails -> RootScreen.SeasonDetails(screen.seasonDetailsFactory.create(config.param))
+            is RootDestinationConfig.Trailers -> RootScreen.Trailers(screen.trailersFactory.create(config.id))
+            is RootDestinationConfig.MoreShows -> RootScreen.MoreShows(screen.moreShowsFactory.create(config.id))
+            is RootDestinationConfig.GenreShows -> RootScreen.GenreShows
         }
+    }
 
     @AssistedFactory
     public fun interface Factory {

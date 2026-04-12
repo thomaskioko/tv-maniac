@@ -204,6 +204,7 @@ include(
     ":domain:user",
     ":domain:watchlist",
     ":domain:watchproviders",
+    ":features:nav",
     ":i18n:api",
     ":i18n:generator",
     ":i18n:implementation",

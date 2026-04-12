@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.presenter.showdetails
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.thomaskioko.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.notifications.api.EpisodeNotification
@@ -43,7 +44,6 @@ import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepositor
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ProviderModel
-import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.TrailerModel
@@ -833,20 +833,23 @@ class ShowDetailsPresenterTest {
 
     private fun buildShowDetailsPresenter(
         param: ShowDetailsParam = ShowDetailsParam(id = 84958),
-        onBack: () -> Unit = {},
         onNavigateToSeason: (param: ShowSeasonDetailsParam) -> Unit = {},
-        onNavigateToTrailer: (id: Long) -> Unit = {},
-        onNavigateToShow: (id: Long) -> Unit = {},
         onShowFollowed: () -> Unit = {},
     ): ShowDetailsPresenter {
         return ShowDetailsPresenter(
             param = param,
             componentContext = DefaultComponentContext(lifecycle = LifecycleRegistry()),
-            onBack = onBack,
-            onNavigateToSeason = onNavigateToSeason,
-            onNavigateToShow = onNavigateToShow,
-            onNavigateToTrailer = onNavigateToTrailer,
-            onShowFollowed = onShowFollowed,
+            navigator = object : ShowDetailsNavigator {
+                override fun goBack() {}
+                override fun showDetails(traktId: Long) {}
+                override fun showSeasonDetails(param: ShowSeasonDetailsParam) {
+                    onNavigateToSeason(param)
+                }
+                override fun showTrailers(traktShowId: Long) {}
+                override fun showFollowed() {
+                    onShowFollowed()
+                }
+            },
             followedShowsRepository = followedShowsRepository,
             followShowInteractor = FollowShowInteractor(
                 followedShowsRepository = followedShowsRepository,

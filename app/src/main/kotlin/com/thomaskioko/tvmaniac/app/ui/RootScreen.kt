@@ -28,6 +28,8 @@ import com.thomaskioko.tvmaniac.episodedetail.ui.EpisodeDetailSheet
 import com.thomaskioko.tvmaniac.home.ui.HomeScreen
 import com.thomaskioko.tvmaniac.moreshows.ui.MoreShowsScreen
 import com.thomaskioko.tvmaniac.navigation.RootPresenter
+import com.thomaskioko.tvmaniac.navigation.RootScreen
+import com.thomaskioko.tvmaniac.navigation.model.EpisodeSheetChild
 import com.thomaskioko.tvmaniac.search.ui.SearchScreen
 import com.thomaskioko.tvmaniac.seasondetails.ui.SeasonDetailsScreen
 import com.thomaskioko.tvmaniac.settings.ui.SettingsScreen
@@ -72,8 +74,8 @@ public fun RootScreen(
     }
 
     val episodeSheetSlot by rootPresenter.episodeSheetSlot.collectAsStateWithLifecycle()
-    episodeSheetSlot.child?.instance?.let { presenter ->
-        EpisodeDetailSheet(presenter = presenter)
+    (episodeSheetSlot.child?.instance as? EpisodeSheetChild)?.let { child ->
+        EpisodeDetailSheet(presenter = child.presenter)
     }
 
     Surface(modifier = modifier, color = MaterialTheme.colorScheme.background) {
@@ -97,55 +99,56 @@ private fun ChildrenContent(rootPresenter: RootPresenter, modifier: Modifier = M
     ) { child ->
         val fillMaxSizeModifier = Modifier.fillMaxSize()
         when (val screen = child.instance) {
-            is RootPresenter.Child.Home ->
+            is RootScreen.Home ->
                 HomeScreen(presenter = screen.presenter, modifier = fillMaxSizeModifier)
 
-            is RootPresenter.Child.Search ->
+            is RootScreen.Search ->
                 SearchScreen(
                     presenter = screen.presenter,
                     modifier = fillMaxSizeModifier,
                 )
 
-            is RootPresenter.Child.Settings ->
+            is RootScreen.Settings ->
                 SettingsScreen(
                     presenter = screen.presenter,
                     modifier = fillMaxSizeModifier,
                 )
-            is RootPresenter.Child.Debug ->
+            is RootScreen.Debug ->
                 DebugMenuScreen(
                     presenter = screen.presenter,
                     modifier = fillMaxSizeModifier,
                 )
 
-            is RootPresenter.Child.ShowDetails -> {
+            is RootScreen.ShowDetails -> {
                 ShowDetailsScreen(
                     presenter = screen.presenter,
                     modifier = fillMaxSizeModifier,
                 )
             }
 
-            is RootPresenter.Child.SeasonDetails -> {
+            is RootScreen.SeasonDetails -> {
                 SeasonDetailsScreen(
                     presenter = screen.presenter,
                     modifier = fillMaxSizeModifier,
                 )
             }
 
-            is RootPresenter.Child.Trailers ->
+            is RootScreen.Trailers ->
                 TrailersScreen(
                     presenter = screen.presenter,
                     modifier = fillMaxSizeModifier,
                 )
 
-            is RootPresenter.Child.MoreShows ->
+            is RootScreen.MoreShows ->
                 MoreShowsScreen(
                     presenter = screen.presenter,
                     modifier = fillMaxSizeModifier,
                 )
 
-            RootPresenter.Child.GenreShows -> {
-                // TODO:: Genre Shows Screen
+            RootScreen.GenreShows -> {
             }
+
+            else -> Unit
         }
     }
 }

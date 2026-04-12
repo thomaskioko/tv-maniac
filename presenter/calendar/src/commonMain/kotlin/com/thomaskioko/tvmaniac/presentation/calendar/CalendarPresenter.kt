@@ -19,9 +19,7 @@ import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarMoreEpisodes
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarNoData
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
-import dev.zacsweers.metro.Assisted
-import dev.zacsweers.metro.AssistedFactory
-import dev.zacsweers.metro.AssistedInject
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -34,11 +32,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-@AssistedInject
+@Inject
 public class CalendarPresenter(
-    @Assisted componentContext: ComponentContext,
-    @Assisted private val navigateToShowDetails: (Long) -> Unit,
-    @Assisted private val onEpisodeLongPressed: (Long) -> Unit,
+    componentContext: ComponentContext,
+    private val navigator: CalendarNavigator,
     private val observeCalendarInteractor: ObserveCalendarInteractor,
     private val fetchCalendarInteractor: FetchCalendarInteractor,
     private val traktAuthRepository: TraktAuthRepository,
@@ -100,7 +97,7 @@ public class CalendarPresenter(
 
             is NavigateToPreviousWeek -> navigateToPreviousWeek()
             is NavigateToNextWeek -> navigateToNextWeek()
-            is EpisodeCardClicked -> onEpisodeLongPressed(action.episodeTraktId)
+            is EpisodeCardClicked -> navigator.showEpisodeSheet(action.episodeTraktId)
             is MessageShown -> clearMessage(action.id)
         }
     }
@@ -168,14 +165,5 @@ public class CalendarPresenter(
         coroutineScope.launch {
             uiMessageManager.clearMessage(id)
         }
-    }
-
-    @AssistedFactory
-    public fun interface Factory {
-        public fun create(
-            componentContext: ComponentContext,
-            navigateToShowDetails: (Long) -> Unit,
-            onEpisodeLongPressed: (Long) -> Unit,
-        ): CalendarPresenter
     }
 }

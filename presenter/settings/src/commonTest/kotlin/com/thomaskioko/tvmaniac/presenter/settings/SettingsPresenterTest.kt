@@ -15,6 +15,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.ChangeThemeClicked
 import com.thomaskioko.tvmaniac.settings.presenter.DismissThemeClicked
 import com.thomaskioko.tvmaniac.settings.presenter.DismissTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
+import com.thomaskioko.tvmaniac.settings.presenter.SettingsNavigator
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.ShowTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
@@ -69,8 +70,10 @@ class SettingsPresenterTest {
             toggleEpisodeNotificationsInteractor = ToggleEpisodeNotificationsInteractor(
                 datastoreRepository = datastoreRepository,
             ),
-            backClicked = {},
-            onNavigateToDebugMenu = {},
+            navigator = object : SettingsNavigator {
+                override fun goBack() {}
+                override fun showDebugMenu() {}
+            },
         )
     }
 

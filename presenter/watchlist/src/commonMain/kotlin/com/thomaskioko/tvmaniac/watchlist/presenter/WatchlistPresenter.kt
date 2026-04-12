@@ -30,8 +30,7 @@ import kotlinx.coroutines.launch
 @AssistedInject
 public class WatchlistPresenter(
     @Assisted componentContext: ComponentContext,
-    @Assisted private val navigateToShowDetails: (id: Long) -> Unit,
-    @Assisted private val navigateToSeason: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
+    private val navigator: WatchlistNavigator,
     private val repository: WatchlistRepository,
     private val unfollowShowInteractor: UnfollowShowInteractor,
     private val observeWatchlistSectionsInteractor: ObserveWatchlistSectionsInteractor,
@@ -87,17 +86,17 @@ public class WatchlistPresenter(
 
     public fun dispatch(action: WatchlistAction) {
         when (action) {
-            is WatchlistShowClicked -> navigateToShowDetails(action.traktId)
+            is WatchlistShowClicked -> navigator.showDetails(action.traktId)
             is WatchlistQueryChanged -> updateQuery(action.query)
             is ClearWatchlistQuery -> clearQuery()
             is ToggleSearchActive -> toggleSearchActive()
             is ChangeListStyleClicked -> toggleListStyle(action.isGridMode)
             is MessageShown -> clearMessage(action.id)
-            is UpNextEpisodeClicked -> navigateToShowDetails(action.showTraktId)
-            is ShowTitleClicked -> navigateToShowDetails(action.showTraktId)
+            is UpNextEpisodeClicked -> navigator.showDetails(action.showTraktId)
+            is ShowTitleClicked -> navigator.showDetails(action.showTraktId)
             is MarkUpNextEpisodeWatched -> markEpisodeWatched(action)
             is UnfollowShowFromUpNext -> unfollowShow(action.showTraktId)
-            is OpenSeasonFromUpNext -> navigateToSeason(action.showTraktId, action.seasonId, action.seasonNumber)
+            is OpenSeasonFromUpNext -> navigator.showSeasonDetails(action.showTraktId, action.seasonId, action.seasonNumber)
             is RefreshWatchlist -> syncWatchlist(action.forceRefresh)
         }
     }
@@ -164,8 +163,6 @@ public class WatchlistPresenter(
     public fun interface Factory {
         public fun create(
             componentContext: ComponentContext,
-            navigateToShowDetails: (id: Long) -> Unit,
-            navigateToSeason: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
         ): WatchlistPresenter
     }
 }

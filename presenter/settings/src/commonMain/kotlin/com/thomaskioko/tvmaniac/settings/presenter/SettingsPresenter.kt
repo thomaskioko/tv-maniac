@@ -16,9 +16,7 @@ import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNot
 import com.thomaskioko.tvmaniac.domain.settings.ObserveSettingsPreferencesInteractor
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
-import dev.zacsweers.metro.Assisted
-import dev.zacsweers.metro.AssistedFactory
-import dev.zacsweers.metro.AssistedInject
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -26,11 +24,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-@AssistedInject
+@Inject
 public class SettingsPresenter(
-    @Assisted componentContext: ComponentContext,
-    @Assisted private val backClicked: () -> Unit,
-    @Assisted private val onNavigateToDebugMenu: () -> Unit,
+    componentContext: ComponentContext,
+    private val navigator: SettingsNavigator,
     private val appInfo: ApplicationInfo,
     private val datastoreRepository: DatastoreRepository,
     private val logoutInteractor: LogoutInteractor,
@@ -90,7 +87,7 @@ public class SettingsPresenter(
             DismissTraktDialog, ShowTraktDialog -> updateTrackDialogState()
             ShowAboutDialog, DismissAboutDialog -> updateAboutDialogState()
             VersionClicked -> handleVersionTap()
-            BackClicked -> backClicked()
+            BackClicked -> navigator.goBack()
             TraktLogoutClicked -> {
                 coroutineScope.launch {
                     logoutInteractor(Unit)
@@ -161,7 +158,7 @@ public class SettingsPresenter(
         _state.update { state ->
             val newCount = state.hiddenTapCount + 1
             if (newCount >= HIDDEN_TAP_THRESHOLD) {
-                onNavigateToDebugMenu()
+                navigator.showDebugMenu()
                 state.copy(hiddenTapCount = 0)
             } else {
                 state.copy(hiddenTapCount = newCount)
@@ -180,14 +177,5 @@ public class SettingsPresenter(
 
     private companion object {
         const val HIDDEN_TAP_THRESHOLD = 6
-    }
-
-    @AssistedFactory
-    public fun interface Factory {
-        public fun create(
-            componentContext: ComponentContext,
-            backClicked: () -> Unit,
-            onNavigateToDebugMenu: () -> Unit,
-        ): SettingsPresenter
     }
 }

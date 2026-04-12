@@ -19,6 +19,7 @@ kotlin {
                 implementation(projects.data.followedshows.api)
                 implementation(projects.domain.episode)
                 implementation(projects.domain.followedshows)
+                implementation(projects.features.nav)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)

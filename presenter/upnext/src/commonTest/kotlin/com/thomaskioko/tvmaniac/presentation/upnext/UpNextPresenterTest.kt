@@ -13,6 +13,7 @@ import com.thomaskioko.tvmaniac.domain.upnext.RefreshUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.model.UpNextSortOption
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
+import com.thomaskioko.tvmaniac.presentation.upnext.UpNextNavigator
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
@@ -396,7 +397,6 @@ internal class UpNextPresenterTest {
     }
 
     private fun createPresenter(
-        navigateToShowDetails: (Long) -> Unit = { },
         navigateToSeasonDetails: (Long, Long, Long) -> Unit = { _, _, _ -> },
     ): UpNextPresenter {
         val observeUpNextInteractor = ObserveUpNextInteractor(
@@ -415,9 +415,13 @@ internal class UpNextPresenterTest {
 
         return UpNextPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
-            navigateToShowDetails = navigateToShowDetails,
-            navigateToSeasonDetails = navigateToSeasonDetails,
-            onEpisodeLongPressed = {},
+            navigator = object : UpNextNavigator {
+                override fun showDetails(traktId: Long) {}
+                override fun showSeasonDetails(showTraktId: Long, seasonId: Long, seasonNumber: Long) {
+                    navigateToSeasonDetails(showTraktId, seasonId, seasonNumber)
+                }
+                override fun showEpisodeSheet(episodeId: Long) {}
+            },
             observeUpNextInteractor = observeUpNextInteractor,
             refreshUpNextInteractor = refreshUpNextInteractor,
             markEpisodeWatchedInteractor = markEpisodeWatchedInteractor,

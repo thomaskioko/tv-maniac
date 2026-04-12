@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.presenter.showdetails
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
@@ -34,8 +35,6 @@ import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import com.thomaskioko.tvmaniac.i18n.PluralsResourceKey
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
-import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsParam
-import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
@@ -56,13 +55,9 @@ import kotlinx.coroutines.launch
 
 @AssistedInject
 public class ShowDetailsPresenter(
-    @Assisted componentContext: ComponentContext,
+    componentContext: ComponentContext,
     @Assisted private val param: ShowDetailsParam,
-    @Assisted private val onBack: () -> Unit,
-    @Assisted private val onNavigateToShow: (id: Long) -> Unit,
-    @Assisted private val onNavigateToSeason: (param: ShowSeasonDetailsParam) -> Unit,
-    @Assisted private val onNavigateToTrailer: (id: Long) -> Unit,
-    @Assisted private val onShowFollowed: () -> Unit,
+    private val navigator: ShowDetailsNavigator,
     private val followedShowsRepository: FollowedShowsRepository,
     private val followShowInteractor: FollowShowInteractor,
     private val showDetailsInteractor: ShowDetailsInteractor,
@@ -166,11 +161,11 @@ public class ShowDetailsPresenter(
                 _state.update {
                     it.copy(selectedSeasonIndex = action.params.selectedSeasonIndex)
                 }
-                onNavigateToSeason(action.params)
+                navigator.showSeasonDetails(action.params)
             }
 
-            is DetailShowClicked -> onNavigateToShow(action.id)
-            is WatchTrailerClicked -> onNavigateToTrailer(action.id)
+            is DetailShowClicked -> navigator.showDetails(action.id)
+            is WatchTrailerClicked -> navigator.showTrailers(action.id)
             is FollowShowClicked -> {
                 coroutineScope.launch {
                     if (action.isInLibrary) {
@@ -186,12 +181,12 @@ public class ShowDetailsPresenter(
                         scheduleEpisodeNotificationsInteractor(ScheduleEpisodeNotificationsInteractor.Params())
                             .collectStatus(episodeActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
 
-                        onShowFollowed()
+                        navigator.showFollowed()
                     }
                 }
             }
 
-            DetailBackClicked -> onBack()
+            DetailBackClicked -> navigator.goBack()
             ReloadShowDetails -> refreshShowContent(isUserInitiated = true)
             is ShowDetailsMessageShown -> coroutineScope.launch { uiMessageManager.clearMessage(action.id) }
             DismissShowsListSheet -> coroutineScope.launch { _state.update { it.copy(showListSheet = false) } }
@@ -335,14 +330,6 @@ public class ShowDetailsPresenter(
 
     @AssistedFactory
     public fun interface Factory {
-        public fun create(
-            componentContext: ComponentContext,
-            param: ShowDetailsParam,
-            onBack: () -> Unit,
-            onNavigateToShow: (id: Long) -> Unit,
-            onNavigateToSeason: (param: ShowSeasonDetailsParam) -> Unit,
-            onNavigateToTrailer: (id: Long) -> Unit,
-            onShowFollowed: () -> Unit,
-        ): ShowDetailsPresenter
+        public fun create(param: ShowDetailsParam): ShowDetailsPresenter
     }
 }

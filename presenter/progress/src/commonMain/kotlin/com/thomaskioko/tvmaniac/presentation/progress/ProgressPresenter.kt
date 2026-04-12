@@ -7,23 +7,16 @@ import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.presentation.calendar.CalendarPresenter
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextPresenter
-import dev.zacsweers.metro.Assisted
-import dev.zacsweers.metro.AssistedFactory
-import dev.zacsweers.metro.AssistedInject
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-@AssistedInject
+@Inject
 public class ProgressPresenter(
-    @Assisted componentContext: ComponentContext,
-    @Assisted private val navigateToShowDetails: (showId: Long) -> Unit,
-    @Assisted private val navigateToSeasonDetails: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
-    @Assisted private val onUpNextEpisodeLongPressed: (Long) -> Unit,
-    @Assisted private val onCalendarEpisodeLongPressed: (Long) -> Unit,
-    upNextPresenterFactory: UpNextPresenter.Factory,
-    calendarPresenterFactory: CalendarPresenter.Factory,
+    componentContext: ComponentContext,
+    progressChildGraphFactory: ProgressChildGraph.Factory,
 ) : ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
@@ -33,18 +26,11 @@ public class ProgressPresenter(
 
     public val stateValue: Value<ProgressState> = state.asValue(coroutineScope)
 
-    public val upNextPresenter: UpNextPresenter = upNextPresenterFactory.create(
-        componentContext = childContext(key = "UpNext"),
-        navigateToShowDetails = navigateToShowDetails,
-        navigateToSeasonDetails = navigateToSeasonDetails,
-        onEpisodeLongPressed = onUpNextEpisodeLongPressed,
-    )
+    public val upNextPresenter: UpNextPresenter =
+        progressChildGraphFactory.createGraph(childContext(key = "UpNext")).upNextPresenter
 
-    public val calendarPresenter: CalendarPresenter = calendarPresenterFactory.create(
-        componentContext = childContext(key = "Calendar"),
-        navigateToShowDetails = navigateToShowDetails,
-        onEpisodeLongPressed = onCalendarEpisodeLongPressed,
-    )
+    public val calendarPresenter: CalendarPresenter =
+        progressChildGraphFactory.createGraph(childContext(key = "Calendar")).calendarPresenter
 
     public fun dispatch(action: ProgressAction) {
         when (action) {
@@ -52,16 +38,5 @@ public class ProgressPresenter(
                 _state.update { it.copy(selectedPage = action.index) }
             }
         }
-    }
-
-    @AssistedFactory
-    public fun interface Factory {
-        public fun create(
-            componentContext: ComponentContext,
-            navigateToShowDetails: (showId: Long) -> Unit,
-            navigateToSeasonDetails: (showTraktId: Long, seasonId: Long, seasonNumber: Long) -> Unit,
-            onUpNextEpisodeLongPressed: (Long) -> Unit,
-            onCalendarEpisodeLongPressed: (Long) -> Unit,
-        ): ProgressPresenter
     }
 }

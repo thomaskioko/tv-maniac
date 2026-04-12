@@ -26,9 +26,7 @@ import com.thomaskioko.tvmaniac.traktauth.api.AuthError
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
-import dev.zacsweers.metro.Assisted
-import dev.zacsweers.metro.AssistedFactory
-import dev.zacsweers.metro.AssistedInject
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -37,10 +35,10 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-@AssistedInject
+@Inject
 public class ProfilePresenter(
-    @Assisted componentContext: ComponentContext,
-    @Assisted private val onSettings: () -> Unit,
+    componentContext: ComponentContext,
+    private val navigator: ProfileNavigator,
     private val localizer: Localizer,
     private val traktAuthManager: TraktAuthManager,
     private val traktAuthRepository: TraktAuthRepository,
@@ -92,7 +90,7 @@ public class ProfilePresenter(
                     traktAuthManager.launchWebView()
                 }
             }
-            SettingsClicked -> onSettings()
+            SettingsClicked -> navigator.showSettings()
             RefreshProfile -> fetchUserData(forceRefresh = true)
             is MessageShown -> {
                 clearMessage(action.id)
@@ -121,11 +119,6 @@ public class ProfilePresenter(
         coroutineScope.launch {
             uiMessageManager.clearMessage(id)
         }
-    }
-
-    @AssistedFactory
-    public fun interface Factory {
-        public fun create(componentContext: ComponentContext, onSettings: () -> Unit): ProfilePresenter
     }
 }
 

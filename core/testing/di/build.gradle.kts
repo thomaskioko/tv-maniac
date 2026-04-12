@@ -122,6 +122,7 @@ kotlin {
             api(projects.data.watchlist.implementation)
             api(projects.data.watchproviders.api)
             api(projects.data.watchproviders.implementation)
+            api(projects.features.nav)
 
             api(libs.decompose.decompose)
             api(libs.kotlin.test)
