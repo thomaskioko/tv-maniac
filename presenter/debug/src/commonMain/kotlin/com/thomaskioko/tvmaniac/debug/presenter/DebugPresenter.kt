@@ -20,9 +20,7 @@ import com.thomaskioko.tvmaniac.traktauth.api.AuthState
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
-import dev.zacsweers.metro.Assisted
-import dev.zacsweers.metro.AssistedFactory
-import dev.zacsweers.metro.AssistedInject
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -31,9 +29,9 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleDebugEpisodeNotificationInteractor.Params as DebugNotificationParams
 
-@AssistedInject
+@Inject
 public class DebugPresenter(
-    @Assisted componentContext: ComponentContext,
+    componentContext: ComponentContext,
     private val navigator: DebugNavigator,
     private val datastoreRepository: DatastoreRepository,
     private val scheduleDebugEpisodeNotificationInteractor: ScheduleDebugEpisodeNotificationInteractor,
@@ -124,11 +122,6 @@ public class DebugPresenter(
             refreshUpNextInteractor(true)
                 .collectStatus(upNextSyncState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         }
-    }
-
-    @AssistedFactory
-    public interface Factory {
-        public fun create(componentContext: ComponentContext): DebugPresenter
     }
 
     private fun formatTokenStatus(

@@ -16,9 +16,7 @@ import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNot
 import com.thomaskioko.tvmaniac.domain.settings.ObserveSettingsPreferencesInteractor
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
-import dev.zacsweers.metro.Assisted
-import dev.zacsweers.metro.AssistedFactory
-import dev.zacsweers.metro.AssistedInject
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -26,9 +24,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-@AssistedInject
+@Inject
 public class SettingsPresenter(
-    @Assisted componentContext: ComponentContext,
+    componentContext: ComponentContext,
     private val navigator: SettingsNavigator,
     private val appInfo: ApplicationInfo,
     private val datastoreRepository: DatastoreRepository,
@@ -179,10 +177,5 @@ public class SettingsPresenter(
 
     private companion object {
         const val HIDDEN_TAP_THRESHOLD = 6
-    }
-
-    @AssistedFactory
-    public interface Factory {
-        public fun create(componentContext: ComponentContext): SettingsPresenter
     }
 }

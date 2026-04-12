@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 
 @AssistedInject
 public class TrailersPresenter(
-    @Assisted componentContext: ComponentContext,
+    componentContext: ComponentContext,
     @Assisted private val traktShowId: Long,
     private val repository: TrailerRepository,
 ) {
@@ -59,6 +59,6 @@ public class TrailersPresenter(
 
     @AssistedFactory
     public fun interface Factory {
-        public fun create(componentContext: ComponentContext, traktShowId: Long): TrailersPresenter
+        public fun create(traktShowId: Long): TrailersPresenter
     }
 }

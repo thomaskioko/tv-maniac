@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.seasondetails.presenter
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.nav.model.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
@@ -27,7 +28,6 @@ import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveUnwatchedInPreviousS
 import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveUnwatchedInPreviousSeasonsParams
 import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsInteractor
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
-import com.thomaskioko.tvmaniac.navigation.model.SeasonDetailsUiParam
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
@@ -41,7 +41,7 @@ import kotlinx.coroutines.launch
 
 @AssistedInject
 public class SeasonDetailsPresenter(
-    @Assisted componentContext: ComponentContext,
+    componentContext: ComponentContext,
     @Assisted private val param: SeasonDetailsUiParam,
     private val navigator: SeasonDetailsNavigator,
     observableSeasonDetailsInteractor: ObservableSeasonDetailsInteractor,
@@ -304,6 +304,6 @@ public class SeasonDetailsPresenter(
 
     @AssistedFactory
     public fun interface Factory {
-        public fun create(componentContext: ComponentContext, param: SeasonDetailsUiParam): SeasonDetailsPresenter
+        public fun create(param: SeasonDetailsUiParam): SeasonDetailsPresenter
     }
 }

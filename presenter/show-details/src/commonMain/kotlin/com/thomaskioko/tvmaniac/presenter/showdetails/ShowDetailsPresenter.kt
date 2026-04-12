@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.presenter.showdetails
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
@@ -34,7 +35,6 @@ import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import com.thomaskioko.tvmaniac.i18n.PluralsResourceKey
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
-import com.thomaskioko.tvmaniac.navigation.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
@@ -55,7 +55,7 @@ import kotlinx.coroutines.launch
 
 @AssistedInject
 public class ShowDetailsPresenter(
-    @Assisted componentContext: ComponentContext,
+    componentContext: ComponentContext,
     @Assisted private val param: ShowDetailsParam,
     private val navigator: ShowDetailsNavigator,
     private val showFollowedNotifier: com.thomaskioko.tvmaniac.core.base.ShowFollowedNotifier,
@@ -331,6 +331,6 @@ public class ShowDetailsPresenter(
 
     @AssistedFactory
     public fun interface Factory {
-        public fun create(componentContext: ComponentContext, param: ShowDetailsParam): ShowDetailsPresenter
+        public fun create(param: ShowDetailsParam): ShowDetailsPresenter
     }
 }

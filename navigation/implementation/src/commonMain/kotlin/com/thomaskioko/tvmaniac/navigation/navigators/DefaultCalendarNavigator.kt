@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.navigation.navigators
 
+import com.thomaskioko.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.navigation.EpisodeSheetController
 import com.thomaskioko.tvmaniac.presentation.calendar.CalendarNavigator
-import com.thomaskioko.tvmaniac.navigation.model.ScreenSource
 import dev.zacsweers.metro.ContributesBinding
 
 @ContributesBinding(ActivityScope::class)

@@ -8,36 +8,37 @@ import com.thomaskioko.tvmaniac.core.base.ShowFollowedNotifier
 import kotlinx.coroutines.flow.StateFlow
 
 public interface RootPresenter : ShowFollowedNotifier {
-  public interface Factory {
-    public operator fun invoke(
-      componentContext: ComponentContext,
-      navigator: RootNavigator,
-    ): RootPresenter
-  }
+    public interface Factory {
+        public operator fun invoke(
+            componentContext: ComponentContext,
+            navigator: RootNavigator,
+        ): RootPresenter
+    }
 
-  public val childStack: StateFlow<ChildStack<*, RootChild>>
+    public val childStack: StateFlow<ChildStack<*, RootChild>>
 
-  public val childStackValue: Value<ChildStack<*, RootChild>>
+    public val childStackValue: Value<ChildStack<*, RootChild>>
 
-  public val episodeSheetSlot: StateFlow<ChildSlot<*, Any>>
+    // TODO:: Instead of any we can create our own type PresenterWrapper<*>
+    public val episodeSheetSlot: StateFlow<ChildSlot<*, Any>>
 
-  public val episodeSheetSlotValue: Value<ChildSlot<*, Any>>
+    public val episodeSheetSlotValue: Value<ChildSlot<*, Any>>
 
-  public val themeState: StateFlow<ThemeState>
+    public val themeState: StateFlow<ThemeState>
 
-  public val themeStateValue: Value<ThemeState>
+    public val themeStateValue: Value<ThemeState>
 
-  public val notificationPermissionState: StateFlow<NotificationPermissionState>
+    public val notificationPermissionState: StateFlow<NotificationPermissionState>
 
-  public val notificationPermissionStateValue: Value<NotificationPermissionState>
+    public val notificationPermissionStateValue: Value<NotificationPermissionState>
 
-  override fun onShowFollowed()
+    override fun onShowFollowed()
 
-  public fun onRationaleAccepted()
+    public fun onRationaleAccepted()
 
-  public fun onRationaleDismissed()
+    public fun onRationaleDismissed()
 
-  public fun onNotificationPermissionResult(granted: Boolean)
+    public fun onNotificationPermissionResult(granted: Boolean)
 
-  public fun onDeepLink(destination: DeepLinkDestination)
+    public fun onDeepLink(destination: DeepLinkDestination)
 }

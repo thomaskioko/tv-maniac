@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.navigation.navigators
 
+import com.thomaskioko.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.navigation.RootDestinationConfig
 import com.thomaskioko.tvmaniac.navigation.RootNavigator
-import com.thomaskioko.tvmaniac.navigation.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.search.presenter.SearchNavigator
 import dev.zacsweers.metro.ContributesBinding
 

@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.presentation.episodedetail
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
@@ -16,7 +17,6 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.episode.ObserveEpisodeByIdInteractor
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
-import com.thomaskioko.tvmaniac.navigation.model.ScreenSource
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 
 @AssistedInject
 public class EpisodeDetailSheetPresenter(
-    @Assisted private val componentContext: ComponentContext,
+    private val componentContext: ComponentContext,
     @Assisted private val episodeId: Long,
     @Assisted private val source: ScreenSource,
     private val navigator: EpisodeDetailNavigator,
@@ -125,6 +125,6 @@ public class EpisodeDetailSheetPresenter(
 
     @AssistedFactory
     public fun interface Factory {
-        public fun create(componentContext: ComponentContext, episodeId: Long, source: ScreenSource): EpisodeDetailSheetPresenter
+        public fun create(episodeId: Long, source: ScreenSource): EpisodeDetailSheetPresenter
     }
 }

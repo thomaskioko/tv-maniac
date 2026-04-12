@@ -34,7 +34,7 @@ import kotlinx.coroutines.launch
 
 @AssistedInject
 public class MoreShowsPresenter(
-    @Assisted componentContext: ComponentContext,
+    componentContext: ComponentContext,
     @Assisted private val categoryId: Long,
     private val navigator: MoreShowsNavigator,
     private val popularShowsRepository: PopularShowsRepository,
@@ -197,6 +197,6 @@ public class MoreShowsPresenter(
 
     @AssistedFactory
     public fun interface Factory {
-        public fun create(componentContext: ComponentContext, categoryId: Long): MoreShowsPresenter
+        public fun create(categoryId: Long): MoreShowsPresenter
     }
 }

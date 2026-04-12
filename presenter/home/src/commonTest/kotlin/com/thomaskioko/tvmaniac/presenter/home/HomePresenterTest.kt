@@ -13,7 +13,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 abstract class HomePresenterTest {
-    abstract val homePresenterFactory: HomePresenter.Factory
+    abstract fun createHomePresenter(componentContext: com.arkivanov.decompose.ComponentContext): HomePresenter
 
     private val lifecycle = LifecycleRegistry()
     private val testDispatcher = StandardTestDispatcher()
@@ -25,9 +25,7 @@ abstract class HomePresenterTest {
         Dispatchers.setMain(testDispatcher)
         lifecycle.resume()
 
-        presenter = homePresenterFactory.create(
-            componentContext = DefaultComponentContext(lifecycle = lifecycle),
-        )
+        presenter = createHomePresenter(DefaultComponentContext(lifecycle = lifecycle))
     }
 
     @Test

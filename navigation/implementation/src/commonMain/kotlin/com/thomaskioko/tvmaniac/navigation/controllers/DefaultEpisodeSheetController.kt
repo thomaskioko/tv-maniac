@@ -3,10 +3,10 @@ package com.thomaskioko.tvmaniac.navigation.controllers
 import com.arkivanov.decompose.router.slot.SlotNavigation
 import com.arkivanov.decompose.router.slot.activate
 import com.arkivanov.decompose.router.slot.dismiss
+import com.thomaskioko.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.navigation.EpisodeSheetConfig
 import com.thomaskioko.tvmaniac.navigation.EpisodeSheetController
-import com.thomaskioko.tvmaniac.navigation.model.ScreenSource
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 

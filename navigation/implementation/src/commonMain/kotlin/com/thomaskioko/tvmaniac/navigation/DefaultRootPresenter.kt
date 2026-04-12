@@ -6,6 +6,8 @@ import com.arkivanov.decompose.router.slot.childSlot
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.nav.model.SeasonDetailsUiParam
+import com.thomaskioko.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.core.base.extensions.asStateFlow
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
@@ -15,19 +17,8 @@ import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
-import com.thomaskioko.tvmaniac.debug.presenter.DebugPresenter
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
-import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsPresenter
-import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeDetailSheetPresenter
-import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
-import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenter
-import com.thomaskioko.tvmaniac.navigation.model.ShowDetailsParam
-import com.thomaskioko.tvmaniac.presenter.trailers.TrailersPresenter
-import com.thomaskioko.tvmaniac.search.presenter.SearchShowsPresenter
-import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsPresenter
-import com.thomaskioko.tvmaniac.navigation.model.SeasonDetailsUiParam
-import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.traktauth.api.AuthError
 import com.thomaskioko.tvmaniac.traktauth.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
@@ -54,15 +45,7 @@ import kotlin.time.Duration.Companion.milliseconds
 public class DefaultRootPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val navigator: RootNavigator,
-    private val homePresenterFactory: HomePresenter.Factory,
-    private val searchPresenterFactory: SearchShowsPresenter.Factory,
-    private val settingsPresenterFactory: SettingsPresenter.Factory,
-    private val debugPresenterFactory: DebugPresenter.Factory,
-    private val moreShowsPresenterFactory: MoreShowsPresenter.Factory,
-    private val showDetailsPresenterFactory: ShowDetailsPresenter.Factory,
-    private val seasonDetailsPresenterFactory: SeasonDetailsPresenter.Factory,
-    private val trailersPresenterFactory: TrailersPresenter.Factory,
-    private val episodeDetailSheetPresenterFactory: EpisodeDetailSheetPresenter.Factory,
+    private val screenGraphFactory: ScreenGraph.Factory,
     private val episodeSheetController: EpisodeSheetController,
     private val traktAuthRepository: TraktAuthRepository,
     private val updateUserProfileData: UpdateUserProfileData,
@@ -136,7 +119,7 @@ public class DefaultRootPresenter(
         serializer = EpisodeSheetConfig.serializer(),
         handleBackButton = true,
     ) { config, childComponentContext ->
-        episodeDetailSheetPresenterFactory.create(childComponentContext, config.episodeId, config.source)
+        screenGraphFactory.createGraph(childComponentContext).episodeDetailFactory.create(config.episodeId, config.source)
     }
 
     override val episodeSheetSlot: StateFlow<ChildSlot<*, Any>> =
@@ -251,34 +234,20 @@ public class DefaultRootPresenter(
     private fun createScreen(
         config: RootDestinationConfig,
         componentContext: ComponentContext,
-    ): RootChild =
-        when (config) {
-            is RootDestinationConfig.Home ->
-                RootScreen.Home(presenter = homePresenterFactory.create(componentContext))
-
-            is RootDestinationConfig.Search ->
-                RootScreen.Search(presenter = searchPresenterFactory.create(componentContext))
-
-            is RootDestinationConfig.Settings ->
-                RootScreen.Settings(presenter = settingsPresenterFactory.create(componentContext))
-
-            is RootDestinationConfig.Debug ->
-                RootScreen.Debug(presenter = debugPresenterFactory.create(componentContext))
-
-            is RootDestinationConfig.ShowDetails ->
-                RootScreen.ShowDetails(presenter = showDetailsPresenterFactory.create(componentContext, config.param))
-
-            is RootDestinationConfig.SeasonDetails ->
-                RootScreen.SeasonDetails(presenter = seasonDetailsPresenterFactory.create(componentContext, config.param))
-
-            is RootDestinationConfig.Trailers ->
-                RootScreen.Trailers(presenter = trailersPresenterFactory.create(componentContext, config.id))
-
-            is RootDestinationConfig.MoreShows ->
-                RootScreen.MoreShows(presenter = moreShowsPresenterFactory.create(componentContext, config.id))
-
+    ): RootChild {
+        val screen = screenGraphFactory.createGraph(componentContext)
+        return when (config) {
+            is RootDestinationConfig.Home -> RootScreen.Home(screen.homePresenter)
+            is RootDestinationConfig.Search -> RootScreen.Search(screen.searchPresenter)
+            is RootDestinationConfig.Settings -> RootScreen.Settings(screen.settingsPresenter)
+            is RootDestinationConfig.Debug -> RootScreen.Debug(screen.debugPresenter)
+            is RootDestinationConfig.ShowDetails -> RootScreen.ShowDetails(screen.showDetailsFactory.create(config.param))
+            is RootDestinationConfig.SeasonDetails -> RootScreen.SeasonDetails(screen.seasonDetailsFactory.create(config.param))
+            is RootDestinationConfig.Trailers -> RootScreen.Trailers(screen.trailersFactory.create(config.id))
+            is RootDestinationConfig.MoreShows -> RootScreen.MoreShows(screen.moreShowsFactory.create(config.id))
             is RootDestinationConfig.GenreShows -> RootScreen.GenreShows
         }
+    }
 
     @AssistedFactory
     public fun interface Factory {

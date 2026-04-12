@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.presentation.episodedetail
 
+import com.thomaskioko.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.db.EpisodeById
-import com.thomaskioko.tvmaniac.navigation.model.ScreenSource
 import kotlinx.collections.immutable.toImmutableList
 
 internal fun EpisodeById.toState(source: ScreenSource): EpisodeDetailSheetState =

@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.testing.di
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.router.slot.SlotNavigation
+import com.thomaskioko.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.appconfig.ApplicationInfo
 import com.thomaskioko.tvmaniac.appconfig.DefaultTmdbConfig
 import com.thomaskioko.tvmaniac.appconfig.DefaultTraktConfig
@@ -34,6 +36,8 @@ import com.thomaskioko.tvmaniac.domain.upnext.UpNextSyncWorker
 import com.thomaskioko.tvmaniac.locale.api.LocaleProvider
 import com.thomaskioko.tvmaniac.locale.testing.FakeLocaleProvider
 import com.thomaskioko.tvmaniac.navigation.DefaultRootPresenter
+import com.thomaskioko.tvmaniac.navigation.EpisodeSheetConfig
+import com.thomaskioko.tvmaniac.navigation.EpisodeSheetController
 import com.thomaskioko.tvmaniac.navigation.RootNavigator
 import com.thomaskioko.tvmaniac.navigation.RootPresenter
 import com.thomaskioko.tvmaniac.navigation.controllers.DefaultEpisodeSheetController
@@ -267,12 +271,16 @@ public object FakeAppBindings {
 
     @Provides
     @SingleIn(AppScope::class)
-    public fun provideEpisodeSheetController(): com.thomaskioko.tvmaniac.navigation.EpisodeSheetController =
-        object : com.thomaskioko.tvmaniac.navigation.EpisodeSheetController {
-            override fun showEpisodeSheet(episodeId: Long, source: com.thomaskioko.tvmaniac.navigation.model.ScreenSource) {}
-            override fun dismissEpisodeSheet() {}
-            override fun getSlotNavigation(): com.arkivanov.decompose.router.slot.SlotNavigation<com.thomaskioko.tvmaniac.navigation.EpisodeSheetConfig> =
-                com.arkivanov.decompose.router.slot.SlotNavigation()
+    public fun provideEpisodeSheetController(): EpisodeSheetController =
+        object : EpisodeSheetController {
+            override fun showEpisodeSheet(
+                episodeId: Long,
+                source: ScreenSource,
+            ) { }
+
+            override fun dismissEpisodeSheet() { }
+            override fun getSlotNavigation(): SlotNavigation<EpisodeSheetConfig> = SlotNavigation()
+
         }
 
     @Provides

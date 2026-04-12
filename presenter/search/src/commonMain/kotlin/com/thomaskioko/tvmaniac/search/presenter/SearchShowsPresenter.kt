@@ -17,9 +17,7 @@ import com.thomaskioko.tvmaniac.genre.GenreRepository
 import com.thomaskioko.tvmaniac.genre.model.GenreShowCategory
 import com.thomaskioko.tvmaniac.search.api.SearchRepository
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
-import dev.zacsweers.metro.Assisted
-import dev.zacsweers.metro.AssistedFactory
-import dev.zacsweers.metro.AssistedInject
+import dev.zacsweers.metro.Inject
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -37,9 +35,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-@AssistedInject
+@Inject
 public class SearchShowsPresenter(
-    @Assisted componentContext: ComponentContext,
+    componentContext: ComponentContext,
     private val navigator: SearchNavigator,
     private val mapper: Mapper,
     private val searchRepository: SearchRepository,
@@ -62,11 +60,6 @@ public class SearchShowsPresenter(
 
     public fun dispatch(action: SearchShowAction) {
         presenterInstance.dispatch(action)
-    }
-
-    @AssistedFactory
-    public interface Factory {
-        public fun create(componentContext: ComponentContext): SearchShowsPresenter
     }
 
     internal inner class PresenterInstance : InstanceKeeper.Instance {

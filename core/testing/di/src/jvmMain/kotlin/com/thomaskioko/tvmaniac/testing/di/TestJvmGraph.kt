@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.testing.di
 
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.navigation.RootPresenter
-import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
+import com.thomaskioko.tvmaniac.navigation.ScreenGraph
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.DependencyGraph
@@ -12,7 +12,7 @@ public interface TestJvmGraph {
     public val datastoreRepository: DatastoreRepository
     public val traktAuthManager: TraktAuthManager
     public val rootPresenterFactory: RootPresenter.Factory
-    public val homePresenterFactory: HomePresenter.Factory
+    public val screenGraphFactory: ScreenGraph.Factory
 
     @DependencyGraph.Factory
     public fun interface Factory {

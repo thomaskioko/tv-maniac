@@ -15,9 +15,7 @@ import com.thomaskioko.tvmaniac.domain.user.ObserveUserProfileInteractor
 import com.thomaskioko.tvmaniac.presentation.library.LibraryPresenter
 import com.thomaskioko.tvmaniac.presentation.progress.ProgressPresenter
 import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
-import dev.zacsweers.metro.Assisted
-import dev.zacsweers.metro.AssistedFactory
-import dev.zacsweers.metro.AssistedInject
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -27,9 +25,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 public data class ProfileAvatar(val url: String? = null)
 
-@AssistedInject
+@Inject
 public class HomePresenter(
-    @Assisted componentContext: ComponentContext,
+    componentContext: ComponentContext,
     private val homeTabController: HomeTabController,
     private val discoverPresenterFactory: DiscoverShowsPresenter.Factory,
     private val progressPresenterFactory: ProgressPresenter.Factory,
@@ -145,10 +143,5 @@ public class HomePresenter(
 
         @Serializable
         public data object Profile : HomeConfig
-    }
-
-    @AssistedFactory
-    public interface Factory {
-        public fun create(componentContext: ComponentContext): HomePresenter
     }
 }

@@ -1,12 +1,12 @@
 package com.thomaskioko.tvmaniac.navigation.navigators
 
+import com.thomaskioko.nav.model.SeasonDetailsUiParam
+import com.thomaskioko.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.navigation.EpisodeSheetController
 import com.thomaskioko.tvmaniac.navigation.RootDestinationConfig
 import com.thomaskioko.tvmaniac.navigation.RootNavigator
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeDetailNavigator
-import com.thomaskioko.tvmaniac.navigation.model.SeasonDetailsUiParam
-import com.thomaskioko.tvmaniac.navigation.model.ShowDetailsParam
 import dev.zacsweers.metro.ContributesBinding
 
 @ContributesBinding(ActivityScope::class)
