@@ -4,9 +4,9 @@ import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.navigation.RootDestinationConfig
 import com.thomaskioko.tvmaniac.navigation.RootNavigator
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsNavigator
-import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsParam
+import com.thomaskioko.tvmaniac.navigation.model.SeasonDetailsUiParam
+import com.thomaskioko.tvmaniac.navigation.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowSeasonDetailsParam
-import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonDetailsUiParam
 import dev.zacsweers.metro.ContributesBinding
 
 @ContributesBinding(ActivityScope::class)

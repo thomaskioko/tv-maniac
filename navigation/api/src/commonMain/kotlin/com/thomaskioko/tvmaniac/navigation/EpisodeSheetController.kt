@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.navigation
 
 import com.arkivanov.decompose.router.slot.SlotNavigation
-import com.thomaskioko.tvmaniac.presentation.episodedetail.ScreenSource
+import com.thomaskioko.tvmaniac.navigation.model.ScreenSource
 
 public interface EpisodeSheetController {
     public fun showEpisodeSheet(episodeId: Long, source: ScreenSource)

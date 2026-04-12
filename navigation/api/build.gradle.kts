@@ -15,17 +15,6 @@ kotlin {
 
                 implementation(projects.core.base)
                 implementation(projects.data.datastore.api)
-                implementation(projects.presenter.debug)
-                implementation(projects.presenter.discover)
-                implementation(projects.presenter.episodeDetail)
-                implementation(projects.presenter.home)
-                implementation(projects.presenter.moreShows)
-                implementation(projects.presenter.profile)
-                implementation(projects.presenter.search)
-                implementation(projects.presenter.seasondetails)
-                implementation(projects.presenter.settings)
-                implementation(projects.presenter.showDetails)
-                implementation(projects.presenter.trailers)
 
                 implementation(libs.coroutines.core)
             }

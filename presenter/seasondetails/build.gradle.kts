@@ -15,6 +15,7 @@ kotlin {
             dependencies {
                 api(projects.core.view)
                 implementation(projects.core.base)
+                implementation(projects.navigation.api)
                 implementation(projects.core.logger.api)
                 implementation(projects.data.episode.api)
                 implementation(projects.data.seasondetails.api)

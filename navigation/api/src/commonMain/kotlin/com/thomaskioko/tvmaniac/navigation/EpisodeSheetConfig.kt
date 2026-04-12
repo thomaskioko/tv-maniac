@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.navigation
 
-import com.thomaskioko.tvmaniac.presentation.episodedetail.ScreenSource
+import com.thomaskioko.tvmaniac.navigation.model.ScreenSource
 import kotlinx.serialization.Serializable
 
 @Serializable

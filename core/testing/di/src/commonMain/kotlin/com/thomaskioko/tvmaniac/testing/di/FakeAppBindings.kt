@@ -269,7 +269,7 @@ public object FakeAppBindings {
     @SingleIn(AppScope::class)
     public fun provideEpisodeSheetController(): com.thomaskioko.tvmaniac.navigation.EpisodeSheetController =
         object : com.thomaskioko.tvmaniac.navigation.EpisodeSheetController {
-            override fun showEpisodeSheet(episodeId: Long, source: com.thomaskioko.tvmaniac.presentation.episodedetail.ScreenSource) {}
+            override fun showEpisodeSheet(episodeId: Long, source: com.thomaskioko.tvmaniac.navigation.model.ScreenSource) {}
             override fun dismissEpisodeSheet() {}
             override fun getSlotNavigation(): com.arkivanov.decompose.router.slot.SlotNavigation<com.thomaskioko.tvmaniac.navigation.EpisodeSheetConfig> =
                 com.arkivanov.decompose.router.slot.SlotNavigation()

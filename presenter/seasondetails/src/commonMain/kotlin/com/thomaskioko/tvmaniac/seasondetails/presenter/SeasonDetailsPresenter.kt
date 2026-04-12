@@ -27,7 +27,7 @@ import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveUnwatchedInPreviousS
 import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveUnwatchedInPreviousSeasonsParams
 import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsInteractor
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
-import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonDetailsUiParam
+import com.thomaskioko.tvmaniac.navigation.model.SeasonDetailsUiParam
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject

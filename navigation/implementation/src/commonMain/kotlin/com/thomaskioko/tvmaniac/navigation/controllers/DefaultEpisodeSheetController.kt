@@ -6,7 +6,7 @@ import com.arkivanov.decompose.router.slot.dismiss
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.navigation.EpisodeSheetConfig
 import com.thomaskioko.tvmaniac.navigation.EpisodeSheetController
-import com.thomaskioko.tvmaniac.presentation.episodedetail.ScreenSource
+import com.thomaskioko.tvmaniac.navigation.model.ScreenSource
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 

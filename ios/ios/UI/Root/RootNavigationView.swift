@@ -17,7 +17,7 @@ struct RootNavigationView: View {
     private let rootNavigator: RootNavigator
     @StateValue private var themeState: ThemeState
     @StateValue private var notificationPermissionState: NotificationPermissionState
-    @StateValue private var episodeSheetSlot: ChildSlot<AnyObject, EpisodeDetailSheetPresenter>
+    @StateValue private var episodeSheetSlot: ChildSlot<AnyObject, AnyObject>
     @StateObject private var store = SettingsAppStorage.shared
     @EnvironmentObject private var appDelegate: AppDelegate
     @State private var rationaleActionTaken = false
@@ -37,25 +37,25 @@ struct RootNavigationView: View {
                 onBack: rootNavigator.popTo
             ) { child in
                 switch child {
-                case let child as RootPresenterChildHome:
+                case let child as RootScreenHome:
                     TabBarView(presenter: child.presenter)
                         .id(ObjectIdentifier(child))
-                case let child as RootPresenterChildShowDetails:
+                case let child as RootScreenShowDetails:
                     ShowDetailsView(presenter: child.presenter)
                         .id(ObjectIdentifier(child))
-                case let child as RootPresenterChildSeasonDetails:
+                case let child as RootScreenSeasonDetails:
                     SeasonDetailsView(presenter: child.presenter)
                         .id(ObjectIdentifier(child))
-                case let child as RootPresenterChildSearch:
+                case let child as RootScreenSearch:
                     SearchTab(presenter: child.presenter)
                         .id(ObjectIdentifier(child))
-                case let child as RootPresenterChildSettings:
+                case let child as RootScreenSettings:
                     SettingsView(presenter: child.presenter)
                         .id(ObjectIdentifier(child))
-                case let child as RootPresenterChildDebug:
+                case let child as RootScreenDebug:
                     DebugMenuView(presenter: child.presenter)
                         .id(ObjectIdentifier(child))
-                case let child as RootPresenterChildMoreShows:
+                case let child as RootScreenMoreShows:
                     MoreShowsView(presenter: child.presenter)
                         .id(ObjectIdentifier(child))
                 default:
@@ -68,13 +68,13 @@ struct RootNavigationView: View {
             isPresented: Binding(
                 get: { episodeSheetSlot.child != nil },
                 set: { isPresented in
-                    if !isPresented, let presenter = episodeSheetSlot.child?.instance {
+                    if !isPresented, let presenter = episodeSheetSlot.child?.instance as? EpisodeDetailSheetPresenter {
                         presenter.dispatch(action: EpisodeDetailSheetActionDismiss())
                     }
                 }
             )
         ) {
-            if let presenter = episodeSheetSlot.child?.instance {
+            if let presenter = episodeSheetSlot.child?.instance as? EpisodeDetailSheetPresenter {
                 EpisodeDetailSheetView(presenter: presenter)
             }
         }

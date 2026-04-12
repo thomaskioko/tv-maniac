@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.navigation.navigators
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.navigation.EpisodeSheetController
 import com.thomaskioko.tvmaniac.navigation.RootNavigator
-import com.thomaskioko.tvmaniac.presentation.episodedetail.ScreenSource
+import com.thomaskioko.tvmaniac.navigation.model.ScreenSource
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsNavigator
 import dev.zacsweers.metro.ContributesBinding
 

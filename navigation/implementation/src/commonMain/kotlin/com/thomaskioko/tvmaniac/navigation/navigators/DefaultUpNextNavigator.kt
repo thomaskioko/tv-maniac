@@ -4,10 +4,10 @@ import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.navigation.EpisodeSheetController
 import com.thomaskioko.tvmaniac.navigation.RootDestinationConfig
 import com.thomaskioko.tvmaniac.navigation.RootNavigator
-import com.thomaskioko.tvmaniac.presentation.episodedetail.ScreenSource
+import com.thomaskioko.tvmaniac.navigation.model.ScreenSource
+import com.thomaskioko.tvmaniac.navigation.model.SeasonDetailsUiParam
+import com.thomaskioko.tvmaniac.navigation.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextNavigator
-import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsParam
-import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonDetailsUiParam
 import dev.zacsweers.metro.ContributesBinding
 
 @ContributesBinding(ActivityScope::class)
