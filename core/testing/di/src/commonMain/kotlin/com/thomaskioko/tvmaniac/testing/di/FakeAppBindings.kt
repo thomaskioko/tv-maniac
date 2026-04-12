@@ -264,13 +264,6 @@ public object FakeAppBindings {
 
     @Provides
     @SingleIn(AppScope::class)
-    public fun provideShowFollowedNotifier(): com.thomaskioko.tvmaniac.core.base.ShowFollowedNotifier =
-        object : com.thomaskioko.tvmaniac.core.base.ShowFollowedNotifier {
-            override fun onShowFollowed() {}
-        }
-
-    @Provides
-    @SingleIn(AppScope::class)
     public fun provideEpisodeSheetController(): EpisodeSheetController =
         object : EpisodeSheetController {
             override fun showEpisodeSheet(
@@ -322,6 +315,7 @@ public object FakeAppBindings {
             override fun showDetails(traktId: Long) {}
             override fun showSeasonDetails(param: com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowSeasonDetailsParam) {}
             override fun showTrailers(traktShowId: Long) {}
+            override fun showFollowed() {}
         }
 
     @Provides

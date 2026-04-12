@@ -846,9 +846,7 @@ class ShowDetailsPresenterTest {
                     onNavigateToSeason(param)
                 }
                 override fun showTrailers(traktShowId: Long) {}
-            },
-            showFollowedNotifier = object : com.thomaskioko.tvmaniac.core.base.ShowFollowedNotifier {
-                override fun onShowFollowed() {
+                override fun showFollowed() {
                     onShowFollowed()
                 }
             },

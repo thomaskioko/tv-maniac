@@ -5,6 +5,7 @@ import com.thomaskioko.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.navigation.RootDestinationConfig
 import com.thomaskioko.tvmaniac.navigation.RootNavigator
+import com.thomaskioko.tvmaniac.navigation.RootPresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsNavigator
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowSeasonDetailsParam
 import dev.zacsweers.metro.ContributesBinding
@@ -12,6 +13,7 @@ import dev.zacsweers.metro.ContributesBinding
 @ContributesBinding(ActivityScope::class)
 public class DefaultShowDetailsNavigator(
     private val rootNavigator: RootNavigator,
+    private val rootPresenter: RootPresenter,
 ) : ShowDetailsNavigator {
     override fun goBack() {
         rootNavigator.pop()
@@ -37,5 +39,9 @@ public class DefaultShowDetailsNavigator(
 
     override fun showTrailers(traktShowId: Long) {
         rootNavigator.pushNew(RootDestinationConfig.Trailers(traktShowId))
+    }
+
+    override fun showFollowed() {
+        rootPresenter.onShowFollowed()
     }
 }
