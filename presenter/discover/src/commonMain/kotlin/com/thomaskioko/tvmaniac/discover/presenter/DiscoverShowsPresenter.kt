@@ -28,9 +28,7 @@ import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsInteractor
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
-import dev.zacsweers.metro.Assisted
-import dev.zacsweers.metro.AssistedFactory
-import dev.zacsweers.metro.AssistedInject
+import dev.zacsweers.metro.Inject
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,9 +40,9 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-@AssistedInject
+@Inject
 public class DiscoverShowsPresenter(
-    @Assisted componentContext: ComponentContext,
+    componentContext: ComponentContext,
     private val navigator: DiscoverNavigator,
     private val discoverShowsInteractor: DiscoverShowsInteractor,
     private val followedShowsRepository: FollowedShowsRepository,
@@ -232,11 +230,6 @@ public class DiscoverShowsPresenter(
         override fun onDestroy() {
             coroutineScope.cancel()
         }
-    }
-
-    @AssistedFactory
-    public fun interface Factory {
-        public fun create(componentContext: ComponentContext): DiscoverShowsPresenter
     }
 }
 

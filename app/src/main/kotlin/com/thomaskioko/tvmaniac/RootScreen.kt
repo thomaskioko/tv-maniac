@@ -74,7 +74,7 @@ public fun RootScreen(
     }
 
     val episodeSheetSlot by rootPresenter.episodeSheetSlot.collectAsStateWithLifecycle()
-    // TODO:: Look into this casting
+    // TODO:: Scope-di-binding :: Look into this casting
     (episodeSheetSlot.child?.instance as? EpisodeDetailSheetPresenter)?.let { presenter ->
         EpisodeDetailSheet(presenter = presenter)
     }

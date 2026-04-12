@@ -28,11 +28,7 @@ public data class ProfileAvatar(val url: String? = null)
 @Inject
 public class HomePresenter(
     componentContext: ComponentContext,
-    private val homeTabController: HomeTabController,
-    private val discoverPresenterFactory: DiscoverShowsPresenter.Factory,
-    private val progressPresenterFactory: ProgressPresenter.Factory,
-    private val libraryPresenterFactory: LibraryPresenter.Factory,
-    private val profilePresenterFactory: ProfilePresenter.Factory,
+    private val homeTabGraphFactory: HomeTabGraph.Factory,
     private val observeUserProfileInteractor: ObserveUserProfileInteractor,
 ) : ComponentContext by componentContext {
 
@@ -112,13 +108,15 @@ public class HomePresenter(
         )
     }
 
-    private fun child(config: HomeConfig, componentContext: ComponentContext): Child =
-        when (config) {
-            is HomeConfig.Discover -> Child.Discover(discoverPresenterFactory.create(componentContext))
-            HomeConfig.Progress -> Child.Progress(progressPresenterFactory.create(componentContext))
-            HomeConfig.Library -> Child.Library(libraryPresenterFactory.create(componentContext))
-            HomeConfig.Profile -> Child.Profile(profilePresenterFactory.create(componentContext))
+    private fun child(config: HomeConfig, componentContext: ComponentContext): Child {
+        val tab = homeTabGraphFactory.createGraph(componentContext)
+        return when (config) {
+            is HomeConfig.Discover -> Child.Discover(tab.discoverPresenter)
+            HomeConfig.Progress -> Child.Progress(tab.progressPresenter)
+            HomeConfig.Library -> Child.Library(tab.libraryPresenter)
+            HomeConfig.Profile -> Child.Profile(tab.profilePresenter)
         }
+    }
 
     public sealed interface Child {
         public class Discover(public val presenter: DiscoverShowsPresenter) : Child

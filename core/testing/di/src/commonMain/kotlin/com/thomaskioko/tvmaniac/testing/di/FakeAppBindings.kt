@@ -280,7 +280,6 @@ public object FakeAppBindings {
 
             override fun dismissEpisodeSheet() { }
             override fun getSlotNavigation(): SlotNavigation<EpisodeSheetConfig> = SlotNavigation()
-
         }
 
     @Provides

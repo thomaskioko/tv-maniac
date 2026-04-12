@@ -20,9 +20,7 @@ import com.thomaskioko.tvmaniac.presentation.library.model.LibrarySortOption
 import com.thomaskioko.tvmaniac.presentation.library.model.ShowStatus
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
-import dev.zacsweers.metro.Assisted
-import dev.zacsweers.metro.AssistedFactory
-import dev.zacsweers.metro.AssistedInject
+import dev.zacsweers.metro.Inject
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,9 +34,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import com.thomaskioko.tvmaniac.data.library.model.LibrarySortOption as DataLibrarySortOption
 
-@AssistedInject
+@Inject
 public class LibraryPresenter(
-    @Assisted componentContext: ComponentContext,
+    componentContext: ComponentContext,
     private val navigator: LibraryNavigator,
     private val repository: LibraryRepository,
     private val observeLibraryInteractor: ObserveLibraryInteractor,
@@ -271,11 +269,6 @@ public class LibraryPresenter(
         coroutineScope.launch {
             uiMessageManager.clearMessage(id)
         }
-    }
-
-    @AssistedFactory
-    public fun interface Factory {
-        public fun create(componentContext: ComponentContext): LibraryPresenter
     }
 }
 

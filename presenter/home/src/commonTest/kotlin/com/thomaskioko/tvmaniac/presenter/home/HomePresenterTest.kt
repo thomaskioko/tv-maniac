@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.presenter.home
 
 import app.cash.turbine.test
+import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
@@ -13,7 +14,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 abstract class HomePresenterTest {
-    abstract fun createHomePresenter(componentContext: com.arkivanov.decompose.ComponentContext): HomePresenter
+    abstract fun createHomePresenter(componentContext: ComponentContext): HomePresenter
 
     private val lifecycle = LifecycleRegistry()
     private val testDispatcher = StandardTestDispatcher()
