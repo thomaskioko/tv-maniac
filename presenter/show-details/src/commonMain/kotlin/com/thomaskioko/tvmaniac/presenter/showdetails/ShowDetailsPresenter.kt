@@ -58,7 +58,6 @@ public class ShowDetailsPresenter(
     componentContext: ComponentContext,
     @Assisted private val param: ShowDetailsParam,
     private val navigator: ShowDetailsNavigator,
-    private val showFollowedNotifier: com.thomaskioko.tvmaniac.core.base.ShowFollowedNotifier,
     private val followedShowsRepository: FollowedShowsRepository,
     private val followShowInteractor: FollowShowInteractor,
     private val showDetailsInteractor: ShowDetailsInteractor,
@@ -182,7 +181,7 @@ public class ShowDetailsPresenter(
                         scheduleEpisodeNotificationsInteractor(ScheduleEpisodeNotificationsInteractor.Params())
                             .collectStatus(episodeActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
 
-                        showFollowedNotifier.onShowFollowed()
+                        navigator.showFollowed()
                     }
                 }
             }
