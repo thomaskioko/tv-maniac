@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.navigation
+package com.thomaskioko.tvmaniac.navigation.di
 
 import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.ActivityScope

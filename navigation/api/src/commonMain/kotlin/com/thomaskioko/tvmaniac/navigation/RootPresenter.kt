@@ -4,6 +4,9 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.slot.ChildSlot
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.tvmaniac.navigation.model.DeepLinkDestination
+import com.thomaskioko.tvmaniac.navigation.model.NotificationPermissionState
+import com.thomaskioko.tvmaniac.navigation.model.ThemeState
 import kotlinx.coroutines.flow.StateFlow
 
 public interface RootPresenter {

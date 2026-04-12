@@ -1,5 +1,8 @@
-package com.thomaskioko.tvmaniac.navigation
+package com.thomaskioko.tvmaniac.navigation.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 public sealed class DeepLinkDestination {
     public data class ShowDetails(
         val showId: Long,

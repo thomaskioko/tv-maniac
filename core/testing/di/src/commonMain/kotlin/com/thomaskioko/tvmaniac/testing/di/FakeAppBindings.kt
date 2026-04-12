@@ -36,12 +36,12 @@ import com.thomaskioko.tvmaniac.domain.upnext.UpNextSyncWorker
 import com.thomaskioko.tvmaniac.locale.api.LocaleProvider
 import com.thomaskioko.tvmaniac.locale.testing.FakeLocaleProvider
 import com.thomaskioko.tvmaniac.navigation.DefaultRootPresenter
-import com.thomaskioko.tvmaniac.navigation.EpisodeSheetConfig
 import com.thomaskioko.tvmaniac.navigation.EpisodeSheetController
 import com.thomaskioko.tvmaniac.navigation.RootNavigator
 import com.thomaskioko.tvmaniac.navigation.RootPresenter
 import com.thomaskioko.tvmaniac.navigation.controllers.DefaultEpisodeSheetController
 import com.thomaskioko.tvmaniac.navigation.controllers.DefaultHomeTabController
+import com.thomaskioko.tvmaniac.navigation.model.EpisodeSheetConfig
 import com.thomaskioko.tvmaniac.navigation.navigators.DefaultCalendarNavigator
 import com.thomaskioko.tvmaniac.navigation.navigators.DefaultDebugNavigator
 import com.thomaskioko.tvmaniac.navigation.navigators.DefaultDiscoverNavigator

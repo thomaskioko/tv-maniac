@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.navigation
+package com.thomaskioko.tvmaniac.navigation.model
 
 import com.thomaskioko.nav.model.ScreenSource
 import kotlinx.serialization.Serializable

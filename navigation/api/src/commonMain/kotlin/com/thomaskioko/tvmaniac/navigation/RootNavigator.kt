@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.navigation
 
 import com.arkivanov.decompose.router.stack.StackNavigation
+import com.thomaskioko.tvmaniac.navigation.model.RootDestinationConfig
 
 public interface RootNavigator {
     /**

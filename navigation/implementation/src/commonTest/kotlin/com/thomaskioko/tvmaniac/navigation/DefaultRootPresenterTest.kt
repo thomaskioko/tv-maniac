@@ -9,6 +9,10 @@ import com.thomaskioko.nav.model.SeasonDetailsUiParam
 import com.thomaskioko.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.navigation.model.DeepLinkDestination
+import com.thomaskioko.tvmaniac.navigation.model.NotificationPermissionState
+import com.thomaskioko.tvmaniac.navigation.model.RootDestinationConfig
+import com.thomaskioko.tvmaniac.navigation.model.ThemeState
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.Dispatchers
@@ -197,7 +201,10 @@ abstract class DefaultRootPresenterTest {
             awaitItem() shouldBe NotificationPermissionState(showRationale = true)
 
             presenter.onRationaleAccepted()
-            awaitItem() shouldBe NotificationPermissionState(showRationale = false, requestPermission = true)
+            awaitItem() shouldBe NotificationPermissionState(
+                showRationale = false,
+                requestPermission = true,
+            )
         }
     }
 
