@@ -9,7 +9,7 @@ java-toolchain = "21"
 
 agp = "9.1.0"
 google-services = "4.4.4"
-android-lint = "32.1.0"
+android-lint = "32.1.1"
 androidx-activity = "1.13.0"
 androidx-annotation = "1.9.1"
 androidx-browser = "1.10.0"
