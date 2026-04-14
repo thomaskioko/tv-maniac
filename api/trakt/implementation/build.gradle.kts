@@ -4,7 +4,7 @@ plugins {
 
 scaffold {
     addAndroidTarget()
-    useKotlinInject()
+    useMetro()
     useSerialization()
 }
 
@@ -20,6 +20,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(projects.api.trakt.api)
+                implementation(projects.core.appconfig.api)
                 implementation(projects.core.base)
                 implementation(projects.core.connectivity.api)
                 implementation(projects.core.networkUtil.api)

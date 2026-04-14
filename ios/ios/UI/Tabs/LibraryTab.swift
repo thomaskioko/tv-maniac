@@ -4,12 +4,12 @@ import TvManiacKit
 
 struct LibraryTab: View {
     private let presenter: LibraryPresenter
-    @StateObject @KotlinStateFlow private var uiState: LibraryState
+    @StateValue private var uiState: LibraryState
     @State private var showSortOptions = false
 
     init(presenter: LibraryPresenter) {
         self.presenter = presenter
-        _uiState = .init(presenter.state)
+        _uiState = .init(presenter.stateValue)
     }
 
     var body: some View {

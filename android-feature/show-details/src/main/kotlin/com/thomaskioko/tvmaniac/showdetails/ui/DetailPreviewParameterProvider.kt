@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.model.SeasonModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.TrailerModel
+import com.thomaskioko.tvmaniac.presenter.showdetails.model.TraktListModel
 import kotlinx.collections.immutable.persistentListOf
 
 internal val showDetailsContent = ShowDetailsContent(
@@ -120,6 +121,54 @@ internal val showDetailsContentWithError = showDetailsContent.copy(
     message = UiMessage(
         message = "Opps! Something went wrong",
     ),
+)
+
+internal val showDetailsWithTraktLists = showDetailsContent.copy(
+    showListSheet = true,
+    listsHeaderText = "Your Lists",
+    traktLists = persistentListOf(
+        TraktListModel(
+            id = 1,
+            slug = "favorites",
+            name = "Favorites",
+            description = "My favorite shows",
+            showCountText = "12 shows",
+            isShowInList = true,
+        ),
+        TraktListModel(
+            id = 2,
+            slug = "watch-later",
+            name = "Watch Later",
+            description = "Shows to watch later",
+            showCountText = "5 shows",
+            isShowInList = false,
+        ),
+        TraktListModel(
+            id = 3,
+            slug = "sci-fi-marathon",
+            name = "Sci-Fi Marathon",
+            description = null,
+            showCountText = "23 shows",
+            isShowInList = true,
+        ),
+    ),
+)
+
+internal val showDetailsWithEmptyTraktLists = showDetailsContent.copy(
+    showListSheet = true,
+    listsHeaderText = "Your Lists",
+    traktLists = persistentListOf(),
+)
+
+internal val showDetailsWithCreateFieldExpanded = showDetailsWithTraktLists.copy(
+    showCreateListField = true,
+    createListName = "My New List",
+)
+
+internal val showDetailsWithCreateListLoading = showDetailsWithTraktLists.copy(
+    showCreateListField = true,
+    isCreatingList = true,
+    createListName = "Sci-Fi Picks",
 )
 
 internal class DetailPreviewParameterProvider : PreviewParameterProvider<ShowDetailsContent> {

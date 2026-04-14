@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftUIComponents
+import TvManiac
 import TvManiacKit
 
 struct SortOptionsSheet: View {
@@ -51,29 +52,18 @@ struct SortOptionsSheet: View {
     private var sortBySection: some View {
         FilterChipSection(
             title: String(\.label_library_sort_by),
-            items: LibrarySortOption.allCases,
+            items: Array(LibrarySortOption.entries),
             selectedItems: [state.sortOption],
             labelProvider: { sortOption in
-                switch sortOption {
-                case .rankAsc:
-                    String(\.label_library_sort_rank_asc)
-                case .rankDesc:
-                    String(\.label_library_sort_rank_desc)
-                case .addedDesc:
-                    String(\.label_library_sort_added_desc)
-                case .addedAsc:
-                    String(\.label_library_sort_added_asc)
-                case .releasedDesc:
-                    String(\.label_library_sort_released_desc)
-                case .releasedAsc:
-                    String(\.label_library_sort_released_asc)
-                case .titleAsc:
-                    String(\.label_library_sort_title_asc)
-                case .titleDesc:
-                    String(\.label_library_sort_title_desc)
-                default:
-                    String(\.label_library_sort_rank_desc)
-                }
+                if sortOption == LibrarySortOption.rankAsc { return String(\.label_library_sort_rank_asc) }
+                if sortOption == LibrarySortOption.rankDesc { return String(\.label_library_sort_rank_desc) }
+                if sortOption == LibrarySortOption.addedDesc { return String(\.label_library_sort_added_desc) }
+                if sortOption == LibrarySortOption.addedAsc { return String(\.label_library_sort_added_asc) }
+                if sortOption == LibrarySortOption.releasedDesc { return String(\.label_library_sort_released_desc) }
+                if sortOption == LibrarySortOption.releasedAsc { return String(\.label_library_sort_released_asc) }
+                if sortOption == LibrarySortOption.titleAsc { return String(\.label_library_sort_title_asc) }
+                if sortOption == LibrarySortOption.titleDesc { return String(\.label_library_sort_title_desc) }
+                return String(\.label_library_sort_rank_desc)
             },
             onItemToggle: { onSortOptionSelected($0) },
             collapsedItemCount: 5
@@ -104,20 +94,12 @@ struct SortOptionsSheet: View {
                 items: statuses,
                 selectedItems: Set(state.selectedStatuses),
                 labelProvider: { status in
-                    switch status {
-                    case .returningSeries:
-                        String(\.label_library_status_returning)
-                    case .planned:
-                        String(\.label_library_status_planned)
-                    case .inProduction:
-                        String(\.label_library_status_in_production)
-                    case .ended:
-                        String(\.label_library_status_ended)
-                    case .canceled:
-                        String(\.label_library_status_canceled)
-                    default:
-                        status.displayName
-                    }
+                    if status == ShowStatus.returningSeries { return String(\.label_library_status_returning) }
+                    if status == ShowStatus.planned { return String(\.label_library_status_planned) }
+                    if status == ShowStatus.inProduction { return String(\.label_library_status_in_production) }
+                    if status == ShowStatus.ended { return String(\.label_library_status_ended) }
+                    if status == ShowStatus.canceled { return String(\.label_library_status_canceled) }
+                    return status.displayName
                 },
                 onItemToggle: { onStatusToggle($0) },
                 collapsedItemCount: 5

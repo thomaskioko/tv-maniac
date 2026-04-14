@@ -30,8 +30,14 @@
     <string name="label_watchlist_title">Add to …</string>
     <string name="label_watchlist_lists">Lists</string>
     <string name="label_watchlist_create_custom_list">Create a List</string>
-    <string name="label_watchlist_empty_list">You don't have any lists. Create a new one?</string>
+    <string name="label_watchlist_empty_list">You don\'t have any lists yet.</string>
     <string name="label_watchlist_create">Create</string>
+    <string name="label_watchlist_done">Done</string>
+    <string name="label_watchlist_new_list_placeholder">New list name</string>
+    <string name="label_watchlist_save_to_list">Save to List</string>
+    <string name="label_watchlist_your_lists">Your Lists</string>
+    <string name="label_watchlist_login_required_title">Login Required</string>
+    <string name="label_watchlist_login_required_message">Please log in with Trakt to manage your lists.</string>
     <string name="label_watchlist_list_style">List Style</string>
     <string name="label_watchlist_search_hint">Enter a show title to search for Show</string>
     <string name="label_watchlist_sort_list">Sort List</string>

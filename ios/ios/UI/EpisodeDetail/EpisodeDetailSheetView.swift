@@ -4,12 +4,12 @@ import TvManiacKit
 
 struct EpisodeDetailSheetView: View {
     private let presenter: EpisodeDetailSheetPresenter
-    @StateObject @KotlinStateFlow private var state: EpisodeDetailSheetState
+    @StateValue private var state: EpisodeDetailSheetState
     @State private var selectedDetent: PresentationDetent = .large
 
     init(presenter: EpisodeDetailSheetPresenter) {
         self.presenter = presenter
-        _state = .init(presenter.state)
+        _state = .init(presenter.stateValue)
     }
 
     var body: some View {

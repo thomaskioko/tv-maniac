@@ -15,8 +15,8 @@ import com.thomaskioko.tvmaniac.domain.user.ObserveUserProfileInteractor
 import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
-import com.thomaskioko.tvmaniac.profile.presenter.DefaultProfilePresenter
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction
+import com.thomaskioko.tvmaniac.profile.presenter.ProfileNavigator
 import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileInfo
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileState
@@ -25,6 +25,7 @@ import com.thomaskioko.tvmaniac.traktauth.api.AuthError
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
+import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -70,6 +71,7 @@ internal class ProfilePresenterTest {
 
     private val updateUserProfileData = UpdateUserProfileData(
         userRepository = userRepository,
+        traktListRepository = FakeTraktListRepository(),
         dispatchers = testDispatchers,
     )
 
@@ -261,9 +263,11 @@ internal class ProfilePresenterTest {
     }
 
     private fun createPresenter(): ProfilePresenter {
-        return DefaultProfilePresenter(
+        return ProfilePresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
-            onSettings = { },
+            navigator = object : ProfileNavigator {
+                override fun showSettings() {}
+            },
             localizer = com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer(),
             traktAuthManager = traktAuthManager,
             traktAuthRepository = traktAuthRepository,

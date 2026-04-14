@@ -12,8 +12,8 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.CALENDAR_S
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.trakt.api.TraktCalendarRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktCalendarResponse
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.withContext
-import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.Validator

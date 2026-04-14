@@ -2,15 +2,16 @@ package com.thomaskioko.tvmaniac.locale.implementation
 
 import android.content.Context
 import android.os.LocaleList
+import com.thomaskioko.tvmaniac.core.base.ApplicationContext
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.flowOf
-import me.tatarka.inject.annotations.Inject
 import java.util.Locale
 
 @Inject
 public actual class PlatformLocaleProvider(
-    private val context: Context,
+    @ApplicationContext private val context: Context,
 ) {
 
     private val locale = MutableSharedFlow<String>(replay = 1)
@@ -24,7 +25,7 @@ public actual class PlatformLocaleProvider(
     public actual suspend fun setLocale(languageCode: String) {
         require(languageCode.isNotEmpty()) { "Language code cannot be empty" }
 
-        val newLocale = Locale(languageCode)
+        val newLocale = Locale.forLanguageTag(languageCode)
         Locale.setDefault(newLocale)
 
         val configuration = context.resources.configuration
@@ -48,11 +49,10 @@ public actual class PlatformLocaleProvider(
             val javaLocale = locales.get(index)
             val language = javaLocale.language
             val country = javaLocale.country.toCountryOrNull()
-            if (country != null) {
-                Locale(language, country)
-            } else {
-                Locale(language)
-            }
+            Locale.Builder()
+                .setLanguage(language)
+                .apply { if (country != null) setRegion(country) }
+                .build()
         }
     }
 

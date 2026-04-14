@@ -3,7 +3,7 @@ plugins {
 }
 
 scaffold {
-    useKotlinInject()
+    useMetro()
     useSerialization()
     optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
 }
@@ -19,12 +19,11 @@ kotlin {
                 implementation(projects.data.followedshows.api)
                 implementation(projects.domain.episode)
                 implementation(projects.domain.followedshows)
+                implementation(projects.features.nav)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
                 api(libs.kotlinx.collections)
-
-                implementation(libs.kotlinInject.runtime)
             }
         }
 

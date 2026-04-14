@@ -7,15 +7,13 @@ import com.thomaskioko.tvmaniac.data.user.api.UserDao
 import com.thomaskioko.tvmaniac.data.user.api.UserRepository
 import com.thomaskioko.tvmaniac.data.user.api.UserStatsDao
 import com.thomaskioko.tvmaniac.data.user.api.model.UserProfile
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
-import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.ExperimentalStoreApi
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
-@Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class DefaultUserRepository(

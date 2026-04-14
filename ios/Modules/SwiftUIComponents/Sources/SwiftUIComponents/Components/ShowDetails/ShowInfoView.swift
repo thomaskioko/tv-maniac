@@ -190,7 +190,7 @@ public struct ShowInfoView: View {
         }
         .buttonStyle(.borderedProminent)
         .controlSize(.small)
-        .tint(isFollowed ? .red.opacity(0.95) : theme.colors.accent)
+        .tint(isFollowed ? .red.opacity(0.65) : theme.colors.accent)
         .buttonBorderShape(.roundedRectangle(radius: DrawingConstants.buttonRadius))
     }
 

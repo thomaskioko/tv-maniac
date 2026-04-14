@@ -1,0 +1,28 @@
+CREATE TABLE IF NOT EXISTS trakt_lists(
+    id INTEGER PRIMARY KEY,
+    slug TEXT NOT NULL,
+    name TEXT NOT NULL,
+    description TEXT,
+    item_count INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL
+);
+
+selectAll:
+SELECT id, slug, name, description, item_count, created_at
+FROM trakt_lists
+ORDER BY name ASC;
+
+selectById:
+SELECT id, slug, name, description, item_count, created_at
+FROM trakt_lists
+WHERE id = ?;
+
+upsert:
+INSERT OR REPLACE INTO trakt_lists(id, slug, name, description, item_count, created_at)
+VALUES(?, ?, ?, ?, ?, ?);
+
+deleteById:
+DELETE FROM trakt_lists WHERE id = ?;
+
+deleteAll:
+DELETE FROM trakt_lists;

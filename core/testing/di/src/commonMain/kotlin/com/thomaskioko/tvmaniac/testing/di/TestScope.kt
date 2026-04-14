@@ -1,3 +1,6 @@
 package com.thomaskioko.tvmaniac.testing.di
 
-public interface TestScope
+import dev.zacsweers.metro.Scope
+
+@Scope
+public annotation class TestScope

@@ -7,9 +7,9 @@ import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.presentation.calendar.model.CalendarDateGroup
 import com.thomaskioko.tvmaniac.presentation.calendar.model.CalendarEpisodeItem
+import dev.zacsweers.metro.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import me.tatarka.inject.annotations.Inject
 
 @Inject
 public class CalendarStateMapper(

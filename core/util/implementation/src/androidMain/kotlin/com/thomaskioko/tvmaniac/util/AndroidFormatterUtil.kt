@@ -1,10 +1,9 @@
 package com.thomaskioko.tvmaniac.util
 
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
-import me.tatarka.inject.annotations.Inject
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.SingleIn
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
@@ -17,7 +16,6 @@ import kotlin.math.pow
 
 public const val POSTER_PATH: String = "https://image.tmdb.org/t/p/original%s"
 
-@Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class AndroidFormatterUtil : FormatterUtil {

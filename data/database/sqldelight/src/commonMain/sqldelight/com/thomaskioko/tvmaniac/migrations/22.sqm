@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS trakt_list_shows(
+    list_id INTEGER NOT NULL,
+    show_trakt_id INTEGER NOT NULL,
+    listed_at TEXT NOT NULL,
+    pending_action TEXT NOT NULL DEFAULT 'NOTHING'
+        CHECK(pending_action IN ('NOTHING', 'UPLOAD', 'DELETE')),
+    PRIMARY KEY (list_id, show_trakt_id)
+);

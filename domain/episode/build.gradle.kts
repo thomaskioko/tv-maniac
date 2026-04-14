@@ -4,7 +4,7 @@ plugins {
 
 scaffold {
     optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
-    useKotlinInject()
+    useMetro()
 }
 
 kotlin {
@@ -22,7 +22,6 @@ kotlin {
                 implementation(projects.data.watchlist.api)
 
                 implementation(libs.coroutines.core)
-                implementation(libs.kotlinInject.runtime)
             }
         }
 

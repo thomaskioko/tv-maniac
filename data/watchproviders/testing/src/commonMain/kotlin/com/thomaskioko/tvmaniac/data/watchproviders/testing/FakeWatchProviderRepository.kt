@@ -13,10 +13,10 @@ public class FakeWatchProviderRepository : WatchProviderRepository {
         watchProvidersResult.emit(result)
     }
 
-    override suspend fun fetchWatchProviders(id: Long, forceRefresh: Boolean) {
+    override suspend fun fetchWatchProviders(traktId: Long, forceRefresh: Boolean) {
     }
 
     override fun observeWatchProviders(
-        id: Long,
+        traktId: Long,
     ): Flow<List<WatchProviders>> = watchProvidersResult.asStateFlow()
 }

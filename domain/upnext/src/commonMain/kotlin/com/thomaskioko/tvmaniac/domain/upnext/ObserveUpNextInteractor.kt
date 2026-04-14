@@ -4,12 +4,12 @@ import com.thomaskioko.tvmaniac.domain.upnext.model.UpNextResult
 import com.thomaskioko.tvmaniac.domain.upnext.model.UpNextSortOption
 import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import me.tatarka.inject.annotations.Inject
 
 @Inject
 public class ObserveUpNextInteractor(

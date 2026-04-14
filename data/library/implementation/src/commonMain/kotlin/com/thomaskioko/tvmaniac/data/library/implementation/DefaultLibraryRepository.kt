@@ -21,6 +21,9 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.LIBRARY_SY
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -29,14 +32,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import me.tatarka.inject.annotations.Inject
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 import kotlin.time.Duration
 
 @OptIn(ExperimentalCoroutinesApi::class)
-@Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class DefaultLibraryRepository(

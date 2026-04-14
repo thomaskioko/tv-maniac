@@ -4,7 +4,7 @@ plugins {
 
 scaffold {
     addAndroidTarget()
-    useKotlinInject()
+    useMetro()
     useSerialization()
 
     optIn(
@@ -21,15 +21,5 @@ kotlin {
             implementation(libs.coroutines.core)
             implementation(libs.decompose.decompose)
         }
-    }
-}
-
-/**
- * Workaround for Gradle 9.0 implicit dependency issue, The extractAndroidMainAnnotations task
- * uses output from kspAndroidMain,but doesn't declare an explicit dependency, causing build failures
- */
-tasks.configureEach {
-    if (name == "extractAndroidMainAnnotations") {
-        dependsOn("kspAndroidMain")
     }
 }

@@ -6,7 +6,7 @@ scaffold {
     addAndroidTarget(
         withDeviceTestBuilder = true,
     )
-    useKotlinInject()
+    useMetro()
 }
 
 kotlin {
@@ -21,6 +21,7 @@ kotlin {
 
         commonMain {
             dependencies {
+                implementation(projects.core.base)
                 implementation(projects.core.locale.api)
                 implementation(projects.data.datastore.api)
                 implementation(libs.coroutines.core)

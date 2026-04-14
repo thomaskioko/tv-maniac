@@ -14,16 +14,14 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.TRENDING_SHOWS_TODAY
 import com.thomaskioko.tvmaniac.shows.api.model.DEFAULT_DAY_TIME_WINDOW
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
-import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.impl.extensions.fresh
 import org.mobilenativefoundation.store.store5.impl.extensions.get
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
-@Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class DefaultTrendingShowsRepository(

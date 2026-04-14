@@ -1,24 +1,202 @@
 package com.thomaskioko.tvmaniac.moreshows.presentation
 
+import androidx.paging.LoadState
+import androidx.paging.PagingData
+import androidx.paging.PagingDataEvent
+import androidx.paging.PagingDataPresenter
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.Value
+import com.thomaskioko.tvmaniac.core.base.extensions.asValue
+import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
+import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsRepository
+import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsRepository
+import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
+import com.thomaskioko.tvmaniac.shows.api.model.Category.POPULAR
+import com.thomaskioko.tvmaniac.shows.api.model.Category.TOP_RATED
+import com.thomaskioko.tvmaniac.shows.api.model.Category.TRENDING_TODAY
+import com.thomaskioko.tvmaniac.shows.api.model.Category.UPCOMING
+import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
+import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsRepository
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.AssistedInject
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-public interface MoreShowsPresenter {
+@AssistedInject
+public class MoreShowsPresenter(
+    componentContext: ComponentContext,
+    @Assisted private val categoryId: Long,
+    private val navigator: MoreShowsNavigator,
+    private val popularShowsRepository: PopularShowsRepository,
+    private val upcomingShowsRepository: UpcomingShowsRepository,
+    private val trendingShowsRepository: TrendingShowsRepository,
+    private val topRatedShowsRepository: TopRatedShowsRepository,
+) : ComponentContext by componentContext {
 
-    public val state: StateFlow<MoreShowsState>
+    private val coroutineScope = coroutineScope()
+    private val _state = MutableStateFlow(MoreShowsState())
 
-    public fun dispatch(action: MoreShowsActions)
+    private val showsPagingDataPresenter = object : PagingDataPresenter<TvShow>() {
+        override suspend fun presentPagingDataEvent(event: PagingDataEvent<TvShow>) {
+            updateItemsFromSnapshot()
+        }
+    }
 
-    public fun onItemVisible(index: Int)
+    init {
+        when (categoryId) {
+            UPCOMING.id -> getUpcomingPagedList()
+            TRENDING_TODAY.id -> getTrendingPagedList()
+            POPULAR.id -> getPopularPagedList()
+            TOP_RATED.id -> getTopRatedPagedList()
+        }
+        observeLoadStates()
+    }
 
-    public fun loadMore()
+    public val state: StateFlow<MoreShowsState> = _state.asStateFlow()
 
-    public interface Factory {
-        public operator fun invoke(
-            componentContext: ComponentContext,
-            id: Long,
-            onBack: () -> Unit,
-            onNavigateToShowDetails: (id: Long) -> Unit,
-        ): MoreShowsPresenter
+    public val stateValue: Value<MoreShowsState> = state.asValue(coroutineScope)
+
+    public fun dispatch(action: MoreShowsActions) {
+        when (action) {
+            is MoreShowClicked -> navigator.showDetails(action.traktId)
+            MoreBackClicked -> navigator.goBack()
+            RefreshMoreShows -> {
+                when (categoryId) {
+                    UPCOMING.id -> getUpcomingPagedList(forceRefresh = true)
+                    TRENDING_TODAY.id -> getTrendingPagedList(forceRefresh = true)
+                    POPULAR.id -> getPopularPagedList(forceRefresh = true)
+                    TOP_RATED.id -> getTopRatedPagedList(forceRefresh = true)
+                }
+            }
+            RetryLoadMore -> showsPagingDataPresenter.retry()
+            DismissErrorMessage -> _state.update { it.copy(errorMessage = null) }
+        }
+    }
+
+    public fun onItemVisible(index: Int) {
+        showsPagingDataPresenter[index]
+    }
+
+    public fun loadMore() {
+        val index = showsPagingDataPresenter.size - 1
+        showsPagingDataPresenter[index]
+    }
+
+    private fun getPopularPagedList(forceRefresh: Boolean = false) {
+        coroutineScope.launch {
+            val pagingList: Flow<PagingData<TvShow>> =
+                popularShowsRepository
+                    .getPagedPopularShows(forceRefresh)
+                    .mapToTvShow()
+                    .cachedIn(coroutineScope)
+
+            updateState(pagingList = pagingList, title = POPULAR.title)
+        }
+    }
+
+    private fun getUpcomingPagedList(forceRefresh: Boolean = false) {
+        coroutineScope.launch {
+            val pagingList: Flow<PagingData<TvShow>> =
+                upcomingShowsRepository
+                    .getPagedUpcomingShows(forceRefresh)
+                    .mapToTvShow()
+                    .cachedIn(coroutineScope)
+
+            updateState(pagingList = pagingList, title = UPCOMING.title)
+        }
+    }
+
+    private fun getTrendingPagedList(forceRefresh: Boolean = false) {
+        coroutineScope.launch {
+            val pagingList: Flow<PagingData<TvShow>> =
+                trendingShowsRepository
+                    .getPagedTrendingShows(forceRefresh)
+                    .mapToTvShow()
+                    .cachedIn(coroutineScope)
+
+            updateState(pagingList = pagingList, title = TRENDING_TODAY.title)
+        }
+    }
+
+    private fun getTopRatedPagedList(forceRefresh: Boolean = false) {
+        coroutineScope.launch {
+            val pagingList: Flow<PagingData<TvShow>> =
+                topRatedShowsRepository
+                    .getPagedTopRatedShows(forceRefresh)
+                    .mapToTvShow()
+                    .cachedIn(coroutineScope)
+
+            updateState(pagingList = pagingList, title = TOP_RATED.title)
+        }
+    }
+
+    private suspend fun updateState(title: String, pagingList: Flow<PagingData<TvShow>>) {
+        _state.update {
+            it.copy(
+                pagingDataFlow = pagingList,
+                categoryTitle = title,
+            )
+        }
+
+        pagingList.collectLatest { showsPagingDataPresenter.collectFrom(it) }
+    }
+
+    private fun updateItemsFromSnapshot() {
+        val newItems = showsPagingDataPresenter.snapshot().filterNotNull().toImmutableList()
+        _state.update { current ->
+            when {
+                current.items == newItems -> current
+                newItems.size < current.items.size -> {
+                    if (newItems.isNotEmpty()) {
+                        showsPagingDataPresenter[newItems.size - 1]
+                    }
+                    current
+                }
+                else -> current.copy(items = newItems)
+            }
+        }
+    }
+
+    private fun observeLoadStates() {
+        coroutineScope.launch {
+            showsPagingDataPresenter.loadStateFlow.collectLatest { loadStates ->
+                loadStates ?: return@collectLatest
+                _state.update {
+                    it.copy(
+                        isRefreshLoading = loadStates.refresh is LoadState.Loading,
+                        isAppendLoading = loadStates.append is LoadState.Loading,
+                        appendError = (loadStates.append as? LoadState.Error)?.error?.message,
+                        errorMessage = (loadStates.refresh as? LoadState.Error)?.error?.message,
+                    )
+                }
+            }
+        }
+    }
+
+    private fun Flow<PagingData<ShowEntity>>.mapToTvShow(): Flow<PagingData<TvShow>> = map {
+        it.map { show ->
+            TvShow(
+                tmdbId = show.tmdbId,
+                traktId = show.traktId,
+                title = show.title,
+                posterImageUrl = show.posterPath,
+                inLibrary = show.inLibrary,
+            )
+        }
+    }
+
+    @AssistedFactory
+    public fun interface Factory {
+        public fun create(categoryId: Long): MoreShowsPresenter
     }
 }

@@ -5,7 +5,7 @@ plugins {
 scaffold {
     addAndroidTarget()
     useSerialization()
-    useKotlinInject()
+    useMetro()
 }
 
 kotlin {
@@ -14,6 +14,7 @@ kotlin {
 
         commonMain {
             dependencies {
+                implementation(projects.core.appconfig.api)
                 implementation(projects.core.base)
                 implementation(projects.core.connectivity.api)
                 implementation(projects.core.networkUtil.api)
@@ -32,11 +33,6 @@ kotlin {
 
         commonTest { dependencies { implementation(libs.ktor.serialization) } }
 
-        iosMain {
-            dependencies {
-                implementation(libs.ktor.darwin)
-                implementation(libs.ktor.negotiation)
-            }
-        }
+        iosMain { dependencies { implementation(libs.ktor.darwin) } }
     }
 }

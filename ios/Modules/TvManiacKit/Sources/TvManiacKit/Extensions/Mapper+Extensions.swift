@@ -5,28 +5,18 @@ import TvManiac
 
 public extension TvManiac.ImageQuality {
     func toSwift() -> SwiftImageQuality {
-        switch self {
-        case .auto:
-            .auto
-        case .high:
-            .high
-        case .medium:
-            .medium
-        case .low:
-            .low
-        }
+        if self == ImageQuality.auto_ { return .auto }
+        if self == ImageQuality.high { return .high }
+        if self == ImageQuality.medium { return .medium }
+        return .low
     }
 
     static func fromSwift(_ swiftQuality: SwiftImageQuality) -> TvManiac.ImageQuality {
         switch swiftQuality {
-        case .auto:
-            .auto
-        case .high:
-            .high
-        case .medium:
-            .medium
-        case .low:
-            .low
+        case .auto: ImageQuality.auto_
+        case .high: ImageQuality.high
+        case .medium: ImageQuality.medium
+        case .low: ImageQuality.low
         }
     }
 }
@@ -287,12 +277,8 @@ public extension TvManiac.UpNextEpisodeItem {
 
 public extension TvManiac.EpisodeBadge {
     func toSwift() -> SwiftEpisodeBadge {
-        switch self {
-        case .premiere:
-            .premiere
-        case .theNew:
-            .new
-        }
+        if self == EpisodeBadge.premiere { return .premiere }
+        return .new
     }
 }
 
@@ -365,6 +351,21 @@ public extension TvManiac.LibraryShowItem {
 public extension TvManiac.WatchProviderUiModel {
     func toSwift() -> SwiftProviders {
         .init(providerId: id, logoUrl: logoUrl)
+    }
+}
+
+// MARK: - Trakt List Mapping
+
+public extension TvManiac.TraktListModel {
+    func toSwift() -> SwiftTraktListItem {
+        .init(
+            listId: id,
+            slug: slug,
+            name: name,
+            description: description_,
+            showCountText: showCountText,
+            isShowInList: isShowInList
+        )
     }
 }
 

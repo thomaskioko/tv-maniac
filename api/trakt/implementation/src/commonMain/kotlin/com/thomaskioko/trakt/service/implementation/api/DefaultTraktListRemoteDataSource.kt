@@ -1,6 +1,6 @@
 package com.thomaskioko.trakt.service.implementation.api
 
-import com.thomaskioko.trakt.service.implementation.TraktHttpClient
+import com.thomaskioko.tvmaniac.core.base.TraktApi
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.authSafeRequest
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
@@ -14,22 +14,22 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktPersonalListsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShow
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowIds
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.SingleIn
+import io.ktor.client.HttpClient
 import io.ktor.client.request.parameter
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
 import io.ktor.http.path
-import me.tatarka.inject.annotations.Inject
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
-@Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class DefaultTraktListRemoteDataSource(
-    private val httpClient: TraktHttpClient,
+    @TraktApi
+    private val httpClient: HttpClient,
 ) : TraktListRemoteDataSource {
 
     override suspend fun getUser(userId: String): ApiResponse<TraktUserResponse> =
@@ -49,26 +49,14 @@ public class DefaultTraktListRemoteDataSource(
             }
         }
 
-    override suspend fun createFollowingList(userSlug: String): ApiResponse<TraktCreateListResponse> =
+    override suspend fun createList(userSlug: String, name: String): ApiResponse<TraktCreateListResponse> =
         httpClient.authSafeRequest {
             url {
                 method = HttpMethod.Post
                 path("users/$userSlug/lists")
             }
             contentType(ContentType.Application.Json)
-            setBody(TraktCreateListRequest())
-        }
-
-    override suspend fun getFollowedList(
-        listId: Long,
-        userSlug: String,
-    ): ApiResponse<List<TraktFollowedShowResponse>> =
-        httpClient.authSafeRequest {
-            url {
-                method = HttpMethod.Get
-                path("users/$userSlug/lists/$listId/items/shows")
-                parameter("sort_by", "added")
-            }
+            setBody(TraktCreateListRequest(name = name))
         }
 
     override suspend fun getWatchList(sortBy: String, sortHow: String): ApiResponse<List<TraktFollowedShowResponse>> =
@@ -155,6 +143,30 @@ public class DefaultTraktListRemoteDataSource(
             url {
                 method = HttpMethod.Post
                 path("users/$userSlug/lists/$listId/items")
+            }
+            contentType(ContentType.Application.Json)
+            setBody(
+                TraktAddShowRequest(
+                    shows = listOf(
+                        TraktShow(
+                            ids = TraktShowIds(
+                                traktId = traktShowId,
+                            ),
+                        ),
+                    ),
+                ),
+            )
+        }
+
+    override suspend fun removeShowFromList(
+        userSlug: String,
+        listId: Long,
+        traktShowId: Long,
+    ): ApiResponse<TraktAddRemoveShowFromListResponse> =
+        httpClient.authSafeRequest {
+            url {
+                method = HttpMethod.Post
+                path("users/$userSlug/lists/$listId/items/remove")
             }
             contentType(ContentType.Application.Json)
             setBody(

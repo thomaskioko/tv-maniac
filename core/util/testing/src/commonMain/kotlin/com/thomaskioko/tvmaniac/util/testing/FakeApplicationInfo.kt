@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.util.testing
 
-import com.thomaskioko.tvmaniac.util.api.ApplicationInfo
-import com.thomaskioko.tvmaniac.util.api.Platform
+import com.thomaskioko.tvmaniac.appconfig.ApplicationInfo
+import com.thomaskioko.tvmaniac.appconfig.Platform
 
 public object FakeApplicationInfo {
     public val DEFAULT: ApplicationInfo = ApplicationInfo(

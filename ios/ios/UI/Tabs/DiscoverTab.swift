@@ -4,13 +4,13 @@ import TvManiacKit
 
 struct DiscoverTab: View {
     private let presenter: DiscoverShowsPresenter
-    @StateObject @KotlinStateFlow private var uiState: DiscoverViewState
+    @StateValue private var uiState: DiscoverViewState
     @StateObject private var store = SettingsAppStorage.shared
     @State private var currentIndex: Int
     @State private var toast: Toast?
     init(presenter: DiscoverShowsPresenter) {
         self.presenter = presenter
-        _uiState = .init(presenter.state)
+        _uiState = .init(presenter.stateValue)
         _currentIndex = State(initialValue: SettingsAppStorage.shared.savedIndex)
     }
 

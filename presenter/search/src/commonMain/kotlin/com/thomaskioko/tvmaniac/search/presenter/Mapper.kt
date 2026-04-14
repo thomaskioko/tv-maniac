@@ -9,9 +9,9 @@ import com.thomaskioko.tvmaniac.search.presenter.model.GenreRowModel
 import com.thomaskioko.tvmaniac.search.presenter.model.ShowItem
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
+import dev.zacsweers.metro.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import me.tatarka.inject.annotations.Inject
 
 @Inject
 public class Mapper(

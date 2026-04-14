@@ -7,8 +7,8 @@ import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderRepository
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor.Param
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.withContext
-import me.tatarka.inject.annotations.Inject
 
 @Inject
 public class ShowDetailsInteractor(

@@ -2,9 +2,9 @@ package com.thomaskioko.tvmaniac.domain.seasondetails
 
 import com.thomaskioko.tvmaniac.core.base.interactor.SubjectInteractor
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import me.tatarka.inject.annotations.Inject
 
 @Inject
 public class ObserveUnwatchedInPreviousSeasonsInteractor(

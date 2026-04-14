@@ -27,6 +27,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_clear
 import com.thomaskioko.tvmaniac.i18n.resolve
 
@@ -107,4 +109,30 @@ internal fun LibrarySearchbar(
             cursorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
         ),
     )
+}
+
+@ThemePreviews
+@Composable
+private fun LibrarySearchbarPreview() {
+    TvManiacTheme {
+        LibrarySearchbar(
+            query = "",
+            hint = "Search library...",
+            onQueryChanged = {},
+            onCloseClick = {},
+        )
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun LibrarySearchbarWithQueryPreview() {
+    TvManiacTheme {
+        LibrarySearchbar(
+            query = "Breaking Bad",
+            hint = "Search library...",
+            onQueryChanged = {},
+            onCloseClick = {},
+        )
+    }
 }

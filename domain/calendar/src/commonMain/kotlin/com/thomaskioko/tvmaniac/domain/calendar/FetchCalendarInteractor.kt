@@ -3,8 +3,8 @@ package com.thomaskioko.tvmaniac.domain.calendar
 import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.calendar.CalendarRepository
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.withContext
-import me.tatarka.inject.annotations.Inject
 
 @Inject
 public class FetchCalendarInteractor(

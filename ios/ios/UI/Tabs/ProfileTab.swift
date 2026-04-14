@@ -6,11 +6,11 @@ struct ProfileTab: View {
     @Environment(ToastManager.self) private var toastManager
 
     private let presenter: ProfilePresenter
-    @StateObject @KotlinStateFlow private var uiState: ProfileState
+    @StateValue private var uiState: ProfileState
 
     init(presenter: ProfilePresenter) {
         self.presenter = presenter
-        _uiState = .init(presenter.state)
+        _uiState = .init(presenter.stateValue)
     }
 
     var body: some View {

@@ -3,7 +3,7 @@ plugins {
 }
 
 scaffold {
-    useKotlinInject()
+    useMetro()
     useSerialization()
 
     optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
@@ -15,6 +15,7 @@ kotlin {
             dependencies {
                 api(projects.core.view)
                 implementation(projects.core.base)
+                implementation(projects.features.nav)
                 implementation(projects.core.logger.api)
                 implementation(projects.core.util.api)
                 implementation(projects.data.episode.api)
@@ -27,13 +28,15 @@ kotlin {
                 implementation(projects.data.followedshows.api)
                 implementation(projects.data.seasondetails.api)
                 implementation(projects.data.traktauth.api)
+                implementation(projects.data.traktlists.api)
                 implementation(projects.domain.notifications)
+                implementation(projects.domain.traktlists)
+                implementation(projects.i18n.api)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
                 api(libs.kotlinx.collections)
 
-                implementation(libs.kotlinInject.runtime)
                 implementation(libs.kotlinx.datetime)
             }
         }
@@ -53,6 +56,9 @@ kotlin {
                 implementation(projects.data.trailers.testing)
                 implementation(projects.data.traktauth.api)
                 implementation(projects.data.traktauth.testing)
+                implementation(projects.data.traktlists.testing)
+                implementation(projects.data.user.api)
+                implementation(projects.data.user.testing)
                 implementation(projects.data.upnext.testing)
                 implementation(projects.data.watchproviders.testing)
                 implementation(projects.i18n.testing)
