@@ -10,7 +10,6 @@ import com.thomaskioko.tvmaniac.appconfig.ApplicationInfo
 import com.thomaskioko.tvmaniac.appconfig.DefaultTmdbConfig
 import com.thomaskioko.tvmaniac.appconfig.DefaultTraktConfig
 import com.thomaskioko.tvmaniac.appconfig.Platform
-import com.thomaskioko.tvmaniac.calendar.nav.CalendarNavigator
 import com.thomaskioko.tvmaniac.core.base.ComputationCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.MainCoroutineScope
@@ -34,55 +33,36 @@ import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.implementation.DefaultDatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
-import com.thomaskioko.tvmaniac.debug.nav.DebugNavigator
-import com.thomaskioko.tvmaniac.debug.presenter.di.DefaultDebugNavigator
 import com.thomaskioko.tvmaniac.discover.nav.DiscoverNavigator
 import com.thomaskioko.tvmaniac.discover.presenter.di.DefaultDiscoverNavigator
 import com.thomaskioko.tvmaniac.domain.library.LibrarySyncWorker
 import com.thomaskioko.tvmaniac.domain.notifications.EpisodeNotificationWorker
 import com.thomaskioko.tvmaniac.domain.upnext.UpNextSyncWorker
-import com.thomaskioko.tvmaniac.espisodedetails.nav.EpisodeDetailNavigator
 import com.thomaskioko.tvmaniac.genreshows.nav.GenreShowsRoute
 import com.thomaskioko.tvmaniac.home.nav.HomeTabNavigator
 import com.thomaskioko.tvmaniac.home.nav.di.model.HomeConfig
-import com.thomaskioko.tvmaniac.library.nav.LibraryNavigator
 import com.thomaskioko.tvmaniac.locale.api.LocaleProvider
 import com.thomaskioko.tvmaniac.locale.testing.FakeLocaleProvider
-import com.thomaskioko.tvmaniac.moreshows.nav.MoreShowsNavigator
-import com.thomaskioko.tvmaniac.moreshows.presentation.di.DefaultMoreShowsNavigator
+import com.thomaskioko.tvmaniac.navigation.DefaultNavEventBus
 import com.thomaskioko.tvmaniac.navigation.DefaultNavRouteSerializer
+import com.thomaskioko.tvmaniac.navigation.DefaultNavigator
 import com.thomaskioko.tvmaniac.navigation.NavDestination
+import com.thomaskioko.tvmaniac.navigation.NavEventBus
 import com.thomaskioko.tvmaniac.navigation.NavRoute
 import com.thomaskioko.tvmaniac.navigation.NavRouteBinding
 import com.thomaskioko.tvmaniac.navigation.NavRouteSerializer
+import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.RootChild
-import com.thomaskioko.tvmaniac.navigation.RootNavigator
 import com.thomaskioko.tvmaniac.navigation.SheetChild
 import com.thomaskioko.tvmaniac.navigation.controllers.DefaultEpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.navigation.controllers.DefaultHomeTabNavigator
 import com.thomaskioko.tvmaniac.navigation.root.EpisodeSheetChildFactory
-import com.thomaskioko.tvmaniac.navigation.root.ShowFollowedCallback
-import com.thomaskioko.tvmaniac.presentation.calendar.di.DefaultCalendarNavigator
-import com.thomaskioko.tvmaniac.presentation.episodedetail.di.DefaultEpisodeDetailNavigator
 import com.thomaskioko.tvmaniac.presentation.episodedetail.di.DefaultEpisodeSheetChildFactory
-import com.thomaskioko.tvmaniac.presentation.library.di.DefaultLibraryNavigator
-import com.thomaskioko.tvmaniac.presentation.upnext.di.DefaultUpNextNavigator
 import com.thomaskioko.tvmaniac.presenter.root.DefaultRootPresenter
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
-import com.thomaskioko.tvmaniac.presenter.showdetails.di.DefaultShowDetailsNavigator
-import com.thomaskioko.tvmaniac.profile.nav.ProfileNavigator
-import com.thomaskioko.tvmaniac.profile.presenter.di.DefaultProfileNavigator
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.implementation.DefaultRequestManagerRepository
-import com.thomaskioko.tvmaniac.search.nav.SearchNavigator
-import com.thomaskioko.tvmaniac.search.presenter.di.DefaultSearchNavigator
-import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsNavigator
-import com.thomaskioko.tvmaniac.seasondetails.presenter.di.DefaultSeasonDetailsNavigator
-import com.thomaskioko.tvmaniac.settings.nav.SettingsNavigator
-import com.thomaskioko.tvmaniac.settings.presenter.di.DefaultSettingsNavigator
-import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsNavigator
-import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityRepository
 import com.thomaskioko.tvmaniac.syncactivity.implementation.DefaultTraktActivityRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
@@ -97,12 +77,9 @@ import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.traktlists.api.TraktListRepository
 import com.thomaskioko.tvmaniac.traktlists.implementation.DefaultTraktListRepository
 import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
-import com.thomaskioko.tvmaniac.upnext.nav.UpNextNavigator
 import com.thomaskioko.tvmaniac.util.api.AppUtils
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
-import com.thomaskioko.tvmaniac.watchlist.nav.WatchlistNavigator
-import com.thomaskioko.tvmaniac.watchlist.presenter.di.DefaultWatchlistNavigator
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
@@ -139,20 +116,8 @@ import kotlinx.coroutines.flow.flowOf
         UpNextSyncWorker::class,
         DefaultEpisodeSheetChildFactory::class,
         DefaultEpisodeSheetNavigator::class,
-        DefaultSearchNavigator::class,
-        DefaultDebugNavigator::class,
-        DefaultSettingsNavigator::class,
-        DefaultMoreShowsNavigator::class,
-        DefaultShowDetailsNavigator::class,
-        DefaultSeasonDetailsNavigator::class,
-        DefaultEpisodeDetailNavigator::class,
-        DefaultLibraryNavigator::class,
-        DefaultProfileNavigator::class,
         DefaultDiscoverNavigator::class,
-        DefaultUpNextNavigator::class,
-        DefaultCalendarNavigator::class,
         DefaultHomeTabNavigator::class,
-        DefaultWatchlistNavigator::class,
     ],
 )
 public object FakeAppBindings {
@@ -295,81 +260,9 @@ public object FakeAppBindings {
             ) { }
 
             override fun dismissEpisodeSheet() { }
+            override fun dismissAndShowShowDetails(showTraktId: Long) { }
+            override fun dismissAndShowSeasonDetails(showTraktId: Long, seasonId: Long, seasonNumber: Long) { }
             override fun getSlotNavigation(): SlotNavigation<EpisodeSheetConfig> = SlotNavigation()
-        }
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideSearchNavigator(): SearchNavigator =
-        object : SearchNavigator {
-            override fun showDetails(traktId: Long) {}
-            override fun showGenre(genreId: Long) {}
-            override fun goBack() {}
-        }
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideDebugNavigator(): DebugNavigator =
-        object : DebugNavigator {
-            override fun goBack() {}
-        }
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideSettingsNavigator(): SettingsNavigator =
-        object : SettingsNavigator {
-            override fun goBack() {}
-            override fun showDebugMenu() {}
-        }
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideMoreShowsNavigator(): MoreShowsNavigator =
-        object : MoreShowsNavigator {
-            override fun goBack() {}
-            override fun showDetails(traktId: Long) {}
-        }
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideShowDetailsNavigator(): ShowDetailsNavigator =
-        object : ShowDetailsNavigator {
-            override fun goBack() {}
-            override fun showDetails(traktId: Long) {}
-            override fun showSeasonDetails(param: ShowSeasonDetailsParam) {}
-            override fun showTrailers(traktShowId: Long) {}
-            override fun showFollowed() {}
-        }
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideSeasonDetailsNavigator(): SeasonDetailsNavigator =
-        object : SeasonDetailsNavigator {
-            override fun goBack() {}
-            override fun showEpisodeSheet(episodeId: Long) {}
-        }
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideEpisodeDetailNavigator(): EpisodeDetailNavigator =
-        object : EpisodeDetailNavigator {
-            override fun showDetails(showTraktId: Long) {}
-            override fun showSeasonDetails(showTraktId: Long, seasonId: Long, seasonNumber: Long) {}
-            override fun dismiss() {}
-        }
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideLibraryNavigator(): LibraryNavigator =
-        object : LibraryNavigator {
-            override fun showDetails(traktId: Long) {}
-        }
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideProfileNavigator(): ProfileNavigator =
-        object : ProfileNavigator {
-            override fun showSettings() {}
         }
 
     @Provides
@@ -386,35 +279,11 @@ public object FakeAppBindings {
 
     @Provides
     @SingleIn(AppScope::class)
-    public fun provideUpNextNavigator(): UpNextNavigator =
-        object : UpNextNavigator {
-            override fun showDetails(traktId: Long) {}
-            override fun showSeasonDetails(showTraktId: Long, seasonId: Long, seasonNumber: Long) {}
-            override fun showEpisodeSheet(episodeId: Long) {}
-        }
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideCalendarNavigator(): CalendarNavigator =
-        object : CalendarNavigator {
-            override fun showEpisodeSheet(episodeId: Long) {}
-        }
-
-    @Provides
-    @SingleIn(AppScope::class)
     public fun provideHomeTabController(): HomeTabNavigator =
         object : HomeTabNavigator {
             override fun registerNavigation(navigation: StackNavigation<HomeConfig>) {}
             override fun unregisterNavigation() {}
             override fun switchToProgressTab() {}
-        }
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideWatchlistNavigator(): WatchlistNavigator =
-        object : WatchlistNavigator {
-            override fun showDetails(traktId: Long) {}
-            override fun showSeasonDetails(showTraktId: Long, seasonId: Long, seasonNumber: Long) {}
         }
 
     @Provides
@@ -453,10 +322,11 @@ public object FakeAppBindings {
 
     @Provides
     @SingleIn(AppScope::class)
-    public fun provideShowFollowedCallback(): ShowFollowedCallback =
-        object : ShowFollowedCallback {
-            override fun onShowFollowed() {}
-        }
+    public fun provideNavEventBus(): NavEventBus = DefaultNavEventBus()
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideRootNavigator(): Navigator = DefaultNavigator()
 
     @Provides
     public fun provideRootPresenterFactory(
@@ -464,7 +334,6 @@ public object FakeAppBindings {
     ): RootPresenter.Factory = object : RootPresenter.Factory {
         override fun invoke(
             componentContext: ComponentContext,
-            navigator: RootNavigator,
-        ): RootPresenter = factory.create(componentContext, navigator)
+        ): RootPresenter = factory.create(componentContext)
     }
 }

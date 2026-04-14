@@ -48,8 +48,7 @@ internal class TestJvmGraphTest {
     @Test
     fun `should resolve RootPresenter factory`() {
         val componentContext = DefaultComponentContext(lifecycle = lifecycle)
-        val navigator = com.thomaskioko.tvmaniac.navigation.DefaultRootNavigator()
-        val presenter = component.rootPresenterFactory(componentContext, navigator)
+        val presenter = component.rootPresenterFactory(componentContext)
 
         presenter.shouldBeInstanceOf<RootPresenter>()
     }
