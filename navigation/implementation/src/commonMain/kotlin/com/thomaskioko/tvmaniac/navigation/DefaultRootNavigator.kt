@@ -7,27 +7,24 @@ import com.arkivanov.decompose.router.stack.popTo
 import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.router.stack.pushToFront
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
-import com.thomaskioko.tvmaniac.navigation.model.RootDestinationConfig
 import dev.zacsweers.metro.ContributesBinding
-import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 
-@Inject
 @SingleIn(ActivityScope::class)
 @ContributesBinding(ActivityScope::class)
 public class DefaultRootNavigator : RootNavigator {
-    private val navigation = StackNavigation<RootDestinationConfig>()
+    private val navigation = StackNavigation<NavRoute>()
 
-    override fun bringToFront(config: RootDestinationConfig) {
-        navigation.bringToFront(config)
+    override fun bringToFront(route: NavRoute) {
+        navigation.bringToFront(route)
     }
 
-    override fun pushNew(config: RootDestinationConfig) {
-        navigation.pushNew(config)
+    override fun pushNew(route: NavRoute) {
+        navigation.pushNew(route)
     }
 
-    override fun pushToFront(config: RootDestinationConfig) {
-        navigation.pushToFront(config)
+    override fun pushToFront(route: NavRoute) {
+        navigation.pushToFront(route)
     }
 
     override fun pop() {
@@ -38,5 +35,5 @@ public class DefaultRootNavigator : RootNavigator {
         navigation.popTo(index = toIndex)
     }
 
-    override fun getStackNavigation(): StackNavigation<RootDestinationConfig> = navigation
+    override fun getStackNavigation(): StackNavigation<NavRoute> = navigation
 }

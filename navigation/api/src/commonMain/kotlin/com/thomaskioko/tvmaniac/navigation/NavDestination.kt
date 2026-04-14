@@ -1,10 +1,9 @@
 package com.thomaskioko.tvmaniac.navigation
 
 import com.arkivanov.decompose.ComponentContext
-import com.thomaskioko.tvmaniac.navigation.model.RootDestinationConfig
 
 /**
- * Factory for creating [RootChild] instances from a [RootDestinationConfig].
+ * Factory for creating [RootChild] instances from a [NavRoute].
  *
  * Each feature contributes an implementation via DI multibinding. The root presenter
  * collects all contributions as a `Set<NavDestination>` and dispatches to the matching
@@ -12,18 +11,18 @@ import com.thomaskioko.tvmaniac.navigation.model.RootDestinationConfig
  */
 public interface NavDestination {
     /**
-     * Returns `true` if this destination can handle the given [config].
+     * Returns `true` if this destination can handle the given [route].
      *
-     * @param config The navigation configuration to check
+     * @param route The navigation route to check
      */
-    public fun matches(config: RootDestinationConfig): Boolean
+    public fun matches(route: NavRoute): Boolean
 
     /**
-     * Creates a [RootChild] for the given [config] and [componentContext].
+     * Creates a [RootChild] for the given [route] and [componentContext].
      * Only called when [matches] returns `true`.
      *
-     * @param config The navigation configuration for the screen
+     * @param route The navigation route for the screen
      * @param componentContext The Decompose component context for the new child
      */
-    public fun createChild(config: RootDestinationConfig, componentContext: ComponentContext): RootChild
+    public fun createChild(route: NavRoute, componentContext: ComponentContext): RootChild
 }

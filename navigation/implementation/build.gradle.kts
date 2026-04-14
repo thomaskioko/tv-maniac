@@ -25,6 +25,7 @@ kotlin {
             implementation(projects.core.util.testing)
             implementation(projects.data.traktauth.testing)
             implementation(projects.core.testing.di)
+            implementation(projects.features.genreShows.nav.api)
 
             implementation(libs.bundles.unittest)
         }

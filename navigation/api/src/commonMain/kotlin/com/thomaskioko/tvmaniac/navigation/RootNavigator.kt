@@ -1,41 +1,40 @@
 package com.thomaskioko.tvmaniac.navigation
 
 import com.arkivanov.decompose.router.stack.StackNavigation
-import com.thomaskioko.tvmaniac.navigation.model.RootDestinationConfig
 
 public interface RootNavigator {
     /**
-     * Brings a configuration to the front of the navigation stack.
-     * If the configuration is already in the stack, it will be brought to the front.
+     * Brings a route to the front of the navigation stack.
+     * If the route is already in the stack, it will be brought to the front.
      * If not, it will be added to the front.
      *
-     * @param config The configuration to bring to the front
+     * @param route The route to bring to the front
      */
-    public fun bringToFront(config: RootDestinationConfig)
+    public fun bringToFront(route: NavRoute)
 
     /**
-     * Pushes a new configuration to the navigation stack.
+     * Pushes a new route to the navigation stack.
      *
-     * @param config The configuration to push
+     * @param route The route to push
      */
-    public fun pushNew(config: RootDestinationConfig)
+    public fun pushNew(route: NavRoute)
 
     /**
-     * Pushes a configuration to the front of the navigation stack.
-     * If the configuration is already in the stack, it will be brought to the front.
+     * Pushes a route to the front of the navigation stack.
+     * If the route is already in the stack, it will be brought to the front.
      * If not, it will be added to the front.
      *
-     * @param config The configuration to push to the front
+     * @param route The route to push to the front
      */
-    public fun pushToFront(config: RootDestinationConfig)
+    public fun pushToFront(route: NavRoute)
 
     /**
-     * Pops the top configuration from the navigation stack.
+     * Pops the top route from the navigation stack.
      */
     public fun pop()
 
     /**
-     * Pops configurations from the navigation stack until reaching the specified index.
+     * Pops routes from the navigation stack until reaching the specified index.
      *
      * @param toIndex The index to pop to
      */
@@ -45,5 +44,5 @@ public interface RootNavigator {
      * Returns the underlying [StackNavigation] instance.
      * This is needed for Decompose's childStack function.
      */
-    public fun getStackNavigation(): StackNavigation<RootDestinationConfig>
+    public fun getStackNavigation(): StackNavigation<NavRoute>
 }

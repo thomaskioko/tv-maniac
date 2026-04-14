@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.navigation.di
 
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.navigation.NavDestination
+import com.thomaskioko.tvmaniac.navigation.NavRouteBinding
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Multibinds
 
@@ -9,4 +10,7 @@ import dev.zacsweers.metro.Multibinds
 public interface NavigationMultibindings {
     @Multibinds
     public fun navDestinations(): Set<NavDestination>
+
+    @Multibinds
+    public fun navRouteBindings(): Set<NavRouteBinding<*>>
 }
