@@ -7,7 +7,7 @@ public struct TabBarView: View {
     @Theme private var theme
 
     private let presenter: HomePresenter
-    @StateValue private var stack: ChildStack<AnyObject, HomePresenterChild>
+    @StateValue private var stack: ChildStack<AnyObject, TabChild<AnyObject>>
     @StateValue private var profileAvatar: ProfileAvatar
     @State private var selectedTab: NavigationTab = .discover
     @State private var avatarImage: UIImage?
@@ -28,19 +28,19 @@ public struct TabBarView: View {
                     tab: tab,
                     avatarImage: tab == .profile ? avatarImage : nil
                 ) { child in
-                    switch child {
-                    case let screen as HomePresenterChildDiscover:
-                        DiscoverTab(presenter: screen.presenter)
-                            .id(ObjectIdentifier(screen))
-                    case let screen as HomePresenterChildProgress:
-                        ProgressTab(presenter: screen.presenter)
-                            .id(ObjectIdentifier(screen))
-                    case let screen as HomePresenterChildProfile:
-                        ProfileTab(presenter: screen.presenter)
-                            .id(ObjectIdentifier(screen))
-                    case let screen as HomePresenterChildLibrary:
-                        LibraryTab(presenter: screen.presenter)
-                            .id(ObjectIdentifier(screen))
+                    switch child.presenter {
+                    case let presenter as DiscoverShowsPresenter:
+                        DiscoverTab(presenter: presenter)
+                            .id(ObjectIdentifier(child))
+                    case let presenter as ProgressPresenter:
+                        ProgressTab(presenter: presenter)
+                            .id(ObjectIdentifier(child))
+                    case let presenter as ProfilePresenter:
+                        ProfileTab(presenter: presenter)
+                            .id(ObjectIdentifier(child))
+                    case let presenter as LibraryPresenter:
+                        LibraryTab(presenter: presenter)
+                            .id(ObjectIdentifier(child))
                     default:
                         EmptyView()
                     }
@@ -122,12 +122,12 @@ public struct TabBarView: View {
         tabForChild(stack.active.instance)
     }
 
-    private func tabForChild(_ child: HomePresenterChild) -> NavigationTab {
-        switch child {
-        case is HomePresenterChildDiscover: .discover
-        case is HomePresenterChildProgress: .progress
-        case is HomePresenterChildProfile: .profile
-        case is HomePresenterChildLibrary: .library
+    private func tabForChild(_ child: TabChild<AnyObject>) -> NavigationTab {
+        switch child.presenter {
+        case is DiscoverShowsPresenter: .discover
+        case is ProgressPresenter: .progress
+        case is ProfilePresenter: .profile
+        case is LibraryPresenter: .library
         default: .discover
         }
     }

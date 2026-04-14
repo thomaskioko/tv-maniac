@@ -36,29 +36,34 @@ struct RootNavigationView: View {
                 stack: rootPresenter.childStackValue,
                 onBack: rootNavigator.popTo
             ) { child in
-                switch child {
-                case let child as HomeDestination:
-                    TabBarView(presenter: child.presenter)
-                        .id(ObjectIdentifier(child))
-                case let child as ShowDetailsDestination:
-                    ShowDetailsView(presenter: child.presenter)
-                        .id(ObjectIdentifier(child))
-                case let child as SeasonDetailsDestination:
-                    SeasonDetailsView(presenter: child.presenter)
-                        .id(ObjectIdentifier(child))
-                case let child as SearchDestination:
-                    SearchTab(presenter: child.presenter)
-                        .id(ObjectIdentifier(child))
-                case let child as SettingsDestination:
-                    SettingsView(presenter: child.presenter)
-                        .id(ObjectIdentifier(child))
-                case let child as DebugDestination:
-                    DebugMenuView(presenter: child.presenter)
-                        .id(ObjectIdentifier(child))
-                case let child as MoreShowsDestination:
-                    MoreShowsView(presenter: child.presenter)
-                        .id(ObjectIdentifier(child))
-                default:
+                if let screen = child as? ScreenDestination<AnyObject> {
+                    let presenter = screen.presenter
+                    switch presenter {
+                    case let presenter as HomePresenter:
+                        TabBarView(presenter: presenter)
+                            .id(ObjectIdentifier(child))
+                    case let presenter as ShowDetailsPresenter:
+                        ShowDetailsView(presenter: presenter)
+                            .id(ObjectIdentifier(child))
+                    case let presenter as SeasonDetailsPresenter:
+                        SeasonDetailsView(presenter: presenter)
+                            .id(ObjectIdentifier(child))
+                    case let presenter as SearchShowsPresenter:
+                        SearchTab(presenter: presenter)
+                            .id(ObjectIdentifier(child))
+                    case let presenter as SettingsPresenter:
+                        SettingsView(presenter: presenter)
+                            .id(ObjectIdentifier(child))
+                    case let presenter as DebugPresenter:
+                        DebugMenuView(presenter: presenter)
+                            .id(ObjectIdentifier(child))
+                    case let presenter as MoreShowsPresenter:
+                        MoreShowsView(presenter: presenter)
+                            .id(ObjectIdentifier(child))
+                    default:
+                        EmptyView()
+                    }
+                } else {
                     EmptyView()
                 }
             }
@@ -68,14 +73,19 @@ struct RootNavigationView: View {
             isPresented: Binding(
                 get: { episodeSheetSlot.child != nil },
                 set: { isPresented in
-                    if !isPresented, let child = episodeSheetSlot.child?.instance as? EpisodeDetailDestination {
-                        child.presenter.dispatch(action: EpisodeDetailSheetActionDismiss())
+                    if !isPresented,
+                       let sheet = episodeSheetSlot.child?.instance as? SheetDestination<AnyObject>,
+                       let presenter = sheet.presenter as? EpisodeDetailSheetPresenter
+                    {
+                        presenter.dispatch(action: EpisodeDetailSheetActionDismiss())
                     }
                 }
             )
         ) {
-            if let child = episodeSheetSlot.child?.instance as? EpisodeDetailDestination {
-                EpisodeDetailSheetView(presenter: child.presenter)
+            if let sheet = episodeSheetSlot.child?.instance as? SheetDestination<AnyObject>,
+               let presenter = sheet.presenter as? EpisodeDetailSheetPresenter
+            {
+                EpisodeDetailSheetView(presenter: presenter)
             }
         }
         .onChange(of: themeState.appTheme) { _, newTheme in

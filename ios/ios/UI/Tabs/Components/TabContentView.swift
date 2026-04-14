@@ -2,17 +2,17 @@ import SwiftUI
 import SwiftUIComponents
 import TvManiac
 
-public struct TabContentView<Child: HomePresenterChild, Content: View>: View {
-    private let child: Child?
+public struct TabContentView<Content: View>: View {
+    private let child: TabChild<AnyObject>?
     private let tab: NavigationTab
     private let avatarImage: UIImage?
-    @ViewBuilder let content: (Child) -> Content
+    @ViewBuilder let content: (TabChild<AnyObject>) -> Content
 
     public init(
-        child: Child?,
+        child: TabChild<AnyObject>?,
         tab: NavigationTab,
         avatarImage: UIImage? = nil,
-        @ViewBuilder content: @escaping (Child) -> Content
+        @ViewBuilder content: @escaping (TabChild<AnyObject>) -> Content
     ) {
         self.child = child
         self.tab = tab
