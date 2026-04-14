@@ -20,25 +20,17 @@ import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
-import com.thomaskioko.tvmaniac.debug.presenter.DebugDestination
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
-import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsDestination
-import com.thomaskioko.tvmaniac.navigation.GenreShowsDestination
+import com.thomaskioko.tvmaniac.navigation.NavDestination
 import com.thomaskioko.tvmaniac.navigation.RootChild
 import com.thomaskioko.tvmaniac.navigation.RootNavigator
 import com.thomaskioko.tvmaniac.navigation.SheetChild
 import com.thomaskioko.tvmaniac.navigation.model.RootDestinationConfig
-import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeDetailDestination
-import com.thomaskioko.tvmaniac.presenter.home.HomeDestination
-import com.thomaskioko.tvmaniac.presenter.root.di.ScreenGraph
-import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsDestination
-import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsParam
-import com.thomaskioko.tvmaniac.presenter.trailers.TrailersDestination
-import com.thomaskioko.tvmaniac.search.presenter.SearchDestination
-import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsDestination
-import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsUiParam
-import com.thomaskioko.tvmaniac.settings.presenter.SettingsDestination
+import com.thomaskioko.tvmaniac.navigation.root.EpisodeSheetChildFactory
+import com.thomaskioko.tvmaniac.navigation.root.ShowFollowedCallback
+import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
+import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.traktauth.api.AuthError
 import com.thomaskioko.tvmaniac.traktauth.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
@@ -65,14 +57,15 @@ import kotlin.time.Duration.Companion.milliseconds
 public class DefaultRootPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val navigator: RootNavigator,
-    private val screenGraphFactory: ScreenGraph.Factory,
+    private val navDestinations: Set<NavDestination>,
+    private val episodeSheetChildFactory: EpisodeSheetChildFactory,
     episodeSheetNavigator: EpisodeSheetNavigator,
     private val traktAuthRepository: TraktAuthRepository,
     private val updateUserProfileData: UpdateUserProfileData,
     private val logoutInteractor: LogoutInteractor,
     private val logger: Logger,
     private val datastoreRepository: DatastoreRepository,
-) : RootPresenter, ComponentContext by componentContext {
+) : RootPresenter, ShowFollowedCallback, ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
 
@@ -139,10 +132,7 @@ public class DefaultRootPresenter(
         serializer = EpisodeSheetConfig.serializer(),
         handleBackButton = true,
     ) { config, childComponentContext ->
-        EpisodeDetailDestination(
-            presenter = screenGraphFactory.createGraph(childComponentContext)
-                .episodeDetailFactory.create(config.episodeId, config.source),
-        )
+        episodeSheetChildFactory.createChild(config, childComponentContext)
     }
 
     override val episodeSheetSlot: StateFlow<ChildSlot<*, SheetChild>> =
@@ -258,18 +248,9 @@ public class DefaultRootPresenter(
         config: RootDestinationConfig,
         componentContext: ComponentContext,
     ): RootChild {
-        val screen = screenGraphFactory.createGraph(componentContext)
-        return when (config) {
-            is RootDestinationConfig.Home -> HomeDestination(screen.homePresenter)
-            is RootDestinationConfig.Search -> SearchDestination(screen.searchPresenter)
-            is RootDestinationConfig.Settings -> SettingsDestination(screen.settingsPresenter)
-            is RootDestinationConfig.Debug -> DebugDestination(screen.debugPresenter)
-            is RootDestinationConfig.ShowDetails -> ShowDetailsDestination(screen.showDetailsFactory.create(config.param))
-            is RootDestinationConfig.SeasonDetails -> SeasonDetailsDestination(screen.seasonDetailsFactory.create(config.param))
-            is RootDestinationConfig.Trailers -> TrailersDestination(screen.trailersFactory.create(config.id))
-            is RootDestinationConfig.MoreShows -> MoreShowsDestination(screen.moreShowsFactory.create(config.id))
-            is RootDestinationConfig.GenreShows -> GenreShowsDestination
-        }
+        val destination = navDestinations.firstOrNull { it.matches(config) }
+            ?: error("No NavDestination found for config: $config")
+        return destination.createChild(config, componentContext)
     }
 
     @AssistedFactory

@@ -23,23 +23,24 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.thomaskioko.tvmaniac.compose.components.NotificationRationaleContent
-import com.thomaskioko.tvmaniac.debug.presenter.DebugDestination
+import com.thomaskioko.tvmaniac.debug.presenter.DebugPresenter
 import com.thomaskioko.tvmaniac.debug.ui.DebugMenuScreen
 import com.thomaskioko.tvmaniac.episodedetail.ui.EpisodeDetailSheet
 import com.thomaskioko.tvmaniac.home.ui.HomeScreen
-import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsDestination
+import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsPresenter
 import com.thomaskioko.tvmaniac.moreshows.ui.MoreShowsScreen
-import com.thomaskioko.tvmaniac.navigation.GenreShowsDestination
-import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeDetailDestination
-import com.thomaskioko.tvmaniac.presenter.home.HomeDestination
+import com.thomaskioko.tvmaniac.navigation.ScreenDestination
+import com.thomaskioko.tvmaniac.navigation.SheetDestination
+import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeDetailSheetPresenter
+import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
-import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsDestination
-import com.thomaskioko.tvmaniac.presenter.trailers.TrailersDestination
-import com.thomaskioko.tvmaniac.search.presenter.SearchDestination
+import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenter
+import com.thomaskioko.tvmaniac.presenter.trailers.TrailersPresenter
+import com.thomaskioko.tvmaniac.search.presenter.SearchShowsPresenter
 import com.thomaskioko.tvmaniac.search.ui.SearchScreen
-import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsDestination
+import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.seasondetails.ui.SeasonDetailsScreen
-import com.thomaskioko.tvmaniac.settings.presenter.SettingsDestination
+import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.settings.ui.SettingsScreen
 import com.thomaskioko.tvmaniac.showdetails.ui.ShowDetailsScreen
 import com.thomaskioko.tvmaniac.trailers.ui.TrailersScreen
@@ -82,8 +83,10 @@ public fun RootScreen(
     }
 
     val episodeSheetSlot by rootPresenter.episodeSheetSlot.collectAsStateWithLifecycle()
-    (episodeSheetSlot.child?.instance as? EpisodeDetailDestination)?.let { child ->
-        EpisodeDetailSheet(presenter = child.presenter)
+    (episodeSheetSlot.child?.instance as? SheetDestination<*>)?.let { child ->
+        (child.presenter as? EpisodeDetailSheetPresenter)?.let { presenter ->
+            EpisodeDetailSheet(presenter = presenter)
+        }
     }
 
     Surface(modifier = modifier, color = MaterialTheme.colorScheme.background) {
@@ -106,58 +109,30 @@ private fun ChildrenContent(rootPresenter: RootPresenter, modifier: Modifier = M
         stack = childStack,
     ) { child ->
         val fillMaxSizeModifier = Modifier.fillMaxSize()
-        when (val screen = child.instance) {
-            is HomeDestination ->
-                HomeScreen(presenter = screen.presenter, modifier = fillMaxSizeModifier)
+        when (val presenter = (child.instance as? ScreenDestination<*>)?.presenter) {
+            is HomePresenter ->
+                HomeScreen(presenter = presenter, modifier = fillMaxSizeModifier)
 
-            is SearchDestination ->
-                SearchScreen(
-                    presenter = screen.presenter,
-                    modifier = fillMaxSizeModifier,
-                )
+            is SearchShowsPresenter ->
+                SearchScreen(presenter = presenter, modifier = fillMaxSizeModifier)
 
-            is SettingsDestination ->
-                SettingsScreen(
-                    presenter = screen.presenter,
-                    modifier = fillMaxSizeModifier,
-                )
+            is SettingsPresenter ->
+                SettingsScreen(presenter = presenter, modifier = fillMaxSizeModifier)
 
-            is DebugDestination ->
-                DebugMenuScreen(
-                    presenter = screen.presenter,
-                    modifier = fillMaxSizeModifier,
-                )
+            is DebugPresenter ->
+                DebugMenuScreen(presenter = presenter, modifier = fillMaxSizeModifier)
 
-            is ShowDetailsDestination -> {
-                ShowDetailsScreen(
-                    presenter = screen.presenter,
-                    modifier = fillMaxSizeModifier,
-                )
-            }
+            is ShowDetailsPresenter ->
+                ShowDetailsScreen(presenter = presenter, modifier = fillMaxSizeModifier)
 
-            is SeasonDetailsDestination -> {
-                SeasonDetailsScreen(
-                    presenter = screen.presenter,
-                    modifier = fillMaxSizeModifier,
-                )
-            }
+            is SeasonDetailsPresenter ->
+                SeasonDetailsScreen(presenter = presenter, modifier = fillMaxSizeModifier)
 
-            is TrailersDestination ->
-                TrailersScreen(
-                    presenter = screen.presenter,
-                    modifier = fillMaxSizeModifier,
-                )
+            is TrailersPresenter ->
+                TrailersScreen(presenter = presenter, modifier = fillMaxSizeModifier)
 
-            is MoreShowsDestination ->
-                MoreShowsScreen(
-                    presenter = screen.presenter,
-                    modifier = fillMaxSizeModifier,
-                )
-
-            is GenreShowsDestination -> {
-            }
-
-            else -> Unit
+            is MoreShowsPresenter ->
+                MoreShowsScreen(presenter = presenter, modifier = fillMaxSizeModifier)
         }
     }
 }

@@ -10,18 +10,11 @@ import com.thomaskioko.root.model.NotificationPermissionState
 import com.thomaskioko.root.model.ThemeState
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
-import com.thomaskioko.tvmaniac.debug.presenter.DebugDestination
-import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsDestination
 import com.thomaskioko.tvmaniac.navigation.FakeRootNavigator
-import com.thomaskioko.tvmaniac.navigation.GenreShowsDestination
+import com.thomaskioko.tvmaniac.navigation.RootChild
 import com.thomaskioko.tvmaniac.navigation.model.RootDestinationConfig
-import com.thomaskioko.tvmaniac.presenter.home.HomeDestination
-import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
-import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsDestination
-import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsParam
-import com.thomaskioko.tvmaniac.presenter.trailers.TrailersDestination
-import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsDestination
-import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsUiParam
+import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
+import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.Dispatchers
@@ -61,56 +54,56 @@ abstract class DefaultRootPresenterTest {
 
     @Test
     fun `initial state should be Home`() = runTest {
-        presenter.childStack.test { awaitItem().active.instance.shouldBeInstanceOf<HomeDestination>() }
+        presenter.childStack.test { awaitItem().active.instance.shouldBeInstanceOf<RootChild>() }
     }
 
     @Test
     fun `should return Home as active instance`() = runTest {
         presenter.childStack.test {
-            awaitItem().active.instance.shouldBeInstanceOf<HomeDestination>()
+            awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
             navigator.bringToFront(RootDestinationConfig.ShowDetails(ShowDetailsParam(1)))
 
             val moreScreen = awaitItem().active.instance
 
-            moreScreen.shouldBeInstanceOf<ShowDetailsDestination>()
+            moreScreen.shouldBeInstanceOf<RootChild>()
 
             navigator.pop()
 
-            awaitItem().active.instance.shouldBeInstanceOf<HomeDestination>()
+            awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
         }
     }
 
     @Test
     fun `should return ShowDetails as active instance`() = runTest {
         presenter.childStack.test {
-            awaitItem().active.instance.shouldBeInstanceOf<HomeDestination>()
+            awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
             navigator.bringToFront(RootDestinationConfig.ShowDetails(ShowDetailsParam(1)))
 
             val moreScreen = awaitItem().active.instance
 
-            moreScreen.shouldBeInstanceOf<ShowDetailsDestination>()
+            moreScreen.shouldBeInstanceOf<RootChild>()
         }
     }
 
     @Test
     fun `should return MoreShows as active instance`() = runTest {
         presenter.childStack.test {
-            awaitItem().active.instance.shouldBeInstanceOf<HomeDestination>()
+            awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
             navigator.bringToFront(RootDestinationConfig.MoreShows(1))
 
             val moreScreen = awaitItem().active.instance
 
-            moreScreen.shouldBeInstanceOf<MoreShowsDestination>()
+            moreScreen.shouldBeInstanceOf<RootChild>()
         }
     }
 
     @Test
     fun `should return SeasonDetails as active instance`() = runTest {
         presenter.childStack.test {
-            awaitItem().active.instance.shouldBeInstanceOf<HomeDestination>()
+            awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
             val param = SeasonDetailsUiParam(
                 showTraktId = 1,
@@ -121,76 +114,76 @@ abstract class DefaultRootPresenterTest {
 
             val seasonDetailsScreen = awaitItem().active.instance
 
-            seasonDetailsScreen.shouldBeInstanceOf<SeasonDetailsDestination>()
+            seasonDetailsScreen.shouldBeInstanceOf<RootChild>()
         }
     }
 
     @Test
     fun `should return Trailers as active instance`() = runTest {
         presenter.childStack.test {
-            awaitItem().active.instance.shouldBeInstanceOf<HomeDestination>()
+            awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
             navigator.bringToFront(RootDestinationConfig.Trailers(1))
 
             val trailersScreen = awaitItem().active.instance
 
-            trailersScreen.shouldBeInstanceOf<TrailersDestination>()
+            trailersScreen.shouldBeInstanceOf<RootChild>()
         }
     }
 
     @Test
     fun `should return GenreShows as active instance`() = runTest {
         presenter.childStack.test {
-            awaitItem().active.instance.shouldBeInstanceOf<HomeDestination>()
+            awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
             navigator.bringToFront(RootDestinationConfig.GenreShows(1))
 
             val genreShowsScreen = awaitItem().active.instance
 
-            genreShowsScreen.shouldBeInstanceOf<GenreShowsDestination>()
+            genreShowsScreen.shouldBeInstanceOf<RootChild>()
         }
     }
 
     @Test
     fun `should navigate to ShowDetails using pushNew`() = runTest {
         presenter.childStack.test {
-            awaitItem().active.instance.shouldBeInstanceOf<HomeDestination>()
+            awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
             navigator.pushNew(RootDestinationConfig.ShowDetails(ShowDetailsParam(1)))
 
             val showDetailsScreen = awaitItem().active.instance
 
-            showDetailsScreen.shouldBeInstanceOf<ShowDetailsDestination>()
+            showDetailsScreen.shouldBeInstanceOf<RootChild>()
         }
     }
 
     @Test
     fun `should navigate to ShowDetails using pushToFront`() = runTest {
         presenter.childStack.test {
-            awaitItem().active.instance.shouldBeInstanceOf<HomeDestination>()
+            awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
             navigator.pushToFront(RootDestinationConfig.ShowDetails(ShowDetailsParam(1)))
 
             val showDetailsScreen = awaitItem().active.instance
 
-            showDetailsScreen.shouldBeInstanceOf<ShowDetailsDestination>()
+            showDetailsScreen.shouldBeInstanceOf<RootChild>()
         }
     }
 
     @Test
     fun `should navigate back to previous screen using popTo`() = runTest {
         presenter.childStack.test {
-            awaitItem().active.instance.shouldBeInstanceOf<HomeDestination>()
+            awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
             navigator.pushNew(RootDestinationConfig.ShowDetails(ShowDetailsParam(1)))
-            awaitItem().active.instance.shouldBeInstanceOf<ShowDetailsDestination>()
+            awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
             navigator.pushNew(RootDestinationConfig.MoreShows(1))
-            awaitItem().active.instance.shouldBeInstanceOf<MoreShowsDestination>()
+            awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
             navigator.popTo(0)
 
-            awaitItem().active.instance.shouldBeInstanceOf<HomeDestination>()
+            awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
         }
     }
 
@@ -262,11 +255,11 @@ abstract class DefaultRootPresenterTest {
     @Test
     fun `should navigate to Debug given DebugMenu deep link`() = runTest {
         presenter.childStack.test {
-            awaitItem().active.instance.shouldBeInstanceOf<HomeDestination>()
+            awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
             presenter.onDeepLink(DeepLinkDestination.DebugMenu)
 
-            awaitItem().active.instance.shouldBeInstanceOf<DebugDestination>()
+            awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
         }
     }
 

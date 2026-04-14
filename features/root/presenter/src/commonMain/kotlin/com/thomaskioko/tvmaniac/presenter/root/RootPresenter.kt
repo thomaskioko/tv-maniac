@@ -36,8 +36,6 @@ public interface RootPresenter {
 
     public val notificationPermissionStateValue: Value<NotificationPermissionState>
 
-    public fun onShowFollowed()
-
     public fun onRationaleAccepted()
 
     public fun onRationaleDismissed()
