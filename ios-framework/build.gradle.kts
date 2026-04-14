@@ -33,6 +33,7 @@ scaffold {
             export(projects.api.trakt.api)
             export(projects.features.calendar.presenter)
             export(projects.features.discover.presenter)
+            export(projects.features.home.nav.api)
             export(projects.features.home.presenter)
             export(projects.features.watchlist.presenter)
             export(projects.features.moreShows.presenter)
@@ -77,6 +78,7 @@ kotlin {
                 api(projects.features.calendar.presenter)
                 api(projects.features.discover.presenter)
                 api(projects.features.watchlist.presenter)
+                api(projects.features.home.nav.api)
                 api(projects.features.home.presenter)
                 api(projects.features.moreShows.presenter)
                 api(projects.features.search.presenter)
@@ -182,20 +184,6 @@ kotlin {
                 implementation(projects.i18n.implementation)
 
                 implementation(projects.navigation.implementation)
-
-                implementation(projects.features.search.nav.implementation)
-                implementation(projects.features.debug.nav.implementation)
-                implementation(projects.features.settings.nav.implementation)
-                implementation(projects.features.library.nav.implementation)
-                implementation(projects.features.profile.nav.implementation)
-                implementation(projects.features.moreShows.nav.implementation)
-                implementation(projects.features.calendar.nav.implementation)
-                implementation(projects.features.discover.nav.implementation)
-                implementation(projects.features.episodeDetail.nav.implementation)
-                implementation(projects.features.seasonDetails.nav.implementation)
-                implementation(projects.features.showDetails.nav.implementation)
-                implementation(projects.features.upnext.nav.implementation)
-                implementation(projects.features.watchlist.nav.implementation)
             }
         }
     }
