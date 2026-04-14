@@ -230,6 +230,8 @@ include(
     ":features:discover:nav:api",
     ":features:episode-detail:presenter",
     ":features:episode-detail:nav:api",
+    ":features:genre-shows:nav:api",
+    ":features:genre-shows:presenter",
     ":features:home:nav:api",
     ":features:home:presenter",
     ":features:progress:presenter",
