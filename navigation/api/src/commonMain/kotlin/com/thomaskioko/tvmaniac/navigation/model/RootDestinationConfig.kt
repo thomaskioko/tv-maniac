@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.navigation.model
 
-import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsParam
-import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsUiParam
+import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
+import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import kotlinx.serialization.Serializable
 
 @Serializable

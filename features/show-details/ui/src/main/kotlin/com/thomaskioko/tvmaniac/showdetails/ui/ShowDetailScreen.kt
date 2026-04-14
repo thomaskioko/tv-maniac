@@ -114,7 +114,6 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsAction
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsContent
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsMessageShown
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenter
-import com.thomaskioko.tvmaniac.presenter.showdetails.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowShowsListSheet
 import com.thomaskioko.tvmaniac.presenter.showdetails.ToggleShowInList
 import com.thomaskioko.tvmaniac.presenter.showdetails.UpdateCreateListName
@@ -125,6 +124,7 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.model.ProviderModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.TrailerModel
+import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.showdetails.ui.components.ContinueTrackingSection
 import com.thomaskioko.tvmaniac.showdetails.ui.components.WatchProgressSection
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior

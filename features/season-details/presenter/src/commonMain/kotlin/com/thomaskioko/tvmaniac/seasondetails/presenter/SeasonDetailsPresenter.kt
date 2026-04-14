@@ -27,7 +27,9 @@ import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveUnwatchedInPreviousS
 import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveUnwatchedInPreviousSeasonsParams
 import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsInteractor
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
-import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsUiParam
+import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsNavigator
+import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
+import com.thomaskioko.tvmaniac.seasondetails.presenter.WatchOperation.MarkSeasonWatched
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
@@ -191,14 +193,14 @@ public class SeasonDetailsPresenter(
             updateState {
                 copy(
                     dialogState = SeasonDialogState.MarkPreviousSeasonsConfirmation(
-                        primaryOperation = WatchOperation.MarkSeasonWatched(param.showTraktId, param.seasonNumber, markPreviousSeasons = true),
-                        secondaryOperation = WatchOperation.MarkSeasonWatched(param.showTraktId, param.seasonNumber, markPreviousSeasons = false),
+                        primaryOperation = MarkSeasonWatched(param.showTraktId, param.seasonNumber, markPreviousSeasons = true),
+                        secondaryOperation = MarkSeasonWatched(param.showTraktId, param.seasonNumber, markPreviousSeasons = false),
                     ),
                 )
             }
             return
         }
-        execute(WatchOperation.MarkSeasonWatched(param.showTraktId, param.seasonNumber))
+        execute(MarkSeasonWatched(param.showTraktId, param.seasonNumber))
     }
 
     private suspend fun handleToggleEpisodeWatched(episodeId: Long) {
@@ -266,7 +268,7 @@ public class SeasonDetailsPresenter(
                 markEpisodeUnwatchedInteractor(
                     MarkEpisodeUnwatchedParams(operation.showTraktId, operation.episodeId),
                 )
-            is WatchOperation.MarkSeasonWatched ->
+            is MarkSeasonWatched ->
                 markSeasonWatchedInteractor(
                     MarkSeasonWatchedParams(operation.showTraktId, operation.seasonNumber, operation.markPreviousSeasons),
                 )

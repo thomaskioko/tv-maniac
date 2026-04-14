@@ -15,6 +15,7 @@ import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
 import com.thomaskioko.tvmaniac.domain.user.model.UserProfile
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
+import com.thomaskioko.tvmaniac.profile.nav.ProfileNavigator
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.LoginClicked
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.MessageShown
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.RefreshProfile

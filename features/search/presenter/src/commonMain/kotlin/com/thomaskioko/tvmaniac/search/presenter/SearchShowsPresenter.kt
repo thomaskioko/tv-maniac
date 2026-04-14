@@ -16,6 +16,7 @@ import com.thomaskioko.tvmaniac.domain.genre.FetchGenreContentInteractor
 import com.thomaskioko.tvmaniac.genre.GenreRepository
 import com.thomaskioko.tvmaniac.genre.model.GenreShowCategory
 import com.thomaskioko.tvmaniac.search.api.SearchRepository
+import com.thomaskioko.tvmaniac.search.nav.SearchNavigator
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import dev.zacsweers.metro.Inject
 import kotlinx.collections.immutable.persistentListOf

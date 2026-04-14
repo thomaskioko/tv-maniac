@@ -15,6 +15,7 @@ import com.thomaskioko.tvmaniac.data.library.model.LibraryItem
 import com.thomaskioko.tvmaniac.data.library.model.WatchProvider
 import com.thomaskioko.tvmaniac.domain.library.ObserveLibraryInteractor
 import com.thomaskioko.tvmaniac.domain.library.SyncLibraryInteractor
+import com.thomaskioko.tvmaniac.library.nav.LibraryNavigator
 import com.thomaskioko.tvmaniac.presentation.library.model.LibraryShowItem
 import com.thomaskioko.tvmaniac.presentation.library.model.LibrarySortOption
 import com.thomaskioko.tvmaniac.presentation.library.model.ShowStatus

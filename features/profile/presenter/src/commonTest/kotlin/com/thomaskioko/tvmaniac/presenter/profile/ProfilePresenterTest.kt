@@ -5,7 +5,6 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
-import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.user.api.model.UserProfile
 import com.thomaskioko.tvmaniac.data.user.api.model.UserProfileStats
 import com.thomaskioko.tvmaniac.data.user.api.model.UserWatchTime
@@ -15,8 +14,8 @@ import com.thomaskioko.tvmaniac.domain.user.ObserveUserProfileInteractor
 import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
+import com.thomaskioko.tvmaniac.profile.nav.ProfileNavigator
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction
-import com.thomaskioko.tvmaniac.profile.presenter.ProfileNavigator
 import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileInfo
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileState
@@ -268,11 +267,11 @@ internal class ProfilePresenterTest {
             navigator = object : ProfileNavigator {
                 override fun showSettings() {}
             },
-            localizer = com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer(),
+            localizer = FakeLocalizer(),
             traktAuthManager = traktAuthManager,
             traktAuthRepository = traktAuthRepository,
             updateUserProfileData = updateUserProfileData,
-            errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
+            errorToStringMapper = { it.message ?: "Test error" },
             logger = logger,
             observeUserProfileInteractor = observeUserProfileInteractor,
         )

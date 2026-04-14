@@ -3,16 +3,15 @@ package com.thomaskioko.tvmaniac.presentation.calendar
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.thomaskioko.tvmaniac.calendar.nav.CalendarNavigator
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
-import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.calendar.CalendarEntry
 import com.thomaskioko.tvmaniac.data.calendar.testing.FakeCalendarRepository
 import com.thomaskioko.tvmaniac.domain.calendar.CalendarEpisodeFormatter
 import com.thomaskioko.tvmaniac.domain.calendar.CalendarWeekCalculator
 import com.thomaskioko.tvmaniac.domain.calendar.FetchCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.calendar.ObserveCalendarInteractor
-import com.thomaskioko.tvmaniac.presentation.calendar.CalendarNavigator
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
@@ -437,7 +436,7 @@ internal class CalendarPresenterTest {
             traktAuthRepository = traktAuthRepository,
             calendarWeekCalculator = calendarWeekCalculator,
             calendarStateMapper = calendarStateMapper,
-            errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
+            errorToStringMapper = { it.message ?: "Test error" },
             logger = logger,
         )
     }

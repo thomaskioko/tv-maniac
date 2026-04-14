@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.presenter.showdetails
 
-import com.thomaskioko.tvmaniac.presenter.showdetails.ShowSeasonDetailsParam
+import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowSeasonDetailsParam
 
 public sealed interface ShowDetailsAction
 

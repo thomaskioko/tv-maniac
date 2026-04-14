@@ -17,6 +17,7 @@ import com.thomaskioko.tvmaniac.domain.watchlist.ObserveUpNextSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.ObserveWatchlistSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.WatchlistSyncInteractor
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
+import com.thomaskioko.tvmaniac.watchlist.nav.WatchlistNavigator
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject

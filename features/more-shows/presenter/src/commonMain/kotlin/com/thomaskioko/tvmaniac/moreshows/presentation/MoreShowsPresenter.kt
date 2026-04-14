@@ -13,6 +13,7 @@ import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsRepository
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsRepository
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
+import com.thomaskioko.tvmaniac.moreshows.nav.MoreShowsNavigator
 import com.thomaskioko.tvmaniac.shows.api.model.Category.POPULAR
 import com.thomaskioko.tvmaniac.shows.api.model.Category.TOP_RATED
 import com.thomaskioko.tvmaniac.shows.api.model.Category.TRENDING_TODAY
