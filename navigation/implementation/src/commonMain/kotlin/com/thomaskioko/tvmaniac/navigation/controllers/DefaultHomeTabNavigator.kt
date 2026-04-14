@@ -2,8 +2,8 @@ package com.thomaskioko.tvmaniac.navigation.controllers
 
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
-import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.HomeConfig
-import com.thomaskioko.tvmaniac.presenter.home.HomeTabNavigator
+import com.thomaskioko.tvmaniac.home.nav.HomeTabNavigator
+import com.thomaskioko.tvmaniac.home.nav.di.model.HomeConfig
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 
@@ -12,11 +12,11 @@ import dev.zacsweers.metro.SingleIn
 public class DefaultHomeTabNavigator : HomeTabNavigator {
     private var navigation: StackNavigation<HomeConfig>? = null
 
-    public fun register(navigation: StackNavigation<HomeConfig>) {
+    override fun registerNavigation(navigation: StackNavigation<HomeConfig>) {
         this.navigation = navigation
     }
 
-    public fun unregister() {
+    override fun unregisterNavigation() {
         this.navigation = null
     }
 

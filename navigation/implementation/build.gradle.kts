@@ -28,6 +28,7 @@ kotlin {
             implementation(projects.navigation.api)
             implementation(projects.features.root.presenter)
 
+            implementation(projects.features.home.nav.api)
             implementation(projects.features.showDetails.nav.api)
             implementation(projects.features.seasonDetails.nav.api)
 
