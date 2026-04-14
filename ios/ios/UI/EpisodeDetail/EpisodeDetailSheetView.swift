@@ -48,25 +48,25 @@ struct EpisodeDetailSheetView: View {
             SheetActionItem(
                 icon: state.isWatched ? "checkmark.circle.fill" : "checkmark.circle",
                 label: state.isWatched ? String(\.dialog_title_unwatched) : String(\.menu_mark_watched),
-                action: { presenter.dispatch(action: EpisodeDetailSheetActionToggleWatched()) }
+                action: { presenter.dispatch(action: EpisodeSheetActionToggleWatched()) }
             )
         case .openShow:
             SheetActionItem(
                 icon: "tv",
                 label: String(\.menu_open_show),
-                action: { presenter.dispatch(action: EpisodeDetailSheetActionOpenShow()) }
+                action: { presenter.dispatch(action: EpisodeSheetActionOpenShow()) }
             )
         case .openSeason:
             SheetActionItem(
                 icon: "list.bullet",
                 label: String(\.menu_open_season),
-                action: { presenter.dispatch(action: EpisodeDetailSheetActionOpenSeason()) }
+                action: { presenter.dispatch(action: EpisodeSheetActionOpenSeason()) }
             )
         case .unfollow:
             SheetActionItem(
                 icon: "minus.circle",
                 label: String(\.menu_unfollow_show),
-                action: { presenter.dispatch(action: EpisodeDetailSheetActionUnfollow()) }
+                action: { presenter.dispatch(action: EpisodeSheetActionUnfollow()) }
             )
         default:
             EmptyView()
