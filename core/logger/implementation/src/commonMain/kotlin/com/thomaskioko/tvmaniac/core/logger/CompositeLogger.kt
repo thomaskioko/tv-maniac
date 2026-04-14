@@ -1,9 +1,8 @@
 package com.thomaskioko.tvmaniac.core.logger
 
-import me.tatarka.inject.annotations.Inject
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.SingleIn
 
 /**
  * A [Logger] implementation that delegates every call to all registered [Logger] instances.
@@ -14,7 +13,6 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
  *
  * @param loggers The set of [Logger] implementations to delegate to.
  */
-@Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class CompositeLogger(

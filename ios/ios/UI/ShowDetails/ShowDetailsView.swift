@@ -4,14 +4,14 @@ import TvManiacKit
 
 struct ShowDetailsView: View {
     private let presenter: ShowDetailsPresenter
-    @StateObject @KotlinStateFlow private var uiState: ShowDetailsContent
+    @StateValue private var uiState: ShowDetailsContent
     @State private var showCustomList = false
     @State private var showLoginPrompt = false
     @State private var toast: Toast?
 
     init(presenter: ShowDetailsPresenter) {
         self.presenter = presenter
-        _uiState = .init(presenter.state)
+        _uiState = .init(presenter.stateValue)
     }
 
     var body: some View {

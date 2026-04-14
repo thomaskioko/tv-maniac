@@ -5,14 +5,12 @@ import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
-import me.tatarka.inject.annotations.Inject
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.SingleIn
 import kotlin.time.Duration
 import kotlin.time.Instant
 
-@Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class DefaultRequestManagerRepository(

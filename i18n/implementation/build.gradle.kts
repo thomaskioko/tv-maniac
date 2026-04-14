@@ -3,7 +3,7 @@ plugins {
 }
 
 scaffold {
-    useKotlinInject()
+    useMetro()
     addAndroidTarget(
         enableAndroidResources = true,
         withHostTestBuilder = true,

@@ -4,14 +4,14 @@ import TvManiacKit
 
 struct WatchlistTab: View {
     private let presenter: WatchlistPresenter
-    @StateObject @KotlinStateFlow private var uiState: WatchlistState
+    @StateValue private var uiState: WatchlistState
 
     @State private var watchNextEpisodesSwift: [SwiftNextEpisode] = []
     @State private var staleEpisodesSwift: [SwiftNextEpisode] = []
 
     init(presenter: WatchlistPresenter) {
         self.presenter = presenter
-        _uiState = .init(presenter.state)
+        _uiState = .init(presenter.stateValue)
     }
 
     var body: some View {

@@ -5,11 +5,11 @@ import TvManiacKit
 
 struct SearchTab: View {
     private let presenter: SearchShowsPresenter
-    @StateObject @KotlinStateFlow private var uiState: SearchShowState
+    @StateValue private var uiState: SearchShowState
 
     init(presenter: SearchShowsPresenter) {
         self.presenter = presenter
-        _uiState = .init(presenter.state)
+        _uiState = .init(presenter.stateValue)
     }
 
     private var searchQueryBinding: Binding<String> {
@@ -45,23 +45,25 @@ struct SearchTab: View {
     }
 
     private func mapState(_ uiState: SearchUiState) -> SearchScreenState {
-        switch onEnum(of: uiState) {
-        case .initialLoading, .searchLoading:
+        switch uiState {
+        case is SearchUiStateInitialLoading, is SearchUiStateSearchLoading:
             .loading
-        case .searchEmpty:
+        case is SearchUiStateSearchEmpty:
             .empty
-        case let .searchResults(state):
+        case let state as SearchUiStateSearchResults:
             .searchResults(
                 results: state.results.map { ($0 as ShowItem).toSwift() },
                 isUpdating: state.isUpdating
             )
-        case let .browsingGenres(state):
+        case let state as SearchUiStateBrowsingGenres:
             .browsingGenres(
                 genres: Array(state.genreRows).map { $0.toSwift() },
                 isRefreshing: state.isRefreshing
             )
-        case let .error(state):
+        case let state as SearchUiStateError:
             .error(message: state.message)
+        default:
+            .loading
         }
     }
 }

@@ -6,6 +6,7 @@ import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.popTo
 import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.router.stack.pushToFront
+import com.thomaskioko.tvmaniac.navigation.model.RootDestinationConfig
 
 class FakeRootNavigator : RootNavigator {
     private val navigation = StackNavigation<RootDestinationConfig>()

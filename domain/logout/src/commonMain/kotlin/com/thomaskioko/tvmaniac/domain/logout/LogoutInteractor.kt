@@ -5,8 +5,8 @@ import com.thomaskioko.tvmaniac.data.user.api.UserRepository
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.first
-import me.tatarka.inject.annotations.Inject
 
 @Inject
 public class LogoutInteractor(

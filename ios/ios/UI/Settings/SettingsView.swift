@@ -6,7 +6,7 @@ import UserNotifications
 
 struct SettingsView: View {
     private let presenter: SettingsPresenter
-    @StateObject @KotlinStateFlow private var uiState: SettingsState
+    @StateValue private var uiState: SettingsState
     @StateObject private var store = SettingsAppStorage.shared
     @State private var showingLogoutAlert: Bool = false
     @State private var showingErrorAlert: Bool = false
@@ -18,7 +18,7 @@ struct SettingsView: View {
 
     init(presenter: SettingsPresenter) {
         self.presenter = presenter
-        _uiState = .init(presenter.state)
+        _uiState = .init(presenter.stateValue)
     }
 
     var body: some View {

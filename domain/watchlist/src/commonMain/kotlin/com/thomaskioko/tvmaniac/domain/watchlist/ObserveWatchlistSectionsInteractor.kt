@@ -7,9 +7,9 @@ import com.thomaskioko.tvmaniac.domain.watchlist.model.WatchlistShowInfo
 import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import me.tatarka.inject.annotations.Inject
 
 private const val THREE_WEEKS_MILLIS = 21 * 24 * 60 * 60 * 1000L
 

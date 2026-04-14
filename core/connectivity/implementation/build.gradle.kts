@@ -4,12 +4,13 @@ plugins {
 
 scaffold {
     addAndroidTarget()
-    useKotlinInject()
+    useMetro()
 }
 
 kotlin {
     sourceSets {
         commonMain.dependencies {
+            implementation(projects.core.base)
             implementation(projects.core.connectivity.api)
         }
     }

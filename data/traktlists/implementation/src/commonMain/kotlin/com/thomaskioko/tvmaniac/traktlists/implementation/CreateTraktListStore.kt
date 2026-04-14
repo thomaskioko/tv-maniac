@@ -6,8 +6,8 @@ import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
 import com.thomaskioko.tvmaniac.traktlists.api.TraktListDao
 import com.thomaskioko.tvmaniac.traktlists.api.TraktListEntity
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.flowOf
-import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
 

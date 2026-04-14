@@ -59,7 +59,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -89,7 +88,6 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.i18n.MR.strings.btn_add_to_list
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_navigate_back
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_show_images
 import com.thomaskioko.tvmaniac.i18n.MR.strings.following
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_error_message
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_retry
@@ -246,7 +244,7 @@ internal fun ShowListSheetContent(
     ) {
         Spacer(modifier = Modifier.height(8.dp))
 
-        val title = stringResource(id = cd_show_images.resourceId, state.showDetails.title)
+        val title = state.showDetails.title
 
         Card(
             modifier = Modifier

@@ -3,7 +3,7 @@ plugins {
 }
 
 scaffold {
-    useKotlinInject()
+    useMetro()
 
     optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
 }
@@ -14,6 +14,7 @@ kotlin {
             dependencies {
                 api(projects.core.view)
 
+                implementation(projects.core.appconfig.api)
                 implementation(projects.core.base)
                 implementation(projects.core.logger.api)
                 implementation(projects.core.util.api)
@@ -26,8 +27,6 @@ kotlin {
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
-
-                implementation(libs.kotlinInject.runtime)
             }
         }
 

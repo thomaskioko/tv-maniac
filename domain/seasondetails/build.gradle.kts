@@ -2,6 +2,10 @@ plugins {
     alias(libs.plugins.app.kmp)
 }
 
+scaffold {
+    useMetro()
+}
+
 kotlin {
     sourceSets {
         commonMain {
@@ -13,8 +17,6 @@ kotlin {
 
                 api(libs.coroutines.core)
                 api(libs.kotlinx.collections)
-
-                implementation(libs.kotlinInject.runtime)
             }
         }
     }

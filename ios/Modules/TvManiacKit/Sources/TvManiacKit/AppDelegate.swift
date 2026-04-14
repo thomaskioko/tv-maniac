@@ -6,11 +6,12 @@ import UIKit
 import UserNotifications
 
 public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
-    public lazy var appComponent = IosApplicationComponent.companion.create()
+    public lazy var appGraph = IosApplicationGraphCompanion.shared.create()
 
-    public lazy var traktAuthRepository = appComponent.traktAuthRepository
-    public lazy var logger = appComponent.logger
-    public lazy var traktAuthManager = appComponent.traktAuthManager
+    public lazy var traktAuthRepository = appGraph.traktAuthRepository
+    public lazy var traktConfig = appGraph.traktConfig
+    public lazy var logger = appGraph.logger
+    public lazy var traktAuthManager = appGraph.traktAuthManager
 
     public private(set) var notificationDelegate: NotificationDelegate?
 
@@ -23,12 +24,12 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
         ImageCacheManager.configure()
         // Force IosTaskScheduler construction so BGTask handlers are registered
         // synchronously during app launch — Apple silently discards late registrations.
-        _ = appComponent.backgroundTaskScheduler
-        appComponent.initializers.initialize()
+        _ = appGraph.backgroundTaskScheduler
+        appGraph.initializers.initialize()
         setupNotifications()
         setupNotificationDelegate()
 
-        let logBridge = KmpLoggerBridge(appComponent.logger)
+        let logBridge = KmpLoggerBridge(appGraph.logger)
         MemoryMonitor.shared.setLogger(logBridge)
         DefaultDiagnosticLogger.shared.setLogger(logBridge)
         MemoryMonitor.shared.setDiagnosticLogger(DefaultDiagnosticLogger.shared)
@@ -89,7 +90,7 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
         )
         logger.debug(message: "[Memory] Background — cleared memory caches")
 
-        appComponent.backgroundTaskScheduler.rescheduleBackgroundTask()
+        appGraph.backgroundTaskScheduler.rescheduleBackgroundTask()
     }
 
     @objc private func applicationWillEnterForeground() {

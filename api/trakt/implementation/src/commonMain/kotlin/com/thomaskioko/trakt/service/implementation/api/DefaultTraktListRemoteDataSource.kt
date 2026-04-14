@@ -1,6 +1,6 @@
 package com.thomaskioko.trakt.service.implementation.api
 
-import com.thomaskioko.trakt.service.implementation.TraktHttpClient
+import com.thomaskioko.tvmaniac.core.base.TraktApi
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.authSafeRequest
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
@@ -14,22 +14,22 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktPersonalListsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShow
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowIds
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.SingleIn
+import io.ktor.client.HttpClient
 import io.ktor.client.request.parameter
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
 import io.ktor.http.path
-import me.tatarka.inject.annotations.Inject
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
-@Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class DefaultTraktListRemoteDataSource(
-    private val httpClient: TraktHttpClient,
+    @TraktApi
+    private val httpClient: HttpClient,
 ) : TraktListRemoteDataSource {
 
     override suspend fun getUser(userId: String): ApiResponse<TraktUserResponse> =

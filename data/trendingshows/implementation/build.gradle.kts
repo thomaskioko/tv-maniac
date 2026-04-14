@@ -3,7 +3,7 @@ plugins {
 }
 
 scaffold {
-    useKotlinInject()
+    useMetro()
 
     optIn(
         "androidx.paging.ExperimentalPagingApi",

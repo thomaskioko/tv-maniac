@@ -10,8 +10,8 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.USER_PROFILE
 import com.thomaskioko.tvmaniac.trakt.api.TraktUserRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.withContext
-import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.Validator

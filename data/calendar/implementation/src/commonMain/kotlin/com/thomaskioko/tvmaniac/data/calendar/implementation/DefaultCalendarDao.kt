@@ -9,14 +9,12 @@ import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.ObserveEntriesBetweenDates
 import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import me.tatarka.inject.annotations.Inject
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
-@Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class DefaultCalendarDao(

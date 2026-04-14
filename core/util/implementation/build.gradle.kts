@@ -4,7 +4,7 @@ plugins {
 
 scaffold {
     addAndroidTarget(withDeviceTestBuilder = true)
-    useKotlinInject()
+    useMetro()
     useSerialization()
 
     optIn(

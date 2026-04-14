@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.seasondetails.presenter
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.thomaskioko.nav.model.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
@@ -27,7 +28,6 @@ import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
 import com.thomaskioko.tvmaniac.seasondetails.presenter.data.buildSeasonDetailsLoaded
 import com.thomaskioko.tvmaniac.seasondetails.presenter.data.buildSeasonDetailsWithEpisodes
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.EpisodeDetailsModel
-import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -1176,7 +1176,7 @@ class SeasonPresenterTest {
         onBack: () -> Unit = {},
         onEpisodeClick: (id: Long) -> Unit = {},
     ): SeasonDetailsPresenter {
-        return DefaultSeasonDetailsPresenter(
+        return SeasonDetailsPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             param =
             SeasonDetailsUiParam(
@@ -1184,8 +1184,14 @@ class SeasonPresenterTest {
                 seasonId = 1,
                 seasonNumber = 1,
             ),
-            onBack = onBack,
-            onEpisodeClick = onEpisodeClick,
+            navigator = object : SeasonDetailsNavigator {
+                override fun goBack() {
+                    onBack()
+                }
+                override fun showEpisodeSheet(episodeId: Long) {
+                    onEpisodeClick(episodeId)
+                }
+            },
             observableSeasonDetailsInteractor = ObservableSeasonDetailsInteractor(
                 seasonDetailsRepository = seasonDetailsRepository,
                 castRepository = castRepository,

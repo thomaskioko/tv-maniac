@@ -14,13 +14,17 @@ kotlin {
                 api(libs.essenty.lifecycle)
 
                 implementation(projects.core.base)
+                implementation(projects.features.nav)
                 implementation(projects.data.datastore.api)
+
                 implementation(projects.presenter.debug)
                 implementation(projects.presenter.discover)
                 implementation(projects.presenter.episodeDetail)
                 implementation(projects.presenter.home)
+                implementation(projects.presenter.library)
                 implementation(projects.presenter.moreShows)
                 implementation(projects.presenter.profile)
+                implementation(projects.presenter.progress)
                 implementation(projects.presenter.search)
                 implementation(projects.presenter.seasondetails)
                 implementation(projects.presenter.settings)

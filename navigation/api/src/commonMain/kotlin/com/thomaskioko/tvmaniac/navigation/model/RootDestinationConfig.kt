@@ -1,0 +1,35 @@
+package com.thomaskioko.tvmaniac.navigation.model
+
+import com.thomaskioko.nav.model.SeasonDetailsUiParam
+import com.thomaskioko.nav.model.ShowDetailsParam
+import kotlinx.serialization.Serializable
+
+@Serializable
+public sealed interface RootDestinationConfig {
+    @Serializable
+    public data object Home : RootDestinationConfig
+
+    @Serializable
+    public data object Search : RootDestinationConfig
+
+    @Serializable
+    public data object Settings : RootDestinationConfig
+
+    @Serializable
+    public data object Debug : RootDestinationConfig
+
+    @Serializable
+    public data class ShowDetails(val param: ShowDetailsParam) : RootDestinationConfig
+
+    @Serializable
+    public data class SeasonDetails(val param: SeasonDetailsUiParam) : RootDestinationConfig
+
+    @Serializable
+    public data class MoreShows(val id: Long) : RootDestinationConfig
+
+    @Serializable
+    public data class Trailers(val id: Long) : RootDestinationConfig
+
+    @Serializable
+    public data class GenreShows(val id: Long) : RootDestinationConfig
+}

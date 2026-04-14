@@ -18,25 +18,25 @@ import androidx.compose.runtime.getValue
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
-import com.thomaskioko.tvmaniac.RootScreen
+import com.thomaskioko.tvmaniac.app.di.ActivityGraph
+import com.thomaskioko.tvmaniac.app.ui.RootScreen
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager.Companion.EXTRA_FROM_NOTIFICATION
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager.Companion.EXTRA_SHOW_ID
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
-import com.thomaskioko.tvmaniac.inject.ActivityComponent
-import com.thomaskioko.tvmaniac.navigation.DeepLinkDestination
+import com.thomaskioko.tvmaniac.navigation.model.DeepLinkDestination
 
 public class MainActivity : ComponentActivity() {
-    private lateinit var component: ActivityComponent
+    private lateinit var graph: ActivityGraph
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        component = ActivityComponent.create(this)
+        graph = ActivityGraph.create(this)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        component.traktAuthManager.registerResult()
+        graph.traktAuthManager.registerResult()
 
         enableEdgeToEdge()
 
@@ -58,7 +58,7 @@ public class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            val themeState by component.rootPresenter.themeState.collectAsState()
+            val themeState by graph.rootPresenter.themeState.collectAsState()
             val appTheme = themeState.appTheme
             val useDarkTheme = shouldUseDarkTheme(appTheme)
 
@@ -82,7 +82,7 @@ public class MainActivity : ComponentActivity() {
                 onDispose {}
             }
 
-            TvManiacTheme(appTheme = appTheme) { RootScreen(rootPresenter = component.rootPresenter) }
+            TvManiacTheme(appTheme = appTheme) { RootScreen(rootPresenter = graph.rootPresenter) }
         }
 
         handleNotificationIntent(intent)
@@ -96,14 +96,14 @@ public class MainActivity : ComponentActivity() {
     private fun handleNotificationIntent(intent: Intent?) {
         val deepLink = intent?.getStringExtra(DeepLinkDestination.EXTRA_DEEP_LINK)
         if (deepLink == DeepLinkDestination.DEEP_LINK_DEBUG_MENU) {
-            component.rootPresenter.onDeepLink(DeepLinkDestination.DebugMenu)
+            graph.rootPresenter.onDeepLink(DeepLinkDestination.DebugMenu)
             return
         }
 
         if (intent?.getBooleanExtra(EXTRA_FROM_NOTIFICATION, false) != true) return
         val showId = intent.getLongExtra(EXTRA_SHOW_ID, -1L)
         if (showId != -1L) {
-            component.rootPresenter.onDeepLink(DeepLinkDestination.ShowDetails(showId = showId))
+            graph.rootPresenter.onDeepLink(DeepLinkDestination.ShowDetails(showId = showId))
         }
     }
 }

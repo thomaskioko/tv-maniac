@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.presentation.episodedetail
 
+import com.thomaskioko.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.db.EpisodeById
 import kotlinx.collections.immutable.toImmutableList
 

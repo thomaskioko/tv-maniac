@@ -5,28 +5,26 @@ import android.os.Build
 import android.os.StrictMode
 import androidx.work.Configuration
 import androidx.work.WorkerFactory
+import com.thomaskioko.tvmaniac.app.di.ApplicationGraph
 import com.thomaskioko.tvmaniac.core.base.extensions.unsafeLazy
-import com.thomaskioko.tvmaniac.inject.ApplicationComponent
-import com.thomaskioko.tvmaniac.inject.create
+import dev.zacsweers.metro.createGraphFactory
 
 public class TvManicApplication : Application(), Configuration.Provider {
-    private val component: ApplicationComponent by unsafeLazy {
-        ApplicationComponent::class.create(
-            this,
-        )
+    private val graph: ApplicationGraph by unsafeLazy {
+        createGraphFactory<ApplicationGraph.Factory>().create(this)
     }
 
     private lateinit var workerFactory: WorkerFactory
 
     override fun onCreate() {
         super.onCreate()
-        workerFactory = component.workerFactory
+        workerFactory = graph.workerFactory
 
-        if (component.appInfo.debugBuild) {
+        if (graph.appInfo.debugBuild) {
             setupStrictMode()
         }
 
-        component.initializers.initialize()
+        graph.initializers.initialize()
     }
 
     override val workManagerConfiguration: Configuration
@@ -34,7 +32,7 @@ public class TvManicApplication : Application(), Configuration.Provider {
             .setWorkerFactory(workerFactory)
             .build()
 
-    internal fun getApplicationComponent() = component
+    internal fun getApplicationGraph() = graph
 }
 
 private fun setupStrictMode() {

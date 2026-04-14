@@ -4,16 +4,16 @@ import TvManiacKit
 
 struct ProgressTab: View {
     private let presenter: ProgressPresenter
-    @StateObject @KotlinStateFlow private var progressState: ProgressState
-    @StateObject @KotlinStateFlow private var upNextState: UpNextState
-    @StateObject @KotlinStateFlow private var calendarState: CalendarState
+    @StateValue private var progressState: ProgressState
+    @StateValue private var upNextState: UpNextState
+    @StateValue private var calendarState: CalendarState
     @State private var toast: Toast?
 
     init(presenter: ProgressPresenter) {
         self.presenter = presenter
-        _progressState = .init(presenter.state)
-        _upNextState = .init(presenter.upNextPresenter.state)
-        _calendarState = .init(presenter.calendarPresenter.state)
+        _progressState = .init(presenter.stateValue)
+        _upNextState = .init(presenter.upNextPresenter.stateValue)
+        _calendarState = .init(presenter.calendarPresenter.stateValue)
     }
 
     var body: some View {

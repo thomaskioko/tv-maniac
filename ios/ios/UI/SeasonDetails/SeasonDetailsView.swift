@@ -5,7 +5,7 @@ import TvManiacKit
 struct SeasonDetailsView: View {
     private let presenter: SeasonDetailsPresenter
 
-    @StateObject @KotlinStateFlow private var uiState: SeasonDetailsModel
+    @StateValue private var uiState: SeasonDetailsModel
     @State private var showGallery = false
     @State private var toast: Toast?
     @State private var showMarkPreviousAlert = false
@@ -14,7 +14,7 @@ struct SeasonDetailsView: View {
     @State private var showSeasonUnwatchAlert = false
     init(presenter: SeasonDetailsPresenter) {
         self.presenter = presenter
-        _uiState = .init(presenter.state)
+        _uiState = .init(presenter.stateValue)
     }
 
     var body: some View {

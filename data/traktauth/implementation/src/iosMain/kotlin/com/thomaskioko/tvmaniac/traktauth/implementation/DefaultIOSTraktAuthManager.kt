@@ -1,13 +1,11 @@
 package com.thomaskioko.tvmaniac.traktauth.implementation
 
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
-import me.tatarka.inject.annotations.Inject
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.SingleIn
 import kotlin.concurrent.Volatile
 
-@Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class DefaultIOSTraktAuthManager : TraktAuthManager {

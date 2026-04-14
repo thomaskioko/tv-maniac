@@ -3,8 +3,8 @@ package com.thomaskioko.tvmaniac.domain.traktlists
 import com.thomaskioko.tvmaniac.core.base.interactor.SubjectInteractor
 import com.thomaskioko.tvmaniac.traktlists.api.TraktList
 import com.thomaskioko.tvmaniac.traktlists.api.TraktListRepository
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.Flow
-import me.tatarka.inject.annotations.Inject
 
 @Inject
 public class ObserveTraktListsInteractor(

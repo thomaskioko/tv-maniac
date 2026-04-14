@@ -3,7 +3,7 @@ plugins {
 }
 
 scaffold {
-    useKotlinInject()
+    useMetro()
 }
 
 kotlin {
@@ -17,8 +17,6 @@ kotlin {
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
                 api(libs.coroutines.core)
-
-                implementation(libs.kotlinInject.runtime)
             }
         }
     }

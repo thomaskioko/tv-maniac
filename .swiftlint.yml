@@ -36,4 +36,4 @@ excluded:
     - ios/Modules/SnapshotTestingLib
     - ios/build
     - vendor/bundle
-    - shared/build
+    - ios-framework/build

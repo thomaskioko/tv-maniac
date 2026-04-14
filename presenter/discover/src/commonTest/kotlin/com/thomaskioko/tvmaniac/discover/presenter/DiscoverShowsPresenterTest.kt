@@ -16,6 +16,7 @@ import com.thomaskioko.tvmaniac.data.trendingshows.testing.FakeTrendingShowsRepo
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsInteractor
 import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepository
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsInteractor
+import com.thomaskioko.tvmaniac.discover.presenter.DiscoverNavigator
 import com.thomaskioko.tvmaniac.discover.presenter.model.DiscoverShow
 import com.thomaskioko.tvmaniac.discover.presenter.model.NextEpisodeUiModel
 import com.thomaskioko.tvmaniac.domain.discover.DiscoverShowsInteractor
@@ -271,16 +272,18 @@ class DiscoverShowsPresenterTest {
     fun `should navigate to season given next episode is clicked`() = runTest {
         var navigatedParams: Triple<Long, Long, Long>? = null
 
-        val testPresenter = DefaultDiscoverShowsPresenter(
+        val testPresenter = DiscoverShowsPresenter(
             componentContext = DefaultComponentContext(lifecycle = LifecycleRegistry()),
-            onNavigateToShowDetails = {},
-            onNavigateToMore = {},
-            onNavigateToEpisode = { _, _ -> },
-            onNavigateToSeason = { showId, seasonId, seasonNumber ->
-                navigatedParams = Triple(showId, seasonId, seasonNumber)
+            navigator = object : DiscoverNavigator {
+                override fun showDetails(traktId: Long) {}
+                override fun showMoreShows(categoryId: Long) {}
+                override fun showSearch() {}
+                override fun showUpNext() {}
+                override fun showEpisodeSheet(showTraktId: Long, episodeId: Long) {}
+                override fun showSeason(showTraktId: Long, seasonId: Long, seasonNumber: Long) {
+                    navigatedParams = Triple(showTraktId, seasonId, seasonNumber)
+                }
             },
-            onNavigateToUpNext = {},
-            onNavigateToSearch = {},
             discoverShowsInteractor = DiscoverShowsInteractor(
                 featuredShowsRepository = featuredShowsRepository,
                 topRatedShowsRepository = topRatedShowsRepository,
@@ -411,14 +414,16 @@ class DiscoverShowsPresenterTest {
 
     private fun buildPresenter(
         lifecycle: LifecycleRegistry = LifecycleRegistry(),
-    ): DiscoverShowsPresenter = DefaultDiscoverShowsPresenter(
+    ): DiscoverShowsPresenter = DiscoverShowsPresenter(
         componentContext = DefaultComponentContext(lifecycle = lifecycle),
-        onNavigateToShowDetails = {},
-        onNavigateToMore = {},
-        onNavigateToEpisode = { _, _ -> },
-        onNavigateToSeason = { _, _, _ -> },
-        onNavigateToUpNext = {},
-        onNavigateToSearch = {},
+        navigator = object : DiscoverNavigator {
+            override fun showDetails(traktId: Long) {}
+            override fun showMoreShows(categoryId: Long) {}
+            override fun showSearch() {}
+            override fun showUpNext() {}
+            override fun showEpisodeSheet(showTraktId: Long, episodeId: Long) {}
+            override fun showSeason(showTraktId: Long, seasonId: Long, seasonNumber: Long) {}
+        },
         discoverShowsInteractor = DiscoverShowsInteractor(
             featuredShowsRepository = featuredShowsRepository,
             topRatedShowsRepository = topRatedShowsRepository,

@@ -8,23 +8,22 @@ import android.content.Intent
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.thomaskioko.tvmaniac.core.base.ApplicationContext
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.notifications.api.EpisodeNotification
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationChannel
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationIconProvider
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
-import me.tatarka.inject.annotations.Inject
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.SingleIn
 import kotlin.time.Duration.Companion.minutes
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager as AppNotificationManager
 
-@Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class AndroidNotificationManager(
-    private val context: Context,
+    @ApplicationContext private val context: Context,
     private val notificationIconProvider: NotificationIconProvider,
     private val dateTimeProvider: DateTimeProvider,
     private val logger: Logger,

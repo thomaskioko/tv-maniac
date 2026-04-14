@@ -11,12 +11,11 @@ import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.settings.ObserveSettingsPreferencesInteractor
-import com.thomaskioko.tvmaniac.i18n.testing.util.IgnoreIos
 import com.thomaskioko.tvmaniac.settings.presenter.ChangeThemeClicked
-import com.thomaskioko.tvmaniac.settings.presenter.DefaultSettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.DismissThemeClicked
 import com.thomaskioko.tvmaniac.settings.presenter.DismissTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
+import com.thomaskioko.tvmaniac.settings.presenter.SettingsNavigator
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.ShowTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
@@ -36,7 +35,6 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-@IgnoreIos
 class SettingsPresenterTest {
 
     private val lifecycle = LifecycleRegistry()
@@ -52,7 +50,7 @@ class SettingsPresenterTest {
     @BeforeTest
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        presenter = DefaultSettingsPresenter(
+        presenter = SettingsPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             appInfo = FakeApplicationInfo.DEFAULT,
             datastoreRepository = datastoreRepository,
@@ -72,8 +70,10 @@ class SettingsPresenterTest {
             toggleEpisodeNotificationsInteractor = ToggleEpisodeNotificationsInteractor(
                 datastoreRepository = datastoreRepository,
             ),
-            backClicked = {},
-            onNavigateToDebugMenu = {},
+            navigator = object : SettingsNavigator {
+                override fun goBack() {}
+                override fun showDebugMenu() {}
+            },
         )
     }
 

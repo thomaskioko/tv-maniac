@@ -1,13 +1,14 @@
 import SwiftUI
 import SwiftUIComponents
+import TvManiac
 import TvManiacKit
 
 public struct TabBarView: View {
     @Theme private var theme
 
     private let presenter: HomePresenter
-    @StateObject @KotlinStateFlow private var stack: ChildStack<AnyObject, HomePresenterChild>
-    @StateObject @KotlinOptionalStateFlow private var avatarUrl: String?
+    @StateValue private var stack: ChildStack<AnyObject, HomePresenterChild>
+    @StateValue private var profileAvatar: ProfileAvatar
     @State private var selectedTab: NavigationTab = .discover
     @State private var avatarImage: UIImage?
     @State private var downloadedAvatar: UIImage?
@@ -15,8 +16,8 @@ public struct TabBarView: View {
 
     init(presenter: HomePresenter) {
         self.presenter = presenter
-        _stack = .init(presenter.homeChildStack)
-        _avatarUrl = .init(presenter.profileAvatarUrl)
+        _stack = .init(presenter.homeChildStackValue)
+        _profileAvatar = .init(presenter.profileAvatarUrlValue)
     }
 
     public var body: some View {
@@ -27,19 +28,21 @@ public struct TabBarView: View {
                     tab: tab,
                     avatarImage: tab == .profile ? avatarImage : nil
                 ) { child in
-                    switch onEnum(of: child) {
-                    case let .discover(screen):
+                    switch child {
+                    case let screen as HomePresenterChildDiscover:
                         DiscoverTab(presenter: screen.presenter)
                             .id(ObjectIdentifier(screen))
-                    case let .progress(screen):
+                    case let screen as HomePresenterChildProgress:
                         ProgressTab(presenter: screen.presenter)
                             .id(ObjectIdentifier(screen))
-                    case let .profile(screen):
+                    case let screen as HomePresenterChildProfile:
                         ProfileTab(presenter: screen.presenter)
                             .id(ObjectIdentifier(screen))
-                    case let .library(screen):
+                    case let screen as HomePresenterChildLibrary:
                         LibraryTab(presenter: screen.presenter)
                             .id(ObjectIdentifier(screen))
+                    default:
+                        EmptyView()
                     }
                 }
             }
@@ -47,7 +50,7 @@ public struct TabBarView: View {
         .tint(theme.colors.accent)
         .toolbarBackground(theme.colors.surface, for: .tabBar)
         .toolbarBackground(.visible, for: .tabBar)
-        .task(id: avatarUrl) {
+        .task(id: profileAvatar.url) {
             await loadAvatar()
         }
         .onChange(of: selectedTab) { _, newTab in
@@ -69,7 +72,7 @@ public struct TabBarView: View {
     }
 
     private func loadAvatar() async {
-        guard let avatarUrl, !avatarUrl.isEmpty, let url = URL(string: avatarUrl) else {
+        guard let avatarUrl = profileAvatar.url, !avatarUrl.isEmpty, let url = URL(string: avatarUrl) else {
             downloadedAvatar = nil
             avatarImage = nil
             return
@@ -120,11 +123,12 @@ public struct TabBarView: View {
     }
 
     private func tabForChild(_ child: HomePresenterChild) -> NavigationTab {
-        switch onEnum(of: child) {
-        case .discover: .discover
-        case .progress: .progress
-        case .profile: .profile
-        case .library: .library
+        switch child {
+        case is HomePresenterChildDiscover: .discover
+        case is HomePresenterChildProgress: .progress
+        case is HomePresenterChildProfile: .profile
+        case is HomePresenterChildLibrary: .library
+        default: .discover
         }
     }
 }

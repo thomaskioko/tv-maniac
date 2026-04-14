@@ -11,7 +11,7 @@ struct iOSApp: App {
     @Environment(\.scenePhase)
     var scenePhase: ScenePhase
 
-    @State private var componentHolder: ComponentHolder<IosViewPresenterComponent>?
+    @State private var componentHolder: ComponentHolder<IosViewPresenterGraph>?
     @State private var authCoordinator: TraktAuthCoordinator?
     @State private var toastManager = ToastManager()
 
@@ -51,7 +51,7 @@ struct iOSApp: App {
             } else {
                 Color.clear.onAppear {
                     componentHolder = ComponentHolder { context in
-                        appDelegate.appComponent.componentFactory.createComponent(
+                        appDelegate.appGraph.viewPresenterGraphFactory.createGraph(
                             componentContext: context
                         )
                     }
@@ -64,6 +64,7 @@ struct iOSApp: App {
         if authCoordinator == nil {
             authCoordinator = AuthCoordinatorFactory.create(
                 authRepository: appDelegate.traktAuthRepository,
+                traktConfig: appDelegate.traktConfig,
                 logger: appDelegate.logger
             )
         }
@@ -75,11 +76,11 @@ struct iOSApp: App {
     private func handleScenePhaseChange(_ phase: ScenePhase, lifecycle: LifecycleRegistry) {
         switch phase {
         case .background:
-            lifecycle.stop()
+            LifecycleRegistryExtKt.stop(lifecycle)
         case .inactive:
-            lifecycle.pause()
+            LifecycleRegistryExtKt.pause(lifecycle)
         case .active:
-            lifecycle.resume()
+            LifecycleRegistryExtKt.resume(lifecycle)
         @unknown default:
             break
         }

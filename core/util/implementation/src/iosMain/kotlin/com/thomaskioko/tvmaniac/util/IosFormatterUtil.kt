@@ -1,7 +1,9 @@
 package com.thomaskioko.tvmaniac.util
 
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.SingleIn
 import platform.Foundation.NSDate
 import platform.Foundation.NSDateFormatter
 import platform.Foundation.NSLocale
@@ -11,16 +13,12 @@ import platform.Foundation.NSTimeZone
 import platform.Foundation.dateWithTimeIntervalSince1970
 import platform.Foundation.localeWithLocaleIdentifier
 import platform.Foundation.timeZoneWithName
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 import kotlin.math.floor
 import kotlin.math.log10
 import kotlin.math.pow
 
 public const val POSTER_PATH: String = "https://image.tmdb.org/t/p/original%s"
 
-@Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class IosFormatterUtil : FormatterUtil {
