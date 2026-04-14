@@ -75,15 +75,15 @@ struct RootNavigationView: View {
                 set: { isPresented in
                     if !isPresented,
                        let sheet = episodeSheetSlot.child?.instance as? SheetDestination<AnyObject>,
-                       let presenter = sheet.presenter as? EpisodeDetailSheetPresenter
+                       let presenter = sheet.presenter as? EpisodeSheetPresenter
                     {
-                        presenter.dispatch(action: EpisodeDetailSheetActionDismiss())
+                        presenter.dispatch(action: EpisodeSheetActionDismiss())
                     }
                 }
             )
         ) {
             if let sheet = episodeSheetSlot.child?.instance as? SheetDestination<AnyObject>,
-               let presenter = sheet.presenter as? EpisodeDetailSheetPresenter
+               let presenter = sheet.presenter as? EpisodeSheetPresenter
             {
                 EpisodeDetailSheetView(presenter: presenter)
             }

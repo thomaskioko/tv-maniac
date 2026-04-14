@@ -3,11 +3,11 @@ import SwiftUIComponents
 import TvManiacKit
 
 struct EpisodeDetailSheetView: View {
-    private let presenter: EpisodeDetailSheetPresenter
+    private let presenter: EpisodeSheetPresenter
     @StateValue private var state: EpisodeDetailSheetState
     @State private var selectedDetent: PresentationDetent = .large
 
-    init(presenter: EpisodeDetailSheetPresenter) {
+    init(presenter: EpisodeSheetPresenter) {
         self.presenter = presenter
         _state = .init(presenter.stateValue)
     }
