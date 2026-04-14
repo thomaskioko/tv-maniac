@@ -42,6 +42,7 @@ import com.thomaskioko.tvmaniac.domain.library.LibrarySyncWorker
 import com.thomaskioko.tvmaniac.domain.notifications.EpisodeNotificationWorker
 import com.thomaskioko.tvmaniac.domain.upnext.UpNextSyncWorker
 import com.thomaskioko.tvmaniac.espisodedetails.nav.EpisodeDetailNavigator
+import com.thomaskioko.tvmaniac.genreshows.nav.GenreShowsRoute
 import com.thomaskioko.tvmaniac.home.nav.HomeTabNavigator
 import com.thomaskioko.tvmaniac.home.nav.di.model.HomeConfig
 import com.thomaskioko.tvmaniac.library.nav.LibraryNavigator
@@ -49,13 +50,16 @@ import com.thomaskioko.tvmaniac.locale.api.LocaleProvider
 import com.thomaskioko.tvmaniac.locale.testing.FakeLocaleProvider
 import com.thomaskioko.tvmaniac.moreshows.nav.MoreShowsNavigator
 import com.thomaskioko.tvmaniac.moreshows.presentation.di.DefaultMoreShowsNavigator
+import com.thomaskioko.tvmaniac.navigation.DefaultNavRouteSerializer
 import com.thomaskioko.tvmaniac.navigation.NavDestination
+import com.thomaskioko.tvmaniac.navigation.NavRoute
+import com.thomaskioko.tvmaniac.navigation.NavRouteBinding
+import com.thomaskioko.tvmaniac.navigation.NavRouteSerializer
 import com.thomaskioko.tvmaniac.navigation.RootChild
 import com.thomaskioko.tvmaniac.navigation.RootNavigator
 import com.thomaskioko.tvmaniac.navigation.SheetChild
 import com.thomaskioko.tvmaniac.navigation.controllers.DefaultEpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.navigation.controllers.DefaultHomeTabNavigator
-import com.thomaskioko.tvmaniac.navigation.model.RootDestinationConfig
 import com.thomaskioko.tvmaniac.navigation.root.EpisodeSheetChildFactory
 import com.thomaskioko.tvmaniac.navigation.root.ShowFollowedCallback
 import com.thomaskioko.tvmaniac.presentation.calendar.di.DefaultCalendarNavigator
@@ -417,13 +421,25 @@ public object FakeAppBindings {
     @SingleIn(AppScope::class)
     public fun provideNavDestinations(): Set<NavDestination> = setOf(
         object : NavDestination {
-            override fun matches(config: RootDestinationConfig): Boolean = true
+            override fun matches(route: NavRoute): Boolean = true
             override fun createChild(
-                config: RootDestinationConfig,
+                route: NavRoute,
                 componentContext: ComponentContext,
             ): RootChild = object : RootChild {}
         },
     )
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideNavRouteBindings(): Set<NavRouteBinding<*>> = setOf(
+        NavRouteBinding(GenreShowsRoute::class, GenreShowsRoute.serializer()),
+    )
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideNavRouteSerializer(
+        bindings: Set<NavRouteBinding<*>>,
+    ): NavRouteSerializer = DefaultNavRouteSerializer(bindings)
 
     @Provides
     @SingleIn(AppScope::class)
