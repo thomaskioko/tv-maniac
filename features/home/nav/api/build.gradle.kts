@@ -4,6 +4,7 @@ plugins {
 
 scaffold {
     useMetro()
+    useSerialization()
 }
 
 kotlin {
@@ -11,8 +12,9 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(projects.core.base)
-                implementation(projects.features.profile.nav.api)
                 implementation(projects.navigation.api)
+
+                api(libs.decompose.decompose)
             }
         }
     }

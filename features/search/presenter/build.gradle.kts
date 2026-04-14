@@ -17,6 +17,7 @@ kotlin {
                 implementation(projects.core.base)
                 implementation(projects.navigation.api)
                 implementation(projects.features.search.nav.api)
+                implementation(projects.features.showDetails.nav.api)
                 implementation(projects.core.util.api)
                 implementation(projects.core.logger.api)
                 implementation(projects.i18n.api)

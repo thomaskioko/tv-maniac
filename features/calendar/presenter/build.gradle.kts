@@ -13,6 +13,7 @@ kotlin {
             dependencies {
                 api(projects.core.view)
                 implementation(projects.features.calendar.nav.api)
+                implementation(projects.features.root.nav)
                 implementation(projects.data.calendar.api)
                 implementation(projects.data.traktauth.api)
                 implementation(projects.core.base)

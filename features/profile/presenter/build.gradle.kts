@@ -15,6 +15,8 @@ kotlin {
                 api(projects.core.view)
                 implementation(projects.core.base)
                 implementation(projects.core.logger.api)
+                implementation(projects.navigation.api)
+                implementation(projects.features.home.nav.api)
                 implementation(projects.features.profile.nav.api)
                 implementation(projects.i18n.api)
                 implementation(projects.domain.user)

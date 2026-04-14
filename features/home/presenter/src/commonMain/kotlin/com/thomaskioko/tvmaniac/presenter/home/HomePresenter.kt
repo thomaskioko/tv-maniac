@@ -10,11 +10,11 @@ import com.thomaskioko.tvmaniac.core.base.extensions.asStateFlow
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
-import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.domain.user.ObserveUserProfileInteractor
-import com.thomaskioko.tvmaniac.presentation.library.LibraryPresenter
-import com.thomaskioko.tvmaniac.presentation.progress.ProgressPresenter
-import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
+import com.thomaskioko.tvmaniac.home.nav.HomeTabNavigator
+import com.thomaskioko.tvmaniac.home.nav.TabChild
+import com.thomaskioko.tvmaniac.home.nav.TabDestination
+import com.thomaskioko.tvmaniac.home.nav.di.model.HomeConfig
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -28,7 +28,8 @@ public data class ProfileAvatar(val url: String? = null)
 @Inject
 public class HomePresenter(
     componentContext: ComponentContext,
-    private val homeTabGraphFactory: HomeTabGraph.Factory,
+    homeTabNavigator: HomeTabNavigator,
+    private val tabDestinations: Set<TabDestination>,
     private val observeUserProfileInteractor: ObserveUserProfileInteractor,
 ) : ComponentContext by componentContext {
 
@@ -36,7 +37,11 @@ public class HomePresenter(
 
     private val navigation = StackNavigation<HomeConfig>()
 
-    private val homeChildStackRouter: Value<ChildStack<*, Child>> = childStack(
+    init {
+        homeTabNavigator.registerNavigation(navigation)
+    }
+
+    private val homeChildStackRouter: Value<ChildStack<*, TabChild<*>>> = childStack(
         source = navigation,
         key = "HomeChildStackKey",
         initialConfiguration = HomeConfig.Discover,
@@ -45,10 +50,10 @@ public class HomePresenter(
         childFactory = ::child,
     )
 
-    public val homeChildStack: StateFlow<ChildStack<*, Child>> =
+    public val homeChildStack: StateFlow<ChildStack<*, TabChild<*>>> =
         homeChildStackRouter.asStateFlow(componentContext.componentCoroutineScope())
 
-    public val homeChildStackValue: Value<ChildStack<*, Child>> = homeChildStackRouter
+    public val homeChildStackValue: Value<ChildStack<*, TabChild<*>>> = homeChildStackRouter
 
     public val profileAvatarUrl: StateFlow<String?> = run {
         observeUserProfileInteractor(Unit)
@@ -108,38 +113,9 @@ public class HomePresenter(
         )
     }
 
-    private fun child(config: HomeConfig, componentContext: ComponentContext): Child {
-        val tab = homeTabGraphFactory.createGraph(componentContext)
-        return when (config) {
-            is HomeConfig.Discover -> Child.Discover(tab.discoverPresenter)
-            HomeConfig.Progress -> Child.Progress(tab.progressPresenter)
-            HomeConfig.Library -> Child.Library(tab.libraryPresenter)
-            HomeConfig.Profile -> Child.Profile(tab.profilePresenter)
-        }
-    }
-
-    public sealed interface Child {
-        public class Discover(public val presenter: DiscoverShowsPresenter) : Child
-
-        public class Progress(public val presenter: ProgressPresenter) : Child
-
-        public class Library(public val presenter: LibraryPresenter) : Child
-
-        public class Profile(public val presenter: ProfilePresenter) : Child
-    }
-
-    @Serializable
-    public sealed interface HomeConfig {
-        @Serializable
-        public data object Discover : HomeConfig
-
-        @Serializable
-        public data object Progress : HomeConfig
-
-        @Serializable
-        public data object Library : HomeConfig
-
-        @Serializable
-        public data object Profile : HomeConfig
+    private fun child(config: HomeConfig, componentContext: ComponentContext): TabChild<*> {
+        val destination = tabDestinations.firstOrNull { it.matches(config) }
+            ?: error("No TabDestination found for config: $config")
+        return destination.createChild(config, componentContext)
     }
 }

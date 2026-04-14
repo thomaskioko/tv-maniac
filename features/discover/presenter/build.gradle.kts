@@ -12,7 +12,12 @@ kotlin {
         commonMain {
             dependencies {
                 api(projects.core.view)
+                implementation(projects.navigation.api)
+                implementation(projects.features.root.nav)
                 implementation(projects.features.discover.nav.api)
+                implementation(projects.features.home.nav.api)
+                implementation(projects.features.showDetails.nav.api)
+                implementation(projects.features.seasonDetails.nav.api)
                 implementation(projects.core.base)
                 implementation(projects.core.logger.api)
                 implementation(projects.domain.discover)

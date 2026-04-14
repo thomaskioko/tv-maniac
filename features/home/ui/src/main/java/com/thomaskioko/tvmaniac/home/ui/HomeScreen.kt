@@ -26,17 +26,17 @@ import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.thomaskioko.tvmaniac.compose.components.CircularCard
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomNavigationItem
 import com.thomaskioko.tvmaniac.compose.components.TvManiacNavigationBar
+import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.discover.ui.DiscoverScreen
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_discover
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_library
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_profile
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_progress
 import com.thomaskioko.tvmaniac.i18n.resolve
+import com.thomaskioko.tvmaniac.presentation.library.LibraryPresenter
+import com.thomaskioko.tvmaniac.presentation.progress.ProgressPresenter
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
-import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.Child.Discover
-import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.Child.Library
-import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.Child.Profile
-import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.Child.Progress
+import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
 import com.thomaskioko.tvmaniac.profile.ui.ProfileScreen
 import com.thomaskioko.tvmaniac.ui.library.LibraryScreen
 import com.thomaskioko.tvmaniac.ui.progress.ProgressScreen
@@ -61,31 +61,15 @@ private fun ChildrenContent(homePresenter: HomePresenter, modifier: Modifier = M
         stack = childStack,
     ) { child ->
         val fillMaxSizeModifier = Modifier.fillMaxSize()
-        when (val screen = child.instance) {
-            is Discover -> {
-                DiscoverScreen(
-                    presenter = screen.presenter,
-                    modifier = fillMaxSizeModifier,
-                )
-            }
-            is Progress -> {
-                ProgressScreen(
-                    presenter = screen.presenter,
-                    modifier = fillMaxSizeModifier,
-                )
-            }
-            is Library -> {
-                LibraryScreen(
-                    presenter = screen.presenter,
-                    modifier = fillMaxSizeModifier,
-                )
-            }
-            is Profile -> {
-                ProfileScreen(
-                    presenter = screen.presenter,
-                    modifier = fillMaxSizeModifier,
-                )
-            }
+        when (val presenter = child.instance.presenter) {
+            is DiscoverShowsPresenter ->
+                DiscoverScreen(presenter = presenter, modifier = fillMaxSizeModifier)
+            is ProgressPresenter ->
+                ProgressScreen(presenter = presenter, modifier = fillMaxSizeModifier)
+            is LibraryPresenter ->
+                LibraryScreen(presenter = presenter, modifier = fillMaxSizeModifier)
+            is ProfilePresenter ->
+                ProfileScreen(presenter = presenter, modifier = fillMaxSizeModifier)
         }
     }
 }
@@ -96,7 +80,7 @@ internal fun BottomNavigationContent(
     modifier: Modifier = Modifier,
 ) {
     val childStack by component.homeChildStack.collectAsState()
-    val activeComponent = childStack.active.instance
+    val activePresenter = childStack.active.instance.presenter
     val avatarUrl by component.profileAvatarUrl.collectAsState()
     val context = LocalContext.current
 
@@ -106,28 +90,28 @@ internal fun BottomNavigationContent(
         TvManiacBottomNavigationItem(
             imageVector = Icons.Outlined.Movie,
             title = menu_item_discover.resolve(context),
-            selected = activeComponent is Discover,
+            selected = activePresenter is DiscoverShowsPresenter,
             onClick = { component.onDiscoverClicked() },
         )
 
         TvManiacBottomNavigationItem(
             imageVector = Icons.Outlined.PlayCircleOutline,
             title = menu_item_progress.resolve(context),
-            selected = activeComponent is Progress,
+            selected = activePresenter is ProgressPresenter,
             onClick = { component.onProgressClicked() },
         )
 
         TvManiacBottomNavigationItem(
             imageVector = Icons.Outlined.VideoLibrary,
             title = menu_item_library.resolve(context),
-            selected = activeComponent is Library,
+            selected = activePresenter is LibraryPresenter,
             onClick = { component.onLibraryClicked() },
         )
 
         ProfileNavigationItem(
             avatarUrl = avatarUrl,
             title = menu_item_profile.resolve(context),
-            selected = activeComponent is Profile,
+            selected = activePresenter is ProfilePresenter,
             onClick = { component.onProfileClicked() },
         )
     }

@@ -22,6 +22,8 @@ kotlin {
                 implementation(projects.domain.episode)
                 implementation(projects.domain.followedshows)
                 implementation(projects.features.root.nav)
+                implementation(projects.features.showDetails.nav.api)
+                implementation(projects.features.seasonDetails.nav.api)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)

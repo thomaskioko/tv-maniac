@@ -13,6 +13,7 @@ kotlin {
                 implementation(projects.core.base)
                 implementation(projects.navigation.api)
                 implementation(projects.features.moreShows.nav.api)
+                implementation(projects.features.showDetails.nav.api)
                 implementation(projects.data.popularshows.api)
                 implementation(projects.data.topratedshows.api)
                 implementation(projects.data.trendingshows.api)

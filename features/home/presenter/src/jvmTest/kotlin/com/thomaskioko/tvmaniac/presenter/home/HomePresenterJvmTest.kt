@@ -9,5 +9,5 @@ internal class HomePresenterJvmTest : HomePresenterTest() {
         createGraphFactory<TestJvmGraph.Factory>().create()
 
     override fun createHomePresenter(componentContext: ComponentContext): HomePresenter =
-        testComponent.screenGraphFactory.createGraph(componentContext).homePresenter
+        testComponent.homeScreenGraphFactory.createHomeGraph(componentContext).homePresenter
 }
