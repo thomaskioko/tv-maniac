@@ -13,7 +13,9 @@ import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsRepository
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsRepository
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
-import com.thomaskioko.tvmaniac.moreshows.nav.MoreShowsNavigator
+import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
+import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.shows.api.model.Category.POPULAR
 import com.thomaskioko.tvmaniac.shows.api.model.Category.TOP_RATED
 import com.thomaskioko.tvmaniac.shows.api.model.Category.TRENDING_TODAY
@@ -37,7 +39,7 @@ import kotlinx.coroutines.launch
 public class MoreShowsPresenter(
     componentContext: ComponentContext,
     @Assisted private val categoryId: Long,
-    private val navigator: MoreShowsNavigator,
+    private val navigator: Navigator,
     private val popularShowsRepository: PopularShowsRepository,
     private val upcomingShowsRepository: UpcomingShowsRepository,
     private val trendingShowsRepository: TrendingShowsRepository,
@@ -69,8 +71,8 @@ public class MoreShowsPresenter(
 
     public fun dispatch(action: MoreShowsActions) {
         when (action) {
-            is MoreShowClicked -> navigator.showDetails(action.traktId)
-            MoreBackClicked -> navigator.goBack()
+            is MoreShowClicked -> navigator.pushNew(ShowDetailsRoute(ShowDetailsParam(id = action.traktId)))
+            MoreBackClicked -> navigator.pop()
             RefreshMoreShows -> {
                 when (categoryId) {
                     UPCOMING.id -> getUpcomingPagedList(forceRefresh = true)

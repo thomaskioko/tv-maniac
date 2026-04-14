@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.presenter.search
 
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
+import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
@@ -13,7 +14,8 @@ import com.thomaskioko.tvmaniac.genre.model.GenreWithShowsEntity
 import com.thomaskioko.tvmaniac.genre.model.TraktGenreEntity
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
-import com.thomaskioko.tvmaniac.search.nav.SearchNavigator
+import com.thomaskioko.tvmaniac.navigation.NavRoute
+import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.search.presenter.CategoryChanged
 import com.thomaskioko.tvmaniac.search.presenter.ClearQuery
 import com.thomaskioko.tvmaniac.search.presenter.Mapper
@@ -356,11 +358,7 @@ internal class SearchShowsPresenterTest {
         lifecycle: LifecycleRegistry = LifecycleRegistry(),
     ): SearchShowsPresenter = SearchShowsPresenter(
         componentContext = DefaultComponentContext(lifecycle = lifecycle),
-        navigator = object : SearchNavigator {
-            override fun showDetails(traktId: Long) {}
-            override fun showGenre(genreId: Long) {}
-            override fun goBack() {}
-        },
+        navigator = NoOpNavigator(),
         searchRepository = fakeSearchRepository,
         genreRepository = genreRepository,
         fetchGenreContentInteractor = FetchGenreContentInteractor(
@@ -494,5 +492,15 @@ internal class SearchShowsPresenterTest {
 
     companion object {
         const val LIST_SIZE = 5
+    }
+
+    private class NoOpNavigator : Navigator {
+        private val navigation = StackNavigation<NavRoute>()
+        override fun bringToFront(route: NavRoute) {}
+        override fun pushNew(route: NavRoute) {}
+        override fun pushToFront(route: NavRoute) {}
+        override fun pop() {}
+        override fun popTo(toIndex: Int) {}
+        override fun getStackNavigation(): StackNavigation<NavRoute> = navigation
     }
 }

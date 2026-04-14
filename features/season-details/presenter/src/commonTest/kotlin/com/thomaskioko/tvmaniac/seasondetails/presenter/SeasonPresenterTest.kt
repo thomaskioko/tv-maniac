@@ -2,7 +2,12 @@ package com.thomaskioko.tvmaniac.seasondetails.presenter
 
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
+import com.arkivanov.decompose.router.slot.SlotNavigation
+import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.thomaskioko.root.model.EpisodeSheetConfig
+import com.thomaskioko.root.model.ScreenSource
+import com.thomaskioko.root.nav.EpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
@@ -23,8 +28,9 @@ import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeUnwatchedCall
 import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall
 import com.thomaskioko.tvmaniac.episodes.testing.MarkSeasonWatchedCall
+import com.thomaskioko.tvmaniac.navigation.NavRoute
+import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
-import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsNavigator
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.seasondetails.presenter.data.buildSeasonDetailsLoaded
 import com.thomaskioko.tvmaniac.seasondetails.presenter.data.buildSeasonDetailsWithEpisodes
@@ -1184,13 +1190,26 @@ class SeasonPresenterTest {
                 seasonId = 1,
                 seasonNumber = 1,
             ),
-            navigator = object : SeasonDetailsNavigator {
-                override fun goBack() {
+            navigator = object : Navigator {
+                private val navigation = StackNavigation<NavRoute>()
+                override fun bringToFront(route: NavRoute) {}
+                override fun pushNew(route: NavRoute) {}
+                override fun pushToFront(route: NavRoute) {}
+                override fun pop() {
                     onBack()
                 }
-                override fun showEpisodeSheet(episodeId: Long) {
+                override fun popTo(toIndex: Int) {}
+                override fun getStackNavigation(): StackNavigation<NavRoute> = navigation
+            },
+            episodeSheetNavigator = object : EpisodeSheetNavigator {
+                private val slotNavigation = SlotNavigation<EpisodeSheetConfig>()
+                override fun showEpisodeSheet(episodeId: Long, source: ScreenSource) {
                     onEpisodeClick(episodeId)
                 }
+                override fun dismissEpisodeSheet() {}
+                override fun dismissAndShowShowDetails(showTraktId: Long) {}
+                override fun dismissAndShowSeasonDetails(showTraktId: Long, seasonId: Long, seasonNumber: Long) {}
+                override fun getSlotNavigation(): SlotNavigation<EpisodeSheetConfig> = slotNavigation
             },
             observableSeasonDetailsInteractor = ObservableSeasonDetailsInteractor(
                 seasonDetailsRepository = seasonDetailsRepository,

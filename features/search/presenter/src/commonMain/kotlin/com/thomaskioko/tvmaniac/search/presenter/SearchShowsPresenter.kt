@@ -15,8 +15,10 @@ import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.domain.genre.FetchGenreContentInteractor
 import com.thomaskioko.tvmaniac.genre.GenreRepository
 import com.thomaskioko.tvmaniac.genre.model.GenreShowCategory
+import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.search.api.SearchRepository
-import com.thomaskioko.tvmaniac.search.nav.SearchNavigator
+import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
+import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import dev.zacsweers.metro.Inject
 import kotlinx.collections.immutable.persistentListOf
@@ -39,7 +41,7 @@ import kotlinx.coroutines.launch
 @Inject
 public class SearchShowsPresenter(
     componentContext: ComponentContext,
-    private val navigator: SearchNavigator,
+    private val navigator: Navigator,
     private val mapper: Mapper,
     private val searchRepository: SearchRepository,
     private val genreRepository: GenreRepository,
@@ -109,7 +111,7 @@ public class SearchShowsPresenter(
 
         fun dispatch(action: SearchShowAction) {
             when (action) {
-                BackClicked -> navigator.goBack()
+                BackClicked -> navigator.pop()
 
                 is MessageShown -> {
                     coroutineScope.launch { uiMessageManager.clearMessage(action.id) }
@@ -131,7 +133,7 @@ public class SearchShowsPresenter(
                 }
 
                 is QueryChanged -> handleQueryChange(action.query)
-                is SearchShowClicked -> navigator.showDetails(action.id)
+                is SearchShowClicked -> navigator.pushNew(ShowDetailsRoute(ShowDetailsParam(id = action.id)))
             }
         }
 

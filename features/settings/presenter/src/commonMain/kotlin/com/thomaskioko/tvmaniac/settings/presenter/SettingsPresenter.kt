@@ -11,10 +11,11 @@ import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.settings.ObserveSettingsPreferencesInteractor
-import com.thomaskioko.tvmaniac.settings.nav.SettingsNavigator
+import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import dev.zacsweers.metro.Inject
@@ -28,7 +29,7 @@ import kotlinx.coroutines.launch
 @Inject
 public class SettingsPresenter(
     componentContext: ComponentContext,
-    private val navigator: SettingsNavigator,
+    private val navigator: Navigator,
     private val appInfo: ApplicationInfo,
     private val datastoreRepository: DatastoreRepository,
     private val logoutInteractor: LogoutInteractor,
@@ -88,7 +89,7 @@ public class SettingsPresenter(
             DismissTraktDialog, ShowTraktDialog -> updateTrackDialogState()
             ShowAboutDialog, DismissAboutDialog -> updateAboutDialogState()
             VersionClicked -> handleVersionTap()
-            BackClicked -> navigator.goBack()
+            BackClicked -> navigator.pop()
             TraktLogoutClicked -> {
                 coroutineScope.launch {
                     logoutInteractor(Unit)
@@ -159,7 +160,7 @@ public class SettingsPresenter(
         _state.update { state ->
             val newCount = state.hiddenTapCount + 1
             if (newCount >= HIDDEN_TAP_THRESHOLD) {
-                navigator.showDebugMenu()
+                navigator.pushNew(DebugRoute)
                 state.copy(hiddenTapCount = 0)
             } else {
                 state.copy(hiddenTapCount = newCount)

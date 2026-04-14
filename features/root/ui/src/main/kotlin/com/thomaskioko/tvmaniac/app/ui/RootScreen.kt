@@ -25,13 +25,13 @@ import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.thomaskioko.tvmaniac.compose.components.NotificationRationaleContent
 import com.thomaskioko.tvmaniac.debug.presenter.DebugPresenter
 import com.thomaskioko.tvmaniac.debug.ui.DebugMenuScreen
-import com.thomaskioko.tvmaniac.episodedetail.ui.EpisodeDetailSheet
+import com.thomaskioko.tvmaniac.episodedetail.ui.EpisodeSheet
 import com.thomaskioko.tvmaniac.home.ui.HomeScreen
 import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsPresenter
 import com.thomaskioko.tvmaniac.moreshows.ui.MoreShowsScreen
 import com.thomaskioko.tvmaniac.navigation.ScreenDestination
 import com.thomaskioko.tvmaniac.navigation.SheetDestination
-import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeDetailSheetPresenter
+import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeSheetPresenter
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenter
@@ -84,8 +84,8 @@ public fun RootScreen(
 
     val episodeSheetSlot by rootPresenter.episodeSheetSlot.collectAsStateWithLifecycle()
     (episodeSheetSlot.child?.instance as? SheetDestination<*>)?.let { child ->
-        (child.presenter as? EpisodeDetailSheetPresenter)?.let { presenter ->
-            EpisodeDetailSheet(presenter = presenter)
+        (child.presenter as? EpisodeSheetPresenter)?.let { presenter ->
+            EpisodeSheet(presenter = presenter)
         }
     }
 

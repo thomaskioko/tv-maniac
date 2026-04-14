@@ -2,6 +2,8 @@ package com.thomaskioko.tvmaniac.seasondetails.presenter
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.root.model.ScreenSource
+import com.thomaskioko.root.nav.EpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
@@ -26,8 +28,8 @@ import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveSeasonWatchProgressP
 import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveUnwatchedInPreviousSeasonsInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveUnwatchedInPreviousSeasonsParams
 import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsInteractor
+import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
-import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsNavigator
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.seasondetails.presenter.WatchOperation.MarkSeasonWatched
 import dev.zacsweers.metro.Assisted
@@ -45,7 +47,8 @@ import kotlinx.coroutines.launch
 public class SeasonDetailsPresenter(
     componentContext: ComponentContext,
     @Assisted private val param: SeasonDetailsUiParam,
-    private val navigator: SeasonDetailsNavigator,
+    private val navigator: Navigator,
+    private val episodeSheetNavigator: EpisodeSheetNavigator,
     observableSeasonDetailsInteractor: ObservableSeasonDetailsInteractor,
     private val seasonDetailsInteractor: SeasonDetailsInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
@@ -132,8 +135,8 @@ public class SeasonDetailsPresenter(
     public fun dispatch(action: SeasonDetailsAction) {
         coroutineScope.launch {
             when (action) {
-                is EpisodeClicked -> navigator.showEpisodeSheet(action.id)
-                SeasonDetailsBackClicked -> navigator.goBack()
+                is EpisodeClicked -> episodeSheetNavigator.showEpisodeSheet(action.id, ScreenSource.SEASON_DETAILS)
+                SeasonDetailsBackClicked -> navigator.pop()
                 ReloadSeasonDetails -> observeSeasonDetails()
                 OnEpisodeHeaderClicked -> updateState { copy(expandEpisodeItems = !expandEpisodeItems) }
                 ShowGallery -> updateState { copy(dialogState = SeasonDialogState.Gallery) }

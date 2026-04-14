@@ -8,16 +8,12 @@ import com.thomaskioko.root.model.DeepLinkDestination
 import com.thomaskioko.root.model.NotificationPermissionState
 import com.thomaskioko.root.model.ThemeState
 import com.thomaskioko.tvmaniac.navigation.RootChild
-import com.thomaskioko.tvmaniac.navigation.RootNavigator
 import com.thomaskioko.tvmaniac.navigation.SheetChild
 import kotlinx.coroutines.flow.StateFlow
 
 public interface RootPresenter {
     public interface Factory {
-        public operator fun invoke(
-            componentContext: ComponentContext,
-            navigator: RootNavigator,
-        ): RootPresenter
+        public operator fun invoke(componentContext: ComponentContext): RootPresenter
     }
 
     public val childStack: StateFlow<ChildStack<*, RootChild>>

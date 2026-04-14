@@ -25,13 +25,14 @@ import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
 import com.thomaskioko.tvmaniac.home.nav.HomeRoute
 import com.thomaskioko.tvmaniac.navigation.NavDestination
+import com.thomaskioko.tvmaniac.navigation.NavEvent
+import com.thomaskioko.tvmaniac.navigation.NavEventBus
 import com.thomaskioko.tvmaniac.navigation.NavRoute
 import com.thomaskioko.tvmaniac.navigation.NavRouteSerializer
+import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.RootChild
-import com.thomaskioko.tvmaniac.navigation.RootNavigator
 import com.thomaskioko.tvmaniac.navigation.SheetChild
 import com.thomaskioko.tvmaniac.navigation.root.EpisodeSheetChildFactory
-import com.thomaskioko.tvmaniac.navigation.root.ShowFollowedCallback
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
@@ -61,17 +62,18 @@ import kotlin.time.Duration.Companion.milliseconds
 @AssistedInject
 public class DefaultRootPresenter(
     @Assisted componentContext: ComponentContext,
-    @Assisted private val navigator: RootNavigator,
+    private val navigator: Navigator,
     private val navDestinations: Set<NavDestination>,
-    private val navRouteSerializer: NavRouteSerializer,
+    navRouteSerializer: NavRouteSerializer,
     private val episodeSheetChildFactory: EpisodeSheetChildFactory,
     episodeSheetNavigator: EpisodeSheetNavigator,
+    navEventBus: NavEventBus,
     private val traktAuthRepository: TraktAuthRepository,
     private val updateUserProfileData: UpdateUserProfileData,
     private val logoutInteractor: LogoutInteractor,
     private val logger: Logger,
     private val datastoreRepository: DatastoreRepository,
-) : RootPresenter, ShowFollowedCallback, ComponentContext by componentContext {
+) : RootPresenter, ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
 
@@ -109,6 +111,14 @@ public class DefaultRootPresenter(
                 .filter { it == TraktAuthState.LOGGED_IN }
                 .take(1)
                 .collect { showRationaleIfNeeded() }
+        }
+
+        coroutineScope.launch {
+            navEventBus.events.collect { event ->
+                when (event) {
+                    NavEvent.ShowFollowed -> showRationaleIfNeeded()
+                }
+            }
         }
     }
 
@@ -177,12 +187,6 @@ public class DefaultRootPresenter(
 
     override val notificationPermissionStateValue: Value<NotificationPermissionState> =
         notificationPermissionState.asValue(coroutineScope)
-
-    override fun onShowFollowed() {
-        coroutineScope.launch {
-            showRationaleIfNeeded()
-        }
-    }
 
     private suspend fun showRationaleIfNeeded() {
         combine(
@@ -261,6 +265,6 @@ public class DefaultRootPresenter(
 
     @AssistedFactory
     public fun interface Factory {
-        public fun create(componentContext: ComponentContext, navigator: RootNavigator): DefaultRootPresenter
+        public fun create(componentContext: ComponentContext): DefaultRootPresenter
     }
 }

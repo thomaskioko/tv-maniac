@@ -15,7 +15,7 @@ import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
 import com.thomaskioko.tvmaniac.domain.user.model.UserProfile
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
-import com.thomaskioko.tvmaniac.profile.nav.ProfileNavigator
+import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.LoginClicked
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.MessageShown
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.RefreshProfile
@@ -23,6 +23,7 @@ import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.SettingsClicked
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileInfo
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileState
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileStats
+import com.thomaskioko.tvmaniac.settings.nav.SettingsRoute
 import com.thomaskioko.tvmaniac.traktauth.api.AuthError
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
@@ -39,7 +40,7 @@ import kotlinx.coroutines.launch
 @Inject
 public class ProfilePresenter(
     componentContext: ComponentContext,
-    private val navigator: ProfileNavigator,
+    private val navigator: Navigator,
     private val localizer: Localizer,
     private val traktAuthManager: TraktAuthManager,
     private val traktAuthRepository: TraktAuthRepository,
@@ -91,7 +92,7 @@ public class ProfilePresenter(
                     traktAuthManager.launchWebView()
                 }
             }
-            SettingsClicked -> navigator.showSettings()
+            SettingsClicked -> navigator.pushNew(SettingsRoute)
             RefreshProfile -> fetchUserData(forceRefresh = true)
             is MessageShown -> {
                 clearMessage(action.id)

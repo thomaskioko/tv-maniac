@@ -20,8 +20,8 @@ dependencies {
 
     implementation(projects.features.debug.presenter)
     implementation(projects.features.debug.ui)
-    implementation(projects.features.episodeDetail.presenter)
-    implementation(projects.features.episodeDetail.ui)
+    implementation(projects.features.episodeSheet.presenter)
+    implementation(projects.features.episodeSheet.ui)
     implementation(projects.features.home.presenter)
     implementation(projects.features.home.ui)
     implementation(projects.features.moreShows.presenter)

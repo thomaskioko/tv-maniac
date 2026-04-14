@@ -12,7 +12,7 @@ import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.genreshows.nav.GenreShowsRoute
 import com.thomaskioko.tvmaniac.moreshows.nav.MoreShowsRoute
-import com.thomaskioko.tvmaniac.navigation.FakeRootNavigator
+import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.RootChild
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
@@ -33,12 +33,12 @@ import kotlin.test.Test
 abstract class DefaultRootPresenterTest {
     abstract val rootPresenterFactory: RootPresenter.Factory
     abstract val datastoreRepository: DatastoreRepository
+    abstract val navigator: Navigator
 
     private val lifecycle = LifecycleRegistry()
     private val testDispatcher = StandardTestDispatcher()
 
     private lateinit var presenter: RootPresenter
-    private lateinit var navigator: FakeRootNavigator
 
     @BeforeTest
     fun before() {
@@ -46,8 +46,7 @@ abstract class DefaultRootPresenterTest {
         lifecycle.resume()
 
         val componentContext = DefaultComponentContext(lifecycle = lifecycle)
-        navigator = FakeRootNavigator()
-        presenter = rootPresenterFactory(componentContext, navigator)
+        presenter = rootPresenterFactory(componentContext)
     }
 
     @AfterTest

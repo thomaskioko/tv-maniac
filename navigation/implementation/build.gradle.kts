@@ -19,6 +19,8 @@ kotlin {
             implementation(projects.features.home.nav.api)
             implementation(projects.features.showDetails.nav.api)
             implementation(projects.features.seasonDetails.nav.api)
+
+            implementation(libs.coroutines.core)
         }
 
         commonTest.dependencies {

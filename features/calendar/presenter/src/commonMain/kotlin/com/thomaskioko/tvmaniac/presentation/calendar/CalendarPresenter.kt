@@ -2,7 +2,8 @@ package com.thomaskioko.tvmaniac.presentation.calendar
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
-import com.thomaskioko.tvmaniac.calendar.nav.CalendarNavigator
+import com.thomaskioko.root.model.ScreenSource
+import com.thomaskioko.root.nav.EpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
@@ -36,7 +37,7 @@ import kotlinx.coroutines.launch
 @Inject
 public class CalendarPresenter(
     componentContext: ComponentContext,
-    private val navigator: CalendarNavigator,
+    private val episodeSheetNavigator: EpisodeSheetNavigator,
     private val observeCalendarInteractor: ObserveCalendarInteractor,
     private val fetchCalendarInteractor: FetchCalendarInteractor,
     private val traktAuthRepository: TraktAuthRepository,
@@ -98,7 +99,7 @@ public class CalendarPresenter(
 
             is NavigateToPreviousWeek -> navigateToPreviousWeek()
             is NavigateToNextWeek -> navigateToNextWeek()
-            is EpisodeCardClicked -> navigator.showEpisodeSheet(action.episodeTraktId)
+            is EpisodeCardClicked -> episodeSheetNavigator.showEpisodeSheet(action.episodeTraktId, ScreenSource.CALENDAR)
             is MessageShown -> clearMessage(action.id)
         }
     }

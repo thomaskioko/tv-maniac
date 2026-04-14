@@ -2,8 +2,11 @@ package com.thomaskioko.tvmaniac.presentation.calendar
 
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
+import com.arkivanov.decompose.router.slot.SlotNavigation
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.thomaskioko.tvmaniac.calendar.nav.CalendarNavigator
+import com.thomaskioko.root.model.EpisodeSheetConfig
+import com.thomaskioko.root.model.ScreenSource
+import com.thomaskioko.root.nav.EpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.data.calendar.CalendarEntry
@@ -426,10 +429,15 @@ internal class CalendarPresenterTest {
 
         return CalendarPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
-            navigator = object : CalendarNavigator {
-                override fun showEpisodeSheet(episodeId: Long) {
+            episodeSheetNavigator = object : EpisodeSheetNavigator {
+                private val slotNavigation = SlotNavigation<EpisodeSheetConfig>()
+                override fun showEpisodeSheet(episodeId: Long, source: ScreenSource) {
                     onEpisodeLongPressed(episodeId)
                 }
+                override fun dismissEpisodeSheet() {}
+                override fun dismissAndShowShowDetails(showTraktId: Long) {}
+                override fun dismissAndShowSeasonDetails(showTraktId: Long, seasonId: Long, seasonNumber: Long) {}
+                override fun getSlotNavigation(): SlotNavigation<EpisodeSheetConfig> = slotNavigation
             },
             observeCalendarInteractor = observeCalendarInteractor,
             fetchCalendarInteractor = fetchCalendarInteractor,

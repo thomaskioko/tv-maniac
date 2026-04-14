@@ -15,10 +15,12 @@ import com.thomaskioko.tvmaniac.data.library.model.LibraryItem
 import com.thomaskioko.tvmaniac.data.library.model.WatchProvider
 import com.thomaskioko.tvmaniac.domain.library.ObserveLibraryInteractor
 import com.thomaskioko.tvmaniac.domain.library.SyncLibraryInteractor
-import com.thomaskioko.tvmaniac.library.nav.LibraryNavigator
+import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.presentation.library.model.LibraryShowItem
 import com.thomaskioko.tvmaniac.presentation.library.model.LibrarySortOption
 import com.thomaskioko.tvmaniac.presentation.library.model.ShowStatus
+import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
+import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import dev.zacsweers.metro.Inject
@@ -38,7 +40,7 @@ import com.thomaskioko.tvmaniac.data.library.model.LibrarySortOption as DataLibr
 @Inject
 public class LibraryPresenter(
     componentContext: ComponentContext,
-    private val navigator: LibraryNavigator,
+    private val navigator: Navigator,
     private val repository: LibraryRepository,
     private val observeLibraryInteractor: ObserveLibraryInteractor,
     private val syncLibraryInteractor: SyncLibraryInteractor,
@@ -106,7 +108,7 @@ public class LibraryPresenter(
 
     public fun dispatch(action: LibraryAction) {
         when (action) {
-            is LibraryShowClicked -> navigator.showDetails(action.traktId)
+            is LibraryShowClicked -> navigator.pushNew(ShowDetailsRoute(ShowDetailsParam(id = action.traktId)))
             is LibraryQueryChanged -> updateQuery(action.query)
             is ClearLibraryQuery -> clearQuery()
             is ToggleSearchActive -> toggleSearchActive()

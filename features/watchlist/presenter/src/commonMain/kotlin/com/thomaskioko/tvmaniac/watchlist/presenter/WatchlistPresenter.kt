@@ -16,8 +16,12 @@ import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.ObserveUpNextSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.ObserveWatchlistSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.WatchlistSyncInteractor
+import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
+import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
+import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
+import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
-import com.thomaskioko.tvmaniac.watchlist.nav.WatchlistNavigator
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
@@ -31,7 +35,7 @@ import kotlinx.coroutines.launch
 @AssistedInject
 public class WatchlistPresenter(
     @Assisted componentContext: ComponentContext,
-    private val navigator: WatchlistNavigator,
+    private val navigator: Navigator,
     private val repository: WatchlistRepository,
     private val unfollowShowInteractor: UnfollowShowInteractor,
     private val observeWatchlistSectionsInteractor: ObserveWatchlistSectionsInteractor,
@@ -87,17 +91,25 @@ public class WatchlistPresenter(
 
     public fun dispatch(action: WatchlistAction) {
         when (action) {
-            is WatchlistShowClicked -> navigator.showDetails(action.traktId)
+            is WatchlistShowClicked -> navigator.pushNew(ShowDetailsRoute(ShowDetailsParam(id = action.traktId)))
             is WatchlistQueryChanged -> updateQuery(action.query)
             is ClearWatchlistQuery -> clearQuery()
             is ToggleSearchActive -> toggleSearchActive()
             is ChangeListStyleClicked -> toggleListStyle(action.isGridMode)
             is MessageShown -> clearMessage(action.id)
-            is UpNextEpisodeClicked -> navigator.showDetails(action.showTraktId)
-            is ShowTitleClicked -> navigator.showDetails(action.showTraktId)
+            is UpNextEpisodeClicked -> navigator.pushNew(ShowDetailsRoute(ShowDetailsParam(id = action.showTraktId)))
+            is ShowTitleClicked -> navigator.pushNew(ShowDetailsRoute(ShowDetailsParam(id = action.showTraktId)))
             is MarkUpNextEpisodeWatched -> markEpisodeWatched(action)
             is UnfollowShowFromUpNext -> unfollowShow(action.showTraktId)
-            is OpenSeasonFromUpNext -> navigator.showSeasonDetails(action.showTraktId, action.seasonId, action.seasonNumber)
+            is OpenSeasonFromUpNext -> navigator.pushNew(
+                SeasonDetailsRoute(
+                    SeasonDetailsUiParam(
+                        showTraktId = action.showTraktId,
+                        seasonId = action.seasonId,
+                        seasonNumber = action.seasonNumber,
+                    ),
+                ),
+            )
             is RefreshWatchlist -> syncWatchlist(action.forceRefresh)
         }
     }

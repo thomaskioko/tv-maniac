@@ -2,6 +2,12 @@ package com.thomaskioko.tvmaniac.presenter.showdetails
 
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
+import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.bringToFront
+import com.arkivanov.decompose.router.stack.pop
+import com.arkivanov.decompose.router.stack.popTo
+import com.arkivanov.decompose.router.stack.pushNew
+import com.arkivanov.decompose.router.stack.pushToFront
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
@@ -42,13 +48,17 @@ import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
+import com.thomaskioko.tvmaniac.navigation.NavEvent
+import com.thomaskioko.tvmaniac.navigation.NavEventBus
+import com.thomaskioko.tvmaniac.navigation.NavRoute
+import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ProviderModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.TrailerModel
 import com.thomaskioko.tvmaniac.seasondetails.api.model.ContinueTrackingResult
+import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
-import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsNavigator
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
@@ -64,6 +74,9 @@ import io.kotest.matchers.shouldBe
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -837,20 +850,48 @@ class ShowDetailsPresenterTest {
         onNavigateToSeason: (param: ShowSeasonDetailsParam) -> Unit = {},
         onShowFollowed: () -> Unit = {},
     ): ShowDetailsPresenter {
+        val navigator = object : Navigator {
+            private val navigation = StackNavigation<NavRoute>()
+            override fun bringToFront(route: NavRoute) {
+                navigation.bringToFront(route)
+            }
+            override fun pushNew(route: NavRoute) {
+                if (route is SeasonDetailsRoute) {
+                    onNavigateToSeason(
+                        ShowSeasonDetailsParam(
+                            showTraktId = route.param.showTraktId,
+                            seasonId = route.param.seasonId,
+                            seasonNumber = route.param.seasonNumber,
+                            selectedSeasonIndex = 0,
+                        ),
+                    )
+                }
+                navigation.pushNew(route)
+            }
+            override fun pushToFront(route: NavRoute) {
+                navigation.pushToFront(route)
+            }
+            override fun pop() {
+                navigation.pop()
+            }
+            override fun popTo(toIndex: Int) {
+                navigation.popTo(index = toIndex)
+            }
+            override fun getStackNavigation(): StackNavigation<NavRoute> = navigation
+        }
+        val navEventBus = object : NavEventBus {
+            private val _events = MutableSharedFlow<NavEvent>(extraBufferCapacity = 16)
+            override val events: SharedFlow<NavEvent> = _events.asSharedFlow()
+            override fun emit(event: NavEvent) {
+                if (event == NavEvent.ShowFollowed) onShowFollowed()
+                _events.tryEmit(event)
+            }
+        }
         return ShowDetailsPresenter(
             param = param,
             componentContext = DefaultComponentContext(lifecycle = LifecycleRegistry()),
-            navigator = object : ShowDetailsNavigator {
-                override fun goBack() {}
-                override fun showDetails(traktId: Long) {}
-                override fun showSeasonDetails(param: ShowSeasonDetailsParam) {
-                    onNavigateToSeason(param)
-                }
-                override fun showTrailers(traktShowId: Long) {}
-                override fun showFollowed() {
-                    onShowFollowed()
-                }
-            },
+            navigator = navigator,
+            navEventBus = navEventBus,
             followedShowsRepository = followedShowsRepository,
             followShowInteractor = FollowShowInteractor(
                 followedShowsRepository = followedShowsRepository,

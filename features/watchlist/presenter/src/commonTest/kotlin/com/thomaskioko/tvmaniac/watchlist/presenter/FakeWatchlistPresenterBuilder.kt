@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.watchlist.presenter
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.router.stack.StackNavigation
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
@@ -13,10 +14,11 @@ import com.thomaskioko.tvmaniac.domain.watchlist.UpNextSectionsMapper
 import com.thomaskioko.tvmaniac.domain.watchlist.WatchlistSyncInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
+import com.thomaskioko.tvmaniac.navigation.NavRoute
+import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
-import com.thomaskioko.tvmaniac.watchlist.nav.WatchlistNavigator
 import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 
@@ -67,10 +69,7 @@ class FakeWatchlistPresenterBuilder {
 
     fun create(
         componentContext: ComponentContext,
-        navigator: WatchlistNavigator = object : WatchlistNavigator {
-            override fun showDetails(traktId: Long) {}
-            override fun showSeasonDetails(showTraktId: Long, seasonId: Long, seasonNumber: Long) {}
-        },
+        navigator: Navigator = NoOpNavigator(),
     ): WatchlistPresenter = WatchlistPresenter(
         componentContext = componentContext,
         navigator = navigator,
@@ -83,4 +82,14 @@ class FakeWatchlistPresenterBuilder {
         errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
         logger = fakeLogger,
     )
+
+    private class NoOpNavigator : Navigator {
+        private val navigation = StackNavigation<NavRoute>()
+        override fun bringToFront(route: NavRoute) {}
+        override fun pushNew(route: NavRoute) {}
+        override fun pushToFront(route: NavRoute) {}
+        override fun pop() {}
+        override fun popTo(toIndex: Int) {}
+        override fun getStackNavigation(): StackNavigation<NavRoute> = navigation
+    }
 }

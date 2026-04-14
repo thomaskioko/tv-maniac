@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.debug.presenter
 
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
+import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
@@ -10,7 +11,6 @@ import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
-import com.thomaskioko.tvmaniac.debug.nav.DebugNavigator
 import com.thomaskioko.tvmaniac.domain.library.SyncLibraryInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleDebugEpisodeNotificationInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.RefreshUpNextInteractor
@@ -19,6 +19,8 @@ import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepositor
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelDebugNeverRefreshed
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
+import com.thomaskioko.tvmaniac.navigation.NavRoute
+import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.traktauth.api.AuthState
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
@@ -171,9 +173,7 @@ class DebugPresenterTest {
 
         return DebugPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
-            navigator = object : DebugNavigator {
-                override fun goBack() {}
-            },
+            navigator = NoOpNavigator(),
             datastoreRepository = datastoreRepository,
             scheduleDebugEpisodeNotificationInteractor = ScheduleDebugEpisodeNotificationInteractor(
                 datastoreRepository = datastoreRepository,
@@ -206,5 +206,15 @@ class DebugPresenterTest {
             logger = logger,
             traktAuthRepository = traktAuthRepository,
         )
+    }
+
+    private class NoOpNavigator : Navigator {
+        private val navigation = StackNavigation<NavRoute>()
+        override fun bringToFront(route: NavRoute) {}
+        override fun pushNew(route: NavRoute) {}
+        override fun pushToFront(route: NavRoute) {}
+        override fun pop() {}
+        override fun popTo(toIndex: Int) {}
+        override fun getStackNavigation(): StackNavigation<NavRoute> = navigation
     }
 }

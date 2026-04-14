@@ -2,6 +2,8 @@ package com.thomaskioko.tvmaniac.presentation.upnext
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.root.model.ScreenSource
+import com.thomaskioko.root.nav.EpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
@@ -15,12 +17,16 @@ import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.RefreshUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.model.UpNextSortOption
+import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.presentation.upnext.model.UpNextEpisodeUiModel
+import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
+import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
+import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
+import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
-import com.thomaskioko.tvmaniac.upnext.nav.UpNextNavigator
 import dev.zacsweers.metro.Inject
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.SharingStarted
@@ -35,7 +41,8 @@ import kotlinx.coroutines.launch
 @Inject
 public class UpNextPresenter(
     componentContext: ComponentContext,
-    private val navigator: UpNextNavigator,
+    private val navigator: Navigator,
+    private val episodeSheetNavigator: EpisodeSheetNavigator,
     private val refreshUpNextInteractor: RefreshUpNextInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val upNextRepository: UpNextRepository,
@@ -86,10 +93,18 @@ public class UpNextPresenter(
             is UpNextChangeSortOption -> changeSortOption(action.sortOption)
             is RefreshUpNext -> refreshUpNext(isUserInitiated = true)
             is UpNextMessageShown -> clearMessage(action.id)
-            is OpenShow -> navigator.showDetails(action.showTraktId)
-            is OpenSeason -> navigator.showSeasonDetails(action.showTraktId, action.seasonId, action.seasonNumber)
+            is OpenShow -> navigator.pushNew(ShowDetailsRoute(ShowDetailsParam(id = action.showTraktId)))
+            is OpenSeason -> navigator.pushNew(
+                SeasonDetailsRoute(
+                    SeasonDetailsUiParam(
+                        showTraktId = action.showTraktId,
+                        seasonId = action.seasonId,
+                        seasonNumber = action.seasonNumber,
+                    ),
+                ),
+            )
             is UnfollowShow -> unfollowShow(action.showTraktId)
-            is UpNextEpisodeLongPressed -> navigator.showEpisodeSheet(action.episodeId)
+            is UpNextEpisodeLongPressed -> episodeSheetNavigator.showEpisodeSheet(action.episodeId, ScreenSource.UP_NEXT)
         }
     }
 
@@ -143,7 +158,15 @@ public class UpNextPresenter(
     private fun navigateToSeasonFromEpisode(showTraktId: Long) {
         val episode = state.value.episodes.firstOrNull { it.showTraktId == showTraktId }
         if (episode?.seasonId != null && episode.seasonNumber != null) {
-            navigator.showSeasonDetails(showTraktId, episode.seasonId, episode.seasonNumber)
+            navigator.pushNew(
+                SeasonDetailsRoute(
+                    SeasonDetailsUiParam(
+                        showTraktId = showTraktId,
+                        seasonId = episode.seasonId,
+                        seasonNumber = episode.seasonNumber,
+                    ),
+                ),
+            )
         }
     }
 

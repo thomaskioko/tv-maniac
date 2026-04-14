@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.presenter.root
 
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
 import com.thomaskioko.tvmaniac.testing.di.TestJvmGraph
 import dev.zacsweers.metro.createGraphFactory
@@ -15,4 +16,7 @@ internal class DefaultRootPresenterJvmTest : DefaultRootPresenterTest() {
 
     override val datastoreRepository: DatastoreRepository
         get() = testComponent.datastoreRepository
+
+    override val navigator: Navigator
+        get() = testComponent.navigator
 }

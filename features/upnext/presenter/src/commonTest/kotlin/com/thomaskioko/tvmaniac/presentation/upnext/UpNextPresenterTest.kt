@@ -2,7 +2,12 @@ package com.thomaskioko.tvmaniac.presentation.upnext
 
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
+import com.arkivanov.decompose.router.slot.SlotNavigation
+import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.thomaskioko.root.model.EpisodeSheetConfig
+import com.thomaskioko.root.model.ScreenSource
+import com.thomaskioko.root.nav.EpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
@@ -13,10 +18,12 @@ import com.thomaskioko.tvmaniac.domain.upnext.RefreshUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.model.UpNextSortOption
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
+import com.thomaskioko.tvmaniac.navigation.NavRoute
+import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
-import com.thomaskioko.tvmaniac.upnext.nav.UpNextNavigator
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.collections.shouldHaveSize
@@ -415,12 +422,26 @@ internal class UpNextPresenterTest {
 
         return UpNextPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
-            navigator = object : UpNextNavigator {
-                override fun showDetails(traktId: Long) {}
-                override fun showSeasonDetails(showTraktId: Long, seasonId: Long, seasonNumber: Long) {
-                    navigateToSeasonDetails(showTraktId, seasonId, seasonNumber)
+            navigator = object : Navigator {
+                private val navigation = StackNavigation<NavRoute>()
+                override fun bringToFront(route: NavRoute) {}
+                override fun pushNew(route: NavRoute) {
+                    if (route is SeasonDetailsRoute) {
+                        navigateToSeasonDetails(route.param.showTraktId, route.param.seasonId, route.param.seasonNumber)
+                    }
                 }
-                override fun showEpisodeSheet(episodeId: Long) {}
+                override fun pushToFront(route: NavRoute) {}
+                override fun pop() {}
+                override fun popTo(toIndex: Int) {}
+                override fun getStackNavigation(): StackNavigation<NavRoute> = navigation
+            },
+            episodeSheetNavigator = object : EpisodeSheetNavigator {
+                private val slotNavigation = SlotNavigation<EpisodeSheetConfig>()
+                override fun showEpisodeSheet(episodeId: Long, source: ScreenSource) {}
+                override fun dismissEpisodeSheet() {}
+                override fun dismissAndShowShowDetails(showTraktId: Long) {}
+                override fun dismissAndShowSeasonDetails(showTraktId: Long, seasonId: Long, seasonNumber: Long) {}
+                override fun getSlotNavigation(): SlotNavigation<EpisodeSheetConfig> = slotNavigation
             },
             observeUpNextInteractor = observeUpNextInteractor,
             refreshUpNextInteractor = refreshUpNextInteractor,
