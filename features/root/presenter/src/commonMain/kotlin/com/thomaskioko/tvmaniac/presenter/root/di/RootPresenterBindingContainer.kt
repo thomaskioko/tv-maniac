@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.navigation.di
+package com.thomaskioko.tvmaniac.presenter.root.di
 
 import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
@@ -13,7 +13,7 @@ import dev.zacsweers.metro.SingleIn
 
 @BindingContainer
 @ContributesTo(ActivityScope::class)
-public object NavigationBindingContainer {
+public object RootPresenterBindingContainer {
 
     @Provides
     @SingleIn(ActivityScope::class)
