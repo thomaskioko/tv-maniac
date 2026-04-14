@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.navigation.root
+package com.thomaskioko.tvmaniac.genreshows.nav
 
 import com.thomaskioko.tvmaniac.navigation.RootChild
 
