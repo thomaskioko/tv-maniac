@@ -12,6 +12,7 @@ kotlin {
             dependencies {
                 implementation(projects.core.base)
                 implementation(projects.features.root.nav)
+                implementation(projects.navigation.api)
             }
         }
     }

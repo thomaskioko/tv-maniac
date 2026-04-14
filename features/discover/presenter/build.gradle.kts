@@ -16,6 +16,8 @@ kotlin {
                 implementation(projects.features.root.nav)
                 implementation(projects.features.discover.nav.api)
                 implementation(projects.features.home.nav.api)
+                implementation(projects.features.moreShows.nav.api)
+                implementation(projects.features.search.nav.api)
                 implementation(projects.features.showDetails.nav.api)
                 implementation(projects.features.seasonDetails.nav.api)
                 implementation(projects.core.base)

@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.settings.presenter.di
 
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
+import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
 import com.thomaskioko.tvmaniac.navigation.RootNavigator
-import com.thomaskioko.tvmaniac.navigation.model.RootDestinationConfig
 import com.thomaskioko.tvmaniac.settings.nav.SettingsNavigator
 import dev.zacsweers.metro.ContributesBinding
 
@@ -15,6 +15,6 @@ public class DefaultSettingsNavigator(
     }
 
     override fun showDebugMenu() {
-        rootNavigator.pushNew(RootDestinationConfig.Debug)
+        rootNavigator.pushNew(DebugRoute)
     }
 }

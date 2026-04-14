@@ -10,11 +10,15 @@ import com.thomaskioko.root.model.NotificationPermissionState
 import com.thomaskioko.root.model.ThemeState
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.genreshows.nav.GenreShowsRoute
+import com.thomaskioko.tvmaniac.moreshows.nav.MoreShowsRoute
 import com.thomaskioko.tvmaniac.navigation.FakeRootNavigator
 import com.thomaskioko.tvmaniac.navigation.RootChild
-import com.thomaskioko.tvmaniac.navigation.model.RootDestinationConfig
+import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
+import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
+import com.thomaskioko.tvmaniac.trailers.nav.TrailersRoute
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.Dispatchers
@@ -62,7 +66,7 @@ abstract class DefaultRootPresenterTest {
         presenter.childStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
-            navigator.bringToFront(RootDestinationConfig.ShowDetails(ShowDetailsParam(1)))
+            navigator.bringToFront(ShowDetailsRoute(ShowDetailsParam(1)))
 
             val moreScreen = awaitItem().active.instance
 
@@ -79,7 +83,7 @@ abstract class DefaultRootPresenterTest {
         presenter.childStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
-            navigator.bringToFront(RootDestinationConfig.ShowDetails(ShowDetailsParam(1)))
+            navigator.bringToFront(ShowDetailsRoute(ShowDetailsParam(1)))
 
             val moreScreen = awaitItem().active.instance
 
@@ -92,7 +96,7 @@ abstract class DefaultRootPresenterTest {
         presenter.childStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
-            navigator.bringToFront(RootDestinationConfig.MoreShows(1))
+            navigator.bringToFront(MoreShowsRoute(1))
 
             val moreScreen = awaitItem().active.instance
 
@@ -110,7 +114,7 @@ abstract class DefaultRootPresenterTest {
                 seasonId = 2,
                 seasonNumber = 3,
             )
-            navigator.bringToFront(RootDestinationConfig.SeasonDetails(param))
+            navigator.bringToFront(SeasonDetailsRoute(param))
 
             val seasonDetailsScreen = awaitItem().active.instance
 
@@ -123,7 +127,7 @@ abstract class DefaultRootPresenterTest {
         presenter.childStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
-            navigator.bringToFront(RootDestinationConfig.Trailers(1))
+            navigator.bringToFront(TrailersRoute(1))
 
             val trailersScreen = awaitItem().active.instance
 
@@ -136,7 +140,7 @@ abstract class DefaultRootPresenterTest {
         presenter.childStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
-            navigator.bringToFront(RootDestinationConfig.GenreShows(1))
+            navigator.bringToFront(GenreShowsRoute(1))
 
             val genreShowsScreen = awaitItem().active.instance
 
@@ -149,7 +153,7 @@ abstract class DefaultRootPresenterTest {
         presenter.childStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
-            navigator.pushNew(RootDestinationConfig.ShowDetails(ShowDetailsParam(1)))
+            navigator.pushNew(ShowDetailsRoute(ShowDetailsParam(1)))
 
             val showDetailsScreen = awaitItem().active.instance
 
@@ -162,7 +166,7 @@ abstract class DefaultRootPresenterTest {
         presenter.childStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
-            navigator.pushToFront(RootDestinationConfig.ShowDetails(ShowDetailsParam(1)))
+            navigator.pushToFront(ShowDetailsRoute(ShowDetailsParam(1)))
 
             val showDetailsScreen = awaitItem().active.instance
 
@@ -175,10 +179,10 @@ abstract class DefaultRootPresenterTest {
         presenter.childStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
-            navigator.pushNew(RootDestinationConfig.ShowDetails(ShowDetailsParam(1)))
+            navigator.pushNew(ShowDetailsRoute(ShowDetailsParam(1)))
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
-            navigator.pushNew(RootDestinationConfig.MoreShows(1))
+            navigator.pushNew(MoreShowsRoute(1))
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
             navigator.popTo(0)

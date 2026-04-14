@@ -20,16 +20,21 @@ import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
+import com.thomaskioko.tvmaniac.home.nav.HomeRoute
 import com.thomaskioko.tvmaniac.navigation.NavDestination
+import com.thomaskioko.tvmaniac.navigation.NavRoute
+import com.thomaskioko.tvmaniac.navigation.NavRouteSerializer
 import com.thomaskioko.tvmaniac.navigation.RootChild
 import com.thomaskioko.tvmaniac.navigation.RootNavigator
 import com.thomaskioko.tvmaniac.navigation.SheetChild
-import com.thomaskioko.tvmaniac.navigation.model.RootDestinationConfig
 import com.thomaskioko.tvmaniac.navigation.root.EpisodeSheetChildFactory
 import com.thomaskioko.tvmaniac.navigation.root.ShowFollowedCallback
+import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
+import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.traktauth.api.AuthError
 import com.thomaskioko.tvmaniac.traktauth.api.TokenRefreshResult
@@ -58,6 +63,7 @@ public class DefaultRootPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val navigator: RootNavigator,
     private val navDestinations: Set<NavDestination>,
+    private val navRouteSerializer: NavRouteSerializer,
     private val episodeSheetChildFactory: EpisodeSheetChildFactory,
     episodeSheetNavigator: EpisodeSheetNavigator,
     private val traktAuthRepository: TraktAuthRepository,
@@ -114,8 +120,8 @@ public class DefaultRootPresenter(
     private val childStackRouter: Value<ChildStack<*, RootChild>> = childStack(
         source = navigator.getStackNavigation(),
         key = "RootChildStackKey",
-        initialConfiguration = RootDestinationConfig.Home,
-        serializer = RootDestinationConfig.serializer(),
+        initialConfiguration = HomeRoute,
+        serializer = navRouteSerializer.serializer,
         handleBackButton = true,
         childFactory = ::createScreen,
     )
@@ -218,7 +224,7 @@ public class DefaultRootPresenter(
         when (destination) {
             is DeepLinkDestination.ShowDetails -> {
                 navigator.pushNew(
-                    RootDestinationConfig.ShowDetails(
+                    ShowDetailsRoute(
                         param = ShowDetailsParam(
                             id = destination.showId,
                             forceRefresh = destination.forceRefresh,
@@ -228,7 +234,7 @@ public class DefaultRootPresenter(
             }
             is DeepLinkDestination.SeasonDetails -> {
                 navigator.pushNew(
-                    RootDestinationConfig.SeasonDetails(
+                    SeasonDetailsRoute(
                         param = SeasonDetailsUiParam(
                             showTraktId = destination.showId,
                             seasonNumber = destination.seasonNumber,
@@ -239,18 +245,18 @@ public class DefaultRootPresenter(
                 )
             }
             is DeepLinkDestination.DebugMenu -> {
-                navigator.pushNew(RootDestinationConfig.Debug)
+                navigator.pushNew(DebugRoute)
             }
         }
     }
 
     private fun createScreen(
-        config: RootDestinationConfig,
+        route: NavRoute,
         componentContext: ComponentContext,
     ): RootChild {
-        val destination = navDestinations.firstOrNull { it.matches(config) }
-            ?: error("No NavDestination found for config: $config")
-        return destination.createChild(config, componentContext)
+        val destination = navDestinations.firstOrNull { it.matches(route) }
+            ?: error("No NavDestination found for route: $route")
+        return destination.createChild(route, componentContext)
     }
 
     @AssistedFactory

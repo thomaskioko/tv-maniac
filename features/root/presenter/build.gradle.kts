@@ -21,6 +21,8 @@ kotlin {
                 implementation(projects.domain.user)
                 implementation(projects.navigation.api)
                 implementation(projects.features.root.nav)
+                implementation(projects.features.debug.nav.api)
+                implementation(projects.features.home.nav.api)
                 implementation(projects.features.seasonDetails.nav.api)
                 implementation(projects.features.showDetails.nav.api)
 
@@ -36,6 +38,9 @@ kotlin {
                 implementation(projects.navigation.implementation)
                 implementation(projects.data.traktauth.testing)
                 implementation(projects.data.datastore.testing)
+                implementation(projects.features.genreShows.nav.api)
+                implementation(projects.features.moreShows.nav.api)
+                implementation(projects.features.trailers.nav.api)
 
                 implementation(libs.bundles.unittest)
             }

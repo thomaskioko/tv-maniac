@@ -16,6 +16,7 @@ kotlin {
             dependencies {
                 implementation(projects.core.base)
                 implementation(projects.navigation.api)
+                implementation(projects.features.genreShows.nav.api)
                 implementation(projects.features.search.nav.api)
                 implementation(projects.features.showDetails.nav.api)
                 implementation(projects.core.util.api)

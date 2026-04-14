@@ -4,9 +4,9 @@ import com.thomaskioko.root.model.ScreenSource
 import com.thomaskioko.root.nav.EpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.navigation.RootNavigator
-import com.thomaskioko.tvmaniac.navigation.model.RootDestinationConfig.SeasonDetails
-import com.thomaskioko.tvmaniac.navigation.model.RootDestinationConfig.ShowDetails
+import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
+import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.upnext.nav.UpNextNavigator
 import dev.zacsweers.metro.ContributesBinding
@@ -17,14 +17,12 @@ public class DefaultUpNextNavigator(
     private val episodeSheetNavigator: EpisodeSheetNavigator,
 ) : UpNextNavigator {
     override fun showDetails(traktId: Long) {
-        rootNavigator.pushNew(
-            ShowDetails(param = ShowDetailsParam(id = traktId)),
-        )
+        rootNavigator.pushNew(ShowDetailsRoute(param = ShowDetailsParam(id = traktId)))
     }
 
     override fun showSeasonDetails(showTraktId: Long, seasonId: Long, seasonNumber: Long) {
         rootNavigator.pushNew(
-            SeasonDetails(
+            SeasonDetailsRoute(
                 param = SeasonDetailsUiParam(
                     showTraktId = showTraktId,
                     seasonId = seasonId,

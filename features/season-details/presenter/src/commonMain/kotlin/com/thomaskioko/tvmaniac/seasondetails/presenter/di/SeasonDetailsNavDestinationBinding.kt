@@ -3,9 +3,11 @@ package com.thomaskioko.tvmaniac.seasondetails.presenter.di
 import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.navigation.NavDestination
+import com.thomaskioko.tvmaniac.navigation.NavRoute
+import com.thomaskioko.tvmaniac.navigation.NavRouteBinding
 import com.thomaskioko.tvmaniac.navigation.RootChild
 import com.thomaskioko.tvmaniac.navigation.ScreenDestination
-import com.thomaskioko.tvmaniac.navigation.model.RootDestinationConfig
+import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.IntoSet
 import dev.zacsweers.metro.Provides
@@ -18,17 +20,21 @@ public interface SeasonDetailsNavDestinationBinding {
         public fun provideSeasonDetailsNavDestination(
             graphFactory: SeasonDetailsScreenGraph.Factory,
         ): NavDestination = object : NavDestination {
-            override fun matches(config: RootDestinationConfig): Boolean =
-                config is RootDestinationConfig.SeasonDetails
+            override fun matches(route: NavRoute): Boolean = route is SeasonDetailsRoute
 
             override fun createChild(
-                config: RootDestinationConfig,
+                route: NavRoute,
                 componentContext: ComponentContext,
             ): RootChild {
-                val seasonConfig = config as RootDestinationConfig.SeasonDetails
+                val seasonRoute = route as SeasonDetailsRoute
                 val graph = graphFactory.createSeasonDetailsGraph(componentContext)
-                return ScreenDestination(graph.seasonDetailsFactory.create(seasonConfig.param))
+                return ScreenDestination(graph.seasonDetailsFactory.create(seasonRoute.param))
             }
         }
+
+        @Provides
+        @IntoSet
+        public fun provideSeasonDetailsRouteBinding(): NavRouteBinding<*> =
+            NavRouteBinding(SeasonDetailsRoute::class, SeasonDetailsRoute.serializer())
     }
 }

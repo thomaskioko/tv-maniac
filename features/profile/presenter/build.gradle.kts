@@ -18,6 +18,7 @@ kotlin {
                 implementation(projects.navigation.api)
                 implementation(projects.features.home.nav.api)
                 implementation(projects.features.profile.nav.api)
+                implementation(projects.features.settings.nav.api)
                 implementation(projects.i18n.api)
                 implementation(projects.domain.user)
                 implementation(projects.data.traktauth.api)

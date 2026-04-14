@@ -3,9 +3,11 @@ package com.thomaskioko.tvmaniac.presenter.showdetails.di
 import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.navigation.NavDestination
+import com.thomaskioko.tvmaniac.navigation.NavRoute
+import com.thomaskioko.tvmaniac.navigation.NavRouteBinding
 import com.thomaskioko.tvmaniac.navigation.RootChild
 import com.thomaskioko.tvmaniac.navigation.ScreenDestination
-import com.thomaskioko.tvmaniac.navigation.model.RootDestinationConfig
+import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.IntoSet
 import dev.zacsweers.metro.Provides
@@ -18,17 +20,21 @@ public interface ShowDetailsNavDestinationBinding {
         public fun provideShowDetailsNavDestination(
             graphFactory: ShowDetailsScreenGraph.Factory,
         ): NavDestination = object : NavDestination {
-            override fun matches(config: RootDestinationConfig): Boolean =
-                config is RootDestinationConfig.ShowDetails
+            override fun matches(route: NavRoute): Boolean = route is ShowDetailsRoute
 
             override fun createChild(
-                config: RootDestinationConfig,
+                route: NavRoute,
                 componentContext: ComponentContext,
             ): RootChild {
-                val showConfig = config as RootDestinationConfig.ShowDetails
+                val showRoute = route as ShowDetailsRoute
                 val graph = graphFactory.createShowDetailsGraph(componentContext)
-                return ScreenDestination(graph.showDetailsFactory.create(showConfig.param))
+                return ScreenDestination(graph.showDetailsFactory.create(showRoute.param))
             }
         }
+
+        @Provides
+        @IntoSet
+        public fun provideShowDetailsRouteBinding(): NavRouteBinding<*> =
+            NavRouteBinding(ShowDetailsRoute::class, ShowDetailsRoute.serializer())
     }
 }

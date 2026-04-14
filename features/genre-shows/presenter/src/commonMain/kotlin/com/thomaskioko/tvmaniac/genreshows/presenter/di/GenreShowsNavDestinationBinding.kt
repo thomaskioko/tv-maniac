@@ -1,11 +1,13 @@
-package com.thomaskioko.tvmaniac.navigation.di
+package com.thomaskioko.tvmaniac.genreshows.presenter.di
 
 import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
+import com.thomaskioko.tvmaniac.genreshows.nav.GenreShowsDestination
+import com.thomaskioko.tvmaniac.genreshows.nav.GenreShowsRoute
 import com.thomaskioko.tvmaniac.navigation.NavDestination
+import com.thomaskioko.tvmaniac.navigation.NavRoute
+import com.thomaskioko.tvmaniac.navigation.NavRouteBinding
 import com.thomaskioko.tvmaniac.navigation.RootChild
-import com.thomaskioko.tvmaniac.navigation.model.RootDestinationConfig
-import com.thomaskioko.tvmaniac.navigation.root.GenreShowsDestination
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.IntoSet
 import dev.zacsweers.metro.Provides
@@ -16,13 +18,17 @@ public interface GenreShowsNavDestinationBinding {
         @Provides
         @IntoSet
         public fun provideGenreShowsNavDestination(): NavDestination = object : NavDestination {
-            override fun matches(config: RootDestinationConfig): Boolean =
-                config is RootDestinationConfig.GenreShows
+            override fun matches(route: NavRoute): Boolean = route is GenreShowsRoute
 
             override fun createChild(
-                config: RootDestinationConfig,
+                route: NavRoute,
                 componentContext: ComponentContext,
             ): RootChild = GenreShowsDestination
         }
+
+        @Provides
+        @IntoSet
+        public fun provideGenreShowsRouteBinding(): NavRouteBinding<*> =
+            NavRouteBinding(GenreShowsRoute::class, GenreShowsRoute.serializer())
     }
 }

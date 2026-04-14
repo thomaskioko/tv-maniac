@@ -19,6 +19,7 @@ kotlin {
                 implementation(projects.navigation.api)
                 implementation(projects.features.root.nav)
                 implementation(projects.features.seasonDetails.nav.api)
+                implementation(projects.features.trailers.nav.api)
                 implementation(projects.core.logger.api)
                 implementation(projects.core.util.api)
                 implementation(projects.data.episode.api)

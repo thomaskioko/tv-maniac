@@ -11,6 +11,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(projects.core.base)
+                implementation(projects.navigation.api)
             }
         }
     }
