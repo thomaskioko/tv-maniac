@@ -14,7 +14,7 @@ import UserNotifications
 
 struct RootNavigationView: View {
     private let rootPresenter: RootPresenter
-    private let rootNavigator: RootNavigator
+    private let navigator: Navigator
     @StateValue private var themeState: ThemeState
     @StateValue private var notificationPermissionState: NotificationPermissionState
     @StateValue private var episodeSheetSlot: ChildSlot<AnyObject, SheetChild>
@@ -22,9 +22,9 @@ struct RootNavigationView: View {
     @EnvironmentObject private var appDelegate: AppDelegate
     @State private var rationaleActionTaken = false
 
-    init(rootPresenter: RootPresenter, rootNavigator: RootNavigator) {
+    init(rootPresenter: RootPresenter, navigator: Navigator) {
         self.rootPresenter = rootPresenter
-        self.rootNavigator = rootNavigator
+        self.navigator = navigator
         _themeState = .init(rootPresenter.themeStateValue)
         _notificationPermissionState = .init(rootPresenter.notificationPermissionStateValue)
         _episodeSheetSlot = .init(rootPresenter.episodeSheetSlotValue)
@@ -34,7 +34,7 @@ struct RootNavigationView: View {
         SplashView {
             DecomposeNavigationStack(
                 stack: rootPresenter.childStackValue,
-                onBack: rootNavigator.popTo
+                onBack: navigator.popTo
             ) { child in
                 if let screen = child as? ScreenDestination<AnyObject> {
                     let presenter = screen.presenter

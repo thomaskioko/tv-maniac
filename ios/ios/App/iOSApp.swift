@@ -24,7 +24,7 @@ struct iOSApp: App {
             if let holder = componentHolder {
                 RootNavigationView(
                     rootPresenter: holder.component.rootPresenter,
-                    rootNavigator: holder.component.rootNavigator
+                    navigator: holder.component.navigator
                 )
                 .environmentObject(appDelegate)
                 .environment(toastManager)

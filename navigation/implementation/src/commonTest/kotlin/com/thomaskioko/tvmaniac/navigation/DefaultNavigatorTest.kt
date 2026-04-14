@@ -7,11 +7,11 @@ import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import io.kotest.matchers.shouldBe
 import kotlin.test.Test
 
-internal class DefaultRootNavigatorTest {
+internal class DefaultNavigatorTest {
 
     @Test
     fun `should emit one event given pushNew`() {
-        val navigator = DefaultRootNavigator()
+        val navigator = DefaultNavigator()
 
         val events = navigator.getStackNavigation().collectEvents {
             navigator.pushNew(ShowDetailsRoute(ShowDetailsParam(1)))
@@ -22,7 +22,7 @@ internal class DefaultRootNavigatorTest {
 
     @Test
     fun `should emit one event given bringToFront`() {
-        val navigator = DefaultRootNavigator()
+        val navigator = DefaultNavigator()
 
         val events = navigator.getStackNavigation().collectEvents {
             navigator.bringToFront(HomeRoute)
@@ -33,7 +33,7 @@ internal class DefaultRootNavigatorTest {
 
     @Test
     fun `should emit one event given pushToFront`() {
-        val navigator = DefaultRootNavigator()
+        val navigator = DefaultNavigator()
 
         val events = navigator.getStackNavigation().collectEvents {
             navigator.pushToFront(HomeRoute)
@@ -44,7 +44,7 @@ internal class DefaultRootNavigatorTest {
 
     @Test
     fun `should emit one event given pop`() {
-        val navigator = DefaultRootNavigator()
+        val navigator = DefaultNavigator()
 
         val events = navigator.getStackNavigation().collectEvents {
             navigator.pop()
@@ -55,7 +55,7 @@ internal class DefaultRootNavigatorTest {
 
     @Test
     fun `should emit one event given popTo`() {
-        val navigator = DefaultRootNavigator()
+        val navigator = DefaultNavigator()
 
         val events = navigator.getStackNavigation().collectEvents {
             navigator.popTo(0)
@@ -66,7 +66,7 @@ internal class DefaultRootNavigatorTest {
 
     @Test
     fun `should return same StackNavigation instance on repeated calls`() {
-        val navigator = DefaultRootNavigator()
+        val navigator = DefaultNavigator()
 
         val first = navigator.getStackNavigation()
         val second = navigator.getStackNavigation()
@@ -76,7 +76,7 @@ internal class DefaultRootNavigatorTest {
 
     @Test
     fun `should transform stack to contain pushed route given pushNew`() {
-        val navigator = DefaultRootNavigator()
+        val navigator = DefaultNavigator()
 
         val events = navigator.getStackNavigation().collectEvents {
             navigator.pushNew(ShowDetailsRoute(ShowDetailsParam(42)))
@@ -88,7 +88,7 @@ internal class DefaultRootNavigatorTest {
 
     @Test
     fun `should transform stack by dropping last given pop`() {
-        val navigator = DefaultRootNavigator()
+        val navigator = DefaultNavigator()
         val route = ShowDetailsRoute(ShowDetailsParam(1))
 
         val events = navigator.getStackNavigation().collectEvents {

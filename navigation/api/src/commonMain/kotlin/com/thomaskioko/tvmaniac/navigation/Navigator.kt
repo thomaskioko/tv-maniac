@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.navigation
 
 import com.arkivanov.decompose.router.stack.StackNavigation
 
-public interface RootNavigator {
+public interface Navigator {
     /**
      * Brings a route to the front of the navigation stack.
      * If the route is already in the stack, it will be brought to the front.

@@ -5,7 +5,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.defaultComponentContext
 import com.thomaskioko.tvmaniac.app.TvManicApplication
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
-import com.thomaskioko.tvmaniac.navigation.RootNavigator
+import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import dev.zacsweers.metro.AppScope
@@ -20,7 +20,7 @@ import dev.zacsweers.metro.asContribution
 public interface ActivityGraph {
     public val traktAuthManager: TraktAuthManager
     public val rootPresenter: RootPresenter
-    public val rootNavigator: RootNavigator
+    public val navigator: Navigator
 
     @Provides
     public fun provideComponentContext(

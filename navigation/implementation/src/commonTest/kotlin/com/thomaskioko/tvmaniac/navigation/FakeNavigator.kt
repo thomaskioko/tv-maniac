@@ -7,7 +7,7 @@ import com.arkivanov.decompose.router.stack.popTo
 import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.router.stack.pushToFront
 
-internal class FakeRootNavigator : RootNavigator {
+internal class FakeNavigator : Navigator {
     private val navigation = StackNavigation<NavRoute>()
 
     override fun bringToFront(route: NavRoute) {

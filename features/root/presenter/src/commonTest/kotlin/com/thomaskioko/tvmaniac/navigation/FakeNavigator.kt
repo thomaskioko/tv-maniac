@@ -6,13 +6,8 @@ import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.popTo
 import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.router.stack.pushToFront
-import com.thomaskioko.tvmaniac.core.base.ActivityScope
-import dev.zacsweers.metro.ContributesBinding
-import dev.zacsweers.metro.SingleIn
 
-@SingleIn(ActivityScope::class)
-@ContributesBinding(ActivityScope::class)
-public class DefaultRootNavigator : RootNavigator {
+class FakeNavigator : Navigator {
     private val navigation = StackNavigation<NavRoute>()
 
     override fun bringToFront(route: NavRoute) {
