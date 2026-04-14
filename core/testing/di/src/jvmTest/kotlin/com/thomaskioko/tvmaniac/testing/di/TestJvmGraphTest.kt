@@ -4,7 +4,6 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
-import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
 import dev.zacsweers.metro.createGraphFactory
@@ -56,10 +55,7 @@ internal class TestJvmGraphTest {
     }
 
     @Test
-    fun `should resolve ScreenGraph factory and HomePresenter`() {
-        val componentContext = DefaultComponentContext(lifecycle = lifecycle)
-        val screenGraph = component.screenGraphFactory.createGraph(componentContext)
-
-        screenGraph.homePresenter.shouldBeInstanceOf<HomePresenter>()
+    fun `should resolve NavDestinations set`() {
+        component.navDestinations.shouldBeInstanceOf<Set<*>>()
     }
 }

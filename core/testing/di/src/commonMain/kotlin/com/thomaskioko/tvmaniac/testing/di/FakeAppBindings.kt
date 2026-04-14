@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.testing.di
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.slot.SlotNavigation
+import com.arkivanov.decompose.router.stack.StackNavigation
 import com.thomaskioko.root.model.EpisodeSheetConfig
 import com.thomaskioko.root.model.ScreenSource
 import com.thomaskioko.root.nav.EpisodeSheetNavigator
@@ -9,6 +10,7 @@ import com.thomaskioko.tvmaniac.appconfig.ApplicationInfo
 import com.thomaskioko.tvmaniac.appconfig.DefaultTmdbConfig
 import com.thomaskioko.tvmaniac.appconfig.DefaultTraktConfig
 import com.thomaskioko.tvmaniac.appconfig.Platform
+import com.thomaskioko.tvmaniac.calendar.nav.CalendarNavigator
 import com.thomaskioko.tvmaniac.core.base.ComputationCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.MainCoroutineScope
@@ -32,46 +34,51 @@ import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.implementation.DefaultDatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
-import com.thomaskioko.tvmaniac.debug.presenter.DebugNavigator
-import com.thomaskioko.tvmaniac.discover.presenter.DiscoverNavigator
+import com.thomaskioko.tvmaniac.debug.nav.DebugNavigator
+import com.thomaskioko.tvmaniac.debug.presenter.di.DefaultDebugNavigator
+import com.thomaskioko.tvmaniac.discover.nav.DiscoverNavigator
+import com.thomaskioko.tvmaniac.discover.presenter.di.DefaultDiscoverNavigator
 import com.thomaskioko.tvmaniac.domain.library.LibrarySyncWorker
 import com.thomaskioko.tvmaniac.domain.notifications.EpisodeNotificationWorker
 import com.thomaskioko.tvmaniac.domain.upnext.UpNextSyncWorker
+import com.thomaskioko.tvmaniac.espisodedetails.nav.EpisodeDetailNavigator
+import com.thomaskioko.tvmaniac.home.nav.HomeTabNavigator
+import com.thomaskioko.tvmaniac.home.nav.di.model.HomeConfig
+import com.thomaskioko.tvmaniac.library.nav.LibraryNavigator
 import com.thomaskioko.tvmaniac.locale.api.LocaleProvider
 import com.thomaskioko.tvmaniac.locale.testing.FakeLocaleProvider
-import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsNavigator
+import com.thomaskioko.tvmaniac.moreshows.nav.MoreShowsNavigator
+import com.thomaskioko.tvmaniac.moreshows.presentation.di.DefaultMoreShowsNavigator
+import com.thomaskioko.tvmaniac.navigation.NavDestination
+import com.thomaskioko.tvmaniac.navigation.RootChild
 import com.thomaskioko.tvmaniac.navigation.RootNavigator
+import com.thomaskioko.tvmaniac.navigation.SheetChild
 import com.thomaskioko.tvmaniac.navigation.controllers.DefaultEpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.navigation.controllers.DefaultHomeTabNavigator
-import com.thomaskioko.tvmaniac.navigation.navigators.DefaultCalendarNavigator
-import com.thomaskioko.tvmaniac.navigation.navigators.DefaultDebugNavigator
-import com.thomaskioko.tvmaniac.navigation.navigators.DefaultDiscoverNavigator
-import com.thomaskioko.tvmaniac.navigation.navigators.DefaultEpisodeDetailNavigator
-import com.thomaskioko.tvmaniac.navigation.navigators.DefaultLibraryNavigator
-import com.thomaskioko.tvmaniac.navigation.navigators.DefaultMoreShowsNavigator
-import com.thomaskioko.tvmaniac.navigation.navigators.DefaultProfileNavigator
-import com.thomaskioko.tvmaniac.navigation.navigators.DefaultSearchNavigator
-import com.thomaskioko.tvmaniac.navigation.navigators.DefaultSeasonDetailsNavigator
-import com.thomaskioko.tvmaniac.navigation.navigators.DefaultSettingsNavigator
-import com.thomaskioko.tvmaniac.navigation.navigators.DefaultShowDetailsNavigator
-import com.thomaskioko.tvmaniac.navigation.navigators.DefaultUpNextNavigator
-import com.thomaskioko.tvmaniac.navigation.navigators.DefaultWatchlistNavigator
-import com.thomaskioko.tvmaniac.presentation.calendar.CalendarNavigator
-import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeDetailNavigator
-import com.thomaskioko.tvmaniac.presentation.library.LibraryNavigator
-import com.thomaskioko.tvmaniac.presentation.upnext.UpNextNavigator
-import com.thomaskioko.tvmaniac.presenter.home.HomeTabNavigator
+import com.thomaskioko.tvmaniac.navigation.model.RootDestinationConfig
+import com.thomaskioko.tvmaniac.navigation.root.EpisodeSheetChildFactory
+import com.thomaskioko.tvmaniac.navigation.root.ShowFollowedCallback
+import com.thomaskioko.tvmaniac.presentation.calendar.di.DefaultCalendarNavigator
+import com.thomaskioko.tvmaniac.presentation.episodedetail.di.DefaultEpisodeDetailNavigator
+import com.thomaskioko.tvmaniac.presentation.episodedetail.di.DefaultEpisodeSheetChildFactory
+import com.thomaskioko.tvmaniac.presentation.library.di.DefaultLibraryNavigator
+import com.thomaskioko.tvmaniac.presentation.upnext.di.DefaultUpNextNavigator
 import com.thomaskioko.tvmaniac.presenter.root.DefaultRootPresenter
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
-import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsNavigator
-import com.thomaskioko.tvmaniac.presenter.showdetails.ShowSeasonDetailsParam
-import com.thomaskioko.tvmaniac.profile.presenter.ProfileNavigator
+import com.thomaskioko.tvmaniac.presenter.showdetails.di.DefaultShowDetailsNavigator
+import com.thomaskioko.tvmaniac.profile.nav.ProfileNavigator
+import com.thomaskioko.tvmaniac.profile.presenter.di.DefaultProfileNavigator
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.implementation.DefaultRequestManagerRepository
-import com.thomaskioko.tvmaniac.search.presenter.SearchNavigator
-import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsNavigator
-import com.thomaskioko.tvmaniac.settings.presenter.SettingsNavigator
+import com.thomaskioko.tvmaniac.search.nav.SearchNavigator
+import com.thomaskioko.tvmaniac.search.presenter.di.DefaultSearchNavigator
+import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsNavigator
+import com.thomaskioko.tvmaniac.seasondetails.presenter.di.DefaultSeasonDetailsNavigator
+import com.thomaskioko.tvmaniac.settings.nav.SettingsNavigator
+import com.thomaskioko.tvmaniac.settings.presenter.di.DefaultSettingsNavigator
+import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsNavigator
+import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityRepository
 import com.thomaskioko.tvmaniac.syncactivity.implementation.DefaultTraktActivityRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
@@ -86,10 +93,12 @@ import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.traktlists.api.TraktListRepository
 import com.thomaskioko.tvmaniac.traktlists.implementation.DefaultTraktListRepository
 import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
+import com.thomaskioko.tvmaniac.upnext.nav.UpNextNavigator
 import com.thomaskioko.tvmaniac.util.api.AppUtils
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
-import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistNavigator
+import com.thomaskioko.tvmaniac.watchlist.nav.WatchlistNavigator
+import com.thomaskioko.tvmaniac.watchlist.presenter.di.DefaultWatchlistNavigator
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
@@ -104,12 +113,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
-/**
- * Binding container of fake / mock providers used by tests. Contributed to
- * [AppScope] and replaces the production bindings it stands in for via
- * [ContributesTo.replaces], so `TestJvmGraph` / `TestIosGraph` pick these up
- * automatically when they merge the scope.
- */
 @BindingContainer
 @ContributesTo(
     AppScope::class,
@@ -130,6 +133,7 @@ import kotlinx.coroutines.flow.flowOf
         LibrarySyncWorker::class,
         TokenRefreshWorker::class,
         UpNextSyncWorker::class,
+        DefaultEpisodeSheetChildFactory::class,
         DefaultEpisodeSheetNavigator::class,
         DefaultSearchNavigator::class,
         DefaultDebugNavigator::class,
@@ -396,6 +400,8 @@ public object FakeAppBindings {
     @SingleIn(AppScope::class)
     public fun provideHomeTabController(): HomeTabNavigator =
         object : HomeTabNavigator {
+            override fun registerNavigation(navigation: StackNavigation<HomeConfig>) {}
+            override fun unregisterNavigation() {}
             override fun switchToProgressTab() {}
         }
 
@@ -405,6 +411,35 @@ public object FakeAppBindings {
         object : WatchlistNavigator {
             override fun showDetails(traktId: Long) {}
             override fun showSeasonDetails(showTraktId: Long, seasonId: Long, seasonNumber: Long) {}
+        }
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideNavDestinations(): Set<NavDestination> = setOf(
+        object : NavDestination {
+            override fun matches(config: RootDestinationConfig): Boolean = true
+            override fun createChild(
+                config: RootDestinationConfig,
+                componentContext: ComponentContext,
+            ): RootChild = object : RootChild {}
+        },
+    )
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideEpisodeSheetChildFactory(): EpisodeSheetChildFactory =
+        object : EpisodeSheetChildFactory {
+            override fun createChild(
+                config: EpisodeSheetConfig,
+                componentContext: ComponentContext,
+            ): SheetChild = object : SheetChild {}
+        }
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideShowFollowedCallback(): ShowFollowedCallback =
+        object : ShowFollowedCallback {
+            override fun onShowFollowed() {}
         }
 
     @Provides
