@@ -32,7 +32,7 @@ import com.thomaskioko.tvmaniac.navigation.NavRouteSerializer
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.RootChild
 import com.thomaskioko.tvmaniac.navigation.SheetChild
-import com.thomaskioko.tvmaniac.navigation.root.EpisodeSheetChildFactory
+import com.thomaskioko.tvmaniac.navigation.EpisodeSheetChildFactory
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute

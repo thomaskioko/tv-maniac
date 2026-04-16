@@ -56,7 +56,7 @@ import com.thomaskioko.tvmaniac.navigation.RootChild
 import com.thomaskioko.tvmaniac.navigation.SheetChild
 import com.thomaskioko.tvmaniac.navigation.controllers.DefaultEpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.navigation.controllers.DefaultHomeTabNavigator
-import com.thomaskioko.tvmaniac.navigation.root.EpisodeSheetChildFactory
+import com.thomaskioko.tvmaniac.navigation.EpisodeSheetChildFactory
 import com.thomaskioko.tvmaniac.presentation.episodedetail.di.DefaultEpisodeSheetChildFactory
 import com.thomaskioko.tvmaniac.presenter.root.DefaultRootPresenter
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter

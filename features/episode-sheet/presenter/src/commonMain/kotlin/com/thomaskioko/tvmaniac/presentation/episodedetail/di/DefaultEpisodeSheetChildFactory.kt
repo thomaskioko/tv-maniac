@@ -5,7 +5,7 @@ import com.thomaskioko.root.model.EpisodeSheetConfig
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.navigation.SheetChild
 import com.thomaskioko.tvmaniac.navigation.SheetDestination
-import com.thomaskioko.tvmaniac.navigation.root.EpisodeSheetChildFactory
+import com.thomaskioko.tvmaniac.navigation.EpisodeSheetChildFactory
 import dev.zacsweers.metro.ContributesBinding
 
 @ContributesBinding(ActivityScope::class)
