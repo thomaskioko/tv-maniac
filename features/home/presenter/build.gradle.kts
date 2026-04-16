@@ -17,7 +17,7 @@ kotlin {
             dependencies {
                 implementation(projects.core.base)
                 implementation(projects.navigation.api)
-                implementation(projects.features.home.nav.api)
+                implementation(projects.features.home.nav)
                 implementation(projects.core.logger.api)
                 implementation(projects.data.traktauth.api)
                 implementation(projects.domain.user)

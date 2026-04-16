@@ -17,7 +17,7 @@ scaffold {
 
 dependencies {
     api(projects.features.showDetails.presenter)
-    implementation(projects.features.showDetails.nav.api)
+    implementation(projects.features.showDetails.nav)
 
     implementation(projects.androidDesignsystem)
     implementation(projects.core.view)

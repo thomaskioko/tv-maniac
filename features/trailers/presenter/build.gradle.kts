@@ -14,7 +14,7 @@ kotlin {
             dependencies {
                 implementation(projects.core.base)
                 implementation(projects.navigation.api)
-                implementation(projects.features.trailers.nav.api)
+                implementation(projects.features.trailers.nav)
                 implementation(projects.data.trailers.api)
 
                 api(libs.decompose.decompose)
