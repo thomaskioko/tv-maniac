@@ -101,6 +101,7 @@ dependencies {
     implementation(projects.features.trailers.presenter)
     implementation(projects.features.upnext.presenter)
     implementation(projects.features.showDetails.nav.api)
+    implementation(projects.features.episodeSheet.nav.api)
     implementation(projects.data.traktlists.implementation)
     implementation(projects.domain.traktlists)
     implementation(projects.core.util.api)
