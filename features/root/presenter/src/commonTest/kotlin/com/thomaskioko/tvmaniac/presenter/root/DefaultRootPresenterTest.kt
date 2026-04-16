@@ -23,7 +23,6 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlin.test.AfterTest
@@ -52,7 +51,6 @@ abstract class DefaultRootPresenterTest {
     @AfterTest
     fun tearDown() {
         lifecycle.destroy()
-        Dispatchers.resetMain()
     }
 
     @Test

@@ -7,11 +7,11 @@ differ = "0.3.0"
 java-target = "21"
 java-toolchain = "21"
 
-agp = "9.1.0"
+agp = "9.1.1"
 google-services = "4.4.4"
 android-lint = "32.1.0"
 androidx-activity = "1.13.0"
-androidx-annotation = "1.9.1"
+androidx-annotation = "1.10.0"
 androidx-browser = "1.10.0"
 androidx-collections = "1.6.0"
 androidx-compose-ui-test = "1.10.6"
@@ -127,7 +127,7 @@ differ = { module = "com.dropbox.differ:differ", version.ref = "differ" }
 essenty-lifecycle = { module = "com.arkivanov.essenty:lifecycle", version.ref = "essenty" }
 
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
-firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version = "20.0.4" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version = "20.0.5" }
 
 kenburns = { module = "com.flaviofaria:kenburnsview", version.ref = "kenburns" }
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
