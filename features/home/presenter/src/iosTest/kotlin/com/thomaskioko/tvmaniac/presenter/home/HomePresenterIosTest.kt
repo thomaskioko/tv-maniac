@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.presenter.home
 
+import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.testing.di.TestIosGraph
 import dev.zacsweers.metro.createGraphFactory
 
@@ -8,6 +9,6 @@ internal class HomePresenterIosTest : HomePresenterTest() {
         createGraphFactory<TestIosGraph.Factory>().create()
     }
 
-    override val homePresenterFactory: HomePresenter.Factory
-        get() = testGraph.homePresenterFactory
+    override fun createHomePresenter(componentContext: ComponentContext): HomePresenter =
+        testGraph.homeScreenGraphFactory.createHomeGraph(componentContext).homePresenter
 }
