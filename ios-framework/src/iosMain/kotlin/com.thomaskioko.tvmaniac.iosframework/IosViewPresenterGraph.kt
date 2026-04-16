@@ -2,8 +2,8 @@ package com.thomaskioko.tvmaniac.iosframework
 
 import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
-import com.thomaskioko.tvmaniac.navigation.RootNavigator
-import com.thomaskioko.tvmaniac.navigation.RootPresenter
+import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.GraphExtension
@@ -14,7 +14,7 @@ import dev.zacsweers.metro.SingleIn
 @SingleIn(ActivityScope::class)
 public interface IosViewPresenterGraph {
     public val rootPresenter: RootPresenter
-    public val rootNavigator: RootNavigator
+    public val navigator: Navigator
 
     @ContributesTo(AppScope::class)
     @GraphExtension.Factory

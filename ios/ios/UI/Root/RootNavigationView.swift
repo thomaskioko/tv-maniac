@@ -14,7 +14,7 @@ import UserNotifications
 
 struct RootNavigationView: View {
     private let rootPresenter: RootPresenter
-    private let rootNavigator: RootNavigator
+    private let navigator: Navigator
     @StateValue private var themeState: ThemeState
     @StateValue private var notificationPermissionState: NotificationPermissionState
     @StateValue private var episodeSheetSlot: ChildSlot<AnyObject, SheetChild>
@@ -22,9 +22,9 @@ struct RootNavigationView: View {
     @EnvironmentObject private var appDelegate: AppDelegate
     @State private var rationaleActionTaken = false
 
-    init(rootPresenter: RootPresenter, rootNavigator: RootNavigator) {
+    init(rootPresenter: RootPresenter, navigator: Navigator) {
         self.rootPresenter = rootPresenter
-        self.rootNavigator = rootNavigator
+        self.navigator = navigator
         _themeState = .init(rootPresenter.themeStateValue)
         _notificationPermissionState = .init(rootPresenter.notificationPermissionStateValue)
         _episodeSheetSlot = .init(rootPresenter.episodeSheetSlotValue)
@@ -34,31 +34,36 @@ struct RootNavigationView: View {
         SplashView {
             DecomposeNavigationStack(
                 stack: rootPresenter.childStackValue,
-                onBack: rootNavigator.popTo
+                onBack: navigator.popTo
             ) { child in
-                switch child {
-                case let child as RootScreenHome:
-                    TabBarView(presenter: child.presenter)
-                        .id(ObjectIdentifier(child))
-                case let child as RootScreenShowDetails:
-                    ShowDetailsView(presenter: child.presenter)
-                        .id(ObjectIdentifier(child))
-                case let child as RootScreenSeasonDetails:
-                    SeasonDetailsView(presenter: child.presenter)
-                        .id(ObjectIdentifier(child))
-                case let child as RootScreenSearch:
-                    SearchTab(presenter: child.presenter)
-                        .id(ObjectIdentifier(child))
-                case let child as RootScreenSettings:
-                    SettingsView(presenter: child.presenter)
-                        .id(ObjectIdentifier(child))
-                case let child as RootScreenDebug:
-                    DebugMenuView(presenter: child.presenter)
-                        .id(ObjectIdentifier(child))
-                case let child as RootScreenMoreShows:
-                    MoreShowsView(presenter: child.presenter)
-                        .id(ObjectIdentifier(child))
-                default:
+                if let screen = child as? ScreenDestination<AnyObject> {
+                    let presenter = screen.presenter
+                    switch presenter {
+                    case let presenter as HomePresenter:
+                        TabBarView(presenter: presenter)
+                            .id(ObjectIdentifier(child))
+                    case let presenter as ShowDetailsPresenter:
+                        ShowDetailsView(presenter: presenter)
+                            .id(ObjectIdentifier(child))
+                    case let presenter as SeasonDetailsPresenter:
+                        SeasonDetailsView(presenter: presenter)
+                            .id(ObjectIdentifier(child))
+                    case let presenter as SearchShowsPresenter:
+                        SearchTab(presenter: presenter)
+                            .id(ObjectIdentifier(child))
+                    case let presenter as SettingsPresenter:
+                        SettingsView(presenter: presenter)
+                            .id(ObjectIdentifier(child))
+                    case let presenter as DebugPresenter:
+                        DebugMenuView(presenter: presenter)
+                            .id(ObjectIdentifier(child))
+                    case let presenter as MoreShowsPresenter:
+                        MoreShowsView(presenter: presenter)
+                            .id(ObjectIdentifier(child))
+                    default:
+                        EmptyView()
+                    }
+                } else {
                     EmptyView()
                 }
             }
@@ -68,14 +73,19 @@ struct RootNavigationView: View {
             isPresented: Binding(
                 get: { episodeSheetSlot.child != nil },
                 set: { isPresented in
-                    if !isPresented, let child = episodeSheetSlot.child?.instance as? EpisodeSheetChild {
-                        child.presenter.dispatch(action: EpisodeDetailSheetActionDismiss())
+                    if !isPresented,
+                       let sheet = episodeSheetSlot.child?.instance as? SheetDestination<AnyObject>,
+                       let presenter = sheet.presenter as? EpisodeSheetPresenter
+                    {
+                        presenter.dispatch(action: EpisodeSheetActionDismiss())
                     }
                 }
             )
         ) {
-            if let child = episodeSheetSlot.child?.instance as? EpisodeSheetChild {
-                EpisodeDetailSheetView(presenter: child.presenter)
+            if let sheet = episodeSheetSlot.child?.instance as? SheetDestination<AnyObject>,
+               let presenter = sheet.presenter as? EpisodeSheetPresenter
+            {
+                EpisodeDetailSheetView(presenter: presenter)
             }
         }
         .onChange(of: themeState.appTheme) { _, newTheme in

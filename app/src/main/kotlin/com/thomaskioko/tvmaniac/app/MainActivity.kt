@@ -18,13 +18,13 @@ import androidx.compose.runtime.getValue
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import com.thomaskioko.root.model.DeepLinkDestination
 import com.thomaskioko.tvmaniac.app.di.ActivityGraph
 import com.thomaskioko.tvmaniac.app.ui.RootScreen
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager.Companion.EXTRA_FROM_NOTIFICATION
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager.Companion.EXTRA_SHOW_ID
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
-import com.thomaskioko.tvmaniac.navigation.model.DeepLinkDestination
 
 public class MainActivity : ComponentActivity() {
     private lateinit var graph: ActivityGraph

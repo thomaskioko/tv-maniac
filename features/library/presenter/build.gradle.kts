@@ -1,0 +1,40 @@
+plugins {
+    alias(libs.plugins.app.kmp)
+}
+
+scaffold {
+    useMetro()
+    optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
+}
+
+kotlin {
+    sourceSets {
+        commonMain {
+            dependencies {
+                api(projects.core.view)
+                implementation(projects.data.library.api)
+                implementation(projects.data.traktauth.api)
+                implementation(projects.core.base)
+                implementation(projects.core.logger.api)
+                implementation(projects.navigation.api)
+                implementation(projects.features.home.nav.api)
+                implementation(projects.features.library.nav.api)
+                implementation(projects.features.showDetails.nav.api)
+                implementation(projects.domain.library)
+
+                api(libs.decompose.decompose)
+                api(libs.essenty.lifecycle)
+                api(libs.kotlinx.collections)
+            }
+        }
+
+        commonTest {
+            dependencies {
+                implementation(projects.core.logger.testing)
+                implementation(projects.data.library.testing)
+
+                implementation(libs.bundles.unittest)
+            }
+        }
+    }
+}
