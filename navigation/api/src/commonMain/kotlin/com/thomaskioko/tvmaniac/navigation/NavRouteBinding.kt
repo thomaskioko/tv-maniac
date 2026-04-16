@@ -4,9 +4,12 @@ import kotlinx.serialization.KSerializer
 import kotlin.reflect.KClass
 
 /**
- * Entry pairing a [NavRoute] subclass with its generated [KSerializer].
- * Features contribute one of these via `@Provides @IntoSet` next to their `NavDestination`
- * so the root presenter can build a single polymorphic serializer for Decompose state keeping.
+ * Pairs a [NavRoute] subclass with its generated [KSerializer].
+ *
+ * Features contribute one entry per route via `@Provides @IntoSet` in the same DI module as their
+ * [NavDestination], typically inside a `@ContributesTo(ActivityScope::class) interface`. The
+ * contributions are collected as a `Set<NavRouteBinding<*>>` and folded into the polymorphic
+ * [NavRouteSerializer] used by Decompose's `childStack` so stacks survive process death.
  */
 public data class NavRouteBinding<T : NavRoute>(
     public val kClass: KClass<T>,

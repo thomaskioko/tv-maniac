@@ -5,24 +5,20 @@ import com.arkivanov.decompose.ComponentContext
 /**
  * Factory for creating [RootChild] instances from a [NavRoute].
  *
- * Each feature contributes an implementation via DI multibinding. The root presenter
- * collects all contributions as a `Set<NavDestination>` and dispatches to the matching
- * one when creating a new screen in the navigation stack.
+ * Each feature contributes one implementation via `@ContributesIntoSet(ActivityScope::class)`.
+ * The root presenter collects every contribution as a `Set<NavDestination>` and, when a new
+ * stack entry is created, walks the set, picks the first destination whose [matches] returns
+ * `true`, and delegates to [createChild]. This replaces a central when-block over a sealed
+ * hierarchy so adding a new screen only touches its own feature module.
  */
 public interface NavDestination {
-    /**
-     * Returns `true` if this destination can handle the given [route].
-     *
-     * @param route The navigation route to check
-     */
+    /** Returns `true` if this destination can handle [route]. */
     public fun matches(route: NavRoute): Boolean
 
     /**
-     * Creates a [RootChild] for the given [route] and [componentContext].
-     * Only called when [matches] returns `true`.
+     * Creates the [RootChild] for [route] under [componentContext].
      *
-     * @param route The navigation route for the screen
-     * @param componentContext The Decompose component context for the new child
+     * Only called after [matches] returned `true` for the same [route].
      */
     public fun createChild(route: NavRoute, componentContext: ComponentContext): RootChild
 }

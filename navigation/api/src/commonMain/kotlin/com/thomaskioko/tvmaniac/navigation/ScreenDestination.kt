@@ -1,14 +1,15 @@
 package com.thomaskioko.tvmaniac.navigation
 
 /**
- * A generic typed wrapper that holds a presenter as a [RootChild] in the navigation stack.
+ * Generic typed [RootChild] that wraps a feature presenter.
  *
- * This replaces per-feature destination classes (e.g., `SettingsDestination`) with a single
- * generic wrapper, keeping `navigation/api` free of presenter-specific types. The concrete
- * presenter type [T] is only known at the creation site (nav/implementation) and the
- * consumption site (UI layer), where it is pattern-matched to render the appropriate screen.
+ * Using a single generic wrapper avoids declaring a per-feature child class (for example
+ * `SettingsDestination`, `DebugDestination`) and keeps `navigation/api` free of presenter-
+ * specific types. The concrete presenter type [T] is known only at the creation site
+ * (the feature's [NavDestination]) and at the consumption site (the platform UI), which
+ * pattern-matches on `presenter` to render the correct screen.
  *
- * @param T The presenter type held by this destination
- * @param presenter The presenter instance for the screen
+ * @param T the presenter type held by this destination
+ * @param presenter the presenter instance for the screen
  */
 public class ScreenDestination<out T : Any>(public val presenter: T) : RootChild
