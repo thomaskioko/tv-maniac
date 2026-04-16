@@ -9,7 +9,6 @@ import com.arkivanov.decompose.value.Value
 import com.thomaskioko.root.model.DeepLinkDestination
 import com.thomaskioko.root.model.NotificationPermissionState
 import com.thomaskioko.root.model.ThemeState
-import com.thomaskioko.root.nav.EpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.core.base.extensions.asStateFlow
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
@@ -34,6 +33,7 @@ import com.thomaskioko.tvmaniac.navigation.SheetChild
 import com.thomaskioko.tvmaniac.navigation.SheetChildFactory
 import com.thomaskioko.tvmaniac.navigation.SheetConfig
 import com.thomaskioko.tvmaniac.navigation.SheetConfigSerializer
+import com.thomaskioko.tvmaniac.navigation.SheetNavigator
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
@@ -68,7 +68,7 @@ public class DefaultRootPresenter(
     navRouteSerializer: NavRouteSerializer,
     private val sheetChildFactories: Set<SheetChildFactory>,
     sheetConfigSerializer: SheetConfigSerializer,
-    episodeSheetNavigator: EpisodeSheetNavigator,
+    sheetNavigator: SheetNavigator,
     navEventBus: NavEventBus,
     private val traktAuthRepository: TraktAuthRepository,
     private val updateUserProfileData: UpdateUserProfileData,
@@ -144,9 +144,9 @@ public class DefaultRootPresenter(
     override val childStackValue: Value<ChildStack<*, RootChild>> =
         childStack.asValue(coroutineScope)
 
-    private val episodeSheetSlotRouter: Value<ChildSlot<*, SheetChild>> = childSlot(
-        source = episodeSheetNavigator.getSlotNavigation(),
-        key = "EpisodeSheetSlotKey",
+    private val sheetSlotRouter: Value<ChildSlot<*, SheetChild>> = childSlot(
+        source = sheetNavigator.getSlotNavigation(),
+        key = "SheetSlotKey",
         serializer = sheetConfigSerializer.serializer,
         handleBackButton = true,
     ) { config, childComponentContext ->
@@ -154,7 +154,7 @@ public class DefaultRootPresenter(
     }
 
     override val episodeSheetSlot: StateFlow<ChildSlot<*, SheetChild>> =
-        episodeSheetSlotRouter.asStateFlow(componentContext.componentCoroutineScope())
+        sheetSlotRouter.asStateFlow(componentContext.componentCoroutineScope())
 
     override val episodeSheetSlotValue: Value<ChildSlot<*, SheetChild>> =
         episodeSheetSlot.asValue(coroutineScope)

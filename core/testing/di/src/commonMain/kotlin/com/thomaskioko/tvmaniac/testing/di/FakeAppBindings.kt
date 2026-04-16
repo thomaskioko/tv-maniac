@@ -2,6 +2,8 @@ package com.thomaskioko.tvmaniac.testing.di
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.slot.SlotNavigation
+import com.arkivanov.decompose.router.slot.activate
+import com.arkivanov.decompose.router.slot.dismiss
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.thomaskioko.root.nav.EpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.appconfig.ApplicationInfo
@@ -59,7 +61,9 @@ import com.thomaskioko.tvmaniac.navigation.SheetChildFactory
 import com.thomaskioko.tvmaniac.navigation.SheetConfig
 import com.thomaskioko.tvmaniac.navigation.SheetConfigBinding
 import com.thomaskioko.tvmaniac.navigation.SheetConfigSerializer
+import com.thomaskioko.tvmaniac.navigation.SheetNavigator
 import com.thomaskioko.tvmaniac.navigation.controllers.DefaultEpisodeSheetNavigator
+import com.thomaskioko.tvmaniac.navigation.controllers.DefaultSheetNavigator
 import com.thomaskioko.tvmaniac.navigation.controllers.DefaultHomeTabNavigator
 import com.thomaskioko.tvmaniac.presenter.root.DefaultRootPresenter
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
@@ -118,6 +122,7 @@ import kotlinx.coroutines.flow.flowOf
         TokenRefreshWorker::class,
         UpNextSyncWorker::class,
         DefaultEpisodeSheetNavigator::class,
+        DefaultSheetNavigator::class,
         DefaultDiscoverNavigator::class,
         DefaultHomeTabNavigator::class,
     ],
@@ -264,7 +269,16 @@ public object FakeAppBindings {
             override fun dismissEpisodeSheet() { }
             override fun dismissAndShowShowDetails(showTraktId: Long) { }
             override fun dismissAndShowSeasonDetails(showTraktId: Long, seasonId: Long, seasonNumber: Long) { }
-            override fun getSlotNavigation(): SlotNavigation<SheetConfig> = SlotNavigation()
+        }
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideSheetNavigator(): SheetNavigator =
+        object : SheetNavigator {
+            private val slotNavigation = SlotNavigation<SheetConfig>()
+            override fun activate(config: SheetConfig) { slotNavigation.activate(config) }
+            override fun dismiss() { slotNavigation.dismiss() }
+            override fun getSlotNavigation(): SlotNavigation<SheetConfig> = slotNavigation
         }
 
     @Provides
