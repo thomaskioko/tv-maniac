@@ -4,8 +4,6 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.router.slot.SlotNavigation
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.thomaskioko.root.model.EpisodeSheetConfig
-import com.thomaskioko.root.model.ScreenSource
 import com.thomaskioko.root.nav.EpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
@@ -15,6 +13,8 @@ import com.thomaskioko.tvmaniac.domain.calendar.CalendarEpisodeFormatter
 import com.thomaskioko.tvmaniac.domain.calendar.CalendarWeekCalculator
 import com.thomaskioko.tvmaniac.domain.calendar.FetchCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.calendar.ObserveCalendarInteractor
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
+import com.thomaskioko.tvmaniac.navigation.SheetConfig
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
@@ -430,14 +430,14 @@ internal class CalendarPresenterTest {
         return CalendarPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             episodeSheetNavigator = object : EpisodeSheetNavigator {
-                private val slotNavigation = SlotNavigation<EpisodeSheetConfig>()
+                private val slotNavigation = SlotNavigation<SheetConfig>()
                 override fun showEpisodeSheet(episodeId: Long, source: ScreenSource) {
                     onEpisodeLongPressed(episodeId)
                 }
                 override fun dismissEpisodeSheet() {}
                 override fun dismissAndShowShowDetails(showTraktId: Long) {}
                 override fun dismissAndShowSeasonDetails(showTraktId: Long, seasonId: Long, seasonNumber: Long) {}
-                override fun getSlotNavigation(): SlotNavigation<EpisodeSheetConfig> = slotNavigation
+                override fun getSlotNavigation(): SlotNavigation<SheetConfig> = slotNavigation
             },
             observeCalendarInteractor = observeCalendarInteractor,
             fetchCalendarInteractor = fetchCalendarInteractor,

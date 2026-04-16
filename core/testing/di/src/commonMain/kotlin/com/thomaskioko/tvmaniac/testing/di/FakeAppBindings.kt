@@ -3,8 +3,6 @@ package com.thomaskioko.tvmaniac.testing.di
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.slot.SlotNavigation
 import com.arkivanov.decompose.router.stack.StackNavigation
-import com.thomaskioko.root.model.EpisodeSheetConfig
-import com.thomaskioko.root.model.ScreenSource
 import com.thomaskioko.root.nav.EpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.appconfig.ApplicationInfo
 import com.thomaskioko.tvmaniac.appconfig.DefaultTmdbConfig
@@ -38,6 +36,8 @@ import com.thomaskioko.tvmaniac.discover.presenter.di.DefaultDiscoverNavigator
 import com.thomaskioko.tvmaniac.domain.library.LibrarySyncWorker
 import com.thomaskioko.tvmaniac.domain.notifications.EpisodeNotificationWorker
 import com.thomaskioko.tvmaniac.domain.upnext.UpNextSyncWorker
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetConfig
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.genreshows.nav.GenreShowsRoute
 import com.thomaskioko.tvmaniac.home.nav.HomeTabNavigator
 import com.thomaskioko.tvmaniac.home.nav.di.model.HomeConfig
@@ -46,6 +46,7 @@ import com.thomaskioko.tvmaniac.locale.testing.FakeLocaleProvider
 import com.thomaskioko.tvmaniac.navigation.DefaultNavEventBus
 import com.thomaskioko.tvmaniac.navigation.DefaultNavRouteSerializer
 import com.thomaskioko.tvmaniac.navigation.DefaultNavigator
+import com.thomaskioko.tvmaniac.navigation.DefaultSheetConfigSerializer
 import com.thomaskioko.tvmaniac.navigation.NavDestination
 import com.thomaskioko.tvmaniac.navigation.NavEventBus
 import com.thomaskioko.tvmaniac.navigation.NavRoute
@@ -54,10 +55,12 @@ import com.thomaskioko.tvmaniac.navigation.NavRouteSerializer
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.RootChild
 import com.thomaskioko.tvmaniac.navigation.SheetChild
+import com.thomaskioko.tvmaniac.navigation.SheetChildFactory
+import com.thomaskioko.tvmaniac.navigation.SheetConfig
+import com.thomaskioko.tvmaniac.navigation.SheetConfigBinding
+import com.thomaskioko.tvmaniac.navigation.SheetConfigSerializer
 import com.thomaskioko.tvmaniac.navigation.controllers.DefaultEpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.navigation.controllers.DefaultHomeTabNavigator
-import com.thomaskioko.tvmaniac.navigation.EpisodeSheetChildFactory
-import com.thomaskioko.tvmaniac.presentation.episodedetail.di.DefaultEpisodeSheetChildFactory
 import com.thomaskioko.tvmaniac.presenter.root.DefaultRootPresenter
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
@@ -114,7 +117,6 @@ import kotlinx.coroutines.flow.flowOf
         LibrarySyncWorker::class,
         TokenRefreshWorker::class,
         UpNextSyncWorker::class,
-        DefaultEpisodeSheetChildFactory::class,
         DefaultEpisodeSheetNavigator::class,
         DefaultDiscoverNavigator::class,
         DefaultHomeTabNavigator::class,
@@ -262,7 +264,7 @@ public object FakeAppBindings {
             override fun dismissEpisodeSheet() { }
             override fun dismissAndShowShowDetails(showTraktId: Long) { }
             override fun dismissAndShowSeasonDetails(showTraktId: Long, seasonId: Long, seasonNumber: Long) { }
-            override fun getSlotNavigation(): SlotNavigation<EpisodeSheetConfig> = SlotNavigation()
+            override fun getSlotNavigation(): SlotNavigation<SheetConfig> = SlotNavigation()
         }
 
     @Provides
@@ -312,13 +314,27 @@ public object FakeAppBindings {
 
     @Provides
     @SingleIn(AppScope::class)
-    public fun provideEpisodeSheetChildFactory(): EpisodeSheetChildFactory =
-        object : EpisodeSheetChildFactory {
+    public fun provideSheetChildFactories(): Set<SheetChildFactory> = setOf(
+        object : SheetChildFactory {
+            override fun matches(config: SheetConfig): Boolean = config is EpisodeSheetConfig
             override fun createChild(
-                config: EpisodeSheetConfig,
+                config: SheetConfig,
                 componentContext: ComponentContext,
             ): SheetChild = object : SheetChild {}
-        }
+        },
+    )
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideSheetConfigBindings(): Set<SheetConfigBinding<*>> = setOf(
+        SheetConfigBinding(EpisodeSheetConfig::class, EpisodeSheetConfig.serializer()),
+    )
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideSheetConfigSerializer(
+        bindings: Set<SheetConfigBinding<*>>,
+    ): SheetConfigSerializer = DefaultSheetConfigSerializer(bindings)
 
     @Provides
     @SingleIn(AppScope::class)

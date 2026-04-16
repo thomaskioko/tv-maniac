@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.presentation.calendar
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
-import com.thomaskioko.root.model.ScreenSource
 import com.thomaskioko.root.nav.EpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
@@ -15,6 +14,7 @@ import com.thomaskioko.tvmaniac.domain.calendar.CalendarWeekCalculator
 import com.thomaskioko.tvmaniac.domain.calendar.CalendarWeekCalculator.Companion.DAYS_IN_WEEK
 import com.thomaskioko.tvmaniac.domain.calendar.FetchCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.calendar.ObserveCalendarInteractor
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarEmpty
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarLoginRequired
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarMoreEpisodes

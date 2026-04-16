@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.presentation.upnext
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
-import com.thomaskioko.root.model.ScreenSource
 import com.thomaskioko.root.nav.EpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
@@ -17,6 +16,7 @@ import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.RefreshUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.model.UpNextSortOption
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.presentation.upnext.model.UpNextEpisodeUiModel
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute

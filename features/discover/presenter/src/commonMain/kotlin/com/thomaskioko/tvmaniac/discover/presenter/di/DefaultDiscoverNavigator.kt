@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.discover.presenter.di
 
-import com.thomaskioko.root.model.ScreenSource
 import com.thomaskioko.root.nav.EpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.discover.nav.DiscoverNavigator
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.home.nav.HomeTabNavigator
 import com.thomaskioko.tvmaniac.moreshows.nav.MoreShowsRoute
 import com.thomaskioko.tvmaniac.navigation.Navigator

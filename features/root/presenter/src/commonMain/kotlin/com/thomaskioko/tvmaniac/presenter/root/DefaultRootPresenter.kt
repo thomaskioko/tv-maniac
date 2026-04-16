@@ -7,7 +7,6 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.root.model.DeepLinkDestination
-import com.thomaskioko.root.model.EpisodeSheetConfig
 import com.thomaskioko.root.model.NotificationPermissionState
 import com.thomaskioko.root.model.ThemeState
 import com.thomaskioko.root.nav.EpisodeSheetNavigator
@@ -32,7 +31,9 @@ import com.thomaskioko.tvmaniac.navigation.NavRouteSerializer
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.RootChild
 import com.thomaskioko.tvmaniac.navigation.SheetChild
-import com.thomaskioko.tvmaniac.navigation.EpisodeSheetChildFactory
+import com.thomaskioko.tvmaniac.navigation.SheetChildFactory
+import com.thomaskioko.tvmaniac.navigation.SheetConfig
+import com.thomaskioko.tvmaniac.navigation.SheetConfigSerializer
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
@@ -65,7 +66,8 @@ public class DefaultRootPresenter(
     private val navigator: Navigator,
     private val navDestinations: Set<NavDestination>,
     navRouteSerializer: NavRouteSerializer,
-    private val episodeSheetChildFactory: EpisodeSheetChildFactory,
+    private val sheetChildFactories: Set<SheetChildFactory>,
+    sheetConfigSerializer: SheetConfigSerializer,
     episodeSheetNavigator: EpisodeSheetNavigator,
     navEventBus: NavEventBus,
     private val traktAuthRepository: TraktAuthRepository,
@@ -145,10 +147,10 @@ public class DefaultRootPresenter(
     private val episodeSheetSlotRouter: Value<ChildSlot<*, SheetChild>> = childSlot(
         source = episodeSheetNavigator.getSlotNavigation(),
         key = "EpisodeSheetSlotKey",
-        serializer = EpisodeSheetConfig.serializer(),
+        serializer = sheetConfigSerializer.serializer,
         handleBackButton = true,
     ) { config, childComponentContext ->
-        episodeSheetChildFactory.createChild(config, childComponentContext)
+        createSheet(config, childComponentContext)
     }
 
     override val episodeSheetSlot: StateFlow<ChildSlot<*, SheetChild>> =
@@ -261,6 +263,15 @@ public class DefaultRootPresenter(
         val destination = navDestinations.firstOrNull { it.matches(route) }
             ?: error("No NavDestination found for route: $route")
         return destination.createChild(route, componentContext)
+    }
+
+    private fun createSheet(
+        config: SheetConfig,
+        componentContext: ComponentContext,
+    ): SheetChild {
+        val factory = sheetChildFactories.firstOrNull { it.matches(config) }
+            ?: error("No SheetChildFactory found for config: $config")
+        return factory.createChild(config, componentContext)
     }
 
     @AssistedFactory

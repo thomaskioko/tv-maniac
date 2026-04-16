@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.seasondetails.presenter
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
-import com.thomaskioko.root.model.ScreenSource
 import com.thomaskioko.root.nav.EpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
@@ -28,6 +27,7 @@ import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveSeasonWatchProgressP
 import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveUnwatchedInPreviousSeasonsInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveUnwatchedInPreviousSeasonsParams
 import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsInteractor
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam

@@ -5,8 +5,6 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.router.slot.SlotNavigation
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.thomaskioko.root.model.EpisodeSheetConfig
-import com.thomaskioko.root.model.ScreenSource
 import com.thomaskioko.root.nav.EpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
@@ -28,8 +26,10 @@ import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeUnwatchedCall
 import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall
 import com.thomaskioko.tvmaniac.episodes.testing.MarkSeasonWatchedCall
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.navigation.NavRoute
 import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.navigation.SheetConfig
 import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.seasondetails.presenter.data.buildSeasonDetailsLoaded
@@ -1202,14 +1202,14 @@ class SeasonPresenterTest {
                 override fun getStackNavigation(): StackNavigation<NavRoute> = navigation
             },
             episodeSheetNavigator = object : EpisodeSheetNavigator {
-                private val slotNavigation = SlotNavigation<EpisodeSheetConfig>()
+                private val slotNavigation = SlotNavigation<SheetConfig>()
                 override fun showEpisodeSheet(episodeId: Long, source: ScreenSource) {
                     onEpisodeClick(episodeId)
                 }
                 override fun dismissEpisodeSheet() {}
                 override fun dismissAndShowShowDetails(showTraktId: Long) {}
                 override fun dismissAndShowSeasonDetails(showTraktId: Long, seasonId: Long, seasonNumber: Long) {}
-                override fun getSlotNavigation(): SlotNavigation<EpisodeSheetConfig> = slotNavigation
+                override fun getSlotNavigation(): SlotNavigation<SheetConfig> = slotNavigation
             },
             observableSeasonDetailsInteractor = ObservableSeasonDetailsInteractor(
                 seasonDetailsRepository = seasonDetailsRepository,
