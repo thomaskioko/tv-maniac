@@ -1,4 +1,4 @@
-package com.thomaskioko.root.model
+package com.thomaskioko.tvmaniac.espisodedetails.nav.model
 
 import kotlinx.serialization.Serializable
 
