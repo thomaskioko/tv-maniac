@@ -15,7 +15,6 @@ kotlin {
                 api(libs.essenty.lifecycle)
 
                 implementation(projects.core.base)
-                implementation(projects.features.root.nav)
 
                 implementation(libs.coroutines.core)
             }

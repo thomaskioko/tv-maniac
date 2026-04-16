@@ -3,11 +3,12 @@ package com.thomaskioko.tvmaniac.navigation.controllers
 import com.arkivanov.decompose.router.slot.SlotNavigation
 import com.arkivanov.decompose.router.slot.activate
 import com.arkivanov.decompose.router.slot.dismiss
-import com.thomaskioko.root.model.EpisodeSheetConfig
-import com.thomaskioko.root.model.ScreenSource
 import com.thomaskioko.root.nav.EpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetConfig
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.navigation.SheetConfig
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
@@ -20,7 +21,7 @@ import dev.zacsweers.metro.SingleIn
 public class DefaultEpisodeSheetNavigator(
     private val navigator: Navigator,
 ) : EpisodeSheetNavigator {
-    private val slotNavigation = SlotNavigation<EpisodeSheetConfig>()
+    private val slotNavigation = SlotNavigation<SheetConfig>()
 
     override fun showEpisodeSheet(episodeId: Long, source: ScreenSource) {
         slotNavigation.activate(EpisodeSheetConfig(episodeId = episodeId, source = source))
@@ -48,5 +49,5 @@ public class DefaultEpisodeSheetNavigator(
         )
     }
 
-    override fun getSlotNavigation(): SlotNavigation<EpisodeSheetConfig> = slotNavigation
+    override fun getSlotNavigation(): SlotNavigation<SheetConfig> = slotNavigation
 }
