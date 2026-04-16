@@ -1,14 +1,11 @@
 package com.thomaskioko.tvmaniac.navigation.controllers
 
-import com.arkivanov.decompose.router.slot.SlotNavigation
-import com.arkivanov.decompose.router.slot.activate
-import com.arkivanov.decompose.router.slot.dismiss
 import com.thomaskioko.root.nav.EpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetConfig
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.navigation.Navigator
-import com.thomaskioko.tvmaniac.navigation.SheetConfig
+import com.thomaskioko.tvmaniac.navigation.SheetNavigator
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
@@ -20,24 +17,24 @@ import dev.zacsweers.metro.SingleIn
 @ContributesBinding(ActivityScope::class)
 public class DefaultEpisodeSheetNavigator(
     private val navigator: Navigator,
+    private val sheetNavigator: SheetNavigator,
 ) : EpisodeSheetNavigator {
-    private val slotNavigation = SlotNavigation<SheetConfig>()
 
     override fun showEpisodeSheet(episodeId: Long, source: ScreenSource) {
-        slotNavigation.activate(EpisodeSheetConfig(episodeId = episodeId, source = source))
+        sheetNavigator.activate(EpisodeSheetConfig(episodeId = episodeId, source = source))
     }
 
     override fun dismissEpisodeSheet() {
-        slotNavigation.dismiss()
+        sheetNavigator.dismiss()
     }
 
     override fun dismissAndShowShowDetails(showTraktId: Long) {
-        slotNavigation.dismiss()
+        sheetNavigator.dismiss()
         navigator.pushToFront(ShowDetailsRoute(ShowDetailsParam(id = showTraktId)))
     }
 
     override fun dismissAndShowSeasonDetails(showTraktId: Long, seasonId: Long, seasonNumber: Long) {
-        slotNavigation.dismiss()
+        sheetNavigator.dismiss()
         navigator.pushNew(
             SeasonDetailsRoute(
                 SeasonDetailsUiParam(
@@ -48,6 +45,4 @@ public class DefaultEpisodeSheetNavigator(
             ),
         )
     }
-
-    override fun getSlotNavigation(): SlotNavigation<SheetConfig> = slotNavigation
 }
