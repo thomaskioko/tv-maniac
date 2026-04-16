@@ -1,6 +1,15 @@
 # Presentation Layer
 
+> **What this covers**: how presenters compose state from interactors, how loading and errors are tracked, and how Android Compose and iOS SwiftUI consume the same shared state.
+> **Prerequisites**: read [Navigation](NAVIGATION.md) for how presenters are created and scoped. Interactor and SubjectInteractor are summarised in the root README [Key Concepts](../../README.md#key-concepts).
+
 The presentation layer is split between **shared KMP presenters** that manage state and **platform-specific UI** that renders it. Business logic never lives in the UI layer.
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Presenter Pattern](#presenter-pattern)
+- [Platform UI Binding](#platform-ui-binding)
 
 ## Overview
 
@@ -99,4 +108,4 @@ The iOS app imports the shared KMP framework and follows the same contract: obse
 | State combination | Presenter |
 | Loading/error tracking | Presenter (via collectStatus) |
 | UI rendering | Platform UI (Compose / SwiftUI) |
-| Navigation triggers | Presenter (via callbacks) |
+| Navigation triggers | Presenter (via Navigator or NavEventBus) |

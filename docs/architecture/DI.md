@@ -1,10 +1,26 @@
 # Dependency Injection
 
+> **What this covers**: scopes, dependency graphs, graph extensions, binding containers, qualifiers, assisted injection, and how tests swap in fakes.
+> **Prerequisites**: read [Modularization](MODULARIZATION.md) for the api / implementation boundary. Metro is summarised in the root README [Key Concepts](../../README.md#key-concepts).
+
 The project uses [Metro](https://zacsweers.github.io/metro/latest/) for compile-time dependency injection. Metro is a Kotlin compiler plugin that treats aggregation as a first-class citizen, so there is no KSP processor and no runtime reflection. Every binding is resolved at graph-processing time.
 
 The primary entry points in Metro are **dependency graphs**: interfaces annotated with `@DependencyGraph` that expose types from the object graph via accessor properties or functions. Those accessors act as the roots from which the rest of the graph is resolved.
 
 This document covers the concepts that matter when adding or touching DI code in this project: scopes, naming, binding containers, qualifiers, assisted injection, initializers, graph creation, and testing.
+
+## Table of Contents
+
+- [Scope Hierarchy](#scope-hierarchy)
+- [Naming Conventions](#naming-conventions)
+- [Binding Containers](#binding-containers)
+- [Qualifiers](#qualifiers)
+- [Assisted Injection](#assisted-injection)
+- [App Initializers](#app-initializers)
+- [Graph Creation](#graph-creation)
+- [API / Implementation Boundary](#api--implementation-boundary)
+- [Testing](#testing)
+- [Adding a New Injectable](#adding-a-new-injectable)
 
 ## Scope Hierarchy
 
@@ -17,7 +33,7 @@ graph TD
 
     subgraph ACS["ActivityScope"]
         direction LR
-        RN["RootNavigator / Navigators"]
+        RN["Navigator / Stateful controllers"]
     end
 
     subgraph SS["ScreenScope"]
@@ -69,7 +85,7 @@ Lives alongside `AppScope` in tests. The `TestJvmGraph` / `TestIosGraph` root gr
 
 ## Naming Conventions
 
-Metro distinguishes three DI concepts that used to collapse into a single `*Component` name under kotlin-inject. This project maps them to explicit suffixes so there is exactly one place to look for each shape:
+Metro distinguishes three DI concepts. This project maps them to explicit suffixes so there is exactly one place to look for each shape:
 
 | Metro annotation                       | Suffix              | Purpose                                                                                                                                | Example                                                                     |
 | -------------------------------------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
@@ -141,7 +157,8 @@ Most presenters use plain `@Inject`. Their `ComponentContext` is provided by a `
 @Inject
 public class HomePresenter(
     componentContext: ComponentContext,              // provided by ScreenScope
-    private val homeTabGraphFactory: HomeTabGraph.Factory,
+    homeTabNavigator: HomeTabNavigator,
+    private val tabDestinations: Set<TabDestination>,
     private val observeUserProfileInteractor: ObserveUserProfileInteractor,
 ) : ComponentContext by componentContext
 ```
@@ -157,7 +174,7 @@ Presenters that need runtime parameters beyond `ComponentContext` use `@Assisted
 public class ShowDetailsPresenter(
     componentContext: ComponentContext,              // provided by ScreenScope
     @Assisted private val param: ShowDetailsParam,  // screen-specific
-    private val navigator: ShowDetailsNavigator,
+    private val navigator: Navigator,
     private val showDetailsInteractor: ShowDetailsInteractor,
 ) : ComponentContext by componentContext {
 

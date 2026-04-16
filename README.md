@@ -82,15 +82,26 @@ For detailed documentation:
 
 ---
 
+## Key Concepts
+
+A few foundational libraries and patterns drive the architecture.
+
+- **[Decompose](https://arkivanov.github.io/Decompose/)**. Shared navigation and lifecycle for KMP. The navigation stack, child components, and back handling all live in shared Kotlin code. Android (Compose) and iOS (SwiftUI) only render the active child. See [Navigation](docs/architecture/NAVIGATION.md).
+- **[Metro](https://zacsweers.github.io/metro/latest/)**. Compile time dependency injection. There is no KSP processor and no runtime reflection. Modules expose interfaces from `api/` packages, implementations are bound with `@ContributesBinding`, and the full graph is assembled at the app entry point. See [Dependency Injection](docs/architecture/DI.md).
+- **[Store pattern](https://store.mobilenativefoundation.org/)**. One fetch and cache pipeline per data type. A `Store` combines a `Fetcher` (network), a `SourceOfTruth` (SQLDelight DAO), and a `Validator` (cache freshness via `RequestManager`). Presenters never call the network or DAO directly. See [Data Layer](docs/architecture/DATA_LAYER.md).
+- **Interactor and SubjectInteractor**. Thin orchestration in the domain layer. An `Interactor` runs a one shot action (mark watched, sign in). A `SubjectInteractor` exposes a continuous `Flow` of data (observe show details). Presenters compose these into screen state. See [Presentation Layer](docs/architecture/PRESENTATION_LAYER.md).
+
+---
+
 ## Tech Stack
+
+Architectural choices (Decompose, Metro, Store) are described in [Key Concepts](#key-concepts) above. The libraries below cover the rest of the shared and platform stack.
 
 **Shared (KMP)**
 - [Kotlin Coroutines](https://github.com/Kotlin/kotlinx.coroutines) - Concurrency
 - [Ktor](https://ktor.io/) - Networking
 - [SQLDelight](https://github.com/cashapp/sqldelight) - Local database
-- [Decompose](https://arkivanov.github.io/Decompose/) - Navigation and lifecycle
 - [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) - JSON serialization
-- [kotlin-inject-anvil](https://github.com/amzn/kotlin-inject-anvil) - Dependency injection
 - [Multiplatform Paging](https://github.com/cashapp/multiplatform-paging) - Pagination
 
 **Android**

@@ -1,15 +1,26 @@
 # Data Layer
 
+> **What this covers**: the Store pattern, the hybrid Trakt and TMDB strategy, cache validation, the SQLDelight database, and how errors propagate.
+> **Prerequisites**: skim the [Key Concepts](../../README.md#key-concepts) section for the Store pattern, then read [Modularization](MODULARIZATION.md) for where data modules live.
+
 The data layer handles all data fetching, caching, and persistence. It is built on the [Store pattern](https://store.mobilenativefoundation.org/) which provides a consistent approach to managing data from network and local sources.
+
+## Table of Contents
+
+- [Hybrid API Strategy](#hybrid-api-strategy)
+- [Store Pattern](#store-pattern)
+- [Cache Validation](#cache-validation)
+- [Database](#database)
+- [Error Handling](#error-handling)
 
 ## Hybrid API Strategy
 
 The app uses two external APIs, each serving a different purpose:
 
-| API | Purpose | Examples |
-|---|---|---|
-| **Trakt** | Show listings, user authentication, watchlist management | Popular shows, trending shows, watchlist, user profile |
-| **TMDB** | Show details, images (posters, backdrops), cast information | Show metadata, season details, trailers |
+| API       | Purpose                                                     | Examples                                               |
+|-----------|-------------------------------------------------------------|--------------------------------------------------------|
+| **Trakt** | Show listings, user authentication, watchlist management    | Popular shows, trending shows, watchlist, user profile |
+| **TMDB**  | Show details, images (posters, backdrops), cast information | Show metadata, season details, trailers                |
 
 This means some features require data from **both** APIs. For example, trending shows come from Trakt, but their poster images come from TMDB. The Store pattern handles this composition transparently — a single Store can fetch from multiple sources in its fetcher.
 
