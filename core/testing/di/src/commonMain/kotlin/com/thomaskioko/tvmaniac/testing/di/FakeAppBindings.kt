@@ -63,8 +63,8 @@ import com.thomaskioko.tvmaniac.navigation.SheetConfigBinding
 import com.thomaskioko.tvmaniac.navigation.SheetConfigSerializer
 import com.thomaskioko.tvmaniac.navigation.SheetNavigator
 import com.thomaskioko.tvmaniac.navigation.controllers.DefaultEpisodeSheetNavigator
-import com.thomaskioko.tvmaniac.navigation.controllers.DefaultSheetNavigator
 import com.thomaskioko.tvmaniac.navigation.controllers.DefaultHomeTabNavigator
+import com.thomaskioko.tvmaniac.navigation.controllers.DefaultSheetNavigator
 import com.thomaskioko.tvmaniac.presenter.root.DefaultRootPresenter
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
@@ -276,8 +276,12 @@ public object FakeAppBindings {
     public fun provideSheetNavigator(): SheetNavigator =
         object : SheetNavigator {
             private val slotNavigation = SlotNavigation<SheetConfig>()
-            override fun activate(config: SheetConfig) { slotNavigation.activate(config) }
-            override fun dismiss() { slotNavigation.dismiss() }
+            override fun activate(config: SheetConfig) {
+                slotNavigation.activate(config)
+            }
+            override fun dismiss() {
+                slotNavigation.dismiss()
+            }
             override fun getSlotNavigation(): SlotNavigation<SheetConfig> = slotNavigation
         }
 
