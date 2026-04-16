@@ -1,66 +1,21 @@
 # Navigation
 
-> **What this covers**: the navigation stack, route types, Navigator, scope hierarchy, and how features communicate without depending on each other.
-> **Prerequisites**: read [Modularization](MODULARIZATION.md) and [Dependency Injection](DI.md) first. Decompose is summarised in the root README [Key Concepts](../../README.md#key-concepts).
-
-The project uses [Decompose](https://arkivanov.github.io/Decompose/) for shared navigation across Android and iOS. Navigation state is managed entirely in shared KMP code. Platform UI simply observes and renders the current screen.
-
 ## Table of Contents
 
-- [Scope Hierarchy](#scope-hierarchy)
 - [Core Components](#core-components)
 - [Navigator pattern](#navigator-pattern)
 - [Feature-to-feature communication](#feature-to-feature-communication)
 - [Module structure](#module-structure)
 
-## Scope Hierarchy
+> **What this covers**: the navigation stack, route types, Navigator, and how features communicate without depending on each other.
+> **Prerequisites**: read [Modularization](modularization.md), [Dependency Injection](dependency-injection.md), and [Scope Hierarchy](scopes.md) first. Decompose is summarised in the root README [Key Concepts](../../README.md#key-concepts).
 
-Navigation and DI scopes are aligned. Each level in the navigation tree has a corresponding Metro scope that provides `ComponentContext` to its children.
+The project uses [Decompose](https://arkivanov.github.io/Decompose/) for shared navigation across Android and iOS. Navigation state is managed entirely in shared KMP code. Platform UI simply observes and renders the current screen.
 
-```mermaid
-graph TD
-    subgraph AS["AppScope"]
-        direction LR
-        R["Repositories / Stores / Clients"]
-    end
+> [!IMPORTANT]
+> Feature navigators and route types must depend on `navigation/api` only, never on `navigation/implementation`. The implementation module is a private detail of the entry-point graph. Importing it from a feature module creates a hidden dependency on the DefaultNavigator class, breaks the API/implementation boundary, and makes the feature untestable without the full navigation stack.
 
-    subgraph ACS["ActivityScope"]
-        direction LR
-        RN["Navigator"]
-        RP["Root presenter"]
-        NAV["Stateful controllers (sheet host, tab host)"]
-    end
-
-    subgraph SS["Per-screen scope (one per root child)"]
-        direction LR
-        HP["Tab host presenter"]
-        SP["Standalone screen presenters"]
-        SDP["Parameterized presenter factories"]
-    end
-
-    subgraph TS["Tab scope (one per host-level tab)"]
-        direction LR
-        DIS["Tab presenters"]
-    end
-
-    subgraph PCS["Nested child scope"]
-        direction LR
-        UN["Inner pager presenters"]
-    end
-
-    AS ==> ACS
-    ACS ==> SS
-    SS ==> TS
-    TS ==> PCS
-
-    style AS fill:#FF9800,color:#fff,stroke:#E65100
-    style ACS fill:#4CAF50,color:#fff,stroke:#1B5E20
-    style SS fill:#2196F3,color:#fff,stroke:#0D47A1
-    style TS fill:#9C27B0,color:#fff,stroke:#4A148C
-    style PCS fill:#E91E63,color:#fff,stroke:#880E4F
-```
-
-Each scope is created from the parent scope through a `@GraphExtension.Factory` that takes the Decompose `ComponentContext` for the new child. There is no central per-screen graph: each feature owns its own per-screen graph extension co-located with its presenter, and parent presenters (the root presenter, a tab host) call the relevant factory when a child enters the stack. Nested scopes (a tab inside a tab host, an inner pager inside a tab) follow the same pattern, one factory per level.
+Navigation and DI scopes are aligned: each level in the navigation tree has a corresponding Metro scope. See [Scope Hierarchy](scopes.md) for the full scope tree and how each scope is created from its parent via `@GraphExtension.Factory`.
 
 ## Core Components
 
@@ -96,24 +51,20 @@ Because `NavRoute` is open, no central sealed hierarchy needs to know about ever
 
 The navigator interface in `navigation/api` is the only navigation API the average presenter ever sees. It pushes routes by type, never by config singleton.
 
-| Method | Purpose |
-|---|---|
-| `pushNew(route)` | Push a new screen onto the stack. |
-| `pop()` | Remove the top screen. |
-| `bringToFront(route)` | Bring an existing screen to the front, or push it if absent. |
-| `pushToFront(route)` | Push the route, removing any prior occurrence. |
-| `popTo(toIndex)` | Pop all screens above the given index. |
-| `getStackNavigation()` | Returns the underlying Decompose `StackNavigation<NavRoute>`. Used by the root presenter when building the `childStack`; not used from feature code. |
+- `pushNew(route)`: push a new screen onto the stack.
+- `pop()`: remove the top screen.
+- `bringToFront(route)`: bring an existing screen to the front, or push it if absent.
+- `pushToFront(route)`: push the route, removing any prior occurrence.
+- `popTo(toIndex)`: pop all screens above the given index.
+- `getStackNavigation()`: returns the underlying Decompose `StackNavigation<NavRoute>`. Used by the root presenter when building the `childStack`; not used from feature code.
 
 ### SheetNavigator
 
 `SheetNavigator` is the sheet-side counterpart to `Navigator`. It owns the single `SlotNavigation<SheetConfig>` that backs the root modal sheet slot. The root presenter injects it to source the `childSlot`. Feature presenters that need to open a sheet do not inject `SheetNavigator` directly; instead, they inject a typed feature navigator (such as `EpisodeSheetNavigator`) declared in the feature's `nav/api`.
 
-| Method | Purpose |
-|---|---|
-| `activate(config)` | Activate the given `SheetConfig` in the sheet slot, replacing any currently active sheet. |
-| `dismiss()` | Dismiss the currently active sheet, if any. |
-| `getSlotNavigation()` | Returns the underlying `SlotNavigation<SheetConfig>`. Used by the root presenter; not called from feature code. |
+- `activate(config)`: activate the given `SheetConfig` in the sheet slot, replacing any currently active sheet.
+- `dismiss()`: dismiss the currently active sheet, if any.
+- `getSlotNavigation()`: returns the underlying `SlotNavigation<SheetConfig>`. Used by the root presenter; not called from feature code.
 
 `DefaultSheetNavigator` in `navigation/implementation/controllers/` is the `@SingleIn(ActivityScope::class)` implementation. A feature-specific sheet navigator (for example, `EpisodeSheetNavigator`) keeps only its typed methods (`showEpisodeSheet`, `dismissEpisodeSheet`, etc.) and delegates `activate` and `dismiss` to an injected `SheetNavigator`. This means the `SlotNavigation` never lives in feature code.
 
@@ -136,14 +87,12 @@ Because the root presenter only depends on these sets, adding a screen or sheet 
 
 The stack and sheet families are parallel by design. Every concept on the stack side has a direct counterpart on the sheet side:
 
-| Stack (main `childStack`)                                    | Sheet (root modal `childSlot`)                                     |
-|--------------------------------------------------------------|--------------------------------------------------------------------|
-| `NavRoute` (open marker interface)                           | `SheetConfig` (open marker interface)                              |
-| `NavDestination` (matcher + child builder, returns `RootChild`) | `SheetChildFactory` (matcher + child builder, returns `SheetChild`) |
-| `NavRouteBinding<T>(kClass, serializer)`                     | `SheetConfigBinding<T>(kClass, serializer)`                        |
-| `NavRouteSerializer` (polymorphic `KSerializer<NavRoute>`)   | `SheetConfigSerializer` (polymorphic `KSerializer<SheetConfig>`)   |
-| `ScreenDestination<T>(presenter) : RootChild`                | `SheetDestination<T>(presenter) : SheetChild`                      |
-| `DefaultNavRouteSerializer` in `navigation/implementation`   | `DefaultSheetConfigSerializer` in `navigation/implementation`      |
+- `NavRoute` (open marker interface) / `SheetConfig` (open marker interface)
+- `NavDestination` (matcher + child builder, returns `RootChild`) / `SheetChildFactory` (matcher + child builder, returns `SheetChild`)
+- `NavRouteBinding<T>(kClass, serializer)` / `SheetConfigBinding<T>(kClass, serializer)`
+- `NavRouteSerializer` (polymorphic `KSerializer<NavRoute>`) / `SheetConfigSerializer` (polymorphic `KSerializer<SheetConfig>`)
+- `ScreenDestination<T>(presenter) : RootChild` / `SheetDestination<T>(presenter) : SheetChild`
+- `DefaultNavRouteSerializer` in `navigation/implementation` / `DefaultSheetConfigSerializer` in `navigation/implementation`
 
 ### Navigation event bus
 
@@ -172,6 +121,11 @@ features/search/
 ```
 
 The presenter injects the Navigator interface directly. There is no `SearchNavigator` and no `nav/implementation` module.
+
+To see this pattern in a real feature, read [`SearchShowsPresenter.kt`](../../features/search/presenter/src/commonMain/kotlin/com/thomaskioko/tvmaniac/search/presenter/SearchShowsPresenter.kt) alongside its route contract in [`SearchRoute.kt`](../../features/search/nav/api/src/commonMain/kotlin/com/thomaskioko/tvmaniac/search/nav/SearchRoute.kt). This shows how the presenter injects `Navigator` from `navigation/api` and pushes a route from a different feature's `nav/api` without importing that feature's presenter.
+
+> [!TIP]
+> When a parent presenter needs children to stay alive simultaneously (for example, a tab host whose tabs must each maintain their own state while the user swipes between them), use `childContext(key = "tabName")` rather than `childStack`. `childContext` creates an independent child `ComponentContext` that lives as long as the parent, so each tab presenter and its scope persist across tab switches. `childStack` is the right choice when only one child should be alive at a time.
 
 ## Feature-to-feature communication
 
@@ -238,17 +192,32 @@ graph LR
 The Discover presenter holds two pieces: the `Navigator` interface from `navigation/api` (the thing it calls) and `ShowDetailsRoute` from Show details' `nav/api` (the value it passes). It never depends on the Show details presenter or UI, and neither `ui` module crosses the feature boundary.
 
 
+The real pattern is in `SearchShowsPresenter` ([`SearchShowsPresenter.kt`](../../features/search/presenter/src/commonMain/kotlin/com/thomaskioko/tvmaniac/search/presenter/SearchShowsPresenter.kt)):
+
 ```kotlin
-class FeatureAPresenter(
+// features/search/presenter/.../SearchShowsPresenter.kt
+
+import com.thomaskioko.tvmaniac.navigation.Navigator           // from navigation/api
+import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute  // from features/show-details/nav/api
+import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
+
+@Inject
+public class SearchShowsPresenter(
+    componentContext: ComponentContext,
     private val navigator: Navigator,
-) {
-    fun onItemClicked(id: Long) {
-        navigator.pushNew(ShowDetailsRoute(ShowDetailsParam(id)))
+    // ... other dependencies
+) : ComponentContext by componentContext {
+
+    fun dispatch(action: SearchShowAction) {
+        when (action) {
+            is SearchShowClicked -> navigator.pushNew(ShowDetailsRoute(ShowDetailsParam(id = action.id)))
+            // ...
+        }
     }
 }
 ```
 
-Feature B never knows it was opened by A. The dependency goes one way: A reads B's route type. There is no presenter-to-presenter coupling.
+The import lines show what the search module actually depends on: `Navigator` from `navigation/api` and `ShowDetailsRoute` plus `ShowDetailsParam` from the show-details `nav/api` module. There is no import of anything from the show-details presenter or UI. Feature B never knows it was opened by A. The dependency goes one way: A reads B's route type. There is no presenter-to-presenter coupling.
 
 ### 2. Emit a cross-feature signal
 
@@ -264,13 +233,16 @@ For these cases, the controller exposes a navigator interface in a shared `nav/a
 
 ### Choosing between them
 
-| Need                                                                                      | Mechanism                                           |
-|-------------------------------------------------------------------------------------------|-----------------------------------------------------|
-| Open a specific screen owned by another feature                                           | Push that feature's route via the Navigator.        |
-| Tell every interested screen that something happened                                      | Emit a `NavEvent`.                                  |
-| Mutate state that lives in another feature's controller (tab selection, sheet visibility) | Inject that feature's stateful navigator interface. |
+Use **push a route** when feature A wants to open a specific screen owned by feature B.
+
+Use **emit a `NavEvent`** when the action is "something changed, every interested screen should react" and there is no single destination to push to.
+
+Use **inject a stateful navigator interface** when the action requires mutating state that lives in another feature's controller (tab selection, sheet visibility).
 
 These are the only sanctioned cross-feature paths. A presenter must never depend on another feature's presenter, UI, or `implementation` module.
+
+> [!WARNING]
+> Presenter-to-presenter dependencies are not allowed. If you find yourself wanting to call a method on another feature's presenter, the interaction belongs in one of the three cross-feature paths above. Shared types (params, route models) belong in `nav/api` modules. Shared signals belong in `NavEvent` on the event bus. Shared stateful behavior belongs in a navigator interface in a shared `nav/api` module.
 
 ## Module structure
 
@@ -302,3 +274,8 @@ features/{name}/
                     sheet features), per-screen scope marker class, optional stateful
                     navigator interface and shared model types.
 ```
+
+## Next Steps
+
+- [Presentation Layer](presentation-layer.md) - How presenters are built, how they compose state from interactors, and how platform UI consumes that state.
+- [Dependency Injection](dependency-injection.md) - How per-screen graph extensions are wired and how the activity scope hosts the Navigator binding.

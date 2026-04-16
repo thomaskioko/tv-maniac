@@ -1,12 +1,5 @@
 # Modularization
 
-> **What this covers**: the layers of modules in this project, how they depend on each other, and the shape each module type takes.
-> **Prerequisites**: skim the [Key Concepts](../../README.md#key-concepts) section in the root README if Metro, Decompose, or the Store pattern are new.
-
-The project is split across many Gradle modules grouped into a handful of archetypes. The module list is long, but the archetypes are few. Once you recognise them, the whole codebase becomes navigable.
-
-This document covers the layers that exist, how they depend on each other, and the shapes individual modules take. For the DI side of the story (scopes, graphs, binding containers) see [Dependency Injection](DI.md).
-
 ## Table of Contents
 
 - [Module Dependency Graph](#module-dependency-graph)
@@ -14,6 +7,14 @@ This document covers the layers that exist, how they depend on each other, and t
 - [Dependency Rules](#dependency-rules)
 - [Module Archetypes](#module-archetypes)
 - [Adding a New Feature](#adding-a-new-feature)
+
+> **What this covers**: the layers of modules in this project, how they depend on each other, and the shape each module type takes.
+> **Prerequisites**: skim the [Key Concepts](../../README.md#key-concepts) section in the root README if Metro, Decompose, or the Store pattern are new.
+
+This document covers the layers that exist, how they depend on each other, and the shapes individual modules take. For the DI side of the story (scopes, graphs, binding containers) see [Dependency Injection](dependency-injection.md).
+
+> [!IMPORTANT]
+> Modules depend on API modules only, never on `implementation/`. If you add a dependency on a concrete implementation module from a presenter or domain module, Metro will resolve the binding correctly at first, but the API/implementation boundary is broken and the module can no longer be tested in isolation using fakes.
 
 ## Module Dependency Graph
 
@@ -65,19 +66,27 @@ The diagram omits utility layers (`core/*`, `i18n/*`, `api/{tmdb,trakt}`, `data/
 
 ## Layers
 
-| Layer               | Modules                                                                      | Role                                                                                                                                                                                                                                                    |
-|---------------------|------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Entry points        | `:app`, `:ios-framework`                                                     | Wire the DI graph and host the app binary. Only these two see implementation modules.                                                                                                                                                                   |
-| Feature modules     | `features/{name}/presenter`, `features/{name}/ui`, `features/{name}/nav/api` | Co-located presenter (KMP), Android UI (Compose), and the feature's nav contract (route type, per-screen DI scope, and a navigator interface when navigation is stateful).                                                                              |
-| Root feature        | `features/root/presenter`, `features/root/ui`, `features/root/nav`           | The root presenter, the root composable, and shared root nav models (theme state, deep-link destinations, sheet-controller interface). Feature-specific sheet configs live in the owning feature's `nav/api`.                                          |
-| Navigation          | `navigation/api`, `navigation/implementation`                                | Cross-cutting navigation contracts (the Navigator interface, the open `NavRoute` interface, the SheetNavigator interface, the open `SheetConfig` interface, stack and sheet child markers, destination factories, route and sheet config binding registries, the navigation event bus) and their default implementations and binding container. |
-| Business logic      | `domain/*`                                                                   | Interactors. The only place business rules live.                                                                                                                                                                                                        |
-| Data contracts      | `data/*/api`                                                                 | Repository interfaces, data models, and query keys.                                                                                                                                                                                                     |
-| Data implementation | `data/*/implementation`                                                      | Stores, repositories, DAOs, and mappers.                                                                                                                                                                                                                |
-| Data infrastructure | `data/database`, `data/datastore`, `data/request-manager`                    | SQLDelight, preferences, and freshness/cache validation.                                                                                                                                                                                                |
-| Network             | `api/tmdb`, `api/trakt`                                                      | Ktor clients, request models, and auth plumbing.                                                                                                                                                                                                        |
-| Localization        | `i18n/*`                                                                     | Moko-generated string resources, the `Localizer` interface, and the code generator.                                                                                                                                                                     |
-| Core                | `core/*`                                                                     | Coroutine dispatchers, logger, connectivity, utilities, design system base types, test scaffolding.                                                                                                                                                     |
+**Entry points** (`:app`, `:ios-framework`): wire the DI graph and host the app binary. Only these two modules depend on `implementation/` modules directly.
+
+**Feature modules** (`features/{name}/presenter`, `features/{name}/ui`, `features/{name}/nav/api`): co-located presenter (KMP), Android UI (Compose), and the feature's nav contract: route type, per-screen DI scope, and a navigator interface when navigation is stateful.
+
+**Root feature** (`features/root/presenter`, `features/root/ui`, `features/root/nav`): the root presenter, the root composable, and shared root nav models (theme state, deep-link destinations, sheet-controller interface). Feature-specific sheet configs live in the owning feature's `nav/api`.
+
+**Navigation** (`navigation/api`, `navigation/implementation`): cross-cutting navigation contracts (the `Navigator` interface, the open `NavRoute` interface, the `SheetNavigator` interface, the open `SheetConfig` interface, stack and sheet child markers, destination factories, route and sheet config binding registries, the navigation event bus) and their default implementations and binding container.
+
+**Business logic** (`domain/*`): interactors. The only place business rules live.
+
+**Data contracts** (`data/*/api`): repository interfaces, data models, and query keys.
+
+**Data implementation** (`data/*/implementation`): stores, repositories, DAOs, and mappers.
+
+**Data infrastructure** (`data/database`, `data/datastore`, `data/request-manager`): SQLDelight, preferences, and freshness/cache validation.
+
+**Network** (`api/tmdb`, `api/trakt`): Ktor clients, request models, and auth plumbing.
+
+**Localization** (`i18n/*`): Moko-generated string resources, the `Localizer` interface, and the code generator.
+
+**Core** (`core/*`): coroutine dispatchers, logger, connectivity, utilities, design system base types, test scaffolding.
 
 ## Dependency Rules
 
@@ -92,6 +101,9 @@ The diagram omits utility layers (`core/*`, `i18n/*`, `api/{tmdb,trakt}`, `data/
 ## Module Archetypes
 
 ### 1. Entry Point Modules
+
+> [!NOTE]
+> Entry points (`:app` and `:ios-framework`) are the only modules allowed to depend on `implementation/` modules directly. They are the final assembly points for the DI graph. No other module in the project should import a concrete implementation module.
 
 Single-module roots that assemble the DI graph and produce the final binary or framework.
 
@@ -130,6 +142,8 @@ data/{feature}/
 
 **Examples**: `data/library`, `data/calendar`, `data/episode`, `api/tmdb`, `api/trakt`.
 
+For a concrete example of this three-part split, see how `data/showdetails` is structured: the repository interface in [`data/showdetails/api`](../../data/showdetails/api/src/commonMain/kotlin/com/thomaskioko/tvmaniac/data/showdetails/api/ShowDetailsRepository.kt), its Store-backed implementation in [`data/showdetails/implementation`](../../data/showdetails/implementation/src/commonMain/kotlin/com/thomaskioko/tvmaniac/data/showdetails/implementation/ShowDetailsStore.kt), and the fake used in presenter tests in [`data/showdetails/testing`](../../data/showdetails/testing/src/commonMain/kotlin/com/thomaskioko/tvmaniac/data/showdetails/testing/FakeShowDetailsRepository.kt).
+
 ### 4. Domain Modules
 
 Single-module KMP features with no sub-modules. Contain interactors and use cases.
@@ -157,3 +171,11 @@ Self-contained single-purpose modules.
 6. If the screen has stateful navigation (switches tabs, dismisses a sheet then routes to another screen), declare a navigator interface in `nav/api` and bind its default implementation as an `internal` class inside the presenter module. For sheet navigators specifically, the implementation must inject `SheetNavigator` from `navigation/api` and delegate `activate`/`dismiss` to it rather than declaring its own `SlotNavigation`.
 7. Register modules in `settings.gradle.kts` and add the new presenter and `nav/api` modules to `:app` and `:ios-framework`.
 8. If tests need a no-op or fake navigator, contribute it from `FakeAppBindings`.
+
+> [!WARNING]
+> Steps 3 and 4 must be done in the correct order: `nav/api` must exist before the presenter module is created, because the presenter's `di/` package imports the route type from `nav/api`. Creating the presenter module first leads to a circular dependency resolution error.
+
+## Next Steps
+
+- [Dependency Injection](dependency-injection.md) - How modules are wired at runtime, including scopes, graph extensions, and binding containers.
+- [Scope Hierarchy](scopes.md) - The Metro scope tree and how each per-screen scope is created from its parent.
