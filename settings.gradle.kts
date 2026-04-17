@@ -23,6 +23,9 @@ pluginManagement {
 
 dependencyResolutionManagement {
     repositories {
+        if (providers.gradleProperty("use.maven.local").orNull == "true") {
+            mavenLocal()
+        }
         google {
             content {
                 includeGroupByRegex(".*google.*")
@@ -223,6 +226,7 @@ include(
     ":i18n:testing",
     ":navigation:api",
     ":navigation:implementation",
+    ":navigation:testing",
     ":features:calendar:presenter",
     ":features:calendar:nav",
     ":features:discover:presenter",
