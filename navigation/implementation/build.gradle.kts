@@ -15,6 +15,7 @@ kotlin {
             implementation(projects.features.root.nav)
             implementation(projects.core.base)
             implementation(projects.navigation.api)
+            implementation(projects.data.datastore.api)
 
             implementation(projects.features.episodeSheet.nav)
             implementation(projects.features.home.nav)
