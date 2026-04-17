@@ -4,6 +4,7 @@ plugins {
 
 scaffold {
     useMetro()
+    useCodegen()
 }
 
 kotlin {
@@ -12,8 +13,8 @@ kotlin {
             dependencies {
                 implementation(projects.core.base)
                 implementation(projects.navigation.api)
-                implementation(projects.features.home.nav.api)
-                implementation(projects.features.progress.nav.api)
+                implementation(projects.features.home.nav)
+                implementation(projects.features.progress.nav)
                 implementation(projects.features.calendar.presenter)
                 implementation(projects.features.upnext.presenter)
 

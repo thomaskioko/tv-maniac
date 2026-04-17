@@ -4,6 +4,7 @@ plugins {
 
 scaffold {
     useMetro()
+    useCodegen()
 
     optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
 }
@@ -16,9 +17,9 @@ kotlin {
                 implementation(projects.core.base)
                 implementation(projects.core.logger.api)
                 implementation(projects.navigation.api)
-                implementation(projects.features.home.nav.api)
-                implementation(projects.features.profile.nav.api)
-                implementation(projects.features.settings.nav.api)
+                implementation(projects.features.home.nav)
+                implementation(projects.features.profile.nav)
+                implementation(projects.features.settings.nav)
                 implementation(projects.i18n.api)
                 implementation(projects.domain.user)
                 implementation(projects.data.traktauth.api)

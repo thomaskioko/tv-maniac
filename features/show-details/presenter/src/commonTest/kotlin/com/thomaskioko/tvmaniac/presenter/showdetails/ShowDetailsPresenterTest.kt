@@ -9,6 +9,7 @@ import com.arkivanov.decompose.router.stack.popTo
 import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.router.stack.pushToFront
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.thomaskioko.root.nav.NotificationRationale
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.notifications.api.EpisodeNotification
@@ -48,8 +49,6 @@ import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
-import com.thomaskioko.tvmaniac.navigation.NavEvent
-import com.thomaskioko.tvmaniac.navigation.NavEventBus
 import com.thomaskioko.tvmaniac.navigation.NavRoute
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ProviderModel
@@ -74,9 +73,6 @@ import io.kotest.matchers.shouldBe
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -879,19 +875,14 @@ class ShowDetailsPresenterTest {
             }
             override fun getStackNavigation(): StackNavigation<NavRoute> = navigation
         }
-        val navEventBus = object : NavEventBus {
-            private val _events = MutableSharedFlow<NavEvent>(extraBufferCapacity = 16)
-            override val events: SharedFlow<NavEvent> = _events.asSharedFlow()
-            override fun emit(event: NavEvent) {
-                if (event == NavEvent.ShowFollowed) onShowFollowed()
-                _events.tryEmit(event)
-            }
+        val notificationRationale = object : NotificationRationale {
+            override suspend fun showIfNeeded() = onShowFollowed()
         }
         return ShowDetailsPresenter(
             param = param,
             componentContext = DefaultComponentContext(lifecycle = LifecycleRegistry()),
             navigator = navigator,
-            navEventBus = navEventBus,
+            notificationRationale = notificationRationale,
             followedShowsRepository = followedShowsRepository,
             followShowInteractor = FollowShowInteractor(
                 followedShowsRepository = followedShowsRepository,

@@ -9,6 +9,7 @@ import com.arkivanov.decompose.value.Value
 import com.thomaskioko.root.model.DeepLinkDestination
 import com.thomaskioko.root.model.NotificationPermissionState
 import com.thomaskioko.root.model.ThemeState
+import com.thomaskioko.root.nav.NotificationRationale
 import com.thomaskioko.tvmaniac.core.base.extensions.asStateFlow
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
@@ -23,8 +24,6 @@ import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
 import com.thomaskioko.tvmaniac.home.nav.HomeRoute
 import com.thomaskioko.tvmaniac.navigation.NavDestination
-import com.thomaskioko.tvmaniac.navigation.NavEvent
-import com.thomaskioko.tvmaniac.navigation.NavEventBus
 import com.thomaskioko.tvmaniac.navigation.NavRoute
 import com.thomaskioko.tvmaniac.navigation.NavRouteSerializer
 import com.thomaskioko.tvmaniac.navigation.Navigator
@@ -69,7 +68,7 @@ public class DefaultRootPresenter(
     private val sheetChildFactories: Set<SheetChildFactory>,
     sheetConfigSerializer: SheetConfigSerializer,
     sheetNavigator: SheetNavigator,
-    navEventBus: NavEventBus,
+    private val notificationRationale: NotificationRationale,
     private val traktAuthRepository: TraktAuthRepository,
     private val updateUserProfileData: UpdateUserProfileData,
     private val logoutInteractor: LogoutInteractor,
@@ -112,15 +111,7 @@ public class DefaultRootPresenter(
                 .distinctUntilChanged()
                 .filter { it == TraktAuthState.LOGGED_IN }
                 .take(1)
-                .collect { showRationaleIfNeeded() }
-        }
-
-        coroutineScope.launch {
-            navEventBus.events.collect { event ->
-                when (event) {
-                    NavEvent.ShowFollowed -> showRationaleIfNeeded()
-                }
-            }
+                .collect { notificationRationale.showIfNeeded() }
         }
     }
 
@@ -189,18 +180,6 @@ public class DefaultRootPresenter(
 
     override val notificationPermissionStateValue: Value<NotificationPermissionState> =
         notificationPermissionState.asValue(coroutineScope)
-
-    private suspend fun showRationaleIfNeeded() {
-        combine(
-            datastoreRepository.observeNotificationPermissionAsked(),
-            datastoreRepository.observeShowNotificationRationale(),
-        ) { hasAsked, isRationaleShowing ->
-            !hasAsked && !isRationaleShowing
-        }
-            .filter { it }
-            .take(1)
-            .collect { datastoreRepository.setShowNotificationRationale(true) }
-    }
 
     override fun onRationaleAccepted() {
         coroutineScope.launch {

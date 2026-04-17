@@ -12,7 +12,7 @@ kotlin {
         commonMain {
             dependencies {
                 api(projects.core.view)
-                implementation(projects.features.calendar.nav.api)
+                implementation(projects.features.calendar.nav)
                 implementation(projects.features.root.nav)
                 implementation(projects.data.calendar.api)
                 implementation(projects.data.traktauth.api)

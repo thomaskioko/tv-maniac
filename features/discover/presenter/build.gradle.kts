@@ -4,6 +4,7 @@ plugins {
 
 scaffold {
     useMetro()
+    useCodegen()
     optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
 }
 
@@ -14,12 +15,12 @@ kotlin {
                 api(projects.core.view)
                 implementation(projects.navigation.api)
                 implementation(projects.features.root.nav)
-                implementation(projects.features.discover.nav.api)
-                implementation(projects.features.home.nav.api)
-                implementation(projects.features.moreShows.nav.api)
-                implementation(projects.features.search.nav.api)
-                implementation(projects.features.showDetails.nav.api)
-                implementation(projects.features.seasonDetails.nav.api)
+                implementation(projects.features.discover.nav)
+                implementation(projects.features.home.nav)
+                implementation(projects.features.moreShows.nav)
+                implementation(projects.features.search.nav)
+                implementation(projects.features.showDetails.nav)
+                implementation(projects.features.seasonDetails.nav)
                 implementation(projects.core.base)
                 implementation(projects.core.logger.api)
                 implementation(projects.domain.discover)
@@ -53,6 +54,7 @@ kotlin {
                 implementation(projects.data.trendingshows.testing)
                 implementation(projects.data.upcomingshows.testing)
                 implementation(projects.data.user.testing)
+                implementation(projects.navigation.testing)
 
                 implementation(libs.bundles.unittest)
             }

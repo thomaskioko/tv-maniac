@@ -10,7 +10,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api(projects.features.episodeSheet.nav.api)
+                api(projects.features.episodeSheet.nav)
                 implementation(projects.data.datastore.api)
             }
         }

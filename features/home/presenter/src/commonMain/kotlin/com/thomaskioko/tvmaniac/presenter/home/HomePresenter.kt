@@ -6,16 +6,19 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.StackNavigator
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asStateFlow
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.domain.user.ObserveUserProfileInteractor
+import com.thomaskioko.tvmaniac.home.nav.HomeRoute
 import com.thomaskioko.tvmaniac.home.nav.HomeTabNavigator
 import com.thomaskioko.tvmaniac.home.nav.TabChild
 import com.thomaskioko.tvmaniac.home.nav.TabDestination
 import com.thomaskioko.tvmaniac.home.nav.di.model.HomeConfig
 import dev.zacsweers.metro.Inject
+import io.github.thomaskioko.codegen.annotations.NavScreen
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -26,6 +29,7 @@ import kotlinx.serialization.Serializable
 public data class ProfileAvatar(val url: String? = null)
 
 @Inject
+@NavScreen(route = HomeRoute::class, parentScope = ActivityScope::class)
 public class HomePresenter(
     componentContext: ComponentContext,
     homeTabNavigator: HomeTabNavigator,

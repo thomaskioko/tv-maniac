@@ -2,12 +2,15 @@ package com.thomaskioko.tvmaniac.presenter.trailers
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
+import com.thomaskioko.tvmaniac.trailers.nav.TrailersRoute
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
+import io.github.thomaskioko.codegen.annotations.NavScreen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,6 +19,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @AssistedInject
+@NavScreen(route = TrailersRoute::class, parentScope = ActivityScope::class)
 public class TrailersPresenter(
     componentContext: ComponentContext,
     @Assisted private val traktShowId: Long,
