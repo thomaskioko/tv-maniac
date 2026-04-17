@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.presenter.showdetails
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.root.nav.NotificationRationale
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
@@ -35,8 +36,6 @@ import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import com.thomaskioko.tvmaniac.i18n.PluralsResourceKey
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
-import com.thomaskioko.tvmaniac.navigation.NavEvent
-import com.thomaskioko.tvmaniac.navigation.NavEventBus
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
@@ -68,7 +67,7 @@ public class ShowDetailsPresenter(
     componentContext: ComponentContext,
     @Assisted private val param: ShowDetailsParam,
     private val navigator: Navigator,
-    private val navEventBus: NavEventBus,
+    private val notificationRationale: NotificationRationale,
     private val followedShowsRepository: FollowedShowsRepository,
     private val followShowInteractor: FollowShowInteractor,
     private val showDetailsInteractor: ShowDetailsInteractor,
@@ -200,7 +199,7 @@ public class ShowDetailsPresenter(
                         scheduleEpisodeNotificationsInteractor(ScheduleEpisodeNotificationsInteractor.Params())
                             .collectStatus(episodeActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
 
-                        navEventBus.emit(NavEvent.ShowFollowed)
+                        notificationRationale.showIfNeeded()
                     }
                 }
             }

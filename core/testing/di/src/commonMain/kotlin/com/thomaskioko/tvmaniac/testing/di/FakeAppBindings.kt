@@ -6,6 +6,7 @@ import com.arkivanov.decompose.router.slot.activate
 import com.arkivanov.decompose.router.slot.dismiss
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.thomaskioko.root.nav.EpisodeSheetNavigator
+import com.thomaskioko.root.nav.NotificationRationale
 import com.thomaskioko.tvmaniac.appconfig.ApplicationInfo
 import com.thomaskioko.tvmaniac.appconfig.DefaultTmdbConfig
 import com.thomaskioko.tvmaniac.appconfig.DefaultTraktConfig
@@ -45,12 +46,10 @@ import com.thomaskioko.tvmaniac.home.nav.HomeTabNavigator
 import com.thomaskioko.tvmaniac.home.nav.di.model.HomeConfig
 import com.thomaskioko.tvmaniac.locale.api.LocaleProvider
 import com.thomaskioko.tvmaniac.locale.testing.FakeLocaleProvider
-import com.thomaskioko.tvmaniac.navigation.DefaultNavEventBus
 import com.thomaskioko.tvmaniac.navigation.DefaultNavRouteSerializer
 import com.thomaskioko.tvmaniac.navigation.DefaultNavigator
 import com.thomaskioko.tvmaniac.navigation.DefaultSheetConfigSerializer
 import com.thomaskioko.tvmaniac.navigation.NavDestination
-import com.thomaskioko.tvmaniac.navigation.NavEventBus
 import com.thomaskioko.tvmaniac.navigation.NavRoute
 import com.thomaskioko.tvmaniac.navigation.NavRouteBinding
 import com.thomaskioko.tvmaniac.navigation.NavRouteSerializer
@@ -64,6 +63,7 @@ import com.thomaskioko.tvmaniac.navigation.SheetConfigSerializer
 import com.thomaskioko.tvmaniac.navigation.SheetNavigator
 import com.thomaskioko.tvmaniac.navigation.controllers.DefaultEpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.navigation.controllers.DefaultHomeTabNavigator
+import com.thomaskioko.tvmaniac.navigation.controllers.DefaultNotificationRationale
 import com.thomaskioko.tvmaniac.navigation.controllers.DefaultSheetNavigator
 import com.thomaskioko.tvmaniac.presenter.root.DefaultRootPresenter
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
@@ -125,6 +125,7 @@ import kotlinx.coroutines.flow.flowOf
         DefaultSheetNavigator::class,
         DefaultDiscoverNavigator::class,
         DefaultHomeTabNavigator::class,
+        DefaultNotificationRationale::class,
     ],
 )
 public object FakeAppBindings {
@@ -308,6 +309,13 @@ public object FakeAppBindings {
 
     @Provides
     @SingleIn(AppScope::class)
+    public fun provideNotificationRationaleCoordinator(): NotificationRationale =
+        object : NotificationRationale {
+            override suspend fun showIfNeeded() = Unit
+        }
+
+    @Provides
+    @SingleIn(AppScope::class)
     public fun provideNavDestinations(): Set<NavDestination> = setOf(
         object : NavDestination {
             override fun matches(route: NavRoute): Boolean = true
@@ -353,10 +361,6 @@ public object FakeAppBindings {
     public fun provideSheetConfigSerializer(
         bindings: Set<SheetConfigBinding<*>>,
     ): SheetConfigSerializer = DefaultSheetConfigSerializer(bindings)
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideNavEventBus(): NavEventBus = DefaultNavEventBus()
 
     @Provides
     @SingleIn(AppScope::class)

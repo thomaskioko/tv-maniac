@@ -54,6 +54,7 @@ kotlin {
                 implementation(projects.data.trendingshows.testing)
                 implementation(projects.data.upcomingshows.testing)
                 implementation(projects.data.user.testing)
+                implementation(projects.navigation.testing)
 
                 implementation(libs.bundles.unittest)
             }
