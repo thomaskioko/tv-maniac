@@ -15,6 +15,8 @@ import com.thomaskioko.tvmaniac.data.library.model.LibraryItem
 import com.thomaskioko.tvmaniac.data.library.model.WatchProvider
 import com.thomaskioko.tvmaniac.domain.library.ObserveLibraryInteractor
 import com.thomaskioko.tvmaniac.domain.library.SyncLibraryInteractor
+import com.thomaskioko.tvmaniac.home.nav.HomeRoute
+import com.thomaskioko.tvmaniac.home.nav.di.model.HomeConfig
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.presentation.library.model.LibraryShowItem
 import com.thomaskioko.tvmaniac.presentation.library.model.LibrarySortOption
@@ -24,6 +26,7 @@ import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import dev.zacsweers.metro.Inject
+import io.github.thomaskioko.codegen.annotations.TabScreen
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,6 +41,7 @@ import kotlinx.coroutines.launch
 import com.thomaskioko.tvmaniac.data.library.model.LibrarySortOption as DataLibrarySortOption
 
 @Inject
+@TabScreen(config = HomeConfig.Library::class, parentScope = HomeRoute::class)
 public class LibraryPresenter(
     componentContext: ComponentContext,
     private val navigator: Navigator,

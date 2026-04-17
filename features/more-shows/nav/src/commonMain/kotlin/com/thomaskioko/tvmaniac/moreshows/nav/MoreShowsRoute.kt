@@ -4,4 +4,4 @@ import com.thomaskioko.tvmaniac.navigation.NavRoute
 import kotlinx.serialization.Serializable
 
 @Serializable
-public data class MoreShowsRoute(public val id: Long) : NavRoute
+public data class MoreShowsRoute(public val categoryId: Long) : NavRoute

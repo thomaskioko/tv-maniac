@@ -5,6 +5,7 @@ plugins {
 scaffold {
     useMetro()
     useSerialization()
+    useCodegen()
 
     optIn(
         "kotlinx.coroutines.ExperimentalCoroutinesApi",
