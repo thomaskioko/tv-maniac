@@ -3,7 +3,6 @@ plugins {
 }
 
 scaffold {
-    useMetro()
     useSerialization()
     useCodegen()
     optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
@@ -22,7 +21,6 @@ kotlin {
                 implementation(projects.data.followedshows.api)
                 implementation(projects.domain.episode)
                 implementation(projects.domain.followedshows)
-                implementation(projects.features.root.nav)
                 implementation(projects.features.showDetails.nav)
                 implementation(projects.features.seasonDetails.nav)
 
@@ -38,6 +36,7 @@ kotlin {
                 implementation(projects.core.util.testing)
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.followedshows.testing)
+                implementation(projects.navigation.testing)
 
                 implementation(libs.bundles.unittest)
             }

@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.navigation.controllers
+package com.thomaskioko.tvmaniac.presenter.home.di
 
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.thomaskioko.tvmaniac.core.base.ActivityScope

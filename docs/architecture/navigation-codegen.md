@@ -6,13 +6,19 @@
 - [Annotations](#annotations)
 - [Route as scope](#route-as-scope)
 - [Patterns by destination shape](#patterns-by-destination-shape)
-- [What stays hand-written and why](#what-stays-hand-written-and-why)
+- [What stays manual and why](#what-stays-manual-and-why)
 - [How this extends the navigation module structure](#how-this-extends-the-navigation-module-structure)
 - [Where the source lives](#where-the-source-lives)
 - [Next Steps](#next-steps)
 
+> [!NOTE]
+> The processor covers two distinct layers: the shared KMP destination layer (`@NavScreen`, `@TabScreen`, `@NavSheet`)
+> and the Android UI renderer layer (`@ScreenUi`, `@SheetUi`). Authors annotate the presenter class for the first
+> group and the composable function for the second.
+
 > **What this covers**: the KSP annotation processor that eliminates per-destination boilerplate by generating
-> `@GraphExtension` interfaces and destination bindings from a single annotation on the presenter class.
+> `@GraphExtension` interfaces, destination bindings, and Android UI multibinding contributions from a single
+> annotation on the presenter class or the composable function.
 > **Prerequisites**: read [Navigation](navigation.md) and [Dependency Injection](dependency-injection.md) first. The
 > codegen builds on top of the patterns defined there: `NavRoute`, `NavDestination`, `NavRouteBinding`, `SheetConfig`,
 > `SheetChildFactory`, `SheetConfigBinding`, Metro graph extensions, and the route-as-scope decision are all explained
@@ -20,25 +26,32 @@
 
 ## Why codegen exists
 
-Before the processor existed, adding a root-stack screen required four hand-written artifacts per destination. Using
-the debug screen as the running example:
+Before the processor existed, adding a root-stack screen required four manually written artifacts per destination in
+the shared KMP layer, plus a fifth manually written artifact on the Android UI layer. Using the debug screen as the
+running example:
 
-The first is `DebugRoute` in `features/debug/nav/api/`: the route is the feature's public API. Its shape is an
-intentional decision the feature author controls. It stays hand-written.
+The first is `DebugRoute` in `features/debug/nav/`: the route is the feature's public API. Its shape is an
+intentional decision the feature author controls. It stays manual.
 
-The remaining three were mechanical: a `DebugScreenScope` scope-marker class in `nav/api/scope/`, a `DebugScreenGraph`
-interface carrying `@GraphExtension(DebugScreenScope::class)` and a `@GraphExtension.Factory` in `presenter/di/`, and a
-`DebugNavDestinationBinding` interface in `presenter/di/` that contributed a `NavDestination` and a
-`NavRouteBinding<*>` into the activity-scope multibinding sets.
+The remaining three shared-code artifacts were mechanical: a `DebugScreenScope` scope-marker class in `nav/scope/`,
+a `DebugScreenGraph` interface carrying `@GraphExtension(DebugScreenScope::class)` and a `@GraphExtension.Factory` in
+`presenter/di/`, and a `DebugNavDestinationBinding` interface in `presenter/di/` that contributed a `NavDestination`
+and a `NavRouteBinding<*>` into the activity-scope multibinding sets.
 
-The scope, the graph, and the binding are all entirely determined by the route type and the presenter class. They
-contain no feature-specific logic. The codegen collapses those three artifacts into a single annotation on the
-presenter class. The route is the only thing left to write.
+On the Android UI side, each feature `ui` module also needed a manually written
+`@BindingContainer @ContributesTo(ActivityScope) object` that provided a `ScreenContent` (or `SheetContent`) into the
+renderer multibinding set.
+
+All four shared-code artifacts and the UI binding artifact are entirely determined by the route type and the presenter
+class. They contain no feature-specific logic. The codegen collapses the three shared-code artifacts into a single
+annotation on the presenter class and the UI binding artifact into a single annotation on the composable function. The
+route is the only thing left to write.
 
 Sheet destinations follow the same shape with a parallel set of generated types. The episode sheet previously required
-an `EpisodeSheetConfig` (hand-written, public API), an `EpisodeSheetScreenScope`, an `EpisodeSheetScreenGraph`, and an
-`EpisodeSheetDestinationBinding` that contributed a `SheetChildFactory` and a `SheetConfigBinding<*>`. The annotation
-reduces that to the config class plus the annotation on the presenter.
+an `EpisodeSheetConfig` (manually written, public API), an `EpisodeSheetScreenScope`, an `EpisodeSheetScreenGraph`, and
+an `EpisodeSheetDestinationBinding` that contributed a `SheetChildFactory` and a `SheetConfigBinding<*>`. The
+annotation reduces that to the config class plus the annotation on the presenter. The `@SheetUi` annotation on the
+composable function similarly eliminates the manually written `SheetContent` binding in the `ui` module.
 
 ## Annotations
 
@@ -92,9 +105,70 @@ The generated `SheetChildFactory` implementation casts the incoming `SheetConfig
 passing params to the presenter factory. When the presenter uses `@AssistedInject`, the cast extracts the assisted
 param from the config property whose name matches the single `@Assisted` constructor parameter.
 
+### `@ScreenUi`
+
+```kotlin
+public annotation class ScreenUi(
+    val presenter: KClass<*>,
+    val parentScope: KClass<*>,
+)
+```
+
+Place this on a `@Composable` screen function to generate a `@BindingContainer @ContributesTo(parentScope)` object
+in the same `ui` module's `di/` package. The generated object provides a `ScreenContent` into the
+`Set<ScreenContent>` multibinding at `ActivityScope`. The `matches` lambda checks whether the active `RootChild` is a
+`ScreenDestination<*>` wrapping the declared presenter type; the `content` lambda calls the annotated composable with
+the cast presenter and the incoming `Modifier`.
+
+The annotated function must match this signature:
+
+```kotlin
+@ScreenUi(presenter = DebugPresenter::class, parentScope = ActivityScope::class)
+@Composable
+public fun DebugMenuScreen(
+    presenter: DebugPresenter,
+    modifier: Modifier = Modifier,
+) { /* ... */ }
+```
+
+Enable this annotation by applying `scaffold { useCodegen() }` in the feature `ui/build.gradle.kts` and adding
+`api(projects.navigation.ui)` to the module's dependencies. The `app/build.gradle.kts` must also carry a direct
+`implementation(projects.features.{name}.ui)` dep so Metro discovers the generated `metro/hints/` contribution classes
+at compile time. `features/root/ui` no longer depends on any feature `ui` module, so there is no transitive path from
+the app through it; each feature must be declared directly.
+
+### `@SheetUi`
+
+```kotlin
+public annotation class SheetUi(
+    val presenter: KClass<*>,
+    val parentScope: KClass<*>,
+)
+```
+
+The sheet-side parallel of `@ScreenUi`. Place this on a `@Composable` sheet function to generate a
+`@BindingContainer @ContributesTo(parentScope)` object that provides a `SheetContent` into `Set<SheetContent>`.
+
+The annotated function must accept `presenter` and `modifier`, matching this signature:
+
+```kotlin
+@SheetUi(presenter = EpisodeSheetPresenter::class, parentScope = ActivityScope::class)
+@Composable
+public fun EpisodeSheet(
+    presenter: EpisodeSheetPresenter,
+    modifier: Modifier = Modifier,
+) { /* ... */ }
+```
+
+Only the `presenter` argument is forwarded in the generated binding. `SheetContent.content` does not receive a
+`Modifier`, so the generated call omits it even though the function declares `modifier` as a parameter.
+
 > [!IMPORTANT]
-> The annotations and the processor are only available when the presenter module applies the shared scaffold
-> convention that enables codegen. No other manual Gradle wiring is needed in the feature module.
+> The shared-code annotations (`@NavScreen`, `@TabScreen`, `@NavSheet`) target the presenter class and are enabled by
+> applying `scaffold { useCodegen() }` in the presenter module. The UI-layer annotations (`@ScreenUi`, `@SheetUi`)
+> target the composable function and are enabled by the same `scaffold { useCodegen() }` call in the `ui` module
+> (`useCodegen()` auto-applies the Metro plugin when it is not already present). Both sets of annotations require
+> separate scaffold declarations in their respective modules.
 
 ## Route as scope
 
@@ -102,12 +176,12 @@ One of the most consequential architectural decisions in this system is that the
 declare a new scope class. The route class (or `HomeConfig` subtype for tabs, or `SheetConfig` subtype for sheets)
 itself serves as the scope marker.
 
-Before the codegen, each destination had a hand-written scope marker (for example, `DebugScreenScope` in
-`features/debug/nav/api/scope/`) and the generated graph referenced it as the `@GraphExtension` scope. After the
+Before the codegen, each destination had a manually written scope marker (for example, `DebugScreenScope` in
+`features/debug/nav/scope/`) and the generated graph referenced it as the `@GraphExtension` scope. After the
 codegen, the route is the scope, so those scope marker classes are no longer generated or needed.
 
-This works because the route is already hand-written, public, and lives in `nav/api`. Any module that imports
-`nav/api` automatically imports the scope for free. There is no KSP per-target-source-set visibility problem: if a
+This works because the route is already manually written, public, and lives in `nav`. Any module that imports
+`nav` automatically imports the scope for free. There is no KSP per-target-source-set visibility problem: if a
 module can see the route (which it already must, to push it), it can see the scope. This mirrors the Khonshu
 convention.
 
@@ -241,42 +315,43 @@ override fun createChild(config: SheetConfig, componentContext: ComponentContext
 }
 ```
 
-## What stays hand-written and why
+## What stays manual and why
 
 Route classes like `DebugRoute` and `ShowDetailsRoute`, and sheet configs like `EpisodeSheetConfig`, all in
-`features/{name}/nav/api/`, are always written by the feature author. The route is the feature's public API: its
+`features/{name}/nav/`, are always written by the feature author. The route is the feature's public API: its
 shape, its serialized form, and its properties are intentional decisions. The codegen generates code that depends on
 the route, not the other way around.
 
-Feature navigator interfaces in `nav/api/` are also hand-written. A stateful navigator exposes typed methods that
+Feature navigator interfaces in `nav/` are also manually written. A stateful navigator exposes typed methods that
 represent the feature's public navigation contract. The set of methods, their names, and their parameters are domain
 decisions, not mechanical ones.
 
-`GenreShowsNavDestinationBinding` in `features/genre-shows/presenter/di/` remains hand-written because Genre Shows has
-no presenter class to annotate. Its destination is a marker that the root presenter handles directly through the
+`GenreShowsNavDestinationBinding` in `features/genre-shows/presenter/di/` remains manual because Genre Shows has no
+presenter class to annotate. Its destination is a marker that the root presenter handles directly through the
 multibinding set. One bespoke binding does not justify a new annotation shape, and the codegen annotations require a
 class target.
 
 > [!TIP]
 > If a feature has no presenter class at all and only needs to contribute a destination marker, keep the binding
-> hand-written. The annotations are designed for the case where a presenter class drives the destination, and the
-> generated code wraps that presenter.
+> manual. The annotations are designed for the case where a presenter class drives the destination, and the generated
+> code wraps that presenter.
 
 ## How this extends the navigation module structure
 
 The multibinding sets documented in [Navigation](navigation.md) (`Set<NavDestination>`, `Set<NavRouteBinding<*>>`,
-`Set<SheetChildFactory>`, `Set<SheetConfigBinding<*>>`) all live in `ActivityScope`. Hand-written bindings contribute
-to these sets using `@ContributesTo(ActivityScope::class)` interfaces with `@Provides @IntoSet` companion methods.
+`Set<SheetChildFactory>`, `Set<SheetConfigBinding<*>>`) all live in `ActivityScope`. Manually written bindings
+contribute to these sets using `@ContributesTo(ActivityScope::class)` interfaces with `@Provides @IntoSet` companion
+methods.
 
 The codegen is the author-facing way to contribute to those same sets. Annotating a presenter with `@NavScreen`
 generates the `@ContributesTo` interface and the `@Provides @IntoSet` methods automatically. The root presenter and
-the navigation runtime are not affected by whether a contribution was generated or hand-written: they only see the
+the navigation runtime are not affected by whether a contribution was generated or written by hand: they only see the
 multibinding sets. The codegen introduces no new runtime machinery. It removes the boilerplate for feeding the
 existing machinery.
 
 As a feature author, you just add the annotation to your presenter, and the codegen will generate all the necessary
 DI bindings for navigation. You don't need to write the repetitive DI code yourself. The navigation system works the
-same way whether the bindings are generated or hand-written. Codegen just saves you time and reduces errors.
+same way whether the bindings are generated or written by hand. Codegen just saves you time and reduces errors.
 
 The DI graph validates that all multibinding contributions form a consistent set at compile time. A missing
 `NavRouteBinding`, a missing `NavDestination`, or a missing `SheetChildFactory` surfaces as a Metro error before any
@@ -297,6 +372,6 @@ and how to extend the annotation set.
   factories, the multibinding sets that the generated bindings contribute into, and the `navigation/testing` helpers
   (`TestNavigator`, `NavigatorTurbine`) for declarative navigation assertions in presenter tests.
 - [Modularization](modularization.md) - Module archetypes, the "Adding a New Feature" checklist, and where generated
-  files land relative to hand-written code.
+  files land relative to manually authored code.
 - [Dependency Injection](dependency-injection.md) - Metro scopes, `@GraphExtension`, and how the generated graph
   extensions are wired into the parent scope.

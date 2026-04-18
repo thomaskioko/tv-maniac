@@ -30,7 +30,7 @@ Testability without mocks flows from the API/implementation split. Every `data/*
 `data/*/testing` module ships a fake. Presenters and domain tests depend only on the api and testing modules. No
 mocking framework is needed, and the fakes stay honest because they are maintained alongside the implementations.
 
-Feature isolation comes from the `nav/api` module shape. Features talk to each other only through small route and
+Feature isolation comes from the `nav` module shape. Features talk to each other only through small route and
 navigator contracts. Presenter-to-presenter dependencies are not allowed. This keeps module graphs acyclic and lets
 features be built, tested, and shipped independently.
 

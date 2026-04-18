@@ -50,6 +50,7 @@ import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_retry
 import com.thomaskioko.tvmaniac.i18n.MR.strings.str_more_trailers
 import com.thomaskioko.tvmaniac.i18n.MR.strings.unexpected_error_retry
@@ -64,8 +65,10 @@ import com.thomaskioko.tvmaniac.presenter.trailers.TrailersPresenter
 import com.thomaskioko.tvmaniac.presenter.trailers.TrailersState
 import com.thomaskioko.tvmaniac.presenter.trailers.VideoPlayerError
 import com.thomaskioko.tvmaniac.presenter.trailers.model.Trailer
+import io.github.thomaskioko.codegen.annotations.ScreenUi
 import kotlinx.collections.immutable.ImmutableList
 
+@ScreenUi(presenter = TrailersPresenter::class, parentScope = ActivityScope::class)
 @Composable
 public fun TrailersScreen(
     presenter: TrailersPresenter,

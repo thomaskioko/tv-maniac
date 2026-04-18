@@ -3,7 +3,6 @@ plugins {
 }
 
 scaffold {
-    useMetro()
     useCodegen()
     optIn(
         "kotlinx.coroutines.ExperimentalCoroutinesApi",

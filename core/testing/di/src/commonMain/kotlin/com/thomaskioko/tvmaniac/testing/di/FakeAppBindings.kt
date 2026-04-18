@@ -5,7 +5,6 @@ import com.arkivanov.decompose.router.slot.SlotNavigation
 import com.arkivanov.decompose.router.slot.activate
 import com.arkivanov.decompose.router.slot.dismiss
 import com.arkivanov.decompose.router.stack.StackNavigation
-import com.thomaskioko.root.nav.EpisodeSheetNavigator
 import com.thomaskioko.root.nav.NotificationRationale
 import com.thomaskioko.tvmaniac.appconfig.ApplicationInfo
 import com.thomaskioko.tvmaniac.appconfig.DefaultTmdbConfig
@@ -40,7 +39,6 @@ import com.thomaskioko.tvmaniac.domain.library.LibrarySyncWorker
 import com.thomaskioko.tvmaniac.domain.notifications.EpisodeNotificationWorker
 import com.thomaskioko.tvmaniac.domain.upnext.UpNextSyncWorker
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetConfig
-import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.genreshows.nav.GenreShowsRoute
 import com.thomaskioko.tvmaniac.home.nav.HomeTabNavigator
 import com.thomaskioko.tvmaniac.home.nav.di.model.HomeConfig
@@ -61,12 +59,11 @@ import com.thomaskioko.tvmaniac.navigation.SheetConfig
 import com.thomaskioko.tvmaniac.navigation.SheetConfigBinding
 import com.thomaskioko.tvmaniac.navigation.SheetConfigSerializer
 import com.thomaskioko.tvmaniac.navigation.SheetNavigator
-import com.thomaskioko.tvmaniac.navigation.controllers.DefaultEpisodeSheetNavigator
-import com.thomaskioko.tvmaniac.navigation.controllers.DefaultHomeTabNavigator
-import com.thomaskioko.tvmaniac.navigation.controllers.DefaultNotificationRationale
-import com.thomaskioko.tvmaniac.navigation.controllers.DefaultSheetNavigator
+import com.thomaskioko.tvmaniac.presenter.home.di.DefaultHomeTabNavigator
 import com.thomaskioko.tvmaniac.presenter.root.DefaultRootPresenter
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
+import com.thomaskioko.tvmaniac.presenter.root.di.DefaultNotificationRationale
+import com.thomaskioko.tvmaniac.presenter.root.di.DefaultSheetNavigator
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.implementation.DefaultRequestManagerRepository
@@ -121,7 +118,6 @@ import kotlinx.coroutines.flow.flowOf
         LibrarySyncWorker::class,
         TokenRefreshWorker::class,
         UpNextSyncWorker::class,
-        DefaultEpisodeSheetNavigator::class,
         DefaultSheetNavigator::class,
         DefaultDiscoverNavigator::class,
         DefaultHomeTabNavigator::class,
@@ -257,20 +253,6 @@ public object FakeAppBindings {
     @Provides
     public fun provideFormatterUtil(): FormatterUtil =
         FakeFormatterUtil()
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideEpisodeSheetController(): EpisodeSheetNavigator =
-        object : EpisodeSheetNavigator {
-            override fun showEpisodeSheet(
-                episodeId: Long,
-                source: ScreenSource,
-            ) { }
-
-            override fun dismissEpisodeSheet() { }
-            override fun dismissAndShowShowDetails(showTraktId: Long) { }
-            override fun dismissAndShowSeasonDetails(showTraktId: Long, seasonId: Long, seasonNumber: Long) { }
-        }
 
     @Provides
     @SingleIn(AppScope::class)

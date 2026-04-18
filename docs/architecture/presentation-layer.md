@@ -192,7 +192,7 @@ The iOS app imports the shared KMP framework and follows the same contract: obse
 - State combination: presenter.
 - Loading/error tracking: presenter (via `collectStatus`).
 - UI rendering: platform UI (Compose / SwiftUI).
-- Navigation triggers: presenter (via `Navigator` or a shared `nav/api` coordinator).
+- Navigation triggers: presenter (via `Navigator` or a shared `nav` module coordinator).
 
 ## Next Steps
 

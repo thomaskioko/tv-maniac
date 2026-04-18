@@ -67,6 +67,7 @@ import com.thomaskioko.tvmaniac.compose.components.actionIconWhen
 import com.thomaskioko.tvmaniac.compose.extensions.contentBackgroundGradient
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.i18n.MR.plurals.season_images_count
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_navigate_back
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_show_images
@@ -108,8 +109,10 @@ import com.thomaskioko.tvmaniac.seasondetails.presenter.model.EpisodeDetailsMode
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonImagesModel
 import com.thomaskioko.tvmaniac.seasondetails.ui.components.CollapsableContent
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
+import io.github.thomaskioko.codegen.annotations.ScreenUi
 import kotlinx.collections.immutable.ImmutableList
 
+@ScreenUi(presenter = SeasonDetailsPresenter::class, parentScope = ActivityScope::class)
 @Composable
 public fun SeasonDetailsScreen(
     presenter: SeasonDetailsPresenter,
@@ -210,13 +213,13 @@ internal fun SeasonDetailsScreen(
 
 @Composable
 internal fun LazyColumnContent(
+    modifier: Modifier = Modifier,
     listState: LazyListState,
     isLoading: Boolean,
     seasonDetailsModel: SeasonDetailsModel,
     contentPadding: PaddingValues,
     onAction: (SeasonDetailsAction) -> Unit,
     onEpisodeLongPress: (EpisodeDetailsModel) -> Unit = {},
-    modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
 

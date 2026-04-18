@@ -37,7 +37,7 @@ graph TD
         direction LR
         FP["presenter"]
         FU["ui (Android)"]
-        FN["nav/api"]
+        FN["nav"]
         FP --> FN
     end
 
@@ -66,7 +66,7 @@ graph TD
 ```
 
 Both platforms consume the same **KMP Shared** layer. Each feature is co-located under `features/{name}/` with a
-presenter (KMP), an Android Compose `ui` module, and a `nav/api` module that publishes the feature's route type and
+presenter (KMP), an Android Compose `ui` module, and a `nav` module that publishes the feature's route type and
 per-screen DI scope. iOS screens live in Swift and reach the shared layer through `:ios-framework`, which exports the
 KMP types as an XCFramework (`import TvManiac`).
 
@@ -78,12 +78,12 @@ layer.
 
 1. **Entry points** (`:app`, `:ios-framework`): wire the DI graph and host the app binary. Only these two modules
    depend on `implementation/` modules directly.
-2. **Feature modules** (`features/{name}/presenter`, `features/{name}/ui`, `features/{name}/nav/api`): co-located
+2. **Feature modules** (`features/{name}/presenter`, `features/{name}/ui`, `features/{name}/nav`): co-located
    presenter (KMP), Android UI (Compose), and the feature's nav contract: route type, per-screen DI scope, and a
    navigator interface when navigation is stateful.
 3. **Root feature** (`features/root/presenter`, `features/root/ui`, `features/root/nav`): the root presenter, the root
-   composable, and shared root nav models (theme state, deep-link destinations, sheet-controller interface).
-   Feature-specific sheet configs live in the owning feature's `nav/api`.
+   composable, and shared root nav models (theme state, deep-link destinations, notification rationale coordinator
+   interface). Feature-specific sheet configs live in the owning feature's `nav` module.
 4. **Navigation** (`navigation/api`, `navigation/implementation`): cross-cutting navigation contracts (the `Navigator`
    interface, the open `NavRoute` interface, the `SheetNavigator` interface, the open `SheetConfig` interface, stack
    and sheet child markers, destination factories, route and sheet config binding registries, the navigation event
@@ -105,10 +105,10 @@ layer.
 2. **Entry points are the only implementation consumers.** `:app` and `:ios-framework` pull the full set of
    `data/*/implementation` modules and every feature presenter module so the DI graph can resolve all bindings
    (including the navigator implementations that live as `internal` classes inside presenter modules).
-3. **Feature nav contracts live in `nav/api` only.** Each feature's `nav/api` exposes its `@Serializable` route type,
-   its per-screen DI scope, and (when needed) a navigator interface for stateful flows. There is no per-feature
-   `nav/implementation` module: the default navigator implementation, when one is needed, lives in the same presenter
-   module as an `internal` class bound via `@ContributesBinding`.
+3. **Feature nav contracts live in the `nav` module only.** Each feature's `nav` module exposes its `@Serializable`
+   route type, its per-screen DI scope, and (when needed) a navigator interface for stateful flows. There is no
+   per-feature `nav/implementation` module: the default navigator implementation, when one is needed, lives in the
+   same presenter module as an `internal` class bound via `@ContributesBinding`.
 4. **`navigation/api` has zero presenter dependencies.** It contains only cross-cutting contracts: the `Navigator` and
    `SheetNavigator` interfaces, the open `NavRoute` and `SheetConfig` markers, stack and sheet child markers, the
    generic `ScreenDestination<T>` and `SheetDestination<T>` wrappers, the stack and sheet destination factories, the
@@ -144,7 +144,7 @@ features/{name}/
 ├── presenter/   # KMP: presenter, state, actions, per-screen DI graph extension,
 │                #      destination + route-serializer bindings
 ├── ui/          # Android: Compose screen, screenshot tests
-└── nav/api/     # KMP: @Serializable route type, per-screen scope marker,
+└── nav/         # KMP: @Serializable route type, per-screen scope marker,
                  #      navigator interface (only for stateful flows)
 ```
 
@@ -154,12 +154,12 @@ features/{name}/
   navigation multibinding sets. Sheet-owning features additionally contribute a `SheetChildFactory` +
   `SheetConfigBinding` pair into the sheet-slot multibinding sets.
 - **`ui/`** holds Compose screens that depend on `presenter/` and `android-designsystem`.
-- **`nav/api/`** holds the feature's `@Serializable` route class, its per-screen scope marker class, and any model
+- **`nav/`** holds the feature's `@Serializable` route class, its per-screen scope marker class, and any model
   types passed across module boundaries. It also holds a navigator interface in the few cases where navigation is
   stateful (tab switching, slot-based sheets, etc.). Most features inject the Navigator interface directly and do not
   declare a per-feature navigator.
 
-A `nav/api` module may be omitted entirely when a screen is purely internal to the feature and never reached as a
+A `nav` module may be omitted entirely when a screen is purely internal to the feature and never reached as a
 destination on its own.
 
 ### 3. Grouped Data Modules (api + implementation + testing)
@@ -202,25 +202,34 @@ Self-contained single-purpose modules.
 1. **`data/{feature}/`**: create `api/`, `implementation/`, and `testing/` sub-modules (only if the feature needs new
    persistence or remote data).
 2. **`domain/{feature}/`**: add interactors.
-3. **`features/{name}/nav/api`**: add the `@Serializable` route class implementing `NavRoute`, plus a per-screen scope
+3. **`features/{name}/nav`**: add the `@Serializable` route class implementing `NavRoute`, plus a per-screen scope
    marker class.
 4. **`features/{name}/presenter`**: add the presenter and screen state, then apply `scaffold { useCodegen() }` in
    `build.gradle.kts`. Annotate the presenter with `@NavScreen`, `@TabScreen`, or `@NavSheet`; the per-screen
    `@GraphExtension` and the destination binding (including `NavRouteBinding` or `SheetConfigBinding` contributions)
    are generated. See [Navigation Codegen](navigation-codegen.md).
-5. **`features/{name}/ui`**: add the Android Compose screen. Build the SwiftUI counterpart in the iOS app.
-6. If the screen has stateful navigation (switches tabs, dismisses a sheet then routes to another screen), declare a
-   navigator interface in `nav/api` and bind its default implementation as an `internal` class inside the presenter
-   module. For sheet navigators specifically, the implementation must inject `SheetNavigator` from `navigation/api` and
-   delegate `activate`/`dismiss` to it rather than declaring its own `SlotNavigation`.
-7. Register modules in `settings.gradle.kts` and add the new presenter and `nav/api` modules to `:app` and
+5. **`features/{name}/ui`**: add the Android Compose screen. Apply `scaffold { useCodegen() }` and add
+   `api(projects.navigation.ui)` in `build.gradle.kts`. Annotate the composable function with `@ScreenUi` (or
+   `@SheetUi` for sheet features); the processor generates the `ScreenContent` (or `SheetContent`) binding in
+   `ui/di/` automatically. See [Navigation: Rendering destinations](navigation.md#rendering-destinations) for the
+   annotation form and the generated binding shape.
+6. **iOS view**: build the SwiftUI counterpart in the iOS app. Register the `presenter -> view` mapping in
+   `ios/ios/UI/Root/ScreenRegistryBootstrap.swift`. `RootNavigationView` does not change.
+7. **`:app` module dependencies**: add the new `features.{name}.ui` module to `app/build.gradle.kts` as a direct
+   `implementation` dependency so Metro discovers the `ScreenContent` contribution at compile time.
+8. If the screen has stateful navigation (switches tabs, coordinates cross-feature events), declare a navigator
+   interface in the feature's `nav` module and bind its default implementation as an `internal` class inside the
+   presenter module. Sheet entry points do not need their own navigator interface: feature presenters inject
+   `SheetNavigator` from `navigation/api` directly and, where ergonomics help, expose an extension function on
+   `SheetNavigator` in the feature's `nav` module (e.g. `SheetNavigator.showEpisodeSheet(episodeId, source)`).
+9. Register modules in `settings.gradle.kts` and add the new presenter and `nav` modules to `:app` and
    `:ios-framework`.
-8. If tests need a no-op or fake navigator, contribute it from `FakeAppBindings`.
+10. If tests need a no-op or fake navigator, contribute it from `FakeAppBindings`.
 
 > [!WARNING]
-> Steps 3 and 4 must be done in the correct order: `nav/api` must exist before the presenter module is created,
-> because the presenter's `di/` package imports the route type from `nav/api`. Creating the presenter module first
-> leads to a circular dependency resolution error.
+> Steps 3 and 4 must be done in the correct order: the `nav` module must exist before the presenter module is
+> created, because the presenter's `di/` package imports the route type from `nav`. Creating the presenter module
+> first leads to a circular dependency resolution error.
 
 ## Next Steps
 

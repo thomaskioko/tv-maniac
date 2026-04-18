@@ -14,6 +14,7 @@ struct iOSApp: App {
     @State private var componentHolder: ComponentHolder<IosViewPresenterGraph>?
     @State private var authCoordinator: TraktAuthCoordinator?
     @State private var toastManager = ToastManager()
+    private let screenRegistry = ScreenRegistryBootstrap.makeRegistry()
 
     init() {
         TvManiacTypographyScheme.configureMoko()
@@ -24,7 +25,8 @@ struct iOSApp: App {
             if let holder = componentHolder {
                 RootNavigationView(
                     rootPresenter: holder.component.rootPresenter,
-                    navigator: holder.component.navigator
+                    navigator: holder.component.navigator,
+                    registry: screenRegistry
                 )
                 .environmentObject(appDelegate)
                 .environment(toastManager)

@@ -3,7 +3,6 @@ plugins {
 }
 
 scaffold {
-    useMetro()
     useSerialization()
     useCodegen()
 
@@ -17,7 +16,7 @@ kotlin {
                 api(projects.core.view)
                 implementation(projects.core.base)
                 implementation(projects.navigation.api)
-                implementation(projects.features.root.nav)
+                implementation(projects.features.episodeSheet.nav)
                 implementation(projects.features.seasonDetails.nav)
                 implementation(projects.core.logger.api)
                 implementation(projects.data.episode.api)
@@ -37,6 +36,7 @@ kotlin {
                 implementation(projects.data.seasondetails.testing)
                 implementation(projects.data.cast.testing)
                 implementation(projects.data.episode.testing)
+                implementation(projects.navigation.testing)
 
                 implementation(libs.bundles.unittest)
             }

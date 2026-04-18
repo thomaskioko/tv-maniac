@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.presentation.calendar
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
-import com.thomaskioko.root.nav.EpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
@@ -15,10 +14,12 @@ import com.thomaskioko.tvmaniac.domain.calendar.CalendarWeekCalculator.Companion
 import com.thomaskioko.tvmaniac.domain.calendar.FetchCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.calendar.ObserveCalendarInteractor
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.showEpisodeSheet
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarEmpty
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarLoginRequired
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarMoreEpisodes
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarNoData
+import com.thomaskioko.tvmaniac.navigation.SheetNavigator
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import dev.zacsweers.metro.Inject
@@ -37,7 +38,7 @@ import kotlinx.coroutines.launch
 @Inject
 public class CalendarPresenter(
     componentContext: ComponentContext,
-    private val episodeSheetNavigator: EpisodeSheetNavigator,
+    private val sheetNavigator: SheetNavigator,
     private val observeCalendarInteractor: ObserveCalendarInteractor,
     private val fetchCalendarInteractor: FetchCalendarInteractor,
     private val traktAuthRepository: TraktAuthRepository,
@@ -99,7 +100,7 @@ public class CalendarPresenter(
 
             is NavigateToPreviousWeek -> navigateToPreviousWeek()
             is NavigateToNextWeek -> navigateToNextWeek()
-            is EpisodeCardClicked -> episodeSheetNavigator.showEpisodeSheet(action.episodeTraktId, ScreenSource.CALENDAR)
+            is EpisodeCardClicked -> sheetNavigator.showEpisodeSheet(action.episodeTraktId, ScreenSource.CALENDAR)
             is MessageShown -> clearMessage(action.id)
         }
     }

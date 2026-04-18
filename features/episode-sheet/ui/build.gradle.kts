@@ -3,6 +3,8 @@ plugins {
 }
 
 scaffold {
+    useCodegen()
+
     android {
         useCompose()
         useRoborazzi()
@@ -14,7 +16,10 @@ scaffold {
 }
 
 dependencies {
+    api(projects.core.base)
     api(projects.features.episodeSheet.presenter)
+    api(projects.navigation.api)
+    api(projects.navigation.ui)
 
     implementation(projects.androidDesignsystem)
     implementation(projects.core.view)

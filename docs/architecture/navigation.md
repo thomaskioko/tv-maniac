@@ -3,6 +3,7 @@
 ## Table of Contents
 
 - [Core Components](#core-components)
+- [Rendering destinations](#rendering-destinations)
 - [Navigator pattern](#navigator-pattern)
 - [Feature-to-feature communication](#feature-to-feature-communication)
 - [Testing navigation](#testing-navigation)
@@ -61,10 +62,10 @@ of the navigation machinery splits along the same line. Every concept on the sta
 ### NavRoute
 
 `NavRoute` is an open marker interface in `navigation/api`. Each feature declares its own `@Serializable` route class
-that implements it, in the feature's `nav/api` module:
+that implements it, in the feature's `nav` module:
 
 ```kotlin
-// features/show-details/nav/api
+// features/show-details/nav
 @Serializable
 public data class ShowDetailsRoute(public val param: ShowDetailsParam) : NavRoute
 ```
@@ -91,18 +92,20 @@ routes by type, never by config singleton.
 
 `SheetNavigator` is the sheet-side counterpart to `Navigator`. It owns the single `SlotNavigation<SheetConfig>` that
 backs the root modal sheet slot. The root presenter injects it to source the `childSlot`. Feature presenters that need
-to open a sheet do not inject `SheetNavigator` directly; instead, they inject a typed feature navigator (such as
-`EpisodeSheetNavigator`) declared in the feature's `nav/api`.
+to open a sheet inject `SheetNavigator` directly and call `activate(config)` with their feature's `SheetConfig`. To
+keep `SheetConfig` construction local to the feature and avoid duplicating it across presenters, each sheet-owning
+feature typically ships a small extension function on `SheetNavigator` in its own `nav` module (for example,
+`SheetNavigator.showEpisodeSheet(episodeId, source)` in `features/episode-sheet/nav`).
 
 - `activate(config)`: activate the given `SheetConfig` in the sheet slot, replacing any currently active sheet.
 - `dismiss()`: dismiss the currently active sheet, if any.
 - `getSlotNavigation()`: returns the underlying `SlotNavigation<SheetConfig>`. Used by the root presenter; not called
   from feature code.
 
-`DefaultSheetNavigator` in `navigation/implementation/controllers/` is the `@SingleIn(ActivityScope::class)`
-implementation. A feature-specific sheet navigator (for example, `EpisodeSheetNavigator`) keeps only its typed methods
-(`showEpisodeSheet`, `dismissEpisodeSheet`, etc.) and delegates `activate` and `dismiss` to an injected
-`SheetNavigator`. This means the `SlotNavigation` never lives in feature code.
+`DefaultSheetNavigator` in `features/root/presenter/di/` is the `@SingleIn(ActivityScope::class)` implementation. The
+sheet's own presenter (for example, `EpisodeSheetPresenter`) injects `SheetNavigator` alongside `Navigator` so it can
+combine `dismiss()` with a subsequent `pushNew` or `pushToFront` when the user drills into a show or season from the
+sheet. This means the `SlotNavigation` never lives in feature code.
 
 ### Children: `RootChild`, `SheetChild`, `ScreenDestination<T>`, `SheetDestination<T>`
 
@@ -144,43 +147,223 @@ sheet side:
 - `DefaultNavRouteSerializer` in `navigation/implementation` / `DefaultSheetConfigSerializer` in
   `navigation/implementation`
 
+## Rendering destinations
+
+The previous section covered how the shared-code multibindings produce a `RootChild` (or `SheetChild`) for the active
+route. This section covers the other half: turning that child into a Compose screen on Android and a SwiftUI view on
+iOS. Each platform has its own registry that mirrors the shared-code multibinding, so adding a screen never requires
+editing the root UI on either platform.
+
+### Android: `Set<ScreenContent>` / `Set<SheetContent>`
+
+`navigation/ui` is a small Android-only module holding two Compose renderer types:
+
+```kotlin
+public class ScreenContent(
+    public val matches: (RootChild) -> Boolean,
+    public val content: @Composable (RootChild, Modifier) -> Unit,
+)
+
+public class SheetContent(
+    public val matches: (SheetChild) -> Boolean,
+    public val content: @Composable (SheetChild) -> Unit,
+)
+```
+
+The module also declares `@Multibinds Set<ScreenContent>` and `@Multibinds Set<SheetContent>` in
+`NavigationUiMultibindings` at `ActivityScope`. Each feature's `ui` module contributes exactly one entry. The primary
+way to contribute is to annotate the composable function with `@ScreenUi` (or `@SheetUi` for sheet features):
+
+```kotlin
+// features/debug/ui/.../DebugMenuScreen.kt
+@ScreenUi(presenter = DebugPresenter::class, parentScope = ActivityScope::class)
+@Composable
+public fun DebugMenuScreen(
+    presenter: DebugPresenter,
+    modifier: Modifier = Modifier,
+) { /* ... */ }
+```
+
+The KSP processor generates `DebugMenuScreenUiBinding` in the same module's `di/` package. For a sheet:
+
+```kotlin
+// features/episode-sheet/ui/.../EpisodeSheet.kt
+@SheetUi(presenter = EpisodeSheetPresenter::class, parentScope = ActivityScope::class)
+@Composable
+public fun EpisodeSheet(
+    presenter: EpisodeSheetPresenter,
+    modifier: Modifier = Modifier,
+) { /* ... */ }
+```
+
+The generated binding for `@ScreenUi` looks like this (shown for reference; authors do not write it):
+
+```kotlin
+// generated: di/DebugMenuScreenUiBinding.kt
+@BindingContainer
+@ContributesTo(ActivityScope::class)
+public object DebugMenuScreenUiBinding {
+    @Provides
+    @IntoSet
+    public fun provideDebugMenuScreenContent(): ScreenContent = ScreenContent(
+        matches = { (it as? ScreenDestination<*>)?.presenter is DebugPresenter },
+        content = { child, modifier ->
+            DebugMenuScreen(
+                presenter = (child as ScreenDestination<*>).presenter as DebugPresenter,
+                modifier = modifier,
+            )
+        },
+    )
+}
+```
+
+For `@SheetUi`, the generated binding omits the `modifier` argument when calling the composable, because
+`SheetContent.content` does not receive a `Modifier`:
+
+```kotlin
+// generated: di/EpisodeSheetUiBinding.kt
+@BindingContainer
+@ContributesTo(ActivityScope::class)
+public object EpisodeSheetUiBinding {
+    @Provides
+    @IntoSet
+    public fun provideEpisodeSheetContent(): SheetContent = SheetContent(
+        matches = { (it as? SheetDestination<*>)?.presenter is EpisodeSheetPresenter },
+        content = { child ->
+            EpisodeSheet(
+                presenter = (child as SheetDestination<*>).presenter as EpisodeSheetPresenter,
+            )
+        },
+    )
+}
+```
+
+`features/root/ui/RootScreen.kt` receives the two sets from the `ActivityGraph`, iterates, and delegates:
+
+```kotlin
+Children(modifier = modifier, stack = childStack) { child ->
+    val instance = child.instance as? RootChild ?: return@Children
+    val renderer = screenContents.firstOrNull { it.matches(instance) } ?: return@Children
+    renderer.content(instance, Modifier.fillMaxSize())
+}
+```
+
+Because the root UI only depends on these sets, adding a screen or sheet never requires editing `features/root/ui`. The
+same decentralization the shared-code multibindings delivered at the presenter layer is now mirrored at the view layer.
+
+> [!IMPORTANT]
+> To enable codegen in a `ui` module, apply `scaffold { useCodegen() }` in the module's `build.gradle.kts` and add
+> `api(projects.navigation.ui)` to its dependencies.
+>
+> The `app` module must directly depend on every feature `ui` module. `features/root/ui` no longer depends on any
+> feature `ui` module (that was the whole point of the refactor), so there is no transitive path that exposes the
+> generated `metro/hints/` classes to the app. Each feature `ui` must be a direct dependency on `app` or
+> Metro reports its contribution as missing.
+
+> [!NOTE]
+> Hand-written `@Provides @IntoSet` contributions (for the rare case where codegen is not suitable) must use the
+> `@BindingContainer + public object` form, not `public interface + companion object`. The interface/companion form
+> requires Metro's `generateContributionProviders` to be `true`, which is disabled in the shared scaffold.
+> Codegen-generated bindings use the interface form because the KSP processor emits the missing plumbing.
+> Hand-written contributions must live on an `object` annotated with `@BindingContainer` so Metro picks up the
+> providers directly.
+
+### iOS: `ScreenRegistry`
+
+iOS does not have Metro multibindings, so the equivalent is a plain Swift registry populated at app startup. It lives
+in `ios/Modules/TvManiacKit/Sources/TvManiacKit/Navigation/ScreenRegistry.swift` and exposes `registerScreen`,
+`registerSheet`, `view(for:)`, `sheet(for:)`, and `dismissSheet(child:)`. Typed convenience wrappers in
+`ScreenRegistry+Typed.swift` allow callers to pass a presenter type and a view builder directly.
+`ScreenRegistryBootstrap` makes a registry and registers each feature view:
+
+```swift
+registry.registerScreen(for: HomePresenter.self) { TabBarView(presenter: $0) }
+```
+
+`RootNavigationView` receives the registry and calls `registry.view(for: child)` inside the stack closure, and
+`registry.sheet(for: child)` inside the sheet presenter. There is no inline `switch presenter` block. Adding a screen
+means adding one registration in `ScreenRegistryBootstrap`; `RootNavigationView` never changes.
+
+Sheets carry a paired dismiss closure because dismissing an episode sheet must call
+`presenter.dispatch(EpisodeSheetActionDismiss())` rather than a generic action. Future sheets register their own
+dismiss handler alongside their builder.
+
 ## Navigator pattern
 
 The default rule is simple: a presenter that needs to navigate injects the navigator interface from `navigation/api`
-and calls it with route values declared in feature `nav/api` modules. There is no per-feature navigator interface for
-the typical case, and there is no per-feature `nav/implementation` module at all.
+and calls it with route values declared in feature `nav` modules. There is no per-feature navigator interface for the
+typical case, and there is no per-feature `nav/implementation` module at all.
 
-A feature introduces its own navigator interface (in its `nav/api`) only when the navigation it owns is **stateful**,
-meaning the implementation has to hold and mutate something beyond a single push or pop. Three current examples:
+A feature introduces its own navigator interface (in its `nav` module) only when the navigation it owns is
+**stateful**, meaning the implementation has to hold and mutate something beyond a single push or pop. Two current
+examples:
 
-- A bottom-sheet controller that coordinates slot activation through `SheetNavigator` and sometimes dismisses the
-  sheet and routes to a new stack destination as a single user-visible step.
 - A tab-switching controller that owns the tab-host's child stack.
 - A cross-tab navigator that lets one tab tell the tab host to switch to another tab.
 
+Sheet entry points do *not* require a dedicated navigator interface. Feature presenters inject `SheetNavigator`
+directly and, where ergonomics matter, expose an extension function in the feature's `nav` module (for example,
+`SheetNavigator.showEpisodeSheet(episodeId, source)` in `features/episode-sheet/nav`). This keeps `SheetConfig`
+construction in one place without adding a new interface or binding per sheet.
+
 When a feature does declare its own navigator, the default implementation is an `internal` class inside the same
-presenter module, bound via `@ContributesBinding(ActivityScope::class)`. Stateful controllers that are shared across
-features (sheet host, tab host) live in `navigation/implementation/controllers/` instead.
+presenter module, bound via `@ContributesBinding(ActivityScope::class)`. Shared stateful hosts (the sheet slot,
+the home tab stack, notification rationale) live next to the presenter that owns them:
+`DefaultSheetNavigator` and `DefaultNotificationRationale` in `features/root/presenter/di/`,
+`DefaultHomeTabNavigator` in `features/home/presenter/di/`. Every binding is contributed at `ActivityScope` so any
+feature can inject the navigator interface without pulling in a host presenter.
 
 ### Sample feature shape
 
 ```
 features/search/
-  presenter/   SearchShowsPresenter, screen state, di/ (per-screen graph extension,
-               NavDestination + NavRouteBinding contributions)
-  ui/          SearchScreen (Android Compose)
-  nav/api/     SearchRoute (@Serializable), SearchScreenScope (DI marker)
+  presenter/   SearchShowsPresenter annotated with @NavScreen; the KSP processor emits
+               di/SearchShowsScreenGraph and di/SearchShowsNavDestinationBinding.
+  ui/          SearchScreen (Android Compose) annotated with @ScreenUi; the processor
+               emits di/SearchScreenUiBinding that contributes a ScreenContent into the
+               renderer multibinding.
+  nav/         SearchRoute (@Serializable). The route class itself is the DI scope
+               marker (route-as-scope), so no separate scope class is declared.
 ```
 
-The presenter injects the Navigator interface directly. There is no `SearchNavigator` and no `nav/implementation`
+The presenter injects the `Navigator` interface directly. There is no `SearchNavigator` and no `nav/implementation`
 module.
 
-To see this pattern in a real feature, read
-[`SearchShowsPresenter.kt`](../../features/search/presenter/src/commonMain/kotlin/com/thomaskioko/tvmaniac/search/presenter/SearchShowsPresenter.kt)
-alongside its route contract in
-[`SearchRoute.kt`](../../features/search/nav/api/src/commonMain/kotlin/com/thomaskioko/tvmaniac/search/nav/SearchRoute.kt).
-This shows how the presenter injects `Navigator` from `navigation/api` and pushes a route from a different feature's
-`nav/api` without importing that feature's presenter.
+The route is a small `@Serializable` data class in the feature's `nav` module:
+
+```kotlin
+// features/search/nav/.../SearchRoute.kt
+@Serializable
+public data object SearchRoute : NavRoute
+```
+
+The presenter injects `Navigator` from `navigation/api` and pushes routes by type. To navigate into Show Details, it
+imports that feature's route from `nav` (never its presenter or UI) and calls `pushNew`:
+
+```kotlin
+
+@Inject
+@NavScreen(route = SearchRoute::class, parentScope = ActivityScope::class)
+public class SearchShowsPresenter(
+    componentContext: ComponentContext,
+    private val navigator: Navigator,
+    // ... other deps
+) : ComponentContext by componentContext {
+
+    public fun dispatch(action: SearchShowAction) {
+        when (action) {
+            BackClicked -> navigator.pop()
+            is SearchShowClicked -> navigator.pushNew(
+                ShowDetailsRoute(ShowDetailsParam(id = action.id)),
+            )
+            // ...
+        }
+    }
+}
+```
+
+The import lines are the architectural contract: `Navigator` from `navigation/api` and `ShowDetailsRoute` from the
+show-details `nav` module. No import crosses the feature boundary into another feature's presenter or UI.
 
 > [!TIP]
 > When a parent presenter needs children to stay alive simultaneously (for example, a tab host whose tabs must each
@@ -191,47 +374,50 @@ This shows how the presenter injects `Navigator` from `navigation/api` and pushe
 
 ## Feature-to-feature communication
 
-Features almost never depend on each other's presenters or UI. When feature A needs to reach feature B, it picks one
-of four mechanisms based on what kind of interaction it is.
+A feature presenter or UI never depends on another feature's presenter or UI. Shared types live in `nav`
+modules; shared stateful behavior lives behind navigator interfaces declared in `navigation/api` or a feature's
+`nav` module, with implementations bound at `ActivityScope` alongside the presenter that owns the host state
+(sheet slot, home tab stack, notification rationale). Every cross-feature interaction in Tv Maniac goes through
+one of two mechanisms:
+
+1. Push another feature's route.
+2. Inject a cross-feature stateful navigator.
+
+`navigation/api` also ships `NavigationResultRegistry` for navigation-for-result. It is
+documented at the end of this section as a scaffolded-but-unused API.
 
 ### 1. Push another feature's route
 
 The most common case: feature A wants to open a screen owned by feature B. Feature A's presenter module declares a
-dependency on feature B's `nav/api` module only (never on B's presenter or UI), then injects the Navigator and pushes
-the route. Keeping `nav/api` as its own module lets any feature import the route contract without pulling in the
-owning feature's presenter, which would create cross-feature presenter dependencies.
+dependency on feature B's `nav` module only (never on B's `presenter` or `ui`), injects `Navigator`, and pushes the
+route. Keeping `nav` as its own module lets any feature import the route contract without pulling in the owning
+feature's presenter.
 
-For example, the discover presenter opens a show-details screen by importing `ShowDetailsRoute` from
-`features/show-details/nav/api` and pushing it. The discover module never sees the show-details presenter or UI.
-
-When a user taps a show in Discover, the flow looks like this:
+When a user taps a show in Search, the flow looks like this:
 
 ```mermaid
 sequenceDiagram
     actor User
-    participant Discover as Discover presenter
+    participant Search as Search presenter
     participant Navigator as Navigator
     participant Root as Root presenter
     participant ShowDetails as Show details presenter
 
-    User->>Discover: taps a show
-    Discover->>Navigator: push ShowDetailsRoute
+    User->>Search: taps a show
+    Search->>Navigator: pushNew(ShowDetailsRoute)
     Navigator->>Root: stack updated
     Root->>ShowDetails: build screen for this route
     ShowDetails-->>User: screen appears
 ```
 
-The key thing to notice: Discover only ever touches `ShowDetailsRoute` (a small data class in the Show details
-`nav/api` module). It never imports the Show details presenter or UI. That stays true even though, at runtime, pushing
-the route is exactly what causes the Show details presenter to be built and shown.
-
-At the module level, the dependency is one-way and goes through `nav/api` only:
+At the module level, the dependency is one-way and goes through `nav` only:
 
 ```mermaid
 graph LR
-    subgraph Discover["features/discover"]
-        DU["ui"]
-        DP["presenter"]
+    subgraph Search["features/search"]
+        SU["ui"]
+        SP["presenter"]
+        SN["nav"]
     end
 
     subgraph Nav["navigation/api"]
@@ -239,132 +425,177 @@ graph LR
     end
 
     subgraph ShowDetails["features/show-details"]
-        SDN["nav/api"]
+        SDN["nav"]
         SDP["presenter"]
         SDU["ui"]
     end
 
-    DU --> DP
-    DP -->|injects| NAV
-    DP -->|imports route| SDN
+    SU --> SP
+    SP --> SN
+    SP -->|injects| NAV
+    SP -->|imports route| SDN
     SDP --> SDN
     SDU --> SDP
 
-    style DU fill:#4CAF50,color:#fff
-    style DP fill:#2196F3,color:#fff
+    style SU fill:#4CAF50,color:#fff
+    style SP fill:#2196F3,color:#fff
+    style SN fill:#FF9800,color:#fff
     style NAV fill:#9C27B0,color:#fff
     style SDU fill:#4CAF50,color:#fff
     style SDP fill:#2196F3,color:#fff
     style SDN fill:#FF9800,color:#fff
 ```
 
-The Discover presenter holds two pieces: the `Navigator` interface from `navigation/api` (the thing it calls) and
-`ShowDetailsRoute` from Show details' `nav/api` (the value it passes). It never depends on the Show details presenter
-or UI, and neither `ui` module crosses the feature boundary.
+The Search presenter holds exactly two pieces from outside its own module: `Navigator` from `navigation/api` and
+`ShowDetailsRoute` from Show details' `nav` module. Neither `ui` module crosses the feature boundary, and neither
+presenter imports the other. See the [Sample feature shape](#sample-feature-shape) section above for the concrete
+`SearchShowsPresenter` snippet.
 
+### 2. Drive a cross-feature stateful navigator
 
-The real pattern is in `SearchShowsPresenter`
-([`SearchShowsPresenter.kt`](../../features/search/presenter/src/commonMain/kotlin/com/thomaskioko/tvmaniac/search/presenter/SearchShowsPresenter.kt)):
+Some navigation is stateful: activating a sheet, switching which tab is selected on the home host, delivering a
+"show followed" signal to root, triggering the notification rationale coordinator. In each case there is one shared
+piece of state that multiple features need to mutate. Those cases expose a typed interface in `navigation/api` or a
+shared `nav` module; the implementation is bound at `ActivityScope` so any feature can inject the interface without
+pulling in a host presenter. Shared hosts (sheet slot, home tab stack, notification rationale) live in
+`features/root/presenter/di/` or `features/home/presenter/di/`.
+
+Current stateful navigators:
+
+- `SheetNavigator` in `navigation/api` owns the single `SlotNavigation<SheetConfig>` that backs the root modal sheet.
+  Feature presenters inject it directly and call `activate(config)` with their own `SheetConfig`. Sheet-owning
+  features typically ship an ergonomic extension function in their `nav` module (for example,
+  `SheetNavigator.showEpisodeSheet(episodeId, source)` in `features/episode-sheet/nav`) so `EpisodeSheetConfig`
+  construction stays in one place across the presenters that open the sheet (Season Details, Discover, Up Next,
+  Calendar).
+- `HomeTabNavigator` in `features/home/nav` switches the home tab host's selected tab. The Discover tab uses it to
+  jump to Library when the user taps the "Up Next" affordance; the default implementation
+  (`DefaultHomeTabNavigator`) holds the tab-host `StackNavigation<HomeConfig>` handed to it by `HomePresenter`.
+- `NotificationRationale` in `features/root/nav` lets `ShowDetailsNavigator` ask the root presenter to show the
+  notification-permission rationale sheet when the user follows their first show.
+
+A feature declares its own navigator interface only when the navigation it owns is stateful in this sense. For a
+plain route push, just inject `Navigator`; adding a typed wrapper is a code smell.
+
+### navigation-for-result
+
+`navigation/api` ships `NavigationResultRegistry`, `NavigationResultRequest`, and `NavigationResults` to support the
+navigation-for-result pattern: feature A opens feature B specifically to receive a typed value back. No feature uses
+this today. Trakt sign-in is the first planned call site (see
+`tasks/completed/navigation-cleanup/tasks/task-16-navigation-codegen-article.md`); the section below walks through
+how it is meant to land.
+
+The flow has three participants: a **result type** declared in a shared `nav` module, a **target sheet config**
+that carries the result key, and a **source presenter** that listens for the result. Sign-in returning a token
+would look like this.
+
+Declare the result type alongside the sign-in sheet's config in `features/auth/nav`:
 
 ```kotlin
-// features/search/presenter/.../SearchShowsPresenter.kt
+// features/auth/nav/.../SignInResult.kt
+public sealed interface SignInResult {
+    public data class Success(public val accessToken: String) : SignInResult
+    public data object Cancelled : SignInResult
+}
 
-import com.thomaskioko.tvmaniac.navigation.Navigator           // from navigation/api
-import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute  // from features/show-details/nav/api
-import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
+// features/auth/nav/.../SignInSheetConfig.kt
+@Serializable
+public data class SignInSheetConfig(
+    public val resultKey: NavigationResultRequest.Key<SignInResult>,
+) : SheetConfig
+```
 
+The caller presenter (for example, settings asking the user to sign in before toggling Trakt sync) registers for the
+result at construction time, collects it on its coroutine scope, then opens the sheet with the request's key:
+
+```kotlin
+// features/settings/presenter/.../SettingsPresenter.kt
 @Inject
-public class SearchShowsPresenter(
+@NavScreen(route = SettingsRoute::class, parentScope = ActivityScope::class)
+public class SettingsPresenter(
     componentContext: ComponentContext,
     private val navigator: Navigator,
-    // ... other dependencies
+    private val sheetNavigator: SheetNavigator,
+    resultRegistry: NavigationResultRegistry,
+    // ...
 ) : ComponentContext by componentContext {
 
-    fun dispatch(action: SearchShowAction) {
-        when (action) {
-            is SearchShowClicked -> navigator.pushNew(ShowDetailsRoute(ShowDetailsParam(id = action.id)))
-            // ...
+    private val signInRequest =
+        resultRegistry.registerForNavigationResult<SettingsRoute, SignInResult>()
+
+    init {
+        coroutineScope.launch {
+            signInRequest.results.collect { result ->
+                when (result) {
+                    is SignInResult.Success -> onSignedIn(result.accessToken)
+                    SignInResult.Cancelled -> { /* user backed out */ }
+                }
+            }
         }
     }
-}
-```
 
-The import lines show what the search module actually depends on: `Navigator` from `navigation/api` and
-`ShowDetailsRoute` plus `ShowDetailsParam` from the show-details `nav/api` module. There is no import of anything from
-the show-details presenter or UI. Feature B never knows it was opened by A. The dependency goes one way: A reads B's
-route type. There is no presenter-to-presenter coupling.
-
-### 2. Drive a cross-feature stateful controller
-
-A few controllers own state that more than one feature needs to mutate. The clearest example is the tab host: the
-discover tab has an "Up Next" affordance that must switch the host's selected tab to "library." That requires touching
-the tab host's child stack, which neither tab owns.
-
-For these cases, the controller exposes a navigator interface in a shared `nav/api` module (`features/home/nav/api`
-for the tab host, `features/episode-sheet/nav/api` for the bottom sheet). Feature presenters inject that interface and
-call typed methods on it. The default implementation lives in `navigation/implementation/controllers/` so that any
-feature can depend on it without pulling in the host's presenter module. For sheet navigators specifically, the
-default slot lives behind `SheetNavigator` in `navigation/api`; feature navigators delegate `activate` and `dismiss`
-to it rather than owning their own `SlotNavigation`.
-
-### 3. Receive a result from another destination
-
-When feature A opens feature B to collect a value (a sign-in sheet that returns a success token, a picker that returns
-a selection), inject `NavigationResultRegistry` from `navigation/api` on both sides. The source calls
-`registerForNavigationResult<SourceRoute, ResultType>()` to get a `NavigationResultRequest` whose `key` it passes into
-the target route and whose `results` flow it collects. The target calls
-`resultRegistry.deliverNavigationResult(key, result)` and then pops itself.
-
-```kotlin
-// Source presenter (hosted by SignInCallerRoute)
-private val signInRequest =
-    resultRegistry.registerForNavigationResult<SignInCallerRoute, SignInResult>()
-
-init {
-    coroutineScope.launch {
-        signInRequest.results.collect { result -> handleSignIn(result) }
+    public fun onSignInClicked() {
+        sheetNavigator.activate(SignInSheetConfig(resultKey = signInRequest.key))
     }
 }
+```
 
-fun onSignInClicked() {
-    navigator.pushNew(SignInSheetConfig(resultKey = signInRequest.key))
-}
+The sign-in sheet presenter injects the registry and the config (so it has the key), delivers the result on success
+or cancellation, then dismisses:
 
-// Target presenter (sign-in sheet)
-fun onSuccess(token: String) {
-    resultRegistry.deliverNavigationResult(resultKey, SignInResult.Success(token))
-    sheetNavigator.dismiss()
+```kotlin
+// features/auth/presenter/.../SignInSheetPresenter.kt
+@AssistedInject
+@NavSheet(route = SignInSheetConfig::class, parentScope = ActivityScope::class)
+public class SignInSheetPresenter(
+    @Assisted private val resultKey: NavigationResultRequest.Key<SignInResult>,
+    private val resultRegistry: NavigationResultRegistry,
+    private val sheetNavigator: SheetNavigator,
+    // ...
+) {
+    public fun onTokenReceived(token: String) {
+        resultRegistry.deliverNavigationResult(resultKey, SignInResult.Success(token))
+        sheetNavigator.dismiss()
+    }
+
+    public fun onCancelled() {
+        resultRegistry.deliverNavigationResult(resultKey, SignInResult.Cancelled)
+        sheetNavigator.dismiss()
+    }
 }
 ```
 
-Keys are identified by `(ownerRouteQualifiedName, resultQualifiedName)`, which makes them stable across recomposition
-and safe to embed in a `@Serializable` route. Results are kept in memory only; they survive Decompose recomposition
-but do not persist across process death today. Reconcile authoritative state through repositories when that guarantee
-matters.
+Three properties worth noticing:
+
+- `Key<SignInResult>` is `@Serializable`, so it survives process death when embedded in `SignInSheetConfig`.
+- The key is derived from `SettingsRoute::class.qualifiedName + SignInResult::class.qualifiedName`, so it is stable
+  for a given source-route / result-type pair. Two callers with the same pair share the same key, which is usually
+  what you want.
+- Results are kept in memory only and delivered at-most-once to the first collector. They do not persist across
+  process death beyond the key itself. Reconcile authoritative state through a repository when the caller needs
+  a stronger guarantee than "one transient hint".
 
 ### Choosing between them
 
-Use **push a route** when feature A wants to open a specific screen owned by feature B.
+Use **push a route** when feature A wants to open a specific screen owned by feature B. That is the default.
 
-Use **inject a stateful navigator interface** when the action requires mutating state that lives in another feature's
-controller (tab selection, sheet visibility, notification-permission rationale).
-
-Use **navigation-for-result** when feature A opens feature B specifically to receive a single value back.
-
-These are the only sanctioned cross-feature paths. A presenter must never depend on another feature's presenter, UI,
-or `implementation` module.
+Use a **stateful navigator interface** only when the action mutates shared state that neither feature owns (sheet
+visibility, tab selection, notification-permission rationale).
 
 > [!WARNING]
-> Presenter-to-presenter dependencies are not allowed. If you find yourself wanting to call a method on another
-> feature's presenter, the interaction belongs in one of the cross-feature paths above. Shared types (params, route
-> models) belong in `nav/api` modules. Shared stateful behavior belongs in a navigator or coordinator interface in a
-> shared `nav/api` module. Do not add a broadcast event bus back to paper over a missing coordinator.
+> Presenter-to-presenter and UI-to-UI dependencies across features are not allowed. If you want to call a method on
+> another feature's presenter, the interaction belongs in one of the mechanisms above. Shared types (params, route
+> models) belong in `nav` modules. Shared stateful behavior belongs in a navigator interface in a `nav` module, with
+> its implementation contributed at `ActivityScope` next to the presenter that owns the host state. Do not
+> reintroduce a broadcast event bus to paper over a missing navigator.
 
 ## Testing navigation
 
 Presenter tests assert on navigation through `navigation/testing`. The module ships a `TestNavigator` that implements
 `Navigator` and records every call (`pushNew`, `pop`, `bringToFront`, etc.) as a `NavEvent`, plus a `NavigatorTurbine`
-that wraps Turbine to consume those events in order.
+that wraps Turbine to consume those events in order. It also ships a `FakeSheetNavigator` that records `activate` and
+`dismiss` calls into a list and a counter, so sheet-activating presenters can be tested without stubbing the
+`SheetNavigator` interface inline in each test.
 
 Wire `TestNavigator` into the feature's own navigator implementation and assert at route level. No more anonymous
 `object : DiscoverNavigator` stubs with one-off local-var captures:
@@ -375,7 +606,7 @@ fun `navigates to season when next episode clicked`() = runTest {
     val testNavigator = TestNavigator()
     val discoverNavigator = DefaultDiscoverNavigator(
         navigator = testNavigator,
-        episodeSheetNavigator = NoOpEpisodeSheetNavigator,
+        sheetNavigator = FakeSheetNavigator(),
         homeTabNavigator = NoOpHomeTabNavigator,
     )
     val presenter = buildPresenter(navigator = discoverNavigator)
@@ -399,6 +630,21 @@ Because `TestNavigator` implements the core `Navigator` interface (not the per-f
 the `NavRoute` instance that feature navigators ultimately construct. Feature-specific methods like
 `DiscoverNavigator.showDetails(traktId)` stay thin delegates and are implicitly covered.
 
+For sheet assertions, `FakeSheetNavigator` exposes `activatedConfigs`, `dismissCount`, and `lastActivated`; the
+inline `lastActivatedAs<T>()` helper narrows to a feature's config type:
+
+```kotlin
+@Test
+fun `activates episode sheet when card is clicked`() = runTest {
+    val sheetNavigator = FakeSheetNavigator()
+    val presenter = createPresenter(sheetNavigator = sheetNavigator)
+
+    presenter.dispatch(EpisodeCardClicked(episodeTraktId = 42))
+
+    sheetNavigator.lastActivatedAs<EpisodeSheetConfig>().episodeId shouldBe 42
+}
+```
+
 ## Module structure
 
 ```
@@ -408,22 +654,30 @@ navigation/
                     RootChild, SheetChild, ScreenDestination<T>, SheetDestination<T>,
                     SheetConfig, SheetChildFactory, SheetConfigBinding, SheetConfigSerializer
   implementation/   Default navigator, default route serializer, default sheet config
-                    serializer, default navigation result registry, default notification
-                    rationale coordinator, stateful controllers (sheet host, tab host),
-                    navigation binding container, multibinding declarations
+                    serializer, default navigation result registry, navigation binding
+                    container, multibinding declarations. (Shared stateful hosts
+                    DefaultSheetNavigator, DefaultNotificationRationale, and
+                    DefaultHomeTabNavigator live next to the presenter that owns them:
+                    features/root/presenter/di/ and features/home/presenter/di/.)
+  ui/               Android-only Compose renderer types ScreenContent and SheetContent,
+                    plus the NavigationUiMultibindings declaration for
+                    Set<ScreenContent> / Set<SheetContent> at ActivityScope.
   testing/          TestNavigator that records every navigation call as a NavEvent plus
                     the NavigatorTurbine assertion API (Navigator.test { awaitPushNew(...) }).
-                    Consumed from feature presenter-test source sets for declarative
-                    navigation assertions.
+                    Also ships FakeSheetNavigator (activatedConfigs, dismissCount,
+                    lastActivatedAs<T>()) for sheet-activating presenters. Consumed from
+                    feature presenter-test source sets for declarative navigation assertions.
 
 features/root/
   presenter/        Root presenter interface and default implementation. Injects the
                     navigator, the destination sets, the route and sheet serializers,
                     the sheet controller, and the notification rationale coordinator.
-  ui/               Root composable (Android). Pattern-matches the active RootChild and
-                    renders the matching screen.
-  nav/              Sheet-controller interface, deep-link destinations, theme state,
-                    notification permission state, notification rationale coordinator.
+  ui/               Root composable (Android). Iterates Set<ScreenContent> and
+                    Set<SheetContent> to render the active child. Only depends on
+                    navigation/api, navigation/ui, features/root/presenter,
+                    features/root/nav, and android-designsystem. No feature dependencies.
+  nav/              Deep-link destinations, theme state, notification permission state,
+                    notification rationale coordinator interface.
 
 features/{name}/
   presenter/        Presenter, screen state, and di/ bindings contributing a NavDestination
@@ -432,10 +686,29 @@ features/{name}/
                     @TabScreen, or @NavSheet and apply scaffold { useCodegen() } in
                     build.gradle.kts; the @GraphExtension and destination binding are
                     generated. See [Navigation Codegen](navigation-codegen.md).
-  ui/               Android Compose screen.
-  nav/api/          @Serializable route class implementing NavRoute (or SheetConfig for
+  ui/               Android Compose screen. Annotate the composable with @ScreenUi (or
+                    @SheetUi for sheet features) and apply scaffold { useCodegen() } in
+                    build.gradle.kts; the processor generates di/XxxUiBinding.kt that
+                    contributes a ScreenContent (or SheetContent) into the Set.
+  nav/              @Serializable route class implementing NavRoute (or SheetConfig for
                     sheet features), optional stateful navigator interface and shared
-                    model types.
+                    model types. The route class itself is the DI scope marker.
+
+ios/Modules/TvManiacKit/Sources/TvManiacKit/Navigation/
+  ScreenRegistry.swift            Plain Swift registry with registerScreen /
+                                  registerSheet / view(for:) / sheet(for:) /
+                                  dismissSheet(child:). iOS counterpart to Android's
+                                  Set<ScreenContent> / Set<SheetContent> multibindings.
+  ScreenRegistry+Typed.swift      Typed convenience wrappers: registerScreen(for:builder:)
+                                  and registerSheet(for:builder:dismiss:). Handle the
+                                  ScreenDestination / SheetDestination cast and AnyView wrap.
+
+ios/ios/UI/Root/
+  ScreenRegistryBootstrap.swift   Registers every feature view at app startup.
+                                  Adding a new screen means adding one registration
+                                  here. RootNavigationView never changes.
+  RootNavigationView.swift        Consumes the registry via registry.view(for:) and
+                                  registry.sheet(for:). No inline switch presenter.
 ```
 
 ## Next Steps

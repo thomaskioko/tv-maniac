@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.presentation.episodedetail
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
-import com.thomaskioko.root.nav.EpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
@@ -20,6 +19,12 @@ import com.thomaskioko.tvmaniac.domain.episode.ObserveEpisodeByIdInteractor
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetConfig
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
+import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.navigation.SheetNavigator
+import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
+import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
+import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
+import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
@@ -37,7 +42,8 @@ public class EpisodeSheetPresenter(
     @Assisted private val source: ScreenSource,
     componentContext: ComponentContext,
     observeEpisodeByIdInteractor: ObserveEpisodeByIdInteractor,
-    private val navigator: EpisodeSheetNavigator,
+    private val navigator: Navigator,
+    private val sheetNavigator: SheetNavigator,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val markEpisodeUnwatchedInteractor: MarkEpisodeUnwatchedInteractor,
     private val unfollowShowInteractor: UnfollowShowInteractor,
@@ -75,7 +81,7 @@ public class EpisodeSheetPresenter(
             is EpisodeSheetAction.OpenShow -> openShow()
             is EpisodeSheetAction.OpenSeason -> openSeason()
             is EpisodeSheetAction.Unfollow -> unfollowShow()
-            is EpisodeSheetAction.Dismiss -> navigator.dismissEpisodeSheet()
+            is EpisodeSheetAction.Dismiss -> sheetNavigator.dismiss()
             is EpisodeSheetAction.MessageShown -> clearMessage(action.id)
         }
     }
@@ -100,25 +106,35 @@ public class EpisodeSheetPresenter(
                     ),
                 ).collectStatus(actionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
             }
-            navigator.dismissEpisodeSheet()
+            sheetNavigator.dismiss()
         }
     }
 
     private fun openShow() {
         val episode = currentEpisode ?: return
-        navigator.dismissAndShowShowDetails(episode.show_trakt_id.id)
+        sheetNavigator.dismiss()
+        navigator.pushToFront(ShowDetailsRoute(ShowDetailsParam(id = episode.show_trakt_id.id)))
     }
 
     private fun openSeason() {
         val episode = currentEpisode ?: return
-        navigator.dismissAndShowSeasonDetails(episode.show_trakt_id.id, episode.season_id.id, episode.season_number)
+        sheetNavigator.dismiss()
+        navigator.pushNew(
+            SeasonDetailsRoute(
+                SeasonDetailsUiParam(
+                    showTraktId = episode.show_trakt_id.id,
+                    seasonId = episode.season_id.id,
+                    seasonNumber = episode.season_number,
+                ),
+            ),
+        )
     }
 
     private fun unfollowShow() {
         val episode = currentEpisode ?: return
         coroutineScope.launch {
             unfollowShowInteractor.executeSync(episode.show_trakt_id.id)
-            navigator.dismissEpisodeSheet()
+            sheetNavigator.dismiss()
         }
     }
 

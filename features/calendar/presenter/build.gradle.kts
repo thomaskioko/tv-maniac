@@ -12,8 +12,9 @@ kotlin {
         commonMain {
             dependencies {
                 api(projects.core.view)
+                implementation(projects.navigation.api)
                 implementation(projects.features.calendar.nav)
-                implementation(projects.features.root.nav)
+                implementation(projects.features.episodeSheet.nav)
                 implementation(projects.data.calendar.api)
                 implementation(projects.data.traktauth.api)
                 implementation(projects.core.base)
@@ -36,6 +37,7 @@ kotlin {
                 implementation(projects.data.calendar.testing)
                 implementation(projects.data.traktauth.testing)
                 implementation(projects.i18n.testing)
+                implementation(projects.navigation.testing)
 
                 implementation(libs.bundles.unittest)
             }

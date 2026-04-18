@@ -82,7 +82,13 @@ public class MainActivity : ComponentActivity() {
                 onDispose {}
             }
 
-            TvManiacTheme(appTheme = appTheme) { RootScreen(rootPresenter = graph.rootPresenter) }
+            TvManiacTheme(appTheme = appTheme) {
+                RootScreen(
+                    rootPresenter = graph.rootPresenter,
+                    screenContents = graph.screenContents,
+                    sheetContents = graph.sheetContents,
+                )
+            }
         }
 
         handleNotificationIntent(intent)

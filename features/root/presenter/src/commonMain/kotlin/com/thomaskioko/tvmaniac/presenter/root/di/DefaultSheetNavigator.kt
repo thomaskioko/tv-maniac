@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.navigation.controllers
+package com.thomaskioko.tvmaniac.presenter.root.di
 
 import com.arkivanov.decompose.router.slot.SlotNavigation
 import com.arkivanov.decompose.router.slot.activate

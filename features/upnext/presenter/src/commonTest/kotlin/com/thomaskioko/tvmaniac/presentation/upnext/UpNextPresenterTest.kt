@@ -4,7 +4,6 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.thomaskioko.root.nav.EpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
@@ -14,10 +13,10 @@ import com.thomaskioko.tvmaniac.domain.upnext.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.RefreshUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.model.UpNextSortOption
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
-import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.navigation.NavRoute
 import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.navigation.testing.FakeSheetNavigator
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
@@ -433,12 +432,7 @@ internal class UpNextPresenterTest {
                 override fun popTo(toIndex: Int) {}
                 override fun getStackNavigation(): StackNavigation<NavRoute> = navigation
             },
-            episodeSheetNavigator = object : EpisodeSheetNavigator {
-                override fun showEpisodeSheet(episodeId: Long, source: ScreenSource) {}
-                override fun dismissEpisodeSheet() {}
-                override fun dismissAndShowShowDetails(showTraktId: Long) {}
-                override fun dismissAndShowSeasonDetails(showTraktId: Long, seasonId: Long, seasonNumber: Long) {}
-            },
+            sheetNavigator = FakeSheetNavigator(),
             observeUpNextInteractor = observeUpNextInteractor,
             refreshUpNextInteractor = refreshUpNextInteractor,
             markEpisodeWatchedInteractor = markEpisodeWatchedInteractor,

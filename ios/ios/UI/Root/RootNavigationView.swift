@@ -15,6 +15,7 @@ import UserNotifications
 struct RootNavigationView: View {
     private let rootPresenter: RootPresenter
     private let navigator: Navigator
+    private let registry: ScreenRegistry
     @StateValue private var themeState: ThemeState
     @StateValue private var notificationPermissionState: NotificationPermissionState
     @StateValue private var episodeSheetSlot: ChildSlot<AnyObject, SheetChild>
@@ -22,9 +23,10 @@ struct RootNavigationView: View {
     @EnvironmentObject private var appDelegate: AppDelegate
     @State private var rationaleActionTaken = false
 
-    init(rootPresenter: RootPresenter, navigator: Navigator) {
+    init(rootPresenter: RootPresenter, navigator: Navigator, registry: ScreenRegistry) {
         self.rootPresenter = rootPresenter
         self.navigator = navigator
+        self.registry = registry
         _themeState = .init(rootPresenter.themeStateValue)
         _notificationPermissionState = .init(rootPresenter.notificationPermissionStateValue)
         _episodeSheetSlot = .init(rootPresenter.episodeSheetSlotValue)
@@ -36,36 +38,7 @@ struct RootNavigationView: View {
                 stack: rootPresenter.childStackValue,
                 onBack: navigator.popTo
             ) { child in
-                if let screen = child as? ScreenDestination<AnyObject> {
-                    let presenter = screen.presenter
-                    switch presenter {
-                    case let presenter as HomePresenter:
-                        TabBarView(presenter: presenter)
-                            .id(ObjectIdentifier(child))
-                    case let presenter as ShowDetailsPresenter:
-                        ShowDetailsView(presenter: presenter)
-                            .id(ObjectIdentifier(child))
-                    case let presenter as SeasonDetailsPresenter:
-                        SeasonDetailsView(presenter: presenter)
-                            .id(ObjectIdentifier(child))
-                    case let presenter as SearchShowsPresenter:
-                        SearchTab(presenter: presenter)
-                            .id(ObjectIdentifier(child))
-                    case let presenter as SettingsPresenter:
-                        SettingsView(presenter: presenter)
-                            .id(ObjectIdentifier(child))
-                    case let presenter as DebugPresenter:
-                        DebugMenuView(presenter: presenter)
-                            .id(ObjectIdentifier(child))
-                    case let presenter as MoreShowsPresenter:
-                        MoreShowsView(presenter: presenter)
-                            .id(ObjectIdentifier(child))
-                    default:
-                        EmptyView()
-                    }
-                } else {
-                    EmptyView()
-                }
+                registry.view(for: child)
             }
         }
         .appTheme()
@@ -73,19 +46,14 @@ struct RootNavigationView: View {
             isPresented: Binding(
                 get: { episodeSheetSlot.child != nil },
                 set: { isPresented in
-                    if !isPresented,
-                       let sheet = episodeSheetSlot.child?.instance as? SheetDestination<AnyObject>,
-                       let presenter = sheet.presenter as? EpisodeSheetPresenter
-                    {
-                        presenter.dispatch(action: EpisodeSheetActionDismiss())
+                    if !isPresented, let child = episodeSheetSlot.child?.instance {
+                        registry.dismissSheet(child: child)
                     }
                 }
             )
         ) {
-            if let sheet = episodeSheetSlot.child?.instance as? SheetDestination<AnyObject>,
-               let presenter = sheet.presenter as? EpisodeSheetPresenter
-            {
-                EpisodeDetailSheetView(presenter: presenter)
+            if let child = episodeSheetSlot.child?.instance {
+                registry.sheet(for: child)
             }
         }
         .onChange(of: themeState.appTheme) { _, newTheme in
