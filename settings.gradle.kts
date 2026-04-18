@@ -227,6 +227,7 @@ include(
     ":navigation:api",
     ":navigation:implementation",
     ":navigation:testing",
+    ":navigation:ui",
     ":features:calendar:presenter",
     ":features:calendar:nav",
     ":features:discover:presenter",
