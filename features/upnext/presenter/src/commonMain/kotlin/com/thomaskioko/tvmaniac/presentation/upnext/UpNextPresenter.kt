@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.presentation.upnext
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
-import com.thomaskioko.root.nav.EpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
@@ -17,7 +16,9 @@ import com.thomaskioko.tvmaniac.domain.upnext.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.RefreshUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.model.UpNextSortOption
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.showEpisodeSheet
 import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.navigation.SheetNavigator
 import com.thomaskioko.tvmaniac.presentation.upnext.model.UpNextEpisodeUiModel
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
@@ -42,7 +43,7 @@ import kotlinx.coroutines.launch
 public class UpNextPresenter(
     componentContext: ComponentContext,
     private val navigator: Navigator,
-    private val episodeSheetNavigator: EpisodeSheetNavigator,
+    private val sheetNavigator: SheetNavigator,
     private val refreshUpNextInteractor: RefreshUpNextInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val upNextRepository: UpNextRepository,
@@ -104,7 +105,7 @@ public class UpNextPresenter(
                 ),
             )
             is UnfollowShow -> unfollowShow(action.showTraktId)
-            is UpNextEpisodeLongPressed -> episodeSheetNavigator.showEpisodeSheet(action.episodeId, ScreenSource.UP_NEXT)
+            is UpNextEpisodeLongPressed -> sheetNavigator.showEpisodeSheet(action.episodeId, ScreenSource.UP_NEXT)
         }
     }
 

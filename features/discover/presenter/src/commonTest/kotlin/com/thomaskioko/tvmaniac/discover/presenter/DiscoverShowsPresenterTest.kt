@@ -5,7 +5,6 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
-import com.thomaskioko.root.nav.EpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
@@ -28,11 +27,11 @@ import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
-import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
 import com.thomaskioko.tvmaniac.home.nav.HomeTabNavigator
 import com.thomaskioko.tvmaniac.home.nav.di.model.HomeConfig
+import com.thomaskioko.tvmaniac.navigation.testing.FakeSheetNavigator
 import com.thomaskioko.tvmaniac.navigation.testing.TestNavigator
 import com.thomaskioko.tvmaniac.navigation.testing.test
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
@@ -283,7 +282,7 @@ class DiscoverShowsPresenterTest {
         val testNavigator = TestNavigator()
         val discoverNavigator = DefaultDiscoverNavigator(
             navigator = testNavigator,
-            episodeSheetNavigator = NoOpEpisodeSheetNavigator,
+            sheetNavigator = FakeSheetNavigator(),
             homeTabNavigator = NoOpHomeTabNavigator,
         )
 
@@ -347,13 +346,6 @@ class DiscoverShowsPresenterTest {
                 ),
             )
         }
-    }
-
-    private object NoOpEpisodeSheetNavigator : EpisodeSheetNavigator {
-        override fun showEpisodeSheet(episodeId: Long, source: ScreenSource) = Unit
-        override fun dismissEpisodeSheet() = Unit
-        override fun dismissAndShowShowDetails(showTraktId: Long) = Unit
-        override fun dismissAndShowSeasonDetails(showTraktId: Long, seasonId: Long, seasonNumber: Long) = Unit
     }
 
     private object NoOpHomeTabNavigator : HomeTabNavigator {

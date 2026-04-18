@@ -13,7 +13,7 @@ kotlin {
             dependencies {
                 api(projects.core.view)
                 implementation(projects.navigation.api)
-                implementation(projects.features.root.nav)
+                implementation(projects.features.episodeSheet.nav)
                 implementation(projects.features.discover.nav)
                 implementation(projects.features.home.nav)
                 implementation(projects.features.moreShows.nav)

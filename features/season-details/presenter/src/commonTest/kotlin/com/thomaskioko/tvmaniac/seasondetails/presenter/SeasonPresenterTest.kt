@@ -4,7 +4,6 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.thomaskioko.root.nav.EpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
@@ -25,9 +24,9 @@ import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeUnwatchedCall
 import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall
 import com.thomaskioko.tvmaniac.episodes.testing.MarkSeasonWatchedCall
-import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.navigation.NavRoute
 import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.navigation.testing.FakeSheetNavigator
 import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.seasondetails.presenter.data.buildSeasonDetailsLoaded
@@ -1179,7 +1178,6 @@ class SeasonPresenterTest {
 
     private fun buildSeasonDetailsPresenter(
         onBack: () -> Unit = {},
-        onEpisodeClick: (id: Long) -> Unit = {},
     ): SeasonDetailsPresenter {
         return SeasonDetailsPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
@@ -1199,14 +1197,7 @@ class SeasonPresenterTest {
                 override fun popTo(toIndex: Int) {}
                 override fun getStackNavigation(): StackNavigation<NavRoute> = navigation
             },
-            episodeSheetNavigator = object : EpisodeSheetNavigator {
-                override fun showEpisodeSheet(episodeId: Long, source: ScreenSource) {
-                    onEpisodeClick(episodeId)
-                }
-                override fun dismissEpisodeSheet() {}
-                override fun dismissAndShowShowDetails(showTraktId: Long) {}
-                override fun dismissAndShowSeasonDetails(showTraktId: Long, seasonId: Long, seasonNumber: Long) {}
-            },
+            sheetNavigator = FakeSheetNavigator(),
             observableSeasonDetailsInteractor = ObservableSeasonDetailsInteractor(
                 seasonDetailsRepository = seasonDetailsRepository,
                 castRepository = castRepository,

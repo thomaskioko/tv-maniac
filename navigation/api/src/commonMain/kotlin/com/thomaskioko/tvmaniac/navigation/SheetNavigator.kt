@@ -7,8 +7,10 @@ import com.arkivanov.decompose.router.slot.SlotNavigation
  *
  * Every sheet-owning feature activates its config through this navigator instead of declaring its
  * own `SlotNavigation`. The root presenter consumes [getSlotNavigation] when building the
- * `childSlot`, so adding a new sheet never touches root. Feature-specific navigators
- * (e.g. `EpisodeSheetNavigator`) delegate to this interface.
+ * `childSlot`, so adding a new sheet never touches root. Features that expose ergonomic sheet
+ * entry points typically add an extension function on [SheetNavigator] in their own `nav` module
+ * (e.g. `SheetNavigator.showEpisodeSheet(episodeId, source)`), keeping config construction local
+ * to the feature.
  */
 public interface SheetNavigator {
     /** Activate [config] in the sheet slot, replacing any currently active sheet. */

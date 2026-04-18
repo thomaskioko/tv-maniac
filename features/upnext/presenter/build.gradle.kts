@@ -13,7 +13,7 @@ kotlin {
             dependencies {
                 api(projects.core.view)
                 implementation(projects.navigation.api)
-                implementation(projects.features.root.nav)
+                implementation(projects.features.episodeSheet.nav)
                 implementation(projects.features.upnext.nav)
                 implementation(projects.features.showDetails.nav)
                 implementation(projects.features.seasonDetails.nav)
@@ -43,6 +43,7 @@ kotlin {
                 implementation(projects.data.followedshows.testing)
                 implementation(projects.data.upnext.testing)
                 implementation(projects.data.traktauth.testing)
+                implementation(projects.navigation.testing)
 
                 implementation(libs.bundles.unittest)
             }

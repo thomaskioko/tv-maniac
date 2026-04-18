@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.presentation.calendar
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.thomaskioko.root.nav.EpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.data.calendar.CalendarEntry
@@ -12,7 +11,9 @@ import com.thomaskioko.tvmaniac.domain.calendar.CalendarEpisodeFormatter
 import com.thomaskioko.tvmaniac.domain.calendar.CalendarWeekCalculator
 import com.thomaskioko.tvmaniac.domain.calendar.FetchCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.calendar.ObserveCalendarInteractor
-import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetConfig
+import com.thomaskioko.tvmaniac.navigation.testing.FakeSheetNavigator
+import com.thomaskioko.tvmaniac.navigation.testing.lastActivatedAs
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
@@ -288,35 +289,27 @@ internal class CalendarPresenterTest {
     }
 
     @Test
-    fun `should invoke callback given EpisodeCardClicked is dispatched`() = runTest {
-        var clickedEpisodeId: Long? = null
-        val presenter = createPresenter(
-            onEpisodeLongPressed = { clickedEpisodeId = it },
-        )
+    fun `should activate episode sheet given EpisodeCardClicked is dispatched`() = runTest {
+        val sheetNavigator = FakeSheetNavigator()
+        val presenter = createPresenter(sheetNavigator = sheetNavigator)
 
-        presenter.state.test {
-            awaitItem()
+        presenter.state.test { awaitItem() }
 
-            presenter.dispatch(EpisodeCardClicked(episodeTraktId = 42))
+        presenter.dispatch(EpisodeCardClicked(episodeTraktId = 42))
 
-            clickedEpisodeId shouldBe 42
-        }
+        sheetNavigator.lastActivatedAs<EpisodeSheetConfig>().episodeId shouldBe 42
     }
 
     @Test
-    fun `should invoke callback with episode id given EpisodeCardClicked with unknown id`() = runTest {
-        var clickedEpisodeId: Long? = null
-        val presenter = createPresenter(
-            onEpisodeLongPressed = { clickedEpisodeId = it },
-        )
+    fun `should activate episode sheet given EpisodeCardClicked with unknown id`() = runTest {
+        val sheetNavigator = FakeSheetNavigator()
+        val presenter = createPresenter(sheetNavigator = sheetNavigator)
 
-        presenter.state.test {
-            awaitItem()
+        presenter.state.test { awaitItem() }
 
-            presenter.dispatch(EpisodeCardClicked(episodeTraktId = 999))
+        presenter.dispatch(EpisodeCardClicked(episodeTraktId = 999))
 
-            clickedEpisodeId shouldBe 999
-        }
+        sheetNavigator.lastActivatedAs<EpisodeSheetConfig>().episodeId shouldBe 999
     }
 
     @Test
@@ -390,7 +383,7 @@ internal class CalendarPresenterTest {
     }
 
     private fun createPresenter(
-        onEpisodeLongPressed: (Long) -> Unit = {},
+        sheetNavigator: FakeSheetNavigator = FakeSheetNavigator(),
     ): CalendarPresenter {
         val dispatchers = AppCoroutineDispatchers(
             main = testDispatcher,
@@ -427,14 +420,7 @@ internal class CalendarPresenterTest {
 
         return CalendarPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
-            episodeSheetNavigator = object : EpisodeSheetNavigator {
-                override fun showEpisodeSheet(episodeId: Long, source: ScreenSource) {
-                    onEpisodeLongPressed(episodeId)
-                }
-                override fun dismissEpisodeSheet() {}
-                override fun dismissAndShowShowDetails(showTraktId: Long) {}
-                override fun dismissAndShowSeasonDetails(showTraktId: Long, seasonId: Long, seasonNumber: Long) {}
-            },
+            sheetNavigator = sheetNavigator,
             observeCalendarInteractor = observeCalendarInteractor,
             fetchCalendarInteractor = fetchCalendarInteractor,
             traktAuthRepository = traktAuthRepository,
