@@ -675,7 +675,7 @@ features/root/
   ui/               Root composable (Android). Iterates Set<ScreenContent> and
                     Set<SheetContent> to render the active child. Only depends on
                     navigation/api, navigation/ui, features/root/presenter,
-                    features/root/nav, and android-designsystem. No per-feature deps.
+                    features/root/nav, and android-designsystem. No feature dependencies.
   nav/              Deep-link destinations, theme state, notification permission state,
                     notification rationale coordinator interface.
 

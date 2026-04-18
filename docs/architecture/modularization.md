@@ -215,8 +215,8 @@ Self-contained single-purpose modules.
    annotation form and the generated binding shape.
 6. **iOS view**: build the SwiftUI counterpart in the iOS app. Register the `presenter -> view` mapping in
    `ios/ios/UI/Root/ScreenRegistryBootstrap.swift`. `RootNavigationView` does not change.
-7. **`:app` module deps**: add the new `features.{name}.ui` module to `app/build.gradle.kts` as a direct
-   `implementation` dep so Metro discovers the `ScreenContent` contribution at compile time.
+7. **`:app` module dependencies**: add the new `features.{name}.ui` module to `app/build.gradle.kts` as a direct
+   `implementation` dependency so Metro discovers the `ScreenContent` contribution at compile time.
 8. If the screen has stateful navigation (switches tabs, coordinates cross-feature events), declare a navigator
    interface in the feature's `nav` module and bind its default implementation as an `internal` class inside the
    presenter module. Sheet entry points do not need their own navigator interface: feature presenters inject
