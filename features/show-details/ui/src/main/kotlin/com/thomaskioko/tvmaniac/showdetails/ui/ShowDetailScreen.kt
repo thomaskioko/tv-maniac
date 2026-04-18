@@ -85,6 +85,7 @@ import com.thomaskioko.tvmaniac.compose.components.actionIconWhen
 import com.thomaskioko.tvmaniac.compose.extensions.backgroundGradient
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.i18n.MR.strings.btn_add_to_list
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_navigate_back
@@ -128,8 +129,10 @@ import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.showdetails.ui.components.ContinueTrackingSection
 import com.thomaskioko.tvmaniac.showdetails.ui.components.WatchProgressSection
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
+import io.github.thomaskioko.codegen.annotations.ScreenUi
 import kotlinx.collections.immutable.ImmutableList
 
+@ScreenUi(presenter = ShowDetailsPresenter::class, parentScope = ActivityScope::class)
 @Composable
 public fun ShowDetailsScreen(
     presenter: ShowDetailsPresenter,

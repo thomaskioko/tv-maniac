@@ -47,6 +47,7 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.debug.presenter.BackClicked
 import com.thomaskioko.tvmaniac.debug.presenter.DebugPresenter
 import com.thomaskioko.tvmaniac.debug.presenter.DebugState
@@ -71,7 +72,9 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_delayed_debug_not
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_episode_notifications
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_last_sync_date
 import com.thomaskioko.tvmaniac.i18n.resolve
+import io.github.thomaskioko.codegen.annotations.ScreenUi
 
+@ScreenUi(presenter = DebugPresenter::class, parentScope = ActivityScope::class)
 @Composable
 public fun DebugMenuScreen(
     presenter: DebugPresenter,

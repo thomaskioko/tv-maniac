@@ -7,6 +7,8 @@ android {
 }
 
 scaffold {
+    useCodegen()
+
     android {
         enableAndroidResources()
 
@@ -20,11 +22,14 @@ scaffold {
 }
 
 dependencies {
+    api(projects.core.base)
     api(projects.features.settings.presenter)
-    implementation(projects.data.datastore.api)
+    api(projects.navigation.api)
+    api(projects.navigation.ui)
 
     implementation(projects.androidDesignsystem)
     implementation(projects.core.view)
+    implementation(projects.data.datastore.api)
     implementation(projects.i18n.generator)
 
     implementation(libs.androidx.browser)

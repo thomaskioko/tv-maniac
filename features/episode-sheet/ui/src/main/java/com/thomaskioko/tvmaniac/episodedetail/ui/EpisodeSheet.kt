@@ -13,12 +13,15 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeDetailSheetState
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeSheetAction
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeSheetActionItem
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeSheetPresenter
+import io.github.thomaskioko.codegen.annotations.SheetUi
 import kotlinx.collections.immutable.persistentListOf
 
+@SheetUi(presenter = EpisodeSheetPresenter::class, parentScope = ActivityScope::class)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 public fun EpisodeSheet(

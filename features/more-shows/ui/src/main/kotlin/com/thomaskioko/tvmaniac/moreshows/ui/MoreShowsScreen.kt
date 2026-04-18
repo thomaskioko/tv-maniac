@@ -49,6 +49,7 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.moreshows.presentation.DismissErrorMessage
 import com.thomaskioko.tvmaniac.moreshows.presentation.MoreBackClicked
 import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowClicked
@@ -57,7 +58,9 @@ import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsPresenter
 import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsState
 import com.thomaskioko.tvmaniac.moreshows.presentation.RefreshMoreShows
 import com.thomaskioko.tvmaniac.moreshows.presentation.TvShow
+import io.github.thomaskioko.codegen.annotations.ScreenUi
 
+@ScreenUi(presenter = MoreShowsPresenter::class, parentScope = ActivityScope::class)
 @Composable
 public fun MoreShowsScreen(
     presenter: MoreShowsPresenter,

@@ -23,32 +23,16 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.thomaskioko.tvmaniac.compose.components.NotificationRationaleContent
-import com.thomaskioko.tvmaniac.debug.presenter.DebugPresenter
-import com.thomaskioko.tvmaniac.debug.ui.DebugMenuScreen
-import com.thomaskioko.tvmaniac.episodedetail.ui.EpisodeSheet
-import com.thomaskioko.tvmaniac.home.ui.HomeScreen
-import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsPresenter
-import com.thomaskioko.tvmaniac.moreshows.ui.MoreShowsScreen
-import com.thomaskioko.tvmaniac.navigation.ScreenDestination
-import com.thomaskioko.tvmaniac.navigation.SheetDestination
-import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeSheetPresenter
-import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
+import com.thomaskioko.tvmaniac.navigation.ui.ScreenContent
+import com.thomaskioko.tvmaniac.navigation.ui.SheetContent
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
-import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenter
-import com.thomaskioko.tvmaniac.presenter.trailers.TrailersPresenter
-import com.thomaskioko.tvmaniac.search.presenter.SearchShowsPresenter
-import com.thomaskioko.tvmaniac.search.ui.SearchScreen
-import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsPresenter
-import com.thomaskioko.tvmaniac.seasondetails.ui.SeasonDetailsScreen
-import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
-import com.thomaskioko.tvmaniac.settings.ui.SettingsScreen
-import com.thomaskioko.tvmaniac.showdetails.ui.ShowDetailsScreen
-import com.thomaskioko.tvmaniac.trailers.ui.TrailersScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 public fun RootScreen(
     rootPresenter: RootPresenter,
+    screenContents: Set<ScreenContent>,
+    sheetContents: Set<SheetContent>,
     modifier: Modifier = Modifier,
 ) {
     val notificationPermissionState by rootPresenter.notificationPermissionState.collectAsStateWithLifecycle()
@@ -83,10 +67,10 @@ public fun RootScreen(
     }
 
     val episodeSheetSlot by rootPresenter.episodeSheetSlot.collectAsStateWithLifecycle()
-    (episodeSheetSlot.child?.instance as? SheetDestination<*>)?.let { child ->
-        (child.presenter as? EpisodeSheetPresenter)?.let { presenter ->
-            EpisodeSheet(presenter = presenter)
-        }
+    val sheetChild = episodeSheetSlot.child?.instance
+    val sheetRenderer = sheetChild?.let { child -> sheetContents.firstOrNull { it.matches(child) } }
+    if (sheetChild != null && sheetRenderer != null) {
+        sheetRenderer.content(sheetChild)
     }
 
     Surface(modifier = modifier, color = MaterialTheme.colorScheme.background) {
@@ -95,44 +79,29 @@ public fun RootScreen(
                 .fillMaxSize()
                 .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
         ) {
-            ChildrenContent(rootPresenter = rootPresenter, modifier = Modifier.weight(1F))
+            ChildrenContent(
+                rootPresenter = rootPresenter,
+                screenContents = screenContents,
+                modifier = Modifier.weight(1F),
+            )
         }
     }
 }
 
 @Composable
-private fun ChildrenContent(rootPresenter: RootPresenter, modifier: Modifier = Modifier) {
+private fun ChildrenContent(
+    rootPresenter: RootPresenter,
+    screenContents: Set<ScreenContent>,
+    modifier: Modifier = Modifier,
+) {
     val childStack by rootPresenter.childStack.collectAsStateWithLifecycle()
 
     Children(
         modifier = modifier,
         stack = childStack,
     ) { child ->
-        val fillMaxSizeModifier = Modifier.fillMaxSize()
-        when (val presenter = (child.instance as? ScreenDestination<*>)?.presenter) {
-            is HomePresenter ->
-                HomeScreen(presenter = presenter, modifier = fillMaxSizeModifier)
-
-            is SearchShowsPresenter ->
-                SearchScreen(presenter = presenter, modifier = fillMaxSizeModifier)
-
-            is SettingsPresenter ->
-                SettingsScreen(presenter = presenter, modifier = fillMaxSizeModifier)
-
-            is DebugPresenter ->
-                DebugMenuScreen(presenter = presenter, modifier = fillMaxSizeModifier)
-
-            is ShowDetailsPresenter ->
-                ShowDetailsScreen(presenter = presenter, modifier = fillMaxSizeModifier)
-
-            is SeasonDetailsPresenter ->
-                SeasonDetailsScreen(presenter = presenter, modifier = fillMaxSizeModifier)
-
-            is TrailersPresenter ->
-                TrailersScreen(presenter = presenter, modifier = fillMaxSizeModifier)
-
-            is MoreShowsPresenter ->
-                MoreShowsScreen(presenter = presenter, modifier = fillMaxSizeModifier)
-        }
+        val instance = child.instance
+        val renderer = screenContents.firstOrNull { it.matches(instance) } ?: return@Children
+        renderer.content(instance, Modifier.fillMaxSize())
     }
 }

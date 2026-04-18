@@ -17,16 +17,16 @@ scaffold {
 }
 
 dependencies {
+    api(projects.core.base)
     api(projects.features.search.presenter)
+    api(projects.navigation.api)
+    api(projects.navigation.ui)
 
     implementation(projects.androidDesignsystem)
-    implementation(projects.core.base)
     implementation(projects.core.view)
     implementation(projects.data.datastore.api)
     implementation(projects.data.genre.api)
     implementation(projects.i18n.generator)
-    implementation(projects.navigation.api)
-    implementation(projects.navigation.ui)
 
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.material3)

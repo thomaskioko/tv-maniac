@@ -3,6 +3,8 @@ plugins {
 }
 
 scaffold {
+    useCodegen()
+
     android {
         useCompose()
     }
@@ -13,7 +15,10 @@ scaffold {
 }
 
 dependencies {
+    api(projects.core.base)
     api(projects.features.debug.presenter)
+    api(projects.navigation.api)
+    api(projects.navigation.ui)
 
     implementation(projects.androidDesignsystem)
     implementation(projects.core.view)

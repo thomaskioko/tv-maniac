@@ -57,6 +57,7 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_back
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_empty_content
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_retry
@@ -85,8 +86,10 @@ import com.thomaskioko.tvmaniac.search.presenter.model.GenreRowModel
 import com.thomaskioko.tvmaniac.search.presenter.model.ShowItem
 import com.thomaskioko.tvmaniac.search.ui.components.HorizontalShowContentRow
 import com.thomaskioko.tvmaniac.search.ui.components.SearchResultItem
+import io.github.thomaskioko.codegen.annotations.ScreenUi
 import kotlinx.collections.immutable.ImmutableList
 
+@ScreenUi(presenter = SearchShowsPresenter::class, parentScope = ActivityScope::class)
 @Composable
 public fun SearchScreen(
     presenter: SearchShowsPresenter,

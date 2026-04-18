@@ -26,6 +26,7 @@ import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.thomaskioko.tvmaniac.compose.components.CircularCard
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomNavigationItem
 import com.thomaskioko.tvmaniac.compose.components.TvManiacNavigationBar
+import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.discover.ui.DiscoverScreen
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_discover
@@ -40,7 +41,9 @@ import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
 import com.thomaskioko.tvmaniac.profile.ui.ProfileScreen
 import com.thomaskioko.tvmaniac.ui.library.LibraryScreen
 import com.thomaskioko.tvmaniac.ui.progress.ProgressScreen
+import io.github.thomaskioko.codegen.annotations.ScreenUi
 
+@ScreenUi(presenter = HomePresenter::class, parentScope = ActivityScope::class)
 @Composable
 public fun HomeScreen(
     presenter: HomePresenter,
