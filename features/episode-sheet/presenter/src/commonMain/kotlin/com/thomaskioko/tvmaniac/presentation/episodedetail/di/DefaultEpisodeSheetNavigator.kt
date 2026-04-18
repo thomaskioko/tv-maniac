@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.navigation.controllers
+package com.thomaskioko.tvmaniac.presentation.episodedetail.di
 
 import com.thomaskioko.root.nav.EpisodeSheetNavigator
 import com.thomaskioko.tvmaniac.core.base.ActivityScope

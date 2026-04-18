@@ -61,11 +61,11 @@ import com.thomaskioko.tvmaniac.navigation.SheetConfig
 import com.thomaskioko.tvmaniac.navigation.SheetConfigBinding
 import com.thomaskioko.tvmaniac.navigation.SheetConfigSerializer
 import com.thomaskioko.tvmaniac.navigation.SheetNavigator
-import com.thomaskioko.tvmaniac.navigation.controllers.DefaultEpisodeSheetNavigator
-import com.thomaskioko.tvmaniac.navigation.controllers.DefaultHomeTabNavigator
-import com.thomaskioko.tvmaniac.navigation.controllers.DefaultNotificationRationale
-import com.thomaskioko.tvmaniac.navigation.controllers.DefaultSheetNavigator
+import com.thomaskioko.tvmaniac.presentation.episodedetail.di.DefaultEpisodeSheetNavigator
+import com.thomaskioko.tvmaniac.presenter.home.di.DefaultHomeTabNavigator
 import com.thomaskioko.tvmaniac.presenter.root.DefaultRootPresenter
+import com.thomaskioko.tvmaniac.presenter.root.di.DefaultNotificationRationale
+import com.thomaskioko.tvmaniac.presenter.root.di.DefaultSheetNavigator
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
