@@ -1,0 +1,58 @@
+name: Feature Request
+description: Suggest a new feature or improvement for TvManiac.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting an improvement. Please describe the problem first, then the proposed solution. Ideas grounded in a concrete use case are easier to evaluate.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What problem are you trying to solve? What is missing or inconvenient today?
+      placeholder: As a user, I want... so that...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the behavior you would like to see. Include mockups or references if helpful.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Other approaches you thought about and why they are less suitable.
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform Scope
+      options:
+        - Android
+        - iOS
+        - Both
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Any other context, links, or references that help motivate the feature.
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues and discussions and did not find a duplicate.
+          required: true

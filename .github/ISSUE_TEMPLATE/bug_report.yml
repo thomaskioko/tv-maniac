@@ -1,0 +1,93 @@
+name: Bug Report
+description: Report a reproducible bug in TvManiac.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug report. Please fill out as much detail as you can. Issues without reproduction steps are hard to act on.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What happened, and what did you expect to happen instead?
+      placeholder: A clear description of the bug.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Minimal, numbered steps that reliably reproduce the issue.
+      placeholder: |
+        1. Open the app.
+        2. Navigate to...
+        3. Tap...
+        4. Observe the bug.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      placeholder: What you expected to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      placeholder: What actually happened. Include error messages if any.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Android
+        - iOS
+        - Both
+    validations:
+      required: true
+
+  - type: input
+    id: device
+    attributes:
+      label: Device and OS Version
+      description: e.g. Pixel 8 on Android 15, iPhone 15 Pro on iOS 18.2.
+      placeholder: Device model and OS version.
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: App Version or Commit SHA
+      description: Version from the About screen, or the commit SHA if running from source.
+      placeholder: e.g. 1.4.0, or 3298cb27f.
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs, Screenshots, or Recordings
+      description: Logcat output, Xcode console logs, screenshots, or screen recordings. Redact any API keys or personal data.
+      render: shell
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues and did not find a duplicate.
+          required: true
+        - label: I redacted any secrets, tokens, or personal data from logs and screenshots.
+          required: true
