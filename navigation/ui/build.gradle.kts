@@ -11,9 +11,8 @@ scaffold {
 }
 
 dependencies {
+    api(projects.core.base)
     api(projects.navigation.api)
-
-    implementation(projects.core.base)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.runtime)
