@@ -2,7 +2,14 @@ package com.thomaskioko.tvmaniac.core.notifications.testing
 
 import com.thomaskioko.tvmaniac.core.notifications.api.EpisodeNotification
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 
+@Inject
+@SingleIn(AppScope::class)
+@ContributesBinding(AppScope::class)
 public class FakeNotificationManager : NotificationManager {
     private val scheduledNotifications = mutableMapOf<Long, EpisodeNotification>()
 
