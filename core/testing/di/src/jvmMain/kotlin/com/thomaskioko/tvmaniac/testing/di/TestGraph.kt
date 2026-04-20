@@ -10,7 +10,7 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.DependencyGraph
 
 @DependencyGraph(AppScope::class)
-public interface TestIosGraph {
+public interface TestGraph {
     public val datastoreRepository: DatastoreRepository
     public val traktAuthManager: TraktAuthManager
     public val navigator: Navigator
@@ -20,6 +20,6 @@ public interface TestIosGraph {
 
     @DependencyGraph.Factory
     public fun interface Factory {
-        public fun create(): TestIosGraph
+        public fun create(): TestGraph
     }
 }
