@@ -7,8 +7,6 @@ import com.arkivanov.decompose.router.slot.dismiss
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.thomaskioko.root.nav.NotificationRationale
 import com.thomaskioko.tvmaniac.appconfig.ApplicationInfo
-import com.thomaskioko.tvmaniac.appconfig.DefaultTmdbConfig
-import com.thomaskioko.tvmaniac.appconfig.DefaultTraktConfig
 import com.thomaskioko.tvmaniac.appconfig.Platform
 import com.thomaskioko.tvmaniac.core.base.ComputationCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
@@ -17,22 +15,6 @@ import com.thomaskioko.tvmaniac.core.base.TmdbApi
 import com.thomaskioko.tvmaniac.core.base.TraktApi
 import com.thomaskioko.tvmaniac.core.base.di.BaseBindingContainer
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.logger.CompositeLogger
-import com.thomaskioko.tvmaniac.core.logger.CrashReporter
-import com.thomaskioko.tvmaniac.core.logger.FirebaseCrashLogger
-import com.thomaskioko.tvmaniac.core.logger.KermitLogger
-import com.thomaskioko.tvmaniac.core.logger.Logger
-import com.thomaskioko.tvmaniac.core.logger.fixture.FakeCrashReporter
-import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
-import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager
-import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
-import com.thomaskioko.tvmaniac.core.tasks.testing.FakeBackgroundTaskScheduler
-import com.thomaskioko.tvmaniac.data.user.api.UserRepository
-import com.thomaskioko.tvmaniac.data.user.implementation.DefaultUserRepository
-import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
-import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
-import com.thomaskioko.tvmaniac.datastore.implementation.DefaultDatastoreRepository
-import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.discover.nav.DiscoverNavigator
 import com.thomaskioko.tvmaniac.discover.presenter.di.DefaultDiscoverNavigator
 import com.thomaskioko.tvmaniac.domain.library.LibrarySyncWorker
@@ -42,8 +24,6 @@ import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetConfig
 import com.thomaskioko.tvmaniac.genreshows.nav.GenreShowsRoute
 import com.thomaskioko.tvmaniac.home.nav.HomeTabNavigator
 import com.thomaskioko.tvmaniac.home.nav.di.model.HomeConfig
-import com.thomaskioko.tvmaniac.locale.api.LocaleProvider
-import com.thomaskioko.tvmaniac.locale.testing.FakeLocaleProvider
 import com.thomaskioko.tvmaniac.navigation.DefaultNavRouteSerializer
 import com.thomaskioko.tvmaniac.navigation.DefaultNavigator
 import com.thomaskioko.tvmaniac.navigation.DefaultSheetConfigSerializer
@@ -64,26 +44,8 @@ import com.thomaskioko.tvmaniac.presenter.root.DefaultRootPresenter
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
 import com.thomaskioko.tvmaniac.presenter.root.di.DefaultNotificationRationale
 import com.thomaskioko.tvmaniac.presenter.root.di.DefaultSheetNavigator
-import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
-import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
-import com.thomaskioko.tvmaniac.resourcemanager.implementation.DefaultRequestManagerRepository
-import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityRepository
-import com.thomaskioko.tvmaniac.syncactivity.implementation.DefaultTraktActivityRepository
-import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
-import com.thomaskioko.tvmaniac.tmdb.api.TmdbConfig
-import com.thomaskioko.tvmaniac.trakt.api.TraktConfig
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.traktauth.implementation.DefaultTraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.implementation.TokenRefreshWorker
-import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
-import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
-import com.thomaskioko.tvmaniac.traktlists.api.TraktListRepository
-import com.thomaskioko.tvmaniac.traktlists.implementation.DefaultTraktListRepository
-import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
 import com.thomaskioko.tvmaniac.util.api.AppUtils
-import com.thomaskioko.tvmaniac.util.api.FormatterUtil
-import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
@@ -103,17 +65,6 @@ import kotlinx.coroutines.flow.flowOf
     AppScope::class,
     replaces = [
         BaseBindingContainer::class,
-        DefaultDatastoreRepository::class,
-        DefaultUserRepository::class,
-        DefaultRequestManagerRepository::class,
-        DefaultTmdbConfig::class,
-        DefaultTraktActivityRepository::class,
-        DefaultTraktAuthRepository::class,
-        DefaultTraktConfig::class,
-        DefaultTraktListRepository::class,
-        CompositeLogger::class,
-        KermitLogger::class,
-        FirebaseCrashLogger::class,
         EpisodeNotificationWorker::class,
         LibrarySyncWorker::class,
         TokenRefreshWorker::class,
@@ -125,47 +76,15 @@ import kotlinx.coroutines.flow.flowOf
     ],
 )
 public object FakeAppBindings {
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideDatastoreRepository(): DatastoreRepository = FakeDatastoreRepository()
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideTraktAuthManager(): TraktAuthManager = FakeTraktAuthManager()
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideTraktAuthRepository(): TraktAuthRepository = FakeTraktAuthRepository()
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideLogger(): Logger = FakeLogger()
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideUserRepository(): UserRepository = FakeUserRepository()
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideTraktListRepository(): TraktListRepository = FakeTraktListRepository()
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideRequestManagerRepository(): RequestManagerRepository = FakeRequestManagerRepository()
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideTraktActivityRepository(): TraktActivityRepository =
-        FakeTraktActivityRepository()
 
     @Provides
     @SingleIn(AppScope::class)
     public fun provideAppCoroutineDispatchers(): AppCoroutineDispatchers = AppCoroutineDispatchers(
-        io = Dispatchers.Default,
-        computation = Dispatchers.Default,
-        databaseWrite = Dispatchers.Default,
-        databaseRead = Dispatchers.Default,
-        main = Dispatchers.Default,
+        io = Dispatchers.Main,
+        computation = Dispatchers.Main,
+        databaseWrite = Dispatchers.Main,
+        databaseRead = Dispatchers.Main,
+        main = Dispatchers.Main,
     )
 
     @Provides
@@ -203,20 +122,6 @@ public object FakeAppBindings {
 
     @Provides
     @SingleIn(AppScope::class)
-    public fun provideTmdbConfig(): TmdbConfig = object : TmdbConfig {
-        override val apiKey: String = "fake-tmdb-api-key"
-    }
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideTraktConfig(): TraktConfig = object : TraktConfig {
-        override val clientId: String = "fake-trakt-client-id"
-        override val clientSecret: String = "fake-trakt-client-secret"
-        override val redirectUri: String = "tvmaniac://auth"
-    }
-
-    @Provides
-    @SingleIn(AppScope::class)
     @TmdbApi
     public fun provideTmdbHttpClientEngine(): io.ktor.client.engine.HttpClientEngine =
         MockEngine { respond("{}", HttpStatusCode.OK) }
@@ -228,31 +133,10 @@ public object FakeAppBindings {
         MockEngine { respond("{}", HttpStatusCode.OK) }
 
     @Provides
-    @SingleIn(AppScope::class)
-    public fun provideNotificationManager(): NotificationManager =
-        com.thomaskioko.tvmaniac.core.notifications.testing.FakeNotificationManager()
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideLocaleProvider(): LocaleProvider = FakeLocaleProvider()
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideCrashReporter(): CrashReporter = FakeCrashReporter()
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideBackgroundTaskScheduler(): BackgroundTaskScheduler = FakeBackgroundTaskScheduler()
-
-    @Provides
     public fun provideAppUtils(): AppUtils = object : AppUtils {
         override fun isYoutubePlayerInstalled(): Flow<Boolean> =
             flowOf(false)
     }
-
-    @Provides
-    public fun provideFormatterUtil(): FormatterUtil =
-        FakeFormatterUtil()
 
     @Provides
     @SingleIn(AppScope::class)

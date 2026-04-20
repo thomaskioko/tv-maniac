@@ -4,12 +4,20 @@ import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.datastore.api.ListStyle
+import com.thomaskioko.tvmaniac.datastore.implementation.DefaultDatastoreRepository
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 
+@Inject
+@SingleIn(AppScope::class)
+@ContributesBinding(AppScope::class, replaces = [DefaultDatastoreRepository::class])
 public class FakeDatastoreRepository : DatastoreRepository {
 
     private val appThemeFlow = MutableStateFlow(AppTheme.SYSTEM_THEME)

@@ -1,6 +1,11 @@
 package com.thomaskioko.tvmaniac.util.testing
 
+import com.thomaskioko.tvmaniac.util.DefaultDateTimeProvider
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
@@ -8,6 +13,9 @@ import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 import kotlin.time.Instant
 
+@Inject
+@SingleIn(AppScope::class)
+@ContributesBinding(AppScope::class, replaces = [DefaultDateTimeProvider::class])
 public class FakeDateTimeProvider(
     private var currentTime: Instant = Clock.System.now(),
 ) : DateTimeProvider {

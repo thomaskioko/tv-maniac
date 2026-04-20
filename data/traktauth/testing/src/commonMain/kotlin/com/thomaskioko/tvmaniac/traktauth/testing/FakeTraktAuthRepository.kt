@@ -5,10 +5,18 @@ import com.thomaskioko.tvmaniac.traktauth.api.AuthState
 import com.thomaskioko.tvmaniac.traktauth.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
+import com.thomaskioko.tvmaniac.traktauth.implementation.DefaultTraktAuthRepository
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
+@Inject
+@SingleIn(AppScope::class)
+@ContributesBinding(AppScope::class, replaces = [DefaultTraktAuthRepository::class])
 public class FakeTraktAuthRepository : TraktAuthRepository {
 
     private val _state = MutableStateFlow(TraktAuthState.LOGGED_OUT)
