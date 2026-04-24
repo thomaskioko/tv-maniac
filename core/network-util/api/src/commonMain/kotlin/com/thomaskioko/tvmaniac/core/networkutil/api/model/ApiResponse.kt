@@ -16,10 +16,12 @@ public sealed class ApiResponse<out T> {
             val errorMessage: String?,
         ) : Error<Nothing>()
 
-        public data class GenericError(
-            val message: String?,
-            val errorMessage: String?,
-        ) : Error<Nothing>()
+        public data class NetworkFailure(
+            val kind: Kind,
+            val cause: Throwable? = null,
+        ) : Error<Nothing>() {
+            public enum class Kind { Timeout, Connectivity, Unknown }
+        }
 
         public data class OfflineError(
             val errorMessage: String = "No internet connection",
@@ -32,8 +34,15 @@ public fun <T> ApiResponse<T>.getOrThrow(): T = when (this) {
     is ApiResponse.Unauthenticated -> throw AuthenticationException("Not authenticated")
     is ApiResponse.Error.HttpError -> throw ApiHttpException(code, "HTTP $code: $errorMessage")
     is ApiResponse.Error.SerializationError -> throw ApiSerializationException("Serialization error: $message")
-    is ApiResponse.Error.GenericError -> throw ApiGenericException("Error: $message")
-    is ApiResponse.Error.OfflineError -> throw ApiGenericException(errorMessage)
+    is ApiResponse.Error.NetworkFailure -> throw ApiNetworkException(
+        kind = kind,
+        message = "Network failure: $kind",
+        cause = cause,
+    )
+    is ApiResponse.Error.OfflineError -> throw ApiNetworkException(
+        kind = ApiResponse.Error.NetworkFailure.Kind.Connectivity,
+        message = errorMessage,
+    )
 }
 
 public fun <T> ApiResponse<T>.getOrNull(): T? = when (this) {

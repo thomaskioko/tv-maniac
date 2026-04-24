@@ -58,9 +58,19 @@ public fun <T> ApiResponse.Error<T>.toSyncError(): SyncError {
         is ApiResponse.Error.SerializationError -> SyncError.Permanent.InvalidData(
             message = message ?: "Failed to process data. Please try again.",
         )
-        is ApiResponse.Error.GenericError -> classifyGenericError(message)
-        is ApiResponse.Error.OfflineError -> SyncError.Retryable.NetworkError("No internet connection")
+        is ApiResponse.Error.NetworkFailure -> kind.toSyncError()
+        is ApiResponse.Error.OfflineError -> SyncError.Retryable.NetworkError(errorMessage)
     }
+}
+
+public fun Throwable.toSyncError(): SyncError? = when (this) {
+    is SyncException -> syncError
+    is ApiHttpException -> classifyHttpError(code, message)
+    is ApiSerializationException -> SyncError.Permanent.InvalidData(message)
+    is ApiNetworkException -> kind.toSyncError()
+    is AuthenticationException -> SyncError.Permanent.AuthenticationFailed(message)
+    is NoInternetException -> SyncError.Retryable.NetworkError("No internet connection")
+    else -> (cause as? SyncException)?.syncError
 }
 
 public fun classifyHttpError(code: Int, errorMessage: String?): SyncError {
@@ -76,21 +86,8 @@ public fun classifyHttpError(code: Int, errorMessage: String?): SyncError {
     }
 }
 
-public fun classifyGenericError(message: String?): SyncError {
-    val errorMessage = message ?: "Unknown error"
-    val lowerMessage = errorMessage.lowercase()
-
-    return when {
-        lowerMessage.contains("timeout") -> SyncError.Retryable.Timeout(errorMessage)
-        lowerMessage.contains("timed out") -> SyncError.Retryable.Timeout(errorMessage)
-        lowerMessage.contains("network") -> SyncError.Retryable.NetworkError(errorMessage)
-        lowerMessage.contains("connection") -> SyncError.Retryable.NetworkError(errorMessage)
-        lowerMessage.contains("socket") -> SyncError.Retryable.NetworkError(errorMessage)
-        lowerMessage.contains("unreachable") -> SyncError.Retryable.NetworkError(errorMessage)
-        lowerMessage.contains("dns") -> SyncError.Retryable.NetworkError(errorMessage)
-        lowerMessage.contains("no address") -> SyncError.Retryable.NetworkError(errorMessage)
-        lowerMessage.contains("429") -> SyncError.Retryable.RateLimited(errorMessage)
-        lowerMessage.contains("rate limit") -> SyncError.Retryable.RateLimited(errorMessage)
-        else -> SyncError.Unknown(errorMessage)
-    }
+private fun ApiResponse.Error.NetworkFailure.Kind.toSyncError(): SyncError = when (this) {
+    ApiResponse.Error.NetworkFailure.Kind.Timeout -> SyncError.Retryable.Timeout()
+    ApiResponse.Error.NetworkFailure.Kind.Connectivity -> SyncError.Retryable.NetworkError()
+    ApiResponse.Error.NetworkFailure.Kind.Unknown -> SyncError.Unknown()
 }

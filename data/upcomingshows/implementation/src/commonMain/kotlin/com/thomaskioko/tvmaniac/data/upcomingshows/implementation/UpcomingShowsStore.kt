@@ -155,6 +155,6 @@ private fun UpcomingShowResult.toTvshow(
 private fun ApiResponse.Error<*>.toException(): Exception = when (this) {
     is ApiResponse.Error.HttpError -> Exception("HTTP error: $code - $errorMessage")
     is ApiResponse.Error.SerializationError -> Exception("Serialization error: $message")
-    is ApiResponse.Error.GenericError -> Exception("Error: $message")
+    is ApiResponse.Error.NetworkFailure -> Exception("Network failure: $kind", cause)
     is ApiResponse.Error.OfflineError -> Exception("No internet connection")
 }

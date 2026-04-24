@@ -2,12 +2,15 @@ package com.thomaskioko.tvmaniac.core.networkutil.api.extensions
 
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.AuthenticationException
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.client.engine.mock.respondError
+import io.ktor.client.plugins.HttpRequestTimeoutException
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
@@ -19,6 +22,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.long
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.test.Test
 
 class ApiResponseExtensionsTest {
@@ -70,7 +74,7 @@ class ApiResponseExtensionsTest {
     }
 
     @Test
-    fun `should return GenericError given malformed response body`() = runTest {
+    fun `should return SerializationError given malformed response body`() = runTest {
         val engine = MockEngine { _ ->
             respond(
                 content = """not json""",
@@ -85,13 +89,14 @@ class ApiResponseExtensionsTest {
             method = HttpMethod.Get
         }
 
-        result.shouldBeInstanceOf<ApiResponse.Error.GenericError>()
+        result.shouldBeInstanceOf<ApiResponse.Error.SerializationError>()
     }
 
     @Test
-    fun `should return GenericError given unexpected exception`() = runTest {
+    fun `should return NetworkFailure Unknown given unexpected exception`() = runTest {
+        val boom = RuntimeException("network failure")
         val engine = MockEngine { _ ->
-            throw RuntimeException("network failure")
+            throw boom
         }
         val client = createClient(engine)
 
@@ -100,8 +105,46 @@ class ApiResponseExtensionsTest {
             method = HttpMethod.Get
         }
 
-        result.shouldBeInstanceOf<ApiResponse.Error.GenericError>()
-        result.message shouldBe "network failure"
+        val failure = result.shouldBeInstanceOf<ApiResponse.Error.NetworkFailure>()
+        failure.kind shouldBe ApiResponse.Error.NetworkFailure.Kind.Unknown
+        failure.cause shouldBe boom
+    }
+
+    @Test
+    fun `should return NetworkFailure Timeout given HttpRequestTimeoutException`() = runTest {
+        val engine = MockEngine { _ ->
+            throw HttpRequestTimeoutException(url = "http://test/test", timeoutMillis = 1_000L)
+        }
+        val client = HttpClient(engine) {
+            install(ContentNegotiation) { json() }
+            install(HttpTimeout) {
+                requestTimeoutMillis = 1_000L
+            }
+            expectSuccess = true
+        }
+
+        val result: ApiResponse<JsonObject> = client.safeRequest {
+            url { path("test") }
+            method = HttpMethod.Get
+        }
+
+        val failure = result.shouldBeInstanceOf<ApiResponse.Error.NetworkFailure>()
+        failure.kind shouldBe ApiResponse.Error.NetworkFailure.Kind.Timeout
+    }
+
+    @Test
+    fun `should propagate CancellationException instead of swallowing it`() = runTest {
+        val engine = MockEngine { _ ->
+            throw CancellationException("cancelled by test")
+        }
+        val client = createClient(engine)
+
+        shouldThrow<CancellationException> {
+            client.safeRequest<JsonObject> {
+                url { path("test") }
+                method = HttpMethod.Get
+            }
+        }
     }
 
     @Test

@@ -9,6 +9,8 @@ public class ApiSerializationException(
     override val message: String,
 ) : Exception(message)
 
-public class ApiGenericException(
+public class ApiNetworkException(
+    public val kind: ApiResponse.Error.NetworkFailure.Kind,
     override val message: String,
-) : Exception(message)
+    override val cause: Throwable? = null,
+) : Exception(message, cause)

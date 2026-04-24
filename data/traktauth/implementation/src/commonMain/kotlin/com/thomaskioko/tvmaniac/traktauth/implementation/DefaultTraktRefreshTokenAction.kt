@@ -63,9 +63,9 @@ public class DefaultTraktRefreshTokenAction(
                 logger.error("TraktRefreshTokenAction", "Serialization error: ${response.message}")
                 RefreshTokenResult.Failed("Serialization error: ${response.message}")
             }
-            is ApiResponse.Error.GenericError -> {
-                logger.error("TraktRefreshTokenAction", "Network error: ${response.message}")
-                RefreshTokenResult.NetworkError(response.message)
+            is ApiResponse.Error.NetworkFailure -> {
+                logger.error("TraktRefreshTokenAction", "Network failure (${response.kind}): ${response.cause?.message}")
+                RefreshTokenResult.NetworkError(response.cause?.message)
             }
             is ApiResponse.Error.OfflineError -> {
                 logger.error("TraktRefreshTokenAction", response.errorMessage)

@@ -131,8 +131,10 @@ internal class SyncErrorTest {
     }
 
     @Test
-    fun `should classify GenericError with timeout keyword as Timeout`() {
-        val error = ApiResponse.Error.GenericError("Connection timeout", null)
+    fun `should classify NetworkFailure Timeout as Retryable Timeout`() {
+        val error = ApiResponse.Error.NetworkFailure(
+            kind = ApiResponse.Error.NetworkFailure.Kind.Timeout,
+        )
 
         val result = error.toSyncError()
 
@@ -140,17 +142,10 @@ internal class SyncErrorTest {
     }
 
     @Test
-    fun `should classify GenericError with timed out keyword as Timeout`() {
-        val error = ApiResponse.Error.GenericError("Request timed out", null)
-
-        val result = error.toSyncError()
-
-        result.shouldBeInstanceOf<SyncError.Retryable.Timeout>()
-    }
-
-    @Test
-    fun `should classify GenericError with network keyword as NetworkError`() {
-        val error = ApiResponse.Error.GenericError("Network unavailable", null)
+    fun `should classify NetworkFailure Connectivity as Retryable NetworkError`() {
+        val error = ApiResponse.Error.NetworkFailure(
+            kind = ApiResponse.Error.NetworkFailure.Kind.Connectivity,
+        )
 
         val result = error.toSyncError()
 
@@ -158,39 +153,24 @@ internal class SyncErrorTest {
     }
 
     @Test
-    fun `should classify GenericError with connection keyword as NetworkError`() {
-        val error = ApiResponse.Error.GenericError("Connection refused", null)
-
-        val result = error.toSyncError()
-
-        result.shouldBeInstanceOf<SyncError.Retryable.NetworkError>()
-    }
-
-    @Test
-    fun `should classify GenericError with socket keyword as NetworkError`() {
-        val error = ApiResponse.Error.GenericError("Socket closed", null)
-
-        val result = error.toSyncError()
-
-        result.shouldBeInstanceOf<SyncError.Retryable.NetworkError>()
-    }
-
-    @Test
-    fun `should classify GenericError with dns keyword as NetworkError`() {
-        val error = ApiResponse.Error.GenericError("DNS resolution failed", null)
-
-        val result = error.toSyncError()
-
-        result.shouldBeInstanceOf<SyncError.Retryable.NetworkError>()
-    }
-
-    @Test
-    fun `should classify GenericError without keywords as Unknown`() {
-        val error = ApiResponse.Error.GenericError("Something went wrong", null)
+    fun `should classify NetworkFailure Unknown as Unknown`() {
+        val error = ApiResponse.Error.NetworkFailure(
+            kind = ApiResponse.Error.NetworkFailure.Kind.Unknown,
+        )
 
         val result = error.toSyncError()
 
         result.shouldBeInstanceOf<SyncError.Unknown>()
+    }
+
+    @Test
+    fun `should classify OfflineError as Retryable NetworkError`() {
+        val error = ApiResponse.Error.OfflineError(errorMessage = "No internet connection")
+
+        val result = error.toSyncError()
+
+        result.shouldBeInstanceOf<SyncError.Retryable.NetworkError>()
+        result.message shouldBe "No internet connection"
     }
 
     @Test
