@@ -18,7 +18,7 @@ import dev.zacsweers.metro.SingleIn
         DefaultTraktConfig::class,
     ],
 )
-public object FakeAppConfigBindings {
+public object FakeAppConfigBindingContainer {
 
     @Provides
     @SingleIn(AppScope::class)

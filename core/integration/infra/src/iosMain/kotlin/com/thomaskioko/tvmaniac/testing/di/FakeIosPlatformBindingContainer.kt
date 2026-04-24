@@ -30,4 +30,4 @@ import dev.zacsweers.metro.ContributesTo
         IosTaskScheduler::class,
     ],
 )
-internal object FakeIosPlatformBindings
+internal object FakeIosPlatformBindingContainer

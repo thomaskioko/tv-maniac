@@ -75,7 +75,7 @@ import kotlinx.coroutines.flow.flowOf
         DefaultNotificationRationale::class,
     ],
 )
-public object FakeAppBindings {
+public object FakeAppBindingContainer {
 
     @Provides
     @SingleIn(AppScope::class)
