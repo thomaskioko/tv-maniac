@@ -15,13 +15,13 @@ dependencies {
     api(projects.features.home.presenter)
     api(projects.navigation.api)
     api(projects.navigation.ui)
+    api(projects.features.home.nav)
 
     implementation(projects.androidDesignsystem)
     implementation(projects.i18n.generator)
 
     implementation(projects.features.discover.ui)
     implementation(projects.features.library.ui)
-    implementation(projects.features.home.nav)
     implementation(projects.features.profile.ui)
     implementation(projects.features.progress.ui)
     implementation(projects.features.discover.presenter)

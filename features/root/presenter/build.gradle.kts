@@ -35,7 +35,7 @@ kotlin {
 
         commonTest {
             dependencies {
-                implementation(projects.core.integration)
+                implementation(projects.core.integration.infra)
                 implementation(projects.navigation.implementation)
                 implementation(projects.data.traktauth.testing)
                 implementation(projects.data.datastore.testing)

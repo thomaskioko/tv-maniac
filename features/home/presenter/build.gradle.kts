@@ -31,7 +31,7 @@ kotlin {
             dependencies {
                 implementation(projects.core.logger.testing)
                 implementation(projects.core.util.testing)
-                implementation(projects.core.testing.di)
+                implementation(projects.core.integration.infra)
 
                 implementation(libs.bundles.unittest)
             }
