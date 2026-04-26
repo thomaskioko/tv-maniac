@@ -11,6 +11,8 @@ import SwiftUIComponents
 import TvManiac
 import UIKit
 
+private typealias KmpTheme = TvManiac.Theme
+
 public enum DeviceAppTheme: String, CaseIterable, ThemeItem {
     public var id: String {
         rawValue
@@ -131,16 +133,16 @@ public enum DeviceAppTheme: String, CaseIterable, ThemeItem {
     }
 }
 
-public extension Theme {
+public extension KmpTheme {
     func toDeviceAppTheme() -> DeviceAppTheme {
-        if self == Theme.darkTheme { return .dark }
-        if self == Theme.lightTheme { return .light }
-        if self == Theme.terminalTheme { return .terminal }
-        if self == Theme.autumnTheme { return .autumn }
-        if self == Theme.aquaTheme { return .aqua }
-        if self == Theme.amberTheme { return .amber }
-        if self == Theme.snowTheme { return .snow }
-        if self == Theme.crimsonTheme { return .crimson }
+        if self == KmpTheme.darkTheme { return .dark }
+        if self == KmpTheme.lightTheme { return .light }
+        if self == KmpTheme.terminalTheme { return .terminal }
+        if self == KmpTheme.autumnTheme { return .autumn }
+        if self == KmpTheme.aquaTheme { return .aqua }
+        if self == KmpTheme.amberTheme { return .amber }
+        if self == KmpTheme.snowTheme { return .snow }
+        if self == KmpTheme.crimsonTheme { return .crimson }
         return .system
     }
 }
@@ -183,17 +185,17 @@ public extension DeviceAppTheme {
         }
     }
 
-    func toTheme() -> Theme {
+    func toTheme() -> TvManiac.Theme {
         switch self {
-        case .system: Theme.systemTheme
-        case .light: Theme.lightTheme
-        case .dark: Theme.darkTheme
-        case .terminal: Theme.terminalTheme
-        case .autumn: Theme.autumnTheme
-        case .aqua: Theme.aquaTheme
-        case .amber: Theme.amberTheme
-        case .snow: Theme.snowTheme
-        case .crimson: Theme.crimsonTheme
+        case .system: KmpTheme.systemTheme
+        case .light: KmpTheme.lightTheme
+        case .dark: KmpTheme.darkTheme
+        case .terminal: KmpTheme.terminalTheme
+        case .autumn: KmpTheme.autumnTheme
+        case .aqua: KmpTheme.aquaTheme
+        case .amber: KmpTheme.amberTheme
+        case .snow: KmpTheme.snowTheme
+        case .crimson: KmpTheme.crimsonTheme
         }
     }
 

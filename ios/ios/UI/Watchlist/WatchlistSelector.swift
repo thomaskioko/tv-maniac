@@ -3,7 +3,7 @@ import SwiftUIComponents
 import TvManiacKit
 
 public struct WatchlistSelector: View {
-    @Theme private var theme
+    @SwiftUIComponents.Theme private var theme
     @Binding var showView: Bool
     private let title: String
     private let posterUrl: String?

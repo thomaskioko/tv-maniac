@@ -3,7 +3,7 @@ import SwiftUIComponents
 import TvManiacKit
 
 struct UpNextPageContent: View {
-    @Theme private var theme
+    @SwiftUIComponents.Theme private var theme
 
     private let presenter: UpNextPresenter
     private let uiState: UpNextState

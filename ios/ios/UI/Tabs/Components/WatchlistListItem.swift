@@ -3,7 +3,7 @@ import SwiftUIComponents
 import TvManiacKit
 
 struct WatchlistListItem: View {
-    @Theme private var theme
+    @SwiftUIComponents.Theme private var theme
 
     let item: TvManiac.WatchlistItem
     let namespace: Namespace.ID
