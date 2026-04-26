@@ -14,8 +14,13 @@ public data class EpisodeDetailSheetState(
     val rating: Double? = null,
     val voteCount: Long? = null,
     val isWatched: Boolean = false,
-    val availableActions: ImmutableList<EpisodeSheetActionItem> = persistentListOf(),
+    val availableActions: ImmutableList<EpisodeSheetActionUi> = persistentListOf(),
     val message: UiMessage? = null,
+)
+
+public data class EpisodeSheetActionUi(
+    val item: EpisodeSheetActionItem,
+    val label: String,
 )
 
 public enum class EpisodeSheetActionItem {

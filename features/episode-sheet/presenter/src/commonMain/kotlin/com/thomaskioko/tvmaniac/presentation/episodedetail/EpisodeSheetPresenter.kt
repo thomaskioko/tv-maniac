@@ -19,6 +19,7 @@ import com.thomaskioko.tvmaniac.domain.episode.ObserveEpisodeByIdInteractor
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetConfig
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
+import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.SheetNavigator
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
@@ -48,6 +49,7 @@ public class EpisodeSheetPresenter(
     private val markEpisodeUnwatchedInteractor: MarkEpisodeUnwatchedInteractor,
     private val unfollowShowInteractor: UnfollowShowInteractor,
     private val errorToStringMapper: ErrorToStringMapper,
+    private val localizer: Localizer,
     private val logger: Logger,
 ) {
 
@@ -61,7 +63,7 @@ public class EpisodeSheetPresenter(
         uiMessageManager.message,
     ) { episode, message ->
         currentEpisode = episode
-        episode?.toState(source)?.copy(message = message)
+        episode?.toState(source, localizer)?.copy(message = message)
             ?: EpisodeDetailSheetState(isLoading = false, message = message)
     }.stateIn(
         scope = coroutineScope,

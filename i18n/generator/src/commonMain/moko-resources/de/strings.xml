@@ -321,6 +321,12 @@
     <string name="label_upnext_sort_last_watched">Zuletzt gesehen</string>
     <string name="label_upnext_sort_air_date">Ausstrahlungsdatum</string>
 
+    <string name="label_episode_action_mark_watched">Als gesehen markieren</string>
+    <string name="label_episode_action_mark_unwatched">Als ungesehen markieren</string>
+    <string name="label_episode_action_open_show">Serie öffnen</string>
+    <string name="label_episode_action_open_season">Staffel öffnen</string>
+    <string name="label_episode_action_unfollow_show">Serie nicht mehr folgen</string>
+
     <string name="label_debug_menu_title">Debug-Menü</string>
     <string name="label_debug_section_developer">Entwickler</string>
     <string name="label_debug_menu_subtitle">Entwicklertools und Diagnose</string>

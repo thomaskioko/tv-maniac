@@ -23,6 +23,7 @@ kotlin {
                 implementation(projects.domain.followedshows)
                 implementation(projects.features.showDetails.nav)
                 implementation(projects.features.seasonDetails.nav)
+                implementation(projects.i18n.api)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
@@ -36,6 +37,7 @@ kotlin {
                 implementation(projects.core.util.testing)
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.followedshows.testing)
+                implementation(projects.i18n.testing)
                 implementation(projects.navigation.testing)
 
                 implementation(libs.bundles.unittest)
