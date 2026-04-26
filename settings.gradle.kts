@@ -115,6 +115,7 @@ include(
     ":core:util:testing",
     ":core:integration:infra",
     ":core:integration:ui",
+    ":core:test-tags",
     ":core:view",
     ":data:calendar:api",
     ":data:calendar:implementation",
