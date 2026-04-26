@@ -1,0 +1,44 @@
+[
+    {
+        "user_count": 4000,
+        "show": {
+            "title": "Better Call Saul",
+            "year": 2015,
+            "ids": {
+                "trakt": 60059,
+                "tmdb": 60059,
+                "slug": "better-call-saul"
+            },
+            "overview": "The trials and tribulations of criminal lawyer Jimmy McGill.",
+            "genres": [
+                "drama",
+                "crime"
+            ],
+            "rating": 8.9,
+            "votes": 30000,
+            "aired_episodes": 63,
+            "status": "ended"
+        }
+    },
+    {
+        "user_count": 3000,
+        "show": {
+            "title": "Game of Thrones",
+            "year": 2011,
+            "ids": {
+                "trakt": 1399,
+                "tmdb": 1399,
+                "slug": "game-of-thrones"
+            },
+            "overview": "Seven noble families fight for control of the mythical land of Westeros.",
+            "genres": [
+                "drama",
+                "fantasy"
+            ],
+            "rating": 9.0,
+            "votes": 80000,
+            "aired_episodes": 73,
+            "status": "ended"
+        }
+    }
+]

@@ -1,0 +1,20 @@
+{
+    "genres": [
+        {
+            "id": 18,
+            "name": "Drama"
+        },
+        {
+            "id": 80,
+            "name": "Crime"
+        },
+        {
+            "id": 53,
+            "name": "Thriller"
+        },
+        {
+            "id": 10765,
+            "name": "Sci-Fi & Fantasy"
+        }
+    ]
+}

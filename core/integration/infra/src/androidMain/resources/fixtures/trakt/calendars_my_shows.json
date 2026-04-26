@@ -1,0 +1,31 @@
+[
+    {
+        "first_aired": "2026-01-31T03:00:00.000Z",
+        "episode": {
+            "season": 2,
+            "number": 1,
+            "title": "Hello, Ms. Cobel",
+            "ids": {
+                "trakt": 100,
+                "tvdb": 101,
+                "imdb": "tt1",
+                "tmdb": 102
+            },
+            "overview": "Mark leads the team on a new mission.",
+            "runtime": 50,
+            "rating": 8.5,
+            "votes": 120
+        },
+        "show": {
+            "title": "Severance",
+            "year": 2022,
+            "ids": {
+                "trakt": 1,
+                "slug": "severance",
+                "tvdb": 2,
+                "imdb": "tt2",
+                "tmdb": 3
+            }
+        }
+    }
+]

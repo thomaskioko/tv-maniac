@@ -1,0 +1,30 @@
+[
+    {
+        "number": 1,
+        "ids": {
+            "trakt": 3950,
+            "tmdb": 3572
+        },
+        "votes": 1200,
+        "rating": 8.5,
+        "aired_episodes": 7,
+        "episode_count": 7,
+        "title": "Season 1",
+        "overview": "High school chemistry teacher Walter White's life is suddenly transformed by a dire medical diagnosis.",
+        "first_aired": "2008-01-21"
+    },
+    {
+        "number": 2,
+        "ids": {
+            "trakt": 3951,
+            "tmdb": 3573
+        },
+        "votes": 1100,
+        "rating": 8.7,
+        "aired_episodes": 13,
+        "episode_count": 13,
+        "title": "Season 2",
+        "overview": "Walt's family starts to feel the pressure of his secret life.",
+        "first_aired": "2009-03-09"
+    }
+]

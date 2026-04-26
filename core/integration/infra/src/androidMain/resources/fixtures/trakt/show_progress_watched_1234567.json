@@ -1,0 +1,21 @@
+{
+    "aired": 2,
+    "completed": 0,
+    "last_watched_at": null,
+    "reset_at": null,
+    "next_episode": {
+        "season": 1,
+        "number": 1,
+        "title": "Unique E1",
+        "ids": {
+            "trakt": 222221,
+            "tmdb": 222221
+        },
+        "overview": "Overview E1",
+        "rating": 10.0,
+        "votes": 1,
+        "runtime": 60,
+        "first_aired": "2024-01-01T00:00:00.000Z"
+    },
+    "last_episode": null
+}

@@ -1,0 +1,342 @@
+[
+    {
+        "title": "Show 1",
+        "year": 2024,
+        "ids": {
+            "trakt": 10001,
+            "tmdb": 20001,
+            "slug": "s1"
+        },
+        "overview": "",
+        "genres": [
+            "drama"
+        ],
+        "rating": 8.0,
+        "votes": 100,
+        "aired_episodes": 10,
+        "status": "returning series"
+    },
+    {
+        "title": "Show 2",
+        "year": 2024,
+        "ids": {
+            "trakt": 10020,
+            "tmdb": 20020,
+            "slug": "s2"
+        },
+        "overview": "",
+        "genres": [
+            "drama"
+        ],
+        "rating": 8.0,
+        "votes": 100,
+        "aired_episodes": 10,
+        "status": "returning series"
+    },
+    {
+        "title": "Show 3",
+        "year": 2024,
+        "ids": {
+            "trakt": 10003,
+            "tmdb": 20003,
+            "slug": "s3"
+        },
+        "overview": "",
+        "genres": [
+            "drama"
+        ],
+        "rating": 8.0,
+        "votes": 100,
+        "aired_episodes": 10,
+        "status": "returning series"
+    },
+    {
+        "title": "Show 4",
+        "year": 2024,
+        "ids": {
+            "trakt": 10004,
+            "tmdb": 20004,
+            "slug": "s4"
+        },
+        "overview": "",
+        "genres": [
+            "drama"
+        ],
+        "rating": 8.0,
+        "votes": 100,
+        "aired_episodes": 10,
+        "status": "returning series"
+    },
+    {
+        "title": "Show 5",
+        "year": 2024,
+        "ids": {
+            "trakt": 10005,
+            "tmdb": 20005,
+            "slug": "s5"
+        },
+        "overview": "",
+        "genres": [
+            "drama"
+        ],
+        "rating": 8.0,
+        "votes": 100,
+        "aired_episodes": 10,
+        "status": "returning series"
+    },
+    {
+        "title": "Show 6",
+        "year": 2024,
+        "ids": {
+            "trakt": 10006,
+            "tmdb": 20006,
+            "slug": "s6"
+        },
+        "overview": "",
+        "genres": [
+            "drama"
+        ],
+        "rating": 8.0,
+        "votes": 100,
+        "aired_episodes": 10,
+        "status": "returning series"
+    },
+    {
+        "title": "Show 7",
+        "year": 2024,
+        "ids": {
+            "trakt": 10007,
+            "tmdb": 20007,
+            "slug": "s7"
+        },
+        "overview": "",
+        "genres": [
+            "drama"
+        ],
+        "rating": 8.0,
+        "votes": 100,
+        "aired_episodes": 10,
+        "status": "returning series"
+    },
+    {
+        "title": "Show 8",
+        "year": 2024,
+        "ids": {
+            "trakt": 10008,
+            "tmdb": 20008,
+            "slug": "s8"
+        },
+        "overview": "",
+        "genres": [
+            "drama"
+        ],
+        "rating": 8.0,
+        "votes": 100,
+        "aired_episodes": 10,
+        "status": "returning series"
+    },
+    {
+        "title": "Show 9",
+        "year": 2024,
+        "ids": {
+            "trakt": 10009,
+            "tmdb": 20009,
+            "slug": "s9"
+        },
+        "overview": "",
+        "genres": [
+            "drama"
+        ],
+        "rating": 8.0,
+        "votes": 100,
+        "aired_episodes": 10,
+        "status": "returning series"
+    },
+    {
+        "title": "Show 10",
+        "year": 2024,
+        "ids": {
+            "trakt": 10010,
+            "tmdb": 20010,
+            "slug": "s10"
+        },
+        "overview": "",
+        "genres": [
+            "drama"
+        ],
+        "rating": 8.0,
+        "votes": 100,
+        "aired_episodes": 10,
+        "status": "returning series"
+    },
+    {
+        "title": "Show 11",
+        "year": 2024,
+        "ids": {
+            "trakt": 10011,
+            "tmdb": 20011,
+            "slug": "s11"
+        },
+        "overview": "",
+        "genres": [
+            "drama"
+        ],
+        "rating": 8.0,
+        "votes": 100,
+        "aired_episodes": 10,
+        "status": "returning series"
+    },
+    {
+        "title": "Show 12",
+        "year": 2024,
+        "ids": {
+            "trakt": 10012,
+            "tmdb": 20012,
+            "slug": "s12"
+        },
+        "overview": "",
+        "genres": [
+            "drama"
+        ],
+        "rating": 8.0,
+        "votes": 100,
+        "aired_episodes": 10,
+        "status": "returning series"
+    },
+    {
+        "title": "Show 13",
+        "year": 2024,
+        "ids": {
+            "trakt": 10013,
+            "tmdb": 20013,
+            "slug": "s13"
+        },
+        "overview": "",
+        "genres": [
+            "drama"
+        ],
+        "rating": 8.0,
+        "votes": 100,
+        "aired_episodes": 10,
+        "status": "returning series"
+    },
+    {
+        "title": "Show 14",
+        "year": 2024,
+        "ids": {
+            "trakt": 10014,
+            "tmdb": 20014,
+            "slug": "s14"
+        },
+        "overview": "",
+        "genres": [
+            "drama"
+        ],
+        "rating": 8.0,
+        "votes": 100,
+        "aired_episodes": 10,
+        "status": "returning series"
+    },
+    {
+        "title": "Show 15",
+        "year": 2024,
+        "ids": {
+            "trakt": 10015,
+            "tmdb": 20015,
+            "slug": "s15"
+        },
+        "overview": "",
+        "genres": [
+            "drama"
+        ],
+        "rating": 8.0,
+        "votes": 100,
+        "aired_episodes": 10,
+        "status": "returning series"
+    },
+    {
+        "title": "Show 16",
+        "year": 2024,
+        "ids": {
+            "trakt": 10016,
+            "tmdb": 20016,
+            "slug": "s16"
+        },
+        "overview": "",
+        "genres": [
+            "drama"
+        ],
+        "rating": 8.0,
+        "votes": 100,
+        "aired_episodes": 10,
+        "status": "returning series"
+    },
+    {
+        "title": "Show 17",
+        "year": 2024,
+        "ids": {
+            "trakt": 10017,
+            "tmdb": 20017,
+            "slug": "s17"
+        },
+        "overview": "",
+        "genres": [
+            "drama"
+        ],
+        "rating": 8.0,
+        "votes": 100,
+        "aired_episodes": 10,
+        "status": "returning series"
+    },
+    {
+        "title": "Show 18",
+        "year": 2024,
+        "ids": {
+            "trakt": 10018,
+            "tmdb": 20018,
+            "slug": "s18"
+        },
+        "overview": "",
+        "genres": [
+            "drama"
+        ],
+        "rating": 8.0,
+        "votes": 100,
+        "aired_episodes": 10,
+        "status": "returning series"
+    },
+    {
+        "title": "Show 19",
+        "year": 2024,
+        "ids": {
+            "trakt": 10019,
+            "tmdb": 20019,
+            "slug": "s19"
+        },
+        "overview": "",
+        "genres": [
+            "drama"
+        ],
+        "rating": 8.0,
+        "votes": 100,
+        "aired_episodes": 10,
+        "status": "returning series"
+    },
+    {
+        "title": "Show 20",
+        "year": 2024,
+        "ids": {
+            "trakt": 10020,
+            "tmdb": 20020,
+            "slug": "s20"
+        },
+        "overview": "",
+        "genres": [
+            "drama"
+        ],
+        "rating": 8.0,
+        "votes": 100,
+        "aired_episodes": 10,
+        "status": "returning series"
+    }
+]
