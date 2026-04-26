@@ -7,7 +7,7 @@ kotlin {
         commonMain {
             dependencies {
                 api(libs.coroutines.core)
-                implementation(projects.domain.theme)
+                api(projects.domain.theme)
             }
         }
     }

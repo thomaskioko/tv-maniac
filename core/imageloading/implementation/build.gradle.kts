@@ -11,6 +11,7 @@ scaffold {
 
 dependencies {
     api(projects.core.imageloading.api)
+    api(projects.domain.theme)
     api(projects.data.datastore.api)
     implementation(projects.core.base)
 
