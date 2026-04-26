@@ -77,7 +77,7 @@ dependencies {
     implementation(projects.data.watchproviders.implementation)
     implementation(projects.data.user.implementation)
     implementation(projects.data.database.sqldelight)
-    implementation(projects.data.datastore.api)
+    implementation(projects.domain.theme)
     implementation(projects.data.datastore.implementation)
     implementation(projects.domain.calendar)
     implementation(projects.domain.discover)

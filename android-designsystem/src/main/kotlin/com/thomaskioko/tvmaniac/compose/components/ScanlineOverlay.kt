@@ -9,7 +9,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.datastore.api.AppTheme
+import com.thomaskioko.tvmaniac.domain.theme.Theme
 
 public data class ScanlineConfiguration(
     val enabled: Boolean,
@@ -47,11 +47,11 @@ public data class ScanlineConfiguration(
     }
 }
 
-internal fun AppTheme.toScanlineConfiguration(): ScanlineConfiguration = when (this) {
-    AppTheme.TERMINAL_THEME -> ScanlineConfiguration.terminal()
-    AppTheme.AMBER_THEME -> ScanlineConfiguration.amber()
-    AppTheme.SNOW_THEME -> ScanlineConfiguration.snow()
-    AppTheme.CRIMSON_THEME -> ScanlineConfiguration.crimson()
+internal fun Theme.toScanlineConfiguration(): ScanlineConfiguration = when (this) {
+    Theme.TERMINAL_THEME -> ScanlineConfiguration.terminal()
+    Theme.AMBER_THEME -> ScanlineConfiguration.amber()
+    Theme.SNOW_THEME -> ScanlineConfiguration.snow()
+    Theme.CRIMSON_THEME -> ScanlineConfiguration.crimson()
     else -> ScanlineConfiguration.Disabled
 }
 

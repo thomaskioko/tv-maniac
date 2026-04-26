@@ -88,8 +88,8 @@ struct SettingsView: View {
             selectedTheme: store.appTheme,
             onThemeSelected: { selectedTheme in
                 store.appTheme = selectedTheme
-                let appTheme = selectedTheme.toAppTheme()
-                presenter.dispatch(action: ThemeSelected(theme: appTheme.toThemeModel()))
+                let theme = selectedTheme.toTheme()
+                presenter.dispatch(action: ThemeSelected(theme: theme.toThemeModel()))
             }
         )
     }

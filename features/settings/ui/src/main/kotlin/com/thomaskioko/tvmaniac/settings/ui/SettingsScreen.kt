@@ -65,7 +65,7 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
-import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
+import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_back
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_crash_reporting
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_crash_reporting_description

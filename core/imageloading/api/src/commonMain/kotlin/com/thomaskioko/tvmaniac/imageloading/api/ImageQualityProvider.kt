@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.imageloading.api
 
-import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
+import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 import kotlinx.coroutines.flow.Flow
 
 public interface ImageQualityProvider {

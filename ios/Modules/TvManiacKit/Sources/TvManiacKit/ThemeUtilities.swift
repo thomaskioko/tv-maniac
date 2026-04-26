@@ -131,16 +131,16 @@ public enum DeviceAppTheme: String, CaseIterable, ThemeItem {
     }
 }
 
-public extension AppTheme {
+public extension Theme {
     func toDeviceAppTheme() -> DeviceAppTheme {
-        if self == AppTheme.darkTheme { return .dark }
-        if self == AppTheme.lightTheme { return .light }
-        if self == AppTheme.terminalTheme { return .terminal }
-        if self == AppTheme.autumnTheme { return .autumn }
-        if self == AppTheme.aquaTheme { return .aqua }
-        if self == AppTheme.amberTheme { return .amber }
-        if self == AppTheme.snowTheme { return .snow }
-        if self == AppTheme.crimsonTheme { return .crimson }
+        if self == Theme.darkTheme { return .dark }
+        if self == Theme.lightTheme { return .light }
+        if self == Theme.terminalTheme { return .terminal }
+        if self == Theme.autumnTheme { return .autumn }
+        if self == Theme.aquaTheme { return .aqua }
+        if self == Theme.amberTheme { return .amber }
+        if self == Theme.snowTheme { return .snow }
+        if self == Theme.crimsonTheme { return .crimson }
         return .system
     }
 }
@@ -183,17 +183,17 @@ public extension DeviceAppTheme {
         }
     }
 
-    func toAppTheme() -> AppTheme {
+    func toTheme() -> Theme {
         switch self {
-        case .system: AppTheme.systemTheme
-        case .light: AppTheme.lightTheme
-        case .dark: AppTheme.darkTheme
-        case .terminal: AppTheme.terminalTheme
-        case .autumn: AppTheme.autumnTheme
-        case .aqua: AppTheme.aquaTheme
-        case .amber: AppTheme.amberTheme
-        case .snow: AppTheme.snowTheme
-        case .crimson: AppTheme.crimsonTheme
+        case .system: Theme.systemTheme
+        case .light: Theme.lightTheme
+        case .dark: Theme.darkTheme
+        case .terminal: Theme.terminalTheme
+        case .autumn: Theme.autumnTheme
+        case .aqua: Theme.aquaTheme
+        case .amber: Theme.amberTheme
+        case .snow: Theme.snowTheme
+        case .crimson: Theme.crimsonTheme
         }
     }
 

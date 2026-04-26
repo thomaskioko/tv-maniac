@@ -18,7 +18,7 @@ dependencies {
     api(libs.androidx.compose.material.icons)
     api(libs.androidx.compose.runtime)
 
-    api(projects.data.datastore.api)
+    api(projects.domain.theme)
     implementation(projects.i18n.generator)
 
     api(libs.coil.base)

@@ -11,7 +11,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ScanlineOverlay
 import com.thomaskioko.tvmaniac.compose.components.toScanlineConfiguration
-import com.thomaskioko.tvmaniac.datastore.api.AppTheme
+import com.thomaskioko.tvmaniac.domain.theme.Theme
 
 public val LightColorScheme: ColorScheme = lightColorScheme(
     primary = md_theme_light_primary,
@@ -134,21 +134,21 @@ public val CrimsonColorScheme: ColorScheme = darkColorScheme(
     outline = md_theme_crimson_outline,
 )
 
-internal fun AppTheme.toColorScheme(isSystemInDarkTheme: Boolean): ColorScheme = when (this) {
-    AppTheme.LIGHT_THEME -> LightColorScheme
-    AppTheme.DARK_THEME -> DarkColorScheme
-    AppTheme.TERMINAL_THEME -> TerminalColorScheme
-    AppTheme.AUTUMN_THEME -> AutumnColorScheme
-    AppTheme.AQUA_THEME -> AquaColorScheme
-    AppTheme.AMBER_THEME -> AmberColorScheme
-    AppTheme.SNOW_THEME -> SnowColorScheme
-    AppTheme.CRIMSON_THEME -> CrimsonColorScheme
-    AppTheme.SYSTEM_THEME -> if (isSystemInDarkTheme) DarkColorScheme else LightColorScheme
+internal fun Theme.toColorScheme(isSystemInDarkTheme: Boolean): ColorScheme = when (this) {
+    Theme.LIGHT_THEME -> LightColorScheme
+    Theme.DARK_THEME -> DarkColorScheme
+    Theme.TERMINAL_THEME -> TerminalColorScheme
+    Theme.AUTUMN_THEME -> AutumnColorScheme
+    Theme.AQUA_THEME -> AquaColorScheme
+    Theme.AMBER_THEME -> AmberColorScheme
+    Theme.SNOW_THEME -> SnowColorScheme
+    Theme.CRIMSON_THEME -> CrimsonColorScheme
+    Theme.SYSTEM_THEME -> if (isSystemInDarkTheme) DarkColorScheme else LightColorScheme
 }
 
 @Composable
 public fun TvManiacTheme(
-    appTheme: AppTheme = AppTheme.SYSTEM_THEME,
+    appTheme: Theme = Theme.SYSTEM_THEME,
     content: @Composable () -> Unit,
 ) {
     val isSystemDark = isSystemInDarkTheme()

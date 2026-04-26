@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.settings.ui
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
+import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 

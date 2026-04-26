@@ -21,6 +21,7 @@ kotlin {
                 implementation(projects.features.debug.nav)
                 implementation(projects.features.settings.nav)
                 implementation(projects.core.util.api)
+                implementation(projects.domain.theme)
                 implementation(projects.data.datastore.api)
                 implementation(projects.data.traktauth.api)
                 implementation(projects.domain.logout)

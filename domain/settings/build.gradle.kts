@@ -12,6 +12,7 @@ kotlin {
             dependencies {
                 implementation(projects.core.base)
                 implementation(projects.core.util.api)
+                implementation(projects.domain.theme)
                 implementation(projects.data.datastore.api)
 
                 implementation(libs.coroutines.core)
