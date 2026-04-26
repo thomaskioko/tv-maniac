@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.i18n
 
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.SyncError
-import com.thomaskioko.tvmaniac.core.networkutil.api.model.SyncException
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.toSyncError
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import dev.zacsweers.metro.AppScope
@@ -14,15 +14,10 @@ public class LocalizedErrorToStringMapper(
     private val localizer: Localizer,
 ) : ErrorToStringMapper {
 
-    override fun mapError(throwable: Throwable): String {
-        val syncException = throwable as? SyncException
-            ?: throwable.cause as? SyncException
-        return if (syncException != null) {
-            mapSyncError(syncException.syncError)
-        } else {
-            localizer.getString(StringResourceKey.ErrorGeneric)
-        }
-    }
+    override fun mapError(throwable: Throwable): String =
+        throwable.toSyncError()
+            ?.let(::mapSyncError)
+            ?: localizer.getString(StringResourceKey.ErrorGeneric)
 
     private fun mapSyncError(error: SyncError): String = when (error) {
         is SyncError.Retryable.RateLimited -> localizer.getString(StringResourceKey.ErrorRateLimited)

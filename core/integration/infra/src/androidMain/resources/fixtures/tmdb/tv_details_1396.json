@@ -1,0 +1,42 @@
+{
+    "adult": false,
+    "backdrop_path": "/ztkUQFLlC19CCMYHW9o1zWhJRNq.jpg",
+    "episode_run_time": [
+        45,
+        47
+    ],
+    "first_air_date": "2008-01-20",
+    "genres": [
+        {
+            "id": 18,
+            "name": "Drama"
+        }
+    ],
+    "id": 1396,
+    "last_air_date": "2013-09-29",
+    "name": "Breaking Bad",
+    "networks": [
+        {
+            "id": 174,
+            "name": "AMC",
+            "logo_path": null,
+            "origin_country": "US"
+        }
+    ],
+    "number_of_episodes": 62,
+    "number_of_seasons": 5,
+    "overview": "When Walter White is diagnosed with terminal cancer, he turns to a life of crime.",
+    "popularity": 200.0,
+    "poster_path": "/ggFHVNu6YYI5L9pCfOacjizRGt.jpg",
+    "seasons": [],
+    "status": "Ended",
+    "vote_average": 8.9,
+    "vote_count": 10000,
+    "videos": {
+        "results": []
+    },
+    "credits": {
+        "cast": []
+    },
+    "original_language": "en"
+}

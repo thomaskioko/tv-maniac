@@ -1,0 +1,32 @@
+[
+    {
+        "rank": 1,
+        "id": 1,
+        "listed_at": "2024-04-19T12:00:00.000Z",
+        "type": "show",
+        "show": {
+            "title": "Breaking Bad",
+            "year": 2008,
+            "ids": {
+                "slug": "breaking-bad",
+                "trakt": 1388,
+                "tmdb": 1396
+            }
+        }
+    },
+    {
+        "rank": 2,
+        "id": 2,
+        "listed_at": "2024-04-19T12:00:00.000Z",
+        "type": "show",
+        "show": {
+            "title": "Better Call Saul",
+            "year": 2015,
+            "ids": {
+                "slug": "better-call-saul",
+                "trakt": 60059,
+                "tmdb": 60059
+            }
+        }
+    }
+]

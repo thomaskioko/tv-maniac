@@ -41,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -80,6 +81,7 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.title_category_top_rated
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_category_trending_today
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_category_upcoming
 import com.thomaskioko.tvmaniac.i18n.resolve
+import com.thomaskioko.tvmaniac.testtags.discover.DiscoverTestTags
 
 @Composable
 public fun DiscoverScreen(
@@ -126,7 +128,7 @@ internal fun DiscoverScreen(
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.testTag(DiscoverTestTags.SCREEN_TEST_TAG),
     ) { paddingValues ->
         val context = LocalContext.current
         when {
@@ -138,6 +140,7 @@ internal fun DiscoverScreen(
                     title = generic_empty_content.resolve(context),
                     message = missing_api_key.resolve(context),
                     buttonText = generic_retry.resolve(context),
+                    buttonTestTag = DiscoverTestTags.ERROR_RETRY_BUTTON_TEST_TAG,
                     onClick = { onAction(RefreshData) },
                 )
 
@@ -145,6 +148,7 @@ internal fun DiscoverScreen(
                 imageVector = Icons.Outlined.ErrorOutline,
                 title = state.message?.message ?: generic_error_message.resolve(context),
                 buttonText = generic_retry.resolve(context),
+                buttonTestTag = DiscoverTestTags.ERROR_RETRY_BUTTON_TEST_TAG,
                 onClick = { onAction(RefreshData) },
             )
 
@@ -214,7 +218,9 @@ private fun DiscoverContent(
                 ScrimButton(
                     show = showAppBarBackground,
                     onClick = { onAction(SearchIconClicked) },
-                    modifier = Modifier.padding(end = 8.dp),
+                    modifier = Modifier
+                        .padding(end = 8.dp)
+                        .testTag(DiscoverTestTags.SEARCH_BUTTON_TEST_TAG),
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Search,
@@ -240,6 +246,7 @@ private fun LazyColumnContent(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
+            .testTag(DiscoverTestTags.DISCOVER_LIST_TEST_TAG)
             .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
         state = listState,
     ) {

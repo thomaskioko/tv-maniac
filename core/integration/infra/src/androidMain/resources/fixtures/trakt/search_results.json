@@ -1,0 +1,21 @@
+[
+    {
+        "type": "show",
+        "score": 1000.0,
+        "show": {
+            "title": "Breaking Bad",
+            "year": 2008,
+            "ids": {
+                "trakt": 1388,
+                "slug": "breaking-bad",
+                "tvdb": 81189,
+                "imdb": "tt0903747",
+                "tmdb": 1396
+            },
+            "overview": "When Walter White is diagnosed with terminal cancer, he turns to a life of crime.",
+            "status": "ended",
+            "rating": 9.3,
+            "votes": 50000
+        }
+    }
+]

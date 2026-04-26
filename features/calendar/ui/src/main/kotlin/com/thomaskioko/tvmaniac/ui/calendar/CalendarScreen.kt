@@ -35,7 +35,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -43,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -65,6 +65,7 @@ import com.thomaskioko.tvmaniac.presentation.calendar.NavigateToNextWeek
 import com.thomaskioko.tvmaniac.presentation.calendar.NavigateToPreviousWeek
 import com.thomaskioko.tvmaniac.presentation.calendar.model.CalendarDateGroup
 import com.thomaskioko.tvmaniac.presentation.calendar.model.CalendarEpisodeItem
+import com.thomaskioko.tvmaniac.testtags.calendar.CalendarTestTags
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -95,55 +96,32 @@ public fun CalendarPageContent(
     onAction: (CalendarAction) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    Column(modifier = modifier.fillMaxSize()) {
-        WeekNavigationHeader(
-            weekLabel = state.weekLabel,
-            canNavigatePrevious = state.canNavigatePrevious,
-            canNavigateNext = state.canNavigateNext,
-            isRefreshing = state.isRefreshing,
-            onPreviousClick = { onAction(NavigateToPreviousWeek) },
-            onNextClick = { onAction(NavigateToNextWeek) },
-            modifier = Modifier.padding(horizontal = 4.dp),
-        )
+    Box(modifier = modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            WeekNavigationHeader(
+                weekLabel = state.weekLabel,
+                canNavigatePrevious = state.canNavigatePrevious,
+                canNavigateNext = state.canNavigateNext,
+                isRefreshing = state.isRefreshing,
+                onPreviousClick = { onAction(NavigateToPreviousWeek) },
+                onNextClick = { onAction(NavigateToNextWeek) },
+                modifier = Modifier.padding(horizontal = 4.dp),
+            )
 
-        when {
-            state.showLoading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    LoadingIndicator()
-                }
-            }
-
-            !state.isLoggedIn -> {
-                EmptyStateView(
-                    imageVector = Icons.Outlined.CalendarMonth,
-                    title = state.loginTitle,
-                    message = state.loginMessage,
-                )
-            }
-
-            state.isEmpty -> {
-                EmptyStateView(
-                    imageVector = Icons.Outlined.CalendarMonth,
-                    title = state.emptyTitle,
-                    message = state.emptyMessage,
-                )
-            }
-
-            else -> {
-                CalendarContent(
-                    dateGroups = state.dateGroups,
-                    moreEpisodesFormat = state.moreEpisodesFormat,
-                    contentPadding = PaddingValues(0.dp),
-                    scrollBehavior = scrollBehavior,
-                    onEpisodeClicked = { episodeTraktId -> onAction(EpisodeCardClicked(episodeTraktId)) },
-                )
-            }
+            CalendarBody(
+                state = state,
+                contentPadding = PaddingValues(0.dp),
+                scrollBehavior = scrollBehavior,
+                onAction = onAction,
+            )
         }
+
+        TvManiacSnackBarHost(
+            message = state.message?.message,
+            style = SnackBarStyle.Error,
+            onDismiss = { state.message?.let { onAction(MessageShown(it.id)) } },
+        )
     }
 }
 
@@ -154,7 +132,6 @@ internal fun CalendarScreen(
     onAction: (CalendarAction) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     Scaffold(
         modifier = modifier.statusBarsPadding(),
@@ -178,45 +155,65 @@ internal fun CalendarScreen(
             )
         },
     ) { contentPadding ->
-        when {
-            state.showLoading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(contentPadding),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    LoadingIndicator()
-                }
-            }
+        CalendarBody(
+            state = state,
+            contentPadding = contentPadding,
+            scrollBehavior = scrollBehavior,
+            onAction = onAction,
+        )
+    }
+}
 
-            !state.isLoggedIn -> {
-                EmptyStateView(
-                    modifier = Modifier.padding(contentPadding),
-                    imageVector = Icons.Outlined.CalendarMonth,
-                    title = state.loginTitle,
-                    message = state.loginMessage,
-                )
+@Composable
+private fun CalendarBody(
+    state: CalendarState,
+    contentPadding: PaddingValues,
+    scrollBehavior: androidx.compose.material3.TopAppBarScrollBehavior,
+    onAction: (CalendarAction) -> Unit,
+) {
+    when {
+        state.showLoading -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(contentPadding),
+                contentAlignment = Alignment.Center,
+            ) {
+                LoadingIndicator()
             }
+        }
 
-            state.isEmpty -> {
-                EmptyStateView(
-                    modifier = Modifier.padding(contentPadding),
-                    imageVector = Icons.Outlined.CalendarMonth,
-                    title = state.emptyTitle,
-                    message = state.emptyMessage,
-                )
-            }
+        !state.isLoggedIn -> {
+            EmptyStateView(
+                modifier = Modifier
+                    .padding(contentPadding)
+                    .testTag(CalendarTestTags.LOGGED_OUT_STATE_TEST_TAG),
+                imageVector = Icons.Outlined.CalendarMonth,
+                title = state.loginTitle,
+                message = state.loginMessage,
+            )
+        }
 
-            else -> {
-                CalendarContent(
-                    dateGroups = state.dateGroups,
-                    moreEpisodesFormat = state.moreEpisodesFormat,
-                    contentPadding = contentPadding,
-                    scrollBehavior = scrollBehavior,
-                    onEpisodeClicked = { episodeTraktId -> onAction(EpisodeCardClicked(episodeTraktId)) },
-                )
-            }
+        state.isEmpty -> {
+            EmptyStateView(
+                modifier = Modifier
+                    .padding(contentPadding)
+                    .testTag(CalendarTestTags.EMPTY_STATE_TEST_TAG),
+                imageVector = Icons.Outlined.CalendarMonth,
+                title = state.emptyTitle,
+                message = state.emptyMessage,
+            )
+        }
+
+        else -> {
+            CalendarContent(
+                modifier = Modifier.testTag(CalendarTestTags.SCREEN_TEST_TAG),
+                dateGroups = state.dateGroups,
+                moreEpisodesFormat = state.moreEpisodesFormat,
+                contentPadding = contentPadding,
+                scrollBehavior = scrollBehavior,
+                onEpisodeClicked = { episodeTraktId -> onAction(EpisodeCardClicked(episodeTraktId)) },
+            )
         }
     }
 }
@@ -239,6 +236,7 @@ internal fun WeekNavigationHeader(
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         IconButton(
+            modifier = Modifier.testTag(CalendarTestTags.PREVIOUS_WEEK_BUTTON),
             onClick = onPreviousClick,
             enabled = canNavigatePrevious,
         ) {
@@ -258,6 +256,7 @@ internal fun WeekNavigationHeader(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
+                modifier = Modifier.testTag(CalendarTestTags.WEEK_LABEL),
                 text = weekLabel,
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
@@ -273,6 +272,7 @@ internal fun WeekNavigationHeader(
         }
 
         IconButton(
+            modifier = Modifier.testTag(CalendarTestTags.NEXT_WEEK_BUTTON),
             onClick = onNextClick,
             enabled = canNavigateNext,
         ) {
@@ -318,6 +318,7 @@ private fun CalendarContent(
                 key = { "${dateGroup.dateLabel}_${it.showTraktId}" },
             ) { episode ->
                 CalendarEpisodeCard(
+                    modifier = Modifier.testTag(CalendarTestTags.episodeCard(episode.episodeTraktId)),
                     episode = episode,
                     moreEpisodesFormat = moreEpisodesFormat,
                     onClick = { onEpisodeClicked(episode.episodeTraktId) },

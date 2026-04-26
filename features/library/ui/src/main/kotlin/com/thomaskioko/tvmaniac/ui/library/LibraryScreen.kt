@@ -55,6 +55,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -89,6 +90,7 @@ import com.thomaskioko.tvmaniac.presentation.library.ToggleGenreFilter
 import com.thomaskioko.tvmaniac.presentation.library.ToggleSearchActive
 import com.thomaskioko.tvmaniac.presentation.library.ToggleStatusFilter
 import com.thomaskioko.tvmaniac.presentation.library.model.LibraryShowItem
+import com.thomaskioko.tvmaniac.testtags.library.LibraryTestTags
 import com.thomaskioko.tvmaniac.ui.library.preview.LibraryStatePreviewParameterProvider
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
@@ -126,7 +128,9 @@ internal fun LibraryScreen(
     val scope = rememberCoroutineScope()
 
     Scaffold(
-        modifier = modifier.statusBarsPadding(),
+        modifier = modifier
+            .statusBarsPadding()
+            .testTag(LibraryTestTags.SCREEN_TEST_TAG),
         topBar = {
             TopBar(
                 onAction = onAction,
@@ -164,6 +168,7 @@ internal fun LibraryScreen(
                             null
                         }
                         EmptyStateView(
+                            modifier = Modifier.testTag(LibraryTestTags.EMPTY_STATE_TEST_TAG),
                             imageVector = Icons.Outlined.Inbox,
                             title = generic_empty_content.resolve(context),
                             message = message,
@@ -361,6 +366,7 @@ private fun LibraryGridContent(
             LibraryGridItem(
                 item = item,
                 onItemClicked = onItemClicked,
+                modifier = Modifier.testTag(LibraryTestTags.showRow(item.traktId)),
             )
         }
 
@@ -403,6 +409,7 @@ private fun LibraryListContent(
             LibraryListItem(
                 item = items[index],
                 onItemClicked = onItemClicked,
+                modifier = Modifier.testTag(LibraryTestTags.showRow(items[index].traktId)),
             )
         }
 

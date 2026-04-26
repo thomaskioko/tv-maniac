@@ -31,6 +31,7 @@ public fun BoxTextItems(
     subtitle: String? = null,
     label: String? = null,
     onMoreClicked: () -> Unit = {},
+    moreModifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier,
@@ -59,7 +60,7 @@ public fun BoxTextItems(
         label?.let {
             Text(
                 text = label,
-                modifier = Modifier
+                modifier = moreModifier
                     .align(Alignment.CenterEnd)
                     .clickable { onMoreClicked() }
                     .padding(16.dp),

@@ -214,7 +214,7 @@ public class DefaultLibraryRepository(
     private fun ApiResponse.Error<*>.toErrorMessage(): String = when (this) {
         is ApiResponse.Error.HttpError -> "HTTP $code: $errorMessage"
         is ApiResponse.Error.SerializationError -> "Serialization error: $errorMessage"
-        is ApiResponse.Error.GenericError -> errorMessage ?: "Unknown error"
+        is ApiResponse.Error.NetworkFailure -> "Network failure: $kind (${cause?.message ?: "no detail"})"
         is ApiResponse.Error.OfflineError -> "No internet connection"
     }
 

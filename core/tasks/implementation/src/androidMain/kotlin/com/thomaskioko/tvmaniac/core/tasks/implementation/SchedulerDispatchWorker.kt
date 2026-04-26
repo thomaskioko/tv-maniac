@@ -10,7 +10,8 @@ import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
 
-public class SchedulerDispatchWorker @AssistedInject constructor(
+@AssistedInject
+public class SchedulerDispatchWorker(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val workerFactory: WorkerFactory,

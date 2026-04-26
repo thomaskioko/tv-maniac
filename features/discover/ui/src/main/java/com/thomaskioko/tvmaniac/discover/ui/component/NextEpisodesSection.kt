@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
@@ -19,6 +20,7 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.discover.presenter.model.NextEpisodeUiModel
 import com.thomaskioko.tvmaniac.i18n.MR.strings.str_more
 import com.thomaskioko.tvmaniac.i18n.resolve
+import com.thomaskioko.tvmaniac.testtags.discover.DiscoverTestTags
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -58,6 +60,7 @@ internal fun NextEpisodesSection(
                     key = { _, episode -> "next_episode_${episode.showTraktId}_${episode.episodeId}" },
                 ) { _, episode ->
                     NextEpisodeCard(
+                        modifier = Modifier.testTag(DiscoverTestTags.upNextCard(episode.showTraktId)),
                         episode = episode,
                         onClick = { onEpisodeClick(episode) },
                     )

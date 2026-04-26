@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -51,6 +52,7 @@ import com.thomaskioko.tvmaniac.seasondetails.presenter.ToggleEpisodeWatched
 import com.thomaskioko.tvmaniac.seasondetails.presenter.ToggleSeasonWatched
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.EpisodeDetailsModel
 import com.thomaskioko.tvmaniac.seasondetails.ui.seasonDetailsLoaded
+import com.thomaskioko.tvmaniac.testtags.seasondetails.SeasonDetailsTestTags
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -86,7 +88,9 @@ internal fun CollapsableContent(
                 EpisodeItem(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .defaultMinSize(minHeight = 84.dp),
+                        .defaultMinSize(minHeight = 84.dp)
+                        .testTag(SeasonDetailsTestTags.episodeRow(episode.id)),
+                    episodeId = episode.id,
                     imageUrl = episode.imageUrl,
                     title = episode.episodeNumberTitle,
                     episodeOverview = episode.overview,
@@ -132,6 +136,7 @@ private fun SeasonTitleHeader(
         modifier = Modifier
             .fillMaxWidth()
             .height(64.dp)
+            .testTag(SeasonDetailsTestTags.EPISODE_HEADER_TEST_TAG)
             .clickable { onAction(OnEpisodeHeaderClicked) },
     ) {
         ConstraintLayout(

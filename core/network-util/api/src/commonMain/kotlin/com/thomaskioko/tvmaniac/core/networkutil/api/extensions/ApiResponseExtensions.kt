@@ -7,11 +7,14 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.model.NoInternetException
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.request
 import io.ktor.client.statement.bodyAsText
+import io.ktor.serialization.ContentConvertException
 import io.ktor.util.AttributeKey
 import kotlinx.serialization.SerializationException
+import kotlin.coroutines.cancellation.CancellationException
 
 public val RequiresAuth: AttributeKey<Boolean> = AttributeKey("RequiresAuth")
 public val IsAuthenticated: AttributeKey<() -> Boolean> = AttributeKey("IsAuthenticated")
@@ -22,6 +25,8 @@ public suspend inline fun <reified T> HttpClient.safeRequest(
     try {
         val response = request { block() }
         ApiResponse.Success(response.body())
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: NoInternetException) {
         ApiResponse.Error.OfflineError(errorMessage = e.message ?: "No internet connection")
     } catch (_: AuthenticationException) {
@@ -40,15 +45,25 @@ public suspend inline fun <reified T> HttpClient.safeRequest(
             errorBody = exception.response.bodyAsText(),
             errorMessage = exception.message,
         )
+    } catch (e: ContentConvertException) {
+        ApiResponse.Error.SerializationError(
+            message = e.message,
+            errorMessage = "Something went wrong",
+        )
     } catch (e: SerializationException) {
         ApiResponse.Error.SerializationError(
             message = e.message,
             errorMessage = "Something went wrong",
         )
-    } catch (e: Exception) {
-        ApiResponse.Error.GenericError(
-            message = e.message,
-            errorMessage = "Something went wrong",
+    } catch (e: HttpRequestTimeoutException) {
+        ApiResponse.Error.NetworkFailure(
+            kind = ApiResponse.Error.NetworkFailure.Kind.Timeout,
+            cause = e,
+        )
+    } catch (e: Throwable) {
+        ApiResponse.Error.NetworkFailure(
+            kind = ApiResponse.Error.NetworkFailure.Kind.Unknown,
+            cause = e,
         )
     }
 

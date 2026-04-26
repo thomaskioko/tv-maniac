@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.FilledTextButton
@@ -42,6 +43,7 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_footer_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_sign_in_button
 import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_unauthenticated_title
 import com.thomaskioko.tvmaniac.i18n.resolve
+import com.thomaskioko.tvmaniac.testtags.profile.ProfileTestTags
 
 @Composable
 internal fun UnauthenticatedContent(
@@ -109,7 +111,9 @@ internal fun UnauthenticatedContent(
             )
 
             FilledTextButton(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag(ProfileTestTags.SIGN_IN_BUTTON_TEST_TAG),
                 onClick = onLoginClicked,
                 shape = ButtonDefaults.shape,
                 buttonColors = ButtonDefaults.buttonColors(

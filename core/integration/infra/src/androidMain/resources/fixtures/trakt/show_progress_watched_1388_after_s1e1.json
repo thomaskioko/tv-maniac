@@ -1,0 +1,29 @@
+{
+    "aired": 62,
+    "completed": 1,
+    "last_watched_at": "2024-04-19T12:00:00.000Z",
+    "reset_at": null,
+    "next_episode": {
+        "season": 1,
+        "number": 2,
+        "title": "Cat's in the Bag...",
+        "ids": {
+            "trakt": 73641,
+            "tmdb": 62092
+        },
+        "overview": "Walt and Jesse try to figure out what to do with the two bodies in the RV.",
+        "rating": 8.7,
+        "votes": 12000,
+        "runtime": 48,
+        "first_aired": "2008-01-28T07:00:00.000Z"
+    },
+    "last_episode": {
+        "season": 1,
+        "number": 1,
+        "title": "Pilot",
+        "ids": {
+            "trakt": 73640,
+            "tmdb": 62085
+        }
+    }
+}

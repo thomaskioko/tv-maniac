@@ -2,376 +2,62 @@
 
 ## Table of Contents
 
-- [Why codegen exists](#why-codegen-exists)
 - [Annotations](#annotations)
-- [Route as scope](#route-as-scope)
-- [Patterns by destination shape](#patterns-by-destination-shape)
-- [What stays manual and why](#what-stays-manual-and-why)
-- [How this extends the navigation module structure](#how-this-extends-the-navigation-module-structure)
-- [Where the source lives](#where-the-source-lives)
-- [Next Steps](#next-steps)
+- [Route as Scope](#route-as-scope)
+- [Patterns by Destination Shape](#patterns-by-destination-shape)
 
-> [!NOTE]
-> The processor covers two distinct layers: the shared KMP destination layer (`@NavScreen`, `@TabScreen`, `@NavSheet`)
-> and the Android UI renderer layer (`@ScreenUi`, `@SheetUi`). Authors annotate the presenter class for the first
-> group and the composable function for the second.
-
-> **What this covers**: the KSP annotation processor that eliminates per-destination boilerplate by generating
-> `@GraphExtension` interfaces, destination bindings, and Android UI multibinding contributions from a single
-> annotation on the presenter class or the composable function.
-> **Prerequisites**: read [Navigation](navigation.md) and [Dependency Injection](dependency-injection.md) first. The
-> codegen builds on top of the patterns defined there: `NavRoute`, `NavDestination`, `NavRouteBinding`, `SheetConfig`,
-> `SheetChildFactory`, `SheetConfigBinding`, Metro graph extensions, and the route-as-scope decision are all explained
-> in those docs.
-
-## Why codegen exists
-
-Before the processor existed, adding a root-stack screen required four manually written artifacts per destination in
-the shared KMP layer, plus a fifth manually written artifact on the Android UI layer. Using the debug screen as the
-running example:
-
-The first is `DebugRoute` in `features/debug/nav/`: the route is the feature's public API. Its shape is an
-intentional decision the feature author controls. It stays manual.
-
-The remaining three shared-code artifacts were mechanical: a `DebugScreenScope` scope-marker class in `nav/scope/`,
-a `DebugScreenGraph` interface carrying `@GraphExtension(DebugScreenScope::class)` and a `@GraphExtension.Factory` in
-`presenter/di/`, and a `DebugNavDestinationBinding` interface in `presenter/di/` that contributed a `NavDestination`
-and a `NavRouteBinding<*>` into the activity-scope multibinding sets.
-
-On the Android UI side, each feature `ui` module also needed a manually written
-`@BindingContainer @ContributesTo(ActivityScope) object` that provided a `ScreenContent` (or `SheetContent`) into the
-renderer multibinding set.
-
-All four shared-code artifacts and the UI binding artifact are entirely determined by the route type and the presenter
-class. They contain no feature-specific logic. The codegen collapses the three shared-code artifacts into a single
-annotation on the presenter class and the UI binding artifact into a single annotation on the composable function. The
-route is the only thing left to write.
-
-Sheet destinations follow the same shape with a parallel set of generated types. The episode sheet previously required
-an `EpisodeSheetConfig` (manually written, public API), an `EpisodeSheetScreenScope`, an `EpisodeSheetScreenGraph`, and
-an `EpisodeSheetDestinationBinding` that contributed a `SheetChildFactory` and a `SheetConfigBinding<*>`. The
-annotation reduces that to the config class plus the annotation on the presenter. The `@SheetUi` annotation on the
-composable function similarly eliminates the manually written `SheetContent` binding in the `ui` module.
+KSP annotation processor that eliminates navigation boilerplate by generating `@GraphExtension` interfaces, destination bindings, and UI multibinding contributions.
 
 ## Annotations
 
-The three annotations cover every current destination shape in the app. They live in the `codegen-annotations` library
-from the `app-gradle-plugins` composite build. Applying the shared scaffold convention to a presenter module is enough
-to make them available; no manual wiring is needed beyond that.
+### Shared KMP Layer
+- **`@NavScreen`**: Generates graph extension and `NavDestination` + `NavRouteBinding`. Use for root-stack screens.
+- **`@TabScreen`**: Generates graph extension and `TabDestination`. Use for home tab presenters.
+- **`@NavSheet`**: Generates graph extension and `SheetChildFactory` + `SheetConfigBinding`. Use for modal sheets.
 
-### `@NavScreen`
+### Android UI Layer
+- **`@ScreenUi`**: Generates `ScreenContent` binding in `ui/di/`.
+- **`@SheetUi`**: Generates `SheetContent` binding in `ui/di/`.
 
-```kotlin
-public annotation class NavScreen(
-    val route: KClass<out NavRoute>,
-    val parentScope: KClass<*> = ActivityScope::class,
-)
-```
+## Route as Scope
 
-Place this on a presenter class to generate a `@GraphExtension` interface scoped to the route class (see
-[Route as scope](#route-as-scope) below) and a `@ContributesTo(parentScope)` binding interface with two
-`@Provides @IntoSet` methods: one contributing a `NavDestination` and one contributing a `NavRouteBinding<*>`.
+Generated `@GraphExtension` interfaces use the route class (or `HomeConfig`/`SheetConfig` subtype) as the scope marker. This eliminates the need for manual scope marker classes.
 
-`parentScope` defaults to `ActivityScope`. Override it only when the presenter lives inside a scope narrower than the
-activity, which is rare for root-stack destinations.
+## Patterns by Destination Shape
 
-### `@TabScreen`
+### Simple Presenter
+Annotate with `@NavScreen`. Processor generates graph and `NavDestination`.
 
 ```kotlin
-public annotation class TabScreen(
-    val config: KClass<out HomeConfig>,
-    val parentScope: KClass<*> = HomeScreenScope::class,
-)
-```
-
-Place this on a tab presenter class to generate a `@GraphExtension` interface scoped to the `HomeConfig` subtype and a
-`@ContributesTo(parentScope)` binding interface contributing a single `TabDestination` to `Set<TabDestination>`. Tab
-destinations do not produce a `NavRouteBinding` because `HomeConfig` serialization is owned by the Home module.
-
-### `@NavSheet`
-
-```kotlin
-public annotation class NavSheet(
-    val route: KClass<out SheetConfig>,
-    val parentScope: KClass<*> = ActivityScope::class,
-)
-```
-
-Place this on a sheet presenter class to generate a `@GraphExtension` interface scoped to the `SheetConfig` subtype
-and a `@ContributesTo(parentScope)` binding interface with two `@Provides @IntoSet` methods: one contributing a
-`SheetChildFactory` and one contributing a `SheetConfigBinding<*>`.
-
-The generated `SheetChildFactory` implementation casts the incoming `SheetConfig` to the declared config type before
-passing params to the presenter factory. When the presenter uses `@AssistedInject`, the cast extracts the assisted
-param from the config property whose name matches the single `@Assisted` constructor parameter.
-
-### `@ScreenUi`
-
-```kotlin
-public annotation class ScreenUi(
-    val presenter: KClass<*>,
-    val parentScope: KClass<*>,
-)
-```
-
-Place this on a `@Composable` screen function to generate a `@BindingContainer @ContributesTo(parentScope)` object
-in the same `ui` module's `di/` package. The generated object provides a `ScreenContent` into the
-`Set<ScreenContent>` multibinding at `ActivityScope`. The `matches` lambda checks whether the active `RootChild` is a
-`ScreenDestination<*>` wrapping the declared presenter type; the `content` lambda calls the annotated composable with
-the cast presenter and the incoming `Modifier`.
-
-The annotated function must match this signature:
-
-```kotlin
-@ScreenUi(presenter = DebugPresenter::class, parentScope = ActivityScope::class)
-@Composable
-public fun DebugMenuScreen(
-    presenter: DebugPresenter,
-    modifier: Modifier = Modifier,
-) { /* ... */ }
-```
-
-Enable this annotation by applying `scaffold { useCodegen() }` in the feature `ui/build.gradle.kts` and adding
-`api(projects.navigation.ui)` to the module's dependencies. The `app/build.gradle.kts` must also carry a direct
-`implementation(projects.features.{name}.ui)` dep so Metro discovers the generated `metro/hints/` contribution classes
-at compile time. `features/root/ui` no longer depends on any feature `ui` module, so there is no transitive path from
-the app through it; each feature must be declared directly.
-
-### `@SheetUi`
-
-```kotlin
-public annotation class SheetUi(
-    val presenter: KClass<*>,
-    val parentScope: KClass<*>,
-)
-```
-
-The sheet-side parallel of `@ScreenUi`. Place this on a `@Composable` sheet function to generate a
-`@BindingContainer @ContributesTo(parentScope)` object that provides a `SheetContent` into `Set<SheetContent>`.
-
-The annotated function must accept `presenter` and `modifier`, matching this signature:
-
-```kotlin
-@SheetUi(presenter = EpisodeSheetPresenter::class, parentScope = ActivityScope::class)
-@Composable
-public fun EpisodeSheet(
-    presenter: EpisodeSheetPresenter,
-    modifier: Modifier = Modifier,
-) { /* ... */ }
-```
-
-Only the `presenter` argument is forwarded in the generated binding. `SheetContent.content` does not receive a
-`Modifier`, so the generated call omits it even though the function declares `modifier` as a parameter.
-
-> [!IMPORTANT]
-> The shared-code annotations (`@NavScreen`, `@TabScreen`, `@NavSheet`) target the presenter class and are enabled by
-> applying `scaffold { useCodegen() }` in the presenter module. The UI-layer annotations (`@ScreenUi`, `@SheetUi`)
-> target the composable function and are enabled by the same `scaffold { useCodegen() }` call in the `ui` module
-> (`useCodegen()` auto-applies the Metro plugin when it is not already present). Both sets of annotations require
-> separate scaffold declarations in their respective modules.
-
-## Route as scope
-
-One of the most consequential architectural decisions in this system is that the generated `@GraphExtension` does not
-declare a new scope class. The route class (or `HomeConfig` subtype for tabs, or `SheetConfig` subtype for sheets)
-itself serves as the scope marker.
-
-Before the codegen, each destination had a manually written scope marker (for example, `DebugScreenScope` in
-`features/debug/nav/scope/`) and the generated graph referenced it as the `@GraphExtension` scope. After the
-codegen, the route is the scope, so those scope marker classes are no longer generated or needed.
-
-This works because the route is already manually written, public, and lives in `nav`. Any module that imports
-`nav` automatically imports the scope for free. There is no KSP per-target-source-set visibility problem: if a
-module can see the route (which it already must, to push it), it can see the scope. This mirrors the Khonshu
-convention.
-
-## Patterns by destination shape
-
-### Simple presenter with `@Inject`
-
-For a presenter with no runtime-supplied parameters, annotate with `@NavScreen`. The processor generates the graph
-and the destination binding:
-
-```kotlin
-// features/debug/presenter/DebugPresenter.kt
 @Inject
 @NavScreen(route = DebugRoute::class)
-public class DebugPresenter(
-    componentContext: ComponentContext,
-    private val navigator: DebugNavigator,
-) : ComponentContext by componentContext { /* ... */ }
+public class DebugPresenter(...)
 ```
 
-The processor generates a graph interface that exposes the presenter as a property and a factory that receives a
-`ComponentContext`:
+### Parameterized Presenter
+Use `@AssistedInject` with one `@Assisted` parameter. Parameter name must match the route property name.
 
 ```kotlin
-// generated: DebugScreenGraph.kt
-@GraphExtension(DebugRoute::class)
-public interface DebugScreenGraph {
-    public val debugPresenter: DebugPresenter
-
-    @ContributesTo(ActivityScope::class)
-    @GraphExtension.Factory
-    public interface Factory {
-        public fun createDebugGraph(@Provides ctx: ComponentContext): DebugScreenGraph
-    }
-}
-```
-
-The generated binding contributes both a `NavDestination` and a `NavRouteBinding<*>` into the activity-scope
-multibinding sets. The `NavDestination.createChild` calls the graph factory and wraps the returned presenter in a
-`ScreenDestination`.
-
-### Parameterized presenter with `@AssistedInject`
-
-When the presenter needs a runtime parameter extracted from the route, use `@AssistedInject` with exactly one
-`@Assisted` constructor parameter. The processor detects the `@AssistedFactory` nested interface and generates a graph
-that exposes the factory. The generated `NavDestination.createChild` casts the incoming route and extracts the param
-by the matching property name:
-
-```kotlin
-// features/show-details/presenter/ShowDetailsPresenter.kt
 @AssistedInject
 @NavScreen(route = ShowDetailsRoute::class)
-public class ShowDetailsPresenter(
-    @Assisted private val param: ShowDetailsParam,
-    componentContext: ComponentContext,
-) {
-    @AssistedFactory
-    public fun interface Factory {
-        public fun create(param: ShowDetailsParam): ShowDetailsPresenter
-    }
-}
+public class ShowDetailsPresenter(@Assisted private val param: ShowDetailsParam, ...)
 ```
 
-The generated destination fragment looks like this:
+### Sheet Presenter
+Annotate with `@NavSheet`. Generates `SheetChildFactory` that performs the cast and extracts params.
 
 ```kotlin
-override fun createChild(route: NavRoute, ctx: ComponentContext): RootChild {
-    val showRoute = route as ShowDetailsRoute
-    val graph = graphFactory.createShowDetailsGraph(ctx)
-    return ScreenDestination(graph.showDetailsFactory.create(showRoute.param))
-}
-```
-
-The `@Assisted` parameter name and the route property name must match. The `ShowDetailsPresenter` declares
-`@Assisted val param`, so `ShowDetailsRoute` must declare a property named `param` of a compatible type. If they do
-not match, the processor emits a compile-time error naming the offending class. Restructure assisted params into a
-single data class (as `ShowDetailsParam` does here) when the route carries more than one value.
-
-### Tab presenter with `@TabScreen`
-
-```kotlin
-// features/discover/presenter/DiscoverShowsPresenter.kt
-@Inject
-@TabScreen(config = HomeConfig.Discover::class)
-public class DiscoverShowsPresenter(/* ... */) { /* ... */ }
-```
-
-The generated `TabDestination.createChild` calls the graph factory and returns a `TabChild` wrapping the presenter:
-
-```kotlin
-override fun createChild(config: HomeConfig, ctx: ComponentContext): TabChild<*> {
-    val graph = graphFactory.createDiscoverTabGraph(ctx)
-    return TabChild(graph.discoverPresenter)
-}
-```
-
-No `NavRouteBinding` is generated for tab presenters. The Home module owns `HomeConfig` serialization and is
-responsible for registering its own subtypes.
-
-### Sheet presenter with `@NavSheet`
-
-```kotlin
-// features/episode-sheet/presenter/EpisodeSheetPresenter.kt
 @AssistedInject
 @NavSheet(route = EpisodeSheetConfig::class)
-public class EpisodeSheetPresenter(
-    @Assisted private val episodeId: Long,
-    @Assisted private val source: String,
-    componentContext: ComponentContext,
-) {
-    @AssistedFactory
-    public fun interface Factory {
-        public fun create(episodeId: Long, source: String): EpisodeSheetPresenter
-    }
-}
+public class EpisodeSheetPresenter(...)
 ```
 
-The generated binding contributes both a `SheetChildFactory` and a `SheetConfigBinding<*>`. The
-`SheetChildFactory.matches` body checks for the specific config type, and `createChild` casts and extracts the params
-before calling the presenter factory:
+## Manual Components
 
-```kotlin
-override fun matches(config: SheetConfig): Boolean = config is EpisodeSheetConfig
+- **Routes and Configs**: Always manual; they define the public API.
+- **Navigator Interfaces**: Manual if stateful.
+- **Bespoke Bindings**: Manual if no presenter class exists (e.g., marker-only destinations).
 
-override fun createChild(config: SheetConfig, componentContext: ComponentContext): SheetChild {
-    val sheetConfig = config as EpisodeSheetConfig
-    return SheetDestination(
-        presenter = graphFactory.createEpisodeDetailGraph(componentContext)
-            .episodeDetailFactory.create(sheetConfig.episodeId, sheetConfig.source),
-    )
-}
-```
+## Configuration
 
-## What stays manual and why
-
-Route classes like `DebugRoute` and `ShowDetailsRoute`, and sheet configs like `EpisodeSheetConfig`, all in
-`features/{name}/nav/`, are always written by the feature author. The route is the feature's public API: its
-shape, its serialized form, and its properties are intentional decisions. The codegen generates code that depends on
-the route, not the other way around.
-
-Feature navigator interfaces in `nav/` are also manually written. A stateful navigator exposes typed methods that
-represent the feature's public navigation contract. The set of methods, their names, and their parameters are domain
-decisions, not mechanical ones.
-
-`GenreShowsNavDestinationBinding` in `features/genre-shows/presenter/di/` remains manual because Genre Shows has no
-presenter class to annotate. Its destination is a marker that the root presenter handles directly through the
-multibinding set. One bespoke binding does not justify a new annotation shape, and the codegen annotations require a
-class target.
-
-> [!TIP]
-> If a feature has no presenter class at all and only needs to contribute a destination marker, keep the binding
-> manual. The annotations are designed for the case where a presenter class drives the destination, and the generated
-> code wraps that presenter.
-
-## How this extends the navigation module structure
-
-The multibinding sets documented in [Navigation](navigation.md) (`Set<NavDestination>`, `Set<NavRouteBinding<*>>`,
-`Set<SheetChildFactory>`, `Set<SheetConfigBinding<*>>`) all live in `ActivityScope`. Manually written bindings
-contribute to these sets using `@ContributesTo(ActivityScope::class)` interfaces with `@Provides @IntoSet` companion
-methods.
-
-The codegen is the author-facing way to contribute to those same sets. Annotating a presenter with `@NavScreen`
-generates the `@ContributesTo` interface and the `@Provides @IntoSet` methods automatically. The root presenter and
-the navigation runtime are not affected by whether a contribution was generated or written by hand: they only see the
-multibinding sets. The codegen introduces no new runtime machinery. It removes the boilerplate for feeding the
-existing machinery.
-
-As a feature author, you just add the annotation to your presenter, and the codegen will generate all the necessary
-DI bindings for navigation. You don't need to write the repetitive DI code yourself. The navigation system works the
-same way whether the bindings are generated or written by hand. Codegen just saves you time and reduces errors.
-
-The DI graph validates that all multibinding contributions form a consistent set at compile time. A missing
-`NavRouteBinding`, a missing `NavDestination`, or a missing `SheetChildFactory` surfaces as a Metro error before any
-runtime crash.
-
-## Where the source lives
-
-The annotations and the KSP processor live in the
-[`app-gradle-plugins`](https://github.com/thomaskioko/app-gradle-plugins) composite build under `codegen/`. That
-composite contains three subprojects: `codegen/annotations/` (the KMP library), `codegen/processor/` (the JVM KSP
-processor), and `codegen/processor-test/` (compile-testing fixtures for each annotation shape and error-path
-diagnostics). See the `codegen/` README inside `app-gradle-plugins` for processor internals, golden fixture layout,
-and how to extend the annotation set.
-
-## Next Steps
-
-- [Navigation](navigation.md) - Core navigation primitives: `NavRoute`, `Navigator`, `SheetConfig`, destination
-  factories, the multibinding sets that the generated bindings contribute into, and the `navigation/testing` helpers
-  (`TestNavigator`, `NavigatorTurbine`) for declarative navigation assertions in presenter tests.
-- [Modularization](modularization.md) - Module archetypes, the "Adding a New Feature" checklist, and where generated
-  files land relative to manually authored code.
-- [Dependency Injection](dependency-injection.md) - Metro scopes, `@GraphExtension`, and how the generated graph
-  extensions are wired into the parent scope.
+Enable by applying `scaffold { useCodegen() }` in `build.gradle.kts`. `ui` modules require `api(projects.navigation.ui)`.

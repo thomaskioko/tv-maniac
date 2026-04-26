@@ -53,6 +53,7 @@ scaffold {
             export(projects.features.episodeSheet.presenter)
             export(projects.features.root.presenter)
             export(projects.features.root.nav)
+            export(projects.core.testTags)
             export(projects.domain.notifications)
 
             export(libs.decompose.decompose)
@@ -99,6 +100,7 @@ kotlin {
                 api(projects.features.seasonDetails.nav)
                 api(projects.features.showDetails.nav)
                 api(projects.features.root.nav)
+                api(projects.core.testTags)
 
                 api(projects.domain.calendar)
                 api(projects.domain.followedshows)

@@ -1,0 +1,29 @@
+{
+    "aired": 2,
+    "completed": 1,
+    "last_watched_at": "2024-04-19T12:00:00.000Z",
+    "reset_at": null,
+    "next_episode": {
+        "season": 1,
+        "number": 2,
+        "title": "Unique E2",
+        "ids": {
+            "trakt": 222222,
+            "tmdb": 222222
+        },
+        "overview": "Overview E2",
+        "rating": 10.0,
+        "votes": 1,
+        "runtime": 60,
+        "first_aired": "2024-01-02T00:00:00.000Z"
+    },
+    "last_episode": {
+        "season": 1,
+        "number": 1,
+        "title": "Unique E1",
+        "ids": {
+            "trakt": 222221,
+            "tmdb": 222221
+        }
+    }
+}

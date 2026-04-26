@@ -59,6 +59,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -128,6 +129,7 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.model.TrailerModel
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.showdetails.ui.components.ContinueTrackingSection
 import com.thomaskioko.tvmaniac.showdetails.ui.components.WatchProgressSection
+import com.thomaskioko.tvmaniac.testtags.showdetails.ShowDetailsTestTags
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import io.github.thomaskioko.codegen.annotations.ScreenUi
 import kotlinx.collections.immutable.ImmutableList
@@ -202,6 +204,7 @@ internal fun ShowDetailsScreen(
                             tint = MaterialTheme.colorScheme.onBackground,
                         )
                     },
+                    navIconModifier = Modifier.testTag(ShowDetailsTestTags.BACK_BUTTON_TEST_TAG),
                     actionIcon = actionIconWhen(state.message == null) {
                         Icon(
                             imageVector = Icons.Default.Refresh,
@@ -503,7 +506,7 @@ internal fun LazyColumnContent(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
-        modifier = modifier,
+        modifier = modifier.testTag(ShowDetailsTestTags.SHOW_DETAILS_SCREEN_TEST_TAG),
         state = listState,
         contentPadding = contentPadding.copy(copyTop = false),
     ) {
@@ -668,6 +671,7 @@ private fun ShowBody(
         ) {
             Text(
                 text = show.title,
+                modifier = Modifier.testTag("show_details_title"),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
@@ -863,6 +867,13 @@ internal fun ShowDetailButtons(
     ) {
         val context = LocalContext.current
         FilledVerticalIconButton(
+            modifier = Modifier.testTag(
+                if (isFollowed) {
+                    ShowDetailsTestTags.STOP_TRACKING_BUTTON_TEST_TAG
+                } else {
+                    ShowDetailsTestTags.TRACK_BUTTON_TEST_TAG
+                },
+            ),
             shape = MaterialTheme.shapes.medium,
             text = if (isFollowed) unfollow.resolve(context) else following.resolve(context),
             imageVector = if (isFollowed) Icons.Filled.RemoveCircle else Icons.Filled.AddCircle,

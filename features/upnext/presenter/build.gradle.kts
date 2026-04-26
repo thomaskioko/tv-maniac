@@ -14,7 +14,6 @@ kotlin {
                 api(projects.core.view)
                 implementation(projects.navigation.api)
                 implementation(projects.features.episodeSheet.nav)
-                implementation(projects.features.upnext.nav)
                 implementation(projects.features.showDetails.nav)
                 implementation(projects.features.seasonDetails.nav)
                 implementation(projects.data.episode.api)

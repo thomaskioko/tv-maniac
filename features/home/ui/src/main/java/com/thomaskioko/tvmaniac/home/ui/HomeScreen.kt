@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.thomaskioko.tvmaniac.compose.components.CircularCard
@@ -39,6 +40,7 @@ import com.thomaskioko.tvmaniac.presentation.progress.ProgressPresenter
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
 import com.thomaskioko.tvmaniac.profile.ui.ProfileScreen
+import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
 import com.thomaskioko.tvmaniac.ui.library.LibraryScreen
 import com.thomaskioko.tvmaniac.ui.progress.ProgressScreen
 import io.github.thomaskioko.codegen.annotations.ScreenUi
@@ -91,6 +93,7 @@ internal fun BottomNavigationContent(
         modifier = modifier,
     ) {
         TvManiacBottomNavigationItem(
+            modifier = Modifier.testTag(HomeTestTags.DISCOVER_TAB),
             imageVector = Icons.Outlined.Movie,
             title = menu_item_discover.resolve(context),
             selected = activePresenter is DiscoverShowsPresenter,
@@ -98,6 +101,7 @@ internal fun BottomNavigationContent(
         )
 
         TvManiacBottomNavigationItem(
+            modifier = Modifier.testTag(HomeTestTags.PROGRESS_TAB),
             imageVector = Icons.Outlined.PlayCircleOutline,
             title = menu_item_progress.resolve(context),
             selected = activePresenter is ProgressPresenter,
@@ -105,6 +109,7 @@ internal fun BottomNavigationContent(
         )
 
         TvManiacBottomNavigationItem(
+            modifier = Modifier.testTag(HomeTestTags.LIBRARY_TAB),
             imageVector = Icons.Outlined.VideoLibrary,
             title = menu_item_library.resolve(context),
             selected = activePresenter is LibraryPresenter,
@@ -112,6 +117,7 @@ internal fun BottomNavigationContent(
         )
 
         ProfileNavigationItem(
+            modifier = Modifier.testTag(HomeTestTags.PROFILE_TAB),
             avatarUrl = avatarUrl,
             title = menu_item_profile.resolve(context),
             selected = activePresenter is ProfilePresenter,
@@ -126,8 +132,10 @@ private fun RowScope.ProfileNavigationItem(
     title: String,
     selected: Boolean,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     NavigationBarItem(
+        modifier = modifier,
         icon = {
             if (avatarUrl != null) {
                 CircularCard(

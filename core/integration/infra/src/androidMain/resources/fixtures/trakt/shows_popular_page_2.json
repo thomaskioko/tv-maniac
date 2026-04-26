@@ -1,0 +1,19 @@
+[
+    {
+        "title": "Popular Show Page 2",
+        "year": 2024,
+        "ids": {
+            "trakt": 10002,
+            "tmdb": 20002,
+            "slug": "popular-2"
+        },
+        "overview": "Overview 2",
+        "genres": [
+            "drama"
+        ],
+        "rating": 7.5,
+        "votes": 500,
+        "aired_episodes": 20,
+        "status": "returning series"
+    }
+]

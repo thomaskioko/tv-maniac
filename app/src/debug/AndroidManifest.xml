@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application>
+        <!--
+            Re-register androidx.activity.ComponentActivity in the debug
+            variant so Robolectric can resolve it when unit tests call
+            `createAndroidComposeRule<ComponentActivity>()`.
+
+            The compose-ui-test-manifest AAR declares this activity with
+            `tools:node="merge"`, which works for library modules but gets
+            shadowed in application modules where the main manifest's
+            MainActivity takes MAIN/LAUNCHER priority. Declaring it
+            explicitly in the debug variant ensures the merged debug
+            manifest (which tests run against) has a resolvable entry for
+            ComponentActivity regardless of the production MainActivity's
+            filter priority.
+        -->
+        <activity
+            android:name="androidx.activity.ComponentActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.Material.Light.NoActionBar"
+            tools:node="merge" />
+
+        <!--
+            Test-only activity that renders the production `RootScreen`
+            wired to `TestAppComponent`. Declared in the debug variant
+            (not main) because it lives in `app/src/test/` and is only
+            launched by Robolectric integration tests via
+            `createAndroidComposeRule<TvManiacTestActivity>()`.
+        -->
+        <activity
+            android:name="com.thomaskioko.tvmaniac.app.test.compose.TvManiacTestActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.Material.Light.NoActionBar" />
+    </application>
+</manifest>

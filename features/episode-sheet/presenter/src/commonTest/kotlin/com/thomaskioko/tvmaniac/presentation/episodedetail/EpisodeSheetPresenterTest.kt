@@ -19,6 +19,7 @@ import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
+import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.NavRoute
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.testing.FakeSheetNavigator
@@ -42,6 +43,7 @@ internal class EpisodeSheetPresenterTest {
     private val testDispatcher = StandardTestDispatcher()
     private val episodeRepository = FakeEpisodeRepository()
     private val followedShowsRepository = FakeFollowedShowsRepository()
+    private val localizer = FakeLocalizer()
     private val logger = FakeLogger()
 
     private var navigatedToShowId: Long? = null
@@ -103,7 +105,7 @@ internal class EpisodeSheetPresenterTest {
             testDispatcher.scheduler.advanceUntilIdle()
             val state = awaitItem()
 
-            state.availableActions shouldContainExactly listOf(
+            state.availableActions.map { it.item } shouldContainExactly listOf(
                 EpisodeSheetActionItem.TOGGLE_WATCHED,
                 EpisodeSheetActionItem.OPEN_SHOW,
                 EpisodeSheetActionItem.OPEN_SEASON,
@@ -123,7 +125,7 @@ internal class EpisodeSheetPresenterTest {
             testDispatcher.scheduler.advanceUntilIdle()
             val state = awaitItem()
 
-            state.availableActions shouldContainExactly listOf(
+            state.availableActions.map { it.item } shouldContainExactly listOf(
                 EpisodeSheetActionItem.TOGGLE_WATCHED,
                 EpisodeSheetActionItem.OPEN_SHOW,
                 EpisodeSheetActionItem.OPEN_SEASON,
@@ -143,7 +145,7 @@ internal class EpisodeSheetPresenterTest {
             testDispatcher.scheduler.advanceUntilIdle()
             val state = awaitItem()
 
-            state.availableActions shouldContainExactly listOf(
+            state.availableActions.map { it.item } shouldContainExactly listOf(
                 EpisodeSheetActionItem.TOGGLE_WATCHED,
                 EpisodeSheetActionItem.OPEN_SHOW,
                 EpisodeSheetActionItem.OPEN_SEASON,
@@ -163,7 +165,7 @@ internal class EpisodeSheetPresenterTest {
             testDispatcher.scheduler.advanceUntilIdle()
             val state = awaitItem()
 
-            state.availableActions shouldContainExactly listOf(
+            state.availableActions.map { it.item } shouldContainExactly listOf(
                 EpisodeSheetActionItem.TOGGLE_WATCHED,
             )
         }
@@ -361,6 +363,7 @@ internal class EpisodeSheetPresenterTest {
             markEpisodeUnwatchedInteractor = MarkEpisodeUnwatchedInteractor(episodeRepository),
             unfollowShowInteractor = UnfollowShowInteractor(followedShowsRepository),
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
+            localizer = localizer,
             logger = logger,
         )
     }

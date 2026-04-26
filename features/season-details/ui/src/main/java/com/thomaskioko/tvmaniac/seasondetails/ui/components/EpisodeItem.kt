@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -34,6 +35,7 @@ import com.thomaskioko.tvmaniac.compose.theme.green
 import com.thomaskioko.tvmaniac.compose.theme.grey
 import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.seasondetails.ui.episodeDetailsModel
+import com.thomaskioko.tvmaniac.testtags.seasondetails.SeasonDetailsTestTags
 
 @Composable
 internal fun EpisodeItem(
@@ -45,6 +47,7 @@ internal fun EpisodeItem(
     hasAired: Boolean,
     onWatchedToggle: () -> Unit,
     modifier: Modifier = Modifier,
+    episodeId: Long? = null,
     daysUntilAir: Int? = null,
     shape: Shape = MaterialTheme.shapes.small,
     onEpisodeClicked: () -> Unit = {},
@@ -99,10 +102,18 @@ internal fun EpisodeItem(
                     color = MaterialTheme.colorScheme.primary,
                 )
             } else if (hasAired) {
+                val toggleTag = episodeId?.let {
+                    if (isWatched) {
+                        SeasonDetailsTestTags.markEpisodeUnwatchedButton(it)
+                    } else {
+                        SeasonDetailsTestTags.markEpisodeWatchedButton(it)
+                    }
+                }
                 Box(
                     modifier = Modifier
                         .padding(12.dp)
                         .size(28.dp)
+                        .let { if (toggleTag != null) it.testTag(toggleTag) else it }
                         .background(
                             color = if (isWatched) green else grey,
                             shape = CircleShape,

@@ -42,7 +42,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -77,6 +79,7 @@ import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileInfo
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileState
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileStats
+import com.thomaskioko.tvmaniac.testtags.profile.ProfileTestTags
 
 @Composable
 public fun ProfileScreen(
@@ -101,7 +104,7 @@ internal fun ProfileScreen(
     val listState = rememberLazyListState()
 
     TvManiacBottomSheetScaffold(
-        modifier = modifier,
+        modifier = modifier.testTag(ProfileTestTags.SCREEN_TEST_TAG),
         showBottomSheet = false,
         sheetContent = {},
         onDismissBottomSheet = {},
@@ -129,11 +132,17 @@ internal fun ProfileScreen(
                         )
                     },
                     actionIcon = {
-                        Icon(
-                            imageVector = Icons.Filled.Settings,
-                            contentDescription = cd_settings.resolve(LocalContext.current),
-                            tint = MaterialTheme.colorScheme.onBackground,
-                        )
+                        Box(
+                            modifier = Modifier
+                                .testTag(ProfileTestTags.SETTINGS_BUTTON_TEST_TAG)
+                                .semantics(mergeDescendants = true) {},
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Settings,
+                                contentDescription = cd_settings.resolve(LocalContext.current),
+                                tint = MaterialTheme.colorScheme.onBackground,
+                            )
+                        }
                     },
                     isRefreshing = state.isLoading,
                     onActionIconClicked = { onAction(SettingsClicked) },
@@ -175,7 +184,7 @@ private fun ProfileContent(
 
         userProfile != null -> {
             LazyColumn(
-                modifier = modifier,
+                modifier = modifier.testTag(ProfileTestTags.userCard(userProfile.slug)),
                 state = listState,
                 contentPadding = contentPadding.copy(copyTop = false),
             ) {

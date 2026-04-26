@@ -4,11 +4,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacChip
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.SeasonModel
+import com.thomaskioko.tvmaniac.testtags.showdetails.ShowDetailsTestTags
 
 @Composable
 internal fun SeasonChipItem(
@@ -18,7 +20,7 @@ internal fun SeasonChipItem(
     modifier: Modifier = Modifier,
 ) {
     TvManiacChip(
-        modifier = modifier,
+        modifier = modifier.testTag(ShowDetailsTestTags.seasonChip(season.seasonNumber)),
         text = season.name,
         selected = isSelected,
         onClick = onClick,

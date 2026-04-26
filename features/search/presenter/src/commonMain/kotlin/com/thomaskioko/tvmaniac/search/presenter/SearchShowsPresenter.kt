@@ -37,6 +37,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -166,12 +167,12 @@ public class SearchShowsPresenter(
                 .filter { it.trim().length >= SearchShowState.SEARCH_QUERY_LENGTH }
                 .onEach { _state.update { it.copy(isUpdating = true) } }
                 .flatMapLatest { query ->
-                    coroutineScope.launch { searchRepository.search(query) }
                     searchRepository.observeSearchResults(query)
+                        .onStart { searchRepository.search(query) }
                 }
                 .catch { error ->
-                    uiMessageManager.emitMessage(UiMessage(message = errorToStringMapper.mapError(error), sourceId = "Search"))
                     _state.update { it.copy(isUpdating = false) }
+                    uiMessageManager.emitMessage(UiMessage(message = errorToStringMapper.mapError(error), sourceId = "Search"))
                 }
                 .collect { result ->
                     handleSearchResults(result)

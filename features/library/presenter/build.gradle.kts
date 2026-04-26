@@ -18,7 +18,6 @@ kotlin {
                 implementation(projects.core.logger.api)
                 implementation(projects.navigation.api)
                 implementation(projects.features.home.nav)
-                implementation(projects.features.library.nav)
                 implementation(projects.features.showDetails.nav)
                 implementation(projects.domain.library)
 

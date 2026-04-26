@@ -21,7 +21,7 @@ kotlin {
         commonTest.dependencies {
             implementation(projects.core.util.testing)
             implementation(projects.data.traktauth.testing)
-            implementation(projects.core.testing.di)
+            implementation(projects.core.integration.infra)
             implementation(projects.features.episodeSheet.nav)
             implementation(projects.features.genreShows.nav)
             implementation(projects.features.home.nav)

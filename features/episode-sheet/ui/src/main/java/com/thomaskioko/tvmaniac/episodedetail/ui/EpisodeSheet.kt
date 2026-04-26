@@ -10,6 +10,8 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
@@ -17,7 +19,9 @@ import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeDetailSheetState
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeSheetAction
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeSheetActionItem
+import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeSheetActionUi
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeSheetPresenter
+import com.thomaskioko.tvmaniac.testtags.episodesheet.EpisodeSheetTestTags
 import io.github.thomaskioko.codegen.annotations.SheetUi
 import kotlinx.collections.immutable.persistentListOf
 
@@ -37,7 +41,11 @@ public fun EpisodeSheet(
             sheetState = sheetState,
             onDismiss = { presenter.dispatch(EpisodeSheetAction.Dismiss) },
             modifier = modifier,
-            actions = state.toSheetActions { presenter.dispatch(it) },
+            actions = if (state.availableActions.isEmpty()) {
+                null
+            } else {
+                { EpisodeSheetActions(state, presenter::dispatch) }
+            },
         )
     }
 }
@@ -51,14 +59,26 @@ internal fun EpisodeDetailContent(
     EpisodeDetailSheetContent(
         episode = state.toEpisodeDetailInfo(),
         modifier = modifier,
-    ) {
-        state.toSheetActions(onAction).forEach { action ->
-            SheetActionItem(
-                icon = action.icon,
-                label = action.label,
-                onClick = action.onClick,
-            )
-        }
+        actions = if (state.availableActions.isEmpty()) {
+            null
+        } else {
+            { EpisodeSheetActions(state, onAction) }
+        },
+    )
+}
+
+@Composable
+private fun EpisodeSheetActions(
+    state: EpisodeDetailSheetState,
+    onAction: (EpisodeSheetAction) -> Unit,
+) {
+    state.availableActions.forEach { action ->
+        SheetActionItem(
+            modifier = Modifier.testTag(EpisodeSheetTestTags.actionItem(action.item.name)),
+            icon = action.item.icon,
+            label = action.label,
+            onClick = { onAction(action.item.toAction()) },
+        )
     }
 }
 
@@ -74,31 +94,19 @@ internal fun EpisodeDetailSheetState.toEpisodeDetailInfo() = EpisodeDetailInfo(
     voteCount = voteCount,
 )
 
-internal fun EpisodeDetailSheetState.toSheetActions(
-    dispatch: (EpisodeSheetAction) -> Unit,
-): List<SheetAction> = availableActions.map { action ->
-    when (action) {
-        EpisodeSheetActionItem.TOGGLE_WATCHED -> SheetAction(
-            icon = Icons.Outlined.Check,
-            label = if (isWatched) "Mark unwatched" else "Mark watched",
-            onClick = { dispatch(EpisodeSheetAction.ToggleWatched) },
-        )
-        EpisodeSheetActionItem.OPEN_SHOW -> SheetAction(
-            icon = Icons.Outlined.Tv,
-            label = "Open show",
-            onClick = { dispatch(EpisodeSheetAction.OpenShow) },
-        )
-        EpisodeSheetActionItem.OPEN_SEASON -> SheetAction(
-            icon = Icons.Outlined.Movie,
-            label = "Open season",
-            onClick = { dispatch(EpisodeSheetAction.OpenSeason) },
-        )
-        EpisodeSheetActionItem.UNFOLLOW -> SheetAction(
-            icon = Icons.Outlined.LinkOff,
-            label = "Unfollow show",
-            onClick = { dispatch(EpisodeSheetAction.Unfollow) },
-        )
+private val EpisodeSheetActionItem.icon: ImageVector
+    get() = when (this) {
+        EpisodeSheetActionItem.TOGGLE_WATCHED -> Icons.Outlined.Check
+        EpisodeSheetActionItem.OPEN_SHOW -> Icons.Outlined.Tv
+        EpisodeSheetActionItem.OPEN_SEASON -> Icons.Outlined.Movie
+        EpisodeSheetActionItem.UNFOLLOW -> Icons.Outlined.LinkOff
     }
+
+private fun EpisodeSheetActionItem.toAction(): EpisodeSheetAction = when (this) {
+    EpisodeSheetActionItem.TOGGLE_WATCHED -> EpisodeSheetAction.ToggleWatched
+    EpisodeSheetActionItem.OPEN_SHOW -> EpisodeSheetAction.OpenShow
+    EpisodeSheetActionItem.OPEN_SEASON -> EpisodeSheetAction.OpenSeason
+    EpisodeSheetActionItem.UNFOLLOW -> EpisodeSheetAction.Unfollow
 }
 
 @ThemePreviews
@@ -116,10 +124,10 @@ private fun EpisodeDetailContentAllActionsPreview() {
                 voteCount = 1234,
                 isWatched = false,
                 availableActions = persistentListOf(
-                    EpisodeSheetActionItem.TOGGLE_WATCHED,
-                    EpisodeSheetActionItem.OPEN_SHOW,
-                    EpisodeSheetActionItem.OPEN_SEASON,
-                    EpisodeSheetActionItem.UNFOLLOW,
+                    EpisodeSheetActionUi(EpisodeSheetActionItem.TOGGLE_WATCHED, "Mark watched"),
+                    EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SHOW, "Open show"),
+                    EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SEASON, "Open season"),
+                    EpisodeSheetActionUi(EpisodeSheetActionItem.UNFOLLOW, "Unfollow show"),
                 ),
             ),
         )
@@ -141,10 +149,10 @@ private fun EpisodeDetailContentWatchedPreview() {
                 voteCount = 856,
                 isWatched = true,
                 availableActions = persistentListOf(
-                    EpisodeSheetActionItem.TOGGLE_WATCHED,
-                    EpisodeSheetActionItem.OPEN_SHOW,
-                    EpisodeSheetActionItem.OPEN_SEASON,
-                    EpisodeSheetActionItem.UNFOLLOW,
+                    EpisodeSheetActionUi(EpisodeSheetActionItem.TOGGLE_WATCHED, "Mark unwatched"),
+                    EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SHOW, "Open show"),
+                    EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SEASON, "Open season"),
+                    EpisodeSheetActionUi(EpisodeSheetActionItem.UNFOLLOW, "Unfollow show"),
                 ),
             ),
         )
@@ -164,7 +172,7 @@ private fun EpisodeDetailContentSeasonDetailsPreview() {
                 overview = "King Viserys hosts a tournament to celebrate the birth of his heir.",
                 isWatched = false,
                 availableActions = persistentListOf(
-                    EpisodeSheetActionItem.TOGGLE_WATCHED,
+                    EpisodeSheetActionUi(EpisodeSheetActionItem.TOGGLE_WATCHED, "Mark watched"),
                 ),
             ),
         )

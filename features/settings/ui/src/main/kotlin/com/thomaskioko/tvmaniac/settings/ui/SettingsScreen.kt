@@ -53,6 +53,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -124,6 +125,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
 import com.thomaskioko.tvmaniac.settings.presenter.TraktLogoutClicked
 import com.thomaskioko.tvmaniac.settings.presenter.VersionClicked
 import com.thomaskioko.tvmaniac.settings.presenter.YoutubeToggled
+import com.thomaskioko.tvmaniac.testtags.settings.SettingsTestTags
 import io.github.thomaskioko.codegen.annotations.ScreenUi
 
 @ScreenUi(presenter = SettingsPresenter::class, parentScope = ActivityScope::class)
@@ -157,6 +159,7 @@ internal fun SettingsScreen(
     val context = LocalContext.current
 
     Scaffold(
+        modifier = modifier.testTag(SettingsTestTags.SCREEN_TEST_TAG),
         topBar = {
             TvManiacTopBar(
                 navigationIcon = {
@@ -189,7 +192,6 @@ internal fun SettingsScreen(
                 ),
             )
         },
-        modifier = modifier,
         content = { innerPadding ->
             SettingsContent(
                 state = state,
@@ -230,7 +232,7 @@ private fun SettingsContent(
 ) {
     val context = LocalContext.current
 
-    LazyColumn(modifier = modifier) {
+    LazyColumn(modifier = modifier.testTag(SettingsTestTags.LIST_TEST_TAG)) {
         item { Spacer(modifier = Modifier.height(16.dp)) }
 
         item {
@@ -505,21 +507,25 @@ private fun ImageQualitySection(
         ) {
             ImageQualityChip(
                 label = label_settings_image_quality_auto.resolve(context),
+                quality = ImageQuality.AUTO,
                 isSelected = imageQuality == ImageQuality.AUTO,
                 onClick = { onQualitySelected(ImageQuality.AUTO) },
             )
             ImageQualityChip(
                 label = label_settings_image_quality_high.resolve(context),
+                quality = ImageQuality.HIGH,
                 isSelected = imageQuality == ImageQuality.HIGH,
                 onClick = { onQualitySelected(ImageQuality.HIGH) },
             )
             ImageQualityChip(
                 label = label_settings_image_quality_medium.resolve(context),
+                quality = ImageQuality.MEDIUM,
                 isSelected = imageQuality == ImageQuality.MEDIUM,
                 onClick = { onQualitySelected(ImageQuality.MEDIUM) },
             )
             ImageQualityChip(
                 label = label_settings_image_quality_low.resolve(context),
+                quality = ImageQuality.LOW,
                 isSelected = imageQuality == ImageQuality.LOW,
                 onClick = { onQualitySelected(ImageQuality.LOW) },
             )
@@ -530,10 +536,12 @@ private fun ImageQualitySection(
 @Composable
 private fun ImageQualityChip(
     label: String,
+    quality: ImageQuality,
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
     FilterChip(
+        modifier = Modifier.testTag(SettingsTestTags.imageQualityChip(quality.name)),
         selected = isSelected,
         onClick = onClick,
         label = {
@@ -745,6 +753,7 @@ private fun TraktAccountSection(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .testTag(SettingsTestTags.TRAKT_ACCOUNT_ROW_TEST_TAG)
             .clickable { onAction(ShowTraktDialog) }
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -804,6 +813,8 @@ private fun LogoutDialog(
             dismissButtonText = label_settings_trakt_dialog_button_secondary.resolve(context),
             onConfirm = onLogoutClicked,
             onDismiss = onDismissDialog,
+            confirmButtonTestTag = SettingsTestTags.LOGOUT_DIALOG_CONFIRM_BUTTON_TEST_TAG,
+            dismissButtonTestTag = SettingsTestTags.LOGOUT_DIALOG_DISMISS_BUTTON_TEST_TAG,
         )
     }
 }

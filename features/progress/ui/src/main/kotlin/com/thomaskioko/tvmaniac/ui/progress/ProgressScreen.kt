@@ -27,6 +27,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
@@ -37,6 +38,7 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.title_calendar
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presentation.progress.ProgressAction
 import com.thomaskioko.tvmaniac.presentation.progress.ProgressPresenter
+import com.thomaskioko.tvmaniac.testtags.progress.ProgressTestTags
 import com.thomaskioko.tvmaniac.ui.calendar.CalendarPageContent
 import com.thomaskioko.tvmaniac.ui.upnext.UpNextPageContent
 
@@ -106,7 +108,9 @@ internal fun ProgressScreen(
     }
 
     Scaffold(
-        modifier = modifier.statusBarsPadding(),
+        modifier = modifier
+            .statusBarsPadding()
+            .testTag(ProgressTestTags.SCREEN_TEST_TAG),
         topBar = {
             TvManiacTopBar(
                 title = {
@@ -117,6 +121,7 @@ internal fun ProgressScreen(
                     ) {
                         Text(
                             text = menu_item_progress.resolve(LocalContext.current),
+                            modifier = Modifier.testTag("progress_title"),
                             style = MaterialTheme.typography.titleLarge.copy(
                                 color = MaterialTheme.colorScheme.onSurface,
                             ),
@@ -151,6 +156,7 @@ internal fun ProgressScreen(
                 selectedTabIndex = pagerState.currentPage,
                 containerColor = MaterialTheme.colorScheme.background,
                 contentColor = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.testTag("progress_tab_row"),
                 indicator = {
                     TabRowDefaults.SecondaryIndicator(
                         modifier = Modifier.tabIndicatorOffset(pagerState.currentPage),
@@ -160,6 +166,7 @@ internal fun ProgressScreen(
             ) {
                 tabs.forEachIndexed { index, title ->
                     Tab(
+                        modifier = Modifier.testTag("progress_tab_$index"),
                         selected = pagerState.currentPage == index,
                         onClick = { onSelectPage(index) },
                         text = {

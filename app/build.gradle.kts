@@ -18,6 +18,8 @@ scaffold {
         useBaselineProfile(projects.benchmark)
         useManagedDevices()
     }
+
+    optIn("androidx.compose.ui.test.ExperimentalTestApi")
 }
 
 dependencies {
@@ -114,6 +116,7 @@ dependencies {
     implementation(projects.features.showDetails.nav)
     implementation(projects.features.episodeSheet.nav)
     implementation(projects.features.episodeSheet.nav)
+    implementation(projects.features.home.nav)
     implementation(projects.data.traktlists.implementation)
     implementation(projects.domain.traktlists)
     implementation(projects.core.util.api)
@@ -160,6 +163,39 @@ dependencies {
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.crashlytics)
+
+    testImplementation(projects.api.tmdb.api)
+    testImplementation(projects.api.trakt.api)
+    testImplementation(projects.core.connectivity.api)
+    testImplementation(projects.core.integration.infra)
+    testImplementation(projects.core.integration.ui)
+    testImplementation(projects.core.testTags)
+    testImplementation(projects.data.episode.api)
+    testImplementation(projects.data.syncActivity.api)
+    testImplementation(projects.data.traktauth.testing)
+    testImplementation(projects.data.traktlists.api)
+    testImplementation(projects.data.upnext.api)
+    testImplementation(projects.features.debug.nav)
+    testImplementation(projects.features.discover.nav)
+    testImplementation(projects.features.genreShows.nav)
+    testImplementation(projects.features.moreShows.nav)
+    testImplementation(projects.features.search.nav)
+    testImplementation(projects.features.seasonDetails.nav)
+    testImplementation(projects.features.settings.nav)
+    testImplementation(projects.features.trailers.nav)
+    testImplementation(projects.core.locale.testing)
+    testImplementation(projects.core.util.testing)
+
+    testImplementation(libs.androidx.compose.ui.test)
+    testRuntimeOnly(libs.androidx.test.core)
+    testImplementation(libs.androidx.work.testing)
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.kotest.assertions)
+    testImplementation(libs.kotlin.test.junit)
+    testImplementation(libs.ktor.core)
+    testRuntimeOnly(libs.robolectric)
+    testImplementation(libs.robolectric.annotations)
+    testRuntimeOnly(libs.androidx.compose.ui.test.manifest)
 }
 
 if (file("google-services.json").exists()) {

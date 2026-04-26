@@ -1,0 +1,65 @@
+[
+    {
+        "watchers": 100,
+        "show": {
+            "title": "Breaking Bad",
+            "year": 2008,
+            "ids": {
+                "trakt": 1388,
+                "tmdb": 1396,
+                "slug": "breaking-bad"
+            },
+            "overview": "A chemistry teacher diagnosed with inoperable lung cancer turns to manufacturing and selling methamphetamine with a former student.",
+            "genres": [
+                "drama",
+                "thriller"
+            ],
+            "rating": 9.3,
+            "votes": 50000,
+            "aired_episodes": 62,
+            "status": "ended"
+        }
+    },
+    {
+        "watchers": 80,
+        "show": {
+            "title": "Better Call Saul",
+            "year": 2015,
+            "ids": {
+                "trakt": 60059,
+                "tmdb": 60059,
+                "slug": "better-call-saul"
+            },
+            "overview": "The trials and tribulations of criminal lawyer Jimmy McGill.",
+            "genres": [
+                "drama",
+                "crime"
+            ],
+            "rating": 8.9,
+            "votes": 30000,
+            "aired_episodes": 63,
+            "status": "ended"
+        }
+    },
+    {
+        "watchers": 60,
+        "show": {
+            "title": "Game of Thrones",
+            "year": 2011,
+            "ids": {
+                "trakt": 1399,
+                "tmdb": 1399,
+                "slug": "game-of-thrones"
+            },
+            "overview": "Seven noble families fight for control of the mythical land of Westeros.",
+            "genres": [
+                "drama",
+                "fantasy"
+            ],
+            "rating": 9.0,
+            "votes": 80000,
+            "aired_episodes": 73,
+            "status": "ended"
+        }
+    }
+]

@@ -46,6 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -86,6 +87,7 @@ import com.thomaskioko.tvmaniac.search.presenter.model.GenreRowModel
 import com.thomaskioko.tvmaniac.search.presenter.model.ShowItem
 import com.thomaskioko.tvmaniac.search.ui.components.HorizontalShowContentRow
 import com.thomaskioko.tvmaniac.search.ui.components.SearchResultItem
+import com.thomaskioko.tvmaniac.testtags.search.SearchTestTags
 import io.github.thomaskioko.codegen.annotations.ScreenUi
 import kotlinx.collections.immutable.ImmutableList
 
@@ -136,7 +138,9 @@ internal fun SearchScreen(
     }
 
     Scaffold(
-        modifier = modifier.statusBarsPadding(),
+        modifier = modifier
+            .statusBarsPadding()
+            .testTag(SearchTestTags.SCREEN_TEST_TAG),
         snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
         topBar = {
             TvManiacTopBar(
@@ -241,6 +245,7 @@ private fun SearchScreenContent(
             InitialLoading, SearchLoading -> LoadingIndicator()
             SearchEmpty -> {
                 EmptyStateView(
+                    modifier = Modifier.testTag(SearchTestTags.EMPTY_STATE_TEST_TAG),
                     imageVector = Icons.Filled.SearchOff,
                     title = search_no_results.resolve(LocalContext.current),
                 )
@@ -262,9 +267,10 @@ private fun SearchScreenContent(
             is Error -> {
                 val context = LocalContext.current
                 EmptyStateView(
+                    modifier = Modifier.testTag(SearchTestTags.ERROR_STATE_TEST_TAG),
                     imageVector = Icons.Outlined.ErrorOutline,
                     title = generic_empty_content.resolve(context),
-                    message = missing_api_key.resolve(context),
+                    message = state.message?.message ?: missing_api_key.resolve(context),
                     buttonText = generic_retry.resolve(context),
                     onClick = { onAction(ReloadShowContent) },
                 )
@@ -293,6 +299,7 @@ private fun SearchScreenHeader(
             hint = msg_search_show_hint.resolve(LocalContext.current),
             lazyListState = lazyListState,
             content = content,
+            textFieldModifier = Modifier.testTag(SearchTestTags.SEARCH_BAR_TEST_TAG),
             onClearQuery = { onAction(ClearQuery) },
             onQueryChanged = { onAction(QueryChanged(it)) },
         )
@@ -326,6 +333,7 @@ private fun SearchResultsContent(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 SearchResultItem(
+                    modifier = Modifier.testTag(SearchTestTags.resultItem(item.traktId)),
                     title = item.title,
                     status = item.status,
                     voteAverage = item.voteAverage,

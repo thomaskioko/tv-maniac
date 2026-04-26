@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -37,6 +38,7 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.grey
 import com.thomaskioko.tvmaniac.presentation.upnext.model.UpNextEpisodeUiModel
+import com.thomaskioko.tvmaniac.testtags.upnext.UpNextTestTags
 import com.thomaskioko.tvmaniac.ui.upnext.preview.UpNextEpisodePreviewParameterProvider
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -100,6 +102,7 @@ internal fun UpNextListItem(
                 item.episodeName?.let { name ->
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
+                        modifier = Modifier.testTag(UpNextTestTags.episodeName(item.showTraktId, name)),
                         text = name,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -150,6 +153,7 @@ internal fun UpNextListItem(
                         color = grey,
                         shape = CircleShape,
                     )
+                    .testTag(UpNextTestTags.watchedButton(item.showTraktId))
                     .clickable { onMarkWatched() },
                 contentAlignment = Alignment.Center,
             ) {

@@ -1,0 +1,57 @@
+[
+    {
+        "title": "The Mandalorian",
+        "year": 2019,
+        "ids": {
+            "trakt": 152993,
+            "tmdb": 82856,
+            "slug": "the-mandalorian"
+        },
+        "overview": "After the fall of the Galactic Empire, a lone gunfighter makes his way through the outer reaches of the lawless galaxy.",
+        "genres": [
+            "action",
+            "adventure",
+            "sci-fi"
+        ],
+        "rating": 8.5,
+        "votes": 20000,
+        "aired_episodes": 24,
+        "status": "returning series"
+    },
+    {
+        "title": "Better Call Saul",
+        "year": 2015,
+        "ids": {
+            "trakt": 60059,
+            "tmdb": 60059,
+            "slug": "better-call-saul"
+        },
+        "overview": "The trials and tribulations of criminal lawyer Jimmy McGill.",
+        "genres": [
+            "drama",
+            "crime"
+        ],
+        "rating": 8.9,
+        "votes": 30000,
+        "aired_episodes": 63,
+        "status": "ended"
+    },
+    {
+        "title": "Game of Thrones",
+        "year": 2011,
+        "ids": {
+            "trakt": 1399,
+            "tmdb": 1399,
+            "slug": "game-of-thrones"
+        },
+        "overview": "Seven noble families fight for control of the mythical land of Westeros.",
+        "genres": [
+            "drama",
+            "fantasy"
+        ],
+        "rating": 9.0,
+        "votes": 80000,
+        "aired_episodes": 73,
+        "status": "ended"
+    }
+]

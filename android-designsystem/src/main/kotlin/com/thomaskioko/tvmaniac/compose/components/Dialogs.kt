@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
@@ -30,6 +31,8 @@ public fun TvManiacAlertDialog(
     shape: Shape = MaterialTheme.shapes.small,
     icon: ImageVector? = null,
     dismissButtonText: String? = null,
+    confirmButtonTestTag: String? = null,
+    dismissButtonTestTag: String? = null,
 ) {
     val density = LocalDensity.current
     val containerWidth = with(density) {
@@ -65,7 +68,10 @@ public fun TvManiacAlertDialog(
             )
         },
         confirmButton = {
-            TextButton(onClick = onConfirm) {
+            TextButton(
+                modifier = confirmButtonTestTag?.let { Modifier.testTag(it) } ?: Modifier,
+                onClick = onConfirm,
+            ) {
                 Text(
                     text = confirmButtonText,
                     style = MaterialTheme.typography.labelLarge,
@@ -75,7 +81,10 @@ public fun TvManiacAlertDialog(
         },
         dismissButton = dismissButtonText?.let {
             {
-                TextButton(onClick = onDismiss) {
+                TextButton(
+                    modifier = dismissButtonTestTag?.let { tag -> Modifier.testTag(tag) } ?: Modifier,
+                    onClick = onDismiss,
+                ) {
                     Text(
                         text = it,
                         style = MaterialTheme.typography.labelLarge,

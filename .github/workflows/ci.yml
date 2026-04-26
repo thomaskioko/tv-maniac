@@ -64,8 +64,6 @@ jobs:
     build-android:
         needs: [static-analysis]
         runs-on: ubuntu-latest
-        environment:
-            name: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')) && 'Protected' || '' }}
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -108,8 +106,6 @@ jobs:
     linux-test:
         needs: [static-analysis]
         runs-on: ubuntu-latest
-        environment:
-            name: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')) && 'Protected' || '' }}
         steps:
             -   uses: actions/checkout@v6
 
@@ -151,8 +147,6 @@ jobs:
         needs: [swift-lint]
         runs-on: macos-15
         timeout-minutes: 60
-        environment:
-            name: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')) && 'Protected' || '' }}
         env:
             FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
 
@@ -192,8 +186,6 @@ jobs:
         needs: [swift-lint]
         runs-on: macos-15
         timeout-minutes: 60
-        environment:
-            name: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')) && 'Protected' || '' }}
         env:
             FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
 

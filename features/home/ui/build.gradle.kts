@@ -17,11 +17,12 @@ dependencies {
     api(projects.navigation.ui)
 
     implementation(projects.androidDesignsystem)
+    implementation(projects.core.testTags)
     implementation(projects.i18n.generator)
 
+    implementation(projects.features.home.nav)
     implementation(projects.features.discover.ui)
     implementation(projects.features.library.ui)
-    implementation(projects.features.home.nav)
     implementation(projects.features.profile.ui)
     implementation(projects.features.progress.ui)
     implementation(projects.features.discover.presenter)

@@ -1,0 +1,12 @@
+{
+    "username": "integration-test-user",
+    "name": "Integration Test",
+    "images": {
+        "avatar": {
+            "full": "https://walterwhite.test/avatar.png"
+        }
+    },
+    "ids": {
+        "slug": "integration-test-user"
+    }
+}
