@@ -1,12 +1,12 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.settings
 
-import com.thomaskioko.tvmaniac.app.test.util.BaseAppRobolectricTest
+import com.thomaskioko.tvmaniac.app.test.util.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.testing.integration.ui.NetworkResponse
 import org.junit.Before
-import kotlin.test.Test
+import org.junit.Test
 
-internal class SettingsFlowTest : BaseAppRobolectricTest() {
+internal class SettingsFlowTest : BaseAppFlowTest() {
 
     @Before
     fun setUp() {
@@ -18,7 +18,7 @@ internal class SettingsFlowTest : BaseAppRobolectricTest() {
     }
 
     @Test
-    fun `should persist image quality selection across presenter cycle`() {
+    fun shouldPersistImageQualitySelectionAcrossPresenterCycle() {
         stubUsersMeUnauthorized()
 
         homeRobot.clickProfileTab()
@@ -37,7 +37,7 @@ internal class SettingsFlowTest : BaseAppRobolectricTest() {
     }
 
     @Test
-    fun `should show logout dialog when authenticated trakt account row is tapped`() {
+    fun shouldShowLogoutDialogWhenAuthenticatedTraktAccountRowIsTapped() {
         scenarios.auth.stubLoggedInUser()
         scenarios.profile.stubProfileSyncEndpoints()
 

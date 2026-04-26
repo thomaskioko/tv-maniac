@@ -1,10 +1,10 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.discover
 
-import com.thomaskioko.tvmaniac.app.test.util.BaseAppRobolectricTest
+import com.thomaskioko.tvmaniac.app.test.util.BaseAppFlowTest
 import org.junit.Before
-import kotlin.test.Test
+import org.junit.Test
 
-internal class DiscoverRenderSmokeTest : BaseAppRobolectricTest() {
+internal class DiscoverRenderSmokeTest : BaseAppFlowTest() {
 
     @Before
     fun stubEndpoints() {
@@ -12,7 +12,7 @@ internal class DiscoverRenderSmokeTest : BaseAppRobolectricTest() {
     }
 
     @Test
-    fun `should render trending show card from real pipeline`() {
+    fun shouldRenderTrendingShowCardFromRealPipeline() {
         discoverRobot.verifyShowCardIsShown(traktId = 1388L)
     }
 }

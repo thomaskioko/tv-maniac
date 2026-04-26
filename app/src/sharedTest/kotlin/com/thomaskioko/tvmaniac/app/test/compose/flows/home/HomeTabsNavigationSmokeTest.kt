@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.home
 
-import com.thomaskioko.tvmaniac.app.test.util.BaseAppRobolectricTest
+import com.thomaskioko.tvmaniac.app.test.util.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.home.nav.di.model.HomeConfig
 import org.junit.Before
-import kotlin.test.Test
+import org.junit.Test
 
-internal class HomeTabsNavigationSmokeTest : BaseAppRobolectricTest() {
+internal class HomeTabsNavigationSmokeTest : BaseAppFlowTest() {
 
     @Before
     fun stubEndpoints() {
@@ -13,7 +13,7 @@ internal class HomeTabsNavigationSmokeTest : BaseAppRobolectricTest() {
     }
 
     @Test
-    fun `should open correct screen when each tab is tapped`() {
+    fun shouldOpenCorrectScreenWhenEachTabIsTapped() {
         discoverRobot.verifyDiscoverScreenIsShown()
 
         homeRobot.clickProgressTab()
@@ -30,7 +30,7 @@ internal class HomeTabsNavigationSmokeTest : BaseAppRobolectricTest() {
     }
 
     @Test
-    fun `should reflect active tab in selection state`() {
+    fun shouldReflectActiveTabInSelectionState() {
         homeRobot.verifyTabSelected(HomeConfig.Discover)
         homeRobot.verifyTabNotSelected(HomeConfig.Progress)
 

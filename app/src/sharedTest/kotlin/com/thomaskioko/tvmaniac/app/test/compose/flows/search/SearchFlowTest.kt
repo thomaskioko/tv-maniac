@@ -1,10 +1,10 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.search
 
-import com.thomaskioko.tvmaniac.app.test.util.BaseAppRobolectricTest
+import com.thomaskioko.tvmaniac.app.test.util.BaseAppFlowTest
 import org.junit.Before
-import kotlin.test.Test
+import org.junit.Test
 
-internal class SearchFlowTest : BaseAppRobolectricTest() {
+internal class SearchFlowTest : BaseAppFlowTest() {
 
     @Before
     fun setUp() {
@@ -12,7 +12,7 @@ internal class SearchFlowTest : BaseAppRobolectricTest() {
     }
 
     @Test
-    fun `should display search results when query is entered`() {
+    fun shouldDisplaySearchResultsWhenQueryIsEntered() {
         val query = "Breaking Bad"
         val traktId = 1388L
         val tmdbId = 1396L
@@ -32,7 +32,7 @@ internal class SearchFlowTest : BaseAppRobolectricTest() {
     }
 
     @Test
-    fun `should display empty state when no results found`() {
+    fun shouldDisplayEmptyStateWhenNoResultsFound() {
         val query = "NoResultsShow"
         scenarios.search.stubEmptySearch()
 
@@ -45,7 +45,7 @@ internal class SearchFlowTest : BaseAppRobolectricTest() {
     }
 
     @Test
-    fun `should navigate to show details when result item is clicked`() {
+    fun shouldNavigateToShowDetailsWhenResultItemIsClicked() {
         val query = "Breaking Bad"
         val traktId = 1388L
         val tmdbId = 1396L
@@ -63,7 +63,7 @@ internal class SearchFlowTest : BaseAppRobolectricTest() {
     }
 
     @Test
-    fun `should restore search screen when navigating back from show details`() {
+    fun shouldRestoreSearchScreenWhenNavigatingBackFromShowDetails() {
         val query = "Breaking Bad"
         val traktId = 1388L
         val tmdbId = 1396L
@@ -85,7 +85,7 @@ internal class SearchFlowTest : BaseAppRobolectricTest() {
     }
 
     @Test
-    fun `should display error state when search fails`() {
+    fun shouldDisplayErrorStateWhenSearchFails() {
         val query = "ErrorQuery"
         scenarios.search.stubSearchError(query)
 
@@ -94,7 +94,6 @@ internal class SearchFlowTest : BaseAppRobolectricTest() {
 
         searchRobot.enterSearchQuery(query)
 
-        // Use standard robot verification with high timeout
         searchRobot.verifyTextShown("Access forbidden.", substring = true, timeoutMillis = 15_000)
         searchRobot.verifyErrorStateIsShown()
     }

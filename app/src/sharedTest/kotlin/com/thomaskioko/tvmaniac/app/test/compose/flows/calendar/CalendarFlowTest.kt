@@ -1,12 +1,12 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.calendar
 
-import com.thomaskioko.tvmaniac.app.test.util.BaseAppRobolectricTest
+import com.thomaskioko.tvmaniac.app.test.util.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.testing.integration.ui.NetworkResponse
 import com.thomaskioko.tvmaniac.testing.integration.ui.stubFixture
 import org.junit.Before
-import kotlin.test.Test
+import org.junit.Test
 
-internal class CalendarFlowTest : BaseAppRobolectricTest() {
+internal class CalendarFlowTest : BaseAppFlowTest() {
 
     @Before
     fun setUp() {
@@ -14,7 +14,7 @@ internal class CalendarFlowTest : BaseAppRobolectricTest() {
     }
 
     @Test
-    fun `should show login prompt when user is not logged in`() {
+    fun shouldShowLoginPromptWhenUserIsNotLoggedIn() {
         homeRobot.clickProgressTab()
         progressRobot.verifyProgressScreenIsShown()
         progressRobot.clickCalendarTab()
@@ -23,7 +23,7 @@ internal class CalendarFlowTest : BaseAppRobolectricTest() {
     }
 
     @Test
-    fun `should show upcoming episodes when user is logged in`() {
+    fun shouldShowUpcomingEpisodesWhenUserIsLoggedIn() {
         scenarios.auth.stubLoggedInUser()
 
         environment.stubber.stubFixture(
@@ -38,7 +38,7 @@ internal class CalendarFlowTest : BaseAppRobolectricTest() {
     }
 
     @Test
-    fun `should show empty state when no episodes are scheduled`() {
+    fun shouldShowEmptyStateWhenNoEpisodesAreScheduled() {
         scenarios.auth.stubLoggedInUser()
 
         environment.stubber.stub(path = "/calendars/my/shows/2026-04-19/7", response = NetworkResponse.Success("[]"))
@@ -50,16 +50,14 @@ internal class CalendarFlowTest : BaseAppRobolectricTest() {
     }
 
     @Test
-    fun `should load episodes for next week when next button is clicked`() {
+    fun shouldLoadEpisodesForNextWeekWhenNextButtonIsClicked() {
         scenarios.auth.stubLoggedInUser()
 
-        // Stub current week (Offset 0)
         environment.stubber.stubFixture(
             path = "/calendars/my/shows/2026-04-19/7",
             fixturePath = "trakt/calendar_breaking_bad.json",
         )
 
-        // Stub next week (Offset 1)
         environment.stubber.stubFixture(
             path = "/calendars/my/shows/2026-04-26/7",
             fixturePath = "trakt/calendar_game_of_thrones.json",
@@ -70,23 +68,19 @@ internal class CalendarFlowTest : BaseAppRobolectricTest() {
         progressRobot.clickCalendarTab()
         calendarRobot.verifyCalendarScreenIsShown()
         calendarRobot.verifyTextShown("Breaking Bad")
-        // Navigate to next week
         calendarRobot.clickNextWeek()
-        // Verify new content is shown and old content is gone
         calendarRobot.verifyTextShown("Game of Thrones")
         calendarRobot.verifyEpisodeCardIsHidden(73640L)
     }
 
     @Test
-    fun `should show error snackbar when calendar fetch fails`() {
+    fun shouldShowErrorSnackbarWhenCalendarFetchFails() {
         scenarios.auth.stubLoggedInUser()
 
-        // Stub non-retryable error
         environment.stubber.stub(path = "/calendars/my/shows/2026-04-19/7", response = NetworkResponse.Error(404, "Not Found"))
 
         homeRobot.clickProgressTab()
         progressRobot.clickCalendarTab()
-        // Verify snackbar appears with "Resource not found."
         calendarRobot.verifyTextShown("Resource not found", substring = true)
     }
 }

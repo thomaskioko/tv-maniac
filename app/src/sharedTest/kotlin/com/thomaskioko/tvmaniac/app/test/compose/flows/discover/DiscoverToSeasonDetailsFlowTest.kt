@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.discover
 
-import com.thomaskioko.tvmaniac.app.test.util.BaseAppRobolectricTest
+import com.thomaskioko.tvmaniac.app.test.util.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.testtags.seasondetails.SeasonDetailsTestTags
 import org.junit.Before
-import kotlin.test.Test
+import org.junit.Test
 
-internal class DiscoverToSeasonDetailsFlowTest : BaseAppRobolectricTest() {
+internal class DiscoverToSeasonDetailsFlowTest : BaseAppFlowTest() {
 
     private val breakingBadTraktId = 1388L
     private val breakingBadTmdbId = 1396L
@@ -21,7 +21,7 @@ internal class DiscoverToSeasonDetailsFlowTest : BaseAppRobolectricTest() {
     }
 
     @Test
-    fun `should render season chips on show details from real pipeline`() {
+    fun shouldRenderSeasonChipsOnShowDetailsFromRealPipeline() {
         discoverRobot.clickShowCard(breakingBadTraktId)
         showDetailsRobot.verifyShowDetailsIsShown()
         showDetailsRobot.verifySeasonChipIsShown(seasonNumber = 1L)
@@ -29,7 +29,7 @@ internal class DiscoverToSeasonDetailsFlowTest : BaseAppRobolectricTest() {
     }
 
     @Test
-    fun `should open season details with episodes when season chip is tapped`() {
+    fun shouldOpenSeasonDetailsWithEpisodesWhenSeasonChipIsTapped() {
         discoverRobot.clickShowCard(breakingBadTraktId)
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
         seasonDetailsRobot.verifySeasonDetailsIsShown()
@@ -37,7 +37,7 @@ internal class DiscoverToSeasonDetailsFlowTest : BaseAppRobolectricTest() {
     }
 
     @Test
-    fun `should open episode sheet when episode row is tapped`() {
+    fun shouldOpenEpisodeSheetWhenEpisodeRowIsTapped() {
         discoverRobot.clickShowCard(breakingBadTraktId)
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
         seasonDetailsRobot.clickEpisodeRow(pilotEpisodeTraktId)
@@ -45,7 +45,7 @@ internal class DiscoverToSeasonDetailsFlowTest : BaseAppRobolectricTest() {
     }
 
     @Test
-    fun `should collapse and expand episode list when header is tapped`() {
+    fun shouldCollapseAndExpandEpisodeListWhenHeaderIsTapped() {
         discoverRobot.clickShowCard(breakingBadTraktId)
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
         seasonDetailsRobot.verifyEpisodeRowIsShown(pilotEpisodeTraktId)
@@ -56,7 +56,7 @@ internal class DiscoverToSeasonDetailsFlowTest : BaseAppRobolectricTest() {
     }
 
     @Test
-    fun `should pop season details and restore show details on back press`() {
+    fun shouldPopSeasonDetailsAndRestoreShowDetailsOnBackPress() {
         discoverRobot.clickShowCard(breakingBadTraktId)
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
         seasonDetailsRobot.verifySeasonDetailsIsShown()
@@ -66,7 +66,7 @@ internal class DiscoverToSeasonDetailsFlowTest : BaseAppRobolectricTest() {
     }
 
     @Test
-    fun `should toggle episode watched state when watched button is tapped`() {
+    fun shouldToggleEpisodeWatchedStateWhenWatchedButtonIsTapped() {
         discoverRobot.clickShowCard(breakingBadTraktId)
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
         seasonDetailsRobot.clickMarkWatched(pilotEpisodeTraktId)

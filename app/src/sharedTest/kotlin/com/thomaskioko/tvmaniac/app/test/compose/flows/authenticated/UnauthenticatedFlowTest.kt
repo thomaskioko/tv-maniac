@@ -1,10 +1,10 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.authenticated
 
-import com.thomaskioko.tvmaniac.app.test.util.BaseAppRobolectricTest
+import com.thomaskioko.tvmaniac.app.test.util.BaseAppFlowTest
 import org.junit.Before
-import kotlin.test.Test
+import org.junit.Test
 
-internal class UnauthenticatedFlowTest : BaseAppRobolectricTest() {
+internal class UnauthenticatedFlowTest : BaseAppFlowTest() {
 
     private val breakingBadTraktId = 1388L
 
@@ -14,34 +14,34 @@ internal class UnauthenticatedFlowTest : BaseAppRobolectricTest() {
     }
 
     @Test
-    fun `should render discover public content without up next card when logged out`() {
+    fun shouldRenderDiscoverPublicContentWithoutUpNextCardWhenLoggedOut() {
         discoverRobot.verifyDiscoverScreenIsShown()
         discoverRobot.verifyShowCardIsShown(breakingBadTraktId)
         discoverRobot.verifyUpNextCardIsHidden(breakingBadTraktId)
     }
 
     @Test
-    fun `should render empty state on library when logged out`() {
+    fun shouldRenderEmptyStateOnLibraryWhenLoggedOut() {
         homeRobot.clickLibraryTab()
         libraryRobot.verifyEmptyStateIsShown()
         libraryRobot.verifyShowRowIsHidden(breakingBadTraktId)
     }
 
     @Test
-    fun `should render empty state on progress up next when logged out`() {
+    fun shouldRenderEmptyStateOnProgressUpNextWhenLoggedOut() {
         homeRobot.clickProgressTab()
         progressRobot.verifyUpNextEmptyStateIsShown()
         progressRobot.verifyEpisodeRowIsHidden(breakingBadTraktId)
     }
 
     @Test
-    fun `should render sign in button on profile when logged out`() {
+    fun shouldRenderSignInButtonOnProfileWhenLoggedOut() {
         homeRobot.clickProfileTab()
         profileRobot.verifySignInButtonIsShown()
     }
 
     @Test
-    fun `should open settings when settings icon is tapped on profile when logged out`() {
+    fun shouldOpenSettingsWhenSettingsIconIsTappedOnProfileWhenLoggedOut() {
         homeRobot.clickProfileTab()
         profileRobot.verifySignInButtonIsShown()
         profileRobot.clickSettingsButton()

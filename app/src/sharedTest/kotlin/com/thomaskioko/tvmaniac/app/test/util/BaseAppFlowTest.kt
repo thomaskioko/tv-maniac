@@ -16,18 +16,28 @@ import com.thomaskioko.tvmaniac.app.test.compose.robot.SeasonDetailsRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.SettingsRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.ShowDetailsRobot
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.Scenarios
-import com.thomaskioko.tvmaniac.testing.integration.ui.robolectric.BaseRobolectricComposeTest
-import com.thomaskioko.tvmaniac.testing.integration.ui.robolectric.RobolectricEnvironment
+import com.thomaskioko.tvmaniac.testing.integration.ui.instrumentation.BaseInstrumentationComposeTest
+import com.thomaskioko.tvmaniac.testing.integration.ui.instrumentation.InstrumentationEnvironment
 import kotlinx.coroutines.runBlocking
 import org.robolectric.annotation.Config
 
+/**
+ * Runner-agnostic base for app-level flow tests.
+ *
+ * `BaseInstrumentationComposeTest` runs under `@RunWith(AndroidJUnit4::class)`. The AndroidX test
+ * runner delegates to `RobolectricTestRunner` when Robolectric is on the JVM classpath (the
+ * Robolectric variant of `app/src/test/`) and runs natively on emulators when it is not (the
+ * `app/src/androidTest/` variant). The `@Config` annotation tells Robolectric which Application
+ * subclass to instantiate; instrumentation ignores it because `TvManiacInstrumentationRunner` already
+ * supplies `TvManiacTestApplication` via `newApplication()`.
+ */
 @Config(sdk = [33], application = TvManiacTestApplication::class)
-internal abstract class BaseAppRobolectricTest : BaseRobolectricComposeTest<TvManiacTestActivity, TestAppComponent>(
+internal abstract class BaseAppFlowTest : BaseInstrumentationComposeTest<TvManiacTestActivity, TestAppComponent>(
     activityClass = TvManiacTestActivity::class.java,
 ) {
 
-    override val environment: RobolectricEnvironment<TvManiacTestActivity, TestAppComponent> by lazy {
-        RobolectricEnvironment(
+    override val environment: InstrumentationEnvironment<TvManiacTestActivity, TestAppComponent> by lazy {
+        InstrumentationEnvironment(
             composeTestRule = composeTestRule,
             graphProvider = { (it.application as TvManiacTestApplication).graph },
         )

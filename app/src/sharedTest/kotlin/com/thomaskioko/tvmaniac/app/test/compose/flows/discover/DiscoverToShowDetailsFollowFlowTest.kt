@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.discover
 
-import com.thomaskioko.tvmaniac.app.test.util.BaseAppRobolectricTest
+import com.thomaskioko.tvmaniac.app.test.util.BaseAppFlowTest
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
-import kotlin.test.Test
+import org.junit.Test
 
-internal class DiscoverToShowDetailsFollowFlowTest : BaseAppRobolectricTest() {
+internal class DiscoverToShowDetailsFollowFlowTest : BaseAppFlowTest() {
 
     private val breakingBadTraktId = 1388L
 
@@ -15,7 +15,7 @@ internal class DiscoverToShowDetailsFollowFlowTest : BaseAppRobolectricTest() {
     }
 
     @Test
-    fun `should follow show and persist it in the followed shows table`() = runTest {
+    fun shouldFollowShowAndPersistItInTheFollowedShowsTable() = runTest {
         discoverRobot.clickShowCard(breakingBadTraktId)
         showDetailsRobot.verifyTrackButtonIsShown()
         showDetailsRobot.clickTrackButton()
@@ -23,7 +23,7 @@ internal class DiscoverToShowDetailsFollowFlowTest : BaseAppRobolectricTest() {
     }
 
     @Test
-    fun `should pop show details and restore discover on back press`() {
+    fun shouldPopShowDetailsAndRestoreDiscoverOnBackPress() {
         discoverRobot.clickShowCard(breakingBadTraktId)
         showDetailsRobot.verifyTrackButtonIsShown()
         showDetailsRobot.pressBack()

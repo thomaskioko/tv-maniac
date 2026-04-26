@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.authenticated
 
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.TEST_PROFILE_SLUG
-import com.thomaskioko.tvmaniac.app.test.util.BaseAppRobolectricTest
+import com.thomaskioko.tvmaniac.app.test.util.BaseAppFlowTest
 import org.junit.Before
-import kotlin.test.Test
+import org.junit.Test
 
-internal class AuthenticatedSyncFlowTest : BaseAppRobolectricTest() {
+internal class AuthenticatedSyncFlowTest : BaseAppFlowTest() {
 
     private val breakingBadTraktId = 1388L
     private val breakingBadTmdbId = 1396L
@@ -21,44 +21,37 @@ internal class AuthenticatedSyncFlowTest : BaseAppRobolectricTest() {
     }
 
     @Test
-    fun `should render watchlist row on library after authenticated sync`() {
+    fun shouldRenderWatchlistRowOnLibraryAfterAuthenticatedSync() {
         homeRobot.clickLibraryTab()
         libraryRobot.verifyShowRowIsShown(breakingBadTraktId)
     }
 
     @Test
-    fun `should render up next episode row on progress after authenticated sync`() {
-        // 1. Navigate to Library to trigger sync
+    fun shouldRenderUpNextEpisodeRowOnProgressAfterAuthenticatedSync() {
         homeRobot.clickLibraryTab()
         libraryRobot.verifyShowRowIsShown(breakingBadTraktId)
-        // 2. Navigate to Progress tab
         homeRobot.clickProgressTab()
-        // 3. Verify episode row from synced UpNext exists
         progressRobot.verifyEpisodeRowIsShown(breakingBadTraktId)
     }
 
     @Test
-    fun `should render up next card on discover after authenticated sync`() {
-        // 1. Navigate to Library to trigger sync
+    fun shouldRenderUpNextCardOnDiscoverAfterAuthenticatedSync() {
         homeRobot.clickLibraryTab()
         libraryRobot.verifyShowRowIsShown(breakingBadTraktId)
-        // 2. Navigate to Progress to trigger UpNext sync
         homeRobot.clickProgressTab()
         progressRobot.verifyEpisodeRowIsShown(breakingBadTraktId)
-        // 3. Navigate back to Discover
         homeRobot.clickDiscoverTab()
-        // 4. Verify UpNext card is now visible on Discover
         discoverRobot.verifyUpNextCardIsShown(breakingBadTraktId)
     }
 
     @Test
-    fun `should render profile user card after authenticated sync`() {
+    fun shouldRenderProfileUserCardAfterAuthenticatedSync() {
         homeRobot.clickProfileTab()
         profileRobot.verifyUserCardIsShown(TEST_PROFILE_SLUG)
     }
 
     @Test
-    fun `should open settings when settings icon is tapped on profile`() {
+    fun shouldOpenSettingsWhenSettingsIconIsTappedOnProfile() {
         homeRobot.clickProfileTab()
         profileRobot.verifyUserCardIsShown(TEST_PROFILE_SLUG)
         profileRobot.clickSettingsButton()
