@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <!--
+            Registers androidx.activity.ComponentActivity so that
+            `createAndroidComposeRule<ComponentActivity>()` in IntegrationTest<G>
+            can launch it via ActivityScenario under Robolectric. Without this,
+            Robolectric's RoboMonitoringInstrumentation cannot resolve the
+            activity for the MAIN/LAUNCHER intent and every test fails in
+            setup with "Unable to resolve activity for Intent".
+
+            The compose-ui-test-manifest AAR ships an equivalent manifest but
+            it is not picked up for KMP Android host tests via runtimeOnly.
+        -->
+        <activity
+            android:name="androidx.activity.ComponentActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.Material.Light.NoActionBar" />
+    </application>
+</manifest>
