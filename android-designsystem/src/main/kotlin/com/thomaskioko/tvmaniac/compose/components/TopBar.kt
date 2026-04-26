@@ -77,6 +77,7 @@ public fun RefreshCollapsableTopAppBar(
     actionIcon: @Composable (() -> Unit)? = null,
     onNavIconClicked: () -> Unit = {},
     onActionIconClicked: () -> Unit = {},
+    navIconModifier: Modifier = Modifier,
 ) {
     var appBarHeight by remember { mutableIntStateOf(0) }
     val showAppBarBackground by remember {
@@ -108,6 +109,7 @@ public fun RefreshCollapsableTopAppBar(
         onActionClicked = onActionIconClicked,
         onNavIconPressed = onNavIconClicked,
         isRefreshing = isRefreshing,
+        navIconModifier = navIconModifier,
     )
 }
 
@@ -207,6 +209,7 @@ internal fun RefreshCollapsableTopAppBar(
     actionIcon: @Composable (() -> Unit)?,
     onNavIconPressed: () -> Unit,
     modifier: Modifier = Modifier,
+    navIconModifier: Modifier = Modifier,
 ) {
     val backgroundColor by animateColorAsState(
         targetValue = when {
@@ -241,6 +244,7 @@ internal fun RefreshCollapsableTopAppBar(
                 ScrimButton(
                     show = showAppBarBackground,
                     onClick = onNavIconPressed,
+                    modifier = navIconModifier,
                 ) {
                     navigationIcon()
                 }

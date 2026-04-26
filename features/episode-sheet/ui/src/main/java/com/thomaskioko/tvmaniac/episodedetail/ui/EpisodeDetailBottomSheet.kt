@@ -33,8 +33,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
+import com.thomaskioko.tvmaniac.testtags.episodesheet.EpisodeSheetTestTags
 
 internal data class EpisodeDetailInfo(
     val title: String,
@@ -57,7 +59,7 @@ internal fun EpisodeDetailBottomSheet(
     sheetState: SheetState,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
-    actions: List<SheetAction> = emptyList(),
+    actions: @Composable (ColumnScope.() -> Unit)? = null,
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -69,6 +71,7 @@ internal fun EpisodeDetailBottomSheet(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .testTag(EpisodeSheetTestTags.SHEET_TEST_TAG)
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = 24.dp),
         ) {
@@ -85,7 +88,7 @@ internal fun EpisodeDetailBottomSheet(
                 voteCount = episode.voteCount,
             )
 
-            if (actions.isNotEmpty()) {
+            actions?.let { actions ->
                 Spacer(modifier = Modifier.height(16.dp))
 
                 HorizontalDivider(
@@ -95,13 +98,7 @@ internal fun EpisodeDetailBottomSheet(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                actions.forEach { action ->
-                    SheetActionItem(
-                        icon = action.icon,
-                        label = action.label,
-                        onClick = action.onClick,
-                    )
-                }
+                actions()
             }
         }
     }

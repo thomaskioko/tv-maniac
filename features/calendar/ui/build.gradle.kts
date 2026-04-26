@@ -18,6 +18,7 @@ dependencies {
     api(projects.features.calendar.presenter)
 
     implementation(projects.androidDesignsystem)
+    implementation(projects.core.testTags)
     implementation(projects.core.view)
     implementation(projects.i18n.generator)
 

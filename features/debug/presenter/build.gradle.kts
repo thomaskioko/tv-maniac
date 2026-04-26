@@ -47,6 +47,7 @@ kotlin {
                 implementation(projects.data.upnext.testing)
                 implementation(projects.data.watchproviders.testing)
                 implementation(projects.i18n.testing)
+                implementation(projects.navigation.testing)
 
                 implementation(libs.bundles.unittest)
             }

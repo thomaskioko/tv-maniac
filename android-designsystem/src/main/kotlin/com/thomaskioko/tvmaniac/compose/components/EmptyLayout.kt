@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
@@ -28,6 +29,7 @@ public fun EmptyStateView(
     imageVector: ImageVector = Icons.Outlined.Inbox,
     message: String? = null,
     buttonText: String? = null,
+    buttonTestTag: String? = null,
     onClick: () -> Unit = {},
 ) {
     Column(
@@ -68,6 +70,7 @@ public fun EmptyStateView(
             Spacer(modifier = Modifier.height(24.dp))
 
             HorizontalOutlinedButton(
+                modifier = buttonTestTag?.let { Modifier.testTag(it) } ?: Modifier,
                 text = it,
                 onClick = onClick,
                 shape = MaterialTheme.shapes.small,

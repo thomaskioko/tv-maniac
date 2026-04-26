@@ -25,6 +25,7 @@ dependencies {
 
     implementation(projects.features.showDetails.nav)
     implementation(projects.androidDesignsystem)
+    implementation(projects.core.testTags)
     implementation(projects.core.view)
     implementation(projects.domain.theme)
     implementation(projects.i18n.generator)

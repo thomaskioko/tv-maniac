@@ -44,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -108,6 +109,7 @@ import com.thomaskioko.tvmaniac.seasondetails.presenter.model.Cast
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.EpisodeDetailsModel
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonImagesModel
 import com.thomaskioko.tvmaniac.seasondetails.ui.components.CollapsableContent
+import com.thomaskioko.tvmaniac.testtags.seasondetails.SeasonDetailsTestTags
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import io.github.thomaskioko.codegen.annotations.ScreenUi
 import kotlinx.collections.immutable.ImmutableList
@@ -138,7 +140,7 @@ internal fun SeasonDetailsScreen(
     val listState = rememberLazyListState()
 
     TvManiacBottomSheetScaffold(
-        modifier = modifier,
+        modifier = modifier.testTag(SeasonDetailsTestTags.SCREEN_TEST_TAG),
         showBottomSheet = state.isGalleryVisible,
         sheetContent = { ImageGalleryContent(imageList = state.seasonImages) },
         onDismissBottomSheet = { onAction(DismissDialog) },
@@ -189,6 +191,7 @@ internal fun SeasonDetailsScreen(
                             tint = MaterialTheme.colorScheme.onBackground,
                         )
                     },
+                    navIconModifier = Modifier.testTag(SeasonDetailsTestTags.BACK_BUTTON_TEST_TAG),
                     actionIcon = actionIconWhen(state.message != null) {
                         Icon(
                             imageVector = Icons.Default.Refresh,

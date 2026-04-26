@@ -19,6 +19,7 @@ dependencies {
     api(projects.features.upnext.presenter)
 
     implementation(projects.androidDesignsystem)
+    implementation(projects.core.testTags)
     implementation(projects.core.view)
     implementation(projects.i18n.generator)
     implementation(projects.domain.upnext)

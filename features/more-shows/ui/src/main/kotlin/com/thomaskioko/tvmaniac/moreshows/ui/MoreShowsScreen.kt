@@ -36,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -58,6 +59,7 @@ import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsPresenter
 import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsState
 import com.thomaskioko.tvmaniac.moreshows.presentation.RefreshMoreShows
 import com.thomaskioko.tvmaniac.moreshows.presentation.TvShow
+import com.thomaskioko.tvmaniac.testtags.moreshows.MoreShowsTestTags
 import io.github.thomaskioko.codegen.annotations.ScreenUi
 
 @ScreenUi(presenter = MoreShowsPresenter::class, parentScope = ActivityScope::class)
@@ -171,7 +173,8 @@ internal fun GridContent(
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
                 .padding(contentPadding)
                 .padding(horizontal = 4.dp)
-                .fillMaxHeight(),
+                .fillMaxHeight()
+                .testTag(MoreShowsTestTags.GRID_TEST_TAG),
         ) {
             items(
                 count = lazyPagingItems.itemCount,
@@ -183,7 +186,8 @@ internal fun GridContent(
                     PosterCard(
                         modifier = Modifier
                             .animateItem()
-                            .fillMaxWidth(),
+                            .fillMaxWidth()
+                            .testTag(MoreShowsTestTags.showCard(show.traktId)),
                         imageUrl = show.posterImageUrl,
                         title = show.title,
                         onClick = { onAction(MoreShowClicked(show.traktId)) },

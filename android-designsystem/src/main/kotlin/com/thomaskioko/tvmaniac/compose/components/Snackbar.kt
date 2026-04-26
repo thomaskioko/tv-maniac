@@ -44,6 +44,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.IntOffset
@@ -196,7 +197,8 @@ internal fun TvManiacSnackBar(
             .padding(horizontal = 16.dp)
             .clip(MaterialTheme.shapes.large)
             .background(style.backgroundColor)
-            .padding(16.dp),
+            .padding(16.dp)
+            .testTag("tvmaniac_snackbar"),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

@@ -48,6 +48,7 @@ public fun SearchTextContainer(
     onQueryChanged: (String) -> Unit,
     onClearQuery: () -> Unit,
     modifier: Modifier = Modifier,
+    textFieldModifier: Modifier = Modifier,
     keyboardType: KeyboardType = KeyboardType.Text,
     content: @Composable () -> Unit,
 ) {
@@ -80,6 +81,7 @@ public fun SearchTextContainer(
                     },
                 )
             },
+        textFieldModifier = textFieldModifier,
         textFieldValue = textState.value,
         hint = hint,
         keyboardType = keyboardType,
@@ -115,11 +117,13 @@ private fun SearchTextFieldContent(
     onClearClick: () -> Unit,
     onSubmit: () -> Unit,
     modifier: Modifier = Modifier,
+    textFieldModifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
     Column(modifier = modifier) {
         SearchTextField(
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = textFieldModifier
+                .padding(horizontal = 16.dp),
             onFocusChanged = onFocusChanged,
             textFieldValue = textFieldValue,
             onTextChanged = onTextChanged,

@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
@@ -22,6 +23,7 @@ import com.thomaskioko.tvmaniac.discover.presenter.model.DiscoverShow
 import com.thomaskioko.tvmaniac.discover.ui.discoverContentSuccess
 import com.thomaskioko.tvmaniac.i18n.MR.strings.str_more
 import com.thomaskioko.tvmaniac.i18n.resolve
+import com.thomaskioko.tvmaniac.testtags.discover.DiscoverTestTags
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.collections.immutable.ImmutableList
 
@@ -42,6 +44,7 @@ internal fun HorizontalRowContent(
                 title = category,
                 label = str_more.resolve(LocalContext.current),
                 onMoreClicked = onMoreClicked,
+                moreModifier = Modifier.testTag(DiscoverTestTags.moreButton(category)),
             )
 
             val lazyListState = rememberLazyListState()
@@ -59,6 +62,7 @@ internal fun HorizontalRowContent(
                     Spacer(modifier = Modifier.width(value.dp))
 
                     PosterCard(
+                        modifier = Modifier.testTag(DiscoverTestTags.showCard(tvShow.traktId)),
                         imageUrl = tvShow.posterImageUrl,
                         title = tvShow.title,
                         onClick = { onItemClicked(tvShow.traktId) },

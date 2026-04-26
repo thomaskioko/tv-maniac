@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -61,6 +62,7 @@ import com.thomaskioko.tvmaniac.presentation.upnext.UpNextMessageShown
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextPresenter
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextShowClicked
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextState
+import com.thomaskioko.tvmaniac.testtags.upnext.UpNextTestTags
 import com.thomaskioko.tvmaniac.ui.upnext.preview.UpNextStatePreviewParameterProvider
 
 @Composable
@@ -115,6 +117,7 @@ public fun UpNextPageContent(
                         ) {
                             item {
                                 EmptyStateView(
+                                    modifier = Modifier.testTag(UpNextTestTags.EMPTY_STATE_TEST_TAG),
                                     imageVector = Icons.Outlined.Inbox,
                                     title = label_upnext_empty.resolve(context),
                                 )
@@ -132,7 +135,9 @@ public fun UpNextPageContent(
                                 key = { it.showTraktId },
                             ) { episode ->
                                 UpNextListItem(
-                                    modifier = Modifier.animateItem(),
+                                    modifier = Modifier
+                                        .animateItem()
+                                        .testTag(UpNextTestTags.episodeRow(episode.showTraktId)),
                                     item = episode,
                                     onItemClicked = { onAction(UpNextShowClicked(it)) },
                                     onMarkWatched = {
@@ -241,7 +246,9 @@ internal fun UpNextScreen(
                                         key = { it.showTraktId },
                                     ) { episode ->
                                         UpNextListItem(
-                                            modifier = Modifier.animateItem(),
+                                            modifier = Modifier
+                                                .animateItem()
+                                                .testTag(UpNextTestTags.episodeRow(episode.showTraktId)),
                                             item = episode,
                                             onItemClicked = { onAction(UpNextShowClicked(it)) },
                                             onMarkWatched = {

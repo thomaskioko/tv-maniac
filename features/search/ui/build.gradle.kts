@@ -23,6 +23,7 @@ dependencies {
     api(projects.navigation.ui)
 
     implementation(projects.androidDesignsystem)
+    implementation(projects.core.testTags)
     implementation(projects.core.view)
     implementation(projects.domain.theme)
     implementation(projects.data.genre.api)

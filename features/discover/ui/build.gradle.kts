@@ -27,6 +27,7 @@ dependencies {
     api(projects.features.discover.presenter)
 
     implementation(projects.androidDesignsystem)
+    implementation(projects.core.testTags)
     implementation(projects.core.view)
     implementation(projects.domain.theme)
     implementation(projects.i18n.generator)

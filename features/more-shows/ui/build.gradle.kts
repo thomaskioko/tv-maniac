@@ -24,6 +24,7 @@ dependencies {
     api(projects.navigation.ui)
 
     implementation(projects.androidDesignsystem)
+    implementation(projects.core.testTags)
     implementation(projects.domain.theme)
 
     implementation(libs.androidx.compose.foundation)

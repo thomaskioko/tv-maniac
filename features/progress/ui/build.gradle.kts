@@ -18,6 +18,7 @@ dependencies {
     api(projects.features.progress.presenter)
 
     implementation(projects.androidDesignsystem)
+    implementation(projects.core.testTags)
     implementation(projects.features.calendar.ui)
     implementation(projects.features.upnext.ui)
     implementation(projects.features.calendar.presenter)
