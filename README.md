@@ -79,6 +79,7 @@ For detailed documentation:
 - [Data Layer](docs/architecture/data-layer.md)
 - [Navigation](docs/architecture/navigation.md)
 - [Dependency Injection](docs/architecture/dependency-injection.md)
+- [Integration Testing](docs/architecture/integration-testing.md)
 
 ---
 
