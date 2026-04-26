@@ -3,13 +3,11 @@ package com.thomaskioko.tvmaniac.testing.di
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.navigation.NavDestination
 import com.thomaskioko.tvmaniac.navigation.Navigator
-import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.presenter.home.di.HomeScreenGraph
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.DependencyGraph
-import com.arkivanov.decompose.ComponentContext
 
 @DependencyGraph(AppScope::class)
 public interface TestGraph {
