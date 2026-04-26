@@ -48,11 +48,11 @@ public data class SearchShowState(
 
     public val uiState: SearchUiState
         get() = when {
-            message != null && genreRows.isEmpty() -> Error(message.message)
+            message != null && searchResults.isEmpty() -> Error(message.message)
+            searchResults.isNotEmpty() -> SearchResults(searchResults, isUpdating)
+            isSearchableQuery && isUpdating -> SearchLoading
+            isSearchableQuery && searchResults.isEmpty() && message == null -> SearchEmpty
             isRefreshing && genreRows.isEmpty() -> InitialLoading
-            isSearchableQuery && searchResults.isNotEmpty() -> SearchResults(searchResults, isUpdating)
-            isSearchableQuery && isUpdating && genreRows.isEmpty() -> SearchLoading
-            isSearchableQuery && !isUpdating && searchResults.isEmpty() -> SearchEmpty
             genreRows.isNotEmpty() -> BrowsingGenres(genreRows, selectedCategory, categoryTitle, categories, isRefreshing)
             else -> InitialLoading
         }
