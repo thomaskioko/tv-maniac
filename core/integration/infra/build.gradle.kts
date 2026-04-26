@@ -4,16 +4,39 @@ plugins {
 
 scaffold {
     useMetro()
+    addAndroidTarget(
+        enableAndroidResources = true,
+        withHostTestBuilder = true,
+        includeAndroidResources = true,
+    )
+    android {
+        useCompose()
+        manifestPlaceholders(
+            mapOf("appAuthRedirectScheme" to "com.thomaskioko.tvmaniac.test"),
+        )
+    }
+    optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
 }
 
 kotlin {
     sourceSets {
+        val jvmAndIosMain by creating {
+            dependsOn(getByName("commonMain"))
+        }
+        getByName("jvmMain").dependsOn(jvmAndIosMain)
+        getByName("iosMain").dependsOn(jvmAndIosMain)
+
         commonMain.dependencies {
+            api(projects.api.tmdb.api)
+            api(projects.api.tmdb.implementation)
+            api(projects.api.trakt.api)
+            api(projects.api.trakt.implementation)
             api(projects.core.appconfig.api)
             api(projects.core.appconfig.implementation)
-            api(projects.api.tmdb.api)
-            api(projects.api.trakt.api)
             api(projects.core.base)
+            api(projects.core.connectivity.api)
+            api(projects.core.connectivity.implementation)
+            api(projects.core.connectivity.testing)
             api(projects.core.logger.api)
             api(projects.core.logger.implementation)
             api(projects.core.logger.testing)
@@ -53,20 +76,9 @@ kotlin {
             api(projects.features.genreShows.presenter)
             api(projects.features.profile.presenter)
             api(projects.features.search.presenter)
-            api(projects.features.search.nav)
-            api(projects.features.debug.nav)
-            api(projects.features.settings.nav)
-            api(projects.features.library.nav)
-            api(projects.features.profile.nav)
-            api(projects.features.moreShows.nav)
-            api(projects.features.calendar.nav)
             api(projects.features.discover.nav)
             api(projects.features.episodeSheet.nav)
             api(projects.features.genreShows.nav)
-            api(projects.features.seasonDetails.nav)
-            api(projects.features.showDetails.nav)
-            api(projects.features.upnext.nav)
-            api(projects.features.watchlist.nav)
             api(projects.features.settings.presenter)
             api(projects.features.watchlist.presenter)
             api(projects.features.library.presenter)
@@ -85,14 +97,11 @@ kotlin {
             api(projects.data.calendar.implementation)
             api(projects.domain.library)
             api(projects.domain.traktlists)
-            api(projects.api.tmdb.implementation)
-            api(projects.api.trakt.implementation)
             api(projects.data.cast.api)
             api(projects.data.cast.implementation)
             api(projects.data.database.sqldelight)
             api(projects.data.datastore.api)
             api(projects.data.datastore.implementation)
-            api(projects.data.datastore.testing)
             api(projects.data.episode.api)
             api(projects.data.episode.implementation)
             api(projects.data.featuredshows.api)
@@ -106,7 +115,6 @@ kotlin {
             api(projects.data.popularshows.implementation)
             api(projects.data.requestManager.api)
             api(projects.data.requestManager.implementation)
-            api(projects.data.requestManager.testing)
             api(projects.data.search.implementation)
             api(projects.data.seasondetails.api)
             api(projects.data.seasondetails.implementation)
@@ -117,7 +125,6 @@ kotlin {
             api(projects.data.shows.implementation)
             api(projects.data.similar.implementation)
             api(projects.data.syncActivity.implementation)
-            api(projects.data.syncActivity.testing)
             api(projects.data.topratedshows.api)
             api(projects.data.topratedshows.implementation)
             api(projects.data.trailers.implementation)
@@ -126,7 +133,6 @@ kotlin {
             api(projects.data.traktauth.testing)
             api(projects.data.traktlists.api)
             api(projects.data.traktlists.implementation)
-            api(projects.data.traktlists.testing)
             api(projects.data.trendingshows.api)
             api(projects.data.trendingshows.implementation)
             api(projects.data.upcomingshows.api)
@@ -135,7 +141,6 @@ kotlin {
             api(projects.data.upnext.implementation)
             api(projects.data.user.api)
             api(projects.data.user.implementation)
-            api(projects.data.user.testing)
             api(projects.data.watchlist.implementation)
             api(projects.data.watchproviders.api)
             api(projects.data.watchproviders.implementation)
@@ -145,11 +150,30 @@ kotlin {
             api(libs.kotlin.test)
             api(libs.kotest.assertions)
             api(libs.coroutines.test)
-            implementation(libs.ktor.mock)
+            api(libs.ktor.mock)
+        }
+
+        getByName("jvmAndIosMain").dependencies {
+            api(projects.data.datastore.testing)
+            api(projects.data.requestManager.testing)
+            api(projects.data.syncActivity.testing)
+            api(projects.data.traktlists.testing)
+            api(projects.data.user.testing)
         }
 
         jvmMain.dependencies {
             implementation(libs.sqldelight.driver.jvm)
+        }
+
+        androidMain.dependencies {
+            api(projects.core.imageloading.implementation)
+            api(projects.core.locale.implementation)
+
+            api(libs.kotlin.test.junit)
+            api(libs.androidx.work.testing)
+
+            implementation(libs.ktor.core)
+            implementation(libs.kotlinx.serialization.json)
         }
     }
 }
