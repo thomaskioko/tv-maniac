@@ -42,30 +42,30 @@ struct EpisodeDetailSheetView: View {
     }
 
     @ViewBuilder
-    private func actionView(for action: EpisodeSheetActionItem) -> some View {
-        switch action {
+    private func actionView(for action: EpisodeSheetActionUi) -> some View {
+        switch action.item {
         case .toggleWatched:
             SheetActionItem(
                 icon: state.isWatched ? "checkmark.circle.fill" : "checkmark.circle",
-                label: state.isWatched ? String(\.dialog_title_unwatched) : String(\.menu_mark_watched),
+                label: action.label,
                 action: { presenter.dispatch(action: EpisodeSheetActionToggleWatched()) }
             )
         case .openShow:
             SheetActionItem(
                 icon: "tv",
-                label: String(\.menu_open_show),
+                label: action.label,
                 action: { presenter.dispatch(action: EpisodeSheetActionOpenShow()) }
             )
         case .openSeason:
             SheetActionItem(
                 icon: "list.bullet",
-                label: String(\.menu_open_season),
+                label: action.label,
                 action: { presenter.dispatch(action: EpisodeSheetActionOpenSeason()) }
             )
         case .unfollow:
             SheetActionItem(
                 icon: "minus.circle",
-                label: String(\.menu_unfollow_show),
+                label: action.label,
                 action: { presenter.dispatch(action: EpisodeSheetActionUnfollow()) }
             )
         default:
