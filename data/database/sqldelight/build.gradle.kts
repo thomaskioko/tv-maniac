@@ -30,7 +30,16 @@ kotlin {
         }
 
         iosMain { dependencies { implementation(libs.sqldelight.driver.native) } }
+
+        jvmTest { dependencies { implementation(libs.sqldelight.driver.jvm) } }
     }
+}
+
+tasks.withType<Test>().configureEach {
+    systemProperty(
+        "tvmaniac.sqldelight.schemas.dir",
+        layout.projectDirectory.dir("src/commonMain/sqldelight/com/thomaskioko/tvmaniac/schemas").asFile.absolutePath,
+    )
 }
 
 sqldelight {
