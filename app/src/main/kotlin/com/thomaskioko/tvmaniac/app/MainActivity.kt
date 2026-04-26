@@ -24,7 +24,7 @@ import com.thomaskioko.tvmaniac.app.ui.RootScreen
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager.Companion.EXTRA_FROM_NOTIFICATION
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager.Companion.EXTRA_SHOW_ID
-import com.thomaskioko.tvmaniac.datastore.api.AppTheme
+import com.thomaskioko.tvmaniac.domain.theme.Theme
 
 public class MainActivity : ComponentActivity() {
     private lateinit var graph: ActivityGraph
@@ -115,9 +115,9 @@ public class MainActivity : ComponentActivity() {
 }
 
 @Composable
-private fun shouldUseDarkTheme(appTheme: AppTheme): Boolean {
+private fun shouldUseDarkTheme(appTheme: Theme): Boolean {
     return when (appTheme) {
-        AppTheme.SYSTEM_THEME -> isSystemInDarkTheme()
+        Theme.SYSTEM_THEME -> isSystemInDarkTheme()
         else -> appTheme.isDark
     }
 }

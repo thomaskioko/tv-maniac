@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.settings.presenter
 
 import com.thomaskioko.tvmaniac.core.view.UiMessage
-import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
+import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 
 public data class SettingsState(
     val isAuthenticated: Boolean,

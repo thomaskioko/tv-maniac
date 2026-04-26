@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.imageloading.implementation
 
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
-import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
+import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 import com.thomaskioko.tvmaniac.imageloading.api.ImageQualityProvider
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
@@ -27,7 +27,7 @@ public class DefaultImageQualityProvider(
         coroutineScope.launch {
             datastoreRepository.observeImageQuality()
                 .collectLatest { quality ->
-                    currentQuality.value = quality
+                    currentQuality.value = ImageQuality.valueOf(quality.name)
                 }
         }
     }

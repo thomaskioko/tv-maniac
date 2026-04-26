@@ -4,7 +4,7 @@ import TvManiac
 import TvManiacKit
 
 public struct TabBarView: View {
-    @Theme private var theme
+    @SwiftUIComponents.Theme private var theme
 
     private let presenter: HomePresenter
     @StateValue private var stack: ChildStack<AnyObject, TabChild<AnyObject>>

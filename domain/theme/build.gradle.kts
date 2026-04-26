@@ -6,8 +6,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api(libs.coroutines.core)
-                api(projects.domain.theme)
+                api(projects.i18n.api)
             }
         }
     }

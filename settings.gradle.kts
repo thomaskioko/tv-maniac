@@ -216,6 +216,7 @@ include(
     ":domain:seasondetails",
     ":domain:showdetails",
     ":domain:similarshows",
+    ":domain:theme",
     ":domain:traktlists",
     ":domain:user",
     ":domain:watchlist",

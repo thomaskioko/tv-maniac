@@ -24,7 +24,7 @@ dependencies {
 
     implementation(projects.androidDesignsystem)
     implementation(projects.core.view)
-    implementation(projects.data.datastore.api)
+    implementation(projects.domain.theme)
     implementation(projects.data.genre.api)
     implementation(projects.i18n.generator)
 

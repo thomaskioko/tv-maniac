@@ -103,13 +103,15 @@ public class SettingsPresenter(
             }
 
             is ThemeSelected -> {
-                datastoreRepository.saveTheme(action.theme.toAppTheme())
+                datastoreRepository.saveTheme(action.theme.toTheme().toAppTheme())
                 updateThemeDialogState()
             }
 
             is ImageQualitySelected -> {
                 coroutineScope.launch {
-                    datastoreRepository.saveImageQuality(action.quality)
+                    datastoreRepository.saveImageQuality(
+                        com.thomaskioko.tvmaniac.datastore.api.ImageQuality.valueOf(action.quality.name),
+                    )
                 }
             }
 

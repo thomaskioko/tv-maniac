@@ -24,7 +24,7 @@ dependencies {
     api(projects.navigation.ui)
 
     implementation(projects.androidDesignsystem)
-    implementation(projects.data.datastore.api)
+    implementation(projects.domain.theme)
 
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.material)

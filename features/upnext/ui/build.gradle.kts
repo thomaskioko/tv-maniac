@@ -23,7 +23,7 @@ dependencies {
     implementation(projects.i18n.generator)
     implementation(projects.domain.upnext)
 
-    implementation(projects.data.datastore.api)
+    implementation(projects.domain.theme)
 
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.material3)

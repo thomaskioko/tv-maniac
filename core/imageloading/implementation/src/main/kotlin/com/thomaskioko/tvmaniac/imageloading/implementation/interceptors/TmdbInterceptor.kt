@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.imageloading.implementation.interceptors
 import coil.intercept.Interceptor
 import coil.request.ImageResult
 import coil.size.Dimension
-import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
+import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 import com.thomaskioko.tvmaniac.imageloading.api.ImageQualityProvider
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject

@@ -25,7 +25,7 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.runtime)
     implementation(libs.kotlinx.collections)
-    implementation(projects.data.datastore.api)
+    implementation(projects.domain.theme)
 
     testImplementation(libs.robolectric.annotations)
     testImplementation(projects.core.screenshotTests)

@@ -16,7 +16,7 @@ import com.github.takahirom.roborazzi.RoborazziOptions.CompareOptions
 import com.github.takahirom.roborazzi.RoborazziOptions.RecordOptions
 import com.github.takahirom.roborazzi.captureRoboImage
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.datastore.api.AppTheme
+import com.thomaskioko.tvmaniac.domain.theme.Theme
 import org.robolectric.RuntimeEnvironment
 
 internal val DefaultRoborazziOptions: RoborazziOptions = RoborazziOptions(
@@ -53,12 +53,12 @@ internal fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule
     RuntimeEnvironment.setQualifiers(deviceSpec)
 
     val themes = if (shouldCompareDarkMode) {
-        listOf(AppTheme.DARK_THEME to "dark", AppTheme.LIGHT_THEME to "light")
+        listOf(Theme.DARK_THEME to "dark", Theme.LIGHT_THEME to "light")
     } else {
-        listOf(AppTheme.LIGHT_THEME to "light")
+        listOf(Theme.LIGHT_THEME to "light")
     }
 
-    var appTheme by mutableStateOf(AppTheme.DARK_THEME)
+    var appTheme by mutableStateOf(Theme.DARK_THEME)
 
     this.setContent {
         CompositionLocalProvider(

@@ -17,7 +17,7 @@ dependencies {
     api(projects.navigation.ui)
 
     implementation(projects.androidDesignsystem)
-    implementation(projects.data.datastore.api)
+    implementation(projects.domain.theme)
     implementation(projects.i18n.generator)
 
     implementation(libs.androidx.compose.constraintlayout)

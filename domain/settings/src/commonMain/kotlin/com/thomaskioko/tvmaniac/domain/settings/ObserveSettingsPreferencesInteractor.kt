@@ -2,9 +2,9 @@ package com.thomaskioko.tvmaniac.domain.settings
 
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.interactor.SubjectInteractor
-import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
-import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
+import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
+import com.thomaskioko.tvmaniac.domain.theme.Theme
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.Flow
@@ -30,8 +30,8 @@ public class ObserveSettingsPreferencesInteractor(
             ->
             val lastSyncDate = lastSyncTimestamp?.let { dateTimeProvider.epochToDisplayDateTime(it) }
             SettingsPreferences(
-                imageQuality = imageQuality,
-                theme = theme,
+                imageQuality = ImageQuality.valueOf(imageQuality.name),
+                theme = Theme.valueOf(theme.name),
                 openTrailersInYoutube = openTrailersInYoutube,
                 includeSpecials = includeSpecials,
                 backgroundSyncEnabled = backgroundSyncEnabled,
@@ -46,7 +46,7 @@ public class ObserveSettingsPreferencesInteractor(
 
 public data class SettingsPreferences(
     val imageQuality: ImageQuality,
-    val theme: AppTheme,
+    val theme: Theme,
     val openTrailersInYoutube: Boolean,
     val includeSpecials: Boolean,
     val backgroundSyncEnabled: Boolean,

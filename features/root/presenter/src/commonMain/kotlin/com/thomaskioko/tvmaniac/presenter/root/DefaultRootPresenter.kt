@@ -35,6 +35,7 @@ import com.thomaskioko.tvmaniac.navigation.SheetConfigSerializer
 import com.thomaskioko.tvmaniac.navigation.SheetNavigator
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
+import com.thomaskioko.tvmaniac.settings.presenter.toTheme
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.traktauth.api.AuthError
@@ -153,7 +154,7 @@ public class DefaultRootPresenter(
     override val themeState: StateFlow<ThemeState> =
         datastoreRepository
             .observeTheme()
-            .map { theme -> ThemeState(isFetching = false, appTheme = theme) }
+            .map { theme -> ThemeState(isFetching = false, appTheme = theme.toTheme()) }
             .stateIn(
                 scope = coroutineScope,
                 started = SharingStarted.WhileSubscribed(5_000),

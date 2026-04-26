@@ -13,7 +13,7 @@ dependencies {
     api(libs.androidx.compose.runtime)
 
     implementation(projects.androidDesignsystem)
-    implementation(projects.data.datastore.api)
+    implementation(projects.domain.theme)
 
     implementation(libs.androidx.compose.ui.test)
     implementation(libs.differ)

@@ -10,6 +10,7 @@ import com.thomaskioko.root.model.NotificationPermissionState
 import com.thomaskioko.root.model.ThemeState
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.domain.theme.Theme
 import com.thomaskioko.tvmaniac.genreshows.nav.GenreShowsRoute
 import com.thomaskioko.tvmaniac.moreshows.nav.MoreShowsRoute
 import com.thomaskioko.tvmaniac.navigation.Navigator
@@ -279,7 +280,7 @@ abstract class DefaultRootPresenterTest {
             awaitItem() shouldBe
                 ThemeState(
                     isFetching = false,
-                    appTheme = AppTheme.DARK_THEME,
+                    appTheme = Theme.DARK_THEME,
                 )
         }
     }
@@ -294,7 +295,7 @@ abstract class DefaultRootPresenterTest {
             awaitItem() shouldBe
                 ThemeState(
                     isFetching = false,
-                    appTheme = AppTheme.LIGHT_THEME,
+                    appTheme = Theme.LIGHT_THEME,
                 )
         }
     }

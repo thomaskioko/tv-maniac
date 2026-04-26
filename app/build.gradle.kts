@@ -79,6 +79,7 @@ dependencies {
     implementation(projects.data.database.sqldelight)
     implementation(projects.data.datastore.api)
     implementation(projects.data.datastore.implementation)
+    implementation(projects.domain.theme)
     implementation(projects.domain.calendar)
     implementation(projects.domain.discover)
     implementation(projects.domain.episode)
