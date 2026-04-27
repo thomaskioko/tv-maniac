@@ -10,7 +10,15 @@ import dev.zacsweers.metro.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class FakeTraktAuthManager : TraktAuthManager {
+
+    private var onLaunchWebView: () -> Unit = { }
+
+    public fun setOnLaunchWebView(onLaunch: () -> Unit) {
+        onLaunchWebView = onLaunch
+    }
+
     override fun launchWebView() {
+        onLaunchWebView()
     }
 
     override fun registerResult() {

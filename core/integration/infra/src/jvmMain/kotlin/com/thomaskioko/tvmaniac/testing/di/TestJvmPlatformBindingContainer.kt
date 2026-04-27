@@ -2,6 +2,9 @@ package com.thomaskioko.tvmaniac.testing.di
 
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
+import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.datastore.implementation.DefaultDatastoreRepository
+import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
@@ -10,7 +13,10 @@ import dev.zacsweers.metro.Provides
 import dev.zacsweers.metro.SingleIn
 
 @BindingContainer
-@ContributesTo(AppScope::class)
+@ContributesTo(
+    AppScope::class,
+    replaces = [DefaultDatastoreRepository::class],
+)
 public object TestJvmPlatformBindingContainer {
 
     @Provides
@@ -20,4 +26,11 @@ public object TestJvmPlatformBindingContainer {
         TvManiacDatabase.Schema.create(driver)
         return driver
     }
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideFakeDatastoreRepository(): FakeDatastoreRepository = FakeDatastoreRepository()
+
+    @Provides
+    public fun provideDatastoreRepository(fake: FakeDatastoreRepository): DatastoreRepository = fake
 }

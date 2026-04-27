@@ -5,7 +5,6 @@ import com.arkivanov.decompose.router.slot.SlotNavigation
 import com.arkivanov.decompose.router.slot.activate
 import com.arkivanov.decompose.router.slot.dismiss
 import com.arkivanov.decompose.router.stack.StackNavigation
-import com.thomaskioko.root.nav.NotificationRationale
 import com.thomaskioko.tvmaniac.appconfig.ApplicationInfo
 import com.thomaskioko.tvmaniac.appconfig.Platform
 import com.thomaskioko.tvmaniac.core.base.ComputationCoroutineScope
@@ -42,7 +41,6 @@ import com.thomaskioko.tvmaniac.navigation.SheetNavigator
 import com.thomaskioko.tvmaniac.presenter.home.di.DefaultHomeTabNavigator
 import com.thomaskioko.tvmaniac.presenter.root.DefaultRootPresenter
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
-import com.thomaskioko.tvmaniac.presenter.root.di.DefaultNotificationRationale
 import com.thomaskioko.tvmaniac.presenter.root.di.DefaultSheetNavigator
 import com.thomaskioko.tvmaniac.traktauth.implementation.TokenRefreshWorker
 import com.thomaskioko.tvmaniac.util.api.AppUtils
@@ -72,7 +70,6 @@ import kotlinx.coroutines.flow.flowOf
         DefaultSheetNavigator::class,
         DefaultDiscoverNavigator::class,
         DefaultHomeTabNavigator::class,
-        DefaultNotificationRationale::class,
     ],
 )
 public object FakeAppBindingContainer {
@@ -171,13 +168,6 @@ public object FakeAppBindingContainer {
             override fun registerNavigation(navigation: StackNavigation<HomeConfig>) {}
             override fun unregisterNavigation() {}
             override fun switchToProgressTab() {}
-        }
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideNotificationRationaleCoordinator(): NotificationRationale =
-        object : NotificationRationale {
-            override suspend fun showIfNeeded() = Unit
         }
 
     @Provides

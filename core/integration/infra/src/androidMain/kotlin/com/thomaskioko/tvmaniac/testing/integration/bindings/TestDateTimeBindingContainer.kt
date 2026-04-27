@@ -1,9 +1,7 @@
 package com.thomaskioko.tvmaniac.testing.integration.bindings
 
-import com.thomaskioko.tvmaniac.util.AndroidFormatterUtil
 import com.thomaskioko.tvmaniac.util.DefaultDateTimeProvider
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
-import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
 import dev.zacsweers.metro.AppScope
@@ -18,7 +16,6 @@ import kotlin.time.Instant
     AppScope::class,
     replaces = [
         DefaultDateTimeProvider::class,
-        AndroidFormatterUtil::class,
         FakeDateTimeProvider::class,
         FakeFormatterUtil::class,
     ],
@@ -33,8 +30,4 @@ public object TestDateTimeBindingContainer {
 
     @Provides
     public fun provideDateTimeProvider(fake: FakeDateTimeProvider): DateTimeProvider = fake
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideFormatterUtil(): FormatterUtil = FakeFormatterUtil()
 }

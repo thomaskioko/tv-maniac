@@ -4,25 +4,15 @@ import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.datastore.api.ListStyle
-import com.thomaskioko.tvmaniac.datastore.implementation.DefaultDatastoreRepository
-import dev.zacsweers.metro.AppScope
-import dev.zacsweers.metro.ContributesBinding
-import dev.zacsweers.metro.Inject
-import dev.zacsweers.metro.SingleIn
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 
-@Inject
-@SingleIn(AppScope::class)
-@ContributesBinding(AppScope::class, replaces = [DefaultDatastoreRepository::class])
 public class FakeDatastoreRepository : DatastoreRepository {
 
     private val appThemeFlow = MutableStateFlow(AppTheme.SYSTEM_THEME)
-    private val languageFlow: Channel<String> = Channel(Channel.UNLIMITED)
-    private val listStyleFlow: Channel<ListStyle> = Channel(Channel.UNLIMITED)
+    private val languageFlow = MutableStateFlow("en")
+    private val listStyleFlow = MutableStateFlow(ListStyle.GRID)
     private val imageQualityFlow = MutableStateFlow(ImageQuality.AUTO)
     private val openTrailersInYoutubeFlow = MutableStateFlow(false)
     private val includeSpecialsFlow = MutableStateFlow(false)
@@ -30,7 +20,7 @@ public class FakeDatastoreRepository : DatastoreRepository {
     private val backgroundSyncEnabledFlow = MutableStateFlow(true)
     private val lastSyncTimestampFlow: MutableStateFlow<Long?> = MutableStateFlow(null)
     private val episodeNotificationsEnabledFlow = MutableStateFlow(false)
-    private val notificationPermissionAskedFlow = MutableStateFlow(false)
+    private val notificationPermissionAskedFlow = MutableStateFlow(true)
     private val showNotificationRationaleFlow = MutableStateFlow(false)
     private val requestNotificationPermissionFlow = MutableStateFlow(false)
     private val librarySortOptionFlow = MutableStateFlow("ADDED_DESC")
@@ -43,8 +33,19 @@ public class FakeDatastoreRepository : DatastoreRepository {
         lastTraktUserId.value = userId
     }
 
+    /**
+     * Non-suspending opt-in setter for tests that need to override the permission-asked default
+     * before the activity launches. The interface counterpart [setNotificationPermissionAsked] is
+     * suspend, which deadlocks under `runBlocking` when the Compose Robolectric harness installs a
+     * `TestDispatcher` as `Dispatchers.Main` (every dispatcher role binds to Main via
+     * `IntegrationTestDispatcherBindings`). Use this from `@Before` to seed state synchronously.
+     */
+    public fun setNotificationPermissionAskedNow(asked: Boolean) {
+        notificationPermissionAskedFlow.value = asked
+    }
+
     public suspend fun setLanguage(languageCode: String) {
-        languageFlow.send(languageCode)
+        languageFlow.value = languageCode
     }
 
     override fun saveTheme(appTheme: AppTheme) {
@@ -54,16 +55,16 @@ public class FakeDatastoreRepository : DatastoreRepository {
     override fun observeTheme(): Flow<AppTheme> = appThemeFlow.asStateFlow()
 
     override suspend fun saveLanguage(languageCode: String) {
-        // no -op
+        languageFlow.value = languageCode
     }
 
-    override fun observeLanguage(): Flow<String> = languageFlow.receiveAsFlow()
+    override fun observeLanguage(): Flow<String> = languageFlow.asStateFlow()
 
     override suspend fun saveListStyle(listStyle: ListStyle) {
-        // no-op
+        listStyleFlow.value = listStyle
     }
 
-    override fun observeListStyle(): Flow<ListStyle> = listStyleFlow.receiveAsFlow()
+    override fun observeListStyle(): Flow<ListStyle> = listStyleFlow.asStateFlow()
 
     override suspend fun saveImageQuality(quality: ImageQuality) {
         imageQualityFlow.value = quality
