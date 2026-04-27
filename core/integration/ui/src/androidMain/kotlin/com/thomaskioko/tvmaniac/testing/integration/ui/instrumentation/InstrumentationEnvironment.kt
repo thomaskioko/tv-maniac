@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.testing.integration.ui.robolectric
+package com.thomaskioko.tvmaniac.testing.integration.ui.instrumentation
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
@@ -13,17 +13,18 @@ import com.thomaskioko.tvmaniac.testing.integration.ui.MockEngineNetworkStub
 import com.thomaskioko.tvmaniac.testing.integration.ui.NetworkStub
 
 /**
- * [IntegrationTestEnvironment] implementation for Robolectric tests.
+ * [IntegrationTestEnvironment] implementation for [BaseInstrumentationComposeTest].
  *
- * Resolves dependency graph from launched activity via [graphProvider]. Wires mock engines
- * and [ClasspathFixtureReader] into [MockEngineNetworkStub].
+ * Resolves the dependency graph from the launched activity via [graphProvider]. Wires the Ktor
+ * [MockEngineHandler]s for TMDB and Trakt plus [ClasspathFixtureReader] into a
+ * [MockEngineNetworkStub] so the same fixtures back both Robolectric and emulator runs.
  *
  * @param A Activity type hosting the Compose content.
  * @param G Dependency graph type.
  * @property composeTestRule Compose rule driving the activity under test.
  * @param graphProvider Extracts graph from the launched activity instance.
  */
-public open class RobolectricEnvironment<A : ComponentActivity, G : Any>(
+public open class InstrumentationEnvironment<A : ComponentActivity, G : Any>(
     override val composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<A>, A>,
     private val graphProvider: (A) -> G,
 ) : IntegrationTestEnvironment<G> {

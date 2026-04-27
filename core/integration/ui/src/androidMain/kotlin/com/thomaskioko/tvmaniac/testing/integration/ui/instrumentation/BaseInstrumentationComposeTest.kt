@@ -1,9 +1,10 @@
-package com.thomaskioko.tvmaniac.testing.integration.ui.robolectric
+package com.thomaskioko.tvmaniac.testing.integration.ui.instrumentation
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.ext.junit.rules.ActivityScenarioRule
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
@@ -15,20 +16,25 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 
 /**
- * Base class for Robolectric-backed Compose integration tests.
+ * Base class for Compose integration tests on Android.
  *
- * Provides [AndroidComposeTestRule], shared Decompose [ComponentContext], and
- * [MockEngineResetRule] to clear stubbed network state between tests.
+ * Runs under `@RunWith(AndroidJUnit4::class)`, which delegates to `RobolectricTestRunner` when
+ * Robolectric is on the JVM classpath (`app/src/test/`) and uses the native runner on emulators or
+ * devices (`app/src/androidTest/`). The same subclass therefore exercises both runners without
+ * duplication.
+ *
+ * Provides [AndroidComposeTestRule], shared Decompose [ComponentContext], and [MockEngineResetRule]
+ * to clear stubbed network state between tests. The Decompose [LifecycleRegistry] is synthetic and
+ * not bound to the activity's real Android lifecycle — acceptable for foreground-only flows.
  *
  * @param A Activity type hosting the Compose content.
  * @param G Dependency graph type.
  * @param activityClass Activity class passed to [createAndroidComposeRule].
  */
-@RunWith(RobolectricTestRunner::class)
-public abstract class BaseRobolectricComposeTest<A : ComponentActivity, G : Any>(
+@RunWith(AndroidJUnit4::class)
+public abstract class BaseInstrumentationComposeTest<A : ComponentActivity, G : Any>(
     activityClass: Class<A>,
 ) {
 
