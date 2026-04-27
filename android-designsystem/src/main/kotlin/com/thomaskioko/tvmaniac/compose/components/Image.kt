@@ -3,7 +3,10 @@ package com.thomaskioko.tvmaniac.compose.components
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -20,6 +23,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import androidx.compose.ui.util.lerp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -28,6 +32,7 @@ import coil.compose.AsyncImagePainter
 import coil.load
 import coil.request.ImageRequest
 import com.flaviofaria.kenburnsview.KenBurnsView
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import kotlin.math.absoluteValue
 
 @Composable
@@ -73,7 +78,14 @@ public fun KenBurnsViewImage(
     val context = LocalContext.current
     val kenBuns = remember { KenBurnsView(context) }
 
-    AndroidView({ kenBuns }, modifier = modifier) { it.load(imageUrl) }
+    Box(modifier = modifier) {
+        PosterPlaceholder(modifier = Modifier.fillMaxSize())
+
+        AndroidView(
+            factory = { kenBuns },
+            modifier = Modifier.fillMaxSize(),
+        ) { it.load(imageUrl) }
+    }
 }
 
 @Composable
@@ -102,6 +114,12 @@ public fun ParallaxCarouselImage(
                 translationX = cardTranslationX
             },
     ) {
+        PosterPlaceholder(
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(shape),
+        )
+
         AsyncImageComposable(
             modifier = Modifier
                 .fillMaxSize()
@@ -120,4 +138,37 @@ public fun ParallaxCarouselImage(
 
 private fun calculatePageOffset(state: PagerState, currentPage: Int): Float {
     return (state.currentPage + state.currentPageOffsetFraction - currentPage).coerceIn(-1f, 1f)
+}
+
+@ThemePreviews
+@Composable
+private fun ParallaxCarouselImagePreview() {
+    val pagerState = rememberPagerState(pageCount = { 3 })
+    TvManiacTheme {
+        Surface {
+            ParallaxCarouselImage(
+                state = pagerState,
+                currentPage = 0,
+                imageUrl = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(360.dp),
+            )
+        }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun KenBurnsViewImagePreview() {
+    TvManiacTheme {
+        Surface {
+            KenBurnsViewImage(
+                imageUrl = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(240.dp),
+            )
+        }
+    }
 }
