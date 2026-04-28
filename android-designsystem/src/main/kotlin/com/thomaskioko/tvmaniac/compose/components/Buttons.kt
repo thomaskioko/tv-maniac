@@ -342,7 +342,7 @@ public fun ScrimButton(
     } else {
         IconButton(
             onClick = onClick,
-            modifier = modifier.iconButtonBackgroundScrim(enabled = false, alpha = alpha),
+            modifier = Modifier.iconButtonBackgroundScrim(enabled = false, alpha = alpha),
         ) {
             content()
         }
