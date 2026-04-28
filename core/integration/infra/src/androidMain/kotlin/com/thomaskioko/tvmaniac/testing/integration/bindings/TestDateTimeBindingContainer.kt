@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.testing.integration.bindings
 
 import com.thomaskioko.tvmaniac.util.DateTimeBindingContainer
-import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
@@ -13,10 +12,7 @@ import kotlin.time.Instant
 @BindingContainer
 @ContributesTo(
     AppScope::class,
-    replaces = [
-        DateTimeBindingContainer::class,
-        FakeFormatterUtil::class,
-    ],
+    replaces = [DateTimeBindingContainer::class],
 )
 public object TestDateTimeBindingContainer {
 

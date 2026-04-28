@@ -22,7 +22,6 @@ import dev.zacsweers.metro.SingleIn
         LibrarySyncWorker::class,
         UpNextSyncWorker::class,
         AndroidTaskScheduler::class,
-        FakeBackgroundTaskScheduler::class,
     ],
 )
 public object TestWorkerBindingContainer {

@@ -22,8 +22,6 @@ import dev.zacsweers.metro.SingleIn
         KermitLogger::class,
         FirebaseCrashLogger::class,
         LoggingInitializerModule::class,
-        FakeLogger::class,
-        FakeCrashReporter::class,
     ],
 )
 public object TestLoggerBindingContainer {

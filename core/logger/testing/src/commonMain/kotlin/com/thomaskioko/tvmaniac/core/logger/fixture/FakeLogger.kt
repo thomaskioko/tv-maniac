@@ -1,19 +1,7 @@
 package com.thomaskioko.tvmaniac.core.logger.fixture
 
-import com.thomaskioko.tvmaniac.core.logger.CompositeLogger
-import com.thomaskioko.tvmaniac.core.logger.KermitLogger
 import com.thomaskioko.tvmaniac.core.logger.Logger
-import dev.zacsweers.metro.AppScope
-import dev.zacsweers.metro.ContributesBinding
-import dev.zacsweers.metro.Inject
-import dev.zacsweers.metro.SingleIn
 
-@Inject
-@SingleIn(AppScope::class)
-@ContributesBinding(
-    AppScope::class,
-    replaces = [CompositeLogger::class, KermitLogger::class],
-)
 public class FakeLogger : Logger {
     override fun setup(debugMode: Boolean) {}
 

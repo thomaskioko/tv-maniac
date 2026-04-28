@@ -12,10 +12,7 @@ import dev.zacsweers.metro.SingleIn
 @BindingContainer
 @ContributesTo(
     AppScope::class,
-    replaces = [
-        AndroidNotificationManager::class,
-        FakeNotificationManager::class,
-    ],
+    replaces = [AndroidNotificationManager::class],
 )
 public object TestNotificationBindingContainer {
 
