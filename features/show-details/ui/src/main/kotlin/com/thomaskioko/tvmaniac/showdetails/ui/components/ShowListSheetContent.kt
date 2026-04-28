@@ -41,7 +41,7 @@ import com.thomaskioko.tvmaniac.showdetails.ui.showDetailsWithCreateListLoading
 import com.thomaskioko.tvmaniac.showdetails.ui.showDetailsWithEmptyTraktLists
 import com.thomaskioko.tvmaniac.showdetails.ui.showDetailsWithTraktLists
 
-//TODO:: Move this to a feature module user-show-list
+// TODO:: Move this to a feature module user-show-list
 @Composable
 internal fun ShowListSheetContent(
     state: ShowDetailsContent,
@@ -110,7 +110,7 @@ private fun TraktListItems(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding( vertical = 4.dp),
+                .padding(vertical = 4.dp),
             shape = MaterialTheme.shapes.medium,
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
