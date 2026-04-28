@@ -1,11 +1,22 @@
 package com.thomaskioko.tvmaniac.compose.components
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -19,10 +30,12 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import androidx.compose.ui.util.lerp
@@ -40,6 +53,8 @@ public fun AsyncImageComposable(
     model: Any?,
     contentDescription: String?,
     modifier: Modifier = Modifier,
+    shape: Shape = RectangleShape,
+    border: BorderStroke? = null,
     transform: (AsyncImagePainter.State) -> AsyncImagePainter.State = AsyncImagePainter.DefaultTransform,
     onState: ((AsyncImagePainter.State) -> Unit)? = null,
     requestBuilder: (ImageRequest.Builder.() -> ImageRequest.Builder)? = null,
@@ -59,7 +74,9 @@ public fun AsyncImageComposable(
                 .build()
         } ?: model,
         contentDescription = contentDescription,
-        modifier = modifier,
+        modifier = modifier
+            .clip(shape)
+            .then(if (border != null) Modifier.border(border, shape) else Modifier),
         transform = transform,
         onState = onState,
         alignment = alignment,
@@ -68,6 +85,49 @@ public fun AsyncImageComposable(
         colorFilter = colorFilter,
         filterQuality = filterQuality,
     )
+}
+
+@Composable
+public fun AvatarComponent(
+    imageUrl: String?,
+    size: Dp,
+    modifier: Modifier = Modifier,
+    contentDescription: String? = null,
+    border: BorderStroke? = null,
+    placeholderIcon: ImageVector = Icons.Outlined.Person,
+    onClick: (() -> Unit)? = null,
+) {
+    val commonModifier = modifier
+        .size(size)
+        .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
+
+    if (imageUrl.isNullOrEmpty()) {
+        Box(
+            modifier = commonModifier
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    shape = CircleShape,
+                )
+                .then(if (border != null) Modifier.border(border, CircleShape) else Modifier),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                imageVector = placeholderIcon,
+                contentDescription = contentDescription,
+                modifier = Modifier.size(size * 0.6f),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    } else {
+        AsyncImageComposable(
+            model = imageUrl,
+            contentDescription = contentDescription,
+            modifier = commonModifier,
+            shape = CircleShape,
+            border = border,
+            contentScale = ContentScale.Crop,
+        )
+    }
 }
 
 @Composable
@@ -168,6 +228,21 @@ private fun KenBurnsViewImagePreview() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(240.dp),
+            )
+        }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun AvatarComponentPreview() {
+    TvManiacTheme {
+        Surface {
+            AvatarComponent(
+                imageUrl = "https://image.png",
+                size = 64.dp,
+                modifier = Modifier.padding(16.dp),
+                border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
             )
         }
     }
