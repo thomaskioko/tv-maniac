@@ -395,7 +395,6 @@ internal class CalendarPresenterTest {
 
         val calendarWeekCalculator = CalendarWeekCalculator(
             dateTimeProvider = dateTimeProvider,
-            formatterUtil = formatterUtil,
         )
 
         val calendarEpisodeFormatter = CalendarEpisodeFormatter(

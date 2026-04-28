@@ -18,10 +18,11 @@ import kotlin.time.Instant
 @ContributesBinding(AppScope::class)
 public class DefaultDateTimeProvider(
     private val formatterUtil: FormatterUtil,
+    private val clock: Clock,
 ) : DateTimeProvider {
-    override fun now(): Instant = Clock.System.now()
+    override fun now(): Instant = clock.now()
 
-    private fun today(timeZone: TimeZone): LocalDate = Clock.System.todayIn(timeZone)
+    private fun today(timeZone: TimeZone): LocalDate = clock.todayIn(timeZone)
 
     override fun startOfDay(timeZone: TimeZone): Instant = now()
         .toLocalDateTime(timeZone)
@@ -58,4 +59,15 @@ public class DefaultDateTimeProvider(
     }
 
     override fun currentYear(timeZone: TimeZone): Int = today(timeZone).year
+
+    override fun formatDisplayDate(date: LocalDate, timeZone: TimeZone): String =
+        formatterUtil.formatDateTime(date.atStartOfDayIn(timeZone).toEpochMilliseconds(), DISPLAY_DATE_PATTERN)
+
+    override fun formatDayOfWeek(date: LocalDate, timeZone: TimeZone): String =
+        formatterUtil.formatDateTime(date.atStartOfDayIn(timeZone).toEpochMilliseconds(), DAY_OF_WEEK_PATTERN)
+
+    private companion object {
+        private const val DISPLAY_DATE_PATTERN = "MMM d, yyyy"
+        private const val DAY_OF_WEEK_PATTERN = "EEEE"
+    }
 }

@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.domain.calendar
 
 import com.thomaskioko.tvmaniac.domain.calendar.model.DateLabel
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
-import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 import dev.zacsweers.metro.Inject
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
@@ -14,10 +13,9 @@ import kotlinx.datetime.toLocalDateTime
 @Inject
 public class CalendarWeekCalculator(
     private val dateTimeProvider: DateTimeProvider,
-    private val formatterUtil: FormatterUtil,
 ) {
 
-    private val timeZone: TimeZone = TimeZone.currentSystemDefault()
+    private val timeZone: TimeZone = dateTimeProvider.getTimeZone()
 
     public fun getWeekRange(weekOffset: Int): Pair<LocalDate, LocalDate> {
         val today = dateTimeProvider.now().toLocalDateTime(timeZone).date
@@ -40,25 +38,21 @@ public class CalendarWeekCalculator(
 
     public fun formatWeekLabel(weekOffset: Int): String {
         val (startDate, endDate) = getWeekRange(weekOffset)
-        val adjustedEndDate = endDate.plus(-1, DateTimeUnit.DAY)
-        val startEpoch = startDate.atStartOfDayIn(timeZone).toEpochMilliseconds()
-        val endEpoch = adjustedEndDate.atStartOfDayIn(timeZone).toEpochMilliseconds()
-        val startFormatted = formatterUtil.formatDateTime(startEpoch, "MMM d, yyyy")
-        val endFormatted = formatterUtil.formatDateTime(endEpoch, "MMM d, yyyy")
+        val inclusiveEndDate = endDate.plus(-1, DateTimeUnit.DAY)
+        val startFormatted = dateTimeProvider.formatDisplayDate(startDate)
+        val endFormatted = dateTimeProvider.formatDisplayDate(inclusiveEndDate)
         return "$startFormatted - $endFormatted"
     }
 
     public fun formatDateLabel(date: LocalDate, today: LocalDate, tomorrow: LocalDate): DateLabel {
-        val dateEpoch = date.atStartOfDayIn(timeZone).toEpochMilliseconds()
-        val dateFormatted = formatterUtil.formatDateTime(dateEpoch, "MMM d, yyyy")
-
+        val formattedDate = dateTimeProvider.formatDisplayDate(date)
         return when (date) {
-            today -> DateLabel.Today(formattedDate = dateFormatted)
-            tomorrow -> DateLabel.Tomorrow(formattedDate = dateFormatted)
-            else -> {
-                val dayName = formatterUtil.formatDateTime(dateEpoch, "EEEE")
-                DateLabel.DayOfWeek(dayName = dayName, formattedDate = dateFormatted)
-            }
+            today -> DateLabel.Today(formattedDate = formattedDate)
+            tomorrow -> DateLabel.Tomorrow(formattedDate = formattedDate)
+            else -> DateLabel.DayOfWeek(
+                dayName = dateTimeProvider.formatDayOfWeek(date),
+                formattedDate = formattedDate,
+            )
         }
     }
 

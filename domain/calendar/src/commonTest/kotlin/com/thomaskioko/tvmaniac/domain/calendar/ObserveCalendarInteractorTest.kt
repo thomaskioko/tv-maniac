@@ -252,7 +252,6 @@ internal class ObserveCalendarInteractorTest {
     private fun createInteractor(): ObserveCalendarInteractor {
         val calendarWeekCalculator = CalendarWeekCalculator(
             dateTimeProvider = dateTimeProvider,
-            formatterUtil = formatterUtil,
         )
         val calendarEpisodeFormatter = CalendarEpisodeFormatter(
             formatterUtil = formatterUtil,

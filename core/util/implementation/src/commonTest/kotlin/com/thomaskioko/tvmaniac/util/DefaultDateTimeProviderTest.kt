@@ -14,7 +14,10 @@ import kotlin.time.Duration.Companion.days
 internal class DefaultDateTimeProviderTest {
 
     private val fakeFormatterUtil = FakeFormatterUtil()
-    private val underTest = DefaultDateTimeProvider(fakeFormatterUtil)
+    private val underTest = DefaultDateTimeProvider(
+        formatterUtil = fakeFormatterUtil,
+        clock = Clock.System,
+    )
 
     @Test
     fun `should return current instant`() {
