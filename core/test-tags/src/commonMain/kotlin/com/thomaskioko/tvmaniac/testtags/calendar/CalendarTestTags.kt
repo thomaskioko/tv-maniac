@@ -7,5 +7,8 @@ public object CalendarTestTags {
     public const val PREVIOUS_WEEK_BUTTON: String = "calendar_previous_week_button"
     public const val NEXT_WEEK_BUTTON: String = "calendar_next_week_button"
     public const val WEEK_LABEL: String = "calendar_week_label"
+    public const val DATE_HEADER: String = "calendar_date_header"
     public fun episodeCard(episodeTraktId: Long): String = "calendar_episode_card_$episodeTraktId"
+    public fun additionalEpisodesCount(episodeTraktId: Long): String =
+        "calendar_additional_episodes_$episodeTraktId"
 }

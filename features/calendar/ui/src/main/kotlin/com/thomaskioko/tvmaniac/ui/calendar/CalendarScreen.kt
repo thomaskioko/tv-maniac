@@ -50,6 +50,7 @@ import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
+import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
@@ -340,7 +341,8 @@ private fun CalendarDateHeader(
     Text(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .testTag(CalendarTestTags.DATE_HEADER),
         text = dateLabel,
         style = MaterialTheme.typography.titleMedium,
         color = MaterialTheme.colorScheme.onSurface,
@@ -426,6 +428,9 @@ private fun CalendarEpisodeCard(
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
+                        modifier = Modifier.testTag(
+                            CalendarTestTags.additionalEpisodesCount(episode.episodeTraktId),
+                        ),
                         text = moreEpisodesFormat.format(episode.additionalEpisodesCount),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -516,7 +521,7 @@ private fun CalendarScreenEmptyPreview() {
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 private fun CalendarScreenNotLoggedInPreview() {
     TvManiacTheme {

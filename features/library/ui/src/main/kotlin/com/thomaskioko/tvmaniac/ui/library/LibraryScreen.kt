@@ -320,7 +320,7 @@ private fun CollapsedTopBarContent(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            IconButton(onClick = onSearchClick) {
+            IconButton(onClick = onSearchClick, modifier = Modifier.testTag(LibraryTestTags.SEARCH_BUTTON_TEST_TAG)) {
                 Icon(
                     imageVector = Icons.Outlined.Search,
                     contentDescription = cd_search.resolve(context),
@@ -328,7 +328,7 @@ private fun CollapsedTopBarContent(
                 )
             }
 
-            IconButton(onClick = onFilterClick) {
+            IconButton(onClick = onFilterClick, modifier = Modifier.testTag(LibraryTestTags.FILTER_BUTTON_TEST_TAG)) {
                 Icon(
                     imageVector = Icons.Outlined.FilterList,
                     contentDescription = cd_filter.resolve(context),

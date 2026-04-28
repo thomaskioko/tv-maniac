@@ -3,13 +3,13 @@ package com.thomaskioko.tvmaniac.settings.ui
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -24,6 +24,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -39,6 +41,7 @@ import com.thomaskioko.tvmaniac.compose.theme.LightColorScheme
 import com.thomaskioko.tvmaniac.compose.theme.SnowColorScheme
 import com.thomaskioko.tvmaniac.compose.theme.TerminalColorScheme
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
+import com.thomaskioko.tvmaniac.testtags.settings.SettingsTestTags
 
 @Composable
 internal fun ThemePreviewSwatch(
@@ -52,8 +55,13 @@ internal fun ThemePreviewSwatch(
 
     Column(
         modifier = modifier
+            .testTag(SettingsTestTags.themeSwatch(theme.name))
             .clip(RoundedCornerShape(12.dp))
-            .clickable(onClick = onClick)
+            .selectable(
+                selected = isSelected,
+                onClick = onClick,
+                role = Role.RadioButton,
+            )
             .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
