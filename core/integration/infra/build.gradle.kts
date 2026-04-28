@@ -154,7 +154,6 @@ kotlin {
         }
 
         getByName("jvmAndIosMain").dependencies {
-            api(projects.data.datastore.testing)
             api(projects.data.requestManager.testing)
             api(projects.data.syncActivity.testing)
             api(projects.data.traktlists.testing)

@@ -23,6 +23,7 @@ import com.thomaskioko.tvmaniac.trailers.nav.TrailersRoute
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -30,6 +31,7 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 abstract class DefaultRootPresenterTest {
     abstract val rootPresenterFactory: RootPresenter.Factory
     abstract val datastoreRepository: DatastoreRepository
@@ -55,12 +57,12 @@ abstract class DefaultRootPresenterTest {
     }
 
     @Test
-    fun `initial state should be Home`() = runTest {
+    fun `initial state should be Home`() = runTest(testDispatcher) {
         presenter.childStack.test { awaitItem().active.instance.shouldBeInstanceOf<RootChild>() }
     }
 
     @Test
-    fun `should return Home as active instance`() = runTest {
+    fun `should return Home as active instance`() = runTest(testDispatcher) {
         presenter.childStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
@@ -77,7 +79,7 @@ abstract class DefaultRootPresenterTest {
     }
 
     @Test
-    fun `should return ShowDetails as active instance`() = runTest {
+    fun `should return ShowDetails as active instance`() = runTest(testDispatcher) {
         presenter.childStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
@@ -90,7 +92,7 @@ abstract class DefaultRootPresenterTest {
     }
 
     @Test
-    fun `should return MoreShows as active instance`() = runTest {
+    fun `should return MoreShows as active instance`() = runTest(testDispatcher) {
         presenter.childStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
@@ -103,7 +105,7 @@ abstract class DefaultRootPresenterTest {
     }
 
     @Test
-    fun `should return SeasonDetails as active instance`() = runTest {
+    fun `should return SeasonDetails as active instance`() = runTest(testDispatcher) {
         presenter.childStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
@@ -121,7 +123,7 @@ abstract class DefaultRootPresenterTest {
     }
 
     @Test
-    fun `should return Trailers as active instance`() = runTest {
+    fun `should return Trailers as active instance`() = runTest(testDispatcher) {
         presenter.childStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
@@ -134,7 +136,7 @@ abstract class DefaultRootPresenterTest {
     }
 
     @Test
-    fun `should return GenreShows as active instance`() = runTest {
+    fun `should return GenreShows as active instance`() = runTest(testDispatcher) {
         presenter.childStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
@@ -147,7 +149,7 @@ abstract class DefaultRootPresenterTest {
     }
 
     @Test
-    fun `should navigate to ShowDetails using pushNew`() = runTest {
+    fun `should navigate to ShowDetails using pushNew`() = runTest(testDispatcher) {
         presenter.childStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
@@ -160,7 +162,7 @@ abstract class DefaultRootPresenterTest {
     }
 
     @Test
-    fun `should navigate to ShowDetails using pushToFront`() = runTest {
+    fun `should navigate to ShowDetails using pushToFront`() = runTest(testDispatcher) {
         presenter.childStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
@@ -173,7 +175,7 @@ abstract class DefaultRootPresenterTest {
     }
 
     @Test
-    fun `should navigate back to previous screen using popTo`() = runTest {
+    fun `should navigate back to previous screen using popTo`() = runTest(testDispatcher) {
         presenter.childStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
@@ -190,14 +192,14 @@ abstract class DefaultRootPresenterTest {
     }
 
     @Test
-    fun `should return default notification permission state`() = runTest {
+    fun `should return default notification permission state`() = runTest(testDispatcher) {
         presenter.notificationPermissionState.test {
             awaitItem() shouldBe NotificationPermissionState()
         }
     }
 
     @Test
-    fun `should set requestPermission given rationale accepted`() = runTest {
+    fun `should set requestPermission given rationale accepted`() = runTest(testDispatcher) {
         presenter.notificationPermissionState.test {
             awaitItem() shouldBe NotificationPermissionState()
 
@@ -205,6 +207,7 @@ abstract class DefaultRootPresenterTest {
             awaitItem() shouldBe NotificationPermissionState(showRationale = true)
 
             presenter.onRationaleAccepted()
+            awaitItem() shouldBe NotificationPermissionState(showRationale = false)
             awaitItem() shouldBe NotificationPermissionState(
                 showRationale = false,
                 requestPermission = true,
@@ -213,7 +216,7 @@ abstract class DefaultRootPresenterTest {
     }
 
     @Test
-    fun `should not mark permission as asked given sheet dismissed without interaction`() = runTest {
+    fun `should not mark permission as asked given sheet dismissed without interaction`() = runTest(testDispatcher) {
         presenter.notificationPermissionState.test {
             awaitItem() shouldBe NotificationPermissionState()
 
@@ -226,7 +229,7 @@ abstract class DefaultRootPresenterTest {
     }
 
     @Test
-    fun `should show rationale again given sheet was dismissed without interaction`() = runTest {
+    fun `should show rationale again given sheet was dismissed without interaction`() = runTest(testDispatcher) {
         presenter.notificationPermissionState.test {
             awaitItem() shouldBe NotificationPermissionState()
 
@@ -242,7 +245,7 @@ abstract class DefaultRootPresenterTest {
     }
 
     @Test
-    fun `should enable notifications given permission granted`() = runTest {
+    fun `should enable notifications given permission granted`() = runTest(testDispatcher) {
         presenter.notificationPermissionState.test {
             awaitItem() shouldBe NotificationPermissionState()
 
@@ -255,7 +258,7 @@ abstract class DefaultRootPresenterTest {
     }
 
     @Test
-    fun `should navigate to Debug given DebugMenu deep link`() = runTest {
+    fun `should navigate to Debug given DebugMenu deep link`() = runTest(testDispatcher) {
         presenter.childStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
@@ -266,14 +269,15 @@ abstract class DefaultRootPresenterTest {
     }
 
     @Test
-    fun `should return initial theme state`() = runTest {
+    fun `should return initial theme state`() = runTest(testDispatcher) {
         presenter.themeState.value shouldBe ThemeState()
     }
 
     @Test
-    fun `should update theme to Dark when DarkTheme is set`() = runTest {
+    fun `should update theme to Dark when DarkTheme is set`() = runTest(testDispatcher) {
         presenter.themeState.test {
             awaitItem() shouldBe ThemeState()
+            awaitItem() shouldBe ThemeState(isFetching = false, appTheme = Theme.SYSTEM_THEME)
 
             datastoreRepository.saveTheme(AppTheme.DARK_THEME)
 
@@ -286,9 +290,10 @@ abstract class DefaultRootPresenterTest {
     }
 
     @Test
-    fun `should update theme to Light when LightTheme is set`() = runTest {
+    fun `should update theme to Light when LightTheme is set`() = runTest(testDispatcher) {
         presenter.themeState.test {
             awaitItem() shouldBe ThemeState()
+            awaitItem() shouldBe ThemeState(isFetching = false, appTheme = Theme.SYSTEM_THEME)
 
             datastoreRepository.saveTheme(AppTheme.LIGHT_THEME)
 

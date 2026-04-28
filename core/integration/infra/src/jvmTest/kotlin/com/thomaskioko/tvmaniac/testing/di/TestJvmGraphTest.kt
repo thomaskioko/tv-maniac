@@ -4,7 +4,6 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.destroy
 import com.arkivanov.essenty.lifecycle.resume
-import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -12,11 +11,6 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlin.test.Test
 
 internal class TestJvmGraphTest {
-
-    @Test
-    fun `should provide fake DatastoreRepository`() = runTestWithGraph { graph ->
-        graph.datastoreRepository.shouldBeInstanceOf<FakeDatastoreRepository>()
-    }
 
     @Test
     fun `should provide fake TraktAuthManager`() = runTestWithGraph { graph ->
