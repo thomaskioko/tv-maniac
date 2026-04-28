@@ -6,7 +6,6 @@ scaffold {
     useMetro()
     addAndroidTarget(
         enableAndroidResources = true,
-        withHostTestBuilder = true,
         lintConfiguration = {
             baseline = file("lint-baseline.xml")
             disable += "AppBundleLocaleChanges"
