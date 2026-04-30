@@ -42,6 +42,12 @@
                 "/org.jetbrains.compose.material/",
                 "/org.jetbrains.compose.material3/"
             ]
+        },
+        {
+            "groupName": "Roborazzi",
+            "matchPackageNames": [
+                "/io.github.takahirom.roborazzi/"
+            ]
         }
     ],
     "dependencyDashboard": true,
