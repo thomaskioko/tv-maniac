@@ -16,6 +16,8 @@ androidx-browser = "1.10.0"
 androidx-collections = "1.6.0"
 androidx-compose-ui-test = "1.11.0"
 androidx-test-core = "1.7.0"
+androidx-test-orchestrator = "1.5.1"
+androidx-uiautomator = "2.3.0"
 androidx-core = "1.18.0"
 androidx-core-splashscreen = "1.2.0"
 androidx-datastore = "1.2.1"
@@ -29,7 +31,7 @@ androidx-security-crypto = "1.1.0"
 androidx-lifecycle = "2.10.0"
 androidx-work = "2.11.2"
 appauth = "0.11.1"
-app-gradle-plugins = "0.7.4"
+app-gradle-plugins = "0.7.5"
 atomicfu = "0.32.1"
 baselineprofile = "1.5.0-alpha05"
 benchmarkMacroJunit4 = "1.4.1"
@@ -109,6 +111,8 @@ androidx-security-crypto = { group = "androidx.security", name = "security-crypt
 androidx-work-runtime = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "androidx-work" }
 androidx-work-testing = { group = "androidx.work", name = "work-testing", version.ref = "androidx-work" }
 androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidx-test-core" }
+androidx-test-orchestrator = { group = "androidx.test", name = "orchestrator", version.ref = "androidx-test-orchestrator" }
+androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "androidx-uiautomator" }
 androidx-lifecycle-common = { module = "androidx.lifecycle:lifecycle-common", version.ref = "androidx-lifecycle" }
 androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junit" }
