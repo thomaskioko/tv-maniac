@@ -29,7 +29,6 @@ import androidx.compose.material.icons.outlined.Tv
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -47,6 +46,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.AvatarComponent
@@ -56,9 +56,9 @@ import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
 import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.extensions.copy
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_profile_pic
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_settings
 import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_edit_button
@@ -424,34 +424,28 @@ private fun HeaderContent(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun ProfileScreenLoadingPreview() {
-    TvManiacTheme {
-        Surface {
-            ProfileScreen(
-                state = ProfileState(
-                    isLoading = true,
-                    userProfile = null,
-                    errorMessage = null,
-                    authenticated = false,
-                ),
-                onAction = {},
-            )
-        }
-    }
+    ProfileScreen(
+        state = ProfileState(
+            isLoading = true,
+            userProfile = null,
+            errorMessage = null,
+            authenticated = false,
+        ),
+        onAction = {},
+    )
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun ProfileScreenPreview(
     @PreviewParameter(ProfilePreviewParameterProvider::class) state: ProfileState,
 ) {
-    TvManiacTheme {
-        Surface {
-            ProfileScreen(
-                state = state,
-                onAction = {},
-            )
-        }
-    }
+    ProfileScreen(
+        state = state,
+        onAction = {},
+    )
 }

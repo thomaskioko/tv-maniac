@@ -17,8 +17,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 
 @Composable
 public fun TextTitlePill(
@@ -56,14 +58,11 @@ public fun TextTitlePill(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun TextTitlePillPreview() {
-    TvManiacTheme {
-        Surface {
-            TextTitlePill(
-                showName = "The Walking Dead: Daryl Dixon",
-                onClick = {},
-            )
-        }
-    }
+    TextTitlePill(
+        showName = "The Walking Dead: Daryl Dixon",
+        onClick = {},
+    )
 }

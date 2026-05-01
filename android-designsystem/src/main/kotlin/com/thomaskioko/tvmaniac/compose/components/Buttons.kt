@@ -23,7 +23,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -38,6 +37,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.extensions.iconButtonBackgroundScrim
@@ -367,108 +367,93 @@ public fun RefreshButton(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun FilledTextButtonPreview() {
-    TvManiacTheme {
-        Surface {
-            FilledTextButton(
-                onClick = {},
-                enabled = false,
-                buttonColors = ButtonDefaults.buttonColors(
-                    contentColor = MaterialTheme.colorScheme.onBackground,
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(2.dp)
-                    .background(color = MaterialTheme.colorScheme.secondary),
-            ) {
-                Text(
-                    text = "Horror",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSecondary,
-                )
-            }
-        }
+    FilledTextButton(
+        onClick = {},
+        enabled = false,
+        buttonColors = ButtonDefaults.buttonColors(
+            contentColor = MaterialTheme.colorScheme.onBackground,
+            containerColor = MaterialTheme.colorScheme.secondary,
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(2.dp)
+            .background(color = MaterialTheme.colorScheme.secondary),
+    ) {
+        Text(
+            text = "Horror",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSecondary,
+        )
     }
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun FilledIconButtonPreview(@PreviewParameter(ButtonPreviewParamProvider::class) isEnable: Boolean) {
-    TvManiacTheme {
-        Surface {
-            FilledVerticalIconButton(
-                onClick = {},
-                enabled = isEnable,
-                text = "Track",
-                imageVector = Icons.Default.LibraryAddCheck,
-            )
-        }
-    }
+    FilledVerticalIconButton(
+        onClick = {},
+        enabled = isEnable,
+        text = "Track",
+        imageVector = Icons.Default.LibraryAddCheck,
+    )
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun FilledHorizontalIconButtonPreview(@PreviewParameter(ButtonPreviewParamProvider::class) isEnable: Boolean) {
-    TvManiacTheme {
-        Surface {
-            FilledHorizontalIconButton(
-                onClick = {},
-                enabled = isEnable,
-                text = "Add To Library",
-                imageVector = Icons.Default.LibraryAddCheck,
-            )
-        }
-    }
+    FilledHorizontalIconButton(
+        onClick = {},
+        enabled = isEnable,
+        text = "Add To Library",
+        imageVector = Icons.Default.LibraryAddCheck,
+    )
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun TvManiacAlphaTextButtonPreview() {
-    TvManiacTheme {
-        Surface {
-            FilledTextButton(
-                onClick = {},
-                enabled = false,
-                buttonColors = ButtonDefaults.buttonColors(
-                    contentColor = MaterialTheme.colorScheme.onSecondary,
-                    containerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f),
-                ),
-            ) {
-                Text(
-                    text = "Horror",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.secondary,
-                )
-            }
-        }
+    FilledTextButton(
+        onClick = {},
+        enabled = false,
+        buttonColors = ButtonDefaults.buttonColors(
+            contentColor = MaterialTheme.colorScheme.onSecondary,
+            containerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f),
+        ),
+    ) {
+        Text(
+            text = "Horror",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.secondary,
+        )
     }
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun TvManiacOutlinedButtonPreview() {
-    TvManiacTheme {
-        Surface {
-            OutlinedVerticalIconButton(
-                onClick = {},
-                enabled = true,
-                leadingIcon = {
-                    Image(
-                        imageVector = Icons.Filled.LibraryAddCheck,
-                        contentDescription = null,
-                        colorFilter = ColorFilter.tint(
-                            MaterialTheme.colorScheme.secondary.copy(
-                                alpha = 0.8F,
-                            ),
-                        ),
-                    )
-                },
-                text = "Following",
+    OutlinedVerticalIconButton(
+        onClick = {},
+        enabled = true,
+        leadingIcon = {
+            Image(
+                imageVector = Icons.Filled.LibraryAddCheck,
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(
+                    MaterialTheme.colorScheme.secondary.copy(
+                        alpha = 0.8F,
+                    ),
+                ),
             )
-        }
-    }
+        },
+        text = "Following",
+    )
 }
 
 private class ButtonPreviewParamProvider : PreviewParameterProvider<Boolean> {

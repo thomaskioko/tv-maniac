@@ -26,7 +26,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -41,12 +40,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.debug.presenter.BackClicked
 import com.thomaskioko.tvmaniac.debug.presenter.DebugPresenter
@@ -376,20 +376,17 @@ private fun DebugDisplayItem(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun DebugMenuScreenPreview() {
-    TvManiacTheme {
-        Surface {
-            DebugMenuScreen(
-                state = DebugState.DEFAULT_STATE,
-                onBackClicked = {},
-                onTriggerDebugNotification = {},
-                onTriggerDelayedDebugNotification = {},
-                onTriggerLibrarySync = {},
-                onTriggerUpNextSync = {},
-                onTriggerTestCrash = {},
-                onDismissSnackbar = {},
-            )
-        }
-    }
+    DebugMenuScreen(
+        state = DebugState.DEFAULT_STATE,
+        onBackClicked = {},
+        onTriggerDebugNotification = {},
+        onTriggerDelayedDebugNotification = {},
+        onTriggerLibrarySync = {},
+        onTriggerUpNextSync = {},
+        onTriggerTestCrash = {},
+        onDismissSnackbar = {},
+    )
 }

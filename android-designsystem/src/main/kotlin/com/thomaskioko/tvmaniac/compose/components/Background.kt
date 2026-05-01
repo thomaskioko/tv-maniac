@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.compose.components
 
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.LocalAbsoluteTonalElevation
@@ -10,10 +11,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.LocalBackgroundTheme
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 
 /**
  * The main background for the app. Uses [LocalBackgroundTheme] to set the color and tonal elevation
@@ -44,7 +45,8 @@ public fun TvManiacBackground(
 public annotation class ThemePreviews
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun BackgroundDefault() {
-    TvManiacTheme { TvManiacBackground(Modifier.size(100.dp), content = {}) }
+    Spacer(Modifier.size(100.dp))
 }

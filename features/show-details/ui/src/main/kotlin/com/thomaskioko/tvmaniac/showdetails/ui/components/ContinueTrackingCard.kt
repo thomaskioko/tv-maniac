@@ -18,7 +18,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,10 +25,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.green
 import com.thomaskioko.tvmaniac.compose.theme.grey
 import com.thomaskioko.tvmaniac.i18n.MR
@@ -140,101 +140,89 @@ internal fun ContinueTrackingCard(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun ContinueTrackingCardPreview() {
-    TvManiacTheme {
-        Surface {
-            ContinueTrackingCard(
-                episode = ContinueTrackingEpisodeModel(
-                    episodeId = 123L,
-                    seasonId = 1L,
-                    showTraktId = 1L,
-                    episodeNumber = 3,
-                    seasonNumber = 2,
-                    episodeNumberFormatted = "S02 | E03",
-                    episodeTitle = "Re:start",
-                    imageUrl = "/still.jpg",
-                    isWatched = false,
-                    daysUntilAir = null,
-                    hasAired = true,
-                ),
-                onMarkWatched = {},
-            )
-        }
-    }
+    ContinueTrackingCard(
+        episode = ContinueTrackingEpisodeModel(
+            episodeId = 123L,
+            seasonId = 1L,
+            showTraktId = 1L,
+            episodeNumber = 3,
+            seasonNumber = 2,
+            episodeNumberFormatted = "S02 | E03",
+            episodeTitle = "Re:start",
+            imageUrl = "/still.jpg",
+            isWatched = false,
+            daysUntilAir = null,
+            hasAired = true,
+        ),
+        onMarkWatched = {},
+    )
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun ContinueTrackingCardWatchedPreview() {
-    TvManiacTheme {
-        Surface {
-            ContinueTrackingCard(
-                episode = ContinueTrackingEpisodeModel(
-                    episodeId = 123L,
-                    seasonId = 1L,
-                    showTraktId = 1L,
-                    episodeNumber = 2,
-                    seasonNumber = 2,
-                    episodeNumberFormatted = "S02 | E02",
-                    episodeTitle = "Previous Episode",
-                    imageUrl = "/still.jpg",
-                    isWatched = true,
-                    daysUntilAir = null,
-                    hasAired = true,
-                ),
-                onMarkWatched = {},
-            )
-        }
-    }
+    ContinueTrackingCard(
+        episode = ContinueTrackingEpisodeModel(
+            episodeId = 123L,
+            seasonId = 1L,
+            showTraktId = 1L,
+            episodeNumber = 2,
+            seasonNumber = 2,
+            episodeNumberFormatted = "S02 | E02",
+            episodeTitle = "Previous Episode",
+            imageUrl = "/still.jpg",
+            isWatched = true,
+            daysUntilAir = null,
+            hasAired = true,
+        ),
+        onMarkWatched = {},
+    )
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun ContinueTrackingCardFuturePreview() {
-    TvManiacTheme {
-        Surface {
-            ContinueTrackingCard(
-                episode = ContinueTrackingEpisodeModel(
-                    episodeId = 123L,
-                    seasonId = 1L,
-                    showTraktId = 1L,
-                    episodeNumber = 5,
-                    seasonNumber = 2,
-                    episodeNumberFormatted = "S02 | E05",
-                    episodeTitle = "Upcoming Episode",
-                    imageUrl = "/still.jpg",
-                    isWatched = false,
-                    daysUntilAir = 7,
-                    hasAired = false,
-                ),
-                onMarkWatched = {},
-            )
-        }
-    }
+    ContinueTrackingCard(
+        episode = ContinueTrackingEpisodeModel(
+            episodeId = 123L,
+            seasonId = 1L,
+            showTraktId = 1L,
+            episodeNumber = 5,
+            seasonNumber = 2,
+            episodeNumberFormatted = "S02 | E05",
+            episodeTitle = "Upcoming Episode",
+            imageUrl = "/still.jpg",
+            isWatched = false,
+            daysUntilAir = 7,
+            hasAired = false,
+        ),
+        onMarkWatched = {},
+    )
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun ContinueTrackingCardUnknownAirDatePreview() {
-    TvManiacTheme {
-        Surface {
-            ContinueTrackingCard(
-                episode = ContinueTrackingEpisodeModel(
-                    episodeId = 123L,
-                    seasonId = 1L,
-                    showTraktId = 1L,
-                    episodeNumber = 6,
-                    seasonNumber = 2,
-                    episodeNumberFormatted = "S02 | E06",
-                    episodeTitle = "Unknown Air Date",
-                    imageUrl = "/still.jpg",
-                    isWatched = false,
-                    daysUntilAir = null,
-                    hasAired = false,
-                ),
-                onMarkWatched = {},
-            )
-        }
-    }
+    ContinueTrackingCard(
+        episode = ContinueTrackingEpisodeModel(
+            episodeId = 123L,
+            seasonId = 1L,
+            showTraktId = 1L,
+            episodeNumber = 6,
+            seasonNumber = 2,
+            episodeNumberFormatted = "S02 | E06",
+            episodeTitle = "Unknown Air Date",
+            imageUrl = "/still.jpg",
+            isWatched = false,
+            daysUntilAir = null,
+            hasAired = false,
+        ),
+        onMarkWatched = {},
+    )
 }

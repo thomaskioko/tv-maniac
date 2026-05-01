@@ -21,7 +21,6 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,9 +31,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_filter_show_less
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_filter_show_more
 import com.thomaskioko.tvmaniac.i18n.resolve
@@ -179,88 +179,76 @@ internal fun ShowMoreToggle(
     }
 }
 
-@Preview
+@ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun FilterChipSectionPreview() {
-    TvManiacTheme {
-        Surface {
-            FilterChipSection(
-                title = "GENRES",
-                items = listOf(
-                    "Action & Adventure",
-                    "Animation",
-                    "Comedy",
-                    "Crime",
-                    "Drama",
-                    "Fantasy",
-                    "Sci-Fi",
-                ),
-                selectedItems = setOf("Drama", "Comedy"),
-                onItemToggle = {},
-                labelProvider = { it },
-                modifier = Modifier.padding(16.dp),
-            )
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun FilterChipSectionCollapsedPreview() {
-    TvManiacTheme {
-        Surface {
-            FilterChipSection(
-                title = "STATUS",
-                items = listOf(
-                    "Returning Series",
-                    "Planned",
-                    "In Production",
-                    "Ended",
-                    "Canceled",
-                ),
-                selectedItems = setOf("Returning Series"),
-                onItemToggle = {},
-                labelProvider = { it },
-                collapsedItemCount = 3,
-                modifier = Modifier.padding(16.dp),
-            )
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun SectionHeaderPreview() {
-    TvManiacTheme {
-        Surface {
-            SectionHeader(
-                title = "SORT BY",
-                modifier = Modifier.padding(16.dp),
-            )
-        }
-    }
+    FilterChipSection(
+        title = "GENRES",
+        items = listOf(
+            "Action & Adventure",
+            "Animation",
+            "Comedy",
+            "Crime",
+            "Drama",
+            "Fantasy",
+            "Sci-Fi",
+        ),
+        selectedItems = setOf("Drama", "Comedy"),
+        onItemToggle = {},
+        labelProvider = { it },
+        modifier = Modifier.padding(16.dp),
+    )
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
+@Composable
+private fun FilterChipSectionCollapsedPreview() {
+    FilterChipSection(
+        title = "STATUS",
+        items = listOf(
+            "Returning Series",
+            "Planned",
+            "In Production",
+            "Ended",
+            "Canceled",
+        ),
+        selectedItems = setOf("Returning Series"),
+        onItemToggle = {},
+        labelProvider = { it },
+        collapsedItemCount = 3,
+        modifier = Modifier.padding(16.dp),
+    )
+}
+
+@ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
+@Composable
+private fun SectionHeaderPreview() {
+    SectionHeader(
+        title = "SORT BY",
+        modifier = Modifier.padding(16.dp),
+    )
+}
+
+@ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun SelectableFilterChipPreview() {
-    TvManiacTheme {
-        Surface {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.padding(16.dp),
-            ) {
-                SelectableFilterChip(
-                    label = "Last watched ↓",
-                    isSelected = true,
-                    onClick = {},
-                )
-                SelectableFilterChip(
-                    label = "Alphabetical",
-                    isSelected = false,
-                    onClick = {},
-                )
-            }
-        }
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.padding(16.dp),
+    ) {
+        SelectableFilterChip(
+            label = "Last watched ↓",
+            isSelected = true,
+            onClick = {},
+        )
+        SelectableFilterChip(
+            label = "Alphabetical",
+            isSelected = false,
+            onClick = {},
+        )
     }
 }

@@ -31,7 +31,6 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -57,7 +56,6 @@ import com.thomaskioko.tvmaniac.compose.components.SearchTextContainer
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_back
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_empty_content
@@ -376,16 +374,13 @@ private fun GenreRowsContent(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun SearchContentPreview(
     @PreviewParameter(SearchPreviewParameterProvider::class) state: SearchShowState,
 ) {
-    TvManiacTheme {
-        Surface {
-            SearchScreen(
-                state = state,
-                onAction = {},
-            )
-        }
-    }
+    SearchScreen(
+        state = state,
+        onAction = {},
+    )
 }

@@ -32,7 +32,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -44,16 +43,16 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_next_week
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_previous_week
 import com.thomaskioko.tvmaniac.i18n.resolve
@@ -441,102 +440,93 @@ private fun CalendarEpisodeCard(
     }
 }
 
-@Preview
+@ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun CalendarScreenPreview() {
-    TvManiacTheme {
-        Surface {
-            CalendarScreen(
-                state = CalendarState(
-                    isLoading = false,
-                    isLoggedIn = true,
-                    weekLabel = "Jan 31, 2026 - Feb 6, 2026",
-                    canNavigatePrevious = false,
-                    moreEpisodesFormat = "+%d episodes",
-                    dateGroups = persistentListOf(
-                        CalendarDateGroup(
-                            dateLabel = "Today, Jan 31, 2026",
-                            episodes = persistentListOf(
-                                CalendarEpisodeItem(
-                                    showTraktId = 1,
-                                    episodeTraktId = 100,
-                                    showTitle = "Severance",
-                                    posterUrl = null,
-                                    episodeInfo = "S02E01 · Hello, Ms. Cobel",
-                                    airTime = "03:00",
-                                    network = "Apple TV+",
-                                    additionalEpisodesCount = 0,
-                                    overview = "Mark leads the team on a new mission.",
-                                    rating = 8.5,
-                                    votes = 120,
-                                    runtime = 50,
-                                    formattedAirDate = "Friday, January 31, 2026 at 03:00",
-                                ),
-                            ),
-                        ),
-                        CalendarDateGroup(
-                            dateLabel = "Tomorrow, Feb 1, 2026",
-                            episodes = persistentListOf(
-                                CalendarEpisodeItem(
-                                    showTraktId = 2,
-                                    episodeTraktId = 200,
-                                    showTitle = "Hell's Paradise",
-                                    posterUrl = null,
-                                    episodeInfo = "S02E04 · The Battle Begins",
-                                    airTime = "15:45",
-                                    network = null,
-                                    additionalEpisodesCount = 1,
-                                    overview = null,
-                                    rating = null,
-                                    votes = null,
-                                    runtime = 24,
-                                    formattedAirDate = "Saturday, February 1, 2026 at 15:45",
-                                ),
-                            ),
+    CalendarScreen(
+        state = CalendarState(
+            isLoading = false,
+            isLoggedIn = true,
+            weekLabel = "Jan 31, 2026 - Feb 6, 2026",
+            canNavigatePrevious = false,
+            moreEpisodesFormat = "+%d episodes",
+            dateGroups = persistentListOf(
+                CalendarDateGroup(
+                    dateLabel = "Today, Jan 31, 2026",
+                    episodes = persistentListOf(
+                        CalendarEpisodeItem(
+                            showTraktId = 1,
+                            episodeTraktId = 100,
+                            showTitle = "Severance",
+                            posterUrl = null,
+                            episodeInfo = "S02E01 · Hello, Ms. Cobel",
+                            airTime = "03:00",
+                            network = "Apple TV+",
+                            additionalEpisodesCount = 0,
+                            overview = "Mark leads the team on a new mission.",
+                            rating = 8.5,
+                            votes = 120,
+                            runtime = 50,
+                            formattedAirDate = "Friday, January 31, 2026 at 03:00",
                         ),
                     ),
                 ),
-                onAction = {},
-            )
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun CalendarScreenEmptyPreview() {
-    TvManiacTheme {
-        Surface {
-            CalendarScreen(
-                state = CalendarState(
-                    isLoading = false,
-                    isLoggedIn = true,
-                    weekLabel = "Jan 31, 2026 - Feb 6, 2026",
-                    emptyTitle = "Nothing to see here",
-                    emptyMessage = "No upcoming episodes",
+                CalendarDateGroup(
+                    dateLabel = "Tomorrow, Feb 1, 2026",
+                    episodes = persistentListOf(
+                        CalendarEpisodeItem(
+                            showTraktId = 2,
+                            episodeTraktId = 200,
+                            showTitle = "Hell's Paradise",
+                            posterUrl = null,
+                            episodeInfo = "S02E04 · The Battle Begins",
+                            airTime = "15:45",
+                            network = null,
+                            additionalEpisodesCount = 1,
+                            overview = null,
+                            rating = null,
+                            votes = null,
+                            runtime = 24,
+                            formattedAirDate = "Saturday, February 1, 2026 at 15:45",
+                        ),
+                    ),
                 ),
-                onAction = {},
-            )
-        }
-    }
+            ),
+        ),
+        onAction = {},
+    )
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
+@Composable
+private fun CalendarScreenEmptyPreview() {
+    CalendarScreen(
+        state = CalendarState(
+            isLoading = false,
+            isLoggedIn = true,
+            weekLabel = "Jan 31, 2026 - Feb 6, 2026",
+            emptyTitle = "Nothing to see here",
+            emptyMessage = "No upcoming episodes",
+        ),
+        onAction = {},
+    )
+}
+
+@ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun CalendarScreenNotLoggedInPreview() {
-    TvManiacTheme {
-        Surface {
-            CalendarScreen(
-                state = CalendarState(
-                    isLoading = false,
-                    isLoggedIn = false,
-                    weekLabel = "Jan 31, 2026 - Feb 6, 2026",
-                    canNavigateNext = false,
-                    loginTitle = "Nothing to see here",
-                    loginMessage = "Login to Trakt to see your calendar",
-                ),
-                onAction = {},
-            )
-        }
-    }
+    CalendarScreen(
+        state = CalendarState(
+            isLoading = false,
+            isLoggedIn = false,
+            weekLabel = "Jan 31, 2026 - Feb 6, 2026",
+            canNavigateNext = false,
+            loginTitle = "Nothing to see here",
+            loginMessage = "Login to Trakt to see your calendar",
+        ),
+        onAction = {},
+    )
 }

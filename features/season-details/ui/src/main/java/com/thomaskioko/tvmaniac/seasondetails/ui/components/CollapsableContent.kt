@@ -23,7 +23,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,12 +35,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.thomaskioko.tvmaniac.compose.components.ShowLinearProgressIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.green
 import com.thomaskioko.tvmaniac.compose.theme.grey
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_episodes
@@ -232,37 +232,31 @@ private fun SeasonTitleHeader(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun SeasonTitleHeaderPreview() {
-    TvManiacTheme {
-        Surface {
-            SeasonTitleHeader(
-                episodesCount = 8,
-                watchProgress = 0.5f,
-                expanded = true,
-                isSeasonWatched = true,
-                onAction = {},
-            )
-        }
-    }
+    SeasonTitleHeader(
+        episodesCount = 8,
+        watchProgress = 0.5f,
+        expanded = true,
+        isSeasonWatched = true,
+        onAction = {},
+    )
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun CollapsableContentPreview() {
-    TvManiacTheme {
-        Surface {
-            CollapsableContent(
-                episodesCount = seasonDetailsLoaded.episodeCount,
-                watchProgress = seasonDetailsLoaded.watchProgress,
-                episodeDetailsModelList = seasonDetailsLoaded.episodeDetailsList,
-                collapsed = false,
-                isSeasonWatched = false,
-                onAction = {},
-                onEpisodeLongPress = {},
-            )
-        }
-    }
+    CollapsableContent(
+        episodesCount = seasonDetailsLoaded.episodeCount,
+        watchProgress = seasonDetailsLoaded.watchProgress,
+        episodeDetailsModelList = seasonDetailsLoaded.episodeDetailsList,
+        collapsed = false,
+        isSeasonWatched = false,
+        onAction = {},
+        onEpisodeLongPress = {},
+    )
 }
 
 internal const val EXPANSION_TRANSITION_DURATION = 450

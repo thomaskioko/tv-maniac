@@ -17,7 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -35,6 +34,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
@@ -45,7 +45,8 @@ import coil.compose.AsyncImagePainter
 import coil.load
 import coil.request.ImageRequest
 import com.flaviofaria.kenburnsview.KenBurnsView
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import kotlin.math.absoluteValue
 
 @Composable
@@ -201,49 +202,40 @@ private fun calculatePageOffset(state: PagerState, currentPage: Int): Float {
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun ParallaxCarouselImagePreview() {
     val pagerState = rememberPagerState(pageCount = { 3 })
-    TvManiacTheme {
-        Surface {
-            ParallaxCarouselImage(
-                state = pagerState,
-                currentPage = 0,
-                imageUrl = null,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(360.dp),
-            )
-        }
-    }
+    ParallaxCarouselImage(
+        state = pagerState,
+        currentPage = 0,
+        imageUrl = null,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(360.dp),
+    )
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun KenBurnsViewImagePreview() {
-    TvManiacTheme {
-        Surface {
-            KenBurnsViewImage(
-                imageUrl = null,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(240.dp),
-            )
-        }
-    }
+    KenBurnsViewImage(
+        imageUrl = null,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(240.dp),
+    )
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun AvatarComponentPreview() {
-    TvManiacTheme {
-        Surface {
-            AvatarComponent(
-                imageUrl = "https://image.png",
-                size = 64.dp,
-                modifier = Modifier.padding(16.dp),
-                border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
-            )
-        }
-    }
+    AvatarComponent(
+        imageUrl = "https://image.png",
+        size = 64.dp,
+        modifier = Modifier.padding(16.dp),
+        border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
+    )
 }

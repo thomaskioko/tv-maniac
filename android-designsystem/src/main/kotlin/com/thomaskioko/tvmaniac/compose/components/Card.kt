@@ -18,7 +18,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -33,9 +32,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_show_poster
 
 @Composable
@@ -323,80 +322,67 @@ private fun contentBackgroundGradient(): Brush {
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun CastCardPreview() {
-    TvManiacTheme {
-        Surface {
-            CastCard(
-                profileUrl = null,
-                name = "Tom Hiddleston",
-                characterName = "Loki",
-            )
-        }
-    }
+    CastCard(
+        profileUrl = null,
+        name = "Tom Hiddleston",
+        characterName = "Loki",
+    )
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun PosterCardPreview() {
-    TvManiacTheme {
-        Surface {
-            PosterCard(
-                imageUrl = "",
-                title = "Loki",
-                onClick = {},
-                modifier = Modifier
-                    .width(100.dp)
-                    .aspectRatio(0.8f),
-            )
-        }
-    }
+    PosterCard(
+        imageUrl = "",
+        title = "Loki",
+        onClick = {},
+        modifier = Modifier
+            .width(100.dp)
+            .aspectRatio(0.8f),
+    )
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun PosterCardWithLibraryOverlayPreview() {
-    TvManiacTheme {
-        Surface {
-            PosterCard(
-                imageUrl = "",
-                title = "Loki",
-                isInLibrary = true,
-                onClick = {},
-                modifier = Modifier
-                    .width(100.dp)
-                    .aspectRatio(0.8f),
-            )
-        }
-    }
+    PosterCard(
+        imageUrl = "",
+        title = "Loki",
+        isInLibrary = true,
+        onClick = {},
+        modifier = Modifier
+            .width(100.dp)
+            .aspectRatio(0.8f),
+    )
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun PosterBackdropPreview() {
-    TvManiacTheme {
-        Surface {
-            PosterBackdropCard(
-                imageUrl = "",
-                title = "Game of Thrones",
-                onClick = {},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(240.dp),
-            )
-        }
-    }
+    PosterBackdropCard(
+        imageUrl = "",
+        title = "Game of Thrones",
+        onClick = {},
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(240.dp),
+    )
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun AvatarComponentPreview() {
-    TvManiacTheme {
-        AvatarComponent(
-            imageUrl = "",
-            size = 38.dp,
-            contentDescription = "Profile",
-            onClick = {},
-        )
-    }
+    AvatarComponent(
+        imageUrl = "",
+        size = 38.dp,
+        contentDescription = "Profile",
+        onClick = {},
+    )
 }

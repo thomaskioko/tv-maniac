@@ -6,12 +6,11 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 
 @Composable
 public fun TvManiacChip(
@@ -49,15 +48,12 @@ public fun TvManiacChip(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun ChipItemSelectedPreview() {
-    TvManiacTheme {
-        Surface {
-            TvManiacChip(
-                selected = true,
-                text = "Season 1",
-                onClick = {},
-            )
-        }
-    }
+    TvManiacChip(
+        selected = true,
+        text = "Season 1",
+        onClick = {},
+    )
 }

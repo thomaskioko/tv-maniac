@@ -34,11 +34,12 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
 import com.thomaskioko.tvmaniac.compose.components.ParallaxCarouselImage
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.util.LocalAutoAdvanceEnabled
 import com.thomaskioko.tvmaniac.discover.presenter.model.DiscoverShow
 import com.thomaskioko.tvmaniac.discover.ui.discoverContentSuccess
@@ -198,14 +199,13 @@ private fun ShowCardOverlay(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 internal fun DiscoverHeaderContentPreview() {
     val pagerState = rememberPagerState(pageCount = { 5 })
-    TvManiacTheme {
-        DiscoverHeaderContent(
-            showList = discoverContentSuccess.featuredShows,
-            pagerState = pagerState,
-            onShowClicked = {},
-        )
-    }
+    DiscoverHeaderContent(
+        showList = discoverContentSuccess.featuredShows,
+        pagerState = pagerState,
+        onShowClicked = {},
+    )
 }

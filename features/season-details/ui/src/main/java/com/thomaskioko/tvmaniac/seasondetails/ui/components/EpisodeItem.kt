@@ -17,7 +17,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,10 +26,11 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.green
 import com.thomaskioko.tvmaniac.compose.theme.grey
 import com.thomaskioko.tvmaniac.i18n.MR
@@ -160,78 +160,66 @@ internal fun EpisodeItem(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun WatchlistRowItemPreview() {
-    TvManiacTheme {
-        Surface {
-            EpisodeItem(
-                title = episodeDetailsModel.episodeNumberTitle,
-                episodeOverview = episodeDetailsModel.overview,
-                imageUrl = episodeDetailsModel.imageUrl,
-                isWatched = false,
-                isProcessing = false,
-                hasAired = true,
-                onWatchedToggle = {},
-                onEpisodeClicked = {},
-            )
-        }
-    }
+    EpisodeItem(
+        title = episodeDetailsModel.episodeNumberTitle,
+        episodeOverview = episodeDetailsModel.overview,
+        imageUrl = episodeDetailsModel.imageUrl,
+        isWatched = false,
+        isProcessing = false,
+        hasAired = true,
+        onWatchedToggle = {},
+        onEpisodeClicked = {},
+    )
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun WatchlistRowItemWatchedPreview() {
-    TvManiacTheme {
-        Surface {
-            EpisodeItem(
-                title = episodeDetailsModel.episodeNumberTitle,
-                episodeOverview = episodeDetailsModel.overview,
-                imageUrl = episodeDetailsModel.imageUrl,
-                isWatched = true,
-                isProcessing = false,
-                hasAired = true,
-                onWatchedToggle = {},
-                onEpisodeClicked = {},
-            )
-        }
-    }
+    EpisodeItem(
+        title = episodeDetailsModel.episodeNumberTitle,
+        episodeOverview = episodeDetailsModel.overview,
+        imageUrl = episodeDetailsModel.imageUrl,
+        isWatched = true,
+        isProcessing = false,
+        hasAired = true,
+        onWatchedToggle = {},
+        onEpisodeClicked = {},
+    )
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun EpisodeItemFuturePreview() {
-    TvManiacTheme {
-        Surface {
-            EpisodeItem(
-                title = episodeDetailsModel.episodeNumberTitle,
-                episodeOverview = episodeDetailsModel.overview,
-                imageUrl = episodeDetailsModel.imageUrl,
-                isWatched = false,
-                isProcessing = false,
-                hasAired = false,
-                daysUntilAir = 7,
-                onWatchedToggle = {},
-                onEpisodeClicked = {},
-            )
-        }
-    }
+    EpisodeItem(
+        title = episodeDetailsModel.episodeNumberTitle,
+        episodeOverview = episodeDetailsModel.overview,
+        imageUrl = episodeDetailsModel.imageUrl,
+        isWatched = false,
+        isProcessing = false,
+        hasAired = false,
+        daysUntilAir = 7,
+        onWatchedToggle = {},
+        onEpisodeClicked = {},
+    )
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun EpisodeItemUnknownAirDatePreview() {
-    TvManiacTheme {
-        Surface {
-            EpisodeItem(
-                title = episodeDetailsModel.episodeNumberTitle,
-                episodeOverview = episodeDetailsModel.overview,
-                imageUrl = episodeDetailsModel.imageUrl,
-                isWatched = false,
-                isProcessing = false,
-                hasAired = false,
-                onWatchedToggle = {},
-                onEpisodeClicked = {},
-            )
-        }
-    }
+    EpisodeItem(
+        title = episodeDetailsModel.episodeNumberTitle,
+        episodeOverview = episodeDetailsModel.overview,
+        imageUrl = episodeDetailsModel.imageUrl,
+        isWatched = false,
+        isProcessing = false,
+        hasAired = false,
+        onWatchedToggle = {},
+        onEpisodeClicked = {},
+    )
 }
