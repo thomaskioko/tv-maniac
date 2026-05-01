@@ -1,0 +1,80 @@
+name: Nightly Integration Tests
+
+on:
+  schedule:
+    - cron: '30 1 * * *'
+  workflow_dispatch:
+  workflow_call:
+
+concurrency:
+  group: nightly-integration-tests-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+  TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
+  TRAKT_CLIENT_SECRET: ${{ secrets.TRAKT_CLIENT_SECRET }}
+  TRAKT_REDIRECT_URI: ${{ secrets.TRAKT_REDIRECT_URI }}
+
+jobs:
+  integration-tests:
+    name: "Pixel 6 API 34 Integration Tests"
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - name: 🚚 Checkout
+        uses: actions/checkout@v6
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: 🐘 Setup Gradle Environment
+        uses: ./.github/actions/setup-gradle
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v4
+
+      - name: Accept licenses
+        run: yes | sdkmanager --licenses || true
+
+      - name: 📦 Cache AVD
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+            ~/.android/debug.keystore
+          key: avd-pixel6Api34-${{ hashFiles('gradle/libs.versions.toml') }}
+          restore-keys: |
+            avd-pixel6Api34-
+
+      - name: 🔥 Install google-services.json
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          if [ -n "$GOOGLE_SERVICES_JSON" ]; then
+            echo "$GOOGLE_SERVICES_JSON" | base64 --decode > app/google-services.json
+          else
+            echo "warning: GOOGLE_SERVICES_JSON secret not set — Firebase will be disabled"
+          fi
+
+      - name: 🤖 Run Integration Tests on Emulator
+        run: |
+          ./gradlew :app:pixel6Api34DebugAndroidTest \
+            -Pandroid.testoptions.manageddevices.emulator.gpu="swiftshader_indirect" \
+            --no-configuration-cache
+
+      - name: 📊 Upload Test Reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: integration-test-reports
+          path: |
+            app/build/reports/androidTests/
+            app/build/outputs/androidTest-results/
+            app/build/outputs/managed_device_android_test_additional_output/
+          if-no-files-found: ignore
