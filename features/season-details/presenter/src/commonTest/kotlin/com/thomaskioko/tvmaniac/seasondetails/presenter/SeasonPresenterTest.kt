@@ -1186,6 +1186,8 @@ class SeasonPresenterTest {
                 seasonNumber = 1,
             ),
             navigator = object : Navigator {
+                override val activeRoot: com.arkivanov.decompose.value.Value<com.thomaskioko.tvmaniac.navigation.NavRoot> =
+                    com.arkivanov.decompose.value.MutableValue(com.thomaskioko.tvmaniac.navigation.testing.UnspecifiedNavRoot)
                 override fun bringToFront(route: NavRoute) {}
                 override fun navigateTo(route: NavRoute) {}
                 override fun pushToFront(route: NavRoute) {}
@@ -1197,22 +1199,16 @@ class SeasonPresenterTest {
                 override fun switchBackStack(root: com.thomaskioko.tvmaniac.navigation.NavRoot) {}
                 override fun showRoot(root: com.thomaskioko.tvmaniac.navigation.NavRoot) {}
                 override fun replaceAllBackStacks(root: com.thomaskioko.tvmaniac.navigation.NavRoot) {}
-                override fun <T : Any> buildRootStack(
+                override fun <T : Any> buildHostNavigation(
                     componentContext: com.arkivanov.decompose.ComponentContext,
                     initialRoot: com.thomaskioko.tvmaniac.navigation.NavRoot,
-                    childFactory: (com.thomaskioko.tvmaniac.navigation.NavRoot, com.arkivanov.decompose.ComponentContext) -> T,
-                ): com.arkivanov.decompose.value.Value<com.arkivanov.decompose.router.stack.ChildStack<*, T>> =
+                    childFactory: (com.thomaskioko.tvmaniac.navigation.BaseRoute, com.arkivanov.decompose.ComponentContext) -> T,
+                ): com.arkivanov.decompose.value.Value<com.thomaskioko.tvmaniac.navigation.MultiStackHostState<T>> =
                     error("Not used in this test")
                 override fun <T : Any> buildOverlaySlot(
                     componentContext: com.arkivanov.decompose.ComponentContext,
                     childFactory: (NavRoute, com.arkivanov.decompose.ComponentContext) -> T,
                 ): com.arkivanov.decompose.value.Value<com.arkivanov.decompose.router.slot.ChildSlot<*, T>> =
-                    error("Not used in this test")
-                override fun <T : Any> buildTabStack(
-                    componentContext: com.arkivanov.decompose.ComponentContext,
-                    root: com.thomaskioko.tvmaniac.navigation.NavRoot,
-                    childFactory: (com.thomaskioko.tvmaniac.navigation.BaseRoute, com.arkivanov.decompose.ComponentContext) -> T,
-                ): com.arkivanov.decompose.value.Value<com.arkivanov.decompose.router.stack.ChildStack<*, T>> =
                     error("Not used in this test")
             },
             sheetNavigator = FakeSheetNavigator(),

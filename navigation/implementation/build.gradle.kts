@@ -31,6 +31,7 @@ kotlin {
             implementation(projects.features.showDetails.nav)
 
             implementation(libs.bundles.unittest)
+            implementation(libs.kotlinx.serialization.json)
         }
     }
 }

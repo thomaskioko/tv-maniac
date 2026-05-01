@@ -3,8 +3,8 @@ package com.thomaskioko.tvmaniac.presenter.home
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.decompose.value.operator.map
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
-import com.thomaskioko.tvmaniac.core.base.extensions.asFlow
 import com.thomaskioko.tvmaniac.core.base.extensions.asStateFlow
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
@@ -15,6 +15,7 @@ import com.thomaskioko.tvmaniac.home.nav.HomeRoute
 import com.thomaskioko.tvmaniac.home.nav.TabDestination
 import com.thomaskioko.tvmaniac.library.nav.LibraryRoot
 import com.thomaskioko.tvmaniac.navigation.BaseRoute
+import com.thomaskioko.tvmaniac.navigation.MultiStackHostState
 import com.thomaskioko.tvmaniac.navigation.NavDestination
 import com.thomaskioko.tvmaniac.navigation.NavRoot
 import com.thomaskioko.tvmaniac.navigation.NavRoute
@@ -45,34 +46,28 @@ public class HomePresenter(
 
     private val coroutineScope = coroutineScope()
 
-    private val rootStackValue: Value<ChildStack<*, NavRoot>> = navigator.buildRootStack(
+    private val hostStateValue: Value<MultiStackHostState<RootChild>> = navigator.buildHostNavigation(
         componentContext = this,
         initialRoot = DiscoverRoot,
-        childFactory = { root, _ -> root },
+        childFactory = ::child,
     )
 
-    public val activeRoot: StateFlow<NavRoot> = rootStackValue
-        .asFlow()
-        .map { it.active.instance }
-        .stateIn(
-            scope = coroutineScope,
-            started = SharingStarted.Eagerly,
-            initialValue = rootStackValue.value.active.instance,
-        )
+    public val activeRootValue: Value<NavRoot> = navigator.activeRoot
 
-    public val activeRootValue: Value<NavRoot> = activeRoot.asValue(coroutineScope)
+    public val activeRoot: StateFlow<NavRoot> = activeRootValue
+        .asStateFlow(componentContext.componentCoroutineScope())
 
     public val discoverChildStackValue: Value<ChildStack<*, RootChild>> =
-        navigator.buildTabStack(componentContext = this, root = DiscoverRoot, childFactory = ::child)
+        hostStateValue.map { it.tabStacks.getValue(DiscoverRoot) }
 
     public val libraryChildStackValue: Value<ChildStack<*, RootChild>> =
-        navigator.buildTabStack(componentContext = this, root = LibraryRoot, childFactory = ::child)
+        hostStateValue.map { it.tabStacks.getValue(LibraryRoot) }
 
     public val profileChildStackValue: Value<ChildStack<*, RootChild>> =
-        navigator.buildTabStack(componentContext = this, root = ProfileRoot, childFactory = ::child)
+        hostStateValue.map { it.tabStacks.getValue(ProfileRoot) }
 
     public val progressChildStackValue: Value<ChildStack<*, RootChild>> =
-        navigator.buildTabStack(componentContext = this, root = ProgressRoot, childFactory = ::child)
+        hostStateValue.map { it.tabStacks.getValue(ProgressRoot) }
 
     public val discoverChildStack: StateFlow<ChildStack<*, RootChild>> =
         discoverChildStackValue.asStateFlow(componentContext.componentCoroutineScope())

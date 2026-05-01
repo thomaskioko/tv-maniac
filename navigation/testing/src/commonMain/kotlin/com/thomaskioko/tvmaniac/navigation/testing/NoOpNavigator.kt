@@ -1,14 +1,15 @@
 package com.thomaskioko.tvmaniac.navigation.testing
 
+import com.arkivanov.decompose.Child
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.slot.ChildSlot
 import com.arkivanov.decompose.router.slot.SlotNavigation
 import com.arkivanov.decompose.router.slot.childSlot
 import com.arkivanov.decompose.router.stack.ChildStack
-import com.arkivanov.decompose.router.stack.StackNavigation
-import com.arkivanov.decompose.router.stack.childStack
+import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.navigation.BaseRoute
+import com.thomaskioko.tvmaniac.navigation.MultiStackHostState
 import com.thomaskioko.tvmaniac.navigation.NavRoot
 import com.thomaskioko.tvmaniac.navigation.NavRoute
 import com.thomaskioko.tvmaniac.navigation.Navigator
@@ -19,15 +20,18 @@ import kotlin.reflect.KClass
  * assert on navigation events (only on state, side effects, etc.). Tests that want to verify
  * navigation calls should use [TestNavigator] instead.
  *
- * Each builder returns a real `Value<ChildStack>` or `Value<ChildSlot>` backed by an internal
- * Decompose source so tests that wire a real Decompose child against this navigator still get a
- * valid stack. No mutation calls are recorded; stacks stay at their initial entries.
+ * [activeRoot] returns [UnspecifiedNavRoot] unless an explicit [initialActiveRoot] is supplied.
+ * [buildHostNavigation] returns a constant [Value] containing only the initial root entry; no
+ * mutation calls are recorded.
  */
-public class NoOpNavigator : Navigator {
+public class NoOpNavigator(
+    private val initialActiveRoot: NavRoot = UnspecifiedNavRoot,
+) : Navigator {
 
-    private val rootNavigation = StackNavigation<NavRoot>()
-    private val tabStacks = mutableMapOf<NavRoot, StackNavigation<BaseRoute>>()
+    private val activeRootValue: Value<NavRoot> = MutableValue(initialActiveRoot)
     private val overlayNavigation = SlotNavigation<NavRoute>()
+
+    override val activeRoot: Value<NavRoot> get() = activeRootValue
 
     override fun navigateTo(route: NavRoute): Unit = Unit
 
@@ -47,18 +51,22 @@ public class NoOpNavigator : Navigator {
 
     override fun replaceAllBackStacks(root: NavRoot): Unit = Unit
 
-    override fun <T : Any> buildRootStack(
+    override fun <T : Any> buildHostNavigation(
         componentContext: ComponentContext,
         initialRoot: NavRoot,
-        childFactory: (NavRoot, ComponentContext) -> T,
-    ): Value<ChildStack<*, T>> = componentContext.childStack(
-        source = rootNavigation,
-        serializer = null,
-        initialConfiguration = initialRoot,
-        key = "NoOpRootTabStackKey",
-        handleBackButton = false,
-        childFactory = childFactory,
-    )
+        childFactory: (BaseRoute, ComponentContext) -> T,
+    ): Value<MultiStackHostState<T>> {
+        val rootInstance = childFactory(initialRoot as BaseRoute, componentContext)
+        val initialChildStack = ChildStack(
+            active = Child.Created(configuration = initialRoot, instance = rootInstance),
+        )
+        return MutableValue(
+            MultiStackHostState(
+                activeRoot = initialRoot,
+                tabStacks = mapOf(initialRoot to initialChildStack),
+            ),
+        )
+    }
 
     override fun <T : Any> buildOverlaySlot(
         componentContext: ComponentContext,
@@ -70,20 +78,4 @@ public class NoOpNavigator : Navigator {
         handleBackButton = true,
         childFactory = childFactory,
     )
-
-    override fun <T : Any> buildTabStack(
-        componentContext: ComponentContext,
-        root: NavRoot,
-        childFactory: (BaseRoute, ComponentContext) -> T,
-    ): Value<ChildStack<*, T>> {
-        val source = tabStacks.getOrPut(root) { StackNavigation() }
-        return componentContext.childStack(
-            source = source,
-            serializer = null,
-            initialConfiguration = root as BaseRoute,
-            key = "NoOpTabStack_${root::class.simpleName}",
-            handleBackButton = true,
-            childFactory = childFactory,
-        )
-    }
 }

@@ -1,21 +1,16 @@
 package com.thomaskioko.tvmaniac.navigation.testing
 
+import com.arkivanov.decompose.Child
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.slot.ChildSlot
 import com.arkivanov.decompose.router.slot.SlotNavigation
 import com.arkivanov.decompose.router.slot.activate
 import com.arkivanov.decompose.router.slot.childSlot
-import com.arkivanov.decompose.router.slot.dismiss
 import com.arkivanov.decompose.router.stack.ChildStack
-import com.arkivanov.decompose.router.stack.StackNavigation
-import com.arkivanov.decompose.router.stack.bringToFront
-import com.arkivanov.decompose.router.stack.childStack
-import com.arkivanov.decompose.router.stack.pop
-import com.arkivanov.decompose.router.stack.popTo
-import com.arkivanov.decompose.router.stack.pushNew
-import com.arkivanov.decompose.router.stack.pushToFront
+import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.navigation.BaseRoute
+import com.thomaskioko.tvmaniac.navigation.MultiStackHostState
 import com.thomaskioko.tvmaniac.navigation.NavRoot
 import com.thomaskioko.tvmaniac.navigation.NavRoute
 import com.thomaskioko.tvmaniac.navigation.Navigator
@@ -23,20 +18,22 @@ import com.thomaskioko.tvmaniac.navigation.OverlayRoute
 import kotlin.reflect.KClass
 
 /**
- * [Navigator] for tests that prefer property-style state inspection over [TestNavigator]'s
- * event flow. Mutations apply to internal Decompose sources (so consumers wiring real children
- * still get valid stacks) and are also recorded in public read-only properties.
+ * [Navigator] for tests that prefer property-style state inspection over [TestNavigator]'s event
+ * flow. Mutations update internal state and are also recorded in public read-only properties.
  *
  * Use this when the test cares about end state (the active root, the last switched-to tab, the
  * last activated overlay) rather than the precise sequence of calls.
+ *
+ * Pass [initialActiveRoot] when the test observes [activeRoot] before any tab interaction.
+ * Otherwise the fake reports [UnspecifiedNavRoot] until the first switch / show / replace call.
  */
-public class FakeNavigator : Navigator {
+public class FakeNavigator(
+    initialActiveRoot: NavRoot = UnspecifiedNavRoot,
+) : Navigator {
 
-    private val rootNavigation = StackNavigation<NavRoot>()
-    private val tabStacks = mutableMapOf<NavRoot, StackNavigation<BaseRoute>>()
     private val overlayNavigation = SlotNavigation<NavRoute>()
 
-    private var _activeRoot: NavRoot? = null
+    private val activeRootValue: MutableValue<NavRoot> = MutableValue(initialActiveRoot)
     private var _lastSwitchedTo: NavRoot? = null
     private var _lastShownRoot: NavRoot? = null
     private var _lastReplacedAllWith: NavRoot? = null
@@ -44,8 +41,7 @@ public class FakeNavigator : Navigator {
     private val _navigatedRoutes = mutableListOf<NavRoute>()
     private var _navigateBackCount = 0
 
-    /** Most recently active [NavRoot]. Null until the first tab interaction. */
-    public val activeRoot: NavRoot? get() = _activeRoot
+    override val activeRoot: Value<NavRoot> get() = activeRootValue
 
     /** Most recent argument to [switchBackStack]. Null until the first call. */
     public val lastSwitchedTo: NavRoot? get() = _lastSwitchedTo
@@ -77,108 +73,55 @@ public class FakeNavigator : Navigator {
             overlayNavigation.activate(route)
         } else {
             _navigatedRoutes += route
-            activeStackOrNull()?.pushNew(route as BaseRoute)
         }
     }
 
     override fun navigateBack() {
         _navigateBackCount++
-        activeStackOrNull()?.pop()
     }
 
-    override fun navigateBackTo(routeClass: KClass<out NavRoute>, inclusive: Boolean) {
-        activeStackOrNull()?.navigate(
-            transformer = { stack ->
-                val targetIndex = stack.indexOfLast { routeClass.isInstance(it) }
-                if (targetIndex < 0) {
-                    stack
-                } else {
-                    val keep = if (inclusive) targetIndex else targetIndex + 1
-                    if (keep <= 0) stack else stack.take(keep)
-                }
-            },
-            onComplete = { _, _ -> },
-        )
-    }
+    override fun navigateBackTo(routeClass: KClass<out NavRoute>, inclusive: Boolean): Unit = Unit
 
-    override fun popTo(toIndex: Int) {
-        activeStackOrNull()?.popTo(index = toIndex)
-    }
+    override fun popTo(toIndex: Int): Unit = Unit
 
     override fun bringToFront(route: NavRoute) {
-        activeStackOrNull()?.bringToFront(route as BaseRoute)
+        _navigatedRoutes += route
     }
 
     override fun pushToFront(route: NavRoute) {
-        activeStackOrNull()?.pushToFront(route as BaseRoute)
+        _navigatedRoutes += route
     }
 
     override fun switchBackStack(root: NavRoot) {
         _lastSwitchedTo = root
-        _activeRoot = root
-        rootNavigation.navigate(
-            transformer = { stack ->
-                val existing = stack.find { it::class == root::class }
-                if (existing != null) {
-                    stack.filterNot { it::class == root::class } + existing
-                } else {
-                    stack + root
-                }
-            },
-            onComplete = { _, _ -> },
-        )
+        activeRootValue.value = root
     }
 
     override fun showRoot(root: NavRoot) {
         _lastShownRoot = root
-        _activeRoot = root
-        rootNavigation.navigate(
-            transformer = { stack ->
-                val existing = stack.find { it::class == root::class }
-                if (existing != null) {
-                    stack.filterNot { it::class == root::class } + existing
-                } else {
-                    stack + root
-                }
-            },
-            onComplete = { _, _ -> },
-        )
-        tabStacks[root]?.navigate(
-            transformer = { listOf(root as BaseRoute) },
-            onComplete = { _, _ -> },
-        )
+        activeRootValue.value = root
     }
 
     override fun replaceAllBackStacks(root: NavRoot) {
         _lastReplacedAllWith = root
-        _activeRoot = root
-        rootNavigation.navigate(
-            transformer = { listOf(root) },
-            onComplete = { _, _ -> },
-        )
-        tabStacks.forEach { (tabRoot, stack) ->
-            stack.navigate(
-                transformer = { listOf(tabRoot as BaseRoute) },
-                onComplete = { _, _ -> },
-            )
-        }
+        activeRootValue.value = root
     }
 
-    override fun <T : Any> buildRootStack(
+    override fun <T : Any> buildHostNavigation(
         componentContext: ComponentContext,
         initialRoot: NavRoot,
-        childFactory: (NavRoot, ComponentContext) -> T,
-    ): Value<ChildStack<*, T>> {
-        if (_activeRoot == null) {
-            _activeRoot = initialRoot
-        }
-        return componentContext.childStack(
-            source = rootNavigation,
-            serializer = null,
-            initialConfiguration = initialRoot,
-            key = "FakeRootTabStackKey",
-            handleBackButton = false,
-            childFactory = childFactory,
+        childFactory: (BaseRoute, ComponentContext) -> T,
+    ): Value<MultiStackHostState<T>> {
+        activeRootValue.value = initialRoot
+        val rootInstance = childFactory(initialRoot as BaseRoute, componentContext)
+        val initialChildStack = ChildStack(
+            active = Child.Created(configuration = initialRoot, instance = rootInstance),
+        )
+        return MutableValue(
+            MultiStackHostState(
+                activeRoot = initialRoot,
+                tabStacks = mapOf(initialRoot to initialChildStack),
+            ),
         )
     }
 
@@ -193,25 +136,9 @@ public class FakeNavigator : Navigator {
         childFactory = childFactory,
     )
 
-    override fun <T : Any> buildTabStack(
-        componentContext: ComponentContext,
-        root: NavRoot,
-        childFactory: (BaseRoute, ComponentContext) -> T,
-    ): Value<ChildStack<*, T>> {
-        val source = tabStacks.getOrPut(root) { StackNavigation() }
-        return componentContext.childStack(
-            source = source,
-            serializer = null,
-            initialConfiguration = root as BaseRoute,
-            key = "FakeTabStack_${root::class.simpleName}",
-            handleBackButton = true,
-            childFactory = childFactory,
-        )
-    }
-
-    /** Resets recorded state for reuse across test cases. Internal Decompose sources are kept. */
+    /** Resets recorded state for reuse across test cases. */
     public fun reset() {
-        _activeRoot = null
+        activeRootValue.value = UnspecifiedNavRoot
         _lastSwitchedTo = null
         _lastShownRoot = null
         _lastReplacedAllWith = null
@@ -219,7 +146,4 @@ public class FakeNavigator : Navigator {
         _navigatedRoutes.clear()
         _navigateBackCount = 0
     }
-
-    private fun activeStackOrNull(): StackNavigation<BaseRoute>? =
-        _activeRoot?.let { tabStacks[it] }
 }

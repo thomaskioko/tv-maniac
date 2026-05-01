@@ -1,19 +1,17 @@
 package com.thomaskioko.tvmaniac.navigation
 
+import com.arkivanov.decompose.Child
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.router.children.SimpleNavigation
+import com.arkivanov.decompose.router.children.children
 import com.arkivanov.decompose.router.slot.ChildSlot
 import com.arkivanov.decompose.router.slot.SlotNavigation
 import com.arkivanov.decompose.router.slot.activate
 import com.arkivanov.decompose.router.slot.childSlot
 import com.arkivanov.decompose.router.stack.ChildStack
-import com.arkivanov.decompose.router.stack.StackNavigation
-import com.arkivanov.decompose.router.stack.bringToFront
-import com.arkivanov.decompose.router.stack.childStack
-import com.arkivanov.decompose.router.stack.pop
-import com.arkivanov.decompose.router.stack.popTo
-import com.arkivanov.decompose.router.stack.pushNew
-import com.arkivanov.decompose.router.stack.pushToFront
+import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
@@ -27,98 +25,94 @@ public class DefaultNavigator(
     private val baseRouteSerializer: BaseRouteSerializer,
     private val navRoots: Set<NavRoot>,
 ) : Navigator {
-    private val rootNavigation = StackNavigation<NavRoot>()
-    private val tabStacks: Map<NavRoot, StackNavigation<BaseRoute>> =
-        navRoots.associateWith { StackNavigation<BaseRoute>() }
+    init {
+        require(navRoots.isNotEmpty()) {
+            "No NavRoots registered. Contribute at least one via @IntoSet on the Set<NavRoot> binding."
+        }
+    }
+
+    private val multiStackSource = SimpleNavigation<MultiStackNavEvent>()
     private val overlayNavigation = SlotNavigation<NavRoute>()
 
-    private var activeRoot: NavRoot? = null
+    private val multiStackStateSerializer by lazy {
+        MultiStackNavStateSerializer(
+            baseRouteSerializer = baseRouteSerializer.serializer,
+            navRootSerializer = navRootSerializer.serializer,
+        )
+    }
+
+    private val activeRootValue = MutableValue(navRoots.first())
+
+    override val activeRoot: Value<NavRoot> get() = activeRootValue
 
     override fun navigateTo(route: NavRoute) {
         if (route is OverlayRoute) {
             overlayNavigation.activate(route)
             return
         }
-        activeTabStack().pushNew(route as BaseRoute)
+        multiStackSource.navigate(MultiStackNavEvent.Push(route))
     }
 
     override fun navigateBack() {
-        activeTabStack().pop()
+        multiStackSource.navigate(MultiStackNavEvent.Pop())
     }
 
     override fun navigateBackTo(routeClass: KClass<out NavRoute>, inclusive: Boolean) {
-        activeTabStack().navigate(
-            transformer = { stack -> popUntilTypeMatch(stack, routeClass, inclusive) },
-            onComplete = { _, _ -> },
-        )
+        multiStackSource.navigate(MultiStackNavEvent.PopUntilType(routeClass, inclusive))
     }
 
     override fun popTo(toIndex: Int) {
-        activeTabStack().popTo(index = toIndex)
+        multiStackSource.navigate(MultiStackNavEvent.Pop(toIndex))
     }
 
     override fun bringToFront(route: NavRoute) {
-        activeTabStack().bringToFront(route as BaseRoute)
+        multiStackSource.navigate(MultiStackNavEvent.BringToFront(route))
     }
 
     override fun pushToFront(route: NavRoute) {
-        activeTabStack().pushToFront(route as BaseRoute)
+        multiStackSource.navigate(MultiStackNavEvent.PushToFront(route))
     }
 
     override fun switchBackStack(root: NavRoot) {
         requireRegistered(root)
-        activeRoot = root
-        rootNavigation.navigate(
-            transformer = { stack -> moveOrPush(stack, root) },
-            onComplete = { _, _ -> },
-        )
+        multiStackSource.navigate(MultiStackNavEvent.SwitchTab(root, resetStack = false))
     }
 
     override fun showRoot(root: NavRoot) {
         requireRegistered(root)
-        activeRoot = root
-        rootNavigation.navigate(
-            transformer = { stack -> moveOrPush(stack, root) },
-            onComplete = { _, _ -> },
-        )
-        tabStacks[root]?.navigate(
-            transformer = { listOf(root as BaseRoute) },
-            onComplete = { _, _ -> },
-        )
+        multiStackSource.navigate(MultiStackNavEvent.SwitchTab(root, resetStack = true))
     }
 
     override fun replaceAllBackStacks(root: NavRoot) {
         requireRegistered(root)
-        activeRoot = root
-        rootNavigation.navigate(
-            transformer = { listOf(root) },
-            onComplete = { _, _ -> },
-        )
-        tabStacks.forEach { (tabRoot, stack) ->
-            stack.navigate(
-                transformer = { listOf(tabRoot as BaseRoute) },
-                onComplete = { _, _ -> },
-            )
-        }
+        multiStackSource.navigate(MultiStackNavEvent.ReplaceAll(root))
     }
 
-    override fun <T : Any> buildRootStack(
+    override fun <T : Any> buildHostNavigation(
         componentContext: ComponentContext,
         initialRoot: NavRoot,
-        childFactory: (NavRoot, ComponentContext) -> T,
-    ): Value<ChildStack<*, T>> {
+        childFactory: (BaseRoute, ComponentContext) -> T,
+    ): Value<MultiStackHostState<T>> {
         requireRegistered(initialRoot)
-        if (activeRoot == null) {
-            activeRoot = initialRoot
-        }
-        return componentContext.childStack(
-            source = rootNavigation,
-            key = ROOT_TAB_STACK_KEY,
-            initialConfiguration = initialRoot,
-            serializer = navRootSerializer.serializer,
-            handleBackButton = false,
-            childFactory = childFactory,
+        activeRootValue.value = initialRoot
+
+        val hostStateValue: Value<MultiStackHostState<T>> = componentContext.children(
+            source = multiStackSource,
+            stateSerializer = multiStackStateSerializer,
+            initialState = { multiStackInitialState(navRoots, initialRoot) },
+            key = HOST_NAV_KEY,
+            navTransformer = ::multiStackNavTransformer,
+            stateMapper = { state, children -> mapToHostState(state, children) },
+            backTransformer = ::multiStackBackTransformer,
+            childFactory = { tabbedRoute, ctx -> childFactory(tabbedRoute.route, ctx) },
         )
+
+        val cancellation = hostStateValue.subscribe { state ->
+            activeRootValue.value = state.activeRoot
+        }
+        componentContext.lifecycle.doOnDestroy(cancellation::cancel)
+
+        return hostStateValue
     }
 
     override fun <T : Any> buildOverlaySlot(
@@ -132,58 +126,46 @@ public class DefaultNavigator(
         childFactory = childFactory,
     )
 
-    override fun <T : Any> buildTabStack(
-        componentContext: ComponentContext,
-        root: NavRoot,
-        childFactory: (BaseRoute, ComponentContext) -> T,
-    ): Value<ChildStack<*, T>> {
-        val source = tabStacks[root]
-            ?: error("NavRoot $root is not registered. Add it to Set<NavRoot>.")
-        return componentContext.childStack(
-            source = source,
-            key = "TabStack_${root::class.simpleName}",
-            initialConfiguration = root as BaseRoute,
-            serializer = baseRouteSerializer.serializer,
-            handleBackButton = true,
-            childFactory = childFactory,
-        )
-    }
-
-    private fun activeTabStack(): StackNavigation<BaseRoute> {
-        val root = activeRoot
-            ?: error("No active NavRoot. Call buildRootStack first to register the initial root.")
-        return tabStacks[root]
-            ?: error("NavRoot $root is not registered. Add it to Set<NavRoot>.")
-    }
-
     private fun requireRegistered(root: NavRoot) {
         require(root in navRoots) {
             "NavRoot $root is not registered. Contribute it to Set<NavRoot> via @IntoSet."
         }
     }
 
-    private fun moveOrPush(stack: List<NavRoot>, root: NavRoot): List<NavRoot> {
-        val existing = stack.find { it::class == root::class }
-        return if (existing != null) {
-            stack.filterNot { it::class == root::class } + existing
+    private fun <T : Any> mapToHostState(
+        state: MultiStackNavState,
+        children: List<Child<TabbedRoute, T>>,
+    ): MultiStackHostState<T> {
+        @Suppress("UNCHECKED_CAST")
+        val byTabbed: Map<TabbedRoute, Child.Created<TabbedRoute, T>> =
+            children.associate { it.configuration to (it as Child.Created<TabbedRoute, T>) }
+        val tabStacks = state.tabStacks.mapValues { (root, entries) ->
+            val created = entries.map { entry ->
+                val tabbed = TabbedRoute(tabRoot = root, route = entry)
+                val child = byTabbed[tabbed]
+                    ?: error("Child for $tabbed not found in children list")
+                Child.Created(configuration = entry, instance = child.instance)
+            }
+            ChildStack(active = created.last(), backStack = created.dropLast(1))
+        }
+        return MultiStackHostState(activeRoot = state.activeRoot, tabStacks = tabStacks)
+    }
+
+    private fun multiStackBackTransformer(state: MultiStackNavState): (() -> MultiStackNavState)? {
+        val activeStack = state.tabStacks[state.activeRoot] ?: return null
+        return if (activeStack.size > 1) {
+            {
+                state.copy(
+                    tabStacks = state.tabStacks + (state.activeRoot to activeStack.dropLast(1)),
+                )
+            }
         } else {
-            stack + root
+            null
         }
     }
 
-    private fun <C : Any> popUntilTypeMatch(
-        stack: List<C>,
-        routeClass: KClass<out NavRoute>,
-        inclusive: Boolean,
-    ): List<C> {
-        val targetIndex = stack.indexOfLast { routeClass.isInstance(it) }
-        if (targetIndex < 0) return stack
-        val keep = if (inclusive) targetIndex else targetIndex + 1
-        return if (keep <= 0) stack else stack.take(keep)
-    }
-
     private companion object {
-        const val ROOT_TAB_STACK_KEY = "RootTabStackKey"
+        const val HOST_NAV_KEY = "MultiStackHostKey"
         const val OVERLAY_SLOT_KEY = "OverlaySlotKey"
     }
 }
