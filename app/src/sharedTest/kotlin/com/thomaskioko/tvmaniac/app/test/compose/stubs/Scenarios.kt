@@ -48,7 +48,7 @@ internal class Scenarios(
     fun signInAndDismissRationale() {
         auth.stubLoggedInUser()
         profile.stubProfileSyncEndpoints()
-        rootRobot.verifyNotificationRationaleIsShownAndDismissed()
+        rootRobot.dismissNotificationRationale()
     }
 
     fun stubAuthenticatedSync() {

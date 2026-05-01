@@ -26,6 +26,7 @@ kotlin {
 
         androidMain.dependencies {
             api(libs.androidx.compose.ui.test)
+            api(libs.androidx.compose.ui.test.common)
             api(libs.androidx.junit)
             api(libs.androidx.uiautomator)
             compileOnly(libs.robolectric)

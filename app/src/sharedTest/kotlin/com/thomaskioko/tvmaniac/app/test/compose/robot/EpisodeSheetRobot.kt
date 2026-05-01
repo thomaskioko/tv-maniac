@@ -1,18 +1,20 @@
 package com.thomaskioko.tvmaniac.app.test.compose.robot
 
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import androidx.compose.ui.test.ComposeUiTest
+import androidx.compose.ui.test.ExperimentalTestApi
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeSheetActionItem
 import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
 import com.thomaskioko.tvmaniac.testtags.episodesheet.EpisodeSheetTestTags
 
-internal class EpisodeSheetRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
+@OptIn(ExperimentalTestApi::class)
+internal class EpisodeSheetRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
 
-    fun verifyEpisodeSheetIsShown() {
-        verifyTagShown(EpisodeSheetTestTags.SHEET_TEST_TAG)
+    fun assertEpisodeSheetDisplayed() {
+        assertDisplayed(EpisodeSheetTestTags.SHEET_TEST_TAG)
     }
 
-    fun verifyActionItemIsShown(action: EpisodeSheetActionItem) {
-        verifyTagExists(EpisodeSheetTestTags.actionItem(action.name))
+    fun assertActionItemDisplayed(action: EpisodeSheetActionItem) {
+        assertExists(EpisodeSheetTestTags.actionItem(action.name))
     }
 
     fun clickActionItem(action: EpisodeSheetActionItem) {

@@ -1,21 +1,23 @@
 package com.thomaskioko.tvmaniac.app.test.compose.robot
 
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import androidx.compose.ui.test.ComposeUiTest
+import androidx.compose.ui.test.ExperimentalTestApi
 import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
 import com.thomaskioko.tvmaniac.testtags.seasondetails.SeasonDetailsTestTags
 
-internal class SeasonDetailsRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
+@OptIn(ExperimentalTestApi::class)
+internal class SeasonDetailsRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
 
-    fun verifySeasonDetailsIsShown() {
-        verifyTagShown(SeasonDetailsTestTags.SCREEN_TEST_TAG)
+    fun assertSeasonDetailsDisplayed() {
+        assertDisplayed(SeasonDetailsTestTags.SCREEN_TEST_TAG)
     }
 
-    fun verifyEpisodeRowIsShown(episodeId: Long) {
-        verifyTagExists(SeasonDetailsTestTags.episodeRow(episodeId))
+    fun assertEpisodeRowDisplayed(episodeId: Long) {
+        assertExists(SeasonDetailsTestTags.episodeRow(episodeId))
     }
 
-    fun verifyEpisodeRowIsHidden(episodeId: Long) {
-        verifyTagHidden(SeasonDetailsTestTags.episodeRow(episodeId))
+    fun assertEpisodeRowDoesNotExist(episodeId: Long) {
+        assertDoesNotExist(SeasonDetailsTestTags.episodeRow(episodeId))
     }
 
     fun clickEpisodeHeader() {
@@ -34,24 +36,24 @@ internal class SeasonDetailsRobot(composeTestRule: ComposeContentTestRule) : Bas
         click(SeasonDetailsTestTags.markEpisodeUnwatchedButton(episodeId), useSemanticsAction = true)
     }
 
-    fun verifyMarkUnwatchedIsShown(episodeId: Long) {
-        verifyTagExists(SeasonDetailsTestTags.markEpisodeUnwatchedButton(episodeId))
+    fun assertMarkUnwatchedDisplayed(episodeId: Long) {
+        assertExists(SeasonDetailsTestTags.markEpisodeUnwatchedButton(episodeId))
     }
 
-    fun verifyMarkWatchedIsShown(episodeId: Long) {
-        verifyTagExists(SeasonDetailsTestTags.markEpisodeWatchedButton(episodeId))
+    fun assertMarkWatchedDisplayed(episodeId: Long) {
+        assertExists(SeasonDetailsTestTags.markEpisodeWatchedButton(episodeId))
     }
 
     fun clickSeasonWatchedToggle() {
         click(SeasonDetailsTestTags.SEASON_WATCHED_TOGGLE_TEST_TAG, useSemanticsAction = true)
     }
 
-    fun verifyMarkPreviousEpisodesDialogIsShown() {
-        verifyTagExists(SeasonDetailsTestTags.MARK_PREVIOUS_EPISODES_DIALOG_CONFIRM_BUTTON_TEST_TAG)
+    fun assertMarkPreviousEpisodesDialogDisplayed() {
+        assertExists(SeasonDetailsTestTags.MARK_PREVIOUS_EPISODES_DIALOG_CONFIRM_BUTTON_TEST_TAG)
     }
 
-    fun verifyMarkPreviousEpisodesDialogIsHidden() {
-        verifyTagHidden(SeasonDetailsTestTags.MARK_PREVIOUS_EPISODES_DIALOG_CONFIRM_BUTTON_TEST_TAG)
+    fun assertMarkPreviousEpisodesDialogDoesNotExist() {
+        assertDoesNotExist(SeasonDetailsTestTags.MARK_PREVIOUS_EPISODES_DIALOG_CONFIRM_BUTTON_TEST_TAG)
     }
 
     fun clickMarkPreviousEpisodesConfirm() {
@@ -62,12 +64,12 @@ internal class SeasonDetailsRobot(composeTestRule: ComposeContentTestRule) : Bas
         click(SeasonDetailsTestTags.MARK_PREVIOUS_EPISODES_DIALOG_DISMISS_BUTTON_TEST_TAG, useSemanticsAction = true)
     }
 
-    fun verifyUnwatchEpisodeDialogIsShown() {
-        verifyTagExists(SeasonDetailsTestTags.UNWATCH_EPISODE_DIALOG_CONFIRM_BUTTON_TEST_TAG)
+    fun assertUnwatchEpisodeDialogDisplayed() {
+        assertExists(SeasonDetailsTestTags.UNWATCH_EPISODE_DIALOG_CONFIRM_BUTTON_TEST_TAG)
     }
 
-    fun verifyUnwatchEpisodeDialogIsHidden() {
-        verifyTagHidden(SeasonDetailsTestTags.UNWATCH_EPISODE_DIALOG_CONFIRM_BUTTON_TEST_TAG)
+    fun assertUnwatchEpisodeDialogDoesNotExist() {
+        assertDoesNotExist(SeasonDetailsTestTags.UNWATCH_EPISODE_DIALOG_CONFIRM_BUTTON_TEST_TAG)
     }
 
     fun clickUnwatchEpisodeConfirm() {
@@ -78,12 +80,12 @@ internal class SeasonDetailsRobot(composeTestRule: ComposeContentTestRule) : Bas
         click(SeasonDetailsTestTags.UNWATCH_EPISODE_DIALOG_DISMISS_BUTTON_TEST_TAG, useSemanticsAction = true)
     }
 
-    fun verifyMarkPreviousSeasonsDialogIsShown() {
-        verifyTagExists(SeasonDetailsTestTags.MARK_PREVIOUS_SEASONS_DIALOG_CONFIRM_BUTTON_TEST_TAG)
+    fun assertMarkPreviousSeasonsDialogDisplayed() {
+        assertExists(SeasonDetailsTestTags.MARK_PREVIOUS_SEASONS_DIALOG_CONFIRM_BUTTON_TEST_TAG)
     }
 
-    fun verifyMarkPreviousSeasonsDialogIsHidden() {
-        verifyTagHidden(SeasonDetailsTestTags.MARK_PREVIOUS_SEASONS_DIALOG_CONFIRM_BUTTON_TEST_TAG)
+    fun assertMarkPreviousSeasonsDialogDoesNotExist() {
+        assertDoesNotExist(SeasonDetailsTestTags.MARK_PREVIOUS_SEASONS_DIALOG_CONFIRM_BUTTON_TEST_TAG)
     }
 
     fun clickMarkPreviousSeasonsConfirm() {
@@ -94,12 +96,12 @@ internal class SeasonDetailsRobot(composeTestRule: ComposeContentTestRule) : Bas
         click(SeasonDetailsTestTags.MARK_PREVIOUS_SEASONS_DIALOG_DISMISS_BUTTON_TEST_TAG, useSemanticsAction = true)
     }
 
-    fun verifyUnwatchSeasonDialogIsShown() {
-        verifyTagExists(SeasonDetailsTestTags.UNWATCH_SEASON_DIALOG_CONFIRM_BUTTON_TEST_TAG)
+    fun assertUnwatchSeasonDialogDisplayed() {
+        assertExists(SeasonDetailsTestTags.UNWATCH_SEASON_DIALOG_CONFIRM_BUTTON_TEST_TAG)
     }
 
-    fun verifyUnwatchSeasonDialogIsHidden() {
-        verifyTagHidden(SeasonDetailsTestTags.UNWATCH_SEASON_DIALOG_CONFIRM_BUTTON_TEST_TAG)
+    fun assertUnwatchSeasonDialogDoesNotExist() {
+        assertDoesNotExist(SeasonDetailsTestTags.UNWATCH_SEASON_DIALOG_CONFIRM_BUTTON_TEST_TAG)
     }
 
     fun clickUnwatchSeasonConfirm() {

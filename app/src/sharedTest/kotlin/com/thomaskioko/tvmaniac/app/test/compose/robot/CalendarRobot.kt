@@ -1,53 +1,50 @@
 package com.thomaskioko.tvmaniac.app.test.compose.robot
 
-import androidx.compose.ui.test.assertTextEquals
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.ComposeUiTest
+import androidx.compose.ui.test.ExperimentalTestApi
 import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
 import com.thomaskioko.tvmaniac.testtags.calendar.CalendarTestTags
 
-internal class CalendarRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
+@OptIn(ExperimentalTestApi::class)
+internal class CalendarRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
 
-    fun verifyCalendarScreenIsShown() {
-        verifyTagShown(CalendarTestTags.SCREEN_TEST_TAG)
+    fun assertCalendarScreenDisplayed() {
+        assertDisplayed(CalendarTestTags.SCREEN_TEST_TAG)
     }
 
-    fun verifyLoggedOutStateIsShown() {
-        verifyTagShown(CalendarTestTags.LOGGED_OUT_STATE_TEST_TAG)
+    fun assertLoggedOutStateDisplayed() {
+        assertDisplayed(CalendarTestTags.LOGGED_OUT_STATE_TEST_TAG)
     }
 
-    fun verifyEmptyStateIsShown() {
-        verifyTagShown(CalendarTestTags.EMPTY_STATE_TEST_TAG)
+    fun assertEmptyStateDisplayed() {
+        assertDisplayed(CalendarTestTags.EMPTY_STATE_TEST_TAG)
     }
 
-    fun verifyWeekLabel(text: String) {
-        verifyTagShown(CalendarTestTags.WEEK_LABEL)
-        composeTestRule.onNodeWithTag(CalendarTestTags.WEEK_LABEL, useUnmergedTree = true)
-            .assertTextEquals(text)
+    fun assertWeekLabelDisplayed(text: String) {
+        assertDisplayed(CalendarTestTags.WEEK_LABEL)
+        assertTextEquals(CalendarTestTags.WEEK_LABEL, text)
     }
 
-    fun verifyDateHeader(text: String) {
-        verifyTagShown(CalendarTestTags.DATE_HEADER)
-        composeTestRule.onNodeWithTag(CalendarTestTags.DATE_HEADER, useUnmergedTree = true)
-            .assertTextEquals(text)
+    fun assertDateHeaderDisplayed(text: String) {
+        assertDisplayed(CalendarTestTags.DATE_HEADER)
+        assertTextEquals(CalendarTestTags.DATE_HEADER, text)
     }
 
-    fun verifyAdditionalEpisodesCount(episodeTraktId: Long, expectedText: String) {
+    fun assertAdditionalEpisodesCountDisplayed(episodeTraktId: Long, expectedText: String) {
         val tag = CalendarTestTags.additionalEpisodesCount(episodeTraktId)
-        verifyTagShown(tag)
-        composeTestRule.onNodeWithTag(tag, useUnmergedTree = true)
-            .assertTextEquals(expectedText)
+        assertDisplayed(tag)
+        assertTextEquals(tag, expectedText)
     }
 
     fun clickNextWeek() {
         click(CalendarTestTags.NEXT_WEEK_BUTTON, useSemanticsAction = true)
     }
 
-    fun verifyEpisodeCardIsShown(episodeId: Long) {
-        verifyTagExists(CalendarTestTags.episodeCard(episodeId))
+    fun assertEpisodeCardDisplayed(episodeId: Long) {
+        assertExists(CalendarTestTags.episodeCard(episodeId))
     }
 
-    fun verifyEpisodeCardIsHidden(episodeId: Long) {
-        verifyTagHidden(CalendarTestTags.episodeCard(episodeId))
+    fun assertEpisodeCardDoesNotExist(episodeId: Long) {
+        assertDoesNotExist(CalendarTestTags.episodeCard(episodeId))
     }
 }
