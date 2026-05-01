@@ -6,8 +6,6 @@ scaffold {
     useMetro()
     addAndroidTarget(
         enableAndroidResources = true,
-        withHostTestBuilder = true,
-        includeAndroidResources = true,
     )
     android {
         useCompose()
