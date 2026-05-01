@@ -97,6 +97,9 @@ internal fun UpNextListItem(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
+                    modifier = Modifier.testTag(
+                        UpNextTestTags.episodeMeta(item.showTraktId, item.formattedEpisodeNumber),
+                    ),
                     text = buildString {
                         append(item.formattedEpisodeNumber)
                         if (item.remainingEpisodes > 0) append(" +${item.remainingEpisodes}")
@@ -148,8 +151,12 @@ internal fun UpNextListItem(
                     )
 
                     if (item.totalCount > 0) {
+                        val countText = "${item.watchedCount}/${item.totalCount}"
                         Text(
-                            text = "${item.watchedCount}/${item.totalCount}",
+                            modifier = Modifier.testTag(
+                                UpNextTestTags.progressCount(item.showTraktId, countText),
+                            ),
+                            text = countText,
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )

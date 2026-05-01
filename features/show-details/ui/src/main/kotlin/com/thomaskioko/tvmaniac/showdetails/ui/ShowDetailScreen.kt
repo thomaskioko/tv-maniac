@@ -251,7 +251,9 @@ private fun ListSheetTopBar(
     ) {
         androidx.compose.material3.FilledIconButton(
             onClick = onClose,
-            modifier = Modifier.size(36.dp),
+            modifier = Modifier
+                .size(36.dp)
+                .testTag(ShowDetailsTestTags.LIST_SHEET_CLOSE_BUTTON_TEST_TAG),
             colors = androidx.compose.material3.IconButtonDefaults.filledIconButtonColors(
                 containerColor = MaterialTheme.colorScheme.secondary,
                 contentColor = MaterialTheme.colorScheme.onSecondary,
@@ -276,7 +278,9 @@ private fun ListSheetTopBar(
         if (!showCreateField) {
             androidx.compose.material3.FilledIconButton(
                 onClick = onCreateClicked,
-                modifier = Modifier.size(36.dp),
+                modifier = Modifier
+                    .size(36.dp)
+                    .testTag(ShowDetailsTestTags.LIST_SHEET_CREATE_LIST_BUTTON_TEST_TAG),
                 colors = androidx.compose.material3.IconButtonDefaults.filledIconButtonColors(
                     containerColor = MaterialTheme.colorScheme.secondary,
                     contentColor = MaterialTheme.colorScheme.onSecondary,

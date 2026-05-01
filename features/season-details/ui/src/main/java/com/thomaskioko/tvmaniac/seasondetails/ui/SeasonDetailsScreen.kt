@@ -526,6 +526,8 @@ private fun SeasonsWatchDialog(
         dismissButtonText = dialog_button_no.resolve(context),
         onConfirm = { onAction(ConfirmDialogAction) },
         onDismiss = { onAction(DismissDialog) },
+        confirmButtonTestTag = SeasonDetailsTestTags.UNWATCH_SEASON_DIALOG_CONFIRM_BUTTON_TEST_TAG,
+        dismissButtonTestTag = SeasonDetailsTestTags.UNWATCH_SEASON_DIALOG_DISMISS_BUTTON_TEST_TAG,
     )
 }
 
@@ -544,6 +546,8 @@ private fun MarkPreviousEpisodesDialog(
         dismissButtonText = dialog_button_just_this.resolve(context),
         onConfirm = onMarkAll,
         onDismiss = onMarkJustThis,
+        confirmButtonTestTag = SeasonDetailsTestTags.MARK_PREVIOUS_EPISODES_DIALOG_CONFIRM_BUTTON_TEST_TAG,
+        dismissButtonTestTag = SeasonDetailsTestTags.MARK_PREVIOUS_EPISODES_DIALOG_DISMISS_BUTTON_TEST_TAG,
     )
 }
 
@@ -561,6 +565,8 @@ private fun MarkEpisodeUnwatchedDialog(
         dismissButtonText = dialog_button_no.resolve(context),
         onConfirm = onConfirm,
         onDismiss = onDismiss,
+        confirmButtonTestTag = SeasonDetailsTestTags.UNWATCH_EPISODE_DIALOG_CONFIRM_BUTTON_TEST_TAG,
+        dismissButtonTestTag = SeasonDetailsTestTags.UNWATCH_EPISODE_DIALOG_DISMISS_BUTTON_TEST_TAG,
     )
 }
 
@@ -579,6 +585,8 @@ private fun MarkPreviousSeasonsDialog(
         dismissButtonText = dialog_button_just_this_season.resolve(context),
         onConfirm = onMarkAll,
         onDismiss = onMarkJustThis,
+        confirmButtonTestTag = SeasonDetailsTestTags.MARK_PREVIOUS_SEASONS_DIALOG_CONFIRM_BUTTON_TEST_TAG,
+        dismissButtonTestTag = SeasonDetailsTestTags.MARK_PREVIOUS_SEASONS_DIALOG_DISMISS_BUTTON_TEST_TAG,
     )
 }
 

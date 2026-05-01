@@ -23,6 +23,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -40,6 +41,7 @@ import com.thomaskioko.tvmaniac.showdetails.ui.showDetailsWithCreateFieldExpande
 import com.thomaskioko.tvmaniac.showdetails.ui.showDetailsWithCreateListLoading
 import com.thomaskioko.tvmaniac.showdetails.ui.showDetailsWithEmptyTraktLists
 import com.thomaskioko.tvmaniac.showdetails.ui.showDetailsWithTraktLists
+import com.thomaskioko.tvmaniac.testtags.showdetails.ShowDetailsTestTags
 
 // TODO:: Move this to a feature module user-show-list
 @Composable
@@ -51,6 +53,7 @@ internal fun ShowListSheetContent(
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .testTag(ShowDetailsTestTags.LIST_SHEET_TEST_TAG)
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -110,6 +113,7 @@ private fun TraktListItems(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
+                .testTag(ShowDetailsTestTags.traktListItem(list.id))
                 .padding(vertical = 4.dp),
             shape = MaterialTheme.shapes.medium,
             colors = CardDefaults.cardColors(
@@ -133,6 +137,7 @@ private fun TraktListItems(
                     )
                     Text(
                         text = list.showCountText,
+                        modifier = Modifier.testTag(ShowDetailsTestTags.traktListItemShowCount(list.id)),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -143,6 +148,7 @@ private fun TraktListItems(
                     onCheckedChange = {
                         onAction(ToggleShowInList(listId = list.id, isCurrentlyInList = list.isShowInList))
                     },
+                    modifier = Modifier.testTag(ShowDetailsTestTags.traktListItemSwitch(list.id)),
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = MaterialTheme.colorScheme.secondary,
                         checkedTrackColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f),
@@ -188,7 +194,9 @@ private fun CreateListInlineField(
             OutlinedTextField(
                 value = state.createListName,
                 onValueChange = { if (it.length <= 50) onAction(UpdateCreateListName(it)) },
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag(ShowDetailsTestTags.LIST_SHEET_CREATE_LIST_INPUT_TEST_TAG),
                 placeholder = {
                     Text(
                         text = state.createListPlaceholder,
@@ -212,13 +220,16 @@ private fun CreateListInlineField(
 
             if (state.isCreatingList) {
                 CircularProgressIndicator(
-                    modifier = Modifier.size(24.dp),
+                    modifier = Modifier
+                        .size(24.dp)
+                        .testTag(ShowDetailsTestTags.LIST_SHEET_CREATE_LIST_PROGRESS_TEST_TAG),
                     strokeWidth = 2.dp,
                     color = MaterialTheme.colorScheme.secondary,
                 )
             } else {
                 FilledTextButton(
                     onClick = { onAction(CreateListSubmitted) },
+                    modifier = Modifier.testTag(ShowDetailsTestTags.LIST_SHEET_CREATE_LIST_SUBMIT_TEST_TAG),
                     enabled = state.createListName.isNotBlank(),
                     buttonColors = ButtonDefaults.textButtonColors(
                         containerColor = MaterialTheme.colorScheme.secondary,

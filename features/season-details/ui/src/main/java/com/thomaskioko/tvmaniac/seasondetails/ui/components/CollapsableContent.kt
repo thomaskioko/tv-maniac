@@ -198,6 +198,7 @@ private fun SeasonTitleHeader(
                         top.linkTo(image.top)
                         bottom.linkTo(image.bottom)
                     }
+                    .testTag(SeasonDetailsTestTags.SEASON_WATCHED_TOGGLE_TEST_TAG)
                     .background(
                         color = if (isSeasonWatched) green else grey,
                         shape = CircleShape,
