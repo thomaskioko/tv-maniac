@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.search
 
-import com.thomaskioko.tvmaniac.app.test.util.BaseAppFlowTest
+import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import org.junit.Before
 import org.junit.Test
 
@@ -8,20 +8,18 @@ internal class SearchFlowTest : BaseAppFlowTest() {
 
     @Before
     fun setUp() {
-        scenarios.stubDiscoverBrowse()
+        scenarios.discover.stubBrowseGraph()
     }
 
     @Test
     fun shouldDisplaySearchResultsWhenQueryIsEntered() {
         val query = "Breaking Bad"
         val traktId = 1388L
-        val tmdbId = 1396L
 
-        scenarios.search.stubSearch(query, traktId, tmdbId)
-
-        homeRobot.clickDiscoverTab()
         discoverRobot.verifyDiscoverScreenIsShown()
-        discoverRobot.clickSearchButton()
+        discoverRobot.navigateToSearchTab()
+
+        scenarios.search.stubSearch(query)
 
         searchRobot.verifySearchScreenIsShown()
         searchRobot.enterSearchQuery(query)
@@ -34,10 +32,9 @@ internal class SearchFlowTest : BaseAppFlowTest() {
     @Test
     fun shouldDisplayEmptyStateWhenNoResultsFound() {
         val query = "NoResultsShow"
-        scenarios.search.stubEmptySearch()
+        discoverRobot.navigateToSearchTab()
 
-        homeRobot.clickDiscoverTab()
-        discoverRobot.clickSearchButton()
+        scenarios.search.stubEmptySearch()
 
         searchRobot.enterSearchQuery(query)
         searchRobot.verifyEmptyStateIsShown()
@@ -48,13 +45,10 @@ internal class SearchFlowTest : BaseAppFlowTest() {
     fun shouldNavigateToShowDetailsWhenResultItemIsClicked() {
         val query = "Breaking Bad"
         val traktId = 1388L
-        val tmdbId = 1396L
 
-        scenarios.search.stubSearch(query, traktId, tmdbId)
-        scenarios.showDetails.stubShowDetailsEndpoints(traktId)
+        discoverRobot.navigateToSearchTab()
 
-        homeRobot.clickDiscoverTab()
-        discoverRobot.clickSearchButton()
+        scenarios.search.stubSearch(query)
 
         searchRobot.enterSearchQuery(query)
         searchRobot.clickResultItem(traktId)
@@ -66,13 +60,10 @@ internal class SearchFlowTest : BaseAppFlowTest() {
     fun shouldRestoreSearchScreenWhenNavigatingBackFromShowDetails() {
         val query = "Breaking Bad"
         val traktId = 1388L
-        val tmdbId = 1396L
 
-        scenarios.search.stubSearch(query, traktId, tmdbId)
-        scenarios.showDetails.stubShowDetailsEndpoints(traktId)
+        discoverRobot.navigateToSearchTab()
 
-        homeRobot.clickDiscoverTab()
-        discoverRobot.clickSearchButton()
+        scenarios.search.stubSearch(query)
 
         searchRobot.enterSearchQuery(query)
         searchRobot.clickResultItem(traktId)
@@ -89,12 +80,11 @@ internal class SearchFlowTest : BaseAppFlowTest() {
         val query = "ErrorQuery"
         scenarios.search.stubSearchError(query)
 
-        homeRobot.clickDiscoverTab()
-        discoverRobot.clickSearchButton()
+        discoverRobot.navigateToSearchTab()
 
         searchRobot.enterSearchQuery(query)
 
-        searchRobot.verifyTextShown("Access forbidden.", substring = true, timeoutMillis = 15_000)
+        searchRobot.verifyTextShown("Access forbidden.", substring = true)
         searchRobot.verifyErrorStateIsShown()
     }
 }

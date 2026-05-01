@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.discover
 
-import com.thomaskioko.tvmaniac.app.test.util.BaseAppFlowTest
+import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.testtags.seasondetails.SeasonDetailsTestTags
 import org.junit.Before
 import org.junit.Test
@@ -8,16 +8,13 @@ import org.junit.Test
 internal class DiscoverToSeasonDetailsFlowTest : BaseAppFlowTest() {
 
     private val breakingBadTraktId = 1388L
-    private val breakingBadTmdbId = 1396L
     private val pilotEpisodeTraktId = 73640L
+    private val secondEpisodeTraktId = 73641L
+    private val seasonTwoFirstEpisodeTraktId = 73489L
 
     @Before
     fun stubEndpoints() {
-        scenarios.stubShowDetailsNavigation(
-            traktShowId = breakingBadTraktId,
-            tmdbShowId = breakingBadTmdbId,
-            seasonNumbers = listOf(1L, 2L),
-        )
+        scenarios.discover.stubBrowseGraph()
     }
 
     @Test
@@ -63,13 +60,5 @@ internal class DiscoverToSeasonDetailsFlowTest : BaseAppFlowTest() {
         seasonDetailsRobot.pressBack()
         seasonDetailsRobot.verifyTagHidden(SeasonDetailsTestTags.SCREEN_TEST_TAG)
         showDetailsRobot.verifyShowDetailsIsShown()
-    }
-
-    @Test
-    fun shouldToggleEpisodeWatchedStateWhenWatchedButtonIsTapped() {
-        discoverRobot.clickShowCard(breakingBadTraktId)
-        showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
-        seasonDetailsRobot.clickMarkWatched(pilotEpisodeTraktId)
-        seasonDetailsRobot.verifyMarkUnwatchedIsShown(pilotEpisodeTraktId)
     }
 }

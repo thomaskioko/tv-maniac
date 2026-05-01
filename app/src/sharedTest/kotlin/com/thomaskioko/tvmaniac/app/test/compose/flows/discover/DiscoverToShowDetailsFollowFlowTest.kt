@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.discover
 
-import com.thomaskioko.tvmaniac.app.test.util.BaseAppFlowTest
+import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -11,7 +11,7 @@ internal class DiscoverToShowDetailsFollowFlowTest : BaseAppFlowTest() {
 
     @Before
     fun stubEndpoints() {
-        scenarios.stubShowDetailsBrowse(traktShowId = breakingBadTraktId)
+        scenarios.discover.stubBrowseGraph()
     }
 
     @Test
@@ -20,6 +20,7 @@ internal class DiscoverToShowDetailsFollowFlowTest : BaseAppFlowTest() {
         showDetailsRobot.verifyTrackButtonIsShown()
         showDetailsRobot.clickTrackButton()
         showDetailsRobot.verifyStopTrackingButtonIsShown()
+        rootRobot.verifyNotificationRationaleIsShownAndDismissed()
     }
 
     @Test

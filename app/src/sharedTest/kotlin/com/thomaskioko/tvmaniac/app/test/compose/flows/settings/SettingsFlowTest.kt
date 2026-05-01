@@ -1,8 +1,7 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.settings
 
-import com.thomaskioko.tvmaniac.app.test.util.BaseAppFlowTest
+import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
-import com.thomaskioko.tvmaniac.testing.integration.ui.NetworkResponse
 import org.junit.Before
 import org.junit.Test
 
@@ -10,16 +9,14 @@ internal class SettingsFlowTest : BaseAppFlowTest() {
 
     @Before
     fun setUp() {
-        scenarios.stubDiscoverBrowse()
-    }
-
-    private fun stubUsersMeUnauthorized() {
-        environment.stubber.stub(path = "/users/me", response = NetworkResponse.Error(401))
+        scenarios.discover.stubBrowseGraph()
     }
 
     @Test
     fun shouldPersistImageQualitySelectionAcrossPresenterCycle() {
-        stubUsersMeUnauthorized()
+        discoverRobot.verifyDiscoverScreenIsShown()
+
+        scenarios.stubUsersMeUnauthorized()
 
         homeRobot.clickProfileTab()
         profileRobot.verifySignInButtonIsShown()
@@ -38,8 +35,9 @@ internal class SettingsFlowTest : BaseAppFlowTest() {
 
     @Test
     fun shouldShowLogoutDialogWhenAuthenticatedTraktAccountRowIsTapped() {
-        scenarios.auth.stubLoggedInUser()
-        scenarios.profile.stubProfileSyncEndpoints()
+        discoverRobot.verifyDiscoverScreenIsShown()
+
+        scenarios.signInAndDismissRationale()
 
         homeRobot.clickProfileTab()
         profileRobot.verifyUserCardIsShown("integration-test-user")

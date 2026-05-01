@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.app.test.compose.robot
 
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import com.thomaskioko.tvmaniac.testing.integration.ui.robot.BaseRobot
+import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
 import com.thomaskioko.tvmaniac.testtags.progress.ProgressTestTags
 import com.thomaskioko.tvmaniac.testtags.upnext.UpNextTestTags
 
@@ -21,6 +21,22 @@ internal class ProgressRobot(composeTestRule: ComposeContentTestRule) : BaseRobo
 
     fun verifyEpisodeRowIsHidden(traktId: Long) {
         verifyTagHidden(UpNextTestTags.episodeRow(traktId))
+    }
+
+    fun verifyEpisodeMetaIsShown(traktId: Long, formattedEpisodeNumber: String) {
+        verifyTagExists(UpNextTestTags.episodeMeta(traktId, formattedEpisodeNumber))
+    }
+
+    fun verifyProgressCountIsShown(traktId: Long, count: String) {
+        verifyTagExists(UpNextTestTags.progressCount(traktId, count))
+    }
+
+    fun clickWatchedButton(traktId: Long) {
+        click(UpNextTestTags.watchedButton(traktId), useSemanticsAction = true)
+    }
+
+    fun clickEpisodeRow(traktId: Long) {
+        click(UpNextTestTags.episodeRow(traktId), useSemanticsAction = true)
     }
 
     fun clickCalendarTab() {

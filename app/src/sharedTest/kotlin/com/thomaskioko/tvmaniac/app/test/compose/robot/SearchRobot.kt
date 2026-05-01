@@ -3,8 +3,8 @@ package com.thomaskioko.tvmaniac.app.test.compose.robot
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.onNodeWithTag
-import com.thomaskioko.tvmaniac.testing.integration.ui.robot.BaseRobot
-import com.thomaskioko.tvmaniac.testing.integration.ui.util.replaceText
+import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
+import com.thomaskioko.tvmaniac.testing.integration.ui.replaceText
 import com.thomaskioko.tvmaniac.testtags.search.SearchTestTags
 
 internal class SearchRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
@@ -28,7 +28,7 @@ internal class SearchRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(
     }
 
     fun verifyResultItemIsShown(traktId: Long) {
-        verifyTagShown(SearchTestTags.resultItem(traktId), timeoutMillis = 10_000, useUnmergedTree = true)
+        verifyTagShown(SearchTestTags.resultItem(traktId), useUnmergedTree = true)
     }
 
     fun verifyResultTitleIsShown(title: String) {
@@ -40,7 +40,7 @@ internal class SearchRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(
     }
 
     fun verifyErrorStateIsShown() {
-        verifyTagShown(SearchTestTags.ERROR_STATE_TEST_TAG, timeoutMillis = 10_000)
+        verifyTagShown(SearchTestTags.ERROR_STATE_TEST_TAG)
     }
 
     fun clickResultItem(traktId: Long): ShowDetailsRobot {

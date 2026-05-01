@@ -2,9 +2,9 @@ package com.thomaskioko.tvmaniac.app.test.compose.robot
 
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import com.thomaskioko.tvmaniac.home.nav.di.model.HomeConfig
-import com.thomaskioko.tvmaniac.testing.integration.ui.robot.BaseRobot
-import com.thomaskioko.tvmaniac.testing.integration.ui.util.isNotSelected
-import com.thomaskioko.tvmaniac.testing.integration.ui.util.isSelected
+import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
+import com.thomaskioko.tvmaniac.testing.integration.ui.isNotSelected
+import com.thomaskioko.tvmaniac.testing.integration.ui.isSelected
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
 
 internal class HomeRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
@@ -17,21 +17,24 @@ internal class HomeRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(co
         composeTestRule.isNotSelected(config.testTag())
     }
 
-    fun clickDiscoverTab(): DiscoverRobot {
+    fun clickDiscoverTab() {
         click(HomeTestTags.DISCOVER_TAB, useSemanticsAction = true)
-        return DiscoverRobot(composeTestRule)
+        verifyTabSelected(HomeConfig.Discover)
     }
 
     fun clickProgressTab() {
         click(HomeTestTags.PROGRESS_TAB, useSemanticsAction = true)
+        verifyTabSelected(HomeConfig.Progress)
     }
 
     fun clickLibraryTab() {
         click(HomeTestTags.LIBRARY_TAB, useSemanticsAction = true)
+        verifyTabSelected(HomeConfig.Library)
     }
 
     fun clickProfileTab() {
         click(HomeTestTags.PROFILE_TAB, useSemanticsAction = true)
+        verifyTabSelected(HomeConfig.Profile)
     }
 
     private fun HomeConfig.testTag(): String = when (this) {

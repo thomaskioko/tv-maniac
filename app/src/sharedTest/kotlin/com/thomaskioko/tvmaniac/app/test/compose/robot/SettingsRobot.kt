@@ -2,9 +2,12 @@ package com.thomaskioko.tvmaniac.app.test.compose.robot
 
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
-import com.thomaskioko.tvmaniac.testing.integration.ui.robot.BaseRobot
-import com.thomaskioko.tvmaniac.testing.integration.ui.util.isNotSelected
-import com.thomaskioko.tvmaniac.testing.integration.ui.util.isSelected
+import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
+import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
+import com.thomaskioko.tvmaniac.testing.integration.ui.isChecked
+import com.thomaskioko.tvmaniac.testing.integration.ui.isNotSelected
+import com.thomaskioko.tvmaniac.testing.integration.ui.isSelected
+import com.thomaskioko.tvmaniac.testing.integration.ui.isUnchecked
 import com.thomaskioko.tvmaniac.testtags.settings.SettingsTestTags
 
 internal class SettingsRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
@@ -51,5 +54,40 @@ internal class SettingsRobot(composeTestRule: ComposeContentTestRule) : BaseRobo
 
     fun clickLogoutDismiss() {
         click(SettingsTestTags.LOGOUT_DIALOG_DISMISS_BUTTON_TEST_TAG, useSemanticsAction = true)
+    }
+
+    fun scrollToThemeSwatch(theme: ThemeModel) {
+        scrollToListTag(SettingsTestTags.LIST_TEST_TAG, SettingsTestTags.themeSwatch(theme.name))
+    }
+
+    fun verifyThemeSwatchSelected(theme: ThemeModel) {
+        composeTestRule.isSelected(SettingsTestTags.themeSwatch(theme.name))
+    }
+
+    fun verifyThemeSwatchNotSelected(theme: ThemeModel) {
+        composeTestRule.isNotSelected(SettingsTestTags.themeSwatch(theme.name))
+    }
+
+    fun clickThemeSwatch(theme: ThemeModel) {
+        click(SettingsTestTags.themeSwatch(theme.name), useSemanticsAction = true)
+    }
+
+    fun scrollToEpisodeNotificationsToggle() {
+        scrollToListTag(
+            SettingsTestTags.LIST_TEST_TAG,
+            SettingsTestTags.EPISODE_NOTIFICATIONS_TOGGLE_TEST_TAG,
+        )
+    }
+
+    fun verifyEpisodeNotificationsEnabled() {
+        composeTestRule.isChecked(SettingsTestTags.EPISODE_NOTIFICATIONS_TOGGLE_TEST_TAG)
+    }
+
+    fun verifyEpisodeNotificationsDisabled() {
+        composeTestRule.isUnchecked(SettingsTestTags.EPISODE_NOTIFICATIONS_TOGGLE_TEST_TAG)
+    }
+
+    fun clickEpisodeNotificationsToggle() {
+        click(SettingsTestTags.EPISODE_NOTIFICATIONS_TOGGLE_TEST_TAG, useSemanticsAction = true)
     }
 }
