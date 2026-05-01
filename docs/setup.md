@@ -11,7 +11,7 @@ TMDB and Trakt API credentials are required.
 - Note the **Client ID** and **Client Secret**.
 
 ## 3. Local Configuration
-Create `local.properties` in the project root:
+Create `local.properties` in project root:
 
 ```properties
 TMDB_API_KEY=your_tmdb_api_key

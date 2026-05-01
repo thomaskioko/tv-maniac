@@ -60,7 +60,7 @@ graph TD
 
 ## Binding Containers
 
-Group related `@Provides` methods into a `public object`.
+Group related `@Provides` methods into `public object`.
 
 ```kotlin
 @BindingContainer
@@ -114,5 +114,5 @@ public class ShowDetailsPresenter(
 
 Tests build custom graphs swapping production bindings for fakes.
 - **`FakeAppBindingContainer`**: Contributes fakes (mock engines, stubs).
-- **`testing/` modules**: Provide fake implementations. Mocks are prohibited.
+- **`testing/` modules**: Provide fake implementations.
 - **`core/integration/ui`**: Integration test scaffolding (DSL, Robot, Harness).
