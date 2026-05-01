@@ -61,8 +61,6 @@ import androidx.compose.ui.test.hasContentDescription as composeHasContentDescri
  * - Defaults: `useUnmergedTree = true`, `timeoutMillis = 5_000`.
  */
 
-private const val DEFAULT_TIMEOUT_MS: Long = 10_000
-
 /**
  * Polls until at least one node with [tag] exists.
  *
@@ -94,7 +92,7 @@ private fun ComposeContentTestRule.awaitNodeWithTag(
  */
 public fun ComposeContentTestRule.onClick(
     tag: String,
-    timeoutMillis: Long = DEFAULT_TIMEOUT_MS,
+    timeoutMillis: Long,
     useUnmergedTree: Boolean = true,
     useSemanticsAction: Boolean = false,
 ): ComposeContentTestRule = apply {
@@ -116,7 +114,7 @@ public fun ComposeContentTestRule.onClick(
  */
 public fun ComposeContentTestRule.performLongClick(
     tag: String,
-    timeoutMillis: Long = DEFAULT_TIMEOUT_MS,
+    timeoutMillis: Long,
     useUnmergedTree: Boolean = true,
 ): ComposeContentTestRule = apply {
     awaitNodeWithTag(tag, useUnmergedTree, timeoutMillis)
@@ -136,7 +134,7 @@ public fun ComposeContentTestRule.performLongClick(
 public fun ComposeContentTestRule.inputText(
     tag: String,
     text: String,
-    timeoutMillis: Long = DEFAULT_TIMEOUT_MS,
+    timeoutMillis: Long,
     useUnmergedTree: Boolean = true,
 ): ComposeContentTestRule = apply {
     awaitNodeWithTag(tag, useUnmergedTree, timeoutMillis)
@@ -156,7 +154,7 @@ public fun ComposeContentTestRule.inputText(
 public fun ComposeContentTestRule.replaceText(
     tag: String,
     text: String,
-    timeoutMillis: Long = DEFAULT_TIMEOUT_MS,
+    timeoutMillis: Long,
     useUnmergedTree: Boolean = true,
 ): ComposeContentTestRule = apply {
     awaitNodeWithTag(tag, useUnmergedTree, timeoutMillis)
@@ -174,7 +172,7 @@ public fun ComposeContentTestRule.replaceText(
  */
 public fun ComposeContentTestRule.submitText(
     tag: String,
-    timeoutMillis: Long = DEFAULT_TIMEOUT_MS,
+    timeoutMillis: Long,
     useUnmergedTree: Boolean = true,
 ): ComposeContentTestRule = apply {
     awaitNodeWithTag(tag, useUnmergedTree, timeoutMillis)
@@ -192,7 +190,7 @@ public fun ComposeContentTestRule.submitText(
  */
 public fun ComposeContentTestRule.scrollTo(
     tag: String,
-    timeoutMillis: Long = DEFAULT_TIMEOUT_MS,
+    timeoutMillis: Long,
     useUnmergedTree: Boolean = true,
 ): ComposeContentTestRule = apply {
     awaitNodeWithTag(tag, useUnmergedTree, timeoutMillis)
@@ -210,8 +208,9 @@ public fun ComposeContentTestRule.scrollTo(
 public fun ComposeContentTestRule.scrollTo(
     listTag: String,
     itemTag: String,
+    timeoutMillis: Long,
 ): ComposeContentTestRule = apply {
-    awaitNodeWithTag(listTag, useUnmergedTree = true, timeoutMillis = DEFAULT_TIMEOUT_MS)
+    awaitNodeWithTag(listTag, useUnmergedTree = true, timeoutMillis = timeoutMillis)
     onAllNodesWithTag(listTag, useUnmergedTree = true)
         .onFirst()
         .performScrollToNode(hasTestTag(itemTag))
@@ -226,7 +225,7 @@ public fun ComposeContentTestRule.scrollTo(
  */
 public fun ComposeContentTestRule.swipeRight(
     tag: String,
-    timeoutMillis: Long = DEFAULT_TIMEOUT_MS,
+    timeoutMillis: Long,
     useUnmergedTree: Boolean = true,
 ): ComposeContentTestRule = apply {
     awaitNodeWithTag(tag, useUnmergedTree, timeoutMillis)
@@ -244,7 +243,7 @@ public fun ComposeContentTestRule.swipeRight(
  */
 public fun ComposeContentTestRule.swipeUp(
     tag: String,
-    timeoutMillis: Long = DEFAULT_TIMEOUT_MS,
+    timeoutMillis: Long,
     useUnmergedTree: Boolean = true,
 ): ComposeContentTestRule = apply {
     awaitNodeWithTag(tag, useUnmergedTree, timeoutMillis)
@@ -356,7 +355,7 @@ public fun ComposeContentTestRule.advanceTimeBy(millis: Long): ComposeContentTes
  */
 public fun ComposeContentTestRule.isShown(
     tag: String,
-    timeoutMillis: Long = DEFAULT_TIMEOUT_MS,
+    timeoutMillis: Long,
     useUnmergedTree: Boolean = true,
 ): ComposeContentTestRule = apply {
     awaitNodeWithTag(tag, useUnmergedTree, timeoutMillis)
@@ -373,7 +372,7 @@ public fun ComposeContentTestRule.isShown(
  */
 public fun ComposeContentTestRule.isHidden(
     tag: String,
-    timeoutMillis: Long = DEFAULT_TIMEOUT_MS,
+    timeoutMillis: Long,
 ): ComposeContentTestRule = apply {
     waitUntilDoesNotExist(hasTestTag(tag), timeoutMillis)
 }
@@ -387,7 +386,7 @@ public fun ComposeContentTestRule.isHidden(
  */
 public fun ComposeContentTestRule.exists(
     tag: String,
-    timeoutMillis: Long = DEFAULT_TIMEOUT_MS,
+    timeoutMillis: Long,
     useUnmergedTree: Boolean = true,
 ): ComposeContentTestRule = apply {
     awaitNodeWithTag(tag, useUnmergedTree, timeoutMillis)
@@ -405,7 +404,7 @@ public fun ComposeContentTestRule.exists(
  */
 public fun ComposeContentTestRule.awaitTag(
     tag: String,
-    timeoutMillis: Long = DEFAULT_TIMEOUT_MS,
+    timeoutMillis: Long,
     useUnmergedTree: Boolean = true,
 ): Boolean = runCatching {
     waitUntil(timeoutMillis) {
@@ -424,7 +423,7 @@ public fun ComposeContentTestRule.awaitTag(
  */
 public fun ComposeContentTestRule.isEnabled(
     tag: String,
-    timeoutMillis: Long = DEFAULT_TIMEOUT_MS,
+    timeoutMillis: Long,
     useUnmergedTree: Boolean = true,
 ): ComposeContentTestRule = apply {
     awaitNodeWithTag(tag, useUnmergedTree, timeoutMillis)
@@ -442,7 +441,7 @@ public fun ComposeContentTestRule.isEnabled(
  */
 public fun ComposeContentTestRule.isDisabled(
     tag: String,
-    timeoutMillis: Long = DEFAULT_TIMEOUT_MS,
+    timeoutMillis: Long,
     useUnmergedTree: Boolean = true,
 ): ComposeContentTestRule = apply {
     awaitNodeWithTag(tag, useUnmergedTree, timeoutMillis)
@@ -460,7 +459,7 @@ public fun ComposeContentTestRule.isDisabled(
  */
 public fun ComposeContentTestRule.isSelected(
     tag: String,
-    timeoutMillis: Long = DEFAULT_TIMEOUT_MS,
+    timeoutMillis: Long,
     useUnmergedTree: Boolean = true,
 ): ComposeContentTestRule = apply {
     awaitNodeWithTag(tag, useUnmergedTree, timeoutMillis)
@@ -478,7 +477,7 @@ public fun ComposeContentTestRule.isSelected(
  */
 public fun ComposeContentTestRule.isNotSelected(
     tag: String,
-    timeoutMillis: Long = DEFAULT_TIMEOUT_MS,
+    timeoutMillis: Long,
     useUnmergedTree: Boolean = true,
 ): ComposeContentTestRule = apply {
     awaitNodeWithTag(tag, useUnmergedTree, timeoutMillis)
@@ -496,7 +495,7 @@ public fun ComposeContentTestRule.isNotSelected(
  */
 public fun ComposeContentTestRule.isChecked(
     tag: String,
-    timeoutMillis: Long = DEFAULT_TIMEOUT_MS,
+    timeoutMillis: Long,
     useUnmergedTree: Boolean = true,
 ): ComposeContentTestRule = apply {
     awaitNodeWithTag(tag, useUnmergedTree, timeoutMillis)
@@ -514,7 +513,7 @@ public fun ComposeContentTestRule.isChecked(
  */
 public fun ComposeContentTestRule.isUnchecked(
     tag: String,
-    timeoutMillis: Long = DEFAULT_TIMEOUT_MS,
+    timeoutMillis: Long,
     useUnmergedTree: Boolean = true,
 ): ComposeContentTestRule = apply {
     awaitNodeWithTag(tag, useUnmergedTree, timeoutMillis)
@@ -535,7 +534,7 @@ public fun ComposeContentTestRule.isTextShown(
     text: String,
     substring: Boolean = true,
     ignoreCase: Boolean = false,
-    timeoutMillis: Long = DEFAULT_TIMEOUT_MS,
+    timeoutMillis: Long,
 ): ComposeContentTestRule = apply {
     waitUntil(timeoutMillis) {
         onAllNodes(hasText(text, substring = substring, ignoreCase = ignoreCase))
@@ -555,7 +554,7 @@ public fun ComposeContentTestRule.isContentDescriptionShown(
     description: String,
     substring: Boolean = true,
     ignoreCase: Boolean = false,
-    timeoutMillis: Long = DEFAULT_TIMEOUT_MS,
+    timeoutMillis: Long,
 ): ComposeContentTestRule = apply {
     waitUntil(timeoutMillis) {
         onAllNodes(composeHasContentDescription(description, substring = substring, ignoreCase = ignoreCase))
@@ -607,7 +606,7 @@ public fun ComposeContentTestRule.hasContentDescription(
     description: String,
     substring: Boolean = true,
     ignoreCase: Boolean = false,
-    timeoutMillis: Long = DEFAULT_TIMEOUT_MS,
+    timeoutMillis: Long,
     useUnmergedTree: Boolean = true,
 ): ComposeContentTestRule = apply {
     awaitNodeWithTag(tag, useUnmergedTree, timeoutMillis)

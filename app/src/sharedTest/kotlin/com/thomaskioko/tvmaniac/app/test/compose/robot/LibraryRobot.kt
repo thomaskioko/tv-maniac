@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.app.test.compose.robot
 
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
+import com.thomaskioko.tvmaniac.testing.integration.ui.TIMEOUT_MILLIS
 import com.thomaskioko.tvmaniac.testing.integration.ui.replaceText
 import com.thomaskioko.tvmaniac.testtags.library.LibraryTestTags
 
@@ -32,7 +33,7 @@ internal class LibraryRobot(composeTestRule: ComposeContentTestRule) : BaseRobot
     }
 
     fun enterSearchQuery(query: String) {
-        composeTestRule.replaceText(LibraryTestTags.SEARCH_BAR_TEST_TAG, query)
+        composeTestRule.replaceText(tag = LibraryTestTags.SEARCH_BAR_TEST_TAG, text = query, timeoutMillis = TIMEOUT_MILLIS)
     }
 
     fun clickFilterButton() {

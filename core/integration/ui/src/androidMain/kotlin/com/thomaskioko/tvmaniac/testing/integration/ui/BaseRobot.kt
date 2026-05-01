@@ -3,8 +3,9 @@ package com.thomaskioko.tvmaniac.testing.integration.ui
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.performClick
+import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot.Companion.isDevelopmentMode
 
-private const val TIMEOUT_MILLIS: Long = 1_500
+public const val TIMEOUT_MILLIS: Long = 1_500
 
 /**
  * Base class for screen robots in integration tests.
@@ -99,7 +100,11 @@ public abstract class BaseRobot(protected val composeTestRule: ComposeContentTes
         timeoutMillis: Long = TIMEOUT_MILLIS,
         useUnmergedTree: Boolean = true,
     ) {
-        composeTestRule.isShown(tag, timeoutMillis = timeoutMillis, useUnmergedTree = useUnmergedTree)
+        composeTestRule.isShown(
+            tag,
+            timeoutMillis = timeoutMillis,
+            useUnmergedTree = useUnmergedTree,
+        )
     }
 
     /**
@@ -125,7 +130,11 @@ public abstract class BaseRobot(protected val composeTestRule: ComposeContentTes
         timeoutMillis: Long = TIMEOUT_MILLIS,
         useUnmergedTree: Boolean = true,
     ) {
-        composeTestRule.exists(tag, timeoutMillis = timeoutMillis, useUnmergedTree = useUnmergedTree)
+        composeTestRule.exists(
+            tag,
+            timeoutMillis = timeoutMillis,
+            useUnmergedTree = useUnmergedTree,
+        )
         devSleep()
     }
 
@@ -142,7 +151,7 @@ public abstract class BaseRobot(protected val composeTestRule: ComposeContentTes
      * Performs swipe right on node with [tag].
      */
     public fun swipeRight(tag: String) {
-        composeTestRule.swipeRight(tag)
+        composeTestRule.swipeRight(tag = tag, timeoutMillis = TIMEOUT_MILLIS)
         devSleep()
     }
 
@@ -150,7 +159,7 @@ public abstract class BaseRobot(protected val composeTestRule: ComposeContentTes
      * Performs swipe up on node with [tag].
      */
     public fun swipeUp(tag: String) {
-        composeTestRule.swipeUp(tag)
+        composeTestRule.swipeUp(tag = tag, timeoutMillis = TIMEOUT_MILLIS)
         devSleep()
     }
 
@@ -207,7 +216,11 @@ public abstract class BaseRobot(protected val composeTestRule: ComposeContentTes
      * @param useSemanticsAction If true, dispatch on-click semantics action directly.
      */
     public fun click(tag: String, useSemanticsAction: Boolean = false) {
-        composeTestRule.onClick(tag, useSemanticsAction = useSemanticsAction)
+        composeTestRule.onClick(
+            tag = tag,
+            useSemanticsAction = useSemanticsAction,
+            timeoutMillis = TIMEOUT_MILLIS,
+        )
         devSleep()
     }
 
@@ -225,7 +238,7 @@ public abstract class BaseRobot(protected val composeTestRule: ComposeContentTes
      * Scrolls node with [tag] into view.
      */
     public fun scrollTo(tag: String) {
-        composeTestRule.scrollTo(tag)
+        composeTestRule.scrollTo(tag = tag, timeoutMillis = TIMEOUT_MILLIS)
         devSleep()
     }
 
@@ -233,7 +246,11 @@ public abstract class BaseRobot(protected val composeTestRule: ComposeContentTes
      * Scrolls inside lazy list [listTag] until child [itemTag] is composed.
      */
     public fun scrollToListTag(listTag: String, itemTag: String) {
-        composeTestRule.scrollTo(listTag, itemTag)
+        composeTestRule.scrollTo(
+            listTag = listTag,
+            itemTag = itemTag,
+            timeoutMillis = TIMEOUT_MILLIS,
+        )
         devSleep()
     }
 }

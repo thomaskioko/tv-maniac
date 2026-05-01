@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.onNodeWithTag
 import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
+import com.thomaskioko.tvmaniac.testing.integration.ui.TIMEOUT_MILLIS
 import com.thomaskioko.tvmaniac.testing.integration.ui.replaceText
 import com.thomaskioko.tvmaniac.testtags.search.SearchTestTags
 
@@ -14,7 +15,11 @@ internal class SearchRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(
     }
 
     fun enterSearchQuery(query: String) {
-        composeTestRule.replaceText(SearchTestTags.SEARCH_BAR_TEST_TAG, query)
+        composeTestRule.replaceText(
+            tag = SearchTestTags.SEARCH_BAR_TEST_TAG,
+            text = query,
+            timeoutMillis = TIMEOUT_MILLIS,
+        )
         composeTestRule.waitForIdle()
     }
 
@@ -24,7 +29,12 @@ internal class SearchRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(
     }
 
     fun assertResultCountEquals(count: Int) {
-        assertCountEquals(SearchTestTags.SCREEN_TEST_TAG, "search_result_item_", count, useUnmergedTree = true)
+        assertCountEquals(
+            SearchTestTags.SCREEN_TEST_TAG,
+            "search_result_item_",
+            count,
+            useUnmergedTree = true,
+        )
     }
 
     fun assertResultItemDisplayed(traktId: Long) {
