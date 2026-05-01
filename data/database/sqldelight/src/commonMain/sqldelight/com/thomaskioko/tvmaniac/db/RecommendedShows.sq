@@ -2,12 +2,15 @@ import com.thomaskioko.tvmaniac.db.Id;
 import com.thomaskioko.tvmaniac.db.TraktId;
 import com.thomaskioko.tvmaniac.db.TmdbId;
 
+-- The parent reference `recommended_show_trakt_id` is intentionally not FK-constrained, for
+-- the same reason as similar_shows: the parent show's tvshow row may not exist yet when this
+-- writer commits (parallel fetch race with ShowDetailsStore). Queries filter by parent id
+-- without joining tvshow on this column.
 CREATE TABLE recommended_shows (
     trakt_id INTEGER AS Id<TraktId>,
     tmdb_id INTEGER AS Id<TmdbId> NOT NULL,
     recommended_show_trakt_id INTEGER AS Id<TraktId> NOT NULL,
     PRIMARY KEY (recommended_show_trakt_id, trakt_id),
-    FOREIGN KEY(recommended_show_trakt_id) REFERENCES tvshow(trakt_id),
     FOREIGN KEY(trakt_id) REFERENCES tvshow(trakt_id)
 );
 

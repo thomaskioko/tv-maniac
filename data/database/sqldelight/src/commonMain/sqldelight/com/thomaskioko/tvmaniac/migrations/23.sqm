@@ -1,0 +1,42 @@
+-- Migration 23: drop the parent FK from similar_shows and recommended_shows.
+--
+-- Both tables hold derived rows (related/recommended shows for a show the user is currently
+-- viewing). The parent reference (`similar_show_trakt_id` / `recommended_show_trakt_id`) FK to
+-- tvshow.trakt_id was racing with `ShowDetailsStore`'s parent-show insert: when the related
+-- fetch's writer transaction commits before the show details writer, the FK rejects the row.
+-- Queries don't depend on the FK being valid (they filter by the parent id directly without
+-- joining tvshow on the parent column), so the constraint is over-protective. Drop it.
+--
+-- The related/recommended `trakt_id` FK on tvshow.trakt_id stays — those rows are inserted by
+-- the same writer that upserts the related show into tvshow, so the parent always exists.
+
+-- similar_shows: rebuild without the parent FK.
+CREATE TABLE similar_shows_new (
+    trakt_id INTEGER,
+    tmdb_id INTEGER NOT NULL,
+    similar_show_trakt_id INTEGER NOT NULL,
+    page_order INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (similar_show_trakt_id, trakt_id),
+    FOREIGN KEY(trakt_id) REFERENCES tvshow(trakt_id)
+);
+
+INSERT INTO similar_shows_new(trakt_id, tmdb_id, similar_show_trakt_id, page_order)
+SELECT trakt_id, tmdb_id, similar_show_trakt_id, page_order FROM similar_shows;
+
+DROP TABLE similar_shows;
+ALTER TABLE similar_shows_new RENAME TO similar_shows;
+
+-- recommended_shows: rebuild without the parent FK.
+CREATE TABLE recommended_shows_new (
+    trakt_id INTEGER,
+    tmdb_id INTEGER NOT NULL,
+    recommended_show_trakt_id INTEGER NOT NULL,
+    PRIMARY KEY (recommended_show_trakt_id, trakt_id),
+    FOREIGN KEY(trakt_id) REFERENCES tvshow(trakt_id)
+);
+
+INSERT INTO recommended_shows_new(trakt_id, tmdb_id, recommended_show_trakt_id)
+SELECT trakt_id, tmdb_id, recommended_show_trakt_id FROM recommended_shows;
+
+DROP TABLE recommended_shows;
+ALTER TABLE recommended_shows_new RENAME TO recommended_shows;
