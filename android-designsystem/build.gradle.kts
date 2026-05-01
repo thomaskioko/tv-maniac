@@ -19,6 +19,7 @@ dependencies {
     api(libs.androidx.compose.runtime)
 
     api(projects.domain.theme)
+    implementation(projects.core.testTags)
     implementation(projects.i18n.generator)
 
     api(libs.coil.base)
