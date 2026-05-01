@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.compose.roborazzi
 
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.Surface
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import com.thomaskioko.tvmaniac.compose.components.NotificationRationaleContent
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import org.junit.Rule
