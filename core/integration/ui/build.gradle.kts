@@ -4,11 +4,7 @@ plugins {
 
 scaffold {
     useMetro()
-    addAndroidTarget(
-        enableAndroidResources = true,
-        withHostTestBuilder = true,
-        includeAndroidResources = true,
-    )
+    addAndroidTarget(enableAndroidResources = true)
     android {
         useCompose()
         manifestPlaceholders(
@@ -31,9 +27,12 @@ kotlin {
         androidMain.dependencies {
             api(libs.androidx.compose.ui.test)
             api(libs.androidx.junit)
-            api(libs.robolectric)
+            api(libs.androidx.uiautomator)
+            compileOnly(libs.robolectric)
+            api(libs.robolectric.annotations)
             api(libs.ktor.core)
             api(libs.ktor.mock)
+            api(libs.kotlinx.serialization.json)
         }
     }
 }

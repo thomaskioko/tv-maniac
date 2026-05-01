@@ -1,7 +1,8 @@
 @file:OptIn(ExperimentalTestApi::class)
 
-package com.thomaskioko.tvmaniac.testing.integration.ui.util
+package com.thomaskioko.tvmaniac.testing.integration.ui
 
+import android.os.Build
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsNode
@@ -34,9 +35,15 @@ import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeRight
+import androidx.compose.ui.test.swipeUp
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.BySelector
+import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.Until
 import androidx.compose.ui.test.hasContentDescription as composeHasContentDescription
 
 /**
@@ -205,17 +212,115 @@ public fun ComposeContentTestRule.scrollTo(
 }
 
 /**
- * Dispatches back press on resumed [ComponentActivity].
+ * Waits for [tag] and performs swipe right.
+ *
+ * @param tag Test tag of node.
+ * @param timeoutMillis Maximum wait time.
+ * @param useUnmergedTree Whether to search unmerged semantics tree.
+ */
+public fun ComposeContentTestRule.swipeRight(
+    tag: String,
+    timeoutMillis: Long = DEFAULT_TIMEOUT_MS,
+    useUnmergedTree: Boolean = true,
+): ComposeContentTestRule = apply {
+    awaitNodeWithTag(tag, useUnmergedTree, timeoutMillis)
+    onNodeWithTag(tag, useUnmergedTree = useUnmergedTree)
+        .performTouchInput { swipeRight() }
+}
+
+/**
+ * Waits for [tag] and performs swipe up.
+ *
+ * @param tag Test tag of node.
+ * @param timeoutMillis Maximum wait time.
+ * @param useUnmergedTree Whether to search unmerged semantics tree.
+ */
+public fun ComposeContentTestRule.swipeUp(
+    tag: String,
+    timeoutMillis: Long = DEFAULT_TIMEOUT_MS,
+    useUnmergedTree: Boolean = true,
+): ComposeContentTestRule = apply {
+    awaitNodeWithTag(tag, useUnmergedTree, timeoutMillis)
+    onNodeWithTag(tag, useUnmergedTree = useUnmergedTree)
+        .performTouchInput { swipeUp() }
+}
+
+/**
+ * Dispatches back press on the foreground [ComponentActivity].
+ *
+ * Falls back from `RESUMED` to `PAUSED` because on real Android the activity briefly transitions
+ * to `PAUSED` while a `ModalBottomSheet` or platform `Dialog` is mid-dismiss; under Robolectric
+ * the transition is synchronous and the activity stays `RESUMED`. Without the fallback the helper
+ * races on instrumentation and throws "no resumed ComponentActivity found" right after the modal
+ * dismisses but before the activity returns to `RESUMED`.
  */
 public fun ComposeContentTestRule.pressBack(): ComposeContentTestRule = apply {
+    waitForIdle()
     InstrumentationRegistry.getInstrumentation().runOnMainSync {
-        val activity = ActivityLifecycleMonitorRegistry.getInstance()
-            .getActivitiesInStage(Stage.RESUMED)
-            .firstOrNull() as? ComponentActivity
-            ?: error("pressBack: no resumed ComponentActivity found")
+        val monitor = ActivityLifecycleMonitorRegistry.getInstance()
+        val activity = (
+            monitor.getActivitiesInStage(Stage.RESUMED).firstOrNull()
+                ?: monitor.getActivitiesInStage(Stage.PAUSED).firstOrNull()
+            ) as? ComponentActivity
+            ?: error("pressBack: no resumed or paused ComponentActivity found")
         activity.onBackPressedDispatcher.onBackPressed()
     }
     waitForIdle()
+}
+
+// endregion
+
+// region System dialogs
+
+/**
+ * Catalogue of platform dialogs that integration tests may need to dismiss.
+ *
+ * Each entry carries the UiAutomator selectors needed to locate its action button. Callers stay
+ * declarative ("dismiss the notification permission prompt") instead of dealing with resource ids
+ * or locale-specific button text. Add new entries here as new dialogs surface in flow tests.
+ */
+public enum class SystemDialog(internal val selectors: List<BySelector>) {
+    /** Android 13+ POST_NOTIFICATIONS prompt. Locates the platform deny button. */
+    NotificationPermissionDeny(
+        selectors = listOf(
+            By.res("com.android.permissioncontroller", "permission_deny_button"),
+            By.textContains("Don't allow"),
+            By.textContains("Deny"),
+        ),
+    ),
+}
+
+/**
+ * Clicks the action button for [dialog] via UiAutomator and waits for it to disappear.
+ *
+ * Use to dismiss platform dialogs that detach the Compose owner. The Compose test rule cannot
+ * drive these because they live outside the Compose hierarchy. The dialog catalogue ([SystemDialog])
+ * encodes the selectors so call sites do not import UiAutomator.
+ *
+ * No-op on Robolectric and pre-Tiramisu where no real system dialog appears. If no selector
+ * resolves within [appearTimeoutMillis], returns silently. The next caller assertion will surface
+ * the real symptom if the dialog is still up.
+ *
+ * @param dialog Catalogue entry whose action button to click.
+ * @param appearTimeoutMillis Maximum wait per selector for a match before giving up.
+ * @param dismissTimeoutMillis Maximum wait for the matched selector to disappear after the click.
+ */
+public fun ComposeContentTestRule.dismissSystemDialog(
+    dialog: SystemDialog,
+    appearTimeoutMillis: Long = 1_000,
+    dismissTimeoutMillis: Long = 1_000,
+): ComposeContentTestRule = apply {
+    if (Build.FINGERPRINT.startsWith("robolectric", ignoreCase = true)) return@apply
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return@apply
+
+    val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+    var matched: BySelector? = null
+    val target = dialog.selectors.firstNotNullOfOrNull { selector ->
+        device.wait(Until.findObject(selector), appearTimeoutMillis)?.also { matched = selector }
+    } ?: return@apply
+
+    target.click()
+    matched?.let { device.wait(Until.gone(it), dismissTimeoutMillis) }
 }
 
 // endregion
@@ -277,6 +382,28 @@ public fun ComposeContentTestRule.exists(
 ): ComposeContentTestRule = apply {
     awaitNodeWithTag(tag, useUnmergedTree, timeoutMillis)
 }
+
+/**
+ * Polls up to [timeoutMillis] for [tag] and returns whether it appeared.
+ *
+ * Non-throwing counterpart to [exists]. Use when the caller branches on presence rather than
+ * fails the test (e.g., overlays that surface only on some runners or environments).
+ *
+ * @param tag Test tag to wait for.
+ * @param timeoutMillis Maximum wait time.
+ * @param useUnmergedTree Whether to search unmerged semantics tree.
+ */
+public fun ComposeContentTestRule.awaitTag(
+    tag: String,
+    timeoutMillis: Long = DEFAULT_TIMEOUT_MS,
+    useUnmergedTree: Boolean = true,
+): Boolean = runCatching {
+    waitUntil(timeoutMillis) {
+        onAllNodesWithTag(tag, useUnmergedTree = useUnmergedTree)
+            .fetchSemanticsNodes()
+            .isNotEmpty()
+    }
+}.isSuccess
 
 /**
  * Waits for [tag] and asserts it is enabled.

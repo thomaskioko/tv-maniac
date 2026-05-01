@@ -1,17 +1,10 @@
-package com.thomaskioko.tvmaniac.testing.integration.ui.robot
+package com.thomaskioko.tvmaniac.testing.integration.ui
 
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import com.thomaskioko.tvmaniac.testing.integration.ui.util.advanceTimeBy
-import com.thomaskioko.tvmaniac.testing.integration.ui.util.exists
-import com.thomaskioko.tvmaniac.testing.integration.ui.util.hasContentDescription
-import com.thomaskioko.tvmaniac.testing.integration.ui.util.hasCount
-import com.thomaskioko.tvmaniac.testing.integration.ui.util.isContentDescriptionShown
-import com.thomaskioko.tvmaniac.testing.integration.ui.util.isHidden
-import com.thomaskioko.tvmaniac.testing.integration.ui.util.isShown
-import com.thomaskioko.tvmaniac.testing.integration.ui.util.isTextShown
-import com.thomaskioko.tvmaniac.testing.integration.ui.util.onClick
-import com.thomaskioko.tvmaniac.testing.integration.ui.util.pressBack
-import com.thomaskioko.tvmaniac.testing.integration.ui.util.scrollTo
+import androidx.compose.ui.test.performClick
+
+private const val TIMEOUT_MILLIS: Long = 1_500
 
 /**
  * Base class for screen robots in integration tests.
@@ -22,6 +15,23 @@ import com.thomaskioko.tvmaniac.testing.integration.ui.util.scrollTo
  * @property composeTestRule Compose rule driving the activity under test.
  */
 public abstract class BaseRobot(protected val composeTestRule: ComposeContentTestRule) {
+
+    public companion object {
+        /**
+         * Toggle this to true to slow down connected tests for visual inspection during development.
+         */
+        public var isDevelopmentMode: Boolean = false
+    }
+
+    /**
+     * Pauses the test execution for a short duration if [isDevelopmentMode] is true.
+     * This is useful for visually inspecting connected tests on an emulator.
+     */
+    protected fun devSleep(duration: Long = 1000) {
+        if (isDevelopmentMode) {
+            Thread.sleep(duration)
+        }
+    }
 
     /**
      * Advances Compose test clock by [millis] and waits for idleness.
@@ -42,7 +52,7 @@ public abstract class BaseRobot(protected val composeTestRule: ComposeContentTes
         text: String,
         substring: Boolean = true,
         ignoreCase: Boolean = false,
-        timeoutMillis: Long = 5_000,
+        timeoutMillis: Long = TIMEOUT_MILLIS,
     ) {
         composeTestRule.isTextShown(
             text = text,
@@ -50,6 +60,7 @@ public abstract class BaseRobot(protected val composeTestRule: ComposeContentTes
             ignoreCase = ignoreCase,
             timeoutMillis = timeoutMillis,
         )
+        devSleep()
     }
 
     /**
@@ -64,7 +75,7 @@ public abstract class BaseRobot(protected val composeTestRule: ComposeContentTes
         description: String,
         substring: Boolean = true,
         ignoreCase: Boolean = false,
-        timeoutMillis: Long = 5_000,
+        timeoutMillis: Long = TIMEOUT_MILLIS,
     ) {
         composeTestRule.isContentDescriptionShown(
             description = description,
@@ -72,25 +83,20 @@ public abstract class BaseRobot(protected val composeTestRule: ComposeContentTes
             ignoreCase = ignoreCase,
             timeoutMillis = timeoutMillis,
         )
+        devSleep()
     }
 
     /**
      * Dispatches system back press.
      */
     public fun pressBack() {
+        devSleep()
         composeTestRule.pressBack()
     }
 
-    /**
-     * Asserts that node with [tag] is displayed.
-     *
-     * @param tag Test tag of the node.
-     * @param timeoutMillis Maximum time to wait for node to appear.
-     * @param useUnmergedTree Whether to search unmerged semantics tree.
-     */
     public fun verifyTagShown(
         tag: String,
-        timeoutMillis: Long = 5_000,
+        timeoutMillis: Long = TIMEOUT_MILLIS,
         useUnmergedTree: Boolean = true,
     ) {
         composeTestRule.isShown(tag, timeoutMillis = timeoutMillis, useUnmergedTree = useUnmergedTree)
@@ -102,8 +108,9 @@ public abstract class BaseRobot(protected val composeTestRule: ComposeContentTes
      * @param tag Test tag of the node.
      * @param timeoutMillis Maximum time to wait for node to disappear.
      */
-    public fun verifyTagHidden(tag: String, timeoutMillis: Long = 5_000) {
+    public fun verifyTagHidden(tag: String, timeoutMillis: Long = TIMEOUT_MILLIS) {
         composeTestRule.isHidden(tag, timeoutMillis = timeoutMillis)
+        devSleep()
     }
 
     /**
@@ -115,15 +122,40 @@ public abstract class BaseRobot(protected val composeTestRule: ComposeContentTes
      */
     public fun verifyTagExists(
         tag: String,
-        timeoutMillis: Long = 5_000,
+        timeoutMillis: Long = TIMEOUT_MILLIS,
         useUnmergedTree: Boolean = true,
     ) {
         composeTestRule.exists(tag, timeoutMillis = timeoutMillis, useUnmergedTree = useUnmergedTree)
+        devSleep()
+    }
+
+    /**
+     * Polls up to [timeoutMillis] for [tag] and returns whether it appeared.
+     */
+    public fun awaitTag(
+        tag: String,
+        timeoutMillis: Long = TIMEOUT_MILLIS,
+        useUnmergedTree: Boolean = true,
+    ): Boolean = composeTestRule.awaitTag(tag, timeoutMillis, useUnmergedTree)
+
+    /**
+     * Performs swipe right on node with [tag].
+     */
+    public fun swipeRight(tag: String) {
+        composeTestRule.swipeRight(tag)
+        devSleep()
+    }
+
+    /**
+     * Performs swipe up on node with [tag].
+     */
+    public fun swipeUp(tag: String) {
+        composeTestRule.swipeUp(tag)
+        devSleep()
     }
 
     /**
      * Asserts that node tagged [tag] has exactly [count] children whose tags start with [childTag].
-     *
      * @param tag Test tag of the parent node.
      * @param childTag Prefix for matching children's test tags.
      * @param count Expected number of children.
@@ -136,6 +168,7 @@ public abstract class BaseRobot(protected val composeTestRule: ComposeContentTes
         useUnmergedTree: Boolean = true,
     ) {
         composeTestRule.hasCount(tag, childTag, count, useUnmergedTree = useUnmergedTree)
+        devSleep()
     }
 
     /**
@@ -153,7 +186,7 @@ public abstract class BaseRobot(protected val composeTestRule: ComposeContentTes
         description: String,
         substring: Boolean = true,
         ignoreCase: Boolean = false,
-        timeoutMillis: Long = 5_000,
+        timeoutMillis: Long = TIMEOUT_MILLIS,
         useUnmergedTree: Boolean = true,
     ) {
         composeTestRule.hasContentDescription(
@@ -164,6 +197,7 @@ public abstract class BaseRobot(protected val composeTestRule: ComposeContentTes
             timeoutMillis = timeoutMillis,
             useUnmergedTree = useUnmergedTree,
         )
+        devSleep()
     }
 
     /**
@@ -172,21 +206,34 @@ public abstract class BaseRobot(protected val composeTestRule: ComposeContentTes
      * @param tag Test tag of the node.
      * @param useSemanticsAction If true, dispatch on-click semantics action directly.
      */
-    protected fun click(tag: String, useSemanticsAction: Boolean = false) {
+    public fun click(tag: String, useSemanticsAction: Boolean = false) {
         composeTestRule.onClick(tag, useSemanticsAction = useSemanticsAction)
+        devSleep()
+    }
+
+    /**
+     * Clicks node with [text].
+     *
+     * @param text Text of the node.
+     */
+    public fun clickText(text: String) {
+        composeTestRule.onNode(hasText(text)).performClick()
+        devSleep()
     }
 
     /**
      * Scrolls node with [tag] into view.
      */
-    protected fun scrollToTag(tag: String) {
+    public fun scrollTo(tag: String) {
         composeTestRule.scrollTo(tag)
+        devSleep()
     }
 
     /**
      * Scrolls inside lazy list [listTag] until child [itemTag] is composed.
      */
-    protected fun scrollToListTag(listTag: String, itemTag: String) {
+    public fun scrollToListTag(listTag: String, itemTag: String) {
         composeTestRule.scrollTo(listTag, itemTag)
+        devSleep()
     }
 }
