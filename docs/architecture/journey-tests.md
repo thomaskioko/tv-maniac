@@ -48,17 +48,18 @@ Season Details mark-watched, opens the Discover UpNext card to the Episode Sheet
 `OPEN_SHOW`, then signs out via Settings (Trakt account row, logout confirm) and lands back on
 the unauthenticated state.
 
-## Anatomy of a Journey
+## Test Journey Structure
 
-1. **Initial state in `@Before`**. Call `scenarios.stubUnauthenticatedState()` so the activity
-   launches in `LOGGED_OUT`. Add stubs for endpoints the journey will hit later
+1. **Register initial state at the top of `runAppFlowTest { ... }`**. Call
+   `scenarios.stubUnauthenticatedJourney()` (or the journey's variant) before driving any robot so
+   the activity launches in `LOGGED_OUT`. Add stubs for endpoints the journey will hit later
    (`scenarios.showDetails.stubShowDetailsEndpoints`, `scenarios.showDetails.stubSeasonDetailsEndpoints`,
    `/shows/<id>/progress/watched` for offline-first UpNext propagation).
 
-2. **Pre-flight test setup before the action that triggers it**. Configure the fake auth
-   manager via `setOnLaunchWebView { ... }` immediately before the click that calls it. Seed
-   permission state via `graph.datastoreRepository.setNotificationPermissionAskedNow(false)`
-   when a phase exercises the rationale path.
+2. **Pre-flight setup inline, before the action that triggers it**. Configure the fake auth manager
+   via `setOnLaunchWebView { ... }` immediately before the click that calls it. Seed permission state
+   via `graph.datastoreRepository.setNotificationPermissionAskedNow(false)` when a phase exercises
+   the rationale path. There is no `@Before`; all setup is inside the lambda.
 
 3. **Walk the narrative in commented phases**. One sequence of robot calls per phase, each
    ending in an assertion. Match the order a real user would take. Use only existing robots
@@ -78,15 +79,16 @@ the unauthenticated state.
 The harness handles several Compose and Android quirks that journeys frequently hit. Use the
 provided helpers instead of working around them per-test.
 
-- **`pressBack` and dialog windows**. `composeTestRule.pressBack()` dispatches via the
-  activity's back-pressed dispatcher, which bypasses Material 3 `Dialog` and `ModalBottomSheet`
+- **`pressBack` and dialog windows**. `<robot>.pressBack()` (a `BaseRobot` method) dispatches via
+  the activity's back-pressed dispatcher, which bypasses Material 3 `Dialog` and `ModalBottomSheet`
   windows. Click the dialog's confirm or dismiss button, or trigger an action that closes the
   modal (for example `clickActionItem(EpisodeSheetActionItem.OPEN_SHOW)` for the episode
   sheet). See [integration-testing.md](integration-testing.md#pressback-behaviour).
 
 - **System notification permission dialog**. The rationale Enable path calls
   `permissionLauncher.launch(POST_NOTIFICATIONS)`, which on real Android API 33+ shows a real
-  system dialog that detaches the Compose owner. Call `dismissSystemDialog()`
+  system dialog that detaches the Compose owner. Call
+  `dismissSystemDialog(SystemDialog.NotificationPermissionDeny)` bare inside `runAppFlowTest { ... }`
   immediately after `acceptNotificationRationale()`. The helper is a no-op under Robolectric
   and on pre-Tiramisu APIs.
 

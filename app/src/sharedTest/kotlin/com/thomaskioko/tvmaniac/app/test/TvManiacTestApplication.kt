@@ -6,12 +6,18 @@ import dev.zacsweers.metro.createGraphFactory
 
 class TvManiacTestApplication : Application() {
 
-    val graph: TestAppComponent by lazy {
-        createGraphFactory<TestAppComponent.Factory>().create(this)
-    }
+    private var testAppComponent: TestAppComponent? = null
+
+    val graph: TestAppComponent
+        get() = testAppComponent ?: createGraphFactory<TestAppComponent.Factory>().create(this)
+            .also { testAppComponent = it }
 
     override fun onCreate() {
         super.onCreate()
         WorkManagerTestInitHelper.initializeTestWorkManager(this)
+    }
+
+    fun resetAppComponent() {
+        testAppComponent = null
     }
 }

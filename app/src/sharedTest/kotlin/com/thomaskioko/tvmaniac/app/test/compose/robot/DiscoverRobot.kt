@@ -1,49 +1,45 @@
 package com.thomaskioko.tvmaniac.app.test.compose.robot
 
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.performTouchInput
-import androidx.compose.ui.test.swipeLeft
-import androidx.compose.ui.test.swipeRight
+import androidx.compose.ui.test.ComposeUiTest
+import androidx.compose.ui.test.ExperimentalTestApi
 import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
 import com.thomaskioko.tvmaniac.testtags.discover.DiscoverTestTags
 
-internal class DiscoverRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
+@OptIn(ExperimentalTestApi::class)
+internal class DiscoverRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
 
-    fun verifyDiscoverScreenIsShown() {
-        verifyTagShown(DiscoverTestTags.SCREEN_TEST_TAG)
+    fun assertDiscoverScreenDisplayed() {
+        assertDisplayed(DiscoverTestTags.SCREEN_TEST_TAG)
     }
 
-    fun verifyShowCardIsShown(traktId: Long) {
-        verifyTagShown(DiscoverTestTags.showCard(traktId))
+    fun assertShowCardDisplayed(traktId: Long) {
+        assertDisplayed(DiscoverTestTags.showCard(traktId))
     }
 
-    fun verifyUpNextCardIsShown(traktId: Long) {
-        verifyTagShown(DiscoverTestTags.upNextCard(traktId))
+    fun assertUpNextCardDisplayed(traktId: Long) {
+        assertDisplayed(DiscoverTestTags.upNextCard(traktId))
     }
 
-    fun verifyUpNextCardIsHidden(traktId: Long) {
-        verifyTagHidden(DiscoverTestTags.upNextCard(traktId))
+    fun assertUpNextCardDoesNotExist(traktId: Long) {
+        assertDoesNotExist(DiscoverTestTags.upNextCard(traktId))
     }
 
-    fun verifyFeaturedPagerIsShown() {
-        verifyTagShown(DiscoverTestTags.FEATURED_PAGER_TEST_TAG)
+    fun assertFeaturedPagerDisplayed() {
+        assertDisplayed(DiscoverTestTags.FEATURED_PAGER_TEST_TAG)
     }
 
-    fun verifyFeaturedShowIsShown(traktId: Long) {
-        verifyTagShown(DiscoverTestTags.featuredShowItem(traktId))
+    fun assertFeaturedShowDisplayed(traktId: Long) {
+        assertDisplayed(DiscoverTestTags.featuredShowItem(traktId))
     }
 
     fun swipeFeaturedPagerLeft() {
-        composeTestRule.onNodeWithTag(DiscoverTestTags.FEATURED_PAGER_TEST_TAG)
-            .performTouchInput { swipeLeft() }
-        composeTestRule.waitForIdle()
+        swipeLeft(DiscoverTestTags.FEATURED_PAGER_TEST_TAG)
+        waitForIdle()
     }
 
     fun swipeFeaturedPagerRight() {
-        composeTestRule.onNodeWithTag(DiscoverTestTags.FEATURED_PAGER_TEST_TAG)
-            .performTouchInput { swipeRight() }
-        composeTestRule.waitForIdle()
+        swipeRight(DiscoverTestTags.FEATURED_PAGER_TEST_TAG)
+        waitForIdle()
     }
 
     fun clickShowCard(traktId: Long) {
@@ -52,15 +48,15 @@ internal class DiscoverRobot(composeTestRule: ComposeContentTestRule) : BaseRobo
 
     fun navigateToSearchTab(): SearchRobot {
         click(DiscoverTestTags.SEARCH_BUTTON_TEST_TAG, useSemanticsAction = true)
-        return SearchRobot(composeTestRule)
+        return SearchRobot(composeUi)
     }
 
     fun clickUpNextCard(traktId: Long) {
         click(DiscoverTestTags.upNextCard(traktId), useSemanticsAction = true)
     }
 
-    fun verifyErrorStateIsShown() {
-        verifyTagShown(DiscoverTestTags.ERROR_RETRY_BUTTON_TEST_TAG)
+    fun assertErrorStateDisplayed() {
+        assertDisplayed(DiscoverTestTags.ERROR_RETRY_BUTTON_TEST_TAG)
     }
 
     fun clickRetryButton() {

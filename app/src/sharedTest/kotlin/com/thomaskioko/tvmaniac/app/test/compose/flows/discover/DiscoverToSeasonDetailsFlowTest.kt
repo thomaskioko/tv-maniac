@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.app.test.compose.flows.discover
 
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.testtags.seasondetails.SeasonDetailsTestTags
-import org.junit.Before
 import org.junit.Test
 
 internal class DiscoverToSeasonDetailsFlowTest : BaseAppFlowTest() {
@@ -12,53 +11,58 @@ internal class DiscoverToSeasonDetailsFlowTest : BaseAppFlowTest() {
     private val secondEpisodeTraktId = 73641L
     private val seasonTwoFirstEpisodeTraktId = 73489L
 
-    @Before
-    fun stubEndpoints() {
+    @Test
+    fun givenShowDetails_whenOpened_thenSeasonChipsAreRendered() = runAppFlowTest {
         scenarios.discover.stubBrowseGraph()
-    }
 
-    @Test
-    fun shouldRenderSeasonChipsOnShowDetailsFromRealPipeline() {
         discoverRobot.clickShowCard(breakingBadTraktId)
-        showDetailsRobot.verifyShowDetailsIsShown()
-        showDetailsRobot.verifySeasonChipIsShown(seasonNumber = 1L)
-        showDetailsRobot.verifySeasonChipIsShown(seasonNumber = 2L)
+        showDetailsRobot.assertShowDetailsDisplayed()
+        showDetailsRobot.assertSeasonChipDisplayed(seasonNumber = 1L)
+        showDetailsRobot.assertSeasonChipDisplayed(seasonNumber = 2L)
     }
 
     @Test
-    fun shouldOpenSeasonDetailsWithEpisodesWhenSeasonChipIsTapped() {
+    fun givenShowDetails_whenSeasonChipClicked_thenOpensSeasonDetails() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         discoverRobot.clickShowCard(breakingBadTraktId)
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
-        seasonDetailsRobot.verifySeasonDetailsIsShown()
-        seasonDetailsRobot.verifyEpisodeRowIsShown(pilotEpisodeTraktId)
+        seasonDetailsRobot.assertSeasonDetailsDisplayed()
+        seasonDetailsRobot.assertEpisodeRowDisplayed(pilotEpisodeTraktId)
     }
 
     @Test
-    fun shouldOpenEpisodeSheetWhenEpisodeRowIsTapped() {
+    fun givenSeasonDetails_whenEpisodeRowClicked_thenOpensEpisodeSheet() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         discoverRobot.clickShowCard(breakingBadTraktId)
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
         seasonDetailsRobot.clickEpisodeRow(pilotEpisodeTraktId)
-        episodeSheetRobot.verifyEpisodeSheetIsShown()
+        episodeSheetRobot.assertEpisodeSheetDisplayed()
     }
 
     @Test
-    fun shouldCollapseAndExpandEpisodeListWhenHeaderIsTapped() {
+    fun givenSeasonDetails_whenEpisodeHeaderClicked_thenTogglesEpisodeList() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         discoverRobot.clickShowCard(breakingBadTraktId)
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
-        seasonDetailsRobot.verifyEpisodeRowIsShown(pilotEpisodeTraktId)
+        seasonDetailsRobot.assertEpisodeRowDisplayed(pilotEpisodeTraktId)
         seasonDetailsRobot.clickEpisodeHeader()
-        seasonDetailsRobot.verifyEpisodeRowIsHidden(pilotEpisodeTraktId)
+        seasonDetailsRobot.assertEpisodeRowDoesNotExist(pilotEpisodeTraktId)
         seasonDetailsRobot.clickEpisodeHeader()
-        seasonDetailsRobot.verifyEpisodeRowIsShown(pilotEpisodeTraktId)
+        seasonDetailsRobot.assertEpisodeRowDisplayed(pilotEpisodeTraktId)
     }
 
     @Test
-    fun shouldPopSeasonDetailsAndRestoreShowDetailsOnBackPress() {
+    fun givenSeasonDetails_whenBackIsPressed_thenRestoresShowDetails() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         discoverRobot.clickShowCard(breakingBadTraktId)
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
-        seasonDetailsRobot.verifySeasonDetailsIsShown()
+        seasonDetailsRobot.assertSeasonDetailsDisplayed()
         seasonDetailsRobot.pressBack()
-        seasonDetailsRobot.verifyTagHidden(SeasonDetailsTestTags.SCREEN_TEST_TAG)
-        showDetailsRobot.verifyShowDetailsIsShown()
+        seasonDetailsRobot.assertDoesNotExist(SeasonDetailsTestTags.SCREEN_TEST_TAG)
+        showDetailsRobot.assertShowDetailsDisplayed()
     }
 }
