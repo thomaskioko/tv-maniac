@@ -15,7 +15,7 @@ import io.ktor.client.engine.mock.MockEngine
 @ContributesTo(AppScope::class, replaces = [TraktPlatformBindingContainer::class])
 public object TestTraktBindingContainer {
 
-    public val handler: MockEngineHandler = MockEngineHandler()
+    public val handler: MockEngineHandler = MockEngineHandler.handler
 
     @Provides
     @SingleIn(AppScope::class)

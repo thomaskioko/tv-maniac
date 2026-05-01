@@ -6,6 +6,7 @@ import io.ktor.client.engine.mock.respond
 import io.ktor.client.request.HttpRequestData
 import io.ktor.client.request.HttpResponseData
 import io.ktor.http.ContentType
+import io.ktor.http.Headers
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.Parameters
@@ -17,9 +18,7 @@ public class MockEngineHandler {
 
     private val stubs: MutableList<Stub> = mutableListOf()
 
-    private val jsonHeaders = headersOf("Content-Type", ContentType.Application.Json.toString())
-
-    public fun loadFixture(fixturePath: String): String = FixtureLoader.load(fixturePath)
+    public val jsonHeaders: Headers = headersOf("Content-Type", ContentType.Application.Json.toString())
 
     public fun stub(
         method: HttpMethod = HttpMethod.Get,
@@ -27,6 +26,21 @@ public class MockEngineHandler {
         response: StubResponder,
     ) {
         stubs += Stub.Single(method, path, response)
+    }
+
+    public fun stub(
+        method: HttpMethod = HttpMethod.Get,
+        path: String,
+        body: String,
+        status: HttpStatusCode = HttpStatusCode.OK,
+    ) {
+        stubs += Stub.Single(method, path) { _ ->
+            respond(
+                content = body,
+                status = status,
+                headers = jsonHeaders,
+            )
+        }
     }
 
     public fun stubFixture(
@@ -61,6 +75,44 @@ public class MockEngineHandler {
         stubs += Stub.ByQuery(method, path, fixtureSelector)
     }
 
+    public fun stubPattern(
+        method: HttpMethod = HttpMethod.Get,
+        pathRegex: String,
+        response: StubResponder,
+    ) {
+        stubs += Stub.PathPattern(method, pathRegex.toRegex(), response)
+    }
+
+    public fun stubPattern(
+        method: HttpMethod = HttpMethod.Get,
+        pathRegex: String,
+        body: String,
+        status: HttpStatusCode = HttpStatusCode.OK,
+    ) {
+        stubs += Stub.PathPattern(method, pathRegex.toRegex()) { _ ->
+            respond(
+                content = body,
+                status = status,
+                headers = jsonHeaders,
+            )
+        }
+    }
+
+    public fun stubPatternFixture(
+        method: HttpMethod = HttpMethod.Get,
+        pathRegex: String,
+        fixturePath: String,
+        status: HttpStatusCode = HttpStatusCode.OK,
+    ) {
+        stubs += Stub.PathPattern(method, pathRegex.toRegex()) { _ ->
+            respond(
+                content = FixtureLoader.load(fixturePath),
+                status = status,
+                headers = jsonHeaders,
+            )
+        }
+    }
+
     public fun reset() {
         stubs.clear()
     }
@@ -73,7 +125,7 @@ public class MockEngineHandler {
         val requestPath = request.url.encodedPath
 
         stubs.asReversed().forEach { stub ->
-            if (stub.method != request.method || stub.path != requestPath) return@forEach
+            if (stub.method != request.method || !stub.matches(requestPath)) return@forEach
             when (stub) {
                 is Stub.Single -> return stub.response(scope, request)
                 is Stub.Sequence -> {
@@ -94,6 +146,7 @@ public class MockEngineHandler {
                         )
                     }
                 }
+                is Stub.PathPattern -> return stub.response(scope, request)
             }
         }
 
@@ -154,6 +207,8 @@ public class MockEngineHandler {
         val method: HttpMethod
         val path: String
 
+        fun matches(requestPath: String): Boolean = path == requestPath
+
         fun describe(): String = "${method.value} $path (${this::class.simpleName})"
 
         data class Single(
@@ -173,5 +228,18 @@ public class MockEngineHandler {
             override val path: String,
             val fixtureSelector: (Parameters) -> String?,
         ) : Stub
+
+        data class PathPattern(
+            override val method: HttpMethod,
+            val pathRegex: Regex,
+            val response: StubResponder,
+        ) : Stub {
+            override val path: String get() = pathRegex.pattern
+            override fun matches(requestPath: String): Boolean = pathRegex.matches(requestPath)
+        }
+    }
+
+    public companion object {
+        public val handler: MockEngineHandler = MockEngineHandler()
     }
 }
