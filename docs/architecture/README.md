@@ -10,6 +10,7 @@
 - [Dependency Injection](dependency-injection.md): Metro scope hierarchy and wiring.
 - [Scope Hierarchy](scopes.md): Scope tree and lifecycle.
 - [Integration Testing](integration-testing.md): Android E2E tests and network stubbing.
+- [Journey Tests](journey-tests.md): End-to-end user lifecycle tests on top of integration harness.
 
 TvManiac is a Kotlin Multiplatform (KMP) entertainment tracker sharing business logic and data layers across Android (Jetpack Compose) and iOS (SwiftUI). Follows Clean Architecture with modular design organized by feature and layer.
 
@@ -23,7 +24,7 @@ TvManiac is a Kotlin Multiplatform (KMP) entertainment tracker sharing business 
 
 High module count increases Gradle maintenance. API/Impl split adds boilerplate. Store pattern caching requires precise validation logic. Native iOS UI requires building screens twice.
 
-## End to End Flow
+## End-to-End Flow
 
 Standard pattern: UI dispatches action → Presenter calls interactor → Store coordinates cache/network → DAO emits → UI renders.
 
