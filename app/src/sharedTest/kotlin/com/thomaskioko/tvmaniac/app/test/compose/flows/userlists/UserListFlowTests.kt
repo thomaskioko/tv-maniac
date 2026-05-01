@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.userlists
 
+import com.thomaskioko.tvmaniac.app.test.AppFlowScope
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.TEST_CREATED_LIST_NAME
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.TEST_CREATED_LIST_TRAKT_ID
@@ -12,94 +13,97 @@ internal class UserListFlowTests : BaseAppFlowTest() {
     private val favoritesListTraktId = 34223248L
     private val animeListTraktId = 34223402L
 
-    override fun onBeforeTest() {
-        super.onBeforeTest()
-        scenarios.stubAuthenticatedSync()
-    }
-
     @Test
-    fun shouldShowListSheetWhenAddToListClicked() {
+    fun givenAuthenticatedUser_whenAddToListClicked_thenShowsListSheet() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
+
         openListSheet()
 
-        showDetailsRobot.verifyListSheetIsShown()
-        showDetailsRobot.verifyTraktListItemIsShown(favoritesListTraktId)
-        showDetailsRobot.verifyTraktListItemIsShown(animeListTraktId)
+        showDetailsRobot.assertListSheetDisplayed()
+        showDetailsRobot.assertTraktListItemDisplayed(favoritesListTraktId)
+        showDetailsRobot.assertTraktListItemDisplayed(animeListTraktId)
     }
 
     @Test
-    fun shouldAddShowToMultipleListsAndUpdateShowCounts() {
+    fun givenListSheet_whenShowAddedToMultipleLists_thenUpdatesShowCounts() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
         scenarios.traktLists.stubAddShowToList(listId = favoritesListTraktId)
         scenarios.traktLists.stubAddShowToList(listId = animeListTraktId)
 
         openListSheet()
-        showDetailsRobot.verifyListSwitchIsUnchecked(favoritesListTraktId)
-        showDetailsRobot.verifyListSwitchIsUnchecked(animeListTraktId)
-        showDetailsRobot.verifyTraktListShowCountText(favoritesListTraktId, "0 shows")
-        showDetailsRobot.verifyTraktListShowCountText(animeListTraktId, "0 shows")
+        showDetailsRobot.assertListSwitchIsUnchecked(favoritesListTraktId)
+        showDetailsRobot.assertListSwitchIsUnchecked(animeListTraktId)
+        showDetailsRobot.assertTraktListShowCountText(favoritesListTraktId, "0 shows")
+        showDetailsRobot.assertTraktListShowCountText(animeListTraktId, "0 shows")
 
         showDetailsRobot.clickListSwitch(favoritesListTraktId)
-        showDetailsRobot.verifyListSwitchIsChecked(favoritesListTraktId)
-        showDetailsRobot.verifyTraktListShowCountText(favoritesListTraktId, "1 show")
+        showDetailsRobot.assertListSwitchIsChecked(favoritesListTraktId)
+        showDetailsRobot.assertTraktListShowCountText(favoritesListTraktId, "1 show")
 
         showDetailsRobot.clickListSwitch(animeListTraktId)
-        showDetailsRobot.verifyListSwitchIsChecked(animeListTraktId)
-        showDetailsRobot.verifyTraktListShowCountText(animeListTraktId, "1 show")
+        showDetailsRobot.assertListSwitchIsChecked(animeListTraktId)
+        showDetailsRobot.assertTraktListShowCountText(animeListTraktId, "1 show")
     }
 
     @Test
-    fun shouldRevealCreateListFieldWhenCreateButtonTapped() {
+    fun givenListSheet_whenCreateClicked_thenShowsCreateListField() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
+
         openListSheet()
-        showDetailsRobot.verifyCreateListFieldIsHidden()
+        showDetailsRobot.assertCreateListFieldDoesNotExist()
 
         showDetailsRobot.clickCreateListButton()
 
-        showDetailsRobot.verifyCreateListFieldIsShown()
+        showDetailsRobot.assertCreateListFieldDisplayed()
     }
 
     @Test
-    fun shouldAppendNewListAndAddShowToItWhenCreateSubmitted() {
+    fun givenListSheet_whenNewListCreated_thenAddsShowToList() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
         scenarios.traktLists.stubCreateList()
         scenarios.traktLists.stubAddShowToList(listId = TEST_CREATED_LIST_TRAKT_ID)
 
         openListSheet()
         showDetailsRobot.clickCreateListButton()
-        showDetailsRobot.verifyCreateListFieldIsShown()
+        showDetailsRobot.assertCreateListFieldDisplayed()
 
         showDetailsRobot.typeCreateListName(TEST_CREATED_LIST_NAME)
         showDetailsRobot.clickCreateListSubmit()
 
-        showDetailsRobot.verifyCreateListFieldIsHidden()
-        showDetailsRobot.verifyTraktListItemIsShown(TEST_CREATED_LIST_TRAKT_ID)
-        showDetailsRobot.verifyListSwitchIsUnchecked(TEST_CREATED_LIST_TRAKT_ID)
-        showDetailsRobot.verifyTraktListShowCountText(TEST_CREATED_LIST_TRAKT_ID, "0 shows")
+        showDetailsRobot.assertCreateListFieldDoesNotExist()
+        showDetailsRobot.assertTraktListItemDisplayed(TEST_CREATED_LIST_TRAKT_ID)
+        showDetailsRobot.assertListSwitchIsUnchecked(TEST_CREATED_LIST_TRAKT_ID)
+        showDetailsRobot.assertTraktListShowCountText(TEST_CREATED_LIST_TRAKT_ID, "0 shows")
 
         showDetailsRobot.clickListSwitch(TEST_CREATED_LIST_TRAKT_ID)
 
-        showDetailsRobot.verifyListSwitchIsChecked(TEST_CREATED_LIST_TRAKT_ID)
-        showDetailsRobot.verifyTraktListShowCountText(TEST_CREATED_LIST_TRAKT_ID, "1 show")
+        showDetailsRobot.assertListSwitchIsChecked(TEST_CREATED_LIST_TRAKT_ID)
+        showDetailsRobot.assertTraktListShowCountText(TEST_CREATED_LIST_TRAKT_ID, "1 show")
     }
 
     @Test
-    fun shouldDismissSheetWhenCloseButtonTapped() {
+    fun givenListSheet_whenCloseClicked_thenDismissesSheet() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
+
         openListSheet()
-        showDetailsRobot.verifyListSheetIsShown()
+        showDetailsRobot.assertListSheetDisplayed()
 
         showDetailsRobot.clickCloseListSheetButton()
 
-        showDetailsRobot.verifyListSheetIsHidden()
+        showDetailsRobot.assertListSheetDoesNotExist()
     }
 
-    private fun openListSheet() {
-        rootRobot.verifyNotificationRationaleIsShownAndDismissed()
+    private fun AppFlowScope.openListSheet() {
+        rootRobot.dismissNotificationRationale()
 
         discoverRobot.clickShowCard(breakingBadTraktId)
-        showDetailsRobot.verifyShowDetailsIsShown()
+        showDetailsRobot.assertShowDetailsDisplayed()
 
         showDetailsRobot.scrollToListTag(
             listTag = ShowDetailsTestTags.SHOW_DETAILS_SCREEN_TEST_TAG,
             itemTag = ShowDetailsTestTags.ADD_TO_LIST_BUTTON_TEST_TAG,
         )
         showDetailsRobot.clickAddToListButton()
-        showDetailsRobot.verifyListSheetIsShown()
+        showDetailsRobot.assertListSheetDisplayed()
     }
 }

@@ -1,26 +1,27 @@
 package com.thomaskioko.tvmaniac.app.test.compose.robot
 
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import androidx.compose.ui.test.ComposeUiTest
+import androidx.compose.ui.test.ExperimentalTestApi
 import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
-import com.thomaskioko.tvmaniac.testing.integration.ui.replaceText
 import com.thomaskioko.tvmaniac.testtags.library.LibraryTestTags
 
-internal class LibraryRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
+@OptIn(ExperimentalTestApi::class)
+internal class LibraryRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
 
-    fun verifyLibraryScreenIsShown() {
-        verifyTagShown(LibraryTestTags.SCREEN_TEST_TAG)
+    fun assertLibraryScreenDisplayed() {
+        assertDisplayed(LibraryTestTags.SCREEN_TEST_TAG)
     }
 
-    fun verifyEmptyStateIsShown() {
-        verifyTagShown(LibraryTestTags.EMPTY_STATE_TEST_TAG)
+    fun assertEmptyStateDisplayed() {
+        assertDisplayed(LibraryTestTags.EMPTY_STATE_TEST_TAG)
     }
 
-    fun verifyShowRowIsShown(traktId: Long) {
-        verifyTagExists(LibraryTestTags.showRow(traktId))
+    fun assertShowRowDisplayed(traktId: Long) {
+        assertExists(LibraryTestTags.showRow(traktId))
     }
 
-    fun verifyShowRowIsHidden(traktId: Long) {
-        verifyTagHidden(LibraryTestTags.showRow(traktId))
+    fun assertShowRowDoesNotExist(traktId: Long) {
+        assertDoesNotExist(LibraryTestTags.showRow(traktId))
     }
 
     fun clickShowRow(traktId: Long) {
@@ -32,7 +33,7 @@ internal class LibraryRobot(composeTestRule: ComposeContentTestRule) : BaseRobot
     }
 
     fun enterSearchQuery(query: String) {
-        composeTestRule.replaceText(LibraryTestTags.SEARCH_BAR_TEST_TAG, query)
+        replaceText(tag = LibraryTestTags.SEARCH_BAR_TEST_TAG, text = query)
     }
 
     fun clickFilterButton() {

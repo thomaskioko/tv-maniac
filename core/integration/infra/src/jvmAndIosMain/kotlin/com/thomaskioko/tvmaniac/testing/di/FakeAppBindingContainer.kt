@@ -77,11 +77,11 @@ public object FakeAppBindingContainer {
     @Provides
     @SingleIn(AppScope::class)
     public fun provideAppCoroutineDispatchers(): AppCoroutineDispatchers = AppCoroutineDispatchers(
-        io = Dispatchers.Main,
-        computation = Dispatchers.Main,
-        databaseWrite = Dispatchers.Main,
-        databaseRead = Dispatchers.Main,
-        main = Dispatchers.Main,
+        io = Dispatchers.Main.immediate,
+        computation = Dispatchers.Main.immediate,
+        databaseWrite = Dispatchers.Main.immediate,
+        databaseRead = Dispatchers.Main.immediate,
+        main = Dispatchers.Main.immediate,
     )
 
     @Provides

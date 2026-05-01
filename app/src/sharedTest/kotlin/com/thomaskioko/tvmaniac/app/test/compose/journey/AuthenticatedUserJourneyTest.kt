@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.app.test.compose.journey
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.TEST_PROFILE_SLUG
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeSheetActionItem
-import org.junit.Before
 import org.junit.Test
 
 internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
@@ -15,98 +14,95 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
     private val secondEpisodeTraktId = 73641L
     private val betterCallSaulTraktId = 59660L
 
-    @Before
-    fun stubInitialState() {
-        scenarios.stubUnauthenticatedState()
-    }
-
     @Test
-    fun authenticatedUserSignsInExploresSyncedSurfacesAndSignsOut() {
+    fun givenAuthenticatedUser_whenSignsIn_thenExploresSyncedSurfacesAndSignsOut() = runAppFlowTest {
+        scenarios.stubUnauthenticatedState()
+
         // Verify public content on Discover
-        discoverRobot.verifyDiscoverScreenIsShown()
-        discoverRobot.verifyShowCardIsShown(breakingBadTraktId)
-        discoverRobot.verifyUpNextCardIsHidden(breakingBadTraktId)
+        discoverRobot.assertDiscoverScreenDisplayed()
+        discoverRobot.assertFeaturedShowDisplayed(breakingBadTraktId)
+        discoverRobot.assertUpNextCardDoesNotExist(breakingBadTraktId)
 
         // Verify featured pager
-        discoverRobot.verifyFeaturedPagerIsShown()
-        discoverRobot.verifyFeaturedShowIsShown(breakingBadTraktId)
+        discoverRobot.assertFeaturedPagerDisplayed()
+        discoverRobot.assertFeaturedShowDisplayed(breakingBadTraktId)
         discoverRobot.swipeFeaturedPagerLeft()
-        discoverRobot.verifyFeaturedShowIsShown(betterCallSaulTraktId)
+        discoverRobot.assertFeaturedShowDisplayed(betterCallSaulTraktId)
         discoverRobot.swipeFeaturedPagerRight()
-        discoverRobot.verifyFeaturedShowIsShown(breakingBadTraktId)
+        discoverRobot.assertFeaturedShowDisplayed(breakingBadTraktId)
 
         // Navigate to Profile and verify Sign In CTA
         homeRobot.clickProfileTab()
-        profileRobot.verifySignInButtonIsShown()
+        profileRobot.assertSignInButtonDisplayed()
 
         // Login user
         scenarios.stubAuthenticatedSyncOnSignIn()
 
         profileRobot.clickSignInButton()
 
-        rootRobot.verifyNotificationRationaleIsShownAndDismissed()
+        rootRobot.dismissNotificationRationale()
 
-        profileRobot.verifyUserCardIsShown(slug = TEST_PROFILE_SLUG)
+        profileRobot.assertUserCardDisplayed(slug = TEST_PROFILE_SLUG)
 
         // Verify synced surfaces appear after auth
         homeRobot.clickLibraryTab()
-        libraryRobot.verifyShowRowIsShown(breakingBadTraktId)
+        libraryRobot.assertShowRowDisplayed(breakingBadTraktId)
 
         homeRobot.clickProgressTab()
-        progressRobot.verifyEpisodeRowIsShown(breakingBadTraktId)
+        progressRobot.assertEpisodeRowDisplayed(breakingBadTraktId)
 
         homeRobot.clickDiscoverTab()
-        discoverRobot.verifyUpNextCardIsShown(breakingBadTraktId)
+        discoverRobot.assertUpNextCardDisplayed(breakingBadTraktId)
 
         // Continue tracking and mark season watched
         homeRobot.clickLibraryTab()
         libraryRobot.clickShowRow(breakingBadTraktId)
-        showDetailsRobot.verifyStopTrackingButtonIsShown()
+        showDetailsRobot.assertStopTrackingButtonDisplayed()
 
         showDetailsRobot.clickContinueTrackingMarkWatched(pilotEpisodeTraktId)
 
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
-        seasonDetailsRobot.verifySeasonDetailsIsShown()
-        seasonDetailsRobot.verifyMarkUnwatchedIsShown(pilotEpisodeTraktId)
+        seasonDetailsRobot.assertSeasonDetailsDisplayed()
+        seasonDetailsRobot.assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
         seasonDetailsRobot.clickMarkWatched(secondEpisodeTraktId)
-        seasonDetailsRobot.verifyMarkUnwatchedIsShown(secondEpisodeTraktId)
+        seasonDetailsRobot.assertMarkUnwatchedDisplayed(secondEpisodeTraktId)
 
         seasonDetailsRobot.pressBack()
-        showDetailsRobot.verifyStopTrackingButtonIsShown()
+        showDetailsRobot.assertStopTrackingButtonDisplayed()
         showDetailsRobot.pressBack()
-        libraryRobot.verifyLibraryScreenIsShown()
+        libraryRobot.assertLibraryScreenDisplayed()
 
         // Open Episode Sheet from Discover UpNext card
         homeRobot.clickDiscoverTab()
-        discoverRobot.verifyUpNextCardIsShown(breakingBadTraktId)
+        discoverRobot.assertUpNextCardDisplayed(breakingBadTraktId)
         discoverRobot.clickUpNextCard(breakingBadTraktId)
-        episodeSheetRobot.verifyEpisodeSheetIsShown()
+        episodeSheetRobot.assertEpisodeSheetDisplayed()
         episodeSheetRobot.clickActionItem(EpisodeSheetActionItem.OPEN_SHOW)
-        showDetailsRobot.verifyStopTrackingButtonIsShown()
+        showDetailsRobot.assertStopTrackingButtonDisplayed()
         showDetailsRobot.pressBack()
 
         // Verify marked-watched updates propagate to Progress tab
         homeRobot.clickProgressTab()
-        progressRobot.verifyEpisodeRowIsShown(breakingBadTraktId)
+        progressRobot.assertEpisodeRowDisplayed(breakingBadTraktId)
 
         // Trigger token refresh round-trip
         scenarios.stubTokenRefresh()
 
         homeRobot.clickProfileTab()
-        profileRobot.verifyUserCardIsShown(slug = TEST_PROFILE_SLUG)
+        profileRobot.assertUserCardDisplayed(slug = TEST_PROFILE_SLUG)
 
         // Logout via Settings
         homeRobot.clickProfileTab()
         profileRobot.clickSettingsButton()
-        settingsRobot.verifySettingsScreenIsShown()
+        settingsRobot.assertSettingsScreenDisplayed()
         settingsRobot.scrollToTraktAccountRow()
         settingsRobot.clickTraktAccountRow()
-        settingsRobot.verifyLogoutDialogIsShown()
+        settingsRobot.assertLogoutDialogDisplayed()
         settingsRobot.clickLogoutConfirm()
-        settingsRobot.verifyLogoutDialogIsHidden()
+        settingsRobot.assertLogoutDialogDoesNotExist()
 
         // Verify unauthenticated state
         settingsRobot.pressBack()
-        profileRobot.verifySignInButtonIsShown()
+        profileRobot.assertSignInButtonDisplayed()
     }
 }

@@ -24,7 +24,7 @@ public object TestDispatcherBindingContainer {
     @Provides
     @SingleIn(AppScope::class)
     public fun provideCoroutineDispatchers(): AppCoroutineDispatchers {
-        val testScheduler = Dispatchers.Main
+        val testScheduler = Dispatchers.Main.immediate
         return AppCoroutineDispatchers(
             io = testScheduler,
             computation = testScheduler,
