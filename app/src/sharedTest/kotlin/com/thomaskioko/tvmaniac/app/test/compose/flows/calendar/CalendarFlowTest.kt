@@ -13,21 +13,21 @@ internal class CalendarFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun shouldShowLoginPromptWhenUserIsNotLoggedIn() {
-        discoverRobot.verifyDiscoverScreenIsShown()
+    fun givenUnauthenticatedUser_whenNavigatesToCalendar_thenShowsLoginPrompt() {
+        discoverRobot.assertDiscoverScreenDisplayed()
 
         homeRobot.clickProgressTab()
 
-        progressRobot.verifyProgressScreenIsShown()
+        progressRobot.assertProgressScreenDisplayed()
         progressRobot.clickCalendarTab()
 
-        calendarRobot.verifyLoggedOutStateIsShown()
-        calendarRobot.verifyTextShown("Login to Trakt to see your calendar")
+        calendarRobot.assertLoggedOutStateDisplayed()
+        calendarRobot.assertTextDisplayed("Login to Trakt to see your calendar")
     }
 
     @Test
-    fun shouldShowUpcomingEpisodesWhenUserIsLoggedIn() {
-        discoverRobot.verifyDiscoverScreenIsShown()
+    fun givenAuthenticatedUser_whenNavigatesToCalendar_thenShowsUpcomingEpisodes() {
+        discoverRobot.assertDiscoverScreenDisplayed()
 
         scenarios.signInAndDismissRationale()
 
@@ -37,15 +37,15 @@ internal class CalendarFlowTest : BaseAppFlowTest() {
 
         progressRobot.clickCalendarTab()
 
-        calendarRobot.verifyCalendarScreenIsShown()
-        calendarRobot.verifyDateHeader("Today, Apr 19, 2026")
-        calendarRobot.verifyTextShown("Breaking Bad")
-        calendarRobot.verifyAdditionalEpisodesCount(episodeTraktId = 73640L, expectedText = "+1 episodes")
+        calendarRobot.assertCalendarScreenDisplayed()
+        calendarRobot.assertDateHeaderDisplayed("Today, Apr 19, 2026")
+        calendarRobot.assertTextDisplayed("Breaking Bad")
+        calendarRobot.assertAdditionalEpisodesCountDisplayed(episodeTraktId = 73640L, expectedText = "+1 episodes")
     }
 
     @Test
-    fun shouldShowEmptyStateWhenNoEpisodesAreScheduled() {
-        discoverRobot.verifyDiscoverScreenIsShown()
+    fun givenAuthenticatedUser_whenNoEpisodesScheduled_thenShowsEmptyState() {
+        discoverRobot.assertDiscoverScreenDisplayed()
 
         scenarios.signInAndDismissRationale()
 
@@ -53,13 +53,13 @@ internal class CalendarFlowTest : BaseAppFlowTest() {
 
         homeRobot.clickProgressTab()
         progressRobot.clickCalendarTab()
-        calendarRobot.verifyEmptyStateIsShown()
-        calendarRobot.verifyTextShown("Nothing to see here")
+        calendarRobot.assertEmptyStateDisplayed()
+        calendarRobot.assertTextDisplayed("Nothing to see here")
     }
 
     @Test
-    fun shouldLoadEpisodesForNextWeekWhenNextButtonIsClicked() {
-        discoverRobot.verifyDiscoverScreenIsShown()
+    fun givenAuthenticatedUser_whenNextWeekClicked_thenLoadsNextWeekEpisodes() {
+        discoverRobot.assertDiscoverScreenDisplayed()
 
         scenarios.signInAndDismissRationale()
 
@@ -68,24 +68,24 @@ internal class CalendarFlowTest : BaseAppFlowTest() {
 
         homeRobot.clickProgressTab()
 
-        progressRobot.verifyProgressScreenIsShown()
+        progressRobot.assertProgressScreenDisplayed()
 
         progressRobot.clickCalendarTab()
 
-        calendarRobot.verifyCalendarScreenIsShown()
-        calendarRobot.verifyWeekLabel("Apr 19, 2026 - Apr 25, 2026")
-        calendarRobot.verifyDateHeader("Today, Apr 19, 2026")
-        calendarRobot.verifyTextShown("Breaking Bad")
+        calendarRobot.assertCalendarScreenDisplayed()
+        calendarRobot.assertWeekLabelDisplayed("Apr 19, 2026 - Apr 25, 2026")
+        calendarRobot.assertDateHeaderDisplayed("Today, Apr 19, 2026")
+        calendarRobot.assertTextDisplayed("Breaking Bad")
         calendarRobot.clickNextWeek()
-        calendarRobot.verifyWeekLabel("Apr 26, 2026 - May 2, 2026")
-        calendarRobot.verifyDateHeader("Sunday, Apr 26, 2026")
-        calendarRobot.verifyTextShown("Game of Thrones")
-        calendarRobot.verifyEpisodeCardIsHidden(73640L)
+        calendarRobot.assertWeekLabelDisplayed("Apr 26, 2026 - May 2, 2026")
+        calendarRobot.assertDateHeaderDisplayed("Sunday, Apr 26, 2026")
+        calendarRobot.assertTextDisplayed("Game of Thrones")
+        calendarRobot.assertEpisodeCardDoesNotExist(73640L)
     }
 
     @Test
-    fun shouldShowErrorSnackbarWhenCalendarFetchFails() {
-        discoverRobot.verifyDiscoverScreenIsShown()
+    fun givenAuthenticatedUser_whenCalendarFetchFails_thenShowsErrorSnackbar() {
+        discoverRobot.assertDiscoverScreenDisplayed()
 
         scenarios.signInAndDismissRationale()
 
@@ -93,7 +93,7 @@ internal class CalendarFlowTest : BaseAppFlowTest() {
 
         homeRobot.clickProgressTab()
         progressRobot.clickCalendarTab()
-        calendarRobot.verifyWeekLabel("Apr 19, 2026 - Apr 25, 2026")
-        calendarRobot.verifyTextShown("Resource not found", substring = true)
+        calendarRobot.assertWeekLabelDisplayed("Apr 19, 2026 - Apr 25, 2026")
+        calendarRobot.assertTextDisplayed("Resource not found", substring = true)
     }
 }

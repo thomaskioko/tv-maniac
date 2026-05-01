@@ -10,28 +10,28 @@ import com.thomaskioko.tvmaniac.testtags.discover.DiscoverTestTags
 
 internal class DiscoverRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
 
-    fun verifyDiscoverScreenIsShown() {
-        verifyTagShown(DiscoverTestTags.SCREEN_TEST_TAG)
+    fun assertDiscoverScreenDisplayed() {
+        assertDisplayed(DiscoverTestTags.SCREEN_TEST_TAG)
     }
 
-    fun verifyShowCardIsShown(traktId: Long) {
-        verifyTagShown(DiscoverTestTags.showCard(traktId))
+    fun assertShowCardDisplayed(traktId: Long) {
+        assertDisplayed(DiscoverTestTags.showCard(traktId))
     }
 
-    fun verifyUpNextCardIsShown(traktId: Long) {
-        verifyTagShown(DiscoverTestTags.upNextCard(traktId))
+    fun assertUpNextCardDisplayed(traktId: Long) {
+        assertDisplayed(DiscoverTestTags.upNextCard(traktId))
     }
 
-    fun verifyUpNextCardIsHidden(traktId: Long) {
-        verifyTagHidden(DiscoverTestTags.upNextCard(traktId))
+    fun assertUpNextCardDoesNotExist(traktId: Long) {
+        assertDoesNotExist(DiscoverTestTags.upNextCard(traktId))
     }
 
-    fun verifyFeaturedPagerIsShown() {
-        verifyTagShown(DiscoverTestTags.FEATURED_PAGER_TEST_TAG)
+    fun assertFeaturedPagerDisplayed() {
+        assertDisplayed(DiscoverTestTags.FEATURED_PAGER_TEST_TAG)
     }
 
-    fun verifyFeaturedShowIsShown(traktId: Long) {
-        verifyTagShown(DiscoverTestTags.featuredShowItem(traktId))
+    fun assertFeaturedShowDisplayed(traktId: Long) {
+        assertDisplayed(DiscoverTestTags.featuredShowItem(traktId))
     }
 
     fun swipeFeaturedPagerLeft() {
@@ -59,8 +59,8 @@ internal class DiscoverRobot(composeTestRule: ComposeContentTestRule) : BaseRobo
         click(DiscoverTestTags.upNextCard(traktId), useSemanticsAction = true)
     }
 
-    fun verifyErrorStateIsShown() {
-        verifyTagShown(DiscoverTestTags.ERROR_RETRY_BUTTON_TEST_TAG)
+    fun assertErrorStateDisplayed() {
+        assertDisplayed(DiscoverTestTags.ERROR_RETRY_BUTTON_TEST_TAG)
     }
 
     fun clickRetryButton() {

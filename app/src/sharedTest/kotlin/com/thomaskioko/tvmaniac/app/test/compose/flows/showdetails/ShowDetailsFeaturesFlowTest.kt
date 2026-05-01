@@ -16,36 +16,36 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun shouldExerciseShowDetailsInteractiveSurfaces() {
+    fun givenShowDetails_whenOpened_thenInteractiveSurfacesAreExercised() {
         discoverRobot.clickShowCard(breakingBadTraktId)
-        showDetailsRobot.verifyShowDetailsIsShown()
+        showDetailsRobot.assertShowDetailsDisplayed()
 
         // Track show
-        showDetailsRobot.verifyTrackButtonIsShown()
+        showDetailsRobot.assertTrackButtonDisplayed()
         showDetailsRobot.clickTrackButton()
 
-        rootRobot.verifyNotificationRationaleIsShownAndDismissed()
+        rootRobot.dismissNotificationRationale()
 
-        showDetailsRobot.verifyStopTrackingButtonIsShown()
+        showDetailsRobot.assertStopTrackingButtonDisplayed()
 
-        showDetailsRobot.verifyContinueTrackingSectionIsShown()
+        showDetailsRobot.assertContinueTrackingSectionDisplayed()
 
         showDetailsRobot.clickContinueTrackingMarkWatched(pilotEpisodeTraktId)
 
         // Navigate to season details and back
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
-        seasonDetailsRobot.verifySeasonDetailsIsShown()
+        seasonDetailsRobot.assertSeasonDetailsDisplayed()
         seasonDetailsRobot.pressBack()
 
         // Verify additional sections
         showDetailsRobot.scrollTo(ShowDetailsTestTags.CAST_LIST_TEST_TAG)
-        showDetailsRobot.verifyCastListIsShown()
+        showDetailsRobot.assertCastListDisplayed()
 
         showDetailsRobot.scrollTo(ShowDetailsTestTags.TRAILERS_LIST_TEST_TAG)
-        showDetailsRobot.verifyTrailersListIsShown()
+        showDetailsRobot.assertTrailersListDisplayed()
 
         showDetailsRobot.scrollTo(ShowDetailsTestTags.SIMILAR_SHOWS_LIST_TEST_TAG)
-        showDetailsRobot.verifySimilarShowsListIsShown()
+        showDetailsRobot.assertSimilarShowsListDisplayed()
 
         // Verify login prompt for logged-out users when adding to list
         showDetailsRobot.scrollToListTag(
@@ -53,17 +53,17 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
             itemTag = ShowDetailsTestTags.ADD_TO_LIST_BUTTON_TEST_TAG,
         )
         showDetailsRobot.clickAddToListButton()
-        showDetailsRobot.verifyLoginPromptIsShown()
+        showDetailsRobot.assertLoginPromptDisplayed()
     }
 
     @Test
-    fun shouldShowListSheetWhenAuthenticatedUserAddsShowToList() {
+    fun givenAuthenticatedUser_whenAddToListClicked_thenShowsListSheet() {
         scenarios.stubAuthenticatedSync()
 
-        rootRobot.verifyNotificationRationaleIsShownAndDismissed()
+        rootRobot.dismissNotificationRationale()
 
         discoverRobot.clickShowCard(breakingBadTraktId)
-        showDetailsRobot.verifyShowDetailsIsShown()
+        showDetailsRobot.assertShowDetailsDisplayed()
 
         showDetailsRobot.scrollToListTag(
             listTag = ShowDetailsTestTags.SHOW_DETAILS_SCREEN_TEST_TAG,
@@ -71,8 +71,8 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
         )
         showDetailsRobot.clickAddToListButton()
 
-        showDetailsRobot.verifyLoginPromptIsHidden()
-        showDetailsRobot.verifyListSheetIsShown()
-        showDetailsRobot.verifyTraktListItemIsShown(favoritesListTraktId)
+        showDetailsRobot.assertLoginPromptDoesNotExist()
+        showDetailsRobot.assertListSheetDisplayed()
+        showDetailsRobot.assertTraktListItemDisplayed(favoritesListTraktId)
     }
 }

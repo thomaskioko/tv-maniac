@@ -7,28 +7,28 @@ import com.thomaskioko.tvmaniac.testtags.upnext.UpNextTestTags
 
 internal class ProgressRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
 
-    fun verifyProgressScreenIsShown() {
-        verifyTagShown(ProgressTestTags.SCREEN_TEST_TAG)
+    fun assertProgressScreenDisplayed() {
+        assertDisplayed(ProgressTestTags.SCREEN_TEST_TAG)
     }
 
-    fun verifyUpNextEmptyStateIsShown() {
-        verifyTagShown(UpNextTestTags.EMPTY_STATE_TEST_TAG)
+    fun assertUpNextEmptyStateDisplayed() {
+        assertDisplayed(UpNextTestTags.EMPTY_STATE_TEST_TAG)
     }
 
-    fun verifyEpisodeRowIsShown(traktId: Long) {
-        verifyTagExists(UpNextTestTags.episodeRow(traktId))
+    fun assertEpisodeRowDisplayed(traktId: Long) {
+        assertExists(UpNextTestTags.episodeRow(traktId))
     }
 
-    fun verifyEpisodeRowIsHidden(traktId: Long) {
-        verifyTagHidden(UpNextTestTags.episodeRow(traktId))
+    fun assertEpisodeRowDoesNotExist(traktId: Long) {
+        assertDoesNotExist(UpNextTestTags.episodeRow(traktId))
     }
 
-    fun verifyEpisodeMetaIsShown(traktId: Long, formattedEpisodeNumber: String) {
-        verifyTagExists(UpNextTestTags.episodeMeta(traktId, formattedEpisodeNumber))
+    fun assertEpisodeMetaDisplayed(traktId: Long, formattedEpisodeNumber: String) {
+        assertExists(UpNextTestTags.episodeMeta(traktId, formattedEpisodeNumber))
     }
 
-    fun verifyProgressCountIsShown(traktId: Long, count: String) {
-        verifyTagExists(UpNextTestTags.progressCount(traktId, count))
+    fun assertProgressCountDisplayed(traktId: Long, count: String) {
+        assertExists(UpNextTestTags.progressCount(traktId, count))
     }
 
     fun clickWatchedButton(traktId: Long) {

@@ -7,12 +7,12 @@ import com.thomaskioko.tvmaniac.testtags.episodesheet.EpisodeSheetTestTags
 
 internal class EpisodeSheetRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
 
-    fun verifyEpisodeSheetIsShown() {
-        verifyTagShown(EpisodeSheetTestTags.SHEET_TEST_TAG)
+    fun assertEpisodeSheetDisplayed() {
+        assertDisplayed(EpisodeSheetTestTags.SHEET_TEST_TAG)
     }
 
-    fun verifyActionItemIsShown(action: EpisodeSheetActionItem) {
-        verifyTagExists(EpisodeSheetTestTags.actionItem(action.name))
+    fun assertActionItemDisplayed(action: EpisodeSheetActionItem) {
+        assertExists(EpisodeSheetTestTags.actionItem(action.name))
     }
 
     fun clickActionItem(action: EpisodeSheetActionItem) {

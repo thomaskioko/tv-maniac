@@ -12,37 +12,37 @@ internal class SearchFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun shouldDisplaySearchResultsWhenQueryIsEntered() {
+    fun givenSearch_whenQueryEntered_thenDisplaysResults() {
         val query = "Breaking Bad"
         val traktId = 1388L
 
-        discoverRobot.verifyDiscoverScreenIsShown()
+        discoverRobot.assertDiscoverScreenDisplayed()
         discoverRobot.navigateToSearchTab()
 
         scenarios.search.stubSearch(query)
 
-        searchRobot.verifySearchScreenIsShown()
+        searchRobot.assertSearchScreenDisplayed()
         searchRobot.enterSearchQuery(query)
-        searchRobot.verifySearchQuery(query)
+        searchRobot.assertSearchQueryDisplayed(query)
 
-        searchRobot.verifyResultItemIsShown(traktId)
-        searchRobot.verifyResultTitleIsShown("Breaking Bad")
+        searchRobot.assertResultItemDisplayed(traktId)
+        searchRobot.assertResultTitleDisplayed("Breaking Bad")
     }
 
     @Test
-    fun shouldDisplayEmptyStateWhenNoResultsFound() {
+    fun givenSearch_whenNoResultsFound_thenDisplaysEmptyState() {
         val query = "NoResultsShow"
         discoverRobot.navigateToSearchTab()
 
         scenarios.search.stubEmptySearch()
 
         searchRobot.enterSearchQuery(query)
-        searchRobot.verifyEmptyStateIsShown()
-        searchRobot.verifyTextShown("No results found", substring = true)
+        searchRobot.assertEmptyStateDisplayed()
+        searchRobot.assertTextDisplayed("No results found", substring = true)
     }
 
     @Test
-    fun shouldNavigateToShowDetailsWhenResultItemIsClicked() {
+    fun givenSearch_whenResultItemClicked_thenNavigatesToShowDetails() {
         val query = "Breaking Bad"
         val traktId = 1388L
 
@@ -53,11 +53,11 @@ internal class SearchFlowTest : BaseAppFlowTest() {
         searchRobot.enterSearchQuery(query)
         searchRobot.clickResultItem(traktId)
 
-        showDetailsRobot.verifyShowDetailsIsShown()
+        showDetailsRobot.assertShowDetailsDisplayed()
     }
 
     @Test
-    fun shouldRestoreSearchScreenWhenNavigatingBackFromShowDetails() {
+    fun givenShowDetails_whenBackIsPressed_thenRestoresSearchScreen() {
         val query = "Breaking Bad"
         val traktId = 1388L
 
@@ -67,16 +67,16 @@ internal class SearchFlowTest : BaseAppFlowTest() {
 
         searchRobot.enterSearchQuery(query)
         searchRobot.clickResultItem(traktId)
-        showDetailsRobot.verifyShowDetailsIsShown()
+        showDetailsRobot.assertShowDetailsDisplayed()
 
         showDetailsRobot.pressBack()
 
-        searchRobot.verifySearchScreenIsShown()
-        searchRobot.verifyResultItemIsShown(traktId)
+        searchRobot.assertSearchScreenDisplayed()
+        searchRobot.assertResultItemDisplayed(traktId)
     }
 
     @Test
-    fun shouldDisplayErrorStateWhenSearchFails() {
+    fun givenSearch_whenSearchFails_thenDisplaysErrorState() {
         val query = "ErrorQuery"
         scenarios.search.stubSearchError(query)
 
@@ -84,7 +84,7 @@ internal class SearchFlowTest : BaseAppFlowTest() {
 
         searchRobot.enterSearchQuery(query)
 
-        searchRobot.verifyTextShown("Access forbidden.", substring = true)
-        searchRobot.verifyErrorStateIsShown()
+        searchRobot.assertTextDisplayed("Access forbidden.", substring = true)
+        searchRobot.assertErrorStateDisplayed()
     }
 }

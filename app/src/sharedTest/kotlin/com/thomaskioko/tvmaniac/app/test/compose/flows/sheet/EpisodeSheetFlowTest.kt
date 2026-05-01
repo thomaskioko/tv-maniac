@@ -17,42 +17,42 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun shouldOpenEpisodeSheetFromDiscoverUpNextCard() {
+    fun givenAuthenticatedUser_whenUpNextCardClicked_thenOpensEpisodeSheet() {
         openEpisodeSheetFromUpNextCard()
-        episodeSheetRobot.verifyEpisodeSheetIsShown()
+        episodeSheetRobot.assertEpisodeSheetDisplayed()
     }
 
     @Test
-    fun shouldShowAllSheetActionsWhenOpened() {
+    fun givenEpisodeSheet_whenOpened_thenShowsAllActionItems() {
         openEpisodeSheetFromUpNextCard()
 
-        episodeSheetRobot.verifyActionItemIsShown(EpisodeSheetActionItem.TOGGLE_WATCHED)
-        episodeSheetRobot.verifyActionItemIsShown(EpisodeSheetActionItem.OPEN_SHOW)
-        episodeSheetRobot.verifyActionItemIsShown(EpisodeSheetActionItem.OPEN_SEASON)
-        episodeSheetRobot.verifyActionItemIsShown(EpisodeSheetActionItem.UNFOLLOW)
+        episodeSheetRobot.assertActionItemDisplayed(EpisodeSheetActionItem.TOGGLE_WATCHED)
+        episodeSheetRobot.assertActionItemDisplayed(EpisodeSheetActionItem.OPEN_SHOW)
+        episodeSheetRobot.assertActionItemDisplayed(EpisodeSheetActionItem.OPEN_SEASON)
+        episodeSheetRobot.assertActionItemDisplayed(EpisodeSheetActionItem.UNFOLLOW)
     }
 
     @Test
-    fun shouldOpenShowDetailsWhenSheetOpenShowActionIsTapped() {
+    fun givenEpisodeSheet_whenOpenShowClicked_thenNavigatesToShowDetails() {
         openEpisodeSheetFromUpNextCard()
 
         episodeSheetRobot.clickActionItem(EpisodeSheetActionItem.OPEN_SHOW)
 
-        showDetailsRobot.verifyStopTrackingButtonIsShown()
+        showDetailsRobot.assertStopTrackingButtonDisplayed()
     }
 
     @Test
-    fun shouldOpenSeasonDetailsWhenSheetOpenSeasonActionIsTapped() {
+    fun givenEpisodeSheet_whenOpenSeasonClicked_thenNavigatesToSeasonDetails() {
         openEpisodeSheetFromUpNextCard()
 
         episodeSheetRobot.clickActionItem(EpisodeSheetActionItem.OPEN_SEASON)
 
-        seasonDetailsRobot.verifySeasonDetailsIsShown()
-        seasonDetailsRobot.verifyEpisodeRowIsShown(pilotEpisodeTraktId)
+        seasonDetailsRobot.assertSeasonDetailsDisplayed()
+        seasonDetailsRobot.assertEpisodeRowDisplayed(pilotEpisodeTraktId)
     }
 
     @Test
-    fun shouldMarkEpisodeWatchedWhenToggleWatchedActionIsTapped() {
+    fun givenEpisodeSheet_whenToggleWatchedClicked_thenMarksEpisodeWatched() {
         openEpisodeSheetFromUpNextCard()
 
         episodeSheetRobot.clickActionItem(EpisodeSheetActionItem.TOGGLE_WATCHED)
@@ -60,33 +60,33 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
         homeRobot.clickLibraryTab()
         libraryRobot.clickShowRow(breakingBadTraktId)
         showDetailsRobot.clickSeasonChip(seasonNumber = pilotSeasonNumber)
-        seasonDetailsRobot.verifyMarkUnwatchedIsShown(pilotEpisodeTraktId)
+        seasonDetailsRobot.assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
     }
 
     @Test
-    fun shouldUnfollowShowWhenUnfollowActionIsTapped() {
+    fun givenEpisodeSheet_whenUnfollowClicked_thenRemovesShowFromLibrary() {
         openEpisodeSheetFromUpNextCard()
 
         episodeSheetRobot.clickActionItem(EpisodeSheetActionItem.UNFOLLOW)
 
         homeRobot.clickLibraryTab()
-        libraryRobot.verifyShowRowIsHidden(breakingBadTraktId)
+        libraryRobot.assertShowRowDoesNotExist(breakingBadTraktId)
     }
 
     private fun openEpisodeSheetFromUpNextCard() {
-        rootRobot.verifyNotificationRationaleIsShownAndDismissed()
+        rootRobot.dismissNotificationRationale()
 
-        discoverRobot.verifyDiscoverScreenIsShown()
+        discoverRobot.assertDiscoverScreenDisplayed()
 
         homeRobot.clickLibraryTab()
-        libraryRobot.verifyShowRowIsShown(breakingBadTraktId)
+        libraryRobot.assertShowRowDisplayed(breakingBadTraktId)
 
         homeRobot.clickProgressTab()
-        progressRobot.verifyEpisodeRowIsShown(breakingBadTraktId)
+        progressRobot.assertEpisodeRowDisplayed(breakingBadTraktId)
 
         homeRobot.clickDiscoverTab()
         discoverRobot.clickUpNextCard(breakingBadTraktId)
 
-        episodeSheetRobot.verifyEpisodeSheetIsShown()
+        episodeSheetRobot.assertEpisodeSheetDisplayed()
     }
 }

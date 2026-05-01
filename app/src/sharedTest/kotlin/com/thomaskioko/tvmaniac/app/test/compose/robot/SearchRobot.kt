@@ -9,8 +9,8 @@ import com.thomaskioko.tvmaniac.testtags.search.SearchTestTags
 
 internal class SearchRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
 
-    fun verifySearchScreenIsShown() {
-        verifyTagShown(SearchTestTags.SCREEN_TEST_TAG)
+    fun assertSearchScreenDisplayed() {
+        assertDisplayed(SearchTestTags.SCREEN_TEST_TAG)
     }
 
     fun enterSearchQuery(query: String) {
@@ -18,29 +18,29 @@ internal class SearchRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(
         composeTestRule.waitForIdle()
     }
 
-    fun verifySearchQuery(query: String) {
+    fun assertSearchQueryDisplayed(query: String) {
         composeTestRule.onNodeWithTag(SearchTestTags.SEARCH_BAR_TEST_TAG)
             .assertTextContains(query)
     }
 
-    fun verifyResultCount(count: Int) {
-        verifyCount(SearchTestTags.SCREEN_TEST_TAG, "search_result_item_", count, useUnmergedTree = true)
+    fun assertResultCountEquals(count: Int) {
+        assertCountEquals(SearchTestTags.SCREEN_TEST_TAG, "search_result_item_", count, useUnmergedTree = true)
     }
 
-    fun verifyResultItemIsShown(traktId: Long) {
-        verifyTagShown(SearchTestTags.resultItem(traktId), useUnmergedTree = true)
+    fun assertResultItemDisplayed(traktId: Long) {
+        assertDisplayed(SearchTestTags.resultItem(traktId), useUnmergedTree = true)
     }
 
-    fun verifyResultTitleIsShown(title: String) {
-        verifyTextShown(title)
+    fun assertResultTitleDisplayed(title: String) {
+        assertTextDisplayed(title)
     }
 
-    fun verifyEmptyStateIsShown() {
-        verifyTagShown(SearchTestTags.EMPTY_STATE_TEST_TAG)
+    fun assertEmptyStateDisplayed() {
+        assertDisplayed(SearchTestTags.EMPTY_STATE_TEST_TAG)
     }
 
-    fun verifyErrorStateIsShown() {
-        verifyTagShown(SearchTestTags.ERROR_STATE_TEST_TAG)
+    fun assertErrorStateDisplayed() {
+        assertDisplayed(SearchTestTags.ERROR_STATE_TEST_TAG)
     }
 
     fun clickResultItem(traktId: Long): ShowDetailsRobot {

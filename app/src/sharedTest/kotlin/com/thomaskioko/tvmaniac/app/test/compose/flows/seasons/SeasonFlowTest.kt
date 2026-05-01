@@ -18,125 +18,126 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun shouldToggleEpisodeWatchedStateWhenWatchedButtonIsTapped() {
+    fun givenSeasonDetails_whenWatchedButtonClicked_thenTogglesWatchedState() {
         discoverRobot.clickShowCard(breakingBadTraktId)
         trackShow()
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
-        seasonDetailsRobot.verifyEpisodeRowIsShown(pilotEpisodeTraktId)
+        seasonDetailsRobot.assertEpisodeRowDisplayed(pilotEpisodeTraktId)
         seasonDetailsRobot.clickMarkWatched(pilotEpisodeTraktId)
-        seasonDetailsRobot.verifyMarkUnwatchedIsShown(pilotEpisodeTraktId)
+        seasonDetailsRobot.assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
 
         rootRobot.pressBack()
-        showDetailsRobot.verifyContinueTrackingSectionIsShown()
-        showDetailsRobot.verifyContinueTrackingEpisodeIsShown(secondEpisodeTraktId)
+        showDetailsRobot.assertContinueTrackingSectionDisplayed()
+        showDetailsRobot.assertContinueTrackingEpisodeDisplayed(secondEpisodeTraktId)
     }
 
     @Test
-    fun shouldShowMarkPreviousEpisodesDialogWhenMarkingEpisodeWithUnwatchedPredecessors() {
+    fun givenSeasonDetails_whenMarkingEpisodeWithPredecessors_thenShowsDialog() {
         discoverRobot.clickShowCard(breakingBadTraktId)
         trackShow()
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
-        seasonDetailsRobot.verifyEpisodeRowIsShown(secondEpisodeTraktId)
+        seasonDetailsRobot.assertEpisodeRowDisplayed(secondEpisodeTraktId)
         seasonDetailsRobot.clickMarkWatched(secondEpisodeTraktId)
-        seasonDetailsRobot.verifyMarkPreviousEpisodesDialogIsShown()
+        seasonDetailsRobot.assertMarkPreviousEpisodesDialogDisplayed()
         seasonDetailsRobot.clickMarkPreviousEpisodesDismiss()
-        seasonDetailsRobot.verifyMarkPreviousEpisodesDialogIsHidden()
+        seasonDetailsRobot.assertMarkPreviousEpisodesDialogDoesNotExist()
 
         rootRobot.pressBack()
-        showDetailsRobot.verifyContinueTrackingSectionIsShown()
-        showDetailsRobot.verifyContinueTrackingEpisodeIsShown(pilotEpisodeTraktId)
+        showDetailsRobot.assertContinueTrackingSectionDisplayed()
+        showDetailsRobot.assertContinueTrackingEpisodeDisplayed(pilotEpisodeTraktId)
     }
 
     @Test
-    fun shouldMarkAllPreviousEpisodesWhenMarkAllConfirmed() {
+    fun givenSeasonDetails_whenMarkAllConfirmed_thenMarksAllPreviousEpisodes() {
         discoverRobot.clickShowCard(breakingBadTraktId)
         trackShow()
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
-        seasonDetailsRobot.verifyEpisodeRowIsShown(secondEpisodeTraktId)
+        seasonDetailsRobot.assertEpisodeRowDisplayed(secondEpisodeTraktId)
         seasonDetailsRobot.clickMarkWatched(secondEpisodeTraktId)
         seasonDetailsRobot.clickMarkPreviousEpisodesConfirm()
-        seasonDetailsRobot.verifyMarkPreviousEpisodesDialogIsHidden()
-        seasonDetailsRobot.verifyMarkUnwatchedIsShown(pilotEpisodeTraktId)
-        seasonDetailsRobot.verifyMarkUnwatchedIsShown(secondEpisodeTraktId)
+        seasonDetailsRobot.assertMarkPreviousEpisodesDialogDoesNotExist()
+        seasonDetailsRobot.assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
+        seasonDetailsRobot.assertMarkUnwatchedDisplayed(secondEpisodeTraktId)
 
         rootRobot.pressBack()
-        showDetailsRobot.verifyContinueTrackingSectionIsShown()
-        showDetailsRobot.verifyContinueTrackingEpisodeIsShown(thirdEpisodeTraktId)
+        showDetailsRobot.assertContinueTrackingSectionDisplayed()
+        showDetailsRobot.assertContinueTrackingEpisodeDisplayed(thirdEpisodeTraktId)
     }
 
     @Test
-    fun shouldMarkOnlyCurrentEpisodeWhenJustThisIsTapped() {
+    fun givenSeasonDetails_whenJustThisClicked_thenMarksOnlyCurrentEpisode() {
         discoverRobot.clickShowCard(breakingBadTraktId)
         trackShow()
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
-        seasonDetailsRobot.verifyEpisodeRowIsShown(secondEpisodeTraktId)
+        seasonDetailsRobot.assertEpisodeRowDisplayed(secondEpisodeTraktId)
         seasonDetailsRobot.clickMarkWatched(secondEpisodeTraktId)
         seasonDetailsRobot.clickMarkPreviousEpisodesDismiss()
-        seasonDetailsRobot.verifyMarkPreviousEpisodesDialogIsHidden()
-        seasonDetailsRobot.verifyMarkUnwatchedIsShown(secondEpisodeTraktId)
-        seasonDetailsRobot.verifyMarkWatchedIsShown(pilotEpisodeTraktId)
+        seasonDetailsRobot.assertMarkPreviousEpisodesDialogDoesNotExist()
+        seasonDetailsRobot.assertMarkUnwatchedDisplayed(secondEpisodeTraktId)
+        seasonDetailsRobot.assertMarkWatchedDisplayed(pilotEpisodeTraktId)
     }
 
     @Test
-    fun shouldShowUnwatchEpisodeDialogWhenWatchedEpisodeToggled() {
+    fun givenSeasonDetails_whenWatchedEpisodeToggled_thenShowsUnwatchDialog() {
         discoverRobot.clickShowCard(breakingBadTraktId)
         trackShow()
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
-        seasonDetailsRobot.verifyEpisodeRowIsShown(pilotEpisodeTraktId)
+        seasonDetailsRobot.assertEpisodeRowDisplayed(pilotEpisodeTraktId)
         seasonDetailsRobot.clickMarkWatched(pilotEpisodeTraktId)
-        seasonDetailsRobot.verifyMarkUnwatchedIsShown(pilotEpisodeTraktId)
+        seasonDetailsRobot.assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
         seasonDetailsRobot.clickMarkUnwatched(pilotEpisodeTraktId)
-        seasonDetailsRobot.verifyUnwatchEpisodeDialogIsShown()
+        seasonDetailsRobot.assertUnwatchEpisodeDialogDisplayed()
         seasonDetailsRobot.clickUnwatchEpisodeDismiss()
-        seasonDetailsRobot.verifyUnwatchEpisodeDialogIsHidden()
+        seasonDetailsRobot.assertUnwatchEpisodeDialogDoesNotExist()
 
         rootRobot.pressBack()
-        showDetailsRobot.verifyContinueTrackingSectionIsShown()
-        showDetailsRobot.verifyContinueTrackingEpisodeIsShown(secondEpisodeTraktId)
+        showDetailsRobot.assertContinueTrackingSectionDisplayed()
+        showDetailsRobot.assertContinueTrackingEpisodeDisplayed(secondEpisodeTraktId)
     }
 
     @Test
-    fun shouldUnwatchEpisodeWhenUnwatchDialogConfirmed() {
+    fun givenSeasonDetails_whenUnwatchConfirmed_thenUnwatchesEpisode() {
         discoverRobot.clickShowCard(breakingBadTraktId)
         trackShow()
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
-        seasonDetailsRobot.verifyEpisodeRowIsShown(pilotEpisodeTraktId)
+        seasonDetailsRobot.assertEpisodeRowDisplayed(pilotEpisodeTraktId)
         seasonDetailsRobot.clickMarkWatched(pilotEpisodeTraktId)
+        seasonDetailsRobot.assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
         seasonDetailsRobot.clickMarkUnwatched(pilotEpisodeTraktId)
         seasonDetailsRobot.clickUnwatchEpisodeConfirm()
-        seasonDetailsRobot.verifyUnwatchEpisodeDialogIsHidden()
-        seasonDetailsRobot.verifyMarkWatchedIsShown(pilotEpisodeTraktId)
+        seasonDetailsRobot.assertUnwatchEpisodeDialogDoesNotExist()
+        seasonDetailsRobot.assertMarkWatchedDisplayed(pilotEpisodeTraktId)
 
         rootRobot.pressBack()
-        showDetailsRobot.verifyContinueTrackingSectionIsShown()
-        showDetailsRobot.verifyContinueTrackingEpisodeIsShown(pilotEpisodeTraktId)
+        showDetailsRobot.assertContinueTrackingSectionDisplayed()
+        showDetailsRobot.assertContinueTrackingEpisodeDisplayed(pilotEpisodeTraktId)
     }
 
     @Test
-    fun shouldMarkAllPreviousSeasonsWatchedWhenConfirmed() {
+    fun givenSeasonDetails_whenMarkPreviousSeasonsConfirmed_thenMarksAllPreviousSeasons() {
         discoverRobot.clickShowCard(breakingBadTraktId)
         showDetailsRobot.clickSeasonChip(seasonNumber = 2L)
-        seasonDetailsRobot.verifyEpisodeRowIsShown(seasonTwoFirstEpisodeTraktId)
+        seasonDetailsRobot.assertEpisodeRowDisplayed(seasonTwoFirstEpisodeTraktId)
         seasonDetailsRobot.clickSeasonWatchedToggle()
-        seasonDetailsRobot.verifyMarkPreviousSeasonsDialogIsShown()
+        seasonDetailsRobot.assertMarkPreviousSeasonsDialogDisplayed()
         seasonDetailsRobot.clickMarkPreviousSeasonsConfirm()
-        seasonDetailsRobot.verifyMarkPreviousSeasonsDialogIsHidden()
-        seasonDetailsRobot.verifyMarkUnwatchedIsShown(seasonTwoFirstEpisodeTraktId)
+        seasonDetailsRobot.assertMarkPreviousSeasonsDialogDoesNotExist()
+        seasonDetailsRobot.assertMarkUnwatchedDisplayed(seasonTwoFirstEpisodeTraktId)
 
         rootRobot.pressBack()
         showDetailsRobot.clickSeasonChip(seasonNumber = 2L)
 
         seasonDetailsRobot.clickSeasonWatchedToggle()
-        seasonDetailsRobot.verifyUnwatchSeasonDialogIsShown()
+        seasonDetailsRobot.assertUnwatchSeasonDialogDisplayed()
         seasonDetailsRobot.clickUnwatchSeasonConfirm()
-        seasonDetailsRobot.verifyUnwatchSeasonDialogIsHidden()
-        seasonDetailsRobot.verifyMarkWatchedIsShown(seasonTwoFirstEpisodeTraktId)
+        seasonDetailsRobot.assertUnwatchSeasonDialogDoesNotExist()
+        seasonDetailsRobot.assertMarkWatchedDisplayed(seasonTwoFirstEpisodeTraktId)
     }
 
     private fun trackShow() {
-        showDetailsRobot.verifyTrackButtonIsShown()
+        showDetailsRobot.assertTrackButtonDisplayed()
         showDetailsRobot.clickTrackButton()
-        rootRobot.verifyNotificationRationaleIsShownAndDismissed()
-        showDetailsRobot.verifyStopTrackingButtonIsShown()
+        rootRobot.dismissNotificationRationale()
+        showDetailsRobot.assertStopTrackingButtonDisplayed()
     }
 }

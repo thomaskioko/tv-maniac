@@ -18,47 +18,47 @@ internal class DiscoverToSeasonDetailsFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun shouldRenderSeasonChipsOnShowDetailsFromRealPipeline() {
+    fun givenShowDetails_whenOpened_thenSeasonChipsAreRendered() {
         discoverRobot.clickShowCard(breakingBadTraktId)
-        showDetailsRobot.verifyShowDetailsIsShown()
-        showDetailsRobot.verifySeasonChipIsShown(seasonNumber = 1L)
-        showDetailsRobot.verifySeasonChipIsShown(seasonNumber = 2L)
+        showDetailsRobot.assertShowDetailsDisplayed()
+        showDetailsRobot.assertSeasonChipDisplayed(seasonNumber = 1L)
+        showDetailsRobot.assertSeasonChipDisplayed(seasonNumber = 2L)
     }
 
     @Test
-    fun shouldOpenSeasonDetailsWithEpisodesWhenSeasonChipIsTapped() {
+    fun givenShowDetails_whenSeasonChipClicked_thenOpensSeasonDetails() {
         discoverRobot.clickShowCard(breakingBadTraktId)
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
-        seasonDetailsRobot.verifySeasonDetailsIsShown()
-        seasonDetailsRobot.verifyEpisodeRowIsShown(pilotEpisodeTraktId)
+        seasonDetailsRobot.assertSeasonDetailsDisplayed()
+        seasonDetailsRobot.assertEpisodeRowDisplayed(pilotEpisodeTraktId)
     }
 
     @Test
-    fun shouldOpenEpisodeSheetWhenEpisodeRowIsTapped() {
+    fun givenSeasonDetails_whenEpisodeRowClicked_thenOpensEpisodeSheet() {
         discoverRobot.clickShowCard(breakingBadTraktId)
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
         seasonDetailsRobot.clickEpisodeRow(pilotEpisodeTraktId)
-        episodeSheetRobot.verifyEpisodeSheetIsShown()
+        episodeSheetRobot.assertEpisodeSheetDisplayed()
     }
 
     @Test
-    fun shouldCollapseAndExpandEpisodeListWhenHeaderIsTapped() {
+    fun givenSeasonDetails_whenEpisodeHeaderClicked_thenTogglesEpisodeList() {
         discoverRobot.clickShowCard(breakingBadTraktId)
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
-        seasonDetailsRobot.verifyEpisodeRowIsShown(pilotEpisodeTraktId)
+        seasonDetailsRobot.assertEpisodeRowDisplayed(pilotEpisodeTraktId)
         seasonDetailsRobot.clickEpisodeHeader()
-        seasonDetailsRobot.verifyEpisodeRowIsHidden(pilotEpisodeTraktId)
+        seasonDetailsRobot.assertEpisodeRowDoesNotExist(pilotEpisodeTraktId)
         seasonDetailsRobot.clickEpisodeHeader()
-        seasonDetailsRobot.verifyEpisodeRowIsShown(pilotEpisodeTraktId)
+        seasonDetailsRobot.assertEpisodeRowDisplayed(pilotEpisodeTraktId)
     }
 
     @Test
-    fun shouldPopSeasonDetailsAndRestoreShowDetailsOnBackPress() {
+    fun givenSeasonDetails_whenBackIsPressed_thenRestoresShowDetails() {
         discoverRobot.clickShowCard(breakingBadTraktId)
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
-        seasonDetailsRobot.verifySeasonDetailsIsShown()
+        seasonDetailsRobot.assertSeasonDetailsDisplayed()
         seasonDetailsRobot.pressBack()
-        seasonDetailsRobot.verifyTagHidden(SeasonDetailsTestTags.SCREEN_TEST_TAG)
-        showDetailsRobot.verifyShowDetailsIsShown()
+        seasonDetailsRobot.assertDoesNotExist(SeasonDetailsTestTags.SCREEN_TEST_TAG)
+        showDetailsRobot.assertShowDetailsDisplayed()
     }
 }

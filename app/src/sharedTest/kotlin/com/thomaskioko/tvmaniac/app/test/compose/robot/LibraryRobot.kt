@@ -7,20 +7,20 @@ import com.thomaskioko.tvmaniac.testtags.library.LibraryTestTags
 
 internal class LibraryRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
 
-    fun verifyLibraryScreenIsShown() {
-        verifyTagShown(LibraryTestTags.SCREEN_TEST_TAG)
+    fun assertLibraryScreenDisplayed() {
+        assertDisplayed(LibraryTestTags.SCREEN_TEST_TAG)
     }
 
-    fun verifyEmptyStateIsShown() {
-        verifyTagShown(LibraryTestTags.EMPTY_STATE_TEST_TAG)
+    fun assertEmptyStateDisplayed() {
+        assertDisplayed(LibraryTestTags.EMPTY_STATE_TEST_TAG)
     }
 
-    fun verifyShowRowIsShown(traktId: Long) {
-        verifyTagExists(LibraryTestTags.showRow(traktId))
+    fun assertShowRowDisplayed(traktId: Long) {
+        assertExists(LibraryTestTags.showRow(traktId))
     }
 
-    fun verifyShowRowIsHidden(traktId: Long) {
-        verifyTagHidden(LibraryTestTags.showRow(traktId))
+    fun assertShowRowDoesNotExist(traktId: Long) {
+        assertDoesNotExist(LibraryTestTags.showRow(traktId))
     }
 
     fun clickShowRow(traktId: Long) {

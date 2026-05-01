@@ -23,169 +23,169 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun unauthenticatedUserNavigatesAllScreensAndChangesAppearanceAndNotifications() {
+    fun givenUnauthenticatedUser_whenNavigatesAllScreens_thenChangesAppearanceAndNotifications() {
         // Verify public content on Discover
-        discoverRobot.verifyDiscoverScreenIsShown()
-        discoverRobot.verifyShowCardIsShown(breakingBadTraktId)
-        discoverRobot.verifyUpNextCardIsHidden(breakingBadTraktId)
+        discoverRobot.assertDiscoverScreenDisplayed()
+        discoverRobot.assertShowCardDisplayed(breakingBadTraktId)
+        discoverRobot.assertUpNextCardDoesNotExist(breakingBadTraktId)
 
         // Verify featured pager
-        discoverRobot.verifyFeaturedPagerIsShown()
-        discoverRobot.verifyFeaturedShowIsShown(breakingBadTraktId)
+        discoverRobot.assertFeaturedPagerDisplayed()
+        discoverRobot.assertFeaturedShowDisplayed(breakingBadTraktId)
         discoverRobot.swipeFeaturedPagerLeft()
-        discoverRobot.verifyFeaturedShowIsShown(betterCallSaulTraktId)
+        discoverRobot.assertFeaturedShowDisplayed(betterCallSaulTraktId)
         discoverRobot.swipeFeaturedPagerRight()
-        discoverRobot.verifyFeaturedShowIsShown(breakingBadTraktId)
+        discoverRobot.assertFeaturedShowDisplayed(breakingBadTraktId)
 
         // Search for show and navigate back
         val query = "Breaking Bad"
         scenarios.search.stubSearch(query)
         discoverRobot.navigateToSearchTab()
-        searchRobot.verifySearchScreenIsShown()
+        searchRobot.assertSearchScreenDisplayed()
         searchRobot.enterSearchQuery(query)
-        searchRobot.verifyResultItemIsShown(breakingBadTraktId)
+        searchRobot.assertResultItemDisplayed(breakingBadTraktId)
         searchRobot.clickResultItem(breakingBadTraktId)
-        showDetailsRobot.verifyTrackButtonIsShown()
+        showDetailsRobot.assertTrackButtonDisplayed()
         showDetailsRobot.pressBack()
-        searchRobot.verifySearchScreenIsShown()
+        searchRobot.assertSearchScreenDisplayed()
         searchRobot.pressBack()
 
         // Visit show details from Discover
         discoverRobot.clickShowCard(breakingBadTraktId)
-        showDetailsRobot.verifyTrackButtonIsShown()
+        showDetailsRobot.assertTrackButtonDisplayed()
         showDetailsRobot.pressBack()
-        discoverRobot.verifyDiscoverScreenIsShown()
+        discoverRobot.assertDiscoverScreenDisplayed()
 
         // Verify logged-out empty states for Progress and Calendar
         homeRobot.clickProgressTab()
-        progressRobot.verifyProgressScreenIsShown()
-        progressRobot.verifyUpNextEmptyStateIsShown()
-        progressRobot.verifyEpisodeRowIsHidden(breakingBadTraktId)
+        progressRobot.assertProgressScreenDisplayed()
+        progressRobot.assertUpNextEmptyStateDisplayed()
+        progressRobot.assertEpisodeRowDoesNotExist(breakingBadTraktId)
 
         progressRobot.clickCalendarTab()
-        calendarRobot.verifyLoggedOutStateIsShown()
+        calendarRobot.assertLoggedOutStateDisplayed()
         progressRobot.clickUpNextTab()
 
         // Verify empty library state
         homeRobot.clickLibraryTab()
-        libraryRobot.verifyEmptyStateIsShown()
-        libraryRobot.verifyShowRowIsHidden(breakingBadTraktId)
+        libraryRobot.assertEmptyStateDisplayed()
+        libraryRobot.assertShowRowDoesNotExist(breakingBadTraktId)
 
         // Navigate to Profile and open Settings
         homeRobot.clickProfileTab()
-        profileRobot.verifySignInButtonIsShown()
+        profileRobot.assertSignInButtonDisplayed()
         profileRobot.clickSettingsButton()
-        settingsRobot.verifySettingsScreenIsShown()
+        settingsRobot.assertSettingsScreenDisplayed()
 
         // Change theme from SYSTEM to DARK
         settingsRobot.scrollToThemeSwatch(ThemeModel.SYSTEM)
-        settingsRobot.verifyThemeSwatchSelected(ThemeModel.SYSTEM)
+        settingsRobot.assertThemeSwatchSelected(ThemeModel.SYSTEM)
         settingsRobot.scrollToThemeSwatch(ThemeModel.DARK)
         settingsRobot.clickThemeSwatch(ThemeModel.DARK)
-        settingsRobot.verifyThemeSwatchSelected(ThemeModel.DARK)
-        settingsRobot.verifyThemeSwatchNotSelected(ThemeModel.SYSTEM)
+        settingsRobot.assertThemeSwatchSelected(ThemeModel.DARK)
+        settingsRobot.assertThemeSwatchNotSelected(ThemeModel.SYSTEM)
 
         // Dismiss episode notifications rationale
         settingsRobot.scrollToEpisodeNotificationsToggle()
-        settingsRobot.verifyEpisodeNotificationsDisabled()
+        settingsRobot.assertEpisodeNotificationsDisabled()
         settingsRobot.clickEpisodeNotificationsToggle()
-        rootRobot.verifyNotificationRationaleIsShown()
-        rootRobot.verifyNotificationRationaleIsShownAndDismissed()
-        settingsRobot.verifyEpisodeNotificationsDisabled()
+        rootRobot.assertNotificationRationaleDisplayed()
+        rootRobot.dismissNotificationRationale()
+        settingsRobot.assertEpisodeNotificationsDisabled()
 
         // Accept episode notifications rationale
         settingsRobot.clickEpisodeNotificationsToggle()
-        rootRobot.verifyNotificationRationaleIsShown()
+        rootRobot.assertNotificationRationaleDisplayed()
         rootRobot.acceptNotificationRationale()
-        rootRobot.verifyNotificationRationaleIsHidden()
+        rootRobot.assertNotificationRationaleDoesNotExist()
         composeTestRule.dismissSystemDialog(SystemDialog.NotificationPermissionDeny)
 
         // Follow show locally
         settingsRobot.pressBack()
         homeRobot.clickDiscoverTab()
         discoverRobot.clickShowCard(breakingBadTraktId)
-        showDetailsRobot.verifyTrackButtonIsShown()
+        showDetailsRobot.assertTrackButtonDisplayed()
         showDetailsRobot.clickTrackButton()
-        showDetailsRobot.verifyStopTrackingButtonIsShown()
+        showDetailsRobot.assertStopTrackingButtonDisplayed()
 
         // Continue tracking and mark season watched
         showDetailsRobot.clickContinueTrackingMarkWatched(pilotEpisodeTraktId)
 
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
-        seasonDetailsRobot.verifySeasonDetailsIsShown()
-        seasonDetailsRobot.verifyMarkUnwatchedIsShown(pilotEpisodeTraktId)
+        seasonDetailsRobot.assertSeasonDetailsDisplayed()
+        seasonDetailsRobot.assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
         seasonDetailsRobot.clickMarkWatched(secondEpisodeTraktId)
-        seasonDetailsRobot.verifyMarkUnwatchedIsShown(secondEpisodeTraktId)
+        seasonDetailsRobot.assertMarkUnwatchedDisplayed(secondEpisodeTraktId)
 
         seasonDetailsRobot.pressBack()
-        showDetailsRobot.verifyStopTrackingButtonIsShown()
+        showDetailsRobot.assertStopTrackingButtonDisplayed()
         showDetailsRobot.pressBack()
-        discoverRobot.verifyDiscoverScreenIsShown()
+        discoverRobot.assertDiscoverScreenDisplayed()
 
         // Open Episode Sheet from Discover UpNext card
-        discoverRobot.verifyUpNextCardIsShown(breakingBadTraktId)
+        discoverRobot.assertUpNextCardDisplayed(breakingBadTraktId)
         discoverRobot.clickUpNextCard(breakingBadTraktId)
-        episodeSheetRobot.verifyEpisodeSheetIsShown()
+        episodeSheetRobot.assertEpisodeSheetDisplayed()
         episodeSheetRobot.clickActionItem(EpisodeSheetActionItem.OPEN_SHOW)
-        showDetailsRobot.verifyStopTrackingButtonIsShown()
+        showDetailsRobot.assertStopTrackingButtonDisplayed()
         showDetailsRobot.pressBack()
-        discoverRobot.verifyDiscoverScreenIsShown()
+        discoverRobot.assertDiscoverScreenDisplayed()
 
         // Verify offline follow in Library
         homeRobot.clickLibraryTab()
-        libraryRobot.verifyShowRowIsShown(breakingBadTraktId)
+        libraryRobot.assertShowRowDisplayed(breakingBadTraktId)
         libraryRobot.clickShowRow(breakingBadTraktId)
-        showDetailsRobot.verifyStopTrackingButtonIsShown()
+        showDetailsRobot.assertStopTrackingButtonDisplayed()
 
         // Raise login prompt and confirm login
         scenarios.stubProfileOnSignIn()
         showDetailsRobot.clickAddToListButton()
-        showDetailsRobot.verifyLoginPromptIsShown()
+        showDetailsRobot.assertLoginPromptDisplayed()
         showDetailsRobot.confirmLoginPrompt()
-        showDetailsRobot.verifyLoginPromptIsHidden()
+        showDetailsRobot.assertLoginPromptDoesNotExist()
         showDetailsRobot.pressBack()
         homeRobot.clickProfileTab()
-        profileRobot.verifyUserCardIsShown(slug = "integration-test-user")
+        profileRobot.assertUserCardDisplayed(slug = "integration-test-user")
     }
 
     @Test
-    fun unauthenticatedUserSignsInFromProfileAndSeesUserCard() {
+    fun givenUnauthenticatedUser_whenSignsInFromProfile_thenSeesUserCard() {
         scenarios.stubProfileOnSignIn()
         homeRobot.clickProfileTab()
-        profileRobot.verifySignInButtonIsShown()
+        profileRobot.assertSignInButtonDisplayed()
         profileRobot.clickSignInButton()
-        profileRobot.verifyUserCardIsShown(slug = "integration-test-user")
+        profileRobot.assertUserCardDisplayed(slug = "integration-test-user")
     }
 
     @Test
-    fun unauthenticatedUserDoesNotSeeAuthRationaleAfterPriorSettingsDismiss() {
+    fun givenUnauthenticatedUser_whenRationaleDismissedInSettings_thenDoesNotShowAgainOnAuth() {
         // Dismiss rationale from Settings
         homeRobot.clickProfileTab()
 
         profileRobot.clickSettingsButton()
-        settingsRobot.verifySettingsScreenIsShown()
+        settingsRobot.assertSettingsScreenDisplayed()
 
         settingsRobot.scrollToEpisodeNotificationsToggle()
         settingsRobot.clickEpisodeNotificationsToggle()
-        rootRobot.verifyNotificationRationaleIsShown()
-        rootRobot.verifyNotificationRationaleIsShownAndDismissed()
-        rootRobot.verifyNotificationRationaleIsHidden()
+        rootRobot.assertNotificationRationaleDisplayed()
+        rootRobot.dismissNotificationRationale()
+        rootRobot.assertNotificationRationaleDoesNotExist()
 
         // Login user
         settingsRobot.pressBack()
-        profileRobot.verifySignInButtonIsShown()
+        profileRobot.assertSignInButtonDisplayed()
 
         scenarios.stubProfileOnSignIn()
 
         profileRobot.clickSignInButton()
-        profileRobot.verifyUserCardIsShown(slug = "integration-test-user")
+        profileRobot.assertUserCardDisplayed(slug = "integration-test-user")
 
         // Verify rationale remains hidden after auth transition
         profileRobot.clickSettingsButton()
-        settingsRobot.verifySettingsScreenIsShown()
+        settingsRobot.assertSettingsScreenDisplayed()
         settingsRobot.pressBack()
-        profileRobot.verifyUserCardIsShown(slug = "integration-test-user")
+        profileRobot.assertUserCardDisplayed(slug = "integration-test-user")
 
-        rootRobot.verifyNotificationRationaleIsHidden()
+        rootRobot.assertNotificationRationaleDoesNotExist()
     }
 }

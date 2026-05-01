@@ -12,15 +12,15 @@ import com.thomaskioko.tvmaniac.testtags.settings.SettingsTestTags
 
 internal class SettingsRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
 
-    fun verifySettingsScreenIsShown() {
-        verifyTagShown(SettingsTestTags.SCREEN_TEST_TAG)
+    fun assertSettingsScreenDisplayed() {
+        assertDisplayed(SettingsTestTags.SCREEN_TEST_TAG)
     }
 
-    fun verifyImageQualitySelected(quality: ImageQuality) {
+    fun assertImageQualitySelected(quality: ImageQuality) {
         composeTestRule.isSelected(SettingsTestTags.imageQualityChip(quality.name))
     }
 
-    fun verifyImageQualityNotSelected(quality: ImageQuality) {
+    fun assertImageQualityNotSelected(quality: ImageQuality) {
         composeTestRule.isNotSelected(SettingsTestTags.imageQualityChip(quality.name))
     }
 
@@ -40,12 +40,12 @@ internal class SettingsRobot(composeTestRule: ComposeContentTestRule) : BaseRobo
         click(SettingsTestTags.TRAKT_ACCOUNT_ROW_TEST_TAG, useSemanticsAction = true)
     }
 
-    fun verifyLogoutDialogIsShown() {
-        verifyTagExists(SettingsTestTags.LOGOUT_DIALOG_CONFIRM_BUTTON_TEST_TAG)
+    fun assertLogoutDialogDisplayed() {
+        assertExists(SettingsTestTags.LOGOUT_DIALOG_CONFIRM_BUTTON_TEST_TAG)
     }
 
-    fun verifyLogoutDialogIsHidden() {
-        verifyTagHidden(SettingsTestTags.LOGOUT_DIALOG_CONFIRM_BUTTON_TEST_TAG)
+    fun assertLogoutDialogDoesNotExist() {
+        assertDoesNotExist(SettingsTestTags.LOGOUT_DIALOG_CONFIRM_BUTTON_TEST_TAG)
     }
 
     fun clickLogoutConfirm() {
@@ -60,11 +60,11 @@ internal class SettingsRobot(composeTestRule: ComposeContentTestRule) : BaseRobo
         scrollToListTag(SettingsTestTags.LIST_TEST_TAG, SettingsTestTags.themeSwatch(theme.name))
     }
 
-    fun verifyThemeSwatchSelected(theme: ThemeModel) {
+    fun assertThemeSwatchSelected(theme: ThemeModel) {
         composeTestRule.isSelected(SettingsTestTags.themeSwatch(theme.name))
     }
 
-    fun verifyThemeSwatchNotSelected(theme: ThemeModel) {
+    fun assertThemeSwatchNotSelected(theme: ThemeModel) {
         composeTestRule.isNotSelected(SettingsTestTags.themeSwatch(theme.name))
     }
 
@@ -79,11 +79,11 @@ internal class SettingsRobot(composeTestRule: ComposeContentTestRule) : BaseRobo
         )
     }
 
-    fun verifyEpisodeNotificationsEnabled() {
+    fun assertEpisodeNotificationsEnabled() {
         composeTestRule.isChecked(SettingsTestTags.EPISODE_NOTIFICATIONS_TOGGLE_TEST_TAG)
     }
 
-    fun verifyEpisodeNotificationsDisabled() {
+    fun assertEpisodeNotificationsDisabled() {
         composeTestRule.isUnchecked(SettingsTestTags.EPISODE_NOTIFICATIONS_TOGGLE_TEST_TAG)
     }
 

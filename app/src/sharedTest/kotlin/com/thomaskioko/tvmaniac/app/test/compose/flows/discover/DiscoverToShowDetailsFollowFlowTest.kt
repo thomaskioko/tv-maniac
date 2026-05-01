@@ -14,20 +14,20 @@ internal class DiscoverToShowDetailsFollowFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun shouldFollowShowAndPersistItInTheFollowedShowsTable() {
+    fun givenShow_whenTrackIsClicked_thenPersistsInFollowedShows() {
         discoverRobot.clickShowCard(breakingBadTraktId)
-        showDetailsRobot.verifyTrackButtonIsShown()
+        showDetailsRobot.assertTrackButtonDisplayed()
         showDetailsRobot.clickTrackButton()
-        showDetailsRobot.verifyStopTrackingButtonIsShown()
-        rootRobot.verifyNotificationRationaleIsShownAndDismissed()
+        showDetailsRobot.assertStopTrackingButtonDisplayed()
+        rootRobot.dismissNotificationRationale()
     }
 
     @Test
-    fun shouldPopShowDetailsAndRestoreDiscoverOnBackPress() {
+    fun givenShowDetails_whenBackIsPressed_thenRestoresDiscover() {
         discoverRobot.clickShowCard(breakingBadTraktId)
-        showDetailsRobot.verifyTrackButtonIsShown()
+        showDetailsRobot.assertTrackButtonDisplayed()
         showDetailsRobot.pressBack()
-        showDetailsRobot.verifyTagHidden("show_details_track_button")
-        discoverRobot.verifyShowCardIsShown(breakingBadTraktId)
+        showDetailsRobot.assertDoesNotExist("show_details_track_button")
+        discoverRobot.assertShowCardDisplayed(breakingBadTraktId)
     }
 }

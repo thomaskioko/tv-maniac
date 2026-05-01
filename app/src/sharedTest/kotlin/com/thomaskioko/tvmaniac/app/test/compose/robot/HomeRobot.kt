@@ -9,32 +9,32 @@ import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
 
 internal class HomeRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
 
-    fun verifyTabSelected(config: HomeConfig) {
+    fun assertTabSelected(config: HomeConfig) {
         composeTestRule.isSelected(config.testTag())
     }
 
-    fun verifyTabNotSelected(config: HomeConfig) {
+    fun assertTabNotSelected(config: HomeConfig) {
         composeTestRule.isNotSelected(config.testTag())
     }
 
     fun clickDiscoverTab() {
         click(HomeTestTags.DISCOVER_TAB, useSemanticsAction = true)
-        verifyTabSelected(HomeConfig.Discover)
+        assertTabSelected(HomeConfig.Discover)
     }
 
     fun clickProgressTab() {
         click(HomeTestTags.PROGRESS_TAB, useSemanticsAction = true)
-        verifyTabSelected(HomeConfig.Progress)
+        assertTabSelected(HomeConfig.Progress)
     }
 
     fun clickLibraryTab() {
         click(HomeTestTags.LIBRARY_TAB, useSemanticsAction = true)
-        verifyTabSelected(HomeConfig.Library)
+        assertTabSelected(HomeConfig.Library)
     }
 
     fun clickProfileTab() {
         click(HomeTestTags.PROFILE_TAB, useSemanticsAction = true)
-        verifyTabSelected(HomeConfig.Profile)
+        assertTabSelected(HomeConfig.Profile)
     }
 
     private fun HomeConfig.testTag(): String = when (this) {

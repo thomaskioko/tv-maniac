@@ -6,17 +6,17 @@ import com.thomaskioko.tvmaniac.testtags.profile.ProfileTestTags
 
 internal class ProfileRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
 
-    fun verifyProfileScreenIsShown() {
-        verifyTagShown(ProfileTestTags.SCREEN_TEST_TAG)
+    fun assertProfileScreenDisplayed() {
+        assertDisplayed(ProfileTestTags.SCREEN_TEST_TAG)
     }
 
-    fun verifySignInButtonIsShown() {
+    fun assertSignInButtonDisplayed() {
         scrollTo(ProfileTestTags.SIGN_IN_BUTTON_TEST_TAG)
-        verifyTagShown(ProfileTestTags.SIGN_IN_BUTTON_TEST_TAG)
+        assertDisplayed(ProfileTestTags.SIGN_IN_BUTTON_TEST_TAG)
     }
 
-    fun verifyUserCardIsShown(slug: String) {
-        verifyTagShown(ProfileTestTags.userCard(slug))
+    fun assertUserCardDisplayed(slug: String) {
+        assertDisplayed(ProfileTestTags.userCard(slug))
     }
 
     fun clickSignInButton() {

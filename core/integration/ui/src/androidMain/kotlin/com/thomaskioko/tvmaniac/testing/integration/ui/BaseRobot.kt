@@ -48,7 +48,7 @@ public abstract class BaseRobot(protected val composeTestRule: ComposeContentTes
      * @param ignoreCase If true, ignore case while matching.
      * @param timeoutMillis Maximum time to wait for text to appear.
      */
-    public fun verifyTextShown(
+    public fun assertTextDisplayed(
         text: String,
         substring: Boolean = true,
         ignoreCase: Boolean = false,
@@ -71,7 +71,7 @@ public abstract class BaseRobot(protected val composeTestRule: ComposeContentTes
      * @param ignoreCase If true, ignore case while matching.
      * @param timeoutMillis Maximum time to wait for node to appear.
      */
-    public fun verifyContentDescriptionShown(
+    public fun assertContentDescriptionDisplayed(
         description: String,
         substring: Boolean = true,
         ignoreCase: Boolean = false,
@@ -94,7 +94,7 @@ public abstract class BaseRobot(protected val composeTestRule: ComposeContentTes
         composeTestRule.pressBack()
     }
 
-    public fun verifyTagShown(
+    public fun assertDisplayed(
         tag: String,
         timeoutMillis: Long = TIMEOUT_MILLIS,
         useUnmergedTree: Boolean = true,
@@ -108,7 +108,7 @@ public abstract class BaseRobot(protected val composeTestRule: ComposeContentTes
      * @param tag Test tag of the node.
      * @param timeoutMillis Maximum time to wait for node to disappear.
      */
-    public fun verifyTagHidden(tag: String, timeoutMillis: Long = TIMEOUT_MILLIS) {
+    public fun assertDoesNotExist(tag: String, timeoutMillis: Long = TIMEOUT_MILLIS) {
         composeTestRule.isHidden(tag, timeoutMillis = timeoutMillis)
         devSleep()
     }
@@ -120,7 +120,7 @@ public abstract class BaseRobot(protected val composeTestRule: ComposeContentTes
      * @param timeoutMillis Maximum time to wait for node to appear.
      * @param useUnmergedTree Whether to search unmerged semantics tree.
      */
-    public fun verifyTagExists(
+    public fun assertExists(
         tag: String,
         timeoutMillis: Long = TIMEOUT_MILLIS,
         useUnmergedTree: Boolean = true,
@@ -161,7 +161,7 @@ public abstract class BaseRobot(protected val composeTestRule: ComposeContentTes
      * @param count Expected number of children.
      * @param useUnmergedTree Whether to search unmerged semantics tree.
      */
-    public fun verifyCount(
+    public fun assertCountEquals(
         tag: String,
         childTag: String,
         count: Int,
@@ -181,7 +181,7 @@ public abstract class BaseRobot(protected val composeTestRule: ComposeContentTes
      * @param timeoutMillis Maximum time to wait for node to appear.
      * @param useUnmergedTree Whether to search unmerged semantics tree.
      */
-    public fun verifyContentDescription(
+    public fun assertContentDescription(
         tag: String,
         description: String,
         substring: Boolean = true,

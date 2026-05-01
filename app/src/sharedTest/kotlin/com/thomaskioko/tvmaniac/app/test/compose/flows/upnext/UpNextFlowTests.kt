@@ -15,54 +15,54 @@ internal class UpNextFlowTests : BaseAppFlowTest() {
     }
 
     @Test
-    fun shouldShowEpisodeRowForFollowedShow() {
+    fun givenAuthenticatedUser_whenShowFollowed_thenShowsEpisodeRow() {
         navigateToUpNext()
 
-        progressRobot.verifyEpisodeRowIsShown(breakingBadTraktId)
+        progressRobot.assertEpisodeRowDisplayed(breakingBadTraktId)
     }
 
     @Test
-    fun shouldMarkEpisodeWatchedWhenWatchedButtonIsTapped() {
+    fun givenUpNext_whenWatchedButtonClicked_thenMarksEpisodeWatched() {
         navigateToUpNext()
-        progressRobot.verifyEpisodeRowIsShown(breakingBadTraktId)
+        progressRobot.assertEpisodeRowDisplayed(breakingBadTraktId)
 
         progressRobot.clickWatchedButton(breakingBadTraktId)
 
         progressRobot.clickEpisodeRow(breakingBadTraktId)
-        seasonDetailsRobot.verifySeasonDetailsIsShown()
-        seasonDetailsRobot.verifyMarkUnwatchedIsShown(pilotEpisodeTraktId)
+        seasonDetailsRobot.assertSeasonDetailsDisplayed()
+        seasonDetailsRobot.assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
     }
 
     @Test
-    fun shouldAdvanceToNextEpisodeAndUpdateCountWhenWatchedButtonIsTapped() {
+    fun givenUpNext_whenWatchedButtonClicked_thenAdvancesToNextEpisode() {
         navigateToUpNext()
-        progressRobot.verifyEpisodeRowIsShown(breakingBadTraktId)
-        progressRobot.verifyEpisodeMetaIsShown(breakingBadTraktId, "S01E01")
-        progressRobot.verifyProgressCountIsShown(breakingBadTraktId, "0/62")
+        progressRobot.assertEpisodeRowDisplayed(breakingBadTraktId)
+        progressRobot.assertEpisodeMetaDisplayed(breakingBadTraktId, "S01E01")
+        progressRobot.assertProgressCountDisplayed(breakingBadTraktId, "0/62")
 
         scenarios.upNext.stubProgressAfterPilotWatched(breakingBadTraktId)
         progressRobot.clickWatchedButton(breakingBadTraktId)
 
-        progressRobot.verifyEpisodeMetaIsShown(breakingBadTraktId, "S01E02")
-        progressRobot.verifyProgressCountIsShown(breakingBadTraktId, "1/62")
+        progressRobot.assertEpisodeMetaDisplayed(breakingBadTraktId, "S01E02")
+        progressRobot.assertProgressCountDisplayed(breakingBadTraktId, "1/62")
     }
 
     @Test
-    fun shouldNavigateToSeasonDetailsWhenEpisodeRowIsTapped() {
+    fun givenUpNext_whenEpisodeRowClicked_thenNavigatesToSeasonDetails() {
         navigateToUpNext()
-        progressRobot.verifyEpisodeRowIsShown(breakingBadTraktId)
+        progressRobot.assertEpisodeRowDisplayed(breakingBadTraktId)
 
         progressRobot.clickEpisodeRow(breakingBadTraktId)
 
-        seasonDetailsRobot.verifySeasonDetailsIsShown()
+        seasonDetailsRobot.assertSeasonDetailsDisplayed()
     }
 
     private fun navigateToUpNext() {
-        rootRobot.verifyNotificationRationaleIsShownAndDismissed()
-        discoverRobot.verifyDiscoverScreenIsShown()
+        rootRobot.dismissNotificationRationale()
+        discoverRobot.assertDiscoverScreenDisplayed()
 
         homeRobot.clickLibraryTab()
-        libraryRobot.verifyShowRowIsShown(breakingBadTraktId)
+        libraryRobot.assertShowRowDisplayed(breakingBadTraktId)
 
         homeRobot.clickProgressTab()
     }

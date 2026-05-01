@@ -16,43 +16,43 @@ internal class LibraryFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun shouldFilterLibraryBySearchQuery() {
-        discoverRobot.verifyDiscoverScreenIsShown()
+    fun givenLibrary_whenSearchQueryEntered_thenFiltersResults() {
+        discoverRobot.assertDiscoverScreenDisplayed()
 
         scenarios.signInAndDismissRationale()
 
         homeRobot.clickLibraryTab()
 
-        libraryRobot.verifyShowRowIsShown(breakingBadTraktId)
-        libraryRobot.verifyShowRowIsShown(forAllMankindTraktId)
-        libraryRobot.verifyShowRowIsShown(theBoysTraktId)
-        rootRobot.verifyNoSnackbarShown()
+        libraryRobot.assertShowRowDisplayed(breakingBadTraktId)
+        libraryRobot.assertShowRowDisplayed(forAllMankindTraktId)
+        libraryRobot.assertShowRowDisplayed(theBoysTraktId)
+        rootRobot.assertNoSnackbarDisplayed()
 
         libraryRobot.clickSearchButton()
         libraryRobot.enterSearchQuery("Breaking")
-        libraryRobot.verifyShowRowIsShown(breakingBadTraktId)
+        libraryRobot.assertShowRowDisplayed(breakingBadTraktId)
 
         libraryRobot.enterSearchQuery("NonExistent")
-        libraryRobot.verifyEmptyStateIsShown()
+        libraryRobot.assertEmptyStateDisplayed()
     }
 
     @Test
-    fun shouldFilterLibraryByGenre() {
-        discoverRobot.verifyDiscoverScreenIsShown()
+    fun givenLibrary_whenGenreSelected_thenFiltersResults() {
+        discoverRobot.assertDiscoverScreenDisplayed()
 
         scenarios.signInAndDismissRationale()
 
         homeRobot.clickLibraryTab()
 
-        libraryRobot.verifyShowRowIsShown(breakingBadTraktId)
-        libraryRobot.verifyShowRowIsShown(forAllMankindTraktId)
-        libraryRobot.verifyShowRowIsShown(theBoysTraktId)
-        rootRobot.verifyNoSnackbarShown()
+        libraryRobot.assertShowRowDisplayed(breakingBadTraktId)
+        libraryRobot.assertShowRowDisplayed(forAllMankindTraktId)
+        libraryRobot.assertShowRowDisplayed(theBoysTraktId)
+        rootRobot.assertNoSnackbarDisplayed()
 
         libraryRobot.clickFilterButton()
         libraryRobot.selectGenreFilter("Drama")
         libraryRobot.clickApplyFilter()
 
-        libraryRobot.verifyShowRowIsShown(breakingBadTraktId)
+        libraryRobot.assertShowRowDisplayed(breakingBadTraktId)
     }
 }

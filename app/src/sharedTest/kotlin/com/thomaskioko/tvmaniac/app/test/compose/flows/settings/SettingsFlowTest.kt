@@ -13,42 +13,42 @@ internal class SettingsFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun shouldPersistImageQualitySelectionAcrossPresenterCycle() {
-        discoverRobot.verifyDiscoverScreenIsShown()
+    fun givenSettings_whenImageQualitySelected_thenSelectionIsPersisted() {
+        discoverRobot.assertDiscoverScreenDisplayed()
 
         scenarios.stubUsersMeUnauthorized()
 
         homeRobot.clickProfileTab()
-        profileRobot.verifySignInButtonIsShown()
+        profileRobot.assertSignInButtonDisplayed()
         profileRobot.clickSettingsButton()
-        settingsRobot.verifySettingsScreenIsShown()
+        settingsRobot.assertSettingsScreenDisplayed()
 
         settingsRobot.scrollToImageQualityChip(ImageQuality.HIGH)
-        settingsRobot.verifyImageQualitySelected(ImageQuality.AUTO)
-        settingsRobot.verifyImageQualityNotSelected(ImageQuality.HIGH)
+        settingsRobot.assertImageQualitySelected(ImageQuality.AUTO)
+        settingsRobot.assertImageQualityNotSelected(ImageQuality.HIGH)
 
         settingsRobot.clickImageQualityChip(ImageQuality.HIGH)
 
-        settingsRobot.verifyImageQualitySelected(ImageQuality.HIGH)
-        settingsRobot.verifyImageQualityNotSelected(ImageQuality.AUTO)
+        settingsRobot.assertImageQualitySelected(ImageQuality.HIGH)
+        settingsRobot.assertImageQualityNotSelected(ImageQuality.AUTO)
     }
 
     @Test
-    fun shouldShowLogoutDialogWhenAuthenticatedTraktAccountRowIsTapped() {
-        discoverRobot.verifyDiscoverScreenIsShown()
+    fun givenAuthenticatedUser_whenTraktAccountClicked_thenShowsLogoutDialog() {
+        discoverRobot.assertDiscoverScreenDisplayed()
 
         scenarios.signInAndDismissRationale()
 
         homeRobot.clickProfileTab()
-        profileRobot.verifyUserCardIsShown("integration-test-user")
+        profileRobot.assertUserCardDisplayed("integration-test-user")
         profileRobot.clickSettingsButton()
-        settingsRobot.verifySettingsScreenIsShown()
+        settingsRobot.assertSettingsScreenDisplayed()
 
         settingsRobot.scrollToTraktAccountRow()
         settingsRobot.clickTraktAccountRow()
 
-        settingsRobot.verifyLogoutDialogIsShown()
+        settingsRobot.assertLogoutDialogDisplayed()
         settingsRobot.clickLogoutDismiss()
-        settingsRobot.verifyLogoutDialogIsHidden()
+        settingsRobot.assertLogoutDialogDoesNotExist()
     }
 }
