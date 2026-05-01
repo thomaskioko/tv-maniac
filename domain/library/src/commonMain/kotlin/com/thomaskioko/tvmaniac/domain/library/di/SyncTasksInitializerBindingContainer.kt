@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.domain.library.di
 
 import com.thomaskioko.tvmaniac.core.base.AsyncInitializers
+import com.thomaskioko.tvmaniac.core.base.Initializer
 import com.thomaskioko.tvmaniac.domain.library.SyncTasksInitializer
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
@@ -15,6 +16,6 @@ public interface SyncTasksInitializerBindingContainer {
         @Provides
         @IntoSet
         @AsyncInitializers
-        public fun provideSyncTasksInitializer(bind: SyncTasksInitializer): () -> Unit = { bind.init() }
+        public fun provideSyncTasksInitializer(bind: SyncTasksInitializer): Initializer = Initializer { bind.init() }
     }
 }

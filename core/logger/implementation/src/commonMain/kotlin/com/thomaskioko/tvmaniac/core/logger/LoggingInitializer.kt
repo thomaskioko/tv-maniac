@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.core.logger
 
 import com.thomaskioko.tvmaniac.appconfig.ApplicationInfo
+import com.thomaskioko.tvmaniac.core.base.Initializer
 import com.thomaskioko.tvmaniac.core.base.Initializers
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
@@ -39,6 +40,6 @@ public interface LoggingInitializerModule {
         @Provides
         @IntoSet
         @Initializers
-        public fun provideLoggingInitializer(bind: LoggingInitializer): () -> Unit = { bind.init() }
+        public fun provideLoggingInitializer(bind: LoggingInitializer): Initializer = Initializer { bind.init() }
     }
 }

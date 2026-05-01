@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.domain.notifications.di
 
 import com.thomaskioko.tvmaniac.core.base.AsyncInitializers
+import com.thomaskioko.tvmaniac.core.base.Initializer
 import com.thomaskioko.tvmaniac.domain.notifications.NotificationTasksInitializer
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
@@ -15,6 +16,6 @@ public interface NotificationTasksInitializerBindingContainer {
         @Provides
         @IntoSet
         @AsyncInitializers
-        public fun provideNotificationTasksInitializer(impl: NotificationTasksInitializer): () -> Unit = { impl.init() }
+        public fun provideNotificationTasksInitializer(impl: NotificationTasksInitializer): Initializer = Initializer { impl.init() }
     }
 }

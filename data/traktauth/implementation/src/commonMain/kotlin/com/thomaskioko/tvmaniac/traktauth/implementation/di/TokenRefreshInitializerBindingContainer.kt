@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.traktauth.implementation.di
 
 import com.thomaskioko.tvmaniac.core.base.AsyncInitializers
+import com.thomaskioko.tvmaniac.core.base.Initializer
 import com.thomaskioko.tvmaniac.traktauth.implementation.TokenRefreshInitializer
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
@@ -15,6 +16,6 @@ public interface TokenRefreshInitializerBindingContainer {
         @Provides
         @IntoSet
         @AsyncInitializers
-        public fun provideTokenRefreshInitializer(bind: TokenRefreshInitializer): () -> Unit = { bind.init() }
+        public fun provideTokenRefreshInitializer(bind: TokenRefreshInitializer): Initializer = Initializer { bind.init() }
     }
 }

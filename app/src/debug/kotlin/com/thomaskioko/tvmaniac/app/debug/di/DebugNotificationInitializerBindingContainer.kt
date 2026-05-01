@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.app.debug.di
 
 import com.thomaskioko.tvmaniac.app.debug.DebugNotificationInitializer
+import com.thomaskioko.tvmaniac.core.base.Initializer
 import com.thomaskioko.tvmaniac.core.base.Initializers
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
@@ -14,5 +15,5 @@ public object DebugNotificationInitializerBindingContainer {
     @Provides
     @IntoSet
     @Initializers
-    public fun provideDebugNotificationInitializer(bind: DebugNotificationInitializer): () -> Unit = { bind.init() }
+    public fun provideDebugNotificationInitializer(bind: DebugNotificationInitializer): Initializer = Initializer { bind.init() }
 }
