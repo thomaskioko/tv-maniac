@@ -22,5 +22,12 @@ kotlin {
                 implementation(libs.coroutines.core)
             }
         }
+
+        commonTest {
+            dependencies {
+                implementation(libs.bundles.unittest)
+                implementation(projects.data.upnext.testing)
+            }
+        }
     }
 }
