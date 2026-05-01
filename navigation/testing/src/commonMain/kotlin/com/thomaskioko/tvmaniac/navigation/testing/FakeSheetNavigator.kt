@@ -1,6 +1,12 @@
 package com.thomaskioko.tvmaniac.navigation.testing
 
+import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.router.slot.ChildSlot
 import com.arkivanov.decompose.router.slot.SlotNavigation
+import com.arkivanov.decompose.router.slot.activate
+import com.arkivanov.decompose.router.slot.childSlot
+import com.arkivanov.decompose.router.slot.dismiss
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.navigation.SheetConfig
 import com.thomaskioko.tvmaniac.navigation.SheetNavigator
 
@@ -19,13 +25,24 @@ public class FakeSheetNavigator : SheetNavigator {
 
     override fun activate(config: SheetConfig) {
         _activatedConfigs += config
+        slotNavigation.activate(config)
     }
 
     override fun dismiss() {
         _dismissCount++
+        slotNavigation.dismiss()
     }
 
-    override fun getSlotNavigation(): SlotNavigation<SheetConfig> = slotNavigation
+    override fun <T : Any> buildChildSlot(
+        componentContext: ComponentContext,
+        childFactory: (SheetConfig, ComponentContext) -> T,
+    ): Value<ChildSlot<*, T>> = componentContext.childSlot(
+        source = slotNavigation,
+        serializer = null,
+        key = "FakeSheetSlotKey",
+        handleBackButton = true,
+        childFactory = childFactory,
+    )
 }
 
 /**

@@ -171,7 +171,7 @@ public class ShowDetailsPresenter(
                 _state.update {
                     it.copy(selectedSeasonIndex = action.params.selectedSeasonIndex)
                 }
-                navigator.pushNew(
+                navigator.navigateTo(
                     SeasonDetailsRoute(
                         SeasonDetailsUiParam(
                             showTraktId = action.params.showTraktId,
@@ -183,7 +183,7 @@ public class ShowDetailsPresenter(
             }
 
             is DetailShowClicked -> navigator.pushToFront(ShowDetailsRoute(ShowDetailsParam(id = action.id)))
-            is WatchTrailerClicked -> navigator.pushNew(TrailersRoute(action.id))
+            is WatchTrailerClicked -> navigator.navigateTo(TrailersRoute(action.id))
             is FollowShowClicked -> {
                 coroutineScope.launch {
                     if (action.isInLibrary) {
@@ -204,7 +204,7 @@ public class ShowDetailsPresenter(
                 }
             }
 
-            DetailBackClicked -> navigator.pop()
+            DetailBackClicked -> navigator.navigateBack()
             ReloadShowDetails -> refreshShowContent(isUserInitiated = true)
             is ShowDetailsMessageShown -> coroutineScope.launch { uiMessageManager.clearMessage(action.id) }
             DismissShowsListSheet -> coroutineScope.launch { _state.update { it.copy(showListSheet = false) } }

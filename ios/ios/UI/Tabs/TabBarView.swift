@@ -7,45 +7,29 @@ public struct TabBarView: View {
     @SwiftUIComponents.Theme private var theme
 
     private let presenter: HomePresenter
-    @StateValue private var stack: ChildStack<AnyObject, TabChild<AnyObject>>
+    private let navigator: Navigator
+    private let registry: ScreenRegistry
+    @StateValue private var activeRoot: NavRoot
     @StateValue private var profileAvatar: ProfileAvatar
     @State private var selectedTab: NavigationTab = .discover
     @State private var avatarImage: UIImage?
     @State private var downloadedAvatar: UIImage?
     @EnvironmentObject private var appDelegate: AppDelegate
 
-    init(presenter: HomePresenter) {
+    init(presenter: HomePresenter, navigator: Navigator, registry: ScreenRegistry) {
         self.presenter = presenter
-        _stack = .init(presenter.homeChildStackValue)
+        self.navigator = navigator
+        self.registry = registry
+        _activeRoot = .init(presenter.activeRootValue)
         _profileAvatar = .init(presenter.profileAvatarUrlValue)
     }
 
     public var body: some View {
         TabView(selection: $selectedTab) {
-            ForEach(NavigationTab.allCases, id: \.self) { tab in
-                TabContentView(
-                    child: stack.items.first(where: { tabForChild($0.instance) == tab })?.instance,
-                    tab: tab,
-                    avatarImage: tab == .profile ? avatarImage : nil
-                ) { child in
-                    switch child.presenter {
-                    case let presenter as DiscoverShowsPresenter:
-                        DiscoverTab(presenter: presenter)
-                            .id(ObjectIdentifier(child))
-                    case let presenter as ProgressPresenter:
-                        ProgressTab(presenter: presenter)
-                            .id(ObjectIdentifier(child))
-                    case let presenter as ProfilePresenter:
-                        ProfileTab(presenter: presenter)
-                            .id(ObjectIdentifier(child))
-                    case let presenter as LibraryPresenter:
-                        LibraryTab(presenter: presenter)
-                            .id(ObjectIdentifier(child))
-                    default:
-                        EmptyView()
-                    }
-                }
-            }
+            tabContent(.discover, stack: presenter.discoverChildStackValue)
+            tabContent(.progress, stack: presenter.progressChildStackValue)
+            tabContent(.library, stack: presenter.libraryChildStackValue)
+            tabContent(.profile, stack: presenter.profileChildStackValue, avatarImage: avatarImage)
         }
         .tint(theme.colors.accent)
         .toolbarBackground(theme.colors.surface, for: .tabBar)
@@ -64,10 +48,67 @@ public struct TabBarView: View {
             case .library: presenter.onLibraryClicked()
             }
         }
-        .onChange(of: activeTab) { _, newTab in
+        .onChange(of: tabFor(activeRoot)) { _, newTab in
             if selectedTab != newTab {
                 selectedTab = newTab
             }
+        }
+    }
+
+    @ViewBuilder
+    private func tabContent(
+        _ tab: NavigationTab,
+        stack: Value<ChildStack<AnyObject, RootChild>>,
+        avatarImage: UIImage? = nil
+    ) -> some View {
+        DecomposeNavigationStack(
+            stack: stack,
+            onBack: navigator.popTo
+        ) { child in
+            renderChild(child)
+        }
+        .tag(tab)
+        .tabItem {
+            if let avatarImage {
+                Image(uiImage: avatarImage.withRenderingMode(.alwaysOriginal))
+                Text(tab.title)
+            } else {
+                Label(tab.title, systemImage: tab.icon)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func renderChild(_ child: RootChild) -> some View {
+        if let tabChild = child as? TabChild<AnyObject> {
+            switch tabChild.presenter {
+            case let p as DiscoverShowsPresenter:
+                DiscoverTab(presenter: p)
+                    .id(ObjectIdentifier(tabChild))
+            case let p as ProgressPresenter:
+                ProgressTab(presenter: p)
+                    .id(ObjectIdentifier(tabChild))
+            case let p as LibraryPresenter:
+                LibraryTab(presenter: p)
+                    .id(ObjectIdentifier(tabChild))
+            case let p as ProfilePresenter:
+                ProfileTab(presenter: p)
+                    .id(ObjectIdentifier(tabChild))
+            default:
+                EmptyView()
+            }
+        } else {
+            registry.view(for: child)
+        }
+    }
+
+    private func tabFor(_ root: NavRoot) -> NavigationTab {
+        switch root {
+        case is DiscoverRoot: return .discover
+        case is ProgressRoot: return .progress
+        case is LibraryRoot: return .library
+        case is ProfileRoot: return .profile
+        default: return .discover
         }
     }
 
@@ -115,20 +156,6 @@ public struct TabBarView: View {
 
             let imageOrigin = CGPoint(x: strokeWidth + padding, y: strokeWidth + padding)
             circular.draw(at: imageOrigin)
-        }
-    }
-
-    private var activeTab: NavigationTab {
-        tabForChild(stack.active.instance)
-    }
-
-    private func tabForChild(_ child: TabChild<AnyObject>) -> NavigationTab {
-        switch child.presenter {
-        case is DiscoverShowsPresenter: .discover
-        case is ProgressPresenter: .progress
-        case is ProfilePresenter: .profile
-        case is LibraryPresenter: .library
-        default: .discover
         }
     }
 }

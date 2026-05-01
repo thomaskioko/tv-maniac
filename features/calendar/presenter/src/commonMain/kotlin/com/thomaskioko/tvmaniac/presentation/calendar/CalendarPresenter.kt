@@ -13,8 +13,8 @@ import com.thomaskioko.tvmaniac.domain.calendar.CalendarWeekCalculator
 import com.thomaskioko.tvmaniac.domain.calendar.CalendarWeekCalculator.Companion.DAYS_IN_WEEK
 import com.thomaskioko.tvmaniac.domain.calendar.FetchCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.calendar.ObserveCalendarInteractor
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetConfig
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
-import com.thomaskioko.tvmaniac.espisodedetails.nav.model.showEpisodeSheet
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarEmpty
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarLoginRequired
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarMoreEpisodes
@@ -97,7 +97,9 @@ public class CalendarPresenter(
 
             is NavigateToPreviousWeek -> navigateToPreviousWeek()
             is NavigateToNextWeek -> navigateToNextWeek()
-            is EpisodeCardClicked -> sheetNavigator.showEpisodeSheet(action.episodeTraktId, ScreenSource.CALENDAR)
+            is EpisodeCardClicked -> sheetNavigator.activate(
+                EpisodeSheetConfig(episodeId = action.episodeTraktId, source = ScreenSource.CALENDAR),
+            )
             is MessageShown -> clearMessage(action.id)
         }
     }

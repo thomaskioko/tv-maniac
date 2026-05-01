@@ -2,14 +2,18 @@ package com.thomaskioko.tvmaniac.app.test.graph
 
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
+import com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetConfig
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.genreshows.nav.GenreShowsRoute
 import com.thomaskioko.tvmaniac.home.nav.HomeRoute
-import com.thomaskioko.tvmaniac.home.nav.di.model.HomeConfig
+import com.thomaskioko.tvmaniac.library.nav.LibraryRoot
 import com.thomaskioko.tvmaniac.moreshows.nav.MoreShowsRoute
+import com.thomaskioko.tvmaniac.navigation.NavRoot
 import com.thomaskioko.tvmaniac.navigation.NavRoute
 import com.thomaskioko.tvmaniac.navigation.SheetConfig
+import com.thomaskioko.tvmaniac.profile.nav.ProfileRoot
+import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
 import com.thomaskioko.tvmaniac.search.nav.SearchRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
@@ -50,13 +54,13 @@ internal class NavigationRouteTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun `should resolve a TabDestination for every HomeConfig subtype`() = runAppFlowTest {
-        // 1. Enumerate all home tab configs
-        val configs: List<HomeConfig> = listOf(
-            HomeConfig.Discover,
-            HomeConfig.Progress,
-            HomeConfig.Library,
-            HomeConfig.Profile,
+    fun `should resolve a TabDestination for every NavRoot subtype`() = runAppFlowTest {
+        // 1. Enumerate all tab roots
+        val roots: List<NavRoot> = listOf(
+            DiscoverRoot,
+            ProgressRoot,
+            LibraryRoot,
+            ProfileRoot,
         )
 
         // 2. Create the home-scoped graph
@@ -65,9 +69,9 @@ internal class NavigationRouteTest : BaseAppFlowTest() {
         val tabDestinations = homeGraph.tabDestinations
         tabDestinations.shouldNotBeEmpty()
 
-        // 3. Verify each tab config has a matching destination in the home graph
-        configs.forEach { config ->
-            tabDestinations.firstOrNull { it.matches(config) }.shouldNotBeNull()
+        // 3. Verify each tab root has a matching destination in the home graph
+        roots.forEach { root ->
+            tabDestinations.firstOrNull { it.matches(root) }.shouldNotBeNull()
         }
     }
 

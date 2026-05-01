@@ -121,7 +121,7 @@ public class EpisodeSheetPresenter(
     private fun openSeason() {
         val episode = currentEpisode ?: return
         sheetNavigator.dismiss()
-        navigator.pushNew(
+        navigator.navigateTo(
             SeasonDetailsRoute(
                 SeasonDetailsUiParam(
                     showTraktId = episode.show_trakt_id.id,

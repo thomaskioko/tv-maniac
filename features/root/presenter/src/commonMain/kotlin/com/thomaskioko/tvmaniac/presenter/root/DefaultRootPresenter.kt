@@ -2,9 +2,6 @@ package com.thomaskioko.tvmaniac.presenter.root
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.slot.ChildSlot
-import com.arkivanov.decompose.router.slot.childSlot
-import com.arkivanov.decompose.router.stack.ChildStack
-import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.root.model.DeepLinkDestination
 import com.thomaskioko.root.model.NotificationPermissionState
@@ -22,17 +19,13 @@ import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
-import com.thomaskioko.tvmaniac.home.nav.HomeRoute
-import com.thomaskioko.tvmaniac.navigation.NavDestination
-import com.thomaskioko.tvmaniac.navigation.NavRoute
-import com.thomaskioko.tvmaniac.navigation.NavRouteSerializer
 import com.thomaskioko.tvmaniac.navigation.Navigator
-import com.thomaskioko.tvmaniac.navigation.RootChild
 import com.thomaskioko.tvmaniac.navigation.SheetChild
 import com.thomaskioko.tvmaniac.navigation.SheetChildFactory
 import com.thomaskioko.tvmaniac.navigation.SheetConfig
-import com.thomaskioko.tvmaniac.navigation.SheetConfigSerializer
 import com.thomaskioko.tvmaniac.navigation.SheetNavigator
+import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
+import com.thomaskioko.tvmaniac.presenter.home.di.HomeScreenGraph
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.settings.presenter.toTheme
@@ -64,17 +57,15 @@ import kotlin.time.Duration.Companion.milliseconds
 public class DefaultRootPresenter(
     @Assisted componentContext: ComponentContext,
     private val navigator: Navigator,
-    private val navDestinations: Set<NavDestination>,
     private val sheetChildFactories: Set<SheetChildFactory>,
+    sheetNavigator: SheetNavigator,
+    homeGraphFactory: HomeScreenGraph.Factory,
     private val notificationRationale: NotificationRationale,
     private val traktAuthRepository: TraktAuthRepository,
     private val updateUserProfileData: UpdateUserProfileData,
     private val logoutInteractor: LogoutInteractor,
     private val logger: Logger,
     private val datastoreRepository: DatastoreRepository,
-    navRouteSerializer: NavRouteSerializer,
-    sheetConfigSerializer: SheetConfigSerializer,
-    sheetNavigator: SheetNavigator,
 ) : RootPresenter, ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
@@ -117,29 +108,12 @@ public class DefaultRootPresenter(
             .collectStatus(profileLoadingState, logger, uiMessageManager)
     }
 
-    private val childStackRouter: Value<ChildStack<*, RootChild>> = childStack(
-        source = navigator.getStackNavigation(),
-        key = "RootChildStackKey",
-        initialConfiguration = HomeRoute,
-        serializer = navRouteSerializer.serializer,
-        handleBackButton = true,
-        childFactory = ::createScreen,
+    override val homePresenter: HomePresenter = homeGraphFactory.createHomeGraph(this).homePresenter
+
+    private val sheetSlotRouter: Value<ChildSlot<*, SheetChild>> = sheetNavigator.buildChildSlot(
+        componentContext = this,
+        childFactory = ::createSheet,
     )
-
-    override val childStack: StateFlow<ChildStack<*, RootChild>> =
-        childStackRouter.asStateFlow(componentContext.componentCoroutineScope())
-
-    override val childStackValue: Value<ChildStack<*, RootChild>> =
-        childStack.asValue(coroutineScope)
-
-    private val sheetSlotRouter: Value<ChildSlot<*, SheetChild>> = childSlot(
-        source = sheetNavigator.getSlotNavigation(),
-        key = "SheetSlotKey",
-        serializer = sheetConfigSerializer.serializer,
-        handleBackButton = true,
-    ) { config, childComponentContext ->
-        createSheet(config, childComponentContext)
-    }
 
     override val episodeSheetSlot: StateFlow<ChildSlot<*, SheetChild>> =
         sheetSlotRouter.asStateFlow(componentContext.componentCoroutineScope())
@@ -205,7 +179,7 @@ public class DefaultRootPresenter(
     override fun onDeepLink(destination: DeepLinkDestination) {
         when (destination) {
             is DeepLinkDestination.ShowDetails -> {
-                navigator.pushNew(
+                navigator.navigateTo(
                     ShowDetailsRoute(
                         param = ShowDetailsParam(
                             id = destination.showId,
@@ -215,7 +189,7 @@ public class DefaultRootPresenter(
                 )
             }
             is DeepLinkDestination.SeasonDetails -> {
-                navigator.pushNew(
+                navigator.navigateTo(
                     SeasonDetailsRoute(
                         param = SeasonDetailsUiParam(
                             showTraktId = destination.showId,
@@ -227,18 +201,9 @@ public class DefaultRootPresenter(
                 )
             }
             is DeepLinkDestination.DebugMenu -> {
-                navigator.pushNew(DebugRoute)
+                navigator.navigateTo(DebugRoute)
             }
         }
-    }
-
-    private fun createScreen(
-        route: NavRoute,
-        componentContext: ComponentContext,
-    ): RootChild {
-        val destination = navDestinations.firstOrNull { it.matches(route) }
-            ?: error("No NavDestination found for route: $route")
-        return destination.createChild(route, componentContext)
     }
 
     private fun createSheet(

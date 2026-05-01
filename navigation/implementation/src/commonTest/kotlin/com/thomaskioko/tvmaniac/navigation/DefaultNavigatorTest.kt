@@ -1,114 +1,105 @@
 package com.thomaskioko.tvmaniac.navigation
 
-import com.arkivanov.decompose.router.stack.StackNavigation
-import com.thomaskioko.tvmaniac.home.nav.HomeRoute
+import com.arkivanov.decompose.DefaultComponentContext
+import com.arkivanov.decompose.router.stack.ChildStack
+import com.arkivanov.decompose.value.Value
+import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.arkivanov.essenty.lifecycle.resume
+import com.thomaskioko.tvmaniac.moreshows.nav.MoreShowsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import kotlin.test.Test
+import kotlinx.serialization.Serializable
 
 internal class DefaultNavigatorTest {
 
+    @Serializable
+    private data object PrimaryRoot : NavRoot
+
     @Test
-    fun `should emit one event given pushNew`() {
-        val navigator = DefaultNavigator()
+    fun `should push new route on top of stack given pushNew`() {
+        val (navigator, stack) = newNavigator()
 
-        val events = navigator.getStackNavigation().collectEvents {
-            navigator.pushNew(ShowDetailsRoute(ShowDetailsParam(1)))
-        }
+        navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(42)))
 
-        events.size shouldBe 1
+        stack.value.active.configuration shouldBe ShowDetailsRoute(ShowDetailsParam(42))
+        stack.value.backStack.map { it.configuration } shouldBe listOf(PrimaryRoot)
     }
 
     @Test
-    fun `should emit one event given bringToFront`() {
-        val navigator = DefaultNavigator()
+    fun `should pop top entry given pop`() {
+        val (navigator, stack) = newNavigator()
+        navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(1)))
 
-        val events = navigator.getStackNavigation().collectEvents {
-            navigator.bringToFront(HomeRoute)
-        }
+        navigator.navigateBack()
 
-        events.size shouldBe 1
+        stack.value.active.configuration shouldBe PrimaryRoot
+        stack.value.backStack.shouldBeEmpty()
     }
 
     @Test
-    fun `should emit one event given pushToFront`() {
-        val navigator = DefaultNavigator()
+    fun `should reuse existing entry given bringToFront for already pushed route`() {
+        val (navigator, stack) = newNavigator()
+        val first = ShowDetailsRoute(ShowDetailsParam(7))
+        val second = ShowDetailsRoute(ShowDetailsParam(8))
+        navigator.navigateTo(first)
+        navigator.navigateTo(second)
 
-        val events = navigator.getStackNavigation().collectEvents {
-            navigator.pushToFront(HomeRoute)
-        }
+        navigator.bringToFront(first)
 
-        events.size shouldBe 1
+        stack.value.active.configuration shouldBe first
     }
 
     @Test
-    fun `should emit one event given pop`() {
-        val navigator = DefaultNavigator()
+    fun `should pop back to root given navigateBackTo target route`() {
+        val (navigator, stack) = newNavigator()
+        navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(1)))
+        navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(2)))
+        navigator.navigateTo(MoreShowsRoute(99))
 
-        val events = navigator.getStackNavigation().collectEvents {
-            navigator.pop()
-        }
+        navigator.navigateBackTo<ShowDetailsRoute>()
 
-        events.size shouldBe 1
+        stack.value.active.configuration shouldBe ShowDetailsRoute(ShowDetailsParam(2))
     }
 
     @Test
-    fun `should emit one event given popTo`() {
-        val navigator = DefaultNavigator()
+    fun `should leave stack unchanged given navigateBackTo for absent route type`() {
+        val (navigator, stack) = newNavigator()
+        navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(1)))
 
-        val events = navigator.getStackNavigation().collectEvents {
-            navigator.popTo(0)
-        }
+        navigator.navigateBackTo(MoreShowsRoute::class)
 
-        events.size shouldBe 1
+        stack.value.active.configuration shouldBe ShowDetailsRoute(ShowDetailsParam(1))
     }
 
-    @Test
-    fun `should return same StackNavigation instance on repeated calls`() {
-        val navigator = DefaultNavigator()
-
-        val first = navigator.getStackNavigation()
-        val second = navigator.getStackNavigation()
-
-        (first === second) shouldBe true
-    }
-
-    @Test
-    fun `should transform stack to contain pushed route given pushNew`() {
-        val navigator = DefaultNavigator()
-
-        val events = navigator.getStackNavigation().collectEvents {
-            navigator.pushNew(ShowDetailsRoute(ShowDetailsParam(42)))
-        }
-
-        val transformed = events.single().transformer(listOf(HomeRoute))
-        transformed shouldBe listOf(HomeRoute, ShowDetailsRoute(ShowDetailsParam(42)))
-    }
-
-    @Test
-    fun `should transform stack by dropping last given pop`() {
-        val navigator = DefaultNavigator()
-        val route = ShowDetailsRoute(ShowDetailsParam(1))
-
-        val events = navigator.getStackNavigation().collectEvents {
-            navigator.pop()
-        }
-
-        val transformed = events.single().transformer(listOf(HomeRoute, route))
-        transformed shouldBe listOf(HomeRoute)
-    }
-
-    private fun StackNavigation<NavRoute>.collectEvents(
-        action: () -> Unit,
-    ): List<StackNavigation.Event<NavRoute>> {
-        val received = mutableListOf<StackNavigation.Event<NavRoute>>()
-        val cancellation = subscribe { received += it }
-        try {
-            action()
-        } finally {
-            cancellation.cancel()
-        }
-        return received
+    private fun newNavigator(): Pair<Navigator, Value<ChildStack<*, BaseRoute>>> {
+        val routeBindings = setOf<NavRouteBinding<*>>(
+            NavRouteBinding(ShowDetailsRoute::class, ShowDetailsRoute.serializer()),
+            NavRouteBinding(MoreShowsRoute::class, MoreShowsRoute.serializer()),
+        )
+        val rootBindings = setOf<NavRootBinding<*>>(
+            NavRootBinding(PrimaryRoot::class, PrimaryRoot.serializer()),
+        )
+        val navigator = DefaultNavigator(
+            navRouteSerializer = DefaultNavRouteSerializer(routeBindings),
+            navRootSerializer = DefaultNavRootSerializer(rootBindings),
+            baseRouteSerializer = DefaultBaseRouteSerializer(routeBindings, rootBindings),
+            navRoots = setOf(PrimaryRoot),
+        )
+        val lifecycle = LifecycleRegistry().apply { resume() }
+        val context = DefaultComponentContext(lifecycle = lifecycle)
+        val stack = navigator.buildTabStack(
+            componentContext = context,
+            root = PrimaryRoot,
+            childFactory = { route, _ -> route },
+        )
+        navigator.buildRootStack(
+            componentContext = context,
+            initialRoot = PrimaryRoot,
+            childFactory = { root, _ -> root },
+        )
+        return navigator to stack
     }
 }

@@ -5,7 +5,10 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
-import com.thomaskioko.tvmaniac.home.nav.TabChild
+import com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot
+import com.thomaskioko.tvmaniac.library.nav.LibraryRoot
+import com.thomaskioko.tvmaniac.profile.nav.ProfileRoot
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -31,29 +34,29 @@ abstract class HomePresenterTest {
     }
 
     @Test
-    fun `initial state should be Discover`() = runTest {
-        presenter.homeChildStack.test {
-            awaitItem().active.instance.shouldBeInstanceOf<TabChild<*>>()
+    fun `initial active root should be Discover`() = runTest {
+        presenter.activeRoot.test {
+            awaitItem().shouldBeInstanceOf<DiscoverRoot>()
         }
     }
 
     @Test
-    fun `should return Profile as active instance when onProfileClicked`() = runTest {
-        presenter.homeChildStack.test {
-            awaitItem().active.instance.shouldBeInstanceOf<TabChild<*>>()
+    fun `should switch active root to Profile when onProfileClicked`() = runTest {
+        presenter.activeRoot.test {
+            awaitItem() shouldBe DiscoverRoot
             presenter.onProfileClicked()
 
-            awaitItem().active.instance.shouldBeInstanceOf<TabChild<*>>()
+            awaitItem() shouldBe ProfileRoot
         }
     }
 
     @Test
-    fun `should return Library as active instance when onSettingsClicked`() = runTest {
-        presenter.homeChildStack.test {
-            awaitItem().active.instance.shouldBeInstanceOf<TabChild<*>>()
+    fun `should switch active root to Library when onLibraryClicked`() = runTest {
+        presenter.activeRoot.test {
+            awaitItem() shouldBe DiscoverRoot
             presenter.onLibraryClicked()
 
-            awaitItem().active.instance.shouldBeInstanceOf<TabChild<*>>()
+            awaitItem() shouldBe LibraryRoot
         }
     }
 }

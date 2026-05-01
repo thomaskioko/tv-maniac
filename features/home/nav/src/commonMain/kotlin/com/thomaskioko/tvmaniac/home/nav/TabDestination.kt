@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.home.nav
 
 import com.arkivanov.decompose.ComponentContext
-import com.thomaskioko.tvmaniac.home.nav.di.model.HomeConfig
+import com.thomaskioko.tvmaniac.navigation.NavRoot
 
 public interface TabDestination {
-    public fun matches(config: HomeConfig): Boolean
-    public fun createChild(config: HomeConfig, componentContext: ComponentContext): TabChild<*>
+    public fun matches(root: NavRoot): Boolean
+    public fun createChild(root: NavRoot, componentContext: ComponentContext): TabChild<*>
 }

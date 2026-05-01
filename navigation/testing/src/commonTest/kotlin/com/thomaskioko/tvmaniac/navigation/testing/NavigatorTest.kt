@@ -1,11 +1,12 @@
 package com.thomaskioko.tvmaniac.navigation.testing
 
 import com.thomaskioko.tvmaniac.navigation.NavRoute
+import com.thomaskioko.tvmaniac.navigation.navigateBackTo
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
+import kotlin.test.Test
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.Serializable
-import kotlin.test.Test
 
 internal class NavigatorTest {
 
@@ -20,8 +21,8 @@ internal class NavigatorTest {
         val navigator = TestNavigator()
 
         navigator.test {
-            navigator.pushNew(AlphaRoute)
-            awaitPushNew(AlphaRoute)
+            navigator.navigateTo(AlphaRoute)
+            awaitNavigateTo(AlphaRoute)
         }
     }
 
@@ -31,8 +32,8 @@ internal class NavigatorTest {
 
         shouldThrow<IllegalStateException> {
             navigator.test {
-                navigator.pushNew(AlphaRoute)
-                awaitPushNew(BetaRoute(42))
+                navigator.navigateTo(AlphaRoute)
+                awaitNavigateTo(BetaRoute(42))
             }
         }
     }
@@ -43,8 +44,8 @@ internal class NavigatorTest {
 
         shouldThrow<IllegalStateException> {
             navigator.test {
-                navigator.pushNew(AlphaRoute)
-                awaitPop()
+                navigator.navigateTo(AlphaRoute)
+                awaitNavigateBack()
             }
         }
     }
@@ -54,13 +55,13 @@ internal class NavigatorTest {
         val navigator = TestNavigator()
 
         navigator.test {
-            navigator.pushNew(AlphaRoute)
+            navigator.navigateTo(AlphaRoute)
             navigator.bringToFront(BetaRoute(7))
-            navigator.pop()
+            navigator.navigateBack()
 
-            awaitPushNew(AlphaRoute)
+            awaitNavigateTo(AlphaRoute)
             awaitBringToFront(BetaRoute(7))
-            awaitPop()
+            awaitNavigateBack()
         }
     }
 
@@ -69,9 +70,9 @@ internal class NavigatorTest {
         val navigator = TestNavigator()
 
         navigator.test {
-            navigator.popTo(2)
+            navigator.navigateBackTo<AlphaRoute>(inclusive = true)
 
-            awaitEvent() shouldBe NavEvent.PopTo(2)
+            awaitEvent() shouldBe NavEvent.NavigateBackTo(AlphaRoute::class, inclusive = true)
         }
     }
 

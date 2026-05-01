@@ -27,8 +27,8 @@ import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveSeasonWatchProgressP
 import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveUnwatchedInPreviousSeasonsInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveUnwatchedInPreviousSeasonsParams
 import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsInteractor
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetConfig
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
-import com.thomaskioko.tvmaniac.espisodedetails.nav.model.showEpisodeSheet
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.SheetNavigator
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
@@ -140,8 +140,10 @@ public class SeasonDetailsPresenter(
     public fun dispatch(action: SeasonDetailsAction) {
         coroutineScope.launch {
             when (action) {
-                is EpisodeClicked -> sheetNavigator.showEpisodeSheet(action.id, ScreenSource.SEASON_DETAILS)
-                SeasonDetailsBackClicked -> navigator.pop()
+                is EpisodeClicked -> sheetNavigator.activate(
+                    EpisodeSheetConfig(episodeId = action.id, source = ScreenSource.SEASON_DETAILS),
+                )
+                SeasonDetailsBackClicked -> navigator.navigateBack()
                 ReloadSeasonDetails -> observeSeasonDetails()
                 OnEpisodeHeaderClicked -> updateState { copy(expandEpisodeItems = !expandEpisodeItems) }
                 ShowGallery -> updateState { copy(dialogState = SeasonDialogState.Gallery) }

@@ -91,17 +91,17 @@ public class WatchlistPresenter(
 
     public fun dispatch(action: WatchlistAction) {
         when (action) {
-            is WatchlistShowClicked -> navigator.pushNew(ShowDetailsRoute(ShowDetailsParam(id = action.traktId)))
+            is WatchlistShowClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(id = action.traktId)))
             is WatchlistQueryChanged -> updateQuery(action.query)
             is ClearWatchlistQuery -> clearQuery()
             is ToggleSearchActive -> toggleSearchActive()
             is ChangeListStyleClicked -> toggleListStyle(action.isGridMode)
             is MessageShown -> clearMessage(action.id)
-            is UpNextEpisodeClicked -> navigator.pushNew(ShowDetailsRoute(ShowDetailsParam(id = action.showTraktId)))
-            is ShowTitleClicked -> navigator.pushNew(ShowDetailsRoute(ShowDetailsParam(id = action.showTraktId)))
+            is UpNextEpisodeClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(id = action.showTraktId)))
+            is ShowTitleClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(id = action.showTraktId)))
             is MarkUpNextEpisodeWatched -> markEpisodeWatched(action)
             is UnfollowShowFromUpNext -> unfollowShow(action.showTraktId)
-            is OpenSeasonFromUpNext -> navigator.pushNew(
+            is OpenSeasonFromUpNext -> navigator.navigateTo(
                 SeasonDetailsRoute(
                     SeasonDetailsUiParam(
                         showTraktId = action.showTraktId,

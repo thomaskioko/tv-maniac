@@ -21,6 +21,10 @@ dependencies {
     implementation(projects.i18n.generator)
 
     implementation(projects.features.home.nav)
+    implementation(projects.features.discover.nav)
+    implementation(projects.features.library.nav)
+    implementation(projects.features.profile.nav)
+    implementation(projects.features.progress.nav)
     implementation(projects.features.discover.ui)
     implementation(projects.features.library.ui)
     implementation(projects.features.profile.ui)

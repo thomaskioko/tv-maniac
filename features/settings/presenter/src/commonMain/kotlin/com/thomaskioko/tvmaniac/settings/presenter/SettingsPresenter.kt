@@ -93,7 +93,7 @@ public class SettingsPresenter(
             DismissTraktDialog, ShowTraktDialog -> updateTrackDialogState()
             ShowAboutDialog, DismissAboutDialog -> updateAboutDialogState()
             VersionClicked -> handleVersionTap()
-            BackClicked -> navigator.pop()
+            BackClicked -> navigator.navigateBack()
             TraktLogoutClicked -> {
                 coroutineScope.launch {
                     logoutInteractor(Unit)
@@ -166,7 +166,7 @@ public class SettingsPresenter(
         _state.update { state ->
             val newCount = state.hiddenTapCount + 1
             if (newCount >= HIDDEN_TAP_THRESHOLD) {
-                navigator.pushNew(DebugRoute)
+                navigator.navigateTo(DebugRoute)
                 state.copy(hiddenTapCount = 0)
             } else {
                 state.copy(hiddenTapCount = newCount)

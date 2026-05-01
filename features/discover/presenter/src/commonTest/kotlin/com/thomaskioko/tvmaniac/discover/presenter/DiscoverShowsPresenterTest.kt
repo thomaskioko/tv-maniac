@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.discover.presenter
 
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
-import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
@@ -17,8 +16,6 @@ import com.thomaskioko.tvmaniac.data.trendingshows.testing.FakeTrendingShowsRepo
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsInteractor
 import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepository
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsInteractor
-import com.thomaskioko.tvmaniac.discover.nav.DiscoverNavigator
-import com.thomaskioko.tvmaniac.discover.presenter.di.DefaultDiscoverNavigator
 import com.thomaskioko.tvmaniac.discover.presenter.model.DiscoverShow
 import com.thomaskioko.tvmaniac.discover.presenter.model.NextEpisodeUiModel
 import com.thomaskioko.tvmaniac.domain.discover.DiscoverShowsInteractor
@@ -29,9 +26,8 @@ import com.thomaskioko.tvmaniac.domain.upnext.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
-import com.thomaskioko.tvmaniac.home.nav.HomeTabNavigator
-import com.thomaskioko.tvmaniac.home.nav.di.model.HomeConfig
 import com.thomaskioko.tvmaniac.navigation.testing.FakeSheetNavigator
+import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
 import com.thomaskioko.tvmaniac.navigation.testing.TestNavigator
 import com.thomaskioko.tvmaniac.navigation.testing.test
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
@@ -287,15 +283,11 @@ class DiscoverShowsPresenterTest {
     @Test
     fun `should navigate to season given next episode is clicked`() = runTest {
         val testNavigator = TestNavigator()
-        val discoverNavigator = DefaultDiscoverNavigator(
-            navigator = testNavigator,
-            sheetNavigator = FakeSheetNavigator(),
-            homeTabNavigator = NoOpHomeTabNavigator,
-        )
 
         val testPresenter = DiscoverShowsPresenter(
             componentContext = DefaultComponentContext(lifecycle = LifecycleRegistry()),
-            navigator = discoverNavigator,
+            navigator = testNavigator,
+            sheetNavigator = FakeSheetNavigator(),
             discoverShowsInteractor = DiscoverShowsInteractor(
                 featuredShowsRepository = featuredShowsRepository,
                 topRatedShowsRepository = topRatedShowsRepository,
@@ -343,7 +335,7 @@ class DiscoverShowsPresenterTest {
         testNavigator.test {
             testPresenter.dispatch(NextEpisodeClicked(showTraktId = 123L, seasonId = 10L, seasonNumber = 2L))
 
-            awaitPushNew(
+            awaitNavigateTo(
                 SeasonDetailsRoute(
                     param = SeasonDetailsUiParam(
                         showTraktId = 123L,
@@ -355,11 +347,6 @@ class DiscoverShowsPresenterTest {
         }
     }
 
-    private object NoOpHomeTabNavigator : HomeTabNavigator {
-        override fun registerNavigation(navigation: StackNavigation<HomeConfig>) = Unit
-        override fun unregisterNavigation() = Unit
-        override fun switchToProgressTab() = Unit
-    }
 
     private suspend fun setList(list: List<ShowEntity>) {
         featuredShowsRepository.setFeaturedShows(list)
@@ -444,14 +431,8 @@ class DiscoverShowsPresenterTest {
         lifecycle: LifecycleRegistry = LifecycleRegistry(),
     ): DiscoverShowsPresenter = DiscoverShowsPresenter(
         componentContext = DefaultComponentContext(lifecycle = lifecycle),
-        navigator = object : DiscoverNavigator {
-            override fun showDetails(traktId: Long) {}
-            override fun showMoreShows(categoryId: Long) {}
-            override fun showSearch() {}
-            override fun showUpNext() {}
-            override fun showEpisodeSheet(showTraktId: Long, episodeId: Long) {}
-            override fun showSeason(showTraktId: Long, seasonId: Long, seasonNumber: Long) {}
-        },
+        navigator = NoOpNavigator(),
+        sheetNavigator = FakeSheetNavigator(),
         discoverShowsInteractor = DiscoverShowsInteractor(
             featuredShowsRepository = featuredShowsRepository,
             topRatedShowsRepository = topRatedShowsRepository,

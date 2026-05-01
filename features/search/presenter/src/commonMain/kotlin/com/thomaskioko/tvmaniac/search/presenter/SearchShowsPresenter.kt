@@ -116,7 +116,7 @@ public class SearchShowsPresenter(
 
         fun dispatch(action: SearchShowAction) {
             when (action) {
-                BackClicked -> navigator.pop()
+                BackClicked -> navigator.navigateBack()
 
                 is MessageShown -> {
                     coroutineScope.launch { uiMessageManager.clearMessage(action.id) }
@@ -138,7 +138,7 @@ public class SearchShowsPresenter(
                 }
 
                 is QueryChanged -> handleQueryChange(action.query)
-                is SearchShowClicked -> navigator.pushNew(ShowDetailsRoute(ShowDetailsParam(id = action.id)))
+                is SearchShowClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(id = action.id)))
             }
         }
 

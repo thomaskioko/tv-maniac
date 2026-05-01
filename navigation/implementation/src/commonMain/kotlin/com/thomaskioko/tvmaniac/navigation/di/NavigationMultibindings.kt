@@ -2,6 +2,8 @@ package com.thomaskioko.tvmaniac.navigation.di
 
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.navigation.NavDestination
+import com.thomaskioko.tvmaniac.navigation.NavRoot
+import com.thomaskioko.tvmaniac.navigation.NavRootBinding
 import com.thomaskioko.tvmaniac.navigation.NavRouteBinding
 import com.thomaskioko.tvmaniac.navigation.SheetChildFactory
 import com.thomaskioko.tvmaniac.navigation.SheetConfigBinding
@@ -15,6 +17,12 @@ public interface NavigationMultibindings {
 
     @Multibinds
     public fun navRouteBindings(): Set<NavRouteBinding<*>>
+
+    @Multibinds(allowEmpty = true)
+    public fun navRoots(): Set<NavRoot>
+
+    @Multibinds(allowEmpty = true)
+    public fun navRootBindings(): Set<NavRootBinding<*>>
 
     @Multibinds
     public fun sheetChildFactories(): Set<SheetChildFactory>

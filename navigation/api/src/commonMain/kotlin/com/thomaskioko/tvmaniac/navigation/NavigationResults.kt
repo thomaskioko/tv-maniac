@@ -15,7 +15,7 @@ package com.thomaskioko.tvmaniac.navigation
  * }
  *
  * fun onSignInClicked() {
- *   navigator.pushNew(SignInRoute(resultKey = signInRequest.key))
+ *   navigator.navigateTo(SignInRoute(resultKey = signInRequest.key))
  * }
  * ```
  *

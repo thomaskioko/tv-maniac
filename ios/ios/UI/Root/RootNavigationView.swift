@@ -34,12 +34,11 @@ struct RootNavigationView: View {
 
     var body: some View {
         SplashView {
-            DecomposeNavigationStack(
-                stack: rootPresenter.childStackValue,
-                onBack: navigator.popTo
-            ) { child in
-                registry.view(for: child)
-            }
+            TabBarView(
+                presenter: rootPresenter.homePresenter,
+                navigator: navigator,
+                registry: registry
+            )
         }
         .appTheme()
         .sheet(

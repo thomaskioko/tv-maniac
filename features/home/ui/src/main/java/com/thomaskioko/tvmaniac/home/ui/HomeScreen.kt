@@ -1,11 +1,12 @@
 package com.thomaskioko.tvmaniac.home.ui
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Movie
 import androidx.compose.material.icons.outlined.Person
@@ -23,27 +24,38 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.stack.Children
+import com.arkivanov.decompose.router.stack.ChildStack
 import com.thomaskioko.tvmaniac.compose.components.AvatarComponent
 import com.thomaskioko.tvmaniac.compose.components.NavigationDefaultColors
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomNavigationItem
 import com.thomaskioko.tvmaniac.compose.components.TvManiacNavigationBar
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
+import com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.discover.ui.DiscoverScreen
+import com.thomaskioko.tvmaniac.home.nav.TabChild
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_discover
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_library
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_profile
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_progress
 import com.thomaskioko.tvmaniac.i18n.resolve
+import com.thomaskioko.tvmaniac.library.nav.LibraryRoot
+import com.thomaskioko.tvmaniac.navigation.NavRoot
+import com.thomaskioko.tvmaniac.navigation.RootChild
+import com.thomaskioko.tvmaniac.navigation.ui.LocalScreenContents
+import com.thomaskioko.tvmaniac.navigation.ui.ScreenContent
 import com.thomaskioko.tvmaniac.presentation.library.LibraryPresenter
 import com.thomaskioko.tvmaniac.presentation.progress.ProgressPresenter
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
+import com.thomaskioko.tvmaniac.profile.nav.ProfileRoot
 import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
 import com.thomaskioko.tvmaniac.profile.ui.ProfileScreen
+import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
 import com.thomaskioko.tvmaniac.ui.library.LibraryScreen
 import com.thomaskioko.tvmaniac.ui.progress.ProgressScreen
 import io.github.thomaskioko.codegen.annotations.ScreenUi
+import kotlinx.coroutines.flow.StateFlow
 
 @ScreenUi(presenter = HomePresenter::class, parentScope = ActivityScope::class)
 @Composable
@@ -51,30 +63,69 @@ public fun HomeScreen(
     presenter: HomePresenter,
     modifier: Modifier = Modifier,
 ) {
+    val screenContents = LocalScreenContents.current
+    val activeRoot by presenter.activeRoot.collectAsState()
+
     Column(modifier = modifier) {
-        ChildrenContent(homePresenter = presenter, modifier = Modifier.weight(1F))
-        BottomNavigationContent(component = presenter, modifier = Modifier.fillMaxWidth())
+        Box(modifier = Modifier.weight(1F).fillMaxSize()) {
+            TabPane(
+                stack = presenter.discoverChildStack,
+                visible = activeRoot is DiscoverRoot,
+                screenContents = screenContents,
+            )
+            TabPane(
+                stack = presenter.progressChildStack,
+                visible = activeRoot is ProgressRoot,
+                screenContents = screenContents,
+            )
+            TabPane(
+                stack = presenter.libraryChildStack,
+                visible = activeRoot is LibraryRoot,
+                screenContents = screenContents,
+            )
+            TabPane(
+                stack = presenter.profileChildStack,
+                visible = activeRoot is ProfileRoot,
+                screenContents = screenContents,
+            )
+        }
+        BottomNavigationContent(
+            component = presenter,
+            activeRoot = activeRoot,
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
 
 @Composable
-private fun ChildrenContent(homePresenter: HomePresenter, modifier: Modifier = Modifier) {
-    val childStack by homePresenter.homeChildStack.collectAsState()
+private fun TabPane(
+    stack: StateFlow<ChildStack<*, RootChild>>,
+    visible: Boolean,
+    screenContents: Set<ScreenContent>,
+) {
+    val childStack by stack.collectAsState()
+    val paneModifier = if (visible) Modifier.fillMaxSize() else Modifier.size(0.dp)
 
     Children(
-        modifier = modifier,
+        modifier = paneModifier,
         stack = childStack,
     ) { child ->
+        val instance = child.instance
         val fillMaxSizeModifier = Modifier.fillMaxSize()
-        when (val presenter = child.instance.presenter) {
-            is DiscoverShowsPresenter ->
-                DiscoverScreen(presenter = presenter, modifier = fillMaxSizeModifier)
-            is ProgressPresenter ->
-                ProgressScreen(presenter = presenter, modifier = fillMaxSizeModifier)
-            is LibraryPresenter ->
-                LibraryScreen(presenter = presenter, modifier = fillMaxSizeModifier)
-            is ProfilePresenter ->
-                ProfileScreen(presenter = presenter, modifier = fillMaxSizeModifier)
+        if (instance is TabChild<*>) {
+            when (val tabPresenter = instance.presenter) {
+                is DiscoverShowsPresenter ->
+                    DiscoverScreen(presenter = tabPresenter, modifier = fillMaxSizeModifier)
+                is ProgressPresenter ->
+                    ProgressScreen(presenter = tabPresenter, modifier = fillMaxSizeModifier)
+                is LibraryPresenter ->
+                    LibraryScreen(presenter = tabPresenter, modifier = fillMaxSizeModifier)
+                is ProfilePresenter ->
+                    ProfileScreen(presenter = tabPresenter, modifier = fillMaxSizeModifier)
+            }
+        } else {
+            val renderer = screenContents.firstOrNull { it.matches(instance) } ?: return@Children
+            renderer.content(instance, fillMaxSizeModifier)
         }
     }
 }
@@ -82,10 +133,9 @@ private fun ChildrenContent(homePresenter: HomePresenter, modifier: Modifier = M
 @Composable
 internal fun BottomNavigationContent(
     component: HomePresenter,
+    activeRoot: NavRoot,
     modifier: Modifier = Modifier,
 ) {
-    val childStack by component.homeChildStack.collectAsState()
-    val activePresenter = childStack.active.instance.presenter
     val avatarUrl by component.profileAvatarUrl.collectAsState()
     val context = LocalContext.current
 
@@ -96,7 +146,7 @@ internal fun BottomNavigationContent(
             modifier = Modifier.testTag(HomeTestTags.DISCOVER_TAB),
             imageVector = Icons.Outlined.Movie,
             title = menu_item_discover.resolve(context),
-            selected = activePresenter is DiscoverShowsPresenter,
+            selected = activeRoot is DiscoverRoot,
             onClick = { component.onDiscoverClicked() },
         )
 
@@ -104,7 +154,7 @@ internal fun BottomNavigationContent(
             modifier = Modifier.testTag(HomeTestTags.PROGRESS_TAB),
             imageVector = Icons.Outlined.PlayCircleOutline,
             title = menu_item_progress.resolve(context),
-            selected = activePresenter is ProgressPresenter,
+            selected = activeRoot is ProgressRoot,
             onClick = { component.onProgressClicked() },
         )
 
@@ -112,7 +162,7 @@ internal fun BottomNavigationContent(
             modifier = Modifier.testTag(HomeTestTags.LIBRARY_TAB),
             imageVector = Icons.Outlined.VideoLibrary,
             title = menu_item_library.resolve(context),
-            selected = activePresenter is LibraryPresenter,
+            selected = activeRoot is LibraryRoot,
             onClick = { component.onLibraryClicked() },
         )
 
@@ -120,7 +170,7 @@ internal fun BottomNavigationContent(
             modifier = Modifier.testTag(HomeTestTags.PROFILE_TAB),
             avatarUrl = avatarUrl,
             title = menu_item_profile.resolve(context),
-            selected = activePresenter is ProfilePresenter,
+            selected = activeRoot is ProfileRoot,
             onClick = { component.onProfileClicked() },
         )
     }

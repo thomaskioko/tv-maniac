@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.presentation.episodedetail
 
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
-import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
@@ -341,9 +340,8 @@ internal class EpisodeSheetPresenterTest {
             episodeId = 1L,
             source = source,
             navigator = object : Navigator {
-                private val navigation = StackNavigation<NavRoute>()
                 override fun bringToFront(route: NavRoute) {}
-                override fun pushNew(route: NavRoute) {
+                override fun navigateTo(route: NavRoute) {
                     if (route is SeasonDetailsRoute) {
                         navigatedToSeason = Triple(route.param.showTraktId, route.param.seasonId, route.param.seasonNumber)
                     }
@@ -353,9 +351,29 @@ internal class EpisodeSheetPresenterTest {
                         navigatedToShowId = route.param.id
                     }
                 }
-                override fun pop() {}
+                override fun navigateBack() {}
+                override fun navigateBackTo(routeClass: kotlin.reflect.KClass<out NavRoute>, inclusive: Boolean) {}
                 override fun popTo(toIndex: Int) {}
-                override fun getStackNavigation(): StackNavigation<NavRoute> = navigation
+                override fun switchBackStack(root: com.thomaskioko.tvmaniac.navigation.NavRoot) {}
+                override fun showRoot(root: com.thomaskioko.tvmaniac.navigation.NavRoot) {}
+                override fun replaceAllBackStacks(root: com.thomaskioko.tvmaniac.navigation.NavRoot) {}
+                override fun <T : Any> buildRootStack(
+                    componentContext: com.arkivanov.decompose.ComponentContext,
+                    initialRoot: com.thomaskioko.tvmaniac.navigation.NavRoot,
+                    childFactory: (com.thomaskioko.tvmaniac.navigation.NavRoot, com.arkivanov.decompose.ComponentContext) -> T,
+                ): com.arkivanov.decompose.value.Value<com.arkivanov.decompose.router.stack.ChildStack<*, T>> =
+                    error("Not used in this test")
+                override fun <T : Any> buildOverlaySlot(
+                    componentContext: com.arkivanov.decompose.ComponentContext,
+                    childFactory: (NavRoute, com.arkivanov.decompose.ComponentContext) -> T,
+                ): com.arkivanov.decompose.value.Value<com.arkivanov.decompose.router.slot.ChildSlot<*, T>> =
+                    error("Not used in this test")
+                override fun <T : Any> buildTabStack(
+                    componentContext: com.arkivanov.decompose.ComponentContext,
+                    root: com.thomaskioko.tvmaniac.navigation.NavRoot,
+                    childFactory: (com.thomaskioko.tvmaniac.navigation.BaseRoute, com.arkivanov.decompose.ComponentContext) -> T,
+                ): com.arkivanov.decompose.value.Value<com.arkivanov.decompose.router.stack.ChildStack<*, T>> =
+                    error("Not used in this test")
             },
             sheetNavigator = sheetNavigator,
             observeEpisodeByIdInteractor = ObserveEpisodeByIdInteractor(episodeRepository),

@@ -75,8 +75,8 @@ public class MoreShowsPresenter(
 
     public fun dispatch(action: MoreShowsActions) {
         when (action) {
-            is MoreShowClicked -> navigator.pushNew(ShowDetailsRoute(ShowDetailsParam(id = action.traktId)))
-            MoreBackClicked -> navigator.pop()
+            is MoreShowClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(id = action.traktId)))
+            MoreBackClicked -> navigator.navigateBack()
             RefreshMoreShows -> {
                 when (categoryId) {
                     UPCOMING.id -> getUpcomingPagedList(forceRefresh = true)

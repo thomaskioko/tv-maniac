@@ -94,7 +94,7 @@ public class DebugPresenter(
 
     public fun dispatch(action: DebugActions) {
         when (action) {
-            BackClicked -> navigator.pop()
+            BackClicked -> navigator.navigateBack()
             TriggerDebugNotification -> scheduleDebugNotification()
             TriggerDelayedDebugNotification -> scheduleDebugNotification(5.minutes)
             TriggerLibrarySync -> triggerLibrarySync()

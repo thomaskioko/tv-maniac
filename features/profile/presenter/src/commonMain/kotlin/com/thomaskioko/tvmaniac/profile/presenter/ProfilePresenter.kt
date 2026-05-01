@@ -13,8 +13,6 @@ import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.domain.user.ObserveUserProfileInteractor
 import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
 import com.thomaskioko.tvmaniac.domain.user.model.UserProfile
-import com.thomaskioko.tvmaniac.home.nav.HomeRoute
-import com.thomaskioko.tvmaniac.home.nav.di.model.HomeConfig
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
@@ -31,7 +29,6 @@ import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import dev.zacsweers.metro.Inject
-import io.github.thomaskioko.codegen.annotations.TabScreen
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -41,7 +38,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @Inject
-@TabScreen(config = HomeConfig.Profile::class, parentScope = HomeRoute::class)
 public class ProfilePresenter(
     componentContext: ComponentContext,
     private val navigator: Navigator,
@@ -96,7 +92,7 @@ public class ProfilePresenter(
                     traktAuthManager.launchWebView()
                 }
             }
-            SettingsClicked -> navigator.pushNew(SettingsRoute)
+            SettingsClicked -> navigator.navigateTo(SettingsRoute)
             RefreshProfile -> fetchUserData(forceRefresh = true)
             is MessageShown -> {
                 clearMessage(action.id)

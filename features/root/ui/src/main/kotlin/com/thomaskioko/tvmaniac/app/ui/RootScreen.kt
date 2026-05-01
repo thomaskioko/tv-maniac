@@ -17,12 +17,14 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.thomaskioko.tvmaniac.compose.components.NotificationRationaleContent
+import com.thomaskioko.tvmaniac.home.ui.HomeScreen
+import com.thomaskioko.tvmaniac.navigation.ui.LocalScreenContents
 import com.thomaskioko.tvmaniac.navigation.ui.ScreenContent
 import com.thomaskioko.tvmaniac.navigation.ui.SheetContent
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
@@ -73,35 +75,18 @@ public fun RootScreen(
         sheetRenderer.content(sheetChild)
     }
 
-    Surface(modifier = modifier, color = MaterialTheme.colorScheme.background) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
-        ) {
-            ChildrenContent(
-                rootPresenter = rootPresenter,
-                screenContents = screenContents,
-                modifier = Modifier.weight(1F),
-            )
+    CompositionLocalProvider(LocalScreenContents provides screenContents) {
+        Surface(modifier = modifier, color = MaterialTheme.colorScheme.background) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
+            ) {
+                HomeScreen(
+                    presenter = rootPresenter.homePresenter,
+                    modifier = Modifier.weight(1F),
+                )
+            }
         }
-    }
-}
-
-@Composable
-private fun ChildrenContent(
-    rootPresenter: RootPresenter,
-    screenContents: Set<ScreenContent>,
-    modifier: Modifier = Modifier,
-) {
-    val childStack by rootPresenter.childStack.collectAsStateWithLifecycle()
-
-    Children(
-        modifier = modifier,
-        stack = childStack,
-    ) { child ->
-        val instance = child.instance
-        val renderer = screenContents.firstOrNull { it.matches(instance) } ?: return@Children
-        renderer.content(instance, Modifier.fillMaxSize())
     }
 }

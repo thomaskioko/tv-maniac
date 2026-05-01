@@ -43,6 +43,7 @@ kotlin {
                 implementation(projects.data.library.testing)
                 implementation(projects.domain.showdetails)
                 implementation(projects.i18n.testing)
+                implementation(projects.navigation.testing)
 
                 implementation(libs.bundles.unittest)
             }

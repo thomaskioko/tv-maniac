@@ -45,6 +45,7 @@ kotlin {
                 implementation(projects.core.util.testing)
                 implementation(projects.i18n.testing)
                 implementation(projects.data.syncActivity.testing)
+                implementation(projects.navigation.testing)
 
                 implementation(libs.bundles.unittest)
             }

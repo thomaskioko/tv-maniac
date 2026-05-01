@@ -20,7 +20,6 @@ enum ScreenRegistryBootstrap {
     }
 
     private static func registerScreens(into registry: ScreenRegistry) {
-        registry.registerScreen(for: HomePresenter.self) { TabBarView(presenter: $0) }
         registry.registerScreen(for: ShowDetailsPresenter.self) { ShowDetailsView(presenter: $0) }
         registry.registerScreen(for: SeasonDetailsPresenter.self) { SeasonDetailsView(presenter: $0) }
         registry.registerScreen(for: SearchShowsPresenter.self) { SearchTab(presenter: $0) }

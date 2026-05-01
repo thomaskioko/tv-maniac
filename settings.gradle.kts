@@ -240,6 +240,8 @@ include(
     ":features:genre-shows:presenter",
     ":features:home:nav",
     ":features:home:presenter",
+    ":features:library:nav",
+    ":features:profile:nav",
     ":features:progress:presenter",
     ":features:progress:nav",
     ":features:trailers:nav",

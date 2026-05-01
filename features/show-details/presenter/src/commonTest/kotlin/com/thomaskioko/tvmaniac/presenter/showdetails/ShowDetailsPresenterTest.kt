@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.presenter.showdetails
 
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
-import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.popTo
@@ -49,8 +48,7 @@ import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
-import com.thomaskioko.tvmaniac.navigation.NavRoute
-import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ProviderModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.TrailerModel
@@ -70,6 +68,7 @@ import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
@@ -106,6 +105,7 @@ class ShowDetailsPresenterTest {
     private val fakeDatastoreRepository = FakeDatastoreRepository()
     private val fakeLogger = FakeLogger()
     private val fakeDateTimeProvider = FakeDateTimeProvider()
+    private val fakeNavigator = FakeNavigator()
     private val testDispatcher = StandardTestDispatcher()
     private val coroutineDispatcher = AppCoroutineDispatchers(
         main = testDispatcher,
@@ -224,10 +224,7 @@ class ShowDetailsPresenterTest {
 
     @Test
     fun `should invoke navigateToSeason when SeasonClicked`() = runTest {
-        var navigatedToSeason = false
-        val presenter = buildShowDetailsPresenter(
-            onNavigateToSeason = { navigatedToSeason = true },
-        )
+        val presenter = buildShowDetailsPresenter()
 
         presenter.dispatch(
             SeasonClicked(
@@ -240,7 +237,7 @@ class ShowDetailsPresenterTest {
             ),
         )
 
-        navigatedToSeason shouldBe true
+        fakeNavigator.lastNavigatedRoute.shouldBeInstanceOf<SeasonDetailsRoute>()
     }
 
     @Test
@@ -843,45 +840,15 @@ class ShowDetailsPresenterTest {
 
     private fun buildShowDetailsPresenter(
         param: ShowDetailsParam = ShowDetailsParam(id = 84958),
-        onNavigateToSeason: (param: ShowSeasonDetailsParam) -> Unit = {},
         onShowFollowed: () -> Unit = {},
     ): ShowDetailsPresenter {
-        val navigator = object : Navigator {
-            private val navigation = StackNavigation<NavRoute>()
-            override fun bringToFront(route: NavRoute) {
-                navigation.bringToFront(route)
-            }
-            override fun pushNew(route: NavRoute) {
-                if (route is SeasonDetailsRoute) {
-                    onNavigateToSeason(
-                        ShowSeasonDetailsParam(
-                            showTraktId = route.param.showTraktId,
-                            seasonId = route.param.seasonId,
-                            seasonNumber = route.param.seasonNumber,
-                            selectedSeasonIndex = 0,
-                        ),
-                    )
-                }
-                navigation.pushNew(route)
-            }
-            override fun pushToFront(route: NavRoute) {
-                navigation.pushToFront(route)
-            }
-            override fun pop() {
-                navigation.pop()
-            }
-            override fun popTo(toIndex: Int) {
-                navigation.popTo(index = toIndex)
-            }
-            override fun getStackNavigation(): StackNavigation<NavRoute> = navigation
-        }
         val notificationRationale = object : NotificationRationale {
             override suspend fun showIfNeeded() = onShowFollowed()
         }
         return ShowDetailsPresenter(
             param = param,
             componentContext = DefaultComponentContext(lifecycle = LifecycleRegistry()),
-            navigator = navigator,
+            navigator = fakeNavigator,
             notificationRationale = notificationRationale,
             followedShowsRepository = followedShowsRepository,
             followShowInteractor = FollowShowInteractor(

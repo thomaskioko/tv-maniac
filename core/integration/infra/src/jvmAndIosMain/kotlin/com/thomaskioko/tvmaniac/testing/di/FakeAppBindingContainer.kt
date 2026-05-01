@@ -1,10 +1,6 @@
 package com.thomaskioko.tvmaniac.testing.di
 
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.router.slot.SlotNavigation
-import com.arkivanov.decompose.router.slot.activate
-import com.arkivanov.decompose.router.slot.dismiss
-import com.arkivanov.decompose.router.stack.StackNavigation
 import com.thomaskioko.tvmaniac.appconfig.ApplicationInfo
 import com.thomaskioko.tvmaniac.appconfig.Platform
 import com.thomaskioko.tvmaniac.core.base.ComputationCoroutineScope
@@ -14,19 +10,22 @@ import com.thomaskioko.tvmaniac.core.base.TmdbApi
 import com.thomaskioko.tvmaniac.core.base.TraktApi
 import com.thomaskioko.tvmaniac.core.base.di.BaseBindingContainer
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.discover.nav.DiscoverNavigator
-import com.thomaskioko.tvmaniac.discover.presenter.di.DefaultDiscoverNavigator
 import com.thomaskioko.tvmaniac.domain.library.LibrarySyncWorker
 import com.thomaskioko.tvmaniac.domain.notifications.EpisodeNotificationWorker
 import com.thomaskioko.tvmaniac.domain.upnext.UpNextSyncWorker
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetConfig
 import com.thomaskioko.tvmaniac.genreshows.nav.GenreShowsRoute
-import com.thomaskioko.tvmaniac.home.nav.HomeTabNavigator
-import com.thomaskioko.tvmaniac.home.nav.di.model.HomeConfig
+import com.thomaskioko.tvmaniac.navigation.BaseRouteSerializer
+import com.thomaskioko.tvmaniac.navigation.DefaultBaseRouteSerializer
+import com.thomaskioko.tvmaniac.navigation.DefaultNavRootSerializer
 import com.thomaskioko.tvmaniac.navigation.DefaultNavRouteSerializer
 import com.thomaskioko.tvmaniac.navigation.DefaultNavigator
 import com.thomaskioko.tvmaniac.navigation.DefaultSheetConfigSerializer
+import com.thomaskioko.tvmaniac.navigation.DefaultSheetNavigator
 import com.thomaskioko.tvmaniac.navigation.NavDestination
+import com.thomaskioko.tvmaniac.navigation.NavRoot
+import com.thomaskioko.tvmaniac.navigation.NavRootBinding
+import com.thomaskioko.tvmaniac.navigation.NavRootSerializer
 import com.thomaskioko.tvmaniac.navigation.NavRoute
 import com.thomaskioko.tvmaniac.navigation.NavRouteBinding
 import com.thomaskioko.tvmaniac.navigation.NavRouteSerializer
@@ -38,10 +37,9 @@ import com.thomaskioko.tvmaniac.navigation.SheetConfig
 import com.thomaskioko.tvmaniac.navigation.SheetConfigBinding
 import com.thomaskioko.tvmaniac.navigation.SheetConfigSerializer
 import com.thomaskioko.tvmaniac.navigation.SheetNavigator
-import com.thomaskioko.tvmaniac.presenter.home.di.DefaultHomeTabNavigator
+import com.thomaskioko.tvmaniac.navigation.testing.FakeSheetNavigator
 import com.thomaskioko.tvmaniac.presenter.root.DefaultRootPresenter
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
-import com.thomaskioko.tvmaniac.presenter.root.di.DefaultSheetNavigator
 import com.thomaskioko.tvmaniac.traktauth.implementation.TokenRefreshWorker
 import com.thomaskioko.tvmaniac.util.api.AppUtils
 import dev.zacsweers.metro.AppScope
@@ -68,8 +66,6 @@ import kotlinx.coroutines.flow.flowOf
         TokenRefreshWorker::class,
         UpNextSyncWorker::class,
         DefaultSheetNavigator::class,
-        DefaultDiscoverNavigator::class,
-        DefaultHomeTabNavigator::class,
     ],
 )
 public object FakeAppBindingContainer {
@@ -137,38 +133,7 @@ public object FakeAppBindingContainer {
 
     @Provides
     @SingleIn(AppScope::class)
-    public fun provideSheetNavigator(): SheetNavigator =
-        object : SheetNavigator {
-            private val slotNavigation = SlotNavigation<SheetConfig>()
-            override fun activate(config: SheetConfig) {
-                slotNavigation.activate(config)
-            }
-            override fun dismiss() {
-                slotNavigation.dismiss()
-            }
-            override fun getSlotNavigation(): SlotNavigation<SheetConfig> = slotNavigation
-        }
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideDiscoverNavigator(): DiscoverNavigator =
-        object : DiscoverNavigator {
-            override fun showDetails(traktId: Long) {}
-            override fun showMoreShows(categoryId: Long) {}
-            override fun showSearch() {}
-            override fun showUpNext() {}
-            override fun showEpisodeSheet(showTraktId: Long, episodeId: Long) {}
-            override fun showSeason(showTraktId: Long, seasonId: Long, seasonNumber: Long) {}
-        }
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideHomeTabController(): HomeTabNavigator =
-        object : HomeTabNavigator {
-            override fun registerNavigation(navigation: StackNavigation<HomeConfig>) {}
-            override fun unregisterNavigation() {}
-            override fun switchToProgressTab() {}
-        }
+    public fun provideSheetNavigator(): SheetNavigator = FakeSheetNavigator()
 
     @Provides
     @SingleIn(AppScope::class)
@@ -220,7 +185,60 @@ public object FakeAppBindingContainer {
 
     @Provides
     @SingleIn(AppScope::class)
-    public fun provideRootNavigator(): Navigator = DefaultNavigator()
+    public fun provideNavRoots(): Set<NavRoot> = setOf(
+        com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot,
+        com.thomaskioko.tvmaniac.library.nav.LibraryRoot,
+        com.thomaskioko.tvmaniac.profile.nav.ProfileRoot,
+        com.thomaskioko.tvmaniac.progress.nav.ProgressRoot,
+    )
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideNavRootBindings(): Set<NavRootBinding<*>> = setOf(
+        NavRootBinding(
+            com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot::class,
+            com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot.serializer(),
+        ),
+        NavRootBinding(
+            com.thomaskioko.tvmaniac.library.nav.LibraryRoot::class,
+            com.thomaskioko.tvmaniac.library.nav.LibraryRoot.serializer(),
+        ),
+        NavRootBinding(
+            com.thomaskioko.tvmaniac.profile.nav.ProfileRoot::class,
+            com.thomaskioko.tvmaniac.profile.nav.ProfileRoot.serializer(),
+        ),
+        NavRootBinding(
+            com.thomaskioko.tvmaniac.progress.nav.ProgressRoot::class,
+            com.thomaskioko.tvmaniac.progress.nav.ProgressRoot.serializer(),
+        ),
+    )
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideNavRootSerializer(
+        bindings: Set<NavRootBinding<*>>,
+    ): NavRootSerializer = DefaultNavRootSerializer(bindings)
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideBaseRouteSerializer(
+        routeBindings: Set<NavRouteBinding<*>>,
+        rootBindings: Set<NavRootBinding<*>>,
+    ): BaseRouteSerializer = DefaultBaseRouteSerializer(routeBindings, rootBindings)
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideRootNavigator(
+        navRouteSerializer: NavRouteSerializer,
+        navRootSerializer: NavRootSerializer,
+        baseRouteSerializer: BaseRouteSerializer,
+        navRoots: Set<NavRoot>,
+    ): Navigator = DefaultNavigator(
+        navRouteSerializer = navRouteSerializer,
+        navRootSerializer = navRootSerializer,
+        baseRouteSerializer = baseRouteSerializer,
+        navRoots = navRoots,
+    )
 
     @Provides
     public fun provideRootPresenterFactory(
