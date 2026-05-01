@@ -37,7 +37,8 @@ public class DefaultTraktListRepository(
         combine(
             traktListDao.observeAll(),
             traktListShowDao.observeByShowTraktId(traktShowId),
-        ) { lists, showEntries ->
+            traktListShowDao.observeActiveCountByListId(),
+        ) { lists, showEntries, activeCounts ->
             val activeEntryListIds = showEntries
                 .filter { it.pendingAction != PendingAction.DELETE.value }
                 .map { it.listId }
@@ -48,19 +49,18 @@ public class DefaultTraktListRepository(
                     slug = list.slug,
                     name = list.name,
                     description = list.description,
-                    itemCount = list.itemCount,
+                    itemCount = activeCounts[list.id] ?: 0L,
                     isShowInList = list.id in activeEntryListIds,
                 )
             }
         }.distinctUntilChanged()
 
     override suspend fun fetchUserLists(slug: String, forceRefresh: Boolean) {
-       /* if (forceRefresh) {
+        if (forceRefresh) {
             traktListsStore.fresh(key = slug)
         } else {
             traktListsStore.get(key = slug)
-        }*/
-        traktListsStore.fresh(key = slug)
+        }
     }
 
     override suspend fun createList(slug: String, name: String) {
