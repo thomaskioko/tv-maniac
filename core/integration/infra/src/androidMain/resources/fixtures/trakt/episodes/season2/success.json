@@ -1,0 +1,70 @@
+[
+    {
+        "ids": {
+            "imdb": "tt1232249",
+            "plex": {
+                "guid": "5d9c0fc37b5c2e001e6a7062"
+            },
+            "tmdb": 62092,
+            "tvdb": 619887,
+            "trakt": 73489
+        },
+        "title": "Seven Thirty-Seven",
+        "votes": 5234,
+        "images": {
+            "screenshot": [
+                "media.trakt.tv/images/episodes/000/073/489/screenshots/medium/aa11bb22cc.jpg.webp"
+            ]
+        },
+        "number": 1,
+        "rating": 8.345600128173828,
+        "season": 2,
+        "runtime": 47,
+        "overview": "Walt and Jesse must come up with $600,000 fast in order to settle their score with Tuco. Meanwhile, Hank investigates the violent disappearance of one of Tuco's henchmen.",
+        "released": "2009-03-08",
+        "number_abs": 8,
+        "updated_at": "2026-04-29T10:00:00.000Z",
+        "first_aired": "2009-03-09T01:00:00.000Z",
+        "episode_type": "season_premiere",
+        "after_credits": false,
+        "comment_count": 19,
+        "during_credits": false,
+        "original_title": "Seven Thirty-Seven",
+        "available_translations": [],
+        "effective_release_date": "2009-03-09T01:00:00.000Z"
+    },
+    {
+        "ids": {
+            "imdb": "tt1232250",
+            "plex": {
+                "guid": "5d9c0fc37b5c2e001e6a7063"
+            },
+            "tmdb": 62093,
+            "tvdb": 619888,
+            "trakt": 73490
+        },
+        "title": "Grilled",
+        "votes": 5102,
+        "images": {
+            "screenshot": [
+                "media.trakt.tv/images/episodes/000/073/490/screenshots/medium/dd33ee44ff.jpg.webp"
+            ]
+        },
+        "number": 2,
+        "rating": 8.523400115966797,
+        "season": 2,
+        "runtime": 48,
+        "overview": "Walt's family becomes desperate after his disappearance. Walt and Jesse find themselves in a precarious situation after a run-in with Tuco.",
+        "released": "2009-03-15",
+        "number_abs": 9,
+        "updated_at": "2026-04-29T10:00:00.000Z",
+        "first_aired": "2009-03-16T01:00:00.000Z",
+        "episode_type": "standard",
+        "after_credits": false,
+        "comment_count": 22,
+        "during_credits": false,
+        "original_title": "Grilled",
+        "available_translations": [],
+        "effective_release_date": "2009-03-16T01:00:00.000Z"
+    }
+]

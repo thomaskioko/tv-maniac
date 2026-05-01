@@ -1,0 +1,182 @@
+[
+    {
+        "ids": {
+            "plex": {
+                "guid": "602e61dd66dfdb002c096afd"
+            },
+            "tmdb": 3577,
+            "tvdb": 439371,
+            "trakt": 3949
+        },
+        "title": "Specials",
+        "votes": 220,
+        "images": {
+            "thumb": [
+                "media.trakt.tv/images/seasons/000/003/949/thumbs/medium/58727e71f3.jpg.webp"
+            ],
+            "poster": [
+                "media.trakt.tv/images/seasons/000/003/949/posters/medium/74cf1d2116.jpg.webp"
+            ]
+        },
+        "number": 0,
+        "rating": 8.209091186523438,
+        "network": null,
+        "overview": null,
+        "updated_at": "2026-04-29T07:17:39.000Z",
+        "first_aired": "2009-02-18T02:00:00.000Z",
+        "episode_count": 10,
+        "total_runtime": 30,
+        "aired_episodes": 8,
+        "original_title": "Specials"
+    },
+    {
+        "ids": {
+            "plex": {
+                "guid": "602e61de66dfdb002c096b16"
+            },
+            "tmdb": 3572,
+            "tvdb": 30272,
+            "trakt": 3950
+        },
+        "title": "Season 1",
+        "votes": 6378,
+        "images": {
+            "thumb": [
+                "media.trakt.tv/images/seasons/000/003/950/thumbs/medium/0c78adaabb.jpg.webp"
+            ],
+            "poster": [
+                "media.trakt.tv/images/seasons/000/003/950/posters/medium/eded236292.jpg.webp"
+            ]
+        },
+        "number": 1,
+        "rating": 8.552210807800293,
+        "network": null,
+        "overview": "High school chemistry teacher Walter White's life is suddenly transformed by a dire medical diagnosis. Street-savvy former student Jesse Pinkman \"teaches\" Walter a new trade.",
+        "updated_at": "2026-04-29T07:17:40.000Z",
+        "first_aired": "2008-01-21T02:00:00.000Z",
+        "episode_count": 7,
+        "total_runtime": 352,
+        "aired_episodes": 7,
+        "original_title": "Season 1"
+    },
+    {
+        "ids": {
+            "plex": {
+                "guid": "602e61df66dfdb002c096b48"
+            },
+            "tmdb": 3573,
+            "tvdb": 40719,
+            "trakt": 3951
+        },
+        "title": "Season 2",
+        "votes": 5665,
+        "images": {
+            "thumb": [
+                "media.trakt.tv/images/seasons/000/003/951/thumbs/medium/21896e4fb8.jpg.webp"
+            ],
+            "poster": [
+                "media.trakt.tv/images/seasons/000/003/951/posters/medium/285d570ea2.jpg.webp"
+            ]
+        },
+        "number": 2,
+        "rating": 9.013238906860352,
+        "network": null,
+        "overview": "Walt must deal with the chain reaction of his choice, as he and Jesse face new and severe consequences. When danger and suspicion around Walt escalate, he is pushed to new levels of desperation. Just how much higher will the stakes rise? How far is Walt willing to go to ensure his family's security? Will his grand plan spiral out of control?",
+        "updated_at": "2026-04-29T07:17:40.000Z",
+        "first_aired": "2009-03-09T01:00:00.000Z",
+        "episode_count": 13,
+        "total_runtime": 623,
+        "aired_episodes": 13,
+        "original_title": "Season 2"
+    },
+    {
+        "ids": {
+            "plex": {
+                "guid": "602e61e266dfdb002c096ba3"
+            },
+            "tmdb": 3575,
+            "tvdb": 171641,
+            "trakt": 3952
+        },
+        "title": "Season 3",
+        "votes": 5383,
+        "images": {
+            "thumb": [
+                "media.trakt.tv/images/seasons/000/003/952/thumbs/medium/34cfd630c0.jpg.webp"
+            ],
+            "poster": [
+                "media.trakt.tv/images/seasons/000/003/952/posters/medium/191835bf48.jpg.webp"
+            ]
+        },
+        "number": 3,
+        "rating": 8.848968505859375,
+        "network": null,
+        "overview": "Walt continues to battle dueling identities: a desperate husband and father trying to provide for his family, and a newly appointed key player in the Albuquerque drug trade. As the danger around him escalates, Walt is now entrenched in the complex worlds of an angst-ridden family on the verge of dissolution, and the ruthless and unrelenting drug cartel.",
+        "updated_at": "2026-04-29T07:17:40.000Z",
+        "first_aired": "2010-03-22T01:00:00.000Z",
+        "episode_count": 13,
+        "total_runtime": 624,
+        "aired_episodes": 13,
+        "original_title": "Season 3"
+    },
+    {
+        "ids": {
+            "plex": {
+                "guid": "602e61e266dfdb002c096bd2"
+            },
+            "tmdb": 3576,
+            "tvdb": 297361,
+            "trakt": 3953
+        },
+        "title": "Season 4",
+        "votes": 5273,
+        "images": {
+            "thumb": [
+                "media.trakt.tv/images/seasons/000/003/953/thumbs/medium/f79fa42beb.jpg.webp"
+            ],
+            "poster": [
+                "media.trakt.tv/images/seasons/000/003/953/posters/medium/228c53bc43.jpg.webp"
+            ]
+        },
+        "number": 4,
+        "rating": 9.373790740966797,
+        "network": null,
+        "overview": "Walt and Jesse must cope with the fallout of their previous actions, both personally and professionally. Tension mounts as Walt faces a true standoff with his employer, Gus, with neither side willing or able to back down. Walt must also adjust to a new relationship with Skyler, whom while still reconciling her relationship with Walt, is committed to properly laundering Walt’s money and ensuring her sister Marie and an ailing Hank are financially stable.",
+        "updated_at": "2026-04-29T07:17:40.000Z",
+        "first_aired": "2011-07-18T01:00:00.000Z",
+        "episode_count": 13,
+        "total_runtime": 619,
+        "aired_episodes": 13,
+        "original_title": "Season 4"
+    },
+    {
+        "ids": {
+            "plex": {
+                "guid": "602e61e366dfdb002c096c00"
+            },
+            "tmdb": 3578,
+            "tvdb": 490110,
+            "trakt": 3954
+        },
+        "title": "Season 5",
+        "votes": 4853,
+        "images": {
+            "thumb": [
+                "media.trakt.tv/images/seasons/000/003/954/thumbs/medium/7382445277.jpg.webp"
+            ],
+            "poster": [
+                "media.trakt.tv/images/seasons/000/003/954/posters/medium/a1878b564a.jpg.webp"
+            ]
+        },
+        "number": 5,
+        "rating": 9.537399291992188,
+        "network": null,
+        "overview": "Walt is faced with the prospect of moving on in a world without his enemy. As the pressure of a criminal life starts to build, Skyler struggles to keep Walt’s terrible secrets. Facing resistance from sometime adversary and former Fring lieutenant Mike, Walt tries to keep his world from falling apart even as his DEA Agent brother in law, Hank, finds numerous leads that could blaze a path straight to Walt. ",
+        "updated_at": "2026-04-29T07:17:40.000Z",
+        "first_aired": "2012-07-16T01:00:00.000Z",
+        "episode_count": 16,
+        "total_runtime": 777,
+        "aired_episodes": 16,
+        "original_title": "Season 5"
+    }
+]

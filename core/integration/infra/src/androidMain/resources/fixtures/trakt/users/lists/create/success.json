@@ -1,0 +1,9 @@
+{
+    "name": "Watch Later",
+    "description": "",
+    "privacy": "private",
+    "ids": {
+        "trakt": 99887766,
+        "slug": "watch-later"
+    }
+}

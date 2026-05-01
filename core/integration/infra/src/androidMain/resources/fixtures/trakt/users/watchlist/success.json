@@ -1,0 +1,71 @@
+[
+    {
+        "type": "show",
+        "show": {
+            "ids": {
+                "imdb": "tt0903747",
+                "plex": {
+                    "guid": "5d9c08f3e98e47001e9a05c8",
+                    "slug": "breaking-bad"
+                },
+                "slug": "breaking-bad",
+                "tmdb": 1396,
+                "tvdb": 81189,
+                "trakt": 1388
+            },
+            "year": 2008,
+            "title": "Breaking Bad",
+            "aired_episodes": 62
+        },
+        "rank": 0,
+        "id": 1460000001,
+        "listed_at": "2026-04-29T00:00:00.000Z",
+        "notes": null
+    },
+    {
+        "type": "show",
+        "show": {
+            "ids": {
+                "imdb": "tt7772588",
+                "plex": {
+                    "guid": "5d9c091408fddd001f2a71c3",
+                    "slug": "for-all-mankind"
+                },
+                "slug": "for-all-mankind",
+                "tmdb": 87917,
+                "tvdb": 356202,
+                "trakt": 140481
+            },
+            "year": 2019,
+            "title": "For All Mankind",
+            "aired_episodes": 45
+        },
+        "rank": 86,
+        "id": 1460356052,
+        "listed_at": "2026-04-23T08:08:51.000Z",
+        "notes": null
+    },
+    {
+        "type": "show",
+        "show": {
+            "ids": {
+                "imdb": "tt1190634",
+                "plex": {
+                    "guid": "5d9c08f246115600200ae0f6",
+                    "slug": "the-boys"
+                },
+                "slug": "the-boys-2019",
+                "tmdb": 76479,
+                "tvdb": 355567,
+                "trakt": 139960
+            },
+            "year": 2019,
+            "title": "The Boys",
+            "aired_episodes": 37
+        },
+        "rank": 90,
+        "id": 1455156698,
+        "listed_at": "2026-04-08T08:22:15.000Z",
+        "notes": null
+    }
+]
