@@ -1,11 +1,13 @@
 package com.thomaskioko.tvmaniac.app.test.compose.robot
 
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import androidx.compose.ui.test.ComposeUiTest
+import androidx.compose.ui.test.ExperimentalTestApi
 import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
 import com.thomaskioko.tvmaniac.testtags.component.DesignComponentTestTags
 import com.thomaskioko.tvmaniac.testtags.notifications.NotificationRationaleTestTags
 
-internal class RootRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
+@OptIn(ExperimentalTestApi::class)
+internal class RootRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
 
     /**
      * Asserts that an error snackbar with [message] is displayed.

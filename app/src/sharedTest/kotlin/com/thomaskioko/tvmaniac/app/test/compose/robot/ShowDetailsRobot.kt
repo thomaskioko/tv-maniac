@@ -1,17 +1,12 @@
 package com.thomaskioko.tvmaniac.app.test.compose.robot
 
-import androidx.compose.ui.test.assert
-import androidx.compose.ui.test.assertIsNotDisplayed
-import androidx.compose.ui.test.assertIsOff
-import androidx.compose.ui.test.assertIsOn
-import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.ComposeUiTest
+import androidx.compose.ui.test.ExperimentalTestApi
 import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
 import com.thomaskioko.tvmaniac.testtags.showdetails.ShowDetailsTestTags
 
-internal class ShowDetailsRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
+@OptIn(ExperimentalTestApi::class)
+internal class ShowDetailsRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
 
     fun assertShowDetailsDisplayed() {
         assertDisplayed(ShowDetailsTestTags.TRACK_BUTTON_TEST_TAG)
@@ -59,7 +54,7 @@ internal class ShowDetailsRobot(composeTestRule: ComposeContentTestRule) : BaseR
 
     fun clickSeasonChip(seasonNumber: Long): SeasonDetailsRobot {
         click(ShowDetailsTestTags.seasonChip(seasonNumber), useSemanticsAction = true)
-        return SeasonDetailsRobot(composeTestRule)
+        return SeasonDetailsRobot(composeUi)
     }
 
     fun assertErrorStateDisplayed() {
@@ -96,10 +91,7 @@ internal class ShowDetailsRobot(composeTestRule: ComposeContentTestRule) : BaseR
     }
 
     fun assertListSheetDoesNotExist() {
-        composeTestRule.onNodeWithTag(
-            ShowDetailsTestTags.LIST_SHEET_TEST_TAG,
-            useUnmergedTree = true,
-        ).assertIsNotDisplayed()
+        assertNotDisplayed(ShowDetailsTestTags.LIST_SHEET_TEST_TAG)
     }
 
     fun assertTraktListItemDisplayed(listId: Long) {
@@ -123,10 +115,7 @@ internal class ShowDetailsRobot(composeTestRule: ComposeContentTestRule) : BaseR
     }
 
     fun typeCreateListName(name: String) {
-        composeTestRule.onNodeWithTag(
-            ShowDetailsTestTags.LIST_SHEET_CREATE_LIST_INPUT_TEST_TAG,
-            useUnmergedTree = true,
-        ).performTextInput(name)
+        inputText(ShowDetailsTestTags.LIST_SHEET_CREATE_LIST_INPUT_TEST_TAG, name)
     }
 
     fun clickCreateListSubmit() {
@@ -138,23 +127,14 @@ internal class ShowDetailsRobot(composeTestRule: ComposeContentTestRule) : BaseR
     }
 
     fun assertListSwitchIsChecked(listId: Long) {
-        composeTestRule.onNodeWithTag(
-            ShowDetailsTestTags.traktListItemSwitch(listId),
-            useUnmergedTree = true,
-        ).assertIsOn()
+        assertChecked(ShowDetailsTestTags.traktListItemSwitch(listId))
     }
 
     fun assertListSwitchIsUnchecked(listId: Long) {
-        composeTestRule.onNodeWithTag(
-            ShowDetailsTestTags.traktListItemSwitch(listId),
-            useUnmergedTree = true,
-        ).assertIsOff()
+        assertUnchecked(ShowDetailsTestTags.traktListItemSwitch(listId))
     }
 
     fun assertTraktListShowCountText(listId: Long, expectedText: String) {
-        composeTestRule.onNodeWithTag(
-            ShowDetailsTestTags.traktListItemShowCount(listId),
-            useUnmergedTree = true,
-        ).assert(hasText(expectedText))
+        assertNodeHasText(ShowDetailsTestTags.traktListItemShowCount(listId), expectedText)
     }
 }

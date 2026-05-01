@@ -1,10 +1,12 @@
 package com.thomaskioko.tvmaniac.app.test.compose.robot
 
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import androidx.compose.ui.test.ComposeUiTest
+import androidx.compose.ui.test.ExperimentalTestApi
 import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
 import com.thomaskioko.tvmaniac.testtags.seasondetails.SeasonDetailsTestTags
 
-internal class SeasonDetailsRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
+@OptIn(ExperimentalTestApi::class)
+internal class SeasonDetailsRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
 
     fun assertSeasonDetailsDisplayed() {
         assertDisplayed(SeasonDetailsTestTags.SCREEN_TEST_TAG)

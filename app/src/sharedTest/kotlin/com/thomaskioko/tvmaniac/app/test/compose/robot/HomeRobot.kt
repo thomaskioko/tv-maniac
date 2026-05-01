@@ -1,21 +1,20 @@
 package com.thomaskioko.tvmaniac.app.test.compose.robot
 
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import androidx.compose.ui.test.ComposeUiTest
+import androidx.compose.ui.test.ExperimentalTestApi
 import com.thomaskioko.tvmaniac.home.nav.di.model.HomeConfig
 import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
-import com.thomaskioko.tvmaniac.testing.integration.ui.TIMEOUT_MILLIS
-import com.thomaskioko.tvmaniac.testing.integration.ui.isNotSelected
-import com.thomaskioko.tvmaniac.testing.integration.ui.isSelected
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
 
-internal class HomeRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
+@OptIn(ExperimentalTestApi::class)
+internal class HomeRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
 
     fun assertTabSelected(config: HomeConfig) {
-        composeTestRule.isSelected(tag =config.testTag(), timeoutMillis = TIMEOUT_MILLIS)
+        assertSelected(tag = config.testTag())
     }
 
     fun assertTabNotSelected(config: HomeConfig) {
-        composeTestRule.isNotSelected(tag = config.testTag(), timeoutMillis = TIMEOUT_MILLIS)
+        assertNotSelected(tag = config.testTag())
     }
 
     fun clickDiscoverTab() {

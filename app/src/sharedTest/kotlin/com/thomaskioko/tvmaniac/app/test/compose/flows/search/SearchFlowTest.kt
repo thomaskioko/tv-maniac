@@ -1,18 +1,14 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.search
 
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
-import org.junit.Before
 import org.junit.Test
 
 internal class SearchFlowTest : BaseAppFlowTest() {
 
-    @Before
-    fun setUp() {
-        scenarios.discover.stubBrowseGraph()
-    }
-
     @Test
-    fun givenSearch_whenQueryEntered_thenDisplaysResults() {
+    fun givenSearch_whenQueryEntered_thenDisplaysResults() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         val query = "Breaking Bad"
         val traktId = 1388L
 
@@ -30,7 +26,9 @@ internal class SearchFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenSearch_whenNoResultsFound_thenDisplaysEmptyState() {
+    fun givenSearch_whenNoResultsFound_thenDisplaysEmptyState() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         val query = "NoResultsShow"
         discoverRobot.navigateToSearchTab()
 
@@ -42,7 +40,9 @@ internal class SearchFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenSearch_whenResultItemClicked_thenNavigatesToShowDetails() {
+    fun givenSearch_whenResultItemClicked_thenNavigatesToShowDetails() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         val query = "Breaking Bad"
         val traktId = 1388L
 
@@ -57,7 +57,9 @@ internal class SearchFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenShowDetails_whenBackIsPressed_thenRestoresSearchScreen() {
+    fun givenShowDetails_whenBackIsPressed_thenRestoresSearchScreen() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         val query = "Breaking Bad"
         val traktId = 1388L
 
@@ -76,7 +78,9 @@ internal class SearchFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenSearch_whenSearchFails_thenDisplaysErrorState() {
+    fun givenSearch_whenSearchFails_thenDisplaysErrorState() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         val query = "ErrorQuery"
         scenarios.search.stubSearchError(query)
 

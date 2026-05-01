@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.sheet
 
+import com.thomaskioko.tvmaniac.app.test.AppFlowScope
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeSheetActionItem
-import org.junit.Before
 import org.junit.Test
 
 internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
@@ -11,19 +11,18 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
     private val pilotEpisodeTraktId = 73640L
     private val pilotSeasonNumber = 1L
 
-    @Before
-    fun setUp() {
-        scenarios.stubAuthenticatedSync()
-    }
-
     @Test
-    fun givenAuthenticatedUser_whenUpNextCardClicked_thenOpensEpisodeSheet() {
+    fun givenAuthenticatedUser_whenUpNextCardClicked_thenOpensEpisodeSheet() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
+
         openEpisodeSheetFromUpNextCard()
         episodeSheetRobot.assertEpisodeSheetDisplayed()
     }
 
     @Test
-    fun givenEpisodeSheet_whenOpened_thenShowsAllActionItems() {
+    fun givenEpisodeSheet_whenOpened_thenShowsAllActionItems() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
+
         openEpisodeSheetFromUpNextCard()
 
         episodeSheetRobot.assertActionItemDisplayed(EpisodeSheetActionItem.TOGGLE_WATCHED)
@@ -33,7 +32,9 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenEpisodeSheet_whenOpenShowClicked_thenNavigatesToShowDetails() {
+    fun givenEpisodeSheet_whenOpenShowClicked_thenNavigatesToShowDetails() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
+
         openEpisodeSheetFromUpNextCard()
 
         episodeSheetRobot.clickActionItem(EpisodeSheetActionItem.OPEN_SHOW)
@@ -42,7 +43,9 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenEpisodeSheet_whenOpenSeasonClicked_thenNavigatesToSeasonDetails() {
+    fun givenEpisodeSheet_whenOpenSeasonClicked_thenNavigatesToSeasonDetails() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
+
         openEpisodeSheetFromUpNextCard()
 
         episodeSheetRobot.clickActionItem(EpisodeSheetActionItem.OPEN_SEASON)
@@ -52,7 +55,9 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenEpisodeSheet_whenToggleWatchedClicked_thenMarksEpisodeWatched() {
+    fun givenEpisodeSheet_whenToggleWatchedClicked_thenMarksEpisodeWatched() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
+
         openEpisodeSheetFromUpNextCard()
 
         episodeSheetRobot.clickActionItem(EpisodeSheetActionItem.TOGGLE_WATCHED)
@@ -64,7 +69,9 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenEpisodeSheet_whenUnfollowClicked_thenRemovesShowFromLibrary() {
+    fun givenEpisodeSheet_whenUnfollowClicked_thenRemovesShowFromLibrary() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
+
         openEpisodeSheetFromUpNextCard()
 
         episodeSheetRobot.clickActionItem(EpisodeSheetActionItem.UNFOLLOW)
@@ -73,7 +80,7 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
         libraryRobot.assertShowRowDoesNotExist(breakingBadTraktId)
     }
 
-    private fun openEpisodeSheetFromUpNextCard() {
+    private fun AppFlowScope.openEpisodeSheetFromUpNextCard() {
         rootRobot.dismissNotificationRationale()
 
         discoverRobot.assertDiscoverScreenDisplayed()

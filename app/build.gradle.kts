@@ -201,7 +201,7 @@ dependencies {
     testImplementation(projects.core.locale.testing)
 
     testImplementation(libs.androidx.compose.ui.test)
-    testRuntimeOnly(libs.androidx.test.core)
+    testImplementation(libs.androidx.test.core)
     testImplementation(libs.androidx.work.testing)
     testImplementation(libs.coroutines.test)
     testImplementation(libs.kotest.assertions)
@@ -235,6 +235,7 @@ dependencies {
 
     androidTestImplementation(libs.androidx.compose.ui.test)
     androidTestImplementation(libs.androidx.runner)
+    androidTestImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.androidx.work.testing)
     androidTestImplementation(libs.coroutines.test)
     androidTestImplementation(libs.kotest.assertions)

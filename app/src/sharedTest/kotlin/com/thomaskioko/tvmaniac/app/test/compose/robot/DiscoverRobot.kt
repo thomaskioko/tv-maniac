@@ -1,14 +1,12 @@
 package com.thomaskioko.tvmaniac.app.test.compose.robot
 
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.performTouchInput
-import androidx.compose.ui.test.swipeLeft
-import androidx.compose.ui.test.swipeRight
+import androidx.compose.ui.test.ComposeUiTest
+import androidx.compose.ui.test.ExperimentalTestApi
 import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
 import com.thomaskioko.tvmaniac.testtags.discover.DiscoverTestTags
 
-internal class DiscoverRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
+@OptIn(ExperimentalTestApi::class)
+internal class DiscoverRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
 
     fun assertDiscoverScreenDisplayed() {
         assertDisplayed(DiscoverTestTags.SCREEN_TEST_TAG)
@@ -35,15 +33,13 @@ internal class DiscoverRobot(composeTestRule: ComposeContentTestRule) : BaseRobo
     }
 
     fun swipeFeaturedPagerLeft() {
-        composeTestRule.onNodeWithTag(DiscoverTestTags.FEATURED_PAGER_TEST_TAG)
-            .performTouchInput { swipeLeft() }
-        composeTestRule.waitForIdle()
+        swipeLeft(DiscoverTestTags.FEATURED_PAGER_TEST_TAG)
+        waitForIdle()
     }
 
     fun swipeFeaturedPagerRight() {
-        composeTestRule.onNodeWithTag(DiscoverTestTags.FEATURED_PAGER_TEST_TAG)
-            .performTouchInput { swipeRight() }
-        composeTestRule.waitForIdle()
+        swipeRight(DiscoverTestTags.FEATURED_PAGER_TEST_TAG)
+        waitForIdle()
     }
 
     fun clickShowCard(traktId: Long) {
@@ -52,7 +48,7 @@ internal class DiscoverRobot(composeTestRule: ComposeContentTestRule) : BaseRobo
 
     fun navigateToSearchTab(): SearchRobot {
         click(DiscoverTestTags.SEARCH_BUTTON_TEST_TAG, useSemanticsAction = true)
-        return SearchRobot(composeTestRule)
+        return SearchRobot(composeUi)
     }
 
     fun clickUpNextCard(traktId: Long) {

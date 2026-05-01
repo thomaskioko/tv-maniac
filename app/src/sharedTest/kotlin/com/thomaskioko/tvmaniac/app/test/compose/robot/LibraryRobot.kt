@@ -1,12 +1,12 @@
 package com.thomaskioko.tvmaniac.app.test.compose.robot
 
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import androidx.compose.ui.test.ComposeUiTest
+import androidx.compose.ui.test.ExperimentalTestApi
 import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
-import com.thomaskioko.tvmaniac.testing.integration.ui.TIMEOUT_MILLIS
-import com.thomaskioko.tvmaniac.testing.integration.ui.replaceText
 import com.thomaskioko.tvmaniac.testtags.library.LibraryTestTags
 
-internal class LibraryRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
+@OptIn(ExperimentalTestApi::class)
+internal class LibraryRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
 
     fun assertLibraryScreenDisplayed() {
         assertDisplayed(LibraryTestTags.SCREEN_TEST_TAG)
@@ -33,7 +33,7 @@ internal class LibraryRobot(composeTestRule: ComposeContentTestRule) : BaseRobot
     }
 
     fun enterSearchQuery(query: String) {
-        composeTestRule.replaceText(tag = LibraryTestTags.SEARCH_BAR_TEST_TAG, text = query, timeoutMillis = TIMEOUT_MILLIS)
+        replaceText(tag = LibraryTestTags.SEARCH_BAR_TEST_TAG, text = query)
     }
 
     fun clickFilterButton() {

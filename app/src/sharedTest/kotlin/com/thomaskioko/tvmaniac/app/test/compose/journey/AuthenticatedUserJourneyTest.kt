@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.app.test.compose.journey
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.TEST_PROFILE_SLUG
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeSheetActionItem
-import org.junit.Before
 import org.junit.Test
 
 internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
@@ -15,13 +14,10 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
     private val secondEpisodeTraktId = 73641L
     private val betterCallSaulTraktId = 59660L
 
-    @Before
-    fun stubInitialState() {
-        scenarios.stubUnauthenticatedState()
-    }
-
     @Test
-    fun givenAuthenticatedUser_whenSignsIn_thenExploresSyncedSurfacesAndSignsOut() {
+    fun givenAuthenticatedUser_whenSignsIn_thenExploresSyncedSurfacesAndSignsOut() = runAppFlowTest {
+        scenarios.stubUnauthenticatedState()
+
         // Verify public content on Discover
         discoverRobot.assertDiscoverScreenDisplayed()
         discoverRobot.assertFeaturedShowDisplayed(breakingBadTraktId)

@@ -9,14 +9,11 @@ internal class LibraryFlowTest : BaseAppFlowTest() {
     private val forAllMankindTraktId = 140481L
     private val theBoysTraktId = 139960L
 
-    override fun onBeforeTest() {
-        super.onBeforeTest()
+    @Test
+    fun givenLibrary_whenSearchQueryEntered_thenFiltersResults() = runAppFlowTest {
         scenarios.discover.stubBrowseGraph()
         scenarios.library.stubLibrarySyncEndpoints()
-    }
 
-    @Test
-    fun givenLibrary_whenSearchQueryEntered_thenFiltersResults() {
         discoverRobot.assertDiscoverScreenDisplayed()
 
         scenarios.signInAndDismissRationale()
@@ -37,7 +34,10 @@ internal class LibraryFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenLibrary_whenGenreSelected_thenFiltersResults() {
+    fun givenLibrary_whenGenreSelected_thenFiltersResults() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+        scenarios.library.stubLibrarySyncEndpoints()
+
         discoverRobot.assertDiscoverScreenDisplayed()
 
         scenarios.signInAndDismissRationale()

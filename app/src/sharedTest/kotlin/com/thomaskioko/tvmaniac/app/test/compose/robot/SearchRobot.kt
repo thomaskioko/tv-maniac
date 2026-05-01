@@ -1,31 +1,24 @@
 package com.thomaskioko.tvmaniac.app.test.compose.robot
 
-import androidx.compose.ui.test.assertTextContains
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.ComposeUiTest
+import androidx.compose.ui.test.ExperimentalTestApi
 import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
-import com.thomaskioko.tvmaniac.testing.integration.ui.TIMEOUT_MILLIS
-import com.thomaskioko.tvmaniac.testing.integration.ui.replaceText
 import com.thomaskioko.tvmaniac.testtags.search.SearchTestTags
 
-internal class SearchRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
+@OptIn(ExperimentalTestApi::class)
+internal class SearchRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
 
     fun assertSearchScreenDisplayed() {
         assertDisplayed(SearchTestTags.SCREEN_TEST_TAG)
     }
 
     fun enterSearchQuery(query: String) {
-        composeTestRule.replaceText(
-            tag = SearchTestTags.SEARCH_BAR_TEST_TAG,
-            text = query,
-            timeoutMillis = TIMEOUT_MILLIS,
-        )
-        composeTestRule.waitForIdle()
+        replaceText(tag = SearchTestTags.SEARCH_BAR_TEST_TAG, text = query)
+        waitForIdle()
     }
 
     fun assertSearchQueryDisplayed(query: String) {
-        composeTestRule.onNodeWithTag(SearchTestTags.SEARCH_BAR_TEST_TAG)
-            .assertTextContains(query)
+        assertTextContains(SearchTestTags.SEARCH_BAR_TEST_TAG, query, useUnmergedTree = false)
     }
 
     fun assertResultCountEquals(count: Int) {
@@ -55,6 +48,6 @@ internal class SearchRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(
 
     fun clickResultItem(traktId: Long): ShowDetailsRobot {
         click(SearchTestTags.resultItem(traktId))
-        return ShowDetailsRobot(composeTestRule)
+        return ShowDetailsRobot(composeUi)
     }
 }

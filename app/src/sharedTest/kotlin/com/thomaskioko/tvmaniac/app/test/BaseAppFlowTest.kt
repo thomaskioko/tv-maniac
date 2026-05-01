@@ -67,7 +67,7 @@ internal abstract class BaseAppFlowTest {
         val application = InstrumentationRegistry.getInstrumentation()
             .targetContext
             .applicationContext as TvManiacTestApplication
-        application.resetGraph()
+        application.resetAppComponent()
 
         runAndroidComposeUiTest<TvManiacTestActivity> {
             val graph = application.graph

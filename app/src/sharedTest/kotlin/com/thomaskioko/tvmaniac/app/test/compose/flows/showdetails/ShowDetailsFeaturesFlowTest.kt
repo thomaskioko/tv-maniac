@@ -10,13 +10,10 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
     private val pilotEpisodeTraktId = 73640L
     private val favoritesListTraktId = 34223248L
 
-    override fun onBeforeTest() {
-        super.onBeforeTest()
-        scenarios.discover.stubBrowseGraph()
-    }
-
     @Test
-    fun givenShowDetails_whenOpened_thenInteractiveSurfacesAreExercised() {
+    fun givenShowDetails_whenOpened_thenInteractiveSurfacesAreExercised() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         discoverRobot.clickShowCard(breakingBadTraktId)
         showDetailsRobot.assertShowDetailsDisplayed()
 
@@ -57,7 +54,9 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenAuthenticatedUser_whenAddToListClicked_thenShowsListSheet() {
+    fun givenAuthenticatedUser_whenAddToListClicked_thenShowsListSheet() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         scenarios.stubAuthenticatedSync()
 
         rootRobot.dismissNotificationRationale()

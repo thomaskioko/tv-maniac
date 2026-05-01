@@ -2,18 +2,14 @@ package com.thomaskioko.tvmaniac.app.test.compose.flows.settings
 
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
-import org.junit.Before
 import org.junit.Test
 
 internal class SettingsFlowTest : BaseAppFlowTest() {
 
-    @Before
-    fun setUp() {
-        scenarios.discover.stubBrowseGraph()
-    }
-
     @Test
-    fun givenSettings_whenImageQualitySelected_thenSelectionIsPersisted() {
+    fun givenSettings_whenImageQualitySelected_thenSelectionIsPersisted() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         discoverRobot.assertDiscoverScreenDisplayed()
 
         scenarios.stubUsersMeUnauthorized()
@@ -34,7 +30,9 @@ internal class SettingsFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenAuthenticatedUser_whenTraktAccountClicked_thenShowsLogoutDialog() {
+    fun givenAuthenticatedUser_whenTraktAccountClicked_thenShowsLogoutDialog() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         discoverRobot.assertDiscoverScreenDisplayed()
 
         scenarios.signInAndDismissRationale()

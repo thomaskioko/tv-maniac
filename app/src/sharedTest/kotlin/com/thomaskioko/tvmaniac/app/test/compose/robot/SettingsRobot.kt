@@ -1,34 +1,25 @@
 package com.thomaskioko.tvmaniac.app.test.compose.robot
 
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import androidx.compose.ui.test.ComposeUiTest
+import androidx.compose.ui.test.ExperimentalTestApi
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
-import com.thomaskioko.tvmaniac.testing.integration.ui.TIMEOUT_MILLIS
-import com.thomaskioko.tvmaniac.testing.integration.ui.isChecked
-import com.thomaskioko.tvmaniac.testing.integration.ui.isNotSelected
-import com.thomaskioko.tvmaniac.testing.integration.ui.isSelected
-import com.thomaskioko.tvmaniac.testing.integration.ui.isUnchecked
 import com.thomaskioko.tvmaniac.testtags.settings.SettingsTestTags
 
-internal class SettingsRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
+@OptIn(ExperimentalTestApi::class)
+internal class SettingsRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
 
     fun assertSettingsScreenDisplayed() {
         assertDisplayed(SettingsTestTags.SCREEN_TEST_TAG)
     }
 
     fun assertImageQualitySelected(quality: ImageQuality) {
-        composeTestRule.isSelected(
-            SettingsTestTags.imageQualityChip(quality.name),
-            timeoutMillis = TIMEOUT_MILLIS,
-        )
+        assertSelected(SettingsTestTags.imageQualityChip(quality.name))
     }
 
     fun assertImageQualityNotSelected(quality: ImageQuality) {
-        composeTestRule.isNotSelected(
-            tag = SettingsTestTags.imageQualityChip(quality.name),
-            timeoutMillis = TIMEOUT_MILLIS,
-        )
+        assertNotSelected(SettingsTestTags.imageQualityChip(quality.name))
     }
 
     fun clickImageQualityChip(quality: ImageQuality) {
@@ -71,17 +62,11 @@ internal class SettingsRobot(composeTestRule: ComposeContentTestRule) : BaseRobo
     }
 
     fun assertThemeSwatchSelected(theme: ThemeModel) {
-        composeTestRule.isSelected(
-            tag = SettingsTestTags.themeSwatch(theme.name),
-            timeoutMillis = TIMEOUT_MILLIS,
-        )
+        assertSelected(SettingsTestTags.themeSwatch(theme.name))
     }
 
     fun assertThemeSwatchNotSelected(theme: ThemeModel) {
-        composeTestRule.isNotSelected(
-            tag = SettingsTestTags.themeSwatch(theme.name),
-            timeoutMillis = TIMEOUT_MILLIS,
-        )
+        assertNotSelected(SettingsTestTags.themeSwatch(theme.name))
     }
 
     fun clickThemeSwatch(theme: ThemeModel) {
@@ -96,17 +81,11 @@ internal class SettingsRobot(composeTestRule: ComposeContentTestRule) : BaseRobo
     }
 
     fun assertEpisodeNotificationsEnabled() {
-        composeTestRule.isChecked(
-            tag = SettingsTestTags.EPISODE_NOTIFICATIONS_TOGGLE_TEST_TAG,
-            timeoutMillis = TIMEOUT_MILLIS,
-        )
+        assertChecked(SettingsTestTags.EPISODE_NOTIFICATIONS_TOGGLE_TEST_TAG)
     }
 
     fun assertEpisodeNotificationsDisabled() {
-        composeTestRule.isUnchecked(
-            tag = SettingsTestTags.EPISODE_NOTIFICATIONS_TOGGLE_TEST_TAG,
-            timeoutMillis = TIMEOUT_MILLIS,
-        )
+        assertUnchecked(SettingsTestTags.EPISODE_NOTIFICATIONS_TOGGLE_TEST_TAG)
     }
 
     fun clickEpisodeNotificationsToggle() {

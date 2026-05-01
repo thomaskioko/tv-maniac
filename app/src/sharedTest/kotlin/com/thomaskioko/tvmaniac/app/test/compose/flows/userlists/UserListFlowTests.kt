@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.userlists
 
+import com.thomaskioko.tvmaniac.app.test.AppFlowScope
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.TEST_CREATED_LIST_NAME
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.TEST_CREATED_LIST_TRAKT_ID
@@ -12,13 +13,10 @@ internal class UserListFlowTests : BaseAppFlowTest() {
     private val favoritesListTraktId = 34223248L
     private val animeListTraktId = 34223402L
 
-    override fun onBeforeTest() {
-        super.onBeforeTest()
-        scenarios.stubAuthenticatedSync()
-    }
-
     @Test
-    fun givenAuthenticatedUser_whenAddToListClicked_thenShowsListSheet() {
+    fun givenAuthenticatedUser_whenAddToListClicked_thenShowsListSheet() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
+
         openListSheet()
 
         showDetailsRobot.assertListSheetDisplayed()
@@ -27,7 +25,8 @@ internal class UserListFlowTests : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenListSheet_whenShowAddedToMultipleLists_thenUpdatesShowCounts() {
+    fun givenListSheet_whenShowAddedToMultipleLists_thenUpdatesShowCounts() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
         scenarios.traktLists.stubAddShowToList(listId = favoritesListTraktId)
         scenarios.traktLists.stubAddShowToList(listId = animeListTraktId)
 
@@ -47,7 +46,9 @@ internal class UserListFlowTests : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenListSheet_whenCreateClicked_thenShowsCreateListField() {
+    fun givenListSheet_whenCreateClicked_thenShowsCreateListField() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
+
         openListSheet()
         showDetailsRobot.assertCreateListFieldDoesNotExist()
 
@@ -57,7 +58,8 @@ internal class UserListFlowTests : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenListSheet_whenNewListCreated_thenAddsShowToList() {
+    fun givenListSheet_whenNewListCreated_thenAddsShowToList() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
         scenarios.traktLists.stubCreateList()
         scenarios.traktLists.stubAddShowToList(listId = TEST_CREATED_LIST_TRAKT_ID)
 
@@ -80,7 +82,9 @@ internal class UserListFlowTests : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenListSheet_whenCloseClicked_thenDismissesSheet() {
+    fun givenListSheet_whenCloseClicked_thenDismissesSheet() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
+
         openListSheet()
         showDetailsRobot.assertListSheetDisplayed()
 
@@ -89,7 +93,7 @@ internal class UserListFlowTests : BaseAppFlowTest() {
         showDetailsRobot.assertListSheetDoesNotExist()
     }
 
-    private fun openListSheet() {
+    private fun AppFlowScope.openListSheet() {
         rootRobot.dismissNotificationRationale()
 
         discoverRobot.clickShowCard(breakingBadTraktId)

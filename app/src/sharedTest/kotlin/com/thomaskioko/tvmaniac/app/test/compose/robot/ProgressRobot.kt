@@ -1,11 +1,13 @@
 package com.thomaskioko.tvmaniac.app.test.compose.robot
 
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import androidx.compose.ui.test.ComposeUiTest
+import androidx.compose.ui.test.ExperimentalTestApi
 import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
 import com.thomaskioko.tvmaniac.testtags.progress.ProgressTestTags
 import com.thomaskioko.tvmaniac.testtags.upnext.UpNextTestTags
 
-internal class ProgressRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
+@OptIn(ExperimentalTestApi::class)
+internal class ProgressRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
 
     fun assertProgressScreenDisplayed() {
         assertDisplayed(ProgressTestTags.SCREEN_TEST_TAG)

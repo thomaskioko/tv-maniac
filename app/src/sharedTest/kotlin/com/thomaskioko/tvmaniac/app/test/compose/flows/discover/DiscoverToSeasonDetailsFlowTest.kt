@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.app.test.compose.flows.discover
 
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.testtags.seasondetails.SeasonDetailsTestTags
-import org.junit.Before
 import org.junit.Test
 
 internal class DiscoverToSeasonDetailsFlowTest : BaseAppFlowTest() {
@@ -12,13 +11,10 @@ internal class DiscoverToSeasonDetailsFlowTest : BaseAppFlowTest() {
     private val secondEpisodeTraktId = 73641L
     private val seasonTwoFirstEpisodeTraktId = 73489L
 
-    @Before
-    fun stubEndpoints() {
-        scenarios.discover.stubBrowseGraph()
-    }
-
     @Test
-    fun givenShowDetails_whenOpened_thenSeasonChipsAreRendered() {
+    fun givenShowDetails_whenOpened_thenSeasonChipsAreRendered() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         discoverRobot.clickShowCard(breakingBadTraktId)
         showDetailsRobot.assertShowDetailsDisplayed()
         showDetailsRobot.assertSeasonChipDisplayed(seasonNumber = 1L)
@@ -26,7 +22,9 @@ internal class DiscoverToSeasonDetailsFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenShowDetails_whenSeasonChipClicked_thenOpensSeasonDetails() {
+    fun givenShowDetails_whenSeasonChipClicked_thenOpensSeasonDetails() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         discoverRobot.clickShowCard(breakingBadTraktId)
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
         seasonDetailsRobot.assertSeasonDetailsDisplayed()
@@ -34,7 +32,9 @@ internal class DiscoverToSeasonDetailsFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenSeasonDetails_whenEpisodeRowClicked_thenOpensEpisodeSheet() {
+    fun givenSeasonDetails_whenEpisodeRowClicked_thenOpensEpisodeSheet() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         discoverRobot.clickShowCard(breakingBadTraktId)
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
         seasonDetailsRobot.clickEpisodeRow(pilotEpisodeTraktId)
@@ -42,7 +42,9 @@ internal class DiscoverToSeasonDetailsFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenSeasonDetails_whenEpisodeHeaderClicked_thenTogglesEpisodeList() {
+    fun givenSeasonDetails_whenEpisodeHeaderClicked_thenTogglesEpisodeList() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         discoverRobot.clickShowCard(breakingBadTraktId)
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
         seasonDetailsRobot.assertEpisodeRowDisplayed(pilotEpisodeTraktId)
@@ -53,7 +55,9 @@ internal class DiscoverToSeasonDetailsFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenSeasonDetails_whenBackIsPressed_thenRestoresShowDetails() {
+    fun givenSeasonDetails_whenBackIsPressed_thenRestoresShowDetails() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         discoverRobot.clickShowCard(breakingBadTraktId)
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
         seasonDetailsRobot.assertSeasonDetailsDisplayed()

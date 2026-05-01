@@ -5,25 +5,19 @@ import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeSheetActionIte
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.testing.integration.ui.SystemDialog
 import com.thomaskioko.tvmaniac.testing.integration.ui.dismissSystemDialog
-import org.junit.Before
 import org.junit.Test
 
 internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
 
     private val breakingBadTraktId = 1388L
-    private val breakingBadTmdbId = 1396L
-    private val breakingBadSeasons = listOf(1L, 2L)
     private val pilotEpisodeTraktId = 73640L
     private val secondEpisodeTraktId = 73641L
     private val betterCallSaulTraktId = 59660L
 
-    @Before
-    fun stubEndpoints() {
-        scenarios.stubUnauthenticatedJourney()
-    }
-
     @Test
-    fun givenUnauthenticatedUser_whenNavigatesAllScreens_thenChangesAppearanceAndNotifications() {
+    fun givenUnauthenticatedUser_whenNavigatesAllScreens_thenChangesAppearanceAndNotifications() = runAppFlowTest {
+        scenarios.stubUnauthenticatedJourney()
+
         // Verify public content on Discover
         discoverRobot.assertDiscoverScreenDisplayed()
         discoverRobot.assertShowCardDisplayed(breakingBadTraktId)
@@ -98,7 +92,8 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
         rootRobot.assertNotificationRationaleDisplayed()
         rootRobot.acceptNotificationRationale()
         rootRobot.assertNotificationRationaleDoesNotExist()
-        composeTestRule.dismissSystemDialog(SystemDialog.NotificationPermissionDeny)
+
+        dismissSystemDialog(SystemDialog.NotificationPermissionDeny)
 
         // Follow show locally
         settingsRobot.pressBack()
@@ -149,8 +144,10 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenUnauthenticatedUser_whenSignsInFromProfile_thenSeesUserCard() {
+    fun givenUnauthenticatedUser_whenSignsInFromProfile_thenSeesUserCard() = runAppFlowTest {
+        scenarios.stubUnauthenticatedJourney()
         scenarios.stubProfileOnSignIn()
+
         homeRobot.clickProfileTab()
         profileRobot.assertSignInButtonDisplayed()
         profileRobot.clickSignInButton()
@@ -158,7 +155,9 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenUnauthenticatedUser_whenRationaleDismissedInSettings_thenDoesNotShowAgainOnAuth() {
+    fun givenUnauthenticatedUser_whenRationaleDismissedInSettings_thenDoesNotShowAgainOnAuth() = runAppFlowTest {
+        scenarios.stubUnauthenticatedJourney()
+
         // Dismiss rationale from Settings
         homeRobot.clickProfileTab()
 

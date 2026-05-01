@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.seasons
 
+import com.thomaskioko.tvmaniac.app.test.AppFlowScope
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
-import org.junit.Before
 import org.junit.Test
 
 internal class SeasonFlowTest : BaseAppFlowTest() {
@@ -12,13 +12,10 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
     private val thirdEpisodeTraktId = 73484L
     private val seasonTwoFirstEpisodeTraktId = 73489L
 
-    @Before
-    fun stubEndpoints() {
-        scenarios.discover.stubBrowseGraph()
-    }
-
     @Test
-    fun givenSeasonDetails_whenWatchedButtonClicked_thenTogglesWatchedState() {
+    fun givenSeasonDetails_whenWatchedButtonClicked_thenTogglesWatchedState() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         discoverRobot.clickShowCard(breakingBadTraktId)
         trackShow()
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
@@ -32,7 +29,9 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenSeasonDetails_whenMarkingEpisodeWithPredecessors_thenShowsDialog() {
+    fun givenSeasonDetails_whenMarkingEpisodeWithPredecessors_thenShowsDialog() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         discoverRobot.clickShowCard(breakingBadTraktId)
         trackShow()
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
@@ -48,7 +47,9 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenSeasonDetails_whenMarkAllConfirmed_thenMarksAllPreviousEpisodes() {
+    fun givenSeasonDetails_whenMarkAllConfirmed_thenMarksAllPreviousEpisodes() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         discoverRobot.clickShowCard(breakingBadTraktId)
         trackShow()
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
@@ -65,7 +66,9 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenSeasonDetails_whenJustThisClicked_thenMarksOnlyCurrentEpisode() {
+    fun givenSeasonDetails_whenJustThisClicked_thenMarksOnlyCurrentEpisode() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         discoverRobot.clickShowCard(breakingBadTraktId)
         trackShow()
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
@@ -78,7 +81,9 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenSeasonDetails_whenWatchedEpisodeToggled_thenShowsUnwatchDialog() {
+    fun givenSeasonDetails_whenWatchedEpisodeToggled_thenShowsUnwatchDialog() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         discoverRobot.clickShowCard(breakingBadTraktId)
         trackShow()
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
@@ -96,7 +101,9 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenSeasonDetails_whenUnwatchConfirmed_thenUnwatchesEpisode() {
+    fun givenSeasonDetails_whenUnwatchConfirmed_thenUnwatchesEpisode() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         discoverRobot.clickShowCard(breakingBadTraktId)
         trackShow()
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
@@ -114,7 +121,9 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenSeasonDetails_whenMarkPreviousSeasonsConfirmed_thenMarksAllPreviousSeasons() {
+    fun givenSeasonDetails_whenMarkPreviousSeasonsConfirmed_thenMarksAllPreviousSeasons() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         discoverRobot.clickShowCard(breakingBadTraktId)
         showDetailsRobot.clickSeasonChip(seasonNumber = 2L)
         seasonDetailsRobot.assertEpisodeRowDisplayed(seasonTwoFirstEpisodeTraktId)
@@ -134,7 +143,7 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
         seasonDetailsRobot.assertMarkWatchedDisplayed(seasonTwoFirstEpisodeTraktId)
     }
 
-    private fun trackShow() {
+    private fun AppFlowScope.trackShow() {
         showDetailsRobot.assertTrackButtonDisplayed()
         showDetailsRobot.clickTrackButton()
         rootRobot.dismissNotificationRationale()

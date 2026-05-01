@@ -1,10 +1,12 @@
 package com.thomaskioko.tvmaniac.app.test.compose.robot
 
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import androidx.compose.ui.test.ComposeUiTest
+import androidx.compose.ui.test.ExperimentalTestApi
 import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
 import com.thomaskioko.tvmaniac.testtags.profile.ProfileTestTags
 
-internal class ProfileRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
+@OptIn(ExperimentalTestApi::class)
+internal class ProfileRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
 
     fun assertProfileScreenDisplayed() {
         assertDisplayed(ProfileTestTags.SCREEN_TEST_TAG)

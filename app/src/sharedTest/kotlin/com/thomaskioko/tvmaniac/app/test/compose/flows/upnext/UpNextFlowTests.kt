@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.upnext
 
+import com.thomaskioko.tvmaniac.app.test.AppFlowScope
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
-import org.junit.Before
 import org.junit.Test
 
 internal class UpNextFlowTests : BaseAppFlowTest() {
@@ -9,20 +9,19 @@ internal class UpNextFlowTests : BaseAppFlowTest() {
     private val breakingBadTraktId = 1388L
     private val pilotEpisodeTraktId = 73640L
 
-    @Before
-    fun setUp() {
-        scenarios.stubAuthenticatedSync()
-    }
-
     @Test
-    fun givenAuthenticatedUser_whenShowFollowed_thenShowsEpisodeRow() {
+    fun givenAuthenticatedUser_whenShowFollowed_thenShowsEpisodeRow() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
+
         navigateToUpNext()
 
         progressRobot.assertEpisodeRowDisplayed(breakingBadTraktId)
     }
 
     @Test
-    fun givenUpNext_whenWatchedButtonClicked_thenMarksEpisodeWatched() {
+    fun givenUpNext_whenWatchedButtonClicked_thenMarksEpisodeWatched() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
+
         navigateToUpNext()
         progressRobot.assertEpisodeRowDisplayed(breakingBadTraktId)
 
@@ -34,7 +33,9 @@ internal class UpNextFlowTests : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenUpNext_whenWatchedButtonClicked_thenAdvancesToNextEpisode() {
+    fun givenUpNext_whenWatchedButtonClicked_thenAdvancesToNextEpisode() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
+
         navigateToUpNext()
         progressRobot.assertEpisodeRowDisplayed(breakingBadTraktId)
         progressRobot.assertEpisodeMetaDisplayed(breakingBadTraktId, "S01E01")
@@ -48,7 +49,9 @@ internal class UpNextFlowTests : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenUpNext_whenEpisodeRowClicked_thenNavigatesToSeasonDetails() {
+    fun givenUpNext_whenEpisodeRowClicked_thenNavigatesToSeasonDetails() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
+
         navigateToUpNext()
         progressRobot.assertEpisodeRowDisplayed(breakingBadTraktId)
 
@@ -57,7 +60,7 @@ internal class UpNextFlowTests : BaseAppFlowTest() {
         seasonDetailsRobot.assertSeasonDetailsDisplayed()
     }
 
-    private fun navigateToUpNext() {
+    private fun AppFlowScope.navigateToUpNext() {
         rootRobot.dismissNotificationRationale()
         discoverRobot.assertDiscoverScreenDisplayed()
 

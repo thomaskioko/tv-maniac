@@ -1,12 +1,12 @@
 package com.thomaskioko.tvmaniac.app.test.compose.robot
 
-import androidx.compose.ui.test.assertTextEquals
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.ComposeUiTest
+import androidx.compose.ui.test.ExperimentalTestApi
 import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
 import com.thomaskioko.tvmaniac.testtags.calendar.CalendarTestTags
 
-internal class CalendarRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
+@OptIn(ExperimentalTestApi::class)
+internal class CalendarRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
 
     fun assertCalendarScreenDisplayed() {
         assertDisplayed(CalendarTestTags.SCREEN_TEST_TAG)
@@ -22,21 +22,18 @@ internal class CalendarRobot(composeTestRule: ComposeContentTestRule) : BaseRobo
 
     fun assertWeekLabelDisplayed(text: String) {
         assertDisplayed(CalendarTestTags.WEEK_LABEL)
-        composeTestRule.onNodeWithTag(CalendarTestTags.WEEK_LABEL, useUnmergedTree = true)
-            .assertTextEquals(text)
+        assertTextEquals(CalendarTestTags.WEEK_LABEL, text)
     }
 
     fun assertDateHeaderDisplayed(text: String) {
         assertDisplayed(CalendarTestTags.DATE_HEADER)
-        composeTestRule.onNodeWithTag(CalendarTestTags.DATE_HEADER, useUnmergedTree = true)
-            .assertTextEquals(text)
+        assertTextEquals(CalendarTestTags.DATE_HEADER, text)
     }
 
     fun assertAdditionalEpisodesCountDisplayed(episodeTraktId: Long, expectedText: String) {
         val tag = CalendarTestTags.additionalEpisodesCount(episodeTraktId)
         assertDisplayed(tag)
-        composeTestRule.onNodeWithTag(tag, useUnmergedTree = true)
-            .assertTextEquals(expectedText)
+        assertTextEquals(tag, expectedText)
     }
 
     fun clickNextWeek() {

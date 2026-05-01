@@ -2,18 +2,14 @@ package com.thomaskioko.tvmaniac.app.test.compose.flows.calendar
 
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.TEST_NEXT_WEEK
-import org.junit.Before
 import org.junit.Test
 
 internal class CalendarFlowTest : BaseAppFlowTest() {
 
-    @Before
-    fun setUp() {
-        scenarios.discover.stubBrowseGraph()
-    }
-
     @Test
-    fun givenUnauthenticatedUser_whenNavigatesToCalendar_thenShowsLoginPrompt() {
+    fun givenUnauthenticatedUser_whenNavigatesToCalendar_thenShowsLoginPrompt() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         discoverRobot.assertDiscoverScreenDisplayed()
 
         homeRobot.clickProgressTab()
@@ -26,7 +22,9 @@ internal class CalendarFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenAuthenticatedUser_whenNavigatesToCalendar_thenShowsUpcomingEpisodes() {
+    fun givenAuthenticatedUser_whenNavigatesToCalendar_thenShowsUpcomingEpisodes() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         discoverRobot.assertDiscoverScreenDisplayed()
 
         scenarios.signInAndDismissRationale()
@@ -44,7 +42,9 @@ internal class CalendarFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenAuthenticatedUser_whenNoEpisodesScheduled_thenShowsEmptyState() {
+    fun givenAuthenticatedUser_whenNoEpisodesScheduled_thenShowsEmptyState() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         discoverRobot.assertDiscoverScreenDisplayed()
 
         scenarios.signInAndDismissRationale()
@@ -58,7 +58,9 @@ internal class CalendarFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenAuthenticatedUser_whenNextWeekClicked_thenLoadsNextWeekEpisodes() {
+    fun givenAuthenticatedUser_whenNextWeekClicked_thenLoadsNextWeekEpisodes() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         discoverRobot.assertDiscoverScreenDisplayed()
 
         scenarios.signInAndDismissRationale()
@@ -84,7 +86,9 @@ internal class CalendarFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenAuthenticatedUser_whenCalendarFetchFails_thenShowsErrorSnackbar() {
+    fun givenAuthenticatedUser_whenCalendarFetchFails_thenShowsErrorSnackbar() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         discoverRobot.assertDiscoverScreenDisplayed()
 
         scenarios.signInAndDismissRationale()
