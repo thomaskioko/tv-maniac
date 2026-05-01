@@ -1,0 +1,15 @@
+{
+    "added": {
+        "shows": 1
+    },
+    "existing": {
+        "shows": 0
+    },
+    "not_found": {
+        "shows": []
+    },
+    "list": {
+        "item_count": 1,
+        "updated_at": "2026-04-30T12:00:00.000Z"
+    }
+}

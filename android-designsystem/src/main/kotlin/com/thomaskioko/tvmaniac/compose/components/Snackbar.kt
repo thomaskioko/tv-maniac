@@ -90,7 +90,6 @@ public fun TvManiacSnackBarHost(
     var visible by remember { mutableStateOf(false) }
     val currentOnDismiss by rememberUpdatedState(onDismiss)
     val offsetX = remember { Animatable(0f) }
-    val offsetY = remember { Animatable(0f) }
     val coroutineScope = rememberCoroutineScope()
     val density = LocalDensity.current
     val dismissThreshold = remember(density) { with(density) { 56.dp.toPx() } }
@@ -103,7 +102,6 @@ public fun TvManiacSnackBarHost(
 
     LaunchedEffect(message) {
         offsetX.snapTo(0f)
-        offsetY.snapTo(0f)
         if (message != null) {
             visible = true
             delay(durationMillis)
@@ -133,14 +131,9 @@ public fun TvManiacSnackBarHost(
             TvManiacSnackBar(
                 modifier = Modifier
                     .padding(vertical = 16.dp)
-                    .offset { IntOffset(offsetX.value.roundToInt(), offsetY.value.roundToInt().coerceAtMost(0)) }
+                    .offset { IntOffset(offsetX.value.roundToInt(), 0) }
                     .alpha(
-                        (
-                            1f - maxOf(
-                                abs(offsetX.value) / (dismissThreshold * 3),
-                                abs(offsetY.value) / (dismissThreshold * 3),
-                            )
-                            ).coerceIn(0f, 1f),
+                        (1f - abs(offsetX.value) / (dismissThreshold * 3)).coerceIn(0f, 1f),
                     )
                     .pointerInput(Unit) {
                         val velocityTracker = VelocityTracker()
@@ -148,22 +141,25 @@ public fun TvManiacSnackBarHost(
                             onDragStart = { velocityTracker.resetTracking() },
                             onDragEnd = {
                                 val velocity = velocityTracker.calculateVelocity()
-                                val isFlingUp = velocity.y < -flingVelocityThreshold
                                 val isFlingHorizontal = abs(velocity.x) > flingVelocityThreshold
 
-                                if (offsetY.value < -dismissThreshold || isFlingUp) {
-                                    dismiss()
-                                } else if (abs(offsetX.value) > dismissThreshold || isFlingHorizontal) {
-                                    dismiss()
+                                if (abs(offsetX.value) > dismissThreshold || isFlingHorizontal) {
+                                    val targetX = if (offsetX.value > 0 || velocity.x > flingVelocityThreshold) {
+                                        2000f // Off-screen right
+                                    } else {
+                                        -2000f // Off-screen left
+                                    }
+                                    coroutineScope.launch {
+                                        offsetX.animateTo(targetX, tween(200))
+                                        dismiss()
+                                    }
                                 } else {
                                     coroutineScope.launch { offsetX.animateTo(0f) }
-                                    coroutineScope.launch { offsetY.animateTo(0f) }
                                 }
                             },
                             onDragCancel = {
                                 velocityTracker.resetTracking()
                                 coroutineScope.launch { offsetX.animateTo(0f) }
-                                coroutineScope.launch { offsetY.animateTo(0f) }
                             },
                             onDrag = { change, dragAmount ->
                                 change.consume()
@@ -172,9 +168,6 @@ public fun TvManiacSnackBarHost(
                                     change.position,
                                 )
                                 coroutineScope.launch { offsetX.snapTo(offsetX.value + dragAmount.x) }
-                                coroutineScope.launch {
-                                    offsetY.snapTo((offsetY.value + dragAmount.y).coerceAtMost(0f))
-                                }
                             },
                         )
                     },

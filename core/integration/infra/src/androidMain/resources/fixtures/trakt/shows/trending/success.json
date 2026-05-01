@@ -1,0 +1,328 @@
+[
+    {
+        "watchers": 100,
+        "show": {
+            "title": "Breaking Bad",
+            "year": 2008,
+            "ids": {
+                "trakt": 1388,
+                "tmdb": 1396,
+                "slug": "breaking-bad"
+            },
+            "overview": "A chemistry teacher diagnosed with inoperable lung cancer turns to manufacturing and selling methamphetamine with a former student.",
+            "genres": [
+                "drama",
+                "thriller"
+            ],
+            "rating": 9.3,
+            "votes": 50000,
+            "aired_episodes": 62,
+            "status": "ended"
+        }
+    },
+    {
+        "watchers": 80,
+        "show": {
+            "title": "Better Call Saul",
+            "year": 2015,
+            "ids": {
+                "trakt": 59660,
+                "tmdb": 60059,
+                "slug": "better-call-saul"
+            },
+            "overview": "The trials and tribulations of criminal lawyer Jimmy McGill.",
+            "genres": [
+                "drama",
+                "crime"
+            ],
+            "rating": 8.9,
+            "votes": 30000,
+            "aired_episodes": 63,
+            "status": "ended"
+        }
+    },
+    {
+        "watchers": 60,
+        "show": {
+            "title": "Game of Thrones",
+            "year": 2011,
+            "ids": {
+                "trakt": 1399,
+                "tmdb": 1399,
+                "slug": "game-of-thrones"
+            },
+            "overview": "Seven noble families fight for control of the mythical land of Westeros.",
+            "genres": [
+                "drama",
+                "fantasy"
+            ],
+            "rating": 9.0,
+            "votes": 80000,
+            "aired_episodes": 73,
+            "status": "ended"
+        }
+    },
+    {
+        "watchers": 10668,
+        "show": {
+            "title": "Fallout",
+            "year": 2024,
+            "ids": {
+                "trakt": 163965,
+                "slug": "fallout",
+                "imdb": "tt12637874",
+                "tmdb": 106379,
+                "plex": {
+                    "guid": "5f1b325f4e3eb7003f6a4140",
+                    "slug": "fallout-1"
+                },
+                "tvdb": 416744
+            },
+            "tagline": "Let the end times roll.",
+            "overview": "The story of haves and have-nots in a world in which there's almost nothing left to have. 200 years after the apocalypse, the gentle denizens of luxury fallout shelters are forced to return to the irradiated hellscape their ancestors left behind — and are shocked to discover an incredibly complex, gleefully weird, and highly violent universe waiting for them.",
+            "runtime": 60,
+            "country": "us",
+            "trailer": "https://youtube.com/watch?v=7h8zJHywjAw",
+            "homepage": "https://www.amazon.com/dp/B0CN4HV16N",
+            "status": "returning series",
+            "rating": 8.11612,
+            "votes": 15398,
+            "comment_count": 133,
+            "updated_at": "2026-01-09T16:23:18.000Z",
+            "language": "en",
+            "languages": [
+                "en"
+            ],
+            "available_translations": [
+                "ar",
+                "bg",
+                "ca",
+                "cs",
+                "da",
+                "de",
+                "el",
+                "en",
+                "es",
+                "eu",
+                "fa",
+                "fi",
+                "fr",
+                "gl",
+                "he",
+                "hi",
+                "hr",
+                "hu",
+                "id",
+                "it",
+                "ja",
+                "ka",
+                "kn",
+                "ko",
+                "lt",
+                "ml",
+                "ms",
+                "nl",
+                "no",
+                "pl",
+                "pt",
+                "ro",
+                "ru",
+                "sk",
+                "sl",
+                "sr",
+                "sv",
+                "ta",
+                "te",
+                "th",
+                "tl",
+                "tr",
+                "uk",
+                "vi",
+                "zh"
+            ],
+            "genres": [
+                "action",
+                "adventure",
+                "fantasy",
+                "science-fiction"
+            ],
+            "subgenres": [
+                "based-on-video-game",
+                "robot",
+                "post-apocalyptic-future",
+                "mutant"
+            ],
+            "original_title": "Fallout",
+            "images": {
+                "fanart": [
+                    "media.trakt.tv/images/shows/000/163/965/fanarts/medium/d057bdb401.jpg.webp"
+                ],
+                "poster": [
+                    "media.trakt.tv/images/shows/000/163/965/posters/medium/16767fca4f.jpg.webp"
+                ],
+                "logo": [
+                    "media.trakt.tv/images/shows/000/163/965/logos/medium/99bf7fd30d.png.webp"
+                ],
+                "banner": [
+                    "media.trakt.tv/images/shows/000/163/965/banners/medium/df182ada3d.jpg.webp"
+                ],
+                "thumb": [
+                    "media.trakt.tv/images/shows/000/163/965/thumbs/medium/e33e4bcc5b.jpg.webp"
+                ],
+                "clearart": [
+                    "media.trakt.tv/images/shows/000/163/965/cleararts/medium/6562414185.png.webp"
+                ]
+            },
+            "colors": {
+                "poster": [
+                    "#B99E5E",
+                    "#383B2C"
+                ]
+            },
+            "first_aired": "2024-04-10T07:00:00.000Z",
+            "aired_episodes": 12,
+            "certification": "TV-MA",
+            "airs": {
+                "day": "Wednesday",
+                "time": "03:00",
+                "timezone": "America/New_York"
+            },
+            "network": "Amazon"
+        }
+    },
+    {
+        "watchers": 8213,
+        "show": {
+            "title": "Stranger Things",
+            "year": 2016,
+            "ids": {
+                "trakt": 104439,
+                "slug": "stranger-things",
+                "imdb": "tt4574334",
+                "tmdb": 66732,
+                "plex": {
+                    "guid": "5d9c07efe9d5a1001f4d5ec1",
+                    "slug": "stranger-things"
+                },
+                "tvdb": 305288
+            },
+            "tagline": "It only gets stranger...",
+            "overview": "When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces, and one strange little girl.",
+            "runtime": 65,
+            "country": "us",
+            "trailer": "https://youtube.com/watch?v=mnd7sFt5c3A",
+            "homepage": "https://www.netflix.com/title/80057281",
+            "status": "ended",
+            "rating": 8.45043,
+            "votes": 69999,
+            "comment_count": 251,
+            "updated_at": "2026-01-09T16:37:21.000Z",
+            "language": "en",
+            "languages": [
+                "en"
+            ],
+            "available_translations": [
+                "ar",
+                "bg",
+                "bs",
+                "cs",
+                "da",
+                "de",
+                "el",
+                "en",
+                "es",
+                "eu",
+                "fa",
+                "fi",
+                "fr",
+                "he",
+                "hi",
+                "hr",
+                "hu",
+                "id",
+                "it",
+                "ja",
+                "ka",
+                "ko",
+                "lt",
+                "lv",
+                "ms",
+                "nl",
+                "no",
+                "pl",
+                "pt",
+                "ro",
+                "ru",
+                "sk",
+                "sl",
+                "so",
+                "sr",
+                "sv",
+                "th",
+                "tl",
+                "tr",
+                "uk",
+                "uz",
+                "vi",
+                "zh"
+            ],
+            "genres": [
+                "fantasy",
+                "science-fiction",
+                "mystery",
+                "action",
+                "adventure",
+                "horror"
+            ],
+            "subgenres": [
+                "friendship",
+                "monster",
+                "supernatural",
+                "coming-of-age",
+                "halloween",
+                "small-town",
+                "1980s",
+                "teen-drama",
+                "super-power",
+                "experiment",
+                "supernatural-horror"
+            ],
+            "original_title": "Stranger Things",
+            "images": {
+                "fanart": [
+                    "media.trakt.tv/images/shows/000/104/439/fanarts/medium/08ffc0eae9.jpg.webp"
+                ],
+                "poster": [
+                    "media.trakt.tv/images/shows/000/104/439/posters/medium/84177ad9b8.jpg.webp"
+                ],
+                "logo": [
+                    "media.trakt.tv/images/shows/000/104/439/logos/medium/4193c17ea9.png.webp"
+                ],
+                "banner": [
+                    "media.trakt.tv/images/shows/000/104/439/banners/medium/b7f2406aed.jpg.webp"
+                ],
+                "thumb": [
+                    "media.trakt.tv/images/shows/000/104/439/thumbs/medium/064a38f738.jpg.webp"
+                ],
+                "clearart": [
+                    "media.trakt.tv/images/shows/000/104/439/cleararts/medium/42ae109f8d.png.webp"
+                ]
+            },
+            "colors": {
+                "poster": [
+                    "#BCA38C",
+                    "#2D2F2C"
+                ]
+            },
+            "first_aired": "2016-07-16T00:00:00.000Z",
+            "aired_episodes": 42,
+            "certification": "TV-14",
+            "airs": {
+                "day": "Wednesday",
+                "time": "20:00",
+                "timezone": "America/New_York"
+            },
+            "network": "Netflix"
+        }
+    }
+]

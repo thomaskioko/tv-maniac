@@ -11,15 +11,30 @@ scaffold {
             rootProject.file("app/proguard-rules.pro"),
         )
     }
+    useMetro()
 
     android {
-        useMetro()
         useCompose()
         useBaselineProfile(projects.benchmark)
         useManagedDevices()
+        enableAndroidTests(
+            testInstrumentationRunner = "com.thomaskioko.tvmaniac.app.test.runner.TvManiacInstrumentationRunner",
+            clearPackageData = true,
+        )
     }
 
     optIn("androidx.compose.ui.test.ExperimentalTestApi")
+}
+
+android {
+    sourceSets {
+        getByName("test") {
+            kotlin.directories.add("src/sharedTest/kotlin")
+        }
+        getByName("androidTest") {
+            kotlin.directories.add("src/sharedTest/kotlin")
+        }
+    }
 }
 
 dependencies {
@@ -184,7 +199,6 @@ dependencies {
     testImplementation(projects.features.settings.nav)
     testImplementation(projects.features.trailers.nav)
     testImplementation(projects.core.locale.testing)
-    testImplementation(projects.core.util.testing)
 
     testImplementation(libs.androidx.compose.ui.test)
     testRuntimeOnly(libs.androidx.test.core)
@@ -193,9 +207,41 @@ dependencies {
     testImplementation(libs.kotest.assertions)
     testImplementation(libs.kotlin.test.junit)
     testImplementation(libs.ktor.core)
+    testImplementation(libs.ktor.http)
     testRuntimeOnly(libs.robolectric)
     testImplementation(libs.robolectric.annotations)
     testRuntimeOnly(libs.androidx.compose.ui.test.manifest)
+
+    androidTestImplementation(libs.robolectric.annotations)
+    androidTestImplementation(projects.api.tmdb.api)
+    androidTestImplementation(projects.api.trakt.api)
+    androidTestImplementation(projects.core.connectivity.api)
+    androidTestImplementation(projects.core.integration.infra)
+    androidTestImplementation(projects.core.integration.ui)
+    androidTestImplementation(projects.core.testTags)
+    androidTestImplementation(projects.data.episode.api)
+    androidTestImplementation(projects.data.syncActivity.api)
+    androidTestImplementation(projects.data.traktauth.testing)
+    androidTestImplementation(projects.data.traktlists.api)
+    androidTestImplementation(projects.data.upnext.api)
+    androidTestImplementation(projects.features.debug.nav)
+    androidTestImplementation(projects.features.discover.nav)
+    androidTestImplementation(projects.features.moreShows.nav)
+    androidTestImplementation(projects.features.search.nav)
+    androidTestImplementation(projects.features.seasonDetails.nav)
+    androidTestImplementation(projects.features.settings.nav)
+    androidTestImplementation(projects.features.trailers.nav)
+    androidTestImplementation(projects.core.locale.testing)
+
+    androidTestImplementation(libs.androidx.compose.ui.test)
+    androidTestImplementation(libs.androidx.runner)
+    androidTestImplementation(libs.androidx.work.testing)
+    androidTestImplementation(libs.coroutines.test)
+    androidTestImplementation(libs.kotest.assertions)
+    androidTestImplementation(libs.kotlin.test.junit)
+    androidTestImplementation(libs.ktor.core)
+    androidTestImplementation(libs.metro.runtime)
+    androidTestImplementation(libs.ktor.http)
 }
 
 if (file("google-services.json").exists()) {

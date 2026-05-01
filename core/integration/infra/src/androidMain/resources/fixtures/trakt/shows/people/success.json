@@ -1,0 +1,4234 @@
+{
+    "cast": [
+        {
+            "character": "Walter White",
+            "characters": [
+                "Walter White"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm0186505",
+                    "slug": "bryan-cranston",
+                    "tmdb": 17419,
+                    "trakt": 297737
+                },
+                "name": "Bryan Cranston",
+                "death": null,
+                "gender": "male",
+                "height": 179.07000732421875,
+                "images": {
+                    "fanart": [
+                        "media.trakt.tv/images/people/000/297/737/fanarts/medium/ec609f5bcc.jpg.webp"
+                    ],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/297/737/headshots/medium/25eb34a2d5.jpg.webp"
+                    ]
+                },
+                "birthday": "1956-03-07",
+                "homepage": null,
+                "biography": "Bryan Lee Cranston (born March 7, 1956) is an American actor. After taking minor roles in television, he established himself as a leading actor in both comedic and dramatic works on stage and screen. He has received several accolades, including seven Primetime Emmy Awards, a Golden Globe Award, a Laurence Olivier Award, and two Tony Awards, as well as nominations for an Academy Award and a BAFTA Award.\n\nCranston first gained prominence playing Hal in the Fox sitcom Malcolm in the Middle (2000–2006), for which he was nominated for the Primetime Emmy Award for Outstanding Supporting Actor in a Comedy Series. He gained stardom for his dramatic leading role playing Walter White in the AMC crime drama series Breaking Bad (2008–2013), for which he won the Outstanding Lead Actor in a Drama Series four times (2008, 2009, 2010, and 2014). He was Emmy-nominated for All the Way (2016) and Curb Your Enthusiasm (2018). Cranston co-developed and appeared in the crime drama series Sneaky Pete (2015–2019), and has also starred in the drama series Your Honor (2020–2023).\n\nOn stage, he earned a Tony Award for Best Actor in a Play for his portrayal of President Lyndon B. Johnson in the Broadway play All the Way (2014), a role he reprised in the 2016 HBO film of the same name. He received the Laurence Olivier Award for Best Actor and his second Tony Award for portraying Howard Beale in the play Network on the West End and Broadway, respectively.\n\nCranston earned nominations for the Academy Award and the BAFTA Award for Best Actor for portraying Dalton Trumbo in the Hollywood blacklist drama Trumbo (2015). Other notable films include Saving Private Ryan (1998), Little Miss Sunshine (2006), Drive (2011), Contagion (2011), Argo (2012), Godzilla (2014), The Infiltrator (2016), The Upside (2017), Last Flag Flying (2017), Isle of Dogs (2018), Asteroid City (2023), and The Phoenician Scheme (2025). He has also voiced roles in Madagascar 3 (2012), Kung Fu Panda 3 (2016), and Kung Fu Panda 4 (2024).\n\nDescription above from the Wikipedia article Bryan Cranston, licensed under CC-BY-SA, full list of contributors on Wikipedia.",
+                "birthplace": "Hollywood, Los Angeles, California, USA",
+                "social_ids": {
+                    "twitter": "BryanCranston",
+                    "facebook": "thebryancranston",
+                    "instagram": "bryancranston",
+                    "wikipedia": "Bryan_Cranston"
+                },
+                "updated_at": "2026-04-29T08:15:51.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/297/737/headshots/medium/25eb34a2d5.jpg.webp"
+                ]
+            },
+            "episode_count": 7,
+            "order": 0
+        },
+        {
+            "character": "Jesse Pinkman",
+            "characters": [
+                "Jesse Pinkman"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm0666739",
+                    "slug": "aaron-paul",
+                    "tmdb": 84497,
+                    "trakt": 415249
+                },
+                "name": "Aaron Paul",
+                "death": null,
+                "gender": "male",
+                "height": 172.5,
+                "images": {
+                    "fanart": [
+                        "media.trakt.tv/images/people/000/415/249/fanarts/medium/eb428e31fa.jpg.webp"
+                    ],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/415/249/headshots/medium/8c71b4b1c4.jpg.webp"
+                    ]
+                },
+                "birthday": "1979-08-27",
+                "homepage": null,
+                "biography": "Aaron Paul Sturtevant (born August 27, 1979) is an American actor. He is best known for his critically acclaimed role as Jesse Pinkman in the hit AMC series Breaking Bad (2008–13). For his portrayal of Jesse Pinkman, he won the Primetime Emmy Award for Outstanding Supporting Actor in a Drama Series in 2010 and 2012, making him one of five actors to win this award more than once. He also won the Saturn Award for Best Supporting Actor on Television in 2010, 2012, and 2014, making him the only actor to win this award three times.",
+                "birthplace": "Emmett, Idaho, USA",
+                "social_ids": {
+                    "twitter": "aaronpaul_8",
+                    "facebook": "aaronpaul",
+                    "instagram": "aaronpaul",
+                    "wikipedia": "Aaron_Paul"
+                },
+                "updated_at": "2026-04-24T08:31:24.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/415/249/headshots/medium/8c71b4b1c4.jpg.webp"
+                ]
+            },
+            "episode_count": 7,
+            "order": 1
+        },
+        {
+            "character": "Skyler White",
+            "characters": [
+                "Skyler White"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm0348152",
+                    "slug": "anna-gunn",
+                    "tmdb": 134531,
+                    "trakt": 420986
+                },
+                "name": "Anna Gunn",
+                "death": null,
+                "gender": "female",
+                "height": 176.5,
+                "images": {
+                    "fanart": [
+                        "media.trakt.tv/images/people/000/420/986/fanarts/medium/1739cad03c.jpg.webp"
+                    ],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/420/986/headshots/medium/83d40c8c0b.jpg.webp"
+                    ]
+                },
+                "birthday": "1968-08-11",
+                "homepage": null,
+                "biography": "Anna Gunn (born August 11, 1968) is an American actress, best known for her roles as ADA Jean Ward on The Practice, Martha Bullock on Deadwood, and Skyler White on Breaking Bad.",
+                "birthplace": "Cleveland, Ohio, USA",
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": "AnnaGunnOfficial",
+                    "instagram": "anna_gunn_official_",
+                    "wikipedia": "Anna_Gunn"
+                },
+                "updated_at": "2026-03-30T08:37:01.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/420/986/headshots/medium/83d40c8c0b.jpg.webp"
+                ]
+            },
+            "episode_count": 7,
+            "order": 2
+        },
+        {
+            "character": "Walter White Jr.",
+            "characters": [
+                "Walter White Jr."
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm2666409",
+                    "slug": "rj-mitte-06c377f6-88c1-4969-86f0-dc0031e45149",
+                    "tmdb": 209674,
+                    "trakt": 459150
+                },
+                "name": "RJ Mitte",
+                "death": null,
+                "gender": "male",
+                "height": 181,
+                "images": {
+                    "fanart": [
+                        "media.trakt.tv/images/people/000/459/150/fanarts/medium/6c828cef66.jpg.webp"
+                    ],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/459/150/headshots/medium/0dd696a78e.jpg.webp"
+                    ]
+                },
+                "birthday": "1992-08-21",
+                "homepage": null,
+                "biography": "Roy Frank “RJ” Mitte III (born August 21, 1992) is an American actor best known for his role as Walter White Jr. on the AMC television series, Breaking Bad.\n\nMitte moved to Hollywood in 2006, and began training with personal talent manager Addison Witt. Mitte has mild cerebral palsy. His manager states that it was Mitte's diligence and attitude that has helped him overcome challenges in all areas of his life.\n\nDescription above from the Wikipedia article RJ Mitte, licensed under CC-BY-SA, full list of contributors on Wikipedia.",
+                "birthplace": "Lafayette, Louisiana, USA",
+                "social_ids": {
+                    "twitter": "RjMitte",
+                    "facebook": "RJ-Mitte-1607845096114106",
+                    "instagram": "rjmitte",
+                    "wikipedia": "RJ_Mitte"
+                },
+                "updated_at": "2026-03-28T20:45:30.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/459/150/headshots/medium/0dd696a78e.jpg.webp"
+                ]
+            },
+            "episode_count": 7,
+            "order": 3
+        },
+        {
+            "character": "Hank Schrader",
+            "characters": [
+                "Hank Schrader"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm0606487",
+                    "slug": "dean-norris",
+                    "tmdb": 14329,
+                    "trakt": 415192
+                },
+                "name": "Dean Norris",
+                "death": null,
+                "gender": "male",
+                "height": 170.17999267578125,
+                "images": {
+                    "fanart": [
+                        "media.trakt.tv/images/people/000/415/192/fanarts/medium/55edec03a1.jpg.webp"
+                    ],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/415/192/headshots/medium/5541e9cdd0.jpg.webp"
+                    ]
+                },
+                "birthday": "1963-04-08",
+                "homepage": null,
+                "biography": "Dean Joseph Norris (born April 8, 1963 height 5' 7\" (1,70 m)) is an American actor, best known for portraying DEA agent Hank Schrader on the AMC series Breaking Bad (2008–2013) and town selectman James \"Big Jim\" Rennie on the CBS series Under the Dome (2013–present). He has also appeared in films such as Lethal Weapon 2 (1989), Total Recall (1990), Terminator 2: Judgment Day (1991), Starship Troopers (1997), Little Miss Sunshine (2006), and Evan Almighty (2007).\n\nNorris was born in South Bend, Indiana, to Jack, a furniture store owner, and Rosie Norris. He has four sisters. Norris graduated from Clay High School in 1981, where he says he got straight A's. He is a 1985 graduate of Harvard College, where he majored in social studies. He also attended the Royal Academy of Dramatic Art.",
+                "birthplace": "South Bend, Indiana, USA",
+                "social_ids": {
+                    "twitter": "deanjnorris",
+                    "facebook": null,
+                    "instagram": "deanjnorris",
+                    "wikipedia": "Dean_Norris"
+                },
+                "updated_at": "2026-04-01T13:44:22.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/415/192/headshots/medium/5541e9cdd0.jpg.webp"
+                ]
+            },
+            "episode_count": 7,
+            "order": 4
+        },
+        {
+            "character": "Marie Schrader",
+            "characters": [
+                "Marie Schrader"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm1336827",
+                    "slug": "betsy-brandt",
+                    "tmdb": 1217934,
+                    "trakt": 436547
+                },
+                "name": "Betsy Brandt",
+                "death": null,
+                "gender": "female",
+                "height": 174,
+                "images": {
+                    "fanart": [
+                        "media.trakt.tv/images/people/000/436/547/fanarts/medium/1f3910fb4c.jpg.webp"
+                    ],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/436/547/headshots/medium/5fff45a12c.jpg.webp"
+                    ]
+                },
+                "birthday": "1973-03-14",
+                "homepage": null,
+                "biography": "Betsy Ann Brandt is an American actress. She portrayed Marie Schrader in Breaking Bad (2008–2013) and played Heather Hughes in the CBS sitcom Life in Pieces (2015–2019).",
+                "birthplace": "Bay City, Michigan, USA",
+                "social_ids": {
+                    "twitter": "betsy_brandt",
+                    "facebook": "BetsyBrandt",
+                    "instagram": "betsybrandt",
+                    "wikipedia": "Betsy_Brandt"
+                },
+                "updated_at": "2026-02-26T19:39:25.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/436/547/headshots/medium/5fff45a12c.jpg.webp"
+                ]
+            },
+            "episode_count": 7,
+            "order": 5
+        },
+        {
+            "character": "Steven Gomez",
+            "characters": [
+                "Steven Gomez"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm2366374",
+                    "slug": "steven-michael-quezada",
+                    "tmdb": 61535,
+                    "trakt": 424602
+                },
+                "name": "Steven Michael Quezada",
+                "death": null,
+                "gender": "male",
+                "height": 166,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/424/602/headshots/medium/22353ac9d1.jpg.webp"
+                    ]
+                },
+                "birthday": "1963-02-15",
+                "homepage": null,
+                "biography": "Steven Michael Quezada; born February 15, 1963 is an American actor and politician. He played Drug Enforcement Administration agent Steven Gomez in the AMC series Breaking Bad from 2008 to 2013.",
+                "birthplace": "Albuquerque, New Mexico, USA",
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": "Steven_Michael_Quezada"
+                },
+                "updated_at": "2026-02-26T19:39:25.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/424/602/headshots/medium/22353ac9d1.jpg.webp"
+                ]
+            },
+            "episode_count": 4,
+            "order": 8
+        },
+        {
+            "character": "Carmen Molina",
+            "characters": [
+                "Carmen Molina"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm0784831",
+                    "slug": "carmen-serano",
+                    "tmdb": 115688,
+                    "trakt": 431721
+                },
+                "name": "Carmen Serano",
+                "death": null,
+                "gender": "female",
+                "height": 167.63999938964844,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/431/721/headshots/medium/4d4f2959bf.jpg.webp"
+                    ]
+                },
+                "birthday": "1973-08-18",
+                "homepage": null,
+                "biography": "From Wikipedia, the free encyclopedia\n\nCarmen Serano (born Carmen Maria Robles; August 18, 1973) is a Hispanic American actress. She starred in the 2007 film Urban Justice alongside Steven Seagal. In 2008 she appeared in five episodes of the series, Breaking Bad.\n\nDescription above from the Wikipedia article Carmen Serano, licensed under CC-BY-SA, full list of contributors on Wikipedia.",
+                "birthplace": "Chula Vista, California, USA",
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": "Carmen_Serano"
+                },
+                "updated_at": "2026-01-10T23:32:48.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/431/721/headshots/medium/4d4f2959bf.jpg.webp"
+                ]
+            },
+            "episode_count": 4,
+            "order": 643
+        },
+        {
+            "character": "Krazy-8",
+            "characters": [
+                "Krazy-8"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm1362980",
+                    "slug": "max-arciniega",
+                    "tmdb": 1046460,
+                    "trakt": 450196
+                },
+                "name": "Max Arciniega",
+                "death": null,
+                "gender": "male",
+                "height": 175.25999450683594,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/450/196/headshots/medium/c44fa24ad6.jpg.webp"
+                    ]
+                },
+                "birthday": "1978-04-28",
+                "homepage": null,
+                "biography": "Maximino Arciniega Jr. (born April 28, 1978) is an American actor. He is best known for his portrayal of Domingo Gallardo \"Krazy-8\" Molina in the crime drama television series Breaking Bad and its prequel Better Call Saul.",
+                "birthplace": "Chicago, Illinois, USA",
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": "Max_Arciniega"
+                },
+                "updated_at": "2026-01-12T02:52:12.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/450/196/headshots/medium/c44fa24ad6.jpg.webp"
+                ]
+            },
+            "episode_count": 3,
+            "order": 504
+        },
+        {
+            "character": "No-Doze",
+            "characters": [
+                "No-Doze"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm1075323",
+                    "slug": "cesar-garcia-2fe41ae3-a362-43a4-bf6c-09a9562831d8",
+                    "tmdb": 53255,
+                    "trakt": 421787
+                },
+                "name": "Cesar Garcia",
+                "death": null,
+                "gender": "male",
+                "height": 170.17999267578125,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/421/787/headshots/medium/626688548b.jpg.webp"
+                    ]
+                },
+                "birthday": null,
+                "homepage": null,
+                "biography": "",
+                "birthplace": null,
+                "social_ids": {
+                    "twitter": "actorcesarg",
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": "null"
+                },
+                "updated_at": "2026-04-03T16:45:30.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/421/787/headshots/medium/626688548b.jpg.webp"
+                ]
+            },
+            "episode_count": 2,
+            "order": 515
+        },
+        {
+            "character": "Gonzo",
+            "characters": [
+                "Gonzo"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm2636838",
+                    "slug": "jesus-jr",
+                    "tmdb": 1260529,
+                    "trakt": 702394
+                },
+                "name": "Jesus Jr.",
+                "death": null,
+                "gender": "male",
+                "height": 191,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/702/394/headshots/medium/c3dbbaeebb.jpg.webp"
+                    ]
+                },
+                "birthday": null,
+                "homepage": null,
+                "biography": "",
+                "birthplace": null,
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": null
+                },
+                "updated_at": "2026-04-01T10:33:20.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/702/394/headshots/medium/c3dbbaeebb.jpg.webp"
+                ]
+            },
+            "episode_count": 2,
+            "order": 516
+        },
+        {
+            "character": "Dr. Delcavoli",
+            "characters": [
+                "Dr. Delcavoli"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm1450145",
+                    "slug": "david-house",
+                    "tmdb": 79211,
+                    "trakt": 69066
+                },
+                "name": "David House",
+                "death": "2016-11-27",
+                "gender": "male",
+                "height": null,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/069/066/headshots/medium/ad34938116.jpg.webp"
+                    ]
+                },
+                "birthday": "1958-12-15",
+                "homepage": null,
+                "biography": "David House (December 5, 1958 – November 27, 2016) was an American actor.",
+                "birthplace": "Detroit, Michigan, USA",
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": "null"
+                },
+                "updated_at": "2026-01-19T09:30:36.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/069/066/headshots/medium/ad34938116.jpg.webp"
+                ]
+            },
+            "episode_count": 2,
+            "order": 532
+        },
+        {
+            "character": "Gretchen Schwartz",
+            "characters": [
+                "Gretchen Schwartz"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm0372961",
+                    "slug": "jessica-hecht",
+                    "tmdb": 14984,
+                    "trakt": 421410
+                },
+                "name": "Jessica Hecht",
+                "death": null,
+                "gender": "female",
+                "height": 172.72000122070312,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/421/410/headshots/medium/0777dd6793.jpg.webp"
+                    ]
+                },
+                "birthday": "1965-06-28",
+                "homepage": null,
+                "biography": "Jessica Hecht is an American stage and screen actress and singer, best known for her recurring roles as Susan Bunch on the television show \"Friends\" and Gretchen Schwartz on \"Breaking Bad\". She holds an BA in Drama from the Tisch School of the Arts, New York University.",
+                "birthplace": "Princeton, New Jersey, USA",
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": "Jessica_Hecht"
+                },
+                "updated_at": "2026-04-01T08:24:22.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/421/410/headshots/medium/0777dd6793.jpg.webp"
+                ]
+            },
+            "episode_count": 2,
+            "order": 655
+        },
+        {
+            "character": "Skinny Pete",
+            "characters": [
+                "Skinny Pete"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm1889973",
+                    "slug": "charles-baker-b5558187-be9c-40a1-931b-1576bb99d2a9",
+                    "tmdb": 82945,
+                    "trakt": 428344
+                },
+                "name": "Charles Baker",
+                "death": null,
+                "gender": "male",
+                "height": 172.6999969482422,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/428/344/headshots/medium/8d5676e030.jpg.webp"
+                    ]
+                },
+                "birthday": "1971-02-27",
+                "homepage": null,
+                "biography": "Charles Edward Baker (born February 27, 1971) is an American actor, writer, and director. He played Skinny Pete on the AMC series Breaking Bad, and had a recurring role on the NBC series The Blacklist.",
+                "birthplace": "Washington, D.C., USA",
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": "Charles_Baker_(actor)"
+                },
+                "updated_at": "2026-04-13T15:28:30.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/428/344/headshots/medium/8d5676e030.jpg.webp"
+                ]
+            },
+            "episode_count": 2,
+            "order": 656
+        },
+        {
+            "character": "Tuco Salamanca",
+            "characters": [
+                "Tuco Salamanca"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm0190441",
+                    "slug": "raymond-cruz",
+                    "tmdb": 58650,
+                    "trakt": 421916
+                },
+                "name": "Raymond Cruz",
+                "death": null,
+                "gender": "male",
+                "height": 173.99000549316406,
+                "images": {
+                    "fanart": [
+                        "media.trakt.tv/images/people/000/421/916/fanarts/medium/09a5ca3403.jpg.webp"
+                    ],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/421/916/headshots/medium/5f23c171b1.jpg.webp"
+                    ]
+                },
+                "birthday": "1964-09-10",
+                "homepage": null,
+                "biography": "Raymund Cruz (born September 10, 1964) is a Mexican American actor. He is mostly known for playing military roles. His movie roles include Clear and Present Danger as Ding Chavez, The Substitute as Tom Berenger's second-in-command Joey Six, The Rock in an un-credited U.S. Marine role, From Dusk Till Dawn 2: Texas Blood Money as Jesus, Alien Resurrection as USM Private Vincent DiStephano, and Under Siege as Ramirez. He also appeared in the gang movie Blood In Blood Out, playing the role of Chuey, a gang member from the Vatos Locos. In 2005 he played Chino In Havoc. He also appears in Gremlins 2: The New Batch, credited as \"The Messenger,\" and in Training Day as a gang member named Sniper, the poker player who doesn't know that three-of-a-kind beats two pair.\n\nHe has made guest appearances in the Star Trek: Deep Space Nine episode \"The Siege of AR-558\", in The X-Files Season 4 episode \"El Mundo Gira\" and in the second season of 24 as a thug. In the Music Videoclip from Madonna Vogue ,He also made an appearance as the father of a murdered girl in CSI.\n\nCruz played a large distributor of methamphetamines named Tuco on Breaking Bad in 2008. He is now a regular cast member on the TV series The Closer. Cruz also had a recurring role as Paco on My Name Is Earl, and as Alejandro Perez on Nip/Tuck.\n\nDescription above from the Wikipedia article Raymond Cruz, licensed under CC-BY-SA, full list of contributors on Wikipedia.",
+                "birthplace": "Los Angeles County, California, USA",
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": "Raymond_Cruz"
+                },
+                "updated_at": "2026-04-05T08:35:43.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/421/916/headshots/medium/5f23c171b1.jpg.webp"
+                ]
+            },
+            "episode_count": 2,
+            "order": 674
+        },
+        {
+            "character": "Emilio Koyama",
+            "characters": [
+                "Emilio Koyama"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm0468697",
+                    "slug": "john-koyama",
+                    "tmdb": 92495,
+                    "trakt": 413846
+                },
+                "name": "John Koyama",
+                "death": null,
+                "gender": "male",
+                "height": 177.8000030517578,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/413/846/headshots/medium/9bf3870ec4.jpg.webp"
+                    ]
+                },
+                "birthday": "1973-02-03",
+                "homepage": null,
+                "biography": "John Koyama is an actor and a stunt performer.",
+                "birthplace": null,
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": null
+                },
+                "updated_at": "2026-04-13T15:28:08.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/413/846/headshots/medium/9bf3870ec4.jpg.webp"
+                ]
+            },
+            "episode_count": 2,
+            "order": 703
+        },
+        {
+            "character": "Jock",
+            "characters": [
+                "Jock"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm1341364",
+                    "slug": "aaron-hill",
+                    "tmdb": 1216132,
+                    "trakt": 441411
+                },
+                "name": "Aaron Hill",
+                "death": null,
+                "gender": "male",
+                "height": 196,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/441/411/headshots/medium/2c6f38d770.jpg.webp"
+                    ]
+                },
+                "birthday": "1983-04-23",
+                "homepage": null,
+                "biography": "Aaron J. Hill (born April 23, 1983) is an American actor most famous for his portrayal of \"Beaver\" on the television show GRΣΣK.\n\nBorn in Santa Clara, California, he began his acting career in 2001 with a single episode role on The Brothers Garcia. He has since been seen in Mad Men, Malcolm in the Middle, Gilmore Girls, Hannah Montana, CSI: Miami, How I Met Your Mother, and is now a regular on ABC Family's series GRΣΣK. He made a cameo as a similar character in Transformers 2: Revenge of the Fallen. He started out doing small time promotional videos for his church in Clovis, California.",
+                "birthplace": "Santa Clara, California, USA",
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": "Aaron_Hill_(actor)"
+                },
+                "updated_at": "2026-03-29T01:00:22.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/441/411/headshots/medium/2c6f38d770.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 500
+        },
+        {
+            "character": "Dr. Belknap",
+            "characters": [
+                "Dr. Belknap"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm0153767",
+                    "slug": "gregory-chase",
+                    "tmdb": 161591,
+                    "trakt": 1104302
+                },
+                "name": "Gregory Chase",
+                "death": null,
+                "gender": "male",
+                "height": null,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/001/104/302/headshots/medium/601c0ae819.jpg.webp"
+                    ]
+                },
+                "birthday": null,
+                "homepage": null,
+                "biography": "",
+                "birthplace": null,
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": "null"
+                },
+                "updated_at": "2026-01-09T19:52:14.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/001/104/302/headshots/medium/601c0ae819.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 502
+        },
+        {
+            "character": "Ken Wins",
+            "characters": [
+                "Ken Wins"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm1531180",
+                    "slug": "kyle-bornheimer",
+                    "tmdb": 1215836,
+                    "trakt": 439223
+                },
+                "name": "Kyle Bornheimer",
+                "death": null,
+                "gender": "male",
+                "height": 182.8800048828125,
+                "images": {
+                    "fanart": [
+                        "media.trakt.tv/images/people/000/439/223/fanarts/medium/3520234c7e.jpg.webp"
+                    ],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/439/223/headshots/medium/95812b48a0.jpg.webp"
+                    ]
+                },
+                "birthday": "1975-09-10",
+                "homepage": null,
+                "biography": "Kyle Edward Bornheimer is an American actor and comedian known for his roles on the sitcoms Worst Week, Brooklyn Nine-Nine, Casual, and Playing House.",
+                "birthplace": "Mishawaka, Indiana, USA",
+                "social_ids": {
+                    "twitter": "",
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": "Kyle_Bornheimer"
+                },
+                "updated_at": "2026-04-08T08:03:39.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/439/223/headshots/medium/95812b48a0.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 503
+        },
+        {
+            "character": "Jake Pinkman",
+            "characters": [
+                "Jake Pinkman"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm1264549",
+                    "slug": "benjamin-petry",
+                    "tmdb": 220118,
+                    "trakt": 420064
+                },
+                "name": "Benjamin Petry",
+                "death": null,
+                "gender": "male",
+                "height": null,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/420/064/headshots/medium/fa728f8e3e.jpg.webp"
+                    ]
+                },
+                "birthday": "1995-08-28",
+                "homepage": null,
+                "biography": "Benjamin Petry was born on August 28, 1995 in Minneapolis, Minnesota, USA. He is an actor, known for 3:10 to Yuma (2007), The Lost Room (2006) and The Spirit (2008).",
+                "birthplace": "Minneapolis, Minnesota, USA",
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": null
+                },
+                "updated_at": "2026-01-11T14:22:08.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/420/064/headshots/medium/fa728f8e3e.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 505
+        },
+        {
+            "character": "Manager",
+            "characters": [
+                "Manager"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm0827429",
+                    "slug": "william-sterchi",
+                    "tmdb": 202830,
+                    "trakt": 332647
+                },
+                "name": "William Sterchi",
+                "death": null,
+                "gender": "male",
+                "height": 172.72000122070312,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/332/647/headshots/medium/9376679a5d.jpg.webp"
+                    ]
+                },
+                "birthday": null,
+                "homepage": null,
+                "biography": "",
+                "birthplace": null,
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": "null"
+                },
+                "updated_at": "2026-03-31T08:41:32.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/332/647/headshots/medium/9376679a5d.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 506
+        },
+        {
+            "character": "Hugo Archuleta",
+            "characters": [
+                "Hugo Archuleta"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm2484601",
+                    "slug": "pierre-barrera",
+                    "tmdb": 210056,
+                    "trakt": 339960
+                },
+                "name": "Pierre Barrera",
+                "death": null,
+                "gender": "male",
+                "height": null,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/339/960/headshots/medium/993aeef1cd.jpg.webp"
+                    ]
+                },
+                "birthday": null,
+                "homepage": null,
+                "biography": "",
+                "birthplace": "the state of New Mexico",
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": null
+                },
+                "updated_at": "2026-04-08T08:54:15.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/339/960/headshots/medium/993aeef1cd.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 507
+        },
+        {
+            "character": "Farley",
+            "characters": [
+                "Farley"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm0609631",
+                    "slug": "marc-mouchet",
+                    "tmdb": 59303,
+                    "trakt": 44985
+                },
+                "name": "Marc Mouchet",
+                "death": null,
+                "gender": "male",
+                "height": null,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/044/985/headshots/medium/ceef298252.jpg.webp"
+                    ]
+                },
+                "birthday": null,
+                "homepage": null,
+                "biography": "",
+                "birthplace": null,
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": null
+                },
+                "updated_at": "2026-01-10T16:02:32.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/044/985/headshots/medium/ceef298252.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 508
+        },
+        {
+            "character": "Mrs. Pope",
+            "characters": [
+                "Mrs. Pope"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm2964889",
+                    "slug": "vivian-nesbitt",
+                    "tmdb": 187505,
+                    "trakt": 1261093
+                },
+                "name": "Vivian Nesbitt",
+                "death": null,
+                "gender": "female",
+                "height": null,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/001/261/093/headshots/medium/c31b1d7e1c.jpg.webp"
+                    ]
+                },
+                "birthday": null,
+                "homepage": null,
+                "biography": "",
+                "birthplace": null,
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": null
+                },
+                "updated_at": "2024-07-29T08:01:41.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/001/261/093/headshots/medium/c31b1d7e1c.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 509
+        },
+        {
+            "character": "Student",
+            "characters": [
+                "Student"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm2727678",
+                    "slug": "seri-deyoung",
+                    "tmdb": 1089016,
+                    "trakt": 431898
+                },
+                "name": "Seri DeYoung",
+                "death": null,
+                "gender": "female",
+                "height": null,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/431/898/headshots/medium/9a1660f37c.jpg.webp"
+                    ]
+                },
+                "birthday": "1989-04-11",
+                "homepage": null,
+                "biography": "",
+                "birthplace": "San Bernardino County, California, USA",
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": "null"
+                },
+                "updated_at": "2025-05-16T12:49:45.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/431/898/headshots/medium/9a1660f37c.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 510
+        },
+        {
+            "character": "Realtor",
+            "characters": [
+                "Realtor"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm1544010",
+                    "slug": "beth-bailey",
+                    "tmdb": 967071,
+                    "trakt": 573324
+                },
+                "name": "Beth Bailey",
+                "death": null,
+                "gender": "female",
+                "height": null,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/573/324/headshots/medium/40bfc91736.jpg.webp"
+                    ]
+                },
+                "birthday": null,
+                "homepage": null,
+                "biography": "",
+                "birthplace": null,
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": "null"
+                },
+                "updated_at": "2026-01-28T08:21:37.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/573/324/headshots/medium/40bfc91736.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 511
+        },
+        {
+            "character": "Lookout",
+            "characters": [
+                "Lookout"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm0445022",
+                    "slug": "dennis-keiffer",
+                    "tmdb": 1221121,
+                    "trakt": 55959
+                },
+                "name": "Dennis Keiffer",
+                "death": null,
+                "gender": "male",
+                "height": 177.8000030517578,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/055/959/headshots/medium/1c2147c23c.jpg.webp"
+                    ]
+                },
+                "birthday": "1969-12-31",
+                "homepage": null,
+                "biography": "Dennis Keiffer is a former K.I.C.K. Super Middleweight Kickboxing Champion. He took his skills to Television and Cinema as an actor and stuntman. Early in his career he worked on fight movies such as \"Bloodfist\", \"Shootfighter\", and \"Die Trying\". In the past 15 years Dennis has been a stunt actor on shows such as \"CSI\", \"House\", \"Sons of Anarchy\" and \"True Blood\" with theatrical releases such as \"Death Sentence\", \"Indiana Jones\", \"The Green Hornet\" and \"Spider-Man\".",
+                "birthplace": null,
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": "null"
+                },
+                "updated_at": "2026-04-08T08:04:32.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/055/959/headshots/medium/1c2147c23c.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 512
+        },
+        {
+            "character": "Police Officer",
+            "characters": [
+                "Police Officer"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm0729060",
+                    "slug": "geoffrey-rivas",
+                    "tmdb": 58651,
+                    "trakt": 44440
+                },
+                "name": "Geoffrey Rivas",
+                "death": null,
+                "gender": "male",
+                "height": null,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/044/440/headshots/medium/e927a261cc.jpg.webp"
+                    ]
+                },
+                "birthday": null,
+                "homepage": null,
+                "biography": "Geoffrey Rivas is an actor and producer, known for La Bamba (1987), Walk of Shame (2014) and The Thirteenth Floor (1999).",
+                "birthplace": null,
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": "null"
+                },
+                "updated_at": "2026-03-27T08:34:18.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/044/440/headshots/medium/e927a261cc.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 513
+        },
+        {
+            "character": "Jewelry Store Owner",
+            "characters": [
+                "Jewelry Store Owner"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm1256275",
+                    "slug": "mike-miller",
+                    "tmdb": 210154,
+                    "trakt": 64965
+                },
+                "name": "Mike Miller",
+                "death": null,
+                "gender": "male",
+                "height": 177.8000030517578,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/064/965/headshots/medium/8a7ff3b0dd.jpg.webp"
+                    ]
+                },
+                "birthday": "1949-01-04",
+                "homepage": null,
+                "biography": "",
+                "birthplace": "Phillips, Texas, USA",
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": null
+                },
+                "updated_at": "2026-01-11T13:52:34.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/064/965/headshots/medium/8a7ff3b0dd.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 514
+        },
+        {
+            "character": "Office Manager",
+            "characters": [
+                "Office Manager"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm2964765",
+                    "slug": "judith-rane",
+                    "tmdb": 210057,
+                    "trakt": 1487344
+                },
+                "name": "Judith Rane",
+                "death": null,
+                "gender": "female",
+                "height": null,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/001/487/344/headshots/medium/614f2e9870.jpg.webp"
+                    ]
+                },
+                "birthday": null,
+                "homepage": null,
+                "biography": "",
+                "birthplace": null,
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": "null"
+                },
+                "updated_at": "2026-03-30T08:42:45.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/001/487/344/headshots/medium/614f2e9870.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 522
+        },
+        {
+            "character": "Mr. Pinkman",
+            "characters": [
+                "Mr. Pinkman"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm0091480",
+                    "slug": "michael-bofshever",
+                    "tmdb": 95195,
+                    "trakt": 430218
+                },
+                "name": "Michael Bofshever",
+                "death": null,
+                "gender": "male",
+                "height": null,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/430/218/headshots/medium/44608b3a1b.jpg.webp"
+                    ]
+                },
+                "birthday": "1950-10-12",
+                "homepage": null,
+                "biography": "Michael Bofshever was born on October 12, 1950 in Brooklyn, New York City, New York, USA. He is an actor and producer, known for A Dog's Purpose (2017), United 93 (2006) and Breaking Bad (2008). He has been married to Celia D. Lee since November 23, 1979. They have two children.",
+                "birthplace": "Brooklyn, New York City, New York, USA",
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": "null"
+                },
+                "updated_at": "2026-01-09T16:52:19.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/430/218/headshots/medium/44608b3a1b.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 537
+        },
+        {
+            "character": "Bogdan Wolynetz",
+            "characters": [
+                "Bogdan Wolynetz"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm2256387",
+                    "slug": "marius-stan",
+                    "tmdb": 1223197,
+                    "trakt": 1487343
+                },
+                "name": "Marius Stan",
+                "death": null,
+                "gender": "male",
+                "height": null,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/001/487/343/headshots/medium/2b5f0053aa.jpg.webp"
+                    ]
+                },
+                "birthday": "1961-01-01",
+                "homepage": null,
+                "biography": "Marius Stan is a Romanian scientist and actor from Urziceni, currently a senior scientist at the Applied Materials division at Argonne National Laboratory in Lemont, Illinois, where he uses Artificial Intelligence to design materials. Stan is best known for playing car wash owner Bogdan Wolynetz in the AMC television series Breaking Bad.\n\nIn 1986, Stan earned a Bachelor of Science degree in physics from the University of Bucharest. In 1997, he earned a PhD in chemistry from the Institute of Physical Chemistry of the Romanian Academy.\n\nStan was a scientist at the Los Alamos National Laboratory in Los Alamos, New Mexico before moving on to the Argonne National Laboratory, a national research laboratory jointly operated by the University of Chicago and Department of Energy, in 2010. From 2013 to 2015, Stan served in the Office of Nuclear Energy within the United States Department of Energy. Stan is also a writer of short fiction and poetry.\n\nStan was living in Albuquerque, New Mexico during the filming of the first season of AMC's Breaking Bad. His two children hoped to be extras in the series, so Stan sent the producers a family photo. Stan's wife and children were picked to be extras, but to Stan's surprise, the producers liked his look and wanted him for a speaking role: the owner of the car wash where Walter White works. The character of Bogdan Wolynetz and the scenes featuring him were further developed, and he would appear in four more episodes.",
+                "birthplace": "Urziceni, Romania",
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": "Marius_Stan_(scientist)"
+                },
+                "updated_at": "2025-07-11T03:27:02.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/001/487/343/headshots/medium/2b5f0053aa.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 575
+        },
+        {
+            "character": "Off Duty Cop",
+            "characters": [
+                "Off Duty Cop"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm2427168",
+                    "slug": "frederic-doss",
+                    "tmdb": 209680,
+                    "trakt": 188805
+                },
+                "name": "Frederic Doss",
+                "death": null,
+                "gender": "male",
+                "height": 183,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/188/805/headshots/medium/87c07d1b6e.jpg.webp"
+                    ]
+                },
+                "birthday": "1977-05-05",
+                "homepage": null,
+                "biography": "Fred is a born entertainer, but did not discover acting until his senior year in High School. After studying theater in college at Missouri Southern State University, he eventually earned a bachelor's degree in sociology, got married and shortly after 9/11 joined the US Air Force. It wasn't until 2006, while stationed at Holloman AFB in New Mexico that he was pulled back into acting, this time in front of a camera working for Michael Bay on \"Transformers\" (his first acting on film). Shortly after that, Fred deployed to Afghanistan working for 10th Mountain under a joint arrangement. After returning he separated from the service and relocated to Texas. He is the only actor to have been killed by both the Decepticons and Cobra on the big screen. He has worked in film as a producer, director and assistant director in addition to being an actor. He and his wife, Andrea (a writer and artist) have two children and presently reside in Texas.",
+                "birthplace": "Joplin, Missouri, USA",
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": "null"
+                },
+                "updated_at": "2026-04-06T08:30:25.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/188/805/headshots/medium/87c07d1b6e.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 653
+        },
+        {
+            "character": "Badger",
+            "characters": [
+                "Badger"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm2804503",
+                    "slug": "matt-jones-d4b5ed9d-856d-491d-9363-006e20cf363d",
+                    "tmdb": 191202,
+                    "trakt": 444339
+                },
+                "name": "Matt Jones",
+                "death": null,
+                "gender": "male",
+                "height": 193,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/444/339/headshots/medium/00a9685be5.jpg.webp"
+                    ]
+                },
+                "birthday": "1981-11-01",
+                "homepage": null,
+                "biography": "Matthew Lee Jones (born November 1, 1981) is an American actor, voice actor and comedian. He is known for his roles as Douglas on Bob Hearts Abishola, Baxter on the CBS sitcom Mom, Special Agent Ned Dornaget on NCIS, and Brandon \"Badger\" Mayhew on the AMC series Breaking Bad.\n\nHe also voices the animated characters of Dave on Hamster & Gretel, Kyle in the movie Home and animated series Home: Adventures with Tip & Oh, Pig on Pig Goat Banana Cricket, Drip in the movies Planes: Fire & Rescue and Planes Fire & Rescue: Smokejumpers, and Gunther Magnuson on Kick Buttowski: Suburban Daredevil.",
+                "birthplace": "Sacramento, California, USA",
+                "social_ids": {
+                    "twitter": "mattjonesisdead",
+                    "facebook": null,
+                    "instagram": "mattjonesisdead",
+                    "wikipedia": "Matt_Jones_(actor)"
+                },
+                "updated_at": "2026-03-31T20:57:12.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/444/339/headshots/medium/00a9685be5.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 658
+        },
+        {
+            "character": "Elliott Schwartz",
+            "characters": [
+                "Elliott Schwartz"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm0324134",
+                    "slug": "adam-godley",
+                    "tmdb": 23429,
+                    "trakt": 422722
+                },
+                "name": "Adam Godley",
+                "death": null,
+                "gender": "male",
+                "height": 185.4199981689453,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/422/722/headshots/medium/55c753bfc6.jpg.webp"
+                    ]
+                },
+                "birthday": "1964-07-22",
+                "homepage": null,
+                "biography": "Adam Godley (born 22 July 1964) is a British actor. He has been nominated for two Tony Awards and four Laurence Olivier Awards for his performances on the New York and London stages which include, Private Lives in 2001, The Pillowman in 2002, Anything Goes in 2011, and The Lehman Trilogy in 2019. He made his Broadway debut in 2002 in a revival of Noël Coward's Private Lives for which he earned a Theatre World Award for Outstanding Broadway debut. In 2011 he returned to Broadway in the musical Anything Goes for which he earned a Tony Award for Best Featured Actor in a Musical nomination. In 2021, The Lehman Trilogy made its Broadway transfer to great critical acclaim, and securing Godley another Tony nomination for Best Actor in a Play.\n\nHis film roles include Love Actually (2003), Nanny McPhee (2005), Charlie and the Chocolate Factory (2005), Elizabeth The Golden Age (2007) and The Theory Of Everything (2014). He has also had recurring roles as Elliot Schwartz in AMC's Breaking Bad, Nigel Nesbit in USA's Suits (2013), Phinneus Pogo in Netflix's The Umbrella Academy (2019 to present), and Archie the Archbishop in Hulu's The Great (2020–present).",
+                "birthplace": "Amersham, England, UK",
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": "Adam_Godley"
+                },
+                "updated_at": "2026-04-08T08:04:43.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/422/722/headshots/medium/55c753bfc6.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 659
+        },
+        {
+            "character": "Combo",
+            "characters": [
+                "Combo"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm2968788",
+                    "slug": "rodney-rush",
+                    "tmdb": 3471782,
+                    "trakt": 2644226
+                },
+                "name": "Rodney Rush",
+                "death": null,
+                "gender": "male",
+                "height": null,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/002/644/226/headshots/medium/a72e437838.jpg.webp"
+                    ]
+                },
+                "birthday": null,
+                "homepage": null,
+                "biography": "",
+                "birthplace": null,
+                "social_ids": {
+                    "twitter": "RodneyRush",
+                    "facebook": null,
+                    "instagram": "therealrodneyrush",
+                    "wikipedia": "null"
+                },
+                "updated_at": "2026-04-06T17:08:18.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/002/644/226/headshots/medium/a72e437838.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 666
+        },
+        {
+            "character": "Mrs. Pinkman",
+            "characters": [
+                "Mrs. Pinkman"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm0002128",
+                    "slug": "tess-harper",
+                    "tmdb": 41249,
+                    "trakt": 419722
+                },
+                "name": "Tess Harper",
+                "death": null,
+                "gender": "female",
+                "height": 162.55999755859375,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/419/722/headshots/medium/9e58aeb35f.jpg.webp"
+                    ]
+                },
+                "birthday": "1950-08-15",
+                "homepage": null,
+                "biography": "Tessie Jean \"Tess\" Harper (née Washam; born August 15, 1950) is an American actress. She was nominated for the Golden Globe Award for Best Supporting Actress for her first film role in 1983's Tender Mercies, and for the Academy Award for Best Supporting Actress for the 1986 film Crimes of the Heart. Her other film appearances include Flashpoint (1984), Ishtar (1987), Far North (1988), and No Country for Old Men (2007). She also had a recurring role on the first three seasons of Breaking Bad (2008–2010).\n\nFrom Wikipedia",
+                "birthplace": "Mammoth Spring, Arkansas, USA",
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": "Tess_Harper"
+                },
+                "updated_at": "2026-04-26T08:33:42.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/419/722/headshots/medium/9e58aeb35f.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 672
+        },
+        {
+            "character": "E.M.T",
+            "characters": [
+                "E.M.T"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm0218716",
+                    "slug": "christopher-dempsey",
+                    "tmdb": 36135,
+                    "trakt": 419047
+                },
+                "name": "Christopher Dempsey",
+                "death": null,
+                "gender": "male",
+                "height": 182.8800048828125,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/419/047/headshots/medium/7e990efc10.jpg.webp"
+                    ]
+                },
+                "birthday": null,
+                "homepage": null,
+                "biography": "",
+                "birthplace": null,
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": null
+                },
+                "updated_at": "2026-01-09T22:52:03.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/419/047/headshots/medium/7e990efc10.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 676
+        },
+        {
+            "character": "DEA Agent",
+            "characters": [
+                "DEA Agent"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm2726231",
+                    "slug": "jon-kristian-moore",
+                    "tmdb": 1673624,
+                    "trakt": 725098
+                },
+                "name": "Jon Kristian Moore",
+                "death": null,
+                "gender": "male",
+                "height": null,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/725/098/headshots/medium/242a1881e6.jpg.webp"
+                    ]
+                },
+                "birthday": null,
+                "homepage": null,
+                "biography": "",
+                "birthplace": null,
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": "null"
+                },
+                "updated_at": "2026-01-14T00:22:35.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/725/098/headshots/medium/242a1881e6.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 687
+        },
+        {
+            "character": "Scientist",
+            "characters": [
+                "Scientist"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm0020309",
+                    "slug": "bill-allen-920250eb-fda1-4dd9-99de-f82aeecab4dd",
+                    "tmdb": 92756,
+                    "trakt": 429015
+                },
+                "name": "Bill Allen",
+                "death": null,
+                "gender": "male",
+                "height": null,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/429/015/headshots/medium/92bad1faae.jpg.webp"
+                    ]
+                },
+                "birthday": "1962-11-07",
+                "homepage": "https://www.billallenrad.net/",
+                "biography": "Allen was born in Wichita, Kansas. He became famous for his role in the 1986 film Rad as BMX racer Cru Jones. Among other roles, William appeared as Roger Sloate in the 1987 Family Ties television episode \"Matchmaker\". Bill has toured extensively for the band The Pipefitters with his harmonica, alongside actor Lou Diamond Phillips.",
+                "birthplace": "Wichita, Kansas, USA",
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": "billslimallen",
+                    "wikipedia": "Bill_Allen_(actor)"
+                },
+                "updated_at": "2026-04-01T17:02:13.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/429/015/headshots/medium/92bad1faae.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 690
+        },
+        {
+            "character": "Music Producer",
+            "characters": [
+                "Music Producer"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm0371128",
+                    "slug": "loren-haynes",
+                    "tmdb": 193285,
+                    "trakt": 310502
+                },
+                "name": "Loren Haynes",
+                "death": null,
+                "gender": "male",
+                "height": 177.8000030517578,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/310/502/headshots/medium/2844035509.jpg.webp"
+                    ]
+                },
+                "birthday": null,
+                "homepage": null,
+                "biography": "",
+                "birthplace": null,
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": null
+                },
+                "updated_at": "2026-01-10T05:22:25.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/310/502/headshots/medium/2844035509.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 691
+        },
+        {
+            "character": "Concerned Parent",
+            "characters": [
+                "Concerned Parent"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm2287032",
+                    "slug": "dave-colon",
+                    "tmdb": 79236,
+                    "trakt": 69101
+                },
+                "name": "Dave Colon",
+                "death": null,
+                "gender": "male",
+                "height": 180,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/069/101/headshots/medium/e168dd3041.jpg.webp"
+                    ]
+                },
+                "birthday": "1955-04-05",
+                "homepage": null,
+                "biography": "",
+                "birthplace": "Manhattan, New York City, New York, USA",
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": null
+                },
+                "updated_at": "2026-03-20T08:51:33.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/069/101/headshots/medium/e168dd3041.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 697
+        },
+        {
+            "character": "Yuppie Woman",
+            "characters": [
+                "Yuppie Woman"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm2314794",
+                    "slug": "carrie-fleming-83f83f8e-2f60-4ac0-ac4b-cabe4a553576",
+                    "tmdb": 209844,
+                    "trakt": 421572
+                },
+                "name": "Carrie Fleming",
+                "death": null,
+                "gender": "female",
+                "height": 157,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/421/572/headshots/medium/018c6da023.jpg.webp"
+                    ]
+                },
+                "birthday": null,
+                "homepage": null,
+                "biography": "",
+                "birthplace": null,
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": null
+                },
+                "updated_at": "2026-01-13T15:10:00.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/421/572/headshots/medium/018c6da023.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 698
+        },
+        {
+            "character": "Chemical Plant Guard",
+            "characters": [
+                "Chemical Plant Guard"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm0656275",
+                    "slug": "matthew-page",
+                    "tmdb": 1094319,
+                    "trakt": 446872
+                },
+                "name": "Matthew Page",
+                "death": null,
+                "gender": "male",
+                "height": 180.33999633789062,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/446/872/headshots/medium/d3240411e9.jpg.webp"
+                    ]
+                },
+                "birthday": null,
+                "homepage": null,
+                "biography": "Matt Page holds a Bachelor's Degree in Moving Image Arts from the College of Santa Fe. In 2006, Page co-founded Riffraff New Media, a New Mexico-based production company through which he has written and directed multiple award-winning short films that have screened all over the world. Page has appeared regularly on the WGN show \"Manhattan\" and has been seen in several feature films. He is also the creator and star of \"Enter The Dojo\", a comedic web series that has achieved over 11 million views on YouTube.  - IMDb Mini Biography By: Matt Page",
+                "birthplace": null,
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": "null"
+                },
+                "updated_at": "2026-04-18T08:34:49.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/446/872/headshots/medium/d3240411e9.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 699
+        },
+        {
+            "character": "Prospective Buyer",
+            "characters": [
+                "Prospective Buyer"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm2891774",
+                    "slug": "jacob-o-brien-mulliken",
+                    "tmdb": 1847290,
+                    "trakt": 932041
+                },
+                "name": "Jacob O'Brien Mulliken",
+                "death": null,
+                "gender": "unknown",
+                "height": null,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/932/041/headshots/medium/b8981172ea.jpg.webp"
+                    ]
+                },
+                "birthday": null,
+                "homepage": null,
+                "biography": "",
+                "birthplace": null,
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": null
+                },
+                "updated_at": "2026-03-27T22:26:42.000Z",
+                "known_for_department": "writing"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/932/041/headshots/medium/b8981172ea.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 700
+        },
+        {
+            "character": "Meth Whore",
+            "characters": [
+                "Meth Whore"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm2928008",
+                    "slug": "julia-minesci",
+                    "tmdb": 1834391,
+                    "trakt": 917941
+                },
+                "name": "Julia Minesci",
+                "death": null,
+                "gender": "female",
+                "height": null,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/917/941/headshots/medium/6461bac696.jpg.webp"
+                    ]
+                },
+                "birthday": "1956-12-12",
+                "homepage": null,
+                "biography": "",
+                "birthplace": "Santa Fe, New Mexico, USA",
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": "jminesci",
+                    "wikipedia": "null"
+                },
+                "updated_at": "2025-12-14T08:19:51.000Z",
+                "known_for_department": "acting"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/917/941/headshots/medium/6461bac696.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 709
+        },
+        {
+            "character": "DEA Agent #1 (uncredited)",
+            "characters": [
+                "DEA Agent #1 (uncredited)"
+            ],
+            "person": {
+                "ids": {
+                    "imdb": "nm2186394",
+                    "slug": "ed-duran-378977",
+                    "tmdb": 1335375,
+                    "trakt": 378977
+                },
+                "name": "Ed Duran",
+                "death": null,
+                "gender": "male",
+                "height": null,
+                "images": {
+                    "fanart": [],
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/378/977/headshots/medium/f64e7ca874.jpg.webp"
+                    ]
+                },
+                "birthday": null,
+                "homepage": null,
+                "biography": "Ed Duran is an American stunt man and coordinator. He has worked on large variety of movies and television shows, inlcluding Interstellar, Thor, Breaking Bad, Independence Day, and Ms. Marvel.",
+                "birthplace": null,
+                "social_ids": {
+                    "twitter": null,
+                    "facebook": null,
+                    "instagram": null,
+                    "wikipedia": "null"
+                },
+                "updated_at": "2026-03-30T08:42:46.000Z",
+                "known_for_department": "crew"
+            },
+            "images": {
+                "headshot": [
+                    "media.trakt.tv/images/people/000/378/977/headshots/medium/f64e7ca874.jpg.webp"
+                ]
+            },
+            "episode_count": 1,
+            "order": 848
+        }
+    ],
+    "crew": {
+        "camera": [
+            {
+                "job": "Director of Photography",
+                "jobs": [
+                    "Director of Photography"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0001799",
+                        "slug": "john-toll",
+                        "tmdb": 2483,
+                        "trakt": 2172
+                    },
+                    "name": "John Toll",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/002/172/headshots/medium/dcf5ef7fdb.jpg.webp"
+                        ]
+                    },
+                    "birthday": "1952-06-15",
+                    "homepage": null,
+                    "biography": "John Toll, ASC (born June 15, 1952) is an American cinematographer and television producer. Toll's filmography spans a wide variety of genres, including epic period drama, comedy, science fiction, and contemporary drama. He won the Academy Award for Best Cinematography in both 1994 and 1995 for Legends of the Fall and Braveheart, respectively, and has also won numerous BAFTA, ASC, and Satellite Awards. He has collaborated with such directors as Francis Ford Coppola, Edward Zwick, Terrence Malick, Mel Gibson, Cameron Crowe, the Wachowskis, and Ang Lee.\n\nOutside of film, he has shot several commercials, the pilot episode of the Emmy Award-winning drama series Breaking Bad, and has served as chief cinematographer on the Netflix original series Sense8 by the Wachowskis, on which he also got executive producing credit in its second season.\n\nDescription above from the Wikipedia article John Toll, licensed under CC-BY-SA, full list of contributors on Wikipedia.",
+                    "birthplace": "Cleveland, Ohio, USA",
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": "John_Toll"
+                    },
+                    "updated_at": "2026-03-27T20:28:14.000Z",
+                    "known_for_department": "camera"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/002/172/headshots/medium/dcf5ef7fdb.jpg.webp"
+                    ]
+                },
+                "episode_count": 1
+            },
+            {
+                "job": "Director of Photography",
+                "jobs": [
+                    "Director of Photography"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0897794",
+                        "slug": "reynaldo-villalobos",
+                        "tmdb": 17948,
+                        "trakt": 13030
+                    },
+                    "name": "Reynaldo Villalobos",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/013/030/headshots/medium/dc6a4607fb.jpg.webp"
+                        ]
+                    },
+                    "birthday": "1940-11-09",
+                    "homepage": null,
+                    "biography": "",
+                    "birthplace": "Los Angeles, California, USA",
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": "Reynaldo_Villalobos"
+                    },
+                    "updated_at": "2026-03-20T08:48:00.000Z",
+                    "known_for_department": "camera"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/013/030/headshots/medium/dc6a4607fb.jpg.webp"
+                    ]
+                },
+                "episode_count": 6
+            }
+        ],
+        "art": [
+            {
+                "job": "Art Direction",
+                "jobs": [
+                    "Art Direction"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm1416525",
+                        "slug": "james-f-oberlander",
+                        "tmdb": 1018092,
+                        "trakt": 68341
+                    },
+                    "name": "James F. Oberlander",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": []
+                    },
+                    "birthday": null,
+                    "homepage": null,
+                    "biography": "",
+                    "birthplace": null,
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": null
+                    },
+                    "updated_at": "2024-05-05T08:01:31.000Z",
+                    "known_for_department": "art"
+                },
+                "images": {
+                    "headshot": []
+                },
+                "episode_count": 1
+            },
+            {
+                "job": "Property Master",
+                "jobs": [
+                    "Property Master"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm1010772",
+                        "slug": "paul-breuninger",
+                        "tmdb": 2054474,
+                        "trakt": 1155564
+                    },
+                    "name": "Paul Breuninger",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": []
+                    },
+                    "birthday": null,
+                    "homepage": null,
+                    "biography": "",
+                    "birthplace": null,
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": null
+                    },
+                    "updated_at": "2025-11-09T08:08:15.000Z",
+                    "known_for_department": "art"
+                },
+                "images": {
+                    "headshot": []
+                },
+                "episode_count": 1
+            },
+            {
+                "job": "Property Master",
+                "jobs": [
+                    "Property Master"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm2152118",
+                        "slug": "jeffri-welsh",
+                        "tmdb": 1446556,
+                        "trakt": 527999
+                    },
+                    "name": "Jeffri Welsh",
+                    "death": null,
+                    "gender": "unknown",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": []
+                    },
+                    "birthday": null,
+                    "homepage": null,
+                    "biography": "",
+                    "birthplace": null,
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": null
+                    },
+                    "updated_at": "2025-11-08T08:13:43.000Z",
+                    "known_for_department": "art"
+                },
+                "images": {
+                    "headshot": []
+                },
+                "episode_count": 6
+            },
+            {
+                "job": "Production Design",
+                "jobs": [
+                    "Production Design"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0455204",
+                        "slug": "robb-wilson-king",
+                        "tmdb": 21640,
+                        "trakt": 15105
+                    },
+                    "name": "Robb Wilson King",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": []
+                    },
+                    "birthday": null,
+                    "homepage": null,
+                    "biography": "",
+                    "birthplace": null,
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": null
+                    },
+                    "updated_at": "2026-02-23T08:36:48.000Z",
+                    "known_for_department": "art"
+                },
+                "images": {
+                    "headshot": []
+                },
+                "episode_count": 7
+            },
+            {
+                "job": "Production Design",
+                "jobs": [
+                    "Production Design"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0293081",
+                        "slug": "mark-s-freeborn",
+                        "tmdb": 12706,
+                        "trakt": 10487
+                    },
+                    "name": "Mark S. Freeborn",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/010/487/headshots/medium/ac22dcf6a8.jpg.webp"
+                        ]
+                    },
+                    "birthday": null,
+                    "homepage": null,
+                    "biography": "",
+                    "birthplace": null,
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": null
+                    },
+                    "updated_at": "2026-04-03T18:14:33.000Z",
+                    "known_for_department": "art"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/010/487/headshots/medium/ac22dcf6a8.jpg.webp"
+                    ]
+                },
+                "episode_count": 62
+            },
+            {
+                "job": "Art Direction",
+                "jobs": [
+                    "Art Direction"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm2240805",
+                        "slug": "bjarne-sletteland",
+                        "tmdb": 1330079,
+                        "trakt": 275389
+                    },
+                    "name": "Bjarne Sletteland",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": []
+                    },
+                    "birthday": null,
+                    "homepage": null,
+                    "biography": "",
+                    "birthplace": null,
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": null
+                    },
+                    "updated_at": "2024-05-05T08:01:31.000Z",
+                    "known_for_department": "art"
+                },
+                "images": {
+                    "headshot": []
+                },
+                "episode_count": 62
+            },
+            {
+                "job": "Property Master",
+                "jobs": [
+                    "Property Master"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm1005837",
+                        "slug": "mark-hansen-7e536396-6e14-4d62-99d4-0e896ab5bdf1",
+                        "tmdb": 1494529,
+                        "trakt": 555448
+                    },
+                    "name": "Mark Hansen",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": []
+                    },
+                    "birthday": null,
+                    "homepage": null,
+                    "biography": "",
+                    "birthplace": null,
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": null
+                    },
+                    "updated_at": "2025-12-05T15:13:40.000Z",
+                    "known_for_department": "art"
+                },
+                "images": {
+                    "headshot": []
+                },
+                "episode_count": 62
+            }
+        ],
+        "writing": [
+            {
+                "job": "Writer",
+                "jobs": [
+                    "Writer"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0319213",
+                        "slug": "vince-gilligan",
+                        "tmdb": 66633,
+                        "trakt": 423003
+                    },
+                    "name": "Vince Gilligan",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/423/003/headshots/medium/7f3390d1df.jpg.webp"
+                        ]
+                    },
+                    "birthday": "1967-02-10",
+                    "homepage": null,
+                    "biography": "George Vincent Gilligan Jr. (born February 10, 1967) is an American screenwriter and filmmaker. He is best known as the creator, primary writer, executive producer, and occasional director of the AMC crime drama series Breaking Bad (2008–2013) and its spin-off prequel series Better Call Saul (2015–2022). He also wrote, directed, and produced the Breaking Bad sequel film El Camino (2019).\n\nGilligan's other work includes writing, directing, and producing some episodes of the Fox science fiction series The X-Files (1993–2002) and co-creating its spin-off series The Lone Gunmen (2001), as well as co-writing the screenplay for the superhero film Hancock (2008). His numerous accolades include four Primetime Emmy Awards, six Writers Guild of America Awards, two Critics' Choice Television Awards, two Producers Guild of America Awards, a Directors Guild of America Award, and a BAFTA Television Award.\n\nDescription above from the Wikipedia article Vince Gilligan, licensed under CC-BY-SA, full list of contributors on Wikipedia.",
+                    "birthplace": "Richmond, Virginia, USA",
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": "Vince_Gilligan"
+                    },
+                    "updated_at": "2026-04-13T15:28:23.000Z",
+                    "known_for_department": "writing"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/423/003/headshots/medium/7f3390d1df.jpg.webp"
+                    ]
+                },
+                "episode_count": 4
+            },
+            {
+                "job": "Writer",
+                "jobs": [
+                    "Writer"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0510937",
+                        "slug": "patty-lin",
+                        "tmdb": 1218856,
+                        "trakt": 398571
+                    },
+                    "name": "Patty Lin",
+                    "death": null,
+                    "gender": "female",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": []
+                    },
+                    "birthday": null,
+                    "homepage": null,
+                    "biography": "",
+                    "birthplace": null,
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": null
+                    },
+                    "updated_at": "2025-11-04T08:11:10.000Z",
+                    "known_for_department": null
+                },
+                "images": {
+                    "headshot": []
+                },
+                "episode_count": 1
+            },
+            {
+                "job": "Writer",
+                "jobs": [
+                    "Writer",
+                    "Story Editor"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm2297407",
+                        "slug": "george-mastras",
+                        "tmdb": 1223193,
+                        "trakt": 400289
+                    },
+                    "name": "George Mastras",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/400/289/headshots/medium/de02620926.jpg.webp"
+                        ]
+                    },
+                    "birthday": "1966-04-10",
+                    "homepage": null,
+                    "biography": "",
+                    "birthplace": "Wellesley, Massachusetts, USA",
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": "George_Mastras"
+                    },
+                    "updated_at": "2026-01-15T08:20:37.000Z",
+                    "known_for_department": "writing"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/400/289/headshots/medium/de02620926.jpg.webp"
+                    ]
+                },
+                "episode_count": 8
+            },
+            {
+                "job": "Writer",
+                "jobs": [
+                    "Writer",
+                    "Story Editor"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0332467",
+                        "slug": "peter-gould",
+                        "tmdb": 24951,
+                        "trakt": 20811
+                    },
+                    "name": "Peter Gould",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/020/811/headshots/medium/a2805ad4f8.jpg.webp"
+                        ]
+                    },
+                    "birthday": "1952-01-01",
+                    "homepage": null,
+                    "biography": "Peter Gould is an American television writer, director and producer. He worked on all five seasons of the AMC drama Breaking Bad. He was nominated for four Writers Guild of America (WGA) Awards for his work on the series. After Breaking Bad ended, he went on to become the co-creator and co-showrunner, with Breaking Bad creator Vince Gilligan, of the show's spinoff, Better Call Saul. He became the series' sole showrunner after Gilligan left the writers room.",
+                    "birthplace": "New York City, New York, USA",
+                    "social_ids": {
+                        "twitter": "petergould",
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": "Peter_Gould"
+                    },
+                    "updated_at": "2026-04-01T16:17:35.000Z",
+                    "known_for_department": "production"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/020/811/headshots/medium/a2805ad4f8.jpg.webp"
+                    ]
+                },
+                "episode_count": 8
+            }
+        ],
+        "directing": [
+            {
+                "job": "Director",
+                "jobs": [
+                    "Director"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0319213",
+                        "slug": "vince-gilligan",
+                        "tmdb": 66633,
+                        "trakt": 423003
+                    },
+                    "name": "Vince Gilligan",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/423/003/headshots/medium/7f3390d1df.jpg.webp"
+                        ]
+                    },
+                    "birthday": "1967-02-10",
+                    "homepage": null,
+                    "biography": "George Vincent Gilligan Jr. (born February 10, 1967) is an American screenwriter and filmmaker. He is best known as the creator, primary writer, executive producer, and occasional director of the AMC crime drama series Breaking Bad (2008–2013) and its spin-off prequel series Better Call Saul (2015–2022). He also wrote, directed, and produced the Breaking Bad sequel film El Camino (2019).\n\nGilligan's other work includes writing, directing, and producing some episodes of the Fox science fiction series The X-Files (1993–2002) and co-creating its spin-off series The Lone Gunmen (2001), as well as co-writing the screenplay for the superhero film Hancock (2008). His numerous accolades include four Primetime Emmy Awards, six Writers Guild of America Awards, two Critics' Choice Television Awards, two Producers Guild of America Awards, a Directors Guild of America Award, and a BAFTA Television Award.\n\nDescription above from the Wikipedia article Vince Gilligan, licensed under CC-BY-SA, full list of contributors on Wikipedia.",
+                    "birthplace": "Richmond, Virginia, USA",
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": "Vince_Gilligan"
+                    },
+                    "updated_at": "2026-04-13T15:28:23.000Z",
+                    "known_for_department": "writing"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/423/003/headshots/medium/7f3390d1df.jpg.webp"
+                    ]
+                },
+                "episode_count": 1
+            },
+            {
+                "job": "Director",
+                "jobs": [
+                    "Director"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0002835",
+                        "slug": "adam-bernstein-5c662b3b-7930-4ca7-82a4-b0342f518e01",
+                        "tmdb": 111338,
+                        "trakt": 439140
+                    },
+                    "name": "Adam Bernstein",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/439/140/headshots/medium/c72aa4a286.jpg.webp"
+                        ]
+                    },
+                    "birthday": "1960-05-07",
+                    "homepage": null,
+                    "biography": "Adam Bernstein (born May 7, 1960) is an American film and television director. For his work on the television series Fargo, he was nominated for the 2014 Primetime Emmy Award for Outstanding Directing for a Miniseries, Movie or a Dramatic Special. In 2007, he won the Primetime Emmy Award for Outstanding Comedy Series for his work on 30 Rock.\n\nDescription above from the Wikipedia article Adam Bernstein, licensed under CC-BY-SA, full list of contributors on Wikipedia.",
+                    "birthplace": "Princeton, New Jersey, USA",
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": "Adam_Bernstein"
+                    },
+                    "updated_at": "2026-04-03T22:58:40.000Z",
+                    "known_for_department": "directing"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/439/140/headshots/medium/c72aa4a286.jpg.webp"
+                    ]
+                },
+                "episode_count": 2
+            },
+            {
+                "job": "Director",
+                "jobs": [
+                    "Director"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0570995",
+                        "slug": "jim-mckay-4139dfe9-27d7-4aef-8645-1fa7b610514c",
+                        "tmdb": 205639,
+                        "trakt": 442030
+                    },
+                    "name": "Jim McKay",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/442/030/headshots/medium/2f0ded3aa6.jpg.webp"
+                        ]
+                    },
+                    "birthday": "1962-01-01",
+                    "homepage": null,
+                    "biography": "Jim McKay is an American director, producer and writer for film and television.",
+                    "birthplace": "Englewood, New Jersey, USA",
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": "Jim_McKay_(director)"
+                    },
+                    "updated_at": "2026-03-31T01:17:31.000Z",
+                    "known_for_department": "directing"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/442/030/headshots/medium/2f0ded3aa6.jpg.webp"
+                    ]
+                },
+                "episode_count": 1
+            },
+            {
+                "job": "Director",
+                "jobs": [
+                    "Director"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0110644",
+                        "slug": "tricia-brock",
+                        "tmdb": 1215145,
+                        "trakt": 348931
+                    },
+                    "name": "Tricia Brock",
+                    "death": null,
+                    "gender": "female",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/348/931/headshots/medium/b892d77748.jpg.webp"
+                        ]
+                    },
+                    "birthday": null,
+                    "homepage": null,
+                    "biography": "Tricia Brock is a director and writer.",
+                    "birthplace": null,
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": "Tricia_Brock_(director)"
+                    },
+                    "updated_at": "2026-03-25T08:38:21.000Z",
+                    "known_for_department": "directing"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/348/931/headshots/medium/b892d77748.jpg.webp"
+                    ]
+                },
+                "episode_count": 1
+            },
+            {
+                "job": "Director",
+                "jobs": [
+                    "Director"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0400486",
+                        "slug": "bronwen-hughes",
+                        "tmdb": 18320,
+                        "trakt": 14298
+                    },
+                    "name": "Bronwen Hughes",
+                    "death": null,
+                    "gender": "female",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/014/298/headshots/medium/afc3d932be.jpg.webp"
+                        ]
+                    },
+                    "birthday": "1967-10-17",
+                    "homepage": null,
+                    "biography": "Bronwen Hughes is a Canadian film director. She was born in Toronto.",
+                    "birthplace": " Toronto, Ontario, Canada",
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": "Bronwen_Hughes"
+                    },
+                    "updated_at": "2025-11-23T09:14:18.000Z",
+                    "known_for_department": "directing"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/014/298/headshots/medium/afc3d932be.jpg.webp"
+                    ]
+                },
+                "episode_count": 1
+            },
+            {
+                "job": "Director",
+                "jobs": [
+                    "Director"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0006853",
+                        "slug": "tim-hunter-b3f4e55e-a017-4d9b-812a-094fbfe8ea7a",
+                        "tmdb": 15858,
+                        "trakt": 420822
+                    },
+                    "name": "Tim Hunter",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/420/822/headshots/medium/7c6b4467d9.jpg.webp"
+                        ]
+                    },
+                    "birthday": "1947-06-15",
+                    "homepage": null,
+                    "biography": "From Wikipedia, the free encyclopedia.\n\nTim Hunter (June 15, 1947 in Los Angeles, California) is an American television and film director. Since the late 1980s he has mostly worked on television, directing episodes for dozens of televisions series including Breaking Bad, Carnivàle, Chicago Hope, Crossing Jordan, Deadwood, Falcon Crest, Homicide: Life on the Street, House M.D., Law & Order, Lie to Me, Mad Men, and Twin Peaks. During the early-to-mid 1980s, Hunter directed feature films, including 1986's River's Edge, which won that year's award for best picture at the Independent Spirit Awards.",
+                    "birthplace": "Los Angeles, California, USA",
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": "Tim_Hunter_(director)"
+                    },
+                    "updated_at": "2026-03-30T17:00:38.000Z",
+                    "known_for_department": "directing"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/420/822/headshots/medium/7c6b4467d9.jpg.webp"
+                    ]
+                },
+                "episode_count": 1
+            }
+        ],
+        "editing": [
+            {
+                "job": "Editor",
+                "jobs": [
+                    "Editor"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0932241",
+                        "slug": "lynne-willingham",
+                        "tmdb": 1280071,
+                        "trakt": 637640
+                    },
+                    "name": "Lynne Willingham",
+                    "death": null,
+                    "gender": "female",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": []
+                    },
+                    "birthday": null,
+                    "homepage": null,
+                    "biography": "",
+                    "birthplace": null,
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": "Lynne_Willingham"
+                    },
+                    "updated_at": "2026-04-02T23:42:00.000Z",
+                    "known_for_department": "editing"
+                },
+                "images": {
+                    "headshot": []
+                },
+                "episode_count": 4
+            },
+            {
+                "job": "Editor",
+                "jobs": [
+                    "Editor"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0228893",
+                        "slug": "kelley-dixon",
+                        "tmdb": 1280074,
+                        "trakt": 637641
+                    },
+                    "name": "Kelley Dixon",
+                    "death": null,
+                    "gender": "female",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/637/641/headshots/medium/4d915136ef.jpg.webp"
+                        ]
+                    },
+                    "birthday": null,
+                    "homepage": null,
+                    "biography": "Kelley Dixon, ACE, is an editor. Dixon began professionally editing in 1990 as an assistant editor on feature films (Good Will Hunting, Reservoir Dogs) and TV series (Without a Trace). She is renowned for her work as a primary editor on a number of notable TV shows from 2008 to 2017, including sixteen episodes of Better Call Saul, twenty-seven episodes of Breaking Bad from 2008 to 2013, five episodes of The Walking Dead, and seven episodes of Shameless. Dixon has had twenty nominations for different editing honours and won an Emmy for Outstanding Single-Camera Picture Editing for Breaking Bad.",
+                    "birthplace": null,
+                    "social_ids": {
+                        "twitter": "kelleydixon",
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": "null"
+                    },
+                    "updated_at": "2026-02-27T08:37:22.000Z",
+                    "known_for_department": "editing"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/637/641/headshots/medium/4d915136ef.jpg.webp"
+                    ]
+                },
+                "episode_count": 2
+            },
+            {
+                "job": "Editor",
+                "jobs": [
+                    "Editor"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0531941",
+                        "slug": "skip-macdonald",
+                        "tmdb": 1123195,
+                        "trakt": 261988
+                    },
+                    "name": "Skip Macdonald",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/261/988/headshots/medium/3c4c1b861c.jpg.webp"
+                        ]
+                    },
+                    "birthday": null,
+                    "homepage": null,
+                    "biography": "Skip Macdonald is an American film and television editor known for his work on Breaking Bad (2008–2013), its spin-off series Better Call Saul (2015–2022), and the 2019 sequel film El Camino. He also edited several episodes for Fargo. In 2014, he won the Primetime Emmy Award for Outstanding Picture Editing for a Drama Series for the series finale of Breaking Bad.\n\nDescription above from the Wikipedia article Skip Macdonald, licensed under CC-BY-SA, full list of contributors on Wikipedia.",
+                    "birthplace": null,
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": "Skip_Macdonald"
+                    },
+                    "updated_at": "2026-01-15T08:20:37.000Z",
+                    "known_for_department": "editing"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/261/988/headshots/medium/3c4c1b861c.jpg.webp"
+                    ]
+                },
+                "episode_count": 1
+            }
+        ],
+        "production": [
+            {
+                "job": "Associate Producer",
+                "jobs": [
+                    "Associate Producer"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0770472",
+                        "slug": "gina-scheerer",
+                        "tmdb": 1808170,
+                        "trakt": 874881
+                    },
+                    "name": "Gina Scheerer",
+                    "death": null,
+                    "gender": "female",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": []
+                    },
+                    "birthday": null,
+                    "homepage": null,
+                    "biography": "",
+                    "birthplace": null,
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": null
+                    },
+                    "updated_at": "2025-05-29T08:08:22.000Z",
+                    "known_for_department": "production"
+                },
+                "images": {
+                    "headshot": []
+                },
+                "episode_count": 2
+            },
+            {
+                "job": "Co-Producer",
+                "jobs": [
+                    "Co-Producer"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0529175",
+                        "slug": "stewart-lyons",
+                        "tmdb": 1223200,
+                        "trakt": 325805
+                    },
+                    "name": "Stewart Lyons",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/325/805/headshots/medium/11667ca949.jpg.webp"
+                        ]
+                    },
+                    "birthday": null,
+                    "homepage": null,
+                    "biography": "",
+                    "birthplace": null,
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": null
+                    },
+                    "updated_at": "2026-04-10T08:03:14.000Z",
+                    "known_for_department": "production"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/325/805/headshots/medium/11667ca949.jpg.webp"
+                    ]
+                },
+                "episode_count": 68
+            },
+            {
+                "job": "Producer",
+                "jobs": [
+                    "Producer"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0510937",
+                        "slug": "patty-lin",
+                        "tmdb": 1218856,
+                        "trakt": 398571
+                    },
+                    "name": "Patty Lin",
+                    "death": null,
+                    "gender": "female",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": []
+                    },
+                    "birthday": null,
+                    "homepage": null,
+                    "biography": "",
+                    "birthplace": null,
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": null
+                    },
+                    "updated_at": "2025-11-04T08:11:10.000Z",
+                    "known_for_department": null
+                },
+                "images": {
+                    "headshot": []
+                },
+                "episode_count": 6
+            },
+            {
+                "job": "Casting",
+                "jobs": [
+                    "Casting"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0080544",
+                        "slug": "sharon-bialy",
+                        "tmdb": 6479,
+                        "trakt": 3025
+                    },
+                    "name": "Sharon Bialy",
+                    "death": null,
+                    "gender": "female",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/003/025/headshots/medium/4c2f0169b5.jpg.webp"
+                        ]
+                    },
+                    "birthday": null,
+                    "homepage": null,
+                    "biography": "",
+                    "birthplace": null,
+                    "social_ids": {
+                        "twitter": "SharonBialy",
+                        "facebook": null,
+                        "instagram": "sharonbialy",
+                        "wikipedia": null
+                    },
+                    "updated_at": "2026-03-13T09:37:12.000Z",
+                    "known_for_department": "production"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/003/025/headshots/medium/4c2f0169b5.jpg.webp"
+                    ]
+                },
+                "episode_count": 69
+            },
+            {
+                "job": "Casting",
+                "jobs": [
+                    "Casting"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0859520",
+                        "slug": "sherry-thomas",
+                        "tmdb": 959387,
+                        "trakt": 289476
+                    },
+                    "name": "Sherry Thomas",
+                    "death": null,
+                    "gender": "female",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/289/476/headshots/medium/acfd660a8d.jpg.webp"
+                        ]
+                    },
+                    "birthday": "1969-06-29",
+                    "homepage": null,
+                    "biography": "Sherry Thomas was born on 29 June 1969 in Northampton, Massachusetts, USA. She is a casting director and producer, known for Breaking Bad (2008), Barry (2018) and The Handmaid's Tale (2017).",
+                    "birthplace": "Northampton, Massachusetts, USA",
+                    "social_ids": {
+                        "twitter": "SherryThomas_ST",
+                        "facebook": null,
+                        "instagram": "sherrythomaslane",
+                        "wikipedia": null
+                    },
+                    "updated_at": "2026-01-20T08:34:21.000Z",
+                    "known_for_department": "production"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/289/476/headshots/medium/acfd660a8d.jpg.webp"
+                    ]
+                },
+                "episode_count": 69
+            },
+            {
+                "job": "Producer",
+                "jobs": [
+                    "Producer"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm1027122",
+                        "slug": "karen-moore",
+                        "tmdb": 1223201,
+                        "trakt": 365840
+                    },
+                    "name": "Karen Moore",
+                    "death": null,
+                    "gender": "female",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": []
+                    },
+                    "birthday": null,
+                    "homepage": null,
+                    "biography": "",
+                    "birthplace": null,
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": null
+                    },
+                    "updated_at": "2026-04-28T08:17:31.000Z",
+                    "known_for_department": "production"
+                },
+                "images": {
+                    "headshot": []
+                },
+                "episode_count": 7
+            },
+            {
+                "job": "Co-Producer",
+                "jobs": [
+                    "Co-Producer",
+                    "Co-Executive Producer"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm2214628",
+                        "slug": "melissa-bernstein",
+                        "tmdb": 1223199,
+                        "trakt": 400288
+                    },
+                    "name": "Melissa Bernstein",
+                    "death": null,
+                    "gender": "female",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/400/288/headshots/medium/efa02f9ae5.jpg.webp"
+                        ]
+                    },
+                    "birthday": null,
+                    "homepage": null,
+                    "biography": "",
+                    "birthplace": null,
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": "null"
+                    },
+                    "updated_at": "2026-02-07T03:20:38.000Z",
+                    "known_for_department": "production"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/400/288/headshots/medium/efa02f9ae5.jpg.webp"
+                    ]
+                },
+                "episode_count": 69
+            },
+            {
+                "job": "Executive Producer",
+                "jobs": [
+                    "Executive Producer"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0425741",
+                        "slug": "mark-johnson-15eae82b-791a-4c7f-a8d8-d5417954f0c5",
+                        "tmdb": 5162,
+                        "trakt": 412662
+                    },
+                    "name": "Mark Johnson",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/412/662/headshots/medium/2f3b08bd5c.jpg.webp"
+                        ]
+                    },
+                    "birthday": "1945-12-27",
+                    "homepage": null,
+                    "biography": "Mark Johnson (born December 27, 1945) is an American film and television producer. He won the Academy Award for Best Picture for producing the 1988 film Rain Man. Johnson was born in Washington, D.C., the son of Dorothy (née King), a realtor, and Emery Johnson, who worked in the air cargo business. He graduated from the University of Virginia in 1971.",
+                    "birthplace": "Washington, District of Columbia, USA",
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": "Mark_Johnson_(producer)"
+                    },
+                    "updated_at": "2026-04-05T08:25:05.000Z",
+                    "known_for_department": "production"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/412/662/headshots/medium/2f3b08bd5c.jpg.webp"
+                    ]
+                },
+                "episode_count": 69
+            },
+            {
+                "job": "Executive Producer",
+                "jobs": [
+                    "Executive Producer"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0319213",
+                        "slug": "vince-gilligan",
+                        "tmdb": 66633,
+                        "trakt": 423003
+                    },
+                    "name": "Vince Gilligan",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/423/003/headshots/medium/7f3390d1df.jpg.webp"
+                        ]
+                    },
+                    "birthday": "1967-02-10",
+                    "homepage": null,
+                    "biography": "George Vincent Gilligan Jr. (born February 10, 1967) is an American screenwriter and filmmaker. He is best known as the creator, primary writer, executive producer, and occasional director of the AMC crime drama series Breaking Bad (2008–2013) and its spin-off prequel series Better Call Saul (2015–2022). He also wrote, directed, and produced the Breaking Bad sequel film El Camino (2019).\n\nGilligan's other work includes writing, directing, and producing some episodes of the Fox science fiction series The X-Files (1993–2002) and co-creating its spin-off series The Lone Gunmen (2001), as well as co-writing the screenplay for the superhero film Hancock (2008). His numerous accolades include four Primetime Emmy Awards, six Writers Guild of America Awards, two Critics' Choice Television Awards, two Producers Guild of America Awards, a Directors Guild of America Award, and a BAFTA Television Award.\n\nDescription above from the Wikipedia article Vince Gilligan, licensed under CC-BY-SA, full list of contributors on Wikipedia.",
+                    "birthplace": "Richmond, Virginia, USA",
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": "Vince_Gilligan"
+                    },
+                    "updated_at": "2026-04-13T15:28:23.000Z",
+                    "known_for_department": "writing"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/423/003/headshots/medium/7f3390d1df.jpg.webp"
+                    ]
+                },
+                "episode_count": 69
+            },
+            {
+                "job": "Executive Producer",
+                "jobs": [
+                    "Executive Producer"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0533713",
+                        "slug": "michelle-maclaren",
+                        "tmdb": 29779,
+                        "trakt": 12427
+                    },
+                    "name": "Michelle MacLaren",
+                    "death": null,
+                    "gender": "female",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/012/427/headshots/medium/f9f33d92b1.jpg.webp"
+                        ]
+                    },
+                    "birthday": "1965-01-01",
+                    "homepage": null,
+                    "biography": "Michelle Maxwell MacLaren is a Canadian television director and producer who has worked on numerous series both in Canada and the United States, and is perhaps best known for her work on shows such as The X-Files, Breaking Bad and most recently Frank Darabont's acclaimed series The Walking Dead. She was recently nominated for two Primetime Emmy Awards; one for directing a season three episode of Breaking Bad entitled \"One Minute\" and the other for Outstanding Drama Series (Breaking Bad), on which she served as an co-executive producer.",
+                    "birthplace": "Vancouver, British Columbia, Canada",
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": "Michelle_MacLaren"
+                    },
+                    "updated_at": "2025-11-10T08:09:47.000Z",
+                    "known_for_department": "directing"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/012/427/headshots/medium/f9f33d92b1.jpg.webp"
+                    ]
+                },
+                "episode_count": 62
+            },
+            {
+                "job": "Co-Executive Producer",
+                "jobs": [
+                    "Co-Executive Producer"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0332467",
+                        "slug": "peter-gould",
+                        "tmdb": 24951,
+                        "trakt": 20811
+                    },
+                    "name": "Peter Gould",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/020/811/headshots/medium/a2805ad4f8.jpg.webp"
+                        ]
+                    },
+                    "birthday": "1952-01-01",
+                    "homepage": null,
+                    "biography": "Peter Gould is an American television writer, director and producer. He worked on all five seasons of the AMC drama Breaking Bad. He was nominated for four Writers Guild of America (WGA) Awards for his work on the series. After Breaking Bad ended, he went on to become the co-creator and co-showrunner, with Breaking Bad creator Vince Gilligan, of the show's spinoff, Better Call Saul. He became the series' sole showrunner after Gilligan left the writers room.",
+                    "birthplace": "New York City, New York, USA",
+                    "social_ids": {
+                        "twitter": "petergould",
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": "Peter_Gould"
+                    },
+                    "updated_at": "2026-04-01T16:17:35.000Z",
+                    "known_for_department": "production"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/020/811/headshots/medium/a2805ad4f8.jpg.webp"
+                    ]
+                },
+                "episode_count": 62
+            },
+            {
+                "job": "Co-Executive Producer",
+                "jobs": [
+                    "Co-Executive Producer"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm1041475",
+                        "slug": "thomas-schnauz",
+                        "tmdb": 103009,
+                        "trakt": 67528
+                    },
+                    "name": "Thomas Schnauz",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/067/528/headshots/medium/9ebcea7403.jpg.webp"
+                        ]
+                    },
+                    "birthday": "1966-12-02",
+                    "homepage": null,
+                    "biography": "Thomas Schnauz is an American television producer and television writer. His credits include The X-Files, The Lone Gunmen, Night Stalker, Reaper, Breaking Bad, and Better Call Saul.",
+                    "birthplace": "Kearny, New Jersey, USA",
+                    "social_ids": {
+                        "twitter": "TomSchnauz",
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": "Thomas_Schnauz"
+                    },
+                    "updated_at": "2026-04-14T08:35:29.000Z",
+                    "known_for_department": "writing"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/067/528/headshots/medium/9ebcea7403.jpg.webp"
+                    ]
+                },
+                "episode_count": 62
+            },
+            {
+                "job": "Producer",
+                "jobs": [
+                    "Producer"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0186505",
+                        "slug": "bryan-cranston",
+                        "tmdb": 17419,
+                        "trakt": 297737
+                    },
+                    "name": "Bryan Cranston",
+                    "death": null,
+                    "gender": "male",
+                    "height": 179.07000732421875,
+                    "images": {
+                        "fanart": [
+                            "media.trakt.tv/images/people/000/297/737/fanarts/medium/ec609f5bcc.jpg.webp"
+                        ],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/297/737/headshots/medium/25eb34a2d5.jpg.webp"
+                        ]
+                    },
+                    "birthday": "1956-03-07",
+                    "homepage": null,
+                    "biography": "Bryan Lee Cranston (born March 7, 1956) is an American actor. After taking minor roles in television, he established himself as a leading actor in both comedic and dramatic works on stage and screen. He has received several accolades, including seven Primetime Emmy Awards, a Golden Globe Award, a Laurence Olivier Award, and two Tony Awards, as well as nominations for an Academy Award and a BAFTA Award.\n\nCranston first gained prominence playing Hal in the Fox sitcom Malcolm in the Middle (2000–2006), for which he was nominated for the Primetime Emmy Award for Outstanding Supporting Actor in a Comedy Series. He gained stardom for his dramatic leading role playing Walter White in the AMC crime drama series Breaking Bad (2008–2013), for which he won the Outstanding Lead Actor in a Drama Series four times (2008, 2009, 2010, and 2014). He was Emmy-nominated for All the Way (2016) and Curb Your Enthusiasm (2018). Cranston co-developed and appeared in the crime drama series Sneaky Pete (2015–2019), and has also starred in the drama series Your Honor (2020–2023).\n\nOn stage, he earned a Tony Award for Best Actor in a Play for his portrayal of President Lyndon B. Johnson in the Broadway play All the Way (2014), a role he reprised in the 2016 HBO film of the same name. He received the Laurence Olivier Award for Best Actor and his second Tony Award for portraying Howard Beale in the play Network on the West End and Broadway, respectively.\n\nCranston earned nominations for the Academy Award and the BAFTA Award for Best Actor for portraying Dalton Trumbo in the Hollywood blacklist drama Trumbo (2015). Other notable films include Saving Private Ryan (1998), Little Miss Sunshine (2006), Drive (2011), Contagion (2011), Argo (2012), Godzilla (2014), The Infiltrator (2016), The Upside (2017), Last Flag Flying (2017), Isle of Dogs (2018), Asteroid City (2023), and The Phoenician Scheme (2025). He has also voiced roles in Madagascar 3 (2012), Kung Fu Panda 3 (2016), and Kung Fu Panda 4 (2024).\n\nDescription above from the Wikipedia article Bryan Cranston, licensed under CC-BY-SA, full list of contributors on Wikipedia.",
+                    "birthplace": "Hollywood, Los Angeles, California, USA",
+                    "social_ids": {
+                        "twitter": "BryanCranston",
+                        "facebook": "thebryancranston",
+                        "instagram": "bryancranston",
+                        "wikipedia": "Bryan_Cranston"
+                    },
+                    "updated_at": "2026-04-29T08:15:51.000Z",
+                    "known_for_department": "acting"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/297/737/headshots/medium/25eb34a2d5.jpg.webp"
+                    ]
+                },
+                "episode_count": 62
+            },
+            {
+                "job": "Co-Executive Producer",
+                "jobs": [
+                    "Co-Executive Producer"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm2297407",
+                        "slug": "george-mastras",
+                        "tmdb": 1223193,
+                        "trakt": 400289
+                    },
+                    "name": "George Mastras",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/400/289/headshots/medium/de02620926.jpg.webp"
+                        ]
+                    },
+                    "birthday": "1966-04-10",
+                    "homepage": null,
+                    "biography": "",
+                    "birthplace": "Wellesley, Massachusetts, USA",
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": "George_Mastras"
+                    },
+                    "updated_at": "2026-01-15T08:20:37.000Z",
+                    "known_for_department": "writing"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/400/289/headshots/medium/de02620926.jpg.webp"
+                    ]
+                },
+                "episode_count": 62
+            },
+            {
+                "job": "Producer",
+                "jobs": [
+                    "Producer"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm1034887",
+                        "slug": "diane-mercer",
+                        "tmdb": 1223202,
+                        "trakt": 400290
+                    },
+                    "name": "Diane Mercer",
+                    "death": null,
+                    "gender": "female",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/400/290/headshots/medium/9b03194511.jpg.webp"
+                        ]
+                    },
+                    "birthday": null,
+                    "homepage": null,
+                    "biography": "",
+                    "birthplace": null,
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": null
+                    },
+                    "updated_at": "2026-01-15T08:20:38.000Z",
+                    "known_for_department": "production"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/400/290/headshots/medium/9b03194511.jpg.webp"
+                    ]
+                },
+                "episode_count": 62
+            },
+            {
+                "job": "Co-Executive Producer",
+                "jobs": [
+                    "Co-Executive Producer"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm1028558",
+                        "slug": "sam-catlin",
+                        "tmdb": 1223194,
+                        "trakt": 436598
+                    },
+                    "name": "Sam Catlin",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/436/598/headshots/medium/93a7b5ac6e.jpg.webp"
+                        ]
+                    },
+                    "birthday": null,
+                    "homepage": null,
+                    "biography": "Sam Catlin is an American television writer, director, and producer. He is the showrunner of AMC's Preacher, and previously worked as a writer/producer on Breaking Bad. He has been nominated for a Writers Guild of America (WGA) Award for his work on the series.",
+                    "birthplace": null,
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": "Sam_Catlin"
+                    },
+                    "updated_at": "2026-01-15T08:20:35.000Z",
+                    "known_for_department": "writing"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/436/598/headshots/medium/93a7b5ac6e.jpg.webp"
+                    ]
+                },
+                "episode_count": 62
+            },
+            {
+                "job": "Casting Associate",
+                "jobs": [
+                    "Casting Associate"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm1877981",
+                        "slug": "russell-scott",
+                        "tmdb": 1537675,
+                        "trakt": 862463
+                    },
+                    "name": "Russell Scott",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/862/463/headshots/medium/cf91f2be90.jpg.webp"
+                        ]
+                    },
+                    "birthday": null,
+                    "homepage": "https://variety.com/exec/russell-scott/",
+                    "biography": "Russell Scott is an award-winning casting director with Bialy/Thomas Casting known for Better Call Saul (2015), The Handmaid's Tale (2017) and Dead to Me (2019).",
+                    "birthplace": "Los Angeles, California, U.S",
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": "rscottcast",
+                        "wikipedia": null
+                    },
+                    "updated_at": "2026-04-29T08:31:50.000Z",
+                    "known_for_department": "production"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/862/463/headshots/medium/cf91f2be90.jpg.webp"
+                    ]
+                },
+                "episode_count": 62
+            },
+            {
+                "job": "Location Manager",
+                "jobs": [
+                    "Location Manager"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm2518831",
+                        "slug": "christian-diaz-de-bedoya",
+                        "tmdb": 1930718,
+                        "trakt": 1021760
+                    },
+                    "name": "Christian Diaz de Bedoya",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/001/021/760/headshots/medium/9d15532712.jpg.webp"
+                        ]
+                    },
+                    "birthday": null,
+                    "homepage": null,
+                    "biography": "",
+                    "birthplace": null,
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": null
+                    },
+                    "updated_at": "2026-01-15T08:20:38.000Z",
+                    "known_for_department": "production"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/001/021/760/headshots/medium/9d15532712.jpg.webp"
+                    ]
+                },
+                "episode_count": 62
+            },
+            {
+                "job": "Associate Producer",
+                "jobs": [
+                    "Associate Producer"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm1003514",
+                        "slug": "andrew-ortner",
+                        "tmdb": 3970747,
+                        "trakt": 3154322
+                    },
+                    "name": "Andrew Ortner",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": []
+                    },
+                    "birthday": null,
+                    "homepage": null,
+                    "biography": "",
+                    "birthplace": null,
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": null
+                    },
+                    "updated_at": "2025-04-30T08:08:51.000Z",
+                    "known_for_department": "production"
+                },
+                "images": {
+                    "headshot": []
+                },
+                "episode_count": 62
+            }
+        ],
+        "crew": [
+            {
+                "job": "Stunts",
+                "jobs": [
+                    "Stunts"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm1075323",
+                        "slug": "cesar-garcia-2fe41ae3-a362-43a4-bf6c-09a9562831d8",
+                        "tmdb": 53255,
+                        "trakt": 421787
+                    },
+                    "name": "Cesar Garcia",
+                    "death": null,
+                    "gender": "male",
+                    "height": 170.17999267578125,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/421/787/headshots/medium/626688548b.jpg.webp"
+                        ]
+                    },
+                    "birthday": null,
+                    "homepage": null,
+                    "biography": "",
+                    "birthplace": null,
+                    "social_ids": {
+                        "twitter": "actorcesarg",
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": "null"
+                    },
+                    "updated_at": "2026-04-03T16:45:30.000Z",
+                    "known_for_department": "acting"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/421/787/headshots/medium/626688548b.jpg.webp"
+                    ]
+                },
+                "episode_count": 2
+            },
+            {
+                "job": "Stunt Coordinator",
+                "jobs": [
+                    "Stunt Coordinator"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0331814",
+                        "slug": "al-goto",
+                        "tmdb": 1537690,
+                        "trakt": 577447
+                    },
+                    "name": "Al Goto",
+                    "death": null,
+                    "gender": "male",
+                    "height": 175.25999450683594,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/577/447/headshots/medium/1d8ac74847.jpg.webp"
+                        ]
+                    },
+                    "birthday": "1962-01-31",
+                    "homepage": "https://www.brandxstunts.org/agoto",
+                    "biography": "Al Goto is an Award-winning American Stunt coordinator and stuntman.",
+                    "birthplace": "San Diego, California, USA",
+                    "social_ids": {
+                        "twitter": "TheGotoCorp",
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": null
+                    },
+                    "updated_at": "2026-03-31T08:29:14.000Z",
+                    "known_for_department": "crew"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/577/447/headshots/medium/1d8ac74847.jpg.webp"
+                    ]
+                },
+                "episode_count": 69
+            },
+            {
+                "job": "Thanks",
+                "jobs": [
+                    "Thanks"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm2852321",
+                        "slug": "martin-chavez-fc22def5-337d-4d57-8829-426ee89d08be",
+                        "tmdb": 4065206,
+                        "trakt": 3249099
+                    },
+                    "name": "Martin Chávez",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": []
+                    },
+                    "birthday": "1952-03-02",
+                    "homepage": null,
+                    "biography": "",
+                    "birthplace": "Albuquerque, New Mexico, USA",
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": "Martin_Chávez"
+                    },
+                    "updated_at": "2025-05-19T22:59:16.000Z",
+                    "known_for_department": "crew"
+                },
+                "images": {
+                    "headshot": []
+                },
+                "episode_count": 7
+            },
+            {
+                "job": "Thanks",
+                "jobs": [
+                    "Thanks"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm5961261",
+                        "slug": "richard-j-berry",
+                        "tmdb": 4065202,
+                        "trakt": 3250326
+                    },
+                    "name": "Richard J. Berry",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": []
+                    },
+                    "birthday": "1962-11-05",
+                    "homepage": null,
+                    "biography": "",
+                    "birthplace": "Waterloo, Iowa, USA",
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": "Richard_J._Berry"
+                    },
+                    "updated_at": "2026-02-28T08:42:29.000Z",
+                    "known_for_department": "crew"
+                },
+                "images": {
+                    "headshot": []
+                },
+                "episode_count": 62
+            }
+        ],
+        "costume & make-up": [
+            {
+                "job": "Costume Design",
+                "jobs": [
+                    "Costume Design"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0221914",
+                        "slug": "kathleen-detoro",
+                        "tmdb": 35583,
+                        "trakt": 27184
+                    },
+                    "name": "Kathleen Detoro",
+                    "death": null,
+                    "gender": "female",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": []
+                    },
+                    "birthday": "1958-07-01",
+                    "homepage": null,
+                    "biography": "",
+                    "birthplace": null,
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": "Kathleen_Detoro"
+                    },
+                    "updated_at": "2026-01-13T08:52:32.000Z",
+                    "known_for_department": "costume & make-up"
+                },
+                "images": {
+                    "headshot": []
+                },
+                "episode_count": 7
+            },
+            {
+                "job": "Costume Design",
+                "jobs": [
+                    "Costume Design"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0116958",
+                        "slug": "jennifer-bryan-626323",
+                        "tmdb": 1537674,
+                        "trakt": 626323
+                    },
+                    "name": "Jennifer Bryan",
+                    "death": null,
+                    "gender": "female",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/626/323/headshots/medium/d76ed1d18b.jpg.webp"
+                        ]
+                    },
+                    "birthday": null,
+                    "homepage": "https://www.jenniferbryandesigns.com/",
+                    "biography": "",
+                    "birthplace": "Jamaica",
+                    "social_ids": {
+                        "twitter": "wearthisjen",
+                        "facebook": "jennifer.bryan.357",
+                        "instagram": "veryjennystyling",
+                        "wikipedia": null
+                    },
+                    "updated_at": "2026-02-26T19:39:25.000Z",
+                    "known_for_department": "costume & make-up"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/626/323/headshots/medium/d76ed1d18b.jpg.webp"
+                    ]
+                },
+                "episode_count": 62
+            }
+        ],
+        "sound": [
+            {
+                "job": "Sound Re-Recording Mixer",
+                "jobs": [
+                    "Sound Re-Recording Mixer"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0673964",
+                        "slug": "jeffrey-perkins",
+                        "tmdb": 143921,
+                        "trakt": 146054
+                    },
+                    "name": "Jeffrey Perkins",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/146/054/headshots/medium/4ff8f70289.jpg.webp"
+                        ]
+                    },
+                    "birthday": null,
+                    "homepage": "https://www.wbsound.com/portfolio/jeffrey-perkins/",
+                    "biography": "Jeffrey Perkins works as sound editor and re-recording mixer for film and television productions. He is an Academy Award Winner for \"Best Achievement in Sound\" in the movie \"Dances  with Wolves\".",
+                    "birthplace": null,
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": "Jeffrey_Perkins"
+                    },
+                    "updated_at": "2026-02-21T08:31:44.000Z",
+                    "known_for_department": "sound"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/146/054/headshots/medium/4ff8f70289.jpg.webp"
+                    ]
+                },
+                "episode_count": 69
+            },
+            {
+                "job": "Music Supervisor",
+                "jobs": [
+                    "Music Supervisor"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0326724",
+                        "slug": "thomas-golubic",
+                        "tmdb": 1069688,
+                        "trakt": 201824
+                    },
+                    "name": "Thomas Golubić",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/201/824/headshots/medium/f6fbdb4033.jpg.webp"
+                        ]
+                    },
+                    "birthday": null,
+                    "homepage": null,
+                    "biography": "",
+                    "birthplace": null,
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": "Thomas_Golubić"
+                    },
+                    "updated_at": "2025-12-16T08:24:34.000Z",
+                    "known_for_department": "sound"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/201/824/headshots/medium/f6fbdb4033.jpg.webp"
+                    ]
+                },
+                "episode_count": 69
+            },
+            {
+                "job": "Original Music Composer",
+                "jobs": [
+                    "Original Music Composer"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm1726663",
+                        "slug": "dave-porter",
+                        "tmdb": 1280070,
+                        "trakt": 241567
+                    },
+                    "name": "Dave Porter",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/241/567/headshots/medium/5d94ec4f3b.jpg.webp"
+                        ]
+                    },
+                    "birthday": null,
+                    "homepage": "https://www.daveporter.tv/",
+                    "biography": "Dave Porter is an American composer, best known for his original score for the television series Breaking Bad (2008–2013), its prequel spin-off Better Call Saul (2015–2022) and the epilogue film El Camino: A Breaking Bad Movie (2019). At Sarah Lawrence College, Porter studied classical and electronic music composition.\n\nDescription above from the Wikipedia article Dave Porter (composer), licensed under CC-BY-SA, full list of contributors on Wikipedia.",
+                    "birthplace": null,
+                    "social_ids": {
+                        "twitter": "DavePorterMusic",
+                        "facebook": "daveportermusic",
+                        "instagram": "daveporter_music",
+                        "wikipedia": "Dave_Porter_(composer)"
+                    },
+                    "updated_at": "2026-02-14T08:19:18.000Z",
+                    "known_for_department": "sound"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/241/567/headshots/medium/5d94ec4f3b.jpg.webp"
+                    ]
+                },
+                "episode_count": 69
+            },
+            {
+                "job": "Sound Re-Recording Mixer",
+                "jobs": [
+                    "Sound Re-Recording Mixer"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0433127",
+                        "slug": "eric-justen",
+                        "tmdb": 1440228,
+                        "trakt": 521319
+                    },
+                    "name": "Eric Justen",
+                    "death": "2016-08-11",
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/521/319/headshots/medium/c3923d4e66.jpg.webp"
+                        ]
+                    },
+                    "birthday": "1972-08-25",
+                    "homepage": null,
+                    "biography": "Eric Justen was an American re-recording mixer and sound recordist for films and television, best known for his Emmy-nominated work on the television series \"Breaking Bad\".",
+                    "birthplace": "Woodstock, Illinois, USA",
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": null
+                    },
+                    "updated_at": "2026-03-21T08:50:30.000Z",
+                    "known_for_department": "sound"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/521/319/headshots/medium/c3923d4e66.jpg.webp"
+                    ]
+                },
+                "episode_count": 69
+            },
+            {
+                "job": "Supervising Sound Editor",
+                "jobs": [
+                    "Supervising Sound Editor"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0286860",
+                        "slug": "nick-forshager-1012176",
+                        "tmdb": 1537682,
+                        "trakt": 1012176
+                    },
+                    "name": "Nick Forshager",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/001/012/176/headshots/medium/2018732c95.jpg.webp"
+                        ]
+                    },
+                    "birthday": "1965-02-15",
+                    "homepage": null,
+                    "biography": "Nick Forshager is an American sound editor. He has been nominated for ten Primetime Emmy Awards in the category Outstanding Sound Editing. Forshager also won a Primetime Emmy Award in the category Outstanding Sound Editing for a Limited or Anthology Series, Movie or Special for the crime drama television series Fargo in 2016.",
+                    "birthplace": "Los Angeles, California, USA",
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": "Nick_Forshager"
+                    },
+                    "updated_at": "2025-11-10T08:04:42.000Z",
+                    "known_for_department": "sound"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/001/012/176/headshots/medium/2018732c95.jpg.webp"
+                    ]
+                },
+                "episode_count": 69
+            }
+        ],
+        "created by": [
+            {
+                "job": "Creator",
+                "jobs": [
+                    "Creator"
+                ],
+                "person": {
+                    "ids": {
+                        "imdb": "nm0319213",
+                        "slug": "vince-gilligan",
+                        "tmdb": 66633,
+                        "trakt": 423003
+                    },
+                    "name": "Vince Gilligan",
+                    "death": null,
+                    "gender": "male",
+                    "height": null,
+                    "images": {
+                        "fanart": [],
+                        "headshot": [
+                            "media.trakt.tv/images/people/000/423/003/headshots/medium/7f3390d1df.jpg.webp"
+                        ]
+                    },
+                    "birthday": "1967-02-10",
+                    "homepage": null,
+                    "biography": "George Vincent Gilligan Jr. (born February 10, 1967) is an American screenwriter and filmmaker. He is best known as the creator, primary writer, executive producer, and occasional director of the AMC crime drama series Breaking Bad (2008–2013) and its spin-off prequel series Better Call Saul (2015–2022). He also wrote, directed, and produced the Breaking Bad sequel film El Camino (2019).\n\nGilligan's other work includes writing, directing, and producing some episodes of the Fox science fiction series The X-Files (1993–2002) and co-creating its spin-off series The Lone Gunmen (2001), as well as co-writing the screenplay for the superhero film Hancock (2008). His numerous accolades include four Primetime Emmy Awards, six Writers Guild of America Awards, two Critics' Choice Television Awards, two Producers Guild of America Awards, a Directors Guild of America Award, and a BAFTA Television Award.\n\nDescription above from the Wikipedia article Vince Gilligan, licensed under CC-BY-SA, full list of contributors on Wikipedia.",
+                    "birthplace": "Richmond, Virginia, USA",
+                    "social_ids": {
+                        "twitter": null,
+                        "facebook": null,
+                        "instagram": null,
+                        "wikipedia": "Vince_Gilligan"
+                    },
+                    "updated_at": "2026-04-13T15:28:23.000Z",
+                    "known_for_department": "writing"
+                },
+                "images": {
+                    "headshot": [
+                        "media.trakt.tv/images/people/000/423/003/headshots/medium/7f3390d1df.jpg.webp"
+                    ]
+                },
+                "episode_count": 62
+            }
+        ]
+    }
+}

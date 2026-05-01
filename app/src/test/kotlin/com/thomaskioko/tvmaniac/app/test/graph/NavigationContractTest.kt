@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.app.test.graph
 
-import com.thomaskioko.tvmaniac.app.test.util.BaseAppRobolectricTest
+import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetConfig
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
@@ -21,7 +21,7 @@ import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.nulls.shouldNotBeNull
 import kotlin.test.Test
 
-internal class NavigationContractTest : BaseAppRobolectricTest() {
+internal class NavigationContractTest : BaseAppFlowTest() {
 
     @Test
     fun `should resolve a NavDestination for every NavRoute subtype`() {

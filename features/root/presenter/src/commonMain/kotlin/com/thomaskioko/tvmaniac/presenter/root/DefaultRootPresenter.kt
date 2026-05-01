@@ -65,16 +65,16 @@ public class DefaultRootPresenter(
     @Assisted componentContext: ComponentContext,
     private val navigator: Navigator,
     private val navDestinations: Set<NavDestination>,
-    navRouteSerializer: NavRouteSerializer,
     private val sheetChildFactories: Set<SheetChildFactory>,
-    sheetConfigSerializer: SheetConfigSerializer,
-    sheetNavigator: SheetNavigator,
     private val notificationRationale: NotificationRationale,
     private val traktAuthRepository: TraktAuthRepository,
     private val updateUserProfileData: UpdateUserProfileData,
     private val logoutInteractor: LogoutInteractor,
     private val logger: Logger,
     private val datastoreRepository: DatastoreRepository,
+    navRouteSerializer: NavRouteSerializer,
+    sheetConfigSerializer: SheetConfigSerializer,
+    sheetNavigator: SheetNavigator,
 ) : RootPresenter, ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
@@ -83,10 +83,6 @@ public class DefaultRootPresenter(
     private val uiMessageManager = UiMessageManager()
 
     init {
-        coroutineScope.launch {
-            datastoreRepository.setShowNotificationRationale(false)
-        }
-
         coroutineScope.launch {
             traktAuthRepository.state
                 .debounce(200.milliseconds)

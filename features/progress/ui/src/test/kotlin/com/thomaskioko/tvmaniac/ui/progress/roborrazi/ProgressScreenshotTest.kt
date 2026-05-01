@@ -1,11 +1,16 @@
 package com.thomaskioko.tvmaniac.ui.progress.roborrazi
 
 import androidx.activity.ComponentActivity
-import androidx.compose.material3.Text
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
+import com.thomaskioko.tvmaniac.presentation.calendar.CalendarState
+import com.thomaskioko.tvmaniac.presentation.progress.ProgressState
+import com.thomaskioko.tvmaniac.presentation.upnext.UpNextState
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import com.thomaskioko.tvmaniac.ui.progress.ProgressScreen
+import com.thomaskioko.tvmaniac.ui.progress.previewCalendarEvents
+import com.thomaskioko.tvmaniac.ui.progress.previewUpNextEpisodes
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -28,11 +33,22 @@ class ProgressScreenshotTest {
         composeTestRule.captureMultiDevice("ProgressScreenUpNextTab") {
             TvManiacBackground {
                 ProgressScreen(
-                    selectedPage = 0,
-                    isLoading = false,
+                    progressState = ProgressState(selectedPage = 0),
+                    upNextState = UpNextState(
+                        isLoading = false,
+                        episodes = previewUpNextEpisodes(),
+                    ),
+                    calendarState = CalendarState(
+                        isLoading = false,
+                        isLoggedIn = true,
+                        weekLabel = "Jan 31, 2026 - Feb 6, 2026",
+                        dateGroups = previewCalendarEvents(),
+                    ),
                     tabs = listOf("Up Next", "Calendar"),
-                    upNextContent = { Text("Up Next Content") },
-                    calendarContent = { Text("Calendar Content") },
+                    modifier = Modifier,
+                    progressAction = {},
+                    upNextAction = {},
+                    calendarAction = {},
                 )
             }
         }
@@ -43,11 +59,22 @@ class ProgressScreenshotTest {
         composeTestRule.captureMultiDevice("ProgressScreenCalendarTab") {
             TvManiacBackground {
                 ProgressScreen(
-                    selectedPage = 1,
-                    isLoading = false,
+                    progressState = ProgressState(selectedPage = 1),
+                    upNextState = UpNextState(
+                        isLoading = false,
+                        episodes = previewUpNextEpisodes(),
+                    ),
+                    calendarState = CalendarState(
+                        isLoading = false,
+                        isLoggedIn = true,
+                        weekLabel = "Jan 31, 2026 - Feb 6, 2026",
+                        dateGroups = previewCalendarEvents(),
+                    ),
                     tabs = listOf("Up Next", "Calendar"),
-                    upNextContent = { Text("Up Next Content") },
-                    calendarContent = { Text("Calendar Content") },
+                    modifier = Modifier,
+                    progressAction = {},
+                    upNextAction = {},
+                    calendarAction = {},
                 )
             }
         }
@@ -58,11 +85,22 @@ class ProgressScreenshotTest {
         composeTestRule.captureMultiDevice("ProgressScreenLoading") {
             TvManiacBackground {
                 ProgressScreen(
-                    selectedPage = 0,
-                    isLoading = true,
+                    progressState = ProgressState(selectedPage = 0),
+                    upNextState = UpNextState(
+                        isLoading = true,
+                        episodes = previewUpNextEpisodes(),
+                    ),
+                    calendarState = CalendarState(
+                        isLoading = false,
+                        isLoggedIn = true,
+                        weekLabel = "Jan 31, 2026 - Feb 6, 2026",
+                        dateGroups = previewCalendarEvents(),
+                    ),
                     tabs = listOf("Up Next", "Calendar"),
-                    upNextContent = { Text("Up Next Content") },
-                    calendarContent = { Text("Calendar Content") },
+                    modifier = Modifier,
+                    progressAction = {},
+                    upNextAction = {},
+                    calendarAction = {},
                 )
             }
         }

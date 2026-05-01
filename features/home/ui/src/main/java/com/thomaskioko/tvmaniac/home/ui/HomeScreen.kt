@@ -1,17 +1,16 @@
 package com.thomaskioko.tvmaniac.home.ui
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Movie
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.PlayCircleOutline
 import androidx.compose.material.icons.outlined.VideoLibrary
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
@@ -24,7 +23,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.stack.Children
-import com.thomaskioko.tvmaniac.compose.components.CircularCard
+import com.thomaskioko.tvmaniac.compose.components.AvatarComponent
+import com.thomaskioko.tvmaniac.compose.components.NavigationDefaultColors
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomNavigationItem
 import com.thomaskioko.tvmaniac.compose.components.TvManiacNavigationBar
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
@@ -137,29 +137,25 @@ private fun RowScope.ProfileNavigationItem(
     NavigationBarItem(
         modifier = modifier,
         icon = {
-            if (avatarUrl != null) {
-                CircularCard(
-                    imageUrl = avatarUrl,
-                    contentDescription = title,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .padding(0.dp),
-                )
-            } else {
-                androidx.compose.material3.Icon(
-                    imageVector = Icons.Outlined.Person,
-                    contentDescription = title,
-                )
-            }
+            AvatarComponent(
+                imageUrl = avatarUrl,
+                contentDescription = title,
+                size = 24.dp,
+                placeholderIcon = Icons.Outlined.Person,
+                border = BorderStroke(
+                    width = 2.dp,
+                    color = if (selected) NavigationDefaultColors.navigationSelectedItemColor() else NavigationDefaultColors.navigationContentColor(),
+                ),
+            )
         },
         label = { Text(title) },
         selected = selected,
         alwaysShowLabel = true,
         colors = NavigationBarItemDefaults.colors(
-            selectedIconColor = MaterialTheme.colorScheme.secondary,
-            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            selectedTextColor = MaterialTheme.colorScheme.secondary,
-            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            selectedIconColor = NavigationDefaultColors.navigationSelectedItemColor(),
+            unselectedIconColor = NavigationDefaultColors.navigationContentColor(),
+            selectedTextColor = NavigationDefaultColors.navigationSelectedItemColor(),
+            unselectedTextColor = NavigationDefaultColors.navigationContentColor(),
             indicatorColor = Color.Transparent,
         ),
         onClick = onClick,

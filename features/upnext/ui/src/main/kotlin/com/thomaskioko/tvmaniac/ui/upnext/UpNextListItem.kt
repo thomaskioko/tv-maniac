@@ -18,6 +18,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -50,11 +52,16 @@ internal fun UpNextListItem(
     modifier: Modifier = Modifier,
     onLongPress: () -> Unit = {},
 ) {
-    Surface(
+    Card(
         modifier = modifier
             .fillMaxWidth()
-            .height(140.dp),
-        color = MaterialTheme.colorScheme.surface,
+            .height(140.dp)
+            .padding(horizontal = 8.dp)
+            .clickable(onClick = { onItemClicked(item.showTraktId) }),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+        ),
+        shape = RoundedCornerShape(12.dp),
     ) {
         Row(
             modifier = Modifier.combinedClickable(
@@ -90,6 +97,9 @@ internal fun UpNextListItem(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
+                    modifier = Modifier.testTag(
+                        UpNextTestTags.episodeMeta(item.showTraktId, item.formattedEpisodeNumber),
+                    ),
                     text = buildString {
                         append(item.formattedEpisodeNumber)
                         if (item.remainingEpisodes > 0) append(" +${item.remainingEpisodes}")
@@ -102,7 +112,12 @@ internal fun UpNextListItem(
                 item.episodeName?.let { name ->
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        modifier = Modifier.testTag(UpNextTestTags.episodeName(item.showTraktId, name)),
+                        modifier = Modifier.testTag(
+                            UpNextTestTags.episodeName(
+                                item.showTraktId,
+                                name,
+                            ),
+                        ),
                         text = name,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -136,8 +151,12 @@ internal fun UpNextListItem(
                     )
 
                     if (item.totalCount > 0) {
+                        val countText = "${item.watchedCount}/${item.totalCount}"
                         Text(
-                            text = "${item.watchedCount}/${item.totalCount}",
+                            modifier = Modifier.testTag(
+                                UpNextTestTags.progressCount(item.showTraktId, countText),
+                            ),
+                            text = countText,
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -174,10 +193,12 @@ private fun UpNextListItemPreview(
     @PreviewParameter(UpNextEpisodePreviewParameterProvider::class) item: UpNextEpisodeUiModel,
 ) {
     TvManiacTheme {
-        UpNextListItem(
-            item = item,
-            onItemClicked = {},
-            onMarkWatched = {},
-        )
+        Surface {
+            UpNextListItem(
+                item = item,
+                onItemClicked = {},
+                onMarkWatched = {},
+            )
+        }
     }
 }

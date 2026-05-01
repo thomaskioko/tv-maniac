@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.profile.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,7 +21,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Person
@@ -50,7 +49,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.components.CircularCard
+import com.thomaskioko.tvmaniac.compose.components.AvatarComponent
 import com.thomaskioko.tvmaniac.compose.components.OutlinedVerticalIconButton
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
@@ -384,7 +383,7 @@ private fun HeaderContent(
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.Bottom,
         ) {
-            CircularCard(
+            AvatarComponent(
                 imageUrl = avatarUrl,
                 size = 80.dp,
                 placeholderIcon = Icons.Filled.Person,
@@ -392,11 +391,7 @@ private fun HeaderContent(
                     cd_profile_pic.resourceId,
                     username,
                 ),
-                modifier = if (!avatarUrl.isNullOrBlank()) {
-                    Modifier.border(3.dp, MaterialTheme.colorScheme.secondary, CircleShape)
-                } else {
-                    Modifier
-                },
+                border = BorderStroke(2.dp, MaterialTheme.colorScheme.secondary),
             )
 
             Spacer(modifier = Modifier.width(16.dp))

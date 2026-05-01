@@ -32,16 +32,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
 import com.thomaskioko.tvmaniac.compose.components.ParallaxCarouselImage
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.util.LocalAutoAdvanceEnabled
 import com.thomaskioko.tvmaniac.discover.presenter.model.DiscoverShow
 import com.thomaskioko.tvmaniac.discover.ui.discoverContentSuccess
+import com.thomaskioko.tvmaniac.testtags.discover.DiscoverTestTags
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 internal fun DiscoverHeaderContent(
@@ -82,7 +86,8 @@ internal fun PosterCardsPager(
         HorizontalPager(
             modifier = modifier
                 .fillMaxWidth()
-                .height(pagerHeight),
+                .height(pagerHeight)
+                .testTag(DiscoverTestTags.FEATURED_PAGER_TEST_TAG),
             state = pagerState,
             verticalAlignment = Alignment.Bottom,
         ) { currentPage ->
@@ -93,6 +98,7 @@ internal fun PosterCardsPager(
                 currentPage = currentPage,
                 imageUrl = currentShow.posterImageUrl,
                 modifier = Modifier
+                    .testTag(DiscoverTestTags.featuredShowItem(currentShow.traktId))
                     .clickable(onClick = { memoizedOnClick(currentShow.traktId) }),
             ) {
                 ShowCardOverlay(
@@ -104,11 +110,13 @@ internal fun PosterCardsPager(
 
         if (list.isNotEmpty()) {
             val isInPreview = LocalInspectionMode.current
-            LaunchedEffect(key1 = list.size) {
+            val autoAdvanceEnabled = LocalAutoAdvanceEnabled.current
+            LaunchedEffect(key1 = list.size, key2 = autoAdvanceEnabled) {
                 if (isInPreview) return@LaunchedEffect
+                if (!autoAdvanceEnabled) return@LaunchedEffect
 
                 while (true) {
-                    delay(4_500)
+                    delay(4_500.milliseconds)
 
                     val nextPage = if (pagerState.currentPage + 1 < list.size) {
                         pagerState.currentPage + 1

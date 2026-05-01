@@ -52,6 +52,7 @@ jobs:
           -Papp.debugOnly=false
           -Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.enabledRules=baselineprofile
           -Pandroid.testoptions.manageddevices.emulator.gpu="swiftshader_indirect"
+          -Pandroid.experimental.androidTest.numManagedDeviceShards=1
           --no-configuration-cache
 
       ## ToDo: Commit baseline profile changes to main.

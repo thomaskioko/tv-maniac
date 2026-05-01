@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.ui.upnext.roborrazi
 
 import androidx.activity.ComponentActivity
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.domain.upnext.model.UpNextSortOption
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextState

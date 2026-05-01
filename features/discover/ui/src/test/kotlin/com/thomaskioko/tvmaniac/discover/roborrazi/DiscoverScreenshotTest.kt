@@ -5,7 +5,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.remember
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverViewState

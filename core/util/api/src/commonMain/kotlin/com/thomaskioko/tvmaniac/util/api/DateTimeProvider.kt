@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.util.api
 
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlin.time.Instant
 
@@ -13,4 +14,7 @@ public interface DateTimeProvider {
     public fun todayAsIsoDate(timeZone: TimeZone = TimeZone.currentSystemDefault()): String
     public fun isoDateToEpoch(dateStr: String?): Long?
     public fun currentYear(timeZone: TimeZone = TimeZone.currentSystemDefault()): Int
+    public fun formatDisplayDate(date: LocalDate, timeZone: TimeZone = TimeZone.UTC): String
+    public fun formatDayOfWeek(date: LocalDate, timeZone: TimeZone = TimeZone.UTC): String
+    public fun getTimeZone(): TimeZone = TimeZone.currentSystemDefault()
 }

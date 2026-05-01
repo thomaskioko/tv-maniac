@@ -1,0 +1,633 @@
+[
+    {
+        "ids": {
+            "imdb": "tt22202452",
+            "plex": {
+                "guid": "6497f1862313a1f871612318",
+                "slug": "pluribus"
+            },
+            "slug": "pluribus",
+            "tmdb": 225171,
+            "tvdb": 436457,
+            "trakt": 206790
+        },
+        "airs": {
+            "day": "Thursday",
+            "time": "21:00",
+            "timezone": "America/New_York"
+        },
+        "year": 2025,
+        "title": "Pluribus",
+        "votes": 9250,
+        "colors": {
+            "poster": [
+                "#F0D414",
+                "#70603C"
+            ]
+        },
+        "genres": [
+            "drama",
+            "fantasy",
+            "science-fiction"
+        ],
+        "images": {
+            "logo": [
+                "media.trakt.tv/images/shows/000/206/790/logos/medium/d445cdd790.png.webp"
+            ],
+            "thumb": [
+                "media.trakt.tv/images/shows/000/206/790/thumbs/medium/de60665b9a.jpg.webp"
+            ],
+            "banner": [
+                "media.trakt.tv/images/shows/000/206/790/banners/medium/b713b94755.jpg.webp"
+            ],
+            "fanart": [
+                "media.trakt.tv/images/shows/000/206/790/fanarts/medium/458c848200.jpg.webp"
+            ],
+            "poster": [
+                "media.trakt.tv/images/shows/000/206/790/posters/medium/e255ecc15c.jpg.webp"
+            ],
+            "clearart": [
+                "media.trakt.tv/images/shows/000/206/790/cleararts/medium/5917104d2b.png.webp"
+            ]
+        },
+        "rating": 8.067675590515137,
+        "status": "returning series",
+        "country": "us",
+        "network": "Apple TV",
+        "runtime": 50,
+        "tagline": "Happiness is a state of mind.",
+        "trailer": "https://youtube.com/watch?v=a6lzvWby9UE",
+        "homepage": "https://tv.apple.com/show/umc.cmc.37axgovs2yozlyh3c2cmwzlza",
+        "language": "en",
+        "overview": "The most miserable person on Earth must save the world from happiness.",
+        "languages": [
+            "en",
+            "fr",
+            "qu",
+            "es"
+        ],
+        "subgenres": [
+            "dystopia",
+            "dark-comedy",
+            "virus",
+            "lesbian",
+            "strange"
+        ],
+        "social_ids": {
+            "twitter": "",
+            "facebook": null,
+            "instagram": null,
+            "wikipedia": "Untitled_Vince_Gilligan_TV_series"
+        },
+        "updated_at": "2026-04-28T17:40:40.000Z",
+        "first_aired": "2025-11-07T02:00:00.000Z",
+        "certification": "TV-MA",
+        "comment_count": 119,
+        "total_runtime": 453,
+        "aired_episodes": 9,
+        "original_title": "Pluribus",
+        "available_translations": [
+            "ar",
+            "bg",
+            "cs",
+            "da",
+            "de",
+            "el",
+            "en",
+            "es",
+            "fa",
+            "fi",
+            "fr",
+            "he",
+            "hi",
+            "hu",
+            "id",
+            "it",
+            "ja",
+            "ka",
+            "ko",
+            "lt",
+            "nl",
+            "no",
+            "pl",
+            "pt",
+            "ro",
+            "ru",
+            "sk",
+            "sl",
+            "sr",
+            "sv",
+            "th",
+            "tr",
+            "uk",
+            "vi",
+            "zh"
+        ]
+    },
+    {
+        "ids": {
+            "imdb": "tt27497448",
+            "plex": {
+                "guid": "643cbf9ec1962a0897b7f6dd",
+                "slug": "a-knight-of-the-seven-kingdoms"
+            },
+            "slug": "a-knight-of-the-seven-kingdoms",
+            "tmdb": 224372,
+            "tvdb": 433631,
+            "trakt": 204141
+        },
+        "airs": {
+            "day": "Sunday",
+            "time": "22:00",
+            "timezone": "America/New_York"
+        },
+        "year": 2026,
+        "title": "A Knight of the Seven Kingdoms",
+        "votes": 7830,
+        "colors": {
+            "poster": [
+                "#CBD3C2",
+                "#1D1D14"
+            ]
+        },
+        "genres": [
+            "drama",
+            "fantasy",
+            "science-fiction",
+            "action",
+            "adventure"
+        ],
+        "images": {
+            "logo": [
+                "media.trakt.tv/images/shows/000/204/141/logos/medium/e4718bddda.png.webp"
+            ],
+            "thumb": [
+                "media.trakt.tv/images/shows/000/204/141/thumbs/medium/c87b3df539.jpg.webp"
+            ],
+            "banner": [
+                "media.trakt.tv/images/shows/000/204/141/banners/medium/9b40cea8b5.jpg.webp"
+            ],
+            "fanart": [
+                "media.trakt.tv/images/shows/000/204/141/fanarts/medium/e4d5748ba5.jpg.webp"
+            ],
+            "poster": [
+                "media.trakt.tv/images/shows/000/204/141/posters/medium/d3b65e6ff9.jpg.webp"
+            ],
+            "clearart": [
+                "media.trakt.tv/images/shows/000/204/141/cleararts/medium/e43be83cd1.png.webp"
+            ]
+        },
+        "rating": 8.223882675170898,
+        "status": "returning series",
+        "country": "us",
+        "network": "HBO",
+        "runtime": 35,
+        "tagline": "A tall tale that became legend.",
+        "trailer": "https://youtube.com/watch?v=sItUCKJQLTU",
+        "homepage": "https://www.hbo.com/content/a-knight-of-the-seven-kingdoms",
+        "language": "en",
+        "overview": "A century before the events of Game of Thrones, two unlikely heroes wandered Westeros: a young, naive but courageous knight, Ser Duncan the Tall, and his diminutive squire, Egg. Set in an age when the Targaryen line still holds the Iron Throne and the last dragon has not yet passed from living memory, great destinies, powerful foes, and dangerous exploits await these improbable and incomparable friends.",
+        "languages": [
+            "en"
+        ],
+        "subgenres": [
+            "fantasy-world",
+            "spin-off",
+            "hilarious",
+            "whimsical",
+            "lighthearted",
+            "adoring",
+            "romantic",
+            "suspenseful",
+            "dramatic",
+            "cautionary",
+            "satirical",
+            "cheerful",
+            "blunt",
+            "wistful"
+        ],
+        "social_ids": {
+            "twitter": "GameOfThrones",
+            "facebook": "100044315715123",
+            "instagram": "gameofthrones",
+            "wikipedia": "A_Knight_of_the_Seven_Kingdoms_(TV_series)"
+        },
+        "updated_at": "2026-04-28T17:39:45.000Z",
+        "first_aired": "2026-01-19T03:00:00.000Z",
+        "certification": "TV-MA",
+        "comment_count": 69,
+        "total_runtime": 208,
+        "aired_episodes": 6,
+        "original_title": "A Knight of the Seven Kingdoms",
+        "available_translations": [
+            "ar",
+            "be",
+            "bg",
+            "ca",
+            "cs",
+            "da",
+            "de",
+            "el",
+            "en",
+            "es",
+            "et",
+            "fa",
+            "fi",
+            "fr",
+            "he",
+            "hr",
+            "hu",
+            "id",
+            "it",
+            "ja",
+            "ka",
+            "ko",
+            "lt",
+            "lv",
+            "mk",
+            "ms",
+            "nl",
+            "no",
+            "pl",
+            "pt",
+            "ro",
+            "ru",
+            "sk",
+            "sl",
+            "sr",
+            "sv",
+            "th",
+            "tr",
+            "uk",
+            "vi",
+            "zh"
+        ]
+    },
+    {
+        "ids": {
+            "imdb": "tt13623632",
+            "plex": {
+                "guid": "66391fb2895fabeb264433d1",
+                "slug": "alien-earth"
+            },
+            "slug": "alien-earth",
+            "tmdb": 157239,
+            "tvdb": 458912,
+            "trakt": 170689
+        },
+        "airs": {
+            "day": "Tuesday",
+            "time": "20:00",
+            "timezone": "America/New_York"
+        },
+        "year": 2025,
+        "title": "Alien: Earth",
+        "votes": 6314,
+        "colors": {
+            "poster": [
+                "#46A0BD",
+                "#090C10"
+            ]
+        },
+        "genres": [
+            "drama",
+            "fantasy",
+            "science-fiction",
+            "horror"
+        ],
+        "images": {
+            "logo": [
+                "media.trakt.tv/images/shows/000/170/689/logos/medium/65e6719610.png.webp"
+            ],
+            "thumb": [
+                "media.trakt.tv/images/shows/000/170/689/thumbs/medium/77fb7f7da2.jpg.webp"
+            ],
+            "banner": [
+                "media.trakt.tv/images/shows/000/170/689/banners/medium/feb084b775.jpg.webp"
+            ],
+            "fanart": [
+                "media.trakt.tv/images/shows/000/170/689/fanarts/medium/012ef35d2f.jpg.webp"
+            ],
+            "poster": [
+                "media.trakt.tv/images/shows/000/170/689/posters/medium/96551b7124.jpg.webp"
+            ],
+            "clearart": [
+                "media.trakt.tv/images/shows/000/170/689/cleararts/medium/3f1f8ab890.png.webp"
+            ]
+        },
+        "rating": 7.455178737640381,
+        "status": "returning series",
+        "country": "us",
+        "network": "Hulu",
+        "runtime": 55,
+        "tagline": "We were safer in space.",
+        "trailer": "https://youtube.com/watch?v=ZbsiKjVAV28",
+        "homepage": "https://www.fxnetworks.com/shows/alien-earth",
+        "language": "en",
+        "overview": "When the mysterious deep space research vessel USCSS Maginot crash-lands on Earth, Wendy and a ragtag group of tactical soldiers make a fateful discovery that puts them face-to-face with the planet's greatest threat.",
+        "languages": [
+            "en"
+        ],
+        "subgenres": [
+            "based-on-movie",
+            "near-future"
+        ],
+        "social_ids": {
+            "twitter": null,
+            "facebook": "alienearthfx",
+            "instagram": "alienearthfx",
+            "wikipedia": "Alien:_Earth"
+        },
+        "updated_at": "2026-04-28T17:32:03.000Z",
+        "first_aired": "2025-08-13T00:00:00.000Z",
+        "certification": "TV-MA",
+        "comment_count": 109,
+        "total_runtime": 454,
+        "aired_episodes": 8,
+        "original_title": "Alien: Earth",
+        "available_translations": [
+            "ar",
+            "bg",
+            "ca",
+            "cs",
+            "da",
+            "de",
+            "el",
+            "en",
+            "es",
+            "fa",
+            "fi",
+            "fr",
+            "he",
+            "hr",
+            "hu",
+            "it",
+            "ja",
+            "ka",
+            "ko",
+            "lt",
+            "nb",
+            "nl",
+            "no",
+            "pl",
+            "pt",
+            "ro",
+            "ru",
+            "sk",
+            "sl",
+            "sr",
+            "sv",
+            "th",
+            "tr",
+            "uk",
+            "vi",
+            "zh"
+        ]
+    },
+    {
+        "ids": {
+            "imdb": "tt27995114",
+            "plex": {
+                "guid": "65c281e8df420a5bf5528d51",
+                "slug": "dept-q"
+            },
+            "slug": "dept-q",
+            "tmdb": 245703,
+            "tvdb": 445802,
+            "trakt": 224621
+        },
+        "airs": {
+            "day": "Thursday",
+            "time": "03:00",
+            "timezone": "Europe/London"
+        },
+        "year": 2025,
+        "title": "Dept. Q",
+        "votes": 4974,
+        "colors": {
+            "poster": [
+                "#CDBE9B",
+                "#271F14"
+            ]
+        },
+        "genres": [
+            "crime",
+            "mystery",
+            "drama",
+            "thriller"
+        ],
+        "images": {
+            "logo": [
+                "media.trakt.tv/images/shows/000/224/621/logos/medium/b4dee4a512.png.webp"
+            ],
+            "thumb": [],
+            "banner": [],
+            "fanart": [
+                "media.trakt.tv/images/shows/000/224/621/fanarts/medium/b52f00df69.jpg.webp"
+            ],
+            "poster": [
+                "media.trakt.tv/images/shows/000/224/621/posters/medium/26702328aa.jpg.webp"
+            ],
+            "clearart": []
+        },
+        "rating": 8.017088890075684,
+        "status": "returning series",
+        "country": "gb",
+        "network": "Netflix",
+        "runtime": 55,
+        "tagline": "Not all causes are lost.",
+        "trailer": "https://youtube.com/watch?v=72hK6FUmm8o",
+        "homepage": "https://www.netflix.com/title/81487660",
+        "language": "en",
+        "overview": "A brash but brilliant cop becomes head of a new police department, where he leads an unlikely team of misfits in solving Edinburgh's cold cases.",
+        "languages": [
+            "en"
+        ],
+        "subgenres": [
+            "detective",
+            "cold-case",
+            "cop",
+            "suspenseful",
+            "dramatic"
+        ],
+        "social_ids": {
+            "twitter": null,
+            "facebook": null,
+            "instagram": null,
+            "wikipedia": "Department_Q_(TV_series)"
+        },
+        "updated_at": "2026-04-28T17:40:29.000Z",
+        "first_aired": "2025-05-29T02:00:00.000Z",
+        "certification": "TV-MA",
+        "comment_count": 52,
+        "total_runtime": 498,
+        "aired_episodes": 9,
+        "original_title": "Dept. Q",
+        "available_translations": [
+            "ar",
+            "ca",
+            "cs",
+            "da",
+            "de",
+            "el",
+            "en",
+            "es",
+            "fa",
+            "fi",
+            "fr",
+            "he",
+            "hi",
+            "hr",
+            "hu",
+            "id",
+            "it",
+            "ja",
+            "ko",
+            "lt",
+            "ms",
+            "nl",
+            "no",
+            "pl",
+            "pt",
+            "ro",
+            "ru",
+            "sk",
+            "sl",
+            "sr",
+            "sv",
+            "th",
+            "tl",
+            "tr",
+            "uk",
+            "vi",
+            "zh"
+        ]
+    },
+    {
+        "ids": {
+            "imdb": "tt33035373",
+            "plex": {
+                "guid": "66a33f8ece8cbb431d9b47f9",
+                "slug": "his-and-hers-2026"
+            },
+            "slug": "his-hers-2026",
+            "tmdb": 259731,
+            "tvdb": 452521,
+            "trakt": 249443
+        },
+        "airs": {
+            "day": "Thursday",
+            "time": "00:00",
+            "timezone": "America/New_York"
+        },
+        "year": 2026,
+        "title": "HIS & HERS",
+        "votes": 4950,
+        "colors": {
+            "poster": [
+                "#C8B8A3",
+                "#25241F"
+            ]
+        },
+        "genres": [
+            "drama",
+            "mystery",
+            "crime"
+        ],
+        "images": {
+            "logo": [
+                "media.trakt.tv/images/shows/000/249/443/logos/medium/bd17f086ee.png.webp"
+            ],
+            "thumb": [
+                "media.trakt.tv/images/shows/000/249/443/thumbs/medium/770304ce65.jpg.webp"
+            ],
+            "banner": [
+                "media.trakt.tv/images/shows/000/249/443/banners/medium/f3910d7f13.jpg.webp"
+            ],
+            "fanart": [
+                "media.trakt.tv/images/shows/000/249/443/fanarts/medium/31c93903b0.jpg.webp"
+            ],
+            "poster": [
+                "media.trakt.tv/images/shows/000/249/443/posters/medium/8b59aa99ce.jpg.webp"
+            ],
+            "clearart": [
+                "media.trakt.tv/images/shows/000/249/443/cleararts/medium/410b199f0b.png.webp"
+            ]
+        },
+        "rating": 7.60585880279541,
+        "status": "ended",
+        "country": "us",
+        "network": "Netflix",
+        "runtime": 45,
+        "tagline": "Two sides. One killer secret.",
+        "trailer": "https://youtube.com/watch?v=8_szlvBLll0",
+        "homepage": "https://www.netflix.com/title/81662954",
+        "language": "en",
+        "overview": "Two estranged spouses — one a detective, the other a news reporter — vie to solve a murder in which each believes the other is a prime suspect.",
+        "languages": [
+            "en"
+        ],
+        "subgenres": [
+            "detective",
+            "miniseries",
+            "revenge",
+            "murder-investigation",
+            "psychological-thriller",
+            "loss-of-loved-one",
+            "bullying",
+            "cautionary",
+            "mysterious"
+        ],
+        "social_ids": {
+            "twitter": null,
+            "facebook": null,
+            "instagram": null,
+            "wikipedia": "His_&_Hers_(upcoming_TV_series)"
+        },
+        "updated_at": "2026-04-28T18:02:10.000Z",
+        "first_aired": "2026-01-08T05:00:00.000Z",
+        "certification": "TV-MA",
+        "comment_count": 53,
+        "total_runtime": 265,
+        "aired_episodes": 6,
+        "original_title": "HIS & HERS",
+        "available_translations": [
+            "ar",
+            "bg",
+            "ca",
+            "cs",
+            "da",
+            "de",
+            "el",
+            "en",
+            "es",
+            "fi",
+            "fr",
+            "he",
+            "hi",
+            "hr",
+            "hu",
+            "id",
+            "it",
+            "ja",
+            "ko",
+            "lt",
+            "ms",
+            "nl",
+            "no",
+            "pl",
+            "pt",
+            "ro",
+            "ru",
+            "sk",
+            "sl",
+            "sv",
+            "th",
+            "tl",
+            "tr",
+            "uk",
+            "vi",
+            "zh"
+        ]
+    }
+]

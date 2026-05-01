@@ -129,6 +129,7 @@ public fun UpNextPageContent(
                             state = listState,
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+                            modifier = Modifier.testTag(UpNextTestTags.LIST_TEST_TAG),
                         ) {
                             items(
                                 items = state.episodes,
@@ -239,7 +240,9 @@ internal fun UpNextScreen(
                                     state = listState,
                                     verticalArrangement = Arrangement.spacedBy(8.dp),
                                     contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-                                    modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+                                    modifier = Modifier
+                                        .nestedScroll(scrollBehavior.nestedScrollConnection)
+                                        .testTag(UpNextTestTags.LIST_TEST_TAG),
                                 ) {
                                     items(
                                         items = state.episodes,

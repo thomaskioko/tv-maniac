@@ -42,7 +42,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -100,7 +99,6 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.title_similar
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_trailer
 import com.thomaskioko.tvmaniac.i18n.MR.strings.unfollow
 import com.thomaskioko.tvmaniac.i18n.resolve
-import com.thomaskioko.tvmaniac.presenter.showdetails.CreateListSubmitted
 import com.thomaskioko.tvmaniac.presenter.showdetails.DetailBackClicked
 import com.thomaskioko.tvmaniac.presenter.showdetails.DetailShowClicked
 import com.thomaskioko.tvmaniac.presenter.showdetails.DismissLoginPrompt
@@ -117,8 +115,6 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsContent
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsMessageShown
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowShowsListSheet
-import com.thomaskioko.tvmaniac.presenter.showdetails.ToggleShowInList
-import com.thomaskioko.tvmaniac.presenter.showdetails.UpdateCreateListName
 import com.thomaskioko.tvmaniac.presenter.showdetails.WatchTrailerClicked
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.CastModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ContinueTrackingEpisodeModel
@@ -128,6 +124,7 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.TrailerModel
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.showdetails.ui.components.ContinueTrackingSection
+import com.thomaskioko.tvmaniac.showdetails.ui.components.ShowListSheetContent
 import com.thomaskioko.tvmaniac.showdetails.ui.components.WatchProgressSection
 import com.thomaskioko.tvmaniac.testtags.showdetails.ShowDetailsTestTags
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
@@ -187,6 +184,7 @@ internal fun ShowDetailsScreen(
 
                 RefreshCollapsableTopAppBar(
                     listState = listState,
+                    isRefreshing = state.isRefreshing,
                     title = {
                         Text(
                             text = title,
@@ -212,7 +210,6 @@ internal fun ShowDetailsScreen(
                             tint = MaterialTheme.colorScheme.onBackground,
                         )
                     },
-                    isRefreshing = state.isRefreshing,
                     onNavIconClicked = { onAction(DetailBackClicked) },
                     onActionIconClicked = { onAction(ReloadShowDetails) },
                 )
@@ -233,148 +230,7 @@ internal fun ShowDetailsScreen(
             confirmButtonText = state.loginRequiredConfirmText,
             onConfirm = { onAction(LoginClicked) },
             onDismiss = { onAction(DismissLoginPrompt) },
-        )
-    }
-}
-
-@Composable
-internal fun ShowListSheetContent(
-    state: ShowDetailsContent,
-    onAction: (ShowDetailsAction) -> Unit,
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Spacer(modifier = Modifier.height(8.dp))
-
-        val title = state.showDetails.title
-
-        Card(
-            modifier = Modifier
-                .size(width = 150.dp, height = 240.dp),
-            shape = MaterialTheme.shapes.medium,
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            ),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 8.dp,
-            ),
-        ) {
-            AsyncImageComposable(
-                model = state.showDetails.posterImageUrl,
-                contentDescription = title,
-                contentScale = ContentScale.Crop,
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium.copy(
-                color = MaterialTheme.colorScheme.onSurface,
-            ),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text(
-            text = state.listsHeaderText,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp),
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        if (state.traktLists.isEmpty()) {
-            EmptyListContent(state)
-        } else {
-            TraktListItems(state, onAction)
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        CreateListInlineField(state, onAction)
-    }
-}
-
-@Composable
-private fun TraktListItems(
-    state: ShowDetailsContent,
-    onAction: (ShowDetailsAction) -> Unit,
-) {
-    state.traktLists.forEach { list ->
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 4.dp),
-            shape = MaterialTheme.shapes.medium,
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-            ),
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 10.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = list.name,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    Text(
-                        text = list.showCountText,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-
-                androidx.compose.material3.Switch(
-                    checked = list.isShowInList,
-                    onCheckedChange = {
-                        onAction(ToggleShowInList(listId = list.id, isCurrentlyInList = list.isShowInList))
-                    },
-                    colors = androidx.compose.material3.SwitchDefaults.colors(
-                        checkedThumbColor = MaterialTheme.colorScheme.secondary,
-                        checkedTrackColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f),
-                        uncheckedThumbColor = MaterialTheme.colorScheme.onSurface,
-                        uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
-                        uncheckedBorderColor = MaterialTheme.colorScheme.outline,
-                    ),
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun EmptyListContent(
-    state: ShowDetailsContent,
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(
-            text = state.emptyListText,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            confirmButtonTestTag = ShowDetailsTestTags.LOGIN_REQUIRED_DIALOG_CONFIRM_BUTTON_TEST_TAG,
         )
     }
 }
@@ -395,7 +251,9 @@ private fun ListSheetTopBar(
     ) {
         androidx.compose.material3.FilledIconButton(
             onClick = onClose,
-            modifier = Modifier.size(36.dp),
+            modifier = Modifier
+                .size(36.dp)
+                .testTag(ShowDetailsTestTags.LIST_SHEET_CLOSE_BUTTON_TEST_TAG),
             colors = androidx.compose.material3.IconButtonDefaults.filledIconButtonColors(
                 containerColor = MaterialTheme.colorScheme.secondary,
                 contentColor = MaterialTheme.colorScheme.onSecondary,
@@ -420,7 +278,9 @@ private fun ListSheetTopBar(
         if (!showCreateField) {
             androidx.compose.material3.FilledIconButton(
                 onClick = onCreateClicked,
-                modifier = Modifier.size(36.dp),
+                modifier = Modifier
+                    .size(36.dp)
+                    .testTag(ShowDetailsTestTags.LIST_SHEET_CREATE_LIST_BUTTON_TEST_TAG),
                 colors = androidx.compose.material3.IconButtonDefaults.filledIconButtonColors(
                     containerColor = MaterialTheme.colorScheme.secondary,
                     contentColor = MaterialTheme.colorScheme.onSecondary,
@@ -434,65 +294,6 @@ private fun ListSheetTopBar(
             }
         } else {
             Spacer(modifier = Modifier.size(36.dp))
-        }
-    }
-}
-
-@Composable
-private fun CreateListInlineField(
-    state: ShowDetailsContent,
-    onAction: (ShowDetailsAction) -> Unit,
-) {
-    androidx.compose.animation.AnimatedVisibility(visible = state.showCreateListField) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            androidx.compose.material3.OutlinedTextField(
-                value = state.createListName,
-                onValueChange = { if (it.length <= 50) onAction(UpdateCreateListName(it)) },
-                modifier = Modifier.weight(1f),
-                placeholder = {
-                    Text(
-                        text = state.createListPlaceholder,
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                        ),
-                    )
-                },
-                singleLine = true,
-                enabled = !state.isCreatingList,
-                textStyle = MaterialTheme.typography.bodyMedium,
-                shape = MaterialTheme.shapes.medium,
-                colors = TextFieldDefaults.colors(
-                    focusedIndicatorColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                    unfocusedIndicatorColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
-                    focusedContainerColor = MaterialTheme.colorScheme.surface,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                    cursorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                ),
-            )
-
-            if (state.isCreatingList) {
-                androidx.compose.material3.CircularProgressIndicator(
-                    modifier = Modifier.size(24.dp),
-                    strokeWidth = 2.dp,
-                    color = MaterialTheme.colorScheme.secondary,
-                )
-            } else {
-                FilledTextButton(
-                    onClick = { onAction(CreateListSubmitted) },
-                    enabled = state.createListName.isNotBlank(),
-                    buttonColors = ButtonDefaults.textButtonColors(
-                        containerColor = MaterialTheme.colorScheme.secondary,
-                        contentColor = MaterialTheme.colorScheme.onSecondary,
-                    ),
-                    shape = MaterialTheme.shapes.medium,
-                ) {
-                    Text(state.createListDoneText)
-                }
-            }
         }
     }
 }
@@ -525,6 +326,7 @@ internal fun LazyColumnContent(
                     imageVector = Icons.Outlined.ErrorOutline,
                     title = generic_error_message.resolve(LocalContext.current),
                     buttonText = generic_retry.resolve(LocalContext.current),
+                    buttonTestTag = ShowDetailsTestTags.ERROR_RETRY_BUTTON_TEST_TAG,
                     onClick = { onAction(ReloadShowDetails) },
                 )
             } else {
@@ -598,13 +400,18 @@ private fun ShowInfoContent(
         WatchProvider(list = showDetails.providers)
 
         TrailersContent(
+            modifier = Modifier.testTag(ShowDetailsTestTags.TRAILERS_LIST_TEST_TAG),
             trailersList = showDetails.trailersList,
             onAction = onAction,
         )
 
-        CastContent(castsList = showDetails.castsList)
+        CastContent(
+            modifier = Modifier.testTag(ShowDetailsTestTags.CAST_LIST_TEST_TAG),
+            castsList = showDetails.castsList,
+        )
 
         SimilarShowsContent(
+            modifier = Modifier.testTag(ShowDetailsTestTags.SIMILAR_SHOWS_LIST_TEST_TAG),
             similarShows = showDetails.similarShows,
             onShowClicked = { onAction(DetailShowClicked(it)) },
         )
@@ -883,6 +690,7 @@ internal fun ShowDetailButtons(
         )
 
         FilledVerticalIconButton(
+            modifier = Modifier.testTag(ShowDetailsTestTags.ADD_TO_LIST_BUTTON_TEST_TAG),
             shape = MaterialTheme.shapes.medium,
             text = btn_add_to_list.resolve(context),
             imageVector = Icons.Outlined.AutoAwesomeMotion,
@@ -950,10 +758,11 @@ internal fun WatchProvider(
 @Composable
 private fun CastContent(
     castsList: ImmutableList<CastModel>,
+    modifier: Modifier = Modifier,
 ) {
     if (castsList.isEmpty()) return
 
-    TextLoadingItem(title = title_casts.resolve(LocalContext.current)) {
+    TextLoadingItem(title = title_casts.resolve(LocalContext.current), modifier = modifier) {
         Box(
             contentAlignment = Alignment.BottomCenter,
         ) {
@@ -984,6 +793,7 @@ private fun CastContent(
 private fun TrailersContent(
     trailersList: ImmutableList<TrailerModel>,
     onAction: (ShowDetailsAction) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     if (trailersList.isEmpty()) return
 
@@ -991,6 +801,7 @@ private fun TrailersContent(
 
     TextLoadingItem(
         title = title_trailer.resolve(LocalContext.current),
+        modifier = modifier,
     ) {
         val lazyListState = rememberLazyListState()
 

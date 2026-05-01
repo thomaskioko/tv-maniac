@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.FilterChipSection
@@ -51,6 +52,7 @@ import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presentation.library.LibraryState
 import com.thomaskioko.tvmaniac.presentation.library.model.LibrarySortOption
 import com.thomaskioko.tvmaniac.presentation.library.model.ShowStatus
+import com.thomaskioko.tvmaniac.testtags.library.LibraryTestTags
 import com.thomaskioko.tvmaniac.ui.library.preview.LibraryStatePreviewParameterProvider
 
 @Composable
@@ -162,6 +164,7 @@ private fun FilterActionBar(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         OutlinedButton(
+            modifier = Modifier.testTag(LibraryTestTags.CLEAR_FILTER_BUTTON_TEST_TAG),
             onClick = onClearClick,
             shape = RoundedCornerShape(24.dp),
         ) {
@@ -177,8 +180,10 @@ private fun FilterActionBar(
         }
 
         Button(
+            modifier = Modifier
+                .weight(1f)
+                .testTag(LibraryTestTags.APPLY_FILTER_BUTTON_TEST_TAG),
             onClick = onApplyClick,
-            modifier = Modifier.weight(1f),
             shape = RoundedCornerShape(24.dp),
             colors = ButtonDefaults.buttonColors(
                 contentColor = MaterialTheme.colorScheme.onSecondary,

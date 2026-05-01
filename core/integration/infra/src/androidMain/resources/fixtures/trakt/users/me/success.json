@@ -1,0 +1,17 @@
+{
+    "username": "integration-test-user",
+    "private": false,
+    "deleted": false,
+    "name": "Integration Test",
+    "vip": false,
+    "vip_ep": false,
+    "director": false,
+    "images": {
+        "avatar": {
+            "full": "https://walterwhite.test/avatar.png"
+        }
+    },
+    "ids": {
+        "slug": "integration-test-user"
+    }
+}

@@ -24,6 +24,8 @@ dependencies {
     implementation(projects.features.calendar.presenter)
     implementation(projects.features.upnext.presenter)
     implementation(projects.i18n.generator)
+    implementation(projects.core.view)
+    implementation(projects.domain.theme)
 
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.material3)

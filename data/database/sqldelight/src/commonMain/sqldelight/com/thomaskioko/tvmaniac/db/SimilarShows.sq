@@ -2,13 +2,16 @@ import com.thomaskioko.tvmaniac.db.Id;
 import com.thomaskioko.tvmaniac.db.TraktId;
 import com.thomaskioko.tvmaniac.db.TmdbId;
 
+-- The parent reference `similar_show_trakt_id` is intentionally not FK-constrained:
+-- ShowDetailsStore inserts the parent show into tvshow on a parallel coroutine, and the
+-- related-shows writer can finish first. Queries filter by the parent id directly without
+-- joining tvshow on this column, so the constraint adds no protection.
 CREATE TABLE similar_shows (
     trakt_id INTEGER AS Id<TraktId>,
     tmdb_id INTEGER AS Id<TmdbId> NOT NULL,
     similar_show_trakt_id INTEGER AS Id<TraktId> NOT NULL,
     page_order INTEGER NOT NULL DEFAULT 0,
     PRIMARY KEY (similar_show_trakt_id, trakt_id),
-    FOREIGN KEY(similar_show_trakt_id) REFERENCES tvshow(trakt_id),
     FOREIGN KEY(trakt_id) REFERENCES tvshow(trakt_id)
 );
 

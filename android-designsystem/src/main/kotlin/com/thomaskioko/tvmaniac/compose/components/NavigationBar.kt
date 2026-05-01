@@ -71,12 +71,12 @@ public fun RowScope.TvManiacBottomNavigationItem(
     )
 }
 
-internal object NavigationDefaultColors {
+public object NavigationDefaultColors {
     @Composable
-    internal fun navigationContentColor(): Color = MaterialTheme.colorScheme.onSurfaceVariant
+    public fun navigationContentColor(): Color = MaterialTheme.colorScheme.onSurfaceVariant
 
     @Composable
-    internal fun navigationSelectedItemColor(): Color = MaterialTheme.colorScheme.secondary
+    public fun navigationSelectedItemColor(): Color = MaterialTheme.colorScheme.secondary
 }
 
 @ThemePreviews

@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.episodedetail.roborrazi
 
 import androidx.activity.ComponentActivity
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.episodedetail.ui.EpisodeDetailContent
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeDetailSheetState

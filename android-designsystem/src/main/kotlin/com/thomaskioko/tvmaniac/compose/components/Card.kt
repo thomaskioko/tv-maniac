@@ -11,11 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Bookmarks
-import androidx.compose.material.icons.outlined.Movie
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -26,7 +23,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -39,48 +35,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_show_poster
-
-@Composable
-public fun CircularCard(
-    imageUrl: String?,
-    modifier: Modifier = Modifier,
-    size: Dp = 38.dp,
-    contentDescription: String? = null,
-    placeholderIcon: ImageVector = Icons.Filled.AccountCircle,
-    onClick: (() -> Unit)? = null,
-) {
-    Box(
-        modifier = modifier
-            .size(size)
-            .clip(CircleShape)
-            .background(
-                color = MaterialTheme.colorScheme.surfaceVariant,
-                shape = CircleShape,
-            )
-            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
-        contentAlignment = Alignment.Center,
-    ) {
-        if (imageUrl.isNullOrEmpty()) {
-            Icon(
-                imageVector = placeholderIcon,
-                contentDescription = contentDescription,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(size * 0.6f),
-            )
-        } else {
-            AsyncImageComposable(
-                model = imageUrl,
-                contentDescription = contentDescription,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize(),
-            )
-        }
-    }
-}
 
 @Composable
 public fun PosterCard(
@@ -102,12 +58,11 @@ public fun PosterCard(
         onClick = onClick,
         content = {
             Box {
-                PlaceholderContent(
+                PosterPlaceholder(
                     modifier = Modifier
-                        .fillMaxSize()
+                        .fillMaxWidth()
                         .aspectRatio(aspectRatio)
                         .align(Alignment.Center),
-                    imageUrl = imageUrl,
                     title = title,
                 )
 
@@ -121,7 +76,7 @@ public fun PosterCard(
                         )
                     },
                     modifier = Modifier
-                        .fillMaxSize()
+                        .fillMaxWidth()
                         .aspectRatio(aspectRatio),
                 )
 
@@ -131,59 +86,6 @@ public fun PosterCard(
             }
         },
     )
-}
-
-@Composable
-private fun PlaceholderContent(
-    imageUrl: String?,
-    modifier: Modifier = Modifier,
-    imageSize: Dp = 52.dp,
-    title: String? = null,
-) {
-    ConstraintLayout(
-        modifier = modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color.Gray.copy(alpha = 0.8f),
-                        Color.Gray,
-                    ),
-                ),
-            ),
-    ) {
-        val (icon, text) = createRefs()
-
-        Icon(
-            modifier = Modifier
-                .size(imageSize)
-                .constrainAs(icon) {
-                    centerTo(parent)
-                },
-            imageVector = Icons.Outlined.Movie,
-            contentDescription = title,
-            tint = Color.White.copy(alpha = 0.8f),
-        )
-
-        title?.let {
-            Text(
-                text = it,
-                modifier = Modifier
-                    .padding(horizontal = 4.dp)
-                    .constrainAs(text) {
-                        top.linkTo(icon.bottom)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        width = Dimension.fillToConstraints
-                    },
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.White.copy(alpha = 0.8f),
-                textAlign = TextAlign.Center,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
-    }
 }
 
 @Composable
@@ -233,19 +135,18 @@ public fun PosterBackdropCard(
         imageWidth = imageWidth,
         onClick = onClick,
         content = {
-            Box(modifier = Modifier.fillMaxSize()) {
-                PlaceholderContent(
+            Box {
+                PosterPlaceholder(
                     modifier = Modifier
-                        .fillMaxSize()
+                        .fillMaxWidth()
                         .aspectRatio(aspectRatio)
                         .align(Alignment.Center),
-                    imageUrl = imageUrl,
                     imageSize = 84.dp,
                 )
 
                 AsyncImageComposable(
                     modifier = Modifier
-                        .fillMaxSize()
+                        .fillMaxWidth()
                         .aspectRatio(aspectRatio),
                     model = imageUrl,
                     contentScale = contentScale,
@@ -489,24 +390,11 @@ private fun PosterBackdropPreview() {
 
 @ThemePreviews
 @Composable
-private fun CircularCardPreview() {
+private fun AvatarComponentPreview() {
     TvManiacTheme {
-        Surface {
-            CircularCard(
-                imageUrl = null,
-                contentDescription = "Profile",
-                onClick = {},
-            )
-        }
-    }
-}
-
-@ThemePreviews
-@Composable
-private fun CircularCardWithImagePreview() {
-    TvManiacTheme {
-        CircularCard(
+        AvatarComponent(
             imageUrl = "",
+            size = 38.dp,
             contentDescription = "Profile",
             onClick = {},
         )

@@ -1,0 +1,671 @@
+{
+    "aired": 62,
+    "completed": 0,
+    "last_watched_at": null,
+    "reset_at": null,
+    "last_episode": null,
+    "next_episode": {
+        "ids": {
+            "imdb": "tt0959621",
+            "plex": {
+                "guid": "5d9c0fc37b5c2e001e6a7045"
+            },
+            "tmdb": 62085,
+            "tvdb": 349232,
+            "trakt": 73640
+        },
+        "title": "Pilot",
+        "votes": 8357,
+        "images": {
+            "screenshot": [
+                "media.trakt.tv/images/episodes/000/073/482/screenshots/medium/ef3352bcb8.jpg.webp"
+            ]
+        },
+        "number": 1,
+        "rating": 8.331698417663574,
+        "season": 1,
+        "runtime": 59,
+        "overview": "When an unassuming high school chemistry teacher discovers he has a rare form of lung cancer, he decides to team up with a former student and create a top of the line crystal meth in a used RV, to provide for his family once he is gone.",
+        "released": "2008-01-20",
+        "number_abs": 1,
+        "updated_at": "2026-04-28T21:35:05.000Z",
+        "first_aired": "2008-01-21T02:00:00.000Z",
+        "episode_type": "series_premiere",
+        "after_credits": false,
+        "comment_count": 25,
+        "during_credits": false,
+        "original_title": "Pilot",
+        "available_translations": [],
+        "effective_release_date": "2008-01-21T02:00:00.000Z"
+    },
+    "stats": {
+        "plays": 0,
+        "minutes": 0
+    },
+    "seasons": [
+        {
+            "number": 1,
+            "title": "Season 1",
+            "aired": 7,
+            "completed": 0,
+            "stats": {
+                "play_count": 14,
+                "minutes_watched": 704,
+                "minutes_left": 0
+            },
+            "episodes": [
+                {
+                    "number": 1,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 118
+                    }
+                },
+                {
+                    "number": 2,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 98
+                    }
+                },
+                {
+                    "number": 3,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 98
+                    }
+                },
+                {
+                    "number": 4,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 98
+                    }
+                },
+                {
+                    "number": 5,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 98
+                    }
+                },
+                {
+                    "number": 6,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 98
+                    }
+                },
+                {
+                    "number": 7,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                }
+            ]
+        },
+        {
+            "number": 2,
+            "title": "Season 2",
+            "aired": 13,
+            "completed": 0,
+            "stats": {
+                "play_count": 26,
+                "minutes_watched": 1246,
+                "minutes_left": 0
+            },
+            "episodes": [
+                {
+                    "number": 1,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 2,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 3,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 94
+                    }
+                },
+                {
+                    "number": 4,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 5,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 6,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 7,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 8,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 9,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 10,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 11,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 12,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 13,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                }
+            ]
+        },
+        {
+            "number": 3,
+            "title": "Season 3",
+            "aired": 13,
+            "completed": 0,
+            "stats": {
+                "play_count": 26,
+                "minutes_watched": 1248,
+                "minutes_left": 0
+            },
+            "episodes": [
+                {
+                    "number": 1,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 2,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 3,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 4,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 5,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 6,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 7,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 8,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 9,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 10,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 11,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 12,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 13,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                }
+            ]
+        },
+        {
+            "number": 4,
+            "title": "Season 4",
+            "aired": 13,
+            "completed": 0,
+            "stats": {
+                "play_count": 26,
+                "minutes_watched": 1238,
+                "minutes_left": 0
+            },
+            "episodes": [
+                {
+                    "number": 1,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 2,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 92
+                    }
+                },
+                {
+                    "number": 3,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 94
+                    }
+                },
+                {
+                    "number": 4,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 92
+                    }
+                },
+                {
+                    "number": 5,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 6,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 7,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 8,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 9,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 10,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 11,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 94
+                    }
+                },
+                {
+                    "number": 12,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 92
+                    }
+                },
+                {
+                    "number": 13,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 102
+                    }
+                }
+            ]
+        },
+        {
+            "number": 5,
+            "title": "Season 5",
+            "aired": 16,
+            "completed": 0,
+            "stats": {
+                "play_count": 32,
+                "minutes_watched": 1554,
+                "minutes_left": 0
+            },
+            "episodes": [
+                {
+                    "number": 1,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 86
+                    }
+                },
+                {
+                    "number": 2,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 3,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 4,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 5,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 98
+                    }
+                },
+                {
+                    "number": 6,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 7,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 8,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 9,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 10,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 11,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 12,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 13,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 94
+                    }
+                },
+                {
+                    "number": 14,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 96
+                    }
+                },
+                {
+                    "number": 15,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 108
+                    }
+                },
+                {
+                    "number": 16,
+                    "completed": false,
+                    "last_watched_at": null,
+                    "stats": {
+                        "play_count": 2,
+                        "minutes_watched": 112
+                    }
+                }
+            ]
+        }
+    ],
+    "hidden_seasons": []
+}

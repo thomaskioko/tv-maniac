@@ -12,10 +12,7 @@ import dev.zacsweers.metro.SingleIn
 @BindingContainer
 @ContributesTo(
     AppScope::class,
-    replaces = [
-        PlatformInternetConnectionChecker::class,
-        FakeInternetConnectionChecker::class,
-    ],
+    replaces = [PlatformInternetConnectionChecker::class],
 )
 public object TestConnectivityBindingContainer {
 

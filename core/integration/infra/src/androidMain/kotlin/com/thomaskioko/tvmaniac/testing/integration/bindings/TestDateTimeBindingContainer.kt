@@ -1,40 +1,25 @@
 package com.thomaskioko.tvmaniac.testing.integration.bindings
 
-import com.thomaskioko.tvmaniac.util.AndroidFormatterUtil
-import com.thomaskioko.tvmaniac.util.DefaultDateTimeProvider
-import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
-import com.thomaskioko.tvmaniac.util.api.FormatterUtil
-import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
-import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
+import com.thomaskioko.tvmaniac.util.DateTimeBindingContainer
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Provides
 import dev.zacsweers.metro.SingleIn
+import kotlin.time.Clock
 import kotlin.time.Instant
 
 @BindingContainer
 @ContributesTo(
     AppScope::class,
-    replaces = [
-        DefaultDateTimeProvider::class,
-        AndroidFormatterUtil::class,
-        FakeDateTimeProvider::class,
-        FakeFormatterUtil::class,
-    ],
+    replaces = [DateTimeBindingContainer::class],
 )
 public object TestDateTimeBindingContainer {
 
     @Provides
     @SingleIn(AppScope::class)
-    public fun provideFakeDateTimeProvider(): FakeDateTimeProvider = FakeDateTimeProvider(
-        currentTime = Instant.parse("2026-04-19T00:00:00Z"),
-    )
-
-    @Provides
-    public fun provideDateTimeProvider(fake: FakeDateTimeProvider): DateTimeProvider = fake
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideFormatterUtil(): FormatterUtil = FakeFormatterUtil()
+    public fun provideClock(): Clock = object : Clock {
+        private val fixedInstant = Instant.parse("2026-04-19T00:00:00Z")
+        override fun now(): Instant = fixedInstant
+    }
 }

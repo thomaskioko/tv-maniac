@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
@@ -32,6 +33,7 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.notification_rationale_enable
 import com.thomaskioko.tvmaniac.i18n.MR.strings.notification_rationale_message
 import com.thomaskioko.tvmaniac.i18n.MR.strings.notification_rationale_not_now
 import com.thomaskioko.tvmaniac.i18n.MR.strings.notification_rationale_title
+import com.thomaskioko.tvmaniac.testtags.notifications.NotificationRationaleTestTags
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
@@ -42,6 +44,7 @@ public fun NotificationRationaleContent(
 ) {
     Column(
         modifier = modifier
+            .testTag(NotificationRationaleTestTags.BOTTOM_SHEET)
             .fillMaxWidth()
             .padding(horizontal = 24.dp, vertical = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -78,7 +81,9 @@ public fun NotificationRationaleContent(
 
         Button(
             onClick = onEnable,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag(NotificationRationaleTestTags.ENABLE_BUTTON),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.secondary,
                 contentColor = MaterialTheme.colorScheme.onSecondary,
@@ -90,7 +95,9 @@ public fun NotificationRationaleContent(
 
         TextButton(
             onClick = onDismiss,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag(NotificationRationaleTestTags.DISMISS_BUTTON),
             colors = ButtonDefaults.textButtonColors(
                 contentColor = MaterialTheme.colorScheme.secondary,
             ),

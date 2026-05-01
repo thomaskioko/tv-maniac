@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -33,6 +34,7 @@ import com.thomaskioko.tvmaniac.compose.theme.green
 import com.thomaskioko.tvmaniac.compose.theme.grey
 import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ContinueTrackingEpisodeModel
+import com.thomaskioko.tvmaniac.testtags.showdetails.ShowDetailsTestTags
 
 @Composable
 internal fun ContinueTrackingCard(
@@ -88,6 +90,7 @@ internal fun ContinueTrackingCard(
                     modifier = Modifier
                         .padding(end = 12.dp)
                         .size(28.dp)
+                        .testTag(ShowDetailsTestTags.continueTrackingMarkWatchedButton(episode.episodeId))
                         .background(
                             color = if (episode.isWatched) green else grey,
                             shape = CircleShape,

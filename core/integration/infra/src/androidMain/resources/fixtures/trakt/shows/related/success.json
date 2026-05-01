@@ -1,0 +1,633 @@
+[
+    {
+        "ids": {
+            "imdb": "tt3032476",
+            "plex": {
+                "guid": "5d9c08254eefaa001f5d6dcb",
+                "slug": "better-call-saul"
+            },
+            "slug": "better-call-saul",
+            "tmdb": 60059,
+            "tvdb": 273181,
+            "trakt": 59660
+        },
+        "airs": {
+            "day": "Sunday",
+            "time": "21:00",
+            "timezone": "America/New_York"
+        },
+        "year": 2015,
+        "title": "Better Call Saul",
+        "votes": 34445,
+        "colors": {
+            "poster": [
+                "#B83340",
+                "#1B0A10"
+            ]
+        },
+        "genres": [
+            "drama",
+            "crime"
+        ],
+        "images": {
+            "logo": [
+                "media.trakt.tv/images/shows/000/059/660/logos/medium/8e97acbd3e.png.webp"
+            ],
+            "thumb": [
+                "media.trakt.tv/images/shows/000/059/660/thumbs/medium/18f8d818eb.jpg.webp"
+            ],
+            "banner": [
+                "media.trakt.tv/images/shows/000/059/660/banners/medium/3f00b6cebf.jpg.webp"
+            ],
+            "fanart": [
+                "media.trakt.tv/images/shows/000/059/660/fanarts/medium/02fcb11046.jpg.webp"
+            ],
+            "poster": [
+                "media.trakt.tv/images/shows/000/059/660/posters/medium/bc8e86002b.jpg.webp"
+            ],
+            "clearart": [
+                "media.trakt.tv/images/shows/000/059/660/cleararts/medium/0e51eb50e0.png.webp"
+            ]
+        },
+        "rating": 8.807345390319824,
+        "status": "ended",
+        "country": "us",
+        "network": "AMC",
+        "runtime": 50,
+        "tagline": "Putting the \"criminal\" in \"criminal lawyer.\"",
+        "trailer": "https://youtube.com/watch?v=HN4oydykJFc",
+        "homepage": "https://www.sonypictures.com/tv/bettercallsaul",
+        "language": "en",
+        "overview": "Six years before Saul Goodman meets Walter White. We meet him when the man who will become Saul Goodman is known as Jimmy McGill, a small-time lawyer searching for his destiny, and, more immediately, hustling to make ends meet. Working alongside, and, often, against Jimmy, is “fixer” Mike Ehrmantraut. The series tracks Jimmy’s transformation into Saul Goodman, the man who puts “criminal” in “criminal lawyer\".",
+        "languages": [
+            "en",
+            "de",
+            "es"
+        ],
+        "subgenres": [
+            "spin-off",
+            "family-relationships",
+            "dark-comedy",
+            "lawyer",
+            "neo-noir",
+            "moral-conflict",
+            "tragedy",
+            "neo-western"
+        ],
+        "social_ids": {
+            "twitter": "BetterCallSaul",
+            "facebook": "BetterCallSaulAMC",
+            "instagram": "bettercallsaulamc",
+            "wikipedia": "Better_Call_Saul"
+        },
+        "updated_at": "2026-04-29T06:12:27.000Z",
+        "first_aired": "2015-02-09T02:00:00.000Z",
+        "certification": "TV-MA",
+        "comment_count": 152,
+        "total_runtime": 3178,
+        "aired_episodes": 63,
+        "original_title": "Better Call Saul",
+        "available_translations": [
+            "ar",
+            "bg",
+            "bs",
+            "cs",
+            "da",
+            "de",
+            "el",
+            "en",
+            "es",
+            "et",
+            "fa",
+            "fi",
+            "fr",
+            "he",
+            "hi",
+            "hr",
+            "hu",
+            "id",
+            "it",
+            "ja",
+            "ka",
+            "ko",
+            "lt",
+            "lv",
+            "ms",
+            "nb",
+            "nl",
+            "no",
+            "pl",
+            "pt",
+            "ro",
+            "ru",
+            "sk",
+            "sl",
+            "sr",
+            "sv",
+            "th",
+            "tl",
+            "tr",
+            "uk",
+            "vi",
+            "zh"
+        ]
+    },
+    {
+        "ids": {
+            "imdb": "tt0306414",
+            "plex": {
+                "guid": "5d9c086c7d06d9001ffd27ae",
+                "slug": "the-wire"
+            },
+            "slug": "the-wire",
+            "tmdb": 1438,
+            "tvdb": 79126,
+            "trakt": 1429
+        },
+        "airs": {
+            "day": "Sunday",
+            "time": "21:00",
+            "timezone": "America/New_York"
+        },
+        "year": 2002,
+        "title": "The Wire",
+        "votes": 18330,
+        "colors": {
+            "poster": [
+                "#B9BCB9",
+                "#12191C"
+            ]
+        },
+        "genres": [
+            "drama",
+            "crime"
+        ],
+        "images": {
+            "logo": [
+                "media.trakt.tv/images/shows/000/001/429/logos/medium/e1d82c6d48.png.webp"
+            ],
+            "thumb": [
+                "media.trakt.tv/images/shows/000/001/429/thumbs/medium/0bdf8fdd22.jpg.webp"
+            ],
+            "banner": [
+                "media.trakt.tv/images/shows/000/001/429/banners/medium/255b8dbad9.jpg.webp"
+            ],
+            "fanart": [
+                "media.trakt.tv/images/shows/000/001/429/fanarts/medium/57a4cb4ee2.jpg.webp"
+            ],
+            "poster": [
+                "media.trakt.tv/images/shows/000/001/429/posters/medium/bc28def267.jpg.webp"
+            ],
+            "clearart": [
+                "media.trakt.tv/images/shows/000/001/429/cleararts/medium/0a64558702.png.webp"
+            ]
+        },
+        "rating": 9.186251640319824,
+        "status": "ended",
+        "country": "us",
+        "network": "HBO",
+        "runtime": 60,
+        "tagline": "Listen carefully.",
+        "trailer": "https://youtube.com/watch?v=uDcQbk78CSw",
+        "homepage": "https://www.hbo.com/the-wire",
+        "language": "en",
+        "overview": "Told from the points of view of both the Baltimore homicide and narcotics detectives and their targets, the series captures a universe in which the national war on drugs has become a permanent, self-sustaining bureaucracy, and distinctions between good and evil are routinely obliterated.",
+        "languages": [
+            "zh",
+            "en",
+            "el",
+            "es"
+        ],
+        "subgenres": [
+            "corruption",
+            "gangster",
+            "organized-crime",
+            "police",
+            "police-detective",
+            "admiring",
+            "drug-dealer",
+            "dramatic",
+            "cautionary",
+            "callous",
+            "informative",
+            "violence"
+        ],
+        "social_ids": {
+            "twitter": "",
+            "facebook": "TheWire",
+            "instagram": "",
+            "wikipedia": "The_Wire"
+        },
+        "updated_at": "2026-04-29T09:44:24.000Z",
+        "first_aired": "2002-06-03T01:00:00.000Z",
+        "certification": "TV-MA",
+        "comment_count": 125,
+        "total_runtime": 3598,
+        "aired_episodes": 60,
+        "original_title": "The Wire",
+        "available_translations": [
+            "ar",
+            "bg",
+            "bs",
+            "cs",
+            "da",
+            "de",
+            "el",
+            "en",
+            "es",
+            "et",
+            "fa",
+            "fi",
+            "fr",
+            "he",
+            "hr",
+            "hu",
+            "it",
+            "ja",
+            "ko",
+            "lt",
+            "lv",
+            "nl",
+            "no",
+            "pl",
+            "pt",
+            "ro",
+            "ru",
+            "sk",
+            "sl",
+            "sr",
+            "sv",
+            "th",
+            "tr",
+            "uk",
+            "vi",
+            "zh"
+        ]
+    },
+    {
+        "ids": {
+            "imdb": "tt0141842",
+            "plex": {
+                "guid": "5d9c086c46115600200aa302",
+                "slug": "the-sopranos"
+            },
+            "slug": "the-sopranos",
+            "tmdb": 1398,
+            "tvdb": 75299,
+            "trakt": 1389
+        },
+        "airs": {
+            "day": "Sunday",
+            "time": "21:00",
+            "timezone": "America/New_York"
+        },
+        "year": 1999,
+        "title": "The Sopranos",
+        "votes": 19214,
+        "colors": {
+            "poster": [
+                "#D5B6AD",
+                "#0D0B08"
+            ]
+        },
+        "genres": [
+            "drama",
+            "crime"
+        ],
+        "images": {
+            "logo": [
+                "media.trakt.tv/images/shows/000/001/389/logos/medium/ae252b9f75.png.webp"
+            ],
+            "thumb": [
+                "media.trakt.tv/images/shows/000/001/389/thumbs/medium/6bb665c10c.jpg.webp"
+            ],
+            "banner": [
+                "media.trakt.tv/images/shows/000/001/389/banners/medium/eac6fb1520.jpg.webp"
+            ],
+            "fanart": [
+                "media.trakt.tv/images/shows/000/001/389/fanarts/medium/3502767e81.jpg.webp"
+            ],
+            "poster": [
+                "media.trakt.tv/images/shows/000/001/389/posters/medium/4d97f66ec7.jpg.webp"
+            ],
+            "clearart": [
+                "media.trakt.tv/images/shows/000/001/389/cleararts/medium/0ffd7060d4.png.webp"
+            ]
+        },
+        "rating": 9.11158561706543,
+        "status": "ended",
+        "country": "us",
+        "network": "HBO",
+        "runtime": 55,
+        "tagline": "Family. Redefined.",
+        "trailer": "https://youtube.com/watch?v=Q8cBFvpqmH0",
+        "homepage": "https://www.hbo.com/the-sopranos",
+        "language": "en",
+        "overview": "The story of New Jersey-based Italian-American mobster Tony Soprano and the difficulties he faces as he tries to balance the conflicting requirements of his home life and the criminal organization he heads. Those difficulties are often highlighted through his ongoing professional relationship with psychiatrist Jennifer Melfi. The show features Tony's family members and Mafia associates in prominent roles and story arcs, most notably his wife Carmela and his cousin and protégé Christopher Moltisanti.",
+        "languages": [
+            "en"
+        ],
+        "subgenres": [
+            "organized-crime",
+            "family-relationships",
+            "dysfunctional-family",
+            "drug-dealer",
+            "mafia"
+        ],
+        "social_ids": {
+            "twitter": null,
+            "facebook": "TheSopranos",
+            "instagram": null,
+            "wikipedia": "The_Sopranos"
+        },
+        "updated_at": "2026-04-29T08:40:55.000Z",
+        "first_aired": "1999-01-11T02:00:00.000Z",
+        "certification": "TV-MA",
+        "comment_count": 83,
+        "total_runtime": 4656,
+        "aired_episodes": 86,
+        "original_title": "The Sopranos",
+        "available_translations": [
+            "ar",
+            "bg",
+            "bs",
+            "cs",
+            "da",
+            "de",
+            "el",
+            "en",
+            "es",
+            "et",
+            "fa",
+            "fi",
+            "fr",
+            "he",
+            "hr",
+            "hu",
+            "it",
+            "ja",
+            "ka",
+            "ko",
+            "lt",
+            "lv",
+            "nl",
+            "no",
+            "pl",
+            "pt",
+            "ro",
+            "ru",
+            "sk",
+            "sl",
+            "sr",
+            "sv",
+            "th",
+            "tr",
+            "uk",
+            "vi",
+            "zh"
+        ]
+    },
+    {
+        "ids": {
+            "imdb": "tt5071412",
+            "plex": {
+                "guid": "5d9f40c69dd5f4001e851dba",
+                "slug": "ozark"
+            },
+            "slug": "ozark",
+            "tmdb": 69740,
+            "tvdb": 329089,
+            "trakt": 119913
+        },
+        "airs": {
+            "day": "Friday",
+            "time": "03:00",
+            "timezone": "America/New_York"
+        },
+        "year": 2017,
+        "title": "Ozark",
+        "votes": 18573,
+        "colors": {
+            "poster": [
+                "#1893A5",
+                "#07344C"
+            ]
+        },
+        "genres": [
+            "drama",
+            "crime"
+        ],
+        "images": {
+            "logo": [
+                "media.trakt.tv/images/shows/000/119/913/logos/medium/1829f58766.png.webp"
+            ],
+            "thumb": [
+                "media.trakt.tv/images/shows/000/119/913/thumbs/medium/cd59c0346f.jpg.webp"
+            ],
+            "banner": [
+                "media.trakt.tv/images/shows/000/119/913/banners/medium/053384aa4f.jpg.webp"
+            ],
+            "fanart": [
+                "media.trakt.tv/images/shows/000/119/913/fanarts/medium/f6a2fc2dbd.jpg.webp"
+            ],
+            "poster": [
+                "media.trakt.tv/images/shows/000/119/913/posters/medium/f0795ac50b.jpg.webp"
+            ],
+            "clearart": [
+                "media.trakt.tv/images/shows/000/119/913/cleararts/medium/b7df019193.png.webp"
+            ]
+        },
+        "rating": 8.264577865600586,
+        "status": "ended",
+        "country": "us",
+        "network": "Netflix",
+        "runtime": 60,
+        "tagline": "No one gets out clean.",
+        "trailer": "https://youtube.com/watch?v=5hAXVqrljbs",
+        "homepage": "https://www.netflix.com/title/80117552",
+        "language": "en",
+        "overview": "A financial adviser drags his family from Chicago to the Missouri Ozarks, where he must launder $500 million in five years to appease a drug boss.",
+        "languages": [
+            "en"
+        ],
+        "subgenres": [
+            "investigation"
+        ],
+        "social_ids": {
+            "twitter": null,
+            "facebook": "OzarkNetflix",
+            "instagram": "ozark",
+            "wikipedia": "Ozark_(TV_series)"
+        },
+        "updated_at": "2026-04-29T12:34:41.000Z",
+        "first_aired": "2017-07-21T07:00:00.000Z",
+        "certification": "TV-MA",
+        "comment_count": 99,
+        "total_runtime": 2681,
+        "aired_episodes": 44,
+        "original_title": "Ozark",
+        "available_translations": [
+            "ar",
+            "bg",
+            "bs",
+            "cs",
+            "da",
+            "de",
+            "el",
+            "en",
+            "es",
+            "fa",
+            "fi",
+            "fr",
+            "he",
+            "hi",
+            "hr",
+            "hu",
+            "id",
+            "it",
+            "ja",
+            "ka",
+            "ko",
+            "lt",
+            "ms",
+            "nl",
+            "no",
+            "pl",
+            "pt",
+            "ro",
+            "ru",
+            "sk",
+            "sl",
+            "sr",
+            "sv",
+            "th",
+            "tr",
+            "uk",
+            "vi",
+            "zh"
+        ]
+    },
+    {
+        "ids": {
+            "imdb": "tt2707408",
+            "plex": {
+                "guid": "5d9c0803705e7a001e6cfe42",
+                "slug": "narcos"
+            },
+            "slug": "narcos",
+            "tmdb": 63351,
+            "tvdb": 282670,
+            "trakt": 94630
+        },
+        "airs": {
+            "day": "Friday",
+            "time": "03:00",
+            "timezone": "America/New_York"
+        },
+        "year": 2015,
+        "title": "Narcos",
+        "votes": 19028,
+        "colors": {
+            "poster": [
+                "#C6C4C2",
+                "#2C2420"
+            ]
+        },
+        "genres": [
+            "drama",
+            "crime",
+            "thriller"
+        ],
+        "images": {
+            "logo": [
+                "media.trakt.tv/images/shows/000/094/630/logos/medium/15eb9e6b4b.png.webp"
+            ],
+            "thumb": [
+                "media.trakt.tv/images/shows/000/094/630/thumbs/medium/8f82a48e82.jpg.webp"
+            ],
+            "banner": [
+                "media.trakt.tv/images/shows/000/094/630/banners/medium/46fa2af69e.jpg.webp"
+            ],
+            "fanart": [
+                "media.trakt.tv/images/shows/000/094/630/fanarts/medium/de387b4a21.jpg.webp"
+            ],
+            "poster": [
+                "media.trakt.tv/images/shows/000/094/630/posters/medium/f054fa939b.jpg.webp"
+            ],
+            "clearart": [
+                "media.trakt.tv/images/shows/000/094/630/cleararts/medium/7e5edc604b.png.webp"
+            ]
+        },
+        "rating": 8.47966194152832,
+        "status": "ended",
+        "country": "us",
+        "network": "Netflix",
+        "runtime": 50,
+        "tagline": "There's no business like blow business.",
+        "trailer": "https://youtube.com/watch?v=RNWAKZzgbp4",
+        "homepage": "https://www.netflix.com/title/80025172",
+        "language": "en",
+        "overview": "A gritty chronicle of the war against Colombia's infamously violent and powerful drug cartels.",
+        "languages": [
+            "es",
+            "en"
+        ],
+        "subgenres": [
+            "drugs",
+            "1980s",
+            "drug-dealer",
+            "dark",
+            "outlaw"
+        ],
+        "social_ids": {
+            "twitter": "NarcosNetflix",
+            "facebook": "NarcosNetflix",
+            "instagram": "narcos",
+            "wikipedia": "Narcos"
+        },
+        "updated_at": "2026-04-29T11:29:35.000Z",
+        "first_aired": "2015-08-28T07:00:00.000Z",
+        "certification": "TV-MA",
+        "comment_count": 56,
+        "total_runtime": 1568,
+        "aired_episodes": 30,
+        "original_title": "Narcos",
+        "available_translations": [
+            "ar",
+            "bg",
+            "bs",
+            "cs",
+            "da",
+            "de",
+            "el",
+            "en",
+            "es",
+            "fa",
+            "fi",
+            "fr",
+            "he",
+            "hr",
+            "hu",
+            "it",
+            "ja",
+            "ka",
+            "ko",
+            "lt",
+            "nl",
+            "no",
+            "pl",
+            "pt",
+            "ro",
+            "ru",
+            "sk",
+            "sl",
+            "sr",
+            "sv",
+            "th",
+            "tr",
+            "uk",
+            "vi",
+            "zh"
+        ]
+    }
+]

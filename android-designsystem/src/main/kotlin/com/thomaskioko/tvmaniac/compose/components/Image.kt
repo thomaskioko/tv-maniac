@@ -1,9 +1,23 @@
 package com.thomaskioko.tvmaniac.compose.components
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -16,10 +30,13 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import androidx.compose.ui.util.lerp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -28,6 +45,7 @@ import coil.compose.AsyncImagePainter
 import coil.load
 import coil.request.ImageRequest
 import com.flaviofaria.kenburnsview.KenBurnsView
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import kotlin.math.absoluteValue
 
 @Composable
@@ -35,6 +53,8 @@ public fun AsyncImageComposable(
     model: Any?,
     contentDescription: String?,
     modifier: Modifier = Modifier,
+    shape: Shape = RectangleShape,
+    border: BorderStroke? = null,
     transform: (AsyncImagePainter.State) -> AsyncImagePainter.State = AsyncImagePainter.DefaultTransform,
     onState: ((AsyncImagePainter.State) -> Unit)? = null,
     requestBuilder: (ImageRequest.Builder.() -> ImageRequest.Builder)? = null,
@@ -54,7 +74,9 @@ public fun AsyncImageComposable(
                 .build()
         } ?: model,
         contentDescription = contentDescription,
-        modifier = modifier,
+        modifier = modifier
+            .clip(shape)
+            .then(if (border != null) Modifier.border(border, shape) else Modifier),
         transform = transform,
         onState = onState,
         alignment = alignment,
@@ -66,6 +88,49 @@ public fun AsyncImageComposable(
 }
 
 @Composable
+public fun AvatarComponent(
+    imageUrl: String?,
+    size: Dp,
+    modifier: Modifier = Modifier,
+    contentDescription: String? = null,
+    border: BorderStroke? = null,
+    placeholderIcon: ImageVector = Icons.Outlined.Person,
+    onClick: (() -> Unit)? = null,
+) {
+    val commonModifier = modifier
+        .size(size)
+        .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
+
+    if (imageUrl.isNullOrEmpty()) {
+        Box(
+            modifier = commonModifier
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    shape = CircleShape,
+                )
+                .then(if (border != null) Modifier.border(border, CircleShape) else Modifier),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                imageVector = placeholderIcon,
+                contentDescription = contentDescription,
+                modifier = Modifier.size(size * 0.6f),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    } else {
+        AsyncImageComposable(
+            model = imageUrl,
+            contentDescription = contentDescription,
+            modifier = commonModifier,
+            shape = CircleShape,
+            border = border,
+            contentScale = ContentScale.Crop,
+        )
+    }
+}
+
+@Composable
 public fun KenBurnsViewImage(
     imageUrl: String?,
     modifier: Modifier = Modifier,
@@ -73,7 +138,14 @@ public fun KenBurnsViewImage(
     val context = LocalContext.current
     val kenBuns = remember { KenBurnsView(context) }
 
-    AndroidView({ kenBuns }, modifier = modifier) { it.load(imageUrl) }
+    Box(modifier = modifier) {
+        PosterPlaceholder(modifier = Modifier.fillMaxSize())
+
+        AndroidView(
+            factory = { kenBuns },
+            modifier = Modifier.fillMaxSize(),
+        ) { it.load(imageUrl) }
+    }
 }
 
 @Composable
@@ -102,6 +174,12 @@ public fun ParallaxCarouselImage(
                 translationX = cardTranslationX
             },
     ) {
+        PosterPlaceholder(
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(shape),
+        )
+
         AsyncImageComposable(
             modifier = Modifier
                 .fillMaxSize()
@@ -120,4 +198,52 @@ public fun ParallaxCarouselImage(
 
 private fun calculatePageOffset(state: PagerState, currentPage: Int): Float {
     return (state.currentPage + state.currentPageOffsetFraction - currentPage).coerceIn(-1f, 1f)
+}
+
+@ThemePreviews
+@Composable
+private fun ParallaxCarouselImagePreview() {
+    val pagerState = rememberPagerState(pageCount = { 3 })
+    TvManiacTheme {
+        Surface {
+            ParallaxCarouselImage(
+                state = pagerState,
+                currentPage = 0,
+                imageUrl = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(360.dp),
+            )
+        }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun KenBurnsViewImagePreview() {
+    TvManiacTheme {
+        Surface {
+            KenBurnsViewImage(
+                imageUrl = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(240.dp),
+            )
+        }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun AvatarComponentPreview() {
+    TvManiacTheme {
+        Surface {
+            AvatarComponent(
+                imageUrl = "https://image.png",
+                size = 64.dp,
+                modifier = Modifier.padding(16.dp),
+                border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
+            )
+        }
+    }
 }
