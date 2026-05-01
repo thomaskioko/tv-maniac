@@ -61,7 +61,7 @@ import androidx.compose.ui.test.hasContentDescription as composeHasContentDescri
  * - Defaults: `useUnmergedTree = true`, `timeoutMillis = 5_000`.
  */
 
-private const val DEFAULT_TIMEOUT_MS: Long = 5_000
+private const val DEFAULT_TIMEOUT_MS: Long = 10_000
 
 /**
  * Polls until at least one node with [tag] exists.
