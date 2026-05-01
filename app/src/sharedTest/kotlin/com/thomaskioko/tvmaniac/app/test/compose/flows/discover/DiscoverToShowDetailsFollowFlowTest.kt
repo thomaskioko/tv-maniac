@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.discover
 
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
-import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 
@@ -15,7 +14,7 @@ internal class DiscoverToShowDetailsFollowFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun shouldFollowShowAndPersistItInTheFollowedShowsTable() = runTest {
+    fun shouldFollowShowAndPersistItInTheFollowedShowsTable() {
         discoverRobot.clickShowCard(breakingBadTraktId)
         showDetailsRobot.verifyTrackButtonIsShown()
         showDetailsRobot.clickTrackButton()

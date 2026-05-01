@@ -9,8 +9,6 @@ import org.junit.Test
 internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
 
     private val breakingBadTraktId = 1388L
-    private val breakingBadTmdbId = 1396L
-    private val breakingBadSeasons = listOf(1L, 2L)
     private val pilotEpisodeTraktId = 73640L
     private val secondEpisodeTraktId = 73641L
     private val betterCallSaulTraktId = 59660L
@@ -24,7 +22,7 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
     fun authenticatedUserSignsInExploresSyncedSurfacesAndSignsOut() {
         // Verify public content on Discover
         discoverRobot.verifyDiscoverScreenIsShown()
-        discoverRobot.verifyShowCardIsShown(breakingBadTraktId)
+        discoverRobot.verifyFeaturedShowIsShown(breakingBadTraktId)
         discoverRobot.verifyUpNextCardIsHidden(breakingBadTraktId)
 
         // Verify featured pager
