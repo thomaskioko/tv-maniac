@@ -21,10 +21,10 @@ import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.nulls.shouldNotBeNull
 import kotlin.test.Test
 
-internal class NavigationContractTest : BaseAppFlowTest() {
+internal class NavigationRouteTest : BaseAppFlowTest() {
 
     @Test
-    fun `should resolve a NavDestination for every NavRoute subtype`() {
+    fun `should resolve a NavDestination for every NavRoute subtype`() = runAppFlowTest {
         // 1. Enumerate all routable subtypes
         val routes: List<NavRoute> = listOf(
             HomeRoute,
@@ -50,7 +50,7 @@ internal class NavigationContractTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun `should resolve a TabDestination for every HomeConfig subtype`() {
+    fun `should resolve a TabDestination for every HomeConfig subtype`() = runAppFlowTest {
         // 1. Enumerate all home tab configs
         val configs: List<HomeConfig> = listOf(
             HomeConfig.Discover,
@@ -72,7 +72,7 @@ internal class NavigationContractTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun `should resolve a SheetChildFactory for every SheetConfig subtype`() {
+    fun `should resolve a SheetChildFactory for every SheetConfig subtype`() = runAppFlowTest {
         // 1. Enumerate all sheet configs
         val configs: List<SheetConfig> = listOf(
             EpisodeSheetConfig(episodeId = 1L, source = ScreenSource.DISCOVER),
@@ -88,7 +88,7 @@ internal class NavigationContractTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun `should expose a NavRouteBinding for every routable NavRoute`() {
+    fun `should expose a NavRouteBinding for every routable NavRoute`() = runAppFlowTest {
         // 1. Enumerate routable classes (for serialization verification)
         val routableTypes = listOf(
             HomeRoute::class,
@@ -112,7 +112,7 @@ internal class NavigationContractTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun `should expose a SheetConfigBinding for every SheetConfig subtype`() {
+    fun `should expose a SheetConfigBinding for every SheetConfig subtype`() = runAppFlowTest {
         // 1. Enumerate sheet classes
         val sheetTypes = listOf(EpisodeSheetConfig::class)
 
@@ -126,7 +126,7 @@ internal class NavigationContractTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun `should resolve every codegen-generated graph extension factory`() {
+    fun `should resolve every codegen-generated graph extension factory`() = runAppFlowTest {
         // Verify factory chain: TestAppComponent -> ActivityGraph -> HomeScreenGraph
         val homeGraph = activityGraph.homeScreenGraphFactory
             .createHomeGraph(componentContext)
