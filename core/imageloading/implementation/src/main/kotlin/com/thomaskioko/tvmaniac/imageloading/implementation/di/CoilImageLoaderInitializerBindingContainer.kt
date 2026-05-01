@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.imageloading.implementation.di
 
+import com.thomaskioko.tvmaniac.core.base.Initializer
 import com.thomaskioko.tvmaniac.core.base.Initializers
 import com.thomaskioko.tvmaniac.imageloading.implementation.CoilImageLoaderInitializer
 import dev.zacsweers.metro.AppScope
@@ -14,5 +15,5 @@ public object CoilImageLoaderInitializerBindingContainer {
     @Provides
     @IntoSet
     @Initializers
-    public fun provideCoilImageLoaderInitializer(bind: CoilImageLoaderInitializer): () -> Unit = { bind.init() }
+    public fun provideCoilImageLoaderInitializer(bind: CoilImageLoaderInitializer): Initializer = Initializer { bind.init() }
 }

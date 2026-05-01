@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.testing.integration.bindings
 
 import com.thomaskioko.tvmaniac.core.base.AsyncInitializers
+import com.thomaskioko.tvmaniac.core.base.Initializer
 import com.thomaskioko.tvmaniac.core.base.Initializers
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
@@ -15,10 +16,10 @@ public object TestInitializerBindingContainer {
     @Provides
     @IntoSet
     @Initializers
-    public fun provideNoOpInitializer(): () -> Unit = {}
+    public fun provideNoOpInitializer(): Initializer = Initializer {}
 
     @Provides
     @IntoSet
     @AsyncInitializers
-    public fun provideNoOpAsyncInitializer(): () -> Unit = {}
+    public fun provideNoOpAsyncInitializer(): Initializer = Initializer {}
 }

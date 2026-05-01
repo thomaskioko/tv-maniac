@@ -9,8 +9,8 @@ import kotlinx.coroutines.launch
 @Inject
 @SingleIn(AppScope::class)
 public class AppInitializers(
-    @Initializers private val initializers: Set<() -> Unit>,
-    @AsyncInitializers private val asyncInitializers: Set<() -> Unit>,
+    @Initializers private val initializers: Set<Initializer>,
+    @AsyncInitializers private val asyncInitializers: Set<Initializer>,
     @IoCoroutineScope private val scope: CoroutineScope,
 ) {
     public fun initialize() {

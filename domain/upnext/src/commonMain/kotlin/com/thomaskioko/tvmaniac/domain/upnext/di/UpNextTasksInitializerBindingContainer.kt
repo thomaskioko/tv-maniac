@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.domain.upnext.di
 
 import com.thomaskioko.tvmaniac.core.base.AsyncInitializers
+import com.thomaskioko.tvmaniac.core.base.Initializer
 import com.thomaskioko.tvmaniac.domain.upnext.UpNextTasksInitializer
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
@@ -15,6 +16,6 @@ public interface UpNextTasksInitializerBindingContainer {
         @Provides
         @IntoSet
         @AsyncInitializers
-        public fun provideUpNextTasksInitializer(bind: UpNextTasksInitializer): () -> Unit = { bind.init() }
+        public fun provideUpNextTasksInitializer(bind: UpNextTasksInitializer): Initializer = Initializer { bind.init() }
     }
 }
