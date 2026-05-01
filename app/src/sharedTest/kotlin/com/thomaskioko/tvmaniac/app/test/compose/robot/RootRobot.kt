@@ -1,25 +1,27 @@
 package com.thomaskioko.tvmaniac.app.test.compose.robot
 
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import androidx.compose.ui.test.ComposeUiTest
+import androidx.compose.ui.test.ExperimentalTestApi
 import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
 import com.thomaskioko.tvmaniac.testtags.component.DesignComponentTestTags
 import com.thomaskioko.tvmaniac.testtags.notifications.NotificationRationaleTestTags
 
-internal class RootRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
+@OptIn(ExperimentalTestApi::class)
+internal class RootRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
 
     /**
      * Asserts that an error snackbar with [message] is displayed.
      */
-    fun verifyErrorSnackbarShown(message: String) {
-        verifyTextShown(text = message, substring = true)
+    fun assertErrorSnackbarDisplayed(message: String) {
+        assertTextDisplayed(text = message, substring = true)
     }
 
     /**
      * Asserts that no snackbar is currently displayed. Polls for [timeoutMillis] to make sure a
      * delayed snackbar (e.g. from an async sync) has time to appear before passing.
      */
-    fun verifyNoSnackbarShown(timeoutMillis: Long = 2_000) {
-        verifyTagHidden(tag = DesignComponentTestTags.SNACKBAR_TEST_TAG, timeoutMillis = timeoutMillis)
+    fun assertNoSnackbarDisplayed(timeoutMillis: Long = 2_000) {
+        assertDoesNotExist(tag = DesignComponentTestTags.SNACKBAR_TEST_TAG, timeoutMillis = timeoutMillis)
     }
 
     /**
@@ -28,25 +30,25 @@ internal class RootRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(co
     fun dismissSnackbar() {
         if (awaitTag(tag = DesignComponentTestTags.SNACKBAR_TEST_TAG)) {
             swipeRight(DesignComponentTestTags.SNACKBAR_TEST_TAG)
-            verifyTagHidden(DesignComponentTestTags.SNACKBAR_TEST_TAG)
+            assertDoesNotExist(DesignComponentTestTags.SNACKBAR_TEST_TAG)
         }
     }
 
-    fun verifyNotificationRationaleIsShown() {
-        verifyTagExists(NotificationRationaleTestTags.BOTTOM_SHEET)
+    fun assertNotificationRationaleDisplayed() {
+        assertExists(NotificationRationaleTestTags.BOTTOM_SHEET)
     }
 
-    fun verifyNotificationRationaleIsHidden() {
-        verifyTagHidden(NotificationRationaleTestTags.BOTTOM_SHEET)
+    fun assertNotificationRationaleDoesNotExist() {
+        assertDoesNotExist(NotificationRationaleTestTags.BOTTOM_SHEET)
     }
 
     /**
      * Dismisses rationale bottom sheet.
      */
-    fun verifyNotificationRationaleIsShownAndDismissed() {
+    fun dismissNotificationRationale() {
         if (awaitTag(tag = NotificationRationaleTestTags.BOTTOM_SHEET)) {
             click(NotificationRationaleTestTags.DISMISS_BUTTON)
-            verifyTagHidden(NotificationRationaleTestTags.BOTTOM_SHEET)
+            assertDoesNotExist(NotificationRationaleTestTags.BOTTOM_SHEET)
         }
     }
 

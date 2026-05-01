@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.sheet
 
+import com.thomaskioko.tvmaniac.app.test.AppFlowScope
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeSheetActionItem
-import org.junit.Before
 import org.junit.Test
 
 internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
@@ -11,48 +11,53 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
     private val pilotEpisodeTraktId = 73640L
     private val pilotSeasonNumber = 1L
 
-    @Before
-    fun setUp() {
+    @Test
+    fun givenAuthenticatedUser_whenUpNextCardClicked_thenOpensEpisodeSheet() = runAppFlowTest {
         scenarios.stubAuthenticatedSync()
-    }
 
-    @Test
-    fun shouldOpenEpisodeSheetFromDiscoverUpNextCard() {
         openEpisodeSheetFromUpNextCard()
-        episodeSheetRobot.verifyEpisodeSheetIsShown()
+        episodeSheetRobot.assertEpisodeSheetDisplayed()
     }
 
     @Test
-    fun shouldShowAllSheetActionsWhenOpened() {
+    fun givenEpisodeSheet_whenOpened_thenShowsAllActionItems() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
+
         openEpisodeSheetFromUpNextCard()
 
-        episodeSheetRobot.verifyActionItemIsShown(EpisodeSheetActionItem.TOGGLE_WATCHED)
-        episodeSheetRobot.verifyActionItemIsShown(EpisodeSheetActionItem.OPEN_SHOW)
-        episodeSheetRobot.verifyActionItemIsShown(EpisodeSheetActionItem.OPEN_SEASON)
-        episodeSheetRobot.verifyActionItemIsShown(EpisodeSheetActionItem.UNFOLLOW)
+        episodeSheetRobot.assertActionItemDisplayed(EpisodeSheetActionItem.TOGGLE_WATCHED)
+        episodeSheetRobot.assertActionItemDisplayed(EpisodeSheetActionItem.OPEN_SHOW)
+        episodeSheetRobot.assertActionItemDisplayed(EpisodeSheetActionItem.OPEN_SEASON)
+        episodeSheetRobot.assertActionItemDisplayed(EpisodeSheetActionItem.UNFOLLOW)
     }
 
     @Test
-    fun shouldOpenShowDetailsWhenSheetOpenShowActionIsTapped() {
+    fun givenEpisodeSheet_whenOpenShowClicked_thenNavigatesToShowDetails() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
+
         openEpisodeSheetFromUpNextCard()
 
         episodeSheetRobot.clickActionItem(EpisodeSheetActionItem.OPEN_SHOW)
 
-        showDetailsRobot.verifyStopTrackingButtonIsShown()
+        showDetailsRobot.assertStopTrackingButtonDisplayed()
     }
 
     @Test
-    fun shouldOpenSeasonDetailsWhenSheetOpenSeasonActionIsTapped() {
+    fun givenEpisodeSheet_whenOpenSeasonClicked_thenNavigatesToSeasonDetails() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
+
         openEpisodeSheetFromUpNextCard()
 
         episodeSheetRobot.clickActionItem(EpisodeSheetActionItem.OPEN_SEASON)
 
-        seasonDetailsRobot.verifySeasonDetailsIsShown()
-        seasonDetailsRobot.verifyEpisodeRowIsShown(pilotEpisodeTraktId)
+        seasonDetailsRobot.assertSeasonDetailsDisplayed()
+        seasonDetailsRobot.assertEpisodeRowDisplayed(pilotEpisodeTraktId)
     }
 
     @Test
-    fun shouldMarkEpisodeWatchedWhenToggleWatchedActionIsTapped() {
+    fun givenEpisodeSheet_whenToggleWatchedClicked_thenMarksEpisodeWatched() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
+
         openEpisodeSheetFromUpNextCard()
 
         episodeSheetRobot.clickActionItem(EpisodeSheetActionItem.TOGGLE_WATCHED)
@@ -60,33 +65,35 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
         homeRobot.clickLibraryTab()
         libraryRobot.clickShowRow(breakingBadTraktId)
         showDetailsRobot.clickSeasonChip(seasonNumber = pilotSeasonNumber)
-        seasonDetailsRobot.verifyMarkUnwatchedIsShown(pilotEpisodeTraktId)
+        seasonDetailsRobot.assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
     }
 
     @Test
-    fun shouldUnfollowShowWhenUnfollowActionIsTapped() {
+    fun givenEpisodeSheet_whenUnfollowClicked_thenRemovesShowFromLibrary() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
+
         openEpisodeSheetFromUpNextCard()
 
         episodeSheetRobot.clickActionItem(EpisodeSheetActionItem.UNFOLLOW)
 
         homeRobot.clickLibraryTab()
-        libraryRobot.verifyShowRowIsHidden(breakingBadTraktId)
+        libraryRobot.assertShowRowDoesNotExist(breakingBadTraktId)
     }
 
-    private fun openEpisodeSheetFromUpNextCard() {
-        rootRobot.verifyNotificationRationaleIsShownAndDismissed()
+    private fun AppFlowScope.openEpisodeSheetFromUpNextCard() {
+        rootRobot.dismissNotificationRationale()
 
-        discoverRobot.verifyDiscoverScreenIsShown()
+        discoverRobot.assertDiscoverScreenDisplayed()
 
         homeRobot.clickLibraryTab()
-        libraryRobot.verifyShowRowIsShown(breakingBadTraktId)
+        libraryRobot.assertShowRowDisplayed(breakingBadTraktId)
 
         homeRobot.clickProgressTab()
-        progressRobot.verifyEpisodeRowIsShown(breakingBadTraktId)
+        progressRobot.assertEpisodeRowDisplayed(breakingBadTraktId)
 
         homeRobot.clickDiscoverTab()
         discoverRobot.clickUpNextCard(breakingBadTraktId)
 
-        episodeSheetRobot.verifyEpisodeSheetIsShown()
+        episodeSheetRobot.assertEpisodeSheetDisplayed()
     }
 }

@@ -1,34 +1,31 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.discover
 
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
-import kotlinx.coroutines.test.runTest
-import org.junit.Before
 import org.junit.Test
 
 internal class DiscoverToShowDetailsFollowFlowTest : BaseAppFlowTest() {
 
     private val breakingBadTraktId = 1388L
 
-    @Before
-    fun stubEndpoints() {
+    @Test
+    fun givenShow_whenTrackIsClicked_thenPersistsInFollowedShows() = runAppFlowTest {
         scenarios.discover.stubBrowseGraph()
-    }
 
-    @Test
-    fun shouldFollowShowAndPersistItInTheFollowedShowsTable() = runTest {
         discoverRobot.clickShowCard(breakingBadTraktId)
-        showDetailsRobot.verifyTrackButtonIsShown()
+        showDetailsRobot.assertTrackButtonDisplayed()
         showDetailsRobot.clickTrackButton()
-        showDetailsRobot.verifyStopTrackingButtonIsShown()
-        rootRobot.verifyNotificationRationaleIsShownAndDismissed()
+        showDetailsRobot.assertStopTrackingButtonDisplayed()
+        rootRobot.dismissNotificationRationale()
     }
 
     @Test
-    fun shouldPopShowDetailsAndRestoreDiscoverOnBackPress() {
+    fun givenShowDetails_whenBackIsPressed_thenRestoresDiscover() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
         discoverRobot.clickShowCard(breakingBadTraktId)
-        showDetailsRobot.verifyTrackButtonIsShown()
+        showDetailsRobot.assertTrackButtonDisplayed()
         showDetailsRobot.pressBack()
-        showDetailsRobot.verifyTagHidden("show_details_track_button")
-        discoverRobot.verifyShowCardIsShown(breakingBadTraktId)
+        showDetailsRobot.assertDoesNotExist("show_details_track_button")
+        discoverRobot.assertShowCardDisplayed(breakingBadTraktId)
     }
 }

@@ -1,22 +1,24 @@
 package com.thomaskioko.tvmaniac.app.test.compose.robot
 
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import androidx.compose.ui.test.ComposeUiTest
+import androidx.compose.ui.test.ExperimentalTestApi
 import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
 import com.thomaskioko.tvmaniac.testtags.profile.ProfileTestTags
 
-internal class ProfileRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
+@OptIn(ExperimentalTestApi::class)
+internal class ProfileRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
 
-    fun verifyProfileScreenIsShown() {
-        verifyTagShown(ProfileTestTags.SCREEN_TEST_TAG)
+    fun assertProfileScreenDisplayed() {
+        assertDisplayed(ProfileTestTags.SCREEN_TEST_TAG)
     }
 
-    fun verifySignInButtonIsShown() {
+    fun assertSignInButtonDisplayed() {
         scrollTo(ProfileTestTags.SIGN_IN_BUTTON_TEST_TAG)
-        verifyTagShown(ProfileTestTags.SIGN_IN_BUTTON_TEST_TAG)
+        assertDisplayed(ProfileTestTags.SIGN_IN_BUTTON_TEST_TAG)
     }
 
-    fun verifyUserCardIsShown(slug: String) {
-        verifyTagShown(ProfileTestTags.userCard(slug))
+    fun assertUserCardDisplayed(slug: String) {
+        assertDisplayed(ProfileTestTags.userCard(slug))
     }
 
     fun clickSignInButton() {
