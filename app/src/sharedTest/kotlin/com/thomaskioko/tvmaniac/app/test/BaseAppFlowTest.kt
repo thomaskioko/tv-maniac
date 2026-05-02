@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.app.test
 import androidx.compose.ui.test.AndroidComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.v2.runAndroidComposeUiTest
+import androidx.datastore.preferences.core.edit
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.arkivanov.decompose.ComponentContext
@@ -26,6 +27,9 @@ import com.thomaskioko.tvmaniac.app.test.compose.robot.SettingsRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.ShowDetailsRobot
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.Scenarios
 import com.thomaskioko.tvmaniac.testing.integration.MockEngineHandler
+import com.thomaskioko.tvmaniac.util.testing.FlakyTestRule
+import kotlinx.coroutines.runBlocking
+import org.junit.Rule
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 
@@ -54,6 +58,15 @@ import org.robolectric.annotation.Config
 @OptIn(ExperimentalTestApi::class)
 internal abstract class BaseAppFlowTest {
 
+    @get:Rule
+    val flakyRule = FlakyTestRule()
+
+    private fun clearPersistedPreferencesViaCurrentGraph(application: TvManiacTestApplication) {
+        runBlocking {
+            application.graph.dataStore.edit { it.clear() }
+        }
+    }
+
     /**
      * Runs [block] inside `runAndroidComposeUiTest<TvManiacTestActivity>`, providing an
      * [AppFlowScope] with all robots, the dependency graph, and pre-seeded scenarios.
@@ -67,7 +80,10 @@ internal abstract class BaseAppFlowTest {
         val application = InstrumentationRegistry.getInstrumentation()
             .targetContext
             .applicationContext as TvManiacTestApplication
+
         application.resetAppComponent()
+        application.clearPersistentTestState()
+        clearPersistedPreferencesViaCurrentGraph(application)
 
         runAndroidComposeUiTest<TvManiacTestActivity> {
             val graph = application.graph
