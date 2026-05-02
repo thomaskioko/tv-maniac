@@ -52,6 +52,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
@@ -59,10 +60,10 @@ import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ShowLinearProgressIndicator
 import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.i18n.MR.strings.badge_new
 import com.thomaskioko.tvmaniac.i18n.MR.strings.badge_premiere
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_filter
@@ -147,7 +148,8 @@ internal fun WatchlistScreen(
                 label = "list_style_animation",
             ) { isGridMode ->
                 val hasNoItems = state.watchNextItems.isEmpty() && state.staleItems.isEmpty()
-                val hasNoEpisodes = state.watchNextEpisodes.isEmpty() && state.staleEpisodes.isEmpty()
+                val hasNoEpisodes =
+                    state.watchNextEpisodes.isEmpty() && state.staleEpisodes.isEmpty()
 
                 when {
                     state.showLoading -> {
@@ -158,6 +160,7 @@ internal fun WatchlistScreen(
                             LoadingIndicator()
                         }
                     }
+
                     isGridMode -> {
                         if (hasNoItems) {
                             val message = if (state.query.isNotBlank()) {
@@ -181,6 +184,7 @@ internal fun WatchlistScreen(
                             )
                         }
                     }
+
                     else -> {
                         if (hasNoEpisodes) {
                             EmptyStateView(
@@ -555,16 +559,13 @@ private fun SectionHeader(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun WatchlistScreenPreview(
     @PreviewParameter(WatchlistPreviewParameterProvider::class) state: WatchlistState,
 ) {
-    TvManiacTheme {
-        Surface {
-            WatchlistScreen(
-                state = state,
-                onAction = {},
-            )
-        }
-    }
+    WatchlistScreen(
+        state = state,
+        onAction = {},
+    )
 }

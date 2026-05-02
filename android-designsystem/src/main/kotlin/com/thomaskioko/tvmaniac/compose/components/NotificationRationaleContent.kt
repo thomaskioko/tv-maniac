@@ -27,8 +27,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.i18n.MR.strings.notification_rationale_enable
 import com.thomaskioko.tvmaniac.i18n.MR.strings.notification_rationale_message
 import com.thomaskioko.tvmaniac.i18n.MR.strings.notification_rationale_not_now
@@ -189,12 +191,11 @@ private fun GradientDivider() {
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun NotificationRationaleContentPreview() {
-    TvManiacTheme {
-        NotificationRationaleContent(
-            onEnable = {},
-            onDismiss = {},
-        )
-    }
+    NotificationRationaleContent(
+        onEnable = {},
+        onDismiss = {},
+    )
 }

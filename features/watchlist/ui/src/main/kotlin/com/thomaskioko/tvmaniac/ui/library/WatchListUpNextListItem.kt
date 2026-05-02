@@ -21,19 +21,19 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.NewBadge
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.PremiereBadge
 import com.thomaskioko.tvmaniac.compose.components.TextTitlePill
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.grey
 import com.thomaskioko.tvmaniac.watchlist.presenter.model.EpisodeBadge
 import com.thomaskioko.tvmaniac.watchlist.presenter.model.UpNextEpisodeItem
@@ -147,32 +147,29 @@ internal fun WatchListUpNextListItem(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun WatchListUpNextListItemPreview() {
-    TvManiacTheme {
-        Surface {
-            WatchListUpNextListItem(
-                item = UpNextEpisodeItem(
-                    showTraktId = 1L,
-                    showName = "The Walking Dead: Daryl Dixon",
-                    showPoster = "/poster.jpg",
-                    episodeId = 123L,
-                    episodeTitle = "L'âme Perdue",
-                    episodeNumberFormatted = "S02 | E01",
-                    seasonId = 1L,
-                    seasonNumber = 2,
-                    episodeNumber = 1,
-                    runtime = "45 min",
-                    stillImage = "/still.jpg",
-                    overview = "Daryl washes ashore in France.",
-                    remainingEpisodes = 7,
-                ),
-                premiereLabel = "PREMIERE",
-                newLabel = "NEW",
-                onItemClicked = { _, _ -> },
-                onShowTitleClicked = {},
-                onMarkWatched = {},
-            )
-        }
-    }
+    WatchListUpNextListItem(
+        item = UpNextEpisodeItem(
+            showTraktId = 1L,
+            showName = "The Walking Dead: Daryl Dixon",
+            showPoster = "/poster.jpg",
+            episodeId = 123L,
+            episodeTitle = "L'âme Perdue",
+            episodeNumberFormatted = "S02 | E01",
+            seasonId = 1L,
+            seasonNumber = 2,
+            episodeNumber = 1,
+            runtime = "45 min",
+            stillImage = "/still.jpg",
+            overview = "Daryl washes ashore in France.",
+            remainingEpisodes = 7,
+        ),
+        premiereLabel = "PREMIERE",
+        newLabel = "NEW",
+        onItemClicked = { _, _ -> },
+        onShowTitleClicked = {},
+        onMarkWatched = {},
+    )
 }

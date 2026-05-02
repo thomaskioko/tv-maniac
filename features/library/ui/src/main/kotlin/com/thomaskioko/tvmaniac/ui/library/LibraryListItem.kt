@@ -25,11 +25,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.i18n.MR.plurals.episode_count
 import com.thomaskioko.tvmaniac.i18n.MR.plurals.season_count
 import com.thomaskioko.tvmaniac.presentation.library.model.LibraryShowItem
@@ -159,16 +160,13 @@ private fun buildMetadataString(item: LibraryShowItem): String = buildString {
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun LibraryListItemPreview(
     @PreviewParameter(LibraryListItemPreviewParameterProvider::class) item: LibraryShowItem,
 ) {
-    TvManiacTheme {
-        Surface {
-            LibraryListItem(
-                item = item,
-                onItemClicked = {},
-            )
-        }
-    }
+    LibraryListItem(
+        item = item,
+        onItemClicked = {},
+    )
 }

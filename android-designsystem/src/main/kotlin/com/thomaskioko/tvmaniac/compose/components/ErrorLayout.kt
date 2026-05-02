@@ -16,7 +16,6 @@ import androidx.compose.material.icons.outlined.SignalWifi4Bar
 import androidx.compose.material.icons.outlined.SignalWifiOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,8 +24,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.green
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_connectivity_icon
 import com.thomaskioko.tvmaniac.i18n.MR.strings.status_connected
@@ -106,16 +107,13 @@ public fun RowError(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun RowErrorPreview() {
-    TvManiacTheme {
-        Surface {
-            RowError(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
-                onRetry = {},
-            )
-        }
-    }
+    RowError(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 16.dp),
+        onRetry = {},
+    )
 }

@@ -15,7 +15,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,11 +25,12 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_clear_text
 import com.thomaskioko.tvmaniac.i18n.resolve
 
@@ -156,20 +156,17 @@ internal fun SearchResultItem(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun SearchResultItemPreview() {
-    TvManiacTheme {
-        Surface {
-            SearchResultItem(
-                title = "Loki",
-                status = "Ended",
-                year = "2012",
-                voteAverage = 6.7,
-                overview = "After stealing the Tesseract during the events of “Avengers: Endgame,”. " +
-                    "After stealing the Tesseract during the events of “Avengers: Endgame. After stealing the Tesseract during the events of “Avengers: Endgame",
-                imageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-                onClick = {},
-            )
-        }
-    }
+    SearchResultItem(
+        title = "Loki",
+        status = "Ended",
+        year = "2012",
+        voteAverage = 6.7,
+        overview = "After stealing the Tesseract during the events of “Avengers: Endgame,”. " +
+            "After stealing the Tesseract during the events of “Avengers: Endgame. After stealing the Tesseract during the events of “Avengers: Endgame",
+        imageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+        onClick = {},
+    )
 }

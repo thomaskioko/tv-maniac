@@ -7,8 +7,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 
 @Composable
 public fun PremiereBadge(
@@ -49,21 +51,15 @@ public fun NewBadge(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun PremiereBadgePreview() {
-    TvManiacTheme {
-        Surface {
-            PremiereBadge(text = "Premiere")
-        }
-    }
+    PremiereBadge(text = "Premiere")
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun NewBadgePreview() {
-    TvManiacTheme {
-        Surface {
-            NewBadge(text = "New")
-        }
-    }
+    NewBadge(text = "New")
 }

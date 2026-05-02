@@ -12,9 +12,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeDetailSheetState
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeSheetAction
@@ -110,71 +111,68 @@ private fun EpisodeSheetActionItem.toAction(): EpisodeSheetAction = when (this) 
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun EpisodeDetailContentAllActionsPreview() {
-    TvManiacTheme {
-        EpisodeDetailContent(
-            state = EpisodeDetailSheetState(
-                isLoading = false,
-                episodeTitle = "The Walking Dead: Daryl Dixon",
-                showName = "The Walking Dead",
-                seasonEpisodeNumber = "S02E01",
-                overview = "Daryl washes ashore in France and struggles to piece together how he got there and why.",
-                rating = 8.5,
-                voteCount = 1234,
-                isWatched = false,
-                availableActions = persistentListOf(
-                    EpisodeSheetActionUi(EpisodeSheetActionItem.TOGGLE_WATCHED, "Mark watched"),
-                    EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SHOW, "Open show"),
-                    EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SEASON, "Open season"),
-                    EpisodeSheetActionUi(EpisodeSheetActionItem.UNFOLLOW, "Unfollow show"),
-                ),
+    EpisodeDetailContent(
+        state = EpisodeDetailSheetState(
+            isLoading = false,
+            episodeTitle = "The Walking Dead: Daryl Dixon",
+            showName = "The Walking Dead",
+            seasonEpisodeNumber = "S02E01",
+            overview = "Daryl washes ashore in France and struggles to piece together how he got there and why.",
+            rating = 8.5,
+            voteCount = 1234,
+            isWatched = false,
+            availableActions = persistentListOf(
+                EpisodeSheetActionUi(EpisodeSheetActionItem.TOGGLE_WATCHED, "Mark watched"),
+                EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SHOW, "Open show"),
+                EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SEASON, "Open season"),
+                EpisodeSheetActionUi(EpisodeSheetActionItem.UNFOLLOW, "Unfollow show"),
             ),
-        )
-    }
+        ),
+    )
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun EpisodeDetailContentWatchedPreview() {
-    TvManiacTheme {
-        EpisodeDetailContent(
-            state = EpisodeDetailSheetState(
-                isLoading = false,
-                episodeTitle = "Wednesday",
-                showName = "Wednesday",
-                seasonEpisodeNumber = "S02E03",
-                overview = "Wednesday arrives at Nevermore Academy and begins investigating a series of mysterious events.",
-                rating = 7.9,
-                voteCount = 856,
-                isWatched = true,
-                availableActions = persistentListOf(
-                    EpisodeSheetActionUi(EpisodeSheetActionItem.TOGGLE_WATCHED, "Mark unwatched"),
-                    EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SHOW, "Open show"),
-                    EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SEASON, "Open season"),
-                    EpisodeSheetActionUi(EpisodeSheetActionItem.UNFOLLOW, "Unfollow show"),
-                ),
+    EpisodeDetailContent(
+        state = EpisodeDetailSheetState(
+            isLoading = false,
+            episodeTitle = "Wednesday",
+            showName = "Wednesday",
+            seasonEpisodeNumber = "S02E03",
+            overview = "Wednesday arrives at Nevermore Academy and begins investigating a series of mysterious events.",
+            rating = 7.9,
+            voteCount = 856,
+            isWatched = true,
+            availableActions = persistentListOf(
+                EpisodeSheetActionUi(EpisodeSheetActionItem.TOGGLE_WATCHED, "Mark unwatched"),
+                EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SHOW, "Open show"),
+                EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SEASON, "Open season"),
+                EpisodeSheetActionUi(EpisodeSheetActionItem.UNFOLLOW, "Unfollow show"),
             ),
-        )
-    }
+        ),
+    )
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun EpisodeDetailContentSeasonDetailsPreview() {
-    TvManiacTheme {
-        EpisodeDetailContent(
-            state = EpisodeDetailSheetState(
-                isLoading = false,
-                episodeTitle = "House of the Dragon",
-                showName = "House of the Dragon",
-                seasonEpisodeNumber = "S03E01",
-                overview = "King Viserys hosts a tournament to celebrate the birth of his heir.",
-                isWatched = false,
-                availableActions = persistentListOf(
-                    EpisodeSheetActionUi(EpisodeSheetActionItem.TOGGLE_WATCHED, "Mark watched"),
-                ),
+    EpisodeDetailContent(
+        state = EpisodeDetailSheetState(
+            isLoading = false,
+            episodeTitle = "House of the Dragon",
+            showName = "House of the Dragon",
+            seasonEpisodeNumber = "S03E01",
+            overview = "King Viserys hosts a tournament to celebrate the birth of his heir.",
+            isWatched = false,
+            availableActions = persistentListOf(
+                EpisodeSheetActionUi(EpisodeSheetActionItem.TOGGLE_WATCHED, "Mark watched"),
             ),
-        )
-    }
+        ),
+    )
 }

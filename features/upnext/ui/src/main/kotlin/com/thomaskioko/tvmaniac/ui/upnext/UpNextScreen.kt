@@ -38,15 +38,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
 import com.thomaskioko.tvmaniac.compose.components.SelectableFilterChip
 import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.domain.upnext.model.UpNextSortOption
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_discover_up_next
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_upnext_empty
@@ -347,14 +348,13 @@ private fun SortChipsRow(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun UpNextScreenPreview(
     @PreviewParameter(UpNextStatePreviewParameterProvider::class) state: UpNextState,
 ) {
-    TvManiacTheme {
-        UpNextScreen(
-            state = state,
-            onAction = {},
-        )
-    }
+    UpNextScreen(
+        state = state,
+        onAction = {},
+    )
 }

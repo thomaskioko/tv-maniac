@@ -2,12 +2,11 @@ package com.thomaskioko.tvmaniac.compose.components
 
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.green
 
 @Composable
@@ -33,11 +32,8 @@ public fun ShowLinearProgressIndicator(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun ShowLinearProgressIndicatorPreview() {
-    TvManiacTheme {
-        Surface {
-            ShowLinearProgressIndicator(progress = 0.6f)
-        }
-    }
+    ShowLinearProgressIndicator(progress = 0.6f)
 }

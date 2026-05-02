@@ -8,14 +8,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -71,27 +72,21 @@ private fun ProgressSegment(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun SegmentedProgressBarPreview() {
-    TvManiacTheme {
-        Surface {
-            SegmentedProgressBar(
-                segmentProgress = persistentListOf(1f, 0.5f, 0f),
-                modifier = Modifier.fillMaxWidth(),
-            )
-        }
-    }
+    SegmentedProgressBar(
+        segmentProgress = persistentListOf(1f, 0.5f, 0f),
+        modifier = Modifier.fillMaxWidth(),
+    )
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun SegmentedProgressBarSinglePreview() {
-    TvManiacTheme {
-        Surface {
-            SegmentedProgressBar(
-                segmentProgress = persistentListOf(0.75f),
-                modifier = Modifier.fillMaxWidth(),
-            )
-        }
-    }
+    SegmentedProgressBar(
+        segmentProgress = persistentListOf(0.75f),
+        modifier = Modifier.fillMaxWidth(),
+    )
 }

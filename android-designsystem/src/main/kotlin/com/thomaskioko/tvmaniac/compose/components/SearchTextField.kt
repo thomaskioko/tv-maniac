@@ -14,7 +14,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -34,8 +33,10 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_clear_text
 import com.thomaskioko.tvmaniac.i18n.resolve
 import kotlinx.coroutines.launch
@@ -201,18 +202,15 @@ private fun SearchTextField(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun SearchTextFieldPreview() {
-    TvManiacTheme {
-        Surface {
-            SearchTextContainer(
-                hint = "Enter Show Title",
-                query = "",
-                lazyListState = remember { LazyListState() },
-                onClearQuery = {},
-                onQueryChanged = {},
-                content = {},
-            )
-        }
-    }
+    SearchTextContainer(
+        hint = "Enter Show Title",
+        query = "",
+        lazyListState = remember { LazyListState() },
+        onClearQuery = {},
+        onQueryChanged = {},
+        content = {},
+    )
 }

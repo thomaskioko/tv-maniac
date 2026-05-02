@@ -14,11 +14,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.discover.presenter.model.DiscoverShow
 import com.thomaskioko.tvmaniac.discover.ui.discoverContentSuccess
 import com.thomaskioko.tvmaniac.i18n.MR.strings.str_more
@@ -75,16 +76,15 @@ internal fun HorizontalRowContent(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 internal fun HorizontalRowContentPreview() {
-    TvManiacTheme {
-        HorizontalRowContent(
-            modifier = Modifier.height(220.dp),
-            category = "Trending",
-            rowKey = DiscoverTestTags.ROW_KEY_TRENDING,
-            tvShows = discoverContentSuccess.topRatedShows,
-            onItemClicked = {},
-            onMoreClicked = {},
-        )
-    }
+    HorizontalRowContent(
+        modifier = Modifier.height(220.dp),
+        category = "Trending",
+        rowKey = DiscoverTestTags.ROW_KEY_TRENDING,
+        tvShows = discoverContentSuccess.topRatedShows,
+        onItemClicked = {},
+        onMoreClicked = {},
+    )
 }

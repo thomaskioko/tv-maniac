@@ -47,9 +47,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -241,28 +243,26 @@ public fun StandardSnackBar(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun TvManiacSnackBarPreview(
     @PreviewParameter(SnackBarPreviewParameterProvider::class) param: SnackBarPreviewParam,
 ) {
-    TvManiacTheme {
-        TvManiacSnackBar(
-            message = param.message,
-            style = param.style,
-        )
-    }
+    TvManiacSnackBar(
+        message = param.message,
+        style = param.style,
+    )
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun StandardSnackBarPreview() {
-    TvManiacTheme {
-        StandardSnackBar(
-            snackBarHostState = SnackbarHostState(),
-            errorMessage = "Somethig went wrong",
-            actionLabel = "Retry",
-        )
-    }
+    StandardSnackBar(
+        snackBarHostState = SnackbarHostState(),
+        errorMessage = "Somethig went wrong",
+        actionLabel = "Retry",
+    )
 }
 
 internal data class SnackBarPreviewParam(

@@ -15,7 +15,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,10 +24,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.android.feature.settings.R
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_about_api_disclaimer
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_about_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_about_github
@@ -165,15 +165,12 @@ private fun AboutLinkRow(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun AboutSheetContentPreview() {
-    TvManiacTheme {
-        Surface {
-            AboutSheetContent(
-                versionName = "1.0.0",
-                onGitHubClick = {},
-                onVersionClick = {},
-            )
-        }
-    }
+    AboutSheetContent(
+        versionName = "1.0.0",
+        onGitHubClick = {},
+        onVersionClick = {},
+    )
 }
