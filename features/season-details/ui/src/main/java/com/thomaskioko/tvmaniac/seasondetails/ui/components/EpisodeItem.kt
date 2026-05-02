@@ -1,7 +1,5 @@
 package com.thomaskioko.tvmaniac.seasondetails.ui.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -54,7 +52,8 @@ internal fun EpisodeItem(
 ) {
     Card(
         shape = shape,
-        modifier = modifier.clickable { onEpisodeClicked() },
+        onClick = onEpisodeClicked,
+        modifier = modifier,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
@@ -93,6 +92,7 @@ internal fun EpisodeItem(
                 )
             }
 
+            // TODO:: Move this logic to the presenter and return a object with the correct data
             if (isProcessing) {
                 CircularProgressIndicator(
                     modifier = Modifier
@@ -109,24 +109,23 @@ internal fun EpisodeItem(
                         SeasonDetailsTestTags.markEpisodeWatchedButton(it)
                     }
                 }
-                Box(
+                Surface(
+                    onClick = onWatchedToggle,
                     modifier = Modifier
                         .padding(12.dp)
                         .size(28.dp)
-                        .let { if (toggleTag != null) it.testTag(toggleTag) else it }
-                        .background(
-                            color = if (isWatched) green else grey,
-                            shape = CircleShape,
-                        )
-                        .clickable { onWatchedToggle() },
-                    contentAlignment = Alignment.Center,
+                        .let { if (toggleTag != null) it.testTag(toggleTag) else it },
+                    shape = CircleShape,
+                    color = if (isWatched) green else grey,
                 ) {
-                    Icon(
-                        modifier = Modifier.size(16.dp),
-                        imageVector = Icons.Rounded.Check,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                    )
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            modifier = Modifier.size(16.dp),
+                            imageVector = Icons.Rounded.Check,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                        )
+                    }
                 }
             } else if (daysUntilAir != null && daysUntilAir > 0) {
                 Column(

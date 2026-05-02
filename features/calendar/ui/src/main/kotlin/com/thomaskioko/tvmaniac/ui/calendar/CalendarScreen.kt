@@ -43,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -374,8 +375,9 @@ private fun CalendarEpisodeCard(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 PosterCard(
-                    modifier = Modifier.fillMaxHeight(),
                     imageUrl = episode.posterUrl,
+                    onClick = onClick,
+                    modifier = Modifier.fillMaxHeight(),
                     imageWidth = 90.dp,
                 )
 
@@ -422,15 +424,14 @@ private fun CalendarEpisodeCard(
             if (episode.additionalEpisodesCount > 0) {
                 Box(
                     modifier = Modifier
+                        .testTag(CalendarTestTags.additionalEpisodesCount(episode.episodeTraktId))
+                        .semantics(mergeDescendants = true) {}
                         .fillMaxWidth()
                         .background(MaterialTheme.colorScheme.surfaceVariant)
                         .padding(horizontal = 12.dp, vertical = 8.dp),
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        modifier = Modifier.testTag(
-                            CalendarTestTags.additionalEpisodesCount(episode.episodeTraktId),
-                        ),
                         text = moreEpisodesFormat.format(episode.additionalEpisodesCount),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,

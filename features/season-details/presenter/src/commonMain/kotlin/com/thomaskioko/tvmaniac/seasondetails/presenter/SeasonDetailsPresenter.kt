@@ -259,13 +259,15 @@ public class SeasonDetailsPresenter(
     }
 
     private suspend fun handleConfirmDialogAction() {
-        (state.value.dialogState as? SeasonDialogState.Confirmation)
-            ?.let { execute(it.primaryOperation) }
+        val operation = (state.value.dialogState as? SeasonDialogState.Confirmation)?.primaryOperation ?: return
+        updateState { copy(dialogState = SeasonDialogState.Hidden) }
+        execute(operation)
     }
 
     private suspend fun handleSecondaryDialogAction() {
-        (state.value.dialogState as? SeasonDialogState.Confirmation)
-            ?.secondaryOperation?.let { execute(it) }
+        val operation = (state.value.dialogState as? SeasonDialogState.Confirmation)?.secondaryOperation ?: return
+        updateState { copy(dialogState = SeasonDialogState.Hidden) }
+        execute(operation)
     }
 
     private suspend fun execute(operation: WatchOperation) {
@@ -285,8 +287,6 @@ public class SeasonDetailsPresenter(
                     MarkSeasonUnwatchedParams(operation.showTraktId, operation.seasonNumber),
                 )
         }.collectStatus(episodeLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
-
-        updateState { copy(dialogState = SeasonDialogState.Hidden) }
     }
 
     private fun updateState(update: SeasonDetailsModel.() -> SeasonDetailsModel) {

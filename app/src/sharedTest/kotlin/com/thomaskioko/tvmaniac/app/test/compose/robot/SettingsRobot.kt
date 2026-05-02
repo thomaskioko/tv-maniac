@@ -14,6 +14,10 @@ internal class SettingsRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
         assertDisplayed(SettingsTestTags.SCREEN_TEST_TAG)
     }
 
+    fun clickBackButton() {
+        click(SettingsTestTags.BACK_BUTTON_TEST_TAG)
+    }
+
     fun assertImageQualitySelected(quality: ImageQuality) {
         assertSelected(SettingsTestTags.imageQualityChip(quality.name))
     }
@@ -23,7 +27,7 @@ internal class SettingsRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
     }
 
     fun clickImageQualityChip(quality: ImageQuality) {
-        click(SettingsTestTags.imageQualityChip(quality.name), useSemanticsAction = true)
+        click(SettingsTestTags.imageQualityChip(quality.name))
     }
 
     fun scrollToImageQualityChip(quality: ImageQuality) {
@@ -38,7 +42,7 @@ internal class SettingsRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
     }
 
     fun clickTraktAccountRow() {
-        click(SettingsTestTags.TRAKT_ACCOUNT_ROW_TEST_TAG, useSemanticsAction = true)
+        click(SettingsTestTags.TRAKT_ACCOUNT_ROW_TEST_TAG)
     }
 
     fun assertLogoutDialogDisplayed() {
@@ -50,11 +54,11 @@ internal class SettingsRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
     }
 
     fun clickLogoutConfirm() {
-        click(SettingsTestTags.LOGOUT_DIALOG_CONFIRM_BUTTON_TEST_TAG, useSemanticsAction = true)
+        click(SettingsTestTags.LOGOUT_DIALOG_CONFIRM_BUTTON_TEST_TAG)
     }
 
     fun clickLogoutDismiss() {
-        click(SettingsTestTags.LOGOUT_DIALOG_DISMISS_BUTTON_TEST_TAG, useSemanticsAction = true)
+        click(SettingsTestTags.LOGOUT_DIALOG_DISMISS_BUTTON_TEST_TAG)
     }
 
     fun scrollToThemeSwatch(theme: ThemeModel) {
@@ -70,7 +74,7 @@ internal class SettingsRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
     }
 
     fun clickThemeSwatch(theme: ThemeModel) {
-        click(SettingsTestTags.themeSwatch(theme.name), useSemanticsAction = true)
+        click(SettingsTestTags.themeSwatch(theme.name))
     }
 
     fun scrollToEpisodeNotificationsToggle() {
@@ -89,6 +93,6 @@ internal class SettingsRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
     }
 
     fun clickEpisodeNotificationsToggle() {
-        click(SettingsTestTags.EPISODE_NOTIFICATIONS_TOGGLE_TEST_TAG, useSemanticsAction = true)
+        click(SettingsTestTags.EPISODE_NOTIFICATIONS_TOGGLE_TEST_TAG)
     }
 }

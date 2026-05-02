@@ -12,8 +12,8 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 
 @Composable
 public fun PremiereBadge(
-    text: String,
     modifier: Modifier = Modifier,
+    text: String,
 ) {
     Surface(
         modifier = modifier,
@@ -31,8 +31,8 @@ public fun PremiereBadge(
 
 @Composable
 public fun NewBadge(
-    text: String,
     modifier: Modifier = Modifier,
+    text: String,
 ) {
     Surface(
         modifier = modifier,

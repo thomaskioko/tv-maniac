@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.compose.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -21,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -41,6 +41,7 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_show_poster
 @Composable
 public fun PosterCard(
     imageUrl: String?,
+    onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     title: String? = null,
     imageWidth: Dp = 120.dp,
@@ -49,13 +50,12 @@ public fun PosterCard(
     shape: Shape = RectangleShape,
     isInLibrary: Boolean = false,
     libraryImageOverlay: ImageVector = Icons.Filled.Bookmarks,
-    onClick: () -> Unit = {},
 ) {
     PosterCard(
+        onClick = onClick,
         modifier = modifier,
         shape = shape,
         imageWidth = imageWidth,
-        onClick = onClick,
         content = {
             Box {
                 PosterPlaceholder(
@@ -112,28 +112,32 @@ private fun LibraryOverlay(
 public fun PosterBackdropCard(
     title: String,
     imageUrl: String?,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     textAlign: TextAlign = TextAlign.Start,
     contentScale: ContentScale = ContentScale.Crop,
     imageWidth: Dp = 120.dp,
     aspectRatio: Float = 2 / 3f,
     shape: Shape = RectangleShape,
-    onClick: () -> Unit,
 ) {
     val surface = MaterialTheme.colorScheme.surface
-    val overlayGradient = listOf(
-        Color.Transparent,
-        surface.copy(alpha = 0.4f),
-        surface.copy(alpha = 0.7f),
-        surface.copy(alpha = 0.9f),
-        surface,
-    )
+    val brush = remember(surface) {
+        Brush.verticalGradient(
+            colors = listOf(
+                Color.Transparent,
+                surface.copy(alpha = 0.4f),
+                surface.copy(alpha = 0.7f),
+                surface.copy(alpha = 0.9f),
+                surface,
+            ),
+        )
+    }
 
     PosterCard(
+        onClick = onClick,
         modifier = modifier,
         shape = shape,
         imageWidth = imageWidth,
-        onClick = onClick,
         content = {
             Box {
                 PosterPlaceholder(
@@ -159,7 +163,7 @@ public fun PosterBackdropCard(
                         .fillMaxWidth()
                         .height(80.dp)
                         .align(Alignment.BottomCenter)
-                        .background(Brush.verticalGradient(overlayGradient)),
+                        .background(brush),
                 )
 
                 Text(
@@ -181,16 +185,16 @@ public fun PosterBackdropCard(
 
 @Composable
 internal fun PosterCard(
-    modifier: Modifier = Modifier,
-    imageWidth: Dp,
-    shape: Shape,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    imageWidth: Dp = 120.dp,
+    shape: Shape = RectangleShape,
     content: @Composable () -> Unit,
 ) {
     Card(
+        onClick = onClick,
         modifier = modifier
-            .width(imageWidth)
-            .clickable { onClick() },
+            .width(imageWidth),
         shape = shape,
         elevation = CardDefaults.cardElevation(
             defaultElevation = 4.dp,
@@ -311,15 +315,17 @@ private fun CastNameOverlay(
 @Composable
 private fun contentBackgroundGradient(): Brush {
     val surface = MaterialTheme.colorScheme.surface
-    return Brush.verticalGradient(
-        colors = listOf(
-            Color.Transparent,
-            surface.copy(alpha = 0.3f),
-            surface.copy(alpha = 0.6f),
-            surface.copy(alpha = 0.9f),
-            surface,
-        ),
-    )
+    return remember(surface) {
+        Brush.verticalGradient(
+            colors = listOf(
+                Color.Transparent,
+                surface.copy(alpha = 0.3f),
+                surface.copy(alpha = 0.6f),
+                surface.copy(alpha = 0.9f),
+                surface,
+            ),
+        )
+    }
 }
 
 @ThemePreviews
@@ -344,7 +350,6 @@ private fun PosterCardPreview() {
             PosterCard(
                 imageUrl = "",
                 title = "Loki",
-                onClick = {},
                 modifier = Modifier
                     .width(100.dp)
                     .aspectRatio(0.8f),
@@ -362,7 +367,6 @@ private fun PosterCardWithLibraryOverlayPreview() {
                 imageUrl = "",
                 title = "Loki",
                 isInLibrary = true,
-                onClick = {},
                 modifier = Modifier
                     .width(100.dp)
                     .aspectRatio(0.8f),
