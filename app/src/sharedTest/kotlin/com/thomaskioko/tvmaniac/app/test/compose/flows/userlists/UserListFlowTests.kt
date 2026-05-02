@@ -14,28 +14,24 @@ internal class UserListFlowTests : BaseAppFlowTest() {
     private val animeListTraktId = 34223402L
 
     @Test
-    fun givenAuthenticatedUser_whenAddToListClicked_thenShowsListSheet() = runAppFlowTest {
-        scenarios.stubAuthenticatedSync()
-
-        openListSheet()
-
-        showDetailsRobot.assertListSheetDisplayed()
-        showDetailsRobot.assertTraktListItemDisplayed(favoritesListTraktId)
-        showDetailsRobot.assertTraktListItemDisplayed(animeListTraktId)
-    }
-
-    @Test
-    fun givenListSheet_whenShowAddedToMultipleLists_thenUpdatesShowCounts() = runAppFlowTest {
+    fun userListManagementJourney() = runAppFlowTest {
         scenarios.stubAuthenticatedSync()
         scenarios.traktLists.stubAddShowToList(listId = favoritesListTraktId)
         scenarios.traktLists.stubAddShowToList(listId = animeListTraktId)
+        scenarios.traktLists.stubCreateList()
+        scenarios.traktLists.stubAddShowToList(listId = TEST_CREATED_LIST_TRAKT_ID)
 
+        // 1. Open list sheet & verify initial state
         openListSheet()
+        showDetailsRobot.assertListSheetDisplayed()
+        showDetailsRobot.assertTraktListItemDisplayed(favoritesListTraktId)
+        showDetailsRobot.assertTraktListItemDisplayed(animeListTraktId)
         showDetailsRobot.assertListSwitchIsUnchecked(favoritesListTraktId)
         showDetailsRobot.assertListSwitchIsUnchecked(animeListTraktId)
         showDetailsRobot.assertTraktListShowCountText(favoritesListTraktId, "0 shows")
         showDetailsRobot.assertTraktListShowCountText(animeListTraktId, "0 shows")
 
+        // 2. Add to multiple lists & verify counts
         showDetailsRobot.clickListSwitch(favoritesListTraktId)
         showDetailsRobot.assertListSwitchIsChecked(favoritesListTraktId)
         showDetailsRobot.assertTraktListShowCountText(favoritesListTraktId, "1 show")
@@ -43,27 +39,9 @@ internal class UserListFlowTests : BaseAppFlowTest() {
         showDetailsRobot.clickListSwitch(animeListTraktId)
         showDetailsRobot.assertListSwitchIsChecked(animeListTraktId)
         showDetailsRobot.assertTraktListShowCountText(animeListTraktId, "1 show")
-    }
 
-    @Test
-    fun givenListSheet_whenCreateClicked_thenShowsCreateListField() = runAppFlowTest {
-        scenarios.stubAuthenticatedSync()
-
-        openListSheet()
+        // 3. Create new list
         showDetailsRobot.assertCreateListFieldDoesNotExist()
-
-        showDetailsRobot.clickCreateListButton()
-
-        showDetailsRobot.assertCreateListFieldDisplayed()
-    }
-
-    @Test
-    fun givenListSheet_whenNewListCreated_thenAddsShowToList() = runAppFlowTest {
-        scenarios.stubAuthenticatedSync()
-        scenarios.traktLists.stubCreateList()
-        scenarios.traktLists.stubAddShowToList(listId = TEST_CREATED_LIST_TRAKT_ID)
-
-        openListSheet()
         showDetailsRobot.clickCreateListButton()
         showDetailsRobot.assertCreateListFieldDisplayed()
 
@@ -76,20 +54,11 @@ internal class UserListFlowTests : BaseAppFlowTest() {
         showDetailsRobot.assertTraktListShowCountText(TEST_CREATED_LIST_TRAKT_ID, "0 shows")
 
         showDetailsRobot.clickListSwitch(TEST_CREATED_LIST_TRAKT_ID)
-
         showDetailsRobot.assertListSwitchIsChecked(TEST_CREATED_LIST_TRAKT_ID)
         showDetailsRobot.assertTraktListShowCountText(TEST_CREATED_LIST_TRAKT_ID, "1 show")
-    }
 
-    @Test
-    fun givenListSheet_whenCloseClicked_thenDismissesSheet() = runAppFlowTest {
-        scenarios.stubAuthenticatedSync()
-
-        openListSheet()
-        showDetailsRobot.assertListSheetDisplayed()
-
+        // 4. Close sheet
         showDetailsRobot.clickCloseListSheetButton()
-
         showDetailsRobot.assertListSheetDoesNotExist()
     }
 

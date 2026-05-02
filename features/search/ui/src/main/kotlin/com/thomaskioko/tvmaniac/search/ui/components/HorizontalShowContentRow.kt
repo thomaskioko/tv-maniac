@@ -66,7 +66,11 @@ internal fun HorizontalShowContentRow(
             contentPadding = PaddingValues(start = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            items(tvShows) { tvShow ->
+            items(
+                items = tvShows,
+                key = { it.traktId },
+                contentType = { "HorizontalShowItem" },
+            ) { tvShow ->
                 PosterBackdropCard(
                     imageUrl = tvShow.posterImageUrl,
                     title = tvShow.title,

@@ -199,6 +199,7 @@ dependencies {
     testImplementation(projects.features.settings.nav)
     testImplementation(projects.features.trailers.nav)
     testImplementation(projects.core.locale.testing)
+    testImplementation(projects.core.util.testing)
 
     testImplementation(libs.androidx.compose.ui.test)
     testImplementation(libs.androidx.test.core)
@@ -232,6 +233,7 @@ dependencies {
     androidTestImplementation(projects.features.settings.nav)
     androidTestImplementation(projects.features.trailers.nav)
     androidTestImplementation(projects.core.locale.testing)
+    androidTestImplementation(projects.core.util.testing)
 
     androidTestImplementation(libs.androidx.compose.ui.test)
     androidTestImplementation(libs.androidx.runner)

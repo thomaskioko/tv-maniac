@@ -11,5 +11,20 @@ kotlin {
                 implementation(projects.core.base)
             }
         }
+
+        val jvmAndroidMain by creating {
+            dependsOn(commonMain.get())
+            dependencies {
+                implementation(libs.junit4)
+            }
+        }
+
+        val jvmMain by getting {
+            dependsOn(jvmAndroidMain)
+        }
+
+        val androidMain by getting {
+            dependsOn(jvmAndroidMain)
+        }
     }
 }

@@ -13,6 +13,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,19 +54,20 @@ internal fun NextEpisodeCard(
                 contentScale = ContentScale.Crop,
             )
 
+            val brush = remember {
+                Brush.verticalGradient(
+                    listOf(
+                        Color.Transparent,
+                        Color.Black.copy(alpha = 0.7f),
+                    ),
+                    startY = 0f,
+                    endY = 400f,
+                )
+            }
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(
-                        Brush.verticalGradient(
-                            listOf(
-                                Color.Transparent,
-                                Color.Black.copy(alpha = 0.7f),
-                            ),
-                            startY = 0f,
-                            endY = 400f,
-                        ),
-                    ),
+                    .background(brush),
             )
 
             Column(

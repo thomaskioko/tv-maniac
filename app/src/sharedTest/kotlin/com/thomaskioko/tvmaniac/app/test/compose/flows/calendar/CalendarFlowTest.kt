@@ -22,7 +22,7 @@ internal class CalendarFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenAuthenticatedUser_whenNavigatesToCalendar_thenShowsUpcomingEpisodes() = runAppFlowTest {
+    fun authenticatedUserCalendarJourney() = runAppFlowTest {
         scenarios.discover.stubBrowseGraph()
 
         discoverRobot.assertDiscoverScreenDisplayed()
@@ -30,15 +30,27 @@ internal class CalendarFlowTest : BaseAppFlowTest() {
         scenarios.signInAndDismissRationale()
 
         scenarios.calendar.stubWeek()
+        scenarios.calendar.stubWeek(weekStart = TEST_NEXT_WEEK)
 
         homeRobot.clickProgressTab()
 
+        progressRobot.assertProgressScreenDisplayed()
+
         progressRobot.clickCalendarTab()
 
+        // Assert Current Week
         calendarRobot.assertCalendarScreenDisplayed()
+        calendarRobot.assertWeekLabelDisplayed("Apr 19, 2026 - Apr 25, 2026")
         calendarRobot.assertDateHeaderDisplayed("Today, Apr 19, 2026")
         calendarRobot.assertTextDisplayed("Breaking Bad")
         calendarRobot.assertAdditionalEpisodesCountDisplayed(episodeTraktId = 73640L, expectedText = "+1 episodes")
+
+        // Assert Next Week
+        calendarRobot.clickNextWeek()
+        calendarRobot.assertWeekLabelDisplayed("Apr 26, 2026 - May 2, 2026")
+        calendarRobot.assertDateHeaderDisplayed("Sunday, Apr 26, 2026")
+        calendarRobot.assertTextDisplayed("Game of Thrones")
+        calendarRobot.assertEpisodeCardDoesNotExist(73640L)
     }
 
     @Test
@@ -55,34 +67,6 @@ internal class CalendarFlowTest : BaseAppFlowTest() {
         progressRobot.clickCalendarTab()
         calendarRobot.assertEmptyStateDisplayed()
         calendarRobot.assertTextDisplayed("Nothing to see here")
-    }
-
-    @Test
-    fun givenAuthenticatedUser_whenNextWeekClicked_thenLoadsNextWeekEpisodes() = runAppFlowTest {
-        scenarios.discover.stubBrowseGraph()
-
-        discoverRobot.assertDiscoverScreenDisplayed()
-
-        scenarios.signInAndDismissRationale()
-
-        scenarios.calendar.stubWeek()
-        scenarios.calendar.stubWeek(weekStart = TEST_NEXT_WEEK)
-
-        homeRobot.clickProgressTab()
-
-        progressRobot.assertProgressScreenDisplayed()
-
-        progressRobot.clickCalendarTab()
-
-        calendarRobot.assertCalendarScreenDisplayed()
-        calendarRobot.assertWeekLabelDisplayed("Apr 19, 2026 - Apr 25, 2026")
-        calendarRobot.assertDateHeaderDisplayed("Today, Apr 19, 2026")
-        calendarRobot.assertTextDisplayed("Breaking Bad")
-        calendarRobot.clickNextWeek()
-        calendarRobot.assertWeekLabelDisplayed("Apr 26, 2026 - May 2, 2026")
-        calendarRobot.assertDateHeaderDisplayed("Sunday, Apr 26, 2026")
-        calendarRobot.assertTextDisplayed("Game of Thrones")
-        calendarRobot.assertEpisodeCardDoesNotExist(73640L)
     }
 
     @Test
