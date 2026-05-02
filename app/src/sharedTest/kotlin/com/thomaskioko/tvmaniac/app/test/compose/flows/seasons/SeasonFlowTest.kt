@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.seasons
 
-import com.thomaskioko.tvmaniac.app.test.AppFlowScope
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import org.junit.Test
 
