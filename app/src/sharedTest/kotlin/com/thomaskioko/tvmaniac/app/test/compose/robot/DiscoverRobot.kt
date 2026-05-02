@@ -13,7 +13,7 @@ internal class DiscoverRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
     }
 
     fun assertShowCardDisplayed(traktId: Long) {
-        assertDisplayed(DiscoverTestTags.showCard(traktId))
+        assertDisplayed(DiscoverTestTags.showCard(DiscoverTestTags.ROW_KEY_TRENDING, traktId))
     }
 
     fun assertUpNextCardDisplayed(traktId: Long) {
@@ -43,16 +43,16 @@ internal class DiscoverRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
     }
 
     fun clickShowCard(traktId: Long) {
-        click(DiscoverTestTags.showCard(traktId))
+        click(DiscoverTestTags.showCard(DiscoverTestTags.ROW_KEY_TRENDING, traktId))
     }
 
     fun navigateToSearchTab(): SearchRobot {
-        click(DiscoverTestTags.SEARCH_BUTTON_TEST_TAG, useSemanticsAction = true)
+        click(DiscoverTestTags.SEARCH_BUTTON_TEST_TAG)
         return SearchRobot(composeUi)
     }
 
     fun clickUpNextCard(traktId: Long) {
-        click(DiscoverTestTags.upNextCard(traktId), useSemanticsAction = true)
+        click(DiscoverTestTags.upNextCard(traktId))
     }
 
     fun assertErrorStateDisplayed() {
@@ -60,6 +60,6 @@ internal class DiscoverRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
     }
 
     fun clickRetryButton() {
-        click(DiscoverTestTags.ERROR_RETRY_BUTTON_TEST_TAG, useSemanticsAction = true)
+        click(DiscoverTestTags.ERROR_RETRY_BUTTON_TEST_TAG)
     }
 }

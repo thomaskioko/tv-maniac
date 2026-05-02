@@ -199,7 +199,11 @@ private fun TrailerList(
     ) {
         item { Spacer(modifier = Modifier.height(8.dp)) }
 
-        items(trailerList) { trailer ->
+        items(
+            items = trailerList,
+            key = { it.key },
+            contentType = { "Trailer" },
+        ) { trailer ->
             ConstraintLayout(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -216,15 +220,16 @@ private fun TrailerList(
                     modifier = Modifier
                         .width(140.dp)
                         .drawWithCache {
+                            val gradient = Brush.verticalGradient(
+                                colors = listOf(Color.Transparent, Color.Black),
+                                startY = size.height / 3,
+                                endY = size.height,
+                            )
                             onDrawWithContent {
                                 drawContent()
                                 drawRect(
+                                    brush = gradient,
                                     blendMode = BlendMode.Multiply,
-                                    brush = Brush.verticalGradient(
-                                        colors = listOf(Color.Transparent, Color.Black),
-                                        startY = size.height / 3,
-                                        endY = size.height,
-                                    ),
                                 )
                             }
                         }

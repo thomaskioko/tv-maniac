@@ -26,26 +26,26 @@ internal class ProgressRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
     }
 
     fun assertEpisodeMetaDisplayed(traktId: Long, formattedEpisodeNumber: String) {
-        assertExists(UpNextTestTags.episodeMeta(traktId, formattedEpisodeNumber))
+        assertNodeHasText(UpNextTestTags.episodeRow(traktId), formattedEpisodeNumber)
     }
 
     fun assertProgressCountDisplayed(traktId: Long, count: String) {
-        assertExists(UpNextTestTags.progressCount(traktId, count))
+        assertNodeHasText(UpNextTestTags.episodeRow(traktId), count)
     }
 
     fun clickWatchedButton(traktId: Long) {
-        click(UpNextTestTags.watchedButton(traktId), useSemanticsAction = true)
+        click(UpNextTestTags.watchedButton(traktId))
     }
 
     fun clickEpisodeRow(traktId: Long) {
-        click(UpNextTestTags.episodeRow(traktId), useSemanticsAction = true)
+        click(UpNextTestTags.episodeRow(traktId))
     }
 
     fun clickCalendarTab() {
-        click(ProgressTestTags.CALENDAR_TAB, useSemanticsAction = true)
+        click(ProgressTestTags.CALENDAR_TAB)
     }
 
     fun clickUpNextTab() {
-        click(ProgressTestTags.UPNEXT_TAB, useSemanticsAction = true)
+        click(ProgressTestTags.UPNEXT_TAB)
     }
 }

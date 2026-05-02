@@ -1,14 +1,14 @@
 package com.thomaskioko.tvmaniac.discover.ui.component
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -31,6 +31,7 @@ import kotlinx.collections.immutable.ImmutableList
 internal fun HorizontalRowContent(
     modifier: Modifier = Modifier,
     category: String,
+    rowKey: String,
     tvShows: ImmutableList<DiscoverShow>,
     onItemClicked: (Long) -> Unit,
     onMoreClicked: () -> Unit,
@@ -44,7 +45,7 @@ internal fun HorizontalRowContent(
                 title = category,
                 label = str_more.resolve(LocalContext.current),
                 onMoreClicked = onMoreClicked,
-                moreModifier = Modifier.testTag(DiscoverTestTags.moreButton(category)),
+                moreModifier = Modifier.testTag(DiscoverTestTags.moreButton(rowKey)),
             )
 
             val lazyListState = rememberLazyListState()
@@ -52,20 +53,19 @@ internal fun HorizontalRowContent(
             LazyRow(
                 state = lazyListState,
                 flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+                contentPadding = PaddingValues(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                itemsIndexed(
+                items(
                     items = tvShows,
-                    key = { index, tvShow -> "${category}_${tvShow.traktId}_$index" },
-                ) { index, tvShow ->
-                    val value = if (index == 0) 16 else 8
-
-                    Spacer(modifier = Modifier.width(value.dp))
-
+                    key = { tvShow -> "${rowKey}_${tvShow.traktId}" },
+                    contentType = { "ShowModel" },
+                ) { tvShow ->
                     PosterCard(
-                        modifier = Modifier.testTag(DiscoverTestTags.showCard(tvShow.traktId)),
                         imageUrl = tvShow.posterImageUrl,
-                        title = tvShow.title,
                         onClick = { onItemClicked(tvShow.traktId) },
+                        modifier = Modifier.testTag(DiscoverTestTags.showCard(rowKey, tvShow.traktId)),
+                        title = tvShow.title,
                         isInLibrary = tvShow.inLibrary,
                     )
                 }
@@ -81,6 +81,7 @@ internal fun HorizontalRowContentPreview() {
         HorizontalRowContent(
             modifier = Modifier.height(220.dp),
             category = "Trending",
+            rowKey = DiscoverTestTags.ROW_KEY_TRENDING,
             tvShows = discoverContentSuccess.topRatedShows,
             onItemClicked = {},
             onMoreClicked = {},

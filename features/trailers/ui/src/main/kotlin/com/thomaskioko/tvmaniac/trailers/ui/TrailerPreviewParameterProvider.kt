@@ -7,10 +7,10 @@ import com.thomaskioko.tvmaniac.presenter.trailers.TrailersState
 import com.thomaskioko.tvmaniac.presenter.trailers.model.Trailer
 import kotlinx.collections.immutable.toPersistentList
 
-private val trailersList = List(4) {
+private val trailersList = List(4) { index ->
     Trailer(
         showTmdbId = 1232,
-        key = "er",
+        key = "er_$index",
         name = "Trailer Name",
         youtubeThumbnailUrl = "",
     )

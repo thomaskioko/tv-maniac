@@ -43,6 +43,7 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
@@ -91,6 +92,7 @@ import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistState
 import com.thomaskioko.tvmaniac.watchlist.presenter.model.UpNextEpisodeItem
 import com.thomaskioko.tvmaniac.watchlist.presenter.model.WatchlistItem
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import java.util.Locale
 
 @Composable
@@ -351,33 +353,46 @@ private fun SectionedWatchlistGridContent(
     scrollBehavior: TopAppBarScrollBehavior,
     onItemClicked: (Long) -> Unit,
 ) {
+    val chunkedWatchNext = remember(watchNextItems) {
+        watchNextItems.chunked(3).map { it.toImmutableList() }.toImmutableList()
+    }
+    val chunkedStale = remember(staleItems) {
+        staleItems.chunked(3).map { it.toImmutableList() }.toImmutableList()
+    }
+
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         modifier = Modifier
             .nestedScroll(scrollBehavior.nestedScrollConnection)
             .padding(horizontal = 4.dp),
     ) {
-        if (watchNextItems.isNotEmpty()) {
+        if (chunkedWatchNext.isNotEmpty()) {
             stickyHeader(key = "grid_header_watch_next") {
                 SectionHeader(title = watchNextTitle)
             }
-            val chunkedWatchNext = watchNextItems.chunked(3)
-            items(chunkedWatchNext.size, key = { "watchnext_row_$it" }) { rowIndex ->
+            items(
+                items = chunkedWatchNext,
+                key = { "watchnext_row_${it.first().traktId}" },
+                contentType = { "WatchnextRow" },
+            ) { rowItems ->
                 GridRow(
-                    items = chunkedWatchNext[rowIndex],
+                    items = rowItems,
                     onItemClicked = onItemClicked,
                 )
             }
         }
 
-        if (staleItems.isNotEmpty()) {
+        if (chunkedStale.isNotEmpty()) {
             stickyHeader(key = "grid_header_stale") {
                 SectionHeader(title = staleTitle)
             }
-            val chunkedStale = staleItems.chunked(3)
-            items(chunkedStale.size, key = { "stale_row_$it" }) { rowIndex ->
+            items(
+                items = chunkedStale,
+                key = { "stale_row_${it.first().traktId}" },
+                contentType = { "StaleRow" },
+            ) { rowItems ->
                 GridRow(
-                    items = chunkedStale[rowIndex],
+                    items = rowItems,
                     onItemClicked = onItemClicked,
                 )
             }
@@ -391,7 +406,7 @@ private fun SectionedWatchlistGridContent(
 
 @Composable
 private fun GridRow(
-    items: List<WatchlistItem>,
+    items: ImmutableList<WatchlistItem>,
     onItemClicked: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -423,12 +438,12 @@ private fun WatchlistGridItem(
         contentAlignment = Alignment.BottomCenter,
     ) {
         PosterCard(
+            imageUrl = show.posterImageUrl,
+            onClick = { onItemClicked(show.traktId) },
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(2f / 3f),
-            imageUrl = show.posterImageUrl,
             title = show.title,
-            onClick = { onItemClicked(show.traktId) },
             shape = RectangleShape,
         )
         ShowLinearProgressIndicator(
@@ -465,7 +480,11 @@ private fun SectionedUpNextListContent(
                     modifier = Modifier.animateItem(),
                 )
             }
-            items(watchNextEpisodes, key = { "watchnext_${it.showTraktId}_${it.episodeId}" }) { episode ->
+            items(
+                items = watchNextEpisodes,
+                key = { "watchnext_${it.showTraktId}_${it.episodeId}" },
+                contentType = { "WatchnextEpisode" },
+            ) { episode ->
                 WatchListUpNextListItem(
                     item = episode,
                     premiereLabel = premiereLabel,
@@ -485,7 +504,11 @@ private fun SectionedUpNextListContent(
                     modifier = Modifier.animateItem(),
                 )
             }
-            items(staleEpisodes, key = { "stale_${it.showTraktId}_${it.episodeId}" }) { episode ->
+            items(
+                items = staleEpisodes,
+                key = { "stale_${it.showTraktId}_${it.episodeId}" },
+                contentType = { "StaleEpisode" },
+            ) { episode ->
                 WatchListUpNextListItem(
                     item = episode,
                     premiereLabel = premiereLabel,

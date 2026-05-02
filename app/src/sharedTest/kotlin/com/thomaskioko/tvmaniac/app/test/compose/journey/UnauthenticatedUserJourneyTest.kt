@@ -96,7 +96,7 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
         dismissSystemDialog(SystemDialog.NotificationPermissionDeny)
 
         // Follow show locally
-        settingsRobot.pressBack()
+        settingsRobot.clickBackButton()
         homeRobot.clickDiscoverTab()
         discoverRobot.clickShowCard(breakingBadTraktId)
         showDetailsRobot.assertTrackButtonDisplayed()
@@ -171,7 +171,7 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
         rootRobot.assertNotificationRationaleDoesNotExist()
 
         // Login user
-        settingsRobot.pressBack()
+        settingsRobot.clickBackButton()
         profileRobot.assertSignInButtonDisplayed()
 
         scenarios.stubProfileOnSignIn()
@@ -182,7 +182,7 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
         // Verify rationale remains hidden after auth transition
         profileRobot.clickSettingsButton()
         settingsRobot.assertSettingsScreenDisplayed()
-        settingsRobot.pressBack()
+        settingsRobot.clickBackButton()
         profileRobot.assertUserCardDisplayed(slug = "integration-test-user")
 
         rootRobot.assertNotificationRationaleDoesNotExist()

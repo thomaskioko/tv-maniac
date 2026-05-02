@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.profile.ui
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,17 +34,17 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -134,7 +135,7 @@ internal fun ProfileScreen(
                         Box(
                             modifier = Modifier
                                 .testTag(ProfileTestTags.SETTINGS_BUTTON_TEST_TAG)
-                                .semantics(mergeDescendants = true) {},
+                                .clickable(onClick = { onAction(SettingsClicked) }),
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.Settings,
@@ -333,47 +334,56 @@ private fun HeaderContent(
     avatarUrl: String?,
     listState: LazyListState,
     onEditClicked: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    val offset = (scrollState.value / 2)
-    val offsetDp = with(LocalDensity.current) { offset.toDp() }
+    val headerOffset by remember {
+        derivedStateOf {
+            IntOffset(
+                x = 0,
+                y = if (listState.firstVisibleItemIndex == 0) {
+                    listState.firstVisibleItemScrollOffset / 2
+                } else {
+                    0
+                },
+            )
+        }
+    }
+
+    val posterOffset by remember {
+        derivedStateOf {
+            IntOffset(0, scrollState.value / 2)
+        }
+    }
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(350.dp)
             .clipToBounds()
-            .offset {
-                IntOffset(
-                    x = 0,
-                    y = if (listState.firstVisibleItemIndex == 0) {
-                        listState.firstVisibleItemScrollOffset / 2
-                    } else {
-                        0
-                    },
-                )
-            },
+            .offset { headerOffset },
         contentAlignment = Alignment.BottomCenter,
     ) {
         PosterCard(
             imageUrl = imageUrl,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = offsetDp),
+                .offset { posterOffset },
         )
 
+        val brush = remember {
+            Brush.verticalGradient(
+                listOf(
+                    Color.Transparent,
+                    Color.Black.copy(alpha = 0.8f),
+                ),
+                startY = 100f,
+                endY = 700f,
+            )
+        }
         Box(
             modifier = Modifier
                 .matchParentSize()
-                .background(
-                    Brush.verticalGradient(
-                        listOf(
-                            Color.Transparent,
-                            Color.Black.copy(alpha = 0.8f),
-                        ),
-                        startY = 100f,
-                        endY = 700f,
-                    ),
-                ),
+                .background(brush),
         )
 
         // Profile Content

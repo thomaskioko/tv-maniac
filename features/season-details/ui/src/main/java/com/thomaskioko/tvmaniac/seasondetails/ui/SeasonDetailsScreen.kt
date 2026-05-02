@@ -37,13 +37,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -231,7 +232,7 @@ internal fun LazyColumnContent(
         state = listState,
         contentPadding = contentPadding.copy(copyTop = false),
     ) {
-        item {
+        item(key = "header") {
             HeaderContent(
                 scrollState = scrollState,
                 imageUrl = seasonDetailsModel.imageUrl,
@@ -244,7 +245,7 @@ internal fun LazyColumnContent(
             )
         }
 
-        item {
+        item(key = "body") {
             BodyContent(
                 seasonDetailsModel = seasonDetailsModel,
                 onAction = onAction,
@@ -252,7 +253,7 @@ internal fun LazyColumnContent(
             )
         }
 
-        item { Spacer(modifier = Modifier.height(54.dp)) }
+        item(key = "footer") { Spacer(modifier = Modifier.height(54.dp)) }
     }
 
     when (seasonDetailsModel.dialogState) {
@@ -301,14 +302,17 @@ internal fun ImageGalleryContent(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         modifier = modifier.fillMaxSize(),
     ) {
-        items(imageList) { item ->
+        items(
+            items = imageList,
+            key = { it.id },
+            contentType = { "SeasonImage" },
+        ) { item ->
             PosterCard(
+                imageUrl = item.imageUrl,
                 modifier = Modifier
                     .fillMaxWidth()
                     .animateItem(),
-                imageUrl = item.imageUrl,
                 title = "",
-                onClick = {},
             )
         }
     }
@@ -324,26 +328,35 @@ private fun HeaderContent(
     isLoading: Boolean,
     listState: LazyListState,
     onAction: (SeasonDetailsAction) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    val offset = (scrollState.value / 2)
-    val offsetDp = with(LocalDensity.current) { offset.toDp() }
     val resources = LocalContext.current.resources
 
+    val headerOffset by remember {
+        derivedStateOf {
+            IntOffset(
+                x = 0,
+                y = if (listState.firstVisibleItemIndex == 0) {
+                    listState.firstVisibleItemScrollOffset / 2
+                } else {
+                    0
+                },
+            )
+        }
+    }
+
+    val posterOffset by remember {
+        derivedStateOf {
+            IntOffset(0, scrollState.value / 2)
+        }
+    }
+
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(350.dp)
             .clipToBounds()
-            .offset {
-                IntOffset(
-                    x = 0,
-                    y = if (listState.firstVisibleItemIndex == 0) {
-                        listState.firstVisibleItemScrollOffset / 2
-                    } else {
-                        0
-                    },
-                )
-            },
+            .offset { headerOffset },
         contentAlignment = Alignment.BottomCenter,
     ) {
         PosterCard(
@@ -351,7 +364,7 @@ private fun HeaderContent(
             title = title,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = offsetDp),
+                .offset { posterOffset },
         )
 
         Box(

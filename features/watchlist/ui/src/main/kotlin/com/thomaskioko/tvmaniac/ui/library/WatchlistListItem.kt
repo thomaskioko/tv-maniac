@@ -51,10 +51,10 @@ internal fun WatchlistListItem(
         ) {
             // Poster image
             PosterCard(
-                imageWidth = 100.dp,
                 imageUrl = item.posterImageUrl,
-                title = item.title,
                 onClick = { onItemClicked(item.traktId) },
+                imageWidth = 100.dp,
+                title = item.title,
                 shape = RectangleShape,
             )
 
