@@ -362,7 +362,11 @@ private fun LibraryGridContent(
             .nestedScroll(scrollBehavior.nestedScrollConnection)
             .padding(horizontal = 4.dp),
     ) {
-        items(items, key = { it.traktId }) { item ->
+        items(
+            items = items,
+            key = { it.traktId },
+            contentType = { "LibraryGridItem" },
+        ) { item ->
             LibraryGridItem(
                 item = item,
                 onItemClicked = onItemClicked,
@@ -383,12 +387,12 @@ private fun LibraryGridItem(
     modifier: Modifier = Modifier,
 ) {
     PosterCard(
+        imageUrl = item.posterImageUrl,
+        onClick = { onItemClicked(item.traktId) },
         modifier = modifier
             .fillMaxWidth()
             .aspectRatio(2f / 3f),
-        imageUrl = item.posterImageUrl,
         title = item.title,
-        onClick = { onItemClicked(item.traktId) },
         shape = RectangleShape,
     )
 }
@@ -405,7 +409,11 @@ private fun LibraryListContent(
         contentPadding = PaddingValues(top = 8.dp),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) {
-        items(items.size, key = { items[it].traktId }) { index ->
+        items(
+            count = items.size,
+            key = { items[it].traktId },
+            contentType = { "LibraryListItem" },
+        ) { index ->
             LibraryListItem(
                 item = items[index],
                 onItemClicked = onItemClicked,

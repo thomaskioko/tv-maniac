@@ -167,6 +167,7 @@ internal fun SettingsScreen(
                 navigationIcon = {
                     Icon(
                         modifier = Modifier
+                            .testTag(SettingsTestTags.BACK_BUTTON_TEST_TAG)
                             .clickable(onClick = { onAction(BackClicked) })
                             .padding(16.dp),
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,

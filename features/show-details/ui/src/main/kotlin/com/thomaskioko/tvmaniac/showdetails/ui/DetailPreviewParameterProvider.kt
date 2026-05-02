@@ -42,13 +42,13 @@ internal val showDetailsContent = ShowDetailsContent(
         trailersList = persistentListOf(
             TrailerModel(
                 showTmdbId = 1232,
-                key = "",
+                key = "1",
                 name = "",
                 youtubeThumbnailUrl = "",
             ),
             TrailerModel(
                 showTmdbId = 1232,
-                key = "",
+                key = "2",
                 name = "",
                 youtubeThumbnailUrl = "",
             ),

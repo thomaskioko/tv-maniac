@@ -5,7 +5,6 @@ import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.rememberTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,6 +22,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -189,7 +189,8 @@ private fun SeasonTitleHeader(
                 },
             )
 
-            Box(
+            Surface(
+                onClick = { onAction(ToggleSeasonWatched) },
                 modifier = Modifier
                     .size(28.dp)
                     .constrainAs(watchedStatusIcon) {
@@ -198,20 +199,18 @@ private fun SeasonTitleHeader(
                         top.linkTo(image.top)
                         bottom.linkTo(image.bottom)
                     }
-                    .testTag(SeasonDetailsTestTags.SEASON_WATCHED_TOGGLE_TEST_TAG)
-                    .background(
-                        color = if (isSeasonWatched) green else grey,
-                        shape = CircleShape,
-                    )
-                    .clickable { onAction(ToggleSeasonWatched) },
-                contentAlignment = Alignment.Center,
+                    .testTag(SeasonDetailsTestTags.SEASON_WATCHED_TOGGLE_TEST_TAG),
+                shape = CircleShape,
+                color = if (isSeasonWatched) green else grey,
             ) {
-                Icon(
-                    modifier = Modifier.size(16.dp),
-                    imageVector = Icons.Rounded.Check,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                )
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        modifier = Modifier.size(16.dp),
+                        imageVector = Icons.Rounded.Check,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                    )
+                }
             }
 
             ShowLinearProgressIndicator(

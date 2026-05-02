@@ -55,6 +55,8 @@ import com.thomaskioko.tvmaniac.presentation.library.model.LibrarySortOption
 import com.thomaskioko.tvmaniac.presentation.library.model.ShowStatus
 import com.thomaskioko.tvmaniac.testtags.library.LibraryTestTags
 import com.thomaskioko.tvmaniac.ui.library.preview.LibraryStatePreviewParameterProvider
+import kotlinx.collections.immutable.persistentSetOf
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 internal fun SortOptionsContent(
@@ -82,8 +84,8 @@ internal fun SortOptionsContent(
         ) {
             FilterChipSection(
                 title = label_library_sort_by.resolve(context),
-                items = LibrarySortOption.entries,
-                selectedItems = setOf(state.sortOption),
+                items = LibrarySortOption.entries.toImmutableList(),
+                selectedItems = persistentSetOf(state.sortOption),
                 onItemToggle = { onSortOptionSelected(it) },
                 labelProvider = { sortOption ->
                     when (sortOption) {

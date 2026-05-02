@@ -102,7 +102,7 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
         settingsRobot.assertLogoutDialogDoesNotExist()
 
         // Verify unauthenticated state
-        settingsRobot.pressBack()
+        settingsRobot.clickBackButton()
         profileRobot.assertSignInButtonDisplayed()
     }
 }

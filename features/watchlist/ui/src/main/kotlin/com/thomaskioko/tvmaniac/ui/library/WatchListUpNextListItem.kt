@@ -50,7 +50,8 @@ internal fun WatchListUpNextListItem(
 ) {
     Card(
         shape = MaterialTheme.shapes.small,
-        modifier = modifier.clickable { onItemClicked(item.showTraktId, item.episodeId) },
+        onClick = { onItemClicked(item.showTraktId, item.episodeId) },
+        modifier = modifier,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),

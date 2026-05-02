@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -56,10 +56,11 @@ internal fun NextEpisodesSection(
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                itemsIndexed(
+                items(
                     items = nextEpisodes,
-                    key = { _, episode -> "next_episode_${episode.showTraktId}_${episode.episodeId}" },
-                ) { _, episode ->
+                    key = { episode -> "next_episode_${episode.showTraktId}_${episode.episodeId}" },
+                    contentType = { "NextEpisode" },
+                ) { episode ->
                     NextEpisodeCard(
                         modifier = Modifier.testTag(DiscoverTestTags.upNextCard(episode.showTraktId)),
                         episode = episode,

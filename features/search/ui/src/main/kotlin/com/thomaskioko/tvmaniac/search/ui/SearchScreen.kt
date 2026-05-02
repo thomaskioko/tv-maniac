@@ -48,12 +48,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
 import com.thomaskioko.tvmaniac.compose.components.FilterChipSection
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.SearchTextContainer
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
@@ -88,6 +90,7 @@ import com.thomaskioko.tvmaniac.search.ui.components.SearchResultItem
 import com.thomaskioko.tvmaniac.testtags.search.SearchTestTags
 import io.github.thomaskioko.codegen.annotations.ScreenUi
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableSet
 
 @ScreenUi(presenter = SearchShowsPresenter::class, parentScope = ActivityScope::class)
 @Composable
@@ -208,10 +211,10 @@ internal fun SearchScreen(
             FilterChipSection(
                 modifier = Modifier.padding(16.dp),
                 title = state.categoryTitle,
-                items = state.categories.toList(),
+                items = state.categories,
                 selectedItems = state.categories
                     .filter { it.category == state.selectedCategory }
-                    .toSet(),
+                    .toImmutableSet(),
                 onItemToggle = { item ->
                     onAction(CategoryChanged(item.category))
                     showFilterSheet = false
@@ -326,7 +329,11 @@ private fun SearchResultsContent(
         LazyColumn(
             state = scrollState,
         ) {
-            items(results) { item ->
+            items(
+                items = results,
+                key = { it.traktId },
+                contentType = { "SearchResult" },
+            ) { item ->
 
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -359,7 +366,11 @@ private fun GenreRowsContent(
         if (genreRows.isEmpty()) return
 
         LazyColumn {
-            items(genreRows, key = { it.slug }) { genreRow ->
+            items(
+                items = genreRows,
+                key = { it.slug },
+                contentType = { "GenreRow" },
+            ) { genreRow ->
                 HorizontalShowContentRow(
                     title = genreRow.name,
                     description = genreRow.subtitle,

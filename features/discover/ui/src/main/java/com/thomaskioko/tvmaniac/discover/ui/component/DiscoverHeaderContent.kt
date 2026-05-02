@@ -90,6 +90,7 @@ internal fun PosterCardsPager(
                 .height(pagerHeight)
                 .testTag(DiscoverTestTags.FEATURED_PAGER_TEST_TAG),
             state = pagerState,
+            key = { index -> list[index].traktId },
             verticalAlignment = Alignment.Bottom,
         ) { currentPage ->
 
@@ -151,14 +152,18 @@ private fun ShowCardOverlay(
     overview: String?,
 ) {
     val background = MaterialTheme.colorScheme.background
-    val overlayGradient = listOf(
-        Color.Transparent,
-        background.copy(alpha = 0.4f),
-        background.copy(alpha = 0.7f),
-        background.copy(alpha = 0.8f),
-        background.copy(alpha = 0.9f),
-        background,
-    )
+    val brush = remember(background) {
+        Brush.verticalGradient(
+            listOf(
+                Color.Transparent,
+                background.copy(alpha = 0.4f),
+                background.copy(alpha = 0.7f),
+                background.copy(alpha = 0.8f),
+                background.copy(alpha = 0.9f),
+                background,
+            ),
+        )
+    }
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -168,7 +173,7 @@ private fun ShowCardOverlay(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(220.dp)
-                .background(Brush.verticalGradient(overlayGradient)),
+                .background(brush),
         )
 
         Column(

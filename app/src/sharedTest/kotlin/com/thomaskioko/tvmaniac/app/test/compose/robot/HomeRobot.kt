@@ -18,22 +18,22 @@ internal class HomeRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
     }
 
     fun clickDiscoverTab() {
-        click(HomeTestTags.DISCOVER_TAB, useSemanticsAction = true)
+        click(HomeTestTags.DISCOVER_TAB)
         assertTabSelected(HomeConfig.Discover)
     }
 
     fun clickProgressTab() {
-        click(HomeTestTags.PROGRESS_TAB, useSemanticsAction = true)
+        click(HomeTestTags.PROGRESS_TAB)
         assertTabSelected(HomeConfig.Progress)
     }
 
     fun clickLibraryTab() {
-        click(HomeTestTags.LIBRARY_TAB, useSemanticsAction = true)
+        click(HomeTestTags.LIBRARY_TAB)
         assertTabSelected(HomeConfig.Library)
     }
 
     fun clickProfileTab() {
-        click(HomeTestTags.PROFILE_TAB, useSemanticsAction = true)
+        click(HomeTestTags.PROFILE_TAB)
         assertTabSelected(HomeConfig.Profile)
     }
 

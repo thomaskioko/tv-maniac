@@ -18,7 +18,7 @@ internal class SearchRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
     }
 
     fun assertSearchQueryDisplayed(query: String) {
-        assertTextContains(SearchTestTags.SEARCH_BAR_TEST_TAG, query, useUnmergedTree = false)
+        assertTextContains(SearchTestTags.SEARCH_BAR_TEST_TAG, query)
     }
 
     fun assertResultCountEquals(count: Int) {
@@ -26,12 +26,11 @@ internal class SearchRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
             SearchTestTags.SCREEN_TEST_TAG,
             "search_result_item_",
             count,
-            useUnmergedTree = true,
         )
     }
 
     fun assertResultItemDisplayed(traktId: Long) {
-        assertDisplayed(SearchTestTags.resultItem(traktId), useUnmergedTree = true)
+        assertDisplayed(SearchTestTags.resultItem(traktId))
     }
 
     fun assertResultTitleDisplayed(title: String) {

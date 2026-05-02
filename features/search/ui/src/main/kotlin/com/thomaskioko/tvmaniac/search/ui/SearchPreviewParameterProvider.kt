@@ -39,7 +39,12 @@ internal class SearchPreviewParameterProvider : PreviewParameterProvider<SearchS
         }
 }
 
-internal fun createDiscoverShowList(size: Int = 5) = List(size) { discoverShow }.toImmutableList()
+internal fun createDiscoverShowList(size: Int = 5) = List(size) { index ->
+    discoverShow.copy(
+        tmdbId = discoverShow.tmdbId + index.toLong(),
+        traktId = discoverShow.traktId + index.toLong(),
+    )
+}.toImmutableList()
 
 internal val discoverShow = ShowItem(
     tmdbId = 84958,

@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import com.thomaskioko.tvmaniac.ui.progress.ProgressScreen
 import com.thomaskioko.tvmaniac.ui.progress.previewCalendarEvents
 import com.thomaskioko.tvmaniac.ui.progress.previewUpNextEpisodes
+import kotlinx.collections.immutable.persistentListOf
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -44,7 +45,7 @@ class ProgressScreenshotTest {
                         weekLabel = "Jan 31, 2026 - Feb 6, 2026",
                         dateGroups = previewCalendarEvents(),
                     ),
-                    tabs = listOf("Up Next", "Calendar"),
+                    tabs = persistentListOf("Up Next", "Calendar"),
                     modifier = Modifier,
                     progressAction = {},
                     upNextAction = {},
@@ -70,7 +71,7 @@ class ProgressScreenshotTest {
                         weekLabel = "Jan 31, 2026 - Feb 6, 2026",
                         dateGroups = previewCalendarEvents(),
                     ),
-                    tabs = listOf("Up Next", "Calendar"),
+                    tabs = persistentListOf("Up Next", "Calendar"),
                     modifier = Modifier,
                     progressAction = {},
                     upNextAction = {},
@@ -96,7 +97,7 @@ class ProgressScreenshotTest {
                         weekLabel = "Jan 31, 2026 - Feb 6, 2026",
                         dateGroups = previewCalendarEvents(),
                     ),
-                    tabs = listOf("Up Next", "Calendar"),
+                    tabs = persistentListOf("Up Next", "Calendar"),
                     modifier = Modifier,
                     progressAction = {},
                     upNextAction = {},

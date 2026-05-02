@@ -38,13 +38,17 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvide
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_filter_show_less
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_filter_show_more
 import com.thomaskioko.tvmaniac.i18n.resolve
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableSet
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentSetOf
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 public fun <T> FilterChipSection(
     title: String,
-    items: List<T>,
-    selectedItems: Set<T>,
+    items: ImmutableList<T>,
+    selectedItems: ImmutableSet<T>,
     onItemToggle: (T) -> Unit,
     labelProvider: (T) -> String,
     modifier: Modifier = Modifier,
@@ -185,7 +189,7 @@ internal fun ShowMoreToggle(
 private fun FilterChipSectionPreview() {
     FilterChipSection(
         title = "GENRES",
-        items = listOf(
+        items = persistentListOf(
             "Action & Adventure",
             "Animation",
             "Comedy",
@@ -194,7 +198,7 @@ private fun FilterChipSectionPreview() {
             "Fantasy",
             "Sci-Fi",
         ),
-        selectedItems = setOf("Drama", "Comedy"),
+        selectedItems = persistentSetOf("Drama", "Comedy"),
         onItemToggle = {},
         labelProvider = { it },
         modifier = Modifier.padding(16.dp),
@@ -207,14 +211,14 @@ private fun FilterChipSectionPreview() {
 private fun FilterChipSectionCollapsedPreview() {
     FilterChipSection(
         title = "STATUS",
-        items = listOf(
+        items = persistentListOf(
             "Returning Series",
             "Planned",
             "In Production",
             "Ended",
             "Canceled",
         ),
-        selectedItems = setOf("Returning Series"),
+        selectedItems = persistentSetOf("Returning Series"),
         onItemToggle = {},
         labelProvider = { it },
         collapsedItemCount = 3,

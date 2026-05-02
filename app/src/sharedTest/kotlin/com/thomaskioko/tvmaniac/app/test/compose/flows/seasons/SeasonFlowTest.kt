@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.seasons
 
-import com.thomaskioko.tvmaniac.app.test.AppFlowScope
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import org.junit.Test
 
@@ -13,118 +12,60 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
     private val seasonTwoFirstEpisodeTraktId = 73489L
 
     @Test
-    fun givenSeasonDetails_whenWatchedButtonClicked_thenTogglesWatchedState() = runAppFlowTest {
+    fun seasonUserJourney() = runAppFlowTest {
         scenarios.discover.stubBrowseGraph()
 
         discoverRobot.clickShowCard(breakingBadTraktId)
         trackShow()
+
+        // 1. Mark episode as watched & check continue tracking
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
         seasonDetailsRobot.assertEpisodeRowDisplayed(pilotEpisodeTraktId)
         seasonDetailsRobot.clickMarkWatched(pilotEpisodeTraktId)
         seasonDetailsRobot.assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
 
-        rootRobot.pressBack()
+        seasonDetailsRobot.clickBackButton()
         showDetailsRobot.assertContinueTrackingSectionDisplayed()
         showDetailsRobot.assertContinueTrackingEpisodeDisplayed(secondEpisodeTraktId)
-    }
 
-    @Test
-    fun givenSeasonDetails_whenMarkingEpisodeWithPredecessors_thenShowsDialog() = runAppFlowTest {
-        scenarios.discover.stubBrowseGraph()
-
-        discoverRobot.clickShowCard(breakingBadTraktId)
-        trackShow()
+        // 2. Unwatch episode - Dismiss & Confirm
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
-        seasonDetailsRobot.assertEpisodeRowDisplayed(secondEpisodeTraktId)
+        seasonDetailsRobot.clickMarkUnwatched(pilotEpisodeTraktId)
+        seasonDetailsRobot.assertUnwatchEpisodeDialogDisplayed()
+        seasonDetailsRobot.clickUnwatchEpisodeDismiss()
+        seasonDetailsRobot.assertUnwatchEpisodeDialogDoesNotExist()
+        seasonDetailsRobot.assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
+
+        seasonDetailsRobot.clickMarkUnwatched(pilotEpisodeTraktId)
+        seasonDetailsRobot.clickUnwatchEpisodeConfirm()
+        seasonDetailsRobot.assertUnwatchEpisodeDialogDoesNotExist()
+        seasonDetailsRobot.assertMarkWatchedDisplayed(pilotEpisodeTraktId)
+
+        // 3. Mark episode with predecessors - Dismiss (Just this)
         seasonDetailsRobot.clickMarkWatched(secondEpisodeTraktId)
         seasonDetailsRobot.assertMarkPreviousEpisodesDialogDisplayed()
         seasonDetailsRobot.clickMarkPreviousEpisodesDismiss()
         seasonDetailsRobot.assertMarkPreviousEpisodesDialogDoesNotExist()
+        seasonDetailsRobot.assertMarkUnwatchedDisplayed(secondEpisodeTraktId)
+        seasonDetailsRobot.assertMarkWatchedDisplayed(pilotEpisodeTraktId)
 
-        rootRobot.pressBack()
-        showDetailsRobot.assertContinueTrackingSectionDisplayed()
-        showDetailsRobot.assertContinueTrackingEpisodeDisplayed(pilotEpisodeTraktId)
-    }
+        // 4. Mark with predecessors - Confirm (Mark All Previous)
+        // Reset state for second episode first
+        seasonDetailsRobot.clickMarkUnwatched(secondEpisodeTraktId)
+        seasonDetailsRobot.clickUnwatchEpisodeConfirm()
 
-    @Test
-    fun givenSeasonDetails_whenMarkAllConfirmed_thenMarksAllPreviousEpisodes() = runAppFlowTest {
-        scenarios.discover.stubBrowseGraph()
-
-        discoverRobot.clickShowCard(breakingBadTraktId)
-        trackShow()
-        showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
-        seasonDetailsRobot.assertEpisodeRowDisplayed(secondEpisodeTraktId)
         seasonDetailsRobot.clickMarkWatched(secondEpisodeTraktId)
         seasonDetailsRobot.clickMarkPreviousEpisodesConfirm()
         seasonDetailsRobot.assertMarkPreviousEpisodesDialogDoesNotExist()
         seasonDetailsRobot.assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
         seasonDetailsRobot.assertMarkUnwatchedDisplayed(secondEpisodeTraktId)
 
-        rootRobot.pressBack()
+        // 5. Verify Continue Tracking
+        seasonDetailsRobot.clickBackButton()
         showDetailsRobot.assertContinueTrackingSectionDisplayed()
         showDetailsRobot.assertContinueTrackingEpisodeDisplayed(thirdEpisodeTraktId)
-    }
 
-    @Test
-    fun givenSeasonDetails_whenJustThisClicked_thenMarksOnlyCurrentEpisode() = runAppFlowTest {
-        scenarios.discover.stubBrowseGraph()
-
-        discoverRobot.clickShowCard(breakingBadTraktId)
-        trackShow()
-        showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
-        seasonDetailsRobot.assertEpisodeRowDisplayed(secondEpisodeTraktId)
-        seasonDetailsRobot.clickMarkWatched(secondEpisodeTraktId)
-        seasonDetailsRobot.clickMarkPreviousEpisodesDismiss()
-        seasonDetailsRobot.assertMarkPreviousEpisodesDialogDoesNotExist()
-        seasonDetailsRobot.assertMarkUnwatchedDisplayed(secondEpisodeTraktId)
-        seasonDetailsRobot.assertMarkWatchedDisplayed(pilotEpisodeTraktId)
-    }
-
-    @Test
-    fun givenSeasonDetails_whenWatchedEpisodeToggled_thenShowsUnwatchDialog() = runAppFlowTest {
-        scenarios.discover.stubBrowseGraph()
-
-        discoverRobot.clickShowCard(breakingBadTraktId)
-        trackShow()
-        showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
-        seasonDetailsRobot.assertEpisodeRowDisplayed(pilotEpisodeTraktId)
-        seasonDetailsRobot.clickMarkWatched(pilotEpisodeTraktId)
-        seasonDetailsRobot.assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
-        seasonDetailsRobot.clickMarkUnwatched(pilotEpisodeTraktId)
-        seasonDetailsRobot.assertUnwatchEpisodeDialogDisplayed()
-        seasonDetailsRobot.clickUnwatchEpisodeDismiss()
-        seasonDetailsRobot.assertUnwatchEpisodeDialogDoesNotExist()
-
-        rootRobot.pressBack()
-        showDetailsRobot.assertContinueTrackingSectionDisplayed()
-        showDetailsRobot.assertContinueTrackingEpisodeDisplayed(secondEpisodeTraktId)
-    }
-
-    @Test
-    fun givenSeasonDetails_whenUnwatchConfirmed_thenUnwatchesEpisode() = runAppFlowTest {
-        scenarios.discover.stubBrowseGraph()
-
-        discoverRobot.clickShowCard(breakingBadTraktId)
-        trackShow()
-        showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
-        seasonDetailsRobot.assertEpisodeRowDisplayed(pilotEpisodeTraktId)
-        seasonDetailsRobot.clickMarkWatched(pilotEpisodeTraktId)
-        seasonDetailsRobot.assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
-        seasonDetailsRobot.clickMarkUnwatched(pilotEpisodeTraktId)
-        seasonDetailsRobot.clickUnwatchEpisodeConfirm()
-        seasonDetailsRobot.assertUnwatchEpisodeDialogDoesNotExist()
-        seasonDetailsRobot.assertMarkWatchedDisplayed(pilotEpisodeTraktId)
-
-        rootRobot.pressBack()
-        showDetailsRobot.assertContinueTrackingSectionDisplayed()
-        showDetailsRobot.assertContinueTrackingEpisodeDisplayed(pilotEpisodeTraktId)
-    }
-
-    @Test
-    fun givenSeasonDetails_whenMarkPreviousSeasonsConfirmed_thenMarksAllPreviousSeasons() = runAppFlowTest {
-        scenarios.discover.stubBrowseGraph()
-
-        discoverRobot.clickShowCard(breakingBadTraktId)
+        // 6. Multi-Season flow - Mark Previous Seasons
         showDetailsRobot.clickSeasonChip(seasonNumber = 2L)
         seasonDetailsRobot.assertEpisodeRowDisplayed(seasonTwoFirstEpisodeTraktId)
         seasonDetailsRobot.clickSeasonWatchedToggle()
@@ -133,20 +74,13 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
         seasonDetailsRobot.assertMarkPreviousSeasonsDialogDoesNotExist()
         seasonDetailsRobot.assertMarkUnwatchedDisplayed(seasonTwoFirstEpisodeTraktId)
 
-        rootRobot.pressBack()
+        // 7. Unwatch Season
+        seasonDetailsRobot.clickBackButton()
         showDetailsRobot.clickSeasonChip(seasonNumber = 2L)
-
         seasonDetailsRobot.clickSeasonWatchedToggle()
         seasonDetailsRobot.assertUnwatchSeasonDialogDisplayed()
         seasonDetailsRobot.clickUnwatchSeasonConfirm()
         seasonDetailsRobot.assertUnwatchSeasonDialogDoesNotExist()
         seasonDetailsRobot.assertMarkWatchedDisplayed(seasonTwoFirstEpisodeTraktId)
-    }
-
-    private fun AppFlowScope.trackShow() {
-        showDetailsRobot.assertTrackButtonDisplayed()
-        showDetailsRobot.clickTrackButton()
-        rootRobot.dismissNotificationRationale()
-        showDetailsRobot.assertStopTrackingButtonDisplayed()
     }
 }

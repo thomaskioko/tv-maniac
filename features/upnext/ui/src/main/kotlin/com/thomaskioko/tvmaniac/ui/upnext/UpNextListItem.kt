@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.ui.upnext
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +22,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -64,18 +64,20 @@ internal fun UpNextListItem(
         shape = RoundedCornerShape(12.dp),
     ) {
         Row(
-            modifier = Modifier.combinedClickable(
-                onClick = { onItemClicked(item.showTraktId) },
-                onLongClick = onLongPress,
-            ),
+            modifier = Modifier
+                .testTag(UpNextTestTags.episodeRow(item.showTraktId))
+                .combinedClickable(
+                    onClick = { onItemClicked(item.showTraktId) },
+                    onLongClick = onLongPress,
+                ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             PosterCard(
                 imageUrl = item.imageUrl,
+                onClick = { onItemClicked(item.showTraktId) },
                 title = item.showName,
                 imageWidth = 100.dp,
                 aspectRatio = 100f / 140f,
-                onClick = { onItemClicked(item.showTraktId) },
             )
 
             Column(
@@ -97,9 +99,6 @@ internal fun UpNextListItem(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    modifier = Modifier.testTag(
-                        UpNextTestTags.episodeMeta(item.showTraktId, item.formattedEpisodeNumber),
-                    ),
                     text = buildString {
                         append(item.formattedEpisodeNumber)
                         if (item.remainingEpisodes > 0) append(" +${item.remainingEpisodes}")
@@ -112,12 +111,6 @@ internal fun UpNextListItem(
                 item.episodeName?.let { name ->
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        modifier = Modifier.testTag(
-                            UpNextTestTags.episodeName(
-                                item.showTraktId,
-                                name,
-                            ),
-                        ),
                         text = name,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -153,9 +146,6 @@ internal fun UpNextListItem(
                     if (item.totalCount > 0) {
                         val countText = "${item.watchedCount}/${item.totalCount}"
                         Text(
-                            modifier = Modifier.testTag(
-                                UpNextTestTags.progressCount(item.showTraktId, countText),
-                            ),
                             text = countText,
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -164,24 +154,23 @@ internal fun UpNextListItem(
                 }
             }
 
-            Box(
+            Surface(
+                onClick = onMarkWatched,
                 modifier = Modifier
                     .padding(12.dp)
                     .size(28.dp)
-                    .background(
-                        color = grey,
-                        shape = CircleShape,
-                    )
-                    .testTag(UpNextTestTags.watchedButton(item.showTraktId))
-                    .clickable { onMarkWatched() },
-                contentAlignment = Alignment.Center,
+                    .testTag(UpNextTestTags.watchedButton(item.showTraktId)),
+                shape = CircleShape,
+                color = grey,
             ) {
-                Icon(
-                    modifier = Modifier.size(16.dp),
-                    imageVector = Icons.Rounded.Check,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                )
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        modifier = Modifier.size(16.dp),
+                        imageVector = Icons.Rounded.Check,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                    )
+                }
             }
         }
     }

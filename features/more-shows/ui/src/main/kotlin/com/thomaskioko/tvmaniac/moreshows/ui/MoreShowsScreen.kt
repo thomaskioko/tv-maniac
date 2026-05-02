@@ -184,13 +184,13 @@ internal fun GridContent(
                 val show = lazyPagingItems[index]
                 show?.let {
                     PosterCard(
+                        imageUrl = show.posterImageUrl,
+                        onClick = { onAction(MoreShowClicked(show.traktId)) },
                         modifier = Modifier
                             .animateItem()
                             .fillMaxWidth()
                             .testTag(MoreShowsTestTags.showCard(show.traktId)),
-                        imageUrl = show.posterImageUrl,
                         title = show.title,
-                        onClick = { onAction(MoreShowClicked(show.traktId)) },
                     )
                 }
             }
