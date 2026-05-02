@@ -12,55 +12,35 @@ internal class DiscoverToSeasonDetailsFlowTest : BaseAppFlowTest() {
     private val seasonTwoFirstEpisodeTraktId = 73489L
 
     @Test
-    fun givenShowDetails_whenOpened_thenSeasonChipsAreRendered() = runAppFlowTest {
+    fun discoverToSeasonDetailsJourney() = runAppFlowTest {
         scenarios.discover.stubBrowseGraph()
 
+        // 1. Open Show Details & verify chips
         discoverRobot.clickShowCard(breakingBadTraktId)
         showDetailsRobot.assertShowDetailsDisplayed()
         showDetailsRobot.assertSeasonChipDisplayed(seasonNumber = 1L)
         showDetailsRobot.assertSeasonChipDisplayed(seasonNumber = 2L)
-    }
 
-    @Test
-    fun givenShowDetails_whenSeasonChipClicked_thenOpensSeasonDetails() = runAppFlowTest {
-        scenarios.discover.stubBrowseGraph()
-
-        discoverRobot.clickShowCard(breakingBadTraktId)
+        // 2. Open Season Details
         showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
         seasonDetailsRobot.assertSeasonDetailsDisplayed()
         seasonDetailsRobot.assertEpisodeRowDisplayed(pilotEpisodeTraktId)
-    }
 
-    @Test
-    fun givenSeasonDetails_whenEpisodeRowClicked_thenOpensEpisodeSheet() = runAppFlowTest {
-        scenarios.discover.stubBrowseGraph()
-
-        discoverRobot.clickShowCard(breakingBadTraktId)
-        showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
-        seasonDetailsRobot.clickEpisodeRow(pilotEpisodeTraktId)
-        episodeSheetRobot.assertEpisodeSheetDisplayed()
-    }
-
-    @Test
-    fun givenSeasonDetails_whenEpisodeHeaderClicked_thenTogglesEpisodeList() = runAppFlowTest {
-        scenarios.discover.stubBrowseGraph()
-
-        discoverRobot.clickShowCard(breakingBadTraktId)
-        showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
-        seasonDetailsRobot.assertEpisodeRowDisplayed(pilotEpisodeTraktId)
+        // 3. Toggle Episode List
         seasonDetailsRobot.clickEpisodeHeader()
         seasonDetailsRobot.assertEpisodeRowDoesNotExist(pilotEpisodeTraktId)
         seasonDetailsRobot.clickEpisodeHeader()
         seasonDetailsRobot.assertEpisodeRowDisplayed(pilotEpisodeTraktId)
-    }
 
-    @Test
-    fun givenSeasonDetails_whenBackIsPressed_thenRestoresShowDetails() = runAppFlowTest {
-        scenarios.discover.stubBrowseGraph()
+        // 4. Open Episode Sheet
+        seasonDetailsRobot.clickEpisodeRow(pilotEpisodeTraktId)
+        episodeSheetRobot.assertEpisodeSheetDisplayed()
 
-        discoverRobot.clickShowCard(breakingBadTraktId)
-        showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
+        // 5. Back to Season Details (Dismiss Sheet)
+        episodeSheetRobot.pressBack()
         seasonDetailsRobot.assertSeasonDetailsDisplayed()
+
+        // 6. Back to Show Details
         seasonDetailsRobot.pressBack()
         seasonDetailsRobot.assertDoesNotExist(SeasonDetailsTestTags.SCREEN_TEST_TAG)
         showDetailsRobot.assertShowDetailsDisplayed()

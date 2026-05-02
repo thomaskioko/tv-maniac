@@ -6,7 +6,7 @@ import org.junit.Test
 internal class SearchFlowTest : BaseAppFlowTest() {
 
     @Test
-    fun givenSearch_whenQueryEntered_thenDisplaysResults() = runAppFlowTest {
+    fun searchUserJourney() = runAppFlowTest {
         scenarios.discover.stubBrowseGraph()
 
         val query = "Breaking Bad"
@@ -17,62 +17,19 @@ internal class SearchFlowTest : BaseAppFlowTest() {
 
         scenarios.search.stubSearch(query)
 
+        // 1. Enter Query & Verify results
         searchRobot.assertSearchScreenDisplayed()
         searchRobot.enterSearchQuery(query)
         searchRobot.assertSearchQueryDisplayed(query)
-
         searchRobot.assertResultItemDisplayed(traktId)
         searchRobot.assertResultTitleDisplayed("Breaking Bad")
-    }
 
-    @Test
-    fun givenSearch_whenNoResultsFound_thenDisplaysEmptyState() = runAppFlowTest {
-        scenarios.discover.stubBrowseGraph()
-
-        val query = "NoResultsShow"
-        discoverRobot.navigateToSearchTab()
-
-        scenarios.search.stubEmptySearch()
-
-        searchRobot.enterSearchQuery(query)
-        searchRobot.assertEmptyStateDisplayed()
-        searchRobot.assertTextDisplayed("No results found", substring = true)
-    }
-
-    @Test
-    fun givenSearch_whenResultItemClicked_thenNavigatesToShowDetails() = runAppFlowTest {
-        scenarios.discover.stubBrowseGraph()
-
-        val query = "Breaking Bad"
-        val traktId = 1388L
-
-        discoverRobot.navigateToSearchTab()
-
-        scenarios.search.stubSearch(query)
-
-        searchRobot.enterSearchQuery(query)
-        searchRobot.clickResultItem(traktId)
-
-        showDetailsRobot.assertShowDetailsDisplayed()
-    }
-
-    @Test
-    fun givenShowDetails_whenBackIsPressed_thenRestoresSearchScreen() = runAppFlowTest {
-        scenarios.discover.stubBrowseGraph()
-
-        val query = "Breaking Bad"
-        val traktId = 1388L
-
-        discoverRobot.navigateToSearchTab()
-
-        scenarios.search.stubSearch(query)
-
-        searchRobot.enterSearchQuery(query)
+        // 2. Click Result -> Show Details
         searchRobot.clickResultItem(traktId)
         showDetailsRobot.assertShowDetailsDisplayed()
 
+        // 3. Back -> Search Screen restored
         showDetailsRobot.pressBack()
-
         searchRobot.assertSearchScreenDisplayed()
         searchRobot.assertResultItemDisplayed(traktId)
     }

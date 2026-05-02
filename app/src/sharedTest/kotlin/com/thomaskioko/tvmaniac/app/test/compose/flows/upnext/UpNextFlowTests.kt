@@ -10,54 +10,32 @@ internal class UpNextFlowTests : BaseAppFlowTest() {
     private val pilotEpisodeTraktId = 73640L
 
     @Test
-    fun givenAuthenticatedUser_whenShowFollowed_thenShowsEpisodeRow() = runAppFlowTest {
+    fun upNextUserJourney() = runAppFlowTest {
         scenarios.stubAuthenticatedSync()
 
         navigateToUpNext()
 
-        progressRobot.assertEpisodeRowDisplayed(breakingBadTraktId)
-    }
-
-    @Test
-    fun givenUpNext_whenWatchedButtonClicked_thenMarksEpisodeWatched() = runAppFlowTest {
-        scenarios.stubAuthenticatedSync()
-
-        navigateToUpNext()
-        progressRobot.assertEpisodeRowDisplayed(breakingBadTraktId)
-
-        progressRobot.clickWatchedButton(breakingBadTraktId)
-
-        progressRobot.clickEpisodeRow(breakingBadTraktId)
-        seasonDetailsRobot.assertSeasonDetailsDisplayed()
-        seasonDetailsRobot.assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
-    }
-
-    @Test
-    fun givenUpNext_whenWatchedButtonClicked_thenAdvancesToNextEpisode() = runAppFlowTest {
-        scenarios.stubAuthenticatedSync()
-
-        navigateToUpNext()
+        // 1. Verify Episode Row & Meta
         progressRobot.assertEpisodeRowDisplayed(breakingBadTraktId)
         progressRobot.assertEpisodeMetaDisplayed(breakingBadTraktId, "S01E01")
         progressRobot.assertProgressCountDisplayed(breakingBadTraktId, "0/62")
 
+        // 2. Click Episode Row -> Season Details
+        progressRobot.clickEpisodeRow(breakingBadTraktId)
+        seasonDetailsRobot.assertSeasonDetailsDisplayed()
+        seasonDetailsRobot.pressBack()
+
+        // 3. Mark Watched & Verify advancement
         scenarios.upNext.stubProgressAfterPilotWatched(breakingBadTraktId)
         progressRobot.clickWatchedButton(breakingBadTraktId)
 
         progressRobot.assertEpisodeMetaDisplayed(breakingBadTraktId, "S01E02")
         progressRobot.assertProgressCountDisplayed(breakingBadTraktId, "1/62")
-    }
 
-    @Test
-    fun givenUpNext_whenEpisodeRowClicked_thenNavigatesToSeasonDetails() = runAppFlowTest {
-        scenarios.stubAuthenticatedSync()
-
-        navigateToUpNext()
-        progressRobot.assertEpisodeRowDisplayed(breakingBadTraktId)
-
+        // 4. Verify in Season Details
         progressRobot.clickEpisodeRow(breakingBadTraktId)
-
         seasonDetailsRobot.assertSeasonDetailsDisplayed()
+        seasonDetailsRobot.assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
     }
 
     private fun AppFlowScope.navigateToUpNext() {
