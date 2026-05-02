@@ -12,10 +12,7 @@ internal class DiscoverToShowDetailsFollowFlowTest : BaseAppFlowTest() {
         scenarios.discover.stubBrowseGraph()
 
         discoverRobot.clickShowCard(breakingBadTraktId)
-        showDetailsRobot.assertTrackButtonDisplayed()
-        showDetailsRobot.clickTrackButton()
-        showDetailsRobot.assertStopTrackingButtonDisplayed()
-        rootRobot.dismissNotificationRationale()
+        trackShow()
     }
 
     @Test
@@ -24,7 +21,7 @@ internal class DiscoverToShowDetailsFollowFlowTest : BaseAppFlowTest() {
 
         discoverRobot.clickShowCard(breakingBadTraktId)
         showDetailsRobot.assertTrackButtonDisplayed()
-        showDetailsRobot.pressBack()
+        rootRobot.pressBack()
         showDetailsRobot.assertDoesNotExist("show_details_track_button")
         discoverRobot.assertShowCardDisplayed(breakingBadTraktId)
     }

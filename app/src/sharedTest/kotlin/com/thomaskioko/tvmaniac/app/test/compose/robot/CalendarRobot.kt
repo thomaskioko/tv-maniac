@@ -37,7 +37,7 @@ internal class CalendarRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
     }
 
     fun clickNextWeek() {
-        click(CalendarTestTags.NEXT_WEEK_BUTTON, useSemanticsAction = true)
+        click(CalendarTestTags.NEXT_WEEK_BUTTON)
     }
 
     fun assertEpisodeCardDisplayed(episodeId: Long) {

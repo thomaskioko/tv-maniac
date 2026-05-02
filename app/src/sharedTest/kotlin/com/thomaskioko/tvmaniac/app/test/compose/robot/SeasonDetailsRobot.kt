@@ -21,19 +21,23 @@ internal class SeasonDetailsRobot(composeUi: ComposeUiTest) : BaseRobot(composeU
     }
 
     fun clickEpisodeHeader() {
-        click(SeasonDetailsTestTags.EPISODE_HEADER_TEST_TAG, useSemanticsAction = true)
+        click(SeasonDetailsTestTags.EPISODE_HEADER_TEST_TAG)
     }
 
     fun clickEpisodeRow(episodeId: Long) {
-        click(SeasonDetailsTestTags.episodeRow(episodeId), useSemanticsAction = true)
+        click(SeasonDetailsTestTags.episodeRow(episodeId))
+    }
+
+    fun clickBackButton() {
+        click(SeasonDetailsTestTags.BACK_BUTTON_TEST_TAG, useUnmergedTree = true)
     }
 
     fun clickMarkWatched(episodeId: Long) {
-        click(SeasonDetailsTestTags.markEpisodeWatchedButton(episodeId), useSemanticsAction = true)
+        click(SeasonDetailsTestTags.markEpisodeWatchedButton(episodeId))
     }
 
     fun clickMarkUnwatched(episodeId: Long) {
-        click(SeasonDetailsTestTags.markEpisodeUnwatchedButton(episodeId), useSemanticsAction = true)
+        click(SeasonDetailsTestTags.markEpisodeUnwatchedButton(episodeId))
     }
 
     fun assertMarkUnwatchedDisplayed(episodeId: Long) {
@@ -45,7 +49,7 @@ internal class SeasonDetailsRobot(composeUi: ComposeUiTest) : BaseRobot(composeU
     }
 
     fun clickSeasonWatchedToggle() {
-        click(SeasonDetailsTestTags.SEASON_WATCHED_TOGGLE_TEST_TAG, useSemanticsAction = true)
+        click(SeasonDetailsTestTags.SEASON_WATCHED_TOGGLE_TEST_TAG)
     }
 
     fun assertMarkPreviousEpisodesDialogDisplayed() {
@@ -57,11 +61,11 @@ internal class SeasonDetailsRobot(composeUi: ComposeUiTest) : BaseRobot(composeU
     }
 
     fun clickMarkPreviousEpisodesConfirm() {
-        click(SeasonDetailsTestTags.MARK_PREVIOUS_EPISODES_DIALOG_CONFIRM_BUTTON_TEST_TAG, useSemanticsAction = true)
+        click(SeasonDetailsTestTags.MARK_PREVIOUS_EPISODES_DIALOG_CONFIRM_BUTTON_TEST_TAG)
     }
 
     fun clickMarkPreviousEpisodesDismiss() {
-        click(SeasonDetailsTestTags.MARK_PREVIOUS_EPISODES_DIALOG_DISMISS_BUTTON_TEST_TAG, useSemanticsAction = true)
+        click(SeasonDetailsTestTags.MARK_PREVIOUS_EPISODES_DIALOG_DISMISS_BUTTON_TEST_TAG)
     }
 
     fun assertUnwatchEpisodeDialogDisplayed() {
@@ -73,11 +77,11 @@ internal class SeasonDetailsRobot(composeUi: ComposeUiTest) : BaseRobot(composeU
     }
 
     fun clickUnwatchEpisodeConfirm() {
-        click(SeasonDetailsTestTags.UNWATCH_EPISODE_DIALOG_CONFIRM_BUTTON_TEST_TAG, useSemanticsAction = true)
+        click(SeasonDetailsTestTags.UNWATCH_EPISODE_DIALOG_CONFIRM_BUTTON_TEST_TAG)
     }
 
     fun clickUnwatchEpisodeDismiss() {
-        click(SeasonDetailsTestTags.UNWATCH_EPISODE_DIALOG_DISMISS_BUTTON_TEST_TAG, useSemanticsAction = true)
+        click(SeasonDetailsTestTags.UNWATCH_EPISODE_DIALOG_DISMISS_BUTTON_TEST_TAG)
     }
 
     fun assertMarkPreviousSeasonsDialogDisplayed() {
@@ -89,11 +93,11 @@ internal class SeasonDetailsRobot(composeUi: ComposeUiTest) : BaseRobot(composeU
     }
 
     fun clickMarkPreviousSeasonsConfirm() {
-        click(SeasonDetailsTestTags.MARK_PREVIOUS_SEASONS_DIALOG_CONFIRM_BUTTON_TEST_TAG, useSemanticsAction = true)
+        click(SeasonDetailsTestTags.MARK_PREVIOUS_SEASONS_DIALOG_CONFIRM_BUTTON_TEST_TAG)
     }
 
     fun clickMarkPreviousSeasonsDismiss() {
-        click(SeasonDetailsTestTags.MARK_PREVIOUS_SEASONS_DIALOG_DISMISS_BUTTON_TEST_TAG, useSemanticsAction = true)
+        click(SeasonDetailsTestTags.MARK_PREVIOUS_SEASONS_DIALOG_DISMISS_BUTTON_TEST_TAG)
     }
 
     fun assertUnwatchSeasonDialogDisplayed() {
@@ -105,10 +109,10 @@ internal class SeasonDetailsRobot(composeUi: ComposeUiTest) : BaseRobot(composeU
     }
 
     fun clickUnwatchSeasonConfirm() {
-        click(SeasonDetailsTestTags.UNWATCH_SEASON_DIALOG_CONFIRM_BUTTON_TEST_TAG, useSemanticsAction = true)
+        click(SeasonDetailsTestTags.UNWATCH_SEASON_DIALOG_CONFIRM_BUTTON_TEST_TAG)
     }
 
     fun clickUnwatchSeasonDismiss() {
-        click(SeasonDetailsTestTags.UNWATCH_SEASON_DIALOG_DISMISS_BUTTON_TEST_TAG, useSemanticsAction = true)
+        click(SeasonDetailsTestTags.UNWATCH_SEASON_DIALOG_DISMISS_BUTTON_TEST_TAG)
     }
 }

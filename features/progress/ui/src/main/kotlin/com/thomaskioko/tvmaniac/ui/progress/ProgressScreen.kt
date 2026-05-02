@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,6 +54,7 @@ import com.thomaskioko.tvmaniac.presentation.upnext.model.UpNextEpisodeUiModel
 import com.thomaskioko.tvmaniac.testtags.progress.ProgressTestTags
 import com.thomaskioko.tvmaniac.ui.calendar.CalendarPageContent
 import com.thomaskioko.tvmaniac.ui.upnext.UpNextPageContent
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
@@ -65,10 +67,12 @@ public fun ProgressScreen(
     val calendarState by presenter.calendarPresenter.state.collectAsState()
     val context = LocalContext.current
 
-    val tabs = listOf(
-        label_discover_up_next.resolve(context),
-        title_calendar.resolve(context),
-    )
+    val tabs = remember(context) {
+        persistentListOf(
+            label_discover_up_next.resolve(context),
+            title_calendar.resolve(context),
+        )
+    }
 
     ProgressScreen(
         progressState = progressState,
@@ -87,7 +91,7 @@ internal fun ProgressScreen(
     progressState: ProgressState,
     upNextState: UpNextState,
     calendarState: CalendarState,
-    tabs: List<String>,
+    tabs: ImmutableList<String>,
     modifier: Modifier,
     progressAction: (ProgressAction) -> Unit,
     upNextAction: (UpNextAction) -> Unit,
@@ -120,7 +124,7 @@ internal fun ProgressScreen(
 internal fun ProgressScreen(
     selectedPage: Int,
     isLoading: Boolean,
-    tabs: List<String>,
+    tabs: ImmutableList<String>,
     modifier: Modifier = Modifier,
     onSelectPage: (Int) -> Unit = {},
     upNextContent: @Composable () -> Unit = {},
@@ -157,7 +161,7 @@ internal fun ProgressScreen(
                     ) {
                         Text(
                             text = menu_item_progress.resolve(LocalContext.current),
-                            modifier = Modifier.testTag("progress_title"),
+                            modifier = Modifier.testTag(ProgressTestTags.PROGRESS_TITLE),
                             style = MaterialTheme.typography.titleLarge.copy(
                                 color = MaterialTheme.colorScheme.onSurface,
                             ),
@@ -192,7 +196,7 @@ internal fun ProgressScreen(
                 selectedTabIndex = pagerState.currentPage,
                 containerColor = MaterialTheme.colorScheme.background,
                 contentColor = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.testTag("progress_tab_row"),
+                modifier = Modifier.testTag(ProgressTestTags.TAB_ROW),
                 indicator = {
                     TabRowDefaults.SecondaryIndicator(
                         modifier = Modifier.tabIndicatorOffset(pagerState.currentPage),
@@ -202,7 +206,9 @@ internal fun ProgressScreen(
             ) {
                 tabs.forEachIndexed { index, title ->
                     Tab(
-                        modifier = Modifier.testTag("progress_tab_$index"),
+                        modifier = Modifier.testTag(
+                            if (index == 0) ProgressTestTags.UPNEXT_TAB else ProgressTestTags.CALENDAR_TAB,
+                        ),
                         selected = pagerState.currentPage == index,
                         onClick = { onSelectPage(index) },
                         text = {
@@ -330,7 +336,7 @@ private fun ProgressScreenPreview(
                 progressState = state.progressState,
                 upNextState = state.upNextState,
                 calendarState = state.calendarState,
-                tabs = listOf("Up Next", "Calendar"),
+                tabs = persistentListOf("Up Next", "Calendar"),
                 modifier = Modifier.fillMaxSize(),
                 progressAction = {},
                 upNextAction = {},

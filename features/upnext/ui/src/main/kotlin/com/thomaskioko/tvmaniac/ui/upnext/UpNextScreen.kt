@@ -134,11 +134,10 @@ public fun UpNextPageContent(
                             items(
                                 items = state.episodes,
                                 key = { it.showTraktId },
+                                contentType = { "UpNextItem" },
                             ) { episode ->
                                 UpNextListItem(
-                                    modifier = Modifier
-                                        .animateItem()
-                                        .testTag(UpNextTestTags.episodeRow(episode.showTraktId)),
+                                    modifier = Modifier.animateItem(),
                                     item = episode,
                                     onItemClicked = { onAction(UpNextShowClicked(it)) },
                                     onMarkWatched = {
@@ -247,11 +246,10 @@ internal fun UpNextScreen(
                                     items(
                                         items = state.episodes,
                                         key = { it.showTraktId },
+                                        contentType = { "UpNextItem" },
                                     ) { episode ->
                                         UpNextListItem(
-                                            modifier = Modifier
-                                                .animateItem()
-                                                .testTag(UpNextTestTags.episodeRow(episode.showTraktId)),
+                                            modifier = Modifier.animateItem(),
                                             item = episode,
                                             onItemClicked = { onAction(UpNextShowClicked(it)) },
                                             onMarkWatched = {
