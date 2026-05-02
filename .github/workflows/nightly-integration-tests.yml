@@ -42,7 +42,7 @@ jobs:
         run: yes | sdkmanager --licenses || true
 
       - name: 📦 Cache AVD
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.android/avd/*
