@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.showdetails.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,7 +20,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -311,7 +309,7 @@ internal fun LazyColumnContent(
         state = listState,
         contentPadding = contentPadding.copy(copyTop = false),
     ) {
-        item {
+        item(key = "header") {
             HeaderContent(
                 show = detailsContent.showDetails,
                 onUpdateFavoriteClicked = { onAction(FollowShowClicked(it)) },
@@ -319,7 +317,7 @@ internal fun LazyColumnContent(
             )
         }
 
-        item {
+        item(key = "content") {
             if (!detailsContent.isRefreshing && detailsContent.showDetails == ShowDetailsModel.Empty && detailsContent.message != null) {
                 EmptyStateView(
                     modifier = Modifier.padding(top = 16.dp),
@@ -478,7 +476,7 @@ private fun ShowBody(
         ) {
             Text(
                 text = show.title,
-                modifier = Modifier.testTag("show_details_title"),
+                modifier = Modifier.testTag(ShowDetailsTestTags.SHOW_DETAILS_TITLE_TEST_TAG),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
@@ -635,13 +633,17 @@ internal fun ShowMetadata(
 @Composable
 private fun GenreText(
     genreList: ImmutableList<String>,
+    modifier: Modifier = Modifier,
 ) {
     LazyRow(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        items(genreList) { genre ->
-            Spacer(modifier = Modifier.width(4.dp))
-
+        items(
+            items = genreList,
+            key = { it },
+            contentType = { "GenreItem" },
+        ) { genre ->
             FilledTextButton(
                 onClick = {},
                 shape = RoundedCornerShape(4.dp),
@@ -722,18 +724,17 @@ internal fun WatchProvider(
             modifier = modifier,
             state = lazyListState,
             flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            itemsIndexed(list) { index, tvShow ->
-                val value = if (index == 0) 16 else 4
-
-                Spacer(modifier = Modifier.width(value.dp))
-
+            items(
+                items = list,
+                key = { it.name },
+                contentType = { "WatchProvider" },
+            ) { tvShow ->
                 Card(
                     modifier = Modifier
-                        .size(width = 80.dp, height = 60.dp)
-                        .padding(
-                            end = if (index == list.size - 1) 16.dp else 8.dp,
-                        ),
+                        .size(width = 80.dp, height = 60.dp),
                     shape = MaterialTheme.shapes.small,
                     elevation = CardDefaults.cardElevation(
                         defaultElevation = 8.dp,
@@ -772,16 +773,18 @@ private fun CastContent(
                 modifier = Modifier,
                 state = lazyListState,
                 flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+                contentPadding = PaddingValues(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                itemsIndexed(castsList) { index, cast ->
+                items(
+                    items = castsList,
+                    key = { it.id },
+                    contentType = { "Cast" },
+                ) { cast ->
                     CastCard(
                         profileUrl = cast.profileUrl,
                         name = cast.name,
                         characterName = cast.characterName,
-                        modifier = Modifier.padding(
-                            start = if (index == 0) 16.dp else 0.dp,
-                            end = if (index == castsList.size - 1) 16.dp else 8.dp,
-                        ),
                     )
                 }
             }
@@ -808,14 +811,17 @@ private fun TrailersContent(
         LazyRow(
             state = lazyListState,
             flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            itemsIndexed(trailersList) { index, trailer ->
-                val value = if (index == 0) 16 else 8
-                Spacer(modifier = Modifier.width(value.dp))
-
+            items(
+                items = trailersList,
+                key = { it.key },
+                contentType = { "Trailer" },
+            ) { trailer ->
                 Column {
                     Card(
-                        modifier = Modifier.clickable { onAction(WatchTrailerClicked(trailer.showTmdbId)) },
+                        onClick = { onAction(WatchTrailerClicked(trailer.showTmdbId)) },
                         shape = RoundedCornerShape(4.dp),
                         elevation = CardDefaults.cardElevation(
                             defaultElevation = 4.dp,
@@ -903,16 +909,18 @@ private fun HorizontalRowContent(
             modifier = modifier,
             state = lazyListState,
             flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            itemsIndexed(items) { index, tvShow ->
-                val value = if (index == 0) 16 else 4
-
-                Spacer(modifier = Modifier.width(value.dp))
-
+            items(
+                items = items,
+                key = { it.traktId },
+                contentType = { "ShowModel" },
+            ) { tvShow ->
                 PosterCard(
                     imageUrl = tvShow.posterImageUrl,
-                    title = tvShow.title,
                     onClick = { onShowClicked(tvShow.traktId) },
+                    title = tvShow.title,
                     imageWidth = 84.dp,
                 )
             }

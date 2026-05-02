@@ -256,7 +256,7 @@ private fun LazyColumnContent(
             }
         }
 
-        item {
+        item(key = "featured_header") {
             DiscoverHeaderContent(
                 pagerState = pagerState,
                 showList = dataLoadedState.featuredShows,
@@ -264,7 +264,7 @@ private fun LazyColumnContent(
             )
         }
 
-        item {
+        item(key = "up_next_section") {
             NextEpisodesSection(
                 title = label_discover_up_next.resolve(context),
                 nextEpisodes = dataLoadedState.nextEpisodes,
@@ -274,36 +274,40 @@ private fun LazyColumnContent(
             )
         }
 
-        item {
+        item(key = DiscoverTestTags.ROW_KEY_TRENDING) {
             HorizontalRowContent(
                 category = title_category_trending_today.resolve(context),
+                rowKey = DiscoverTestTags.ROW_KEY_TRENDING,
                 tvShows = dataLoadedState.trendingToday,
                 onItemClicked = { onAction(ShowClicked(it)) },
                 onMoreClicked = { onAction(TrendingClicked) },
             )
         }
 
-        item {
+        item(key = DiscoverTestTags.ROW_KEY_UPCOMING) {
             HorizontalRowContent(
                 category = title_category_upcoming.resolve(context),
+                rowKey = DiscoverTestTags.ROW_KEY_UPCOMING,
                 tvShows = dataLoadedState.upcomingShows,
                 onItemClicked = { onAction(ShowClicked(it)) },
                 onMoreClicked = { onAction(UpComingClicked) },
             )
         }
 
-        item {
+        item(key = DiscoverTestTags.ROW_KEY_POPULAR) {
             HorizontalRowContent(
                 category = title_category_popular.resolve(context),
+                rowKey = DiscoverTestTags.ROW_KEY_POPULAR,
                 tvShows = dataLoadedState.popularShows,
                 onItemClicked = { onAction(ShowClicked(it)) },
                 onMoreClicked = { onAction(PopularClicked) },
             )
         }
 
-        item {
+        item(key = DiscoverTestTags.ROW_KEY_TOP_RATED) {
             HorizontalRowContent(
                 category = title_category_top_rated.resolve(context),
+                rowKey = DiscoverTestTags.ROW_KEY_TOP_RATED,
                 tvShows = dataLoadedState.topRatedShows,
                 onItemClicked = { onAction(ShowClicked(it)) },
                 onMoreClicked = { onAction(TopRatedClicked) },

@@ -27,19 +27,23 @@ internal val episodeDetailsModel = EpisodeDetailsModel(
 )
 
 internal val seasonDetailsLoaded = SeasonDetailsModel(
-    seasonId = 1,
+    seasonId = 1324,
     seasonName = "Specials",
     episodeCount = 8,
     watchProgress = 0.4f,
     imageUrl = null,
-    episodeDetailsList = List(8) { episodeDetailsModel }.toPersistentList(),
+    episodeDetailsList = List(8) { index ->
+        episodeDetailsModel.copy(
+            id = episodeDetailsModel.id + index,
+        )
+    }.toPersistentList(),
     seasonImages = persistentListOf(
         SeasonImagesModel(
             id = 1L,
             imageUrl = null,
         ),
         SeasonImagesModel(
-            id = 1L,
+            id = 2L,
             imageUrl = null,
         ),
     ),

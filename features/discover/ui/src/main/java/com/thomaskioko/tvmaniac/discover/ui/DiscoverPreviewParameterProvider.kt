@@ -39,7 +39,12 @@ internal val discoverContentSuccess = DiscoverViewState(
     nextEpisodes = createNextEpisodesList(3),
 )
 
-private fun createDiscoverShowList(size: Int = 20) = List(size) { discoverShow }.toImmutableList()
+private fun createDiscoverShowList(size: Int = 20) = List(size) { index ->
+    discoverShow.copy(
+        tmdbId = discoverShow.tmdbId + index,
+        traktId = discoverShow.traktId + index,
+    )
+}.toImmutableList()
 
 private fun createNextEpisodesList(size: Int = 3) = List(size) { index ->
     nextEpisodeUiModel.copy(
