@@ -18,6 +18,6 @@ internal class EpisodeSheetRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi
     }
 
     fun clickActionItem(action: EpisodeSheetActionItem) {
-        click(EpisodeSheetTestTags.actionItem(action.name), useSemanticsAction = true)
+        click(EpisodeSheetTestTags.actionItem(action.name))
     }
 }

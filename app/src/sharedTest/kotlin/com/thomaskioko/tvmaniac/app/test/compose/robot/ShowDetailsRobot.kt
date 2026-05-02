@@ -53,7 +53,7 @@ internal class ShowDetailsRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi)
     }
 
     fun clickSeasonChip(seasonNumber: Long): SeasonDetailsRobot {
-        click(ShowDetailsTestTags.seasonChip(seasonNumber), useSemanticsAction = true)
+        click(ShowDetailsTestTags.seasonChip(seasonNumber))
         return SeasonDetailsRobot(composeUi)
     }
 
@@ -62,7 +62,7 @@ internal class ShowDetailsRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi)
     }
 
     fun clickRetryButton() {
-        click(ShowDetailsTestTags.ERROR_RETRY_BUTTON_TEST_TAG, useSemanticsAction = true)
+        click(ShowDetailsTestTags.ERROR_RETRY_BUTTON_TEST_TAG)
     }
 
     fun clickRefreshButton() {
@@ -99,11 +99,11 @@ internal class ShowDetailsRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi)
     }
 
     fun clickCloseListSheetButton() {
-        click(ShowDetailsTestTags.LIST_SHEET_CLOSE_BUTTON_TEST_TAG, useSemanticsAction = true)
+        click(ShowDetailsTestTags.LIST_SHEET_CLOSE_BUTTON_TEST_TAG)
     }
 
     fun clickCreateListButton() {
-        click(ShowDetailsTestTags.LIST_SHEET_CREATE_LIST_BUTTON_TEST_TAG, useSemanticsAction = true)
+        click(ShowDetailsTestTags.LIST_SHEET_CREATE_LIST_BUTTON_TEST_TAG)
     }
 
     fun assertCreateListFieldDisplayed() {
@@ -119,11 +119,11 @@ internal class ShowDetailsRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi)
     }
 
     fun clickCreateListSubmit() {
-        click(ShowDetailsTestTags.LIST_SHEET_CREATE_LIST_SUBMIT_TEST_TAG, useSemanticsAction = true)
+        click(ShowDetailsTestTags.LIST_SHEET_CREATE_LIST_SUBMIT_TEST_TAG)
     }
 
     fun clickListSwitch(listId: Long) {
-        click(ShowDetailsTestTags.traktListItemSwitch(listId), useSemanticsAction = true)
+        click(ShowDetailsTestTags.traktListItemSwitch(listId))
     }
 
     fun assertListSwitchIsChecked(listId: Long) {

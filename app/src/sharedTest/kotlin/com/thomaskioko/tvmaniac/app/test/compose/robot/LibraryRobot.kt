@@ -25,11 +25,11 @@ internal class LibraryRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
     }
 
     fun clickShowRow(traktId: Long) {
-        click(LibraryTestTags.showRow(traktId), useSemanticsAction = true)
+        click(LibraryTestTags.showRow(traktId))
     }
 
     fun clickSearchButton() {
-        click(LibraryTestTags.SEARCH_BUTTON_TEST_TAG, useSemanticsAction = true)
+        click(LibraryTestTags.SEARCH_BUTTON_TEST_TAG)
     }
 
     fun enterSearchQuery(query: String) {
@@ -37,15 +37,15 @@ internal class LibraryRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
     }
 
     fun clickFilterButton() {
-        click(LibraryTestTags.FILTER_BUTTON_TEST_TAG, useSemanticsAction = true)
+        click(LibraryTestTags.FILTER_BUTTON_TEST_TAG)
     }
 
     fun clickApplyFilter() {
-        click(LibraryTestTags.APPLY_FILTER_BUTTON_TEST_TAG, useSemanticsAction = true)
+        click(LibraryTestTags.APPLY_FILTER_BUTTON_TEST_TAG)
     }
 
     fun clickClearFilter() {
-        click(LibraryTestTags.CLEAR_FILTER_BUTTON_TEST_TAG, useSemanticsAction = true)
+        click(LibraryTestTags.CLEAR_FILTER_BUTTON_TEST_TAG)
     }
 
     fun selectSortOption(text: String) {
