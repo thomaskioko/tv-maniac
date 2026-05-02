@@ -200,7 +200,6 @@ internal fun ShowDetailsScreen(
                             tint = MaterialTheme.colorScheme.onBackground,
                         )
                     },
-                    navIconModifier = Modifier.testTag(ShowDetailsTestTags.BACK_BUTTON_TEST_TAG),
                     actionIcon = actionIconWhen(state.message == null) {
                         Icon(
                             imageVector = Icons.Default.Refresh,
