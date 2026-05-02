@@ -29,7 +29,7 @@ internal class SearchFlowTest : BaseAppFlowTest() {
         showDetailsRobot.assertShowDetailsDisplayed()
 
         // 3. Back -> Search Screen restored
-        showDetailsRobot.pressBack()
+        rootRobot.pressBack()
         searchRobot.assertSearchScreenDisplayed()
         searchRobot.assertResultItemDisplayed(traktId)
     }

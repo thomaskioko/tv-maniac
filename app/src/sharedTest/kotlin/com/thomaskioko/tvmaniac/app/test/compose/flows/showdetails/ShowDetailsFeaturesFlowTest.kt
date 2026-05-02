@@ -30,9 +30,10 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
         showDetailsRobot.clickContinueTrackingMarkWatched(pilotEpisodeTraktId)
 
         // Navigate to season details and back
-        showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
-        seasonDetailsRobot.assertSeasonDetailsDisplayed()
-        seasonDetailsRobot.pressBack()
+        showDetailsRobot.clickSeasonChip(seasonNumber = 1L).apply {
+            assertSeasonDetailsDisplayed()
+            clickBackButton()
+        }
 
         // Verify additional sections
         showDetailsRobot.scrollTo(ShowDetailsTestTags.CAST_LIST_TEST_TAG)

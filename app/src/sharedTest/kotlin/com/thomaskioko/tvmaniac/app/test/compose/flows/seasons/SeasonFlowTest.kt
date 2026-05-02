@@ -25,7 +25,7 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
         seasonDetailsRobot.clickMarkWatched(pilotEpisodeTraktId)
         seasonDetailsRobot.assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
 
-        rootRobot.pressBack()
+        seasonDetailsRobot.clickBackButton()
         showDetailsRobot.assertContinueTrackingSectionDisplayed()
         showDetailsRobot.assertContinueTrackingEpisodeDisplayed(secondEpisodeTraktId)
 
@@ -62,7 +62,7 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
         seasonDetailsRobot.assertMarkUnwatchedDisplayed(secondEpisodeTraktId)
 
         // 5. Verify Continue Tracking
-        rootRobot.pressBack()
+        seasonDetailsRobot.clickBackButton()
         showDetailsRobot.assertContinueTrackingSectionDisplayed()
         showDetailsRobot.assertContinueTrackingEpisodeDisplayed(thirdEpisodeTraktId)
 
@@ -76,19 +76,12 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
         seasonDetailsRobot.assertMarkUnwatchedDisplayed(seasonTwoFirstEpisodeTraktId)
 
         // 7. Unwatch Season
-        rootRobot.pressBack()
+        seasonDetailsRobot.clickBackButton()
         showDetailsRobot.clickSeasonChip(seasonNumber = 2L)
         seasonDetailsRobot.clickSeasonWatchedToggle()
         seasonDetailsRobot.assertUnwatchSeasonDialogDisplayed()
         seasonDetailsRobot.clickUnwatchSeasonConfirm()
         seasonDetailsRobot.assertUnwatchSeasonDialogDoesNotExist()
         seasonDetailsRobot.assertMarkWatchedDisplayed(seasonTwoFirstEpisodeTraktId)
-    }
-
-    private fun AppFlowScope.trackShow() {
-        showDetailsRobot.assertTrackButtonDisplayed()
-        showDetailsRobot.clickTrackButton()
-        rootRobot.dismissNotificationRationale()
-        showDetailsRobot.assertStopTrackingButtonDisplayed()
     }
 }

@@ -23,7 +23,7 @@ internal class UpNextFlowTests : BaseAppFlowTest() {
         // 2. Click Episode Row -> Season Details
         progressRobot.clickEpisodeRow(breakingBadTraktId)
         seasonDetailsRobot.assertSeasonDetailsDisplayed()
-        seasonDetailsRobot.pressBack()
+        seasonDetailsRobot.clickBackButton()
 
         // 3. Mark Watched & Verify advancement
         scenarios.upNext.stubProgressAfterPilotWatched(breakingBadTraktId)

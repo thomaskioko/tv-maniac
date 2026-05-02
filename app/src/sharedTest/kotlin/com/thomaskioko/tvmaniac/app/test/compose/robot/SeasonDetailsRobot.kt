@@ -28,6 +28,10 @@ internal class SeasonDetailsRobot(composeUi: ComposeUiTest) : BaseRobot(composeU
         click(SeasonDetailsTestTags.episodeRow(episodeId))
     }
 
+    fun clickBackButton() {
+        click(SeasonDetailsTestTags.BACK_BUTTON_TEST_TAG, useUnmergedTree = true)
+    }
+
     fun clickMarkWatched(episodeId: Long) {
         click(SeasonDetailsTestTags.markEpisodeWatchedButton(episodeId))
     }

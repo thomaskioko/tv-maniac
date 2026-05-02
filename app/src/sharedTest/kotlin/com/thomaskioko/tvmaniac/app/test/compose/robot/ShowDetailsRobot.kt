@@ -57,6 +57,10 @@ internal class ShowDetailsRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi)
         return SeasonDetailsRobot(composeUi)
     }
 
+    fun clickBackButton() {
+        click(ShowDetailsTestTags.BACK_BUTTON_TEST_TAG, useUnmergedTree = true)
+    }
+
     fun assertErrorStateDisplayed() {
         assertDisplayed(ShowDetailsTestTags.ERROR_RETRY_BUTTON_TEST_TAG)
     }

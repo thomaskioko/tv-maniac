@@ -140,6 +140,13 @@ internal class AppFlowScope(
         )
     }
 
+    internal fun trackShow() {
+        showDetailsRobot.assertTrackButtonDisplayed()
+        showDetailsRobot.clickTrackButton()
+        rootRobot.dismissNotificationRationale()
+        showDetailsRobot.assertStopTrackingButtonDisplayed()
+    }
+
     internal fun tearDown() {
         lifecycle.destroy()
     }

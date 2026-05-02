@@ -41,7 +41,7 @@ internal class DiscoverToSeasonDetailsFlowTest : BaseAppFlowTest() {
         seasonDetailsRobot.assertSeasonDetailsDisplayed()
 
         // 6. Back to Show Details
-        seasonDetailsRobot.pressBack()
+        seasonDetailsRobot.clickBackButton()
         seasonDetailsRobot.assertDoesNotExist(SeasonDetailsTestTags.SCREEN_TEST_TAG)
         showDetailsRobot.assertShowDetailsDisplayed()
     }
