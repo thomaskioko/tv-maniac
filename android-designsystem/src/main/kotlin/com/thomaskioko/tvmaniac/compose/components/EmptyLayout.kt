@@ -11,7 +11,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Inbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,8 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 
 @Composable
 public fun EmptyStateView(
@@ -80,29 +81,23 @@ public fun EmptyStateView(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun EmptyStateViewPreview() {
-    TvManiacTheme {
-        Surface {
-            EmptyStateView(
-                title = "Nothing here yet",
-                message = "Shows you follow will appear here.",
-            )
-        }
-    }
+    EmptyStateView(
+        title = "Nothing here yet",
+        message = "Shows you follow will appear here.",
+    )
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun EmptyStateViewWithButtonPreview() {
-    TvManiacTheme {
-        Surface {
-            EmptyStateView(
-                title = "Something went wrong",
-                message = "We couldn't load the data.",
-                buttonText = "Retry",
-                onClick = {},
-            )
-        }
-    }
+    EmptyStateView(
+        title = "Something went wrong",
+        message = "We couldn't load the data.",
+        buttonText = "Retry",
+        onClick = {},
+    )
 }

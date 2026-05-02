@@ -44,16 +44,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
 import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
 import com.thomaskioko.tvmaniac.compose.components.ScrimButton
 import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
-import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.extensions.copy
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverEpisodeLongPressed
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowAction
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowsPresenter
@@ -321,22 +321,16 @@ private fun LazyColumnContent(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun DiscoverScreenPreview(
     @PreviewParameter(DiscoverPreviewParameterProvider::class) state: DiscoverViewState,
 ) {
-    TvManiacTheme {
-        TvManiacBackground {
-            val pagerState = rememberPagerState(pageCount = { 5 })
-            val snackBarHostState = remember { SnackbarHostState() }
-            val dismissSnackbarState = rememberDismissState { true }
-            DiscoverScreen(
-                state = state,
-                pagerState = pagerState,
-                snackBarHostState = snackBarHostState,
-                dismissSnackbarState = dismissSnackbarState,
-                onAction = {},
-            )
-        }
-    }
+    DiscoverScreen(
+        state = state,
+        pagerState = rememberPagerState(pageCount = { 5 }),
+        snackBarHostState = remember { SnackbarHostState() },
+        dismissSnackbarState = rememberDismissState { true },
+        onAction = {},
+    )
 }

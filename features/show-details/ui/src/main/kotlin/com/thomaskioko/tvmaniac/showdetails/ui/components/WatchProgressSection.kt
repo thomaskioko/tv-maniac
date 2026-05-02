@@ -13,7 +13,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,10 +24,11 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.SegmentedProgressBar
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_season_details
 import com.thomaskioko.tvmaniac.i18n.resolve
@@ -183,133 +183,124 @@ internal fun WatchProgressSection(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun WatchProgressSectionPreview() {
-    TvManiacTheme {
-        Surface {
-            WatchProgressSection(
-                status = "Ended",
-                watchedEpisodesCount = 7,
-                totalEpisodesCount = 12,
-                seasonsList = persistentListOf(
-                    SeasonModel(
-                        seasonId = 1L,
-                        tvShowId = 1L,
-                        name = "Season 1",
-                        seasonNumber = 1L,
-                        watchedCount = 6,
-                        totalCount = 6,
-                    ),
-                    SeasonModel(
-                        seasonId = 2L,
-                        tvShowId = 1L,
-                        name = "Season 2",
-                        seasonNumber = 2L,
-                        watchedCount = 1,
-                        totalCount = 6,
-                    ),
-                ),
-                selectedSeasonIndex = 0,
-                showHeader = true,
-                onSeasonClicked = { _, _ -> },
-                modifier = Modifier.padding(16.dp),
-            )
-        }
-    }
+    WatchProgressSection(
+        status = "Ended",
+        watchedEpisodesCount = 7,
+        totalEpisodesCount = 12,
+        seasonsList = persistentListOf(
+            SeasonModel(
+                seasonId = 1L,
+                tvShowId = 1L,
+                name = "Season 1",
+                seasonNumber = 1L,
+                watchedCount = 6,
+                totalCount = 6,
+            ),
+            SeasonModel(
+                seasonId = 2L,
+                tvShowId = 1L,
+                name = "Season 2",
+                seasonNumber = 2L,
+                watchedCount = 1,
+                totalCount = 6,
+            ),
+        ),
+        selectedSeasonIndex = 0,
+        showHeader = true,
+        onSeasonClicked = { _, _ -> },
+        modifier = Modifier.padding(16.dp),
+    )
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun WatchProgressSectionUpToDatePreview() {
-    TvManiacTheme {
-        Surface {
-            WatchProgressSection(
-                status = "Returning Series",
-                watchedEpisodesCount = 30,
-                totalEpisodesCount = 30,
-                seasonsList = persistentListOf(
-                    SeasonModel(
-                        seasonId = 1L,
-                        tvShowId = 1L,
-                        name = "Season 1",
-                        seasonNumber = 1L,
-                        watchedCount = 6,
-                        totalCount = 6,
-                    ),
-                    SeasonModel(
-                        seasonId = 2L,
-                        tvShowId = 1L,
-                        name = "Season 2",
-                        seasonNumber = 2L,
-                        watchedCount = 6,
-                        totalCount = 6,
-                    ),
-                    SeasonModel(
-                        seasonId = 3L,
-                        tvShowId = 1L,
-                        name = "Season 3",
-                        seasonNumber = 3L,
-                        watchedCount = 6,
-                        totalCount = 6,
-                    ),
-                    SeasonModel(
-                        seasonId = 4L,
-                        tvShowId = 1L,
-                        name = "Season 4",
-                        seasonNumber = 4L,
-                        watchedCount = 6,
-                        totalCount = 6,
-                    ),
-                    SeasonModel(
-                        seasonId = 5L,
-                        tvShowId = 1L,
-                        name = "Season 5",
-                        seasonNumber = 5L,
-                        watchedCount = 6,
-                        totalCount = 6,
-                    ),
-                ),
-                selectedSeasonIndex = 0,
-                showHeader = true,
-                onSeasonClicked = { _, _ -> },
-                modifier = Modifier.padding(16.dp),
-            )
-        }
-    }
+    WatchProgressSection(
+        status = "Returning Series",
+        watchedEpisodesCount = 30,
+        totalEpisodesCount = 30,
+        seasonsList = persistentListOf(
+            SeasonModel(
+                seasonId = 1L,
+                tvShowId = 1L,
+                name = "Season 1",
+                seasonNumber = 1L,
+                watchedCount = 6,
+                totalCount = 6,
+            ),
+            SeasonModel(
+                seasonId = 2L,
+                tvShowId = 1L,
+                name = "Season 2",
+                seasonNumber = 2L,
+                watchedCount = 6,
+                totalCount = 6,
+            ),
+            SeasonModel(
+                seasonId = 3L,
+                tvShowId = 1L,
+                name = "Season 3",
+                seasonNumber = 3L,
+                watchedCount = 6,
+                totalCount = 6,
+            ),
+            SeasonModel(
+                seasonId = 4L,
+                tvShowId = 1L,
+                name = "Season 4",
+                seasonNumber = 4L,
+                watchedCount = 6,
+                totalCount = 6,
+            ),
+            SeasonModel(
+                seasonId = 5L,
+                tvShowId = 1L,
+                name = "Season 5",
+                seasonNumber = 5L,
+                watchedCount = 6,
+                totalCount = 6,
+            ),
+        ),
+        selectedSeasonIndex = 0,
+        showHeader = true,
+        onSeasonClicked = { _, _ -> },
+        modifier = Modifier.padding(16.dp),
+    )
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun WatchProgressSectionUntrackedPreview() {
-    TvManiacTheme {
-        Surface {
-            WatchProgressSection(
-                status = "Ended",
-                watchedEpisodesCount = 0,
-                totalEpisodesCount = 12,
-                seasonsList = persistentListOf(
-                    SeasonModel(
-                        seasonId = 1L,
-                        tvShowId = 1L,
-                        name = "Season 1",
-                        seasonNumber = 1L,
-                        watchedCount = 0,
-                        totalCount = 6,
-                    ),
-                    SeasonModel(
-                        seasonId = 2L,
-                        tvShowId = 1L,
-                        name = "Season 2",
-                        seasonNumber = 2L,
-                        watchedCount = 0,
-                        totalCount = 6,
-                    ),
-                ),
-                selectedSeasonIndex = 0,
-                showHeader = true,
-                onSeasonClicked = { _, _ -> },
-                modifier = Modifier.padding(16.dp),
-            )
-        }
-    }
+    WatchProgressSection(
+        status = "Ended",
+        watchedEpisodesCount = 0,
+        totalEpisodesCount = 12,
+        seasonsList = persistentListOf(
+            SeasonModel(
+                seasonId = 1L,
+                tvShowId = 1L,
+                name = "Season 1",
+                seasonNumber = 1L,
+                watchedCount = 0,
+                totalCount = 6,
+            ),
+            SeasonModel(
+                seasonId = 2L,
+                tvShowId = 1L,
+                name = "Season 2",
+                seasonNumber = 2L,
+                watchedCount = 0,
+                totalCount = 6,
+            ),
+        ),
+        selectedSeasonIndex = 0,
+        showHeader = true,
+        onSeasonClicked = { _, _ -> },
+        modifier = Modifier.padding(16.dp),
+    )
 }

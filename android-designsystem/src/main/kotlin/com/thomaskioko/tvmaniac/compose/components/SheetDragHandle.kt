@@ -16,7 +16,6 @@ import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,8 +25,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_expand_collapse
 import com.thomaskioko.tvmaniac.i18n.resolve
 
@@ -82,15 +83,12 @@ public fun SheetDragHandle(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun CustomSheetDragHandlePreview() {
-    TvManiacTheme {
-        Surface {
-            SheetDragHandle(
-                title = "Drag Handle",
-                onClick = {},
-                imageVector = Icons.Outlined.KeyboardArrowDown,
-            )
-        }
-    }
+    SheetDragHandle(
+        title = "Drag Handle",
+        onClick = {},
+        imageVector = Icons.Outlined.KeyboardArrowDown,
+    )
 }

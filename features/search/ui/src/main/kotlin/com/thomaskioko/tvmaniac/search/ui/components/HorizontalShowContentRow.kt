@@ -14,15 +14,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.PosterBackdropCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.search.presenter.model.ShowItem
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.collections.immutable.ImmutableList
@@ -84,26 +84,23 @@ internal fun HorizontalShowContentRow(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun HorizontalRowContentPreview() {
-    TvManiacTheme {
-        Surface {
-            HorizontalShowContentRow(
-                tvShows = List(5) {
-                    ShowItem(
-                        traktId = 84958,
-                        tmdbId = 84958,
-                        title = "Loki",
-                        posterImageUrl = null,
-                        overview = "After stealing the Tesseract during the events of Avengers: Endgame.",
-                        status = "Ended",
-                        inLibrary = false,
-                    )
-                }.toImmutableList(),
-                onItemClicked = {},
-                title = "Being watched",
-                description = "Non-stop thrill and action",
+    HorizontalShowContentRow(
+        tvShows = List(5) {
+            ShowItem(
+                traktId = 84958,
+                tmdbId = 84958,
+                title = "Loki",
+                posterImageUrl = null,
+                overview = "After stealing the Tesseract during the events of Avengers: Endgame.",
+                status = "Ended",
+                inLibrary = false,
             )
-        }
-    }
+        }.toImmutableList(),
+        onItemClicked = {},
+        title = "Being watched",
+        description = "Non-stop thrill and action",
+    )
 }

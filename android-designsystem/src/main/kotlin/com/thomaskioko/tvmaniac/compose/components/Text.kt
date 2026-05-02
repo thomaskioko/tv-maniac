@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,9 +19,11 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 
 @Composable
 public fun BoxTextItems(
@@ -146,45 +147,36 @@ public fun ExpandingText(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun ExpandingTextPreview() {
-    TvManiacTheme {
-        Surface {
-            ExpandingText(
-                text = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
-                    "an alternate version of Loki is brought to the mysterious Time Variance " +
-                    "Authority, a bureaucratic organization that exists outside of time and " +
-                    "space and monitors the timeline. They give Loki a choice: face being " +
-                    "erased from existence due to being a “time variant”or help fix " +
-                    "the timeline and stop a greater threat.",
-            )
-        }
-    }
+    ExpandingText(
+        text = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
+            "an alternate version of Loki is brought to the mysterious Time Variance " +
+            "Authority, a bureaucratic organization that exists outside of time and " +
+            "space and monitors the timeline. They give Loki a choice: face being " +
+            "erased from existence due to being a “time variant”or help fix " +
+            "the timeline and stop a greater threat.",
+    )
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun BoxTextItemsPreview() {
-    TvManiacTheme {
-        Surface {
-            BoxTextItems(
-                modifier = Modifier.fillMaxWidth(),
-                title = "Being Watched",
-                label = "More",
-            )
-        }
-    }
+    BoxTextItems(
+        modifier = Modifier.fillMaxWidth(),
+        title = "Being Watched",
+        label = "More",
+    )
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun TextLoadingItemPreview() {
-    TvManiacTheme {
-        Surface {
-            TextLoadingItem(
-                title = "Seasons",
-                content = {},
-            )
-        }
-    }
+    TextLoadingItem(
+        title = "Seasons",
+        content = {},
+    )
 }

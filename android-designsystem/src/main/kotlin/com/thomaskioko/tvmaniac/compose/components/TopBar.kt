@@ -38,12 +38,14 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
+import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.extensions.iconButtonBackgroundScrim
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import kotlin.math.roundToInt
 
 @Composable
@@ -293,23 +295,22 @@ internal fun AutoSizedCircularProgressIndicator(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun TopBarPreview() {
-    TvManiacTheme {
-        TvManiacTopBar(
-            title = {
-                Text(
-                    text = "Tv Maniac",
-                    style = MaterialTheme.typography.titleSmall.copy(
-                        color = MaterialTheme.colorScheme.onSurface,
-                    ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            },
-        )
-    }
+    TvManiacTopBar(
+        title = {
+            Text(
+                text = "Tv Maniac",
+                style = MaterialTheme.typography.titleSmall.copy(
+                    color = MaterialTheme.colorScheme.onSurface,
+                ),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        },
+    )
 }
 
 public inline fun actionIconWhen(
@@ -322,63 +323,61 @@ public inline fun actionIconWhen(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun TopBarActionPreview() {
-    TvManiacTheme {
-        TvManiacTopBar(
-            title = {
-                Text(
-                    text = "Tv Maniac",
-                    style = MaterialTheme.typography.titleSmall.copy(
-                        color = MaterialTheme.colorScheme.onSurface,
-                    ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.fillMaxWidth(),
+    TvManiacTopBar(
+        title = {
+            Text(
+                text = "Tv Maniac",
+                style = MaterialTheme.typography.titleSmall.copy(
+                    color = MaterialTheme.colorScheme.onSurface,
+                ),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        },
+        actions = {
+            IconButton(
+                onClick = {},
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Settings,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurface,
                 )
-            },
-            actions = {
-                IconButton(
-                    onClick = {},
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Settings,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurface,
-                    )
-                }
-            },
-        )
-    }
+            }
+        },
+    )
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun TopBarScrimPreview() {
-    TvManiacTheme {
-        TvManiacTopBar(
-            title = {
-                Text(
-                    text = "Tv Maniac",
-                    style = MaterialTheme.typography.titleSmall.copy(
-                        color = MaterialTheme.colorScheme.onSurface,
-                    ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            },
-            navigationIcon = {
-                Image(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onSurface),
-                    modifier = Modifier
-                        .clickable(onClick = {})
-                        .padding(16.dp),
-                )
-            },
-            modifier = Modifier.iconButtonBackgroundScrim(enabled = true, alpha = 0.4f),
-        )
-    }
+    TvManiacTopBar(
+        title = {
+            Text(
+                text = "Tv Maniac",
+                style = MaterialTheme.typography.titleSmall.copy(
+                    color = MaterialTheme.colorScheme.onSurface,
+                ),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        },
+        navigationIcon = {
+            Image(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onSurface),
+                modifier = Modifier
+                    .clickable(onClick = {})
+                    .padding(16.dp),
+            )
+        },
+        modifier = Modifier.iconButtonBackgroundScrim(enabled = true, alpha = 0.4f),
+    )
 }

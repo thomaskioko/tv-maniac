@@ -11,7 +11,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
@@ -19,8 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_discover
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_library
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_search
@@ -80,39 +81,36 @@ public object NavigationDefaultColors {
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun TvManiacTvManiacNavigationBarPreviewPreview() {
-    TvManiacTheme {
-        Surface {
-            TvManiacNavigationBar {
-                TvManiacBottomNavigationItem(
-                    imageVector = Icons.Outlined.Movie,
-                    title = menu_item_discover.resolve(LocalContext.current),
-                    selected = true,
-                    onClick = { },
-                )
+    TvManiacNavigationBar {
+        TvManiacBottomNavigationItem(
+            imageVector = Icons.Outlined.Movie,
+            title = menu_item_discover.resolve(LocalContext.current),
+            selected = true,
+            onClick = { },
+        )
 
-                TvManiacBottomNavigationItem(
-                    imageVector = Icons.Outlined.Search,
-                    title = menu_item_search.resolve(LocalContext.current),
-                    selected = false,
-                    onClick = { },
-                )
+        TvManiacBottomNavigationItem(
+            imageVector = Icons.Outlined.Search,
+            title = menu_item_search.resolve(LocalContext.current),
+            selected = false,
+            onClick = { },
+        )
 
-                TvManiacBottomNavigationItem(
-                    imageVector = Icons.Outlined.VideoLibrary,
-                    title = menu_item_library.resolve(LocalContext.current),
-                    selected = false,
-                    onClick = { },
-                )
+        TvManiacBottomNavigationItem(
+            imageVector = Icons.Outlined.VideoLibrary,
+            title = menu_item_library.resolve(LocalContext.current),
+            selected = false,
+            onClick = { },
+        )
 
-                TvManiacBottomNavigationItem(
-                    imageVector = Icons.Outlined.Settings,
-                    title = menu_item_settings.resolve(LocalContext.current),
-                    selected = false,
-                    onClick = { },
-                )
-            }
-        }
+        TvManiacBottomNavigationItem(
+            imageVector = Icons.Outlined.Settings,
+            title = menu_item_settings.resolve(LocalContext.current),
+            selected = false,
+            onClick = { },
+        )
     }
 }

@@ -20,17 +20,17 @@ import androidx.compose.material.icons.outlined.Tv
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.FilledTextButton
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_feature_discover_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_feature_discover_title
 import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_feature_manage_description
@@ -167,14 +167,11 @@ private fun FeatureItem(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun UnauthenticatedContentPreview() {
-    TvManiacTheme {
-        Surface {
-            UnauthenticatedContent(
-                onLoginClicked = {},
-                contentPadding = PaddingValues(),
-            )
-        }
-    }
+    UnauthenticatedContent(
+        onLoginClicked = {},
+        contentPadding = PaddingValues(),
+    )
 }

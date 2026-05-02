@@ -38,13 +38,11 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -63,6 +61,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.CastCard
@@ -78,11 +77,11 @@ import com.thomaskioko.tvmaniac.compose.components.TextLoadingItem
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacAlertDialog
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.actionIconWhen
 import com.thomaskioko.tvmaniac.compose.extensions.backgroundGradient
 import com.thomaskioko.tvmaniac.compose.extensions.copy
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.i18n.MR.strings.btn_add_to_list
@@ -571,7 +570,13 @@ internal fun ShowMetadata(
             if (seasonNumber > 0) {
                 append(divider)
                 withStyle(tagStyle) {
-                    append(resources.getQuantityString(MR.plurals.season_count.resourceId, seasonNumber, seasonNumber))
+                    append(
+                        resources.getQuantityString(
+                            MR.plurals.season_count.resourceId,
+                            seasonNumber,
+                            seasonNumber,
+                        ),
+                    )
                 }
             }
 
@@ -928,18 +933,15 @@ private fun HorizontalRowContent(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun ShowDetailScreenPreview(
     @PreviewParameter(DetailPreviewParameterProvider::class) state: ShowDetailsContent,
 ) {
-    TvManiacTheme {
-        Surface {
-            ShowDetailsScreen(
-                state = state,
-                title = "",
-                listState = LazyListState(),
-                onAction = {},
-            )
-        }
-    }
+    ShowDetailsScreen(
+        state = state,
+        title = "",
+        listState = LazyListState(),
+        onAction = {},
+    )
 }

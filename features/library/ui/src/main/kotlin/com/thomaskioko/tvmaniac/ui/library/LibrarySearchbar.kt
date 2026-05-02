@@ -27,9 +27,10 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_clear
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.testtags.library.LibraryTestTags
@@ -115,27 +116,25 @@ internal fun LibrarySearchbar(
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun LibrarySearchbarPreview() {
-    TvManiacTheme {
-        LibrarySearchbar(
-            query = "",
-            hint = "Search library...",
-            onQueryChanged = {},
-            onCloseClick = {},
-        )
-    }
+    LibrarySearchbar(
+        query = "",
+        hint = "Search library...",
+        onQueryChanged = {},
+        onCloseClick = {},
+    )
 }
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun LibrarySearchbarWithQueryPreview() {
-    TvManiacTheme {
-        LibrarySearchbar(
-            query = "Breaking Bad",
-            hint = "Search library...",
-            onQueryChanged = {},
-            onCloseClick = {},
-        )
-    }
+    LibrarySearchbar(
+        query = "Breaking Bad",
+        hint = "Search library...",
+        onQueryChanged = {},
+        onCloseClick = {},
+    )
 }

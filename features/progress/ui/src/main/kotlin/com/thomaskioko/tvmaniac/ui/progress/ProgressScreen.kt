@@ -14,7 +14,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SecondaryTabRow
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
@@ -32,11 +31,12 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_discover_up_next
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_progress
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_calendar
@@ -325,23 +325,20 @@ internal fun previewCalendarEvents() = persistentListOf(
 )
 
 @ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun ProgressScreenPreview(
     @PreviewParameter(ProgressPreviewParameterProvider::class)
     state: ProgressPreviewViewState,
 ) {
-    TvManiacTheme {
-        Surface {
-            ProgressScreen(
-                progressState = state.progressState,
-                upNextState = state.upNextState,
-                calendarState = state.calendarState,
-                tabs = persistentListOf("Up Next", "Calendar"),
-                modifier = Modifier.fillMaxSize(),
-                progressAction = {},
-                upNextAction = {},
-                calendarAction = {},
-            )
-        }
-    }
+    ProgressScreen(
+        progressState = state.progressState,
+        upNextState = state.upNextState,
+        calendarState = state.calendarState,
+        tabs = persistentListOf("Up Next", "Calendar"),
+        modifier = Modifier.fillMaxSize(),
+        progressAction = {},
+        upNextAction = {},
+        calendarAction = {},
+    )
 }
