@@ -453,4 +453,8 @@ public abstract class BaseRobot<T : BaseRobot<T>>(protected val composeUi: Compo
             )
             .assertCountEquals(count)
     }
+
+    public fun onClick(tag: String): T = self().apply {
+        click(tag)
+    }
 }
