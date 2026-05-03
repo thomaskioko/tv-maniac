@@ -74,12 +74,21 @@ public fun dismissSystemDialog(
     val instrumentation = InstrumentationRegistry.getInstrumentation()
     val device = UiDevice.getInstance(instrumentation)
 
-    val exists = dialog.selectors.any { selector ->
-        device.hasObject(selector) || device.wait(Until.hasObject(selector), appearTimeoutMillis)
+    var matchedSelector: BySelector? = null
+    for (selector in dialog.selectors) {
+        if (device.hasObject(selector)) {
+            matchedSelector = selector
+            break
+        }
+        if (device.wait(Until.hasObject(selector), appearTimeoutMillis)) {
+            matchedSelector = selector
+            break
+        }
     }
-    if (!exists) return
 
-    device.pressBack()
+    if (matchedSelector == null) return
+
+    device.findObject(matchedSelector).click()
 
     device.wait(Until.gone(By.pkg(dialog.packageName)), dismissTimeoutMillis)
     device.wait(
