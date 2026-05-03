@@ -12,6 +12,7 @@ import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultEpisodesDao
 import com.thomaskioko.tvmaniac.followedshows.implementation.DefaultFollowedShowsDao
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
+import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
 import com.thomaskioko.tvmaniac.shows.implementation.DefaultTvShowsDao
 import com.thomaskioko.tvmaniac.trakt.api.TimePeriod
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
@@ -49,6 +50,7 @@ internal class DefaultUpNextRepositoryTest : BaseDatabaseTest() {
     private val requestManagerRepository = FakeRequestManagerRepository()
     private val showDetailsRepository = FakeShowDetailsRepository()
     private val seasonDetailsRepository = FakeSeasonDetailsRepository()
+    private val seasonsRepository = FakeSeasonsRepository()
     private val datastoreRepository = FakeDatastoreRepository()
 
     private lateinit var upNextDao: DefaultUpNextDao
@@ -85,6 +87,7 @@ internal class DefaultUpNextRepositoryTest : BaseDatabaseTest() {
             tvShowsDao = tvShowsDao,
             showDetailsRepository = showDetailsRepository,
             seasonDetailsRepository = seasonDetailsRepository,
+            seasonsRepository = seasonsRepository,
             requestManagerRepository = requestManagerRepository,
             dateTimeProvider = dateTimeProvider,
             logger = FakeLogger(),
