@@ -172,6 +172,7 @@ internal fun ProgressScreen(
                         if (isLoading) {
                             CircularProgressIndicator(
                                 modifier = Modifier
+                                    .testTag(ProgressTestTags.PROGRESS_INDICATOR)
                                     .padding(start = 8.dp)
                                     .size(20.dp),
                                 color = MaterialTheme.colorScheme.secondary,
