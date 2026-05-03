@@ -15,8 +15,8 @@ internal class DiscoverToSeasonDetailsFlowTest : BaseAppFlowTest() {
     fun discoverToSeasonDetailsJourney() = runAppFlowTest {
         scenarios.discover.stubBrowseGraph()
 
-        // 1. Open Show Details & verify chips
         discoverRobot
+            .assertLoadingIndicatorDisplayed()
             .assertFeaturedPagerDisplayed()
             .clickShowCard(breakingBadTraktId)
 

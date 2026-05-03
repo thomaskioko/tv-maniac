@@ -13,6 +13,7 @@ internal class DiscoverToShowDetailsFollowFlowTest : BaseAppFlowTest() {
         scenarios.discover.stubBrowseGraph()
 
         discoverRobot
+            .assertLoadingIndicatorDisplayed()
             .assertFeaturedPagerDisplayed()
             .clickShowCard(breakingBadTraktId)
 

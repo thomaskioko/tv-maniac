@@ -12,6 +12,14 @@ internal class DiscoverRobot(composeUi: ComposeUiTest) : BaseRobot<DiscoverRobot
         assertDisplayed(DiscoverTestTags.SCREEN_TEST_TAG)
     }
 
+    fun assertLoadingIndicatorDisplayed() = apply {
+        assertDisplayed(DiscoverTestTags.PROGRESS_INDICATOR)
+    }
+
+    fun assertLoadingIndicatorDoesNotExist() = apply {
+        assertDoesNotExist(DiscoverTestTags.PROGRESS_INDICATOR)
+    }
+
     fun assertShowCardDisplayed(traktId: Long) = apply {
         val rowTag = DiscoverTestTags.ROW_KEY_TRENDING
         val cardTag = DiscoverTestTags.showCard(rowTag, traktId)
