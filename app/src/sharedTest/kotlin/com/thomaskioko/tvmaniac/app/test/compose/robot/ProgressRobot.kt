@@ -34,7 +34,7 @@ internal class ProgressRobot(composeUi: ComposeUiTest) : BaseRobot<ProgressRobot
     }
 
     fun assertUpNextPageDisplayed() = apply {
-        assertDisplayed(UpNextTestTags.PAGE_LIST_TEST_TAG)
+        assertDisplayed(UpNextTestTags.SCREEN_TEST_TAG)
     }
 
     fun scrollToUpNextEpisode(traktId: Long) = apply {

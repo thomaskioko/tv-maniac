@@ -57,6 +57,7 @@ import com.thomaskioko.tvmaniac.presentation.upnext.UpNextMessageShown
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextShowClicked
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextState
 import com.thomaskioko.tvmaniac.testtags.upnext.UpNextTestTags
+import com.thomaskioko.tvmaniac.testtags.upnext.UpNextTestTags.SCREEN_TEST_TAG
 import com.thomaskioko.tvmaniac.ui.upnext.preview.UpNextStatePreviewParameterProvider
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,8 +77,8 @@ public fun UpNextScreen(
             onAction = onAction,
             modifier = Modifier
                 .padding(contentPadding.copy(copyBottom = false))
-                .nestedScroll(scrollBehavior.nestedScrollConnection),
-            listTestTag = UpNextTestTags.SCREEN_LIST_TEST_TAG,
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
+                .testTag(SCREEN_TEST_TAG),
         )
     }
 }
@@ -88,7 +89,6 @@ internal fun UpNextScreenContent(
     state: UpNextState,
     onAction: (UpNextAction) -> Unit,
     modifier: Modifier = Modifier,
-    listTestTag: String,
 ) {
     val listState = rememberLazyListState()
 
@@ -113,11 +113,10 @@ internal fun UpNextScreenContent(
                 when {
                     state.showLoading -> Box(modifier = Modifier.fillMaxSize())
                     state.isEmpty -> UpNextEmptyState()
-                    else -> UpNextList(
+                    else -> UpNextLoadedContent(
                         state = state,
                         listState = listState,
                         onAction = onAction,
-                        testTag = listTestTag,
                     )
                 }
             }
@@ -155,18 +154,17 @@ private fun UpNextEmptyState() {
 }
 
 @Composable
-private fun UpNextList(
+private fun UpNextLoadedContent(
     state: UpNextState,
     listState: LazyListState,
     onAction: (UpNextAction) -> Unit,
-    testTag: String,
 ) {
     LazyColumn(
         state = listState,
         verticalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
         modifier = Modifier
-            .testTag(testTag)
+            .testTag(UpNextTestTags.PAGE_LIST_TEST_TAG)
             .fillMaxSize(),
     ) {
         items(
