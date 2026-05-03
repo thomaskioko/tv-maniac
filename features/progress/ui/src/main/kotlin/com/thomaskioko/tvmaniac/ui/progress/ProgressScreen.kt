@@ -52,8 +52,8 @@ import com.thomaskioko.tvmaniac.presentation.upnext.UpNextAction
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextState
 import com.thomaskioko.tvmaniac.presentation.upnext.model.UpNextEpisodeUiModel
 import com.thomaskioko.tvmaniac.testtags.progress.ProgressTestTags
-import com.thomaskioko.tvmaniac.ui.calendar.CalendarPageContent
-import com.thomaskioko.tvmaniac.ui.upnext.UpNextPageContent
+import com.thomaskioko.tvmaniac.ui.calendar.CalendarScreen
+import com.thomaskioko.tvmaniac.ui.upnext.UpNextScreen
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -104,14 +104,14 @@ internal fun ProgressScreen(
         modifier = modifier,
         onSelectPage = { progressAction(ProgressAction.SelectPage(it)) },
         upNextContent = {
-            UpNextPageContent(
+            UpNextScreen(
                 state = upNextState,
                 modifier = Modifier.fillMaxSize(),
                 onAction = upNextAction,
             )
         },
         calendarContent = {
-            CalendarPageContent(
+            CalendarScreen(
                 state = calendarState,
                 modifier = Modifier.fillMaxSize(),
                 onAction = calendarAction,

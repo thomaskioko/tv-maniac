@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -31,11 +30,9 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,12 +50,10 @@ import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
-import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_next_week
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_previous_week
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presentation.calendar.CalendarAction
-import com.thomaskioko.tvmaniac.presentation.calendar.CalendarPresenter
 import com.thomaskioko.tvmaniac.presentation.calendar.CalendarState
 import com.thomaskioko.tvmaniac.presentation.calendar.EpisodeCardClicked
 import com.thomaskioko.tvmaniac.presentation.calendar.MessageShown
@@ -72,26 +67,6 @@ import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 public fun CalendarScreen(
-    presenter: CalendarPresenter,
-    modifier: Modifier = Modifier,
-) {
-    val state by presenter.state.collectAsState()
-
-    CalendarScreen(
-        modifier = modifier,
-        state = state,
-        onAction = presenter::dispatch,
-    )
-
-    TvManiacSnackBarHost(
-        message = state.message?.message,
-        style = SnackBarStyle.Error,
-        onDismiss = { state.message?.let { presenter.dispatch(MessageShown(it.id)) } },
-    )
-}
-
-@Composable
-public fun CalendarPageContent(
     state: CalendarState,
     modifier: Modifier = Modifier,
     onAction: (CalendarAction) -> Unit,
@@ -122,45 +97,6 @@ public fun CalendarPageContent(
             message = state.message?.message,
             style = SnackBarStyle.Error,
             onDismiss = { state.message?.let { onAction(MessageShown(it.id)) } },
-        )
-    }
-}
-
-@Composable
-internal fun CalendarScreen(
-    state: CalendarState,
-    modifier: Modifier = Modifier,
-    onAction: (CalendarAction) -> Unit,
-) {
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-
-    Scaffold(
-        modifier = modifier.statusBarsPadding(),
-        topBar = {
-            TvManiacTopBar(
-                title = {
-                    WeekNavigationHeader(
-                        weekLabel = state.weekLabel,
-                        canNavigatePrevious = state.canNavigatePrevious,
-                        canNavigateNext = state.canNavigateNext,
-                        isRefreshing = state.isRefreshing,
-                        onPreviousClick = { onAction(NavigateToPreviousWeek) },
-                        onNextClick = { onAction(NavigateToNextWeek) },
-                    )
-                },
-                scrollBehavior = scrollBehavior,
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    scrolledContainerColor = MaterialTheme.colorScheme.background,
-                ),
-            )
-        },
-    ) { contentPadding ->
-        CalendarBody(
-            state = state,
-            contentPadding = contentPadding,
-            scrollBehavior = scrollBehavior,
-            onAction = onAction,
         )
     }
 }
