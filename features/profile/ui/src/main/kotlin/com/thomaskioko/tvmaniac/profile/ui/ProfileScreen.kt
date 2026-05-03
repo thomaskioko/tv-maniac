@@ -412,6 +412,8 @@ private fun HeaderContent(
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSecondary,
+                    modifier = Modifier
+                        .testTag(ProfileTestTags.USERNAME_TEST_TAG),
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))

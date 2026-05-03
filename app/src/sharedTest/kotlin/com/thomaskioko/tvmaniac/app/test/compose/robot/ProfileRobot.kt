@@ -24,6 +24,10 @@ internal class ProfileRobot(composeUi: ComposeUiTest) : BaseRobot<ProfileRobot>(
         assertDisplayed(ProfileTestTags.userCard(slug))
     }
 
+    fun assertUserNameDisplayed() = apply {
+        assertDisplayed(ProfileTestTags.USERNAME_TEST_TAG)
+    }
+
     fun clickSignInButton() = apply {
         click(ProfileTestTags.SIGN_IN_BUTTON_TEST_TAG)
     }
