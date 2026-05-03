@@ -228,7 +228,8 @@ internal fun LazyColumnContent(
     val scrollState = rememberScrollState()
 
     LazyColumn(
-        modifier = modifier,
+        modifier = modifier
+            .testTag(SeasonDetailsTestTags.SEASON_DETAILS_LIST_TEST_TAG),
         state = listState,
         contentPadding = contentPadding.copy(copyTop = false),
     ) {

@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.discover.ui.component
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,38 +35,39 @@ internal fun NextEpisodesSection(
     onEpisodeClick: (NextEpisodeUiModel) -> Unit,
     onSeeAllClick: () -> Unit = {},
 ) {
-    AnimatedVisibility(
-        visible = nextEpisodes.isNotEmpty(),
-        modifier = modifier,
-    ) {
-        Column {
-            BoxTextItems(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp),
-                title = title,
-                label = str_more.resolve(LocalContext.current),
-                onMoreClicked = onSeeAllClick,
-            )
+    Box(modifier = modifier) {
+        AnimatedVisibility(
+            visible = nextEpisodes.isNotEmpty(),
+        ) {
+            Column {
+                BoxTextItems(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp),
+                    title = title,
+                    label = str_more.resolve(LocalContext.current),
+                    onMoreClicked = onSeeAllClick,
+                )
 
-            val lazyListState = rememberLazyListState()
+                val lazyListState = rememberLazyListState()
 
-            LazyRow(
-                state = lazyListState,
-                flingBehavior = rememberSnapperFlingBehavior(lazyListState),
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                items(
-                    items = nextEpisodes,
-                    key = { episode -> "next_episode_${episode.showTraktId}_${episode.episodeId}" },
-                    contentType = { "NextEpisode" },
-                ) { episode ->
-                    NextEpisodeCard(
-                        modifier = Modifier.testTag(DiscoverTestTags.upNextCard(episode.showTraktId)),
-                        episode = episode,
-                        onClick = { onEpisodeClick(episode) },
-                    )
+                LazyRow(
+                    state = lazyListState,
+                    flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    items(
+                        items = nextEpisodes,
+                        key = { episode -> "next_episode_${episode.showTraktId}_${episode.episodeId}" },
+                        contentType = { "NextEpisode" },
+                    ) { episode ->
+                        NextEpisodeCard(
+                            modifier = Modifier.testTag(DiscoverTestTags.upNextCard(episode.showTraktId)),
+                            episode = episode,
+                            onClick = { onEpisodeClick(episode) },
+                        )
+                    }
                 }
             }
         }

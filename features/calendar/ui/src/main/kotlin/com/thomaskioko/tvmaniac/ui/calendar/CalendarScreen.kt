@@ -177,6 +177,7 @@ private fun CalendarBody(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
+                    .testTag(CalendarTestTags.LOADING_INDICATOR)
                     .padding(contentPadding),
                 contentAlignment = Alignment.Center,
             ) {
@@ -342,7 +343,7 @@ private fun CalendarDateHeader(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .testTag(CalendarTestTags.DATE_HEADER),
+            .testTag(CalendarTestTags.dateHeader(dateLabel)),
         text = dateLabel,
         style = MaterialTheme.typography.titleMedium,
         color = MaterialTheme.colorScheme.onSurface,

@@ -264,8 +264,9 @@ private fun LazyColumnContent(
             )
         }
 
-        item(key = "up_next_section") {
+        item(key = DiscoverTestTags.UP_NEXT_SECTION_TEST_TAG) {
             NextEpisodesSection(
+                modifier = Modifier.testTag(DiscoverTestTags.UP_NEXT_SECTION_TEST_TAG),
                 title = label_discover_up_next.resolve(context),
                 nextEpisodes = dataLoadedState.nextEpisodes,
                 onEpisodeClick = { episode ->
@@ -276,6 +277,7 @@ private fun LazyColumnContent(
 
         item(key = DiscoverTestTags.ROW_KEY_TRENDING) {
             HorizontalRowContent(
+                modifier = Modifier.testTag(DiscoverTestTags.ROW_KEY_TRENDING),
                 category = title_category_trending_today.resolve(context),
                 rowKey = DiscoverTestTags.ROW_KEY_TRENDING,
                 tvShows = dataLoadedState.trendingToday,
@@ -286,6 +288,7 @@ private fun LazyColumnContent(
 
         item(key = DiscoverTestTags.ROW_KEY_UPCOMING) {
             HorizontalRowContent(
+                modifier = Modifier.testTag(DiscoverTestTags.ROW_KEY_UPCOMING),
                 category = title_category_upcoming.resolve(context),
                 rowKey = DiscoverTestTags.ROW_KEY_UPCOMING,
                 tvShows = dataLoadedState.upcomingShows,
@@ -296,6 +299,7 @@ private fun LazyColumnContent(
 
         item(key = DiscoverTestTags.ROW_KEY_POPULAR) {
             HorizontalRowContent(
+                modifier = Modifier.testTag(DiscoverTestTags.ROW_KEY_POPULAR),
                 category = title_category_popular.resolve(context),
                 rowKey = DiscoverTestTags.ROW_KEY_POPULAR,
                 tvShows = dataLoadedState.popularShows,
@@ -306,6 +310,7 @@ private fun LazyColumnContent(
 
         item(key = DiscoverTestTags.ROW_KEY_TOP_RATED) {
             HorizontalRowContent(
+                modifier = Modifier.testTag(DiscoverTestTags.ROW_KEY_TOP_RATED),
                 category = title_category_top_rated.resolve(context),
                 rowKey = DiscoverTestTags.ROW_KEY_TOP_RATED,
                 tvShows = dataLoadedState.topRatedShows,

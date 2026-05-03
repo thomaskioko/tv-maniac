@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.testtags.seasondetails
 
 public object SeasonDetailsTestTags {
     public const val SCREEN_TEST_TAG: String = "season_details_screen"
+    public const val SEASON_DETAILS_LIST_TEST_TAG: String = "season_details_list"
     public const val BACK_BUTTON_TEST_TAG: String = "season_details_back_button"
     public const val EPISODE_HEADER_TEST_TAG: String = "season_details_episode_header"
     public const val SEASON_WATCHED_TOGGLE_TEST_TAG: String = "season_details_season_watched_toggle"

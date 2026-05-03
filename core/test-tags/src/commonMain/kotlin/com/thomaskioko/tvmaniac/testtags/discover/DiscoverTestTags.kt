@@ -6,6 +6,7 @@ public object DiscoverTestTags {
     public const val SEARCH_BUTTON_TEST_TAG: String = "discover_search_button"
     public const val ERROR_RETRY_BUTTON_TEST_TAG: String = "discover_error_retry_button"
     public const val FEATURED_PAGER_TEST_TAG: String = "discover_featured_pager"
+    public const val UP_NEXT_SECTION_TEST_TAG: String = "up_next_section"
 
     public const val ROW_KEY_TRENDING: String = "trending"
     public const val ROW_KEY_UPCOMING: String = "upcoming"

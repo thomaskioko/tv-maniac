@@ -4,11 +4,13 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -40,58 +42,62 @@ internal fun ContinueTrackingSection(
     onMarkWatched: (ContinueTrackingEpisodeModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    AnimatedVisibility(
-        visible = episodes.isNotEmpty(),
-        enter = fadeIn(),
-        exit = fadeOut(),
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(min = 1.dp),
     ) {
-        Column(
-            modifier = modifier
-                .fillMaxWidth()
-                .testTag(ShowDetailsTestTags.CONTINUE_TRACKING_SECTION_TEST_TAG),
+        AnimatedVisibility(
+            visible = episodes.isNotEmpty(),
+            enter = fadeIn(),
+            exit = fadeOut(),
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
+            Column {
+                Spacer(modifier = Modifier.height(16.dp))
 
-            Text(
-                text = title_continue_tracking.resolve(LocalContext.current),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.padding(horizontal = 16.dp),
-            )
+                Text(
+                    text = title_continue_tracking.resolve(LocalContext.current),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                )
 
-            Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-            val lazyListState = rememberLazyListState()
-            val scrollOffsetPx = calculateScrollOffset(
-                itemWidth = CARD_WIDTH_DP,
-                itemSpacing = CARD_SPACING_DP,
-                visibleFraction = PREVIOUS_ITEM_VISIBLE_FRACTION,
-            )
+                val lazyListState = rememberLazyListState()
+                val scrollOffsetPx = calculateScrollOffset(
+                    itemWidth = CARD_WIDTH_DP,
+                    itemSpacing = CARD_SPACING_DP,
+                    visibleFraction = PREVIOUS_ITEM_VISIBLE_FRACTION,
+                )
 
-            LaunchedEffect(scrollIndex) {
-                if (scrollIndex > 0 && scrollIndex < episodes.size) {
-                    lazyListState.animateScrollToItem(
-                        index = scrollIndex - 1,
-                        scrollOffset = scrollOffsetPx,
-                    )
+                LaunchedEffect(scrollIndex) {
+                    if (scrollIndex > 0 && scrollIndex < episodes.size) {
+                        lazyListState.animateScrollToItem(
+                            index = scrollIndex - 1,
+                            scrollOffset = scrollOffsetPx,
+                        )
+                    }
                 }
-            }
 
-            LazyRow(
-                state = lazyListState,
-                modifier = Modifier.fillMaxWidth(),
-                flingBehavior = rememberSnapperFlingBehavior(lazyListState),
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                itemsIndexed(
-                    items = episodes,
-                    key = { _, episode -> episode.episodeId },
-                ) { _, episode ->
-                    ContinueTrackingCard(
-                        episode = episode,
-                        onMarkWatched = { onMarkWatched(episode) },
-                    )
+                LazyRow(
+                    state = lazyListState,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag(ShowDetailsTestTags.CONTINUE_TRACKING_LIST_TEST_TAG),
+                    flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    itemsIndexed(
+                        items = episodes,
+                        key = { _, episode -> episode.episodeId },
+                    ) { _, episode ->
+                        ContinueTrackingCard(
+                            episode = episode,
+                            onMarkWatched = { onMarkWatched(episode) },
+                        )
+                    }
                 }
             }
         }

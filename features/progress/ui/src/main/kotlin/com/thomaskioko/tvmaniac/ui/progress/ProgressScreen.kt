@@ -226,6 +226,7 @@ internal fun ProgressScreen(
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier
+                    .testTag(ProgressTestTags.HORIZONTAL_PAGER)
                     .fillMaxWidth()
                     .weight(1f),
             ) { page ->
