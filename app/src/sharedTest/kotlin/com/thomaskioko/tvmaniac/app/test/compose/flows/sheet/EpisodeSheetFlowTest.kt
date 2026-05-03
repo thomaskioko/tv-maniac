@@ -114,7 +114,10 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
             .assertTabSelected(HomeTestTags.PROGRESS_TAB)
 
         progressRobot
-            .assertEpisodeRowDisplayed(breakingBadTraktId)
+            .assertUpNextTabSelected()
+            .assertUpNextPageDisplayed()
+            .scrollToUpNextEpisode(breakingBadTraktId)
+            .assertUpNextEpisodeDisplayed(breakingBadTraktId)
 
         homeRobot
             .clickDiscoverTab()

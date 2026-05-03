@@ -63,10 +63,11 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
 
         progressRobot
             .assertProgressScreenDisplayed()
+            .assertUpNextTabSelected()
             .assertUpNextEmptyStateDisplayed()
-            .assertEpisodeRowDoesNotExist(breakingBadTraktId)
+            .assertUpNextEpisodeDoesNotExist(breakingBadTraktId)
             .clickCalendarTab()
-            .assertSelected(com.thomaskioko.tvmaniac.testtags.progress.ProgressTestTags.CALENDAR_TAB)
+            .assertCalendarTabSelected()
 
         calendarRobot.assertLoggedOutStateDisplayed()
 

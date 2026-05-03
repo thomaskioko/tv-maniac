@@ -18,10 +18,13 @@ internal class UpNextFlowTests : BaseAppFlowTest() {
 
         // 1. Verify Episode Row & Meta
         progressRobot
-            .assertEpisodeRowDisplayed(breakingBadTraktId)
-            .assertEpisodeMetaDisplayed(breakingBadTraktId, "S01E01")
-            .assertProgressCountDisplayed(breakingBadTraktId, "0/62")
-            .clickEpisodeRow(breakingBadTraktId)
+            .assertUpNextTabSelected()
+            .assertUpNextPageDisplayed()
+            .scrollToUpNextEpisode(breakingBadTraktId)
+            .assertUpNextEpisodeDisplayed(breakingBadTraktId)
+            .assertUpNextEpisodeMetaDisplayed(breakingBadTraktId, "S01E01")
+            .assertUpNextProgressCountDisplayed(breakingBadTraktId, "0/62")
+            .clickUpNextEpisodeRow(breakingBadTraktId)
             .assertSeasonDetailsDisplayed()
             .clickBackButton()
 
@@ -29,11 +32,12 @@ internal class UpNextFlowTests : BaseAppFlowTest() {
         scenarios.upNext.stubProgressAfterPilotWatched(breakingBadTraktId)
 
         progressRobot
-            .clickWatchedButton(breakingBadTraktId)
-            .assertEpisodeMetaDisplayed(breakingBadTraktId, "S01E02")
-            .assertProgressCountDisplayed(breakingBadTraktId, "1/62")
+            .scrollToUpNextEpisode(breakingBadTraktId)
+            .clickUpNextWatchedButton(breakingBadTraktId)
+            .assertUpNextEpisodeMetaDisplayed(breakingBadTraktId, "S01E02")
+            .assertUpNextProgressCountDisplayed(breakingBadTraktId, "1/62")
             // 4. Verify in Season Details
-            .clickEpisodeRow(breakingBadTraktId)
+            .clickUpNextEpisodeRow(breakingBadTraktId)
             .assertSeasonDetailsDisplayed()
             .assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
     }

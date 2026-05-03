@@ -17,6 +17,8 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
     @Test
     fun givenAuthenticatedUser_whenSignsIn_thenExploresSyncedSurfacesAndSignsOut() = runAppFlowTest {
         scenarios.stubUnauthenticatedState()
+        scenarios.calendar.stubWeek()
+        scenarios.calendar.stubWeek(weekStart = TEST_NEXT_WEEK)
 
         // Verify public content on Discover
         discoverRobot
@@ -60,7 +62,10 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
             .assertTabSelected(HomeTestTags.PROGRESS_TAB)
 
         progressRobot
-            .assertEpisodeRowDisplayed(breakingBadTraktId)
+            .assertUpNextTabSelected()
+            .assertUpNextPageDisplayed()
+            .scrollToUpNextEpisode(breakingBadTraktId)
+            .assertUpNextEpisodeDisplayed(breakingBadTraktId)
 
         homeRobot
             .clickDiscoverTab()
@@ -123,8 +128,11 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
 
         progressRobot
             .assertProgressScreenDisplayed()
-            .assertEpisodeRowDisplayed(breakingBadTraktId)
-            .clickEpisodeRow(breakingBadTraktId)
+            .assertUpNextTabSelected()
+            .assertUpNextPageDisplayed()
+            .scrollToUpNextEpisode(breakingBadTraktId)
+            .assertUpNextEpisodeDisplayed(breakingBadTraktId)
+            .clickUpNextEpisodeRow(breakingBadTraktId)
 
         seasonDetailsRobot
             .assertSeasonDetailsDisplayed()
@@ -133,15 +141,13 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
             .clickBackButton()
 
         // Calendar Flow
-        scenarios.calendar.stubWeek()
-        scenarios.calendar.stubWeek(weekStart = TEST_NEXT_WEEK)
-
         progressRobot
             .clickCalendarTab()
-            .assertSelected(com.thomaskioko.tvmaniac.testtags.progress.ProgressTestTags.CALENDAR_TAB)
+            .assertCalendarTabSelected()
             .waitForIdle()
 
         calendarRobot
+            .assertLoadingIndicatorDoesNotExist()
             .assertCalendarScreenDisplayed()
             .assertWeekLabelDisplayed("Apr 19, 2026 - Apr 25, 2026")
             .clickNextWeek()
@@ -155,7 +161,10 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
             .assertTabSelected(HomeTestTags.PROGRESS_TAB)
 
         progressRobot
-            .assertEpisodeRowDisplayed(breakingBadTraktId)
+            .assertUpNextTabSelected()
+            .assertUpNextPageDisplayed()
+            .scrollToUpNextEpisode(breakingBadTraktId)
+            .assertUpNextEpisodeDisplayed(breakingBadTraktId)
 
         // Trigger token refresh round-trip
         scenarios.stubTokenRefresh()

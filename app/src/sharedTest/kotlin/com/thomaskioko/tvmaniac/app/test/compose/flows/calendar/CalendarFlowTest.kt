@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.app.test.compose.flows.calendar
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.TEST_NEXT_WEEK
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
-import com.thomaskioko.tvmaniac.testtags.progress.ProgressTestTags
 import org.junit.Test
 
 internal class CalendarFlowTest : BaseAppFlowTest() {
@@ -22,7 +21,7 @@ internal class CalendarFlowTest : BaseAppFlowTest() {
         progressRobot
             .assertProgressScreenDisplayed()
             .clickCalendarTab()
-            .assertSelected(ProgressTestTags.CALENDAR_TAB)
+            .assertCalendarTabSelected()
 
         calendarRobot
             .assertLoggedOutStateDisplayed()
@@ -48,8 +47,7 @@ internal class CalendarFlowTest : BaseAppFlowTest() {
         progressRobot
             .assertProgressScreenDisplayed()
             .clickCalendarTab()
-            .assertSelected(ProgressTestTags.CALENDAR_TAB)
-            .waitForIdle()
+            .assertCalendarTabSelected()
 
         // Assert Current Week
         calendarRobot
@@ -82,7 +80,7 @@ internal class CalendarFlowTest : BaseAppFlowTest() {
 
         progressRobot
             .clickCalendarTab()
-            .assertSelected(ProgressTestTags.CALENDAR_TAB)
+            .assertCalendarTabSelected()
 
         calendarRobot
             .assertEmptyStateDisplayed()
@@ -105,7 +103,7 @@ internal class CalendarFlowTest : BaseAppFlowTest() {
 
         progressRobot
             .clickCalendarTab()
-            .assertSelected(ProgressTestTags.CALENDAR_TAB)
+            .assertCalendarTabSelected()
 
         calendarRobot
             .assertWeekLabelDisplayed("Apr 19, 2026 - Apr 25, 2026")
