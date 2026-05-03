@@ -2,27 +2,22 @@ package com.thomaskioko.tvmaniac.app.test.compose.robot
 
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.hasTestTag
 import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
-import com.thomaskioko.tvmaniac.testing.integration.ui.TIMEOUT_MILLIS
 import com.thomaskioko.tvmaniac.testtags.calendar.CalendarTestTags
 
 @OptIn(ExperimentalTestApi::class)
 internal class CalendarRobot(composeUi: ComposeUiTest) : BaseRobot<CalendarRobot>(composeUi) {
 
     fun assertCalendarScreenDisplayed() = apply {
-        // Barrier: Wait for loading to finish if it's there
-        if (awaitTag(CalendarTestTags.LOADING_INDICATOR, timeoutMillis = 500)) {
-            assertDoesNotExist(CalendarTestTags.LOADING_INDICATOR)
-        }
+        assertDisplayed(CalendarTestTags.SCREEN_TEST_TAG)
+    }
 
-        // Barrier: Wait for either the content OR the empty state to appear
-        awaitMatcherAtLeastOne(
-            matcher = hasTestTag(CalendarTestTags.SCREEN_TEST_TAG) or
-                hasTestTag(CalendarTestTags.EMPTY_STATE_TEST_TAG) or
-                hasTestTag(CalendarTestTags.LOGGED_OUT_STATE_TEST_TAG),
-            timeoutMillis = TIMEOUT_MILLIS,
-        )
+    fun assertLoadingIndicatorDisplayed() = apply {
+        assertDisplayed(CalendarTestTags.LOADING_INDICATOR)
+    }
+
+    fun assertLoadingIndicatorDoesNotExist() = apply {
+        assertDoesNotExist(CalendarTestTags.LOADING_INDICATOR)
     }
 
     fun assertLoggedOutStateDisplayed() = apply {
