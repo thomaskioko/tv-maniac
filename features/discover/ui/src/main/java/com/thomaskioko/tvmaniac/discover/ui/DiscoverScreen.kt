@@ -136,7 +136,16 @@ internal fun DiscoverScreen(
             state.isLoading -> LoadingIndicator(
                 modifier = Modifier
                     .fillMaxSize()
+                    .testTag(DiscoverTestTags.PROGRESS_INDICATOR)
                     .padding(paddingValues.copy(copyBottom = false)),
+            )
+
+            state.showError -> EmptyStateView(
+                imageVector = Icons.Outlined.ErrorOutline,
+                title = state.message?.message ?: generic_error_message.resolve(context),
+                buttonText = generic_retry.resolve(context),
+                buttonTestTag = DiscoverTestTags.ERROR_RETRY_BUTTON_TEST_TAG,
+                onClick = { onAction(RefreshData) },
             )
 
             state.isEmpty ->
@@ -150,14 +159,6 @@ internal fun DiscoverScreen(
                     buttonTestTag = DiscoverTestTags.ERROR_RETRY_BUTTON_TEST_TAG,
                     onClick = { onAction(RefreshData) },
                 )
-
-            state.showError -> EmptyStateView(
-                imageVector = Icons.Outlined.ErrorOutline,
-                title = state.message?.message ?: generic_error_message.resolve(context),
-                buttonText = generic_retry.resolve(context),
-                buttonTestTag = DiscoverTestTags.ERROR_RETRY_BUTTON_TEST_TAG,
-                onClick = { onAction(RefreshData) },
-            )
 
             else -> DiscoverContent(
                 modifier = modifier,
