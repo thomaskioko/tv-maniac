@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.app.test.compose.stubs.TEST_NEXT_WEEK
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.TEST_PROFILE_SLUG
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeSheetActionItem
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
+import com.thomaskioko.tvmaniac.testtags.notifications.NotificationRationaleTestTags
 import org.junit.Test
 
 internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
@@ -40,17 +41,13 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
             .scrollToSignInButton()
             .assertSignInButtonDisplayed()
             .also { scenarios.stubAuthenticatedSyncOnSignIn() }
-
-        profileRobot.clickSignInButton()
-
-        rootRobot
-            .dismissNotificationRationale()
-
-        profileRobot
+            .clickSignInButton()
+            .onClick(NotificationRationaleTestTags.DISMISS_BUTTON)
             .assertUserCardDisplayed(slug = TEST_PROFILE_SLUG)
 
         // Verify synced surfaces appear after auth
-        homeRobot.clickLibraryTab()
+        homeRobot
+            .clickLibraryTab()
             .assertTabSelected(HomeTestTags.LIBRARY_TAB)
 
         libraryRobot
@@ -64,7 +61,6 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
         progressRobot
             .assertUpNextTabSelected()
             .assertUpNextPageDisplayed()
-            .scrollToUpNextEpisode(breakingBadTraktId)
             .assertUpNextEpisodeDisplayed(breakingBadTraktId)
 
         homeRobot
@@ -129,6 +125,7 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
         progressRobot
             .assertProgressScreenDisplayed()
             .assertUpNextTabSelected()
+            .assertLoadingIndicatorDoesNotExist()
             .assertUpNextPageDisplayed()
             .scrollToUpNextEpisode(breakingBadTraktId)
             .assertUpNextEpisodeDisplayed(breakingBadTraktId)
@@ -162,6 +159,7 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
 
         progressRobot
             .assertUpNextTabSelected()
+            .assertLoadingIndicatorDoesNotExist()
             .assertUpNextPageDisplayed()
             .scrollToUpNextEpisode(breakingBadTraktId)
             .assertUpNextEpisodeDisplayed(breakingBadTraktId)
@@ -171,13 +169,10 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
 
         homeRobot.clickProfileTab()
             .assertTabSelected(HomeTestTags.PROFILE_TAB)
-        profileRobot.assertUserCardDisplayed(slug = TEST_PROFILE_SLUG)
 
-        // Logout via Settings
-        homeRobot.clickProfileTab()
-            .assertTabSelected(HomeTestTags.PROFILE_TAB)
-
-        profileRobot.clickSettingsButton()
+        profileRobot
+            .assertUserNameDisplayed()
+            .clickSettingsButton()
 
         settingsRobot
             .assertSettingsScreenDisplayed()
