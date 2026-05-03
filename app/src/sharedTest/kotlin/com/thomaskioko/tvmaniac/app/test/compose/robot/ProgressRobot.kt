@@ -34,12 +34,12 @@ internal class ProgressRobot(composeUi: ComposeUiTest) : BaseRobot<ProgressRobot
     }
 
     fun assertUpNextPageDisplayed() = apply {
-        assertDisplayed(UpNextTestTags.LIST_TEST_TAG)
+        assertDisplayed(UpNextTestTags.PAGE_LIST_TEST_TAG)
     }
 
     fun scrollToUpNextEpisode(traktId: Long) = apply {
         val tag = UpNextTestTags.episodeRow(traktId)
-        scrollDownUntilTag(UpNextTestTags.LIST_TEST_TAG, tag)
+        scrollDownUntilTag(UpNextTestTags.PAGE_LIST_TEST_TAG, tag)
     }
 
     fun assertUpNextEpisodeDisplayed(traktId: Long) = apply {
