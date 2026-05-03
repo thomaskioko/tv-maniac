@@ -2,6 +2,8 @@ package com.thomaskioko.tvmaniac.app.test.compose.flows.calendar
 
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.TEST_NEXT_WEEK
+import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
+import com.thomaskioko.tvmaniac.testtags.progress.ProgressTestTags
 import org.junit.Test
 
 internal class CalendarFlowTest : BaseAppFlowTest() {
@@ -10,47 +12,58 @@ internal class CalendarFlowTest : BaseAppFlowTest() {
     fun givenUnauthenticatedUser_whenNavigatesToCalendar_thenShowsLoginPrompt() = runAppFlowTest {
         scenarios.discover.stubBrowseGraph()
 
-        discoverRobot.assertDiscoverScreenDisplayed()
+        discoverRobot
+            .assertDiscoverScreenDisplayed()
 
-        homeRobot.clickProgressTab()
+        homeRobot
+            .clickProgressTab()
+            .assertTabSelected(HomeTestTags.PROGRESS_TAB)
 
-        progressRobot.assertProgressScreenDisplayed()
-        progressRobot.clickCalendarTab()
+        progressRobot
+            .assertProgressScreenDisplayed()
+            .clickCalendarTab()
+            .assertSelected(ProgressTestTags.CALENDAR_TAB)
 
-        calendarRobot.assertLoggedOutStateDisplayed()
-        calendarRobot.assertTextDisplayed("Login to Trakt to see your calendar")
+        calendarRobot
+            .assertLoggedOutStateDisplayed()
+            .assertTextDisplayed("Login to Trakt to see your calendar")
     }
 
     @Test
     fun authenticatedUserCalendarJourney() = runAppFlowTest {
         scenarios.discover.stubBrowseGraph()
 
-        discoverRobot.assertDiscoverScreenDisplayed()
+        discoverRobot
+            .assertDiscoverScreenDisplayed()
 
         scenarios.signInAndDismissRationale()
 
         scenarios.calendar.stubWeek()
         scenarios.calendar.stubWeek(weekStart = TEST_NEXT_WEEK)
 
-        homeRobot.clickProgressTab()
+        homeRobot
+            .clickProgressTab()
+            .assertTabSelected(HomeTestTags.PROGRESS_TAB)
 
-        progressRobot.assertProgressScreenDisplayed()
-
-        progressRobot.clickCalendarTab()
+        progressRobot
+            .assertProgressScreenDisplayed()
+            .clickCalendarTab()
+            .assertSelected(ProgressTestTags.CALENDAR_TAB)
+            .waitForIdle()
 
         // Assert Current Week
-        calendarRobot.assertCalendarScreenDisplayed()
-        calendarRobot.assertWeekLabelDisplayed("Apr 19, 2026 - Apr 25, 2026")
-        calendarRobot.assertDateHeaderDisplayed("Today, Apr 19, 2026")
-        calendarRobot.assertTextDisplayed("Breaking Bad")
-        calendarRobot.assertAdditionalEpisodesCountDisplayed(episodeTraktId = 73640L, expectedText = "+1 episodes")
-
-        // Assert Next Week
-        calendarRobot.clickNextWeek()
-        calendarRobot.assertWeekLabelDisplayed("Apr 26, 2026 - May 2, 2026")
-        calendarRobot.assertDateHeaderDisplayed("Sunday, Apr 26, 2026")
-        calendarRobot.assertTextDisplayed("Game of Thrones")
-        calendarRobot.assertEpisodeCardDoesNotExist(73640L)
+        calendarRobot
+            .assertCalendarScreenDisplayed()
+            .assertWeekLabelDisplayed("Apr 19, 2026 - Apr 25, 2026")
+            .assertDateHeaderDisplayed("Today, Apr 19, 2026")
+            .assertTextDisplayed("Breaking Bad")
+            .scrollToAdditionalEpisodesCount(episodeTraktId = 73640L)
+            .assertAdditionalEpisodesCountDisplayed(episodeTraktId = 73640L, expectedText = "+1 episodes")
+            .clickNextWeek()
+            .assertWeekLabelDisplayed("Apr 26, 2026 - May 2, 2026")
+            .assertDateHeaderDisplayed("Sunday, Apr 26, 2026")
+            .assertTextDisplayed("Game of Thrones")
+            .assertEpisodeCardDoesNotExist(73640L)
     }
 
     @Test
@@ -63,10 +76,17 @@ internal class CalendarFlowTest : BaseAppFlowTest() {
 
         scenarios.calendar.stubEmptyWeek()
 
-        homeRobot.clickProgressTab()
-        progressRobot.clickCalendarTab()
-        calendarRobot.assertEmptyStateDisplayed()
-        calendarRobot.assertTextDisplayed("Nothing to see here")
+        homeRobot
+            .clickProgressTab()
+            .assertTabSelected(HomeTestTags.PROGRESS_TAB)
+
+        progressRobot
+            .clickCalendarTab()
+            .assertSelected(ProgressTestTags.CALENDAR_TAB)
+
+        calendarRobot
+            .assertEmptyStateDisplayed()
+            .assertTextDisplayed("Nothing to see here")
     }
 
     @Test
@@ -79,9 +99,16 @@ internal class CalendarFlowTest : BaseAppFlowTest() {
 
         scenarios.calendar.stubWeekError()
 
-        homeRobot.clickProgressTab()
-        progressRobot.clickCalendarTab()
-        calendarRobot.assertWeekLabelDisplayed("Apr 19, 2026 - Apr 25, 2026")
-        calendarRobot.assertTextDisplayed("Resource not found", substring = true)
+        homeRobot
+            .clickProgressTab()
+            .assertTabSelected(HomeTestTags.PROGRESS_TAB)
+
+        progressRobot
+            .clickCalendarTab()
+            .assertSelected(ProgressTestTags.CALENDAR_TAB)
+
+        calendarRobot
+            .assertWeekLabelDisplayed("Apr 19, 2026 - Apr 25, 2026")
+            .assertTextDisplayed("Resource not found", substring = true)
     }
 }

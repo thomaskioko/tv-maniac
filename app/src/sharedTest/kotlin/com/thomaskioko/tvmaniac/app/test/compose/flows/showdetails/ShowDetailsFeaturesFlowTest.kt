@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.showdetails
 
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
-import com.thomaskioko.tvmaniac.testtags.showdetails.ShowDetailsTestTags
 import org.junit.Test
 
 internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
@@ -14,44 +13,33 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
     fun givenShowDetails_whenOpened_thenInteractiveSurfacesAreExercised() = runAppFlowTest {
         scenarios.discover.stubBrowseGraph()
 
-        discoverRobot.clickShowCard(breakingBadTraktId)
-        showDetailsRobot.assertShowDetailsDisplayed()
+        discoverRobot
+            .assertFeaturedPagerDisplayed()
+            .clickShowCard(breakingBadTraktId)
 
-        // Track show
-        showDetailsRobot.assertTrackButtonDisplayed()
-        showDetailsRobot.clickTrackButton()
+        showDetailsRobot
+            .assertShowDetailsDisplayed()
+            .assertTrackButtonDisplayed()
+            .clickTrackButton()
 
         rootRobot.dismissNotificationRationale()
 
-        showDetailsRobot.assertStopTrackingButtonDisplayed()
+        showDetailsRobot
+            .assertStopTrackingButtonDisplayed()
+            .assertContinueTrackingSectionDisplayed()
+            .clickContinueTrackingMarkWatched(pilotEpisodeTraktId)
+            // Navigate to season details and back
+            .clickSeasonChip(seasonNumber = 1L)
+            .assertSeasonDetailsDisplayed()
+            .clickBackButton()
 
-        showDetailsRobot.assertContinueTrackingSectionDisplayed()
-
-        showDetailsRobot.clickContinueTrackingMarkWatched(pilotEpisodeTraktId)
-
-        // Navigate to season details and back
-        showDetailsRobot.clickSeasonChip(seasonNumber = 1L).apply {
-            assertSeasonDetailsDisplayed()
-            clickBackButton()
-        }
-
-        // Verify additional sections
-        showDetailsRobot.scrollTo(ShowDetailsTestTags.CAST_LIST_TEST_TAG)
-        showDetailsRobot.assertCastListDisplayed()
-
-        showDetailsRobot.scrollTo(ShowDetailsTestTags.TRAILERS_LIST_TEST_TAG)
-        showDetailsRobot.assertTrailersListDisplayed()
-
-        showDetailsRobot.scrollTo(ShowDetailsTestTags.SIMILAR_SHOWS_LIST_TEST_TAG)
-        showDetailsRobot.assertSimilarShowsListDisplayed()
-
-        // Verify login prompt for logged-out users when adding to list
-        showDetailsRobot.scrollToListTag(
-            listTag = ShowDetailsTestTags.SHOW_DETAILS_SCREEN_TEST_TAG,
-            itemTag = ShowDetailsTestTags.ADD_TO_LIST_BUTTON_TEST_TAG,
-        )
-        showDetailsRobot.clickAddToListButton()
-        showDetailsRobot.assertLoginPromptDisplayed()
+        showDetailsRobot
+            .assertCastListDisplayed()
+            .assertTrailersListDisplayed()
+            .assertSimilarShowsListDisplayed()
+            // Verify login prompt for logged-out users when adding to list
+            .clickAddToListButton()
+            .assertLoginPromptDisplayed()
     }
 
     @Test
@@ -60,19 +48,17 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
 
         scenarios.stubAuthenticatedSync()
 
-        rootRobot.dismissNotificationRationale()
+        rootRobot
+            .dismissNotificationRationale()
 
-        discoverRobot.clickShowCard(breakingBadTraktId)
-        showDetailsRobot.assertShowDetailsDisplayed()
+        discoverRobot
+            .assertFeaturedPagerDisplayed()
+            .clickShowCard(breakingBadTraktId)
 
-        showDetailsRobot.scrollToListTag(
-            listTag = ShowDetailsTestTags.SHOW_DETAILS_SCREEN_TEST_TAG,
-            itemTag = ShowDetailsTestTags.ADD_TO_LIST_BUTTON_TEST_TAG,
-        )
-        showDetailsRobot.clickAddToListButton()
-
-        showDetailsRobot.assertLoginPromptDoesNotExist()
-        showDetailsRobot.assertListSheetDisplayed()
-        showDetailsRobot.assertTraktListItemDisplayed(favoritesListTraktId)
+        showDetailsRobot
+            .assertShowDetailsDisplayed()
+            .clickAddToListButton()
+            .assertListSheetDisplayed()
+            .assertTraktListItemDisplayed(favoritesListTraktId)
     }
 }

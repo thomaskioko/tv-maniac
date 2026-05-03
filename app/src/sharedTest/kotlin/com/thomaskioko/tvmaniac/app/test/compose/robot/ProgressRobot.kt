@@ -7,45 +7,66 @@ import com.thomaskioko.tvmaniac.testtags.progress.ProgressTestTags
 import com.thomaskioko.tvmaniac.testtags.upnext.UpNextTestTags
 
 @OptIn(ExperimentalTestApi::class)
-internal class ProgressRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
+internal class ProgressRobot(composeUi: ComposeUiTest) : BaseRobot<ProgressRobot>(composeUi) {
 
-    fun assertProgressScreenDisplayed() {
+    fun assertProgressScreenDisplayed() = apply {
         assertDisplayed(ProgressTestTags.SCREEN_TEST_TAG)
     }
 
-    fun assertUpNextEmptyStateDisplayed() {
+    fun assertUpNextEmptyStateDisplayed() = apply {
         assertDisplayed(UpNextTestTags.EMPTY_STATE_TEST_TAG)
     }
 
-    fun assertEpisodeRowDisplayed(traktId: Long) {
-        assertExists(UpNextTestTags.episodeRow(traktId))
+    fun assertEpisodeRowDisplayed(traktId: Long) = apply {
+        val tag = UpNextTestTags.episodeRow(traktId)
+        scrollDownUntilTag(UpNextTestTags.LIST_TEST_TAG, tag)
+        assertExists(tag)
     }
 
-    fun assertEpisodeRowDoesNotExist(traktId: Long) {
+    fun assertEpisodeRowDoesNotExist(traktId: Long) = apply {
         assertDoesNotExist(UpNextTestTags.episodeRow(traktId))
     }
 
-    fun assertEpisodeMetaDisplayed(traktId: Long, formattedEpisodeNumber: String) {
-        assertNodeHasText(UpNextTestTags.episodeRow(traktId), formattedEpisodeNumber)
+    fun assertEpisodeMetaDisplayed(traktId: Long, formattedEpisodeNumber: String) = apply {
+        val tag = UpNextTestTags.episodeRow(traktId)
+        scrollDownUntilTag(UpNextTestTags.LIST_TEST_TAG, tag)
+        assertNodeHasText(tag, formattedEpisodeNumber)
     }
 
-    fun assertProgressCountDisplayed(traktId: Long, count: String) {
-        assertNodeHasText(UpNextTestTags.episodeRow(traktId), count)
+    fun assertProgressCountDisplayed(traktId: Long, count: String) = apply {
+        val tag = UpNextTestTags.episodeRow(traktId)
+        scrollDownUntilTag(UpNextTestTags.LIST_TEST_TAG, tag)
+        assertNodeHasText(tag, count)
     }
 
-    fun clickWatchedButton(traktId: Long) {
-        click(UpNextTestTags.watchedButton(traktId))
+    fun clickWatchedButton(traktId: Long) = apply {
+        val tag = UpNextTestTags.watchedButton(traktId)
+        scrollDownUntilTag(UpNextTestTags.LIST_TEST_TAG, tag)
+        click(tag)
     }
 
-    fun clickEpisodeRow(traktId: Long) {
-        click(UpNextTestTags.episodeRow(traktId))
+    fun clickEpisodeRow(traktId: Long): SeasonDetailsRobot {
+        val tag = UpNextTestTags.episodeRow(traktId)
+        scrollDownUntilTag(UpNextTestTags.LIST_TEST_TAG, tag)
+        click(tag)
+        return SeasonDetailsRobot(composeUi)
     }
 
-    fun clickCalendarTab() {
+    fun clickCalendarTab() = apply {
         click(ProgressTestTags.CALENDAR_TAB)
     }
 
-    fun clickUpNextTab() {
+    fun clickUpNextTab() = apply {
         click(ProgressTestTags.UPNEXT_TAB)
+    }
+
+    fun swipeLeftPager() = apply {
+        swipeLeft(ProgressTestTags.HORIZONTAL_PAGER)
+        waitForIdle()
+    }
+
+    fun swipeRightPager() = apply {
+        swipeRight(ProgressTestTags.HORIZONTAL_PAGER)
+        waitForIdle()
     }
 }

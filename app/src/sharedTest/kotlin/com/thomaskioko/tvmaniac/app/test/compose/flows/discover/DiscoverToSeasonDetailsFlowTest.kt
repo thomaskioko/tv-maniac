@@ -16,33 +16,36 @@ internal class DiscoverToSeasonDetailsFlowTest : BaseAppFlowTest() {
         scenarios.discover.stubBrowseGraph()
 
         // 1. Open Show Details & verify chips
-        discoverRobot.clickShowCard(breakingBadTraktId)
-        showDetailsRobot.assertShowDetailsDisplayed()
-        showDetailsRobot.assertSeasonChipDisplayed(seasonNumber = 1L)
-        showDetailsRobot.assertSeasonChipDisplayed(seasonNumber = 2L)
+        discoverRobot
+            .assertFeaturedPagerDisplayed()
+            .clickShowCard(breakingBadTraktId)
 
         // 2. Open Season Details
-        showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
-        seasonDetailsRobot.assertSeasonDetailsDisplayed()
-        seasonDetailsRobot.assertEpisodeRowDisplayed(pilotEpisodeTraktId)
+        showDetailsRobot
+            .assertShowDetailsDisplayed()
+            .assertSeasonChipDisplayed(seasonNumber = 1L)
+            .assertSeasonChipDisplayed(seasonNumber = 2L)
+            .clickSeasonChip(seasonNumber = 1L)
 
-        // 3. Toggle Episode List
-        seasonDetailsRobot.clickEpisodeHeader()
-        seasonDetailsRobot.assertEpisodeRowDoesNotExist(pilotEpisodeTraktId)
-        seasonDetailsRobot.clickEpisodeHeader()
-        seasonDetailsRobot.assertEpisodeRowDisplayed(pilotEpisodeTraktId)
+        seasonDetailsRobot
+            .assertSeasonDetailsDisplayed()
+            .assertEpisodeRowDisplayed(pilotEpisodeTraktId)
+            .clickEpisodeHeader()
+            .assertEpisodeRowDoesNotExist(pilotEpisodeTraktId)
+            .clickEpisodeHeader()
+            .assertEpisodeRowDisplayed(pilotEpisodeTraktId)
+            .clickEpisodeRow(pilotEpisodeTraktId)
 
-        // 4. Open Episode Sheet
-        seasonDetailsRobot.clickEpisodeRow(pilotEpisodeTraktId)
-        episodeSheetRobot.assertEpisodeSheetDisplayed()
+        episodeSheetRobot
+            .assertEpisodeSheetDisplayed()
+            .pressBack()
 
-        // 5. Back to Season Details (Dismiss Sheet)
-        episodeSheetRobot.pressBack()
-        seasonDetailsRobot.assertSeasonDetailsDisplayed()
+        seasonDetailsRobot
+            .assertSeasonDetailsDisplayed()
+            .clickBackButton()
+            .assertDoesNotExist(SeasonDetailsTestTags.SCREEN_TEST_TAG)
 
-        // 6. Back to Show Details
-        seasonDetailsRobot.clickBackButton()
-        seasonDetailsRobot.assertDoesNotExist(SeasonDetailsTestTags.SCREEN_TEST_TAG)
-        showDetailsRobot.assertShowDetailsDisplayed()
+        showDetailsRobot
+            .assertShowDetailsDisplayed()
     }
 }

@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.app.test.compose.flows.sheet
 import com.thomaskioko.tvmaniac.app.test.AppFlowScope
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeSheetActionItem
+import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
 import org.junit.Test
 
 internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
@@ -16,7 +17,9 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
         scenarios.stubAuthenticatedSync()
 
         openEpisodeSheetFromUpNextCard()
-        episodeSheetRobot.assertEpisodeSheetDisplayed()
+
+        episodeSheetRobot
+            .assertEpisodeSheetDisplayed()
     }
 
     @Test
@@ -25,10 +28,11 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
 
         openEpisodeSheetFromUpNextCard()
 
-        episodeSheetRobot.assertActionItemDisplayed(EpisodeSheetActionItem.TOGGLE_WATCHED)
-        episodeSheetRobot.assertActionItemDisplayed(EpisodeSheetActionItem.OPEN_SHOW)
-        episodeSheetRobot.assertActionItemDisplayed(EpisodeSheetActionItem.OPEN_SEASON)
-        episodeSheetRobot.assertActionItemDisplayed(EpisodeSheetActionItem.UNFOLLOW)
+        episodeSheetRobot
+            .assertActionItemDisplayed(EpisodeSheetActionItem.TOGGLE_WATCHED)
+            .assertActionItemDisplayed(EpisodeSheetActionItem.OPEN_SHOW)
+            .assertActionItemDisplayed(EpisodeSheetActionItem.OPEN_SEASON)
+            .assertActionItemDisplayed(EpisodeSheetActionItem.UNFOLLOW)
     }
 
     @Test
@@ -37,9 +41,11 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
 
         openEpisodeSheetFromUpNextCard()
 
-        episodeSheetRobot.clickActionItem(EpisodeSheetActionItem.OPEN_SHOW)
+        episodeSheetRobot
+            .clickActionItem(EpisodeSheetActionItem.OPEN_SHOW)
 
-        showDetailsRobot.assertStopTrackingButtonDisplayed()
+        showDetailsRobot
+            .assertStopTrackingButtonDisplayed()
     }
 
     @Test
@@ -48,10 +54,13 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
 
         openEpisodeSheetFromUpNextCard()
 
-        episodeSheetRobot.clickActionItem(EpisodeSheetActionItem.OPEN_SEASON)
+        episodeSheetRobot
+            .clickActionItem(EpisodeSheetActionItem.OPEN_SEASON)
 
-        seasonDetailsRobot.assertSeasonDetailsDisplayed()
-        seasonDetailsRobot.assertEpisodeRowDisplayed(pilotEpisodeTraktId)
+        seasonDetailsRobot
+            .assertSeasonDetailsDisplayed()
+            .scrollToEpisodeRow(pilotEpisodeTraktId)
+            .assertEpisodeRowDisplayed(pilotEpisodeTraktId)
     }
 
     @Test
@@ -60,11 +69,14 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
 
         openEpisodeSheetFromUpNextCard()
 
-        episodeSheetRobot.clickActionItem(EpisodeSheetActionItem.TOGGLE_WATCHED)
+        episodeSheetRobot
+            .clickActionItem(EpisodeSheetActionItem.TOGGLE_WATCHED)
 
         homeRobot.clickLibraryTab()
         libraryRobot.clickShowRow(breakingBadTraktId)
-        showDetailsRobot.clickSeasonChip(seasonNumber = pilotSeasonNumber)
+        showDetailsRobot
+            .assertShowDetailsDisplayed()
+            .clickSeasonChip(seasonNumber = pilotSeasonNumber)
         seasonDetailsRobot.assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
     }
 
@@ -74,10 +86,14 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
 
         openEpisodeSheetFromUpNextCard()
 
-        episodeSheetRobot.clickActionItem(EpisodeSheetActionItem.UNFOLLOW)
+        episodeSheetRobot
+            .clickActionItem(EpisodeSheetActionItem.UNFOLLOW)
 
-        homeRobot.clickLibraryTab()
-        libraryRobot.assertShowRowDoesNotExist(breakingBadTraktId)
+        homeRobot
+            .clickLibraryTab()
+
+        libraryRobot
+            .assertShowRowDoesNotExist(breakingBadTraktId)
     }
 
     private fun AppFlowScope.openEpisodeSheetFromUpNextCard() {
@@ -85,15 +101,30 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
 
         discoverRobot.assertDiscoverScreenDisplayed()
 
-        homeRobot.clickLibraryTab()
-        libraryRobot.assertShowRowDisplayed(breakingBadTraktId)
+        homeRobot
+            .clickLibraryTab()
+            .assertTabSelected(HomeTestTags.LIBRARY_TAB)
 
-        homeRobot.clickProgressTab()
-        progressRobot.assertEpisodeRowDisplayed(breakingBadTraktId)
+        libraryRobot
+            .scrollToShowRow(breakingBadTraktId)
+            .assertShowRowDisplayed(breakingBadTraktId)
 
-        homeRobot.clickDiscoverTab()
-        discoverRobot.clickUpNextCard(breakingBadTraktId)
+        homeRobot
+            .clickProgressTab()
+            .assertTabSelected(HomeTestTags.PROGRESS_TAB)
 
-        episodeSheetRobot.assertEpisodeSheetDisplayed()
+        progressRobot
+            .assertEpisodeRowDisplayed(breakingBadTraktId)
+
+        homeRobot
+            .clickDiscoverTab()
+            .assertTabSelected(HomeTestTags.DISCOVER_TAB)
+
+        discoverRobot
+            .assertFeaturedPagerDisplayed()
+            .clickUpNextCard(breakingBadTraktId)
+
+        episodeSheetRobot
+            .assertEpisodeSheetDisplayed()
     }
 }
