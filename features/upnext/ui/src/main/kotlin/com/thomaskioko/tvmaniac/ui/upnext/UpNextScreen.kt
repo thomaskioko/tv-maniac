@@ -37,6 +37,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
+import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.SelectableFilterChip
 import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
@@ -111,7 +112,12 @@ internal fun UpNextScreenContent(
                 modifier = Modifier.weight(1f),
             ) {
                 when {
-                    state.showLoading -> Box(modifier = Modifier.fillMaxSize())
+                    state.showLoading -> LoadingIndicator(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .testTag(UpNextTestTags.PROGRESS_INDICATOR),
+                    )
+
                     state.isEmpty -> UpNextEmptyState()
                     else -> UpNextLoadedContent(
                         state = state,
@@ -208,12 +214,10 @@ private fun TopBarContent(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (state.isLoading) {
-            CircularProgressIndicator(
+            LoadingIndicator(
                 modifier = Modifier
                     .padding(start = 8.dp)
                     .size(20.dp),
-                color = MaterialTheme.colorScheme.secondary,
-                strokeWidth = 2.dp,
             )
         }
     }

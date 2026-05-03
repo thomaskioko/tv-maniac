@@ -33,6 +33,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
@@ -170,13 +171,11 @@ internal fun ProgressScreen(
                         )
 
                         if (isLoading) {
-                            CircularProgressIndicator(
+                            LoadingIndicator(
                                 modifier = Modifier
                                     .testTag(ProgressTestTags.PROGRESS_INDICATOR)
                                     .padding(start = 8.dp)
                                     .size(20.dp),
-                                color = MaterialTheme.colorScheme.secondary,
-                                strokeWidth = 2.dp,
                             )
                         }
                     }

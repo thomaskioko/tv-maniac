@@ -7,5 +7,5 @@ public object ProgressTestTags {
     public const val HORIZONTAL_PAGER: String = "progress_horizontal_pager"
     public const val UPNEXT_TAB: String = "progress_tab_0"
     public const val CALENDAR_TAB: String = "progress_tab_1"
-    public const val PROGRESS_INDICATOR: String = "progress_indicator"
+    public const val PROGRESS_INDICATOR: String = "progress_loading_indicator"
 }
