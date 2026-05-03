@@ -47,6 +47,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
+import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
 import com.thomaskioko.tvmaniac.compose.components.ScrimButton
 import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
@@ -132,6 +133,12 @@ internal fun DiscoverScreen(
     ) { paddingValues ->
         val context = LocalContext.current
         when {
+            state.isLoading -> LoadingIndicator(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues.copy(copyBottom = false)),
+            )
+
             state.isEmpty ->
                 EmptyStateView(
                     modifier = Modifier
