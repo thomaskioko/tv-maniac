@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Movie
 import androidx.compose.material.icons.outlined.Person
@@ -18,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -65,29 +65,20 @@ public fun HomeScreen(
 ) {
     val screenContents = LocalScreenContents.current
     val activeRoot by presenter.activeRoot.collectAsState()
+    val saveableStateHolder = rememberSaveableStateHolder()
 
     Column(modifier = modifier) {
         Box(modifier = Modifier.weight(1F).fillMaxSize()) {
-            TabPane(
-                stack = presenter.discoverChildStack,
-                visible = activeRoot is DiscoverRoot,
-                screenContents = screenContents,
-            )
-            TabPane(
-                stack = presenter.progressChildStack,
-                visible = activeRoot is ProgressRoot,
-                screenContents = screenContents,
-            )
-            TabPane(
-                stack = presenter.libraryChildStack,
-                visible = activeRoot is LibraryRoot,
-                screenContents = screenContents,
-            )
-            TabPane(
-                stack = presenter.profileChildStack,
-                visible = activeRoot is ProfileRoot,
-                screenContents = screenContents,
-            )
+            val (key, activeStack) = when (activeRoot) {
+                is DiscoverRoot -> "discover" to presenter.discoverChildStack
+                is ProgressRoot -> "progress" to presenter.progressChildStack
+                is LibraryRoot -> "library" to presenter.libraryChildStack
+                is ProfileRoot -> "profile" to presenter.profileChildStack
+                else -> "discover" to presenter.discoverChildStack
+            }
+            saveableStateHolder.SaveableStateProvider(key = key) {
+                TabPane(stack = activeStack, screenContents = screenContents)
+            }
         }
         BottomNavigationContent(
             component = presenter,
@@ -100,14 +91,12 @@ public fun HomeScreen(
 @Composable
 private fun TabPane(
     stack: StateFlow<ChildStack<*, RootChild>>,
-    visible: Boolean,
     screenContents: Set<ScreenContent>,
 ) {
     val childStack by stack.collectAsState()
-    val paneModifier = if (visible) Modifier.fillMaxSize() else Modifier.size(0.dp)
 
     Children(
-        modifier = paneModifier,
+        modifier = Modifier.fillMaxSize(),
         stack = childStack,
     ) { child ->
         val instance = child.instance
