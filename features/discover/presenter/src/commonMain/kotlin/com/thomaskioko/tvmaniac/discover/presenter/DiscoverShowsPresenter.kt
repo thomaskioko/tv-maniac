@@ -92,7 +92,7 @@ public class DiscoverShowsPresenter(
         private val uiMessageManager = UiMessageManager()
 
         private val _state: MutableStateFlow<DiscoverViewState> = MutableStateFlow(
-            DiscoverViewState.Empty.copy(featuredRefreshing = true),
+            DiscoverViewState.Empty,
         )
         public val state: StateFlow<DiscoverViewState> = combine(
             upNextActionLoadingState.observable,
@@ -110,7 +110,15 @@ public class DiscoverShowsPresenter(
                 showData, message, currentState,
             ->
 
+            val isUpdating = featuredShowsIsUpdating || topRatedShowsIsUpdating || popularShowsIsUpdating ||
+                trendingShowsIsUpdating || upComingIsUpdating
+            val hasData = showData.featuredShows.isNotEmpty() || showData.topRatedShows.isNotEmpty() ||
+                showData.popularShows.isNotEmpty() || showData.trendingShows.isNotEmpty() ||
+                showData.upcomingShows.isNotEmpty()
+            val isInitial = currentState.isInitial && !isUpdating && !hasData && message == null
+
             currentState.copy(
+                isInitial = isInitial,
                 message = message,
                 featuredRefreshing = featuredShowsIsUpdating,
                 topRatedRefreshing = topRatedShowsIsUpdating,

@@ -117,7 +117,7 @@ class DiscoverShowsPresenterTest {
         presenter.state.test {
             setList(emptyList())
 
-            awaitItem() shouldBe DiscoverViewState.Empty.copy(featuredRefreshing = true)
+            awaitItem() shouldBe DiscoverViewState.Empty
         }
     }
 
@@ -127,12 +127,13 @@ class DiscoverShowsPresenterTest {
             setList(emptyList())
             setNextEpisodes(emptyList())
 
-            awaitItem() shouldBe DiscoverViewState.Empty.copy(featuredRefreshing = true)
+            awaitItem() shouldBe DiscoverViewState.Empty
 
             setList(createDiscoverShowList())
             setNextEpisodes(createNextEpisodesList())
 
             awaitItem() shouldBe DiscoverViewState(
+                isInitial = false,
                 featuredShows = uiModelList(),
                 topRatedShows = uiModelList(),
                 popularShows = uiModelList(),
@@ -149,8 +150,9 @@ class DiscoverShowsPresenterTest {
             setList(createDiscoverShowList())
             setNextEpisodes(createNextEpisodesList())
 
-            awaitItem() shouldBe DiscoverViewState.Empty.copy(featuredRefreshing = true)
+            awaitItem() shouldBe DiscoverViewState.Empty
             awaitItem() shouldBe DiscoverViewState(
+                isInitial = false,
                 featuredShows = uiModelList(),
                 topRatedShows = uiModelList(),
                 popularShows = uiModelList(),
@@ -166,7 +168,7 @@ class DiscoverShowsPresenterTest {
         presenter.state.test {
             setList(emptyList())
 
-            awaitItem() shouldBe DiscoverViewState.Empty.copy(featuredRefreshing = true)
+            awaitItem() shouldBe DiscoverViewState.Empty
 
             presenter.dispatch(RefreshData)
 
@@ -174,6 +176,7 @@ class DiscoverShowsPresenterTest {
             setNextEpisodes(createNextEpisodesList())
 
             awaitItem() shouldBe DiscoverViewState(
+                isInitial = false,
                 featuredShows = uiModelList(),
                 topRatedShows = uiModelList(),
                 popularShows = uiModelList(),
@@ -192,6 +195,7 @@ class DiscoverShowsPresenterTest {
 
             val expectedList = uiModelList()
             val expectedResult = DiscoverViewState(
+                isInitial = false,
                 featuredShows = expectedList,
                 topRatedShows = expectedList,
                 popularShows = expectedList,
@@ -200,7 +204,7 @@ class DiscoverShowsPresenterTest {
                 nextEpisodes = nextEpisodeUiModelList(),
             )
 
-            awaitItem() shouldBe DiscoverViewState.Empty.copy(featuredRefreshing = true)
+            awaitItem() shouldBe DiscoverViewState.Empty
             awaitItem() shouldBe expectedResult
 
             presenter.dispatch(RefreshData)
@@ -218,6 +222,7 @@ class DiscoverShowsPresenterTest {
             val expectedUpdatedList = uiModelList()
 
             awaitItem() shouldBe DiscoverViewState(
+                isInitial = false,
                 featuredShows = expectedUpdatedList,
                 topRatedShows = expectedUpdatedList,
                 popularShows = expectedUpdatedList,
@@ -234,10 +239,11 @@ class DiscoverShowsPresenterTest {
         setNextEpisodes(createNextEpisodesList())
 
         presenter.state.test {
-            awaitItem() shouldBe DiscoverViewState.Empty.copy(featuredRefreshing = true)
+            awaitItem() shouldBe DiscoverViewState.Empty
 
             val expectedList = uiModelList()
             val expectedResult = DiscoverViewState(
+                isInitial = false,
                 featuredShows = expectedList,
                 topRatedShows = expectedList,
                 popularShows = expectedList,
@@ -263,6 +269,7 @@ class DiscoverShowsPresenterTest {
             val expectedUpdatedList = uiModelList()
 
             val expectedUpdatedResult = DiscoverViewState(
+                isInitial = false,
                 featuredShows = expectedUpdatedList,
                 topRatedShows = expectedUpdatedList,
                 popularShows = expectedUpdatedList,

@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.discover.ui.component
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,38 +38,40 @@ internal fun HorizontalRowContent(
     onItemClicked: (Long) -> Unit,
     onMoreClicked: () -> Unit,
 ) {
-    AnimatedVisibility(visible = tvShows.isNotEmpty()) {
-        Column(modifier = modifier) {
-            BoxTextItems(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp),
-                title = category,
-                label = str_more.resolve(LocalContext.current),
-                onMoreClicked = onMoreClicked,
-                moreModifier = Modifier.testTag(DiscoverTestTags.moreButton(rowKey)),
-            )
+    Box(modifier = modifier) {
+        AnimatedVisibility(visible = tvShows.isNotEmpty()) {
+            Column {
+                BoxTextItems(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp),
+                    title = category,
+                    label = str_more.resolve(LocalContext.current),
+                    onMoreClicked = onMoreClicked,
+                    moreModifier = Modifier.testTag(DiscoverTestTags.moreButton(rowKey)),
+                )
 
-            val lazyListState = rememberLazyListState()
+                val lazyListState = rememberLazyListState()
 
-            LazyRow(
-                state = lazyListState,
-                flingBehavior = rememberSnapperFlingBehavior(lazyListState),
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                items(
-                    items = tvShows,
-                    key = { tvShow -> "${rowKey}_${tvShow.traktId}" },
-                    contentType = { "ShowModel" },
-                ) { tvShow ->
-                    PosterCard(
-                        imageUrl = tvShow.posterImageUrl,
-                        onClick = { onItemClicked(tvShow.traktId) },
-                        modifier = Modifier.testTag(DiscoverTestTags.showCard(rowKey, tvShow.traktId)),
-                        title = tvShow.title,
-                        isInLibrary = tvShow.inLibrary,
-                    )
+                LazyRow(
+                    state = lazyListState,
+                    flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    items(
+                        items = tvShows,
+                        key = { tvShow -> "${rowKey}_${tvShow.traktId}" },
+                        contentType = { "ShowModel" },
+                    ) { tvShow ->
+                        PosterCard(
+                            imageUrl = tvShow.posterImageUrl,
+                            onClick = { onItemClicked(tvShow.traktId) },
+                            modifier = Modifier.testTag(DiscoverTestTags.showCard(rowKey, tvShow.traktId)),
+                            title = tvShow.title,
+                            isInLibrary = tvShow.inLibrary,
+                        )
+                    }
                 }
             }
         }

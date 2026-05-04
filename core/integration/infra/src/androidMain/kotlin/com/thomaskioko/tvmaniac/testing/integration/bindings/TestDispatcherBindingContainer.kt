@@ -13,6 +13,7 @@ import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 
 @BindingContainer
 @ContributesTo(
@@ -20,6 +21,13 @@ import kotlinx.coroutines.SupervisorJob
     replaces = [BaseBindingContainer::class],
 )
 public object TestDispatcherBindingContainer {
+
+    private val activeScopes = mutableListOf<CoroutineScope>()
+
+    public fun reset() {
+        activeScopes.forEach { it.cancel() }
+        activeScopes.clear()
+    }
 
     @Provides
     @SingleIn(AppScope::class)
@@ -56,19 +64,19 @@ public object TestDispatcherBindingContainer {
     @IoCoroutineScope
     @SingleIn(AppScope::class)
     public fun provideIoCoroutineScope(dispatchers: AppCoroutineDispatchers): CoroutineScope =
-        CoroutineScope(SupervisorJob() + dispatchers.io)
+        CoroutineScope(SupervisorJob() + dispatchers.io).also { activeScopes.add(it) }
 
     @Provides
     @MainCoroutineScope
     @SingleIn(AppScope::class)
     public fun provideMainCoroutineScope(dispatchers: AppCoroutineDispatchers): CoroutineScope =
-        CoroutineScope(SupervisorJob() + dispatchers.main)
+        CoroutineScope(SupervisorJob() + dispatchers.main).also { activeScopes.add(it) }
 
     @Provides
     @ComputationCoroutineScope
     @SingleIn(AppScope::class)
     public fun provideComputationCoroutineScope(dispatchers: AppCoroutineDispatchers): CoroutineScope =
-        CoroutineScope(SupervisorJob() + dispatchers.computation)
+        CoroutineScope(SupervisorJob() + dispatchers.computation).also { activeScopes.add(it) }
 
     @Provides
     public fun provideCoroutineScope(@MainCoroutineScope scope: CoroutineScope): CoroutineScope =

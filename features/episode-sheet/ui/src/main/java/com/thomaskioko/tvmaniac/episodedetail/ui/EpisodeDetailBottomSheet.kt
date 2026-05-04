@@ -214,6 +214,8 @@ private fun EpisodeDetailContentLayout(
 
         Text(
             text = title,
+            modifier = Modifier
+                .testTag(EpisodeSheetTestTags.TITLE_TEST_TAG),
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onSurface,
         )

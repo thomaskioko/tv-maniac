@@ -28,8 +28,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -57,7 +55,6 @@ public class CalendarPresenter(
     init {
         observeAuthState()
         observeCalendar()
-        fetchCalendar(startDate = calendarWeekCalculator.getStartDateForOffset(_state.value.weekOffset))
     }
 
     public val state: StateFlow<CalendarState> = combine(
@@ -109,10 +106,10 @@ public class CalendarPresenter(
         coroutineScope.launch {
             traktAuthRepository.state
                 .distinctUntilChanged()
-                .filter { it == TraktAuthState.LOGGED_IN }
-                .drop(1)
-                .collect {
-                    fetchCalendar(startDate = calendarWeekCalculator.getStartDateForOffset(_state.value.weekOffset))
+                .collect { authState ->
+                    if (authState == TraktAuthState.LOGGED_IN) {
+                        fetchCalendar(startDate = calendarWeekCalculator.getStartDateForOffset(_state.value.weekOffset))
+                    }
                 }
         }
     }

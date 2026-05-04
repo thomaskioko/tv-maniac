@@ -8,91 +8,91 @@ import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
 import com.thomaskioko.tvmaniac.testtags.settings.SettingsTestTags
 
 @OptIn(ExperimentalTestApi::class)
-internal class SettingsRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
+internal class SettingsRobot(composeUi: ComposeUiTest) : BaseRobot<SettingsRobot>(composeUi) {
 
-    fun assertSettingsScreenDisplayed() {
+    fun assertSettingsScreenDisplayed() = apply {
         assertDisplayed(SettingsTestTags.SCREEN_TEST_TAG)
     }
 
-    fun clickBackButton() {
+    fun clickBackButton() = apply {
         click(SettingsTestTags.BACK_BUTTON_TEST_TAG)
     }
 
-    fun assertImageQualitySelected(quality: ImageQuality) {
+    fun assertImageQualitySelected(quality: ImageQuality) = apply {
         assertSelected(SettingsTestTags.imageQualityChip(quality.name))
     }
 
-    fun assertImageQualityNotSelected(quality: ImageQuality) {
+    fun assertImageQualityNotSelected(quality: ImageQuality) = apply {
         assertNotSelected(SettingsTestTags.imageQualityChip(quality.name))
     }
 
-    fun clickImageQualityChip(quality: ImageQuality) {
+    fun clickImageQualityChip(quality: ImageQuality) = apply {
         click(SettingsTestTags.imageQualityChip(quality.name))
     }
 
-    fun scrollToImageQualityChip(quality: ImageQuality) {
+    fun scrollToImageQualityChip(quality: ImageQuality) = apply {
         scrollToListTag(
             SettingsTestTags.LIST_TEST_TAG,
             SettingsTestTags.imageQualityChip(quality.name),
         )
     }
 
-    fun scrollToTraktAccountRow() {
+    fun scrollToTraktAccountRow() = apply {
         scrollToListTag(SettingsTestTags.LIST_TEST_TAG, SettingsTestTags.TRAKT_ACCOUNT_ROW_TEST_TAG)
     }
 
-    fun clickTraktAccountRow() {
+    fun clickTraktAccountRow() = apply {
         click(SettingsTestTags.TRAKT_ACCOUNT_ROW_TEST_TAG)
     }
 
-    fun assertLogoutDialogDisplayed() {
+    fun assertLogoutDialogDisplayed() = apply {
         assertExists(SettingsTestTags.LOGOUT_DIALOG_CONFIRM_BUTTON_TEST_TAG)
     }
 
-    fun assertLogoutDialogDoesNotExist() {
+    fun assertLogoutDialogDoesNotExist() = apply {
         assertDoesNotExist(SettingsTestTags.LOGOUT_DIALOG_CONFIRM_BUTTON_TEST_TAG)
     }
 
-    fun clickLogoutConfirm() {
+    fun clickLogoutConfirm() = apply {
         click(SettingsTestTags.LOGOUT_DIALOG_CONFIRM_BUTTON_TEST_TAG)
     }
 
-    fun clickLogoutDismiss() {
+    fun clickLogoutDismiss() = apply {
         click(SettingsTestTags.LOGOUT_DIALOG_DISMISS_BUTTON_TEST_TAG)
     }
 
-    fun scrollToThemeSwatch(theme: ThemeModel) {
+    fun scrollToThemeSwatch(theme: ThemeModel) = apply {
         scrollToListTag(SettingsTestTags.LIST_TEST_TAG, SettingsTestTags.themeSwatch(theme.name))
     }
 
-    fun assertThemeSwatchSelected(theme: ThemeModel) {
+    fun assertThemeSwatchSelected(theme: ThemeModel) = apply {
         assertSelected(SettingsTestTags.themeSwatch(theme.name))
     }
 
-    fun assertThemeSwatchNotSelected(theme: ThemeModel) {
+    fun assertThemeSwatchNotSelected(theme: ThemeModel) = apply {
         assertNotSelected(SettingsTestTags.themeSwatch(theme.name))
     }
 
-    fun clickThemeSwatch(theme: ThemeModel) {
+    fun clickThemeSwatch(theme: ThemeModel) = apply {
         click(SettingsTestTags.themeSwatch(theme.name))
     }
 
-    fun scrollToEpisodeNotificationsToggle() {
+    fun scrollToEpisodeNotificationsToggle() = apply {
         scrollToListTag(
             SettingsTestTags.LIST_TEST_TAG,
             SettingsTestTags.EPISODE_NOTIFICATIONS_TOGGLE_TEST_TAG,
         )
     }
 
-    fun assertEpisodeNotificationsEnabled() {
+    fun assertEpisodeNotificationsEnabled() = apply {
         assertChecked(SettingsTestTags.EPISODE_NOTIFICATIONS_TOGGLE_TEST_TAG)
     }
 
-    fun assertEpisodeNotificationsDisabled() {
+    fun assertEpisodeNotificationsDisabled() = apply {
         assertUnchecked(SettingsTestTags.EPISODE_NOTIFICATIONS_TOGGLE_TEST_TAG)
     }
 
-    fun clickEpisodeNotificationsToggle() {
+    fun clickEpisodeNotificationsToggle() = apply {
         click(SettingsTestTags.EPISODE_NOTIFICATIONS_TOGGLE_TEST_TAG)
     }
 }

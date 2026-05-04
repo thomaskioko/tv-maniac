@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.app.test.compose.flows.settings
 
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
+import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
 import org.junit.Test
 
 internal class SettingsFlowTest : BaseAppFlowTest() {
@@ -15,18 +16,21 @@ internal class SettingsFlowTest : BaseAppFlowTest() {
         scenarios.stubUsersMeUnauthorized()
 
         homeRobot.clickProfileTab()
-        profileRobot.assertSignInButtonDisplayed()
-        profileRobot.clickSettingsButton()
-        settingsRobot.assertSettingsScreenDisplayed()
+            .assertTabSelected(HomeTestTags.PROFILE_TAB)
 
-        settingsRobot.scrollToImageQualityChip(ImageQuality.HIGH)
-        settingsRobot.assertImageQualitySelected(ImageQuality.AUTO)
-        settingsRobot.assertImageQualityNotSelected(ImageQuality.HIGH)
+        profileRobot
+            .scrollToSignInButton()
+            .assertSignInButtonDisplayed()
+            .clickSettingsButton()
 
-        settingsRobot.clickImageQualityChip(ImageQuality.HIGH)
-
-        settingsRobot.assertImageQualitySelected(ImageQuality.HIGH)
-        settingsRobot.assertImageQualityNotSelected(ImageQuality.AUTO)
+        settingsRobot
+            .assertSettingsScreenDisplayed()
+            .scrollToImageQualityChip(ImageQuality.HIGH)
+            .assertImageQualitySelected(ImageQuality.AUTO)
+            .assertImageQualityNotSelected(ImageQuality.HIGH)
+            .clickImageQualityChip(ImageQuality.HIGH)
+            .assertImageQualitySelected(ImageQuality.HIGH)
+            .assertImageQualityNotSelected(ImageQuality.AUTO)
     }
 
     @Test
@@ -37,16 +41,20 @@ internal class SettingsFlowTest : BaseAppFlowTest() {
 
         scenarios.signInAndDismissRationale()
 
-        homeRobot.clickProfileTab()
-        profileRobot.assertUserCardDisplayed("integration-test-user")
-        profileRobot.clickSettingsButton()
-        settingsRobot.assertSettingsScreenDisplayed()
+        homeRobot
+            .clickProfileTab()
+            .assertTabSelected(HomeTestTags.PROFILE_TAB)
 
-        settingsRobot.scrollToTraktAccountRow()
-        settingsRobot.clickTraktAccountRow()
+        profileRobot
+            .assertUserCardDisplayed("integration-test-user")
+            .clickSettingsButton()
 
-        settingsRobot.assertLogoutDialogDisplayed()
-        settingsRobot.clickLogoutDismiss()
-        settingsRobot.assertLogoutDialogDoesNotExist()
+        settingsRobot
+            .assertSettingsScreenDisplayed()
+            .scrollToTraktAccountRow()
+            .clickTraktAccountRow()
+            .assertLogoutDialogDisplayed()
+            .clickLogoutDismiss()
+            .assertLogoutDialogDoesNotExist()
     }
 }

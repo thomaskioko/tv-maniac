@@ -10,7 +10,6 @@ import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Instant
@@ -29,7 +28,7 @@ public class ObserveCalendarInteractor(
     }
 
     private fun groupEntriesByDate(entries: List<CalendarEntry>): List<GroupedCalendarEntry> {
-        val timeZone = TimeZone.currentSystemDefault()
+        val timeZone = dateTimeProvider.getTimeZone()
         val today = dateTimeProvider.now().toLocalDateTime(timeZone).date
         val tomorrow = today.plus(1, DateTimeUnit.DAY)
 

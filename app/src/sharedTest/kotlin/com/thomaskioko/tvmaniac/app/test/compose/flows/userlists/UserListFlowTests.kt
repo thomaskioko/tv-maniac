@@ -4,7 +4,6 @@ import com.thomaskioko.tvmaniac.app.test.AppFlowScope
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.TEST_CREATED_LIST_NAME
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.TEST_CREATED_LIST_TRAKT_ID
-import com.thomaskioko.tvmaniac.testtags.showdetails.ShowDetailsTestTags
 import org.junit.Test
 
 internal class UserListFlowTests : BaseAppFlowTest() {
@@ -23,56 +22,49 @@ internal class UserListFlowTests : BaseAppFlowTest() {
 
         // 1. Open list sheet & verify initial state
         openListSheet()
-        showDetailsRobot.assertListSheetDisplayed()
-        showDetailsRobot.assertTraktListItemDisplayed(favoritesListTraktId)
-        showDetailsRobot.assertTraktListItemDisplayed(animeListTraktId)
-        showDetailsRobot.assertListSwitchIsUnchecked(favoritesListTraktId)
-        showDetailsRobot.assertListSwitchIsUnchecked(animeListTraktId)
-        showDetailsRobot.assertTraktListShowCountText(favoritesListTraktId, "0 shows")
-        showDetailsRobot.assertTraktListShowCountText(animeListTraktId, "0 shows")
 
-        // 2. Add to multiple lists & verify counts
-        showDetailsRobot.clickListSwitch(favoritesListTraktId)
-        showDetailsRobot.assertListSwitchIsChecked(favoritesListTraktId)
-        showDetailsRobot.assertTraktListShowCountText(favoritesListTraktId, "1 show")
-
-        showDetailsRobot.clickListSwitch(animeListTraktId)
-        showDetailsRobot.assertListSwitchIsChecked(animeListTraktId)
-        showDetailsRobot.assertTraktListShowCountText(animeListTraktId, "1 show")
-
-        // 3. Create new list
-        showDetailsRobot.assertCreateListFieldDoesNotExist()
-        showDetailsRobot.clickCreateListButton()
-        showDetailsRobot.assertCreateListFieldDisplayed()
-
-        showDetailsRobot.typeCreateListName(TEST_CREATED_LIST_NAME)
-        showDetailsRobot.clickCreateListSubmit()
-
-        showDetailsRobot.assertCreateListFieldDoesNotExist()
-        showDetailsRobot.assertTraktListItemDisplayed(TEST_CREATED_LIST_TRAKT_ID)
-        showDetailsRobot.assertListSwitchIsUnchecked(TEST_CREATED_LIST_TRAKT_ID)
-        showDetailsRobot.assertTraktListShowCountText(TEST_CREATED_LIST_TRAKT_ID, "0 shows")
-
-        showDetailsRobot.clickListSwitch(TEST_CREATED_LIST_TRAKT_ID)
-        showDetailsRobot.assertListSwitchIsChecked(TEST_CREATED_LIST_TRAKT_ID)
-        showDetailsRobot.assertTraktListShowCountText(TEST_CREATED_LIST_TRAKT_ID, "1 show")
-
-        // 4. Close sheet
-        showDetailsRobot.clickCloseListSheetButton()
-        showDetailsRobot.assertListSheetDoesNotExist()
+        showDetailsRobot
+            .assertListSheetDisplayed()
+            .assertTraktListItemDisplayed(favoritesListTraktId)
+            .assertTraktListItemDisplayed(animeListTraktId)
+            .assertListSwitchIsUnchecked(favoritesListTraktId)
+            .assertListSwitchIsUnchecked(animeListTraktId)
+            .assertTraktListShowCountText(favoritesListTraktId, "0 shows")
+            .assertTraktListShowCountText(animeListTraktId, "0 shows")
+            // 2. Add to multiple lists & verify counts
+            .clickListSwitch(favoritesListTraktId)
+            .assertListSwitchIsChecked(favoritesListTraktId)
+            .assertTraktListShowCountText(favoritesListTraktId, "1 show")
+            .clickListSwitch(animeListTraktId)
+            .assertListSwitchIsChecked(animeListTraktId)
+            .assertTraktListShowCountText(animeListTraktId, "1 show")
+            // 3. Create new list
+            .assertCreateListFieldDoesNotExist()
+            .clickCreateListButton()
+            .assertCreateListFieldDisplayed()
+            .typeCreateListName(TEST_CREATED_LIST_NAME)
+            .clickCreateListSubmit()
+            .assertCreateListFieldDoesNotExist()
+            .assertTraktListItemDisplayed(TEST_CREATED_LIST_TRAKT_ID)
+            .assertListSwitchIsUnchecked(TEST_CREATED_LIST_TRAKT_ID)
+            .assertTraktListShowCountText(TEST_CREATED_LIST_TRAKT_ID, "0 shows")
+            .clickListSwitch(TEST_CREATED_LIST_TRAKT_ID)
+            .assertListSwitchIsChecked(TEST_CREATED_LIST_TRAKT_ID)
+            .assertTraktListShowCountText(TEST_CREATED_LIST_TRAKT_ID, "1 show")
+            .clickCloseListSheetButton()
+            .assertListSheetDoesNotExist()
     }
 
     private fun AppFlowScope.openListSheet() {
         rootRobot.dismissNotificationRationale()
 
-        discoverRobot.clickShowCard(breakingBadTraktId)
-        showDetailsRobot.assertShowDetailsDisplayed()
+        discoverRobot
+            .assertFeaturedPagerDisplayed()
+            .clickShowCard(breakingBadTraktId)
 
-        showDetailsRobot.scrollToListTag(
-            listTag = ShowDetailsTestTags.SHOW_DETAILS_SCREEN_TEST_TAG,
-            itemTag = ShowDetailsTestTags.ADD_TO_LIST_BUTTON_TEST_TAG,
-        )
-        showDetailsRobot.clickAddToListButton()
-        showDetailsRobot.assertListSheetDisplayed()
+        showDetailsRobot
+            .assertShowDetailsDisplayed()
+            .clickAddToListButton()
+            .assertListSheetDisplayed()
     }
 }

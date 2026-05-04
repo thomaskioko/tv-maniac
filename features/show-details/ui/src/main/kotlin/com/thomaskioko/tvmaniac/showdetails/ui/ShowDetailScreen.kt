@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -36,6 +37,7 @@ import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -114,7 +116,6 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowShowsListSheet
 import com.thomaskioko.tvmaniac.presenter.showdetails.WatchTrailerClicked
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.CastModel
-import com.thomaskioko.tvmaniac.presenter.showdetails.model.ContinueTrackingEpisodeModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ProviderModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowModel
@@ -245,7 +246,7 @@ private fun ListSheetTopBar(
             .padding(horizontal = 24.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        androidx.compose.material3.FilledIconButton(
+        FilledIconButton(
             onClick = onClose,
             modifier = Modifier
                 .size(36.dp)
@@ -272,7 +273,7 @@ private fun ListSheetTopBar(
         )
 
         if (!showCreateField) {
-            androidx.compose.material3.FilledIconButton(
+            FilledIconButton(
                 onClick = onCreateClicked,
                 modifier = Modifier
                     .size(36.dp)
@@ -303,7 +304,9 @@ internal fun LazyColumnContent(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
-        modifier = modifier.testTag(ShowDetailsTestTags.SHOW_DETAILS_SCREEN_TEST_TAG),
+        modifier = modifier
+            .testTag(ShowDetailsTestTags.SHOW_DETAILS_SCREEN_TEST_TAG)
+            .fillMaxSize(),
         state = listState,
         contentPadding = contentPadding.copy(copyTop = false),
     ) {
@@ -315,8 +318,8 @@ internal fun LazyColumnContent(
             )
         }
 
-        item(key = "content") {
-            if (!detailsContent.isRefreshing && detailsContent.showDetails == ShowDetailsModel.Empty && detailsContent.message != null) {
+        if (!detailsContent.isRefreshing && detailsContent.showDetails == ShowDetailsModel.Empty && detailsContent.message != null) {
+            item(key = "error") {
                 EmptyStateView(
                     modifier = Modifier.padding(top = 16.dp),
                     imageVector = Icons.Outlined.ErrorOutline,
@@ -325,94 +328,93 @@ internal fun LazyColumnContent(
                     buttonTestTag = ShowDetailsTestTags.ERROR_RETRY_BUTTON_TEST_TAG,
                     onClick = { onAction(ReloadShowDetails) },
                 )
-            } else {
-                ShowInfoContent(
-                    showDetails = detailsContent.showDetails,
+            }
+        } else {
+            item(key = "continue_tracking") {
+                ContinueTrackingSection(
+                    modifier = Modifier.testTag(ShowDetailsTestTags.CONTINUE_TRACKING_SECTION_TEST_TAG),
+                    episodes = detailsContent.continueTrackingEpisodes,
+                    scrollIndex = detailsContent.continueTrackingScrollIndex,
+                    onMarkWatched = { episode ->
+                        if (episode.isWatched) {
+                            onAction(
+                                MarkEpisodeUnwatched(
+                                    showTraktId = episode.showTraktId,
+                                    episodeId = episode.episodeId,
+                                ),
+                            )
+                        } else {
+                            onAction(
+                                MarkEpisodeWatched(
+                                    showTraktId = episode.showTraktId,
+                                    episodeId = episode.episodeId,
+                                    seasonNumber = episode.seasonNumber,
+                                    episodeNumber = episode.episodeNumber,
+                                ),
+                            )
+                        }
+                    },
+                )
+            }
+
+            item(key = "watch_progress") {
+                WatchProgressSection(
+                    modifier = Modifier.testTag(ShowDetailsTestTags.WATCH_PROGRESS_SECTION_TEST_TAG),
+                    status = detailsContent.showDetails.status,
+                    watchedEpisodesCount = detailsContent.showDetails.watchedEpisodesCount,
+                    totalEpisodesCount = detailsContent.showDetails.totalEpisodesCount,
+                    seasonsList = detailsContent.showDetails.seasonsList,
                     selectedSeasonIndex = detailsContent.selectedSeasonIndex,
-                    continueTrackingEpisodes = detailsContent.continueTrackingEpisodes,
-                    continueTrackingScrollIndex = detailsContent.continueTrackingScrollIndex,
+                    showHeader = detailsContent.continueTrackingEpisodes.isEmpty(),
+                    onSeasonClicked = { index, season ->
+                        onAction(
+                            SeasonClicked(
+                                ShowSeasonDetailsParam(
+                                    season.tvShowId,
+                                    season.seasonId,
+                                    season.seasonNumber,
+                                    selectedSeasonIndex = index,
+                                ),
+                            ),
+                        )
+                    },
+                )
+            }
+
+            item(key = "providers") {
+                WatchProvider(
+                    modifier = Modifier.testTag("show_details_watch_providers"),
+                    list = detailsContent.showDetails.providers,
+                )
+            }
+
+            item(key = "trailers") {
+                TrailersContent(
+                    modifier = Modifier.testTag(ShowDetailsTestTags.TRAILERS_LIST_TEST_TAG),
+                    trailersList = detailsContent.showDetails.trailersList,
                     onAction = onAction,
                 )
             }
-        }
-    }
-}
 
-@Composable
-private fun ShowInfoContent(
-    showDetails: ShowDetailsModel,
-    selectedSeasonIndex: Int,
-    continueTrackingEpisodes: ImmutableList<ContinueTrackingEpisodeModel>,
-    continueTrackingScrollIndex: Int,
-    onAction: (ShowDetailsAction) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(modifier = modifier.fillMaxWidth()) {
-        ContinueTrackingSection(
-            episodes = continueTrackingEpisodes,
-            scrollIndex = continueTrackingScrollIndex,
-            onMarkWatched = { episode ->
-                if (episode.isWatched) {
-                    onAction(
-                        MarkEpisodeUnwatched(
-                            showTraktId = episode.showTraktId,
-                            episodeId = episode.episodeId,
-                        ),
-                    )
-                } else {
-                    onAction(
-                        MarkEpisodeWatched(
-                            showTraktId = episode.showTraktId,
-                            episodeId = episode.episodeId,
-                            seasonNumber = episode.seasonNumber,
-                            episodeNumber = episode.episodeNumber,
-                        ),
-                    )
-                }
-            },
-        )
-
-        WatchProgressSection(
-            status = showDetails.status,
-            watchedEpisodesCount = showDetails.watchedEpisodesCount,
-            totalEpisodesCount = showDetails.totalEpisodesCount,
-            seasonsList = showDetails.seasonsList,
-            selectedSeasonIndex = selectedSeasonIndex,
-            showHeader = continueTrackingEpisodes.isEmpty(),
-            onSeasonClicked = { index, season ->
-                onAction(
-                    SeasonClicked(
-                        ShowSeasonDetailsParam(
-                            season.tvShowId,
-                            season.seasonId,
-                            season.seasonNumber,
-                            selectedSeasonIndex = index,
-                        ),
-                    ),
+            item(key = "casts") {
+                CastContent(
+                    modifier = Modifier.testTag(ShowDetailsTestTags.CAST_LIST_TEST_TAG),
+                    castsList = detailsContent.showDetails.castsList,
                 )
-            },
-        )
+            }
 
-        WatchProvider(list = showDetails.providers)
+            item(key = "similar") {
+                SimilarShowsContent(
+                    modifier = Modifier.testTag(ShowDetailsTestTags.SIMILAR_SHOWS_LIST_TEST_TAG),
+                    similarShows = detailsContent.showDetails.similarShows,
+                    onShowClicked = { onAction(DetailShowClicked(it)) },
+                )
+            }
 
-        TrailersContent(
-            modifier = Modifier.testTag(ShowDetailsTestTags.TRAILERS_LIST_TEST_TAG),
-            trailersList = showDetails.trailersList,
-            onAction = onAction,
-        )
-
-        CastContent(
-            modifier = Modifier.testTag(ShowDetailsTestTags.CAST_LIST_TEST_TAG),
-            castsList = showDetails.castsList,
-        )
-
-        SimilarShowsContent(
-            modifier = Modifier.testTag(ShowDetailsTestTags.SIMILAR_SHOWS_LIST_TEST_TAG),
-            similarShows = showDetails.similarShows,
-            onShowClicked = { onAction(DetailShowClicked(it)) },
-        )
-
-        Spacer(modifier = Modifier.height(54.dp))
+            item(key = "bottom_spacer") {
+                Spacer(modifier = Modifier.height(54.dp))
+            }
+        }
     }
 }
 
@@ -887,24 +889,31 @@ internal fun SimilarShowsContent(
     modifier: Modifier = Modifier,
     onShowClicked: (Long) -> Unit = {},
 ) {
-    if (similarShows.isEmpty()) return
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(min = 1.dp),
+    ) {
+        if (similarShows.isNotEmpty()) {
+            Column {
+                Spacer(modifier = Modifier.height(16.dp))
 
-    Spacer(modifier = Modifier.height(16.dp))
-
-    HorizontalRowContent(
-        modifier = modifier,
-        title = title_similar.resolve(LocalContext.current),
-        items = similarShows,
-        onShowClicked = onShowClicked,
-    )
+                HorizontalRowContent(
+                    title = title_similar.resolve(LocalContext.current),
+                    items = similarShows,
+                    onShowClicked = onShowClicked,
+                )
+            }
+        }
+    }
 }
 
 @Composable
 private fun HorizontalRowContent(
-    modifier: Modifier,
     title: String,
     items: ImmutableList<ShowModel>,
     onShowClicked: (Long) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val lazyListState = rememberLazyListState()
 

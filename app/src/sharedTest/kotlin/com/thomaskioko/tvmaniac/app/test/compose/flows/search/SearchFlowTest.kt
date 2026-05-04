@@ -12,26 +12,28 @@ internal class SearchFlowTest : BaseAppFlowTest() {
         val query = "Breaking Bad"
         val traktId = 1388L
 
-        discoverRobot.assertDiscoverScreenDisplayed()
-        discoverRobot.navigateToSearchTab()
+        discoverRobot
+            .assertDiscoverScreenDisplayed()
+            .navigateToSearchTab()
 
         scenarios.search.stubSearch(query)
 
         // 1. Enter Query & Verify results
-        searchRobot.assertSearchScreenDisplayed()
-        searchRobot.enterSearchQuery(query)
-        searchRobot.assertSearchQueryDisplayed(query)
-        searchRobot.assertResultItemDisplayed(traktId)
-        searchRobot.assertResultTitleDisplayed("Breaking Bad")
-
-        // 2. Click Result -> Show Details
-        searchRobot.clickResultItem(traktId)
-        showDetailsRobot.assertShowDetailsDisplayed()
+        searchRobot
+            .assertSearchScreenDisplayed()
+            .enterSearchQuery(query)
+            .assertSearchQueryDisplayed(query)
+            .assertResultItemDisplayed(traktId)
+            .assertResultTitleDisplayed("Breaking Bad")
+            // 2. Click Result -> Show Details
+            .clickResultItem(traktId)
+            .assertShowDetailsDisplayed()
+            .pressBack()
 
         // 3. Back -> Search Screen restored
-        rootRobot.pressBack()
-        searchRobot.assertSearchScreenDisplayed()
-        searchRobot.assertResultItemDisplayed(traktId)
+        searchRobot
+            .assertSearchScreenDisplayed()
+            .assertResultItemDisplayed(traktId)
     }
 
     @Test
@@ -43,9 +45,9 @@ internal class SearchFlowTest : BaseAppFlowTest() {
 
         discoverRobot.navigateToSearchTab()
 
-        searchRobot.enterSearchQuery(query)
-
-        searchRobot.assertTextDisplayed("Access forbidden.", substring = true)
-        searchRobot.assertErrorStateDisplayed()
+        searchRobot
+            .enterSearchQuery(query)
+            .assertTextDisplayed("Access forbidden.", substring = true)
+            .assertErrorStateDisplayed()
     }
 }

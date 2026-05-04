@@ -30,11 +30,26 @@ class DiscoverScreenshotTest {
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
     @Test
+    fun discoverScreenLoadingState() {
+        composeTestRule.captureMultiDevice("DiscoverScreenLoadingState") {
+            TvManiacBackground {
+                DiscoverScreen(
+                    state = DiscoverViewState.Empty,
+                    pagerState = rememberPagerState(pageCount = { 5 }),
+                    dismissSnackbarState = rememberDismissState { true },
+                    snackBarHostState = remember { SnackbarHostState() },
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
     fun discoverScreenEmptyState() {
         composeTestRule.captureMultiDevice("DiscoverScreenEmptyState") {
             TvManiacBackground {
                 DiscoverScreen(
-                    state = DiscoverViewState.Empty,
+                    state = DiscoverViewState.Empty.copy(isInitial = false),
                     pagerState = rememberPagerState(pageCount = { 5 }),
                     dismissSnackbarState = rememberDismissState { true },
                     snackBarHostState = remember { SnackbarHostState() },
@@ -50,6 +65,7 @@ class DiscoverScreenshotTest {
             TvManiacBackground {
                 DiscoverScreen(
                     state = DiscoverViewState.Empty.copy(
+                        isInitial = false,
                         message = UiMessage(message = "Opps! Something went wrong"),
                     ),
                     dismissSnackbarState = rememberDismissState { true },

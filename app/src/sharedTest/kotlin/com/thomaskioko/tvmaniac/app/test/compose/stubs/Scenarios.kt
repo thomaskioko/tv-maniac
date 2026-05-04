@@ -56,6 +56,8 @@ internal class Scenarios(
         discover.stubBrowseGraph()
         library.stubLibrarySyncEndpoints()
         profile.stubProfileSyncEndpoints()
+        calendar.stubWeek()
+        calendar.stubWeek(weekStart = TEST_NEXT_WEEK)
     }
 
     fun stubUsersMeUnauthorized() {
@@ -73,6 +75,7 @@ internal class Scenarios(
             profile.stubProfileSyncEndpoints()
             library.stubLibrarySyncEndpoints()
             auth.stubLoggedInUser()
+            calendar.stubWeek()
         }
     }
 

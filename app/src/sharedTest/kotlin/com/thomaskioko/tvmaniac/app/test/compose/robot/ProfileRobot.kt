@@ -6,26 +6,33 @@ import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
 import com.thomaskioko.tvmaniac.testtags.profile.ProfileTestTags
 
 @OptIn(ExperimentalTestApi::class)
-internal class ProfileRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
+internal class ProfileRobot(composeUi: ComposeUiTest) : BaseRobot<ProfileRobot>(composeUi) {
 
-    fun assertProfileScreenDisplayed() {
+    fun assertProfileScreenDisplayed() = apply {
         assertDisplayed(ProfileTestTags.SCREEN_TEST_TAG)
     }
 
-    fun assertSignInButtonDisplayed() {
-        scrollTo(ProfileTestTags.SIGN_IN_BUTTON_TEST_TAG)
+    fun assertSignInButtonDisplayed() = apply {
         assertDisplayed(ProfileTestTags.SIGN_IN_BUTTON_TEST_TAG)
     }
 
-    fun assertUserCardDisplayed(slug: String) {
+    fun scrollToSignInButton() = apply {
+        scrollTo(ProfileTestTags.SIGN_IN_BUTTON_TEST_TAG)
+    }
+
+    fun assertUserCardDisplayed(slug: String) = apply {
         assertDisplayed(ProfileTestTags.userCard(slug))
     }
 
-    fun clickSignInButton() {
+    fun assertUserNameDisplayed() = apply {
+        assertDisplayed(ProfileTestTags.USERNAME_TEST_TAG)
+    }
+
+    fun clickSignInButton() = apply {
         click(ProfileTestTags.SIGN_IN_BUTTON_TEST_TAG)
     }
 
-    fun clickSettingsButton() {
+    fun clickSettingsButton() = apply {
         click(ProfileTestTags.SETTINGS_BUTTON_TEST_TAG)
     }
 }

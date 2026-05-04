@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.UPNEXT_FULL_SYNC
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
+import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.upnext.api.UpNextDao
 import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
@@ -33,6 +34,7 @@ public class DefaultUpNextRepository(
     private val tvShowsDao: TvShowsDao,
     private val showDetailsRepository: ShowDetailsRepository,
     private val seasonDetailsRepository: SeasonDetailsRepository,
+    private val seasonsRepository: SeasonsRepository,
     private val requestManagerRepository: RequestManagerRepository,
     private val dateTimeProvider: DateTimeProvider,
     private val logger: Logger,
@@ -135,8 +137,13 @@ public class DefaultUpNextRepository(
     }
 
     private suspend fun ensureShowExists(showTraktId: Long) {
-        if (!tvShowsDao.existsByTraktId(showTraktId)) {
-            logger.debug(TAG, "Show $showTraktId not in cache, fetching details")
+        val tvShowExists = tvShowsDao.existsByTraktId(showTraktId)
+        val seasonsLoaded = seasonsRepository.getSeasonsByShowId(showTraktId, includeSpecials = true).isNotEmpty()
+        if (!tvShowExists || !seasonsLoaded) {
+            logger.debug(
+                TAG,
+                "Show $showTraktId graph incomplete (tvShow=$tvShowExists, seasons=$seasonsLoaded), fetching details",
+            )
             showDetailsRepository.fetchShowDetails(
                 id = showTraktId,
                 forceRefresh = true,

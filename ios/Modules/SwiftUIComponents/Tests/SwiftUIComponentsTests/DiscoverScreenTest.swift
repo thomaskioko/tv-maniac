@@ -46,9 +46,49 @@ class DiscoverScreenTest: SnapshotTestCase {
         ),
     ]
 
+    func test_DiscoverScreen_Loading() {
+        DiscoverScreen(
+            title: "Discover",
+            isLoading: true,
+            isEmpty: false,
+            showError: false,
+            errorMessage: nil,
+            featuredShows: [],
+            nextEpisodes: [],
+            trendingToday: [],
+            upcomingShows: [],
+            popularShows: [],
+            topRatedShows: [],
+            isRefreshing: false,
+            emptyContentText: "No content available",
+            missingApiKeyText: "API key missing",
+            retryText: "Retry",
+            upNextTitle: "Up Next",
+            trendingTitle: "Trending Today",
+            upcomingTitle: "Upcoming",
+            popularTitle: "Popular",
+            topRatedTitle: "Top Rated",
+            currentIndex: .constant(0),
+            toast: .constant(nil),
+            selectedEpisode: .constant(nil),
+            onShowClicked: { _ in },
+            onSearchClicked: {},
+            onRefresh: {},
+            onTrendingClicked: {},
+            onUpcomingClicked: {},
+            onPopularClicked: {},
+            onTopRatedClicked: {},
+            onNextEpisodeClicked: { _ in },
+            onCarouselIndexChanged: { _ in }
+        )
+        .themedPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_Loading")
+    }
+
     func test_DiscoverScreen_Empty() {
         DiscoverScreen(
             title: "Discover",
+            isLoading: false,
             isEmpty: true,
             showError: false,
             errorMessage: nil,
@@ -87,6 +127,7 @@ class DiscoverScreenTest: SnapshotTestCase {
     func test_DiscoverScreen_Error() {
         DiscoverScreen(
             title: "Discover",
+            isLoading: false,
             isEmpty: false,
             showError: true,
             errorMessage: "Something went wrong",
@@ -125,6 +166,7 @@ class DiscoverScreenTest: SnapshotTestCase {
     func test_DiscoverScreen_Loaded() {
         DiscoverScreen(
             title: "Discover",
+            isLoading: false,
             isEmpty: false,
             showError: false,
             errorMessage: nil,

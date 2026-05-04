@@ -76,6 +76,8 @@ public class DefaultSeasonDetailsRepository(
         val includeSpecials = datastoreRepository.getIncludeSpecials()
         val seasons = seasonsRepository.getSeasonsByShowId(showTraktId, includeSpecials)
 
+        if (seasons.isEmpty()) return
+
         seasons.parallelForEach(concurrency = SEASON_SYNC_CONCURRENCY) { season ->
             fetchSeasonDetails(
                 param = SeasonDetailsParam(

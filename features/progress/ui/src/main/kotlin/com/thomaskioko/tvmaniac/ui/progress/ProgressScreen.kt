@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SecondaryTabRow
@@ -33,6 +32,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
@@ -52,8 +52,8 @@ import com.thomaskioko.tvmaniac.presentation.upnext.UpNextAction
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextState
 import com.thomaskioko.tvmaniac.presentation.upnext.model.UpNextEpisodeUiModel
 import com.thomaskioko.tvmaniac.testtags.progress.ProgressTestTags
-import com.thomaskioko.tvmaniac.ui.calendar.CalendarPageContent
-import com.thomaskioko.tvmaniac.ui.upnext.UpNextPageContent
+import com.thomaskioko.tvmaniac.ui.calendar.CalendarScreen
+import com.thomaskioko.tvmaniac.ui.upnext.UpNextScreen
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -104,14 +104,14 @@ internal fun ProgressScreen(
         modifier = modifier,
         onSelectPage = { progressAction(ProgressAction.SelectPage(it)) },
         upNextContent = {
-            UpNextPageContent(
+            UpNextScreen(
                 state = upNextState,
                 modifier = Modifier.fillMaxSize(),
                 onAction = upNextAction,
             )
         },
         calendarContent = {
-            CalendarPageContent(
+            CalendarScreen(
                 state = calendarState,
                 modifier = Modifier.fillMaxSize(),
                 onAction = calendarAction,
@@ -170,12 +170,11 @@ internal fun ProgressScreen(
                         )
 
                         if (isLoading) {
-                            CircularProgressIndicator(
+                            LoadingIndicator(
                                 modifier = Modifier
+                                    .testTag(ProgressTestTags.PROGRESS_INDICATOR)
                                     .padding(start = 8.dp)
                                     .size(20.dp),
-                                color = MaterialTheme.colorScheme.secondary,
-                                strokeWidth = 2.dp,
                             )
                         }
                     }
@@ -226,6 +225,7 @@ internal fun ProgressScreen(
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier
+                    .testTag(ProgressTestTags.HORIZONTAL_PAGER)
                     .fillMaxWidth()
                     .weight(1f),
             ) { page ->

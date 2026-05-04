@@ -25,6 +25,7 @@ kotlin {
                 implementation(projects.data.followedshows.api)
                 implementation(projects.data.requestManager.api)
                 implementation(projects.data.seasondetails.api)
+                implementation(projects.data.seasons.api)
                 implementation(projects.data.showdetails.api)
                 implementation(projects.data.shows.api)
                 implementation(projects.data.upnext.api)
@@ -47,6 +48,7 @@ kotlin {
                 implementation(projects.data.requestManager.testing)
                 implementation(projects.data.showdetails.testing)
                 implementation(projects.data.seasondetails.testing)
+                implementation(projects.data.seasons.testing)
                 implementation(projects.data.shows.implementation)
             }
         }

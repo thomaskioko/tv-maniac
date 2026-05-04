@@ -13,6 +13,10 @@ import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -45,13 +49,18 @@ public fun TvManiacBottomSheetScaffold(
         bottomSheetState = bottomSheetState,
     )
 
+    var isSheetContentComposing by remember { mutableStateOf(initialSheetState != SheetValue.Hidden) }
+
     LaunchedEffect(key1 = showBottomSheet) {
         if (showBottomSheet) {
+            isSheetContentComposing = true
             bottomSheetState.expand()
         } else {
             bottomSheetState.hide()
+            isSheetContentComposing = false
         }
     }
+
     LaunchedEffect(bottomSheetScaffoldState.bottomSheetState.currentValue) {
         if (bottomSheetScaffoldState.bottomSheetState.currentValue == SheetValue.PartiallyExpanded) {
             onDismissBottomSheet()
@@ -65,11 +74,19 @@ public fun TvManiacBottomSheetScaffold(
         scaffoldState = bottomSheetScaffoldState,
         sheetShape = sheetShape,
         sheetShadowElevation = sheetShadowElevation,
-        sheetContent = sheetContent,
+        sheetContent = {
+            if (isSheetContentComposing) {
+                sheetContent()
+            }
+        },
         sheetContainerColor = sheetContainerColor,
         snackbarHost = snackbarHost,
         containerColor = containerColor,
-        sheetDragHandle = sheetDragHandle,
+        sheetDragHandle = {
+            if (isSheetContentComposing) {
+                sheetDragHandle?.invoke()
+            }
+        },
         content = content,
     )
 }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -18,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -33,6 +35,7 @@ import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_season_details
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.SeasonModel
+import com.thomaskioko.tvmaniac.testtags.showdetails.ShowDetailsTestTags
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -55,7 +58,11 @@ internal fun WatchProgressSection(
     val isUpToDate = remainingEpisodes <= 0 && totalEpisodesCount > 0
     val seasonCount = seasonsList.size
 
-    Column(modifier = modifier.fillMaxWidth()) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(min = 1.dp),
+    ) {
         Spacer(modifier = Modifier.height(24.dp))
 
         if (showHeader) {
@@ -163,6 +170,7 @@ internal fun WatchProgressSection(
 
                 LazyRow(
                     state = lazyListState,
+                    modifier = Modifier.testTag(ShowDetailsTestTags.WATCH_PROGRESS_LIST_TEST_TAG),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     contentPadding = PaddingValues(horizontal = 0.dp),
                 ) {
