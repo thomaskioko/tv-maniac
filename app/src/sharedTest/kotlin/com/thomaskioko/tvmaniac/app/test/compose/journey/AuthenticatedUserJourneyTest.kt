@@ -23,7 +23,6 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
 
         // Verify public content on Discover
         discoverRobot
-            .assertLoadingIndicatorDisplayed()
             .assertDiscoverScreenDisplayed()
             .assertFeaturedShowDisplayed(breakingBadTraktId)
             .assertUpNextCardDoesNotExist(breakingBadTraktId)

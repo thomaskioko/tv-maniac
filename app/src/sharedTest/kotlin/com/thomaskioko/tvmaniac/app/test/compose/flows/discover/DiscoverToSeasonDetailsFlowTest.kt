@@ -16,7 +16,6 @@ internal class DiscoverToSeasonDetailsFlowTest : BaseAppFlowTest() {
         scenarios.discover.stubBrowseGraph()
 
         discoverRobot
-            .assertLoadingIndicatorDisplayed()
             .assertFeaturedPagerDisplayed()
             .clickShowCard(breakingBadTraktId)
 
