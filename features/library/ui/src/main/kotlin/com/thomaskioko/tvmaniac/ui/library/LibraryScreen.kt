@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -359,6 +360,8 @@ private fun LibraryGridContent(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         modifier = Modifier
+            .testTag(LibraryTestTags.LIBRARY_LIST_TEST_TAG)
+            .fillMaxSize()
             .nestedScroll(scrollBehavior.nestedScrollConnection)
             .padding(horizontal = 4.dp),
     ) {
@@ -407,7 +410,10 @@ private fun LibraryListContent(
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(top = 8.dp),
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier
+            .testTag(LibraryTestTags.LIBRARY_LIST_TEST_TAG)
+            .fillMaxSize()
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
     ) {
         items(
             count = items.size,

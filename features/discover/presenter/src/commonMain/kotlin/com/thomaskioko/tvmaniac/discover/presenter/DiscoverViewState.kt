@@ -7,6 +7,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 public data class DiscoverViewState(
+    val isInitial: Boolean = true,
     val featuredRefreshing: Boolean = false,
     val topRatedRefreshing: Boolean = false,
     val trendingRefreshing: Boolean = false,
@@ -23,8 +24,11 @@ public data class DiscoverViewState(
     val message: UiMessage? = null,
 ) {
     val isRefreshing: Boolean
-        get() = featuredRefreshing || topRatedRefreshing || trendingRefreshing ||
+        get() = isInitial || featuredRefreshing || topRatedRefreshing || trendingRefreshing ||
             popularRefreshing || upcomingRefreshing || nextEpisodesRefreshing || upNextRefreshing
+
+    val isLoading: Boolean
+        get() = isRefreshing && isEmpty(featuredShows, topRatedShows, popularShows, upcomingShows, trendingToday)
 
     val isEmpty: Boolean
         get() = !isRefreshing && isEmpty(featuredShows, topRatedShows, popularShows, upcomingShows, trendingToday)

@@ -42,7 +42,7 @@ public fun TvManiacAlertDialog(
 
     AlertDialog(
         properties = DialogProperties(usePlatformDefaultWidth = false),
-        modifier = Modifier.widthIn(max = containerWidth - 80.dp),
+        modifier = Modifier.widthIn(max = (containerWidth - 80.dp).coerceAtLeast(0.dp)),
         shape = shape,
         onDismissRequest = onDismiss,
         icon = icon?.let {

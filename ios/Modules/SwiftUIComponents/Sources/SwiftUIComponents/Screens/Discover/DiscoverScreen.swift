@@ -4,6 +4,7 @@ public struct DiscoverScreen: View {
     @Theme private var appTheme
 
     private let title: String
+    private let isLoading: Bool
     private let isEmpty: Bool
     private let showError: Bool
     private let errorMessage: String?
@@ -38,6 +39,7 @@ public struct DiscoverScreen: View {
 
     public init(
         title: String,
+        isLoading: Bool,
         isEmpty: Bool,
         showError: Bool,
         errorMessage: String?,
@@ -71,6 +73,7 @@ public struct DiscoverScreen: View {
         episodeSheetContent: ((SwiftNextEpisode) -> AnyView)? = nil
     ) {
         self.title = title
+        self.isLoading = isLoading
         self.isEmpty = isEmpty
         self.showError = showError
         self.errorMessage = errorMessage
@@ -112,7 +115,9 @@ public struct DiscoverScreen: View {
     @State private var isScrollInteracting: Bool = false
 
     public var body: some View {
-        if isEmpty {
+        if isLoading {
+            LoadingIndicatorView()
+        } else if isEmpty {
             emptyView
         } else if showError {
             EmptyStateView(

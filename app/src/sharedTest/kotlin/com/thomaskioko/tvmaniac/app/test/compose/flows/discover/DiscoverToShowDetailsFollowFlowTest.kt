@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.discover
 
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
+import com.thomaskioko.tvmaniac.testtags.showdetails.ShowDetailsTestTags
 import org.junit.Test
 
 internal class DiscoverToShowDetailsFollowFlowTest : BaseAppFlowTest() {
@@ -11,7 +12,11 @@ internal class DiscoverToShowDetailsFollowFlowTest : BaseAppFlowTest() {
     fun givenShow_whenTrackIsClicked_thenPersistsInFollowedShows() = runAppFlowTest {
         scenarios.discover.stubBrowseGraph()
 
-        discoverRobot.clickShowCard(breakingBadTraktId)
+        discoverRobot
+            .assertLoadingIndicatorDisplayed()
+            .assertFeaturedPagerDisplayed()
+            .clickShowCard(breakingBadTraktId)
+
         trackShow()
     }
 
@@ -19,10 +24,16 @@ internal class DiscoverToShowDetailsFollowFlowTest : BaseAppFlowTest() {
     fun givenShowDetails_whenBackIsPressed_thenRestoresDiscover() = runAppFlowTest {
         scenarios.discover.stubBrowseGraph()
 
-        discoverRobot.clickShowCard(breakingBadTraktId)
-        showDetailsRobot.assertTrackButtonDisplayed()
-        rootRobot.pressBack()
-        showDetailsRobot.assertDoesNotExist("show_details_track_button")
-        discoverRobot.assertShowCardDisplayed(breakingBadTraktId)
+        discoverRobot
+            .assertFeaturedPagerDisplayed()
+            .clickShowCard(breakingBadTraktId)
+            .assertShowDetailsDisplayed()
+            .pressBack()
+
+        showDetailsRobot
+            .assertDoesNotExist(ShowDetailsTestTags.SHOW_DETAILS_SCREEN_TEST_TAG)
+
+        discoverRobot
+            .assertShowCardDisplayed(breakingBadTraktId)
     }
 }

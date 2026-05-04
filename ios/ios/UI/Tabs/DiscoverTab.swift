@@ -17,6 +17,7 @@ struct DiscoverTab: View {
     var body: some View {
         DiscoverScreen(
             title: String(\.label_discover_title),
+            isLoading: uiState.isLoading,
             isEmpty: uiState.isEmpty,
             showError: uiState.showError,
             errorMessage: uiState.message?.message,

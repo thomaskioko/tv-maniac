@@ -6,139 +6,200 @@ import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
 import com.thomaskioko.tvmaniac.testtags.showdetails.ShowDetailsTestTags
 
 @OptIn(ExperimentalTestApi::class)
-internal class ShowDetailsRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
+internal class ShowDetailsRobot(composeUi: ComposeUiTest) : BaseRobot<ShowDetailsRobot>(composeUi) {
 
-    fun assertShowDetailsDisplayed() {
+    fun assertShowDetailsDisplayed() = apply {
+        assertDisplayed(ShowDetailsTestTags.SHOW_DETAILS_SCREEN_TEST_TAG)
+    }
+
+    fun assertTrackButtonDisplayed() = apply {
         assertDisplayed(ShowDetailsTestTags.TRACK_BUTTON_TEST_TAG)
     }
 
-    fun assertTrackButtonDisplayed() {
-        assertDisplayed(ShowDetailsTestTags.TRACK_BUTTON_TEST_TAG)
-    }
-
-    fun assertStopTrackingButtonDisplayed() {
+    fun assertStopTrackingButtonDisplayed() = apply {
         assertDisplayed(ShowDetailsTestTags.STOP_TRACKING_BUTTON_TEST_TAG)
     }
 
-    fun assertSeasonChipDisplayed(seasonNumber: Long) {
-        assertExists(ShowDetailsTestTags.seasonChip(seasonNumber))
+    fun assertSeasonChipDisplayed(seasonNumber: Long) = apply {
+        val tag = ShowDetailsTestTags.seasonChip(seasonNumber)
+        scrollDownUntilTag(
+            listTag = ShowDetailsTestTags.SHOW_DETAILS_SCREEN_TEST_TAG,
+            itemTag = ShowDetailsTestTags.WATCH_PROGRESS_SECTION_TEST_TAG,
+        )
+        waitForIdle()
+        scrollToListTag(
+            listTag = ShowDetailsTestTags.WATCH_PROGRESS_LIST_TEST_TAG,
+            itemTag = tag,
+        )
+        assertExists(tag)
     }
 
-    fun clickTrackButton() {
+    fun clickTrackButton() = apply {
         click(ShowDetailsTestTags.TRACK_BUTTON_TEST_TAG)
     }
 
-    fun clickContinueTrackingMarkWatched(episodeId: Long) {
-        click(ShowDetailsTestTags.continueTrackingMarkWatchedButton(episodeId))
+    fun clickContinueTrackingMarkWatched(episodeId: Long) = apply {
+        val tag = ShowDetailsTestTags.continueTrackingMarkWatchedButton(episodeId)
+        scrollDownUntilTag(
+            listTag = ShowDetailsTestTags.SHOW_DETAILS_SCREEN_TEST_TAG,
+            itemTag = ShowDetailsTestTags.CONTINUE_TRACKING_SECTION_TEST_TAG,
+        )
+        waitForIdle()
+        scrollToListTag(
+            listTag = ShowDetailsTestTags.CONTINUE_TRACKING_LIST_TEST_TAG,
+            itemTag = tag,
+        )
+        click(tag)
     }
 
-    fun assertContinueTrackingEpisodeDisplayed(episodeId: Long) {
-        assertExists(ShowDetailsTestTags.continueTrackingMarkWatchedButton(episodeId))
+    fun assertContinueTrackingEpisodeDisplayed(episodeId: Long) = apply {
+        val tag = ShowDetailsTestTags.continueTrackingMarkWatchedButton(episodeId)
+        scrollDownUntilTag(
+            listTag = ShowDetailsTestTags.SHOW_DETAILS_SCREEN_TEST_TAG,
+            itemTag = ShowDetailsTestTags.CONTINUE_TRACKING_SECTION_TEST_TAG,
+        )
+        waitForIdle()
+        scrollToListTag(
+            listTag = ShowDetailsTestTags.CONTINUE_TRACKING_LIST_TEST_TAG,
+            itemTag = tag,
+        )
+        assertExists(tag)
     }
 
-    fun clickAddToListButton() {
-        click(ShowDetailsTestTags.ADD_TO_LIST_BUTTON_TEST_TAG)
+    fun clickAddToListButton() = apply {
+        val tag = ShowDetailsTestTags.ADD_TO_LIST_BUTTON_TEST_TAG
+        scrollDownUntilTag(
+            listTag = ShowDetailsTestTags.SHOW_DETAILS_SCREEN_TEST_TAG,
+            itemTag = tag,
+        )
+        click(tag)
     }
 
-    fun assertLoginPromptDisplayed() {
+    fun assertLoginPromptDisplayed() = apply {
         assertExists(ShowDetailsTestTags.LOGIN_REQUIRED_DIALOG_CONFIRM_BUTTON_TEST_TAG)
     }
 
-    fun assertLoginPromptDoesNotExist() {
+    fun assertLoginPromptDoesNotExist() = apply {
         assertDoesNotExist(ShowDetailsTestTags.LOGIN_REQUIRED_DIALOG_CONFIRM_BUTTON_TEST_TAG)
     }
 
-    fun confirmLoginPrompt() {
+    fun confirmLoginPrompt() = apply {
         click(ShowDetailsTestTags.LOGIN_REQUIRED_DIALOG_CONFIRM_BUTTON_TEST_TAG)
     }
 
     fun clickSeasonChip(seasonNumber: Long): SeasonDetailsRobot {
-        click(ShowDetailsTestTags.seasonChip(seasonNumber))
+        val tag = ShowDetailsTestTags.seasonChip(seasonNumber)
+        scrollDownUntilTag(
+            listTag = ShowDetailsTestTags.SHOW_DETAILS_SCREEN_TEST_TAG,
+            itemTag = ShowDetailsTestTags.WATCH_PROGRESS_SECTION_TEST_TAG,
+        )
+        waitForIdle()
+        scrollToListTag(
+            listTag = ShowDetailsTestTags.WATCH_PROGRESS_LIST_TEST_TAG,
+            itemTag = tag,
+        )
+        click(tag)
         return SeasonDetailsRobot(composeUi)
     }
 
-    fun clickBackButton() {
+    fun clickBackButton() = apply {
         click(ShowDetailsTestTags.BACK_BUTTON_TEST_TAG, useUnmergedTree = true)
     }
 
-    fun assertErrorStateDisplayed() {
+    fun assertErrorStateDisplayed() = apply {
         assertDisplayed(ShowDetailsTestTags.ERROR_RETRY_BUTTON_TEST_TAG)
     }
 
-    fun clickRetryButton() {
+    fun clickRetryButton() = apply {
         click(ShowDetailsTestTags.ERROR_RETRY_BUTTON_TEST_TAG)
     }
 
-    fun clickRefreshButton() {
+    fun clickRefreshButton() = apply {
         assertDisplayed(ShowDetailsTestTags.REFRESH_BUTTON_TEST_TAG)
         click(ShowDetailsTestTags.REFRESH_BUTTON_TEST_TAG)
     }
 
-    fun assertCastListDisplayed() {
+    fun assertCastListDisplayed() = apply {
+        scrollDownUntilTag(
+            listTag = ShowDetailsTestTags.SHOW_DETAILS_SCREEN_TEST_TAG,
+            itemTag = ShowDetailsTestTags.CAST_LIST_TEST_TAG,
+        )
         assertDisplayed(ShowDetailsTestTags.CAST_LIST_TEST_TAG)
     }
 
-    fun assertTrailersListDisplayed() {
+    fun assertTrailersListDisplayed() = apply {
+        scrollDownUntilTag(
+            listTag = ShowDetailsTestTags.SHOW_DETAILS_SCREEN_TEST_TAG,
+            itemTag = ShowDetailsTestTags.TRAILERS_LIST_TEST_TAG,
+        )
         assertDisplayed(ShowDetailsTestTags.TRAILERS_LIST_TEST_TAG)
     }
 
-    fun assertSimilarShowsListDisplayed() {
+    fun assertSimilarShowsListDisplayed() = apply {
+        scrollDownUntilTag(
+            listTag = ShowDetailsTestTags.SHOW_DETAILS_SCREEN_TEST_TAG,
+            itemTag = ShowDetailsTestTags.SIMILAR_SHOWS_LIST_TEST_TAG,
+        )
         assertDisplayed(ShowDetailsTestTags.SIMILAR_SHOWS_LIST_TEST_TAG)
     }
 
-    fun assertContinueTrackingSectionDisplayed() {
+    fun assertContinueTrackingSectionDisplayed() = apply {
+        scrollDownUntilTag(
+            listTag = ShowDetailsTestTags.SHOW_DETAILS_SCREEN_TEST_TAG,
+            itemTag = ShowDetailsTestTags.CONTINUE_TRACKING_SECTION_TEST_TAG,
+        )
         assertDisplayed(ShowDetailsTestTags.CONTINUE_TRACKING_SECTION_TEST_TAG)
     }
 
-    fun assertListSheetDisplayed() {
+    fun assertListSheetDisplayed() = apply {
         assertDisplayed(ShowDetailsTestTags.LIST_SHEET_TEST_TAG)
     }
 
-    fun assertListSheetDoesNotExist() {
-        assertNotDisplayed(ShowDetailsTestTags.LIST_SHEET_TEST_TAG)
+    fun assertListSheetDoesNotExist() = apply {
+        assertDoesNotExist(ShowDetailsTestTags.LIST_SHEET_TEST_TAG)
     }
 
-    fun assertTraktListItemDisplayed(listId: Long) {
+    fun assertTraktListItemDisplayed(listId: Long) = apply {
         assertExists(ShowDetailsTestTags.traktListItem(listId))
     }
 
-    fun clickCloseListSheetButton() {
+    fun clickCloseListSheetButton() = apply {
         click(ShowDetailsTestTags.LIST_SHEET_CLOSE_BUTTON_TEST_TAG)
     }
 
-    fun clickCreateListButton() {
+    fun clickCreateListButton() = apply {
         click(ShowDetailsTestTags.LIST_SHEET_CREATE_LIST_BUTTON_TEST_TAG)
     }
 
-    fun assertCreateListFieldDisplayed() {
+    fun assertCreateListFieldDisplayed() = apply {
         assertExists(ShowDetailsTestTags.LIST_SHEET_CREATE_LIST_INPUT_TEST_TAG)
     }
 
-    fun assertCreateListFieldDoesNotExist() {
+    fun assertCreateListFieldDoesNotExist() = apply {
         assertDoesNotExist(ShowDetailsTestTags.LIST_SHEET_CREATE_LIST_INPUT_TEST_TAG)
     }
 
-    fun typeCreateListName(name: String) {
+    fun typeCreateListName(name: String) = apply {
         inputText(ShowDetailsTestTags.LIST_SHEET_CREATE_LIST_INPUT_TEST_TAG, name)
     }
 
-    fun clickCreateListSubmit() {
+    fun clickCreateListSubmit() = apply {
         click(ShowDetailsTestTags.LIST_SHEET_CREATE_LIST_SUBMIT_TEST_TAG)
     }
 
-    fun clickListSwitch(listId: Long) {
+    fun clickListSwitch(listId: Long) = apply {
         click(ShowDetailsTestTags.traktListItemSwitch(listId))
     }
 
-    fun assertListSwitchIsChecked(listId: Long) {
+    fun assertListSwitchIsChecked(listId: Long) = apply {
         assertChecked(ShowDetailsTestTags.traktListItemSwitch(listId))
     }
 
-    fun assertListSwitchIsUnchecked(listId: Long) {
+    fun assertListSwitchIsUnchecked(listId: Long) = apply {
         assertUnchecked(ShowDetailsTestTags.traktListItemSwitch(listId))
     }
 
-    fun assertTraktListShowCountText(listId: Long, expectedText: String) {
+    fun assertTraktListShowCountText(listId: Long, expectedText: String) = apply {
         assertNodeHasText(ShowDetailsTestTags.traktListItemShowCount(listId), expectedText)
     }
 }

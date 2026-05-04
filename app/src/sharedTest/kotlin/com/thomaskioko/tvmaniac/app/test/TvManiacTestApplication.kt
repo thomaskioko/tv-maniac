@@ -3,6 +3,8 @@ package com.thomaskioko.tvmaniac.app.test
 import android.app.Application
 import androidx.work.testing.WorkManagerTestInitHelper
 import com.thomaskioko.tvmaniac.datastore.implementation.DATA_STORE_FILE_NAME
+import com.thomaskioko.tvmaniac.datastore.implementation.clearDataStoreReference
+import com.thomaskioko.tvmaniac.testing.integration.bindings.TestDispatcherBindingContainer
 import dev.zacsweers.metro.createGraphFactory
 
 class TvManiacTestApplication : Application() {
@@ -20,6 +22,7 @@ class TvManiacTestApplication : Application() {
 
     fun resetAppComponent() {
         testAppComponent = null
+        TestDispatcherBindingContainer.reset()
     }
 
     /**
@@ -33,6 +36,7 @@ class TvManiacTestApplication : Application() {
         deleteDatabase(DATABASE_NAME)
         filesDir.resolve(DATA_STORE_FILE_NAME).delete()
         filesDir.resolve("$DATA_STORE_FILE_NAME.lock").delete()
+        clearDataStoreReference()
     }
 
     private companion object {

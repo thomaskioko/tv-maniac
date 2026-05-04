@@ -2,45 +2,33 @@ package com.thomaskioko.tvmaniac.app.test.compose.robot
 
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
-import com.thomaskioko.tvmaniac.home.nav.di.model.HomeConfig
 import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
 
 @OptIn(ExperimentalTestApi::class)
-internal class HomeRobot(composeUi: ComposeUiTest) : BaseRobot(composeUi) {
+internal class HomeRobot(composeUi: ComposeUiTest) : BaseRobot<HomeRobot>(composeUi) {
 
-    fun assertTabSelected(config: HomeConfig) {
-        assertSelected(tag = config.testTag())
+    fun assertTabSelected(tag: String) = apply {
+        assertSelected(tag = tag)
     }
 
-    fun assertTabNotSelected(config: HomeConfig) {
-        assertNotSelected(tag = config.testTag())
+    fun assertTabNotSelected(tag: String) = apply {
+        assertNotSelected(tag = tag)
     }
 
-    fun clickDiscoverTab() {
+    fun clickDiscoverTab() = apply {
         click(HomeTestTags.DISCOVER_TAB)
-        assertTabSelected(HomeConfig.Discover)
     }
 
-    fun clickProgressTab() {
+    fun clickProgressTab() = apply {
         click(HomeTestTags.PROGRESS_TAB)
-        assertTabSelected(HomeConfig.Progress)
     }
 
-    fun clickLibraryTab() {
+    fun clickLibraryTab() = apply {
         click(HomeTestTags.LIBRARY_TAB)
-        assertTabSelected(HomeConfig.Library)
     }
 
-    fun clickProfileTab() {
+    fun clickProfileTab() = apply {
         click(HomeTestTags.PROFILE_TAB)
-        assertTabSelected(HomeConfig.Profile)
-    }
-
-    private fun HomeConfig.testTag(): String = when (this) {
-        HomeConfig.Discover -> HomeTestTags.DISCOVER_TAB
-        HomeConfig.Progress -> HomeTestTags.PROGRESS_TAB
-        HomeConfig.Library -> HomeTestTags.LIBRARY_TAB
-        HomeConfig.Profile -> HomeTestTags.PROFILE_TAB
     }
 }

@@ -64,7 +64,7 @@ public class EpisodeSheetPresenter(
     ) { episode, message ->
         currentEpisode = episode
         episode?.toState(source, localizer)?.copy(message = message)
-            ?: EpisodeDetailSheetState(isLoading = false, message = message)
+            ?: EpisodeDetailSheetState(isLoading = true, message = message)
     }.stateIn(
         scope = coroutineScope,
         started = SharingStarted.WhileSubscribed(5_000),

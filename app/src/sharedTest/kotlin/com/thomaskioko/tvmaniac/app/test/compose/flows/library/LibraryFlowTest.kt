@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.library
 
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
+import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
 import org.junit.Test
 
 internal class LibraryFlowTest : BaseAppFlowTest() {
@@ -19,18 +20,26 @@ internal class LibraryFlowTest : BaseAppFlowTest() {
         scenarios.signInAndDismissRationale()
 
         homeRobot.clickLibraryTab()
+            .assertTabSelected(HomeTestTags.LIBRARY_TAB)
 
-        libraryRobot.assertShowRowDisplayed(breakingBadTraktId)
-        libraryRobot.assertShowRowDisplayed(forAllMankindTraktId)
-        libraryRobot.assertShowRowDisplayed(theBoysTraktId)
-        rootRobot.assertNoSnackbarDisplayed()
+        libraryRobot
+            .scrollToShowRow(breakingBadTraktId)
+            .assertShowRowDisplayed(breakingBadTraktId)
+            .scrollToShowRow(forAllMankindTraktId)
+            .assertShowRowDisplayed(forAllMankindTraktId)
+            .scrollToShowRow(theBoysTraktId)
+            .assertShowRowDisplayed(theBoysTraktId)
 
-        libraryRobot.clickSearchButton()
-        libraryRobot.enterSearchQuery("Breaking")
-        libraryRobot.assertShowRowDisplayed(breakingBadTraktId)
+        rootRobot
+            .assertNoSnackbarDisplayed()
 
-        libraryRobot.enterSearchQuery("NonExistent")
-        libraryRobot.assertEmptyStateDisplayed()
+        libraryRobot
+            .clickSearchButton()
+            .enterSearchQuery("Breaking")
+            .scrollToShowRow(breakingBadTraktId)
+            .assertShowRowDisplayed(breakingBadTraktId)
+            .enterSearchQuery("NonExistent")
+            .assertEmptyStateDisplayed()
     }
 
     @Test
@@ -38,21 +47,31 @@ internal class LibraryFlowTest : BaseAppFlowTest() {
         scenarios.discover.stubBrowseGraph()
         scenarios.library.stubLibrarySyncEndpoints()
 
-        discoverRobot.assertDiscoverScreenDisplayed()
+        discoverRobot
+            .assertDiscoverScreenDisplayed()
 
         scenarios.signInAndDismissRationale()
 
-        homeRobot.clickLibraryTab()
+        homeRobot
+            .clickLibraryTab()
+            .assertTabSelected(HomeTestTags.LIBRARY_TAB)
 
-        libraryRobot.assertShowRowDisplayed(breakingBadTraktId)
-        libraryRobot.assertShowRowDisplayed(forAllMankindTraktId)
-        libraryRobot.assertShowRowDisplayed(theBoysTraktId)
-        rootRobot.assertNoSnackbarDisplayed()
+        libraryRobot
+            .scrollToShowRow(breakingBadTraktId)
+            .assertShowRowDisplayed(breakingBadTraktId)
+            .scrollToShowRow(forAllMankindTraktId)
+            .assertShowRowDisplayed(forAllMankindTraktId)
+            .scrollToShowRow(theBoysTraktId)
+            .assertShowRowDisplayed(theBoysTraktId)
 
-        libraryRobot.clickFilterButton()
-        libraryRobot.selectGenreFilter("Drama")
-        libraryRobot.clickApplyFilter()
+        rootRobot
+            .assertNoSnackbarDisplayed()
 
-        libraryRobot.assertShowRowDisplayed(breakingBadTraktId)
+        libraryRobot
+            .clickFilterButton()
+            .selectGenreFilter("Drama")
+            .clickApplyFilter()
+            .scrollToShowRow(breakingBadTraktId)
+            .assertShowRowDisplayed(breakingBadTraktId)
     }
 }

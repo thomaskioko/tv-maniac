@@ -16,8 +16,6 @@ import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertIsSelected
-import androidx.compose.ui.test.assertTextContains
-import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.filter
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
@@ -63,37 +61,56 @@ public const val TIMEOUT_MILLIS: Long = 5_000
  * @property composeUi Compose test driver driving [androidx.compose.ui.test.runAndroidComposeUiTest].
  */
 @OptIn(ExperimentalTestApi::class)
-public abstract class BaseRobot(protected val composeUi: ComposeUiTest) {
+public abstract class BaseRobot<T : BaseRobot<T>>(protected val composeUi: ComposeUiTest) {
 
-    private fun awaitTagOnce(
+    @Suppress("UNCHECKED_CAST")
+    protected fun self(): T = this as T
+
+    public fun awaitTagOnce(
         tag: String,
         useUnmergedTree: Boolean = false,
         timeoutMillis: Long = TIMEOUT_MILLIS,
-    ) {
+    ): T = self().apply {
         composeUi.waitUntil(timeoutMillis = timeoutMillis) {
-            composeUi.onAllNodes(matcher = hasTestTag(tag), useUnmergedTree = useUnmergedTree)
-                .fetchSemanticsNodes().size == 1
+            val nodes = fetchNodesSafely(matcher = hasTestTag(tag), useUnmergedTree = useUnmergedTree)
+            nodes != null && nodes.size == 1
         }
     }
 
-    private fun awaitMatcherAtLeastOne(
+    protected fun awaitMatcherAtLeastOne(
         matcher: SemanticsMatcher,
         useUnmergedTree: Boolean = false,
         timeoutMillis: Long = TIMEOUT_MILLIS,
-    ) {
+    ): T = self().apply {
         composeUi.waitUntil(timeoutMillis = timeoutMillis) {
+            val nodes = fetchNodesSafely(matcher = matcher, useUnmergedTree = useUnmergedTree)
+            !nodes.isNullOrEmpty()
+        }
+    }
+
+    protected fun fetchNodesSafely(
+        matcher: SemanticsMatcher,
+        useUnmergedTree: Boolean,
+    ): List<SemanticsNode>? {
+        return try {
             composeUi.onAllNodes(matcher = matcher, useUnmergedTree = useUnmergedTree)
-                .fetchSemanticsNodes().isNotEmpty()
+                .fetchSemanticsNodes()
+        } catch (e: IllegalStateException) {
+            if (e.message?.contains("No compose hierarchies") == true) {
+                null
+            } else {
+                throw e
+            }
         }
     }
 
     /** Drains pending recompositions and dispatched coroutines. */
-    public fun waitForIdle() {
+    public fun waitForIdle(): T = self().apply {
         composeUi.waitForIdle()
     }
 
     /** Advances main test clock by [millis] and waits for idleness. */
-    public fun advanceTime(millis: Long) {
+    public fun advanceTime(millis: Long): T = self().apply {
         composeUi.mainClock.advanceTimeBy(millis)
         composeUi.waitForIdle()
     }
@@ -107,10 +124,11 @@ public abstract class BaseRobot(protected val composeUi: ComposeUiTest) {
      * on overlapping modifiers does not always reach right handler. Use [clickWithTouch] for
      * real touch input.
      */
-    public fun click(tag: String, useUnmergedTree: Boolean = false) {
+    public fun click(tag: String, useUnmergedTree: Boolean = false): T = self().apply {
         awaitTagOnce(tag, useUnmergedTree)
         composeUi.onNode(matcher = hasTestTag(tag), useUnmergedTree = useUnmergedTree)
             .performSemanticsAction(SemanticsActions.OnClick)
+        composeUi.waitForIdle()
     }
 
     /**
@@ -118,57 +136,100 @@ public abstract class BaseRobot(protected val composeUi: ComposeUiTest) {
      *
      * Use for real touch input, overlapping pointer handlers, or verifying ripple positioning.
      */
-    public fun clickWithTouch(tag: String, useUnmergedTree: Boolean = false) {
+    public fun clickWithTouch(tag: String, useUnmergedTree: Boolean = false): T = self().apply {
         awaitTagOnce(tag, useUnmergedTree)
         composeUi.onNode(matcher = hasTestTag(tag), useUnmergedTree = useUnmergedTree).performClick()
+        composeUi.waitForIdle()
     }
 
     /** Clicks first node whose text matches [text]. */
-    public fun clickText(text: String, useUnmergedTree: Boolean = false) {
+    public fun clickText(text: String, useUnmergedTree: Boolean = false): T = self().apply {
         composeUi.onNode(hasText(text), useUnmergedTree = useUnmergedTree).performClick()
+        composeUi.waitForIdle()
     }
 
     /** Waits for [tag] and replaces text field contents with [text]. */
-    public fun replaceText(tag: String, text: String, useUnmergedTree: Boolean = false) {
+    public fun replaceText(tag: String, text: String, useUnmergedTree: Boolean = false): T = self().apply {
         awaitTagOnce(tag, useUnmergedTree)
         composeUi.onNode(hasTestTag(tag), useUnmergedTree = useUnmergedTree).performTextReplacement(text)
+        composeUi.waitForIdle()
     }
 
     /** Waits for [tag] and appends [text] to text field. */
-    public fun inputText(tag: String, text: String, useUnmergedTree: Boolean = false) {
+    public fun inputText(tag: String, text: String, useUnmergedTree: Boolean = false): T = self().apply {
         awaitTagOnce(tag, useUnmergedTree)
         composeUi.onNode(hasTestTag(tag), useUnmergedTree = useUnmergedTree).performTextInput(text)
+        composeUi.waitForIdle()
     }
 
     /** Waits for [tag] and scrolls it into view. */
-    public fun scrollTo(tag: String, useUnmergedTree: Boolean = false) {
+    public fun scrollTo(tag: String, useUnmergedTree: Boolean = false): T = self().apply {
         awaitTagOnce(tag, useUnmergedTree)
         composeUi.onNode(matcher = hasTestTag(tag), useUnmergedTree = useUnmergedTree).performScrollTo()
     }
 
     /** Scrolls inside lazy list [listTag] until child [itemTag] is composed. */
-    public fun scrollToListTag(listTag: String, itemTag: String, useUnmergedTree: Boolean = false) {
-        awaitTagOnce(listTag, useUnmergedTree)
-        composeUi.onNode(matcher = hasTestTag(listTag), useUnmergedTree = useUnmergedTree)
-            .performScrollToNode(matcher = hasTestTag(itemTag))
+    public fun scrollToListTag(
+        listTag: String,
+        itemTag: String,
+        useUnmergedTree: Boolean = false,
+        timeoutMillis: Long = TIMEOUT_MILLIS,
+    ): T = self().apply {
+        awaitTagOnce(listTag, useUnmergedTree, timeoutMillis)
+        waitForIdle()
+
+        // performScrollToNode is the standard way to scroll in Lazy layouts.
+        // It has internal retry logic and handles scrolling until the node is found.
+        @Suppress("RETURN_VALUE_NOT_USED_COERCION")
+        runCatching {
+            composeUi.onNode(matcher = hasTestTag(listTag), useUnmergedTree = useUnmergedTree)
+                .performScrollToNode(matcher = hasTestTag(itemTag))
+        }
+
+        // Wait for the item to actually be present in the tree and displayed
+        awaitTagOnce(itemTag, useUnmergedTree = true, timeoutMillis = timeoutMillis)
+        waitForIdle()
     }
 
     /** Performs right swipe gesture on node with [tag]. */
-    public fun swipeRight(tag: String, useUnmergedTree: Boolean = false) {
+    public fun swipeRight(tag: String, useUnmergedTree: Boolean = false): T = self().apply {
         awaitTagOnce(tag, useUnmergedTree)
         composeUi.onNode(matcher = hasTestTag(tag), useUnmergedTree = useUnmergedTree).performTouchInput { swipeRight() }
     }
 
     /** Performs left swipe gesture on node with [tag]. */
-    public fun swipeLeft(tag: String, useUnmergedTree: Boolean = false) {
+    public fun swipeLeft(tag: String, useUnmergedTree: Boolean = false): T = self().apply {
         awaitTagOnce(tag, useUnmergedTree)
         composeUi.onNode(matcher = hasTestTag(tag), useUnmergedTree = useUnmergedTree).performTouchInput { swipeLeft() }
     }
 
     /** Performs upward swipe gesture on node with [tag]. */
-    public fun swipeUp(tag: String, useUnmergedTree: Boolean = false) {
+    public fun swipeUp(tag: String, useUnmergedTree: Boolean = false): T = self().apply {
         awaitTagOnce(tag, useUnmergedTree)
         composeUi.onNode(matcher = hasTestTag(tag), useUnmergedTree = useUnmergedTree).performTouchInput { swipeUp() }
+    }
+
+    /** Scrolls down using swipe gestures until [itemTag] is found. */
+    @Suppress("RETURN_VALUE_NOT_USED_COERCION")
+    public fun scrollDownUntilTag(
+        listTag: String,
+        itemTag: String,
+        maxSwipes: Int = 10,
+        useUnmergedTree: Boolean = false,
+    ): T = self().apply {
+        awaitTagOnce(listTag, useUnmergedTree)
+        var swipes = 0
+        while (!awaitTag(itemTag, useUnmergedTree = true, timeoutMillis = 500) && swipes < maxSwipes) {
+            swipeUp(listTag, useUnmergedTree)
+            waitForIdle()
+            swipes++
+        }
+        // Final scroll pass to ensure it's fully visible and interactive
+        runCatching {
+            composeUi.onNode(matcher = hasTestTag(listTag), useUnmergedTree = useUnmergedTree)
+                .performScrollToNode(matcher = hasTestTag(itemTag))
+        }
+        waitForIdle()
     }
 
     /**
@@ -176,7 +237,7 @@ public abstract class BaseRobot(protected val composeUi: ComposeUiTest) {
      *
      * Falls back from `RESUMED` to `PAUSED` for transitions like bottom sheets or dialogs.
      */
-    public fun pressBack() {
+    public fun pressBack(): T = self().apply {
         composeUi.waitForIdle()
         InstrumentationRegistry.getInstrumentation().runOnMainSync {
             val monitor = ActivityLifecycleMonitorRegistry.getInstance()
@@ -199,7 +260,7 @@ public abstract class BaseRobot(protected val composeUi: ComposeUiTest) {
         tag: String,
         useUnmergedTree: Boolean = false,
         timeoutMillis: Long = TIMEOUT_MILLIS,
-    ) {
+    ): T = self().apply {
         awaitTagOnce(tag, useUnmergedTree, timeoutMillis)
         composeUi.onNode(hasTestTag(tag), useUnmergedTree = useUnmergedTree).assertIsDisplayed()
     }
@@ -209,7 +270,7 @@ public abstract class BaseRobot(protected val composeUi: ComposeUiTest) {
      *
      * Differs from [assertDoesNotExist], which polls until node is removed.
      */
-    public fun assertNotDisplayed(tag: String, useUnmergedTree: Boolean = false) {
+    public fun assertNotDisplayed(tag: String, useUnmergedTree: Boolean = false): T = self().apply {
         composeUi.onNode(matcher = hasTestTag(tag), useUnmergedTree = useUnmergedTree).assertIsNotDisplayed()
     }
 
@@ -218,10 +279,10 @@ public abstract class BaseRobot(protected val composeUi: ComposeUiTest) {
         tag: String,
         useUnmergedTree: Boolean = false,
         timeoutMillis: Long = TIMEOUT_MILLIS,
-    ) {
+    ): T = self().apply {
         composeUi.waitUntil(timeoutMillis = timeoutMillis) {
-            composeUi.onAllNodes(matcher = hasTestTag(tag), useUnmergedTree = useUnmergedTree)
-                .fetchSemanticsNodes().isEmpty()
+            val nodes = fetchNodesSafely(matcher = hasTestTag(tag), useUnmergedTree = useUnmergedTree)
+            nodes != null && nodes.isEmpty()
         }
     }
 
@@ -230,7 +291,7 @@ public abstract class BaseRobot(protected val composeUi: ComposeUiTest) {
         tag: String,
         useUnmergedTree: Boolean = false,
         timeoutMillis: Long = TIMEOUT_MILLIS,
-    ) {
+    ): T = self().apply {
         awaitTagOnce(tag, useUnmergedTree, timeoutMillis)
     }
 
@@ -251,7 +312,7 @@ public abstract class BaseRobot(protected val composeUi: ComposeUiTest) {
         tag: String,
         useUnmergedTree: Boolean = false,
         timeoutMillis: Long = TIMEOUT_MILLIS,
-    ) {
+    ): T = self().apply {
         awaitTagOnce(tag, useUnmergedTree, timeoutMillis)
         composeUi.onNode(hasTestTag(tag), useUnmergedTree = useUnmergedTree).assertIsSelected()
     }
@@ -261,7 +322,7 @@ public abstract class BaseRobot(protected val composeUi: ComposeUiTest) {
         tag: String,
         useUnmergedTree: Boolean = false,
         timeoutMillis: Long = TIMEOUT_MILLIS,
-    ) {
+    ): T = self().apply {
         awaitTagOnce(tag, useUnmergedTree, timeoutMillis)
         composeUi.onNode(hasTestTag(tag), useUnmergedTree = useUnmergedTree).assertIsNotSelected()
     }
@@ -271,7 +332,7 @@ public abstract class BaseRobot(protected val composeUi: ComposeUiTest) {
         tag: String,
         useUnmergedTree: Boolean = false,
         timeoutMillis: Long = TIMEOUT_MILLIS,
-    ) {
+    ): T = self().apply {
         awaitTagOnce(tag, useUnmergedTree, timeoutMillis)
         composeUi.onNode(hasTestTag(tag), useUnmergedTree = useUnmergedTree).assertIsOn()
     }
@@ -281,7 +342,7 @@ public abstract class BaseRobot(protected val composeUi: ComposeUiTest) {
         tag: String,
         useUnmergedTree: Boolean = false,
         timeoutMillis: Long = TIMEOUT_MILLIS,
-    ) {
+    ): T = self().apply {
         awaitTagOnce(tag, useUnmergedTree, timeoutMillis)
         composeUi.onNode(hasTestTag(tag), useUnmergedTree = useUnmergedTree).assertIsOff()
     }
@@ -290,10 +351,10 @@ public abstract class BaseRobot(protected val composeUi: ComposeUiTest) {
     public fun assertTextDisplayed(
         text: String,
         substring: Boolean = true,
-        ignoreCase: Boolean = false,
+        ignoreCase: Boolean = true,
         useUnmergedTree: Boolean = false,
         timeoutMillis: Long = TIMEOUT_MILLIS,
-    ) {
+    ): T = self().apply {
         awaitMatcherAtLeastOne(
             matcher = hasText(text, substring = substring, ignoreCase = ignoreCase),
             useUnmergedTree = useUnmergedTree,
@@ -312,7 +373,7 @@ public abstract class BaseRobot(protected val composeUi: ComposeUiTest) {
         ignoreCase: Boolean = false,
         useUnmergedTree: Boolean = false,
         timeoutMillis: Long = TIMEOUT_MILLIS,
-    ) {
+    ): T = self().apply {
         awaitMatcherAtLeastOne(
             matcher = composeHasContentDescription(description, substring = substring, ignoreCase = ignoreCase),
             useUnmergedTree = useUnmergedTree,
@@ -325,34 +386,33 @@ public abstract class BaseRobot(protected val composeUi: ComposeUiTest) {
     // region Attribute assertions
 
     /** Asserts node with [tag] has exact text matching [text]. */
-    public fun assertTextEquals(tag: String, text: String, useUnmergedTree: Boolean = false) {
-        composeUi.onNode(hasTestTag(tag), useUnmergedTree = useUnmergedTree).assertTextEquals(text)
+    public fun assertTextEquals(tag: String, text: String, useUnmergedTree: Boolean = false): T = self().apply {
+        composeUi.waitUntil(timeoutMillis = TIMEOUT_MILLIS) {
+            val nodes = fetchNodesSafely(
+                matcher = hasTestTag(tag) and hasText(text, substring = false, ignoreCase = true),
+                useUnmergedTree = useUnmergedTree,
+            )
+            nodes != null && nodes.size == 1
+        }
     }
 
     /** Asserts node with [tag] has text containing [text]. */
-    public fun assertTextContains(tag: String, text: String, useUnmergedTree: Boolean = false) {
-        composeUi.onNode(hasTestTag(tag), useUnmergedTree = useUnmergedTree).assertTextContains(text)
+    public fun assertTextContains(tag: String, text: String, useUnmergedTree: Boolean = false): T = self().apply {
+        awaitMatcherAtLeastOne(
+            matcher = hasTestTag(tag) and hasText(text, substring = true, ignoreCase = true),
+            useUnmergedTree = useUnmergedTree,
+        )
     }
 
-    /**
-     * Waits for [tag] and asserts resolved node has text matching [text].
-     *
-     * Defaults to substring matching. safe to call after actions triggering async recomposition.
-     */
-    public fun assertNodeHasText(
-        tag: String,
-        text: String,
-        substring: Boolean = true,
-        ignoreCase: Boolean = false,
-        useUnmergedTree: Boolean = false,
-        timeoutMillis: Long = TIMEOUT_MILLIS,
-    ) {
-        val matcher = hasTestTag(tag) and hasText(text, substring = substring, ignoreCase = ignoreCase)
-        composeUi.waitUntil(timeoutMillis = timeoutMillis) {
-            composeUi.onAllNodes(matcher, useUnmergedTree = useUnmergedTree)
-                .fetchSemanticsNodes().isNotEmpty()
-        }
+    /** Waits for [tag] and asserts it contains [text]. */
+    public fun assertNodeHasText(tag: String, text: String, useUnmergedTree: Boolean = false): T = self().apply {
+        awaitMatcherAtLeastOne(
+            matcher = hasTestTag(tag) and hasText(text, substring = true, ignoreCase = true),
+            useUnmergedTree = useUnmergedTree,
+        )
     }
+
+    // endregion
 
     /**
      * Waits for [tag] and asserts expected content [description].
@@ -367,7 +427,7 @@ public abstract class BaseRobot(protected val composeUi: ComposeUiTest) {
         ignoreCase: Boolean = false,
         useUnmergedTree: Boolean = false,
         timeoutMillis: Long = TIMEOUT_MILLIS,
-    ) {
+    ): T = self().apply {
         awaitTagOnce(tag, useUnmergedTree, timeoutMillis)
         composeUi.onNode(hasTestTag(tag), useUnmergedTree = useUnmergedTree)
             .assert(composeHasContentDescription(description, substring = substring, ignoreCase = ignoreCase))
@@ -383,7 +443,7 @@ public abstract class BaseRobot(protected val composeUi: ComposeUiTest) {
         childTag: String,
         count: Int,
         useUnmergedTree: Boolean = false,
-    ) {
+    ): T = self().apply {
         composeUi.onNode(hasTestTag(tag), useUnmergedTree = useUnmergedTree)
             .onChildren()
             .filter(
@@ -394,5 +454,7 @@ public abstract class BaseRobot(protected val composeUi: ComposeUiTest) {
             .assertCountEquals(count)
     }
 
-    // endregion
+    public fun onClick(tag: String): T = self().apply {
+        click(tag)
+    }
 }

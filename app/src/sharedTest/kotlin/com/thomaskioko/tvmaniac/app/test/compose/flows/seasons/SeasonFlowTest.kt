@@ -15,72 +15,87 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
     fun seasonUserJourney() = runAppFlowTest {
         scenarios.discover.stubBrowseGraph()
 
-        discoverRobot.clickShowCard(breakingBadTraktId)
+        discoverRobot
+            .assertFeaturedPagerDisplayed()
+            .clickShowCard(breakingBadTraktId)
         trackShow()
 
         // 1. Mark episode as watched & check continue tracking
-        showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
-        seasonDetailsRobot.assertEpisodeRowDisplayed(pilotEpisodeTraktId)
-        seasonDetailsRobot.clickMarkWatched(pilotEpisodeTraktId)
-        seasonDetailsRobot.assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
+        showDetailsRobot
+            .clickSeasonChip(seasonNumber = 1L)
+            .scrollToEpisodeRow(pilotEpisodeTraktId)
+            .assertEpisodeRowDisplayed(pilotEpisodeTraktId)
+            .clickMarkWatched(pilotEpisodeTraktId)
+            .assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
+            .clickBackButton()
 
-        seasonDetailsRobot.clickBackButton()
-        showDetailsRobot.assertContinueTrackingSectionDisplayed()
-        showDetailsRobot.assertContinueTrackingEpisodeDisplayed(secondEpisodeTraktId)
+        showDetailsRobot
+            .assertShowDetailsDisplayed()
+            .assertContinueTrackingSectionDisplayed()
+            .assertContinueTrackingEpisodeDisplayed(secondEpisodeTraktId)
 
         // 2. Unwatch episode - Dismiss & Confirm
-        showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
-        seasonDetailsRobot.clickMarkUnwatched(pilotEpisodeTraktId)
-        seasonDetailsRobot.assertUnwatchEpisodeDialogDisplayed()
-        seasonDetailsRobot.clickUnwatchEpisodeDismiss()
-        seasonDetailsRobot.assertUnwatchEpisodeDialogDoesNotExist()
-        seasonDetailsRobot.assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
-
-        seasonDetailsRobot.clickMarkUnwatched(pilotEpisodeTraktId)
-        seasonDetailsRobot.clickUnwatchEpisodeConfirm()
-        seasonDetailsRobot.assertUnwatchEpisodeDialogDoesNotExist()
-        seasonDetailsRobot.assertMarkWatchedDisplayed(pilotEpisodeTraktId)
+        showDetailsRobot
+            .clickSeasonChip(seasonNumber = 1L)
+            .clickMarkUnwatched(pilotEpisodeTraktId)
+            .assertUnwatchEpisodeDialogDisplayed()
+            .clickUnwatchEpisodeDismiss()
+            .assertUnwatchEpisodeDialogDoesNotExist()
+            .assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
+            .clickMarkUnwatched(pilotEpisodeTraktId)
+            .clickUnwatchEpisodeConfirm()
+            .assertUnwatchEpisodeDialogDoesNotExist()
+            .assertMarkWatchedDisplayed(pilotEpisodeTraktId)
 
         // 3. Mark episode with predecessors - Dismiss (Just this)
-        seasonDetailsRobot.clickMarkWatched(secondEpisodeTraktId)
-        seasonDetailsRobot.assertMarkPreviousEpisodesDialogDisplayed()
-        seasonDetailsRobot.clickMarkPreviousEpisodesDismiss()
-        seasonDetailsRobot.assertMarkPreviousEpisodesDialogDoesNotExist()
-        seasonDetailsRobot.assertMarkUnwatchedDisplayed(secondEpisodeTraktId)
-        seasonDetailsRobot.assertMarkWatchedDisplayed(pilotEpisodeTraktId)
+        seasonDetailsRobot
+            .clickMarkWatched(secondEpisodeTraktId)
+            .assertMarkPreviousEpisodesDialogDisplayed()
+            .clickMarkPreviousEpisodesDismiss()
+            .assertMarkPreviousEpisodesDialogDoesNotExist()
+            .assertMarkUnwatchedDisplayed(secondEpisodeTraktId)
+            .assertMarkWatchedDisplayed(pilotEpisodeTraktId)
 
         // 4. Mark with predecessors - Confirm (Mark All Previous)
         // Reset state for second episode first
-        seasonDetailsRobot.clickMarkUnwatched(secondEpisodeTraktId)
-        seasonDetailsRobot.clickUnwatchEpisodeConfirm()
-
-        seasonDetailsRobot.clickMarkWatched(secondEpisodeTraktId)
-        seasonDetailsRobot.clickMarkPreviousEpisodesConfirm()
-        seasonDetailsRobot.assertMarkPreviousEpisodesDialogDoesNotExist()
-        seasonDetailsRobot.assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
-        seasonDetailsRobot.assertMarkUnwatchedDisplayed(secondEpisodeTraktId)
+        seasonDetailsRobot
+            .clickMarkUnwatched(secondEpisodeTraktId)
+            .clickUnwatchEpisodeConfirm()
+            .clickMarkWatched(secondEpisodeTraktId)
+            .clickMarkPreviousEpisodesConfirm()
+            .assertMarkPreviousEpisodesDialogDoesNotExist()
+            .assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
+            .assertMarkUnwatchedDisplayed(secondEpisodeTraktId)
+            .clickBackButton()
 
         // 5. Verify Continue Tracking
-        seasonDetailsRobot.clickBackButton()
-        showDetailsRobot.assertContinueTrackingSectionDisplayed()
-        showDetailsRobot.assertContinueTrackingEpisodeDisplayed(thirdEpisodeTraktId)
+        showDetailsRobot
+            .assertShowDetailsDisplayed()
+            .assertContinueTrackingSectionDisplayed()
+            .assertContinueTrackingEpisodeDisplayed(thirdEpisodeTraktId)
+            .clickSeasonChip(seasonNumber = 2L)
 
         // 6. Multi-Season flow - Mark Previous Seasons
-        showDetailsRobot.clickSeasonChip(seasonNumber = 2L)
-        seasonDetailsRobot.assertEpisodeRowDisplayed(seasonTwoFirstEpisodeTraktId)
-        seasonDetailsRobot.clickSeasonWatchedToggle()
-        seasonDetailsRobot.assertMarkPreviousSeasonsDialogDisplayed()
-        seasonDetailsRobot.clickMarkPreviousSeasonsConfirm()
-        seasonDetailsRobot.assertMarkPreviousSeasonsDialogDoesNotExist()
-        seasonDetailsRobot.assertMarkUnwatchedDisplayed(seasonTwoFirstEpisodeTraktId)
+        seasonDetailsRobot
+            .scrollToEpisodeRow(seasonTwoFirstEpisodeTraktId)
+            .assertEpisodeRowDisplayed(seasonTwoFirstEpisodeTraktId)
+            .clickSeasonWatchedToggle()
+            .assertMarkPreviousSeasonsDialogDisplayed()
+            .clickMarkPreviousSeasonsConfirm()
+            .assertMarkPreviousSeasonsDialogDoesNotExist()
+            .assertMarkUnwatchedDisplayed(seasonTwoFirstEpisodeTraktId)
+            .clickBackButton()
 
         // 7. Unwatch Season
-        seasonDetailsRobot.clickBackButton()
-        showDetailsRobot.clickSeasonChip(seasonNumber = 2L)
-        seasonDetailsRobot.clickSeasonWatchedToggle()
-        seasonDetailsRobot.assertUnwatchSeasonDialogDisplayed()
-        seasonDetailsRobot.clickUnwatchSeasonConfirm()
-        seasonDetailsRobot.assertUnwatchSeasonDialogDoesNotExist()
-        seasonDetailsRobot.assertMarkWatchedDisplayed(seasonTwoFirstEpisodeTraktId)
+        showDetailsRobot
+            .assertShowDetailsDisplayed()
+            .clickSeasonChip(seasonNumber = 2L)
+
+        seasonDetailsRobot
+            .clickSeasonWatchedToggle()
+            .assertUnwatchSeasonDialogDisplayed()
+            .clickUnwatchSeasonConfirm()
+            .assertUnwatchSeasonDialogDoesNotExist()
+            .assertMarkWatchedDisplayed(seasonTwoFirstEpisodeTraktId)
     }
 }

@@ -40,8 +40,8 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_show_poster
 @Composable
 public fun PosterCard(
     imageUrl: String?,
-    onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
     title: String? = null,
     imageWidth: Dp = 120.dp,
     aspectRatio: Float = 2 / 3f,

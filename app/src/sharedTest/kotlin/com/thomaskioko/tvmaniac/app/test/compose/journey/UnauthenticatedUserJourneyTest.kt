@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeSheetActionIte
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.testing.integration.ui.SystemDialog
 import com.thomaskioko.tvmaniac.testing.integration.ui.dismissSystemDialog
+import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
 import org.junit.Test
 
 internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
@@ -19,127 +20,166 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
         scenarios.stubUnauthenticatedJourney()
 
         // Verify public content on Discover
-        discoverRobot.assertDiscoverScreenDisplayed()
-        discoverRobot.assertShowCardDisplayed(breakingBadTraktId)
-        discoverRobot.assertUpNextCardDoesNotExist(breakingBadTraktId)
-
-        // Verify featured pager
-        discoverRobot.assertFeaturedPagerDisplayed()
-        discoverRobot.assertFeaturedShowDisplayed(breakingBadTraktId)
-        discoverRobot.swipeFeaturedPagerLeft()
-        discoverRobot.assertFeaturedShowDisplayed(betterCallSaulTraktId)
-        discoverRobot.swipeFeaturedPagerRight()
-        discoverRobot.assertFeaturedShowDisplayed(breakingBadTraktId)
+        discoverRobot
+            .assertLoadingIndicatorDisplayed()
+            .assertDiscoverScreenDisplayed()
+            .assertShowCardDisplayed(breakingBadTraktId)
+            .assertUpNextCardDoesNotExist(breakingBadTraktId)
+            // Verify featured pager
+            .assertFeaturedPagerDisplayed()
+            .assertFeaturedShowDisplayed(breakingBadTraktId)
+            .swipeFeaturedPagerLeft()
+            .assertFeaturedShowDisplayed(betterCallSaulTraktId)
+            .swipeFeaturedPagerRight()
+            .assertFeaturedShowDisplayed(breakingBadTraktId)
 
         // Search for show and navigate back
         val query = "Breaking Bad"
         scenarios.search.stubSearch(query)
-        discoverRobot.navigateToSearchTab()
-        searchRobot.assertSearchScreenDisplayed()
-        searchRobot.enterSearchQuery(query)
-        searchRobot.assertResultItemDisplayed(breakingBadTraktId)
-        searchRobot.clickResultItem(breakingBadTraktId)
-        showDetailsRobot.assertTrackButtonDisplayed()
-        showDetailsRobot.pressBack()
-        searchRobot.assertSearchScreenDisplayed()
-        searchRobot.pressBack()
+        discoverRobot
+            .navigateToSearchTab()
+            .assertSearchScreenDisplayed()
+            .enterSearchQuery(query)
+            .assertResultItemDisplayed(breakingBadTraktId)
+            .clickResultItem(breakingBadTraktId)
+            .assertTrackButtonDisplayed()
+            .pressBack()
+
+        searchRobot
+            .assertSearchScreenDisplayed()
+            .pressBack()
 
         // Visit show details from Discover
-        discoverRobot.clickShowCard(breakingBadTraktId)
-        showDetailsRobot.assertTrackButtonDisplayed()
-        showDetailsRobot.pressBack()
+        discoverRobot
+            .assertFeaturedPagerDisplayed()
+            .clickShowCard(breakingBadTraktId)
+            .assertTrackButtonDisplayed()
+            .pressBack()
+
         discoverRobot.assertDiscoverScreenDisplayed()
 
         // Verify logged-out empty states for Progress and Calendar
         homeRobot.clickProgressTab()
-        progressRobot.assertProgressScreenDisplayed()
-        progressRobot.assertUpNextEmptyStateDisplayed()
-        progressRobot.assertEpisodeRowDoesNotExist(breakingBadTraktId)
+            .assertTabSelected(HomeTestTags.PROGRESS_TAB)
 
-        progressRobot.clickCalendarTab()
+        progressRobot
+            .assertProgressScreenDisplayed()
+            .assertUpNextTabSelected()
+            .assertUpNextEmptyStateDisplayed()
+            .assertUpNextEpisodeDoesNotExist(breakingBadTraktId)
+            .clickCalendarTab()
+            .assertCalendarTabSelected()
+
         calendarRobot.assertLoggedOutStateDisplayed()
+
         progressRobot.clickUpNextTab()
 
         // Verify empty library state
         homeRobot.clickLibraryTab()
-        libraryRobot.assertEmptyStateDisplayed()
-        libraryRobot.assertShowRowDoesNotExist(breakingBadTraktId)
+            .assertTabSelected(HomeTestTags.LIBRARY_TAB)
+
+        libraryRobot
+            .assertEmptyStateDisplayed()
+            .assertShowRowDoesNotExist(breakingBadTraktId)
 
         // Navigate to Profile and open Settings
         homeRobot.clickProfileTab()
-        profileRobot.assertSignInButtonDisplayed()
-        profileRobot.clickSettingsButton()
-        settingsRobot.assertSettingsScreenDisplayed()
+            .assertTabSelected(HomeTestTags.PROFILE_TAB)
 
-        // Change theme from SYSTEM to DARK
-        settingsRobot.scrollToThemeSwatch(ThemeModel.SYSTEM)
-        settingsRobot.assertThemeSwatchSelected(ThemeModel.SYSTEM)
-        settingsRobot.scrollToThemeSwatch(ThemeModel.DARK)
-        settingsRobot.clickThemeSwatch(ThemeModel.DARK)
-        settingsRobot.assertThemeSwatchSelected(ThemeModel.DARK)
-        settingsRobot.assertThemeSwatchNotSelected(ThemeModel.SYSTEM)
+        profileRobot
+            .scrollToSignInButton()
+            .assertSignInButtonDisplayed()
+            .clickSettingsButton()
 
-        // Dismiss episode notifications rationale
-        settingsRobot.scrollToEpisodeNotificationsToggle()
-        settingsRobot.assertEpisodeNotificationsDisabled()
-        settingsRobot.clickEpisodeNotificationsToggle()
-        rootRobot.assertNotificationRationaleDisplayed()
-        rootRobot.dismissNotificationRationale()
-        settingsRobot.assertEpisodeNotificationsDisabled()
+        settingsRobot
+            .assertSettingsScreenDisplayed()
+            // Change theme from SYSTEM to DARK
+            .scrollToThemeSwatch(ThemeModel.SYSTEM)
+            .assertThemeSwatchSelected(ThemeModel.SYSTEM)
+            .scrollToThemeSwatch(ThemeModel.DARK)
+            .clickThemeSwatch(ThemeModel.DARK)
+            .assertThemeSwatchSelected(ThemeModel.DARK)
+            .assertThemeSwatchNotSelected(ThemeModel.SYSTEM)
+            // Dismiss episode notifications rationale
+            .scrollToEpisodeNotificationsToggle()
+            .assertEpisodeNotificationsDisabled()
+            .clickEpisodeNotificationsToggle()
 
-        // Accept episode notifications rationale
-        settingsRobot.clickEpisodeNotificationsToggle()
-        rootRobot.assertNotificationRationaleDisplayed()
-        rootRobot.acceptNotificationRationale()
-        rootRobot.assertNotificationRationaleDoesNotExist()
+        rootRobot
+            .assertNotificationRationaleDisplayed()
+            .dismissNotificationRationale()
+
+        settingsRobot
+            .assertEpisodeNotificationsDisabled()
+            // Accept episode notifications rationale
+            .clickEpisodeNotificationsToggle()
+
+        rootRobot
+            .assertNotificationRationaleDisplayed()
+            .acceptNotificationRationale()
 
         dismissSystemDialog(SystemDialog.NotificationPermissionDeny)
 
+        rootRobot.assertNotificationRationaleDoesNotExist()
+
         // Follow show locally
         settingsRobot.clickBackButton()
+
         homeRobot.clickDiscoverTab()
-        discoverRobot.clickShowCard(breakingBadTraktId)
-        showDetailsRobot.assertTrackButtonDisplayed()
-        showDetailsRobot.clickTrackButton()
-        showDetailsRobot.assertStopTrackingButtonDisplayed()
+            .assertTabSelected(HomeTestTags.DISCOVER_TAB)
 
-        // Continue tracking and mark season watched
-        showDetailsRobot.clickContinueTrackingMarkWatched(pilotEpisodeTraktId)
+        discoverRobot
+            .assertFeaturedPagerDisplayed()
+            .clickShowCard(breakingBadTraktId)
+            .assertTrackButtonDisplayed()
+            .clickTrackButton()
+            .assertStopTrackingButtonDisplayed()
+            .clickContinueTrackingMarkWatched(pilotEpisodeTraktId)
+            .clickSeasonChip(seasonNumber = 1L)
+            .assertSeasonDetailsDisplayed()
+            .scrollToMarkUnwatchedButton(pilotEpisodeTraktId)
+            .assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
+            .clickMarkWatched(secondEpisodeTraktId)
+            .scrollToMarkUnwatchedButton(secondEpisodeTraktId)
+            .assertMarkUnwatchedDisplayed(secondEpisodeTraktId)
+            .pressBack()
 
-        showDetailsRobot.clickSeasonChip(seasonNumber = 1L)
-        seasonDetailsRobot.assertSeasonDetailsDisplayed()
-        seasonDetailsRobot.assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
-        seasonDetailsRobot.clickMarkWatched(secondEpisodeTraktId)
-        seasonDetailsRobot.assertMarkUnwatchedDisplayed(secondEpisodeTraktId)
-
-        seasonDetailsRobot.pressBack()
-        showDetailsRobot.assertStopTrackingButtonDisplayed()
         showDetailsRobot.pressBack()
-        discoverRobot.assertDiscoverScreenDisplayed()
 
-        // Open Episode Sheet from Discover UpNext card
-        discoverRobot.assertUpNextCardDisplayed(breakingBadTraktId)
-        discoverRobot.clickUpNextCard(breakingBadTraktId)
-        episodeSheetRobot.assertEpisodeSheetDisplayed()
-        episodeSheetRobot.clickActionItem(EpisodeSheetActionItem.OPEN_SHOW)
-        showDetailsRobot.assertStopTrackingButtonDisplayed()
-        showDetailsRobot.pressBack()
+        discoverRobot
+            .assertDiscoverScreenDisplayed()
+            .assertUpNextCardDisplayed(breakingBadTraktId)
+            .clickUpNextCard(breakingBadTraktId)
+            .assertEpisodeSheetDisplayed()
+            .clickActionItem(EpisodeSheetActionItem.OPEN_SHOW)
+
+        showDetailsRobot
+            .assertStopTrackingButtonDisplayed()
+            .pressBack()
+
         discoverRobot.assertDiscoverScreenDisplayed()
 
         // Verify offline follow in Library
-        homeRobot.clickLibraryTab()
-        libraryRobot.assertShowRowDisplayed(breakingBadTraktId)
-        libraryRobot.clickShowRow(breakingBadTraktId)
-        showDetailsRobot.assertStopTrackingButtonDisplayed()
+        homeRobot
+            .clickLibraryTab()
+            .assertTabSelected(HomeTestTags.LIBRARY_TAB)
 
-        // Raise login prompt and confirm login
-        scenarios.stubProfileOnSignIn()
-        showDetailsRobot.clickAddToListButton()
-        showDetailsRobot.assertLoginPromptDisplayed()
-        showDetailsRobot.confirmLoginPrompt()
-        showDetailsRobot.assertLoginPromptDoesNotExist()
-        showDetailsRobot.pressBack()
+        libraryRobot
+            .scrollToShowRow(breakingBadTraktId)
+            .assertShowRowDisplayed(breakingBadTraktId)
+            .clickShowRow(breakingBadTraktId)
+            .assertStopTrackingButtonDisplayed()
+            // Raise login prompt and confirm login
+            .also { scenarios.stubProfileOnSignIn() }
+            .clickAddToListButton()
+            .assertLoginPromptDisplayed()
+            .confirmLoginPrompt()
+            .assertLoginPromptDoesNotExist()
+            .pressBack()
+
         homeRobot.clickProfileTab()
+            .assertTabSelected(HomeTestTags.PROFILE_TAB)
+
         profileRobot.assertUserCardDisplayed(slug = "integration-test-user")
     }
 
@@ -148,10 +188,15 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
         scenarios.stubUnauthenticatedJourney()
         scenarios.stubProfileOnSignIn()
 
-        homeRobot.clickProfileTab()
-        profileRobot.assertSignInButtonDisplayed()
-        profileRobot.clickSignInButton()
-        profileRobot.assertUserCardDisplayed(slug = "integration-test-user")
+        homeRobot
+            .clickProfileTab()
+            .assertTabSelected(HomeTestTags.PROFILE_TAB)
+
+        profileRobot
+            .scrollToSignInButton()
+            .assertSignInButtonDisplayed()
+            .clickSignInButton()
+            .assertUserCardDisplayed(slug = "integration-test-user")
     }
 
     @Test
@@ -159,32 +204,49 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
         scenarios.stubUnauthenticatedJourney()
 
         // Dismiss rationale from Settings
-        homeRobot.clickProfileTab()
+        homeRobot
+            .clickProfileTab()
+            .assertTabSelected(HomeTestTags.PROFILE_TAB)
 
-        profileRobot.clickSettingsButton()
-        settingsRobot.assertSettingsScreenDisplayed()
+        profileRobot
+            .clickSettingsButton()
 
-        settingsRobot.scrollToEpisodeNotificationsToggle()
-        settingsRobot.clickEpisodeNotificationsToggle()
-        rootRobot.assertNotificationRationaleDisplayed()
-        rootRobot.dismissNotificationRationale()
-        rootRobot.assertNotificationRationaleDoesNotExist()
+        settingsRobot
+            .assertSettingsScreenDisplayed()
+            .scrollToEpisodeNotificationsToggle()
+            .clickEpisodeNotificationsToggle()
+
+        rootRobot
+            .assertNotificationRationaleDisplayed()
+            .dismissNotificationRationale()
+            .assertNotificationRationaleDoesNotExist()
+
+        settingsRobot
+            .clickBackButton()
 
         // Login user
-        settingsRobot.clickBackButton()
-        profileRobot.assertSignInButtonDisplayed()
+        profileRobot
+            .scrollToSignInButton()
+            .assertSignInButtonDisplayed()
 
         scenarios.stubProfileOnSignIn()
 
-        profileRobot.clickSignInButton()
-        profileRobot.assertUserCardDisplayed(slug = "integration-test-user")
+        profileRobot
+            .clickSignInButton()
+            .assertUserCardDisplayed(slug = "integration-test-user")
 
         // Verify rationale remains hidden after auth transition
-        profileRobot.clickSettingsButton()
-        settingsRobot.assertSettingsScreenDisplayed()
-        settingsRobot.clickBackButton()
-        profileRobot.assertUserCardDisplayed(slug = "integration-test-user")
+        profileRobot
+            .clickSettingsButton()
 
-        rootRobot.assertNotificationRationaleDoesNotExist()
+        settingsRobot
+            .assertSettingsScreenDisplayed()
+            .clickBackButton()
+
+        profileRobot
+            .assertUserCardDisplayed(slug = "integration-test-user")
+
+        rootRobot
+            .assertNotificationRationaleDoesNotExist()
     }
 }
