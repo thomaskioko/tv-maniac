@@ -118,6 +118,14 @@ public interface Navigator {
         componentContext: ComponentContext,
         childFactory: (NavRoute, ComponentContext) -> T,
     ): Value<ChildSlot<*, T>>
+
+    /**
+     * Dismisses the active overlay, if any. No-op if no overlay is currently active. Use from a
+     * presenter that owns an [OverlayRoute] to close itself programmatically (action commit, deep
+     * link, or sibling navigation). Hardware back press already dismisses via the slot's
+     * `handleBackButton`.
+     */
+    public fun dismissOverlay()
 }
 
 /**

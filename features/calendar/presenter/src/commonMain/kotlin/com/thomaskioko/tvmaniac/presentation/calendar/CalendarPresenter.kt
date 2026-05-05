@@ -13,13 +13,14 @@ import com.thomaskioko.tvmaniac.domain.calendar.CalendarWeekCalculator
 import com.thomaskioko.tvmaniac.domain.calendar.CalendarWeekCalculator.Companion.DAYS_IN_WEEK
 import com.thomaskioko.tvmaniac.domain.calendar.FetchCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.calendar.ObserveCalendarInteractor
-import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetConfig
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarEmpty
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarLoginRequired
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarMoreEpisodes
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarNoData
-import com.thomaskioko.tvmaniac.navigation.SheetNavigator
+import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import dev.zacsweers.metro.Inject
@@ -36,7 +37,7 @@ import kotlinx.coroutines.launch
 @Inject
 public class CalendarPresenter(
     componentContext: ComponentContext,
-    private val sheetNavigator: SheetNavigator,
+    private val navigator: Navigator,
     private val observeCalendarInteractor: ObserveCalendarInteractor,
     private val fetchCalendarInteractor: FetchCalendarInteractor,
     private val traktAuthRepository: TraktAuthRepository,
@@ -97,8 +98,8 @@ public class CalendarPresenter(
 
             is NavigateToPreviousWeek -> navigateToPreviousWeek()
             is NavigateToNextWeek -> navigateToNextWeek()
-            is EpisodeCardClicked -> sheetNavigator.activate(
-                EpisodeSheetConfig(episodeId = action.episodeTraktId, source = ScreenSource.CALENDAR),
+            is EpisodeCardClicked -> navigator.navigateTo(
+                EpisodeSheetRoute(EpisodeSheetParam(episodeId = action.episodeTraktId, source = ScreenSource.CALENDAR)),
             )
             is MessageShown -> clearMessage(action.id)
         }

@@ -13,15 +13,12 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.domain.library.LibrarySyncWorker
 import com.thomaskioko.tvmaniac.domain.notifications.EpisodeNotificationWorker
 import com.thomaskioko.tvmaniac.domain.upnext.UpNextSyncWorker
-import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetConfig
 import com.thomaskioko.tvmaniac.genreshows.nav.GenreShowsRoute
 import com.thomaskioko.tvmaniac.navigation.BaseRouteSerializer
 import com.thomaskioko.tvmaniac.navigation.DefaultBaseRouteSerializer
 import com.thomaskioko.tvmaniac.navigation.DefaultNavRootSerializer
 import com.thomaskioko.tvmaniac.navigation.DefaultNavRouteSerializer
 import com.thomaskioko.tvmaniac.navigation.DefaultNavigator
-import com.thomaskioko.tvmaniac.navigation.DefaultSheetConfigSerializer
-import com.thomaskioko.tvmaniac.navigation.DefaultSheetNavigator
 import com.thomaskioko.tvmaniac.navigation.NavDestination
 import com.thomaskioko.tvmaniac.navigation.NavRoot
 import com.thomaskioko.tvmaniac.navigation.NavRootBinding
@@ -31,13 +28,6 @@ import com.thomaskioko.tvmaniac.navigation.NavRouteBinding
 import com.thomaskioko.tvmaniac.navigation.NavRouteSerializer
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.RootChild
-import com.thomaskioko.tvmaniac.navigation.SheetChild
-import com.thomaskioko.tvmaniac.navigation.SheetChildFactory
-import com.thomaskioko.tvmaniac.navigation.SheetConfig
-import com.thomaskioko.tvmaniac.navigation.SheetConfigBinding
-import com.thomaskioko.tvmaniac.navigation.SheetConfigSerializer
-import com.thomaskioko.tvmaniac.navigation.SheetNavigator
-import com.thomaskioko.tvmaniac.navigation.testing.FakeSheetNavigator
 import com.thomaskioko.tvmaniac.presenter.root.DefaultRootPresenter
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
 import com.thomaskioko.tvmaniac.traktauth.implementation.TokenRefreshWorker
@@ -65,7 +55,6 @@ import kotlinx.coroutines.flow.flowOf
         LibrarySyncWorker::class,
         TokenRefreshWorker::class,
         UpNextSyncWorker::class,
-        DefaultSheetNavigator::class,
     ],
 )
 public object FakeAppBindingContainer {
@@ -133,10 +122,6 @@ public object FakeAppBindingContainer {
 
     @Provides
     @SingleIn(AppScope::class)
-    public fun provideSheetNavigator(): SheetNavigator = FakeSheetNavigator()
-
-    @Provides
-    @SingleIn(AppScope::class)
     public fun provideNavDestinations(): Set<NavDestination> = setOf(
         object : NavDestination {
             override fun matches(route: NavRoute): Boolean = true
@@ -158,30 +143,6 @@ public object FakeAppBindingContainer {
     public fun provideNavRouteSerializer(
         bindings: Set<NavRouteBinding<*>>,
     ): NavRouteSerializer = DefaultNavRouteSerializer(bindings)
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideSheetChildFactories(): Set<SheetChildFactory> = setOf(
-        object : SheetChildFactory {
-            override fun matches(config: SheetConfig): Boolean = config is EpisodeSheetConfig
-            override fun createChild(
-                config: SheetConfig,
-                componentContext: ComponentContext,
-            ): SheetChild = object : SheetChild {}
-        },
-    )
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideSheetConfigBindings(): Set<SheetConfigBinding<*>> = setOf(
-        SheetConfigBinding(EpisodeSheetConfig::class, EpisodeSheetConfig.serializer()),
-    )
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideSheetConfigSerializer(
-        bindings: Set<SheetConfigBinding<*>>,
-    ): SheetConfigSerializer = DefaultSheetConfigSerializer(bindings)
 
     @Provides
     @SingleIn(AppScope::class)

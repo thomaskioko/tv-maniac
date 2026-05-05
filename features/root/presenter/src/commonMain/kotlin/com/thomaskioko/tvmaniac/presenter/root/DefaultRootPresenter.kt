@@ -19,11 +19,12 @@ import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
+import com.thomaskioko.tvmaniac.navigation.NavDestination
+import com.thomaskioko.tvmaniac.navigation.NavRoute
 import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.navigation.ScreenDestination
 import com.thomaskioko.tvmaniac.navigation.SheetChild
-import com.thomaskioko.tvmaniac.navigation.SheetChildFactory
-import com.thomaskioko.tvmaniac.navigation.SheetConfig
-import com.thomaskioko.tvmaniac.navigation.SheetNavigator
+import com.thomaskioko.tvmaniac.navigation.SheetDestination
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.presenter.home.di.HomeScreenGraph
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
@@ -57,8 +58,7 @@ import kotlin.time.Duration.Companion.milliseconds
 public class DefaultRootPresenter(
     @Assisted componentContext: ComponentContext,
     private val navigator: Navigator,
-    private val sheetChildFactories: Set<SheetChildFactory>,
-    sheetNavigator: SheetNavigator,
+    private val navDestinations: Set<NavDestination>,
     homeGraphFactory: HomeScreenGraph.Factory,
     private val notificationRationale: NotificationRationale,
     private val traktAuthRepository: TraktAuthRepository,
@@ -110,9 +110,9 @@ public class DefaultRootPresenter(
 
     override val homePresenter: HomePresenter = homeGraphFactory.createHomeGraph(this).homePresenter
 
-    private val sheetSlotRouter: Value<ChildSlot<*, SheetChild>> = sheetNavigator.buildChildSlot(
+    private val sheetSlotRouter: Value<ChildSlot<*, SheetChild>> = navigator.buildOverlaySlot(
         componentContext = this,
-        childFactory = ::createSheet,
+        childFactory = ::createOverlay,
     )
 
     override val episodeSheetSlot: StateFlow<ChildSlot<*, SheetChild>> =
@@ -206,13 +206,19 @@ public class DefaultRootPresenter(
         }
     }
 
-    private fun createSheet(
-        config: SheetConfig,
+    private fun createOverlay(
+        route: NavRoute,
         componentContext: ComponentContext,
     ): SheetChild {
-        val factory = sheetChildFactories.firstOrNull { it.matches(config) }
-            ?: error("No SheetChildFactory found for config: $config")
-        return factory.createChild(config, componentContext)
+        val destination = navDestinations.firstOrNull { it.matches(route) }
+            ?: error("No NavDestination found for overlay route: $route")
+        val rootChild = destination.createChild(route, componentContext)
+        return when (rootChild) {
+            is ScreenDestination<*> -> SheetDestination(rootChild.presenter)
+            else -> error(
+                "NavDestination produced unsupported child for overlay route $route: ${rootChild::class.simpleName}",
+            )
+        }
     }
 
     @AssistedFactory

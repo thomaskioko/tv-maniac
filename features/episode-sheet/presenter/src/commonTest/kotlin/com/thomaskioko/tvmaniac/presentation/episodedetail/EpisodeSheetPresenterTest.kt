@@ -16,12 +16,11 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveEpisodeByIdInteractor
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
-import com.thomaskioko.tvmaniac.navigation.NavRoute
-import com.thomaskioko.tvmaniac.navigation.Navigator
-import com.thomaskioko.tvmaniac.navigation.testing.FakeSheetNavigator
+import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import io.kotest.matchers.collections.shouldContainExactly
@@ -45,8 +44,7 @@ internal class EpisodeSheetPresenterTest {
     private val localizer = FakeLocalizer()
     private val logger = FakeLogger()
 
-    private var navigatedToShowId: Long? = null
-    private var navigatedToSeason: Triple<Long, Long, Long>? = null
+    private val navigator = FakeNavigator()
 
     @BeforeTest
     fun setUp() {
@@ -56,6 +54,7 @@ internal class EpisodeSheetPresenterTest {
     @AfterTest
     fun tearDown() {
         Dispatchers.resetMain()
+        navigator.reset()
     }
 
     @Test
@@ -230,7 +229,8 @@ internal class EpisodeSheetPresenterTest {
 
             presenter.dispatch(EpisodeSheetAction.OpenShow)
 
-            navigatedToShowId shouldBe 100L
+            (navigator.lastNavigatedRoute as ShowDetailsRoute).param.id shouldBe 100L
+            navigator.overlayDismissCount shouldBe 1
         }
     }
 
@@ -247,7 +247,11 @@ internal class EpisodeSheetPresenterTest {
 
             presenter.dispatch(EpisodeSheetAction.OpenSeason)
 
-            navigatedToSeason shouldBe Triple(100L, 10L, 1L)
+            val seasonRoute = navigator.lastNavigatedRoute as SeasonDetailsRoute
+            seasonRoute.param.showTraktId shouldBe 100L
+            seasonRoute.param.seasonId shouldBe 10L
+            seasonRoute.param.seasonNumber shouldBe 1L
+            navigator.overlayDismissCount shouldBe 1
         }
     }
 
@@ -255,8 +259,7 @@ internal class EpisodeSheetPresenterTest {
     fun `should unfollow show and dismiss given Unfollow is dispatched`() = runTest {
         episodeRepository.setEpisodeById(testEpisode())
 
-        val sheetNavigator = FakeSheetNavigator()
-        val presenter = createPresenter(sheetNavigator = sheetNavigator)
+        val presenter = createPresenter()
 
         presenter.state.test {
             awaitItem()
@@ -267,7 +270,7 @@ internal class EpisodeSheetPresenterTest {
             testDispatcher.scheduler.advanceUntilIdle()
 
             followedShowsRepository.removedShowIds shouldContainExactly listOf(100L)
-            sheetNavigator.dismissCount shouldBe 1
+            navigator.overlayDismissCount shouldBe 1
         }
     }
 
@@ -275,8 +278,7 @@ internal class EpisodeSheetPresenterTest {
     fun `should dismiss sheet given Dismiss is dispatched`() = runTest {
         episodeRepository.setEpisodeById(testEpisode())
 
-        val sheetNavigator = FakeSheetNavigator()
-        val presenter = createPresenter(sheetNavigator = sheetNavigator)
+        val presenter = createPresenter()
 
         presenter.state.test {
             awaitItem()
@@ -285,7 +287,7 @@ internal class EpisodeSheetPresenterTest {
 
             presenter.dispatch(EpisodeSheetAction.Dismiss)
 
-            sheetNavigator.dismissCount shouldBe 1
+            navigator.overlayDismissCount shouldBe 1
         }
     }
 
@@ -322,11 +324,7 @@ internal class EpisodeSheetPresenterTest {
 
     private fun createPresenter(
         source: ScreenSource = ScreenSource.DISCOVER,
-        sheetNavigator: FakeSheetNavigator = FakeSheetNavigator(),
     ): EpisodeSheetPresenter {
-        navigatedToShowId = null
-        navigatedToSeason = null
-
         val dispatchers = AppCoroutineDispatchers(
             main = testDispatcher,
             io = testDispatcher,
@@ -337,41 +335,8 @@ internal class EpisodeSheetPresenterTest {
 
         return EpisodeSheetPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
-            episodeId = 1L,
-            source = source,
-            navigator = object : Navigator {
-                override val activeRoot: com.arkivanov.decompose.value.Value<com.thomaskioko.tvmaniac.navigation.NavRoot> =
-                    com.arkivanov.decompose.value.MutableValue(com.thomaskioko.tvmaniac.navigation.testing.UnspecifiedNavRoot)
-                override fun bringToFront(route: NavRoute) {}
-                override fun navigateTo(route: NavRoute) {
-                    if (route is SeasonDetailsRoute) {
-                        navigatedToSeason = Triple(route.param.showTraktId, route.param.seasonId, route.param.seasonNumber)
-                    }
-                }
-                override fun pushToFront(route: NavRoute) {
-                    if (route is ShowDetailsRoute) {
-                        navigatedToShowId = route.param.id
-                    }
-                }
-                override fun navigateBack() {}
-                override fun navigateBackTo(routeClass: kotlin.reflect.KClass<out NavRoute>, inclusive: Boolean) {}
-                override fun popTo(toIndex: Int) {}
-                override fun switchBackStack(root: com.thomaskioko.tvmaniac.navigation.NavRoot) {}
-                override fun showRoot(root: com.thomaskioko.tvmaniac.navigation.NavRoot) {}
-                override fun replaceAllBackStacks(root: com.thomaskioko.tvmaniac.navigation.NavRoot) {}
-                override fun <T : Any> buildHostNavigation(
-                    componentContext: com.arkivanov.decompose.ComponentContext,
-                    initialRoot: com.thomaskioko.tvmaniac.navigation.NavRoot,
-                    childFactory: (com.thomaskioko.tvmaniac.navigation.BaseRoute, com.arkivanov.decompose.ComponentContext) -> T,
-                ): com.arkivanov.decompose.value.Value<com.thomaskioko.tvmaniac.navigation.MultiStackHostState<T>> =
-                    error("Not used in this test")
-                override fun <T : Any> buildOverlaySlot(
-                    componentContext: com.arkivanov.decompose.ComponentContext,
-                    childFactory: (NavRoute, com.arkivanov.decompose.ComponentContext) -> T,
-                ): com.arkivanov.decompose.value.Value<com.arkivanov.decompose.router.slot.ChildSlot<*, T>> =
-                    error("Not used in this test")
-            },
-            sheetNavigator = sheetNavigator,
+            param = EpisodeSheetParam(episodeId = 1L, source = source),
+            navigator = navigator,
             observeEpisodeByIdInteractor = ObserveEpisodeByIdInteractor(episodeRepository),
             markEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(episodeRepository),
             markEpisodeUnwatchedInteractor = MarkEpisodeUnwatchedInteractor(episodeRepository),

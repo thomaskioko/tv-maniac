@@ -57,11 +57,4 @@ internal class SerializerInitChecksTest {
         error.message shouldContain "at least one NavRootBinding"
     }
 
-    @Test
-    fun `should throw given DefaultSheetConfigSerializer with no bindings`() {
-        val error = shouldThrow<IllegalArgumentException> {
-            DefaultSheetConfigSerializer(bindings = emptySet())
-        }
-        error.message shouldContain "at least one SheetConfigBinding"
-    }
 }

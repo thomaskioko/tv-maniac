@@ -8,8 +8,6 @@ import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.navigation.NavDestination
 import com.thomaskioko.tvmaniac.navigation.NavRouteBinding
 import com.thomaskioko.tvmaniac.navigation.Navigator
-import com.thomaskioko.tvmaniac.navigation.SheetChildFactory
-import com.thomaskioko.tvmaniac.navigation.SheetConfigBinding
 import com.thomaskioko.tvmaniac.navigation.ui.ScreenContent
 import com.thomaskioko.tvmaniac.navigation.ui.SheetContent
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
@@ -31,8 +29,6 @@ public interface ActivityGraph {
     public val sheetContents: Set<SheetContent>
     public val navDestinations: Set<NavDestination>
     public val navRouteBindings: Set<NavRouteBinding<*>>
-    public val sheetChildFactories: Set<SheetChildFactory>
-    public val sheetConfigBindings: Set<SheetConfigBinding<*>>
 
     @Provides
     public fun provideComponentContext(

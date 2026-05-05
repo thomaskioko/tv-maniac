@@ -78,4 +78,6 @@ public class NoOpNavigator(
         handleBackButton = true,
         childFactory = childFactory,
     )
+
+    override fun dismissOverlay(): Unit = Unit
 }

@@ -3,7 +3,8 @@ package com.thomaskioko.tvmaniac.app.test.graph
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
 import com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot
-import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetConfig
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.genreshows.nav.GenreShowsRoute
 import com.thomaskioko.tvmaniac.home.nav.HomeRoute
@@ -11,7 +12,6 @@ import com.thomaskioko.tvmaniac.library.nav.LibraryRoot
 import com.thomaskioko.tvmaniac.moreshows.nav.MoreShowsRoute
 import com.thomaskioko.tvmaniac.navigation.NavRoot
 import com.thomaskioko.tvmaniac.navigation.NavRoute
-import com.thomaskioko.tvmaniac.navigation.SheetConfig
 import com.thomaskioko.tvmaniac.profile.nav.ProfileRoot
 import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
 import com.thomaskioko.tvmaniac.search.nav.SearchRoute
@@ -29,7 +29,7 @@ internal class NavigationRouteTest : BaseAppFlowTest() {
 
     @Test
     fun `should resolve a NavDestination for every NavRoute subtype`() = runAppFlowTest {
-        // 1. Enumerate all routable subtypes
+        // 1. Enumerate all routable subtypes (including overlay routes such as EpisodeSheetRoute)
         val routes: List<NavRoute> = listOf(
             HomeRoute,
             SettingsRoute,
@@ -42,6 +42,7 @@ internal class NavigationRouteTest : BaseAppFlowTest() {
             ),
             GenreShowsRoute(id = 1L),
             MoreShowsRoute(categoryId = 1L),
+            EpisodeSheetRoute(EpisodeSheetParam(episodeId = 1L, source = ScreenSource.DISCOVER)),
         )
 
         val destinations = activityGraph.navDestinations
@@ -76,23 +77,7 @@ internal class NavigationRouteTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun `should resolve a SheetChildFactory for every SheetConfig subtype`() = runAppFlowTest {
-        // 1. Enumerate all sheet configs
-        val configs: List<SheetConfig> = listOf(
-            EpisodeSheetConfig(episodeId = 1L, source = ScreenSource.DISCOVER),
-        )
-
-        val factories = activityGraph.sheetChildFactories
-        factories.shouldNotBeEmpty()
-
-        // 2. Verify each sheet has a factory bound in the graph
-        configs.forEach { config ->
-            factories.firstOrNull { it.matches(config) }.shouldNotBeNull()
-        }
-    }
-
-    @Test
-    fun `should expose a NavRouteBinding for every routable NavRoute`() = runAppFlowTest {
+    fun `should expose a NavRouteBinding for every routable NavRoute including overlays`() = runAppFlowTest {
         // 1. Enumerate routable classes (for serialization verification)
         val routableTypes = listOf(
             HomeRoute::class,
@@ -104,6 +89,7 @@ internal class NavigationRouteTest : BaseAppFlowTest() {
             SeasonDetailsRoute::class,
             GenreShowsRoute::class,
             MoreShowsRoute::class,
+            EpisodeSheetRoute::class,
         )
 
         val bindings = activityGraph.navRouteBindings
@@ -111,20 +97,6 @@ internal class NavigationRouteTest : BaseAppFlowTest() {
 
         // 2. Verify each class has a registered serializer binding (required for Decompose state restoration)
         routableTypes.forEach { kClass ->
-            bindings.firstOrNull { it.kClass == kClass }.shouldNotBeNull()
-        }
-    }
-
-    @Test
-    fun `should expose a SheetConfigBinding for every SheetConfig subtype`() = runAppFlowTest {
-        // 1. Enumerate sheet classes
-        val sheetTypes = listOf(EpisodeSheetConfig::class)
-
-        val bindings = activityGraph.sheetConfigBindings
-        bindings.shouldNotBeEmpty()
-
-        // 2. Verify serialization bindings for sheets
-        sheetTypes.forEach { kClass ->
             bindings.firstOrNull { it.kClass == kClass }.shouldNotBeNull()
         }
     }

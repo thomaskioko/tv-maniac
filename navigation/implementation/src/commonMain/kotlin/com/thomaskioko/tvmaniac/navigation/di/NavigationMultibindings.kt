@@ -5,8 +5,6 @@ import com.thomaskioko.tvmaniac.navigation.NavDestination
 import com.thomaskioko.tvmaniac.navigation.NavRoot
 import com.thomaskioko.tvmaniac.navigation.NavRootBinding
 import com.thomaskioko.tvmaniac.navigation.NavRouteBinding
-import com.thomaskioko.tvmaniac.navigation.SheetChildFactory
-import com.thomaskioko.tvmaniac.navigation.SheetConfigBinding
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Multibinds
 
@@ -23,10 +21,4 @@ public interface NavigationMultibindings {
 
     @Multibinds(allowEmpty = true)
     public fun navRootBindings(): Set<NavRootBinding<*>>
-
-    @Multibinds
-    public fun sheetChildFactories(): Set<SheetChildFactory>
-
-    @Multibinds
-    public fun sheetConfigBindings(): Set<SheetConfigBinding<*>>
 }

@@ -11,9 +11,8 @@ import com.thomaskioko.tvmaniac.domain.calendar.CalendarEpisodeFormatter
 import com.thomaskioko.tvmaniac.domain.calendar.CalendarWeekCalculator
 import com.thomaskioko.tvmaniac.domain.calendar.FetchCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.calendar.ObserveCalendarInteractor
-import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetConfig
-import com.thomaskioko.tvmaniac.navigation.testing.FakeSheetNavigator
-import com.thomaskioko.tvmaniac.navigation.testing.lastActivatedAs
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
+import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
@@ -290,26 +289,28 @@ internal class CalendarPresenterTest {
 
     @Test
     fun `should activate episode sheet given EpisodeCardClicked is dispatched`() = runTest {
-        val sheetNavigator = FakeSheetNavigator()
-        val presenter = createPresenter(sheetNavigator = sheetNavigator)
+        val navigator = FakeNavigator()
+        val presenter = createPresenter(navigator = navigator)
 
         presenter.state.test { awaitItem() }
 
         presenter.dispatch(EpisodeCardClicked(episodeTraktId = 42))
 
-        sheetNavigator.lastActivatedAs<EpisodeSheetConfig>().episodeId shouldBe 42
+        val activated = navigator.lastActivatedOverlay
+        (activated as EpisodeSheetRoute).param.episodeId shouldBe 42
     }
 
     @Test
     fun `should activate episode sheet given EpisodeCardClicked with unknown id`() = runTest {
-        val sheetNavigator = FakeSheetNavigator()
-        val presenter = createPresenter(sheetNavigator = sheetNavigator)
+        val navigator = FakeNavigator()
+        val presenter = createPresenter(navigator = navigator)
 
         presenter.state.test { awaitItem() }
 
         presenter.dispatch(EpisodeCardClicked(episodeTraktId = 999))
 
-        sheetNavigator.lastActivatedAs<EpisodeSheetConfig>().episodeId shouldBe 999
+        val activated = navigator.lastActivatedOverlay
+        (activated as EpisodeSheetRoute).param.episodeId shouldBe 999
     }
 
     @Test
@@ -383,7 +384,7 @@ internal class CalendarPresenterTest {
     }
 
     private fun createPresenter(
-        sheetNavigator: FakeSheetNavigator = FakeSheetNavigator(),
+        navigator: FakeNavigator = FakeNavigator(),
     ): CalendarPresenter {
         val dispatchers = AppCoroutineDispatchers(
             main = testDispatcher,
@@ -419,7 +420,7 @@ internal class CalendarPresenterTest {
 
         return CalendarPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
-            sheetNavigator = sheetNavigator,
+            navigator = navigator,
             observeCalendarInteractor = observeCalendarInteractor,
             fetchCalendarInteractor = fetchCalendarInteractor,
             traktAuthRepository = traktAuthRepository,

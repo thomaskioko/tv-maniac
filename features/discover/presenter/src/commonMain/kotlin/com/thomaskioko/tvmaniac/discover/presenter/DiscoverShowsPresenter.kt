@@ -22,12 +22,12 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
-import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetConfig
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import com.thomaskioko.tvmaniac.moreshows.nav.MoreShowsRoute
 import com.thomaskioko.tvmaniac.navigation.Navigator
-import com.thomaskioko.tvmaniac.navigation.SheetNavigator
 import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
 import com.thomaskioko.tvmaniac.search.nav.SearchRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
@@ -55,7 +55,6 @@ import kotlinx.coroutines.launch
 public class DiscoverShowsPresenter(
     componentContext: ComponentContext,
     private val navigator: Navigator,
-    private val sheetNavigator: SheetNavigator,
     private val discoverShowsInteractor: DiscoverShowsInteractor,
     private val followedShowsRepository: FollowedShowsRepository,
     private val unfollowShowInteractor: UnfollowShowInteractor,
@@ -224,8 +223,8 @@ public class DiscoverShowsPresenter(
                     ShowDetailsRoute(ShowDetailsParam(id = action.showTraktId)),
                 )
                 SearchIconClicked -> navigator.navigateTo(SearchRoute)
-                is DiscoverEpisodeLongPressed -> sheetNavigator.activate(
-                    EpisodeSheetConfig(episodeId = action.episodeId, source = ScreenSource.DISCOVER),
+                is DiscoverEpisodeLongPressed -> navigator.navigateTo(
+                    EpisodeSheetRoute(EpisodeSheetParam(episodeId = action.episodeId, source = ScreenSource.DISCOVER)),
                 )
             }
         }

@@ -137,6 +137,16 @@ public class FakeNavigator(
         childFactory = childFactory,
     )
 
+    override fun dismissOverlay() {
+        _overlayDismissCount += 1
+        overlayNavigation.dismiss()
+    }
+
+    private var _overlayDismissCount: Int = 0
+
+    /** Number of programmatic [Navigator.dismissOverlay] calls since the last [reset]. */
+    public val overlayDismissCount: Int get() = _overlayDismissCount
+
     /** Resets recorded state for reuse across test cases. */
     public fun reset() {
         activeRootValue.value = UnspecifiedNavRoot
@@ -146,6 +156,7 @@ public class FakeNavigator(
         _activatedOverlays.clear()
         _navigatedRoutes.clear()
         _navigateBackCount = 0
+        _overlayDismissCount = 0
         overlayNavigation.dismiss()
     }
 }

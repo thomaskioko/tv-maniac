@@ -27,10 +27,10 @@ import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveSeasonWatchProgressP
 import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveUnwatchedInPreviousSeasonsInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveUnwatchedInPreviousSeasonsParams
 import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsInteractor
-import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetConfig
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.navigation.Navigator
-import com.thomaskioko.tvmaniac.navigation.SheetNavigator
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
@@ -53,7 +53,6 @@ public class SeasonDetailsPresenter(
     componentContext: ComponentContext,
     @Assisted private val param: SeasonDetailsUiParam,
     private val navigator: Navigator,
-    private val sheetNavigator: SheetNavigator,
     observableSeasonDetailsInteractor: ObservableSeasonDetailsInteractor,
     private val seasonDetailsInteractor: SeasonDetailsInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
@@ -140,8 +139,8 @@ public class SeasonDetailsPresenter(
     public fun dispatch(action: SeasonDetailsAction) {
         coroutineScope.launch {
             when (action) {
-                is EpisodeClicked -> sheetNavigator.activate(
-                    EpisodeSheetConfig(episodeId = action.id, source = ScreenSource.SEASON_DETAILS),
+                is EpisodeClicked -> navigator.navigateTo(
+                    EpisodeSheetRoute(EpisodeSheetParam(episodeId = action.id, source = ScreenSource.SEASON_DETAILS)),
                 )
                 SeasonDetailsBackClicked -> navigator.navigateBack()
                 ReloadSeasonDetails -> observeSeasonDetails()

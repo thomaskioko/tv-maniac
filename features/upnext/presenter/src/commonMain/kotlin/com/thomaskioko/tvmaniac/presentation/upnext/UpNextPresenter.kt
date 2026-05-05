@@ -15,10 +15,10 @@ import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.RefreshUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.model.UpNextSortOption
-import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetConfig
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.navigation.Navigator
-import com.thomaskioko.tvmaniac.navigation.SheetNavigator
 import com.thomaskioko.tvmaniac.presentation.upnext.model.UpNextEpisodeUiModel
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
@@ -43,7 +43,6 @@ import kotlinx.coroutines.launch
 public class UpNextPresenter(
     componentContext: ComponentContext,
     private val navigator: Navigator,
-    private val sheetNavigator: SheetNavigator,
     private val refreshUpNextInteractor: RefreshUpNextInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val upNextRepository: UpNextRepository,
@@ -105,8 +104,8 @@ public class UpNextPresenter(
                 ),
             )
             is UnfollowShow -> unfollowShow(action.showTraktId)
-            is UpNextEpisodeLongPressed -> sheetNavigator.activate(
-                EpisodeSheetConfig(episodeId = action.episodeId, source = ScreenSource.UP_NEXT),
+            is UpNextEpisodeLongPressed -> navigator.navigateTo(
+                EpisodeSheetRoute(EpisodeSheetParam(episodeId = action.episodeId, source = ScreenSource.UP_NEXT)),
             )
         }
     }
