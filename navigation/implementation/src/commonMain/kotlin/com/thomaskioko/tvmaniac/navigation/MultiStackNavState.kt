@@ -22,6 +22,19 @@ internal data class MultiStackNavState(
         }
     }
 
+    /**
+     * Projects every entry across every tab as a [ChildNavState]. Only the active tab's top is
+     * [ChildNavState.Status.RESUMED]; everything else is [ChildNavState.Status.CREATED].
+     *
+     * Decompose's canonical neighbours are typically [ChildNavState.Status.STARTED] (ChildPages
+     * `INACTIVE`) or [ChildNavState.Status.CREATED] (ChildStack back stack). [CREATED] is chosen
+     * here so coroutines wired through `lifecycle.coroutineScope()` do not run for inactive tabs,
+     * conserving CPU and battery on bottom-nav re-entry.
+     *
+     * Tab presenters must use `stateIn(scope, SharingStarted.WhileSubscribed(...))` for any flow
+     * that needs to refresh on tab re-entry; the flow restarts on UI subscription, independent of
+     * lifecycle status.
+     */
     override val children: List<ChildNavState<TabbedRoute>> by lazy {
         tabStacks.flatMap { (root, stack) ->
             stack.mapIndexed { index, entry ->

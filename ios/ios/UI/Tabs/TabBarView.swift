@@ -83,17 +83,13 @@ public struct TabBarView: View {
         if let tabChild = child as? TabChild<AnyObject> {
             switch tabChild.presenter {
             case let p as DiscoverShowsPresenter:
-                DiscoverTab(presenter: p)
-                    .id(ObjectIdentifier(tabChild))
+                DiscoverTab(presenter: p).id(NavigationTab.discover.rawValue)
             case let p as ProgressPresenter:
-                ProgressTab(presenter: p)
-                    .id(ObjectIdentifier(tabChild))
+                ProgressTab(presenter: p).id(NavigationTab.progress.rawValue)
             case let p as LibraryPresenter:
-                LibraryTab(presenter: p)
-                    .id(ObjectIdentifier(tabChild))
+                LibraryTab(presenter: p).id(NavigationTab.library.rawValue)
             case let p as ProfilePresenter:
-                ProfileTab(presenter: p)
-                    .id(ObjectIdentifier(tabChild))
+                ProfileTab(presenter: p).id(NavigationTab.profile.rawValue)
             default:
                 EmptyView()
             }

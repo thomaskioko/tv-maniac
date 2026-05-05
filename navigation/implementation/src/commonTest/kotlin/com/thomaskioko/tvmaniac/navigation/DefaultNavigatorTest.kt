@@ -162,7 +162,11 @@ internal class DefaultNavigatorTest {
         val navigator = DefaultNavigator(
             navRouteSerializer = DefaultNavRouteSerializer(routeBindings),
             navRootSerializer = DefaultNavRootSerializer(rootBindings),
-            baseRouteSerializer = DefaultBaseRouteSerializer(routeBindings, rootBindings),
+            baseRouteSerializer = DefaultBaseRouteSerializer(
+                routeBindings = routeBindings,
+                rootBindings = rootBindings,
+                navRoots = setOf(PrimaryRoot),
+            ),
             navRoots = setOf(PrimaryRoot),
         )
         val lifecycle = LifecycleRegistry().apply { resume() }

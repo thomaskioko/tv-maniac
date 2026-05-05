@@ -224,7 +224,8 @@ public object FakeAppBindingContainer {
     public fun provideBaseRouteSerializer(
         routeBindings: Set<NavRouteBinding<*>>,
         rootBindings: Set<NavRootBinding<*>>,
-    ): BaseRouteSerializer = DefaultBaseRouteSerializer(routeBindings, rootBindings)
+        navRoots: Set<NavRoot>,
+    ): BaseRouteSerializer = DefaultBaseRouteSerializer(routeBindings, rootBindings, navRoots)
 
     @Provides
     @SingleIn(AppScope::class)

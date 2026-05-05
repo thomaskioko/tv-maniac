@@ -17,6 +17,21 @@ import kotlin.reflect.KClass
 public class DefaultSheetConfigSerializer(
     bindings: Set<SheetConfigBinding<*>>,
 ) : SheetConfigSerializer {
+    init {
+        require(bindings.isNotEmpty()) {
+            "DefaultSheetConfigSerializer requires at least one SheetConfigBinding. " +
+                "Contribute via @IntoSet on Set<SheetConfigBinding<*>>."
+        }
+        val duplicates = bindings.map { it.kClass }
+            .groupingBy { it }.eachCount()
+            .filterValues { it > 1 }
+            .keys
+        require(duplicates.isEmpty()) {
+            "Duplicate SheetConfigBindings for: ${duplicates.map { it.simpleName }}. " +
+                "Each SheetConfig class may only contribute one binding."
+        }
+    }
+
     private val module: SerializersModule = SerializersModule {
         polymorphic(SheetConfig::class) {
             bindings.forEach { binding ->

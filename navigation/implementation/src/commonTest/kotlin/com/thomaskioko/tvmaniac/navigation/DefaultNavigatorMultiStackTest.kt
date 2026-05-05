@@ -177,7 +177,7 @@ internal class DefaultNavigatorMultiStackTest {
         return DefaultNavigator(
             navRouteSerializer = DefaultNavRouteSerializer(routeBindings),
             navRootSerializer = DefaultNavRootSerializer(rootBindings),
-            baseRouteSerializer = DefaultBaseRouteSerializer(routeBindings, rootBindings),
+            baseRouteSerializer = DefaultBaseRouteSerializer(routeBindings, rootBindings, navRoots),
             navRoots = navRoots,
         )
     }

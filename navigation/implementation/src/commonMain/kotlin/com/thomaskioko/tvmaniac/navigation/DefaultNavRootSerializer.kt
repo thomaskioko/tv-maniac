@@ -17,6 +17,21 @@ import kotlin.reflect.KClass
 public class DefaultNavRootSerializer(
     bindings: Set<NavRootBinding<*>>,
 ) : NavRootSerializer {
+    init {
+        require(bindings.isNotEmpty()) {
+            "DefaultNavRootSerializer requires at least one NavRootBinding. " +
+                "Contribute via @IntoSet on Set<NavRootBinding<*>>."
+        }
+        val duplicates = bindings.map { it.kClass }
+            .groupingBy { it }.eachCount()
+            .filterValues { it > 1 }
+            .keys
+        require(duplicates.isEmpty()) {
+            "Duplicate NavRootBindings for: ${duplicates.map { it.simpleName }}. " +
+                "Each NavRoot class may only contribute one binding."
+        }
+    }
+
     private val module: SerializersModule = SerializersModule {
         polymorphic(NavRoot::class) {
             bindings.forEach { binding ->
