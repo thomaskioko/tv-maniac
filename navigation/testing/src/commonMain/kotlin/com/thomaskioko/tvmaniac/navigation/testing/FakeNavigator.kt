@@ -6,6 +6,7 @@ import com.arkivanov.decompose.router.slot.ChildSlot
 import com.arkivanov.decompose.router.slot.SlotNavigation
 import com.arkivanov.decompose.router.slot.activate
 import com.arkivanov.decompose.router.slot.childSlot
+import com.arkivanov.decompose.router.slot.dismiss
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
@@ -113,7 +114,7 @@ public class FakeNavigator(
         childFactory: (BaseRoute, ComponentContext) -> T,
     ): Value<MultiStackHostState<T>> {
         activeRootValue.value = initialRoot
-        val rootInstance = childFactory(initialRoot as BaseRoute, componentContext)
+        val rootInstance = childFactory(initialRoot, componentContext)
         val initialChildStack = ChildStack(
             active = Child.Created(configuration = initialRoot, instance = rootInstance),
         )
@@ -145,5 +146,6 @@ public class FakeNavigator(
         _activatedOverlays.clear()
         _navigatedRoutes.clear()
         _navigateBackCount = 0
+        overlayNavigation.dismiss()
     }
 }

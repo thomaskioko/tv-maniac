@@ -136,9 +136,9 @@ public class DefaultNavigator(
         state: MultiStackNavState,
         children: List<Child<TabbedRoute, T>>,
     ): MultiStackHostState<T> {
-        @Suppress("UNCHECKED_CAST")
         val byTabbed: Map<TabbedRoute, Child.Created<TabbedRoute, T>> =
-            children.associate { it.configuration to (it as Child.Created<TabbedRoute, T>) }
+            children.filterIsInstance<Child.Created<TabbedRoute, T>>()
+                .associateBy { it.configuration }
         val tabStacks = state.tabStacks.mapValues { (root, entries) ->
             val created = entries.map { entry ->
                 val tabbed = TabbedRoute(tabRoot = root, route = entry)
@@ -146,7 +146,9 @@ public class DefaultNavigator(
                     ?: error("Child for $tabbed not found in children list")
                 Child.Created(configuration = entry, instance = child.instance)
             }
-            ChildStack(active = created.last(), backStack = created.dropLast(1))
+            val active = created.lastOrNull()
+                ?: error("Tab stack for $root is empty; expected at least the tab root entry")
+            ChildStack(active = active, backStack = created.dropLast(1))
         }
         return MultiStackHostState(activeRoot = state.activeRoot, tabStacks = tabStacks)
     }

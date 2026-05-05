@@ -56,7 +56,7 @@ public class NoOpNavigator(
         initialRoot: NavRoot,
         childFactory: (BaseRoute, ComponentContext) -> T,
     ): Value<MultiStackHostState<T>> {
-        val rootInstance = childFactory(initialRoot as BaseRoute, componentContext)
+        val rootInstance = childFactory(initialRoot, componentContext)
         val initialChildStack = ChildStack(
             active = Child.Created(configuration = initialRoot, instance = rootInstance),
         )

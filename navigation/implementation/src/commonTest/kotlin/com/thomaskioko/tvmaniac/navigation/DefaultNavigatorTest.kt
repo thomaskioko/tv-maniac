@@ -54,7 +54,7 @@ internal class DefaultNavigatorTest {
     }
 
     @Test
-    fun `should pop back to root given navigateBackTo target route`() {
+    fun `should pop back to most recent matching route given navigateBackTo target route type`() {
         val (navigator, stack) = newNavigator()
         navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(1)))
         navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(2)))
