@@ -43,6 +43,7 @@ WITH last_watched_cte AS (
     SELECT we.episode_id, we.season_number, we.episode_number, we.watched_at
     FROM watched_episodes we
     WHERE we.show_trakt_id = :show_trakt_id
+      AND we.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
       AND (:include_specials = 1 OR we.season_number > 0)
     ORDER BY we.watched_at DESC, (1000 * we.season_number) + we.episode_number DESC
     LIMIT 1
@@ -64,6 +65,7 @@ UPDATE show_metadata SET
     cached_watched_count = (
         SELECT COUNT(*) FROM watched_episodes
         WHERE watched_episodes.show_trakt_id = :show_trakt_id
+          AND watched_episodes.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
     ),
     cached_total_count = (
         SELECT COUNT(*) FROM episode
@@ -83,7 +85,7 @@ FROM tvshow
 LEFT JOIN (
     SELECT show_trakt_id, COUNT(*) AS count
     FROM watched_episodes
-    WHERE pending_action != 'DELETE'
+    WHERE pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
     GROUP BY show_trakt_id
 ) AS watched ON watched.show_trakt_id = tvshow.trakt_id
 LEFT JOIN (

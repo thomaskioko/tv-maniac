@@ -22,7 +22,7 @@ INNER JOIN season ON tvshow.trakt_id = season.show_trakt_id
 INNER JOIN episode ON episode.season_id = season.id AND episode.show_trakt_id = tvshow.trakt_id
 LEFT JOIN watched_episodes AS watched_episode
     ON watched_episode.show_trakt_id = tvshow.trakt_id
-    AND watched_episode.pending_action != 'DELETE'
+    AND watched_episode.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
     AND (
         watched_episode.episode_id = episode.id
         OR (
@@ -58,7 +58,7 @@ INNER JOIN season ON tvshow.trakt_id = season.show_trakt_id
 INNER JOIN episode ON episode.season_id = season.id AND episode.show_trakt_id = tvshow.trakt_id
 LEFT JOIN watched_episodes AS watched_episode
     ON watched_episode.show_trakt_id = tvshow.trakt_id
-    AND watched_episode.pending_action != 'DELETE'
+    AND watched_episode.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
     AND (
         watched_episode.episode_id = episode.id
         OR (
