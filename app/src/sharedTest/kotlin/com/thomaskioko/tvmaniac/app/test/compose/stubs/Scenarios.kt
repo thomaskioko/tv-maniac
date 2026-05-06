@@ -180,6 +180,10 @@ internal class Scenarios(
             mockHandler.stubEndpoint(Endpoints.Tmdb.Credits)
             mockHandler.stubEndpoint(Endpoints.Tmdb.SeasonDetails)
             mockHandler.stubEndpoint(Endpoints.Tmdb.WatchProviders)
+            mockHandler.stubPatternFixture(
+                pathRegex = "/users/me/history/shows/\\d+",
+                fixturePath = EMPTY_ARRAY_FIXTURE,
+            )
         }
 
         fun stubDiscoverError() {
@@ -230,17 +234,17 @@ internal class Scenarios(
 
     inner class UpNext {
         /**
-         * Wires the post-pilot-watched flow:
-         * - Accepts the `POST /sync/history` upload so `markEpisodeAsWatched` proceeds to refresh
-         *   UpNext instead of throwing on the unstubbed upload.
-         * - Overrides the per-show watched-progress endpoint with a response where pilot is the
-         *   last watched episode and episode 2 is queued up. The exact path beats the pattern
-         *   fixture registered in [Discover.stubBrowseGraph] because `MockEngineHandler`
-         *   matches stubs in last-registered-wins order.
+         * Stubs `POST /sync/history` so the background launcher fired by `markEpisodeAsWatched`
+         * resolves cleanly when pushing the local UPLOAD-pending row to Trakt. UpNext list and
+         * count derive live from the local `watched_episodes` table, so no Trakt UpNext API stub
+         * is required after the click.
+         *
+         * The unused [showTraktId] parameter is kept so callers can keep the per-show signature
+         * if/when the upload assertion grows to verify a specific show id.
          */
+        @Suppress("UNUSED_PARAMETER")
         fun stubProgressAfterPilotWatched(showTraktId: Long) {
             mockHandler.stubEndpoint(Endpoints.Trakt.SyncHistory, method = HttpMethod.Post)
-            mockHandler.stubEndpoint(Endpoints.Trakt.showProgressAfterPilotWatched(showTraktId))
         }
     }
 
