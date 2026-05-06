@@ -14,12 +14,4 @@ public interface UpNextRepository {
     public suspend fun saveUpNextSortOption(sortOption: String)
 
     public fun observeUpNextSortOption(): Flow<String>
-
-    public suspend fun updateUpNextForShow(showTraktId: Long, forceRefresh: Boolean = false)
-
-    public suspend fun fetchUpNext(
-        showTraktId: Long,
-        seasonNumber: Long,
-        episodeNumber: Long,
-    )
 }

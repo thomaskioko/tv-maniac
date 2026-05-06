@@ -13,7 +13,6 @@ import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
-import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
@@ -29,7 +28,6 @@ import kotlin.time.Duration
 public class DefaultEpisodeRepository(
     private val watchedEpisodeDao: WatchedEpisodeDao,
     private val datastoreRepository: DatastoreRepository,
-    private val upNextRepository: UpNextRepository,
     private val syncRepository: WatchedEpisodeSyncRepository,
     private val episodesDao: EpisodesDao,
     private val dispatchers: AppCoroutineDispatchers,
@@ -57,12 +55,6 @@ public class DefaultEpisodeRepository(
 
         appScopeLauncher.launch(TAG) {
             syncRepository.syncPendingEpisodes()
-
-            upNextRepository.fetchUpNext(
-                showTraktId = showTraktId,
-                seasonNumber = seasonNumber,
-                episodeNumber = episodeNumber,
-            )
         }
     }
 
@@ -83,7 +75,6 @@ public class DefaultEpisodeRepository(
 
         appScopeLauncher.launch(TAG) {
             syncRepository.syncPendingEpisodes()
-            upNextRepository.updateUpNextForShow(showTraktId)
         }
     }
 
@@ -97,7 +88,6 @@ public class DefaultEpisodeRepository(
 
         appScopeLauncher.launch(TAG) {
             syncRepository.syncPendingEpisodes()
-            upNextRepository.updateUpNextForShow(showTraktId)
         }
     }
 
@@ -131,7 +121,6 @@ public class DefaultEpisodeRepository(
 
         appScopeLauncher.launch(TAG) {
             syncRepository.syncPendingEpisodes()
-            upNextRepository.updateUpNextForShow(showTraktId)
         }
     }
 
@@ -148,7 +137,6 @@ public class DefaultEpisodeRepository(
 
         appScopeLauncher.launch(TAG) {
             syncRepository.syncPendingEpisodes()
-            upNextRepository.updateUpNextForShow(showTraktId)
         }
     }
 
@@ -158,7 +146,6 @@ public class DefaultEpisodeRepository(
 
         appScopeLauncher.launch(TAG) {
             syncRepository.syncPendingEpisodes()
-            upNextRepository.updateUpNextForShow(showTraktId)
         }
     }
 

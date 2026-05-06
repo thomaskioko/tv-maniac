@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.db.NextEpisodesForWatchlist
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.episodes.api.NextEpisodeDao
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
+import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.map
 public class DefaultNextEpisodeDao(
     private val database: TvManiacDatabase,
     private val dispatchers: AppCoroutineDispatchers,
+    private val dateTimeProvider: DateTimeProvider,
 ) : NextEpisodeDao {
 
     override fun observeNextEpisodesForWatchlist(includeSpecials: Boolean): Flow<List<NextEpisodeWithShow>> {
@@ -26,23 +28,27 @@ public class DefaultNextEpisodeDao(
             .nextEpisodesForWatchlist(includeSpecials = if (includeSpecials) 1L else 0L)
             .asFlow()
             .mapToList(dispatchers.databaseRead)
-            .map { list ->
-                list.filter { it.episode_id != null }
-                    .map { it.toNextEpisodeWithShow() }
+            .map { rows ->
+                rows.mapNotNull { it.toNextEpisodeWithShow() }
+                    .filterActionableEpisodes(dateTimeProvider.nowMillis())
             }
             .catch { emit(emptyList()) }
     }
 }
 
-private fun NextEpisodesForWatchlist.toNextEpisodeWithShow(): NextEpisodeWithShow {
+private fun NextEpisodesForWatchlist.toNextEpisodeWithShow(): NextEpisodeWithShow? {
+    val episodeId = episode_id?.id ?: return null
+    val seasonId = season_id?.id ?: return null
+    val seasonNumber = season_number ?: return null
+    val episodeNumber = episode_number ?: return null
     return NextEpisodeWithShow(
         showTraktId = show_trakt_id.id,
         showTmdbId = show_tmdb_id.id,
-        episodeId = episode_id!!.id,
+        episodeId = episodeId,
         episodeName = episode_name,
-        seasonId = season_id!!.id,
-        seasonNumber = season_number!!,
-        episodeNumber = episode_number!!,
+        seasonId = seasonId,
+        seasonNumber = seasonNumber,
+        episodeNumber = episodeNumber,
         runtime = runtime,
         stillPath = still_path,
         overview = overview,
@@ -60,4 +66,13 @@ private fun NextEpisodesForWatchlist.toNextEpisodeWithShow(): NextEpisodeWithSho
         rating = ratings,
         voteCount = vote_count,
     )
+}
+
+private fun List<NextEpisodeWithShow>.filterActionableEpisodes(
+    nowMillis: Long,
+): List<NextEpisodeWithShow> = filter { episode ->
+    val airDate = episode.firstAired
+    val isCaughtUp = episode.totalCount > 0 && episode.watchedCount >= episode.totalCount
+    val hasNotAired = airDate == null || airDate > nowMillis
+    !(isCaughtUp && hasNotAired)
 }

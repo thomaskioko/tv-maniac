@@ -37,14 +37,4 @@ public class FakeUpNextRepository : UpNextRepository {
     }
 
     override fun observeUpNextSortOption(): Flow<String> = upNextSortOptionFlow.asStateFlow()
-
-    override suspend fun updateUpNextForShow(showTraktId: Long, forceRefresh: Boolean) {
-    }
-
-    override suspend fun fetchUpNext(
-        showTraktId: Long,
-        seasonNumber: Long,
-        episodeNumber: Long,
-    ) {
-    }
 }
