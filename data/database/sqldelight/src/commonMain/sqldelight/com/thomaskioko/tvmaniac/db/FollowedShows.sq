@@ -114,11 +114,12 @@ SELECT
     show_metadata.season_count,
     show_metadata.episode_count,
     show_metadata.status,
-    show_metadata.cached_watched_count AS watched_count,
-    show_metadata.cached_total_count AS total_episode_count
+    COALESCE(show_watch_progress.watched_count, 0) AS watched_count,
+    COALESCE(show_watch_progress.total_count, 0) AS total_episode_count
 FROM followed_shows
 INNER JOIN tvshow ON followed_shows.trakt_id = tvshow.trakt_id
 LEFT JOIN show_metadata ON tvshow.trakt_id = show_metadata.show_trakt_id
+LEFT JOIN show_watch_progress ON tvshow.trakt_id = show_watch_progress.show_trakt_id
 WHERE followed_shows.pending_action != 'DELETE'
 ORDER BY COALESCE(show_metadata.last_watched_at, followed_shows.followed_at) DESC;
 
@@ -134,11 +135,12 @@ SELECT
     show_metadata.season_count,
     show_metadata.episode_count,
     show_metadata.status AS metadata_status,
-    show_metadata.cached_watched_count AS watched_count,
-    show_metadata.cached_total_count AS total_episode_count
+    COALESCE(show_watch_progress.watched_count, 0) AS watched_count,
+    COALESCE(show_watch_progress.total_count, 0) AS total_episode_count
 FROM followed_shows
 INNER JOIN tvshow ON followed_shows.trakt_id = tvshow.trakt_id
 LEFT JOIN show_metadata ON tvshow.trakt_id = show_metadata.show_trakt_id
+LEFT JOIN show_watch_progress ON tvshow.trakt_id = show_watch_progress.show_trakt_id
 WHERE followed_shows.pending_action != 'DELETE'
   AND tvshow.name LIKE '%' || :query || '%' COLLATE NOCASE
 ORDER BY
