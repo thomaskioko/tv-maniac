@@ -69,9 +69,6 @@ public class DefaultWatchedEpisodeDao(
                     show_trakt_id = Id(showTraktId),
                     include_specials = if (includeSpecials) 1L else 0L,
                 )
-                val _ = database.showMetadataQueries.incrementWatchedCount(
-                    show_trakt_id = Id(showTraktId),
-                )
             }
         }
     }
@@ -104,9 +101,6 @@ public class DefaultWatchedEpisodeDao(
                 val _ = database.showMetadataQueries.recalculateLastWatched(
                     show_trakt_id = Id(showTraktId),
                     include_specials = if (includeSpecials) 1L else 0L,
-                )
-                val _ = database.showMetadataQueries.recalculateCachedCounts(
-                    show_trakt_id = Id(showTraktId),
                 )
             }
         }
@@ -208,9 +202,6 @@ public class DefaultWatchedEpisodeDao(
                     show_trakt_id = Id(showTraktId),
                     include_specials = if (includeSpecials) 1L else 0L,
                 )
-                val _ = database.showMetadataQueries.recalculateCachedCounts(
-                    show_trakt_id = Id(showTraktId),
-                )
             }
         }
     }
@@ -239,9 +230,6 @@ public class DefaultWatchedEpisodeDao(
                 val _ = database.showMetadataQueries.recalculateLastWatched(
                     show_trakt_id = Id(showTraktId),
                     include_specials = if (includeSpecials) 1L else 0L,
-                )
-                val _ = database.showMetadataQueries.recalculateCachedCounts(
-                    show_trakt_id = Id(showTraktId),
                 )
             }
         }
@@ -314,9 +302,6 @@ public class DefaultWatchedEpisodeDao(
                     show_trakt_id = Id(showTraktId),
                     include_specials = if (includeSpecials) 1L else 0L,
                 )
-                val _ = database.showMetadataQueries.recalculateCachedCounts(
-                    show_trakt_id = Id(showTraktId),
-                )
             }
         }
     }
@@ -365,9 +350,6 @@ public class DefaultWatchedEpisodeDao(
                 val _ = database.showMetadataQueries.recalculateLastWatched(
                     show_trakt_id = Id(showTraktId),
                     include_specials = if (includeSpecials) 1L else 0L,
-                )
-                val _ = database.showMetadataQueries.recalculateCachedCounts(
-                    show_trakt_id = Id(showTraktId),
                 )
             }
         }
@@ -509,9 +491,6 @@ public class DefaultWatchedEpisodeDao(
                 val _ = database.showMetadataQueries.recalculateLastWatched(
                     show_trakt_id = Id(showTraktId),
                     include_specials = if (includeSpecials) 1L else 0L,
-                )
-                val _ = database.showMetadataQueries.recalculateCachedCounts(
-                    show_trakt_id = Id(showTraktId),
                 )
             }
         }

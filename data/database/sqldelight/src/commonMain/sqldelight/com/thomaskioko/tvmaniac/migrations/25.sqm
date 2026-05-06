@@ -1,0 +1,47 @@
+-- Migration 25: drop denormalised cached_watched_count and cached_total_count columns from
+-- show_metadata.
+--
+-- Watched/total counts are derived live from the show_watch_progress view (which aggregates
+-- watched_episodes joined with episode and season). The cached columns drifted on retries
+-- because markAsWatched incremented while every other write recalculated, and Trakt pulls
+-- could overwrite freshly-incremented local counts with stale server values. After PRD #1
+-- moved the UpNext path to the live view and PRD #3's earlier edits move Library and
+-- FollowedShows to the same view, no reader needs the cached columns.
+--
+-- SQLite cannot drop columns in place; rebuild via temp-table pattern.
+
+CREATE TABLE show_metadata_new (
+    show_trakt_id INTEGER PRIMARY KEY NOT NULL,
+    season_count INTEGER NOT NULL DEFAULT 0,
+    episode_count INTEGER NOT NULL DEFAULT 0,
+    status TEXT DEFAULT NULL,
+    last_watched_episode_id INTEGER DEFAULT NULL,
+    last_watched_season_number INTEGER DEFAULT NULL,
+    last_watched_episode_number INTEGER DEFAULT NULL,
+    last_watched_at INTEGER DEFAULT NULL,
+    FOREIGN KEY(show_trakt_id) REFERENCES tvshow(trakt_id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+INSERT INTO show_metadata_new(
+    show_trakt_id,
+    season_count,
+    episode_count,
+    status,
+    last_watched_episode_id,
+    last_watched_season_number,
+    last_watched_episode_number,
+    last_watched_at
+)
+SELECT
+    show_trakt_id,
+    season_count,
+    episode_count,
+    status,
+    last_watched_episode_id,
+    last_watched_season_number,
+    last_watched_episode_number,
+    last_watched_at
+FROM show_metadata;
+
+DROP TABLE show_metadata;
+ALTER TABLE show_metadata_new RENAME TO show_metadata;
