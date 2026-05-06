@@ -20,4 +20,3 @@ internal class RecordingLogger : Logger {
         recorded += LoggedError(tag = tag, message = message, throwable = throwable)
     }
 }
-
