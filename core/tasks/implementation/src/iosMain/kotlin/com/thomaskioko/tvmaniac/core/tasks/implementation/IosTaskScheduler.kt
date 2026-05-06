@@ -11,15 +11,24 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 import kotlinx.atomicfu.atomic
+import kotlinx.atomicfu.locks.reentrantLock
+import kotlinx.atomicfu.locks.withLock
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.ObjCObjectVar
+import kotlinx.cinterop.alloc
+import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.ptr
+import kotlinx.cinterop.value
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import platform.BackgroundTasks.BGAppRefreshTaskRequest
 import platform.BackgroundTasks.BGProcessingTaskRequest
 import platform.BackgroundTasks.BGTask
+import platform.BackgroundTasks.BGTaskRequest
 import platform.BackgroundTasks.BGTaskScheduler
 import platform.Foundation.NSDate
+import platform.Foundation.NSError
 import platform.Foundation.dateWithTimeIntervalSinceNow
 
 @SingleIn(AppScope::class)
@@ -31,18 +40,20 @@ public class IosTaskScheduler(
 ) : BackgroundTaskScheduler {
 
     private val scheduler = BGTaskScheduler.sharedScheduler
+    private val lock = reentrantLock()
     private val activeRequests = mutableMapOf<String, PeriodicTaskRequest>()
     private val registeredTaskIds = mutableSetOf<String>()
 
     init {
         val names = workerFactory.workerNames
         names.forEach { taskId -> ensureRegistered(taskId) }
-        logger.debug(TAG, "Eagerly registered ${names.size} background task handlers")
+        logger.debug(TAG, "Eagerly registered ${names.size} background task handlers: $names")
+        logPendingRequests(reason = "init")
     }
 
     override fun schedulePeriodic(request: PeriodicTaskRequest) {
         ensureRegistered(request.id)
-        activeRequests[request.id] = request
+        lock.withLock { activeRequests[request.id] = request }
         submitRequest(request)
     }
 
@@ -52,32 +63,63 @@ public class IosTaskScheduler(
     }
 
     override fun cancel(id: String) {
-        activeRequests.remove(id)
+        lock.withLock { activeRequests.remove(id) }
         scheduler.cancelTaskRequestWithIdentifier(id)
         logger.debug(TAG, "Cancelled task [$id]")
     }
 
     override fun cancelAll() {
-        activeRequests.clear()
+        lock.withLock { activeRequests.clear() }
         scheduler.cancelAllTaskRequests()
         logger.debug(TAG, "Cancelled all tasks")
     }
 
+    /**
+     * Resubmits any active requests that the system no longer has pending.
+     *
+     * The earlier implementation resubmitted every active request on every
+     * backgrounding event, which reset `earliestBeginDate` to `now + 5 minutes`
+     * each time and allowed rapid foreground/background cycles to push the
+     * begin date forward indefinitely.
+     */
     override fun rescheduleBackgroundTask() {
-        activeRequests.values.forEach { request ->
-            submitRequest(request)
+        scheduler.getPendingTaskRequestsWithCompletionHandler { array ->
+            val pendingIds = (array ?: emptyList<Any?>())
+                .filterIsInstance<BGTaskRequest>()
+                .map { it.identifier }
+                .toSet()
+            val snapshot = lock.withLock { activeRequests.values.toList() }
+            var resubmitted = 0
+            snapshot.forEach { request ->
+                if (request.id in pendingIds) {
+                    logger.debug(TAG, "Already pending, skipping resubmit [${request.id}]")
+                } else {
+                    submitRequest(request)
+                    resubmitted++
+                }
+            }
+            logger.debug(
+                TAG,
+                "Reschedule complete. pending=${pendingIds.size}, resubmitted=$resubmitted, active=${snapshot.size}",
+            )
         }
-        logger.debug(TAG, "Rescheduled ${activeRequests.size} tasks")
     }
 
     private fun ensureRegistered(taskId: String) {
-        if (taskId in registeredTaskIds) return
+        val needsRegister = lock.withLock {
+            if (taskId in registeredTaskIds) {
+                false
+            } else {
+                registeredTaskIds.add(taskId)
+                true
+            }
+        }
+        if (!needsRegister) return
         scheduler.registerForTaskWithIdentifier(
             identifier = taskId,
             usingQueue = null,
             launchHandler = ::handleTask,
         )
-        registeredTaskIds.add(taskId)
         logger.debug(TAG, "Registered background task [$taskId]")
     }
 
@@ -115,12 +157,20 @@ public class IosTaskScheduler(
             }
         }
 
-        try {
-            scheduler.submitTaskRequest(taskRequest = bgRequest, error = null)
-            val type = if (request.longRunning) "processing" else "refresh"
-            logger.debug(TAG, "Scheduled $type task [${request.id}] for $earliestBeginDate")
-        } catch (t: Throwable) {
-            logger.error(TAG, "Error scheduling task [${request.id}]: ${t.message}")
+        val type = if (request.longRunning) "processing" else "refresh"
+        memScoped {
+            val errorPtr = alloc<ObjCObjectVar<NSError?>>()
+            val ok = scheduler.submitTaskRequest(taskRequest = bgRequest, error = errorPtr.ptr)
+            if (ok) {
+                logger.debug(TAG, "Scheduled $type task [${request.id}] for $earliestBeginDate")
+            } else {
+                val error = errorPtr.value
+                logger.error(
+                    TAG,
+                    "Submit failed [${request.id}] type=$type code=${error?.code} " +
+                        "domain=${error?.domain} desc=${error?.localizedDescription}",
+                )
+            }
         }
     }
 
@@ -145,7 +195,8 @@ public class IosTaskScheduler(
 
     private fun handleTask(bgTask: BGTask?) {
         val taskId = bgTask?.identifier ?: return
-        val request = activeRequests[taskId]
+        val request = lock.withLock { activeRequests[taskId] }
+        logger.debug(TAG, "handleTask fired [$taskId] knownRequest=${request != null}")
 
         val worker = workerFactory.createWorker(taskId) ?: run {
             logger.error(TAG, "Received unknown task [$taskId]")
@@ -188,6 +239,22 @@ public class IosTaskScheduler(
             } catch (e: Throwable) {
                 completeTask(false)
                 logger.error(TAG, "Task [$taskId] failed: ${e.message}")
+            }
+        }
+    }
+
+    private fun logPendingRequests(reason: String) {
+        scheduler.getPendingTaskRequestsWithCompletionHandler { array ->
+            val requests = (array ?: emptyList<Any?>()).filterIsInstance<BGTaskRequest>()
+            if (requests.isEmpty()) {
+                logger.debug(TAG, "Pending dump [$reason]: empty")
+            } else {
+                requests.forEach { req ->
+                    logger.debug(
+                        TAG,
+                        "Pending dump [$reason]: id=${req.identifier} earliest=${req.earliestBeginDate}",
+                    )
+                }
             }
         }
     }
