@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
@@ -28,7 +29,9 @@ import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -41,6 +44,7 @@ internal class EpisodeSheetPresenterTest {
 
     private val lifecycle = LifecycleRegistry()
     private val testDispatcher = StandardTestDispatcher()
+    private val appCoroutineScope = CoroutineScope(testDispatcher + SupervisorJob())
     private val episodeRepository = FakeEpisodeRepository()
     private val followedShowsRepository = FakeFollowedShowsRepository()
     private val localizer = FakeLocalizer()
@@ -175,7 +179,8 @@ internal class EpisodeSheetPresenterTest {
     fun `should mark episode as watched given ToggleWatched is dispatched and episode is unwatched`() = runTest {
         episodeRepository.setEpisodeById(testEpisode(isWatched = false))
 
-        val presenter = createPresenter()
+        val sheetNavigator = FakeSheetNavigator()
+        val presenter = createPresenter(sheetNavigator = sheetNavigator)
 
         presenter.state.test {
             awaitItem()
@@ -193,6 +198,7 @@ internal class EpisodeSheetPresenterTest {
                 episodeNumber = 1L,
             )
             episodeRepository.lastMarkEpisodeUnwatchedCall.shouldBeNull()
+            sheetNavigator.dismissCount shouldBe 1
         }
     }
 
@@ -200,7 +206,8 @@ internal class EpisodeSheetPresenterTest {
     fun `should mark episode as unwatched given ToggleWatched is dispatched and episode is watched`() = runTest {
         episodeRepository.setEpisodeById(testEpisode(isWatched = true))
 
-        val presenter = createPresenter()
+        val sheetNavigator = FakeSheetNavigator()
+        val presenter = createPresenter(sheetNavigator = sheetNavigator)
 
         presenter.state.test {
             awaitItem()
@@ -215,6 +222,36 @@ internal class EpisodeSheetPresenterTest {
                 showTraktId = 100L,
                 episodeId = 1L,
             )
+            sheetNavigator.dismissCount shouldBe 1
+        }
+    }
+
+    @Test
+    fun `should dismiss sheet immediately given ToggleWatched is dispatched and before background work completes`() = runTest {
+        episodeRepository.setEpisodeById(testEpisode(isWatched = false))
+
+        val sheetNavigator = FakeSheetNavigator()
+        val presenter = createPresenter(sheetNavigator = sheetNavigator)
+
+        presenter.state.test {
+            awaitItem()
+            testDispatcher.scheduler.advanceUntilIdle()
+            awaitItem()
+
+            presenter.dispatch(EpisodeSheetAction.ToggleWatched)
+
+            sheetNavigator.dismissCount shouldBe 1
+            episodeRepository.lastMarkEpisodeWatchedCall.shouldBeNull()
+
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            episodeRepository.lastMarkEpisodeWatchedCall shouldBe
+                com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall(
+                    showTraktId = 100L,
+                    episodeId = 1L,
+                    seasonNumber = 1L,
+                    episodeNumber = 1L,
+                )
         }
     }
 
@@ -324,6 +361,7 @@ internal class EpisodeSheetPresenterTest {
     private fun createPresenter(
         source: ScreenSource = ScreenSource.DISCOVER,
         sheetNavigator: FakeSheetNavigator = FakeSheetNavigator(),
+        appScopeLauncher: FakeAppScopeLauncher = FakeAppScopeLauncher(appCoroutineScope),
     ): EpisodeSheetPresenter {
         navigatedToShowId = null
         navigatedToSeason = null
@@ -365,6 +403,7 @@ internal class EpisodeSheetPresenterTest {
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             localizer = localizer,
             logger = logger,
+            appScopeLauncher = appScopeLauncher,
         )
     }
 

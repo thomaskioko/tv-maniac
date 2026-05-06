@@ -33,6 +33,7 @@ kotlin {
 
         commonTest {
             dependencies {
+                implementation(projects.core.base.testing)
                 implementation(projects.core.logger.testing)
                 implementation(projects.core.util.testing)
                 implementation(projects.data.episode.testing)
