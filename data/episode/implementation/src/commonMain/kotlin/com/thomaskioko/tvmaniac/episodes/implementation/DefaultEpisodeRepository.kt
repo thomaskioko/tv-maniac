@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
+import com.thomaskioko.tvmaniac.core.base.coroutines.AppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.fresh
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.get
@@ -33,6 +34,7 @@ public class DefaultEpisodeRepository(
     private val episodesDao: EpisodesDao,
     private val dispatchers: AppCoroutineDispatchers,
     private val upcomingEpisodesStore: UpcomingEpisodesStore,
+    private val appScopeLauncher: AppScopeLauncher,
 ) : EpisodeRepository {
 
     override fun observeEpisodeById(episodeId: Long): Flow<EpisodeById?> =
@@ -52,13 +54,16 @@ public class DefaultEpisodeRepository(
             episodeNumber = episodeNumber,
             includeSpecials = includeSpecials,
         )
-        syncRepository.uploadPendingEpisodes()
 
-        upNextRepository.fetchUpNext(
-            showTraktId = showTraktId,
-            seasonNumber = seasonNumber,
-            episodeNumber = episodeNumber,
-        )
+        appScopeLauncher.launch(TAG) {
+            syncRepository.syncPendingEpisodes()
+
+            upNextRepository.fetchUpNext(
+                showTraktId = showTraktId,
+                seasonNumber = seasonNumber,
+                episodeNumber = episodeNumber,
+            )
+        }
     }
 
     override suspend fun markEpisodeAndPreviousEpisodesWatched(
@@ -75,7 +80,11 @@ public class DefaultEpisodeRepository(
             episodeNumber = episodeNumber,
             includeSpecials = includeSpecials,
         )
-        upNextRepository.updateUpNextForShow(showTraktId)
+
+        appScopeLauncher.launch(TAG) {
+            syncRepository.syncPendingEpisodes()
+            upNextRepository.updateUpNextForShow(showTraktId)
+        }
     }
 
     override suspend fun markEpisodeAsUnwatched(showTraktId: Long, episodeId: Long) {
@@ -85,7 +94,11 @@ public class DefaultEpisodeRepository(
             episodeId = episodeId,
             includeSpecials = includeSpecials,
         )
-        upNextRepository.updateUpNextForShow(showTraktId)
+
+        appScopeLauncher.launch(TAG) {
+            syncRepository.syncPendingEpisodes()
+            upNextRepository.updateUpNextForShow(showTraktId)
+        }
     }
 
     override fun observeSeasonWatchProgress(
@@ -115,7 +128,11 @@ public class DefaultEpisodeRepository(
             episodes = episodes,
             includeSpecials = includeSpecials,
         )
-        upNextRepository.updateUpNextForShow(showTraktId)
+
+        appScopeLauncher.launch(TAG) {
+            syncRepository.syncPendingEpisodes()
+            upNextRepository.updateUpNextForShow(showTraktId)
+        }
     }
 
     override suspend fun markSeasonAndPreviousSeasonsWatched(
@@ -128,13 +145,21 @@ public class DefaultEpisodeRepository(
             seasonNumber = seasonNumber,
             includeSpecials = includeSpecials,
         )
-        upNextRepository.updateUpNextForShow(showTraktId)
+
+        appScopeLauncher.launch(TAG) {
+            syncRepository.syncPendingEpisodes()
+            upNextRepository.updateUpNextForShow(showTraktId)
+        }
     }
 
     override suspend fun markSeasonUnwatched(showTraktId: Long, seasonNumber: Long) {
         val includeSpecials = getIncludeSpecials()
         watchedEpisodeDao.markSeasonAsUnwatched(showTraktId, seasonNumber, includeSpecials)
-        upNextRepository.updateUpNextForShow(showTraktId)
+
+        appScopeLauncher.launch(TAG) {
+            syncRepository.syncPendingEpisodes()
+            upNextRepository.updateUpNextForShow(showTraktId)
+        }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -186,4 +211,8 @@ public class DefaultEpisodeRepository(
     }
 
     private suspend fun getIncludeSpecials(): Boolean = datastoreRepository.getIncludeSpecials()
+
+    private companion object {
+        private const val TAG = "EpisodeRepository"
+    }
 }

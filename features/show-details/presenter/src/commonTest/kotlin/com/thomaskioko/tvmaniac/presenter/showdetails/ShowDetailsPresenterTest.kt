@@ -10,6 +10,7 @@ import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.router.stack.pushToFront
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.root.nav.NotificationRationale
+import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.notifications.api.EpisodeNotification
@@ -72,7 +73,9 @@ import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
 import io.kotest.matchers.shouldBe
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -107,6 +110,7 @@ class ShowDetailsPresenterTest {
     private val fakeLogger = FakeLogger()
     private val fakeDateTimeProvider = FakeDateTimeProvider()
     private val testDispatcher = StandardTestDispatcher()
+    private val appCoroutineScope = CoroutineScope(testDispatcher + SupervisorJob())
     private val coroutineDispatcher = AppCoroutineDispatchers(
         main = testDispatcher,
         io = testDispatcher,
@@ -894,8 +898,7 @@ class ShowDetailsPresenterTest {
                     watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
                 ),
                 upNextRepository = upNextRepository,
-                dispatchers = coroutineDispatcher,
-                logger = fakeLogger,
+                appScopeLauncher = FakeAppScopeLauncher(scope = appCoroutineScope),
             ),
             showDetailsInteractor = ShowDetailsInteractor(
                 showDetailsRepository = showDetailsRepository,
