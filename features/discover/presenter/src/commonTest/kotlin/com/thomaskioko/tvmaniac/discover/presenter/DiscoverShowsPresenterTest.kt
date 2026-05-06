@@ -327,7 +327,6 @@ class DiscoverShowsPresenterTest {
                     dispatchers = coroutineDispatcher,
                     logger = FakeLogger(),
                 ),
-                upNextRepository = upNextRepository,
                 appScopeLauncher = FakeAppScopeLauncher(scope = appCoroutineScope),
             ),
             featuredShowsInteractor = FeaturedShowsInteractor(
@@ -494,7 +493,6 @@ class DiscoverShowsPresenterTest {
                 dispatchers = coroutineDispatcher,
                 logger = FakeLogger(),
             ),
-            upNextRepository = upNextRepository,
             appScopeLauncher = FakeAppScopeLauncher(scope = appCoroutineScope),
         ),
         featuredShowsInteractor = FeaturedShowsInteractor(

@@ -897,7 +897,6 @@ class ShowDetailsPresenterTest {
                     logger = fakeLogger,
                     watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
                 ),
-                upNextRepository = upNextRepository,
                 appScopeLauncher = FakeAppScopeLauncher(scope = appCoroutineScope),
             ),
             showDetailsInteractor = ShowDetailsInteractor(
