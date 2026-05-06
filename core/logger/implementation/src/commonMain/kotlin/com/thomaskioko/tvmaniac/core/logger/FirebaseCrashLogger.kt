@@ -18,6 +18,11 @@ public class FirebaseCrashLogger(
         crashReporter.log("[$tag] $message")
     }
 
+    override fun error(tag: String, message: String, throwable: Throwable) {
+        crashReporter.log("[$tag] $message")
+        crashReporter.recordException(throwable, tag)
+    }
+
     override fun recordException(throwable: Throwable, tag: String) {
         if (tag.isEmpty()) {
             crashReporter.recordException(throwable)

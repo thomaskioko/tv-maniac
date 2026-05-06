@@ -13,6 +13,8 @@ public class FakeLogger : Logger {
 
     override fun error(tag: String, message: String) {}
 
+    override fun error(tag: String, message: String, throwable: Throwable) {}
+
     override fun info(message: String, throwable: Throwable) {}
 
     override fun info(tag: String, message: String) {}
