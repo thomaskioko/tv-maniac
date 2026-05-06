@@ -24,7 +24,6 @@ import kotlin.test.Test
 private fun LocalDate.toEpochMillis(): Long =
     atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
 
-
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class ContinueTrackingTest : BaseDatabaseTest() {
 
