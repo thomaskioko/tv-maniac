@@ -12,6 +12,8 @@ public interface Logger {
 
     public fun error(tag: String, message: String)
 
+    public fun error(tag: String, message: String, throwable: Throwable): Unit = Unit
+
     public fun info(message: String, throwable: Throwable): Unit = Unit
 
     public fun info(tag: String, message: String): Unit = Unit

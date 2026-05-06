@@ -30,6 +30,10 @@ public class KermitLogger : Logger {
         KermitLogger.withTag(tag).e(message)
     }
 
+    override fun error(tag: String, message: String, throwable: Throwable) {
+        KermitLogger.withTag(tag).e(message, throwable)
+    }
+
     override fun info(message: String, throwable: Throwable) {
         KermitLogger.i(message, throwable)
     }

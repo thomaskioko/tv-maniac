@@ -139,11 +139,23 @@ public class DebugPresenter(
         val formattedDate = lastTokenRefreshTimestamp?.let(dateTimeProvider::epochToDisplayDateTime)
             ?: return localizer.getString(StringResourceKey.LabelDebugNeverRefreshed)
 
-        val key = if (authState?.isAuthorized == true) {
-            StringResourceKey.LabelDebugTokenRefreshValid
+        val expiresAt = authState?.expiresAt
+        val remaining = expiresAt?.minus(dateTimeProvider.now())
+        return if (authState?.isAuthorized == true && remaining != null && remaining.isPositive()) {
+            localizer.getString(
+                StringResourceKey.LabelDebugTokenExpiresIn,
+                formattedDate,
+                formatRemaining(remaining),
+            )
         } else {
-            StringResourceKey.LabelDebugTokenRefreshExpired
+            localizer.getString(StringResourceKey.LabelDebugTokenExpired, formattedDate)
         }
-        return localizer.getString(key, formattedDate)
+    }
+
+    private fun formatRemaining(duration: Duration): String = when {
+        duration.inWholeDays >= 1 -> "${duration.inWholeDays}d ${duration.inWholeHours % 24}h"
+        duration.inWholeHours >= 1 -> "${duration.inWholeHours}h ${duration.inWholeMinutes % 60}m"
+        duration.inWholeMinutes >= 1 -> "${duration.inWholeMinutes}m"
+        else -> "${duration.inWholeSeconds.coerceAtLeast(0)}s"
     }
 }

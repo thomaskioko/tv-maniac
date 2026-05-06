@@ -18,8 +18,13 @@ kotlin {
         commonMain.dependencies {
             api(projects.core.view)
 
+            implementation(projects.core.logger.api)
             implementation(libs.coroutines.core)
             implementation(libs.decompose.decompose)
+        }
+
+        commonTest.dependencies {
+            implementation(libs.bundles.unittest)
         }
     }
 }

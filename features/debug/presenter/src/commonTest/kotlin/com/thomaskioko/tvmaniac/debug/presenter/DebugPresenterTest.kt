@@ -37,6 +37,8 @@ import kotlinx.coroutines.test.setMain
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Instant
 
 @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
 class DebugPresenterTest {
@@ -74,13 +76,16 @@ class DebugPresenterTest {
     }
 
     @Test
-    fun `should return valid token status given logged in with authorized auth state`() = runTest {
+    fun `should return expires-in subtitle given logged in with future expiry`() = runTest {
+        val now = Instant.fromEpochMilliseconds(1_700_000_000_000L)
+        dateTimeProvider.setCurrentTime(now)
         traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
         traktAuthRepository.setAuthState(
             AuthState(
                 accessToken = "test-token",
                 refreshToken = "test-refresh",
                 isAuthorized = true,
+                expiresAt = now + 3.hours,
             ),
         )
         datastoreRepository.setLastTokenRefreshTimestamp(1_700_000_000_000L)
@@ -92,16 +97,16 @@ class DebugPresenterTest {
             advanceUntilIdle()
             val state = expectMostRecentItem()
 
-            val expectedDate = "Mar 22, 2026 at 10:00"
             state.tokenStatusSubtitle shouldBe localizer.getString(
-                StringResourceKey.LabelDebugTokenRefreshValid,
-                expectedDate,
+                StringResourceKey.LabelDebugTokenExpiresIn,
+                "Mar 22, 2026 at 10:00",
+                "3h 0m",
             )
         }
     }
 
     @Test
-    fun `should return expired token status given logged in with unauthorized auth state`() = runTest {
+    fun `should return expired subtitle given logged in with unauthorized auth state`() = runTest {
         traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
         traktAuthRepository.setAuthState(
             AuthState(
@@ -119,10 +124,38 @@ class DebugPresenterTest {
             advanceUntilIdle()
             val state = expectMostRecentItem()
 
-            val expectedDate = "Mar 22, 2026 at 10:00"
             state.tokenStatusSubtitle shouldBe localizer.getString(
-                StringResourceKey.LabelDebugTokenRefreshExpired,
-                expectedDate,
+                StringResourceKey.LabelDebugTokenExpired,
+                "Mar 22, 2026 at 10:00",
+            )
+        }
+    }
+
+    @Test
+    fun `should return expired subtitle given logged in with past expiry`() = runTest {
+        val now = Instant.fromEpochMilliseconds(1_700_000_000_000L)
+        dateTimeProvider.setCurrentTime(now)
+        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        traktAuthRepository.setAuthState(
+            AuthState(
+                accessToken = "test-token",
+                refreshToken = "test-refresh",
+                isAuthorized = true,
+                expiresAt = now - 1.hours,
+            ),
+        )
+        datastoreRepository.setLastTokenRefreshTimestamp(1_700_000_000_000L)
+        dateTimeProvider.setEpochToDisplayDateTimeResult("Mar 22, 2026 at 10:00")
+
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            advanceUntilIdle()
+            val state = expectMostRecentItem()
+
+            state.tokenStatusSubtitle shouldBe localizer.getString(
+                StringResourceKey.LabelDebugTokenExpired,
+                "Mar 22, 2026 at 10:00",
             )
         }
     }

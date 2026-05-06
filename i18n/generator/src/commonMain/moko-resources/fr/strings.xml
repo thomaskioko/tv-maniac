@@ -341,8 +341,8 @@
     <string name="label_debug_trigger_crash_title">Test de crash</string>
     <string name="label_debug_trigger_crash_description">Déclencher un crash de test pour Crashlytics</string>
     <string name="label_debug_token_status_title">Statut du token</string>
-    <string name="label_debug_token_refresh_valid">Dernière actualisation : %s · Le token est valide</string>
-    <string name="label_debug_token_refresh_expired">Dernière actualisation : %s · Le token a expiré</string>
+    <string name="label_debug_token_expires_in">Dernière actualisation : %1$s · Expire dans %2$s</string>
+    <string name="label_debug_token_expired">Dernière actualisation : %s · Expiré</string>
     <string name="label_debug_never_refreshed">Jamais actualisé</string>
 
     <string name="label_genre_category_popular">Populaire</string>

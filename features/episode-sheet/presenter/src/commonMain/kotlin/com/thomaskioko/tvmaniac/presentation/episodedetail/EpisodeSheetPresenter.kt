@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.presentation.episodedetail
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
+import com.thomaskioko.tvmaniac.core.base.coroutines.AppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
@@ -51,6 +52,7 @@ public class EpisodeSheetPresenter(
     private val errorToStringMapper: ErrorToStringMapper,
     private val localizer: Localizer,
     private val logger: Logger,
+    private val appScopeLauncher: AppScopeLauncher,
 ) {
 
     private val coroutineScope = componentContext.coroutineScope()
@@ -90,7 +92,8 @@ public class EpisodeSheetPresenter(
 
     private fun toggleWatched() {
         val episode = currentEpisode ?: return
-        coroutineScope.launch {
+        sheetNavigator.dismiss()
+        appScopeLauncher.launch(TAG) {
             if (episode.is_watched != 0L) {
                 markEpisodeUnwatchedInteractor(
                     MarkEpisodeUnwatchedParams(
@@ -108,7 +111,6 @@ public class EpisodeSheetPresenter(
                     ),
                 ).collectStatus(actionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
             }
-            sheetNavigator.dismiss()
         }
     }
 
@@ -134,9 +136,9 @@ public class EpisodeSheetPresenter(
 
     private fun unfollowShow() {
         val episode = currentEpisode ?: return
-        coroutineScope.launch {
+        sheetNavigator.dismiss()
+        appScopeLauncher.launch(TAG) {
             unfollowShowInteractor.executeSync(episode.show_trakt_id.id)
-            sheetNavigator.dismiss()
         }
     }
 
@@ -149,5 +151,9 @@ public class EpisodeSheetPresenter(
     @AssistedFactory
     public fun interface Factory {
         public fun create(episodeId: Long, source: ScreenSource): EpisodeSheetPresenter
+    }
+
+    private companion object {
+        private const val TAG = "EpisodeSheetPresenter"
     }
 }

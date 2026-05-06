@@ -23,7 +23,7 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
-import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
+import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
 import com.thomaskioko.tvmaniac.home.nav.HomeRoute
 import com.thomaskioko.tvmaniac.home.nav.di.model.HomeConfig
 import com.thomaskioko.tvmaniac.shows.api.model.Category
@@ -50,7 +50,7 @@ public class DiscoverShowsPresenter(
     componentContext: ComponentContext,
     private val navigator: DiscoverNavigator,
     private val discoverShowsInteractor: DiscoverShowsInteractor,
-    private val followedShowsRepository: FollowedShowsRepository,
+    private val followShowInteractor: FollowShowInteractor,
     private val unfollowShowInteractor: UnfollowShowInteractor,
     private val featuredShowsInteractor: FeaturedShowsInteractor,
     private val topRatedShowsInteractor: TopRatedShowsInteractor,
@@ -171,7 +171,9 @@ public class DiscoverShowsPresenter(
                         if (action.inLibrary) {
                             unfollowShowInteractor.executeSync(action.traktId)
                         } else {
-                            followedShowsRepository.addFollowedShow(action.traktId)
+                            followShowInteractor.executeSync(
+                                FollowShowInteractor.Param(traktId = action.traktId),
+                            )
                         }
                     }
                 }

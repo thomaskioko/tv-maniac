@@ -28,11 +28,12 @@ public class DefaultWatchedEpisodeSyncRepository(
     private val logger: Logger,
 ) : WatchedEpisodeSyncRepository {
 
-    override suspend fun uploadPendingEpisodes() {
+    override suspend fun syncPendingEpisodes() {
         val authState = traktAuthRepository.getAuthState()
         if (authState == null || !authState.isAuthorized) return
 
         processPendingEpisodesToUploads()
+        processPendingEpisodesDeletes()
     }
 
     override suspend fun syncShowEpisodeWatches(showTraktId: Long, forceRefresh: Boolean) {

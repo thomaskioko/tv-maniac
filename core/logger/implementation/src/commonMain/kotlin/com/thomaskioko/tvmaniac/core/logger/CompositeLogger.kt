@@ -39,6 +39,10 @@ public class CompositeLogger(
         loggers.forEach { it.error(tag, message) }
     }
 
+    override fun error(tag: String, message: String, throwable: Throwable) {
+        loggers.forEach { it.error(tag, message, throwable) }
+    }
+
     override fun info(message: String, throwable: Throwable) {
         loggers.forEach { it.info(message, throwable) }
     }

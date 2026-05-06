@@ -26,6 +26,7 @@ kotlin {
                 implementation(projects.domain.episode)
                 implementation(projects.domain.followedshows)
                 implementation(projects.domain.genre)
+                implementation(projects.domain.showdetails)
                 implementation(projects.domain.upnext)
                 implementation(projects.data.episode.api)
                 implementation(projects.data.followedshows.api)
@@ -41,6 +42,7 @@ kotlin {
 
         commonTest {
             dependencies {
+                implementation(projects.core.base.testing)
                 implementation(projects.core.logger.testing)
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.upnext.testing)
@@ -48,6 +50,8 @@ kotlin {
                 implementation(projects.data.followedshows.testing)
                 implementation(projects.data.genre.testing)
                 implementation(projects.data.popularshows.testing)
+                implementation(projects.data.seasondetails.testing)
+                implementation(projects.data.showdetails.testing)
                 implementation(projects.data.topratedshows.testing)
                 implementation(projects.data.traktauth.testing)
                 implementation(projects.data.trendingshows.testing)

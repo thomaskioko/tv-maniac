@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import dev.zacsweers.metro.Inject
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.withContext
 
 @Inject
@@ -35,8 +36,10 @@ public class ShowContentSyncInteractor(
                     showTraktId = params.traktId,
                     forceRefresh = params.forceRefresh,
                 )
-            } catch (t: Throwable) {
-                logger.error("Error while updating show seasons/episodes: ${params.traktId}", t)
+            } catch (cancellation: CancellationException) {
+                throw cancellation
+            } catch (throwable: Throwable) {
+                logger.error(TAG, "Failed to sync show ${params.traktId}", throwable)
             }
         }
     }
@@ -46,4 +49,8 @@ public class ShowContentSyncInteractor(
         val forceRefresh: Boolean = false,
         val isUserInitiated: Boolean = false,
     )
+
+    private companion object {
+        private const val TAG = "ShowContentSync"
+    }
 }

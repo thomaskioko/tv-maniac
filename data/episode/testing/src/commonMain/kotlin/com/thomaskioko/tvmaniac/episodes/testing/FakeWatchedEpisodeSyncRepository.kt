@@ -20,6 +20,6 @@ public class FakeWatchedEpisodeSyncRepository : WatchedEpisodeSyncRepository {
         lastForceRefresh = forceRefresh
     }
 
-    override suspend fun uploadPendingEpisodes() {
+    override suspend fun syncPendingEpisodes() {
     }
 }
