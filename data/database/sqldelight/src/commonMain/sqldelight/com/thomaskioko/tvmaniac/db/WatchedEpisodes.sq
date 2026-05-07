@@ -92,7 +92,7 @@ getTotalEpisodesForSeason:
 SELECT COUNT(*) FROM episode e
 INNER JOIN season s ON e.season_id = s.id
 WHERE e.show_trakt_id = ? AND s.season_number = ?
-  AND (e.first_aired IS NULL OR e.first_aired <= date('now'));
+  AND (e.first_aired IS NULL OR e.first_aired <= strftime('%s', 'now') * 1000);
 
 getPreviousUnwatchedEpisodes:
 SELECT
@@ -110,7 +110,7 @@ WHERE e.show_trakt_id = :show_trakt_id
     OR (s.season_number = :season_number AND e.episode_number < :episode_number)
   )
   AND we.id IS NULL
-  AND (e.first_aired IS NULL OR e.first_aired <= date('now'))
+  AND (e.first_aired IS NULL OR e.first_aired <= strftime('%s', 'now') * 1000)
 ORDER BY s.season_number, e.episode_number;
 
 getEpisodesForSeason:
@@ -122,7 +122,7 @@ SELECT
 FROM episode e
 INNER JOIN season s ON e.season_id = s.id
 WHERE e.show_trakt_id = ? AND s.season_number = ?
-  AND (e.first_aired IS NULL OR e.first_aired <= date('now'))
+  AND (e.first_aired IS NULL OR e.first_aired <= strftime('%s', 'now') * 1000)
 ORDER BY e.episode_number;
 
 getTotalEpisodesForShow:
@@ -148,7 +148,7 @@ WHERE e.show_trakt_id = :show_trakt_id
   AND s.season_number < :season_number
   AND (:include_specials = 1 OR (s.season_number > 0 OR s.title != 'Specials'))
   AND we.id IS NULL
-  AND (e.first_aired IS NULL OR e.first_aired <= date('now'))
+  AND (e.first_aired IS NULL OR e.first_aired <= strftime('%s', 'now') * 1000)
 ORDER BY s.season_number, e.episode_number;
 
 getUnwatchedEpisodeCountInPreviousSeasons:
@@ -159,7 +159,7 @@ WHERE e.show_trakt_id = :show_trakt_id
   AND s.season_number < :season_number
   AND (:include_specials = 1 OR (s.season_number > 0 OR s.title != 'Specials'))
   AND we.id IS NULL
-  AND (e.first_aired IS NULL OR e.first_aired <= date('now'));
+  AND (e.first_aired IS NULL OR e.first_aired <= strftime('%s', 'now') * 1000);
 
 -- Trakt Sync Queries
 
@@ -243,7 +243,7 @@ LEFT JOIN (
     SELECT season_id, COUNT(*) AS cnt
     FROM episode
     WHERE show_trakt_id = :show_trakt_id
-      AND (first_aired IS NULL OR first_aired <= date('now'))
+      AND (first_aired IS NULL OR first_aired <= strftime('%s', 'now') * 1000)
     GROUP BY season_id
 ) total ON total.season_id = s.id
 WHERE s.show_trakt_id = :show_trakt_id
