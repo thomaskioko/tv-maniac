@@ -15,6 +15,7 @@ kotlin {
 
                 implementation(projects.core.base)
                 implementation(projects.core.logger.api)
+                implementation(projects.core.tasks.api)
                 implementation(projects.core.util.api)
                 implementation(projects.core.networkUtil.api)
                 implementation(projects.data.episode.api)
@@ -28,7 +29,9 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)
+                implementation(projects.core.logger.testing)
                 implementation(projects.data.episode.testing)
+                implementation(projects.data.traktauth.testing)
                 implementation(projects.data.watchlist.testing)
             }
         }
