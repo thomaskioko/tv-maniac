@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.core.base.coroutines
 
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -15,14 +16,25 @@ public class FakeAppScopeLauncher(
 ) : AppScopeLauncher {
 
     private val recordedTags = mutableListOf<String>()
+    private val recordedThrowables = mutableListOf<Throwable>()
 
     public val launches: List<String> get() = recordedTags.toList()
+
+    public val thrown: List<Throwable> get() = recordedThrowables.toList()
 
     override fun launch(
         tag: String,
         block: suspend CoroutineScope.() -> Unit,
     ): Job {
         recordedTags += tag
-        return scope.launch { block() }
+        return scope.launch {
+            try {
+                block()
+            } catch (cancellation: CancellationException) {
+                throw cancellation
+            } catch (throwable: Throwable) {
+                recordedThrowables += throwable
+            }
+        }
     }
 }
