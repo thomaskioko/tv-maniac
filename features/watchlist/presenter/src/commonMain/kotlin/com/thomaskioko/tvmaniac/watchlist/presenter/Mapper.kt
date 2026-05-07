@@ -47,8 +47,8 @@ public fun List<SearchFollowedShows>.entityToWatchlistShowList(
     lastWatchedMap: Map<Long, Long?> = emptyMap(),
 ): ImmutableList<WatchlistItem> {
     return this.map {
-        val watched = it.watched_count ?: 0
-        val total = it.total_episode_count ?: 0
+        val watched = it.watched_count
+        val total = it.total_episode_count
         val progress = if (total > 0) watched.toFloat() / total else 0f
         WatchlistItem(
             traktId = it.show_trakt_id.id,

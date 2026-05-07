@@ -12,6 +12,7 @@ import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
+import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
@@ -45,6 +46,7 @@ import com.thomaskioko.tvmaniac.trailers.nav.TrailersRoute
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
+import com.thomaskioko.tvmaniac.util.api.SyncErrorChannel
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
@@ -87,6 +89,7 @@ public class ShowDetailsPresenter(
     observeTraktListsInteractor: ObserveTraktListsInteractor,
     private val traktAuthRepository: TraktAuthRepository,
     private val traktAuthManager: TraktAuthManager,
+    private val syncErrorChannel: SyncErrorChannel,
     private val localizer: Localizer,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
@@ -109,6 +112,18 @@ public class ShowDetailsPresenter(
         observeTraktListsInteractor(showTraktId)
         observeShowDetails(forceReload = param.forceRefresh)
         observeAuthState()
+        observeSyncErrors()
+    }
+
+    // TODO:: Move to root presenter
+    private fun observeSyncErrors() {
+        coroutineScope.launch {
+            syncErrorChannel.errors.collect {
+                uiMessageManager.emitMessage(
+                    UiMessage(message = localizer.getString(StringResourceKey.SyncFailedWillRetry)),
+                )
+            }
+        }
     }
 
     public val state: StateFlow<ShowDetailsContent> = combine(

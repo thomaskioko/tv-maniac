@@ -68,6 +68,7 @@ import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
+import com.thomaskioko.tvmaniac.util.DefaultSyncErrorChannel
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
 import io.kotest.matchers.shouldBe
@@ -894,7 +895,6 @@ class ShowDetailsPresenterTest {
                     showDetailsRepository = showDetailsRepository,
                     seasonDetailsRepository = seasonDetailsRepository,
                     dispatchers = coroutineDispatcher,
-                    logger = fakeLogger,
                     watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
                 ),
                 appScopeLauncher = FakeAppScopeLauncher(scope = appCoroutineScope),
@@ -939,7 +939,6 @@ class ShowDetailsPresenterTest {
                 showDetailsRepository = showDetailsRepository,
                 seasonDetailsRepository = seasonDetailsRepository,
                 dispatchers = coroutineDispatcher,
-                logger = fakeLogger,
                 watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
             ),
             syncTraktCalendarInteractor = SyncTraktCalendarInteractor(
@@ -975,6 +974,7 @@ class ShowDetailsPresenterTest {
             ),
             traktAuthRepository = traktAuthRepository,
             traktAuthManager = com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager(),
+            syncErrorChannel = DefaultSyncErrorChannel(),
             localizer = fakeLocalizer,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             dispatchers = coroutineDispatcher,

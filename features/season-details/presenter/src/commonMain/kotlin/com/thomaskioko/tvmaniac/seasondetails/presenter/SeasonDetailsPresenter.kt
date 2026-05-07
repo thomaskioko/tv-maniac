@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
+import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
@@ -29,12 +30,15 @@ import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveUnwatchedInPreviousS
 import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsInteractor
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.showEpisodeSheet
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey
+import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.SheetNavigator
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.seasondetails.presenter.WatchOperation.MarkSeasonWatched
+import com.thomaskioko.tvmaniac.util.api.SyncErrorChannel
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
@@ -63,6 +67,8 @@ public class SeasonDetailsPresenter(
     private val fetchPreviousSeasonsInteractor: FetchPreviousSeasonsInteractor,
     observeSeasonWatchProgressInteractor: ObserveSeasonWatchProgressInteractor,
     observeUnwatchedInPreviousSeasonsInteractor: ObserveUnwatchedInPreviousSeasonsInteractor,
+    private val syncErrorChannel: SyncErrorChannel,
+    private val localizer: Localizer,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
 ) : ComponentContext by componentContext {
@@ -135,6 +141,17 @@ public class SeasonDetailsPresenter(
         )
         observeSeasonDetails(forceReload = param.forceRefresh)
         prefetchPreviousSeasonsData()
+        observeSyncErrors()
+    }
+
+    private fun observeSyncErrors() {
+        coroutineScope.launch {
+            syncErrorChannel.errors.collect {
+                uiMessageManager.emitMessage(
+                    UiMessage(message = localizer.getString(StringResourceKey.SyncFailedWillRetry)),
+                )
+            }
+        }
     }
 
     public fun dispatch(action: SeasonDetailsAction) {

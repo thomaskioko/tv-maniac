@@ -38,6 +38,7 @@ kotlin {
                 implementation(projects.core.util.testing)
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.followedshows.testing)
+                implementation(projects.core.util.implementation)
                 implementation(projects.i18n.testing)
                 implementation(projects.navigation.testing)
 
