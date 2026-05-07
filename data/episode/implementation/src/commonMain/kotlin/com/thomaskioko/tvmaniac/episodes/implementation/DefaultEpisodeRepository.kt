@@ -204,7 +204,7 @@ public class DefaultEpisodeRepository(
             } catch (cancellation: CancellationException) {
                 throw cancellation
             } catch (throwable: Throwable) {
-                syncErrorChannel.report(errorFor(throwable))
+                syncErrorChannel.log(errorFor(throwable))
                 throw throwable
             }
         }
