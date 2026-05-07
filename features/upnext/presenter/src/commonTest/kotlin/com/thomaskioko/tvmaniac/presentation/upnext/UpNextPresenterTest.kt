@@ -382,7 +382,7 @@ internal class UpNextPresenterTest {
             awaitItem()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            syncErrorChannel.report(
+            syncErrorChannel.log(
                 com.thomaskioko.tvmaniac.util.api.SyncError.MarkWatchedFailed(
                     showTraktId = 1L,
                     cause = RuntimeException("network down"),
