@@ -393,4 +393,6 @@
     <string name="notification_channel_episodes_description">Notifications for upcoming episodes</string>
     <string name="notification_channel_developer">Developer Testing</string>
     <string name="notification_channel_developer_description">Notifications for testing</string>
+
+    <string name="sync_failed_will_retry">Couldn\'t sync with server. Your change is saved and will retry when you\'re back online.</string>
 </resources>

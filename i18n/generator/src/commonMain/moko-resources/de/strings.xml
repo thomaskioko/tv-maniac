@@ -390,4 +390,6 @@
     <string name="notification_channel_episodes_description">Benachrichtigungen für kommende Episoden</string>
     <string name="notification_channel_developer">Entwicklertests</string>
     <string name="notification_channel_developer_description">Benachrichtigungen zum Testen</string>
+
+    <string name="sync_failed_will_retry">Synchronisierung mit dem Server fehlgeschlagen. Deine Änderung ist gespeichert und wird erneut versucht, sobald du wieder online bist.</string>
 </resources>

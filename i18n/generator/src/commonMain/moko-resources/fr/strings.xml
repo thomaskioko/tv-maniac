@@ -388,4 +388,6 @@
     <string name="notification_channel_episodes_description">Notifications pour les épisodes à venir</string>
     <string name="notification_channel_developer">Tests développeur</string>
     <string name="notification_channel_developer_description">Notifications pour les tests</string>
+
+    <string name="sync_failed_will_retry">Impossible de synchroniser avec le serveur. Ta modification est enregistrée et sera retentée dès ton retour en ligne.</string>
 </resources>
