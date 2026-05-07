@@ -6,6 +6,7 @@ struct EpisodeDetailSheetView: View {
     private let presenter: EpisodeSheetPresenter
     @StateValue private var state: EpisodeDetailSheetState
     @State private var selectedDetent: PresentationDetent = .large
+    @State private var toast: Toast?
 
     init(presenter: EpisodeSheetPresenter) {
         self.presenter = presenter
@@ -38,6 +39,13 @@ struct EpisodeDetailSheetView: View {
             .presentationDragIndicator(.visible)
             .presentationCornerRadius(16)
             .appTheme()
+            .toastView(toast: $toast)
+            .onChange(of: state.message) { _, newValue in
+                if let message = newValue {
+                    toast = Toast(type: .error, title: "Error", message: message.message)
+                    presenter.dispatch(action: EpisodeSheetActionMessageShown(id: message.id))
+                }
+            }
         }
     }
 
