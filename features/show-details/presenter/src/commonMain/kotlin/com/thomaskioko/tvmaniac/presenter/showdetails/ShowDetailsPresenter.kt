@@ -58,6 +58,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -118,11 +119,13 @@ public class ShowDetailsPresenter(
     // TODO:: Move to root presenter
     private fun observeSyncErrors() {
         coroutineScope.launch {
-            syncErrorChannel.errors.collect {
-                uiMessageManager.emitMessage(
-                    UiMessage(message = localizer.getString(StringResourceKey.SyncFailedWillRetry)),
-                )
-            }
+            syncErrorChannel.errors
+                .filter { it.showTraktId == showTraktId }
+                .collect {
+                    uiMessageManager.emitMessage(
+                        UiMessage(message = localizer.getString(StringResourceKey.SyncFailedWillRetry)),
+                    )
+                }
         }
     }
 

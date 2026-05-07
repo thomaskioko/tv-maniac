@@ -47,6 +47,7 @@ import kotlinx.collections.immutable.toPersistentSet
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -146,11 +147,13 @@ public class SeasonDetailsPresenter(
 
     private fun observeSyncErrors() {
         coroutineScope.launch {
-            syncErrorChannel.errors.collect {
-                uiMessageManager.emitMessage(
-                    UiMessage(message = localizer.getString(StringResourceKey.SyncFailedWillRetry)),
-                )
-            }
+            syncErrorChannel.errors
+                .filter { it.showTraktId == param.showTraktId }
+                .collect {
+                    uiMessageManager.emitMessage(
+                        UiMessage(message = localizer.getString(StringResourceKey.SyncFailedWillRetry)),
+                    )
+                }
         }
     }
 
