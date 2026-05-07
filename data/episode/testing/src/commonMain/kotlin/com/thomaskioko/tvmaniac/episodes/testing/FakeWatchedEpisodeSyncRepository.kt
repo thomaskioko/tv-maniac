@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
 public class FakeWatchedEpisodeSyncRepository : WatchedEpisodeSyncRepository {
     private val syncedShowIds = mutableListOf<Long>()
     private var lastForceRefresh: Boolean = false
+    private var pendingError: Throwable? = null
 
     public fun getLastSyncedShowId(): Long? = syncedShowIds.lastOrNull()
 
@@ -12,9 +13,14 @@ public class FakeWatchedEpisodeSyncRepository : WatchedEpisodeSyncRepository {
 
     public fun wasForceRefreshUsed(): Boolean = lastForceRefresh
 
+    public fun setPendingEpisodesError(error: Throwable?) {
+        pendingError = error
+    }
+
     public fun reset() {
         syncedShowIds.clear()
         lastForceRefresh = false
+        pendingError = null
     }
 
     override suspend fun syncShowEpisodeWatches(showTraktId: Long, forceRefresh: Boolean) {
@@ -23,5 +29,6 @@ public class FakeWatchedEpisodeSyncRepository : WatchedEpisodeSyncRepository {
     }
 
     override suspend fun syncPendingEpisodes() {
+        pendingError?.let { throw it }
     }
 }

@@ -13,9 +13,12 @@ import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
+import com.thomaskioko.tvmaniac.util.api.SyncError
+import com.thomaskioko.tvmaniac.util.api.SyncErrorChannel
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -33,6 +36,7 @@ public class DefaultEpisodeRepository(
     private val dispatchers: AppCoroutineDispatchers,
     private val upcomingEpisodesStore: UpcomingEpisodesStore,
     private val appScopeLauncher: AppScopeLauncher,
+    private val syncErrorChannel: SyncErrorChannel,
 ) : EpisodeRepository {
 
     override fun observeEpisodeById(episodeId: Long): Flow<EpisodeById?> =
@@ -53,9 +57,7 @@ public class DefaultEpisodeRepository(
             includeSpecials = includeSpecials,
         )
 
-        appScopeLauncher.launch(TAG) {
-            syncRepository.syncPendingEpisodes()
-        }
+        launchSyncReporting { SyncError.MarkWatchedFailed(showTraktId, it) }
     }
 
     override suspend fun markEpisodeAndPreviousEpisodesWatched(
@@ -73,9 +75,7 @@ public class DefaultEpisodeRepository(
             includeSpecials = includeSpecials,
         )
 
-        appScopeLauncher.launch(TAG) {
-            syncRepository.syncPendingEpisodes()
-        }
+        launchSyncReporting { SyncError.BatchMarkFailed(showTraktId, it) }
     }
 
     override suspend fun markEpisodeAsUnwatched(showTraktId: Long, episodeId: Long) {
@@ -86,9 +86,7 @@ public class DefaultEpisodeRepository(
             includeSpecials = includeSpecials,
         )
 
-        appScopeLauncher.launch(TAG) {
-            syncRepository.syncPendingEpisodes()
-        }
+        launchSyncReporting { SyncError.MarkUnwatchedFailed(showTraktId, it) }
     }
 
     override fun observeSeasonWatchProgress(
@@ -119,9 +117,7 @@ public class DefaultEpisodeRepository(
             includeSpecials = includeSpecials,
         )
 
-        appScopeLauncher.launch(TAG) {
-            syncRepository.syncPendingEpisodes()
-        }
+        launchSyncReporting { SyncError.BatchMarkFailed(showTraktId, it) }
     }
 
     override suspend fun markSeasonAndPreviousSeasonsWatched(
@@ -135,18 +131,14 @@ public class DefaultEpisodeRepository(
             includeSpecials = includeSpecials,
         )
 
-        appScopeLauncher.launch(TAG) {
-            syncRepository.syncPendingEpisodes()
-        }
+        launchSyncReporting { SyncError.BatchMarkFailed(showTraktId, it) }
     }
 
     override suspend fun markSeasonUnwatched(showTraktId: Long, seasonNumber: Long) {
         val includeSpecials = getIncludeSpecials()
         watchedEpisodeDao.markSeasonAsUnwatched(showTraktId, seasonNumber, includeSpecials)
 
-        appScopeLauncher.launch(TAG) {
-            syncRepository.syncPendingEpisodes()
-        }
+        launchSyncReporting { SyncError.BatchMarkFailed(showTraktId, it) }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -198,6 +190,25 @@ public class DefaultEpisodeRepository(
     }
 
     private suspend fun getIncludeSpecials(): Boolean = datastoreRepository.getIncludeSpecials()
+
+    /**
+     * Push pending watched-episodes changes via the sync repository on a background scope. On
+     * failure, publish the appropriate [SyncError] variant for subscribed presenters and rethrow
+     * so [AppScopeLauncher]'s catch logs the cause. The rethrow is intentional: the launcher's
+     * existing swallow-and-log keeps the background scope alive.
+     */
+    private fun launchSyncReporting(errorFor: (Throwable) -> SyncError) {
+        appScopeLauncher.launch(TAG) {
+            try {
+                syncRepository.syncPendingEpisodes()
+            } catch (cancellation: CancellationException) {
+                throw cancellation
+            } catch (throwable: Throwable) {
+                syncErrorChannel.report(errorFor(throwable))
+                throw throwable
+            }
+        }
+    }
 
     private companion object {
         private const val TAG = "EpisodeRepository"
