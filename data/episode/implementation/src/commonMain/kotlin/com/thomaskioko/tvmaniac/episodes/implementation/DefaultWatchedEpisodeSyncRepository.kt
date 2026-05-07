@@ -98,7 +98,11 @@ public class DefaultWatchedEpisodeSyncRepository(
         }
 
         pending.forEach { episode ->
-            dao.markAsSyncedDelete(episode.watched_id)
+            if (episode.trakt_id != null) {
+                dao.markAsSyncedDelete(episode.watched_id)
+            } else {
+                dao.deleteById(episode.watched_id)
+            }
         }
 
         logger.debug(TAG, "Successfully deleted ${pending.size} episodes")
