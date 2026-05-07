@@ -828,6 +828,48 @@ class ShowDetailsPresenterTest {
         presenter.state.value.showListSheet shouldBe false
     }
 
+    @Test
+    fun `should post toast given SyncError matches the presenter showTraktId`() = runTest {
+        buildMockData(showDetailResult = tvShowDetails)
+        val syncErrorChannel = DefaultSyncErrorChannel()
+        val presenter = buildShowDetailsPresenter(
+            param = ShowDetailsParam(id = 84958),
+            syncErrorChannel = syncErrorChannel,
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        syncErrorChannel.log(
+            com.thomaskioko.tvmaniac.util.api.SyncError.MarkWatchedFailed(
+                showTraktId = 84958L,
+                cause = RuntimeException("network down"),
+            ),
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.state.value.message?.message shouldBe "Couldn't sync with server. Your change is saved and will retry when you're back online."
+    }
+
+    @Test
+    fun `should ignore SyncError published for a different showTraktId`() = runTest {
+        buildMockData(showDetailResult = tvShowDetails)
+        val syncErrorChannel = DefaultSyncErrorChannel()
+        val presenter = buildShowDetailsPresenter(
+            param = ShowDetailsParam(id = 84958),
+            syncErrorChannel = syncErrorChannel,
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        syncErrorChannel.log(
+            com.thomaskioko.tvmaniac.util.api.SyncError.MarkWatchedFailed(
+                showTraktId = 99999L,
+                cause = RuntimeException("network down"),
+            ),
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.state.value.message shouldBe null
+    }
+
     private suspend fun buildMockData(
         isYoutubeInstalled: Boolean = false,
         castList: List<ShowCast> = emptyList(),
@@ -850,6 +892,7 @@ class ShowDetailsPresenterTest {
         param: ShowDetailsParam = ShowDetailsParam(id = 84958),
         onNavigateToSeason: (param: ShowSeasonDetailsParam) -> Unit = {},
         onShowFollowed: () -> Unit = {},
+        syncErrorChannel: com.thomaskioko.tvmaniac.util.api.SyncErrorChannel = DefaultSyncErrorChannel(),
     ): ShowDetailsPresenter {
         val navigator = object : Navigator {
             private val navigation = StackNavigation<NavRoute>()
@@ -974,7 +1017,7 @@ class ShowDetailsPresenterTest {
             ),
             traktAuthRepository = traktAuthRepository,
             traktAuthManager = com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager(),
-            syncErrorChannel = DefaultSyncErrorChannel(),
+            syncErrorChannel = syncErrorChannel,
             localizer = fakeLocalizer,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             dispatchers = coroutineDispatcher,
