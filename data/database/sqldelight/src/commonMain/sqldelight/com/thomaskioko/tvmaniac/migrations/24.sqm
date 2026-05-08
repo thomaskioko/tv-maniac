@@ -1,0 +1,8 @@
+-- Migration 24: drop the next_episodes cache table.
+--
+-- UpNext list and counts now derive live from `nextEpisodesForWatchlist` (a SQL query over
+-- `episode`, `season`, `watched_episodes`, `followed_shows`, and `show_watch_progress`). The
+-- denormalised `next_episodes` cache and the Trakt `ShowUpNextStore` that populated it are
+-- removed alongside the table.
+
+DROP TABLE IF EXISTS next_episodes;

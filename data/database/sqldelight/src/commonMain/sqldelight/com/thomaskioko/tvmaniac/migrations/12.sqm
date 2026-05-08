@@ -2,6 +2,11 @@
 -- Also makes episode_id nullable to support Trakt sync before local episode data is fetched
 -- Uses temp table pattern to preserve existing data
 
+-- Drop views first so the upcoming DROP/RENAME on watched_episodes does not trip
+-- SQLite's view validation (legacy_alter_table=OFF re-parses every view in the schema).
+DROP VIEW IF EXISTS shows_next_to_watch;
+DROP VIEW IF EXISTS shows_last_watched;
+
 CREATE TABLE watched_episodes_new (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     show_id INTEGER NOT NULL,
@@ -37,8 +42,6 @@ CREATE INDEX IF NOT EXISTS idx_watched_episodes_pending_action ON watched_episod
 CREATE INDEX IF NOT EXISTS idx_watched_episodes_trakt ON watched_episodes(trakt_id);
 
 -- Recreate views using composable pattern (shows_last_watched referenced by shows_next_to_watch)
-DROP VIEW IF EXISTS shows_next_to_watch;
-DROP VIEW IF EXISTS shows_last_watched;
 
 CREATE VIEW shows_last_watched AS
 SELECT

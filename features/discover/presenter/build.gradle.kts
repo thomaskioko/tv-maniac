@@ -31,6 +31,7 @@ kotlin {
                 implementation(projects.data.episode.api)
                 implementation(projects.data.followedshows.api)
                 implementation(projects.data.traktauth.api)
+                implementation(projects.i18n.api)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
@@ -57,6 +58,8 @@ kotlin {
                 implementation(projects.data.trendingshows.testing)
                 implementation(projects.data.upcomingshows.testing)
                 implementation(projects.data.user.testing)
+                implementation(projects.core.util.implementation)
+                implementation(projects.i18n.testing)
                 implementation(projects.navigation.testing)
 
                 implementation(libs.bundles.unittest)

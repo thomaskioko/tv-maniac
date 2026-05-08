@@ -1,0 +1,89 @@
+-- Migration 26: rebuild watch-progress views to match current source-of-truth definitions.
+--
+-- Two prior changes updated view bodies in .sq sources without shipping a migration:
+--   * SYNCED_DELETE pending action: shows_last_watched, shows_next_to_watch, and
+--     show_watch_progress now filter out both 'DELETE' and 'SYNCED_DELETE' rows so
+--     pushed soft deletes stay hidden until the GC sweep removes them.
+--   * Episode ratings/vote_count: shows_next_to_watch now exposes episode.ratings and
+--     episode.vote_count, and matches watched_episodes by id-or-(season,episode) so
+--     Trakt-pushed rows that arrived before episode metadata are still recognised.
+--
+-- Drop in dependency order (shows_next_to_watch depends on shows_last_watched), then
+-- recreate from the same body as ShowsLastWatched.sq, ShowMetadata.sq, and
+-- ShowsNextToWatch.sq.
+
+DROP VIEW IF EXISTS shows_next_to_watch;
+DROP VIEW IF EXISTS show_watch_progress;
+DROP VIEW IF EXISTS shows_last_watched;
+
+CREATE VIEW shows_last_watched AS
+SELECT
+    tvshow.trakt_id AS show_trakt_id,
+    MAX((1000 * season.season_number) + episode.episode_number) AS last_watched_abs_number,
+    MAX(watched_episode.watched_at) AS last_watched_at
+FROM tvshow
+INNER JOIN season ON tvshow.trakt_id = season.show_trakt_id
+INNER JOIN episode ON episode.season_id = season.id AND episode.show_trakt_id = tvshow.trakt_id
+INNER JOIN watched_episodes AS watched_episode ON watched_episode.show_trakt_id = tvshow.trakt_id AND watched_episode.episode_id = episode.id AND watched_episode.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
+WHERE season.season_number > 0 OR season.title != 'Specials'
+GROUP BY tvshow.trakt_id;
+
+CREATE VIEW show_watch_progress AS
+SELECT
+    tvshow.trakt_id AS show_trakt_id,
+    COALESCE(watched.count, 0) AS watched_count,
+    COALESCE(total.count, 0) AS total_count
+FROM tvshow
+LEFT JOIN (
+    SELECT show_trakt_id, COUNT(*) AS count
+    FROM watched_episodes
+    WHERE pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
+    GROUP BY show_trakt_id
+) AS watched ON watched.show_trakt_id = tvshow.trakt_id
+LEFT JOIN (
+    SELECT episode.show_trakt_id, COUNT(*) AS count
+    FROM episode
+    INNER JOIN season ON episode.season_id = season.id
+    WHERE season.season_number > 0
+    AND (episode.first_aired IS NULL OR episode.first_aired <= strftime('%s', 'now') * 1000)
+    GROUP BY episode.show_trakt_id
+) AS total ON total.show_trakt_id = tvshow.trakt_id;
+
+CREATE VIEW shows_next_to_watch AS
+SELECT
+    tvshow.trakt_id AS show_trakt_id,
+    tvshow.tmdb_id AS show_tmdb_id,
+    episode.id AS episode_id,
+    episode.title AS episode_name,
+    season.id AS season_id,
+    season.season_number,
+    episode.episode_number,
+    episode.runtime,
+    episode.image_url AS still_path,
+    episode.overview,
+    tvshow.name AS show_name,
+    tvshow.poster_path AS show_poster,
+    ((1000 * season.season_number) + episode.episode_number) AS next_ep_abs_number,
+    episode.first_aired,
+    last_watched.last_watched_at,
+    episode.ratings,
+    episode.vote_count
+FROM tvshow
+INNER JOIN season ON tvshow.trakt_id = season.show_trakt_id
+INNER JOIN episode ON episode.season_id = season.id AND episode.show_trakt_id = tvshow.trakt_id
+LEFT JOIN watched_episodes AS watched_episode
+    ON watched_episode.show_trakt_id = tvshow.trakt_id
+    AND watched_episode.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
+    AND (
+        watched_episode.episode_id = episode.id
+        OR (
+            watched_episode.episode_id IS NULL
+            AND watched_episode.season_number = season.season_number
+            AND watched_episode.episode_number = episode.episode_number
+        )
+    )
+LEFT JOIN shows_last_watched AS last_watched ON last_watched.show_trakt_id = tvshow.trakt_id
+WHERE (season.season_number > 0 OR (season.season_number = 0 AND season.title != 'Specials'))
+  AND watched_episode.id IS NULL
+  AND ((1000 * season.season_number) + episode.episode_number) > COALESCE(last_watched.last_watched_abs_number, 0)
+ORDER BY tvshow.trakt_id, season.season_number, episode.episode_number;

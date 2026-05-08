@@ -10,7 +10,7 @@ import java.nio.file.Files
 import java.sql.Connection
 import java.sql.DriverManager
 
-private val SCHEMAS_DIR: File by lazy {
+internal val SCHEMAS_DIR: File by lazy {
     val path = System.getProperty("tvmaniac.sqldelight.schemas.dir")
         ?: error(
             "tvmaniac.sqldelight.schemas.dir system property not set. " +
@@ -52,7 +52,69 @@ internal fun SqlDriver.tableNames(): Set<String> = executeQuery(
     },
 ).value
 
-private class PinnedJdbcDriver(private val connection: Connection) : JdbcDriver() {
+internal fun SqlDriver.columnNames(table: String): Set<String> = executeQuery(
+    identifier = null,
+    sql = "SELECT name FROM pragma_table_info('$table')",
+    parameters = 0,
+    binders = null,
+    mapper = { cursor ->
+        val names = mutableSetOf<String>()
+        while (cursor.next().value) {
+            cursor.getString(0)?.let(names::add)
+        }
+        QueryResult.Value(names.toSet())
+    },
+).value
+
+internal fun SqlDriver.notNullColumns(table: String): Set<String> = executeQuery(
+    identifier = null,
+    sql = "SELECT name FROM pragma_table_info('$table') WHERE \"notnull\" = 1",
+    parameters = 0,
+    binders = null,
+    mapper = { cursor ->
+        val names = mutableSetOf<String>()
+        while (cursor.next().value) {
+            cursor.getString(0)?.let(names::add)
+        }
+        QueryResult.Value(names.toSet())
+    },
+).value
+
+internal fun SqlDriver.enableForeignKeys() {
+    execute(null, "PRAGMA foreign_keys=ON", 0)
+}
+
+internal data class SchemaEntry(
+    val type: String,
+    val name: String,
+    val sql: String?,
+)
+
+internal fun SqlDriver.readSchema(): Set<SchemaEntry> = executeQuery(
+    identifier = null,
+    sql = """
+        SELECT type, name, sql FROM sqlite_master
+        WHERE name NOT LIKE 'sqlite_%'
+        ORDER BY type, name
+    """.trimIndent(),
+    parameters = 0,
+    binders = null,
+    mapper = { cursor ->
+        val entries = mutableSetOf<SchemaEntry>()
+        while (cursor.next().value) {
+            entries.add(
+                SchemaEntry(
+                    type = cursor.getString(0)!!,
+                    name = cursor.getString(1)!!,
+                    sql = cursor.getString(2),
+                ),
+            )
+        }
+        QueryResult.Value(entries.toSet())
+    },
+).value
+
+internal class PinnedJdbcDriver(private val connection: Connection) : JdbcDriver() {
     override fun getConnection(): Connection = connection
 
     override fun closeConnection(connection: Connection) = Unit

@@ -12,7 +12,7 @@ public data object ToggleSearchActive : WatchlistAction
 
 public data class ChangeListStyleClicked(val isGridMode: Boolean) : WatchlistAction
 
-public data class MessageShown(val id: Long) : WatchlistAction
+public data class WatchlistMessageShown(val id: Long) : WatchlistAction
 
 public data class UpNextEpisodeClicked(val showTraktId: Long, val episodeId: Long) : WatchlistAction
 

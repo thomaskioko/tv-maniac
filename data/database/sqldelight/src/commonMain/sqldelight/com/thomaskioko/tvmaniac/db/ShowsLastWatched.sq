@@ -6,7 +6,7 @@ SELECT
 FROM tvshow
 INNER JOIN season ON tvshow.trakt_id = season.show_trakt_id
 INNER JOIN episode ON episode.season_id = season.id AND episode.show_trakt_id = tvshow.trakt_id
-INNER JOIN watched_episodes AS watched_episode ON watched_episode.show_trakt_id = tvshow.trakt_id AND watched_episode.episode_id = episode.id
+INNER JOIN watched_episodes AS watched_episode ON watched_episode.show_trakt_id = tvshow.trakt_id AND watched_episode.episode_id = episode.id AND watched_episode.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
 WHERE season.season_number > 0 OR season.title != 'Specials'
 GROUP BY tvshow.trakt_id;
 

@@ -1,0 +1,84 @@
+-- Migration 27: filter unaired episodes out of UpNext source views.
+--
+-- Two related fixes that together stop TBD episodes from leaking into UpNext and
+-- the show-details continue-watching rail:
+--   * shows_next_to_watch: WHERE clause now requires episode.first_aired IS NOT
+--     NULL AND episode.first_aired <= now, so unaired episodes are excluded at
+--     the view source rather than relying on a Kotlin-side safety net.
+--   * show_watch_progress.total_count: the aired-episode subquery tightens from
+--     (first_aired IS NULL OR first_aired <= now) to
+--     (first_aired IS NOT NULL AND first_aired <= now), so TBD episodes no
+--     longer count toward total_count. Without this, watched_count < total_count
+--     for a caught-up viewer of a still-airing show, and the Kotlin filter
+--     in DefaultNextEpisodeDao failed to drop the TBD row.
+--
+-- shows_last_watched is unchanged but cannot stay across the rebuild because
+-- shows_next_to_watch depends on it; SQLite drops dependent views on DROP VIEW
+-- only when CASCADE is requested, so explicit drop-and-recreate is used to
+-- mirror the pattern from migration 26.
+
+DROP VIEW IF EXISTS shows_next_to_watch;
+DROP VIEW IF EXISTS show_watch_progress;
+
+CREATE VIEW show_watch_progress AS
+SELECT
+    tvshow.trakt_id AS show_trakt_id,
+    COALESCE(watched.count, 0) AS watched_count,
+    COALESCE(total.count, 0) AS total_count
+FROM tvshow
+LEFT JOIN (
+    SELECT show_trakt_id, COUNT(*) AS count
+    FROM watched_episodes
+    WHERE pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
+    GROUP BY show_trakt_id
+) AS watched ON watched.show_trakt_id = tvshow.trakt_id
+LEFT JOIN (
+    SELECT episode.show_trakt_id, COUNT(*) AS count
+    FROM episode
+    INNER JOIN season ON episode.season_id = season.id
+    WHERE season.season_number > 0
+    AND episode.first_aired IS NOT NULL
+    AND episode.first_aired <= strftime('%s', 'now') * 1000
+    GROUP BY episode.show_trakt_id
+) AS total ON total.show_trakt_id = tvshow.trakt_id;
+
+CREATE VIEW shows_next_to_watch AS
+SELECT
+    tvshow.trakt_id AS show_trakt_id,
+    tvshow.tmdb_id AS show_tmdb_id,
+    episode.id AS episode_id,
+    episode.title AS episode_name,
+    season.id AS season_id,
+    season.season_number,
+    episode.episode_number,
+    episode.runtime,
+    episode.image_url AS still_path,
+    episode.overview,
+    tvshow.name AS show_name,
+    tvshow.poster_path AS show_poster,
+    ((1000 * season.season_number) + episode.episode_number) AS next_ep_abs_number,
+    episode.first_aired,
+    last_watched.last_watched_at,
+    episode.ratings,
+    episode.vote_count
+FROM tvshow
+INNER JOIN season ON tvshow.trakt_id = season.show_trakt_id
+INNER JOIN episode ON episode.season_id = season.id AND episode.show_trakt_id = tvshow.trakt_id
+LEFT JOIN watched_episodes AS watched_episode
+    ON watched_episode.show_trakt_id = tvshow.trakt_id
+    AND watched_episode.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
+    AND (
+        watched_episode.episode_id = episode.id
+        OR (
+            watched_episode.episode_id IS NULL
+            AND watched_episode.season_number = season.season_number
+            AND watched_episode.episode_number = episode.episode_number
+        )
+    )
+LEFT JOIN shows_last_watched AS last_watched ON last_watched.show_trakt_id = tvshow.trakt_id
+WHERE (season.season_number > 0 OR (season.season_number = 0 AND season.title != 'Specials'))
+  AND watched_episode.id IS NULL
+  AND ((1000 * season.season_number) + episode.episode_number) > COALESCE(last_watched.last_watched_abs_number, 0)
+  AND episode.first_aired IS NOT NULL
+  AND episode.first_aired <= strftime('%s', 'now') * 1000
+ORDER BY tvshow.trakt_id, season.season_number, episode.episode_number;

@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.domain.episode.PendingUploadsWorker
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import dev.zacsweers.metro.Inject
@@ -61,8 +62,14 @@ public class SyncTasksInitializer(
                 .distinctUntilChanged()
                 .collect { shouldSync ->
                     when {
-                        shouldSync -> scheduler.schedulePeriodic(LibrarySyncWorker.REQUEST)
-                        else -> scheduler.cancel(LibrarySyncWorker.WORKER_NAME)
+                        shouldSync -> {
+                            scheduler.schedulePeriodic(LibrarySyncWorker.REQUEST)
+                            scheduler.schedulePeriodic(PendingUploadsWorker.REQUEST)
+                        }
+                        else -> {
+                            scheduler.cancel(LibrarySyncWorker.WORKER_NAME)
+                            scheduler.cancel(PendingUploadsWorker.WORKER_NAME)
+                        }
                     }
                 }
         }

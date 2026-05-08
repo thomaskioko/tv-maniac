@@ -23,7 +23,7 @@ internal class UpNextFlowTests : BaseAppFlowTest() {
             .scrollToUpNextEpisode(breakingBadTraktId)
             .assertUpNextEpisodeDisplayed(breakingBadTraktId)
             .assertUpNextEpisodeMetaDisplayed(breakingBadTraktId, "S01E01")
-            .assertUpNextProgressCountDisplayed(breakingBadTraktId, "0/62")
+            .assertUpNextProgressCountDisplayed(breakingBadTraktId, "0/9")
             .clickUpNextEpisodeRow(breakingBadTraktId)
             .assertSeasonDetailsDisplayed()
             .clickBackButton()
@@ -35,7 +35,7 @@ internal class UpNextFlowTests : BaseAppFlowTest() {
             .scrollToUpNextEpisode(breakingBadTraktId)
             .clickUpNextWatchedButton(breakingBadTraktId)
             .assertUpNextEpisodeMetaDisplayed(breakingBadTraktId, "S01E02")
-            .assertUpNextProgressCountDisplayed(breakingBadTraktId, "1/62")
+            .assertUpNextProgressCountDisplayed(breakingBadTraktId, "1/9")
             // 4. Verify in Season Details
             .clickUpNextEpisodeRow(breakingBadTraktId)
             .assertSeasonDetailsDisplayed()

@@ -63,13 +63,17 @@ SELECT
     watched_episodes.synced_at,
     watched_episodes.pending_action
 FROM watched_episodes
-WHERE show_trakt_id = ? AND season_number = ? AND pending_action != 'DELETE'
+WHERE show_trakt_id = ? AND season_number = ? AND pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
 ORDER BY episode_number;
 
 markAsWatched:
-INSERT OR REPLACE INTO watched_episodes(
+INSERT INTO watched_episodes(
     show_trakt_id, episode_id, season_number, episode_number, watched_at, pending_action
-) VALUES (?, ?, ?, ?, ?, ?);
+) VALUES (?, ?, ?, ?, ?, ?)
+ON CONFLICT(show_trakt_id, season_number, episode_number) DO UPDATE SET
+    episode_id = excluded.episode_id,
+    watched_at = excluded.watched_at,
+    pending_action = excluded.pending_action;
 
 markAsUnwatched:
 DELETE FROM watched_episodes
@@ -88,7 +92,7 @@ getTotalEpisodesForSeason:
 SELECT COUNT(*) FROM episode e
 INNER JOIN season s ON e.season_id = s.id
 WHERE e.show_trakt_id = ? AND s.season_number = ?
-  AND (e.first_aired IS NULL OR e.first_aired <= date('now'));
+  AND (e.first_aired IS NULL OR e.first_aired <= strftime('%s', 'now') * 1000);
 
 getPreviousUnwatchedEpisodes:
 SELECT
@@ -98,7 +102,7 @@ SELECT
     e.season_id
 FROM episode e
 INNER JOIN season s ON e.season_id = s.id
-LEFT JOIN watched_episodes we ON e.id = we.episode_id AND we.show_trakt_id = :show_trakt_id AND we.pending_action != 'DELETE'
+LEFT JOIN watched_episodes we ON e.id = we.episode_id AND we.show_trakt_id = :show_trakt_id AND we.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
 WHERE e.show_trakt_id = :show_trakt_id
   AND (:include_specials = 1 OR (s.season_number > 0 OR s.title != 'Specials'))
   AND (
@@ -106,7 +110,7 @@ WHERE e.show_trakt_id = :show_trakt_id
     OR (s.season_number = :season_number AND e.episode_number < :episode_number)
   )
   AND we.id IS NULL
-  AND (e.first_aired IS NULL OR e.first_aired <= date('now'))
+  AND (e.first_aired IS NULL OR e.first_aired <= strftime('%s', 'now') * 1000)
 ORDER BY s.season_number, e.episode_number;
 
 getEpisodesForSeason:
@@ -118,7 +122,7 @@ SELECT
 FROM episode e
 INNER JOIN season s ON e.season_id = s.id
 WHERE e.show_trakt_id = ? AND s.season_number = ?
-  AND (e.first_aired IS NULL OR e.first_aired <= date('now'))
+  AND (e.first_aired IS NULL OR e.first_aired <= strftime('%s', 'now') * 1000)
 ORDER BY e.episode_number;
 
 getTotalEpisodesForShow:
@@ -129,7 +133,7 @@ WHERE show_trakt_id = :show_trakt_id
 
 getWatchedEpisodesCountForShow:
 SELECT COUNT(*) FROM watched_episodes
-WHERE show_trakt_id = ? AND pending_action != 'DELETE';
+WHERE show_trakt_id = ? AND pending_action NOT IN ('DELETE', 'SYNCED_DELETE');
 
 getUnwatchedEpisodesInPreviousSeasons:
 SELECT
@@ -139,23 +143,23 @@ SELECT
     e.season_id
 FROM episode e
 INNER JOIN season s ON e.season_id = s.id
-LEFT JOIN watched_episodes we ON e.id = we.episode_id AND we.show_trakt_id = :show_trakt_id AND we.pending_action != 'DELETE'
+LEFT JOIN watched_episodes we ON e.id = we.episode_id AND we.show_trakt_id = :show_trakt_id AND we.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
 WHERE e.show_trakt_id = :show_trakt_id
   AND s.season_number < :season_number
   AND (:include_specials = 1 OR (s.season_number > 0 OR s.title != 'Specials'))
   AND we.id IS NULL
-  AND (e.first_aired IS NULL OR e.first_aired <= date('now'))
+  AND (e.first_aired IS NULL OR e.first_aired <= strftime('%s', 'now') * 1000)
 ORDER BY s.season_number, e.episode_number;
 
 getUnwatchedEpisodeCountInPreviousSeasons:
 SELECT COUNT(*) FROM episode e
 INNER JOIN season s ON e.season_id = s.id
-LEFT JOIN watched_episodes we ON e.id = we.episode_id AND we.show_trakt_id = :show_trakt_id AND we.pending_action != 'DELETE'
+LEFT JOIN watched_episodes we ON e.id = we.episode_id AND we.show_trakt_id = :show_trakt_id AND we.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
 WHERE e.show_trakt_id = :show_trakt_id
   AND s.season_number < :season_number
   AND (:include_specials = 1 OR (s.season_number > 0 OR s.title != 'Specials'))
   AND we.id IS NULL
-  AND (e.first_aired IS NULL OR e.first_aired <= date('now'));
+  AND (e.first_aired IS NULL OR e.first_aired <= strftime('%s', 'now') * 1000);
 
 -- Trakt Sync Queries
 
@@ -187,6 +191,16 @@ WHERE show_trakt_id = ? AND episode_id = ?;
 deleteById:
 DELETE FROM watched_episodes WHERE id = ?;
 
+markAsSyncedDelete:
+UPDATE watched_episodes
+SET pending_action = 'SYNCED_DELETE',
+    synced_at = :now
+WHERE id = :id;
+
+purgeSyncedDeletesOlderThan:
+DELETE FROM watched_episodes
+WHERE pending_action = 'SYNCED_DELETE' AND synced_at < :threshold;
+
 getEntryByShowAndEpisode:
 SELECT
     watched_episodes.id AS watched_id,
@@ -202,9 +216,16 @@ FROM watched_episodes
 WHERE show_trakt_id = ? AND episode_id = ?;
 
 upsertFromTrakt:
-INSERT OR REPLACE INTO watched_episodes(
+INSERT INTO watched_episodes(
     show_trakt_id, episode_id, season_number, episode_number, watched_at, trakt_id, synced_at, pending_action
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+ON CONFLICT(show_trakt_id, season_number, episode_number) DO UPDATE SET
+    episode_id = excluded.episode_id,
+    watched_at = excluded.watched_at,
+    trakt_id = excluded.trakt_id,
+    synced_at = excluded.synced_at,
+    pending_action = excluded.pending_action
+WHERE watched_episodes.pending_action = 'NOTHING';
 
 getAllSeasonsWatchProgress:
 SELECT
@@ -215,14 +236,14 @@ FROM season s
 LEFT JOIN (
     SELECT season_number, COUNT(*) AS cnt
     FROM watched_episodes
-    WHERE show_trakt_id = :show_trakt_id AND pending_action != 'DELETE'
+    WHERE show_trakt_id = :show_trakt_id AND pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
     GROUP BY season_number
 ) watched ON watched.season_number = s.season_number
 LEFT JOIN (
     SELECT season_id, COUNT(*) AS cnt
     FROM episode
     WHERE show_trakt_id = :show_trakt_id
-      AND (first_aired IS NULL OR first_aired <= date('now'))
+      AND (first_aired IS NULL OR first_aired <= strftime('%s', 'now') * 1000)
     GROUP BY season_id
 ) total ON total.season_id = s.id
 WHERE s.show_trakt_id = :show_trakt_id

@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
+import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.data.featuredshows.api.interactor.FeaturedShowsInteractor
@@ -26,11 +27,15 @@ import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
 import com.thomaskioko.tvmaniac.home.nav.HomeRoute
 import com.thomaskioko.tvmaniac.home.nav.di.model.HomeConfig
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey
+import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.shows.api.model.Category
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsInteractor
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
+import com.thomaskioko.tvmaniac.util.api.SyncError
+import com.thomaskioko.tvmaniac.util.api.SyncErrorChannel
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.TabScreen
 import kotlinx.collections.immutable.toImmutableList
@@ -60,6 +65,8 @@ public class DiscoverShowsPresenter(
     private val genreShowsInteractor: GenreShowsInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val traktAuthRepository: TraktAuthRepository,
+    private val syncErrorChannel: SyncErrorChannel,
+    private val localizer: Localizer,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
 ) : ComponentContext by componentContext {
@@ -145,6 +152,20 @@ public class DiscoverShowsPresenter(
             discoverShowsInteractor(Unit)
             observeShowData()
             observeAuthState()
+            observeSyncErrors()
+        }
+
+        // TODO:: Move to root presenter
+        private fun observeSyncErrors() {
+            coroutineScope.launch {
+                syncErrorChannel.errors
+                    .filter { it is SyncError.MarkWatchedFailed }
+                    .collect {
+                        uiMessageManager.emitMessage(
+                            UiMessage(message = localizer.getString(StringResourceKey.SyncFailedWillRetry)),
+                        )
+                    }
+            }
         }
 
         private fun observeAuthState() {

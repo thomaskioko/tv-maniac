@@ -37,6 +37,7 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)
+                implementation(projects.core.base.testing)
                 implementation(projects.core.util.testing)
                 implementation(projects.data.database.testing)
                 implementation(projects.data.datastore.testing)
@@ -44,6 +45,7 @@ kotlin {
                 implementation(projects.data.upnext.testing)
                 implementation(projects.data.followedshows.testing)
                 implementation(projects.data.requestManager.testing)
+                implementation(projects.core.util.implementation)
                 implementation(projects.i18n.testing)
             }
         }

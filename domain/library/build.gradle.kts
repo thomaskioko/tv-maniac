@@ -22,6 +22,7 @@ kotlin {
                 implementation(projects.data.syncActivity.api)
                 implementation(projects.data.traktauth.api)
                 implementation(projects.data.watchproviders.api)
+                implementation(projects.domain.episode)
 
                 implementation(libs.coroutines.core)
             }

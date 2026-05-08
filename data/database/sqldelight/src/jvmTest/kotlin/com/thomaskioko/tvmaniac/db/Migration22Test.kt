@@ -8,7 +8,7 @@ import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.shouldBe
 import kotlin.test.Test
 
-class Migration22TraktListShowsTest {
+class Migration22Test {
 
     @Test
     fun `should add trakt_list_shows junction table when migrating past version 22`() {

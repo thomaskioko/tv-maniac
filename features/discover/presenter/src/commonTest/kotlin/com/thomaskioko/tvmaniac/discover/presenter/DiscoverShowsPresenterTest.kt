@@ -36,6 +36,7 @@ import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepositor
 import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
 import com.thomaskioko.tvmaniac.home.nav.HomeTabNavigator
 import com.thomaskioko.tvmaniac.home.nav.di.model.HomeConfig
+import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.FakeSheetNavigator
 import com.thomaskioko.tvmaniac.navigation.testing.TestNavigator
 import com.thomaskioko.tvmaniac.navigation.testing.test
@@ -47,6 +48,7 @@ import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsInteractor
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
+import com.thomaskioko.tvmaniac.util.DefaultSyncErrorChannel
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldNotBeSameInstanceAs
@@ -325,9 +327,7 @@ class DiscoverShowsPresenterTest {
                     seasonDetailsRepository = seasonDetailsRepository,
                     watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
                     dispatchers = coroutineDispatcher,
-                    logger = FakeLogger(),
                 ),
-                upNextRepository = upNextRepository,
                 appScopeLauncher = FakeAppScopeLauncher(scope = appCoroutineScope),
             ),
             featuredShowsInteractor = FeaturedShowsInteractor(
@@ -359,6 +359,8 @@ class DiscoverShowsPresenterTest {
             ),
             unfollowShowInteractor = UnfollowShowInteractor(followedShowsRepository),
             traktAuthRepository = traktAuthRepository,
+            syncErrorChannel = DefaultSyncErrorChannel(),
+            localizer = FakeLocalizer(),
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = FakeLogger(),
         )
@@ -492,9 +494,7 @@ class DiscoverShowsPresenterTest {
                 seasonDetailsRepository = seasonDetailsRepository,
                 watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
                 dispatchers = coroutineDispatcher,
-                logger = FakeLogger(),
             ),
-            upNextRepository = upNextRepository,
             appScopeLauncher = FakeAppScopeLauncher(scope = appCoroutineScope),
         ),
         featuredShowsInteractor = FeaturedShowsInteractor(
@@ -526,6 +526,8 @@ class DiscoverShowsPresenterTest {
         ),
         unfollowShowInteractor = UnfollowShowInteractor(followedShowsRepository),
         traktAuthRepository = traktAuthRepository,
+        syncErrorChannel = DefaultSyncErrorChannel(),
+        localizer = FakeLocalizer(),
         errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
         logger = FakeLogger(),
     ).also { lifecycle.resume() }

@@ -24,6 +24,7 @@ kotlin {
                 implementation(projects.domain.episode)
                 implementation(projects.domain.followedshows)
                 implementation(projects.domain.watchlist)
+                implementation(projects.i18n.api)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
@@ -42,6 +43,7 @@ kotlin {
                 implementation(projects.data.watchlist.testing)
                 implementation(projects.data.library.testing)
                 implementation(projects.domain.showdetails)
+                implementation(projects.core.util.implementation)
                 implementation(projects.i18n.testing)
 
                 implementation(libs.bundles.unittest)

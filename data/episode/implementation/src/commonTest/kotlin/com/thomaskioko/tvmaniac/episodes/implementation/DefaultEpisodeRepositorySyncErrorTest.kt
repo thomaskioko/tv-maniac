@@ -1,0 +1,204 @@
+package com.thomaskioko.tvmaniac.episodes.implementation
+
+import app.cash.turbine.test
+import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
+import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
+import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
+import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
+import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultEpisodesDao
+import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultWatchedEpisodeDao
+import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
+import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
+import com.thomaskioko.tvmaniac.trakt.api.TraktCalendarRemoteDataSource
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktCalendarResponse
+import com.thomaskioko.tvmaniac.util.DefaultSyncErrorChannel
+import com.thomaskioko.tvmaniac.util.api.SyncError
+import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+
+@OptIn(ExperimentalCoroutinesApi::class)
+internal class DefaultEpisodeRepositorySyncErrorTest : BaseDatabaseTest() {
+
+    private val testDispatcher = StandardTestDispatcher()
+    private val dispatchers = AppCoroutineDispatchers(
+        main = testDispatcher,
+        io = testDispatcher,
+        computation = testDispatcher,
+        databaseWrite = testDispatcher,
+        databaseRead = testDispatcher,
+    )
+    private val fakeDateTimeProvider = FakeDateTimeProvider()
+    private val datastoreRepository = FakeDatastoreRepository()
+    private val syncRepository = FakeWatchedEpisodeSyncRepository()
+    private val requestManagerRepository = FakeRequestManagerRepository()
+
+    @BeforeTest
+    fun setup() {
+        Dispatchers.setMain(testDispatcher)
+        seedShow()
+    }
+
+    @AfterTest
+    fun tearDown() {
+        Dispatchers.resetMain()
+        closeDb()
+    }
+
+    @Test
+    fun `should publish MarkWatchedFailed when syncPendingEpisodes throws on mark watched`() = runTest {
+        val syncErrorChannel = DefaultSyncErrorChannel()
+        val repository = buildRepository(syncErrorChannel)
+        syncRepository.setPendingEpisodesError(RuntimeException("network down"))
+
+        syncErrorChannel.errors.test {
+            repository.markEpisodeAsWatched(
+                showTraktId = SHOW_ID,
+                episodeId = EPISODE_ID,
+                seasonNumber = 1L,
+                episodeNumber = 1L,
+            )
+
+            val event = awaitItem()
+            event.shouldBeInstanceOf<SyncError.MarkWatchedFailed>()
+            event.showTraktId shouldBe SHOW_ID
+            event.cause.message shouldBe "network down"
+        }
+    }
+
+    @Test
+    fun `should publish MarkUnwatchedFailed when syncPendingEpisodes throws on mark unwatched`() = runTest {
+        val syncErrorChannel = DefaultSyncErrorChannel()
+        val repository = buildRepository(syncErrorChannel)
+        syncRepository.setPendingEpisodesError(RuntimeException("network down"))
+
+        syncErrorChannel.errors.test {
+            repository.markEpisodeAsUnwatched(showTraktId = SHOW_ID, episodeId = EPISODE_ID)
+
+            val event = awaitItem()
+            event.shouldBeInstanceOf<SyncError.MarkUnwatchedFailed>()
+            event.showTraktId shouldBe SHOW_ID
+        }
+    }
+
+    @Test
+    fun `should publish BatchMarkFailed when syncPendingEpisodes throws on mark season watched`() = runTest {
+        val syncErrorChannel = DefaultSyncErrorChannel()
+        val repository = buildRepository(syncErrorChannel)
+        syncRepository.setPendingEpisodesError(RuntimeException("network down"))
+
+        syncErrorChannel.errors.test {
+            repository.markSeasonWatched(showTraktId = SHOW_ID, seasonNumber = 1L)
+
+            val event = awaitItem()
+            event.shouldBeInstanceOf<SyncError.BatchMarkFailed>()
+            event.showTraktId shouldBe SHOW_ID
+        }
+    }
+
+    @Test
+    fun `should not emit when syncPendingEpisodes succeeds`() = runTest {
+        val syncErrorChannel = DefaultSyncErrorChannel()
+        val repository = buildRepository(syncErrorChannel)
+        syncRepository.setPendingEpisodesError(null)
+
+        syncErrorChannel.errors.test {
+            repository.markEpisodeAsWatched(
+                showTraktId = SHOW_ID,
+                episodeId = EPISODE_ID,
+                seasonNumber = 1L,
+                episodeNumber = 1L,
+            )
+            expectNoEvents()
+        }
+    }
+
+    private fun TestScope.buildRepository(
+        syncErrorChannel: DefaultSyncErrorChannel,
+    ): DefaultEpisodeRepository {
+        val watchedEpisodeDao = DefaultWatchedEpisodeDao(database, dispatchers, fakeDateTimeProvider)
+        val episodesDao = DefaultEpisodesDao(database, dispatchers, fakeDateTimeProvider)
+        val upcomingEpisodesStore = UpcomingEpisodesStore(
+            calendarDataSource = NoOpCalendarDataSource,
+            episodesDao = episodesDao,
+            requestManagerRepository = requestManagerRepository,
+            dispatchers = dispatchers,
+        )
+        return DefaultEpisodeRepository(
+            watchedEpisodeDao = watchedEpisodeDao,
+            datastoreRepository = datastoreRepository,
+            syncRepository = syncRepository,
+            episodesDao = episodesDao,
+            dispatchers = dispatchers,
+            upcomingEpisodesStore = upcomingEpisodesStore,
+            appScopeLauncher = FakeAppScopeLauncher(scope = this),
+            syncErrorChannel = syncErrorChannel,
+        )
+    }
+
+    private fun seedShow() {
+        database.tvShowQueries.upsert(
+            trakt_id = Id(SHOW_ID),
+            tmdb_id = Id(SHOW_ID),
+            name = "Test Show",
+            overview = "",
+            language = "en",
+            year = "2024",
+            ratings = 8.0,
+            vote_count = 100,
+            genres = listOf("Drama"),
+            status = "Returning Series",
+            episode_numbers = null,
+            season_numbers = null,
+            poster_path = null,
+            backdrop_path = null,
+        )
+        database.seasonsQueries.upsert(
+            id = Id(11L),
+            show_trakt_id = Id(SHOW_ID),
+            season_number = 1L,
+            title = "Season 1",
+            overview = null,
+            episode_count = 2L,
+            image_url = null,
+        )
+        database.episodesQueries.upsert(
+            id = Id(EPISODE_ID),
+            season_id = Id(11L),
+            show_trakt_id = Id(SHOW_ID),
+            title = "Pilot",
+            overview = "",
+            episode_number = 1L,
+            runtime = 45L,
+            image_url = null,
+            ratings = 8.0,
+            vote_count = 100L,
+            trakt_id = null,
+            first_aired = null,
+        )
+    }
+
+    private companion object {
+        private const val SHOW_ID = 1L
+        private const val EPISODE_ID = 101L
+    }
+}
+
+private object NoOpCalendarDataSource : TraktCalendarRemoteDataSource {
+    override suspend fun getMyShowsCalendar(
+        startDate: String,
+        days: Int,
+    ): ApiResponse<List<TraktCalendarResponse>> = ApiResponse.Success(emptyList())
+}

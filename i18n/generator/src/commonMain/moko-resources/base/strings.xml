@@ -311,7 +311,7 @@
     <string name="label_library_filter_show_less">Show less</string>
     <string name="label_library_filter_clear">Clear</string>
     <string name="label_library_filter_apply">Filter</string>
-    <string name="label_library_status_returning">Returning Series</string>
+    <string name="label_library_status_returning">Returning</string>
     <string name="label_library_status_planned">Planned</string>
     <string name="label_library_status_in_production">In Production</string>
     <string name="label_library_status_ended">Ended</string>
@@ -393,4 +393,6 @@
     <string name="notification_channel_episodes_description">Notifications for upcoming episodes</string>
     <string name="notification_channel_developer">Developer Testing</string>
     <string name="notification_channel_developer_description">Notifications for testing</string>
+
+    <string name="sync_failed_will_retry">Couldn\'t sync with server. Your change is saved and will retry when you\'re back online.</string>
 </resources>

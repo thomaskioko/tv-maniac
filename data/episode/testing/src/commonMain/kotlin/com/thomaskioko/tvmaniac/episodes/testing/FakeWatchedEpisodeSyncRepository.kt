@@ -3,23 +3,32 @@ package com.thomaskioko.tvmaniac.episodes.testing
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
 
 public class FakeWatchedEpisodeSyncRepository : WatchedEpisodeSyncRepository {
-    private var lastSyncedShowId: Long? = null
+    private val syncedShowIds = mutableListOf<Long>()
     private var lastForceRefresh: Boolean = false
+    private var pendingError: Throwable? = null
 
-    public fun getLastSyncedShowId(): Long? = lastSyncedShowId
+    public fun getLastSyncedShowId(): Long? = syncedShowIds.lastOrNull()
+
+    public fun getSyncedShowIds(): List<Long> = syncedShowIds.toList()
 
     public fun wasForceRefreshUsed(): Boolean = lastForceRefresh
 
+    public fun setPendingEpisodesError(error: Throwable?) {
+        pendingError = error
+    }
+
     public fun reset() {
-        lastSyncedShowId = null
+        syncedShowIds.clear()
         lastForceRefresh = false
+        pendingError = null
     }
 
     override suspend fun syncShowEpisodeWatches(showTraktId: Long, forceRefresh: Boolean) {
-        lastSyncedShowId = showTraktId
+        syncedShowIds.add(showTraktId)
         lastForceRefresh = forceRefresh
     }
 
     override suspend fun syncPendingEpisodes() {
+        pendingError?.let { throw it }
     }
 }
