@@ -17,6 +17,7 @@ public struct BorderTextView: View {
     private let borderWidth: CGFloat
     private let cornerRadius: CGFloat?
     private let weight: Font.Weight
+    private let lineLimit: Int?
 
     public init(
         text: String,
@@ -25,7 +26,8 @@ public struct BorderTextView: View {
         borderOpacity: CGFloat = 1,
         borderWidth: CGFloat = 1,
         cornerRadius: CGFloat? = nil,
-        weight: Font.Weight = .light
+        weight: Font.Weight = .light,
+        lineLimit: Int? = 1
     ) {
         self.text = text
         self.borderWidth = borderWidth
@@ -34,6 +36,7 @@ public struct BorderTextView: View {
         self.borderOpacity = borderOpacity
         self.weight = weight
         self.colorOpacity = colorOpacity
+        self.lineLimit = lineLimit
     }
 
     public var body: some View {
@@ -42,6 +45,7 @@ public struct BorderTextView: View {
 
         VStack {
             Text(text)
+                .lineLimit(lineLimit)
                 .padding(theme.spacing.xxSmall)
                 .textStyle(theme.typography.labelMedium)
                 .foregroundColor(resolvedColor)
