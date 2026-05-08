@@ -1,15 +1,17 @@
 package com.thomaskioko.tvmaniac.db
 
 import app.cash.sqldelight.db.QueryResult
-import app.cash.sqldelight.db.SqlDriver
+import com.thomaskioko.tvmaniac.db.util.columnNames
+import com.thomaskioko.tvmaniac.db.util.enableForeignKeys
 import com.thomaskioko.tvmaniac.db.util.migrateToCurrent
 import com.thomaskioko.tvmaniac.db.util.openSnapshot
+import com.thomaskioko.tvmaniac.db.util.seedTvshow
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.shouldBe
 import kotlin.test.Test
 
-class Migration25DropCachedCountsTest {
+class Migration25Test {
 
     @Test
     fun `should drop cached count columns from show_metadata when migrating past version 24`() {
@@ -133,31 +135,3 @@ private data class ShowMetadataRow(
     val lastWatchedAt: Long?,
 )
 
-private fun SqlDriver.columnNames(table: String): Set<String> = executeQuery(
-    identifier = null,
-    sql = "SELECT name FROM pragma_table_info('$table')",
-    parameters = 0,
-    binders = null,
-    mapper = { cursor ->
-        val names = mutableSetOf<String>()
-        while (cursor.next().value) {
-            cursor.getString(0)?.let(names::add)
-        }
-        QueryResult.Value(names.toSet())
-    },
-).value
-
-private fun SqlDriver.enableForeignKeys() {
-    execute(null, "PRAGMA foreign_keys=ON", 0)
-}
-
-private fun SqlDriver.seedTvshow(traktId: Long, tmdbId: Long) {
-    execute(
-        identifier = null,
-        sql = """
-            INSERT INTO tvshow (trakt_id, tmdb_id, name, overview, ratings, vote_count)
-            VALUES ($traktId, $tmdbId, 'show-$traktId', 'overview', 0.0, 0)
-        """.trimIndent(),
-        parameters = 0,
-    )
-}
