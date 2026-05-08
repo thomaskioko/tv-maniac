@@ -81,11 +81,11 @@ import com.thomaskioko.tvmaniac.ui.library.component.Searchbar
 import com.thomaskioko.tvmaniac.watchlist.presenter.ChangeListStyleClicked
 import com.thomaskioko.tvmaniac.watchlist.presenter.ClearWatchlistQuery
 import com.thomaskioko.tvmaniac.watchlist.presenter.MarkUpNextEpisodeWatched
-import com.thomaskioko.tvmaniac.watchlist.presenter.MessageShown
 import com.thomaskioko.tvmaniac.watchlist.presenter.ShowTitleClicked
 import com.thomaskioko.tvmaniac.watchlist.presenter.ToggleSearchActive
 import com.thomaskioko.tvmaniac.watchlist.presenter.UpNextEpisodeClicked
 import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistAction
+import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistMessageShown
 import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistPresenter
 import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistQueryChanged
 import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistShowClicked
@@ -112,7 +112,7 @@ public fun WatchlistScreen(
     TvManiacSnackBarHost(
         message = libraryState.message?.message,
         style = SnackBarStyle.Error,
-        onDismiss = { libraryState.message?.let { presenter.dispatch(MessageShown(it.id)) } },
+        onDismiss = { libraryState.message?.let { presenter.dispatch(WatchlistMessageShown(it.id)) } },
     )
 }
 
