@@ -1,0 +1,87 @@
+-- Migration 28: Reconcile schema drift between .sq files and migration history.
+--
+-- Several .sq schema changes shipped without paired migrations:
+--   * Trailers.sq renamed `key` to `youtube_url` (commit 862010687).
+--   * ShowGenres.sq renamed `show_id` (FK -> tvshow.id) to `show_tmdb_id`
+--     (FK -> tvshow.tmdb_id) (commit 886dc733de).
+--   * FollowedShows.sq relaxed `tmdb_id INTEGER NOT NULL` to nullable with
+--     DEFAULT NULL (commit 886dc733de).
+--   * User.sq added `background_url`, but migration 7 used
+--     CREATE TABLE IF NOT EXISTS, so older lineages where `user` predates
+--     migration 7 never received the column.
+--   * SeasonVideos.sq / EpisodeImage.sq are still defined, but migration 13
+--     dropped them without a recreate.
+--
+-- This migration brings any production database (post-migration-27) up to the
+-- current .sq schema. user/trailers/show_genres are recreated outright because
+-- their data is API-fetched and refreshed on next request. followed_shows
+-- preserves user data via the temp-table swap pattern. season_videos and
+-- episode_image use CREATE TABLE IF NOT EXISTS so the migration is idempotent
+-- across lineages where they already exist.
+
+DROP TABLE IF EXISTS user;
+CREATE TABLE user (
+    slug TEXT NOT NULL PRIMARY KEY,
+    user_name Text NOT NULL,
+    full_name TEXT,
+    profile_picture TEXT,
+    background_url TEXT,
+    is_me INTEGER NOT NULL DEFAULT 0
+);
+
+DROP TABLE IF EXISTS trailers;
+CREATE TABLE trailers (
+    id TEXT NOT NULL PRIMARY KEY,
+    show_tmdb_id INTEGER NOT NULL,
+    youtube_url TEXT NOT NULL,
+    name TEXT NOT NULL,
+    site TEXT NOT NULL,
+    size INTEGER NOT NULL,
+    type TEXT NOT NULL,
+    FOREIGN KEY(show_tmdb_id) REFERENCES tvshow(tmdb_id)
+);
+
+DROP TABLE IF EXISTS show_genres;
+CREATE TABLE show_genres (
+    show_tmdb_id INTEGER NOT NULL,
+    genre_id INTEGER NOT NULL,
+    FOREIGN KEY(show_tmdb_id) REFERENCES tvshow(tmdb_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY(genre_id) REFERENCES genres(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    PRIMARY KEY (show_tmdb_id, genre_id)
+);
+
+CREATE TABLE followed_shows_new(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    trakt_id INTEGER NOT NULL UNIQUE,
+    tmdb_id INTEGER DEFAULT NULL,
+    followed_at INTEGER NOT NULL,
+    pending_action TEXT NOT NULL DEFAULT 'NOTHING'
+        CHECK(pending_action IN ('NOTHING', 'UPLOAD', 'DELETE'))
+);
+INSERT INTO followed_shows_new(id, trakt_id, tmdb_id, followed_at, pending_action)
+SELECT id, trakt_id, tmdb_id, followed_at, pending_action FROM followed_shows;
+DROP TABLE followed_shows;
+ALTER TABLE followed_shows_new RENAME TO followed_shows;
+CREATE INDEX IF NOT EXISTS idx_followed_shows_trakt_id ON followed_shows(trakt_id);
+CREATE INDEX IF NOT EXISTS idx_followed_shows_tmdb_id ON followed_shows(tmdb_id);
+CREATE INDEX IF NOT EXISTS idx_followed_shows_pending_action ON followed_shows(pending_action);
+CREATE INDEX IF NOT EXISTS idx_followed_trakt_pending ON followed_shows(trakt_id, pending_action);
+
+CREATE TABLE IF NOT EXISTS season_videos (
+    id TEXT NOT NULL PRIMARY KEY,
+    season_id INTEGER NOT NULL,
+    key TEXT NOT NULL,
+    name TEXT NOT NULL,
+    site TEXT NOT NULL,
+    size INTEGER NOT NULL,
+    type TEXT NOT NULL,
+    FOREIGN KEY(season_id) REFERENCES season(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS episode_image (
+    id INTEGER NOT NULL PRIMARY KEY,
+    tmdb_id INTEGER,
+    image_url TEXT DEFAULT NULL,
+    FOREIGN KEY(id) REFERENCES episode(id) ON DELETE CASCADE,
+    UNIQUE(id)
+);
