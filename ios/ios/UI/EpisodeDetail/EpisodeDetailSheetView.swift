@@ -42,7 +42,7 @@ struct EpisodeDetailSheetView: View {
             .toastView(toast: $toast)
             .onChange(of: state.message) { _, newValue in
                 if let message = newValue {
-                    toast = Toast(type: .error, title: "Error", message: message.message)
+                    toast = Toast(type: .error, title: String(\.label_error), message: message.message)
                     presenter.dispatch(action: EpisodeSheetActionMessageShown(id: message.id))
                 }
             }

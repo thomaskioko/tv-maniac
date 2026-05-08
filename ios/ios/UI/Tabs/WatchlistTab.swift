@@ -75,7 +75,7 @@ struct WatchlistTab: View {
         .toastView(toast: $toast)
         .onChange(of: uiState.message) { _, newValue in
             if let message = newValue {
-                toast = Toast(type: .error, title: "Error", message: message.message)
+                toast = Toast(type: .error, title: String(\.label_error), message: message.message)
                 presenter.dispatch(action: WatchlistMessageShown(id: message.id))
             }
         }
