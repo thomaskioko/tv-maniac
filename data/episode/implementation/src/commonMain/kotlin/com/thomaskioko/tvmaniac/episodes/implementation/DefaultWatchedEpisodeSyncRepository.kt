@@ -143,8 +143,8 @@ public class DefaultWatchedEpisodeSyncRepository(
     }
 
     private companion object {
-        const val TAG = "WatchedEpisodeSyncRepository"
-        const val BATCH_SIZE = 50
-        val SYNCED_DELETE_TTL = 7.days
+        private const val TAG = "WatchedEpisodeSyncRepository"
+        private const val BATCH_SIZE = 50
+        private val SYNCED_DELETE_TTL = 7.days
     }
 }
