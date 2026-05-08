@@ -118,7 +118,7 @@ public class WatchlistPresenter(
             is ClearWatchlistQuery -> clearQuery()
             is ToggleSearchActive -> toggleSearchActive()
             is ChangeListStyleClicked -> toggleListStyle(action.isGridMode)
-            is MessageShown -> clearMessage(action.id)
+            is WatchlistMessageShown -> clearMessage(action.id)
             is UpNextEpisodeClicked -> navigator.pushNew(ShowDetailsRoute(ShowDetailsParam(id = action.showTraktId)))
             is ShowTitleClicked -> navigator.pushNew(ShowDetailsRoute(ShowDetailsParam(id = action.showTraktId)))
             is MarkUpNextEpisodeWatched -> markEpisodeWatched(action)

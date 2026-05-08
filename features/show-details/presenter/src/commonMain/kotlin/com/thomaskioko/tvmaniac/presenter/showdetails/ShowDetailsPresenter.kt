@@ -58,7 +58,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -143,6 +142,7 @@ public class ShowDetailsPresenter(
         ->
         currentState.copy(
             showDetails = showDetails.toShowDetails(
+                localizer = localizer,
                 watchedEpisodesCount = watchProgress.watchedCount,
                 totalEpisodesCount = watchProgress.totalCount,
                 watchProgress = watchProgress.progressPercentage,

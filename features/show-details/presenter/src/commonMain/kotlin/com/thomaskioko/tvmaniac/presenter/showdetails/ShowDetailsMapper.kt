@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.presenter.showdetails
 
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey
+import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.CastModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ContinueTrackingEpisodeModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ProviderModel
@@ -18,6 +20,7 @@ import com.thomaskioko.tvmaniac.domain.showdetails.model.ShowDetails as DomainSh
 import com.thomaskioko.tvmaniac.domain.showdetails.model.Trailer as DomainTrailer
 
 public fun DomainShowDetails.toShowDetails(
+    localizer: Localizer,
     watchedEpisodesCount: Int = 0,
     totalEpisodesCount: Int = 0,
     watchProgress: Float = 0f,
@@ -31,7 +34,7 @@ public fun DomainShowDetails.toShowDetails(
     votes = votes,
     rating = rating,
     year = year,
-    status = status?.capitalizeFirstCharacter(),
+    status = status?.localizeStatus(localizer),
     isInLibrary = isInLibrary,
     hasWebViewInstalled = hasWebViewInstalled,
     numberOfSeasons = numberOfSeasons ?: 0,
@@ -45,6 +48,18 @@ public fun DomainShowDetails.toShowDetails(
     similarShows = similarShows.toShowList(),
     trailersList = trailersList.toTrailerList(),
 )
+
+private fun String.localizeStatus(localizer: Localizer): String {
+    val key = when (lowercase()) {
+        "returning series" -> StringResourceKey.LabelLibraryStatusReturning
+        "planned" -> StringResourceKey.LabelLibraryStatusPlanned
+        "in production" -> StringResourceKey.LabelLibraryStatusInProduction
+        "ended" -> StringResourceKey.LabelLibraryStatusEnded
+        "canceled", "cancelled" -> StringResourceKey.LabelLibraryStatusCanceled
+        else -> return capitalizeFirstCharacter()
+    }
+    return localizer.getString(key)
+}
 
 internal fun List<DomainCasts>.toCastList(): ImmutableList<CastModel> =
     this.map {
