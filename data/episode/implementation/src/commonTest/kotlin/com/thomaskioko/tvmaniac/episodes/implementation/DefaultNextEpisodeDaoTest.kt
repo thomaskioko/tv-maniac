@@ -370,7 +370,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should show row when next episode airs at exactly current time`() = runTest {
-        val realNow = kotlin.time.Clock.System.now().toEpochMilliseconds()
+        val realNow = (kotlin.time.Clock.System.now().toEpochMilliseconds() / 1000) * 1000
         fakeDateTimeProvider.setCurrentTimeMillis(realNow)
         insertShow(id = 8L, name = "Boundary Show", status = "Returning Series")
         insertSeason(seasonId = 81L, showId = 8L, seasonNumber = 1L, episodeCount = 2L)
@@ -415,6 +415,77 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             firstAired = realNow - 86_400_000L,
         )
         followShow(showId = 9L, followedAt = watchDate)
+
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
+            val episodes = awaitItem()
+            episodes.size shouldBe 1
+            episodes[0].episodeNumber shouldBe 1L
+            episodes[0].watchedCount shouldBe 0
+            episodes[0].totalCount shouldBe 1
+        }
+    }
+
+    @Test
+    fun `should hide row when lowest unwatched episode has null first_aired`() = runTest {
+        val realNow = kotlin.time.Clock.System.now().toEpochMilliseconds()
+        fakeDateTimeProvider.setCurrentTimeMillis(realNow)
+        insertShow(id = 10L, name = "TBD Show", status = "Returning Series")
+        insertSeason(seasonId = 1010L, showId = 10L, seasonNumber = 1L, episodeCount = 2L)
+        insertEpisode(
+            episodeId = 1001L,
+            seasonId = 1010L,
+            showId = 10L,
+            episodeNumber = 1L,
+            title = "Aired",
+            firstAired = realNow - 86_400_000L,
+        )
+        insertEpisode(
+            episodeId = 1002L,
+            seasonId = 1010L,
+            showId = 10L,
+            episodeNumber = 2L,
+            title = "TBD",
+            firstAired = null,
+        )
+        followShow(showId = 10L, followedAt = watchDate)
+        markEpisodeWatched(showId = 10L, episodeId = 1001L, seasonNumber = 1L, episodeNumber = 1L)
+
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
+            awaitItem().size shouldBe 0
+        }
+    }
+
+    @Test
+    fun `should exclude null-aired and future-aired episodes from total count`() = runTest {
+        val realNow = kotlin.time.Clock.System.now().toEpochMilliseconds()
+        fakeDateTimeProvider.setCurrentTimeMillis(realNow)
+        insertShow(id = 11L, name = "Mixed Show", status = "Returning Series")
+        insertSeason(seasonId = 1110L, showId = 11L, seasonNumber = 1L, episodeCount = 3L)
+        insertEpisode(
+            episodeId = 1101L,
+            seasonId = 1110L,
+            showId = 11L,
+            episodeNumber = 1L,
+            title = "Aired",
+            firstAired = realNow - 86_400_000L,
+        )
+        insertEpisode(
+            episodeId = 1102L,
+            seasonId = 1110L,
+            showId = 11L,
+            episodeNumber = 2L,
+            title = "TBD",
+            firstAired = null,
+        )
+        insertEpisode(
+            episodeId = 1103L,
+            seasonId = 1110L,
+            showId = 11L,
+            episodeNumber = 3L,
+            title = "Future",
+            firstAired = realNow + 7L * 86_400_000L,
+        )
+        followShow(showId = 11L, followedAt = watchDate)
 
         nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
             val episodes = awaitItem()

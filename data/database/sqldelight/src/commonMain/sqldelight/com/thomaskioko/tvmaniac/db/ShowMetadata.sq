@@ -57,6 +57,7 @@ LEFT JOIN (
     FROM episode
     INNER JOIN season ON episode.season_id = season.id
     WHERE season.season_number > 0
-    AND (episode.first_aired IS NULL OR episode.first_aired <= strftime('%s', 'now') * 1000)
+    AND episode.first_aired IS NOT NULL
+    AND episode.first_aired <= strftime('%s', 'now') * 1000
     GROUP BY episode.show_trakt_id
 ) AS total ON total.show_trakt_id = tvshow.trakt_id;
