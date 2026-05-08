@@ -10,7 +10,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import kotlin.test.Test
 
-class Migration23DropParentFkTest {
+class Migration23Test {
 
     @Test
     fun `should drop parent FK from similar_shows when migrating past version 23`() {

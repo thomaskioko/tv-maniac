@@ -9,7 +9,7 @@ import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.shouldBe
 import kotlin.test.Test
 
-class Migration24DropNextEpisodesTest {
+class Migration24Test {
 
     @Test
     fun `should drop next_episodes table when migrating past version 23`() {

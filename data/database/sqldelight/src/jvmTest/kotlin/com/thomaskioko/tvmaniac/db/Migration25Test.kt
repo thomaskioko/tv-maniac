@@ -134,4 +134,3 @@ private data class ShowMetadataRow(
     val lastWatchedEpisodeNumber: Long?,
     val lastWatchedAt: Long?,
 )
-
