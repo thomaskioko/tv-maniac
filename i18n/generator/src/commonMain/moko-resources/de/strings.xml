@@ -311,7 +311,7 @@
     <string name="label_library_filter_show_less">Weniger anzeigen</string>
     <string name="label_library_filter_clear">Löschen</string>
     <string name="label_library_filter_apply">Filtern</string>
-    <string name="label_library_status_returning">Laufende Serie</string>
+    <string name="label_library_status_returning">Laufend</string>
     <string name="label_library_status_planned">Geplant</string>
     <string name="label_library_status_in_production">In Produktion</string>
     <string name="label_library_status_ended">Beendet</string>

@@ -309,7 +309,7 @@
     <string name="label_library_filter_show_less">Afficher moins</string>
     <string name="label_library_filter_clear">Effacer</string>
     <string name="label_library_filter_apply">Filtrer</string>
-    <string name="label_library_status_returning">Série en cours</string>
+    <string name="label_library_status_returning">En cours</string>
     <string name="label_library_status_planned">Planifié</string>
     <string name="label_library_status_in_production">En production</string>
     <string name="label_library_status_ended">Terminé</string>
