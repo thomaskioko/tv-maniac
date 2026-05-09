@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.presenter.root.di
+package com.thomaskioko.tvmaniac.presenter.root
 
 import com.thomaskioko.root.nav.NotificationRationale
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
