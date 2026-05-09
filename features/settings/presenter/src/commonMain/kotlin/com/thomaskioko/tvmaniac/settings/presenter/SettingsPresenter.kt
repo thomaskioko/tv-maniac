@@ -21,7 +21,8 @@ import com.thomaskioko.tvmaniac.settings.nav.SettingsRoute
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import dev.zacsweers.metro.Inject
-import io.github.thomaskioko.codegen.annotations.NavScreen
+import io.github.thomaskioko.codegen.annotations.DestinationKind
+import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -29,8 +30,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+@NavDestination(
+    route = SettingsRoute::class,
+    parentScope = ActivityScope::class,
+    kind = DestinationKind.SCREEN
+)
 @Inject
-@NavScreen(route = SettingsRoute::class, parentScope = ActivityScope::class)
 public class SettingsPresenter(
     componentContext: ComponentContext,
     private val navigator: Navigator,

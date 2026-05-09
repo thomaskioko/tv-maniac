@@ -27,7 +27,8 @@ import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsRepository
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
-import io.github.thomaskioko.codegen.annotations.NavScreen
+import io.github.thomaskioko.codegen.annotations.DestinationKind
+import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,8 +39,12 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+@NavDestination(
+    route = MoreShowsRoute::class,
+    parentScope = ActivityScope::class,
+    kind = DestinationKind.SCREEN
+)
 @AssistedInject
-@NavScreen(route = MoreShowsRoute::class, parentScope = ActivityScope::class)
 public class MoreShowsPresenter(
     componentContext: ComponentContext,
     @Assisted private val categoryId: Long,

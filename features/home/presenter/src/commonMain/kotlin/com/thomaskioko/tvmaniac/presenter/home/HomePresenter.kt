@@ -12,7 +12,6 @@ import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot
 import com.thomaskioko.tvmaniac.domain.user.ObserveUserProfileInteractor
 import com.thomaskioko.tvmaniac.home.nav.HomeRoute
-import com.thomaskioko.tvmaniac.home.nav.TabDestination
 import com.thomaskioko.tvmaniac.library.nav.LibraryRoot
 import com.thomaskioko.tvmaniac.navigation.BaseRoute
 import com.thomaskioko.tvmaniac.navigation.MultiStackHostState
@@ -24,23 +23,27 @@ import com.thomaskioko.tvmaniac.navigation.RootChild
 import com.thomaskioko.tvmaniac.profile.nav.ProfileRoot
 import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
 import dev.zacsweers.metro.Inject
-import io.github.thomaskioko.codegen.annotations.NavScreen
+import io.github.thomaskioko.codegen.annotations.DestinationKind
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.serialization.Serializable
+import io.github.thomaskioko.codegen.annotations.NavDestination as NavDestinationAnno
 
 @Serializable
 public data class ProfileAvatar(val url: String? = null)
 
+@NavDestinationAnno(
+    route = HomeRoute::class,
+    parentScope = ActivityScope::class,
+    kind = DestinationKind.SCREEN
+)
 @Inject
-@NavScreen(route = HomeRoute::class, parentScope = ActivityScope::class)
 public class HomePresenter(
     componentContext: ComponentContext,
     private val navigator: Navigator,
-    private val tabDestinations: Set<TabDestination>,
-    private val navDestinations: Set<NavDestination>,
+    private val navDestinations: Set<NavDestination<*>>,
     private val observeUserProfileInteractor: ObserveUserProfileInteractor,
 ) : ComponentContext by componentContext {
 
@@ -127,13 +130,22 @@ public class HomePresenter(
     }
 
     private fun child(route: BaseRoute, componentContext: ComponentContext): RootChild = when (route) {
-        is NavRoot -> tabDestinations
-            .firstOrNull { it.matches(route) }
-            ?.createChild(route, componentContext)
-            ?: error("No TabDestination found for root: $route")
-        is NavRoute -> navDestinations
-            .firstOrNull { it.matches(route) }
-            ?.createChild(route, componentContext)
-            ?: error("No NavDestination found for route: $route")
+        is NavRoot -> {
+            val dest = navDestinations
+                .filterIsInstance<NavDestination.TabRoot<*>>()
+                .firstOrNull { it.matches(route) }
+                ?: error("No NavDestination.TabRoot found for root: $route")
+            dest.createChild(route, componentContext)
+        }
+        is NavRoute -> {
+            val dest = navDestinations
+                .firstOrNull { (it is NavDestination.Screen<*> || it is NavDestination.Overlay<*>) && it.matches(route) }
+                ?: error("No NavDestination.Screen or .Overlay found for route: $route")
+            when (dest) {
+                is NavDestination.Screen<*> -> dest.createChild(route, componentContext)
+                is NavDestination.Overlay<*> -> dest.createChild(route, componentContext)
+                is NavDestination.TabRoot<*> -> error("Unreachable: filtered above")
+            }
+        }
     }
 }

@@ -28,15 +28,20 @@ import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
-import io.github.thomaskioko.codegen.annotations.NavScreen
+import io.github.thomaskioko.codegen.annotations.DestinationKind
+import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+@NavDestination(
+    route = EpisodeSheetRoute::class,
+    parentScope = ActivityScope::class,
+    kind = DestinationKind.OVERLAY
+)
 @AssistedInject
-@NavScreen(route = EpisodeSheetRoute::class, parentScope = ActivityScope::class)
 public class EpisodeSheetPresenter(
     @Assisted private val param: EpisodeSheetParam,
     componentContext: ComponentContext,
