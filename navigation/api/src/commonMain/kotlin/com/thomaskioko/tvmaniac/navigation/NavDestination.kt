@@ -1,24 +1,66 @@
 package com.thomaskioko.tvmaniac.navigation
 
 import com.arkivanov.decompose.ComponentContext
+import kotlin.reflect.KClass
 
 /**
- * Factory for creating [RootChild] instances from a [NavRoute].
+ * Sealed factory family for resolving a [BaseRoute] to its [RootChild] wrapper.
  *
- * Each feature contributes one implementation via `@ContributesIntoSet(ActivityScope::class)`.
- * The root presenter collects every contribution as a `Set<NavDestination>` and, when a new
- * stack entry is created, walks the set, picks the first destination whose [matches] returns
- * `true`, and delegates to [createChild]. This replaces a central when-block over a sealed
- * hierarchy so adding a new screen only touches its own feature module.
+ * Each feature contributes one [NavDestination] subtype via `@ContributesIntoSet(ActivityScope::class)`
+ * (typically through codegen). The hosts (`DefaultRootPresenter` for the overlay slot,
+ * `HomePresenter` for the multi-stack body) collect every contribution as `Set<NavDestination<*>>`,
+ * filter by subtype, match by route class, and delegate to [Screen.createChild] / [Overlay.createChild]
+ * / [TabRoot.createChild]. A central when-block stays out of the root module.
+ *
+ * The three subtypes mirror the runtime dispatch in [Navigator.navigateTo]:
+ * - [Screen] — pushed onto the active tab's back stack.
+ * - [Overlay] — activated as a modal in the overlay slot.
+ * - [TabRoot] — the bottom-of-stack entry for one of the registered [NavRoot] tabs.
+ *
+ * @param R route type this destination matches.
+ * @property routeClass concrete `KClass` used for runtime matching against an incoming [BaseRoute].
  */
-public interface NavDestination {
-    /** Returns `true` if this destination can handle [route]. */
-    public fun matches(route: NavRoute): Boolean
+public sealed class NavDestination<out R : BaseRoute>(
+    public val routeClass: KClass<out R>,
+) {
+    /** Returns `true` if this destination handles [route]. */
+    public fun matches(route: BaseRoute): Boolean = routeClass.isInstance(route)
 
     /**
-     * Creates the [RootChild] for [route] under [componentContext].
-     *
-     * Only called after [matches] returned `true` for the same [route].
+     * Stack screen pushed via [Navigator.navigateTo] on the active tab's back stack.
      */
-    public fun createChild(route: NavRoute, componentContext: ComponentContext): RootChild
+    public class Screen<R : NavRoute>(
+        routeClass: KClass<R>,
+        private val factory: (R, ComponentContext) -> RootChild,
+    ) : NavDestination<R>(routeClass) {
+        @Suppress("UNCHECKED_CAST")
+        public fun createChild(route: BaseRoute, componentContext: ComponentContext): RootChild =
+            factory(route as R, componentContext)
+    }
+
+    /**
+     * Modal overlay activated via [Navigator.navigateTo] when the route also implements [OverlayRoute].
+     * The host (typically `DefaultRootPresenter`) renders this in the overlay slot.
+     */
+    public class Overlay<R : NavRoute>(
+        routeClass: KClass<R>,
+        private val factory: (R, ComponentContext) -> RootChild,
+    ) : NavDestination<R>(routeClass) {
+        @Suppress("UNCHECKED_CAST")
+        public fun createChild(route: BaseRoute, componentContext: ComponentContext): RootChild =
+            factory(route as R, componentContext)
+    }
+
+    /**
+     * Tab root anchoring its own back stack. Resolved by `HomePresenter` when projecting per-tab
+     * [com.arkivanov.decompose.router.stack.ChildStack] children.
+     */
+    public class TabRoot<R : NavRoot>(
+        routeClass: KClass<R>,
+        private val factory: (R, ComponentContext) -> RootChild,
+    ) : NavDestination<R>(routeClass) {
+        @Suppress("UNCHECKED_CAST")
+        public fun createChild(route: BaseRoute, componentContext: ComponentContext): RootChild =
+            factory(route as R, componentContext)
+    }
 }

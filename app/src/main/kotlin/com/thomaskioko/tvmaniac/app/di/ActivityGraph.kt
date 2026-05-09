@@ -27,7 +27,7 @@ public interface ActivityGraph {
     public val navigator: Navigator
     public val screenContents: Set<ScreenContent>
     public val sheetContents: Set<SheetContent>
-    public val navDestinations: Set<NavDestination>
+    public val navDestinations: Set<NavDestination<*>>
     public val navRouteBindings: Set<NavRouteBinding<*>>
 
     @Provides

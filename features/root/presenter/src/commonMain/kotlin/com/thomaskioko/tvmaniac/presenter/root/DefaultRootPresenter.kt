@@ -58,7 +58,7 @@ import kotlin.time.Duration.Companion.milliseconds
 public class DefaultRootPresenter(
     @Assisted componentContext: ComponentContext,
     private val navigator: Navigator,
-    private val navDestinations: Set<NavDestination>,
+    private val navDestinations: Set<NavDestination<*>>,
     homeGraphFactory: HomeScreenGraph.Factory,
     private val notificationRationale: NotificationRationale,
     private val traktAuthRepository: TraktAuthRepository,
@@ -210,13 +210,14 @@ public class DefaultRootPresenter(
         route: NavRoute,
         componentContext: ComponentContext,
     ): SheetChild {
-        val destination = navDestinations.firstOrNull { it.matches(route) }
-            ?: error("No NavDestination found for overlay route: $route")
-        val rootChild = destination.createChild(route, componentContext)
-        return when (rootChild) {
+        val destination = navDestinations
+            .filterIsInstance<NavDestination.Overlay<*>>()
+            .firstOrNull { it.matches(route) }
+            ?: error("No NavDestination.Overlay found for route: $route")
+        return when (val rootChild = destination.createChild(route, componentContext)) {
             is ScreenDestination<*> -> SheetDestination(rootChild.presenter)
             else -> error(
-                "NavDestination produced unsupported child for overlay route $route: ${rootChild::class.simpleName}",
+                "NavDestination.Overlay produced unsupported child for route $route: ${rootChild::class.simpleName}",
             )
         }
     }

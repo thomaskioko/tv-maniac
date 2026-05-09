@@ -11,7 +11,7 @@ import dev.zacsweers.metro.Multibinds
 @ContributesTo(ActivityScope::class)
 public interface NavigationMultibindings {
     @Multibinds
-    public fun navDestinations(): Set<NavDestination>
+    public fun navDestinations(): Set<NavDestination<*>>
 
     @Multibinds
     public fun navRouteBindings(): Set<NavRouteBinding<*>>

@@ -15,7 +15,7 @@ public interface TestGraph {
     public val traktAuthManager: TraktAuthManager
     public val navigator: Navigator
     public val rootPresenterFactory: RootPresenter.Factory
-    public val navDestinations: Set<NavDestination>
+    public val navDestinations: Set<NavDestination<*>>
     public val homeScreenGraphFactory: HomeScreenGraph.Factory
 
     @DependencyGraph.Factory

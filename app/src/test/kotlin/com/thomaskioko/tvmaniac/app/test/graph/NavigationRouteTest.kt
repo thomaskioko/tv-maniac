@@ -55,7 +55,7 @@ internal class NavigationRouteTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun `should resolve a TabDestination for every NavRoot subtype`() = runAppFlowTest {
+    fun `should resolve a NavDestination TabRoot for every NavRoot subtype`() = runAppFlowTest {
         // 1. Enumerate all tab roots
         val roots: List<NavRoot> = listOf(
             DiscoverRoot,
@@ -64,15 +64,12 @@ internal class NavigationRouteTest : BaseAppFlowTest() {
             ProfileRoot,
         )
 
-        // 2. Create the home-scoped graph
-        val homeGraph = activityGraph.homeScreenGraphFactory
-            .createHomeGraph(componentContext)
-        val tabDestinations = homeGraph.tabDestinations
-        tabDestinations.shouldNotBeEmpty()
+        val destinations = activityGraph.navDestinations
+        destinations.shouldNotBeEmpty()
 
-        // 3. Verify each tab root has a matching destination in the home graph
+        // 2. Verify each tab root has a matching TabRoot destination in the activity graph
         roots.forEach { root ->
-            tabDestinations.firstOrNull { it.matches(root) }.shouldNotBeNull()
+            destinations.firstOrNull { it.matches(root) }.shouldNotBeNull()
         }
     }
 
@@ -108,8 +105,8 @@ internal class NavigationRouteTest : BaseAppFlowTest() {
             .createHomeGraph(componentContext)
         homeGraph.homePresenter.shouldNotBeNull()
 
-        // Verify Discover Tab graph (nested scope)
-        val discoverTabGraph = homeGraph.discoverShowsTabGraphFactory
+        // Verify Discover Tab graph (now contributed at ActivityScope by codegen)
+        val discoverTabGraph = activityGraph.discoverShowsTabGraphFactory
             .createDiscoverShowsTabGraph(componentContext)
         discoverTabGraph.discoverShowsPresenter.shouldNotBeNull()
 
