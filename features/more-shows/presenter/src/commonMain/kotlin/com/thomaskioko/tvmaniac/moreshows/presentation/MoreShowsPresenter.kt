@@ -42,7 +42,7 @@ import kotlinx.coroutines.launch
 @NavDestination(
     route = MoreShowsRoute::class,
     parentScope = ActivityScope::class,
-    kind = DestinationKind.SCREEN
+    kind = DestinationKind.SCREEN,
 )
 @AssistedInject
 public class MoreShowsPresenter(

@@ -37,7 +37,7 @@ public data class ProfileAvatar(val url: String? = null)
 @NavDestinationAnno(
     route = HomeRoute::class,
     parentScope = ActivityScope::class,
-    kind = DestinationKind.SCREEN
+    kind = DestinationKind.SCREEN,
 )
 @Inject
 public class HomePresenter(

@@ -46,7 +46,7 @@ import kotlinx.coroutines.launch
 @NavDestination(
     route = SearchRoute::class,
     parentScope = ActivityScope::class,
-    kind = DestinationKind.SCREEN
+    kind = DestinationKind.SCREEN,
 )
 @Inject
 public class SearchShowsPresenter(

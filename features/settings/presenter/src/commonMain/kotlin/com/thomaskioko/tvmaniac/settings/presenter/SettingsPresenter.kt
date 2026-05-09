@@ -33,7 +33,7 @@ import kotlinx.coroutines.launch
 @NavDestination(
     route = SettingsRoute::class,
     parentScope = ActivityScope::class,
-    kind = DestinationKind.SCREEN
+    kind = DestinationKind.SCREEN,
 )
 @Inject
 public class SettingsPresenter(

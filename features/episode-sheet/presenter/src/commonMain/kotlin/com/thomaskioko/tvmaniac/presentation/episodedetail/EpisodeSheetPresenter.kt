@@ -39,7 +39,7 @@ import kotlinx.coroutines.launch
 @NavDestination(
     route = EpisodeSheetRoute::class,
     parentScope = ActivityScope::class,
-    kind = DestinationKind.OVERLAY
+    kind = DestinationKind.OVERLAY,
 )
 @AssistedInject
 public class EpisodeSheetPresenter(

@@ -37,7 +37,7 @@ import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleDebugEpi
 @NavDestination(
     route = DebugRoute::class,
     parentScope = ActivityScope::class,
-    kind = DestinationKind.SCREEN
+    kind = DestinationKind.SCREEN,
 )
 @Inject
 public class DebugPresenter(

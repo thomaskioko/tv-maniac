@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 @NavDestination(
     route = TrailersRoute::class,
     parentScope = ActivityScope::class,
-    kind = DestinationKind.SCREEN
+    kind = DestinationKind.SCREEN,
 )
 @AssistedInject
 public class TrailersPresenter(
