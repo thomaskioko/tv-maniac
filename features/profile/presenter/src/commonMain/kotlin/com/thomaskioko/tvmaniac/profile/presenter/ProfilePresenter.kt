@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.profile.presenter
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
@@ -16,6 +17,7 @@ import com.thomaskioko.tvmaniac.domain.user.model.UserProfile
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.profile.nav.ProfileRoot
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.LoginClicked
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.MessageShown
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.RefreshProfile
@@ -29,6 +31,8 @@ import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import dev.zacsweers.metro.Inject
+import io.github.thomaskioko.codegen.annotations.DestinationKind
+import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -38,6 +42,11 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @Inject
+@NavDestination(
+    route = ProfileRoot::class,
+    parentScope = ActivityScope::class,
+    kind = DestinationKind.TAB_ROOT,
+)
 public class ProfilePresenter(
     componentContext: ComponentContext,
     private val navigator: Navigator,

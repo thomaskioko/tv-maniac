@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.presentation.library
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
@@ -15,6 +16,7 @@ import com.thomaskioko.tvmaniac.data.library.model.LibraryItem
 import com.thomaskioko.tvmaniac.data.library.model.WatchProvider
 import com.thomaskioko.tvmaniac.domain.library.ObserveLibraryInteractor
 import com.thomaskioko.tvmaniac.domain.library.SyncLibraryInteractor
+import com.thomaskioko.tvmaniac.library.nav.LibraryRoot
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.presentation.library.model.LibraryShowItem
 import com.thomaskioko.tvmaniac.presentation.library.model.LibrarySortOption
@@ -24,6 +26,8 @@ import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import dev.zacsweers.metro.Inject
+import io.github.thomaskioko.codegen.annotations.DestinationKind
+import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,6 +42,11 @@ import kotlinx.coroutines.launch
 import com.thomaskioko.tvmaniac.data.library.model.LibrarySortOption as DataLibrarySortOption
 
 @Inject
+@NavDestination(
+    route = LibraryRoot::class,
+    parentScope = ActivityScope::class,
+    kind = DestinationKind.TAB_ROOT,
+)
 public class LibraryPresenter(
     componentContext: ComponentContext,
     private val navigator: Navigator,
