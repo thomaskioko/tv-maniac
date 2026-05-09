@@ -81,5 +81,4 @@ class FakeWatchlistPresenterBuilder {
         errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
         logger = fakeLogger,
     )
-
 }
