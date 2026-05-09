@@ -8,9 +8,9 @@ import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.matchers.shouldBe
-import kotlin.test.Test
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlin.test.Test
 
 internal class MultiStackNavStateSerializerTest {
 

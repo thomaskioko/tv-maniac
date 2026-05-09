@@ -56,5 +56,4 @@ internal class SerializerInitChecksTest {
         }
         error.message shouldContain "at least one NavRootBinding"
     }
-
 }

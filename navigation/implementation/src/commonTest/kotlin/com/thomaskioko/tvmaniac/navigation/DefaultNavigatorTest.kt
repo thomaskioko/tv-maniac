@@ -11,8 +11,8 @@ import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
-import kotlin.test.Test
 import kotlinx.serialization.Serializable
+import kotlin.test.Test
 
 internal class DefaultNavigatorTest {
 

@@ -14,11 +14,11 @@ import com.thomaskioko.tvmaniac.navigation.MultiStackHostState
 import com.thomaskioko.tvmaniac.navigation.NavRoot
 import com.thomaskioko.tvmaniac.navigation.NavRoute
 import com.thomaskioko.tvmaniac.navigation.Navigator
-import kotlin.reflect.KClass
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlin.reflect.KClass
 
 /**
  * [Navigator] implementation for unit tests that records every call as a [NavEvent] and exposes

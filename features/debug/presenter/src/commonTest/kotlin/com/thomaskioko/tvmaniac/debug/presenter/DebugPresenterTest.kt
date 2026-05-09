@@ -205,5 +205,4 @@ class DebugPresenterTest {
             traktAuthRepository = traktAuthRepository,
         )
     }
-
 }

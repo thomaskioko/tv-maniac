@@ -2,11 +2,6 @@ package com.thomaskioko.tvmaniac.presenter.showdetails
 
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
-import com.arkivanov.decompose.router.stack.bringToFront
-import com.arkivanov.decompose.router.stack.pop
-import com.arkivanov.decompose.router.stack.popTo
-import com.arkivanov.decompose.router.stack.pushNew
-import com.arkivanov.decompose.router.stack.pushToFront
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.root.nav.NotificationRationale
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers

@@ -13,7 +13,7 @@ import kotlinx.serialization.encoding.decodeStructure
 import kotlinx.serialization.encoding.encodeStructure
 
 internal class MultiStackNavStateSerializer(
-    private val baseRouteSerializer: KSerializer<BaseRoute>,
+    baseRouteSerializer: KSerializer<BaseRoute>,
     private val navRootSerializer: KSerializer<NavRoot>,
 ) : KSerializer<MultiStackNavState> {
 

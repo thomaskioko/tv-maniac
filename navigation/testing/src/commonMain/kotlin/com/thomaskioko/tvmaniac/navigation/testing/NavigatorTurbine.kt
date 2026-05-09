@@ -6,9 +6,9 @@ import app.cash.turbine.testIn
 import com.thomaskioko.tvmaniac.navigation.NavRoot
 import com.thomaskioko.tvmaniac.navigation.NavRoute
 import com.thomaskioko.tvmaniac.navigation.Navigator
+import kotlinx.coroutines.CoroutineScope
 import kotlin.reflect.KClass
 import kotlin.time.Duration
-import kotlinx.coroutines.CoroutineScope
 
 /**
  * Asserts on a sequence of navigation events recorded by [TestNavigator].

@@ -11,8 +11,8 @@ import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
-import kotlin.test.Test
 import kotlinx.serialization.Serializable
+import kotlin.test.Test
 
 internal class DefaultNavigatorMultiStackTest {
 

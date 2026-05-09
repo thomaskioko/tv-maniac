@@ -491,5 +491,4 @@ internal class SearchShowsPresenterTest {
     companion object {
         const val LIST_SIZE = 5
     }
-
 }
