@@ -10,10 +10,12 @@ import com.thomaskioko.tvmaniac.core.base.TmdbApi
 import com.thomaskioko.tvmaniac.core.base.TraktApi
 import com.thomaskioko.tvmaniac.core.base.di.BaseBindingContainer
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot
 import com.thomaskioko.tvmaniac.domain.library.LibrarySyncWorker
 import com.thomaskioko.tvmaniac.domain.notifications.EpisodeNotificationWorker
 import com.thomaskioko.tvmaniac.domain.upnext.UpNextSyncWorker
 import com.thomaskioko.tvmaniac.genreshows.nav.GenreShowsRoute
+import com.thomaskioko.tvmaniac.library.nav.LibraryRoot
 import com.thomaskioko.tvmaniac.navigation.BaseRouteSerializer
 import com.thomaskioko.tvmaniac.navigation.DefaultBaseRouteSerializer
 import com.thomaskioko.tvmaniac.navigation.DefaultNavRootSerializer
@@ -27,9 +29,12 @@ import com.thomaskioko.tvmaniac.navigation.NavRoute
 import com.thomaskioko.tvmaniac.navigation.NavRouteBinding
 import com.thomaskioko.tvmaniac.navigation.NavRouteSerializer
 import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.navigation.OverlayRoute
 import com.thomaskioko.tvmaniac.navigation.RootChild
 import com.thomaskioko.tvmaniac.presenter.root.DefaultRootPresenter
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
+import com.thomaskioko.tvmaniac.profile.nav.ProfileRoot
+import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
 import com.thomaskioko.tvmaniac.traktauth.implementation.TokenRefreshWorker
 import com.thomaskioko.tvmaniac.util.api.AppUtils
 import dev.zacsweers.metro.AppScope
@@ -122,14 +127,25 @@ public object FakeAppBindingContainer {
 
     @Provides
     @SingleIn(AppScope::class)
-    public fun provideNavDestinations(): Set<NavDestination> = setOf(
-        object : NavDestination {
-            override fun matches(route: NavRoute): Boolean = true
-            override fun createChild(
-                route: NavRoute,
-                componentContext: ComponentContext,
-            ): RootChild = object : RootChild {}
-        },
+    public fun provideNavDestinations(): Set<NavDestination<*>> = setOf(
+        NavDestination.Screen(
+            routeClass = NavRoute::class,
+        ) { _: NavRoute, _: ComponentContext -> object : RootChild {} },
+        NavDestination.Overlay(
+            routeClass = OverlayRoute::class,
+        ) { _: NavRoute, _: ComponentContext -> object : RootChild {} },
+        NavDestination.TabRoot(
+            routeClass = DiscoverRoot::class,
+        ) { _: DiscoverRoot, _: ComponentContext -> object : RootChild {} },
+        NavDestination.TabRoot(
+            routeClass = LibraryRoot::class,
+        ) { _: LibraryRoot, _: ComponentContext -> object : RootChild {} },
+        NavDestination.TabRoot(
+            routeClass = ProfileRoot::class,
+        ) { _: ProfileRoot, _: ComponentContext -> object : RootChild {} },
+        NavDestination.TabRoot(
+            routeClass = ProgressRoot::class,
+        ) { _: ProgressRoot, _: ComponentContext -> object : RootChild {} },
     )
 
     @Provides
@@ -147,30 +163,30 @@ public object FakeAppBindingContainer {
     @Provides
     @SingleIn(AppScope::class)
     public fun provideNavRoots(): Set<NavRoot> = setOf(
-        com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot,
-        com.thomaskioko.tvmaniac.library.nav.LibraryRoot,
-        com.thomaskioko.tvmaniac.profile.nav.ProfileRoot,
-        com.thomaskioko.tvmaniac.progress.nav.ProgressRoot,
+        DiscoverRoot,
+        LibraryRoot,
+        ProfileRoot,
+        ProgressRoot,
     )
 
     @Provides
     @SingleIn(AppScope::class)
     public fun provideNavRootBindings(): Set<NavRootBinding<*>> = setOf(
         NavRootBinding(
-            com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot::class,
-            com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot.serializer(),
+            DiscoverRoot::class,
+            DiscoverRoot.serializer(),
         ),
         NavRootBinding(
-            com.thomaskioko.tvmaniac.library.nav.LibraryRoot::class,
-            com.thomaskioko.tvmaniac.library.nav.LibraryRoot.serializer(),
+            LibraryRoot::class,
+            LibraryRoot.serializer(),
         ),
         NavRootBinding(
-            com.thomaskioko.tvmaniac.profile.nav.ProfileRoot::class,
-            com.thomaskioko.tvmaniac.profile.nav.ProfileRoot.serializer(),
+            ProfileRoot::class,
+            ProfileRoot.serializer(),
         ),
         NavRootBinding(
-            com.thomaskioko.tvmaniac.progress.nav.ProgressRoot::class,
-            com.thomaskioko.tvmaniac.progress.nav.ProgressRoot.serializer(),
+            ProgressRoot::class,
+            ProgressRoot.serializer(),
         ),
     )
 

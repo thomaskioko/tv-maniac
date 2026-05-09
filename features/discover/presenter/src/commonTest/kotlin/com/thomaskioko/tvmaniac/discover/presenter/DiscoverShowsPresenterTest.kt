@@ -345,7 +345,6 @@ class DiscoverShowsPresenterTest {
         }
     }
 
-
     private suspend fun setList(list: List<ShowEntity>) {
         featuredShowsRepository.setFeaturedShows(list)
         topRatedShowsRepository.setTopRatedShows(list)

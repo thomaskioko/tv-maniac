@@ -274,5 +274,4 @@ internal class ProfilePresenterTest {
             observeUserProfileInteractor = observeUserProfileInteractor,
         )
     }
-
 }
