@@ -55,6 +55,9 @@ public class HomePresenter(
         childFactory = ::child,
     )
 
+    public val hostState: StateFlow<MultiStackHostState<RootChild>> =
+        hostStateValue.asStateFlow(componentContext.componentCoroutineScope())
+
     public val activeRootValue: Value<NavRoot> = navigator.activeRoot
 
     public val activeRoot: StateFlow<NavRoot> = activeRootValue

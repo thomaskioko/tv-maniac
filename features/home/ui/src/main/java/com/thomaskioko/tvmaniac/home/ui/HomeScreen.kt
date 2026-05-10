@@ -40,8 +40,10 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_profile
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_progress
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.library.nav.LibraryRoot
+import com.thomaskioko.tvmaniac.navigation.BaseRoute
 import com.thomaskioko.tvmaniac.navigation.NavRoot
 import com.thomaskioko.tvmaniac.navigation.RootChild
+import com.thomaskioko.tvmaniac.navigation.stableKey
 import com.thomaskioko.tvmaniac.navigation.ui.LocalScreenContents
 import com.thomaskioko.tvmaniac.navigation.ui.ScreenContent
 import com.thomaskioko.tvmaniac.presentation.library.LibraryPresenter
@@ -55,7 +57,6 @@ import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
 import com.thomaskioko.tvmaniac.ui.library.LibraryScreen
 import com.thomaskioko.tvmaniac.ui.progress.ProgressScreen
 import io.github.thomaskioko.codegen.annotations.ScreenUi
-import kotlinx.coroutines.flow.StateFlow
 
 @ScreenUi(presenter = HomePresenter::class, parentScope = ActivityScope::class)
 @Composable
@@ -64,19 +65,16 @@ public fun HomeScreen(
     modifier: Modifier = Modifier,
 ) {
     val screenContents = LocalScreenContents.current
-    val activeRoot by presenter.activeRoot.collectAsState()
+    val hostState by presenter.hostState.collectAsState()
     val saveableStateHolder = rememberSaveableStateHolder()
+
+    val activeRoot = hostState.activeRoot
+    val activeStack = hostState.tabStacks[activeRoot]
+        ?: error("No back stack registered for $activeRoot.")
 
     Column(modifier = modifier) {
         Box(modifier = Modifier.weight(1F).fillMaxSize()) {
-            val (key, activeStack) = when (activeRoot) {
-                is DiscoverRoot -> "discover" to presenter.discoverChildStack
-                is ProgressRoot -> "progress" to presenter.progressChildStack
-                is LibraryRoot -> "library" to presenter.libraryChildStack
-                is ProfileRoot -> "profile" to presenter.profileChildStack
-                else -> "discover" to presenter.discoverChildStack
-            }
-            saveableStateHolder.SaveableStateProvider(key = key) {
+            saveableStateHolder.SaveableStateProvider(key = activeRoot.stableKey) {
                 TabPane(stack = activeStack, screenContents = screenContents)
             }
         }
@@ -90,14 +88,12 @@ public fun HomeScreen(
 
 @Composable
 private fun TabPane(
-    stack: StateFlow<ChildStack<*, RootChild>>,
+    stack: ChildStack<BaseRoute, RootChild>,
     screenContents: Set<ScreenContent>,
 ) {
-    val childStack by stack.collectAsState()
-
     Children(
         modifier = Modifier.fillMaxSize(),
-        stack = childStack,
+        stack = stack,
     ) { child ->
         val instance = child.instance
         val fillMaxSizeModifier = Modifier.fillMaxSize()

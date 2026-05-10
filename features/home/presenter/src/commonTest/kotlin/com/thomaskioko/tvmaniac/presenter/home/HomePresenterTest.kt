@@ -8,6 +8,8 @@ import com.arkivanov.essenty.lifecycle.resume
 import com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot
 import com.thomaskioko.tvmaniac.library.nav.LibraryRoot
 import com.thomaskioko.tvmaniac.profile.nav.ProfileRoot
+import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.Dispatchers
@@ -57,6 +59,20 @@ abstract class HomePresenterTest {
             presenter.onLibraryClicked()
 
             awaitItem() shouldBe LibraryRoot
+        }
+    }
+
+    @Test
+    fun `should expose host state with every registered nav root in tab stacks`() = runTest {
+        presenter.hostState.test {
+            val snapshot = awaitItem()
+            snapshot.activeRoot shouldBe DiscoverRoot
+            snapshot.tabStacks.keys shouldContainExactlyInAnyOrder listOf(
+                DiscoverRoot,
+                ProgressRoot,
+                LibraryRoot,
+                ProfileRoot,
+            )
         }
     }
 }
