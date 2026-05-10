@@ -69,6 +69,7 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvide
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
+import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_filter
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_search
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_toggle_list_style
@@ -93,9 +94,11 @@ import com.thomaskioko.tvmaniac.presentation.library.ToggleStatusFilter
 import com.thomaskioko.tvmaniac.presentation.library.model.LibraryShowItem
 import com.thomaskioko.tvmaniac.testtags.library.LibraryTestTags
 import com.thomaskioko.tvmaniac.ui.library.preview.LibraryStatePreviewParameterProvider
+import io.github.thomaskioko.codegen.annotations.TabUi
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 
+@TabUi(presenter = LibraryPresenter::class, parentScope = ActivityScope::class)
 @Composable
 public fun LibraryScreen(
     presenter: LibraryPresenter,
