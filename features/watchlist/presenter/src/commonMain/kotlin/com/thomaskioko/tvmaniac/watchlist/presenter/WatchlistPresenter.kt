@@ -9,7 +9,6 @@ import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
-import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
@@ -18,16 +17,12 @@ import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.ObserveUpNextSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.ObserveWatchlistSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.WatchlistSyncInteractor
-import com.thomaskioko.tvmaniac.i18n.StringResourceKey
-import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
-import com.thomaskioko.tvmaniac.util.api.SyncError
-import com.thomaskioko.tvmaniac.util.api.SyncErrorChannel
 import com.thomaskioko.tvmaniac.watchlist.nav.WatchlistRoute
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
@@ -35,7 +30,6 @@ import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -55,8 +49,6 @@ public class WatchlistPresenter(
     private val observeUpNextSectionsInteractor: ObserveUpNextSectionsInteractor,
     private val watchlistSyncInteractor: WatchlistSyncInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
-    private val syncErrorChannel: SyncErrorChannel,
-    private val localizer: Localizer,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
 ) : ComponentContext by componentContext {
@@ -72,20 +64,6 @@ public class WatchlistPresenter(
         observeWatchlistSectionsInteractor(queryFlow.value)
         observeUpNextSectionsInteractor(queryFlow.value)
         syncWatchlist()
-        observeSyncErrors()
-    }
-
-    // TODO:: Move to root presenter
-    private fun observeSyncErrors() {
-        coroutineScope.launch {
-            syncErrorChannel.errors
-                .filter { it is SyncError.MarkWatchedFailed }
-                .collect {
-                    uiMessageManager.emitMessage(
-                        UiMessage(message = localizer.getString(StringResourceKey.SyncFailedWillRetry)),
-                    )
-                }
-        }
     }
 
     public val state: StateFlow<WatchlistState> = combine(

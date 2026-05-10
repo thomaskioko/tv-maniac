@@ -46,7 +46,6 @@ kotlin {
                 implementation(projects.data.upnext.testing)
                 implementation(projects.data.followedshows.testing)
                 implementation(projects.data.requestManager.testing)
-                implementation(projects.core.syncstate.implementation)
                 implementation(projects.core.util.implementation)
                 implementation(projects.i18n.testing)
             }

@@ -44,7 +44,6 @@ kotlin {
                 implementation(projects.data.followedshows.testing)
                 implementation(projects.data.upnext.testing)
                 implementation(projects.data.traktauth.testing)
-                implementation(projects.core.syncstate.implementation)
                 implementation(projects.core.util.implementation)
                 implementation(projects.i18n.testing)
                 implementation(projects.navigation.testing)

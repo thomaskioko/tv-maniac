@@ -60,6 +60,7 @@ kotlin {
                 implementation(projects.data.upcomingshows.testing)
                 implementation(projects.data.user.testing)
                 implementation(projects.core.util.implementation)
+                implementation(projects.core.util.testing)
                 implementation(projects.i18n.testing)
                 implementation(projects.navigation.testing)
 

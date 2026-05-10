@@ -24,7 +24,6 @@ import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
-import com.thomaskioko.tvmaniac.util.DefaultSyncErrorChannel
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
@@ -381,7 +380,6 @@ internal class EpisodeSheetPresenterTest {
             localizer = localizer,
             logger = logger,
             appScopeLauncher = appScopeLauncher,
-            syncErrorChannel = DefaultSyncErrorChannel(),
         )
     }
 

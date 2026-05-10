@@ -7,7 +7,6 @@ import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
-import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
@@ -19,8 +18,6 @@ import com.thomaskioko.tvmaniac.domain.upnext.model.UpNextSortOption
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
-import com.thomaskioko.tvmaniac.i18n.StringResourceKey
-import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.presentation.upnext.model.UpNextEpisodeUiModel
 import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
@@ -33,8 +30,6 @@ import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
-import com.thomaskioko.tvmaniac.util.api.SyncError
-import com.thomaskioko.tvmaniac.util.api.SyncErrorChannel
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.ChildPresenter
 import kotlinx.collections.immutable.toImmutableList
@@ -57,8 +52,6 @@ public class UpNextPresenter(
     private val upNextRepository: UpNextRepository,
     private val unfollowShowInteractor: UnfollowShowInteractor,
     private val traktAuthRepository: TraktAuthRepository,
-    private val syncErrorChannel: SyncErrorChannel,
-    private val localizer: Localizer,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
     observeUpNextInteractor: ObserveUpNextInteractor,
@@ -74,7 +67,6 @@ public class UpNextPresenter(
     init {
         observeAuthState()
         observeFollowedShows()
-        observeSyncErrors()
     }
 
     public val state: StateFlow<UpNextState> = combine(
@@ -138,19 +130,6 @@ public class UpNextPresenter(
                 .drop(1)
                 .collect {
                     refreshUpNext()
-                }
-        }
-    }
-
-    // TODO:: Move to root presenter
-    private fun observeSyncErrors() {
-        coroutineScope.launch {
-            syncErrorChannel.errors
-                .filter { it is SyncError.MarkWatchedFailed || it is SyncError.MarkUnwatchedFailed }
-                .collect {
-                    uiMessageManager.emitMessage(
-                        UiMessage(message = localizer.getString(StringResourceKey.SyncFailedWillRetry)),
-                    )
                 }
         }
     }
