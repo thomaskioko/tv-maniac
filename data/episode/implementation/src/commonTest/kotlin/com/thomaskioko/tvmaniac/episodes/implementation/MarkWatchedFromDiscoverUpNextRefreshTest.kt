@@ -1,0 +1,194 @@
+package com.thomaskioko.tvmaniac.episodes.implementation
+
+import app.cash.turbine.test
+import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
+import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultNextEpisodeDao
+import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultWatchedEpisodeDao
+import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
+import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+
+private fun LocalDate.toEpochMillis(): Long =
+    atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
+
+@OptIn(ExperimentalCoroutinesApi::class)
+internal class MarkWatchedFromDiscoverUpNextRefreshTest : BaseDatabaseTest() {
+
+    private val testDispatcher = StandardTestDispatcher()
+    private val dispatchers = AppCoroutineDispatchers(
+        main = testDispatcher,
+        io = testDispatcher,
+        computation = testDispatcher,
+        databaseWrite = testDispatcher,
+        databaseRead = testDispatcher,
+    )
+    private val now = LocalDate(2024, 6, 1).toEpochMillis()
+    private val fakeDateTimeProvider = FakeDateTimeProvider()
+
+    private lateinit var watchedEpisodeDao: DefaultWatchedEpisodeDao
+    private lateinit var nextEpisodeDao: DefaultNextEpisodeDao
+
+    @BeforeTest
+    fun setup() {
+        Dispatchers.setMain(testDispatcher)
+        fakeDateTimeProvider.setCurrentTimeMillis(now)
+        watchedEpisodeDao = DefaultWatchedEpisodeDao(database, dispatchers, fakeDateTimeProvider)
+        nextEpisodeDao = DefaultNextEpisodeDao(database, dispatchers, fakeDateTimeProvider)
+        seedShowWithThreeAiredEpisodes()
+    }
+
+    @AfterTest
+    fun tearDown() {
+        Dispatchers.resetMain()
+        closeDb()
+    }
+
+    @Test
+    fun `should advance next episode and decrement remaining when watched marked locally`() = runTest {
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
+            val initial = awaitItem()
+            initial.size shouldBe 1
+            initial[0].episodeNumber shouldBe 1L
+            initial[0].watchedCount shouldBe 0L
+            initial[0].totalCount shouldBe 3L
+
+            watchedEpisodeDao.markAsWatched(
+                showTraktId = SHOW_ID,
+                episodeId = EPISODE_1_ID,
+                seasonNumber = 1L,
+                episodeNumber = 1L,
+                includeSpecials = false,
+            )
+
+            val afterFirst = awaitItem()
+            afterFirst.size shouldBe 1
+            afterFirst[0].episodeNumber shouldBe 2L
+            afterFirst[0].watchedCount shouldBe 1L
+            afterFirst[0].totalCount shouldBe 3L
+
+            watchedEpisodeDao.markAsWatched(
+                showTraktId = SHOW_ID,
+                episodeId = EPISODE_2_ID,
+                seasonNumber = 1L,
+                episodeNumber = 2L,
+                includeSpecials = false,
+            )
+
+            val afterSecond = awaitItem()
+            afterSecond.size shouldBe 1
+            afterSecond[0].episodeNumber shouldBe 3L
+            afterSecond[0].watchedCount shouldBe 2L
+            afterSecond[0].totalCount shouldBe 3L
+        }
+    }
+
+    @Test
+    fun `should drop show from list when last aired episode marked watched`() = runTest {
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
+            awaitItem().size shouldBe 1
+
+            watchedEpisodeDao.markAsWatched(
+                showTraktId = SHOW_ID,
+                episodeId = EPISODE_1_ID,
+                seasonNumber = 1L,
+                episodeNumber = 1L,
+                includeSpecials = false,
+            )
+            awaitItem()[0].episodeNumber shouldBe 2L
+
+            watchedEpisodeDao.markAsWatched(
+                showTraktId = SHOW_ID,
+                episodeId = EPISODE_2_ID,
+                seasonNumber = 1L,
+                episodeNumber = 2L,
+                includeSpecials = false,
+            )
+            awaitItem()[0].episodeNumber shouldBe 3L
+
+            watchedEpisodeDao.markAsWatched(
+                showTraktId = SHOW_ID,
+                episodeId = EPISODE_3_ID,
+                seasonNumber = 1L,
+                episodeNumber = 3L,
+                includeSpecials = false,
+            )
+            awaitItem().size shouldBe 0
+        }
+    }
+
+    private fun seedShowWithThreeAiredEpisodes() {
+        database.tvShowQueries.upsert(
+            trakt_id = Id(SHOW_ID),
+            tmdb_id = Id(SHOW_ID),
+            name = "Severance",
+            overview = "",
+            language = "en",
+            year = "2024",
+            ratings = 8.5,
+            vote_count = 100,
+            genres = listOf("Drama"),
+            status = "Returning Series",
+            episode_numbers = null,
+            season_numbers = null,
+            poster_path = null,
+            backdrop_path = null,
+        )
+        database.followedShowsQueries.upsert(
+            id = null,
+            traktId = Id(SHOW_ID),
+            tmdbId = Id(SHOW_ID),
+            followedAt = now,
+            pendingAction = "NOTHING",
+        )
+        database.seasonsQueries.upsert(
+            id = Id(SEASON_ID),
+            show_trakt_id = Id(SHOW_ID),
+            season_number = 1L,
+            title = "Season 1",
+            overview = null,
+            episode_count = 3L,
+            image_url = null,
+        )
+        listOf(
+            EPISODE_1_ID to 1L,
+            EPISODE_2_ID to 2L,
+            EPISODE_3_ID to 3L,
+        ).forEach { (episodeId, episodeNumber) ->
+            database.episodesQueries.upsert(
+                id = Id(episodeId),
+                season_id = Id(SEASON_ID),
+                show_trakt_id = Id(SHOW_ID),
+                title = "Episode $episodeNumber",
+                overview = "",
+                episode_number = episodeNumber,
+                runtime = 45L,
+                image_url = null,
+                ratings = 8.0,
+                vote_count = 100L,
+                trakt_id = null,
+                first_aired = now - (4 - episodeNumber) * 86_400_000L,
+            )
+        }
+    }
+
+    private companion object {
+        private const val SHOW_ID = 1L
+        private const val SEASON_ID = 11L
+        private const val EPISODE_1_ID = 101L
+        private const val EPISODE_2_ID = 102L
+        private const val EPISODE_3_ID = 103L
+    }
+}

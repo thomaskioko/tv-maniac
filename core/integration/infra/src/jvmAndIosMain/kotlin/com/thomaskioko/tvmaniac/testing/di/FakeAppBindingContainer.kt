@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.core.base.TraktApi
 import com.thomaskioko.tvmaniac.core.base.di.BaseBindingContainer
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot
+import com.thomaskioko.tvmaniac.domain.episode.PendingUploadsWorker
 import com.thomaskioko.tvmaniac.domain.library.LibrarySyncWorker
 import com.thomaskioko.tvmaniac.domain.notifications.EpisodeNotificationWorker
 import com.thomaskioko.tvmaniac.domain.upnext.UpNextSyncWorker
@@ -58,6 +59,7 @@ import kotlinx.coroutines.flow.flowOf
         BaseBindingContainer::class,
         EpisodeNotificationWorker::class,
         LibrarySyncWorker::class,
+        PendingUploadsWorker::class,
         TokenRefreshWorker::class,
         UpNextSyncWorker::class,
     ],

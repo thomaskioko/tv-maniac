@@ -3,11 +3,13 @@ package com.thomaskioko.tvmaniac.presentation.episodedetail
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
+import com.thomaskioko.tvmaniac.core.base.coroutines.AppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
+import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.db.EpisodeById
@@ -19,12 +21,15 @@ import com.thomaskioko.tvmaniac.domain.episode.ObserveEpisodeByIdInteractor
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
+import com.thomaskioko.tvmaniac.util.api.SyncError
+import com.thomaskioko.tvmaniac.util.api.SyncErrorChannel
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
@@ -33,6 +38,7 @@ import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -53,6 +59,8 @@ public class EpisodeSheetPresenter(
     private val errorToStringMapper: ErrorToStringMapper,
     private val localizer: Localizer,
     private val logger: Logger,
+    private val appScopeLauncher: AppScopeLauncher,
+    private val syncErrorChannel: SyncErrorChannel,
 ) {
 
     private val coroutineScope = componentContext.coroutineScope()
@@ -77,6 +85,20 @@ public class EpisodeSheetPresenter(
 
     init {
         observeEpisodeByIdInteractor(param.episodeId)
+        observeSyncErrors()
+    }
+
+    // TODO:: Move to root presenter
+    private fun observeSyncErrors() {
+        coroutineScope.launch {
+            syncErrorChannel.errors
+                .filter { it is SyncError.MarkWatchedFailed || it is SyncError.MarkUnwatchedFailed }
+                .collect {
+                    uiMessageManager.emitMessage(
+                        UiMessage(message = localizer.getString(StringResourceKey.SyncFailedWillRetry)),
+                    )
+                }
+        }
     }
 
     public fun dispatch(action: EpisodeSheetAction) {
@@ -92,7 +114,8 @@ public class EpisodeSheetPresenter(
 
     private fun toggleWatched() {
         val episode = currentEpisode ?: return
-        coroutineScope.launch {
+        navigator.dismissOverlay()
+        appScopeLauncher.launch(TAG) {
             if (episode.is_watched != 0L) {
                 markEpisodeUnwatchedInteractor(
                     MarkEpisodeUnwatchedParams(
@@ -110,7 +133,6 @@ public class EpisodeSheetPresenter(
                     ),
                 ).collectStatus(actionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
             }
-            navigator.dismissOverlay()
         }
     }
 
@@ -136,9 +158,9 @@ public class EpisodeSheetPresenter(
 
     private fun unfollowShow() {
         val episode = currentEpisode ?: return
-        coroutineScope.launch {
+        navigator.dismissOverlay()
+        appScopeLauncher.launch(TAG) {
             unfollowShowInteractor.executeSync(episode.show_trakt_id.id)
-            navigator.dismissOverlay()
         }
     }
 
@@ -151,5 +173,9 @@ public class EpisodeSheetPresenter(
     @AssistedFactory
     public fun interface Factory {
         public fun create(param: EpisodeSheetParam): EpisodeSheetPresenter
+    }
+
+    private companion object {
+        private const val TAG = "EpisodeSheetPresenter"
     }
 }

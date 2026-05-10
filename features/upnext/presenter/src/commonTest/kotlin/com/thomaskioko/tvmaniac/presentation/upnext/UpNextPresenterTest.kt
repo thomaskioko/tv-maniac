@@ -13,6 +13,7 @@ import com.thomaskioko.tvmaniac.domain.upnext.RefreshUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.model.UpNextSortOption
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
+import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.NavRoute
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
@@ -20,6 +21,7 @@ import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
+import com.thomaskioko.tvmaniac.util.DefaultSyncErrorChannel
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
@@ -42,6 +44,8 @@ internal class UpNextPresenterTest {
     private val traktAuthRepository = FakeTraktAuthRepository()
     private val dateTimeProvider = FakeDateTimeProvider()
     private val datastoreRepository = FakeDatastoreRepository()
+    private val syncErrorChannel = DefaultSyncErrorChannel()
+    private val localizer = FakeLocalizer()
     private val logger = FakeLogger()
 
     @BeforeTest
@@ -369,6 +373,32 @@ internal class UpNextPresenterTest {
     }
 
     @Test
+    fun `should post UiMessage given SyncError MarkWatchedFailed published on channel`() = runTest {
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            awaitItem()
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            syncErrorChannel.log(
+                com.thomaskioko.tvmaniac.util.api.SyncError.MarkWatchedFailed(
+                    showTraktId = 1L,
+                    cause = RuntimeException("network down"),
+                ),
+            )
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            var observed: String? = null
+            while (observed == null) {
+                observed = awaitItem().message?.message
+            }
+            observed shouldBe "Couldn't sync with server. Your change is saved and will retry when you're back online."
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     fun `should refresh data given followed shows count changes`() = runTest {
         val presenter = createPresenter()
 
@@ -452,6 +482,8 @@ internal class UpNextPresenterTest {
             upNextRepository = upNextRepository,
             unfollowShowInteractor = UnfollowShowInteractor(followedShowsRepository),
             traktAuthRepository = traktAuthRepository,
+            syncErrorChannel = syncErrorChannel,
+            localizer = localizer,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = logger,
         )

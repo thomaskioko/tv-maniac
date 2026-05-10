@@ -58,7 +58,8 @@ struct WatchlistListItem: View {
                             text: status,
                             colorOpacity: 0.12,
                             borderOpacity: 0.12,
-                            weight: .bold
+                            weight: .bold,
+                            lineLimit: 1
                         )
 
                         Text("•")

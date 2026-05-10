@@ -22,7 +22,7 @@ INNER JOIN season ON tvshow.trakt_id = season.show_trakt_id
 INNER JOIN episode ON episode.season_id = season.id AND episode.show_trakt_id = tvshow.trakt_id
 LEFT JOIN watched_episodes AS watched_episode
     ON watched_episode.show_trakt_id = tvshow.trakt_id
-    AND watched_episode.pending_action != 'DELETE'
+    AND watched_episode.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
     AND (
         watched_episode.episode_id = episode.id
         OR (
@@ -35,6 +35,8 @@ LEFT JOIN shows_last_watched AS last_watched ON last_watched.show_trakt_id = tvs
 WHERE (season.season_number > 0 OR (season.season_number = 0 AND season.title != 'Specials'))
   AND watched_episode.id IS NULL
   AND ((1000 * season.season_number) + episode.episode_number) > COALESCE(last_watched.last_watched_abs_number, 0)
+  AND episode.first_aired IS NOT NULL
+  AND episode.first_aired <= strftime('%s', 'now') * 1000
 ORDER BY tvshow.trakt_id, season.season_number, episode.episode_number;
 
 nextEpisodeForShow:
@@ -58,7 +60,7 @@ INNER JOIN season ON tvshow.trakt_id = season.show_trakt_id
 INNER JOIN episode ON episode.season_id = season.id AND episode.show_trakt_id = tvshow.trakt_id
 LEFT JOIN watched_episodes AS watched_episode
     ON watched_episode.show_trakt_id = tvshow.trakt_id
-    AND watched_episode.pending_action != 'DELETE'
+    AND watched_episode.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
     AND (
         watched_episode.episode_id = episode.id
         OR (
@@ -73,6 +75,8 @@ WHERE tvshow.trakt_id = :showTraktId
   AND (:includeSpecials = 1 OR (season.season_number > 0 OR season.title != 'Specials'))
   AND watched_episode.id IS NULL
   AND ((1000 * season.season_number) + episode.episode_number) > COALESCE(last_watched.last_watched_abs_number, 0)
+  AND episode.first_aired IS NOT NULL
+  AND episode.first_aired <= strftime('%s', 'now') * 1000
 ORDER BY season.season_number, episode.episode_number
 LIMIT 1;
 

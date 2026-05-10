@@ -47,6 +47,7 @@ kotlin {
 
         commonTest {
             dependencies {
+                implementation(projects.core.base.testing)
                 implementation(projects.core.logger.testing)
                 implementation(projects.core.util.testing)
                 implementation(projects.data.cast.testing)
@@ -65,6 +66,7 @@ kotlin {
                 implementation(projects.data.user.testing)
                 implementation(projects.data.upnext.testing)
                 implementation(projects.data.watchproviders.testing)
+                implementation(projects.core.util.implementation)
                 implementation(projects.i18n.testing)
                 implementation(projects.core.notifications.testing)
                 implementation(projects.navigation.testing)

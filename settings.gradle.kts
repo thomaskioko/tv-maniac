@@ -88,6 +88,7 @@ include(
     ":core:appconfig:api",
     ":core:appconfig:implementation",
     ":core:base",
+    ":core:base:testing",
     ":core:connectivity:api",
     ":core:connectivity:implementation",
     ":core:connectivity:testing",

@@ -8,6 +8,7 @@ struct WatchlistTab: View {
 
     @State private var watchNextEpisodesSwift: [SwiftNextEpisode] = []
     @State private var staleEpisodesSwift: [SwiftNextEpisode] = []
+    @State private var toast: Toast?
 
     init(presenter: WatchlistPresenter) {
         self.presenter = presenter
@@ -71,6 +72,13 @@ struct WatchlistTab: View {
                 ))
             }
         )
+        .toastView(toast: $toast)
+        .onChange(of: uiState.message) { _, newValue in
+            if let message = newValue {
+                toast = Toast(type: .error, title: String(\.label_error), message: message.message)
+                presenter.dispatch(action: WatchlistMessageShown(id: message.id))
+            }
+        }
         .onChange(of: uiState.watchNextEpisodes) { _, newValue in
             watchNextEpisodesSwift = newValue.map { $0.toSwift() }
         }

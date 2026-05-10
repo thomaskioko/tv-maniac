@@ -23,6 +23,7 @@ import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeUnwatchedCall
 import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall
 import com.thomaskioko.tvmaniac.episodes.testing.MarkSeasonWatchedCall
+import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.NavRoute
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
@@ -31,6 +32,7 @@ import com.thomaskioko.tvmaniac.seasondetails.presenter.data.buildSeasonDetailsL
 import com.thomaskioko.tvmaniac.seasondetails.presenter.data.buildSeasonDetailsWithEpisodes
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.EpisodeDetailsModel
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
+import com.thomaskioko.tvmaniac.util.DefaultSyncErrorChannel
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.collections.immutable.persistentListOf
@@ -1240,6 +1242,8 @@ class SeasonPresenterTest {
             observeUnwatchedInPreviousSeasonsInteractor = ObserveUnwatchedInPreviousSeasonsInteractor(
                 episodeRepository = episodeRepository,
             ),
+            syncErrorChannel = DefaultSyncErrorChannel(),
+            localizer = FakeLocalizer(),
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = FakeLogger(),
         )

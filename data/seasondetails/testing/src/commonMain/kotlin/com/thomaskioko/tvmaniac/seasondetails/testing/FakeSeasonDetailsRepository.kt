@@ -30,6 +30,7 @@ public class FakeSeasonDetailsRepository : SeasonDetailsRepository {
     private val continueTrackingResult = MutableStateFlow<ContinueTrackingResult?>(null)
 
     private val fetchedSeasons = mutableListOf<SeasonDetailsParam>()
+    private val syncedShowIds = mutableListOf<Long>()
     private var fetchError: Throwable? = null
 
     public fun setSeasonsResult(result: SeasonDetailsWithEpisodes) {
@@ -44,6 +45,12 @@ public class FakeSeasonDetailsRepository : SeasonDetailsRepository {
 
     public fun clearFetchedSeasons() {
         fetchedSeasons.clear()
+    }
+
+    public fun getSyncedShowIds(): List<Long> = syncedShowIds.toList()
+
+    public fun clearSyncedShowIds() {
+        syncedShowIds.clear()
     }
 
     public fun setContinueTrackingResult(result: ContinueTrackingResult?) {
@@ -62,6 +69,7 @@ public class FakeSeasonDetailsRepository : SeasonDetailsRepository {
         showTraktId: Long,
         forceRefresh: Boolean,
     ) {
+        syncedShowIds.add(showTraktId)
     }
 
     override suspend fun syncPreviousSeasonsEpisodes(

@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.root.nav.NotificationRationale
+import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.notifications.api.EpisodeNotification
@@ -60,13 +61,16 @@ import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
+import com.thomaskioko.tvmaniac.util.DefaultSyncErrorChannel
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -102,6 +106,7 @@ class ShowDetailsPresenterTest {
     private val fakeDateTimeProvider = FakeDateTimeProvider()
     private val fakeNavigator = FakeNavigator()
     private val testDispatcher = StandardTestDispatcher()
+    private val appCoroutineScope = CoroutineScope(testDispatcher + SupervisorJob())
     private val coroutineDispatcher = AppCoroutineDispatchers(
         main = testDispatcher,
         io = testDispatcher,
@@ -815,6 +820,48 @@ class ShowDetailsPresenterTest {
         presenter.state.value.showListSheet shouldBe false
     }
 
+    @Test
+    fun `should post toast given SyncError matches the presenter showTraktId`() = runTest {
+        buildMockData(showDetailResult = tvShowDetails)
+        val syncErrorChannel = DefaultSyncErrorChannel()
+        val presenter = buildShowDetailsPresenter(
+            param = ShowDetailsParam(id = 84958),
+            syncErrorChannel = syncErrorChannel,
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        syncErrorChannel.log(
+            com.thomaskioko.tvmaniac.util.api.SyncError.MarkWatchedFailed(
+                showTraktId = 84958L,
+                cause = RuntimeException("network down"),
+            ),
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.state.value.message?.message shouldBe "Couldn't sync with server. Your change is saved and will retry when you're back online."
+    }
+
+    @Test
+    fun `should ignore SyncError published for a different showTraktId`() = runTest {
+        buildMockData(showDetailResult = tvShowDetails)
+        val syncErrorChannel = DefaultSyncErrorChannel()
+        val presenter = buildShowDetailsPresenter(
+            param = ShowDetailsParam(id = 84958),
+            syncErrorChannel = syncErrorChannel,
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        syncErrorChannel.log(
+            com.thomaskioko.tvmaniac.util.api.SyncError.MarkWatchedFailed(
+                showTraktId = 99999L,
+                cause = RuntimeException("network down"),
+            ),
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.state.value.message shouldBe null
+    }
+
     private suspend fun buildMockData(
         isYoutubeInstalled: Boolean = false,
         castList: List<ShowCast> = emptyList(),
@@ -836,6 +883,7 @@ class ShowDetailsPresenterTest {
     private fun buildShowDetailsPresenter(
         param: ShowDetailsParam = ShowDetailsParam(id = 84958),
         onShowFollowed: () -> Unit = {},
+        syncErrorChannel: com.thomaskioko.tvmaniac.util.api.SyncErrorChannel = DefaultSyncErrorChannel(),
     ): ShowDetailsPresenter {
         val notificationRationale = object : NotificationRationale {
             override suspend fun showIfNeeded() = onShowFollowed()
@@ -852,12 +900,9 @@ class ShowDetailsPresenterTest {
                     showDetailsRepository = showDetailsRepository,
                     seasonDetailsRepository = seasonDetailsRepository,
                     dispatchers = coroutineDispatcher,
-                    logger = fakeLogger,
                     watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
                 ),
-                upNextRepository = upNextRepository,
-                dispatchers = coroutineDispatcher,
-                logger = fakeLogger,
+                appScopeLauncher = FakeAppScopeLauncher(scope = appCoroutineScope),
             ),
             showDetailsInteractor = ShowDetailsInteractor(
                 showDetailsRepository = showDetailsRepository,
@@ -899,7 +944,6 @@ class ShowDetailsPresenterTest {
                 showDetailsRepository = showDetailsRepository,
                 seasonDetailsRepository = seasonDetailsRepository,
                 dispatchers = coroutineDispatcher,
-                logger = fakeLogger,
                 watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
             ),
             syncTraktCalendarInteractor = SyncTraktCalendarInteractor(
@@ -935,6 +979,7 @@ class ShowDetailsPresenterTest {
             ),
             traktAuthRepository = traktAuthRepository,
             traktAuthManager = com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager(),
+            syncErrorChannel = syncErrorChannel,
             localizer = fakeLocalizer,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             dispatchers = coroutineDispatcher,

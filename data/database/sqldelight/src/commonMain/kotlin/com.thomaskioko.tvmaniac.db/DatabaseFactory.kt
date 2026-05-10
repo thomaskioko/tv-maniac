@@ -113,9 +113,6 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
             synced_remote_timestampAdapter = InstantColumnAdapter,
             fetched_atAdapter = InstantColumnAdapter,
         ),
-        next_episodesAdapter = Next_episodes.Adapter(
-            show_trakt_idAdapter = IdAdapter(),
-        ),
         calendar_entryAdapter = Calendar_entry.Adapter(
             show_trakt_idAdapter = IdAdapter(),
         ),

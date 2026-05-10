@@ -9,11 +9,13 @@ import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
+import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
+import kotlin.time.Duration.Companion.days
 import kotlin.time.Instant.Companion.fromEpochMilliseconds
 
 @SingleIn(AppScope::class)
@@ -25,19 +27,25 @@ public class DefaultWatchedEpisodeSyncRepository(
     private val datastoreRepository: DatastoreRepository,
     private val lastRequestStore: EpisodeWatchesLastRequestStore,
     private val traktAuthRepository: TraktAuthRepository,
+    private val dateTimeProvider: DateTimeProvider,
     private val logger: Logger,
 ) : WatchedEpisodeSyncRepository {
 
-    override suspend fun uploadPendingEpisodes() {
+    override suspend fun syncPendingEpisodes() {
         val authState = traktAuthRepository.getAuthState()
         if (authState == null || !authState.isAuthorized) return
 
         processPendingEpisodesToUploads()
+        processPendingEpisodesDeletes()
     }
 
     override suspend fun syncShowEpisodeWatches(showTraktId: Long, forceRefresh: Boolean) {
         val authState = traktAuthRepository.getAuthState()
         if (authState == null || !authState.isAuthorized) return
+
+        dao.purgeSyncedDeletesOlderThan(
+            thresholdMillis = dateTimeProvider.nowMillis() - SYNCED_DELETE_TTL.inWholeMilliseconds,
+        )
 
         processPendingEpisodesToUploads()
         processPendingEpisodesDeletes()
@@ -90,7 +98,11 @@ public class DefaultWatchedEpisodeSyncRepository(
         }
 
         pending.forEach { episode ->
-            dao.deleteById(episode.watched_id)
+            if (episode.trakt_id != null) {
+                dao.markAsSyncedDelete(episode.watched_id)
+            } else {
+                dao.deleteById(episode.watched_id)
+            }
         }
 
         logger.debug(TAG, "Successfully deleted ${pending.size} episodes")
@@ -131,7 +143,8 @@ public class DefaultWatchedEpisodeSyncRepository(
     }
 
     private companion object {
-        const val TAG = "WatchedEpisodeSyncRepository"
-        const val BATCH_SIZE = 50
+        private const val TAG = "WatchedEpisodeSyncRepository"
+        private const val BATCH_SIZE = 50
+        private val SYNCED_DELETE_TTL = 7.days
     }
 }

@@ -311,7 +311,7 @@
     <string name="label_library_filter_show_less">Show less</string>
     <string name="label_library_filter_clear">Clear</string>
     <string name="label_library_filter_apply">Filter</string>
-    <string name="label_library_status_returning">Returning Series</string>
+    <string name="label_library_status_returning">Returning</string>
     <string name="label_library_status_planned">Planned</string>
     <string name="label_library_status_in_production">In Production</string>
     <string name="label_library_status_ended">Ended</string>
@@ -351,8 +351,8 @@
     <string name="label_debug_trigger_crash_title">Test Crash</string>
     <string name="label_debug_trigger_crash_description">Trigger a test crash for Crashlytics</string>
     <string name="label_debug_token_status_title">Token Status</string>
-    <string name="label_debug_token_refresh_valid">Last refreshed: %s · Token is valid</string>
-    <string name="label_debug_token_refresh_expired">Last refreshed: %s · Token has expired</string>
+    <string name="label_debug_token_expires_in">Last refreshed: %1$s · Expires in %2$s</string>
+    <string name="label_debug_token_expired">Last refreshed: %s · Expired</string>
     <string name="label_debug_never_refreshed">Never refreshed</string>
 
     <string name="label_genre_category_popular">Popular</string>
@@ -393,4 +393,6 @@
     <string name="notification_channel_episodes_description">Notifications for upcoming episodes</string>
     <string name="notification_channel_developer">Developer Testing</string>
     <string name="notification_channel_developer_description">Notifications for testing</string>
+
+    <string name="sync_failed_will_retry">Couldn\'t sync with server. Your change is saved and will retry when you\'re back online.</string>
 </resources>

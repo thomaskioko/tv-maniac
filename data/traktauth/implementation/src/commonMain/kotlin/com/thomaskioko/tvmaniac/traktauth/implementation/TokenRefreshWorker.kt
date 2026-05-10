@@ -43,6 +43,7 @@ public class TokenRefreshWorker(
             id = WORKER_NAME,
             intervalMs = FIVE_HOURS_MS,
             constraints = TaskConstraints(requiresNetwork = true),
+            longRunning = true,
         )
     }
 }

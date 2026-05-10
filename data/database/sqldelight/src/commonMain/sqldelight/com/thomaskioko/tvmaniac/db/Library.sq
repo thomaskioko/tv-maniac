@@ -16,8 +16,8 @@ SELECT
     tvshow.genres,
     COALESCE(CAST(tvshow.season_numbers AS INTEGER), 0) AS season_count,
     COALESCE(CAST(tvshow.episode_numbers AS INTEGER), 0) AS episode_count,
-    COALESCE(show_metadata.cached_watched_count, 0) AS watched_count,
-    COALESCE(show_metadata.cached_total_count, 0) AS total_count,
+    COALESCE(show_watch_progress.watched_count, 0) AS watched_count,
+    COALESCE(show_watch_progress.total_count, 0) AS total_count,
     show_metadata.last_watched_at,
     followed_shows.followed_at,
     CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS is_followed
@@ -25,9 +25,10 @@ FROM tvshow
 LEFT JOIN followed_shows ON tvshow.trakt_id = followed_shows.trakt_id
     AND followed_shows.pending_action != 'DELETE'
 LEFT JOIN show_metadata ON tvshow.trakt_id = show_metadata.show_trakt_id
+LEFT JOIN show_watch_progress ON tvshow.trakt_id = show_watch_progress.show_trakt_id
 WHERE (
     followed_shows.id IS NOT NULL
-    OR show_metadata.cached_watched_count > 0
+    OR COALESCE(show_watch_progress.watched_count, 0) > 0
 )
 AND (
     :query IS NULL
@@ -51,8 +52,8 @@ countLibraryShows:
 SELECT COUNT(*) FROM tvshow
 LEFT JOIN followed_shows ON tvshow.trakt_id = followed_shows.trakt_id
     AND followed_shows.pending_action != 'DELETE'
-LEFT JOIN show_metadata ON tvshow.trakt_id = show_metadata.show_trakt_id
+LEFT JOIN show_watch_progress ON tvshow.trakt_id = show_watch_progress.show_trakt_id
 WHERE (
     followed_shows.id IS NOT NULL
-    OR show_metadata.cached_watched_count > 0
+    OR COALESCE(show_watch_progress.watched_count, 0) > 0
 );

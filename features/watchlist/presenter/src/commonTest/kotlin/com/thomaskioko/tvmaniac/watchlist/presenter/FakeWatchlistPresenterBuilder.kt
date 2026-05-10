@@ -13,10 +13,12 @@ import com.thomaskioko.tvmaniac.domain.watchlist.UpNextSectionsMapper
 import com.thomaskioko.tvmaniac.domain.watchlist.WatchlistSyncInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
+import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
+import com.thomaskioko.tvmaniac.util.DefaultSyncErrorChannel
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -78,6 +80,8 @@ class FakeWatchlistPresenterBuilder {
         observeUpNextSectionsInteractor = observeUpNextSectionsInteractor,
         markEpisodeWatchedInteractor = fakeMarkEpisodeWatchedInteractor,
         watchlistSyncInteractor = watchlistSyncInteractor,
+        syncErrorChannel = DefaultSyncErrorChannel(),
+        localizer = FakeLocalizer(),
         errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
         logger = fakeLogger,
     )

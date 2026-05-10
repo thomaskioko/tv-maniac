@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.presentation.episodedetail
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
@@ -23,10 +24,13 @@ import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
+import com.thomaskioko.tvmaniac.util.DefaultSyncErrorChannel
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -39,6 +43,7 @@ internal class EpisodeSheetPresenterTest {
 
     private val lifecycle = LifecycleRegistry()
     private val testDispatcher = StandardTestDispatcher()
+    private val appCoroutineScope = CoroutineScope(testDispatcher + SupervisorJob())
     private val episodeRepository = FakeEpisodeRepository()
     private val followedShowsRepository = FakeFollowedShowsRepository()
     private val localizer = FakeLocalizer()
@@ -191,6 +196,7 @@ internal class EpisodeSheetPresenterTest {
                 episodeNumber = 1L,
             )
             episodeRepository.lastMarkEpisodeUnwatchedCall.shouldBeNull()
+            navigator.overlayDismissCount shouldBe 1
         }
     }
 
@@ -213,6 +219,35 @@ internal class EpisodeSheetPresenterTest {
                 showTraktId = 100L,
                 episodeId = 1L,
             )
+            navigator.overlayDismissCount shouldBe 1
+        }
+    }
+
+    @Test
+    fun `should dismiss sheet immediately given ToggleWatched is dispatched and before background work completes`() = runTest {
+        episodeRepository.setEpisodeById(testEpisode(isWatched = false))
+
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            awaitItem()
+            testDispatcher.scheduler.advanceUntilIdle()
+            awaitItem()
+
+            presenter.dispatch(EpisodeSheetAction.ToggleWatched)
+
+            navigator.overlayDismissCount shouldBe 1
+            episodeRepository.lastMarkEpisodeWatchedCall.shouldBeNull()
+
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            episodeRepository.lastMarkEpisodeWatchedCall shouldBe
+                com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall(
+                    showTraktId = 100L,
+                    episodeId = 1L,
+                    seasonNumber = 1L,
+                    episodeNumber = 1L,
+                )
         }
     }
 
@@ -324,6 +359,7 @@ internal class EpisodeSheetPresenterTest {
 
     private fun createPresenter(
         source: ScreenSource = ScreenSource.DISCOVER,
+        appScopeLauncher: FakeAppScopeLauncher = FakeAppScopeLauncher(appCoroutineScope),
     ): EpisodeSheetPresenter {
         val dispatchers = AppCoroutineDispatchers(
             main = testDispatcher,
@@ -344,6 +380,8 @@ internal class EpisodeSheetPresenterTest {
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             localizer = localizer,
             logger = logger,
+            appScopeLauncher = appScopeLauncher,
+            syncErrorChannel = DefaultSyncErrorChannel(),
         )
     }
 

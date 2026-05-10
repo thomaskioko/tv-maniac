@@ -23,6 +23,7 @@ kotlin {
                 implementation(projects.data.seasondetails.api)
                 implementation(projects.domain.episode)
                 implementation(projects.domain.seasondetails)
+                implementation(projects.i18n.api)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
@@ -36,6 +37,8 @@ kotlin {
                 implementation(projects.data.seasondetails.testing)
                 implementation(projects.data.cast.testing)
                 implementation(projects.data.episode.testing)
+                implementation(projects.core.util.implementation)
+                implementation(projects.i18n.testing)
                 implementation(projects.navigation.testing)
 
                 implementation(libs.bundles.unittest)

@@ -311,7 +311,7 @@
     <string name="label_library_filter_show_less">Weniger anzeigen</string>
     <string name="label_library_filter_clear">Löschen</string>
     <string name="label_library_filter_apply">Filtern</string>
-    <string name="label_library_status_returning">Laufende Serie</string>
+    <string name="label_library_status_returning">Laufend</string>
     <string name="label_library_status_planned">Geplant</string>
     <string name="label_library_status_in_production">In Produktion</string>
     <string name="label_library_status_ended">Beendet</string>
@@ -343,8 +343,8 @@
     <string name="label_debug_trigger_crash_title">Testabsturz</string>
     <string name="label_debug_trigger_crash_description">Einen Testabsturz für Crashlytics auslösen</string>
     <string name="label_debug_token_status_title">Token-Status</string>
-    <string name="label_debug_token_refresh_valid">Zuletzt aktualisiert: %s · Token ist gültig</string>
-    <string name="label_debug_token_refresh_expired">Zuletzt aktualisiert: %s · Token ist abgelaufen</string>
+    <string name="label_debug_token_expires_in">Zuletzt aktualisiert: %1$s · Läuft ab in %2$s</string>
+    <string name="label_debug_token_expired">Zuletzt aktualisiert: %s · Abgelaufen</string>
     <string name="label_debug_never_refreshed">Nie aktualisiert</string>
 
     <string name="label_genre_category_popular">Beliebt</string>
@@ -390,4 +390,6 @@
     <string name="notification_channel_episodes_description">Benachrichtigungen für kommende Episoden</string>
     <string name="notification_channel_developer">Entwicklertests</string>
     <string name="notification_channel_developer_description">Benachrichtigungen zum Testen</string>
+
+    <string name="sync_failed_will_retry">Synchronisierung mit dem Server fehlgeschlagen. Deine Änderung ist gespeichert und wird erneut versucht, sobald du wieder online bist.</string>
 </resources>
