@@ -7,7 +7,9 @@ import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.presentation.calendar.CalendarPresenter
+import com.thomaskioko.tvmaniac.presentation.calendar.di.CalendarChildGraph
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextPresenter
+import com.thomaskioko.tvmaniac.presentation.upnext.di.UpNextChildGraph
 import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
@@ -25,7 +27,8 @@ import kotlinx.coroutines.flow.update
 )
 public class ProgressPresenter(
     componentContext: ComponentContext,
-    progressChildGraphFactory: ProgressChildGraph.Factory,
+    upNextGraphFactory: UpNextChildGraph.Factory,
+    calendarGraphFactory: CalendarChildGraph.Factory,
 ) : ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
@@ -36,10 +39,10 @@ public class ProgressPresenter(
     public val stateValue: Value<ProgressState> = state.asValue(coroutineScope)
 
     public val upNextPresenter: UpNextPresenter =
-        progressChildGraphFactory.createGraph(childContext(key = "UpNext")).upNextPresenter
+        upNextGraphFactory.createUpNextGraph(childContext(key = "UpNext")).upNextPresenter
 
     public val calendarPresenter: CalendarPresenter =
-        progressChildGraphFactory.createGraph(childContext(key = "Calendar")).calendarPresenter
+        calendarGraphFactory.createCalendarGraph(childContext(key = "Calendar")).calendarPresenter
 
     public fun dispatch(action: ProgressAction) {
         when (action) {

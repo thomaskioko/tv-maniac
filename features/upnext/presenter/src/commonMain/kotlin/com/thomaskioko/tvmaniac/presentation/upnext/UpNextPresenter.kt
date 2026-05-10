@@ -20,6 +20,8 @@ import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.presentation.upnext.model.UpNextEpisodeUiModel
+import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
+import com.thomaskioko.tvmaniac.progress.nav.scope.ProgressChildScope
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
@@ -29,6 +31,7 @@ import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import dev.zacsweers.metro.Inject
+import io.github.thomaskioko.codegen.annotations.ChildPresenter
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -39,6 +42,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+@ChildPresenter(scope = ProgressChildScope::class, parentScope = ProgressRoot::class)
 @Inject
 public class UpNextPresenter(
     componentContext: ComponentContext,

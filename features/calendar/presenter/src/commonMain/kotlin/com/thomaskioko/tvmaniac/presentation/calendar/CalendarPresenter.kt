@@ -21,9 +21,12 @@ import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarLoginRequire
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarMoreEpisodes
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarNoData
 import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
+import com.thomaskioko.tvmaniac.progress.nav.scope.ProgressChildScope
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import dev.zacsweers.metro.Inject
+import io.github.thomaskioko.codegen.annotations.ChildPresenter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -34,6 +37,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+@ChildPresenter(scope = ProgressChildScope::class, parentScope = ProgressRoot::class)
 @Inject
 public class CalendarPresenter(
     componentContext: ComponentContext,
