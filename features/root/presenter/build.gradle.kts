@@ -14,12 +14,14 @@ kotlin {
             dependencies {
                 implementation(projects.core.base)
                 implementation(projects.core.logger.api)
+                implementation(projects.core.syncstate.api)
                 implementation(projects.core.view)
                 implementation(projects.data.datastore.api)
                 implementation(projects.domain.theme)
                 implementation(projects.features.settings.presenter)
                 implementation(projects.domain.logout)
                 implementation(projects.domain.user)
+                implementation(projects.i18n.api)
                 implementation(projects.navigation.api)
                 implementation(projects.features.root.nav)
                 implementation(projects.features.debug.nav)
@@ -37,6 +39,7 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(projects.core.integration.infra)
+                implementation(projects.i18n.testing)
                 implementation(projects.navigation.implementation)
                 implementation(projects.data.traktauth.testing)
                 implementation(projects.data.datastore.testing)

@@ -25,6 +25,7 @@ import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
+import com.thomaskioko.tvmaniac.util.testing.FakeSyncObserver
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -231,6 +232,7 @@ class DebugPresenterTest {
                 datastoreRepository = datastoreRepository,
                 dateTimeProvider = dateTimeProvider,
             ),
+            syncObserver = FakeSyncObserver(),
             dateTimeProvider = dateTimeProvider,
             localizer = localizer,
             errorToStringMapper = { it.message ?: "Test error" },
