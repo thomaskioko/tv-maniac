@@ -8,13 +8,14 @@ import kotlin.reflect.KClass
 /**
  * Single entry point for mutating the multi-stack navigation state.
  *
- * Hides Decompose's [com.arkivanov.decompose.router.children.children] generic-navigation primitive
- * behind one public surface that coordinates per-tab back stacks under one [com.arkivanov.decompose.router.children.NavState].
- * A separate [com.arkivanov.decompose.router.slot.SlotNavigation] handles overlays. Presenters depend on this interface
- * rather than Decompose directly, so call sites stay focused on intent (navigate to a route, switch a tab) and tests
- * substitute a fake without pulling in Decompose.
+ * Wraps Decompose's [com.arkivanov.decompose.router.children.children] navigation API behind one
+ * public surface that coordinates a back stack for each tab through a single
+ * [com.arkivanov.decompose.router.children.NavState]. A separate
+ * [com.arkivanov.decompose.router.slot.SlotNavigation] handles overlays. Presenters depend on this
+ * interface rather than Decompose directly, so call sites stay focused on intent (navigate to a
+ * route, switch a tab) and tests substitute a fake without pulling in Decompose.
  *
- * Method names mirror khonshu's `Navigator` vocabulary. [navigateTo] dispatches by route type:
+ * [navigateTo] dispatches by route type:
  * [OverlayRoute] activates the overlay slot; any other [NavRoute] pushes onto the active tab's stack. Tab navigation
  * is [switchBackStack] (preserves the target's stack) or [showRoot] (clears it).
  *
@@ -87,21 +88,28 @@ public interface Navigator {
     public fun replaceAllBackStacks(root: NavRoot)
 
     /**
-     * Wires the multi-stack navigation host to [componentContext]. Call exactly once per host
+     * Connects the multi-stack navigation host to [componentContext]. Call exactly once per host
      * (typically from `HomePresenter.init`). [initialRoot] is the active tab on first launch; if a
      * previously saved state is present, the saved active root wins. The returned [Value] exposes
-     * the current active root and a [com.arkivanov.decompose.router.stack.ChildStack] per registered
-     * [NavRoot]; project per-tab stacks via `value.tabStacks[root]`.
+     * the current active root and a [com.arkivanov.decompose.router.stack.ChildStack] for each
+     * registered [NavRoot]; project tab stacks through `value.tabStacks[root]`.
      *
-     * Decompose's `children(...)` primitive coordinates child lifecycles per [com.arkivanov.decompose.router.children.ChildNavState.Status]:
-     * the active tab's top is `RESUMED`, every other entry is `CREATED` (instance preserved, back
-     * handlers detached, callbacks paused). The single `backTransformer` registered by this call
-     * replaces per-tab back-button handlers, so back press always pops the active tab.
+     * Decompose's `children(...)` API coordinates child lifecycles per
+     * [com.arkivanov.decompose.router.children.ChildNavState.Status]: the active tab's top is
+     * `RESUMED`, every other entry is `CREATED` (instance preserved, back handlers detached,
+     * callbacks paused). The single `backTransformer` registered by this call replaces back-button
+     * handlers in each tab so back press always pops the active tab.
      *
      * The [childFactory] receives [BaseRoute] because each tab's stack starts with the tab's
-     * [NavRoot] at the bottom and accumulates [NavRoute] entries on top. The factory must dispatch
+     * [NavRoot] at the bottom and accumulates [NavRoute] entries on top. The factory dispatches
      * by type to render either the tab's home content (when the entry is a [NavRoot]) or a pushed
      * screen (when the entry is a [NavRoute]).
+     *
+     * @param T component type produced by [childFactory] for each entry.
+     * @param componentContext lifecycle owner that scopes the host.
+     * @param initialRoot active tab on first launch when no saved state exists.
+     * @param childFactory builds the component for each [BaseRoute] entry across every tab.
+     * @return read-only [Value] tracking the active root and the back stack for each tab.
      */
     public fun <T : Any> buildHostNavigation(
         componentContext: ComponentContext,
@@ -113,6 +121,11 @@ public interface Navigator {
      * Builds the overlay child slot for [componentContext], returning the read-only [Value]
      * consumed by the UI. Overlays are [NavRoute] subtypes that implement [OverlayRoute];
      * activation flows through [navigateTo] like any other route.
+     *
+     * @param T component type produced by [childFactory] for the active overlay.
+     * @param componentContext lifecycle owner that scopes the slot.
+     * @param childFactory builds the component for the active overlay [NavRoute].
+     * @return read-only [Value] holding the active overlay child or `null` when none is active.
      */
     public fun <T : Any> buildOverlaySlot(
         componentContext: ComponentContext,
@@ -130,8 +143,10 @@ public interface Navigator {
 
 /**
  * Type-safe overload of [Navigator.navigateBackTo]. Pops back to the most recent entry whose
- * configuration is an instance of [T]. Mirrors khonshu's
- * `navigator.navigateBackTo<HomeRoute>(inclusive = true)` shape.
+ * configuration is an instance of [T].
+ *
+ * @param T target [NavRoute] type to pop back to.
+ * @param inclusive when `true`, pops the matching entry as well.
  */
 public inline fun <reified T : NavRoute> Navigator.navigateBackTo(inclusive: Boolean = false) {
     navigateBackTo(T::class, inclusive)

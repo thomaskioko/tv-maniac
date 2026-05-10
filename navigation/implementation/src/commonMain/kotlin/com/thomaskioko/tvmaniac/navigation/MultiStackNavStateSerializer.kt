@@ -12,6 +12,18 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.decodeStructure
 import kotlinx.serialization.encoding.encodeStructure
 
+/**
+ * Serializes [MultiStackNavState] using the polymorphic [BaseRoute] and [NavRoot] serializers
+ * contributed through the navigation multibinding sets.
+ *
+ * Decompose calls [serialize] when the activity is being torn down and [deserialize] when state
+ * is restored. The active root and the back stack for each tab are encoded as two fields; entry
+ * order within a tab is preserved by [ListSerializer] and tab order by [MapSerializer].
+ *
+ * @param baseRouteSerializer aggregated route and root serializer used for individual stack
+ *   entries.
+ * @param navRootSerializer serializer for the active tab anchor and tab keys.
+ */
 internal class MultiStackNavStateSerializer(
     baseRouteSerializer: KSerializer<BaseRoute>,
     private val navRootSerializer: KSerializer<NavRoot>,

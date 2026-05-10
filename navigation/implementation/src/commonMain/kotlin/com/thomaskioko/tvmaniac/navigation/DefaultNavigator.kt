@@ -18,6 +18,26 @@ import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 import kotlin.reflect.KClass
 
+/**
+ * Drives every navigation mutation through Decompose's `SimpleNavigation<MultiStackNavEvent>` for
+ * the multi-stack body and `SlotNavigation<NavRoute>` for overlays.
+ *
+ * Hosts call [buildHostNavigation] once per activity to attach the multi-stack tree to a
+ * [com.arkivanov.decompose.ComponentContext]; the navigator then routes every public call to the
+ * matching Decompose source. [navigateTo] dispatches by type: a [NavRoute] that also implements
+ * [OverlayRoute] activates the slot, anything else pushes onto the active tab. Tab switches go
+ * through [switchBackStack] (preserves the target's stack) or [showRoot] (clears it).
+ *
+ * The constructor validates that at least one [NavRoot] is registered. The first registered
+ * [NavRoot] becomes the initial value of [activeRoot] until [buildHostNavigation] is called or a
+ * saved state is restored.
+ *
+ * @param navRouteSerializer polymorphic serializer for [NavRoute] entries pushed onto a tab.
+ * @param navRootSerializer polymorphic serializer for [NavRoot] tab anchors.
+ * @param baseRouteSerializer combined serializer covering both routes and roots, used for the
+ *   per-tab back stacks.
+ * @param navRoots tab anchors registered through the navigation multibinding set.
+ */
 @SingleIn(ActivityScope::class)
 @ContributesBinding(ActivityScope::class)
 public class DefaultNavigator(

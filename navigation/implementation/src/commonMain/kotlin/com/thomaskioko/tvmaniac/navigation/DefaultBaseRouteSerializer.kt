@@ -11,6 +11,22 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlin.reflect.KClass
 
+/**
+ * Composes every [NavRouteBinding] and [NavRootBinding] contributed at [ActivityScope] into one
+ * polymorphic [KSerializer] of [BaseRoute].
+ *
+ * Decompose's `childStack(serializer = ...)` uses the resulting serializer when each tab's back
+ * stack mixes a [NavRoot] at the bottom with [NavRoute] entries on top. The constructor validates
+ * three invariants: at least one binding is present, every contributed [NavRoot] also has a
+ * matching [NavRootBinding], and no route or root class contributes more than one binding.
+ * Validation runs once at construction so misconfigured graphs fail at startup rather than at the
+ * first navigation event.
+ *
+ * @param routeBindings polymorphic serializer entries for each [NavRoute] subclass.
+ * @param rootBindings polymorphic serializer entries for each [NavRoot] subclass.
+ * @param navRoots tab anchors registered through the navigation multibinding set; used to verify
+ *   each has a matching [NavRootBinding].
+ */
 @OptIn(ExperimentalStateKeeperApi::class, ExperimentalSerializationApi::class)
 @SingleIn(ActivityScope::class)
 @ContributesBinding(ActivityScope::class)
