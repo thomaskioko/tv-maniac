@@ -22,12 +22,29 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.compose.components.NotificationRationaleContent
+import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.home.ui.HomeScreen
 import com.thomaskioko.tvmaniac.navigation.ui.LocalScreenContents
 import com.thomaskioko.tvmaniac.navigation.ui.ScreenContent
 import com.thomaskioko.tvmaniac.navigation.ui.SheetContent
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
+import io.github.thomaskioko.codegen.annotations.AppRootUi
 
+/**
+ * Activity-level host composable. Receives the navigation multibinding sets from the activity
+ * graph, publishes [ScreenContent] through [LocalScreenContents] for descendants, and renders
+ * [HomeScreen] directly.
+ *
+ * Annotated with [AppRootUi] so the codegen processor emits the `AppRootProvider` interface and
+ * the `AppRootContent` extension that lets the activity collapse the multi-argument call into
+ * `graph.AppRootContent()`.
+ *
+ * @param rootPresenter activity-scope root presenter from the dependency injection graph.
+ * @param screenContents screen renderers contributed across every feature `ui` module.
+ * @param sheetContents sheet renderers contributed across every sheet-owning feature `ui` module.
+ * @param modifier layout modifier applied to the surface that hosts the home screen.
+ */
+@AppRootUi(presenter = RootPresenter::class, parentScope = ActivityScope::class)
 @Composable
 public fun RootScreen(
     rootPresenter: RootPresenter,

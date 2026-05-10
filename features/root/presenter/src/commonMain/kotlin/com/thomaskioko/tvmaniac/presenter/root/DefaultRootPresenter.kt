@@ -7,6 +7,7 @@ import com.thomaskioko.root.model.DeepLinkDestination
 import com.thomaskioko.root.model.NotificationPermissionState
 import com.thomaskioko.root.model.ThemeState
 import com.thomaskioko.root.nav.NotificationRationale
+import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asStateFlow
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
@@ -39,6 +40,7 @@ import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
+import io.github.thomaskioko.codegen.annotations.AppRoot
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -54,6 +56,7 @@ import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(kotlinx.coroutines.FlowPreview::class)
+@AppRoot(parentScope = ActivityScope::class)
 @AssistedInject
 public class DefaultRootPresenter(
     @Assisted componentContext: ComponentContext,
@@ -133,6 +136,7 @@ public class DefaultRootPresenter(
 
     override val themeStateValue: Value<ThemeState> = themeState.asValue(coroutineScope)
 
+    // TODO:: Move notification rationale to it's own feature.
     override val notificationPermissionState: StateFlow<NotificationPermissionState> =
         combine(
             datastoreRepository.observeShowNotificationRationale(),

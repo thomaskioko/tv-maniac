@@ -3,6 +3,8 @@ plugins {
 }
 
 scaffold {
+    useCodegen()
+
     android {
         useCompose()
     }
