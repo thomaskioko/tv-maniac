@@ -110,6 +110,7 @@ include(
     ":core:screenshot-tests",
     ":core:syncstate:api",
     ":core:syncstate:implementation",
+    ":core:syncstate:testing",
     ":core:tasks:api",
     ":core:tasks:implementation",
     ":core:tasks:testing",

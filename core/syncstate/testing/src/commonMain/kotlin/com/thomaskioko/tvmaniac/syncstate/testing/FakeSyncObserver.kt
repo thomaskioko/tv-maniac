@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.util.testing
+package com.thomaskioko.tvmaniac.syncstate.testing
 
 import com.thomaskioko.tvmaniac.syncstate.api.SyncError
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
