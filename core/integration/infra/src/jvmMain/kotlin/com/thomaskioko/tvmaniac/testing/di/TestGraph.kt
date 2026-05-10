@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.navigation.NavDestination
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.presenter.home.di.HomeScreenGraph
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
+import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.DependencyGraph
@@ -17,6 +18,7 @@ public interface TestGraph {
     public val rootPresenterFactory: RootPresenter.Factory
     public val navDestinations: Set<NavDestination<*>>
     public val homeScreenGraphFactory: HomeScreenGraph.Factory
+    public val syncObserver: SyncObserver
 
     @DependencyGraph.Factory
     public fun interface Factory {

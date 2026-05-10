@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundWorker
 import com.thomaskioko.tvmaniac.core.tasks.api.PeriodicTaskRequest
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerFactory
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerResult
+import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
@@ -36,6 +37,7 @@ import platform.Foundation.dateWithTimeIntervalSinceNow
 public class IosTaskScheduler(
     private val workerFactory: WorkerFactory,
     @IoCoroutineScope private val appCoroutineScope: CoroutineScope,
+    private val syncObserver: SyncObserver,
     private val logger: Logger,
 ) : BackgroundTaskScheduler {
 
@@ -183,7 +185,7 @@ public class IosTaskScheduler(
         logger.debug(TAG, "Starting immediate execution of [$taskId]")
         appCoroutineScope.launch {
             try {
-                worker.doWork()
+                worker.runTracked(taskId)
                 logger.debug(TAG, "Immediate execution of [$taskId] completed")
             } catch (e: CancellationException) {
                 throw e
@@ -230,7 +232,7 @@ public class IosTaskScheduler(
 
         appCoroutineScope.launch {
             try {
-                val result = worker.doWork()
+                val result = worker.runTracked(taskId)
                 val success = result is WorkerResult.Success
                 completeTask(success)
                 logger.debug(TAG, "Task [$taskId] completed with result: $result")
@@ -242,6 +244,13 @@ public class IosTaskScheduler(
             }
         }
     }
+
+    private suspend fun BackgroundWorker.runTracked(taskId: String): WorkerResult =
+        if (isLibrarySyncWork) {
+            syncObserver.trackSync(taskId) { doWork() }
+        } else {
+            doWork()
+        }
 
     private fun logPendingRequests(reason: String) {
         scheduler.getPendingTaskRequestsWithCompletionHandler { array ->
