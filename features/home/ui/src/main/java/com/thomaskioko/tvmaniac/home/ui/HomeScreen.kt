@@ -31,9 +31,6 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomNavigationItem
 import com.thomaskioko.tvmaniac.compose.components.TvManiacNavigationBar
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot
-import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowsPresenter
-import com.thomaskioko.tvmaniac.discover.ui.DiscoverScreen
-import com.thomaskioko.tvmaniac.home.nav.TabChild
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_discover
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_library
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_profile
@@ -46,16 +43,10 @@ import com.thomaskioko.tvmaniac.navigation.RootChild
 import com.thomaskioko.tvmaniac.navigation.stableKey
 import com.thomaskioko.tvmaniac.navigation.ui.LocalScreenContents
 import com.thomaskioko.tvmaniac.navigation.ui.ScreenContent
-import com.thomaskioko.tvmaniac.presentation.library.LibraryPresenter
-import com.thomaskioko.tvmaniac.presentation.progress.ProgressPresenter
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.profile.nav.ProfileRoot
-import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
-import com.thomaskioko.tvmaniac.profile.ui.ProfileScreen
 import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
-import com.thomaskioko.tvmaniac.ui.library.LibraryScreen
-import com.thomaskioko.tvmaniac.ui.progress.ProgressScreen
 import io.github.thomaskioko.codegen.annotations.ScreenUi
 
 @ScreenUi(presenter = HomePresenter::class, parentScope = ActivityScope::class)
@@ -96,22 +87,8 @@ private fun TabPane(
         stack = stack,
     ) { child ->
         val instance = child.instance
-        val fillMaxSizeModifier = Modifier.fillMaxSize()
-        if (instance is TabChild<*>) {
-            when (val tabPresenter = instance.presenter) {
-                is DiscoverShowsPresenter ->
-                    DiscoverScreen(presenter = tabPresenter, modifier = fillMaxSizeModifier)
-                is ProgressPresenter ->
-                    ProgressScreen(presenter = tabPresenter, modifier = fillMaxSizeModifier)
-                is LibraryPresenter ->
-                    LibraryScreen(presenter = tabPresenter, modifier = fillMaxSizeModifier)
-                is ProfilePresenter ->
-                    ProfileScreen(presenter = tabPresenter, modifier = fillMaxSizeModifier)
-            }
-        } else {
-            val renderer = screenContents.firstOrNull { it.matches(instance) } ?: return@Children
-            renderer.content(instance, fillMaxSizeModifier)
-        }
+        val renderer = screenContents.firstOrNull { it.matches(instance) } ?: return@Children
+        renderer.content(instance, Modifier.fillMaxSize())
     }
 }
 
