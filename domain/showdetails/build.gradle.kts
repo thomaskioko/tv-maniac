@@ -30,6 +30,7 @@ kotlin {
                 implementation(projects.core.logger.api)
 
                 implementation(projects.core.base)
+                implementation(projects.core.syncstate.api)
                 implementation(projects.core.util.api)
 
                 implementation(libs.coroutines.core)

@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.core.view.InvokeError
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import dev.zacsweers.metro.Inject
@@ -20,6 +21,7 @@ import kotlinx.coroutines.launch
 @Inject
 public class UpNextTasksInitializer(
     private val scheduler: BackgroundTaskScheduler,
+    private val syncObserver: SyncObserver,
     private val logger: Logger,
     @IoCoroutineScope private val coroutineScope: CoroutineScope,
     refreshUpNextInteractor: Lazy<RefreshUpNextInteractor>,
@@ -43,13 +45,15 @@ public class UpNextTasksInitializer(
                 .drop(1)
                 .filter { it == TraktAuthState.LOGGED_IN }
                 .collect {
-                    upNextInteractor(true)
-                        .onEach { status ->
-                            if (status is InvokeError) {
-                                logger.error(TAG, "Up next sync failed on login: ${status.throwable.message}")
+                    syncObserver.trackSync(POST_LOGIN_OPERATION_ID) {
+                        upNextInteractor(true)
+                            .onEach { status ->
+                                if (status is InvokeError) {
+                                    logger.error(TAG, "Up next sync failed on login: ${status.throwable.message}")
+                                }
                             }
-                        }
-                        .collect()
+                            .collect()
+                    }
                 }
         }
     }
@@ -80,5 +84,6 @@ public class UpNextTasksInitializer(
 
     private companion object {
         private const val TAG = "UpNextTasksInitializer"
+        private const val POST_LOGIN_OPERATION_ID = "PostLoginUpNextSync"
     }
 }

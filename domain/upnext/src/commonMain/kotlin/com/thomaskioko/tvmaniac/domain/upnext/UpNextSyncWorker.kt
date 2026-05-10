@@ -5,6 +5,8 @@ import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundWorker
 import com.thomaskioko.tvmaniac.core.tasks.api.PeriodicTaskRequest
 import com.thomaskioko.tvmaniac.core.tasks.api.TaskConstraints
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerResult
+import com.thomaskioko.tvmaniac.syncstate.api.SyncError
+import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoSet
@@ -16,6 +18,7 @@ import kotlinx.coroutines.CancellationException
 public class UpNextSyncWorker(
     private val refreshUpNextInteractor: Lazy<RefreshUpNextInteractor>,
     private val traktAuthRepository: Lazy<TraktAuthRepository>,
+    private val syncObserver: SyncObserver,
     private val logger: Logger,
 ) : BackgroundWorker {
 
@@ -38,6 +41,7 @@ public class UpNextSyncWorker(
             WorkerResult.Retry("Cancelled, will retry")
         } catch (e: Exception) {
             logger.error(TAG, "Up next sync failed: ${e.message}")
+            syncObserver.log(SyncError.BackgroundSyncFailed(WORKER_NAME, e))
             WorkerResult.Failure(e.message)
         }
     }

@@ -22,6 +22,8 @@ public class TokenRefreshWorker(
 
     override val workerName: String = WORKER_NAME
 
+    override val isLibrarySyncWork: Boolean = false
+
     override suspend fun doWork(): WorkerResult {
         logger.debug(TAG, "Token refresh running")
         val authState = traktAuthRepository.value.getAuthState() ?: return WorkerResult.Success

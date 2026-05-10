@@ -1,10 +1,13 @@
 package com.thomaskioko.tvmaniac.domain.episode
 
+import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerResult
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
+import com.thomaskioko.tvmaniac.syncstate.api.SyncError
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
+import com.thomaskioko.tvmaniac.util.testing.FakeSyncObserver
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.test.runTest
@@ -14,11 +17,13 @@ internal class PendingUploadsWorkerTest {
 
     private val syncRepository = FakeWatchedEpisodeSyncRepository()
     private val authRepository = FakeTraktAuthRepository()
+    private val syncObserver = FakeSyncObserver()
     private val logger = FakeLogger()
 
     private val worker = PendingUploadsWorker(
         syncRepository = lazy { syncRepository },
         traktAuthRepository = lazy { authRepository },
+        syncObserver = syncObserver,
         logger = logger,
     )
 
@@ -62,5 +67,20 @@ internal class PendingUploadsWorkerTest {
 
         syncRepository.setPendingEpisodesError(null)
         worker.doWork().shouldBeInstanceOf<WorkerResult.Success>()
+    }
+
+    @Test
+    fun `should log BackgroundSyncFailed given syncPendingEpisodes throws`() = runTest {
+        authRepository.setState(TraktAuthState.LOGGED_IN)
+        val cause = RuntimeException("rate limit 429")
+        syncRepository.setPendingEpisodesError(cause)
+
+        syncObserver.errors.test {
+            worker.doWork().shouldBeInstanceOf<WorkerResult.Retry>()
+            val event = awaitItem()
+            event.shouldBeInstanceOf<SyncError.BackgroundSyncFailed>()
+            event.operationId shouldBe PendingUploadsWorker.WORKER_NAME
+            event.cause shouldBe cause
+        }
     }
 }

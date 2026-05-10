@@ -6,6 +6,8 @@ import com.thomaskioko.tvmaniac.core.tasks.api.PeriodicTaskRequest
 import com.thomaskioko.tvmaniac.core.tasks.api.TaskConstraints
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerResult
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
+import com.thomaskioko.tvmaniac.syncstate.api.SyncError
+import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoSet
@@ -34,6 +36,7 @@ import kotlinx.coroutines.CancellationException
 public class PendingUploadsWorker(
     private val syncRepository: Lazy<WatchedEpisodeSyncRepository>,
     private val traktAuthRepository: Lazy<TraktAuthRepository>,
+    private val syncObserver: SyncObserver,
     private val logger: Logger,
 ) : BackgroundWorker {
 
@@ -56,6 +59,7 @@ public class PendingUploadsWorker(
             WorkerResult.Retry("Cancelled, will retry")
         } catch (exception: Exception) {
             logger.error(TAG, "Pending uploads sync failed: ${exception.message}")
+            syncObserver.log(SyncError.BackgroundSyncFailed(WORKER_NAME, exception))
             WorkerResult.Retry(exception.message ?: "Pending uploads sync failed")
         }
     }

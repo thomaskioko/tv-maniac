@@ -13,8 +13,8 @@ import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
-import com.thomaskioko.tvmaniac.util.api.SyncError
-import com.thomaskioko.tvmaniac.util.api.SyncErrorChannel
+import com.thomaskioko.tvmaniac.syncstate.api.SyncError
+import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
@@ -36,7 +36,7 @@ public class DefaultEpisodeRepository(
     private val dispatchers: AppCoroutineDispatchers,
     private val upcomingEpisodesStore: UpcomingEpisodesStore,
     private val appScopeLauncher: AppScopeLauncher,
-    private val syncErrorChannel: SyncErrorChannel,
+    private val syncObserver: SyncObserver,
 ) : EpisodeRepository {
 
     override fun observeEpisodeById(episodeId: Long): Flow<EpisodeById?> =
@@ -204,7 +204,7 @@ public class DefaultEpisodeRepository(
             } catch (cancellation: CancellationException) {
                 throw cancellation
             } catch (throwable: Throwable) {
-                syncErrorChannel.log(errorFor(throwable))
+                syncObserver.log(errorFor(throwable))
                 throw throwable
             }
         }

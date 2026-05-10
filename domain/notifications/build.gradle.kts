@@ -20,6 +20,7 @@ kotlin {
                 implementation(projects.data.seasons.api)
                 implementation(projects.core.logger.api)
                 implementation(projects.core.networkUtil.api)
+                implementation(projects.core.syncstate.api)
                 implementation(projects.i18n.api)
                 implementation(projects.core.notifications.api)
                 implementation(projects.core.util.api)
