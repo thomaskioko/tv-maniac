@@ -3,7 +3,7 @@ plugins {
 }
 
 scaffold {
-    useMetro()
+    useCodegen()
     optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
 }
 
@@ -15,6 +15,7 @@ kotlin {
                 implementation(projects.navigation.api)
                 implementation(projects.features.showDetails.nav)
                 implementation(projects.features.seasonDetails.nav)
+                implementation(projects.features.watchlist.nav)
                 implementation(projects.core.base)
                 implementation(projects.core.logger.api)
                 implementation(projects.core.util.api)

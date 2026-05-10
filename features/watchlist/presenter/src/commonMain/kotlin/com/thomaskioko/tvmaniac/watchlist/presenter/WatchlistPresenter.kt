@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.watchlist.presenter
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
@@ -22,9 +23,10 @@ import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
-import dev.zacsweers.metro.Assisted
-import dev.zacsweers.metro.AssistedFactory
-import dev.zacsweers.metro.AssistedInject
+import com.thomaskioko.tvmaniac.watchlist.nav.WatchlistRoute
+import dev.zacsweers.metro.Inject
+import io.github.thomaskioko.codegen.annotations.DestinationKind
+import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -32,9 +34,14 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-@AssistedInject
+@NavDestination(
+    route = WatchlistRoute::class,
+    parentScope = ActivityScope::class,
+    kind = DestinationKind.SCREEN,
+)
+@Inject
 public class WatchlistPresenter(
-    @Assisted componentContext: ComponentContext,
+    componentContext: ComponentContext,
     private val navigator: Navigator,
     private val repository: WatchlistRepository,
     private val unfollowShowInteractor: UnfollowShowInteractor,
@@ -170,12 +177,5 @@ public class WatchlistPresenter(
             watchlistSyncInteractor(WatchlistSyncInteractor.Param(forceRefresh))
                 .collectStatus(watchlistLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         }
-    }
-
-    @AssistedFactory
-    public fun interface Factory {
-        public fun create(
-            componentContext: ComponentContext,
-        ): WatchlistPresenter
     }
 }
