@@ -8,7 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.thomaskioko.tvmaniac.app.di.ActivityGraph
 import com.thomaskioko.tvmaniac.app.test.TvManiacTestApplication
-import com.thomaskioko.tvmaniac.app.ui.RootScreen
+import com.thomaskioko.tvmaniac.app.ui.di.AppRootContent
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.util.LocalAutoAdvanceEnabled
 import dev.zacsweers.metro.asContribution
@@ -28,11 +28,7 @@ internal class TvManiacTestActivity : ComponentActivity() {
             val themeState by activityGraph.rootPresenter.themeState.collectAsState()
             TvManiacTheme(appTheme = themeState.appTheme) {
                 CompositionLocalProvider(LocalAutoAdvanceEnabled provides false) {
-                    RootScreen(
-                        rootPresenter = activityGraph.rootPresenter,
-                        screenContents = activityGraph.screenContents,
-                        sheetContents = activityGraph.sheetContents,
-                    )
+                    activityGraph.AppRootContent()
                 }
             }
         }

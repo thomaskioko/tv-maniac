@@ -4,6 +4,7 @@ import androidx.activity.ComponentActivity
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.defaultComponentContext
 import com.thomaskioko.tvmaniac.app.TvManicApplication
+import com.thomaskioko.tvmaniac.app.ui.di.AppRootProvider
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.navigation.NavDestination
 import com.thomaskioko.tvmaniac.navigation.NavRouteBinding
@@ -21,12 +22,12 @@ import dev.zacsweers.metro.asContribution
 
 @GraphExtension(ActivityScope::class)
 @SingleIn(ActivityScope::class)
-public interface ActivityGraph {
+public interface ActivityGraph : AppRootProvider {
     public val traktAuthManager: TraktAuthManager
-    public val rootPresenter: RootPresenter
+    override val rootPresenter: RootPresenter
     public val navigator: Navigator
-    public val screenContents: Set<ScreenContent>
-    public val sheetContents: Set<SheetContent>
+    override val screenContents: Set<ScreenContent>
+    override val sheetContents: Set<SheetContent>
     public val navDestinations: Set<NavDestination<*>>
     public val navRouteBindings: Set<NavRouteBinding<*>>
 
