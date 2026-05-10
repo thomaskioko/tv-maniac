@@ -1,6 +1,9 @@
 package com.thomaskioko.tvmaniac.syncstate
 
+import app.cash.turbine.test
+import com.thomaskioko.tvmaniac.syncstate.api.SyncError
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -91,6 +94,41 @@ internal class DefaultSyncObserverTest {
 
         deferred.cancel()
         deferred.join()
+
+        underTest.isSyncing.value shouldBe false
+    }
+
+    @Test
+    fun `should emit BackgroundSyncFailed given block throws non-cancellation exception`() = runTest {
+        val cause = IllegalStateException("rate limit 429")
+
+        underTest.errors.test {
+            assertFailsWith<IllegalStateException> {
+                underTest.trackSync("library-sync") { throw cause }
+            }
+
+            val event = awaitItem()
+            event.shouldBeInstanceOf<SyncError.BackgroundSyncFailed>()
+            event.operationId shouldBe "library-sync"
+            event.cause shouldBe cause
+        }
+
+        underTest.isSyncing.value shouldBe false
+    }
+
+    @Test
+    fun `should not emit BackgroundSyncFailed given block is cancelled`() = runTest {
+        underTest.errors.test {
+            val deferred = async {
+                underTest.trackSync("op-1") { CompletableDeferred<Unit>().await() }
+            }
+            runCurrent()
+
+            deferred.cancel()
+            deferred.join()
+
+            expectNoEvents()
+        }
 
         underTest.isSyncing.value shouldBe false
     }
