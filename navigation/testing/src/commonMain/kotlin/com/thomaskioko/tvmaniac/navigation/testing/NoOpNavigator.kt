@@ -16,13 +16,15 @@ import com.thomaskioko.tvmaniac.navigation.Navigator
 import kotlin.reflect.KClass
 
 /**
- * [Navigator] that ignores every navigation call. Use in presenter tests where the test does not
- * assert on navigation events (only on state, side effects, etc.). Tests that want to verify
- * navigation calls should use [TestNavigator] instead.
+ * [Navigator] that ignores every navigation call. Use in presenter tests that do not assert on
+ * navigation events and only check state or side effects. Tests that need to verify navigation
+ * calls should use [TestNavigator] instead.
  *
  * [activeRoot] returns [UnspecifiedNavRoot] unless an explicit [initialActiveRoot] is supplied.
  * [buildHostNavigation] returns a constant [Value] containing only the initial root entry; no
  * mutation calls are recorded.
+ *
+ * @property initialActiveRoot value reported by [activeRoot] for the lifetime of this navigator.
  */
 public class NoOpNavigator(
     private val initialActiveRoot: NavRoot = UnspecifiedNavRoot,

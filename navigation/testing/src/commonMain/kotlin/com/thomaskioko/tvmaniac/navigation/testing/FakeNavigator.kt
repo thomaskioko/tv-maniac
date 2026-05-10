@@ -26,7 +26,10 @@ import kotlin.reflect.KClass
  * last activated overlay) rather than the precise sequence of calls.
  *
  * Pass [initialActiveRoot] when the test observes [activeRoot] before any tab interaction.
- * Otherwise the fake reports [UnspecifiedNavRoot] until the first switch / show / replace call.
+ * Otherwise the fake reports [UnspecifiedNavRoot] until the first switch, show, or replace call.
+ *
+ * @param initialActiveRoot value reported by [activeRoot] until a switch, show, or replace call
+ *   updates it.
  */
 public class FakeNavigator(
     initialActiveRoot: NavRoot = UnspecifiedNavRoot,

@@ -22,14 +22,18 @@ import kotlin.reflect.KClass
 
 /**
  * [Navigator] implementation for unit tests that records every call as a [NavEvent] and exposes
- * them via [events]. No real stack mutation happens; feature-specific navigators that delegate to
- * [Navigator] can be wired directly to this fake to assert on the routes they push.
+ * them through [events]. No real stack mutation happens; feature-specific navigators that delegate
+ * to [Navigator] can be connected directly to this fake to assert on the routes they push.
  *
  * Consume events through [Navigator.test] or [Navigator.testIn] rather than subscribing to
  * [events] directly so unconsumed events fail the enclosing test.
  *
  * Pass [initialActiveRoot] when the test observes [activeRoot]. Otherwise the navigator reports
- * [UnspecifiedNavRoot] until the first [switchBackStack] / [showRoot] / [replaceAllBackStacks].
+ * [UnspecifiedNavRoot] until the first [switchBackStack], [showRoot], or [replaceAllBackStacks]
+ * call.
+ *
+ * @param initialActiveRoot value reported by [activeRoot] until a switch, show, or replace call
+ *   updates it.
  */
 public class TestNavigator(
     initialActiveRoot: NavRoot = UnspecifiedNavRoot,
