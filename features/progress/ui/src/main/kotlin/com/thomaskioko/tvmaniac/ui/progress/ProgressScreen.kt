@@ -37,6 +37,7 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
+import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_discover_up_next
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_progress
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_calendar
@@ -54,9 +55,11 @@ import com.thomaskioko.tvmaniac.presentation.upnext.model.UpNextEpisodeUiModel
 import com.thomaskioko.tvmaniac.testtags.progress.ProgressTestTags
 import com.thomaskioko.tvmaniac.ui.calendar.CalendarScreen
 import com.thomaskioko.tvmaniac.ui.upnext.UpNextScreen
+import io.github.thomaskioko.codegen.annotations.TabUi
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
+@TabUi(presenter = ProgressPresenter::class, parentScope = ActivityScope::class)
 @Composable
 public fun ProgressScreen(
     presenter: ProgressPresenter,

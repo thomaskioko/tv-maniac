@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
  * Each [NavigationResultRequest.Key] is backed by a capacity-1 [Channel] with [BufferOverflow.DROP_OLDEST]
  * semantics: a newer delivery replaces any unconsumed prior value for the same key, and the first
  * collector consumes the value exactly once. Only one logical collector per key is supported, which
- * matches the per-destination lifecycle that drives navigation-for-result flows.
+ * matches the lifecycle of each navigation destination.
  *
  * The registry is activity-scoped and expected to be accessed from the main thread, which matches
  * where navigation calls originate. No explicit synchronization is applied to the key map.

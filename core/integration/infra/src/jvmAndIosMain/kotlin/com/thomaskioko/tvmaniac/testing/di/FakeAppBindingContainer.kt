@@ -1,10 +1,6 @@
 package com.thomaskioko.tvmaniac.testing.di
 
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.router.slot.SlotNavigation
-import com.arkivanov.decompose.router.slot.activate
-import com.arkivanov.decompose.router.slot.dismiss
-import com.arkivanov.decompose.router.stack.StackNavigation
 import com.thomaskioko.tvmaniac.appconfig.ApplicationInfo
 import com.thomaskioko.tvmaniac.appconfig.Platform
 import com.thomaskioko.tvmaniac.core.base.ComputationCoroutineScope
@@ -14,35 +10,32 @@ import com.thomaskioko.tvmaniac.core.base.TmdbApi
 import com.thomaskioko.tvmaniac.core.base.TraktApi
 import com.thomaskioko.tvmaniac.core.base.di.BaseBindingContainer
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.discover.nav.DiscoverNavigator
-import com.thomaskioko.tvmaniac.discover.presenter.di.DefaultDiscoverNavigator
+import com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot
 import com.thomaskioko.tvmaniac.domain.episode.PendingUploadsWorker
 import com.thomaskioko.tvmaniac.domain.library.LibrarySyncWorker
 import com.thomaskioko.tvmaniac.domain.notifications.EpisodeNotificationWorker
 import com.thomaskioko.tvmaniac.domain.upnext.UpNextSyncWorker
-import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetConfig
 import com.thomaskioko.tvmaniac.genreshows.nav.GenreShowsRoute
-import com.thomaskioko.tvmaniac.home.nav.HomeTabNavigator
-import com.thomaskioko.tvmaniac.home.nav.di.model.HomeConfig
+import com.thomaskioko.tvmaniac.library.nav.LibraryRoot
+import com.thomaskioko.tvmaniac.navigation.BaseRouteSerializer
+import com.thomaskioko.tvmaniac.navigation.DefaultBaseRouteSerializer
+import com.thomaskioko.tvmaniac.navigation.DefaultNavRootSerializer
 import com.thomaskioko.tvmaniac.navigation.DefaultNavRouteSerializer
 import com.thomaskioko.tvmaniac.navigation.DefaultNavigator
-import com.thomaskioko.tvmaniac.navigation.DefaultSheetConfigSerializer
 import com.thomaskioko.tvmaniac.navigation.NavDestination
+import com.thomaskioko.tvmaniac.navigation.NavRoot
+import com.thomaskioko.tvmaniac.navigation.NavRootBinding
+import com.thomaskioko.tvmaniac.navigation.NavRootSerializer
 import com.thomaskioko.tvmaniac.navigation.NavRoute
 import com.thomaskioko.tvmaniac.navigation.NavRouteBinding
 import com.thomaskioko.tvmaniac.navigation.NavRouteSerializer
 import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.navigation.OverlayRoute
 import com.thomaskioko.tvmaniac.navigation.RootChild
-import com.thomaskioko.tvmaniac.navigation.SheetChild
-import com.thomaskioko.tvmaniac.navigation.SheetChildFactory
-import com.thomaskioko.tvmaniac.navigation.SheetConfig
-import com.thomaskioko.tvmaniac.navigation.SheetConfigBinding
-import com.thomaskioko.tvmaniac.navigation.SheetConfigSerializer
-import com.thomaskioko.tvmaniac.navigation.SheetNavigator
-import com.thomaskioko.tvmaniac.presenter.home.di.DefaultHomeTabNavigator
 import com.thomaskioko.tvmaniac.presenter.root.DefaultRootPresenter
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
-import com.thomaskioko.tvmaniac.presenter.root.di.DefaultSheetNavigator
+import com.thomaskioko.tvmaniac.profile.nav.ProfileRoot
+import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
 import com.thomaskioko.tvmaniac.traktauth.implementation.TokenRefreshWorker
 import com.thomaskioko.tvmaniac.util.api.AppUtils
 import dev.zacsweers.metro.AppScope
@@ -69,9 +62,6 @@ import kotlinx.coroutines.flow.flowOf
         PendingUploadsWorker::class,
         TokenRefreshWorker::class,
         UpNextSyncWorker::class,
-        DefaultSheetNavigator::class,
-        DefaultDiscoverNavigator::class,
-        DefaultHomeTabNavigator::class,
     ],
 )
 public object FakeAppBindingContainer {
@@ -139,49 +129,25 @@ public object FakeAppBindingContainer {
 
     @Provides
     @SingleIn(AppScope::class)
-    public fun provideSheetNavigator(): SheetNavigator =
-        object : SheetNavigator {
-            private val slotNavigation = SlotNavigation<SheetConfig>()
-            override fun activate(config: SheetConfig) {
-                slotNavigation.activate(config)
-            }
-            override fun dismiss() {
-                slotNavigation.dismiss()
-            }
-            override fun getSlotNavigation(): SlotNavigation<SheetConfig> = slotNavigation
-        }
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideDiscoverNavigator(): DiscoverNavigator =
-        object : DiscoverNavigator {
-            override fun showDetails(traktId: Long) {}
-            override fun showMoreShows(categoryId: Long) {}
-            override fun showSearch() {}
-            override fun showUpNext() {}
-            override fun showEpisodeSheet(showTraktId: Long, episodeId: Long) {}
-            override fun showSeason(showTraktId: Long, seasonId: Long, seasonNumber: Long) {}
-        }
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideHomeTabController(): HomeTabNavigator =
-        object : HomeTabNavigator {
-            override fun registerNavigation(navigation: StackNavigation<HomeConfig>) {}
-            override fun unregisterNavigation() {}
-            override fun switchToProgressTab() {}
-        }
-
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideNavDestinations(): Set<NavDestination> = setOf(
-        object : NavDestination {
-            override fun matches(route: NavRoute): Boolean = true
-            override fun createChild(
-                route: NavRoute,
-                componentContext: ComponentContext,
-            ): RootChild = object : RootChild {}
-        },
+    public fun provideNavDestinations(): Set<NavDestination<*>> = setOf(
+        NavDestination.Screen(
+            routeClass = NavRoute::class,
+        ) { _: NavRoute, _: ComponentContext -> object : RootChild {} },
+        NavDestination.Overlay(
+            routeClass = OverlayRoute::class,
+        ) { _: NavRoute, _: ComponentContext -> object : RootChild {} },
+        NavDestination.TabRoot(
+            routeClass = DiscoverRoot::class,
+        ) { _: DiscoverRoot, _: ComponentContext -> object : RootChild {} },
+        NavDestination.TabRoot(
+            routeClass = LibraryRoot::class,
+        ) { _: LibraryRoot, _: ComponentContext -> object : RootChild {} },
+        NavDestination.TabRoot(
+            routeClass = ProfileRoot::class,
+        ) { _: ProfileRoot, _: ComponentContext -> object : RootChild {} },
+        NavDestination.TabRoot(
+            routeClass = ProgressRoot::class,
+        ) { _: ProgressRoot, _: ComponentContext -> object : RootChild {} },
     )
 
     @Provides
@@ -198,31 +164,61 @@ public object FakeAppBindingContainer {
 
     @Provides
     @SingleIn(AppScope::class)
-    public fun provideSheetChildFactories(): Set<SheetChildFactory> = setOf(
-        object : SheetChildFactory {
-            override fun matches(config: SheetConfig): Boolean = config is EpisodeSheetConfig
-            override fun createChild(
-                config: SheetConfig,
-                componentContext: ComponentContext,
-            ): SheetChild = object : SheetChild {}
-        },
+    public fun provideNavRoots(): Set<NavRoot> = setOf(
+        DiscoverRoot,
+        LibraryRoot,
+        ProfileRoot,
+        ProgressRoot,
     )
 
     @Provides
     @SingleIn(AppScope::class)
-    public fun provideSheetConfigBindings(): Set<SheetConfigBinding<*>> = setOf(
-        SheetConfigBinding(EpisodeSheetConfig::class, EpisodeSheetConfig.serializer()),
+    public fun provideNavRootBindings(): Set<NavRootBinding<*>> = setOf(
+        NavRootBinding(
+            DiscoverRoot::class,
+            DiscoverRoot.serializer(),
+        ),
+        NavRootBinding(
+            LibraryRoot::class,
+            LibraryRoot.serializer(),
+        ),
+        NavRootBinding(
+            ProfileRoot::class,
+            ProfileRoot.serializer(),
+        ),
+        NavRootBinding(
+            ProgressRoot::class,
+            ProgressRoot.serializer(),
+        ),
     )
 
     @Provides
     @SingleIn(AppScope::class)
-    public fun provideSheetConfigSerializer(
-        bindings: Set<SheetConfigBinding<*>>,
-    ): SheetConfigSerializer = DefaultSheetConfigSerializer(bindings)
+    public fun provideNavRootSerializer(
+        bindings: Set<NavRootBinding<*>>,
+    ): NavRootSerializer = DefaultNavRootSerializer(bindings)
 
     @Provides
     @SingleIn(AppScope::class)
-    public fun provideRootNavigator(): Navigator = DefaultNavigator()
+    public fun provideBaseRouteSerializer(
+        routeBindings: Set<NavRouteBinding<*>>,
+        rootBindings: Set<NavRootBinding<*>>,
+        navRoots: Set<NavRoot>,
+    ): BaseRouteSerializer = DefaultBaseRouteSerializer(routeBindings, rootBindings, navRoots)
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideRootNavigator(
+        navRouteSerializer: NavRouteSerializer,
+        navRootSerializer: NavRootSerializer,
+        baseRouteSerializer: BaseRouteSerializer,
+        navRoots: Set<NavRoot>,
+    ): Navigator = DefaultNavigator(
+        navRouteSerializer = navRouteSerializer,
+        navRootSerializer = navRootSerializer,
+        baseRouteSerializer = baseRouteSerializer,
+        navRoots = navRoots,
+    )
 
     @Provides
     public fun provideRootPresenterFactory(

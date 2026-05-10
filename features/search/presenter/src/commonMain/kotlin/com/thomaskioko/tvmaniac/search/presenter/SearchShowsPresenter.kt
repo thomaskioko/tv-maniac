@@ -23,7 +23,8 @@ import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import dev.zacsweers.metro.Inject
-import io.github.thomaskioko.codegen.annotations.NavScreen
+import io.github.thomaskioko.codegen.annotations.DestinationKind
+import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -42,8 +43,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+@NavDestination(
+    route = SearchRoute::class,
+    parentScope = ActivityScope::class,
+    kind = DestinationKind.SCREEN,
+)
 @Inject
-@NavScreen(route = SearchRoute::class, parentScope = ActivityScope::class)
 public class SearchShowsPresenter(
     componentContext: ComponentContext,
     private val navigator: Navigator,
@@ -116,7 +121,7 @@ public class SearchShowsPresenter(
 
         fun dispatch(action: SearchShowAction) {
             when (action) {
-                BackClicked -> navigator.pop()
+                BackClicked -> navigator.navigateBack()
 
                 is MessageShown -> {
                     coroutineScope.launch { uiMessageManager.clearMessage(action.id) }
@@ -138,7 +143,7 @@ public class SearchShowsPresenter(
                 }
 
                 is QueryChanged -> handleQueryChange(action.query)
-                is SearchShowClicked -> navigator.pushNew(ShowDetailsRoute(ShowDetailsParam(id = action.id)))
+                is SearchShowClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(id = action.id)))
             }
         }
 

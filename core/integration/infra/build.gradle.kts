@@ -43,6 +43,7 @@ kotlin {
             api(projects.core.view)
             api(projects.navigation.api)
             api(projects.navigation.implementation)
+            api(projects.navigation.testing)
             api(projects.features.root.presenter)
             api(projects.core.locale.api)
             api(projects.core.locale.testing)
@@ -77,6 +78,9 @@ kotlin {
             api(projects.features.discover.nav)
             api(projects.features.episodeSheet.nav)
             api(projects.features.genreShows.nav)
+            api(projects.features.library.nav)
+            api(projects.features.profile.nav)
+            api(projects.features.progress.nav)
             api(projects.features.settings.presenter)
             api(projects.features.watchlist.presenter)
             api(projects.features.library.presenter)
@@ -152,6 +156,7 @@ kotlin {
         }
 
         getByName("jvmAndIosMain").dependencies {
+            api(projects.data.datastore.testing)
             api(projects.data.requestManager.testing)
             api(projects.data.syncActivity.testing)
             api(projects.data.traktlists.testing)

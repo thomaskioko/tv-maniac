@@ -3,9 +3,11 @@ package com.thomaskioko.tvmaniac.navigation.testing
 import app.cash.turbine.ReceiveTurbine
 import app.cash.turbine.test
 import app.cash.turbine.testIn
+import com.thomaskioko.tvmaniac.navigation.NavRoot
 import com.thomaskioko.tvmaniac.navigation.NavRoute
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import kotlinx.coroutines.CoroutineScope
+import kotlin.reflect.KClass
 import kotlin.time.Duration
 
 /**
@@ -18,11 +20,11 @@ public class NavigatorTurbine internal constructor(
     private val turbine: ReceiveTurbine<NavEvent>,
 ) {
 
-    /** Suspends until the next event; fails if it is not [NavEvent.PushNew] with [route]. */
-    public suspend fun awaitPushNew(route: NavRoute) {
-        awaitTyped<NavEvent.PushNew>().let { event ->
+    /** Suspends until the next event; fails if it is not [NavEvent.NavigateTo] with [route]. */
+    public suspend fun awaitNavigateTo(route: NavRoute) {
+        awaitTyped<NavEvent.NavigateTo>().let { event ->
             check(event.route == route) {
-                "Expected PushNew(route=$route) but was PushNew(route=${event.route})"
+                "Expected NavigateTo(route=$route) but was NavigateTo(route=${event.route})"
             }
         }
     }
@@ -45,9 +47,26 @@ public class NavigatorTurbine internal constructor(
         }
     }
 
-    /** Suspends until the next event; fails if it is not [NavEvent.Pop]. */
-    public suspend fun awaitPop() {
-        awaitTyped<NavEvent.Pop>()
+    /** Suspends until the next event; fails if it is not [NavEvent.NavigateBack]. */
+    public suspend fun awaitNavigateBack() {
+        awaitTyped<NavEvent.NavigateBack>()
+    }
+
+    /**
+     * Suspends until the next event; fails if it is not [NavEvent.NavigateBackTo] with the
+     * matching [routeClass] and [inclusive].
+     */
+    public suspend fun awaitNavigateBackTo(routeClass: KClass<out NavRoute>, inclusive: Boolean = false) {
+        awaitTyped<NavEvent.NavigateBackTo>().let { event ->
+            check(event.routeClass == routeClass && event.inclusive == inclusive) {
+                "Expected NavigateBackTo(routeClass=$routeClass, inclusive=$inclusive) but was $event"
+            }
+        }
+    }
+
+    /** Type-safe overload of [awaitNavigateBackTo]. */
+    public suspend inline fun <reified T : NavRoute> awaitNavigateBackTo(inclusive: Boolean = false) {
+        awaitNavigateBackTo(T::class, inclusive)
     }
 
     /** Suspends until the next event; fails if it is not [NavEvent.PopTo] with [index]. */
@@ -55,6 +74,33 @@ public class NavigatorTurbine internal constructor(
         awaitTyped<NavEvent.PopTo>().let { event ->
             check(event.index == index) {
                 "Expected PopTo(index=$index) but was PopTo(index=${event.index})"
+            }
+        }
+    }
+
+    /** Suspends until the next event; fails if it is not [NavEvent.SwitchBackStack] with [root]. */
+    public suspend fun awaitSwitchBackStack(root: NavRoot) {
+        awaitTyped<NavEvent.SwitchBackStack>().let { event ->
+            check(event.root == root) {
+                "Expected SwitchBackStack(root=$root) but was SwitchBackStack(root=${event.root})"
+            }
+        }
+    }
+
+    /** Suspends until the next event; fails if it is not [NavEvent.ShowRoot] with [root]. */
+    public suspend fun awaitShowRoot(root: NavRoot) {
+        awaitTyped<NavEvent.ShowRoot>().let { event ->
+            check(event.root == root) {
+                "Expected ShowRoot(root=$root) but was ShowRoot(root=${event.root})"
+            }
+        }
+    }
+
+    /** Suspends until the next event; fails if it is not [NavEvent.ReplaceAllBackStacks] with [root]. */
+    public suspend fun awaitReplaceAllBackStacks(root: NavRoot) {
+        awaitTyped<NavEvent.ReplaceAllBackStacks>().let { event ->
+            check(event.root == root) {
+                "Expected ReplaceAllBackStacks(root=$root) but was ReplaceAllBackStacks(root=${event.root})"
             }
         }
     }
@@ -76,6 +122,9 @@ public class NavigatorTurbine internal constructor(
     public suspend fun cancelAndIgnoreRemainingEvents() {
         turbine.cancelAndIgnoreRemainingEvents()
     }
+
+    @PublishedApi
+    internal suspend fun awaitItem(): NavEvent = turbine.awaitItem()
 
     private suspend inline fun <reified T : NavEvent> awaitTyped(): T {
         val event = turbine.awaitItem()

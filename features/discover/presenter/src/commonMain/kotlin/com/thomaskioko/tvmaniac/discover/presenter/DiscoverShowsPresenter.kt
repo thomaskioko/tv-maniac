@@ -4,6 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.instancekeeper.InstanceKeeper
 import com.arkivanov.essenty.instancekeeper.getOrCreate
+import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
@@ -17,7 +18,7 @@ import com.thomaskioko.tvmaniac.data.featuredshows.api.interactor.FeaturedShowsI
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsInteractor
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsInteractor
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsInteractor
-import com.thomaskioko.tvmaniac.discover.nav.DiscoverNavigator
+import com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot
 import com.thomaskioko.tvmaniac.discover.presenter.model.NextEpisodeUiModel
 import com.thomaskioko.tvmaniac.domain.discover.DiscoverShowsInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
@@ -25,10 +26,19 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
-import com.thomaskioko.tvmaniac.home.nav.HomeRoute
-import com.thomaskioko.tvmaniac.home.nav.di.model.HomeConfig
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
+import com.thomaskioko.tvmaniac.moreshows.nav.MoreShowsRoute
+import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
+import com.thomaskioko.tvmaniac.search.nav.SearchRoute
+import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
+import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
+import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
+import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.shows.api.model.Category
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsInteractor
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
@@ -37,7 +47,8 @@ import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.util.api.SyncError
 import com.thomaskioko.tvmaniac.util.api.SyncErrorChannel
 import dev.zacsweers.metro.Inject
-import io.github.thomaskioko.codegen.annotations.TabScreen
+import io.github.thomaskioko.codegen.annotations.DestinationKind
+import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,10 +61,14 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @Inject
-@TabScreen(config = HomeConfig.Discover::class, parentScope = HomeRoute::class)
+@NavDestination(
+    route = DiscoverRoot::class,
+    parentScope = ActivityScope::class,
+    kind = DestinationKind.TAB_ROOT,
+)
 public class DiscoverShowsPresenter(
     componentContext: ComponentContext,
-    private val navigator: DiscoverNavigator,
+    private val navigator: Navigator,
     private val discoverShowsInteractor: DiscoverShowsInteractor,
     private val followShowInteractor: FollowShowInteractor,
     private val unfollowShowInteractor: UnfollowShowInteractor,
@@ -180,12 +195,12 @@ public class DiscoverShowsPresenter(
 
         public fun dispatch(action: DiscoverShowAction) {
             when (action) {
-                is ShowClicked -> navigator.showDetails(action.traktId)
-                PopularClicked -> navigator.showMoreShows(Category.POPULAR.id)
-                TopRatedClicked -> navigator.showMoreShows(Category.TOP_RATED.id)
-                TrendingClicked -> navigator.showMoreShows(Category.TRENDING_TODAY.id)
-                UpComingClicked -> navigator.showMoreShows(Category.UPCOMING.id)
-                UpNextMoreClicked -> navigator.showUpNext()
+                is ShowClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(id = action.traktId)))
+                PopularClicked -> navigator.navigateTo(MoreShowsRoute(Category.POPULAR.id))
+                TopRatedClicked -> navigator.navigateTo(MoreShowsRoute(Category.TOP_RATED.id))
+                TrendingClicked -> navigator.navigateTo(MoreShowsRoute(Category.TRENDING_TODAY.id))
+                UpComingClicked -> navigator.navigateTo(MoreShowsRoute(Category.UPCOMING.id))
+                UpNextMoreClicked -> navigator.switchBackStack(ProgressRoot)
                 RefreshData -> observeShowData(forceRefresh = true)
                 is UpdateShowInLibrary -> {
                     coroutineScope.launch {
@@ -201,7 +216,15 @@ public class DiscoverShowsPresenter(
                 is MessageShown -> {
                     clearMessage(action.id)
                 }
-                is NextEpisodeClicked -> navigator.showSeason(action.showTraktId, action.seasonId, action.seasonNumber)
+                is NextEpisodeClicked -> navigator.navigateTo(
+                    SeasonDetailsRoute(
+                        SeasonDetailsUiParam(
+                            showTraktId = action.showTraktId,
+                            seasonId = action.seasonId,
+                            seasonNumber = action.seasonNumber,
+                        ),
+                    ),
+                )
                 is MarkNextEpisodeWatched -> {
                     coroutineScope.launch {
                         markEpisodeWatchedInteractor(
@@ -219,10 +242,22 @@ public class DiscoverShowsPresenter(
                         unfollowShowInteractor.executeSync(action.showTraktId)
                     }
                 }
-                is OpenSeasonFromUpNext -> navigator.showSeason(action.showTraktId, action.seasonId, action.seasonNumber)
-                is OpenShowFromUpNext -> navigator.showDetails(action.showTraktId)
-                SearchIconClicked -> navigator.showSearch()
-                is DiscoverEpisodeLongPressed -> navigator.showEpisodeSheet(action.showTraktId, action.episodeId)
+                is OpenSeasonFromUpNext -> navigator.navigateTo(
+                    SeasonDetailsRoute(
+                        SeasonDetailsUiParam(
+                            showTraktId = action.showTraktId,
+                            seasonId = action.seasonId,
+                            seasonNumber = action.seasonNumber,
+                        ),
+                    ),
+                )
+                is OpenShowFromUpNext -> navigator.navigateTo(
+                    ShowDetailsRoute(ShowDetailsParam(id = action.showTraktId)),
+                )
+                SearchIconClicked -> navigator.navigateTo(SearchRoute)
+                is DiscoverEpisodeLongPressed -> navigator.navigateTo(
+                    EpisodeSheetRoute(EpisodeSheetParam(episodeId = action.episodeId, source = ScreenSource.DISCOVER)),
+                )
             }
         }
 

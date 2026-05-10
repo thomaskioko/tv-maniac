@@ -60,6 +60,7 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.extensions.copy
+import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_profile_pic
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_settings
 import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_edit_button
@@ -80,7 +81,9 @@ import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileInfo
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileState
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileStats
 import com.thomaskioko.tvmaniac.testtags.profile.ProfileTestTags
+import io.github.thomaskioko.codegen.annotations.TabUi
 
+@TabUi(presenter = ProfilePresenter::class, parentScope = ActivityScope::class)
 @Composable
 public fun ProfileScreen(
     presenter: ProfilePresenter,

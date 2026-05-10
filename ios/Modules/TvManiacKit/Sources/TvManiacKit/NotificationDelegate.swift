@@ -43,15 +43,6 @@ public class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
     }
 
     private func navigateToLibrary() {
-        guard let rootPresenter else { return }
-
-        let childStack = rootPresenter.childStackValue.value
-        let activeChild = childStack.active.instance
-
-        if let screen = activeChild as? ScreenDestination<AnyObject>,
-           let homePresenter = screen.presenter as? HomePresenter
-        {
-            homePresenter.onLibraryClicked()
-        }
+        rootPresenter?.homePresenter.onLibraryClicked()
     }
 }

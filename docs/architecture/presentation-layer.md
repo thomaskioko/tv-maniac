@@ -3,10 +3,12 @@
 ## Table of Contents
 
 - [Presenter Pattern](#presenter-pattern)
+- [State Composition](#state-composition)
 - [Loading and Error Handling](#loading-and-error-handling)
+- [Interactor Types](#interactor-types)
 - [Platform UI Binding](#platform-ui-binding)
 
-Presentation layer splits into shared KMP presenters for state management and platform-specific UI for rendering.
+A [Presenter](glossary.md#presenter) is a shared Kotlin Multiplatform class that exposes one `StateFlow<State>` and accepts dispatched actions. The same presenter feeds Android Compose and iOS SwiftUI.
 
 ```mermaid
 graph LR
@@ -29,53 +31,103 @@ graph LR
 
 ## Presenter Pattern
 
-Each feature uses a presenter to accept actions, invoke interactors, and emit a single `StateFlow<State>`.
+Each feature has one presenter. The presenter accepts actions, calls one or more [interactors](glossary.md#interactor), and emits a `StateFlow<State>`.
 
 ### Rules
 
-- **Single State Flow**: Presenters expose one `StateFlow`.
-- **Single Mutable State**: Internal state uses one `MutableStateFlow`.
-- **Transform after Combine**: Data mapping occurs after combining input streams.
-- **No Business Logic**: Presenters orchestrate data; they do not filter or sort.
-- **Localization**: User-facing strings go through the `Localizer` interface.
+- **One state flow**: each presenter exposes a single `StateFlow<State>`.
+- **One mutable source**: internal mutation funnels through one `MutableStateFlow`.
+- **Combine, then transform**: combine input flows first, map to the screen state second.
+- **No business logic**: presenters orchestrate. Filtering, sorting, and formatting belong in interactors or domain utilities.
+- **Localization**: every user-facing string goes through the [`Localizer`](glossary.md#localizer) interface.
 
-## Loading and Error Handling
+## State Composition
 
-Presenters use `collectStatus()` to declaratively manage state:
-
-- **`ObservableLoadingCounter`**: Tracks in-flight operations.
-- **`UiMessageManager`**: Queues error messages with support for deduplication.
-
-`collectStatus()` automatically increments/decrements counters and routes errors to the message manager.
+A presenter combines its private `MutableStateFlow`, every interactor flow, the loading counter, and the message queue into one public `StateFlow<State>`.
 
 ```kotlin
-private fun fetchContent(category: Category, forceRefresh: Boolean) {
-    coroutineScope.launch {
-        interactor(Params(category, forceRefresh))
-            .collectStatus(loadingState, logger, uiMessageManager, "Label", errorMapper)
+@Inject
+@NavDestination(
+    route = TrendingShowsRoute::class,
+    parentScope = ActivityScope::class,
+    kind = DestinationKind.SCREEN,
+)
+public class TrendingShowsPresenter(
+    componentContext: ComponentContext,
+    private val navigator: Navigator,
+    private val observeTrendingInteractor: ObserveTrendingShowsInteractor,
+    private val refreshTrendingInteractor: RefreshTrendingShowsInteractor,
+    private val errorToStringMapper: ErrorToStringMapper,
+    private val logger: Logger,
+) : ComponentContext by componentContext {
+
+    private val coroutineScope = coroutineScope()
+    private val loadingState = ObservableLoadingCounter()
+    private val uiMessageManager = UiMessageManager()
+    private val _state = MutableStateFlow(TrendingShowsState())
+
+    init { refresh(forceRefresh = false) }
+
+    public val state: StateFlow<TrendingShowsState> = combine(
+        _state,
+        loadingState.observable,
+        observeTrendingInteractor.flow,
+        uiMessageManager.message,
+    ) { current, isLoading, shows, message ->
+        current.copy(isLoading = isLoading, shows = shows, message = message)
+    }.stateIn(
+        scope = coroutineScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = TrendingShowsState(),
+    )
+
+    public fun dispatch(action: TrendingShowsAction) {
+        when (action) {
+            is ShowClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(action.traktId)))
+            is Refresh -> refresh(forceRefresh = true)
+        }
+    }
+
+    private fun refresh(forceRefresh: Boolean) {
+        coroutineScope.launch {
+            refreshTrendingInteractor(RefreshTrendingShowsInteractor.Param(forceRefresh))
+                .collectStatus(loadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+        }
     }
 }
 ```
 
+## Loading and Error Handling
+
+`collectStatus` is the project-wide extension on `Flow<InvokeStatus>`. It increments and decrements an `ObservableLoadingCounter`, routes errors through an `ErrorToStringMapper`, and queues the resulting message in a `UiMessageManager`.
+
+- `ObservableLoadingCounter`: tracks every in-flight invocation. Increments when one starts, decrements when it finishes or fails.
+- `UiMessageManager`: queues error messages with deduplication.
+- `ErrorToStringMapper`: translates exceptions into localized strings.
+
+The combined `StateFlow` reflects loading and message state on every emission, so UI never subscribes to multiple flows.
+
 ## Interactor Types
 
-- **`Interactor`**: One-shot operations returning `Flow<InvokeStatus>`.
-- **`SubjectInteractor`**: Continuous data streams returning `Flow<T>`.
+- `Interactor`: one-shot operations returning `Flow<InvokeStatus>`.
+- `SubjectInteractor`: continuous data streams returning `Flow<T>`.
 
 > [!WARNING]
-> Interactors must return a `Flow`. Calling `suspend` functions inside flow transformers prevents `combine()` from observing updates reactively.
+> Interactors return a `Flow`. Calling a `suspend` function inside a flow transformer prevents `combine` from observing updates reactively.
 
 ## Platform UI Binding
 
 ### Android (Compose)
-Screens collect state via `collectAsState()` and dispatch actions back to the presenter. Feature UI modules contain no business logic.
+
+Screens collect state through `collectAsState()` and dispatch actions back to the presenter. Feature UI modules contain no business logic.
 
 ### iOS (SwiftUI)
-Views bind to the shared presenter using a property wrapper bridging Kotlin `StateFlow` to SwiftUI.
+
+Views bind to the shared presenter through a property wrapper that bridges Kotlin `StateFlow` to a SwiftUI `@StateValue`.
 
 ## Responsibilities
 
-- **Domain (Interactors/Utilities)**: Sorting, filtering, formatting.
-- **Presenter**: State combination, localization, loading/error tracking.
-- **Platform UI**: Rendering.
-- **Navigator**: Navigation triggers.
+- **Domain (interactors and utilities)**: sorting, filtering, formatting.
+- **Presenter**: state combination, localization, loading and error tracking.
+- **Platform UI**: rendering and dispatch.
+- **[Navigator](glossary.md#navigator)**: navigation triggers.

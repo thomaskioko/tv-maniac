@@ -69,6 +69,7 @@ kotlin {
                 implementation(projects.core.util.implementation)
                 implementation(projects.i18n.testing)
                 implementation(projects.core.notifications.testing)
+                implementation(projects.navigation.testing)
 
                 implementation(libs.bundles.unittest)
             }

@@ -64,6 +64,7 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvide
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
+import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.i18n.MR.strings.badge_new
 import com.thomaskioko.tvmaniac.i18n.MR.strings.badge_premiere
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_filter
@@ -92,10 +93,12 @@ import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistShowClicked
 import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistState
 import com.thomaskioko.tvmaniac.watchlist.presenter.model.UpNextEpisodeItem
 import com.thomaskioko.tvmaniac.watchlist.presenter.model.WatchlistItem
+import io.github.thomaskioko.codegen.annotations.ScreenUi
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import java.util.Locale
 
+@ScreenUi(presenter = WatchlistPresenter::class, parentScope = ActivityScope::class)
 @Composable
 public fun WatchlistScreen(
     presenter: WatchlistPresenter,

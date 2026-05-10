@@ -24,7 +24,8 @@ import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import dev.zacsweers.metro.Inject
-import io.github.thomaskioko.codegen.annotations.NavScreen
+import io.github.thomaskioko.codegen.annotations.DestinationKind
+import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -33,8 +34,12 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleDebugEpisodeNotificationInteractor.Params as DebugNotificationParams
 
+@NavDestination(
+    route = DebugRoute::class,
+    parentScope = ActivityScope::class,
+    kind = DestinationKind.SCREEN,
+)
 @Inject
-@NavScreen(route = DebugRoute::class, parentScope = ActivityScope::class)
 public class DebugPresenter(
     componentContext: ComponentContext,
     private val navigator: Navigator,
@@ -94,7 +99,7 @@ public class DebugPresenter(
 
     public fun dispatch(action: DebugActions) {
         when (action) {
-            BackClicked -> navigator.pop()
+            BackClicked -> navigator.navigateBack()
             TriggerDebugNotification -> scheduleDebugNotification()
             TriggerDelayedDebugNotification -> scheduleDebugNotification(5.minutes)
             TriggerLibrarySync -> triggerLibrarySync()

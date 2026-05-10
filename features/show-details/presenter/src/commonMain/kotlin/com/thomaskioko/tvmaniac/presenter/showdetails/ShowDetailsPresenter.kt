@@ -50,7 +50,8 @@ import com.thomaskioko.tvmaniac.util.api.SyncErrorChannel
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
-import io.github.thomaskioko.codegen.annotations.NavScreen
+import io.github.thomaskioko.codegen.annotations.DestinationKind
+import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -63,8 +64,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+@NavDestination(
+    route = ShowDetailsRoute::class,
+    parentScope = ActivityScope::class,
+    kind = DestinationKind.SCREEN,
+)
 @AssistedInject
-@NavScreen(route = ShowDetailsRoute::class, parentScope = ActivityScope::class)
 public class ShowDetailsPresenter(
     componentContext: ComponentContext,
     @Assisted private val param: ShowDetailsParam,
@@ -189,7 +194,7 @@ public class ShowDetailsPresenter(
                 _state.update {
                     it.copy(selectedSeasonIndex = action.params.selectedSeasonIndex)
                 }
-                navigator.pushNew(
+                navigator.navigateTo(
                     SeasonDetailsRoute(
                         SeasonDetailsUiParam(
                             showTraktId = action.params.showTraktId,
@@ -201,7 +206,7 @@ public class ShowDetailsPresenter(
             }
 
             is DetailShowClicked -> navigator.pushToFront(ShowDetailsRoute(ShowDetailsParam(id = action.id)))
-            is WatchTrailerClicked -> navigator.pushNew(TrailersRoute(action.id))
+            is WatchTrailerClicked -> navigator.navigateTo(TrailersRoute(action.id))
             is FollowShowClicked -> {
                 coroutineScope.launch {
                     if (action.isInLibrary) {
@@ -222,7 +227,7 @@ public class ShowDetailsPresenter(
                 }
             }
 
-            DetailBackClicked -> navigator.pop()
+            DetailBackClicked -> navigator.navigateBack()
             ReloadShowDetails -> refreshShowContent(isUserInitiated = true)
             is ShowDetailsMessageShown -> coroutineScope.launch { uiMessageManager.clearMessage(action.id) }
             DismissShowsListSheet -> coroutineScope.launch { _state.update { it.copy(showListSheet = false) } }

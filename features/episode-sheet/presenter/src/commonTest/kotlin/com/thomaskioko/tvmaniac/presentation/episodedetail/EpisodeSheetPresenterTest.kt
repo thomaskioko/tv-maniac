@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.presentation.episodedetail
 
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
-import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
@@ -18,12 +17,11 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveEpisodeByIdInteractor
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
-import com.thomaskioko.tvmaniac.navigation.NavRoute
-import com.thomaskioko.tvmaniac.navigation.Navigator
-import com.thomaskioko.tvmaniac.navigation.testing.FakeSheetNavigator
+import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.util.DefaultSyncErrorChannel
@@ -51,8 +49,7 @@ internal class EpisodeSheetPresenterTest {
     private val localizer = FakeLocalizer()
     private val logger = FakeLogger()
 
-    private var navigatedToShowId: Long? = null
-    private var navigatedToSeason: Triple<Long, Long, Long>? = null
+    private val navigator = FakeNavigator()
 
     @BeforeTest
     fun setUp() {
@@ -62,6 +59,7 @@ internal class EpisodeSheetPresenterTest {
     @AfterTest
     fun tearDown() {
         Dispatchers.resetMain()
+        navigator.reset()
     }
 
     @Test
@@ -180,8 +178,7 @@ internal class EpisodeSheetPresenterTest {
     fun `should mark episode as watched given ToggleWatched is dispatched and episode is unwatched`() = runTest {
         episodeRepository.setEpisodeById(testEpisode(isWatched = false))
 
-        val sheetNavigator = FakeSheetNavigator()
-        val presenter = createPresenter(sheetNavigator = sheetNavigator)
+        val presenter = createPresenter()
 
         presenter.state.test {
             awaitItem()
@@ -199,7 +196,7 @@ internal class EpisodeSheetPresenterTest {
                 episodeNumber = 1L,
             )
             episodeRepository.lastMarkEpisodeUnwatchedCall.shouldBeNull()
-            sheetNavigator.dismissCount shouldBe 1
+            navigator.overlayDismissCount shouldBe 1
         }
     }
 
@@ -207,8 +204,7 @@ internal class EpisodeSheetPresenterTest {
     fun `should mark episode as unwatched given ToggleWatched is dispatched and episode is watched`() = runTest {
         episodeRepository.setEpisodeById(testEpisode(isWatched = true))
 
-        val sheetNavigator = FakeSheetNavigator()
-        val presenter = createPresenter(sheetNavigator = sheetNavigator)
+        val presenter = createPresenter()
 
         presenter.state.test {
             awaitItem()
@@ -223,7 +219,7 @@ internal class EpisodeSheetPresenterTest {
                 showTraktId = 100L,
                 episodeId = 1L,
             )
-            sheetNavigator.dismissCount shouldBe 1
+            navigator.overlayDismissCount shouldBe 1
         }
     }
 
@@ -231,8 +227,7 @@ internal class EpisodeSheetPresenterTest {
     fun `should dismiss sheet immediately given ToggleWatched is dispatched and before background work completes`() = runTest {
         episodeRepository.setEpisodeById(testEpisode(isWatched = false))
 
-        val sheetNavigator = FakeSheetNavigator()
-        val presenter = createPresenter(sheetNavigator = sheetNavigator)
+        val presenter = createPresenter()
 
         presenter.state.test {
             awaitItem()
@@ -241,7 +236,7 @@ internal class EpisodeSheetPresenterTest {
 
             presenter.dispatch(EpisodeSheetAction.ToggleWatched)
 
-            sheetNavigator.dismissCount shouldBe 1
+            navigator.overlayDismissCount shouldBe 1
             episodeRepository.lastMarkEpisodeWatchedCall.shouldBeNull()
 
             testDispatcher.scheduler.advanceUntilIdle()
@@ -269,7 +264,8 @@ internal class EpisodeSheetPresenterTest {
 
             presenter.dispatch(EpisodeSheetAction.OpenShow)
 
-            navigatedToShowId shouldBe 100L
+            (navigator.lastNavigatedRoute as ShowDetailsRoute).param.id shouldBe 100L
+            navigator.overlayDismissCount shouldBe 1
         }
     }
 
@@ -286,7 +282,11 @@ internal class EpisodeSheetPresenterTest {
 
             presenter.dispatch(EpisodeSheetAction.OpenSeason)
 
-            navigatedToSeason shouldBe Triple(100L, 10L, 1L)
+            val seasonRoute = navigator.lastNavigatedRoute as SeasonDetailsRoute
+            seasonRoute.param.showTraktId shouldBe 100L
+            seasonRoute.param.seasonId shouldBe 10L
+            seasonRoute.param.seasonNumber shouldBe 1L
+            navigator.overlayDismissCount shouldBe 1
         }
     }
 
@@ -294,8 +294,7 @@ internal class EpisodeSheetPresenterTest {
     fun `should unfollow show and dismiss given Unfollow is dispatched`() = runTest {
         episodeRepository.setEpisodeById(testEpisode())
 
-        val sheetNavigator = FakeSheetNavigator()
-        val presenter = createPresenter(sheetNavigator = sheetNavigator)
+        val presenter = createPresenter()
 
         presenter.state.test {
             awaitItem()
@@ -306,7 +305,7 @@ internal class EpisodeSheetPresenterTest {
             testDispatcher.scheduler.advanceUntilIdle()
 
             followedShowsRepository.removedShowIds shouldContainExactly listOf(100L)
-            sheetNavigator.dismissCount shouldBe 1
+            navigator.overlayDismissCount shouldBe 1
         }
     }
 
@@ -314,8 +313,7 @@ internal class EpisodeSheetPresenterTest {
     fun `should dismiss sheet given Dismiss is dispatched`() = runTest {
         episodeRepository.setEpisodeById(testEpisode())
 
-        val sheetNavigator = FakeSheetNavigator()
-        val presenter = createPresenter(sheetNavigator = sheetNavigator)
+        val presenter = createPresenter()
 
         presenter.state.test {
             awaitItem()
@@ -324,7 +322,7 @@ internal class EpisodeSheetPresenterTest {
 
             presenter.dispatch(EpisodeSheetAction.Dismiss)
 
-            sheetNavigator.dismissCount shouldBe 1
+            navigator.overlayDismissCount shouldBe 1
         }
     }
 
@@ -361,12 +359,8 @@ internal class EpisodeSheetPresenterTest {
 
     private fun createPresenter(
         source: ScreenSource = ScreenSource.DISCOVER,
-        sheetNavigator: FakeSheetNavigator = FakeSheetNavigator(),
         appScopeLauncher: FakeAppScopeLauncher = FakeAppScopeLauncher(appCoroutineScope),
     ): EpisodeSheetPresenter {
-        navigatedToShowId = null
-        navigatedToSeason = null
-
         val dispatchers = AppCoroutineDispatchers(
             main = testDispatcher,
             io = testDispatcher,
@@ -377,26 +371,8 @@ internal class EpisodeSheetPresenterTest {
 
         return EpisodeSheetPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
-            episodeId = 1L,
-            source = source,
-            navigator = object : Navigator {
-                private val navigation = StackNavigation<NavRoute>()
-                override fun bringToFront(route: NavRoute) {}
-                override fun pushNew(route: NavRoute) {
-                    if (route is SeasonDetailsRoute) {
-                        navigatedToSeason = Triple(route.param.showTraktId, route.param.seasonId, route.param.seasonNumber)
-                    }
-                }
-                override fun pushToFront(route: NavRoute) {
-                    if (route is ShowDetailsRoute) {
-                        navigatedToShowId = route.param.id
-                    }
-                }
-                override fun pop() {}
-                override fun popTo(toIndex: Int) {}
-                override fun getStackNavigation(): StackNavigation<NavRoute> = navigation
-            },
-            sheetNavigator = sheetNavigator,
+            param = EpisodeSheetParam(episodeId = 1L, source = source),
+            navigator = navigator,
             observeEpisodeByIdInteractor = ObserveEpisodeByIdInteractor(episodeRepository),
             markEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(episodeRepository),
             markEpisodeUnwatchedInteractor = MarkEpisodeUnwatchedInteractor(episodeRepository),

@@ -1,13 +1,13 @@
 package com.thomaskioko.tvmaniac.navigation
 
 /**
- * Generic typed [SheetChild] that wraps a feature presenter in the modal sheet slot.
+ * Wraps a feature presenter as a [SheetChild] in the modal sheet slot.
  *
- * Sheet counterpart to [ScreenDestination]. The concrete presenter type [T] is known only at
- * the creation site (the feature's [SheetChildFactory]) and at the consumption site (the
- * platform UI), keeping the navigation API free of presenter-specific types.
+ * Sheet counterpart to [ScreenDestination]. The concrete presenter type [T] is known only at the
+ * creation site (the feature's [NavDestination.Overlay]) and at the consumption site (the platform
+ * UI), so `navigation/api` stays free of presenter-specific types.
  *
- * @param T the presenter type held by this sheet destination
- * @param presenter the presenter instance for the sheet
+ * @param T presenter type held by this sheet destination.
+ * @property presenter sheet presenter rendered by the platform UI.
  */
 public class SheetDestination<out T : Any>(public val presenter: T) : SheetChild

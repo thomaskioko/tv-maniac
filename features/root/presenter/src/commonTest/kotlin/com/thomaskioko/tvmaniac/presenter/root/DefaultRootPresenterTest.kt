@@ -57,13 +57,13 @@ abstract class DefaultRootPresenterTest {
     }
 
     @Test
-    fun `initial state should be Home`() = runTest(testDispatcher) {
-        presenter.childStack.test { awaitItem().active.instance.shouldBeInstanceOf<RootChild>() }
+    fun `initial active item should be the Discover tab body`() = runTest(testDispatcher) {
+        presenter.homePresenter.discoverChildStack.test { awaitItem().active.instance.shouldBeInstanceOf<RootChild>() }
     }
 
     @Test
     fun `should return Home as active instance`() = runTest(testDispatcher) {
-        presenter.childStack.test {
+        presenter.homePresenter.discoverChildStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
             navigator.bringToFront(ShowDetailsRoute(ShowDetailsParam(1)))
@@ -72,7 +72,7 @@ abstract class DefaultRootPresenterTest {
 
             moreScreen.shouldBeInstanceOf<RootChild>()
 
-            navigator.pop()
+            navigator.navigateBack()
 
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
         }
@@ -80,7 +80,7 @@ abstract class DefaultRootPresenterTest {
 
     @Test
     fun `should return ShowDetails as active instance`() = runTest(testDispatcher) {
-        presenter.childStack.test {
+        presenter.homePresenter.discoverChildStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
             navigator.bringToFront(ShowDetailsRoute(ShowDetailsParam(1)))
@@ -93,7 +93,7 @@ abstract class DefaultRootPresenterTest {
 
     @Test
     fun `should return MoreShows as active instance`() = runTest(testDispatcher) {
-        presenter.childStack.test {
+        presenter.homePresenter.discoverChildStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
             navigator.bringToFront(MoreShowsRoute(1))
@@ -106,7 +106,7 @@ abstract class DefaultRootPresenterTest {
 
     @Test
     fun `should return SeasonDetails as active instance`() = runTest(testDispatcher) {
-        presenter.childStack.test {
+        presenter.homePresenter.discoverChildStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
             val param = SeasonDetailsUiParam(
@@ -124,7 +124,7 @@ abstract class DefaultRootPresenterTest {
 
     @Test
     fun `should return Trailers as active instance`() = runTest(testDispatcher) {
-        presenter.childStack.test {
+        presenter.homePresenter.discoverChildStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
             navigator.bringToFront(TrailersRoute(1))
@@ -137,7 +137,7 @@ abstract class DefaultRootPresenterTest {
 
     @Test
     fun `should return GenreShows as active instance`() = runTest(testDispatcher) {
-        presenter.childStack.test {
+        presenter.homePresenter.discoverChildStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
             navigator.bringToFront(GenreShowsRoute(1))
@@ -150,10 +150,10 @@ abstract class DefaultRootPresenterTest {
 
     @Test
     fun `should navigate to ShowDetails using pushNew`() = runTest(testDispatcher) {
-        presenter.childStack.test {
+        presenter.homePresenter.discoverChildStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
-            navigator.pushNew(ShowDetailsRoute(ShowDetailsParam(1)))
+            navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(1)))
 
             val showDetailsScreen = awaitItem().active.instance
 
@@ -163,7 +163,7 @@ abstract class DefaultRootPresenterTest {
 
     @Test
     fun `should navigate to ShowDetails using pushToFront`() = runTest(testDispatcher) {
-        presenter.childStack.test {
+        presenter.homePresenter.discoverChildStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
             navigator.pushToFront(ShowDetailsRoute(ShowDetailsParam(1)))
@@ -175,17 +175,17 @@ abstract class DefaultRootPresenterTest {
     }
 
     @Test
-    fun `should navigate back to previous screen using popTo`() = runTest(testDispatcher) {
-        presenter.childStack.test {
+    fun `should navigate back to tab root using popTo`() = runTest(testDispatcher) {
+        presenter.homePresenter.discoverChildStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
-            navigator.pushNew(ShowDetailsRoute(ShowDetailsParam(1)))
+            navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(1)))
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
-            navigator.pushNew(MoreShowsRoute(1))
+            navigator.navigateTo(MoreShowsRoute(1))
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
-            navigator.popTo(0)
+            navigator.popTo(toIndex = 0)
 
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
         }
@@ -259,7 +259,7 @@ abstract class DefaultRootPresenterTest {
 
     @Test
     fun `should navigate to Debug given DebugMenu deep link`() = runTest(testDispatcher) {
-        presenter.childStack.test {
+        presenter.homePresenter.discoverChildStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
             presenter.onDeepLink(DeepLinkDestination.DebugMenu)

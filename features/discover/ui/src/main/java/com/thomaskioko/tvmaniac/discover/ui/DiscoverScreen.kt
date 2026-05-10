@@ -55,6 +55,7 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.extensions.copy
+import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverEpisodeLongPressed
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowAction
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowsPresenter
@@ -83,7 +84,9 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.title_category_trending_today
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_category_upcoming
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.testtags.discover.DiscoverTestTags
+import io.github.thomaskioko.codegen.annotations.TabUi
 
+@TabUi(presenter = DiscoverShowsPresenter::class, parentScope = ActivityScope::class)
 @Composable
 public fun DiscoverScreen(
     presenter: DiscoverShowsPresenter,

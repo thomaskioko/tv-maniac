@@ -1,12 +1,16 @@
 package com.thomaskioko.tvmaniac.home.nav
 
+import com.thomaskioko.tvmaniac.navigation.RootChild
+
 /**
- * A generic typed wrapper that holds a tab presenter as a child of the home screen.
+ * Wraps a tab presenter as a [RootChild] in the home screen's stack.
  *
- * The concrete presenter type [T] is only known at the creation site (each tab's
- * `presenter/di/` wiring) and the consumption site (the home UI).
+ * The concrete presenter type [T] is known at the creation site (each tab's `presenter/di/`
+ * binding) and at the consumption site (the home UI). Implements [RootChild] so each tab's back
+ * stack can mix [TabChild] (tab roots) with other [RootChild] subtypes (pushed screens) inside
+ * one [com.arkivanov.decompose.router.stack.ChildStack].
  *
- * @param T The presenter type held by this tab child
- * @param presenter The presenter instance for the tab
+ * @param T presenter type held by this tab child.
+ * @property presenter tab presenter rendered by the home UI.
  */
-public class TabChild<out T : Any>(public val presenter: T)
+public class TabChild<out T : Any>(public val presenter: T) : RootChild

@@ -3,24 +3,32 @@ package com.thomaskioko.tvmaniac.presentation.progress
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.childContext
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
-import com.thomaskioko.tvmaniac.home.nav.HomeRoute
-import com.thomaskioko.tvmaniac.home.nav.di.model.HomeConfig
 import com.thomaskioko.tvmaniac.presentation.calendar.CalendarPresenter
+import com.thomaskioko.tvmaniac.presentation.calendar.di.CalendarChildGraph
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextPresenter
+import com.thomaskioko.tvmaniac.presentation.upnext.di.UpNextChildGraph
+import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
 import dev.zacsweers.metro.Inject
-import io.github.thomaskioko.codegen.annotations.TabScreen
+import io.github.thomaskioko.codegen.annotations.DestinationKind
+import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 @Inject
-@TabScreen(config = HomeConfig.Progress::class, parentScope = HomeRoute::class)
+@NavDestination(
+    route = ProgressRoot::class,
+    parentScope = ActivityScope::class,
+    kind = DestinationKind.TAB_ROOT,
+)
 public class ProgressPresenter(
     componentContext: ComponentContext,
-    progressChildGraphFactory: ProgressChildGraph.Factory,
+    upNextGraphFactory: UpNextChildGraph.Factory,
+    calendarGraphFactory: CalendarChildGraph.Factory,
 ) : ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
@@ -31,10 +39,10 @@ public class ProgressPresenter(
     public val stateValue: Value<ProgressState> = state.asValue(coroutineScope)
 
     public val upNextPresenter: UpNextPresenter =
-        progressChildGraphFactory.createGraph(childContext(key = "UpNext")).upNextPresenter
+        upNextGraphFactory.createUpNextGraph(childContext(key = "UpNext")).upNextPresenter
 
     public val calendarPresenter: CalendarPresenter =
-        progressChildGraphFactory.createGraph(childContext(key = "Calendar")).calendarPresenter
+        calendarGraphFactory.createCalendarGraph(childContext(key = "Calendar")).calendarPresenter
 
     public fun dispatch(action: ProgressAction) {
         when (action) {

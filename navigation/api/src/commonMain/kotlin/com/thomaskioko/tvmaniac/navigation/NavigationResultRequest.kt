@@ -7,8 +7,12 @@ import kotlinx.serialization.Serializable
  * Represents a pending request for a result from another destination.
  *
  * Create one by injecting [NavigationResultRegistry] and calling
- * [registerForNavigationResult] from the source screen. Pass [key] into the target route so that
- * the target can match deliveries back to this request.
+ * [registerForNavigationResult] from the source screen. Pass [key] into the target route so the
+ * target can match deliveries back to this request.
+ *
+ * @param R result type expected from the target destination.
+ * @property key identifier embedded in the target route to match deliveries.
+ * @property results flow that emits each delivered result.
  */
 public class NavigationResultRequest<R : Any> @PublishedApi internal constructor(
     public val key: Key<R>,

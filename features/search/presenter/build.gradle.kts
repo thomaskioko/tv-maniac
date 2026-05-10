@@ -45,6 +45,7 @@ kotlin {
                 implementation(projects.i18n.testing)
                 implementation(projects.data.search.testing)
                 implementation(projects.data.genre.testing)
+                implementation(projects.navigation.testing)
 
                 implementation(libs.bundles.unittest)
             }

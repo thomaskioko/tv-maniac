@@ -17,6 +17,7 @@ kotlin {
                 implementation(projects.core.logger.api)
                 implementation(projects.navigation.api)
                 implementation(projects.features.home.nav)
+                implementation(projects.features.profile.nav)
                 implementation(projects.features.settings.nav)
                 implementation(projects.i18n.api)
                 implementation(projects.domain.user)
@@ -36,6 +37,7 @@ kotlin {
                 implementation(projects.data.traktlists.testing)
                 implementation(projects.data.user.testing)
                 implementation(projects.i18n.testing)
+                implementation(projects.navigation.testing)
 
                 implementation(libs.bundles.unittest)
             }

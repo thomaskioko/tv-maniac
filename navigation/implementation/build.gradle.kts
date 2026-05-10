@@ -14,6 +14,7 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.core.base)
             implementation(projects.navigation.api)
+            implementation(projects.features.home.nav)
 
             implementation(libs.coroutines.core)
         }
@@ -25,10 +26,12 @@ kotlin {
             implementation(projects.features.episodeSheet.nav)
             implementation(projects.features.genreShows.nav)
             implementation(projects.features.home.nav)
+            implementation(projects.features.moreShows.nav)
             implementation(projects.features.seasonDetails.nav)
             implementation(projects.features.showDetails.nav)
 
             implementation(libs.bundles.unittest)
+            implementation(libs.kotlinx.serialization.json)
         }
     }
 }

@@ -13,16 +13,20 @@ import com.thomaskioko.tvmaniac.domain.calendar.CalendarWeekCalculator
 import com.thomaskioko.tvmaniac.domain.calendar.CalendarWeekCalculator.Companion.DAYS_IN_WEEK
 import com.thomaskioko.tvmaniac.domain.calendar.FetchCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.calendar.ObserveCalendarInteractor
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
-import com.thomaskioko.tvmaniac.espisodedetails.nav.model.showEpisodeSheet
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarEmpty
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarLoginRequired
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarMoreEpisodes
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarNoData
-import com.thomaskioko.tvmaniac.navigation.SheetNavigator
+import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
+import com.thomaskioko.tvmaniac.progress.nav.scope.ProgressChildScope
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import dev.zacsweers.metro.Inject
+import io.github.thomaskioko.codegen.annotations.ChildPresenter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -33,10 +37,11 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+@ChildPresenter(scope = ProgressChildScope::class, parentScope = ProgressRoot::class)
 @Inject
 public class CalendarPresenter(
     componentContext: ComponentContext,
-    private val sheetNavigator: SheetNavigator,
+    private val navigator: Navigator,
     private val observeCalendarInteractor: ObserveCalendarInteractor,
     private val fetchCalendarInteractor: FetchCalendarInteractor,
     private val traktAuthRepository: TraktAuthRepository,
@@ -97,7 +102,9 @@ public class CalendarPresenter(
 
             is NavigateToPreviousWeek -> navigateToPreviousWeek()
             is NavigateToNextWeek -> navigateToNextWeek()
-            is EpisodeCardClicked -> sheetNavigator.showEpisodeSheet(action.episodeTraktId, ScreenSource.CALENDAR)
+            is EpisodeCardClicked -> navigator.navigateTo(
+                EpisodeSheetRoute(EpisodeSheetParam(episodeId = action.episodeTraktId, source = ScreenSource.CALENDAR)),
+            )
             is MessageShown -> clearMessage(action.id)
         }
     }

@@ -2,13 +2,12 @@ package com.thomaskioko.tvmaniac.presenter.root
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.slot.ChildSlot
-import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.root.model.DeepLinkDestination
 import com.thomaskioko.root.model.NotificationPermissionState
 import com.thomaskioko.root.model.ThemeState
-import com.thomaskioko.tvmaniac.navigation.RootChild
 import com.thomaskioko.tvmaniac.navigation.SheetChild
+import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import kotlinx.coroutines.flow.StateFlow
 
 public interface RootPresenter {
@@ -16,9 +15,7 @@ public interface RootPresenter {
         public operator fun invoke(componentContext: ComponentContext): RootPresenter
     }
 
-    public val childStack: StateFlow<ChildStack<*, RootChild>>
-
-    public val childStackValue: Value<ChildStack<*, RootChild>>
+    public val homePresenter: HomePresenter
 
     public val episodeSheetSlot: StateFlow<ChildSlot<*, SheetChild>>
 

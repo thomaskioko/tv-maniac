@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.presenter.profile
 
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
-import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
@@ -15,8 +14,7 @@ import com.thomaskioko.tvmaniac.domain.user.ObserveUserProfileInteractor
 import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
-import com.thomaskioko.tvmaniac.navigation.NavRoute
-import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction
 import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileInfo
@@ -275,15 +273,5 @@ internal class ProfilePresenterTest {
             logger = logger,
             observeUserProfileInteractor = observeUserProfileInteractor,
         )
-    }
-
-    private class NoOpNavigator : Navigator {
-        private val navigation = StackNavigation<NavRoute>()
-        override fun bringToFront(route: NavRoute) {}
-        override fun pushNew(route: NavRoute) {}
-        override fun pushToFront(route: NavRoute) {}
-        override fun pop() {}
-        override fun popTo(toIndex: Int) {}
-        override fun getStackNavigation(): StackNavigation<NavRoute> = navigation
     }
 }

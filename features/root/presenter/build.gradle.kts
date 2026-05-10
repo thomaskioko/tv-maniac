@@ -3,7 +3,7 @@ plugins {
 }
 
 scaffold {
-    useMetro()
+    useCodegen()
 
     optIn("kotlinx.coroutines.FlowPreview")
 }
@@ -24,6 +24,7 @@ kotlin {
                 implementation(projects.features.root.nav)
                 implementation(projects.features.debug.nav)
                 implementation(projects.features.home.nav)
+                implementation(projects.features.home.presenter)
                 implementation(projects.features.seasonDetails.nav)
                 implementation(projects.features.showDetails.nav)
 

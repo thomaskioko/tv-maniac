@@ -11,23 +11,40 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.thomaskioko.tvmaniac.compose.components.NotificationRationaleContent
+import com.thomaskioko.tvmaniac.core.base.ActivityScope
+import com.thomaskioko.tvmaniac.home.ui.HomeScreen
+import com.thomaskioko.tvmaniac.navigation.ui.LocalScreenContents
 import com.thomaskioko.tvmaniac.navigation.ui.ScreenContent
 import com.thomaskioko.tvmaniac.navigation.ui.SheetContent
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
+import io.github.thomaskioko.codegen.annotations.AppRootUi
 
-@OptIn(ExperimentalMaterial3Api::class)
+/**
+ * Activity-level host composable. Receives the navigation multibinding sets from the activity
+ * graph, publishes [ScreenContent] through [LocalScreenContents] for descendants, and renders
+ * [HomeScreen] directly.
+ *
+ * Annotated with [AppRootUi] so the codegen processor emits the `AppRootProvider` interface and
+ * the `AppRootContent` extension that lets the activity collapse the multi-argument call into
+ * `graph.AppRootContent()`.
+ *
+ * @param rootPresenter activity-scope root presenter from the dependency injection graph.
+ * @param screenContents screen renderers contributed across every feature `ui` module.
+ * @param sheetContents sheet renderers contributed across every sheet-owning feature `ui` module.
+ * @param modifier layout modifier applied to the surface that hosts the home screen.
+ */
+@AppRootUi(presenter = RootPresenter::class, parentScope = ActivityScope::class)
 @Composable
 public fun RootScreen(
     rootPresenter: RootPresenter,
@@ -73,35 +90,18 @@ public fun RootScreen(
         sheetRenderer.content(sheetChild)
     }
 
-    Surface(modifier = modifier, color = MaterialTheme.colorScheme.background) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
-        ) {
-            ChildrenContent(
-                rootPresenter = rootPresenter,
-                screenContents = screenContents,
-                modifier = Modifier.weight(1F),
-            )
+    CompositionLocalProvider(LocalScreenContents provides screenContents) {
+        Surface(modifier = modifier, color = MaterialTheme.colorScheme.background) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
+            ) {
+                HomeScreen(
+                    presenter = rootPresenter.homePresenter,
+                    modifier = Modifier.weight(1F),
+                )
+            }
         }
-    }
-}
-
-@Composable
-private fun ChildrenContent(
-    rootPresenter: RootPresenter,
-    screenContents: Set<ScreenContent>,
-    modifier: Modifier = Modifier,
-) {
-    val childStack by rootPresenter.childStack.collectAsStateWithLifecycle()
-
-    Children(
-        modifier = modifier,
-        stack = childStack,
-    ) { child ->
-        val instance = child.instance
-        val renderer = screenContents.firstOrNull { it.matches(instance) } ?: return@Children
-        renderer.content(instance, Modifier.fillMaxSize())
     }
 }

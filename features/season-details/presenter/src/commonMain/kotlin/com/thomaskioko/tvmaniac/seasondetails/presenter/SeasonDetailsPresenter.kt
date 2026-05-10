@@ -28,12 +28,12 @@ import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveSeasonWatchProgressP
 import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveUnwatchedInPreviousSeasonsInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveUnwatchedInPreviousSeasonsParams
 import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsInteractor
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
-import com.thomaskioko.tvmaniac.espisodedetails.nav.model.showEpisodeSheet
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
-import com.thomaskioko.tvmaniac.navigation.SheetNavigator
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
@@ -42,7 +42,8 @@ import com.thomaskioko.tvmaniac.util.api.SyncErrorChannel
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
-import io.github.thomaskioko.codegen.annotations.NavScreen
+import io.github.thomaskioko.codegen.annotations.DestinationKind
+import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.collections.immutable.toPersistentSet
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -52,13 +53,16 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+@NavDestination(
+    route = SeasonDetailsRoute::class,
+    parentScope = ActivityScope::class,
+    kind = DestinationKind.SCREEN,
+)
 @AssistedInject
-@NavScreen(route = SeasonDetailsRoute::class, parentScope = ActivityScope::class)
 public class SeasonDetailsPresenter(
     componentContext: ComponentContext,
     @Assisted private val param: SeasonDetailsUiParam,
     private val navigator: Navigator,
-    private val sheetNavigator: SheetNavigator,
     observableSeasonDetailsInteractor: ObservableSeasonDetailsInteractor,
     private val seasonDetailsInteractor: SeasonDetailsInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
@@ -160,8 +164,10 @@ public class SeasonDetailsPresenter(
     public fun dispatch(action: SeasonDetailsAction) {
         coroutineScope.launch {
             when (action) {
-                is EpisodeClicked -> sheetNavigator.showEpisodeSheet(action.id, ScreenSource.SEASON_DETAILS)
-                SeasonDetailsBackClicked -> navigator.pop()
+                is EpisodeClicked -> navigator.navigateTo(
+                    EpisodeSheetRoute(EpisodeSheetParam(episodeId = action.id, source = ScreenSource.SEASON_DETAILS)),
+                )
+                SeasonDetailsBackClicked -> navigator.navigateBack()
                 ReloadSeasonDetails -> observeSeasonDetails()
                 OnEpisodeHeaderClicked -> updateState { copy(expandEpisodeItems = !expandEpisodeItems) }
                 ShowGallery -> updateState { copy(dialogState = SeasonDialogState.Gallery) }
