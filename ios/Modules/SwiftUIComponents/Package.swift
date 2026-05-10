@@ -26,6 +26,9 @@ let package = Package(
                 .product(name: "Nuke", package: "Nuke"),
                 .product(name: "NukeUI", package: "Nuke"),
                 "YouTubePlayerKit",
+            ],
+            resources: [
+                .process("Resources"),
             ]
         ),
         .testTarget(

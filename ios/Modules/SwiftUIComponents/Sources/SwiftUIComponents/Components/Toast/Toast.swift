@@ -4,18 +4,24 @@ public struct Toast: Equatable {
     public var type: ToastStyle
     public var title: String
     public var message: String
-    public var duration: Double
+    public var duration: Double?
+    public var persistent: Bool
+    public var loading: Bool
 
     public init(
         type: ToastStyle,
         title: String = "",
         message: String,
-        duration: Double = 10.0
+        duration: Double? = 10.0,
+        persistent: Bool = false,
+        loading: Bool = false
     ) {
         self.type = type
         self.title = title
         self.message = message
-        self.duration = duration
+        self.duration = persistent ? nil : duration
+        self.persistent = persistent
+        self.loading = loading
     }
 }
 

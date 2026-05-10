@@ -12,14 +12,18 @@ import com.thomaskioko.tvmaniac.core.base.extensions.asStateFlow
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
+import com.thomaskioko.tvmaniac.core.base.extensions.minTrueDuration
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
+import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey
+import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.NavDestination
 import com.thomaskioko.tvmaniac.navigation.NavRoute
 import com.thomaskioko.tvmaniac.navigation.Navigator
@@ -28,11 +32,14 @@ import com.thomaskioko.tvmaniac.navigation.SheetChild
 import com.thomaskioko.tvmaniac.navigation.SheetDestination
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.presenter.home.di.HomeScreenGraph
+import com.thomaskioko.tvmaniac.presenter.root.model.ToastState
+import com.thomaskioko.tvmaniac.presenter.root.model.ToastType
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.settings.presenter.toTheme
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
+import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.traktauth.api.AuthError
 import com.thomaskioko.tvmaniac.traktauth.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
@@ -41,6 +48,7 @@ import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
 import io.github.thomaskioko.codegen.annotations.AppRoot
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -69,12 +77,16 @@ public class DefaultRootPresenter(
     private val logoutInteractor: LogoutInteractor,
     private val logger: Logger,
     private val datastoreRepository: DatastoreRepository,
+    private val syncObserver: SyncObserver,
+    private val localizer: Localizer,
 ) : RootPresenter, ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
 
     private val profileLoadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
+    private val syncErrorMessages = UiMessageManager()
+    private val userDismissed = MutableStateFlow(false)
 
     init {
         coroutineScope.launch {
@@ -103,6 +115,18 @@ public class DefaultRootPresenter(
                 .filter { it == TraktAuthState.LOGGED_IN }
                 .take(1)
                 .collect { notificationRationale.showIfNeeded() }
+        }
+
+        coroutineScope.launch {
+            syncObserver.syncStarted.collect { userDismissed.value = false }
+        }
+
+        coroutineScope.launch {
+            syncObserver.errors.collect {
+                syncErrorMessages.emitMessage(
+                    UiMessage(message = localizer.getString(StringResourceKey.SyncFailedWillRetry)),
+                )
+            }
         }
     }
 
@@ -155,6 +179,35 @@ public class DefaultRootPresenter(
 
     override val notificationPermissionStateValue: Value<NotificationPermissionState> =
         notificationPermissionState.asValue(coroutineScope)
+
+    override val toastState: StateFlow<ToastState> = combine(
+        syncObserver.isSyncing.minTrueDuration(MIN_STATUS_DISPLAY),
+        userDismissed,
+        syncErrorMessages.message,
+    ) { syncing, dismissed, errorMessage ->
+        when {
+            errorMessage != null -> ToastState(
+                message = errorMessage.message,
+                type = ToastType.Error,
+                persistent = false,
+                id = errorMessage.id,
+            )
+            syncing && !dismissed -> ToastState(
+                message = localizer.getString(StringResourceKey.SyncingLibrary),
+                type = ToastType.Status,
+                persistent = true,
+            )
+            else -> ToastState()
+        }
+    }
+        .distinctUntilChanged()
+        .stateIn(
+            scope = coroutineScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = ToastState(),
+        )
+
+    override val toastStateValue: Value<ToastState> = toastState.asValue(coroutineScope)
 
     override fun onRationaleAccepted() {
         coroutineScope.launch {
@@ -226,8 +279,22 @@ public class DefaultRootPresenter(
         }
     }
 
+    override fun onToastShown(id: Long) {
+        coroutineScope.launch {
+            syncErrorMessages.clearMessage(id)
+        }
+    }
+
+    override fun dismissSyncStatus() {
+        userDismissed.value = true
+    }
+
     @AssistedFactory
     public fun interface Factory {
         public fun create(componentContext: ComponentContext): DefaultRootPresenter
+    }
+
+    private companion object {
+        private val MIN_STATUS_DISPLAY = 2_500.milliseconds
     }
 }

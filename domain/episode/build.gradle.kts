@@ -15,6 +15,7 @@ kotlin {
 
                 implementation(projects.core.base)
                 implementation(projects.core.logger.api)
+                implementation(projects.core.syncstate.api)
                 implementation(projects.core.tasks.api)
                 implementation(projects.core.util.api)
                 implementation(projects.core.networkUtil.api)
@@ -30,6 +31,8 @@ kotlin {
             dependencies {
                 implementation(libs.bundles.unittest)
                 implementation(projects.core.logger.testing)
+                implementation(projects.core.syncstate.testing)
+                implementation(projects.core.util.testing)
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.traktauth.testing)
                 implementation(projects.data.watchlist.testing)

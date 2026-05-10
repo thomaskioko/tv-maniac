@@ -12,9 +12,9 @@ public final class ToastManager {
         dismissalTask?.cancel()
         self.toast = toast
 
-        if toast.duration > 0 {
+        if let duration = toast.duration, duration > 0 {
             dismissalTask = Task { @MainActor [weak self] in
-                try? await Task.sleep(for: .seconds(toast.duration))
+                try? await Task.sleep(for: .seconds(duration))
                 guard !Task.isCancelled, let self else { return }
                 dismiss()
             }

@@ -20,6 +20,7 @@ kotlin {
                 api(projects.core.tasks.api)
                 implementation(libs.coroutines.core)
                 implementation(projects.core.logger.api)
+                implementation(projects.core.syncstate.api)
                 implementation(libs.kotlinx.atomicfu)
             }
         }

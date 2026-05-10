@@ -8,6 +8,7 @@ import com.thomaskioko.root.model.NotificationPermissionState
 import com.thomaskioko.root.model.ThemeState
 import com.thomaskioko.tvmaniac.navigation.SheetChild
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
+import com.thomaskioko.tvmaniac.presenter.root.model.ToastState
 import kotlinx.coroutines.flow.StateFlow
 
 public interface RootPresenter {
@@ -29,6 +30,10 @@ public interface RootPresenter {
 
     public val notificationPermissionStateValue: Value<NotificationPermissionState>
 
+    public val toastState: StateFlow<ToastState>
+
+    public val toastStateValue: Value<ToastState>
+
     public fun onRationaleAccepted()
 
     public fun onRationaleDismissed()
@@ -36,4 +41,8 @@ public interface RootPresenter {
     public fun onNotificationPermissionResult(granted: Boolean)
 
     public fun onDeepLink(destination: DeepLinkDestination)
+
+    public fun onToastShown(id: Long)
+
+    public fun dismissSyncStatus()
 }

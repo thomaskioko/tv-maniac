@@ -9,6 +9,7 @@ kotlin {
                 api(projects.core.appconfig.api)
                 api(projects.core.util.api)
                 implementation(projects.core.base)
+                implementation(libs.coroutines.core)
             }
         }
 

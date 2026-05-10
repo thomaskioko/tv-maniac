@@ -11,10 +11,10 @@ import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultEpisodesDao
 import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultWatchedEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
+import com.thomaskioko.tvmaniac.syncstate.api.SyncError
+import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.trakt.api.TraktCalendarRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktCalendarResponse
-import com.thomaskioko.tvmaniac.util.DefaultSyncErrorChannel
-import com.thomaskioko.tvmaniac.util.api.SyncError
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -59,11 +59,11 @@ internal class DefaultEpisodeRepositorySyncErrorTest : BaseDatabaseTest() {
 
     @Test
     fun `should publish MarkWatchedFailed when syncPendingEpisodes throws on mark watched`() = runTest {
-        val syncErrorChannel = DefaultSyncErrorChannel()
-        val repository = buildRepository(syncErrorChannel)
+        val syncObserver = FakeSyncObserver()
+        val repository = buildRepository(syncObserver)
         syncRepository.setPendingEpisodesError(RuntimeException("network down"))
 
-        syncErrorChannel.errors.test {
+        syncObserver.errors.test {
             repository.markEpisodeAsWatched(
                 showTraktId = SHOW_ID,
                 episodeId = EPISODE_ID,
@@ -80,11 +80,11 @@ internal class DefaultEpisodeRepositorySyncErrorTest : BaseDatabaseTest() {
 
     @Test
     fun `should publish MarkUnwatchedFailed when syncPendingEpisodes throws on mark unwatched`() = runTest {
-        val syncErrorChannel = DefaultSyncErrorChannel()
-        val repository = buildRepository(syncErrorChannel)
+        val syncObserver = FakeSyncObserver()
+        val repository = buildRepository(syncObserver)
         syncRepository.setPendingEpisodesError(RuntimeException("network down"))
 
-        syncErrorChannel.errors.test {
+        syncObserver.errors.test {
             repository.markEpisodeAsUnwatched(showTraktId = SHOW_ID, episodeId = EPISODE_ID)
 
             val event = awaitItem()
@@ -95,11 +95,11 @@ internal class DefaultEpisodeRepositorySyncErrorTest : BaseDatabaseTest() {
 
     @Test
     fun `should publish BatchMarkFailed when syncPendingEpisodes throws on mark season watched`() = runTest {
-        val syncErrorChannel = DefaultSyncErrorChannel()
-        val repository = buildRepository(syncErrorChannel)
+        val syncObserver = FakeSyncObserver()
+        val repository = buildRepository(syncObserver)
         syncRepository.setPendingEpisodesError(RuntimeException("network down"))
 
-        syncErrorChannel.errors.test {
+        syncObserver.errors.test {
             repository.markSeasonWatched(showTraktId = SHOW_ID, seasonNumber = 1L)
 
             val event = awaitItem()
@@ -110,11 +110,11 @@ internal class DefaultEpisodeRepositorySyncErrorTest : BaseDatabaseTest() {
 
     @Test
     fun `should not emit when syncPendingEpisodes succeeds`() = runTest {
-        val syncErrorChannel = DefaultSyncErrorChannel()
-        val repository = buildRepository(syncErrorChannel)
+        val syncObserver = FakeSyncObserver()
+        val repository = buildRepository(syncObserver)
         syncRepository.setPendingEpisodesError(null)
 
-        syncErrorChannel.errors.test {
+        syncObserver.errors.test {
             repository.markEpisodeAsWatched(
                 showTraktId = SHOW_ID,
                 episodeId = EPISODE_ID,
@@ -126,7 +126,7 @@ internal class DefaultEpisodeRepositorySyncErrorTest : BaseDatabaseTest() {
     }
 
     private fun TestScope.buildRepository(
-        syncErrorChannel: DefaultSyncErrorChannel,
+        syncObserver: FakeSyncObserver,
     ): DefaultEpisodeRepository {
         val watchedEpisodeDao = DefaultWatchedEpisodeDao(database, dispatchers, fakeDateTimeProvider)
         val episodesDao = DefaultEpisodesDao(database, dispatchers, fakeDateTimeProvider)
@@ -144,7 +144,7 @@ internal class DefaultEpisodeRepositorySyncErrorTest : BaseDatabaseTest() {
             dispatchers = dispatchers,
             upcomingEpisodesStore = upcomingEpisodesStore,
             appScopeLauncher = FakeAppScopeLauncher(scope = this),
-            syncErrorChannel = syncErrorChannel,
+            syncObserver = syncObserver,
         )
     }
 

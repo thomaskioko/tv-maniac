@@ -19,6 +19,7 @@ import com.thomaskioko.tvmaniac.domain.upnext.RefreshUpNextInteractor
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.traktauth.api.AuthState
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
@@ -47,6 +48,7 @@ public class DebugPresenter(
     private val scheduleDebugEpisodeNotificationInteractor: ScheduleDebugEpisodeNotificationInteractor,
     private val syncLibraryInteractor: SyncLibraryInteractor,
     private val refreshUpNextInteractor: RefreshUpNextInteractor,
+    private val syncObserver: SyncObserver,
     private val dateTimeProvider: DateTimeProvider,
     private val localizer: Localizer,
     private val errorToStringMapper: ErrorToStringMapper,
@@ -122,15 +124,19 @@ public class DebugPresenter(
 
     private fun triggerLibrarySync() {
         coroutineScope.launch {
-            syncLibraryInteractor(SyncLibraryInteractor.Param(forceRefresh = true))
-                .collectStatus(librarySyncState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+            syncObserver.trackSync("DebugLibrarySync") {
+                syncLibraryInteractor(SyncLibraryInteractor.Param(forceRefresh = true))
+                    .collectStatus(librarySyncState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+            }
         }
     }
 
     private fun triggerUpNextSync() {
         coroutineScope.launch {
-            refreshUpNextInteractor(true)
-                .collectStatus(upNextSyncState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+            syncObserver.trackSync("DebugUpNextSync") {
+                refreshUpNextInteractor(true)
+                    .collectStatus(upNextSyncState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+            }
         }
     }
 

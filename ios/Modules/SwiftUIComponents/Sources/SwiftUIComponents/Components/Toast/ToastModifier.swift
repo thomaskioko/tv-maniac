@@ -74,7 +74,7 @@ public struct ToastModifier: ViewModifier {
         dragOffsetY = 0
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
 
-        if toast.duration > 0 {
+        if let duration = toast.duration, duration > 0 {
             workItem?.cancel()
 
             let task = DispatchWorkItem {
@@ -82,7 +82,7 @@ public struct ToastModifier: ViewModifier {
             }
 
             workItem = task
-            DispatchQueue.main.asyncAfter(deadline: .now() + toast.duration, execute: task)
+            DispatchQueue.main.asyncAfter(deadline: .now() + duration, execute: task)
         }
     }
 

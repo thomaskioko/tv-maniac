@@ -47,6 +47,8 @@ dependencies {
     implementation(projects.core.appconfig.api)
     implementation(projects.core.appconfig.implementation)
     implementation(projects.core.base)
+    implementation(projects.core.syncstate.api)
+    implementation(projects.core.syncstate.implementation)
     implementation(projects.core.util.implementation)
     implementation(projects.core.imageloading.implementation)
     implementation(projects.core.locale.api)

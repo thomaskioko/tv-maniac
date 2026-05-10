@@ -38,6 +38,8 @@ kotlin {
             api(projects.core.logger.api)
             api(projects.core.logger.implementation)
             api(projects.core.logger.testing)
+            api(projects.core.syncstate.api)
+            api(projects.core.syncstate.implementation)
             api(projects.core.util.api)
             api(projects.core.util.testing)
             api(projects.core.view)

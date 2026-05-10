@@ -16,6 +16,7 @@ kotlin {
                 implementation(projects.navigation.api)
                 implementation(projects.core.logger.api)
                 implementation(projects.features.debug.nav)
+                implementation(projects.core.syncstate.api)
                 implementation(projects.core.util.api)
                 implementation(projects.data.datastore.api)
                 implementation(projects.data.traktauth.api)
@@ -36,6 +37,7 @@ kotlin {
             dependencies {
                 implementation(projects.core.logger.testing)
                 implementation(projects.core.notifications.testing)
+                implementation(projects.core.syncstate.testing)
                 implementation(projects.core.util.testing)
                 implementation(projects.data.datastore.testing)
                 implementation(projects.data.episode.testing)

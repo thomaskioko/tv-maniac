@@ -9,6 +9,13 @@ public interface BackgroundTaskScheduler {
      *
      * Use this on app launch to ensure background jobs are registered without
      * causing unnecessary network calls at startup.
+     *
+     * All periodic workers route through this entry point and are dispatched by
+     * the platform-specific funnel (Android: `SchedulerDispatchWorker`; iOS:
+     * `IosTaskScheduler.executeWithinWindow`). Sync visibility on top of these
+     * workers is gated by [BackgroundWorker.isLibrarySyncWork]: library-sync workers
+     * surface in the root "Syncing your library..." toast, auth-only workers stay
+     * invisible by overriding the flag to `false`.
      */
     public fun schedulePeriodic(request: PeriodicTaskRequest)
 

@@ -14,12 +14,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
@@ -50,8 +52,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
-import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -86,6 +86,8 @@ public fun TvManiacSnackBarHost(
     modifier: Modifier = Modifier,
     style: SnackBarStyle = SnackBarStyle.Error,
     durationMillis: Long = 10000L,
+    persistent: Boolean = false,
+    loading: Boolean = false,
     alignment: Alignment = Alignment.TopCenter,
     onDismiss: () -> Unit = {},
 ) {
@@ -102,12 +104,14 @@ public fun TvManiacSnackBarHost(
         currentOnDismiss()
     }
 
-    LaunchedEffect(message) {
+    LaunchedEffect(message, persistent) {
         offsetX.snapTo(0f)
         if (message != null) {
             visible = true
-            delay(durationMillis)
-            dismiss()
+            if (!persistent) {
+                delay(durationMillis)
+                dismiss()
+            }
         } else {
             visible = false
         }
@@ -175,6 +179,7 @@ public fun TvManiacSnackBarHost(
                     },
                 message = message.orEmpty(),
                 style = style,
+                loading = loading,
             )
         }
     }
@@ -185,6 +190,7 @@ internal fun TvManiacSnackBar(
     message: String,
     modifier: Modifier = Modifier,
     style: SnackBarStyle = SnackBarStyle.Error,
+    loading: Boolean = false,
 ) {
     Row(
         modifier = modifier
@@ -197,11 +203,19 @@ internal fun TvManiacSnackBar(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(
-            imageVector = style.icon,
-            contentDescription = null,
-            tint = Color.White,
-        )
+        if (loading) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(20.dp),
+                color = Color.White,
+                strokeWidth = 2.dp,
+            )
+        } else {
+            Icon(
+                imageVector = style.icon,
+                contentDescription = null,
+                tint = Color.White,
+            )
+        }
 
         Text(
             text = message,

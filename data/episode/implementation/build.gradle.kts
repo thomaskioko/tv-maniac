@@ -19,6 +19,7 @@ kotlin {
                 implementation(projects.core.base)
                 implementation(projects.core.logger.api)
                 implementation(projects.core.networkUtil.api)
+                implementation(projects.core.syncstate.api)
                 implementation(projects.core.util.api)
                 implementation(projects.data.database.sqldelight)
                 implementation(projects.data.datastore.api)
@@ -46,6 +47,7 @@ kotlin {
                 implementation(projects.data.followedshows.testing)
                 implementation(projects.data.requestManager.testing)
                 implementation(projects.core.util.implementation)
+                implementation(projects.core.syncstate.testing)
                 implementation(projects.i18n.testing)
             }
         }

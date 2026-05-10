@@ -142,6 +142,8 @@ kotlin {
                 implementation(projects.core.locale.implementation)
                 implementation(projects.core.logger.api)
                 implementation(projects.core.logger.implementation)
+                implementation(projects.core.syncstate.api)
+                implementation(projects.core.syncstate.implementation)
                 implementation(projects.core.util.implementation)
                 implementation(projects.core.tasks.api)
                 implementation(projects.core.tasks.implementation)

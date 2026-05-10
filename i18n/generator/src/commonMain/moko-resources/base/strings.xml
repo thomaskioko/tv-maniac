@@ -395,4 +395,5 @@
     <string name="notification_channel_developer_description">Notifications for testing</string>
 
     <string name="sync_failed_will_retry">Couldn\'t sync with server. Your change is saved and will retry when you\'re back online.</string>
+    <string name="syncing_library">Syncing your library&#8230;</string>
 </resources>
