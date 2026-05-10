@@ -10,7 +10,6 @@ import com.thomaskioko.tvmaniac.traktauth.api.AuthError
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import dev.zacsweers.metro.ContributesBinding
-import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -22,7 +21,6 @@ import kotlin.coroutines.suspendCoroutine
 
 private const val TYPE_USER_CANCELED = 2
 
-@Inject
 @SingleIn(ActivityScope::class)
 @ContributesBinding(ActivityScope::class)
 public class AndroidTraktAuthManager(

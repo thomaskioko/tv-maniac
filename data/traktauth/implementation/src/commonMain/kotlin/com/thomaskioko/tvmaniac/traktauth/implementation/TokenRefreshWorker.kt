@@ -9,10 +9,8 @@ import com.thomaskioko.tvmaniac.traktauth.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoSet
-import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 
-@Inject
 @SingleIn(AppScope::class)
 @ContributesIntoSet(AppScope::class)
 public class TokenRefreshWorker(

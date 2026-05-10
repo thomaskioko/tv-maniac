@@ -10,11 +10,9 @@ import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoSet
-import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CancellationException
 
-@Inject
 @SingleIn(AppScope::class)
 @ContributesIntoSet(AppScope::class)
 public class LibrarySyncWorker(

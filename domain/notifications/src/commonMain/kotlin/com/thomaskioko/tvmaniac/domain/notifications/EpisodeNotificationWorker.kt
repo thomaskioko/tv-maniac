@@ -12,11 +12,9 @@ import com.thomaskioko.tvmaniac.syncstate.api.SyncError
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoSet
-import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import kotlin.time.Duration.Companion.hours
 
-@Inject
 @SingleIn(AppScope::class)
 @ContributesIntoSet(AppScope::class)
 public class EpisodeNotificationWorker(
