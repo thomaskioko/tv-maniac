@@ -66,6 +66,7 @@ kotlin {
                 implementation(projects.data.user.testing)
                 implementation(projects.data.upnext.testing)
                 implementation(projects.data.watchproviders.testing)
+                implementation(projects.core.syncstate.api)
                 implementation(projects.core.util.implementation)
                 implementation(projects.i18n.testing)
                 implementation(projects.core.notifications.testing)

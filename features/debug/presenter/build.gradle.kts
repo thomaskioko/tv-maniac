@@ -16,6 +16,7 @@ kotlin {
                 implementation(projects.navigation.api)
                 implementation(projects.core.logger.api)
                 implementation(projects.features.debug.nav)
+                implementation(projects.core.syncstate.api)
                 implementation(projects.core.util.api)
                 implementation(projects.data.datastore.api)
                 implementation(projects.data.traktauth.api)
