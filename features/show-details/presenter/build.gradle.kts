@@ -49,6 +49,7 @@ kotlin {
             dependencies {
                 implementation(projects.core.base.testing)
                 implementation(projects.core.logger.testing)
+                implementation(projects.core.syncstate.testing)
                 implementation(projects.core.util.testing)
                 implementation(projects.data.cast.testing)
                 implementation(projects.data.datastore.testing)

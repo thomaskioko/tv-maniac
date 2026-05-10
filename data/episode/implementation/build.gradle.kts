@@ -47,6 +47,7 @@ kotlin {
                 implementation(projects.data.followedshows.testing)
                 implementation(projects.data.requestManager.testing)
                 implementation(projects.core.util.implementation)
+                implementation(projects.core.syncstate.testing)
                 implementation(projects.i18n.testing)
             }
         }

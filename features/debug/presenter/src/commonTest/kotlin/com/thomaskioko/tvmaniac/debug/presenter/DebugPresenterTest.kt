@@ -20,12 +20,12 @@ import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelDebugNeverRefreshed
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
+import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.traktauth.api.AuthState
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
-import com.thomaskioko.tvmaniac.util.testing.FakeSyncObserver
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher

@@ -38,11 +38,11 @@ import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
+import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsInteractor
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
-import com.thomaskioko.tvmaniac.util.testing.FakeSyncObserver
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldNotBeSameInstanceAs

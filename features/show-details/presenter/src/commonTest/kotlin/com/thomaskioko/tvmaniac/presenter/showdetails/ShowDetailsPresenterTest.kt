@@ -55,6 +55,7 @@ import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
+import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
@@ -63,7 +64,6 @@ import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
-import com.thomaskioko.tvmaniac.util.testing.FakeSyncObserver
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.collections.immutable.persistentListOf
