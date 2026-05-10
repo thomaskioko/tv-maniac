@@ -23,23 +23,29 @@ struct iOSApp: App {
     var body: some Scene {
         WindowGroup {
             if let holder = componentHolder {
-                RootNavigationView(
+                RootToastForwarder(
                     rootPresenter: holder.component.rootPresenter,
                     navigator: holder.component.navigator,
                     registry: screenRegistry
                 )
                 .environmentObject(appDelegate)
                 .environment(toastManager)
-                .overlay(alignment: .bottom) {
+                .overlay(alignment: .top) {
                     if let toast = toastManager.toast {
                         ToastView(
                             type: toast.type,
                             title: toast.title,
                             message: toast.message,
-                            onCancelTapped: { toastManager.dismiss() }
+                            loading: toast.loading,
+                            onCancelTapped: {
+                                if toast.persistent {
+                                    holder.component.rootPresenter.dismissSyncStatus()
+                                }
+                                toastManager.dismiss()
+                            }
                         )
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
-                        .padding(.bottom, 50)
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                        .padding(.top, 8)
                     }
                 }
                 .animation(.spring(), value: toastManager.toast)
@@ -86,5 +92,44 @@ struct iOSApp: App {
         @unknown default:
             break
         }
+    }
+}
+
+private struct RootToastForwarder: View {
+    let rootPresenter: RootPresenter
+    let navigator: Navigator
+    let registry: ScreenRegistry
+
+    @StateValue private var toast: ToastState
+    @Environment(ToastManager.self) private var toastManager
+
+    init(rootPresenter: RootPresenter, navigator: Navigator, registry: ScreenRegistry) {
+        self.rootPresenter = rootPresenter
+        self.navigator = navigator
+        self.registry = registry
+        _toast = .init(rootPresenter.toastStateValue)
+    }
+
+    var body: some View {
+        RootNavigationView(rootPresenter: rootPresenter, navigator: navigator, registry: registry)
+            .onAppear { forward(toast) }
+            .onChange(of: toast) { _, newState in
+                forward(newState)
+            }
+    }
+
+    private func forward(_ state: ToastState) {
+        guard let message = state.message else {
+            toastManager.dismiss()
+            return
+        }
+        toastManager.show(
+            Toast(
+                type: state.type == .error ? .error : .info,
+                message: message,
+                persistent: state.persistent,
+                loading: state.type == .status
+            )
+        )
     }
 }

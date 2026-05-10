@@ -29,7 +29,7 @@ struct SplashView: View {
                 theme.colors.background
                     .ignoresSafeArea()
 
-                Image(AppIcon.tvManiacIcon)
+                TvManiacAppIcon.image
                     .resizable()
                     .scaledToFit()
                     .frame(width: 180, height: 180)

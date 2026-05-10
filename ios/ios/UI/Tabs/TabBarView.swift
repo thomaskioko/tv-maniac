@@ -55,7 +55,6 @@ public struct TabBarView: View {
         }
     }
 
-    @ViewBuilder
     private func tabContent(
         _ tab: NavigationTab,
         stack: Value<ChildStack<AnyObject, RootChild>>,
@@ -100,11 +99,11 @@ public struct TabBarView: View {
 
     private func tabFor(_ root: NavRoot) -> NavigationTab {
         switch root {
-        case is DiscoverRoot: return .discover
-        case is ProgressRoot: return .progress
-        case is LibraryRoot: return .library
-        case is ProfileRoot: return .profile
-        default: return .discover
+        case is DiscoverRoot: .discover
+        case is ProgressRoot: .progress
+        case is LibraryRoot: .library
+        case is ProfileRoot: .profile
+        default: .discover
         }
     }
 

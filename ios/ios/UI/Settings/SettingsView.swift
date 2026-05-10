@@ -58,7 +58,24 @@ struct SettingsView: View {
             Text(String(\.notification_permission_denied_message))
         }
         .sheet(isPresented: $showAboutSheet) {
-            AboutSheet()
+            AboutSheet(
+                appName: "TvManiac",
+                versionText: String(\.settings_about_version, parameter: uiState.versionName),
+                aboutTitle: String(\.settings_about_section_title),
+                aboutDescription: String(\.settings_about_description),
+                sourceCodeLabel: String(\.settings_about_source_code),
+                sourceCodeAction: String(\.settings_about_github),
+                apiDisclaimer: String(\.settings_about_api_disclaimer),
+                icon: TvManiacAppIcon.image,
+                onVersionTap: { presenter.dispatch(action: VersionClicked()) },
+                onSourceCodeTap: {
+                    if let url = URL(string: uiState.githubUrl) {
+                        openURL(url)
+                    }
+                }
+            )
+            .appTint()
+            .appTheme()
         }
         .onChange(of: uiState.hiddenTapCount) { _, newCount in
             if newCount == 0, showAboutSheet {
@@ -234,78 +251,6 @@ struct SettingsView: View {
                 }
             }
         }
-    }
-
-    // MARK: - About Sheet
-
-    private func AboutSheet() -> some View {
-        ZStack(alignment: .bottom) {
-            ScrollView {
-                VStack(spacing: 0) {
-                    VStack(spacing: 16) {
-                        Image(AppIcon.tvManiacIcon)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 72, height: 72)
-                            .clipShape(RoundedRectangle(cornerRadius: 16))
-
-                        Text("TvManiac")
-                            .font(.title)
-                            .bold()
-
-                        Text(String(\.settings_about_version, parameter: uiState.versionName))
-                            .font(.body)
-                            .contentShape(Rectangle())
-                            .onTapGesture { presenter.dispatch(action: VersionClicked()) }
-                    }
-                    .padding(.vertical, 32)
-
-                    Divider()
-
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(String(\.settings_about_section_title))
-                            .font(.headline)
-                        Text(String(\.settings_about_description))
-                            .font(.body)
-                            .foregroundColor(.secondary)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(16)
-
-                    Divider()
-
-                    Button {
-                        if let url = URL(string: uiState.githubUrl) {
-                            openURL(url)
-                        }
-                    } label: {
-                        HStack {
-                            Text(String(\.settings_about_source_code))
-                            Spacer()
-                            Text(String(\.settings_about_github))
-                                .foregroundColor(.accentColor)
-                        }
-                        .padding(16)
-                    }
-                    .buttonStyle(.plain)
-
-                    Divider()
-
-                    Spacer()
-                        .frame(height: 80)
-                }
-            }
-
-            Text(String(\.settings_about_api_disclaimer))
-                .font(.caption)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(24)
-                .frame(maxWidth: .infinity)
-                .background(Color(.systemBackground))
-        }
-        .frame(maxWidth: .infinity)
-        .presentationDetents([.large])
     }
 
     // MARK: - Helpers
