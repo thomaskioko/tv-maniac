@@ -6,25 +6,34 @@ public struct ToastView: View {
     private let type: ToastStyle
     private let title: String
     private let message: String
+    private let loading: Bool
     private let onCancelTapped: () -> Void
 
     public init(
         type: ToastStyle,
         title: String,
         message: String,
+        loading: Bool = false,
         onCancelTapped: @escaping () -> Void
     ) {
         self.type = type
         self.title = title
         self.message = message
+        self.loading = loading
         self.onCancelTapped = onCancelTapped
     }
 
     public var body: some View {
         HStack(alignment: .center, spacing: theme.spacing.small) {
-            Image(systemName: type.iconFileName)
-                .foregroundColor(.white)
-                .font(.title3)
+            if loading {
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                    .scaleEffect(0.8)
+            } else {
+                Image(systemName: type.iconFileName)
+                    .foregroundColor(.white)
+                    .font(.title3)
+            }
 
             Text(message)
                 .textStyle(theme.typography.bodyMedium)
