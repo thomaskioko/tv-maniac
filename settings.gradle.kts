@@ -108,6 +108,8 @@ include(
     ":core:notifications:testing",
     ":core:paging",
     ":core:screenshot-tests",
+    ":core:syncstate:api",
+    ":core:syncstate:implementation",
     ":core:tasks:api",
     ":core:tasks:implementation",
     ":core:tasks:testing",

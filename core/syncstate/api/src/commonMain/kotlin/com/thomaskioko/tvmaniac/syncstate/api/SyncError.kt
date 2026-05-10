@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.util.api
+package com.thomaskioko.tvmaniac.syncstate.api
 
 public sealed interface SyncError {
     public val showTraktId: Long
