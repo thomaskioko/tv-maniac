@@ -83,7 +83,7 @@ provided helpers instead of working around them per-test.
   the activity's back-pressed dispatcher, which bypasses Material 3 `Dialog` and `ModalBottomSheet`
   windows. Click the dialog's confirm or dismiss button, or trigger an action that closes the
   modal (for example `clickActionItem(EpisodeSheetActionItem.OPEN_SHOW)` for the episode
-  sheet). See [integration-testing.md](integration-testing.md#pressback-behaviour).
+  sheet). See [flow-test-patterns.md](flow-test-patterns.md#pressback-behaviour).
 
 - **System notification permission dialog**. The rationale Enable path calls
   `permissionLauncher.launch(POST_NOTIFICATIONS)`, which on real Android API 33+ shows a real

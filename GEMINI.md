@@ -33,12 +33,9 @@ TV Maniac is a Kotlin Multiplatform (KMP) project for tracking TV shows. It foll
   - `ScreenScope`: Decompose component lifetime.
 
 ### 3. Navigation (Decompose)
-- Use `NavRoute` for standard navigation and `SheetConfig` for bottom sheets.
-- **Annotations**:
-  - `@NavScreen`: Annotate presenters for standard screens.
-  - `@NavSheet`: Annotate presenters for bottom sheets.
-  - `@TabScreen`: Annotate presenters for tab screens.
-- **Codegen**: Navigation is largely handled via codegen based on these annotations.
+- Use `NavRoute` for stack screens and overlays (overlays additionally implement `OverlayRoute`). Use `NavRoot` for tab anchors.
+- **Annotation**: `@NavDestination(route, parentScope, kind)` with `kind = SCREEN | OVERLAY | TAB_ROOT`.
+- **Codegen**: Navigation bindings (`NavDestination.Screen`, `.Overlay`, `.TabRoot`), graph extensions, and route/root bindings are generated from this single annotation.
 
 ### 4. Presentation Layer (MVI)
 - **Presenters**:
@@ -88,7 +85,7 @@ TV Maniac is a Kotlin Multiplatform (KMP) project for tracking TV shows. It foll
 1. **Feature Addition**:
    - Define `Route` in `nav`.
    - Implement `Interactor` in `domain` (if needed).
-   - Implement `Presenter` in `presenter` using `@AssistedInject` and `@NavScreen`.
+   - Implement `Presenter` in `presenter` annotated with `@NavDestination(...)` (use `@AssistedInject` only when the route carries a parameter).
    - Implement `Screen` in `ui` using `@ScreenUi`.
 2. **Data Changes**:
    - Update SQLDelight `.sq` files.

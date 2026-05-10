@@ -8,7 +8,7 @@
 - [Module Archetypes](#module-archetypes)
 - [Adding a New Feature](#adding-a-new-feature)
 
-Modules depend on API modules only, never on `implementation/`. Breaking this boundary prevents module isolation and testing via fakes.
+The application splits into roughly 100 Gradle modules grouped by layer and feature. Every module depends on API contracts only; the matching implementation is selected at compile time by [Metro](glossary.md#metro). Lint rules reject any consumer that crosses the boundary into another feature's `implementation/`.
 
 ## Module Dependency Graph
 
@@ -56,53 +56,82 @@ graph TD
 
 ## Layers
 
-1. **Entry points** (`:app`, `:ios-framework`): Wire DI graph and host binary. Only modules allowed to depend on `implementation/`.
-2. **Features** (`features/{name}/*`): Co-located presenter (KMP), UI (Android), and navigation contract.
-3. **Root** (`features/root/*`): Root presenter, composable, and shared nav models.
-4. **Navigation** (`navigation/*`): Cross-cutting contracts and registries.
-5. **Business logic** (`domain/*`): Interactors only.
-6. **Data Contracts** (`data/*/api`): Repository interfaces and models.
-7. **Data Implementation** (`data/*/implementation`): Stores, repositories, DAOs, and mappers.
-8. **Data Infrastructure** (`data/database`, `data/datastore`, `data/request-manager`): persistence and cache validation.
-9. **Network** (`api/*`): Ktor clients and auth.
-10. **Localization** (`i18n/*`): Resources and generated localizer.
-11. **Core** (`core/*`): Utilities, design system base, and test scaffolding.
+| Layer | Modules | Responsibility |
+|---|---|---|
+| Entry points | `:app`, `:ios-framework` | Build the dependency graph and host the binary. Only modules allowed to depend on `implementation/`. |
+| Features | `features/{name}/*` | Co-located presenter (Kotlin Multiplatform), Android UI, and navigation contract. |
+| Root | `features/root/*` | The [`RootPresenter`](glossary.md#rootpresenter), shared composables, and navigation models. |
+| Navigation | `navigation/*` | Cross-cutting navigation contracts and registries. |
+| Business logic | `domain/*` | [Interactors](glossary.md#interactor) only. |
+| Data contracts | `data/*/api` | Repository interfaces and domain models. |
+| Data implementation | `data/*/implementation` | [Stores](glossary.md#store), repositories, Data Access Objects, and mappers. |
+| Data infrastructure | `data/database`, `data/datastore`, `data/request-manager` | Persistence and cache validation. |
+| Network | `api/*` | Ktor clients and authentication. |
+| Localization | `i18n/*` | Resources and the generated [`Localizer`](glossary.md#localizer). |
+| Core | `core/*` | Utilities, design system base, and test scaffolding. |
 
 ## Dependency Rules
 
-- **API-only**: Modules import `api/` modules. Metro resolves implementations at graph processing time.
-- **Entry points**: `:app` and `:ios-framework` are the only implementation consumers.
-- **Feature nav**: Contracts live in feature `nav` modules. Navigator implementations live as `internal` classes in `presenter`.
-- **Fakes**: `testing/` modules provide fakes. Tests depend on `api/` + `testing/`.
-- **UI modules**: Render state and dispatch intents. No business logic.
+- **API only**: presenters and tests import the `api/` module. Metro resolves the matching `implementation/` at graph processing time.
+- **Entry points**: `:app` and `:ios-framework` are the only modules that may depend on any `implementation/` module.
+- **Feature navigation**: every route lives in `features/{name}/nav`. Navigator implementations live as `internal` classes in `navigation/implementation`.
+- **Fakes**: `testing/` modules provide fake implementations. Unit tests depend on `api/` plus `testing/`, never on `implementation/`.
+- **UI modules**: Compose screens render state and dispatch actions. No business logic.
 
 ## Module Archetypes
 
-### 1. Feature Modules
-Co-located under `features/{name}/`:
-- **`presenter/`**: `@Inject` presenters, screen state, and DI extensions.
-- **`ui/`**: Compose screens.
-- **`nav/`**: Serializable routes and scope markers.
+### Feature module
 
-### 2. Data Modules
-Split into three parts:
-- **`api/`**: Interfaces and models.
-- **`implementation/`**: Store wiring and persistence.
-- **`testing/`**: Fake implementations.
+Three sibling Gradle modules under `features/{name}/`.
 
-### 3. Domain Modules
-KMP modules containing interactors and use cases.
+- `presenter/`: `@Inject` presenter, screen state, and Metro graph extensions.
+- `ui/`: Compose screen and previews.
+- `nav/`: serializable [`NavRoute`](glossary.md#navroute) types and binding multibindings.
 
-### 4. Integration Test Modules
-- **`core/integration/infra`**: DI overrides and fakes.
-- **`core/integration/ui`**: UI scaffolding and DSL.
+### Data module
+
+Three sibling Gradle modules under `data/{name}/`.
+
+- `api/`: repository interface, domain models, and qualifiers.
+- `implementation/`: [`Store`](glossary.md#store) bindings, repositories, and persistence.
+- `testing/`: fake implementations of the API.
+
+### Domain module
+
+A single Kotlin Multiplatform module under `domain/{name}/` containing interactors and use cases.
+
+### Integration test modules
+
+- `core/integration/infra`: dependency injection overrides and shared fakes.
+- `core/integration/ui`: UI scaffolding, DSL, and the Robot pattern.
 
 ## Adding a New Feature
 
-1. **Create Data**: Add `api/`, `implementation/`, `testing/` if persistence is needed.
-2. **Add Domain**: Implement interactors.
-3. **Define Route**: Create `NavRoute` in `features/{name}/nav`.
-4. **Implement Presenter**: Add presenter in `features/{name}/presenter`. Use `@NavScreen` or `@TabScreen` with codegen.
-5. **Implement UI**: Add Compose screen in `features/{name}/ui` using `@ScreenUi`.
-6. **iOS View**: Register `presenter -> view` mapping in `ScreenRegistryBootstrap.swift`.
-7. **Register**: Add module to `settings.gradle.kts` and dependencies to `:app` and `:ios-framework`.
+The walkthrough below covers a feature named `trending`. Substitute the feature name in every path.
+
+1. **Add the three data modules** under `data/trending/`: `api/`, `implementation/`, `testing/`. Use the `/data-module` skill to scaffold.
+2. **Add the domain module** under `domain/trending/` with a [`SubjectInteractor`](glossary.md#interactor) that streams the trending list.
+3. **Declare the route** in `features/trending/nav/.../TrendingShowsRoute.kt`:
+
+   ```kotlin
+   @Serializable
+   public data object TrendingShowsRoute : NavRoute
+   ```
+
+4. **Add the presenter** in `features/trending/presenter/.../TrendingShowsPresenter.kt`. Annotate the class so the [code generation processor](navigation-codegen.md) emits the graph extension and the destination binding:
+
+   ```kotlin
+   @Inject
+   @NavDestination(
+       route = TrendingShowsRoute::class,
+       parentScope = ActivityScope::class,
+       kind = DestinationKind.SCREEN,
+   )
+   public class TrendingShowsPresenter(/* ... */)
+   ```
+
+5. **Add the Compose screen** in `features/trending/ui/.../TrendingShowsScreen.kt`. Annotate the binding with `@ScreenUi`.
+6. **Bind the iOS view** by adding a presenter to SwiftUI view mapping in `ios/.../ScreenRegistryBootstrap.swift`.
+7. **Register the modules** in `settings.gradle.kts` and add the module dependencies to `:app` and `:ios-framework`.
+
+The `/navigation` skill walks through the same flow with a checklist.
