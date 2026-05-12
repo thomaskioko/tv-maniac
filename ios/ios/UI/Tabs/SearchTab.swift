@@ -24,15 +24,8 @@ struct SearchTab: View {
         let categoryLabels = Array(uiState.categories).map { $0 as CategoryItem }
 
         SearchScreen(
-            title: String(\.label_search_title),
-            state: mapState(uiState.uiState),
+            state: uiState.toState(categoryLabels: categoryLabels),
             query: searchQueryBinding,
-            searchPlaceholder: String(\.label_search_placeholder),
-            emptyResultsMessage: String(\.label_search_empty_results),
-            retryButtonText: String(\.button_error_retry),
-            selectedCategory: categoryLabels.first { $0.category == uiState.selectedCategory }?.label ?? "",
-            categories: categoryLabels.map(\.label),
-            categoryTitle: uiState.categoryTitle,
             onShowClicked: { id in presenter.dispatch(action: SearchShowClicked(id: id)) },
             onRetry: { presenter.dispatch(action: ReloadShowContent()) },
             onBack: { presenter.dispatch(action: BackClicked_()) },
@@ -43,9 +36,26 @@ struct SearchTab: View {
             }
         )
     }
+}
 
-    private func mapState(_ uiState: SearchUiState) -> SearchScreenState {
-        switch uiState {
+private extension SearchShowState {
+    func toState(categoryLabels: [CategoryItem]) -> SearchScreen.State {
+        SearchScreen.State(
+            title: String(\.label_search_title),
+            screenState: uiState.toScreenState(),
+            searchPlaceholder: String(\.label_search_placeholder),
+            emptyResultsMessage: String(\.label_search_empty_results),
+            retryButtonText: String(\.button_error_retry),
+            selectedCategory: categoryLabels.first { $0.category == selectedCategory }?.label ?? "",
+            categories: categoryLabels.map(\.label),
+            categoryTitle: categoryTitle
+        )
+    }
+}
+
+private extension SearchUiState {
+    func toScreenState() -> SearchScreenState {
+        switch self {
         case is SearchUiStateInitialLoading, is SearchUiStateSearchLoading:
             .loading
         case is SearchUiStateSearchEmpty:

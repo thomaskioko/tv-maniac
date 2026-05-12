@@ -1,21 +1,28 @@
 import SwiftUI
 
 public struct DebugScreen: View {
+    public struct State: Equatable {
+        public let title: String
+        public let items: [DebugMenuItem]
+
+        public init(title: String, items: [DebugMenuItem]) {
+            self.title = title
+            self.items = items
+        }
+    }
+
     @Theme private var theme
 
-    private let title: String
-    private let items: [DebugMenuItem]
+    private let state: State
     @Binding private var toast: Toast?
     private let onBack: () -> Void
 
     public init(
-        title: String,
-        items: [DebugMenuItem],
+        state: State,
         toast: Binding<Toast?>,
         onBack: @escaping () -> Void
     ) {
-        self.title = title
-        self.items = items
+        self.state = state
         _toast = toast
         self.onBack = onBack
     }
@@ -23,7 +30,7 @@ public struct DebugScreen: View {
     public var body: some View {
         List {
             Section {
-                ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
+                ForEach(Array(state.items.enumerated()), id: \.element.id) { index, item in
                     debugRow(for: item)
                         .listRowSeparator(.hidden, edges: index == 0 ? .top : [])
                 }
@@ -49,7 +56,7 @@ public struct DebugScreen: View {
         .swipeBackGesture(onSwipe: onBack)
         .overlay(
             GlassToolbar(
-                title: title,
+                title: state.title,
                 opacity: 1.0,
                 leadingIcon: {
                     GlassButton(icon: "chevron.left", action: onBack)
@@ -109,47 +116,49 @@ public struct DebugScreen: View {
 #Preview("Debug Screen") {
     ThemedPreview {
         DebugScreen(
-            title: "Debug Menu",
-            items: [
-                DebugMenuItem(
-                    id: "notification",
-                    icon: "bell.fill",
-                    title: "Episode Notifications",
-                    subtitle: "Send a test notification",
-                    onTap: {}
-                ),
-                DebugMenuItem(
-                    id: "delayed",
-                    icon: "clock",
-                    title: "Delayed Notification",
-                    subtitle: "Schedule notification in 10 seconds",
-                    onTap: {}
-                ),
-                DebugMenuItem(
-                    id: "library-sync",
-                    icon: "arrow.triangle.2.circlepath",
-                    title: "Library Sync",
-                    subtitle: "Last synced: Never",
-                    onTap: {}
-                ),
-                DebugMenuItem(
-                    id: "upnext-sync",
-                    icon: "arrow.clockwise",
-                    title: "Up Next Sync",
-                    subtitle: "Last synced: 2 hours ago",
-                    isLoading: false,
-                    isEnabled: true,
-                    onTap: {}
-                ),
-                DebugMenuItem(
-                    id: "crash",
-                    icon: "exclamationmark.triangle",
-                    role: .destructive,
-                    title: "Test Crash",
-                    subtitle: "Trigger a fatal error",
-                    onTap: {}
-                ),
-            ],
+            state: DebugScreen.State(
+                title: "Debug Menu",
+                items: [
+                    DebugMenuItem(
+                        id: "notification",
+                        icon: "bell.fill",
+                        title: "Episode Notifications",
+                        subtitle: "Send a test notification",
+                        onTap: {}
+                    ),
+                    DebugMenuItem(
+                        id: "delayed",
+                        icon: "clock",
+                        title: "Delayed Notification",
+                        subtitle: "Schedule notification in 10 seconds",
+                        onTap: {}
+                    ),
+                    DebugMenuItem(
+                        id: "library-sync",
+                        icon: "arrow.triangle.2.circlepath",
+                        title: "Library Sync",
+                        subtitle: "Last synced: Never",
+                        onTap: {}
+                    ),
+                    DebugMenuItem(
+                        id: "upnext-sync",
+                        icon: "arrow.clockwise",
+                        title: "Up Next Sync",
+                        subtitle: "Last synced: 2 hours ago",
+                        isLoading: false,
+                        isEnabled: true,
+                        onTap: {}
+                    ),
+                    DebugMenuItem(
+                        id: "crash",
+                        icon: "exclamationmark.triangle",
+                        role: .destructive,
+                        title: "Test Crash",
+                        subtitle: "Trigger a fatal error",
+                        onTap: {}
+                    ),
+                ]
+            ),
             toast: .constant(nil),
             onBack: {}
         )

@@ -1,32 +1,42 @@
 import SwiftUI
 
 public struct ProgressScreen<UpNextContent: View, CalendarContent: View>: View {
+    public struct State: Equatable {
+        public let title: String
+        public let isLoading: Bool
+        public let selectedPage: Int
+        public let upNextTabTitle: String
+        public let calendarTabTitle: String
+
+        public init(
+            title: String,
+            isLoading: Bool,
+            selectedPage: Int,
+            upNextTabTitle: String,
+            calendarTabTitle: String
+        ) {
+            self.title = title
+            self.isLoading = isLoading
+            self.selectedPage = selectedPage
+            self.upNextTabTitle = upNextTabTitle
+            self.calendarTabTitle = calendarTabTitle
+        }
+    }
+
     @Theme private var theme
 
-    private let title: String
-    private let isLoading: Bool
-    private let selectedPage: Int
-    private let upNextTabTitle: String
-    private let calendarTabTitle: String
+    private let state: State
     private let onPageChanged: (Int) -> Void
     @ViewBuilder private let upNextContent: () -> UpNextContent
     @ViewBuilder private let calendarContent: () -> CalendarContent
 
     public init(
-        title: String,
-        isLoading: Bool,
-        selectedPage: Int,
-        upNextTabTitle: String,
-        calendarTabTitle: String,
+        state: State,
         onPageChanged: @escaping (Int) -> Void,
         @ViewBuilder upNextContent: @escaping () -> UpNextContent,
         @ViewBuilder calendarContent: @escaping () -> CalendarContent
     ) {
-        self.title = title
-        self.isLoading = isLoading
-        self.selectedPage = selectedPage
-        self.upNextTabTitle = upNextTabTitle
-        self.calendarTabTitle = calendarTabTitle
+        self.state = state
         self.onPageChanged = onPageChanged
         self.upNextContent = upNextContent
         self.calendarContent = calendarContent
@@ -37,7 +47,7 @@ public struct ProgressScreen<UpNextContent: View, CalendarContent: View>: View {
             pagePicker
 
             TabView(selection: Binding(
-                get: { selectedPage },
+                get: { state.selectedPage },
                 set: { onPageChanged($0) }
             )) {
                 upNextContent()
@@ -61,12 +71,12 @@ public struct ProgressScreen<UpNextContent: View, CalendarContent: View>: View {
 
     private var titleView: some View {
         HStack(spacing: theme.spacing.xSmall) {
-            Text(title)
+            Text(state.title)
                 .textStyle(theme.typography.titleMedium)
                 .lineLimit(1)
                 .foregroundColor(theme.colors.onSurface)
 
-            if isLoading {
+            if state.isLoading {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle(tint: theme.colors.accent))
                     .scaleEffect(0.7)
@@ -76,11 +86,11 @@ public struct ProgressScreen<UpNextContent: View, CalendarContent: View>: View {
 
     private var pagePicker: some View {
         Picker("", selection: Binding(
-            get: { selectedPage },
+            get: { state.selectedPage },
             set: { onPageChanged($0) }
         )) {
-            Text(upNextTabTitle).tag(0)
-            Text(calendarTabTitle).tag(1)
+            Text(state.upNextTabTitle).tag(0)
+            Text(state.calendarTabTitle).tag(1)
         }
         .pickerStyle(.segmented)
         .padding(.horizontal)
@@ -92,11 +102,13 @@ public struct ProgressScreen<UpNextContent: View, CalendarContent: View>: View {
     ThemedPreview {
         NavigationStack {
             ProgressScreen(
-                title: "Progress",
-                isLoading: false,
-                selectedPage: 0,
-                upNextTabTitle: "Up Next",
-                calendarTabTitle: "Calendar",
+                state: ProgressScreen.State(
+                    title: "Progress",
+                    isLoading: false,
+                    selectedPage: 0,
+                    upNextTabTitle: "Up Next",
+                    calendarTabTitle: "Calendar"
+                ),
                 onPageChanged: { _ in },
                 upNextContent: {
                     Text("Up Next Content")
@@ -113,11 +125,13 @@ public struct ProgressScreen<UpNextContent: View, CalendarContent: View>: View {
     ThemedPreview {
         NavigationStack {
             ProgressScreen(
-                title: "Progress",
-                isLoading: true,
-                selectedPage: 0,
-                upNextTabTitle: "Up Next",
-                calendarTabTitle: "Calendar",
+                state: ProgressScreen.State(
+                    title: "Progress",
+                    isLoading: true,
+                    selectedPage: 0,
+                    upNextTabTitle: "Up Next",
+                    calendarTabTitle: "Calendar"
+                ),
                 onPageChanged: { _ in },
                 upNextContent: {
                     Text("Up Next Content")

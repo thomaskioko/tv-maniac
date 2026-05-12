@@ -15,9 +15,29 @@ struct ProfileTab: View {
 
     var body: some View {
         ProfileScreen(
+            state: uiState.toState(),
+            onSettingsClicked: { presenter.dispatch(action: ProfileActionSettingsClicked()) },
+            onLoginClicked: { presenter.dispatch(action: ProfileActionLoginClicked()) }
+        )
+        .onChange(of: uiState.errorMessage) { _, errorMessage in
+            if let errorMessage {
+                toastManager.showError(title: "Error", message: errorMessage.message)
+            }
+        }
+        .onChange(of: toastManager.toast) { _, newValue in
+            if newValue == nil, let errorMessage = uiState.errorMessage {
+                presenter.dispatch(action: ProfileActionMessageShown(id: errorMessage.id))
+            }
+        }
+    }
+}
+
+private extension ProfileState {
+    func toState() -> ProfileScreen.State {
+        ProfileScreen.State(
             title: String(\.profile_title),
-            isLoading: uiState.showLoading,
-            userProfile: uiState.userProfile.map { profile in
+            isLoading: showLoading,
+            userProfile: userProfile.map { profile in
                 SwiftProfileInfo(
                     username: profile.username,
                     fullName: profile.fullName,
@@ -66,19 +86,7 @@ struct ProfileTab: View {
                     title: String(\.profile_feature_more_title),
                     description: String(\.profile_feature_more_description)
                 ),
-            ],
-            onSettingsClicked: { presenter.dispatch(action: ProfileActionSettingsClicked()) },
-            onLoginClicked: { presenter.dispatch(action: ProfileActionLoginClicked()) }
+            ]
         )
-        .onChange(of: uiState.errorMessage) { _, errorMessage in
-            if let errorMessage {
-                toastManager.showError(title: "Error", message: errorMessage.message)
-            }
-        }
-        .onChange(of: toastManager.toast) { _, newValue in
-            if newValue == nil, let errorMessage = uiState.errorMessage {
-                presenter.dispatch(action: ProfileActionMessageShown(id: errorMessage.id))
-            }
-        }
     }
 }

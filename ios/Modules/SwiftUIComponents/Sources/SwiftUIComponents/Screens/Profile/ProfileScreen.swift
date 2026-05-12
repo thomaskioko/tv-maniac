@@ -1,71 +1,81 @@
 import SwiftUI
 
 public struct ProfileScreen: View {
+    public struct State: Equatable {
+        public let title: String
+        public let isLoading: Bool
+        public let userProfile: SwiftProfileInfo?
+        public let editButtonLabel: String
+        public let statsTitle: String
+        public let watchTimeLabel: String
+        public let monthsLabel: String
+        public let daysLabel: String
+        public let hoursLabel: String
+        public let episodesWatchedLabel: String
+        public let unauthenticatedTitle: String
+        public let footerDescription: String
+        public let signInLabel: String
+        public let featureItems: [SwiftFeatureItem]
+
+        public init(
+            title: String,
+            isLoading: Bool,
+            userProfile: SwiftProfileInfo?,
+            editButtonLabel: String,
+            statsTitle: String,
+            watchTimeLabel: String,
+            monthsLabel: String,
+            daysLabel: String,
+            hoursLabel: String,
+            episodesWatchedLabel: String,
+            unauthenticatedTitle: String,
+            footerDescription: String,
+            signInLabel: String,
+            featureItems: [SwiftFeatureItem]
+        ) {
+            self.title = title
+            self.isLoading = isLoading
+            self.userProfile = userProfile
+            self.editButtonLabel = editButtonLabel
+            self.statsTitle = statsTitle
+            self.watchTimeLabel = watchTimeLabel
+            self.monthsLabel = monthsLabel
+            self.daysLabel = daysLabel
+            self.hoursLabel = hoursLabel
+            self.episodesWatchedLabel = episodesWatchedLabel
+            self.unauthenticatedTitle = unauthenticatedTitle
+            self.footerDescription = footerDescription
+            self.signInLabel = signInLabel
+            self.featureItems = featureItems
+        }
+    }
+
     @Theme private var appTheme
 
-    private let title: String
-    private let isLoading: Bool
-    private let userProfile: SwiftProfileInfo?
-    private let editButtonLabel: String
-    private let statsTitle: String
-    private let watchTimeLabel: String
-    private let monthsLabel: String
-    private let daysLabel: String
-    private let hoursLabel: String
-    private let episodesWatchedLabel: String
-    private let unauthenticatedTitle: String
-    private let footerDescription: String
-    private let signInLabel: String
-    private let featureItems: [SwiftFeatureItem]
+    private let state: State
     private let onSettingsClicked: () -> Void
     private let onLoginClicked: () -> Void
 
     public init(
-        title: String,
-        isLoading: Bool,
-        userProfile: SwiftProfileInfo?,
-        editButtonLabel: String,
-        statsTitle: String,
-        watchTimeLabel: String,
-        monthsLabel: String,
-        daysLabel: String,
-        hoursLabel: String,
-        episodesWatchedLabel: String,
-        unauthenticatedTitle: String,
-        footerDescription: String,
-        signInLabel: String,
-        featureItems: [SwiftFeatureItem],
+        state: State,
         onSettingsClicked: @escaping () -> Void,
         onLoginClicked: @escaping () -> Void
     ) {
-        self.title = title
-        self.isLoading = isLoading
-        self.userProfile = userProfile
-        self.editButtonLabel = editButtonLabel
-        self.statsTitle = statsTitle
-        self.watchTimeLabel = watchTimeLabel
-        self.monthsLabel = monthsLabel
-        self.daysLabel = daysLabel
-        self.hoursLabel = hoursLabel
-        self.episodesWatchedLabel = episodesWatchedLabel
-        self.unauthenticatedTitle = unauthenticatedTitle
-        self.footerDescription = footerDescription
-        self.signInLabel = signInLabel
-        self.featureItems = featureItems
+        self.state = state
         self.onSettingsClicked = onSettingsClicked
         self.onLoginClicked = onLoginClicked
     }
 
-    @State private var showGlass: Double = 0
+    @SwiftUI.State private var showGlass: Double = 0
 
     public var body: some View {
         ZStack(alignment: .top) {
-            if isLoading {
+            if state.isLoading {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle(tint: appTheme.colors.accent))
                     .scaleEffect(1.5)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if let userProfile {
+            } else if let userProfile = state.userProfile {
                 profileScrollView(userProfile: userProfile)
             } else {
                 unauthenticatedScrollView
@@ -84,7 +94,7 @@ public struct ProfileScreen: View {
             .allowsHitTesting(false)
 
             GlassToolbar(
-                title: title,
+                title: state.title,
                 opacity: showGlass,
                 trailingIcon: {
                     GlassButton(icon: "gearshape", action: onSettingsClicked)
@@ -173,7 +183,7 @@ public struct ProfileScreen: View {
                         .foregroundColor(appTheme.colors.onPrimary)
 
                     Button(action: {}) {
-                        Text(editButtonLabel)
+                        Text(state.editButtonLabel)
                             .textStyle(appTheme.typography.labelMedium)
                             .foregroundColor(appTheme.colors.onPrimary)
                             .padding(.horizontal, 20)
@@ -199,7 +209,7 @@ public struct ProfileScreen: View {
         VStack(alignment: .leading, spacing: appTheme.spacing.medium) {
             HStack {
                 ChevronTitle(
-                    title: statsTitle,
+                    title: state.statsTitle,
                     chevronStyle: ChevronStyle.chevronOnly,
                     action: {}
                 )
@@ -210,18 +220,18 @@ public struct ProfileScreen: View {
                 HStack(alignment: .top, spacing: appTheme.spacing.small) {
                     StatsCardItem(
                         systemImage: "calendar",
-                        title: watchTimeLabel
+                        title: state.watchTimeLabel
                     ) {
                         HStack(spacing: appTheme.spacing.large) {
-                            statColumn(label: monthsLabel, value: stats.months)
-                            statColumn(label: daysLabel, value: stats.days)
-                            statColumn(label: hoursLabel, value: stats.hours)
+                            statColumn(label: state.monthsLabel, value: stats.months)
+                            statColumn(label: state.daysLabel, value: stats.days)
+                            statColumn(label: state.hoursLabel, value: stats.hours)
                         }
                     }
 
                     StatsCardItem(
                         systemImage: "tv",
-                        title: episodesWatchedLabel
+                        title: state.episodesWatchedLabel
                     ) {
                         VStack(spacing: 0) {
                             Text(formatNumber(stats.episodesWatched))
@@ -264,14 +274,14 @@ public struct ProfileScreen: View {
                 Spacer()
                     .frame(height: 84)
 
-                Text(unauthenticatedTitle)
+                Text(state.unauthenticatedTitle)
                     .textStyle(appTheme.typography.headlineLarge)
                     .foregroundColor(appTheme.colors.onSurface)
                     .lineSpacing(appTheme.spacing.xSmall)
                     .padding(.horizontal, 28)
 
                 VStack(alignment: .leading, spacing: appTheme.spacing.large) {
-                    ForEach(featureItems) { item in
+                    ForEach(state.featureItems) { item in
                         featureItemView(iconName: item.iconName, title: item.title, description: item.description)
                     }
                 }
@@ -281,14 +291,14 @@ public struct ProfileScreen: View {
                     .frame(height: appTheme.spacing.xSmall)
 
                 VStack(spacing: 20) {
-                    Text(footerDescription)
+                    Text(state.footerDescription)
                         .textStyle(appTheme.typography.bodyMedium)
                         .foregroundColor(appTheme.colors.onSurface)
                         .lineSpacing(appTheme.spacing.xxSmall)
                         .padding(.horizontal, appTheme.spacing.large)
 
                     Button(action: onLoginClicked) {
-                        Text(signInLabel)
+                        Text(state.signInLabel)
                             .textStyle(appTheme.typography.bodyMedium)
                             .foregroundColor(appTheme.colors.onButtonBackground)
                             .frame(maxWidth: .infinity)

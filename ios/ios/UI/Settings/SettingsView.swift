@@ -21,15 +21,21 @@ struct SettingsView: View {
         _uiState = .init(presenter.stateValue)
     }
 
-    var body: some View {
-        SettingsScreen(
+    private var screenState: SettingsScreen<DeviceAppTheme>.State {
+        SettingsScreen<DeviceAppTheme>.State(
             title: String(\.label_settings_title),
             themeItem: themeItem,
             imageQualityItem: imageQualityItem,
             behaviorToggles: behaviorToggles,
             privacyToggles: privacyToggles,
             infoItems: infoItems,
-            traktItems: traktItems,
+            traktItems: traktItems
+        )
+    }
+
+    var body: some View {
+        SettingsScreen(
+            state: screenState,
             onBack: { presenter.dispatch(action: BackClicked__()) }
         )
         .settingsObservers(

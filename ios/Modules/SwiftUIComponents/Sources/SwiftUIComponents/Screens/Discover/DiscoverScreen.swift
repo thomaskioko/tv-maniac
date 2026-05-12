@@ -1,28 +1,76 @@
 import SwiftUI
 
 public struct DiscoverScreen: View {
+    public struct State {
+        public let title: String
+        public let isLoading: Bool
+        public let isEmpty: Bool
+        public let showError: Bool
+        public let errorMessage: String?
+        public let featuredShows: [SwiftShow]
+        public let nextEpisodes: [SwiftNextEpisode]
+        public let trendingToday: [SwiftShow]
+        public let upcomingShows: [SwiftShow]
+        public let popularShows: [SwiftShow]
+        public let topRatedShows: [SwiftShow]
+        public let isRefreshing: Bool
+        public let emptyContentText: String
+        public let missingApiKeyText: String
+        public let retryText: String
+        public let upNextTitle: String
+        public let trendingTitle: String
+        public let upcomingTitle: String
+        public let popularTitle: String
+        public let topRatedTitle: String
+
+        public init(
+            title: String,
+            isLoading: Bool,
+            isEmpty: Bool,
+            showError: Bool,
+            errorMessage: String?,
+            featuredShows: [SwiftShow],
+            nextEpisodes: [SwiftNextEpisode],
+            trendingToday: [SwiftShow],
+            upcomingShows: [SwiftShow],
+            popularShows: [SwiftShow],
+            topRatedShows: [SwiftShow],
+            isRefreshing: Bool,
+            emptyContentText: String,
+            missingApiKeyText: String,
+            retryText: String,
+            upNextTitle: String,
+            trendingTitle: String,
+            upcomingTitle: String,
+            popularTitle: String,
+            topRatedTitle: String
+        ) {
+            self.title = title
+            self.isLoading = isLoading
+            self.isEmpty = isEmpty
+            self.showError = showError
+            self.errorMessage = errorMessage
+            self.featuredShows = featuredShows
+            self.nextEpisodes = nextEpisodes
+            self.trendingToday = trendingToday
+            self.upcomingShows = upcomingShows
+            self.popularShows = popularShows
+            self.topRatedShows = topRatedShows
+            self.isRefreshing = isRefreshing
+            self.emptyContentText = emptyContentText
+            self.missingApiKeyText = missingApiKeyText
+            self.retryText = retryText
+            self.upNextTitle = upNextTitle
+            self.trendingTitle = trendingTitle
+            self.upcomingTitle = upcomingTitle
+            self.popularTitle = popularTitle
+            self.topRatedTitle = topRatedTitle
+        }
+    }
+
     @Theme private var appTheme
 
-    private let title: String
-    private let isLoading: Bool
-    private let isEmpty: Bool
-    private let showError: Bool
-    private let errorMessage: String?
-    private let featuredShows: [SwiftShow]
-    private let nextEpisodes: [SwiftNextEpisode]
-    private let trendingToday: [SwiftShow]
-    private let upcomingShows: [SwiftShow]
-    private let popularShows: [SwiftShow]
-    private let topRatedShows: [SwiftShow]
-    private let isRefreshing: Bool
-    private let emptyContentText: String
-    private let missingApiKeyText: String
-    private let retryText: String
-    private let upNextTitle: String
-    private let trendingTitle: String
-    private let upcomingTitle: String
-    private let popularTitle: String
-    private let topRatedTitle: String
+    private let state: State
     @Binding private var currentIndex: Int
     @Binding private var toast: Toast?
     @Binding private var selectedEpisode: SwiftNextEpisode?
@@ -38,26 +86,7 @@ public struct DiscoverScreen: View {
     private let episodeSheetContent: ((SwiftNextEpisode) -> AnyView)?
 
     public init(
-        title: String,
-        isLoading: Bool,
-        isEmpty: Bool,
-        showError: Bool,
-        errorMessage: String?,
-        featuredShows: [SwiftShow],
-        nextEpisodes: [SwiftNextEpisode],
-        trendingToday: [SwiftShow],
-        upcomingShows: [SwiftShow],
-        popularShows: [SwiftShow],
-        topRatedShows: [SwiftShow],
-        isRefreshing: Bool,
-        emptyContentText: String,
-        missingApiKeyText: String,
-        retryText: String,
-        upNextTitle: String,
-        trendingTitle: String,
-        upcomingTitle: String,
-        popularTitle: String,
-        topRatedTitle: String,
+        state: State,
         currentIndex: Binding<Int>,
         toast: Binding<Toast?>,
         selectedEpisode: Binding<SwiftNextEpisode?>,
@@ -72,26 +101,7 @@ public struct DiscoverScreen: View {
         onCarouselIndexChanged: @escaping (Int) -> Void,
         episodeSheetContent: ((SwiftNextEpisode) -> AnyView)? = nil
     ) {
-        self.title = title
-        self.isLoading = isLoading
-        self.isEmpty = isEmpty
-        self.showError = showError
-        self.errorMessage = errorMessage
-        self.featuredShows = featuredShows
-        self.nextEpisodes = nextEpisodes
-        self.trendingToday = trendingToday
-        self.upcomingShows = upcomingShows
-        self.popularShows = popularShows
-        self.topRatedShows = topRatedShows
-        self.isRefreshing = isRefreshing
-        self.emptyContentText = emptyContentText
-        self.missingApiKeyText = missingApiKeyText
-        self.retryText = retryText
-        self.upNextTitle = upNextTitle
-        self.trendingTitle = trendingTitle
-        self.upcomingTitle = upcomingTitle
-        self.popularTitle = popularTitle
-        self.topRatedTitle = topRatedTitle
+        self.state = state
         _currentIndex = currentIndex
         _toast = toast
         _selectedEpisode = selectedEpisode
@@ -107,22 +117,22 @@ public struct DiscoverScreen: View {
         self.episodeSheetContent = episodeSheetContent
     }
 
-    @State private var selectedShow: SwiftShow?
-    @State private var showGlass: Double = 0
-    @State private var isDraggingCarousel: Bool = false
-    @State private var pullOffset: CGFloat = 0
-    @State private var isRefreshingLocal: Bool = false
-    @State private var isScrollInteracting: Bool = false
+    @SwiftUI.State private var selectedShow: SwiftShow?
+    @SwiftUI.State private var showGlass: Double = 0
+    @SwiftUI.State private var isDraggingCarousel: Bool = false
+    @SwiftUI.State private var pullOffset: CGFloat = 0
+    @SwiftUI.State private var isRefreshingLocal: Bool = false
+    @SwiftUI.State private var isScrollInteracting: Bool = false
 
     public var body: some View {
-        if isLoading {
+        if state.isLoading {
             LoadingIndicatorView()
-        } else if isEmpty {
+        } else if state.isEmpty {
             emptyView
-        } else if showError {
+        } else if state.showError {
             EmptyStateView(
                 systemName: "exclamationmark.arrow.triangle.2.circlepath",
-                title: errorMessage ?? "Something went wrong"
+                title: state.errorMessage ?? "Something went wrong"
             )
         } else {
             discoverLoadedContent
@@ -156,7 +166,7 @@ public struct DiscoverScreen: View {
             }
 
             GlassToolbar(
-                title: title,
+                title: state.title,
                 opacity: showGlass,
                 isLoading: false,
                 trailingIcon: {
@@ -172,7 +182,7 @@ public struct DiscoverScreen: View {
         .onDisappear {
             selectedShow = nil
         }
-        .onChange(of: isRefreshing) { _, newValue in
+        .onChange(of: state.isRefreshing) { _, newValue in
             if !newValue, isRefreshingLocal {
                 withAnimation(.easeOut(duration: AnimationConstants.defaultDuration)) {
                     isRefreshingLocal = false
@@ -219,11 +229,11 @@ public struct DiscoverScreen: View {
                 GeometryReader { proxy in
                     let scrollY = proxy.frame(in: .named("discoverScroll")).minY
 
-                    headerContent(shows: featuredShows)
+                    headerContent(shows: state.featuredShows)
                         .frame(width: proxy.size.width, height: CarouselConstants.headerHeight + max(scrollY, 0))
                         .offset(y: -max(scrollY, 0))
                         .overlay(alignment: .bottom) {
-                            showInfoOverlay(featuredShows)
+                            showInfoOverlay(state.featuredShows)
                         }
                         .onChange(of: scrollY) { _, newValue in
                             DispatchQueue.main.async {
@@ -342,16 +352,18 @@ public struct DiscoverScreen: View {
 
     private var discoverListContent: some View {
         DiscoverListContent(
-            upNextTitle: upNextTitle,
-            trendingTitle: trendingTitle,
-            upcomingTitle: upcomingTitle,
-            popularTitle: popularTitle,
-            topRatedTitle: topRatedTitle,
-            nextEpisodes: nextEpisodes,
-            trendingToday: trendingToday,
-            upcomingShows: upcomingShows,
-            popularShows: popularShows,
-            topRatedShows: topRatedShows,
+            state: DiscoverListContent.State(
+                upNextTitle: state.upNextTitle,
+                trendingTitle: state.trendingTitle,
+                upcomingTitle: state.upcomingTitle,
+                popularTitle: state.popularTitle,
+                topRatedTitle: state.topRatedTitle,
+                nextEpisodes: state.nextEpisodes,
+                trendingToday: state.trendingToday,
+                upcomingShows: state.upcomingShows,
+                popularShows: state.popularShows,
+                topRatedShows: state.topRatedShows
+            ),
             onShowClicked: onShowClicked,
             onTrendingClicked: onTrendingClicked,
             onUpcomingClicked: onUpcomingClicked,
@@ -364,9 +376,9 @@ public struct DiscoverScreen: View {
     private var emptyView: some View {
         EmptyStateView(
             systemName: "list.bullet.below.rectangle",
-            title: emptyContentText,
-            message: missingApiKeyText,
-            buttonText: retryText,
+            title: state.emptyContentText,
+            message: state.missingApiKeyText,
+            buttonText: state.retryText,
             action: onRefresh
         )
     }

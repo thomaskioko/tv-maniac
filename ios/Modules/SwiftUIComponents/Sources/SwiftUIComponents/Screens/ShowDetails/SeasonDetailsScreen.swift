@@ -1,27 +1,69 @@
 import SwiftUI
 
 public struct SeasonDetailsScreen: View {
+    public struct State {
+        public let seasonName: String
+        public let imageUrl: String?
+        public let seasonOverview: String
+        public let episodeCount: Int64
+        public let watchProgress: Float
+        public let expandEpisodeItems: Bool
+        public let isSeasonWatched: Bool
+        public let isRefreshing: Bool
+        public let showError: Bool
+        public let seasonImages: [ShowPosterImage]
+        public let episodes: [SwiftEpisode]
+        public let casts: [SwiftCast]
+        public let errorTitle: String
+        public let errorRetryText: String
+        public let overviewTitle: String
+        public let episodesTitle: String
+        public let tbdLabel: String
+
+        public init(
+            seasonName: String,
+            imageUrl: String?,
+            seasonOverview: String,
+            episodeCount: Int64,
+            watchProgress: Float,
+            expandEpisodeItems: Bool,
+            isSeasonWatched: Bool,
+            isRefreshing: Bool,
+            showError: Bool,
+            seasonImages: [ShowPosterImage],
+            episodes: [SwiftEpisode],
+            casts: [SwiftCast],
+            errorTitle: String,
+            errorRetryText: String,
+            overviewTitle: String,
+            episodesTitle: String,
+            tbdLabel: String
+        ) {
+            self.seasonName = seasonName
+            self.imageUrl = imageUrl
+            self.seasonOverview = seasonOverview
+            self.episodeCount = episodeCount
+            self.watchProgress = watchProgress
+            self.expandEpisodeItems = expandEpisodeItems
+            self.isSeasonWatched = isSeasonWatched
+            self.isRefreshing = isRefreshing
+            self.showError = showError
+            self.seasonImages = seasonImages
+            self.episodes = episodes
+            self.casts = casts
+            self.errorTitle = errorTitle
+            self.errorRetryText = errorRetryText
+            self.overviewTitle = overviewTitle
+            self.episodesTitle = episodesTitle
+            self.tbdLabel = tbdLabel
+        }
+    }
+
     @Theme private var appTheme
 
-    private let seasonName: String
-    private let imageUrl: String?
-    private let seasonOverview: String
-    private let episodeCount: Int64
-    private let watchProgress: Float
-    private let expandEpisodeItems: Bool
-    private let isSeasonWatched: Bool
-    private let isRefreshing: Bool
-    private let showError: Bool
-    private let seasonImages: [ShowPosterImage]
-    private let episodes: [SwiftEpisode]
-    private let casts: [SwiftCast]
-    private let errorTitle: String
-    private let errorRetryText: String
-    private let overviewTitle: String
-    private let episodesTitle: String
+    private let state: State
     private let seasonImagesCountFormat: (Int) -> String
     private let dayLabelFormat: (Int) -> String
-    private let tbdLabel: String
     @Binding private var toast: Toast?
     @Binding private var showGallery: Bool
     private let onBack: () -> Void
@@ -33,25 +75,9 @@ public struct SeasonDetailsScreen: View {
     private let onEpisodeTapped: (SwiftEpisode) -> Void
 
     public init(
-        seasonName: String,
-        imageUrl: String?,
-        seasonOverview: String,
-        episodeCount: Int64,
-        watchProgress: Float,
-        expandEpisodeItems: Bool,
-        isSeasonWatched: Bool,
-        isRefreshing: Bool,
-        showError: Bool,
-        seasonImages: [ShowPosterImage],
-        episodes: [SwiftEpisode],
-        casts: [SwiftCast],
-        errorTitle: String,
-        errorRetryText: String,
-        overviewTitle: String,
-        episodesTitle: String,
+        state: State,
         seasonImagesCountFormat: @escaping (Int) -> String,
         dayLabelFormat: @escaping (Int) -> String,
-        tbdLabel: String,
         toast: Binding<Toast?>,
         showGallery: Binding<Bool>,
         onBack: @escaping () -> Void,
@@ -62,25 +88,9 @@ public struct SeasonDetailsScreen: View {
         onEpisodeWatchToggle: @escaping (SwiftEpisode) -> Void,
         onEpisodeTapped: @escaping (SwiftEpisode) -> Void = { _ in }
     ) {
-        self.seasonName = seasonName
-        self.imageUrl = imageUrl
-        self.seasonOverview = seasonOverview
-        self.episodeCount = episodeCount
-        self.watchProgress = watchProgress
-        self.expandEpisodeItems = expandEpisodeItems
-        self.isSeasonWatched = isSeasonWatched
-        self.isRefreshing = isRefreshing
-        self.showError = showError
-        self.seasonImages = seasonImages
-        self.episodes = episodes
-        self.casts = casts
-        self.errorTitle = errorTitle
-        self.errorRetryText = errorRetryText
-        self.overviewTitle = overviewTitle
-        self.episodesTitle = episodesTitle
+        self.state = state
         self.seasonImagesCountFormat = seasonImagesCountFormat
         self.dayLabelFormat = dayLabelFormat
-        self.tbdLabel = tbdLabel
         _toast = toast
         _showGallery = showGallery
         self.onBack = onBack
@@ -92,18 +102,18 @@ public struct SeasonDetailsScreen: View {
         self.onEpisodeTapped = onEpisodeTapped
     }
 
-    @State private var showGlass: Double = 0
-    @State private var progressViewOffset: CGFloat = 0
+    @SwiftUI.State private var showGlass: Double = 0
+    @SwiftUI.State private var progressViewOffset: CGFloat = 0
 
     public var body: some View {
         ZStack {
             appTheme.colors.background.edgesIgnoringSafeArea(.all)
 
-            if showError {
+            if state.showError {
                 EmptyStateView(
                     systemName: "exclamationmark.triangle",
-                    title: errorTitle,
-                    buttonText: errorRetryText,
+                    title: state.errorTitle,
+                    buttonText: state.errorRetryText,
                     action: onRetry
                 )
             } else {
@@ -118,15 +128,15 @@ public struct SeasonDetailsScreen: View {
         .overlay(
             VStack(spacing: 0) {
                 GlassToolbar(
-                    title: seasonName,
+                    title: state.seasonName,
                     opacity: showGlass,
-                    isLoading: isRefreshing,
+                    isLoading: state.isRefreshing,
                     leadingIcon: {
                         GlassButton(icon: "chevron.left", action: onBack)
                             .opacity(1 - showGlass)
                     }
                 )
-                ProgressView(value: watchProgress, total: 1)
+                ProgressView(value: state.watchProgress, total: 1)
                     .progressViewStyle(RoundedRectProgressViewStyle())
                     .offset(y: progressViewOffset)
             },
@@ -135,7 +145,7 @@ public struct SeasonDetailsScreen: View {
         .animation(.easeInOut(duration: AnimationConstants.defaultDuration), value: showGlass)
         .edgesIgnoringSafeArea(.top)
         .sheet(isPresented: $showGallery) {
-            ImageGalleryContentView(items: seasonImages)
+            ImageGalleryContentView(items: state.seasonImages)
         }
         .toastView(toast: $toast)
     }
@@ -155,8 +165,8 @@ public struct SeasonDetailsScreen: View {
                 )
             },
             content: {
-                if !seasonOverview.isEmpty {
-                    Text(overviewTitle)
+                if !state.seasonOverview.isEmpty {
+                    Text(state.overviewTitle)
                         .textStyle(appTheme.typography.titleLarge)
                         .foregroundColor(appTheme.colors.onSurface)
                         .lineLimit(1)
@@ -164,20 +174,20 @@ public struct SeasonDetailsScreen: View {
                         .padding(.horizontal)
                         .frame(maxWidth: .infinity, alignment: .leading)
 
-                    OverviewBoxView(overview: seasonOverview)
+                    OverviewBoxView(overview: state.seasonOverview)
                         .padding()
                 }
 
                 EpisodeListView(
-                    title: episodesTitle,
-                    episodeCount: episodeCount,
-                    watchProgress: watchProgress,
-                    expandEpisodeItems: expandEpisodeItems,
+                    title: state.episodesTitle,
+                    episodeCount: state.episodeCount,
+                    watchProgress: state.watchProgress,
+                    expandEpisodeItems: state.expandEpisodeItems,
                     showSeasonWatchStateDialog: false,
-                    isSeasonWatched: isSeasonWatched,
-                    items: episodes,
+                    isSeasonWatched: state.isSeasonWatched,
+                    items: state.episodes,
                     dayLabelFormat: dayLabelFormat,
-                    tbdLabel: tbdLabel,
+                    tbdLabel: state.tbdLabel,
                     onEpisodeHeaderClicked: onEpisodeHeaderClicked,
                     onWatchedStateClicked: onWatchedStateClicked,
                     onEpisodeWatchToggle: onEpisodeWatchToggle,
@@ -186,7 +196,7 @@ public struct SeasonDetailsScreen: View {
 
                 Spacer().frame(height: appTheme.spacing.large)
 
-                CastListView(casts: casts)
+                CastListView(casts: state.casts)
             },
             onScroll: { offset in
                 showGlass = ParallaxConstants.glassOpacity(from: offset)
@@ -201,7 +211,7 @@ public struct SeasonDetailsScreen: View {
     private func headerContent(progress: CGFloat, headerHeight: CGFloat) -> some View {
         ZStack(alignment: .bottom) {
             HeaderCoverArtWorkView(
-                imageUrl: imageUrl,
+                imageUrl: state.imageUrl,
                 posterHeight: headerHeight
             )
             .foregroundStyle(.ultraThinMaterial)
@@ -236,7 +246,7 @@ public struct SeasonDetailsScreen: View {
                                 d[HorizontalAlignment.leading]
                             }
 
-                        Text(seasonImagesCountFormat(seasonImages.count))
+                        Text(seasonImagesCountFormat(state.seasonImages.count))
                             .textStyle(appTheme.typography.bodyMedium)
                             .foregroundColor(appTheme.colors.onSurface)
                             .lineLimit(1)

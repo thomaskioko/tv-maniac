@@ -1,19 +1,49 @@
 import SwiftUI
 
 public struct LibraryScreen: View {
+    public struct State: Equatable {
+        public let title: String
+        public let searchPlaceholder: String
+        public let emptyText: String
+        public let isLoading: Bool
+        public let isRefreshing: Bool
+        public let isEmpty: Bool
+        public let isGridMode: Bool
+        public let isSearchActive: Bool
+        public let query: String
+        public let gridItems: [LibraryGridItem]
+        public let listItems: [SwiftLibraryItem]
+
+        public init(
+            title: String,
+            searchPlaceholder: String,
+            emptyText: String,
+            isLoading: Bool,
+            isRefreshing: Bool,
+            isEmpty: Bool,
+            isGridMode: Bool,
+            isSearchActive: Bool,
+            query: String,
+            gridItems: [LibraryGridItem],
+            listItems: [SwiftLibraryItem]
+        ) {
+            self.title = title
+            self.searchPlaceholder = searchPlaceholder
+            self.emptyText = emptyText
+            self.isLoading = isLoading
+            self.isRefreshing = isRefreshing
+            self.isEmpty = isEmpty
+            self.isGridMode = isGridMode
+            self.isSearchActive = isSearchActive
+            self.query = query
+            self.gridItems = gridItems
+            self.listItems = listItems
+        }
+    }
+
     @Theme private var appTheme
 
-    private let title: String
-    private let searchPlaceholder: String
-    private let emptyText: String
-    private let isLoading: Bool
-    private let isRefreshing: Bool
-    private let isEmpty: Bool
-    private let isGridMode: Bool
-    private let isSearchActive: Bool
-    private let query: String
-    private let gridItems: [LibraryGridItem]
-    private let listItems: [SwiftLibraryItem]
+    private let state: State
     private let emptySearchResultFormat: ((String) -> String)?
     private let onQueryChanged: (String) -> Void
     private let onQueryCleared: () -> Void
@@ -23,17 +53,7 @@ public struct LibraryScreen: View {
     private let onShowClicked: (Int64) -> Void
 
     public init(
-        title: String,
-        searchPlaceholder: String,
-        emptyText: String,
-        isLoading: Bool,
-        isRefreshing: Bool,
-        isEmpty: Bool,
-        isGridMode: Bool,
-        isSearchActive: Bool,
-        query: String,
-        gridItems: [LibraryGridItem],
-        listItems: [SwiftLibraryItem],
+        state: State,
         emptySearchResultFormat: ((String) -> String)? = nil,
         onQueryChanged: @escaping (String) -> Void,
         onQueryCleared: @escaping () -> Void,
@@ -42,17 +62,7 @@ public struct LibraryScreen: View {
         onSortClicked: @escaping () -> Void,
         onShowClicked: @escaping (Int64) -> Void
     ) {
-        self.title = title
-        self.searchPlaceholder = searchPlaceholder
-        self.emptyText = emptyText
-        self.isLoading = isLoading
-        self.isRefreshing = isRefreshing
-        self.isEmpty = isEmpty
-        self.isGridMode = isGridMode
-        self.isSearchActive = isSearchActive
-        self.query = query
-        self.gridItems = gridItems
-        self.listItems = listItems
+        self.state = state
         self.emptySearchResultFormat = emptySearchResultFormat
         self.onQueryChanged = onQueryChanged
         self.onQueryCleared = onQueryCleared
@@ -64,7 +74,7 @@ public struct LibraryScreen: View {
 
     @FocusState private var isSearchFocused: Bool
     @Namespace private var animation
-    @State private var localQuery: String = ""
+    @SwiftUI.State private var localQuery: String = ""
 
     public var body: some View {
         ZStack {
@@ -81,7 +91,7 @@ public struct LibraryScreen: View {
         .disableAutocorrection(true)
         .overlay(
             Group {
-                if isSearchActive {
+                if state.isSearchActive {
                     searchBarOverlay
                 } else {
                     libraryToolbar
@@ -90,28 +100,28 @@ public struct LibraryScreen: View {
             alignment: .top
         )
         .edgesIgnoringSafeArea(.top)
-        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: isSearchActive)
+        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: state.isSearchActive)
         .disableAutocorrection(true)
         .textInputAutocapitalization(.never)
         .onAppear {
-            localQuery = query
+            localQuery = state.query
         }
-        .onChange(of: query) { _, newValue in
+        .onChange(of: state.query) { _, newValue in
             localQuery = newValue
         }
     }
 
     @ViewBuilder
     private var contentView: some View {
-        if isLoading {
+        if state.isLoading {
             CenteredFullScreenView {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle(tint: appTheme.colors.accent))
                     .scaleEffect(1.5)
             }
-        } else if isEmpty {
+        } else if state.isEmpty {
             emptyView
-        } else if isGridMode {
+        } else if state.isGridMode {
             gridContent
         } else {
             listContent
@@ -119,11 +129,11 @@ public struct LibraryScreen: View {
     }
 
     private var libraryToolbar: some View {
-        let image = isGridMode ? "list.bullet" : "rectangle.grid.2x2"
+        let image = state.isGridMode ? "list.bullet" : "rectangle.grid.2x2"
         return GlassToolbar(
-            title: title,
+            title: state.title,
             opacity: 1.0,
-            isLoading: isRefreshing,
+            isLoading: state.isRefreshing,
             leadingIcon: {
                 GlassButton(icon: image) {
                     withAnimation {
@@ -165,7 +175,7 @@ public struct LibraryScreen: View {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(appTheme.colors.onSurfaceVariant)
 
-                TextField(searchPlaceholder, text: $localQuery)
+                TextField(state.searchPlaceholder, text: $localQuery)
                     .textStyle(appTheme.typography.bodyMedium)
                     .focused($isSearchFocused)
                     .submitLabel(.search)
@@ -199,7 +209,7 @@ public struct LibraryScreen: View {
     private var gridContent: some View {
         ScrollView(showsIndicators: false) {
             LazyVGrid(columns: LibraryScreenConstants.columns, spacing: LibraryScreenConstants.spacing) {
-                ForEach(gridItems) { item in
+                ForEach(state.gridItems) { item in
                     PosterItemView(
                         title: item.title,
                         posterUrl: item.posterImageUrl
@@ -215,13 +225,13 @@ public struct LibraryScreen: View {
             .padding(.horizontal, appTheme.spacing.xSmall)
             .padding(.top, appTheme.spacing.large)
         }
-        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isGridMode)
+        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: state.isGridMode)
     }
 
     private var listContent: some View {
         ScrollView(showsIndicators: false) {
             LazyVStack(spacing: appTheme.spacing.small) {
-                ForEach(listItems) { item in
+                ForEach(state.listItems) { item in
                     LibraryListItemView(
                         item: item,
                         onItemClicked: {
@@ -233,15 +243,15 @@ public struct LibraryScreen: View {
             .padding(.horizontal, appTheme.spacing.xSmall)
             .padding(.top, appTheme.spacing.large)
         }
-        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isGridMode)
+        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: state.isGridMode)
     }
 
     @ViewBuilder
     private var emptyView: some View {
-        let subtitle = query.isEmpty ? nil : emptySearchResultFormat?(query)
+        let subtitle = state.query.isEmpty ? nil : emptySearchResultFormat?(state.query)
 
         EmptyStateView(
-            title: emptyText,
+            title: state.emptyText,
             message: subtitle
         )
     }

@@ -1,34 +1,44 @@
 import SwiftUI
 
 public struct SettingsScreen<Theme: ThemeItem>: View {
+    public struct State {
+        public let title: String
+        public let themeItem: SettingsThemeItem<Theme>
+        public let imageQualityItem: SettingsImageQualityItem
+        public let behaviorToggles: [SettingsToggleItem]
+        public let privacyToggles: [SettingsToggleItem]
+        public let infoItems: [SettingsNavigationItem]
+        public let traktItems: [SettingsNavigationItem]
+
+        public init(
+            title: String,
+            themeItem: SettingsThemeItem<Theme>,
+            imageQualityItem: SettingsImageQualityItem,
+            behaviorToggles: [SettingsToggleItem],
+            privacyToggles: [SettingsToggleItem],
+            infoItems: [SettingsNavigationItem],
+            traktItems: [SettingsNavigationItem] = []
+        ) {
+            self.title = title
+            self.themeItem = themeItem
+            self.imageQualityItem = imageQualityItem
+            self.behaviorToggles = behaviorToggles
+            self.privacyToggles = privacyToggles
+            self.infoItems = infoItems
+            self.traktItems = traktItems
+        }
+    }
+
     @SwiftUIComponents.Theme private var appTheme
 
-    private let title: String
-    private let themeItem: SettingsThemeItem<Theme>
-    private let imageQualityItem: SettingsImageQualityItem
-    private let behaviorToggles: [SettingsToggleItem]
-    private let privacyToggles: [SettingsToggleItem]
-    private let infoItems: [SettingsNavigationItem]
-    private let traktItems: [SettingsNavigationItem]
+    private let state: State
     private let onBack: () -> Void
 
     public init(
-        title: String,
-        themeItem: SettingsThemeItem<Theme>,
-        imageQualityItem: SettingsImageQualityItem,
-        behaviorToggles: [SettingsToggleItem],
-        privacyToggles: [SettingsToggleItem],
-        infoItems: [SettingsNavigationItem],
-        traktItems: [SettingsNavigationItem] = [],
+        state: State,
         onBack: @escaping () -> Void
     ) {
-        self.title = title
-        self.themeItem = themeItem
-        self.imageQualityItem = imageQualityItem
-        self.behaviorToggles = behaviorToggles
-        self.privacyToggles = privacyToggles
-        self.infoItems = infoItems
-        self.traktItems = traktItems
+        self.state = state
         self.onBack = onBack
     }
 
@@ -44,41 +54,41 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
                 imageQualitySectionContent
                     .padding(.top, appTheme.spacing.large)
 
-                if !behaviorToggles.isEmpty {
+                if !state.behaviorToggles.isEmpty {
                     sectionHeader("Behavior")
                         .padding(.top, appTheme.spacing.xLarge)
 
-                    ForEach(behaviorToggles) { toggle in
+                    ForEach(state.behaviorToggles) { toggle in
                         toggleRow(toggle)
                             .padding(.top, appTheme.spacing.medium)
                     }
                 }
 
-                if !privacyToggles.isEmpty {
+                if !state.privacyToggles.isEmpty {
                     sectionHeader("Privacy")
                         .padding(.top, appTheme.spacing.xLarge)
 
-                    ForEach(privacyToggles) { toggle in
+                    ForEach(state.privacyToggles) { toggle in
                         toggleRow(toggle)
                             .padding(.top, appTheme.spacing.medium)
                     }
                 }
 
-                if !infoItems.isEmpty {
+                if !state.infoItems.isEmpty {
                     sectionHeader("Info")
                         .padding(.top, appTheme.spacing.xLarge)
 
-                    ForEach(Array(infoItems.enumerated()), id: \.element.id) { index, item in
+                    ForEach(Array(state.infoItems.enumerated()), id: \.element.id) { index, item in
                         navigationRow(item)
                             .padding(.top, index == 0 ? appTheme.spacing.medium : appTheme.spacing.xSmall)
                     }
                 }
 
-                if !traktItems.isEmpty {
+                if !state.traktItems.isEmpty {
                     sectionHeader("Trakt")
                         .padding(.top, appTheme.spacing.xLarge)
 
-                    ForEach(traktItems) { item in
+                    ForEach(state.traktItems) { item in
                         navigationRow(item)
                             .padding(.top, appTheme.spacing.medium)
                     }
@@ -98,7 +108,7 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
         .swipeBackGesture(onSwipe: onBack)
         .overlay(
             GlassToolbar(
-                title: title,
+                title: state.title,
                 opacity: 1.0,
                 leadingIcon: {
                     GlassButton(icon: "chevron.left", action: onBack)
@@ -118,22 +128,22 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
     private var themeSectionContent: some View {
         VStack(alignment: .leading, spacing: appTheme.spacing.small) {
             HStack(spacing: appTheme.spacing.medium) {
-                settingsIcon(themeItem.icon, color: appTheme.colors.secondary)
+                settingsIcon(state.themeItem.icon, color: appTheme.colors.secondary)
 
                 VStack(alignment: .leading, spacing: appTheme.spacing.xxSmall) {
-                    Text(themeItem.title)
+                    Text(state.themeItem.title)
                         .textStyle(appTheme.typography.titleMedium)
                         .foregroundColor(appTheme.colors.onSurface)
-                    Text(themeItem.subtitle)
+                    Text(state.themeItem.subtitle)
                         .textStyle(appTheme.typography.bodySmall)
                         .foregroundColor(appTheme.colors.onSurfaceVariant)
                 }
             }
 
             ThemeSelectorView(
-                themes: themeItem.themes,
-                selectedTheme: themeItem.selectedTheme,
-                onThemeSelected: themeItem.onThemeSelected
+                themes: state.themeItem.themes,
+                selectedTheme: state.themeItem.selectedTheme,
+                onThemeSelected: state.themeItem.onThemeSelected
             )
         }
     }
@@ -141,23 +151,23 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
     private var imageQualitySectionContent: some View {
         VStack(alignment: .leading, spacing: appTheme.spacing.small) {
             HStack(spacing: appTheme.spacing.medium) {
-                settingsIcon(imageQualityItem.icon, color: appTheme.colors.secondary)
+                settingsIcon(state.imageQualityItem.icon, color: appTheme.colors.secondary)
 
                 VStack(alignment: .leading, spacing: appTheme.spacing.xxSmall) {
-                    Text(imageQualityItem.title)
+                    Text(state.imageQualityItem.title)
                         .textStyle(appTheme.typography.titleMedium)
                         .foregroundColor(appTheme.colors.onSurface)
-                    Text(imageQualityItem.subtitle)
+                    Text(state.imageQualityItem.subtitle)
                         .textStyle(appTheme.typography.bodySmall)
                         .foregroundColor(appTheme.colors.onSurfaceVariant)
                 }
             }
 
             HStack(spacing: appTheme.spacing.small) {
-                ForEach(imageQualityItem.options) { option in
+                ForEach(state.imageQualityItem.options) { option in
                     SelectionChip(
                         label: option.label,
-                        isSelected: option.id == imageQualityItem.selectedOptionId,
+                        isSelected: option.id == state.imageQualityItem.selectedOptionId,
                         action: option.onSelect
                     )
                 }

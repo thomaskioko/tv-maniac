@@ -33,9 +33,11 @@ class TraktListSelectorContentTest: SnapshotTestCase {
 
     func test_TraktListSelector_WithLists() {
         TraktListSelectorContent(
-            title: "Loki",
-            posterUrl: nil,
-            traktLists: sampleLists,
+            state: TraktListSelectorContent.State(
+                title: "Loki",
+                posterUrl: nil,
+                traktLists: sampleLists
+            ),
             onToggle: { _, _ in },
             onShowCreateField: {},
             onDismissCreateField: {},
@@ -49,11 +51,13 @@ class TraktListSelectorContentTest: SnapshotTestCase {
 
     func test_TraktListSelector_WithCreateField() {
         TraktListSelectorContent(
-            title: "Loki",
-            posterUrl: nil,
-            traktLists: sampleLists,
-            showCreateField: true,
-            createListName: "My New List",
+            state: TraktListSelectorContent.State(
+                title: "Loki",
+                posterUrl: nil,
+                traktLists: sampleLists,
+                showCreateField: true,
+                createListName: "My New List"
+            ),
             onToggle: { _, _ in },
             onShowCreateField: {},
             onDismissCreateField: {},
@@ -67,9 +71,11 @@ class TraktListSelectorContentTest: SnapshotTestCase {
 
     func test_TraktListSelector_Empty() {
         TraktListSelectorContent(
-            title: "Loki",
-            posterUrl: nil,
-            traktLists: [],
+            state: TraktListSelectorContent.State(
+                title: "Loki",
+                posterUrl: nil,
+                traktLists: []
+            ),
             onToggle: { _, _ in },
             onShowCreateField: {},
             onDismissCreateField: {},

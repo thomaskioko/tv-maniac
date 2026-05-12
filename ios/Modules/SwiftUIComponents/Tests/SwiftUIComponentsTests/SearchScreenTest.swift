@@ -79,21 +79,23 @@ class SearchScreenTest: SnapshotTestCase {
     }
 
     private func makeScreen(
-        state: SearchScreenState,
+        state screenState: SearchScreenState,
         query: String = "",
         selectedCategory: String = "Popular",
         categories: [String] = ["Popular", "Trending", "Top Rated", "Most Watched"]
     ) -> some View {
         SearchScreen(
-            title: "Search",
-            state: state,
+            state: SearchScreen.State(
+                title: "Search",
+                screenState: screenState,
+                searchPlaceholder: "Enter Show Title",
+                emptyResultsMessage: "No results found",
+                retryButtonText: "Retry",
+                selectedCategory: selectedCategory,
+                categories: categories,
+                categoryTitle: "Category"
+            ),
             query: .constant(query),
-            searchPlaceholder: "Enter Show Title",
-            emptyResultsMessage: "No results found",
-            retryButtonText: "Retry",
-            selectedCategory: selectedCategory,
-            categories: categories,
-            categoryTitle: "Category",
             onShowClicked: { _ in },
             onRetry: {},
             onBack: {},

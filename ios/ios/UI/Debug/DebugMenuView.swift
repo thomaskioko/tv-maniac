@@ -15,8 +15,7 @@ struct DebugMenuView: View {
 
     var body: some View {
         DebugScreen(
-            title: String(\.label_debug_menu_title),
-            items: menuItems,
+            state: uiState.toState(items: menuItems),
             toast: $toast,
             onBack: { presenter.dispatch(action: BackClicked()) }
         )
@@ -108,5 +107,14 @@ struct DebugMenuView: View {
             return String(\.label_settings_last_sync_date, parameter: date)
         }
         return String(\.label_debug_never_synced)
+    }
+}
+
+private extension DebugState {
+    func toState(items: [DebugMenuItem]) -> DebugScreen.State {
+        DebugScreen.State(
+            title: String(\.label_debug_menu_title),
+            items: items
+        )
     }
 }
