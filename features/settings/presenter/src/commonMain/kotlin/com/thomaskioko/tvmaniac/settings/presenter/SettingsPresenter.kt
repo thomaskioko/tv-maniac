@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.settings.presenter
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
-import com.thomaskioko.tvmaniac.appconfig.ApplicationInfo
+import com.thomaskioko.tvmaniac.appconfig.AppMetadata
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
@@ -39,7 +39,7 @@ import kotlinx.coroutines.launch
 public class SettingsPresenter(
     componentContext: ComponentContext,
     private val navigator: Navigator,
-    private val appInfo: ApplicationInfo,
+    private val appMetadata: AppMetadata,
     private val datastoreRepository: DatastoreRepository,
     private val logoutInteractor: LogoutInteractor,
     private val toggleEpisodeNotificationsInteractor: ToggleEpisodeNotificationsInteractor,
@@ -79,7 +79,7 @@ public class SettingsPresenter(
             backgroundSyncEnabled = preferences.backgroundSyncEnabled,
             lastSyncDate = preferences.lastSyncDate,
             showLastSyncDate = preferences.showLastSyncDate,
-            versionName = appInfo.versionName,
+            versionName = appMetadata.versionName,
             episodeNotificationsEnabled = preferences.episodeNotificationsEnabled,
             crashReportingEnabled = preferences.crashReportingEnabled,
             message = message,

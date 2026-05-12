@@ -4,7 +4,17 @@ import SwiftUIComponents
 import XCTest
 
 class AboutSheetTest: SnapshotTestCase {
-    func test_AboutSheet() {
+    func test_AboutSheet_release() {
+        renderAboutSheet(isDebug: false)
+            .assertSnapshot(layout: .defaultDevice, testName: "AboutSheet_release")
+    }
+
+    func test_AboutSheet_debug() {
+        renderAboutSheet(isDebug: true)
+            .assertSnapshot(layout: .defaultDevice, testName: "AboutSheet_debug")
+    }
+
+    private func renderAboutSheet(isDebug: Bool) -> some View {
         AboutSheet(
             appName: "TvManiac",
             versionText: "Version 1.0.0",
@@ -13,11 +23,10 @@ class AboutSheetTest: SnapshotTestCase {
             sourceCodeLabel: "Source Code",
             sourceCodeAction: "GitHub",
             apiDisclaimer: "This product uses the TMDB API but is not endorsed or certified by TMDB.",
-            icon: TvManiacAppIcon.image,
+            icon: TvManiacAppIcon.image(isDebug: isDebug),
             onVersionTap: {},
             onSourceCodeTap: {}
         )
         .themedPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "AboutSheet")
     }
 }

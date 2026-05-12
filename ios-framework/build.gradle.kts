@@ -26,6 +26,7 @@ scaffold {
             )
 
             export(projects.i18n.api)
+            export(projects.core.appconfig.api)
             export(projects.core.logger.api)
             export(projects.navigation.api)
             export(projects.domain.theme)
@@ -199,6 +200,10 @@ kotlin {
 
                 implementation(projects.navigation.implementation)
             }
+        }
+
+        commonTest.dependencies {
+            implementation(libs.bundles.unittest)
         }
     }
 }

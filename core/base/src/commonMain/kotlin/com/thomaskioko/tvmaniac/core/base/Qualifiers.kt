@@ -34,3 +34,7 @@ public annotation class TmdbApi
 @Qualifier
 @Retention(BINARY)
 public annotation class TraktApi
+
+@Qualifier
+@Retention(BINARY)
+public annotation class IsDebugBuild

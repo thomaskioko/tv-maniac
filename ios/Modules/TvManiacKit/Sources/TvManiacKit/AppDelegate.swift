@@ -6,7 +6,7 @@ import UIKit
 import UserNotifications
 
 public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
-    public lazy var appGraph = IosApplicationGraphCompanion.shared.create()
+    public lazy var appGraph: IosApplicationGraph = IosApplicationGraphCompanion.shared.create(isDebug: Self.isDebugBuild)
 
     public lazy var traktAuthRepository = appGraph.traktAuthRepository
     public lazy var traktConfig = appGraph.traktConfig
@@ -14,6 +14,18 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
     public lazy var traktAuthManager = appGraph.traktAuthManager
 
     public private(set) var notificationDelegate: NotificationDelegate?
+
+    public var isDebug: Bool {
+        appGraph.debugConfig.isDebug
+    }
+
+    private static var isDebugBuild: Bool {
+        #if DEBUG
+            return true
+        #else
+            return false
+        #endif
+    }
 
     override public init() {
         super.init()
@@ -33,6 +45,7 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
         MemoryMonitor.shared.setLogger(logBridge)
         DefaultDiagnosticLogger.shared.setLogger(logBridge)
         MemoryMonitor.shared.setDiagnosticLogger(DefaultDiagnosticLogger.shared)
+        MemoryMonitor.shared.setDebugEnabled(appGraph.debugConfig.isDebug)
         MemoryMonitor.shared.logMemoryState(event: "AppDelegate.init")
     }
 

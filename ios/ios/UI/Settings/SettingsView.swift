@@ -66,7 +66,7 @@ struct SettingsView: View {
                 sourceCodeLabel: String(\.settings_about_source_code),
                 sourceCodeAction: String(\.settings_about_github),
                 apiDisclaimer: String(\.settings_about_api_disclaimer),
-                icon: TvManiacAppIcon.image,
+                icon: TvManiacAppIcon.image(isDebug: appDelegate.isDebug),
                 onVersionTap: { presenter.dispatch(action: VersionClicked()) },
                 onSourceCodeTap: {
                     if let url = URL(string: uiState.githubUrl) {

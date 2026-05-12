@@ -23,7 +23,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
 import com.thomaskioko.tvmaniac.settings.presenter.toAppTheme
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
-import com.thomaskioko.tvmaniac.util.testing.FakeApplicationInfo
+import com.thomaskioko.tvmaniac.util.testing.FakeAppMetadata
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
@@ -52,7 +52,7 @@ class SettingsPresenterTest {
         Dispatchers.setMain(testDispatcher)
         presenter = SettingsPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
-            appInfo = FakeApplicationInfo.DEFAULT,
+            appMetadata = FakeAppMetadata.DEFAULT,
             datastoreRepository = datastoreRepository,
             traktAuthRepository = traktAuthRepository,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },

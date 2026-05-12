@@ -14,7 +14,7 @@ import dev.zacsweers.metro.Provides
 public object AndroidAppConfigBindingContainer {
 
     @Provides
-    public fun provideApplicationInfo(@ApplicationContext context: Context): ApplicationInfo {
+    public fun provideAppMetadata(@ApplicationContext context: Context): AppMetadata {
         val packageManager = context.packageManager
         val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             packageManager.getPackageInfo(
@@ -26,7 +26,7 @@ public object AndroidAppConfigBindingContainer {
             packageManager.getPackageInfo(context.packageName, 0)
         }
 
-        return ApplicationInfo(
+        return AppMetadata(
             versionName = packageInfo.versionName ?: "Unknown",
             versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 packageInfo.longVersionCode.toInt()
@@ -35,7 +35,6 @@ public object AndroidAppConfigBindingContainer {
                 packageInfo.versionCode
             },
             packageName = context.packageName,
-            debugBuild = BuildConfig.IS_DEBUG,
             platform = Platform.ANDROID,
         )
     }

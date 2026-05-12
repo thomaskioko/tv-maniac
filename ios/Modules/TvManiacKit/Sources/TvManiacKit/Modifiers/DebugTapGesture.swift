@@ -1,81 +1,84 @@
-#if DEBUG
-    import SwiftUI
-    import UIKit
+import SwiftUI
+import UIKit
 
-    private final class WindowGestureHost: UIView {
-        var coordinator: DebugTapGestureView.Coordinator?
+private final class WindowGestureHost: UIView {
+    var coordinator: DebugTapGestureView.Coordinator?
 
-        override func didMoveToWindow() {
-            super.didMoveToWindow()
-            coordinator?.attach(to: window)
-        }
+    override func didMoveToWindow() {
+        super.didMoveToWindow()
+        coordinator?.attach(to: window)
+    }
+}
+
+struct DebugTapGestureView: UIViewRepresentable {
+    let onTripleTap: () -> Void
+
+    func makeUIView(context: Context) -> UIView {
+        let view = WindowGestureHost()
+        view.isHidden = true
+        view.coordinator = context.coordinator
+        return view
     }
 
-    struct DebugTapGestureView: UIViewRepresentable {
+    func updateUIView(_: UIView, context _: Context) {}
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(onTripleTap: onTripleTap)
+    }
+
+    final class Coordinator: NSObject {
         let onTripleTap: () -> Void
+        private var gesture: UITapGestureRecognizer?
+        private weak var attachedWindow: UIWindow?
 
-        func makeUIView(context: Context) -> UIView {
-            let view = WindowGestureHost()
-            view.isHidden = true
-            view.coordinator = context.coordinator
-            return view
+        init(onTripleTap: @escaping () -> Void) {
+            self.onTripleTap = onTripleTap
         }
 
-        func updateUIView(_: UIView, context _: Context) {}
+        func attach(to window: UIWindow?) {
+            if let existing = gesture, let previous = attachedWindow {
+                previous.removeGestureRecognizer(existing)
+            }
 
-        func makeCoordinator() -> Coordinator {
-            Coordinator(onTripleTap: onTripleTap)
+            guard let window else {
+                gesture = nil
+                attachedWindow = nil
+                return
+            }
+
+            let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+            tap.numberOfTapsRequired = 3
+            tap.numberOfTouchesRequired = 2
+            tap.cancelsTouchesInView = false
+            tap.delaysTouchesBegan = false
+            tap.delaysTouchesEnded = false
+
+            window.addGestureRecognizer(tap)
+            gesture = tap
+            attachedWindow = window
         }
 
-        final class Coordinator: NSObject {
-            let onTripleTap: () -> Void
-            private var gesture: UITapGestureRecognizer?
-            private weak var attachedWindow: UIWindow?
+        @objc func handleTap() {
+            let generator = UINotificationFeedbackGenerator()
+            generator.notificationOccurred(.success)
+            onTripleTap()
+        }
 
-            init(onTripleTap: @escaping () -> Void) {
-                self.onTripleTap = onTripleTap
-            }
-
-            func attach(to window: UIWindow?) {
-                if let existing = gesture, let previous = attachedWindow {
-                    previous.removeGestureRecognizer(existing)
-                }
-
-                guard let window else {
-                    gesture = nil
-                    attachedWindow = nil
-                    return
-                }
-
-                let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap))
-                tap.numberOfTapsRequired = 3
-                tap.numberOfTouchesRequired = 2
-                tap.cancelsTouchesInView = false
-                tap.delaysTouchesBegan = false
-                tap.delaysTouchesEnded = false
-
-                window.addGestureRecognizer(tap)
-                gesture = tap
-                attachedWindow = window
-            }
-
-            @objc func handleTap() {
-                let generator = UINotificationFeedbackGenerator()
-                generator.notificationOccurred(.success)
-                onTripleTap()
-            }
-
-            deinit {
-                if let gesture, let attachedWindow {
-                    attachedWindow.removeGestureRecognizer(gesture)
-                }
+        deinit {
+            if let gesture, let attachedWindow {
+                attachedWindow.removeGestureRecognizer(gesture)
             }
         }
     }
+}
 
-    public extension View {
-        func debugTapGesture(onTripleTap: @escaping () -> Void) -> some View {
+public extension View {
+    @ViewBuilder
+    func debugTapGesture(isEnabled: Bool, onTripleTap: @escaping () -> Void) -> some View {
+        if isEnabled {
             background(DebugTapGestureView(onTripleTap: onTripleTap))
+        } else {
+            self
         }
     }
-#endif
+}

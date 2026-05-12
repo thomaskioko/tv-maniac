@@ -11,16 +11,15 @@ import platform.Foundation.NSBundle
 public object IosAppConfigBindingContainer {
 
     @Provides
-    public fun provideApplicationInfo(): ApplicationInfo {
+    public fun provideAppMetadata(): AppMetadata {
         val bundle = NSBundle.mainBundle
         val versionName = bundle.objectForInfoDictionaryKey("CFBundleShortVersionString") as? String
         val versionCode = bundle.objectForInfoDictionaryKey("CFBundleVersion") as? String
 
-        return ApplicationInfo(
+        return AppMetadata(
             versionName = versionName ?: "Unknown",
             versionCode = versionCode?.toIntOrNull() ?: 0,
             packageName = bundle.bundleIdentifier ?: "Unknown",
-            debugBuild = BuildConfig.IS_DEBUG,
             platform = Platform.IOS,
         )
     }

@@ -1,10 +1,11 @@
 package com.thomaskioko.tvmaniac.testing.di
 
 import com.arkivanov.decompose.ComponentContext
-import com.thomaskioko.tvmaniac.appconfig.ApplicationInfo
+import com.thomaskioko.tvmaniac.appconfig.AppMetadata
 import com.thomaskioko.tvmaniac.appconfig.Platform
 import com.thomaskioko.tvmaniac.core.base.ComputationCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
+import com.thomaskioko.tvmaniac.core.base.IsDebugBuild
 import com.thomaskioko.tvmaniac.core.base.MainCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.TmdbApi
 import com.thomaskioko.tvmaniac.core.base.TraktApi
@@ -100,14 +101,17 @@ public object FakeAppBindingContainer {
 
     @Provides
     @SingleIn(AppScope::class)
-    public fun provideApplicationInfo(): ApplicationInfo =
-        ApplicationInfo(
-            debugBuild = true,
+    public fun provideAppMetadata(): AppMetadata =
+        AppMetadata(
             versionName = "0.0.1",
             versionCode = 1,
             packageName = "com.thomaskioko.tvmaniac.test",
             platform = Platform.ANDROID,
         )
+
+    @Provides
+    @IsDebugBuild
+    public fun provideIsDebugBuild(): Boolean = true
 
     @Provides
     @SingleIn(AppScope::class)

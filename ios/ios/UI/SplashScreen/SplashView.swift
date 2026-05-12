@@ -14,9 +14,11 @@ struct SplashView: View {
     @State private var isActive = false
     @State private var logoScale: CGFloat = 0.6
     @State private var logoOpacity: Double = 0
+    private let isDebug: Bool
     private let content: AnyView
 
-    init(@ViewBuilder content: @escaping () -> some View) {
+    init(isDebug: Bool, @ViewBuilder content: @escaping () -> some View) {
+        self.isDebug = isDebug
         self.content = AnyView(content())
     }
 
@@ -29,7 +31,7 @@ struct SplashView: View {
                 theme.colors.background
                     .ignoresSafeArea()
 
-                TvManiacAppIcon.image
+                TvManiacAppIcon.image(isDebug: isDebug)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 180, height: 180)

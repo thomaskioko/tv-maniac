@@ -19,6 +19,7 @@ public final class MemoryMonitor: @unchecked Sendable {
     private let lock = NSLock()
     private var _logger: CoreLogger?
     private var _diagnosticLogger: DiagnosticLogger?
+    private var _isDebugEnabled: Bool = false
 
     public var warningCount: Int {
         lock.lock()
@@ -40,29 +41,36 @@ public final class MemoryMonitor: @unchecked Sendable {
         lock.unlock()
     }
 
+    public func setDebugEnabled(_ enabled: Bool) {
+        lock.lock()
+        _isDebugEnabled = enabled
+        lock.unlock()
+    }
+
     public func start() {
-        #if DEBUG
-            stop()
-            let newTimer = Timer(timeInterval: 30.0, repeats: true) { [weak self] _ in
-                self?.logCurrentState()
-            }
-            RunLoop.main.add(newTimer, forMode: .common)
-            timer = newTimer
+        lock.lock()
+        let enabled = _isDebugEnabled
+        lock.unlock()
+        guard enabled else { return }
 
-            lock.lock()
-            let log = _logger
-            lock.unlock()
+        stop()
+        let newTimer = Timer(timeInterval: 30.0, repeats: true) { [weak self] _ in
+            self?.logCurrentState()
+        }
+        RunLoop.main.add(newTimer, forMode: .common)
+        timer = newTimer
 
-            log?.debug(tag: "Memory", message: "Monitor started")
-            logCurrentState()
-        #endif
+        lock.lock()
+        let log = _logger
+        lock.unlock()
+
+        log?.debug(tag: "Memory", message: "Monitor started")
+        logCurrentState()
     }
 
     public func stop() {
-        #if DEBUG
-            timer?.invalidate()
-            timer = nil
-        #endif
+        timer?.invalidate()
+        timer = nil
     }
 
     public func logMemoryState(event: String) {

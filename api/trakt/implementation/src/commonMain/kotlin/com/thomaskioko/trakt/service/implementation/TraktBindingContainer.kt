@@ -1,6 +1,6 @@
 package com.thomaskioko.trakt.service.implementation
 
-import com.thomaskioko.tvmaniac.appconfig.ApplicationInfo
+import com.thomaskioko.tvmaniac.appconfig.DebugConfig
 import com.thomaskioko.tvmaniac.core.base.TraktApi
 import com.thomaskioko.tvmaniac.core.connectivity.api.InternetConnectionChecker
 import com.thomaskioko.tvmaniac.core.logger.Logger
@@ -30,13 +30,13 @@ public object TraktBindingContainer {
     @TraktApi
     public fun provideHttpClient(
         @TraktApi httpClientEngine: HttpClientEngine,
-        applicationInfo: ApplicationInfo,
+        debugConfig: DebugConfig,
         traktConfig: TraktConfig,
         logger: Logger,
         traktAuthRepository: TraktAuthRepository,
         internetConnectionChecker: InternetConnectionChecker,
     ): HttpClient = traktHttpClient(
-        isDebug = applicationInfo.debugBuild,
+        isDebug = debugConfig.isDebug,
         traktClientId = traktConfig.clientId,
         json = json,
         httpClientEngine = httpClientEngine,
