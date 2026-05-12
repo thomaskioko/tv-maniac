@@ -11,7 +11,8 @@ import dev.zacsweers.metro.createGraphFactory
 
 public class TvManicApplication : Application(), Configuration.Provider {
     private val graph: ApplicationGraph by unsafeLazy {
-        createGraphFactory<ApplicationGraph.Factory>().create(this)
+        createGraphFactory<ApplicationGraph.Factory>()
+            .create(this, BuildConfig.DEBUG)
     }
 
     private lateinit var workerFactory: WorkerFactory

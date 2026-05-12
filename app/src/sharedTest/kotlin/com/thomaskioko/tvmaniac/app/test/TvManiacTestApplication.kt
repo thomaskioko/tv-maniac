@@ -12,7 +12,8 @@ class TvManiacTestApplication : Application() {
     private var testAppComponent: TestAppComponent? = null
 
     val graph: TestAppComponent
-        get() = testAppComponent ?: createGraphFactory<TestAppComponent.Factory>().create(this)
+        get() = testAppComponent ?: createGraphFactory<TestAppComponent.Factory>()
+            .create(application = this, isDebug = true)
             .also { testAppComponent = it }
 
     override fun onCreate() {

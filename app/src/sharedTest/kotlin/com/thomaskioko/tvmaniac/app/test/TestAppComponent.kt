@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.app.test
 import android.app.Application
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import com.thomaskioko.tvmaniac.core.base.IsDebugBuild
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
@@ -20,6 +21,9 @@ interface TestAppComponent {
 
     @DependencyGraph.Factory
     fun interface Factory {
-        fun create(@Provides application: Application): TestAppComponent
+        fun create(
+            @Provides application: Application,
+            @Provides @IsDebugBuild isDebug: Boolean,
+        ): TestAppComponent
     }
 }
