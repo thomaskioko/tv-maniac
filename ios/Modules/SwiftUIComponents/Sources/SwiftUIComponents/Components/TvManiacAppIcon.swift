@@ -1,11 +1,11 @@
 import SwiftUI
 
 public enum TvManiacAppIcon {
-    public static var image: Image {
-        #if DEBUG
+    public static func image(isDebug: Bool) -> Image {
+        if isDebug {
             Image("TvManiacIconDebug", bundle: .module)
-        #else
+        } else {
             Image("TvManiacIcon", bundle: .module)
-        #endif
+        }
     }
 }

@@ -33,7 +33,7 @@ struct RootNavigationView: View {
     }
 
     var body: some View {
-        SplashView {
+        SplashView(isDebug: appDelegate.isDebug) {
             TabBarView(
                 presenter: rootPresenter.homePresenter,
                 navigator: navigator,
@@ -87,19 +87,17 @@ struct RootNavigationView: View {
             .presentationDragIndicator(.visible)
             .appTheme()
         }
-        #if DEBUG
-        .debugTapGesture {
-                rootPresenter.onDeepLink(
-                    destination: DeepLinkDestination.DebugMenu.shared
-                )
-            }
-        #endif
-            .onChange(of: notificationPermissionState.requestPermission) { _, _ in
-                requestNotificationPermissionIfNeeded()
-            }
-            .onChange(of: notificationPermissionState.showRationale) { _, _ in
-                requestNotificationPermissionIfNeeded()
-            }
+        .debugTapGesture(isEnabled: appDelegate.isDebug) {
+            rootPresenter.onDeepLink(
+                destination: DeepLinkDestination.DebugMenu.shared
+            )
+        }
+        .onChange(of: notificationPermissionState.requestPermission) { _, _ in
+            requestNotificationPermissionIfNeeded()
+        }
+        .onChange(of: notificationPermissionState.showRationale) { _, _ in
+            requestNotificationPermissionIfNeeded()
+        }
     }
 
     private func requestNotificationPermissionIfNeeded() {
