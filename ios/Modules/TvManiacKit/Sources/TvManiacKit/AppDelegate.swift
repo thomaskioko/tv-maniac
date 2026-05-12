@@ -16,7 +16,7 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
     public private(set) var notificationDelegate: NotificationDelegate?
 
     public var isDebug: Bool {
-        appGraph.applicationInfo.debugBuild
+        appGraph.debugConfig.isDebug
     }
 
     private static var isDebugBuild: Bool {
@@ -45,7 +45,7 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
         MemoryMonitor.shared.setLogger(logBridge)
         DefaultDiagnosticLogger.shared.setLogger(logBridge)
         MemoryMonitor.shared.setDiagnosticLogger(DefaultDiagnosticLogger.shared)
-        MemoryMonitor.shared.setDebugEnabled(appGraph.applicationInfo.debugBuild)
+        MemoryMonitor.shared.setDebugEnabled(appGraph.debugConfig.isDebug)
         MemoryMonitor.shared.logMemoryState(event: "AppDelegate.init")
     }
 

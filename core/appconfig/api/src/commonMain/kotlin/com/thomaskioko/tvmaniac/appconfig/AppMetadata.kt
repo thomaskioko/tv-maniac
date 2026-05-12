@@ -1,10 +1,9 @@
 package com.thomaskioko.tvmaniac.appconfig
 
-public data class ApplicationInfo(
+public data class AppMetadata(
     val versionName: String,
     val versionCode: Int,
     val packageName: String,
-    val debugBuild: Boolean,
     val platform: Platform,
 )
 

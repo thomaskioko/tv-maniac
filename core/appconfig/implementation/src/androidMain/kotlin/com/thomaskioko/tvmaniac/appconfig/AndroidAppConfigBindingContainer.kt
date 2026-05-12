@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import com.thomaskioko.tvmaniac.core.base.ApplicationContext
-import com.thomaskioko.tvmaniac.core.base.IsDebugBuild
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
@@ -15,10 +14,7 @@ import dev.zacsweers.metro.Provides
 public object AndroidAppConfigBindingContainer {
 
     @Provides
-    public fun provideApplicationInfo(
-        @ApplicationContext context: Context,
-        @IsDebugBuild isDebug: Boolean,
-    ): ApplicationInfo {
+    public fun provideAppMetadata(@ApplicationContext context: Context): AppMetadata {
         val packageManager = context.packageManager
         val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             packageManager.getPackageInfo(
@@ -30,7 +26,7 @@ public object AndroidAppConfigBindingContainer {
             packageManager.getPackageInfo(context.packageName, 0)
         }
 
-        return ApplicationInfo(
+        return AppMetadata(
             versionName = packageInfo.versionName ?: "Unknown",
             versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 packageInfo.longVersionCode.toInt()
@@ -39,7 +35,6 @@ public object AndroidAppConfigBindingContainer {
                 packageInfo.versionCode
             },
             packageName = context.packageName,
-            debugBuild = isDebug,
             platform = Platform.ANDROID,
         )
     }

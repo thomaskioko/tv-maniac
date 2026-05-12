@@ -21,7 +21,7 @@ public class TvManicApplication : Application(), Configuration.Provider {
         super.onCreate()
         workerFactory = graph.workerFactory
 
-        if (graph.appInfo.debugBuild) {
+        if (graph.debugConfig.isDebug) {
             setupStrictMode()
         }
 

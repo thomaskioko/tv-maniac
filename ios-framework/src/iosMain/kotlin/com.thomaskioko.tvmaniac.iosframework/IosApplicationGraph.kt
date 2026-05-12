@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.iosframework
 
-import com.thomaskioko.tvmaniac.appconfig.ApplicationInfo
+import com.thomaskioko.tvmaniac.appconfig.AppMetadata
+import com.thomaskioko.tvmaniac.appconfig.DebugConfig
 import com.thomaskioko.tvmaniac.core.base.AppInitializers
 import com.thomaskioko.tvmaniac.core.base.IsDebugBuild
 import com.thomaskioko.tvmaniac.core.logger.Logger
@@ -20,7 +21,8 @@ public interface IosApplicationGraph {
     public val traktAuthManager: TraktAuthManager
     public val traktConfig: TraktConfig
     public val backgroundTaskScheduler: BackgroundTaskScheduler
-    public val applicationInfo: ApplicationInfo
+    public val appMetadata: AppMetadata
+    public val debugConfig: DebugConfig
     public val logger: Logger
 
     @DependencyGraph.Factory
