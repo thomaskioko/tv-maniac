@@ -69,7 +69,7 @@ class CalendarScreenTest: SnapshotTestCase {
     }
 
     private func makeScreen(
-        state: CalendarScreenState,
+        state screenState: CalendarScreenState,
         weekLabel: String = "Jan 31, 2026 - Feb 6, 2026",
         canNavigatePrevious: Bool = false,
         canNavigateNext: Bool = true,
@@ -77,11 +77,13 @@ class CalendarScreenTest: SnapshotTestCase {
     ) -> some View {
         NavigationStack {
             CalendarScreen(
-                state: state,
-                weekLabel: weekLabel,
-                canNavigatePrevious: canNavigatePrevious,
-                canNavigateNext: canNavigateNext,
-                isRefreshing: isRefreshing,
+                state: CalendarScreen.State(
+                    screenState: screenState,
+                    weekLabel: weekLabel,
+                    canNavigatePrevious: canNavigatePrevious,
+                    canNavigateNext: canNavigateNext,
+                    isRefreshing: isRefreshing
+                ),
                 moreEpisodesFormat: { "+\($0) episodes" },
                 onPreviousWeek: {},
                 onNextWeek: {},

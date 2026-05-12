@@ -45,8 +45,10 @@ class DebugScreenTest: SnapshotTestCase {
 
     func test_DebugScreen() {
         DebugScreen(
-            title: "Debug Menu",
-            items: sampleItems,
+            state: DebugScreen.State(
+                title: "Debug Menu",
+                items: sampleItems
+            ),
             toast: .constant(nil),
             onBack: {}
         )
@@ -74,8 +76,10 @@ class DebugScreenTest: SnapshotTestCase {
         ]
 
         DebugScreen(
-            title: "Debug Menu",
-            items: items,
+            state: DebugScreen.State(
+                title: "Debug Menu",
+                items: items
+            ),
             toast: .constant(nil),
             onBack: {}
         )
@@ -103,8 +107,10 @@ class DebugScreenTest: SnapshotTestCase {
         ]
 
         DebugScreen(
-            title: "Debug Menu",
-            items: items,
+            state: DebugScreen.State(
+                title: "Debug Menu",
+                items: items
+            ),
             toast: .constant(nil),
             onBack: {}
         )

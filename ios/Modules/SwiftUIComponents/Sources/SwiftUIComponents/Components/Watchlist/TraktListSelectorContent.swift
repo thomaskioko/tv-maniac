@@ -1,19 +1,51 @@
 import SwiftUI
 
 public struct TraktListSelectorContent: View {
+    public struct State {
+        public let title: String
+        public let posterUrl: String?
+        public let traktLists: [SwiftTraktListItem]
+        public let showCreateField: Bool
+        public let isCreatingList: Bool
+        public let createListName: String
+        public let sheetTitle: String
+        public let createButtonText: String
+        public let doneButtonText: String
+        public let emptyListText: String
+        public let newListPlaceholder: String
+        public let listsHeaderText: String
+
+        public init(
+            title: String,
+            posterUrl: String?,
+            traktLists: [SwiftTraktListItem],
+            showCreateField: Bool = false,
+            isCreatingList: Bool = false,
+            createListName: String = "",
+            sheetTitle: String = "Save to List",
+            createButtonText: String = "Create a List",
+            doneButtonText: String = "Done",
+            emptyListText: String = "You don't have any lists yet.",
+            newListPlaceholder: String = "New list name",
+            listsHeaderText: String = "Your Lists"
+        ) {
+            self.title = title
+            self.posterUrl = posterUrl
+            self.traktLists = traktLists
+            self.showCreateField = showCreateField
+            self.isCreatingList = isCreatingList
+            self.createListName = createListName
+            self.sheetTitle = sheetTitle
+            self.createButtonText = createButtonText
+            self.doneButtonText = doneButtonText
+            self.emptyListText = emptyListText
+            self.newListPlaceholder = newListPlaceholder
+            self.listsHeaderText = listsHeaderText
+        }
+    }
+
     @Theme private var theme
-    private let title: String
-    private let posterUrl: String?
-    private let traktLists: [SwiftTraktListItem]
-    private let showCreateField: Bool
-    private let isCreatingList: Bool
-    private let createListName: String
-    private let sheetTitle: String
-    private let createButtonText: String
-    private let doneButtonText: String
-    private let emptyListText: String
-    private let newListPlaceholder: String
-    private let listsHeaderText: String
+    private let state: State
     private let onToggle: (Int64, Bool) -> Void
     private let onShowCreateField: () -> Void
     private let onDismissCreateField: () -> Void
@@ -22,18 +54,7 @@ public struct TraktListSelectorContent: View {
     private let onDismiss: () -> Void
 
     public init(
-        title: String,
-        posterUrl: String?,
-        traktLists: [SwiftTraktListItem],
-        showCreateField: Bool = false,
-        isCreatingList: Bool = false,
-        createListName: String = "",
-        sheetTitle: String = "Save to List",
-        createButtonText: String = "Create a List",
-        doneButtonText: String = "Done",
-        emptyListText: String = "You don't have any lists yet.",
-        newListPlaceholder: String = "New list name",
-        listsHeaderText: String = "Your Lists",
+        state: State,
         onToggle: @escaping (Int64, Bool) -> Void,
         onShowCreateField: @escaping () -> Void,
         onDismissCreateField: @escaping () -> Void,
@@ -41,18 +62,7 @@ public struct TraktListSelectorContent: View {
         onCreateSubmitted: @escaping () -> Void,
         onDismiss: @escaping () -> Void
     ) {
-        self.title = title
-        self.posterUrl = posterUrl
-        self.traktLists = traktLists
-        self.showCreateField = showCreateField
-        self.isCreatingList = isCreatingList
-        self.createListName = createListName
-        self.sheetTitle = sheetTitle
-        self.createButtonText = createButtonText
-        self.doneButtonText = doneButtonText
-        self.emptyListText = emptyListText
-        self.newListPlaceholder = newListPlaceholder
-        self.listsHeaderText = listsHeaderText
+        self.state = state
         self.onToggle = onToggle
         self.onShowCreateField = onShowCreateField
         self.onDismissCreateField = onDismissCreateField
@@ -66,7 +76,7 @@ public struct TraktListSelectorContent: View {
             Form {
                 posterSection
 
-                if !traktLists.isEmpty {
+                if !state.traktLists.isEmpty {
                     listsSection
                 } else {
                     emptySection
@@ -77,7 +87,7 @@ public struct TraktListSelectorContent: View {
             .scrollBounceBehavior(.basedOnSize, axes: .vertical)
             .scrollContentBackground(.hidden)
             .background(theme.colors.background)
-            .navigationTitle(sheetTitle)
+            .navigationTitle(state.sheetTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(theme.colors.surface, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
@@ -90,7 +100,7 @@ public struct TraktListSelectorContent: View {
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    if !showCreateField {
+                    if !state.showCreateField {
                         Button(action: onShowCreateField) {
                             Image(systemName: "plus")
                                 .font(.system(size: 14, weight: .semibold))
@@ -111,8 +121,8 @@ public struct TraktListSelectorContent: View {
             VStack(alignment: .center) {
                 HStack(alignment: .center) {
                     PosterItemView(
-                        title: title,
-                        posterUrl: posterUrl,
+                        title: state.title,
+                        posterUrl: state.posterUrl,
                         posterWidth: 150,
                         posterHeight: 220
                     )
@@ -124,7 +134,7 @@ public struct TraktListSelectorContent: View {
 
                 Spacer().frame(height: 16)
 
-                Text(title)
+                Text(state.title)
                     .textStyle(theme.typography.titleMedium)
                     .multilineTextAlignment(.center)
             }
@@ -135,7 +145,7 @@ public struct TraktListSelectorContent: View {
 
     private var listsSection: some View {
         Section {
-            ForEach(traktLists) { list in
+            ForEach(state.traktLists) { list in
                 HStack {
                     VStack(alignment: .leading) {
                         Text(list.name)
@@ -161,14 +171,14 @@ public struct TraktListSelectorContent: View {
                 .listRowSeparator(.hidden)
             }
         } header: {
-            Text(listsHeaderText)
+            Text(state.listsHeaderText)
         }
     }
 
     private var emptySection: some View {
         Section {
             VStack {
-                Text(emptyListText)
+                Text(state.emptyListText)
                     .textStyle(theme.typography.bodySmall)
                     .multilineTextAlignment(.center)
             }
@@ -180,11 +190,11 @@ public struct TraktListSelectorContent: View {
 
     @ViewBuilder
     private var createSection: some View {
-        if showCreateField {
+        if state.showCreateField {
             Section {
                 HStack(spacing: 8) {
-                    TextField(newListPlaceholder, text: Binding(
-                        get: { createListName },
+                    TextField(state.newListPlaceholder, text: Binding(
+                        get: { state.createListName },
                         set: { newValue in
                             if newValue.count <= 50 {
                                 onCreateListNameChanged(newValue)
@@ -192,7 +202,7 @@ public struct TraktListSelectorContent: View {
                         }
                     ))
                     .textStyle(theme.typography.bodyMedium)
-                    .disabled(isCreatingList)
+                    .disabled(state.isCreatingList)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 10)
                     .background(theme.colors.surface)
@@ -203,17 +213,17 @@ public struct TraktListSelectorContent: View {
                     )
 
                     Button(action: onCreateSubmitted) {
-                        if isCreatingList {
+                        if state.isCreatingList {
                             ProgressView()
                                 .progressViewStyle(.circular)
                                 .scaleEffect(0.8)
                         } else {
-                            Text(doneButtonText)
+                            Text(state.doneButtonText)
                         }
                     }
                     .buttonStyle(.borderedProminent)
                     .tint(theme.colors.accent)
-                    .disabled(createListName.trimmingCharacters(in: .whitespaces).isEmpty || isCreatingList)
+                    .disabled(state.createListName.trimmingCharacters(in: .whitespaces).isEmpty || state.isCreatingList)
                 }
                 .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
                 .listRowBackground(Color.clear)

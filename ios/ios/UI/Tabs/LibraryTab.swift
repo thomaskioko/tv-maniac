@@ -14,19 +14,7 @@ struct LibraryTab: View {
 
     var body: some View {
         LibraryScreen(
-            title: String(\.label_library_title),
-            searchPlaceholder: String(\.label_search_placeholder),
-            emptyText: String(\.generic_empty_content),
-            isLoading: uiState.showLoading,
-            isRefreshing: uiState.isRefreshing,
-            isEmpty: uiState.isEmpty,
-            isGridMode: uiState.isGridMode,
-            isSearchActive: uiState.isSearchActive,
-            query: uiState.query,
-            gridItems: Array(uiState.items).map {
-                LibraryGridItem(traktId: $0.traktId, title: $0.title, posterImageUrl: $0.posterImageUrl)
-            },
-            listItems: Array(uiState.items).map { $0.toSwift() },
+            state: uiState.toState(),
             emptySearchResultFormat: { query in String(\.label_watchlist_empty_result, parameter: query) },
             onQueryChanged: { presenter.dispatch(action: LibraryQueryChanged(query: $0)) },
             onQueryCleared: { presenter.dispatch(action: ClearLibraryQuery()) },
@@ -58,5 +46,25 @@ struct LibraryTab: View {
             )
             .presentationDetents([.large])
         }
+    }
+}
+
+private extension LibraryState {
+    func toState() -> LibraryScreen.State {
+        LibraryScreen.State(
+            title: String(\.label_library_title),
+            searchPlaceholder: String(\.label_search_placeholder),
+            emptyText: String(\.generic_empty_content),
+            isLoading: showLoading,
+            isRefreshing: isRefreshing,
+            isEmpty: isEmpty,
+            isGridMode: isGridMode,
+            isSearchActive: isSearchActive,
+            query: query,
+            gridItems: Array(items).map {
+                LibraryGridItem(traktId: $0.traktId, title: $0.title, posterImageUrl: $0.posterImageUrl)
+            },
+            listItems: Array(items).map { $0.toSwift() }
+        )
     }
 }

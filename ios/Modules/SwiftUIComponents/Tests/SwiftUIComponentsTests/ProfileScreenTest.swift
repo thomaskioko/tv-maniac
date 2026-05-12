@@ -13,20 +13,22 @@ class ProfileScreenTest: SnapshotTestCase {
 
     func test_ProfileScreen_Loading() {
         ProfileScreen(
-            title: "Profile",
-            isLoading: true,
-            userProfile: nil,
-            editButtonLabel: "Edit Profile",
-            statsTitle: "Statistics",
-            watchTimeLabel: "Watch Time",
-            monthsLabel: "Months",
-            daysLabel: "Days",
-            hoursLabel: "Hours",
-            episodesWatchedLabel: "Episodes Watched",
-            unauthenticatedTitle: "Track your shows",
-            footerDescription: "Sign in to sync your data.",
-            signInLabel: "Sign In with Trakt",
-            featureItems: sampleFeatureItems,
+            state: ProfileScreen.State(
+                title: "Profile",
+                isLoading: true,
+                userProfile: nil,
+                editButtonLabel: "Edit Profile",
+                statsTitle: "Statistics",
+                watchTimeLabel: "Watch Time",
+                monthsLabel: "Months",
+                daysLabel: "Days",
+                hoursLabel: "Hours",
+                episodesWatchedLabel: "Episodes Watched",
+                unauthenticatedTitle: "Track your shows",
+                footerDescription: "Sign in to sync your data.",
+                signInLabel: "Sign In with Trakt",
+                featureItems: sampleFeatureItems
+            ),
             onSettingsClicked: {},
             onLoginClicked: {}
         )
@@ -36,20 +38,22 @@ class ProfileScreenTest: SnapshotTestCase {
 
     func test_ProfileScreen_Unauthenticated() {
         ProfileScreen(
-            title: "Profile",
-            isLoading: false,
-            userProfile: nil,
-            editButtonLabel: "Edit Profile",
-            statsTitle: "Statistics",
-            watchTimeLabel: "Watch Time",
-            monthsLabel: "Months",
-            daysLabel: "Days",
-            hoursLabel: "Hours",
-            episodesWatchedLabel: "Episodes Watched",
-            unauthenticatedTitle: "Track your shows",
-            footerDescription: "Sign in to sync your data across devices.",
-            signInLabel: "Sign In with Trakt",
-            featureItems: sampleFeatureItems,
+            state: ProfileScreen.State(
+                title: "Profile",
+                isLoading: false,
+                userProfile: nil,
+                editButtonLabel: "Edit Profile",
+                statsTitle: "Statistics",
+                watchTimeLabel: "Watch Time",
+                monthsLabel: "Months",
+                daysLabel: "Days",
+                hoursLabel: "Hours",
+                episodesWatchedLabel: "Episodes Watched",
+                unauthenticatedTitle: "Track your shows",
+                footerDescription: "Sign in to sync your data across devices.",
+                signInLabel: "Sign In with Trakt",
+                featureItems: sampleFeatureItems
+            ),
             onSettingsClicked: {},
             onLoginClicked: {}
         )
@@ -72,20 +76,22 @@ class ProfileScreenTest: SnapshotTestCase {
         )
 
         ProfileScreen(
-            title: "Profile",
-            isLoading: false,
-            userProfile: profile,
-            editButtonLabel: "Edit Profile",
-            statsTitle: "Statistics",
-            watchTimeLabel: "Watch Time",
-            monthsLabel: "Months",
-            daysLabel: "Days",
-            hoursLabel: "Hours",
-            episodesWatchedLabel: "Episodes Watched",
-            unauthenticatedTitle: "Track your shows",
-            footerDescription: "Sign in to sync your data.",
-            signInLabel: "Sign In with Trakt",
-            featureItems: sampleFeatureItems,
+            state: ProfileScreen.State(
+                title: "Profile",
+                isLoading: false,
+                userProfile: profile,
+                editButtonLabel: "Edit Profile",
+                statsTitle: "Statistics",
+                watchTimeLabel: "Watch Time",
+                monthsLabel: "Months",
+                daysLabel: "Days",
+                hoursLabel: "Hours",
+                episodesWatchedLabel: "Episodes Watched",
+                unauthenticatedTitle: "Track your shows",
+                footerDescription: "Sign in to sync your data.",
+                signInLabel: "Sign In with Trakt",
+                featureItems: sampleFeatureItems
+            ),
             onSettingsClicked: {},
             onLoginClicked: {}
         )

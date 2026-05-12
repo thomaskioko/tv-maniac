@@ -9,49 +9,59 @@ public enum SearchScreenState {
 }
 
 public struct SearchScreen: View {
+    public struct State {
+        public let title: String
+        public let screenState: SearchScreenState
+        public let searchPlaceholder: String
+        public let emptyResultsMessage: String
+        public let retryButtonText: String
+        public let selectedCategory: String
+        public let categories: [String]
+        public let categoryTitle: String
+
+        public init(
+            title: String,
+            screenState: SearchScreenState,
+            searchPlaceholder: String,
+            emptyResultsMessage: String,
+            retryButtonText: String,
+            selectedCategory: String = "",
+            categories: [String] = [],
+            categoryTitle: String = "Category"
+        ) {
+            self.title = title
+            self.screenState = screenState
+            self.searchPlaceholder = searchPlaceholder
+            self.emptyResultsMessage = emptyResultsMessage
+            self.retryButtonText = retryButtonText
+            self.selectedCategory = selectedCategory
+            self.categories = categories
+            self.categoryTitle = categoryTitle
+        }
+    }
+
     @Theme private var theme
 
-    private let title: String
-    private let state: SearchScreenState
+    private let state: State
     @Binding private var query: String
-    private let searchPlaceholder: String
-    private let emptyResultsMessage: String
-    private let retryButtonText: String
-    private let selectedCategory: String
-    private let categories: [String]
-    private let categoryTitle: String
     private let onShowClicked: (Int64) -> Void
     private let onRetry: () -> Void
     private let onBack: () -> Void
     private let onCategoryChanged: (String) -> Void
 
     @FocusState private var isSearchFocused: Bool
-    @State private var showFilterSheet = false
+    @SwiftUI.State private var showFilterSheet = false
 
     public init(
-        title: String,
-        state: SearchScreenState,
+        state: State,
         query: Binding<String>,
-        searchPlaceholder: String,
-        emptyResultsMessage: String,
-        retryButtonText: String,
-        selectedCategory: String = "",
-        categories: [String] = [],
-        categoryTitle: String = "Category",
         onShowClicked: @escaping (Int64) -> Void,
         onRetry: @escaping () -> Void,
         onBack: @escaping () -> Void,
         onCategoryChanged: @escaping (String) -> Void = { _ in }
     ) {
-        self.title = title
         self.state = state
         _query = query
-        self.searchPlaceholder = searchPlaceholder
-        self.emptyResultsMessage = emptyResultsMessage
-        self.retryButtonText = retryButtonText
-        self.selectedCategory = selectedCategory
-        self.categories = categories
-        self.categoryTitle = categoryTitle
         self.onShowClicked = onShowClicked
         self.onRetry = onRetry
         self.onBack = onBack
@@ -59,7 +69,7 @@ public struct SearchScreen: View {
     }
 
     private var isBrowsingGenres: Bool {
-        if case .browsingGenres = state { return true }
+        if case .browsingGenres = state.screenState { return true }
         return false
     }
 
@@ -123,7 +133,7 @@ public struct SearchScreen: View {
 
     private var searchToolbar: some View {
         GlassToolbar(
-            title: title,
+            title: state.title,
             opacity: 1.0,
             leadingIcon: {
                 GlassButton(icon: "chevron.left", action: onBack)
@@ -147,7 +157,7 @@ public struct SearchScreen: View {
             Image(systemName: "magnifyingglass")
                 .foregroundColor(theme.colors.onSurfaceVariant)
 
-            TextField(searchPlaceholder, text: $query)
+            TextField(state.searchPlaceholder, text: $query)
                 .textStyle(theme.typography.bodyMedium)
                 .focused($isSearchFocused)
                 .submitLabel(.search)
@@ -174,9 +184,9 @@ public struct SearchScreen: View {
     private var filterSheetContent: some View {
         VStack(spacing: theme.spacing.medium) {
             FilterChipSection(
-                title: categoryTitle,
-                items: categories,
-                selectedItems: Set([selectedCategory]),
+                title: state.categoryTitle,
+                items: state.categories,
+                selectedItems: Set([state.selectedCategory]),
                 labelProvider: { $0 },
                 onItemToggle: { category in
                     onCategoryChanged(category)
@@ -192,7 +202,7 @@ public struct SearchScreen: View {
 
     @ViewBuilder
     private var contentView: some View {
-        switch state {
+        switch state.screenState {
         case .loading:
             loadingView
                 .transition(.opacity)
@@ -259,7 +269,7 @@ public struct SearchScreen: View {
     private var emptyStateView: some View {
         EmptyStateView(
             systemName: "exclamationmark.magnifyingglass",
-            title: emptyResultsMessage
+            title: state.emptyResultsMessage
         )
     }
 
@@ -267,7 +277,7 @@ public struct SearchScreen: View {
         EmptyStateView(
             systemName: "exclamationmark.arrow.triangle.2.circlepath",
             title: message,
-            buttonText: retryButtonText,
+            buttonText: state.retryButtonText,
             action: onRetry
         )
         .frame(height: 200)

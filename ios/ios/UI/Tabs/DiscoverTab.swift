@@ -16,26 +16,7 @@ struct DiscoverTab: View {
 
     var body: some View {
         DiscoverScreen(
-            title: String(\.label_discover_title),
-            isLoading: uiState.isLoading,
-            isEmpty: uiState.isEmpty,
-            showError: uiState.showError,
-            errorMessage: uiState.message?.message,
-            featuredShows: uiState.featuredShowsSwift,
-            nextEpisodes: uiState.nextEpisodesSwift,
-            trendingToday: uiState.trendingTodaySwift,
-            upcomingShows: uiState.upcomingShowsSwift,
-            popularShows: uiState.popularShowsSwift,
-            topRatedShows: uiState.topRatedShowsSwift,
-            isRefreshing: uiState.isRefreshing,
-            emptyContentText: String(\.generic_empty_content),
-            missingApiKeyText: String(\.missing_api_key),
-            retryText: String(\.button_error_retry),
-            upNextTitle: String(\.label_discover_up_next),
-            trendingTitle: String(\.label_discover_trending_today),
-            upcomingTitle: String(\.label_discover_upcoming),
-            popularTitle: String(\.label_discover_popular),
-            topRatedTitle: String(\.label_discover_top_rated),
+            state: uiState.toState(),
             currentIndex: $currentIndex,
             toast: $toast,
             selectedEpisode: .constant(nil),
@@ -63,5 +44,32 @@ struct DiscoverTab: View {
                 presenter.dispatch(action: MessageShown(id: message.id))
             }
         }
+    }
+}
+
+private extension DiscoverViewState {
+    func toState() -> DiscoverScreen.State {
+        DiscoverScreen.State(
+            title: String(\.label_discover_title),
+            isLoading: isLoading,
+            isEmpty: isEmpty,
+            showError: showError,
+            errorMessage: message?.message,
+            featuredShows: featuredShowsSwift,
+            nextEpisodes: nextEpisodesSwift,
+            trendingToday: trendingTodaySwift,
+            upcomingShows: upcomingShowsSwift,
+            popularShows: popularShowsSwift,
+            topRatedShows: topRatedShowsSwift,
+            isRefreshing: isRefreshing,
+            emptyContentText: String(\.generic_empty_content),
+            missingApiKeyText: String(\.missing_api_key),
+            retryText: String(\.button_error_retry),
+            upNextTitle: String(\.label_discover_up_next),
+            trendingTitle: String(\.label_discover_trending_today),
+            upcomingTitle: String(\.label_discover_upcoming),
+            popularTitle: String(\.label_discover_popular),
+            topRatedTitle: String(\.label_discover_top_rated)
+        )
     }
 }

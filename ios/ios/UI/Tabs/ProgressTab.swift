@@ -18,11 +18,7 @@ struct ProgressTab: View {
 
     var body: some View {
         ProgressScreen(
-            title: String(\.menu_item_progress),
-            isLoading: upNextState.isLoading || calendarState.isLoading,
-            selectedPage: Int(progressState.selectedPage),
-            upNextTabTitle: String(\.label_discover_up_next),
-            calendarTabTitle: String(\.title_calendar),
+            state: progressState.toState(isLoading: upNextState.isLoading || calendarState.isLoading),
             onPageChanged: { page in
                 presenter.dispatch(action: ProgressActionSelectPage(index: Int32(page)))
             },
@@ -55,11 +51,7 @@ struct ProgressTab: View {
 
     private var calendarContent: some View {
         CalendarPageContent(
-            state: mapCalendarScreenState(),
-            weekLabel: calendarState.weekLabel,
-            canNavigatePrevious: calendarState.canNavigatePrevious,
-            canNavigateNext: calendarState.canNavigateNext,
-            isRefreshing: calendarState.isRefreshing,
+            state: calendarState.toState(),
             moreEpisodesFormat: { count in
                 String(format: calendarState.moreEpisodesFormat, count)
             },
@@ -74,24 +66,40 @@ struct ProgressTab: View {
             }
         )
     }
+}
 
-    private func mapCalendarScreenState() -> CalendarScreenState {
-        if calendarState.showLoading {
+private extension ProgressState {
+    func toState<U: View, C: View>(isLoading: Bool) -> ProgressScreen<U, C>.State {
+        ProgressScreen<U, C>.State(
+            title: String(\.menu_item_progress),
+            isLoading: isLoading,
+            selectedPage: Int(selectedPage),
+            upNextTabTitle: String(\.label_discover_up_next),
+            calendarTabTitle: String(\.title_calendar)
+        )
+    }
+}
+
+private extension CalendarState {
+    func toState() -> CalendarPageContent.State {
+        CalendarPageContent.State(
+            screenState: toScreenState(),
+            weekLabel: weekLabel,
+            canNavigatePrevious: canNavigatePrevious,
+            canNavigateNext: canNavigateNext,
+            isRefreshing: isRefreshing
+        )
+    }
+
+    private func toScreenState() -> CalendarScreenState {
+        if showLoading {
             .loading
-        } else if !calendarState.isLoggedIn {
-            .loginRequired(
-                title: calendarState.loginTitle,
-                message: calendarState.loginMessage
-            )
-        } else if calendarState.isEmpty {
-            .empty(
-                title: calendarState.emptyTitle,
-                message: calendarState.emptyMessage
-            )
+        } else if !isLoggedIn {
+            .loginRequired(title: loginTitle, message: loginMessage)
+        } else if isEmpty {
+            .empty(title: emptyTitle, message: emptyMessage)
         } else {
-            .content(
-                dateGroups: Array(calendarState.dateGroups).map { $0.toSwift() }
-            )
+            .content(dateGroups: Array(dateGroups).map { $0.toSwift() })
         }
     }
 }

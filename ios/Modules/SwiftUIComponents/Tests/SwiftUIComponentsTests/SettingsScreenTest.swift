@@ -125,12 +125,14 @@ class SettingsScreenTest: SnapshotTestCase {
 
     func test_SettingsScreen_Default() {
         SettingsScreen(
-            title: "Settings",
-            themeItem: defaultThemeItem,
-            imageQualityItem: defaultImageQualityItem,
-            behaviorToggles: defaultBehaviorToggles,
-            privacyToggles: defaultPrivacyToggles,
-            infoItems: defaultInfoItems,
+            state: SettingsScreen<ThemeItemModel>.State(
+                title: "Settings",
+                themeItem: defaultThemeItem,
+                imageQualityItem: defaultImageQualityItem,
+                behaviorToggles: defaultBehaviorToggles,
+                privacyToggles: defaultPrivacyToggles,
+                infoItems: defaultInfoItems
+            ),
             onBack: {}
         )
         .themedPreview()
@@ -149,13 +151,15 @@ class SettingsScreenTest: SnapshotTestCase {
         ]
 
         SettingsScreen(
-            title: "Settings",
-            themeItem: defaultThemeItem,
-            imageQualityItem: defaultImageQualityItem,
-            behaviorToggles: defaultBehaviorToggles,
-            privacyToggles: defaultPrivacyToggles,
-            infoItems: defaultInfoItems,
-            traktItems: traktItems,
+            state: SettingsScreen<ThemeItemModel>.State(
+                title: "Settings",
+                themeItem: defaultThemeItem,
+                imageQualityItem: defaultImageQualityItem,
+                behaviorToggles: defaultBehaviorToggles,
+                privacyToggles: defaultPrivacyToggles,
+                infoItems: defaultInfoItems,
+                traktItems: traktItems
+            ),
             onBack: {}
         )
         .themedPreview()
@@ -184,12 +188,14 @@ class SettingsScreenTest: SnapshotTestCase {
         ]
 
         SettingsScreen(
-            title: "Settings",
-            themeItem: defaultThemeItem,
-            imageQualityItem: defaultImageQualityItem,
-            behaviorToggles: togglesWithSync,
-            privacyToggles: defaultPrivacyToggles,
-            infoItems: defaultInfoItems,
+            state: SettingsScreen<ThemeItemModel>.State(
+                title: "Settings",
+                themeItem: defaultThemeItem,
+                imageQualityItem: defaultImageQualityItem,
+                behaviorToggles: togglesWithSync,
+                privacyToggles: defaultPrivacyToggles,
+                infoItems: defaultInfoItems
+            ),
             onBack: {}
         )
         .themedPreview()
@@ -208,12 +214,14 @@ class SettingsScreenTest: SnapshotTestCase {
         ]
 
         SettingsScreen(
-            title: "Settings",
-            themeItem: defaultThemeItem,
-            imageQualityItem: defaultImageQualityItem,
-            behaviorToggles: defaultBehaviorToggles,
-            privacyToggles: defaultPrivacyToggles,
-            infoItems: defaultInfoItems,
+            state: SettingsScreen<ThemeItemModel>.State(
+                title: "Settings",
+                themeItem: defaultThemeItem,
+                imageQualityItem: defaultImageQualityItem,
+                behaviorToggles: defaultBehaviorToggles,
+                privacyToggles: defaultPrivacyToggles,
+                infoItems: defaultInfoItems
+            ),
             onBack: {}
         )
         .themedPreview()

@@ -25,11 +25,13 @@ class ProgressScreenTest: SnapshotTestCase {
     ) -> some View {
         NavigationStack {
             ProgressScreen(
-                title: "Progress",
-                isLoading: isLoading,
-                selectedPage: selectedPage,
-                upNextTabTitle: "Up Next",
-                calendarTabTitle: "Calendar",
+                state: .init(
+                    title: "Progress",
+                    isLoading: isLoading,
+                    selectedPage: selectedPage,
+                    upNextTabTitle: "Up Next",
+                    calendarTabTitle: "Calendar"
+                ),
                 onPageChanged: { _ in },
                 upNextContent: {
                     Text("Up Next Content")

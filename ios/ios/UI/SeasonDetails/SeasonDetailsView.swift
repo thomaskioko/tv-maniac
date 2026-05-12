@@ -19,32 +19,9 @@ struct SeasonDetailsView: View {
 
     var body: some View {
         SeasonDetailsScreen(
-            seasonName: uiState.seasonName,
-            imageUrl: uiState.imageUrl,
-            seasonOverview: uiState.seasonOverview,
-            episodeCount: uiState.episodeCount,
-            watchProgress: uiState.watchProgress,
-            expandEpisodeItems: uiState.expandEpisodeItems,
-            isSeasonWatched: uiState.isSeasonWatched,
-            isRefreshing: uiState.isRefreshing,
-            showError: uiState.showError,
-            seasonImages: uiState.seasonImages.map { $0.toSwift() },
-            episodes: uiState.episodeDetailsList.map { $0.toSwift() },
-            casts: uiState.seasonCast.map { cast in
-                SwiftCast(
-                    castId: cast.id,
-                    name: cast.name,
-                    characterName: cast.characterName,
-                    profileUrl: cast.profileUrl
-                )
-            },
-            errorTitle: String(\.generic_error_message),
-            errorRetryText: String(\.button_error_retry),
-            overviewTitle: String(\.title_season_overview),
-            episodesTitle: String(\.title_episodes),
+            state: uiState.toState(),
             seasonImagesCountFormat: { count in String(\.season_images_count, quantity: count) },
             dayLabelFormat: { count in String(\.day_label, quantity: count) },
-            tbdLabel: String(\.label_tbd),
             toast: $toast,
             showGallery: $showGallery,
             onBack: { presenter.dispatch(action: SeasonDetailsBackClicked()) },
@@ -118,5 +95,36 @@ struct SeasonDetailsView: View {
         } message: {
             Text(String(\.dialog_message_mark_previous_seasons))
         }
+    }
+}
+
+private extension SeasonDetailsModel {
+    func toState() -> SeasonDetailsScreen.State {
+        SeasonDetailsScreen.State(
+            seasonName: seasonName,
+            imageUrl: imageUrl,
+            seasonOverview: seasonOverview,
+            episodeCount: episodeCount,
+            watchProgress: watchProgress,
+            expandEpisodeItems: expandEpisodeItems,
+            isSeasonWatched: isSeasonWatched,
+            isRefreshing: isRefreshing,
+            showError: showError,
+            seasonImages: seasonImages.map { $0.toSwift() },
+            episodes: episodeDetailsList.map { $0.toSwift() },
+            casts: seasonCast.map { cast in
+                SwiftCast(
+                    castId: cast.id,
+                    name: cast.name,
+                    characterName: cast.characterName,
+                    profileUrl: cast.profileUrl
+                )
+            },
+            errorTitle: String(\.generic_error_message),
+            errorRetryText: String(\.button_error_retry),
+            overviewTitle: String(\.title_season_overview),
+            episodesTitle: String(\.title_episodes),
+            tbdLabel: String(\.label_tbd)
+        )
     }
 }

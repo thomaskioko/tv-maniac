@@ -15,12 +15,14 @@ class MoreShowsScreenTest: SnapshotTestCase {
 
     func test_MoreShowsScreen() {
         MoreShowsScreen(
-            title: "Popular",
-            items: sampleItems,
-            isLoadingMore: false,
-            hasNextPage: false,
-            loadError: nil,
-            retryLabel: "Retry",
+            state: MoreShowsScreen.State(
+                title: "Popular",
+                items: sampleItems,
+                isLoadingMore: false,
+                hasNextPage: false,
+                loadError: nil,
+                retryLabel: "Retry"
+            ),
             toast: .constant(nil),
             onItemAppear: { _ in },
             onLoadMore: {},
@@ -34,12 +36,14 @@ class MoreShowsScreenTest: SnapshotTestCase {
 
     func test_MoreShowsScreen_LoadingMore() {
         MoreShowsScreen(
-            title: "Trending",
-            items: sampleItems,
-            isLoadingMore: true,
-            hasNextPage: true,
-            loadError: nil,
-            retryLabel: "Retry",
+            state: MoreShowsScreen.State(
+                title: "Trending",
+                items: sampleItems,
+                isLoadingMore: true,
+                hasNextPage: true,
+                loadError: nil,
+                retryLabel: "Retry"
+            ),
             toast: .constant(nil),
             onItemAppear: { _ in },
             onLoadMore: {},
@@ -53,12 +57,14 @@ class MoreShowsScreenTest: SnapshotTestCase {
 
     func test_MoreShowsScreen_Error() {
         MoreShowsScreen(
-            title: "Top Rated",
-            items: sampleItems,
-            isLoadingMore: false,
-            hasNextPage: false,
-            loadError: "Failed to load more shows. Please try again.",
-            retryLabel: "Retry",
+            state: MoreShowsScreen.State(
+                title: "Top Rated",
+                items: sampleItems,
+                isLoadingMore: false,
+                hasNextPage: false,
+                loadError: "Failed to load more shows. Please try again.",
+                retryLabel: "Retry"
+            ),
             toast: .constant(nil),
             onItemAppear: { _ in },
             onLoadMore: {},
@@ -72,12 +78,14 @@ class MoreShowsScreenTest: SnapshotTestCase {
 
     func test_MoreShowsScreen_Empty() {
         MoreShowsScreen(
-            title: "Upcoming",
-            items: [],
-            isLoadingMore: false,
-            hasNextPage: false,
-            loadError: nil,
-            retryLabel: "Retry",
+            state: MoreShowsScreen.State(
+                title: "Upcoming",
+                items: [],
+                isLoadingMore: false,
+                hasNextPage: false,
+                loadError: nil,
+                retryLabel: "Retry"
+            ),
             toast: .constant(nil),
             onItemAppear: { _ in },
             onLoadMore: {},

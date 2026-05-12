@@ -15,12 +15,7 @@ struct MoreShowsView: View {
 
     var body: some View {
         MoreShowsScreen(
-            title: uiState.categoryTitle ?? "",
-            items: uiState.items.map { $0.toSwift() },
-            isLoadingMore: uiState.isAppendLoading,
-            hasNextPage: uiState.hasNextPage,
-            loadError: uiState.appendError,
-            retryLabel: String(\.button_error_retry),
+            state: uiState.toState(),
             toast: $toast,
             onItemAppear: { index in
                 presenter.onItemVisible(index: Int32(index))
@@ -51,5 +46,18 @@ struct MoreShowsView: View {
                 presenter.dispatch(action: DismissErrorMessage())
             }
         }
+    }
+}
+
+private extension MoreShowsState {
+    func toState() -> MoreShowsScreen.State {
+        MoreShowsScreen.State(
+            title: categoryTitle ?? "",
+            items: items.map { $0.toSwift() },
+            isLoadingMore: isAppendLoading,
+            hasNextPage: hasNextPage,
+            loadError: appendError,
+            retryLabel: String(\.button_error_retry)
+        )
     }
 }

@@ -1,27 +1,73 @@
 import SwiftUI
 
 public struct WatchlistScreen: View {
+    public struct State {
+        public let title: String
+        public let searchPlaceholder: String
+        public let emptyText: String
+        public let upToDateText: String
+        public let listStyleLabel: String
+        public let searchLabel: String
+        public let sortLabel: String
+        public let upNextSectionTitle: String
+        public let staleSectionTitle: String
+        public let premiereLabel: String
+        public let newLabel: String
+        public let isLoading: Bool
+        public let isGridMode: Bool
+        public let isSearchActive: Bool
+        public let query: String
+        public let watchNextGridItems: [WatchlistGridItem]
+        public let staleGridItems: [WatchlistGridItem]
+        public let watchNextEpisodes: [SwiftNextEpisode]
+        public let staleEpisodes: [SwiftNextEpisode]
+
+        public init(
+            title: String,
+            searchPlaceholder: String,
+            emptyText: String,
+            upToDateText: String,
+            listStyleLabel: String,
+            searchLabel: String,
+            sortLabel: String,
+            upNextSectionTitle: String,
+            staleSectionTitle: String,
+            premiereLabel: String,
+            newLabel: String,
+            isLoading: Bool,
+            isGridMode: Bool,
+            isSearchActive: Bool,
+            query: String,
+            watchNextGridItems: [WatchlistGridItem],
+            staleGridItems: [WatchlistGridItem],
+            watchNextEpisodes: [SwiftNextEpisode],
+            staleEpisodes: [SwiftNextEpisode]
+        ) {
+            self.title = title
+            self.searchPlaceholder = searchPlaceholder
+            self.emptyText = emptyText
+            self.upToDateText = upToDateText
+            self.listStyleLabel = listStyleLabel
+            self.searchLabel = searchLabel
+            self.sortLabel = sortLabel
+            self.upNextSectionTitle = upNextSectionTitle
+            self.staleSectionTitle = staleSectionTitle
+            self.premiereLabel = premiereLabel
+            self.newLabel = newLabel
+            self.isLoading = isLoading
+            self.isGridMode = isGridMode
+            self.isSearchActive = isSearchActive
+            self.query = query
+            self.watchNextGridItems = watchNextGridItems
+            self.staleGridItems = staleGridItems
+            self.watchNextEpisodes = watchNextEpisodes
+            self.staleEpisodes = staleEpisodes
+        }
+    }
+
     @Theme private var appTheme
 
-    private let title: String
-    private let searchPlaceholder: String
-    private let emptyText: String
-    private let upToDateText: String
-    private let listStyleLabel: String
-    private let searchLabel: String
-    private let sortLabel: String
-    private let upNextSectionTitle: String
-    private let staleSectionTitle: String
-    private let premiereLabel: String
-    private let newLabel: String
-    private let isLoading: Bool
-    private let isGridMode: Bool
-    private let isSearchActive: Bool
-    private let query: String
-    private let watchNextGridItems: [WatchlistGridItem]
-    private let staleGridItems: [WatchlistGridItem]
-    private let watchNextEpisodes: [SwiftNextEpisode]
-    private let staleEpisodes: [SwiftNextEpisode]
+    private let state: State
     private let onQueryChanged: (String) -> Void
     private let onQueryCleared: () -> Void
     private let onToggleListStyle: () -> Void
@@ -32,25 +78,7 @@ public struct WatchlistScreen: View {
     private let onMarkWatched: (SwiftNextEpisode) -> Void
 
     public init(
-        title: String,
-        searchPlaceholder: String,
-        emptyText: String,
-        upToDateText: String,
-        listStyleLabel: String,
-        searchLabel: String,
-        sortLabel: String,
-        upNextSectionTitle: String,
-        staleSectionTitle: String,
-        premiereLabel: String,
-        newLabel: String,
-        isLoading: Bool,
-        isGridMode: Bool,
-        isSearchActive: Bool,
-        query: String,
-        watchNextGridItems: [WatchlistGridItem],
-        staleGridItems: [WatchlistGridItem],
-        watchNextEpisodes: [SwiftNextEpisode],
-        staleEpisodes: [SwiftNextEpisode],
+        state: State,
         onQueryChanged: @escaping (String) -> Void,
         onQueryCleared: @escaping () -> Void,
         onToggleListStyle: @escaping () -> Void,
@@ -60,25 +88,7 @@ public struct WatchlistScreen: View {
         onShowTitleClicked: @escaping (Int64) -> Void,
         onMarkWatched: @escaping (SwiftNextEpisode) -> Void
     ) {
-        self.title = title
-        self.searchPlaceholder = searchPlaceholder
-        self.emptyText = emptyText
-        self.upToDateText = upToDateText
-        self.listStyleLabel = listStyleLabel
-        self.searchLabel = searchLabel
-        self.sortLabel = sortLabel
-        self.upNextSectionTitle = upNextSectionTitle
-        self.staleSectionTitle = staleSectionTitle
-        self.premiereLabel = premiereLabel
-        self.newLabel = newLabel
-        self.isLoading = isLoading
-        self.isGridMode = isGridMode
-        self.isSearchActive = isSearchActive
-        self.query = query
-        self.watchNextGridItems = watchNextGridItems
-        self.staleGridItems = staleGridItems
-        self.watchNextEpisodes = watchNextEpisodes
-        self.staleEpisodes = staleEpisodes
+        self.state = state
         self.onQueryChanged = onQueryChanged
         self.onQueryCleared = onQueryCleared
         self.onToggleListStyle = onToggleListStyle
@@ -89,11 +99,11 @@ public struct WatchlistScreen: View {
         self.onMarkWatched = onMarkWatched
     }
 
-    @State private var showListSelection = false
-    @State private var isRotating = 0.0
+    @SwiftUI.State private var showListSelection = false
+    @SwiftUI.State private var isRotating = 0.0
     @FocusState private var isSearchFocused: Bool
     @Namespace private var animation
-    @State private var localQuery: String = ""
+    @SwiftUI.State private var localQuery: String = ""
 
     public var body: some View {
         ZStack {
@@ -107,18 +117,18 @@ public struct WatchlistScreen: View {
         .navigationBarTitleDisplayMode(.inline)
         .disableAutocorrection(true)
         .toolbar {
-            if isSearchActive {
+            if state.isSearchActive {
                 ToolbarItem(placement: .principal) {
                     expandedSearchBar
                 }
             } else {
-                let image = isGridMode ? "list.bullet" : "rectangle.grid.2x2"
+                let image = state.isGridMode ? "list.bullet" : "rectangle.grid.2x2"
                 ToolbarItem(placement: .navigationBarLeading) {
                     HStack {
                         Button {
                             withAnimation { onToggleListStyle() }
                         } label: {
-                            Label(listStyleLabel, systemImage: image)
+                            Label(state.listStyleLabel, systemImage: image)
                                 .labelStyle(.iconOnly)
                         }
                         .buttonBorderShape(.roundedRectangle(radius: appTheme.shapes.large))
@@ -137,27 +147,27 @@ public struct WatchlistScreen: View {
                 }
             }
         }
-        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: isSearchActive)
+        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: state.isSearchActive)
         .disableAutocorrection(true)
         .textInputAutocapitalization(.never)
         .toolbarBackground(appTheme.colors.surface, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
-        .onAppear { localQuery = query }
-        .onChange(of: query) { _, newValue in localQuery = newValue }
+        .onAppear { localQuery = state.query }
+        .onChange(of: state.query) { _, newValue in localQuery = newValue }
     }
 
     @ViewBuilder
     private var contentView: some View {
-        let hasNoGridItems = watchNextGridItems.isEmpty && staleGridItems.isEmpty
-        let hasNoEpisodes = watchNextEpisodes.isEmpty && staleEpisodes.isEmpty
+        let hasNoGridItems = state.watchNextGridItems.isEmpty && state.staleGridItems.isEmpty
+        let hasNoEpisodes = state.watchNextEpisodes.isEmpty && state.staleEpisodes.isEmpty
 
-        if isLoading {
+        if state.isLoading {
             CenteredFullScreenView {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle(tint: appTheme.colors.accent))
                     .scaleEffect(1.5)
             }
-        } else if isGridMode {
+        } else if state.isGridMode {
             if hasNoGridItems {
                 gridEmptyView
             } else {
@@ -174,7 +184,7 @@ public struct WatchlistScreen: View {
 
     private var titleView: some View {
         HStack {
-            Text(title)
+            Text(state.title)
                 .textStyle(appTheme.typography.titleMedium)
                 .lineLimit(1)
                 .foregroundColor(appTheme.colors.onSurface)
@@ -201,7 +211,7 @@ public struct WatchlistScreen: View {
                 isSearchFocused = true
             }
         } label: {
-            Label(searchLabel, systemImage: "magnifyingglass")
+            Label(state.searchLabel, systemImage: "magnifyingglass")
                 .labelStyle(.iconOnly)
         }
         .buttonBorderShape(.roundedRectangle(radius: appTheme.shapes.large))
@@ -213,7 +223,7 @@ public struct WatchlistScreen: View {
         Button {
             withAnimation {}
         } label: {
-            Label(sortLabel, systemImage: "line.3.horizontal.decrease.circle")
+            Label(state.sortLabel, systemImage: "line.3.horizontal.decrease.circle")
                 .labelStyle(.iconOnly)
         }
         .buttonBorderShape(.roundedRectangle(radius: appTheme.shapes.large))
@@ -227,7 +237,7 @@ public struct WatchlistScreen: View {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(appTheme.colors.onSurfaceVariant)
 
-                TextField(searchPlaceholder, text: $localQuery)
+                TextField(state.searchPlaceholder, text: $localQuery)
                     .textStyle(appTheme.typography.bodyMedium)
                     .focused($isSearchFocused)
                     .submitLabel(.search)
@@ -263,13 +273,13 @@ public struct WatchlistScreen: View {
     private var sectionedListContent: some View {
         ScrollView(showsIndicators: false) {
             LazyVStack(spacing: appTheme.spacing.xSmall, pinnedViews: [.sectionHeaders]) {
-                if !watchNextEpisodes.isEmpty {
+                if !state.watchNextEpisodes.isEmpty {
                     Section {
-                        ForEach(watchNextEpisodes, id: \.episodeId) { episode in
+                        ForEach(state.watchNextEpisodes, id: \.episodeId) { episode in
                             WatchListItemView(
                                 episode: episode,
-                                premiereLabel: premiereLabel,
-                                newLabel: newLabel,
+                                premiereLabel: state.premiereLabel,
+                                newLabel: state.newLabel,
                                 onItemClicked: onEpisodeClicked,
                                 onShowTitleClicked: onShowTitleClicked,
                                 onMarkWatched: { onMarkWatched(episode) }
@@ -282,17 +292,17 @@ public struct WatchlistScreen: View {
                             )
                         }
                     } header: {
-                        SectionHeaderView(title: upNextSectionTitle)
+                        SectionHeaderView(title: state.upNextSectionTitle)
                     }
                 }
 
-                if !staleEpisodes.isEmpty {
+                if !state.staleEpisodes.isEmpty {
                     Section {
-                        ForEach(staleEpisodes, id: \.episodeId) { episode in
+                        ForEach(state.staleEpisodes, id: \.episodeId) { episode in
                             WatchListItemView(
                                 episode: episode,
-                                premiereLabel: premiereLabel,
-                                newLabel: newLabel,
+                                premiereLabel: state.premiereLabel,
+                                newLabel: state.newLabel,
                                 onItemClicked: onEpisodeClicked,
                                 onShowTitleClicked: onShowTitleClicked,
                                 onMarkWatched: { onMarkWatched(episode) }
@@ -305,35 +315,35 @@ public struct WatchlistScreen: View {
                             )
                         }
                     } header: {
-                        SectionHeaderView(title: staleSectionTitle)
+                        SectionHeaderView(title: state.staleSectionTitle)
                     }
                 }
             }
         }
-        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isGridMode)
+        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: state.isGridMode)
     }
 
     private var sectionedGridContent: some View {
         ScrollView(showsIndicators: false) {
             LazyVStack(spacing: appTheme.spacing.small, pinnedViews: [.sectionHeaders]) {
-                if !watchNextGridItems.isEmpty {
+                if !state.watchNextGridItems.isEmpty {
                     Section {
-                        gridItemsView(items: watchNextGridItems)
+                        gridItemsView(items: state.watchNextGridItems)
                     } header: {
-                        SectionHeaderView(title: upNextSectionTitle)
+                        SectionHeaderView(title: state.upNextSectionTitle)
                     }
                 }
 
-                if !staleGridItems.isEmpty {
+                if !state.staleGridItems.isEmpty {
                     Section {
-                        gridItemsView(items: staleGridItems)
+                        gridItemsView(items: state.staleGridItems)
                     } header: {
-                        SectionHeaderView(title: staleSectionTitle)
+                        SectionHeaderView(title: state.staleSectionTitle)
                     }
                 }
             }
         }
-        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isGridMode)
+        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: state.isGridMode)
     }
 
     private func gridItemsView(items: [WatchlistGridItem]) -> some View {
@@ -362,10 +372,10 @@ public struct WatchlistScreen: View {
 
     @ViewBuilder
     private var gridEmptyView: some View {
-        let subtitle = query.isEmpty ? nil : "\(emptyText) \"\(query)\""
+        let subtitle = state.query.isEmpty ? nil : "\(state.emptyText) \"\(state.query)\""
 
         EmptyStateView(
-            title: emptyText,
+            title: state.emptyText,
             message: subtitle
         )
     }
@@ -373,7 +383,7 @@ public struct WatchlistScreen: View {
     private var upNextEmptyView: some View {
         EmptyStateView(
             systemName: "checkmark.circle",
-            title: upToDateText
+            title: state.upToDateText
         )
     }
 }

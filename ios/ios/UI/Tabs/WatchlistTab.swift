@@ -17,39 +17,10 @@ struct WatchlistTab: View {
 
     var body: some View {
         WatchlistScreen(
-            title: String(\.label_tab_watchlist),
-            searchPlaceholder: String(\.label_search_placeholder),
-            emptyText: String(\.generic_empty_content),
-            upToDateText: String(\.label_up_to_date),
-            listStyleLabel: String(\.label_watchlist_list_style),
-            searchLabel: String(\.label_tab_search),
-            sortLabel: String(\.label_watchlist_sort_list),
-            upNextSectionTitle: String(\.label_discover_up_next),
-            staleSectionTitle: String(\.title_not_watched_for_while),
-            premiereLabel: String(\.badge_premiere),
-            newLabel: String(\.badge_new),
-            isLoading: uiState.showLoading,
-            isGridMode: uiState.isGridMode,
-            isSearchActive: uiState.isSearchActive,
-            query: uiState.query,
-            watchNextGridItems: Array(uiState.watchNextItems).map {
-                WatchlistGridItem(
-                    traktId: $0.traktId,
-                    title: $0.title,
-                    posterImageUrl: $0.posterImageUrl,
-                    watchProgress: $0.watchProgress
-                )
-            },
-            staleGridItems: Array(uiState.staleItems).map {
-                WatchlistGridItem(
-                    traktId: $0.traktId,
-                    title: $0.title,
-                    posterImageUrl: $0.posterImageUrl,
-                    watchProgress: $0.watchProgress
-                )
-            },
-            watchNextEpisodes: watchNextEpisodesSwift,
-            staleEpisodes: staleEpisodesSwift,
+            state: uiState.toState(
+                watchNextEpisodes: watchNextEpisodesSwift,
+                staleEpisodes: staleEpisodesSwift
+            ),
             onQueryChanged: { presenter.dispatch(action: WatchlistQueryChanged(query: $0)) },
             onQueryCleared: { presenter.dispatch(action: ClearWatchlistQuery()) },
             onToggleListStyle: {
@@ -93,5 +64,48 @@ struct WatchlistTab: View {
             watchNextEpisodesSwift.removeAll()
             staleEpisodesSwift.removeAll()
         }
+    }
+}
+
+private extension WatchlistState {
+    func toState(
+        watchNextEpisodes: [SwiftNextEpisode],
+        staleEpisodes: [SwiftNextEpisode]
+    ) -> WatchlistScreen.State {
+        WatchlistScreen.State(
+            title: String(\.label_tab_watchlist),
+            searchPlaceholder: String(\.label_search_placeholder),
+            emptyText: String(\.generic_empty_content),
+            upToDateText: String(\.label_up_to_date),
+            listStyleLabel: String(\.label_watchlist_list_style),
+            searchLabel: String(\.label_tab_search),
+            sortLabel: String(\.label_watchlist_sort_list),
+            upNextSectionTitle: String(\.label_discover_up_next),
+            staleSectionTitle: String(\.title_not_watched_for_while),
+            premiereLabel: String(\.badge_premiere),
+            newLabel: String(\.badge_new),
+            isLoading: showLoading,
+            isGridMode: isGridMode,
+            isSearchActive: isSearchActive,
+            query: query,
+            watchNextGridItems: Array(watchNextItems).map {
+                WatchlistGridItem(
+                    traktId: $0.traktId,
+                    title: $0.title,
+                    posterImageUrl: $0.posterImageUrl,
+                    watchProgress: $0.watchProgress
+                )
+            },
+            staleGridItems: Array(staleItems).map {
+                WatchlistGridItem(
+                    traktId: $0.traktId,
+                    title: $0.title,
+                    posterImageUrl: $0.posterImageUrl,
+                    watchProgress: $0.watchProgress
+                )
+            },
+            watchNextEpisodes: watchNextEpisodes,
+            staleEpisodes: staleEpisodes
+        )
     }
 }

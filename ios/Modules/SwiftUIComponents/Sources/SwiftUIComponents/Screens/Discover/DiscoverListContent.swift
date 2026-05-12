@@ -1,18 +1,22 @@
 import SwiftUI
 
 struct DiscoverListContent: View {
+    struct State {
+        let upNextTitle: String
+        let trendingTitle: String
+        let upcomingTitle: String
+        let popularTitle: String
+        let topRatedTitle: String
+        let nextEpisodes: [SwiftNextEpisode]
+        let trendingToday: [SwiftShow]
+        let upcomingShows: [SwiftShow]
+        let popularShows: [SwiftShow]
+        let topRatedShows: [SwiftShow]
+    }
+
     @Theme private var appTheme
 
-    let upNextTitle: String
-    let trendingTitle: String
-    let upcomingTitle: String
-    let popularTitle: String
-    let topRatedTitle: String
-    let nextEpisodes: [SwiftNextEpisode]
-    let trendingToday: [SwiftShow]
-    let upcomingShows: [SwiftShow]
-    let popularShows: [SwiftShow]
-    let topRatedShows: [SwiftShow]
+    let state: State
     let onShowClicked: (Int64) -> Void
     let onTrendingClicked: () -> Void
     let onUpcomingClicked: () -> Void
@@ -23,44 +27,44 @@ struct DiscoverListContent: View {
     var body: some View {
         VStack {
             NextEpisodesSection(
-                title: upNextTitle,
-                episodes: nextEpisodes,
+                title: state.upNextTitle,
+                episodes: state.nextEpisodes,
                 chevronStyle: .chevronOnly,
                 onEpisodeClick: onNextEpisodeClicked
             )
 
             HorizontalItemListView(
-                title: trendingTitle,
+                title: state.trendingTitle,
                 chevronStyle: .chevronOnly,
                 cardStyle: .poster,
-                items: trendingToday,
+                items: state.trendingToday,
                 onClick: onShowClicked,
                 onMoreClicked: onTrendingClicked
             )
 
             HorizontalItemListView(
-                title: upcomingTitle,
+                title: state.upcomingTitle,
                 chevronStyle: .chevronOnly,
                 cardStyle: .poster,
-                items: upcomingShows,
+                items: state.upcomingShows,
                 onClick: onShowClicked,
                 onMoreClicked: onUpcomingClicked
             )
 
             HorizontalItemListView(
-                title: popularTitle,
+                title: state.popularTitle,
                 chevronStyle: .chevronOnly,
                 cardStyle: .poster,
-                items: popularShows,
+                items: state.popularShows,
                 onClick: onShowClicked,
                 onMoreClicked: onPopularClicked
             )
 
             HorizontalItemListView(
-                title: topRatedTitle,
+                title: state.topRatedTitle,
                 chevronStyle: .chevronOnly,
                 cardStyle: .poster,
-                items: topRatedShows,
+                items: state.topRatedShows,
                 onClick: onShowClicked,
                 onMoreClicked: onTopRatedClicked
             )

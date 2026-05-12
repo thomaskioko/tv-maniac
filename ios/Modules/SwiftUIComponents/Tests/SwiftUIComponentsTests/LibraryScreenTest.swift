@@ -13,17 +13,19 @@ class LibraryScreenTest: SnapshotTestCase {
 
     func test_LibraryScreen_Loading() {
         LibraryScreen(
-            title: "Library",
-            searchPlaceholder: "Search shows",
-            emptyText: "No content",
-            isLoading: true,
-            isRefreshing: false,
-            isEmpty: false,
-            isGridMode: true,
-            isSearchActive: false,
-            query: "",
-            gridItems: [],
-            listItems: [],
+            state: LibraryScreen.State(
+                title: "Library",
+                searchPlaceholder: "Search shows",
+                emptyText: "No content",
+                isLoading: true,
+                isRefreshing: false,
+                isEmpty: false,
+                isGridMode: true,
+                isSearchActive: false,
+                query: "",
+                gridItems: [],
+                listItems: []
+            ),
             onQueryChanged: { _ in },
             onQueryCleared: {},
             onToggleListStyle: {},
@@ -37,17 +39,19 @@ class LibraryScreenTest: SnapshotTestCase {
 
     func test_LibraryScreen_Empty() {
         LibraryScreen(
-            title: "Library",
-            searchPlaceholder: "Search shows",
-            emptyText: "No content",
-            isLoading: false,
-            isRefreshing: false,
-            isEmpty: true,
-            isGridMode: true,
-            isSearchActive: false,
-            query: "",
-            gridItems: [],
-            listItems: [],
+            state: LibraryScreen.State(
+                title: "Library",
+                searchPlaceholder: "Search shows",
+                emptyText: "No content",
+                isLoading: false,
+                isRefreshing: false,
+                isEmpty: true,
+                isGridMode: true,
+                isSearchActive: false,
+                query: "",
+                gridItems: [],
+                listItems: []
+            ),
             onQueryChanged: { _ in },
             onQueryCleared: {},
             onToggleListStyle: {},
@@ -61,17 +65,19 @@ class LibraryScreenTest: SnapshotTestCase {
 
     func test_LibraryScreen_GridMode() {
         LibraryScreen(
-            title: "Library",
-            searchPlaceholder: "Search shows",
-            emptyText: "No content",
-            isLoading: false,
-            isRefreshing: false,
-            isEmpty: false,
-            isGridMode: true,
-            isSearchActive: false,
-            query: "",
-            gridItems: sampleGridItems,
-            listItems: [],
+            state: LibraryScreen.State(
+                title: "Library",
+                searchPlaceholder: "Search shows",
+                emptyText: "No content",
+                isLoading: false,
+                isRefreshing: false,
+                isEmpty: false,
+                isGridMode: true,
+                isSearchActive: false,
+                query: "",
+                gridItems: sampleGridItems,
+                listItems: []
+            ),
             onQueryChanged: { _ in },
             onQueryCleared: {},
             onToggleListStyle: {},
@@ -136,17 +142,19 @@ class LibraryScreenTest: SnapshotTestCase {
 
     func test_LibraryScreen_ListMode() {
         LibraryScreen(
-            title: "Library",
-            searchPlaceholder: "Search shows",
-            emptyText: "No content",
-            isLoading: false,
-            isRefreshing: false,
-            isEmpty: false,
-            isGridMode: false,
-            isSearchActive: false,
-            query: "",
-            gridItems: [],
-            listItems: sampleListItems,
+            state: LibraryScreen.State(
+                title: "Library",
+                searchPlaceholder: "Search shows",
+                emptyText: "No content",
+                isLoading: false,
+                isRefreshing: false,
+                isEmpty: false,
+                isGridMode: false,
+                isSearchActive: false,
+                query: "",
+                gridItems: [],
+                listItems: sampleListItems
+            ),
             onQueryChanged: { _ in },
             onQueryCleared: {},
             onToggleListStyle: {},
