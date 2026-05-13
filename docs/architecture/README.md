@@ -24,10 +24,6 @@ TvManiac is a Kotlin Multiplatform (KMP) entertainment tracker that shares busin
 - **Testability**: API and implementation modules ship separately. Tests depend on the API plus a fake from the `testing/` module.
 - **Feature isolation**: Features communicate through [route](glossary.md#navroute) and [navigator](glossary.md#navigator) contracts. Presenter-to-presenter dependencies are prohibited, keeping the module graph acyclic.
 
-## Trade-offs
-
-The module count is high, which increases Gradle maintenance. The API and implementation split adds boilerplate. The [Store](glossary.md#store) pattern requires precise cache validation. Native iOS UI means each screen is built twice.
-
 ## End-to-End Flow
 
 Standard pattern: UI dispatches an action, the [Presenter](glossary.md#presenter) calls an [interactor](glossary.md#interactor), the Store coordinates cache and network, the database emits, and the UI re-renders.
