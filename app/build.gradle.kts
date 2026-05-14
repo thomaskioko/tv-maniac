@@ -73,6 +73,8 @@ dependencies {
     implementation(projects.features.root.presenter)
     implementation(projects.core.logger.api)
     implementation(projects.core.logger.implementation)
+    implementation(projects.core.featureFlags.api)
+    implementation(projects.core.featureFlags.implementation)
     implementation(projects.data.cast.implementation)
     implementation(projects.data.episode.implementation)
     implementation(projects.data.featuredshows.api)
