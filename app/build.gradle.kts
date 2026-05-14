@@ -261,7 +261,12 @@ dependencies {
     androidTestImplementation(libs.ktor.http)
 }
 
-if (file("google-services.json").exists()) {
+val hasGoogleServicesConfig =
+    file("google-services.json").exists() ||
+        file("src/debug/google-services.json").exists() ||
+        file("src/release/google-services.json").exists()
+
+if (hasGoogleServicesConfig) {
     apply(plugin = libs.plugins.google.services.get().pluginId)
     apply(plugin = libs.plugins.firebase.crashlytics.gradle.get().pluginId)
 }
