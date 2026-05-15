@@ -137,6 +137,7 @@ coil-gif = { module = "io.coil-kt:coil-gif", version.ref = "coil" }
 coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 coroutines-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "coroutines" }
+coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "coroutines" }
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 
 decompose-decompose = { group = "com.arkivanov.decompose", name = "decompose", version.ref = "decompose" }
@@ -146,6 +147,7 @@ differ = { module = "com.dropbox.differ:differ", version.ref = "differ" }
 essenty-lifecycle = { module = "com.arkivanov.essenty:lifecycle", version.ref = "essenty" }
 
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
+firebase-config = { module = "com.google.firebase:firebase-config", version = "23.1.0" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version = "20.0.6" }
 
 junit4 = { module = "junit:junit", version.ref = "junit4" }

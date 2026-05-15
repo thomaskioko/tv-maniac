@@ -22,6 +22,7 @@ let package = Package(
             name: "CoreKit",
             dependencies: [
                 .product(name: "FirebaseCrashlytics", package: "firebase-ios-sdk"),
+                .product(name: "FirebaseRemoteConfig", package: "firebase-ios-sdk"),
                 .product(name: "Nuke", package: "Nuke"),
             ]
         ),
