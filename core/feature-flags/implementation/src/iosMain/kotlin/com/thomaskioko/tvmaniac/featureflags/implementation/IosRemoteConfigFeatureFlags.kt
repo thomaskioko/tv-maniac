@@ -30,7 +30,8 @@ public class IosRemoteConfigFeatureFlags(
         bridge.setDefaults(FeatureFlag.entries.associate { it.key to it.defaultValue })
         bridge.addOnConfigUpdateListener {
             logger.debug(LOG_TAG, "realtime update received")
-            publishCurrent()
+            runCatching { publishCurrent() }
+                .onFailure { logger.error(LOG_TAG, "realtime update failed", it) }
         }
         logger.debug(LOG_TAG, "realtime listener registered")
     }

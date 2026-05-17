@@ -10,7 +10,7 @@ public class FirebaseRemoteConfigBridge: RemoteConfigBridge {
     }
 
     public func setMinimumFetchIntervalSeconds(seconds: Int64) {
-        let settings = RemoteConfigSettings()
+        let settings = remoteConfig.configSettings
         settings.minimumFetchInterval = TimeInterval(seconds)
         remoteConfig.configSettings = settings
     }
@@ -41,7 +41,8 @@ public class FirebaseRemoteConfigBridge: RemoteConfigBridge {
         listenerRegistration?.remove()
         listenerRegistration = remoteConfig.addOnConfigUpdateListener { configUpdate, error in
             guard error == nil, configUpdate != nil else { return }
-            self.remoteConfig.activate { _, _ in
+            self.remoteConfig.activate { success, _ in
+                guard success else { return }
                 DispatchQueue.main.async {
                     onUpdate()
                 }

@@ -50,7 +50,10 @@ public class AndroidRemoteConfigFeatureFlags(
     override fun source(flag: FeatureFlag): Flow<FeatureFlagSource> = state.source(flag)
 
     override suspend fun refresh() {
-        val config = remoteConfig ?: return
+        val config = remoteConfig ?: run {
+            logger.debug(LOG_TAG, "refresh skipped (FirebaseRemoteConfig unavailable)")
+            return
+        }
         runCatching { config.fetchAndActivate().await() }
             .onSuccess { activated -> logger.debug(LOG_TAG, "fetchAndActivate succeeded (activated=$activated)") }
             .onFailure { logger.error(LOG_TAG, "fetchAndActivate failed", it) }

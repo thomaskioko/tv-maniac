@@ -34,8 +34,6 @@ public final class ScreenRegistry {
     public func view(for child: Any) -> some View {
         if let built = screenBuilders.lazy.compactMap({ $0(child) }).first {
             built
-        } else {
-            EmptyView()
         }
     }
 
@@ -43,8 +41,6 @@ public final class ScreenRegistry {
     public func sheet(for child: Any) -> some View {
         if let built = sheetBuilders.lazy.compactMap({ $0.build(child) }).first {
             built
-        } else {
-            EmptyView()
         }
     }
 
