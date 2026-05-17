@@ -6,7 +6,10 @@ import UIKit
 import UserNotifications
 
 public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
-    public lazy var appGraph: IosApplicationGraph = IosApplicationGraphCompanion.shared.create(isDebug: Self.isDebugBuild)
+    public lazy var appGraph: IosApplicationGraph = IosApplicationGraphCompanion.shared.create(
+        isDebug: Self.isDebugBuild,
+        remoteConfigBridge: Self.makeRemoteConfigBridge()
+    )
 
     public lazy var traktAuthRepository = appGraph.traktAuthRepository
     public lazy var traktConfig = appGraph.traktConfig
@@ -25,6 +28,13 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
         #else
             return false
         #endif
+    }
+
+    private static func makeRemoteConfigBridge() -> RemoteConfigBridge {
+        guard Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist") != nil else {
+            return NoOpRemoteConfigBridge()
+        }
+        return FirebaseRemoteConfigBridge()
     }
 
     override public init() {
