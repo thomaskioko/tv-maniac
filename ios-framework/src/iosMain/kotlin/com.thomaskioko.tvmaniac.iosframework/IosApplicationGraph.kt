@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.core.base.AppInitializers
 import com.thomaskioko.tvmaniac.core.base.IsDebugBuild
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
+import com.thomaskioko.tvmaniac.featureflags.RemoteConfigBridge
 import com.thomaskioko.tvmaniac.trakt.api.TraktConfig
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
@@ -27,6 +28,9 @@ public interface IosApplicationGraph {
 
     @DependencyGraph.Factory
     public fun interface Factory {
-        public fun create(@Provides @IsDebugBuild isDebug: Boolean): IosApplicationGraph
+        public fun create(
+            @Provides @IsDebugBuild isDebug: Boolean,
+            @Provides remoteConfigBridge: RemoteConfigBridge,
+        ): IosApplicationGraph
     }
 }
