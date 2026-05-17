@@ -56,8 +56,8 @@ jobs:
         steps:
             -   uses: actions/checkout@v6
 
-            -   name: 🔍 Run SwiftLint
-                uses: norio-nomura/action-swiftlint@3.2.1
+            -   name: 🔍 Run SwiftLint (pinned)
+                uses: docker://ghcr.io/realm/swiftlint:0.63.2
                 with:
                     args: --config .swiftlint.yml
 
