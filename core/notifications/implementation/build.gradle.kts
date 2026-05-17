@@ -19,11 +19,10 @@ kotlin {
         commonMain {
             dependencies {
                 api(projects.core.notifications.api)
+                api(projects.core.logger.api)
+                api(projects.core.util.api)
                 implementation(projects.core.base)
-                implementation(projects.core.util.api)
                 implementation(libs.kotlinx.serialization.json)
-                implementation(projects.core.logger.api)
-                implementation(libs.kotlinx.datetime)
             }
         }
     }

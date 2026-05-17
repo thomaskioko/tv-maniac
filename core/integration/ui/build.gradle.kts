@@ -3,7 +3,6 @@ plugins {
 }
 
 scaffold {
-    useMetro()
     addAndroidTarget(enableAndroidResources = true)
     android {
         useCompose()
@@ -16,24 +15,17 @@ scaffold {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(projects.core.integration.infra)
-
-            api(libs.decompose.decompose)
             api(libs.kotlin.test)
-            api(libs.kotest.assertions)
             api(libs.coroutines.test)
         }
 
         androidMain.dependencies {
             api(libs.androidx.compose.ui.test)
             api(libs.androidx.compose.ui.test.common)
-            api(libs.androidx.junit)
-            api(libs.androidx.uiautomator)
             compileOnly(libs.robolectric)
-            api(libs.robolectric.annotations)
-            api(libs.ktor.core)
-            api(libs.ktor.mock)
-            api(libs.kotlinx.serialization.json)
+            implementation(libs.androidx.uiautomator)
+            implementation("androidx.test:monitor:1.8.0")
+            runtimeOnly(libs.kotlin.test.junit)
         }
     }
 }

@@ -11,36 +11,27 @@ kotlin {
         commonMain {
             dependencies {
                 api(libs.coroutines.core)
+                api(libs.store5)
+                api(projects.api.trakt.api)
+                api(projects.core.base)
+                api(projects.core.logger.api)
+                api(projects.core.util.api)
+                api(projects.data.database.sqldelight)
+                api(projects.data.datastore.api)
+                api(projects.data.followedshows.api)
+                api(projects.data.library.api)
+                api(projects.data.requestManager.api)
+                api(projects.data.syncActivity.api)
+                api(projects.data.traktauth.api)
 
-                implementation(projects.api.trakt.api)
-                implementation(projects.core.base)
-                implementation(projects.core.logger.api)
                 implementation(projects.core.networkUtil.api)
-                implementation(projects.core.util.api)
-                implementation(projects.data.database.sqldelight)
-                implementation(projects.data.datastore.api)
-                implementation(projects.data.followedshows.api)
-                implementation(projects.data.library.api)
-                implementation(projects.data.requestManager.api)
-                implementation(projects.data.syncActivity.api)
-                implementation(projects.data.traktauth.api)
-
                 implementation(libs.sqldelight.extensions)
-                implementation(libs.store5)
             }
         }
 
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)
-                implementation(projects.core.logger.testing)
-                implementation(projects.core.util.testing)
-                implementation(projects.data.database.testing)
-                implementation(projects.data.datastore.testing)
-                implementation(projects.data.followedshows.testing)
-                implementation(projects.data.requestManager.testing)
-                implementation(projects.data.traktauth.testing)
-                implementation(projects.data.syncActivity.testing)
             }
         }
     }

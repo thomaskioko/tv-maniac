@@ -10,10 +10,9 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(projects.core.base)
-                implementation(projects.core.locale.api)
-                implementation(projects.core.locale.implementation)
-                implementation(libs.coroutines.core)
+                api(libs.coroutines.core)
+                api(projects.core.locale.api)
+                api(projects.core.locale.implementation)
             }
         }
     }

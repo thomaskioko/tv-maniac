@@ -2,19 +2,11 @@ plugins {
     alias(libs.plugins.app.kmp)
 }
 
-scaffold {
-    useMetro()
-}
-
 kotlin {
     sourceSets {
         commonMain {
             dependencies {
                 api(projects.data.database.sqldelight)
-                api(projects.core.networkUtil.api)
-
-                implementation(projects.core.base)
-
                 api(libs.coroutines.core)
             }
         }

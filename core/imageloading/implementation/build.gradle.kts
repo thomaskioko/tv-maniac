@@ -20,6 +20,6 @@ dependencies {
     implementation(libs.coil.coil)
     implementation(libs.coil.compose)
     implementation(libs.coil.gif)
-    implementation(libs.coroutines.core)
+    api(libs.coroutines.core)
     api(libs.okhttp.okhttp)
 }

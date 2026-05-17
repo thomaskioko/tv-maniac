@@ -10,13 +10,11 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(projects.core.base)
-                implementation(projects.core.logger.api)
-                implementation(projects.core.util.api)
+                api(libs.coroutines.core)
+                api(libs.kotlinx.datetime)
+                api(projects.core.base)
+                api(projects.core.util.api)
                 api(projects.data.calendar.api)
-
-                implementation(libs.coroutines.core)
-                implementation(libs.kotlinx.datetime)
             }
         }
 

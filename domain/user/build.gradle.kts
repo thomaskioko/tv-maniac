@@ -13,23 +13,17 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api(projects.data.user.api)
+                api(libs.coroutines.core)
+                api(projects.core.base)
                 api(projects.data.traktauth.api)
-                api(projects.core.util.api)
-
-                implementation(projects.core.base)
-                implementation(projects.data.traktlists.api)
-                implementation(projects.domain.logout)
-
-                implementation(libs.coroutines.core)
+                api(projects.data.traktlists.api)
+                api(projects.data.user.api)
             }
         }
 
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)
-                implementation(projects.data.user.testing)
-                implementation(projects.data.traktauth.testing)
             }
         }
     }

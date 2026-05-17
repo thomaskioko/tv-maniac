@@ -10,9 +10,8 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(projects.core.base)
-                implementation(projects.data.traktauth.api)
-                implementation(projects.data.traktauth.implementation)
+                api(projects.data.traktauth.api)
+                api(projects.data.traktauth.implementation)
             }
         }
     }

@@ -8,9 +8,7 @@ kotlin {
             dependencies {
                 api(projects.data.seasondetails.api)
                 api(projects.data.database.sqldelight)
-
-                implementation(libs.coroutines.core)
-                implementation(libs.kotlinx.collections)
+                api(libs.coroutines.core)
             }
         }
     }

@@ -11,45 +11,50 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                api(projects.core.base)
+                api(projects.core.logger.api)
+                api(projects.core.util.api)
                 api(projects.core.view)
-                implementation(projects.navigation.api)
-                implementation(projects.features.showDetails.nav)
-                implementation(projects.features.seasonDetails.nav)
-                implementation(projects.features.watchlist.nav)
-                implementation(projects.core.base)
-                implementation(projects.core.logger.api)
-                implementation(projects.core.util.api)
-                implementation(projects.data.episode.api)
-                implementation(projects.data.followedshows.api)
-                implementation(projects.data.watchlist.api)
-                implementation(projects.domain.episode)
-                implementation(projects.domain.followedshows)
-                implementation(projects.domain.watchlist)
-                implementation(projects.i18n.api)
+                api(projects.data.episode.api)
+                api(projects.data.followedshows.api)
+                api(projects.data.watchlist.api)
+                api(projects.domain.episode)
+                api(projects.domain.followedshows)
+                api(projects.domain.watchlist)
+                api(projects.features.watchlist.nav)
+                api(projects.navigation.api)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
                 api(libs.kotlinx.collections)
+
+                implementation(projects.features.seasonDetails.nav)
+                implementation(projects.features.showDetails.nav)
+            }
+        }
+
+        androidMain {
+            dependencies {
+                api(projects.data.database.sqldelight)
             }
         }
 
         commonTest {
             dependencies {
+                implementation(libs.bundles.unittest)
+                implementation(libs.kotlinx.datetime)
                 implementation(projects.core.logger.testing)
                 implementation(projects.core.util.testing)
                 implementation(projects.data.episode.testing)
-                implementation(projects.data.upnext.testing)
                 implementation(projects.data.followedshows.testing)
-                implementation(projects.data.syncActivity.testing)
-                implementation(projects.data.watchlist.testing)
+                implementation(projects.data.library.api)
                 implementation(projects.data.library.testing)
-                implementation(projects.domain.showdetails)
-                implementation(projects.core.syncstate.api)
-                implementation(projects.core.util.implementation)
-                implementation(projects.i18n.testing)
+                implementation(projects.data.syncActivity.api)
+                implementation(projects.data.syncActivity.testing)
+                implementation(projects.data.upnext.api)
+                implementation(projects.data.upnext.testing)
+                implementation(projects.data.watchlist.testing)
                 implementation(projects.navigation.testing)
-
-                implementation(libs.bundles.unittest)
             }
         }
     }

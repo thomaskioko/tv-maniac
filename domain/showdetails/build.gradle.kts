@@ -4,49 +4,38 @@ plugins {
 
 scaffold {
     useMetro()
-}
-
-scaffold {
     optIn("kotlinx.coroutines.FlowPreview")
     optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
 }
 
 kotlin {
     sourceSets {
+        androidMain {
+            dependencies {
+                implementation(projects.data.database.sqldelight)
+            }
+        }
+
         commonMain {
             dependencies {
-
-                implementation(projects.data.cast.api)
-                implementation(projects.data.episode.api)
-                implementation(projects.data.followedshows.api)
-                implementation(projects.data.upnext.api)
-                implementation(projects.data.seasondetails.api)
-                implementation(projects.data.seasons.api)
-                implementation(projects.data.showdetails.api)
-                implementation(projects.data.shows.api)
-                implementation(projects.data.similar.api)
-                implementation(projects.data.trailers.api)
-                implementation(projects.data.watchproviders.api)
-                implementation(projects.core.logger.api)
-
-                implementation(projects.core.base)
-                implementation(projects.core.syncstate.api)
-                implementation(projects.core.util.api)
-
-                implementation(libs.coroutines.core)
+                api(libs.coroutines.core)
+                api(projects.core.base)
+                api(projects.core.syncstate.api)
+                api(projects.core.util.api)
+                api(projects.data.cast.api)
+                api(projects.data.episode.api)
+                api(projects.data.followedshows.api)
+                api(projects.data.seasondetails.api)
+                api(projects.data.seasons.api)
+                api(projects.data.showdetails.api)
+                api(projects.data.similar.api)
+                api(projects.data.trailers.api)
+                api(projects.data.watchproviders.api)
             }
         }
 
         commonTest {
             dependencies {
-                implementation(projects.data.featuredshows.testing)
-                implementation(projects.data.genre.testing)
-                implementation(projects.data.popularshows.testing)
-                implementation(projects.data.topratedshows.testing)
-                implementation(projects.data.trendingshows.testing)
-                implementation(projects.data.upcomingshows.testing)
-                implementation(projects.data.watchproviders.testing)
-
                 implementation(libs.bundles.unittest)
             }
         }

@@ -8,21 +8,25 @@ scaffold {
 
 kotlin {
     sourceSets {
+        androidMain {
+            dependencies {
+                implementation(projects.core.networkUtil.api)
+            }
+        }
+
         commonMain {
             dependencies {
-                implementation(projects.api.tmdb.api)
-                implementation(projects.core.base)
-                implementation(projects.data.database.sqldelight)
-                implementation(projects.core.util.api)
-                implementation(projects.data.requestManager.api)
-                implementation(projects.data.shows.api)
-                implementation(projects.data.watchproviders.api)
-
                 api(libs.coroutines.core)
+                api(libs.store5)
+                api(projects.api.tmdb.api)
+                api(projects.core.base)
+                api(projects.core.util.api)
+                api(projects.data.database.sqldelight)
+                api(projects.data.requestManager.api)
+                api(projects.data.shows.api)
+                api(projects.data.watchproviders.api)
 
                 implementation(libs.sqldelight.extensions)
-                implementation(libs.kotlinx.atomicfu)
-                implementation(libs.store5)
             }
         }
     }

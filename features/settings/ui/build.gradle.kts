@@ -27,6 +27,8 @@ dependencies {
     api(projects.navigation.api)
     api(projects.navigation.ui)
 
+    api(libs.androidx.compose.foundation)
+    api(libs.androidx.compose.runtime)
     implementation(projects.androidDesignsystem)
     implementation(projects.core.testTags)
     implementation(projects.core.view)
@@ -35,10 +37,7 @@ dependencies {
 
     implementation(libs.androidx.browser)
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.compose.foundation)
-
     implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.runtime)
     implementation(libs.coil.compose)
 
     testImplementation(libs.robolectric.annotations)

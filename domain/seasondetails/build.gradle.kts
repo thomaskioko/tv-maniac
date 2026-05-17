@@ -8,15 +8,19 @@ scaffold {
 
 kotlin {
     sourceSets {
+        androidMain {
+            dependencies {
+                implementation(projects.data.database.sqldelight)
+            }
+        }
+
         commonMain {
             dependencies {
-                implementation(projects.core.base)
-                implementation(projects.data.cast.api)
-                implementation(projects.data.episode.api)
-                implementation(projects.data.seasondetails.api)
-
                 api(libs.coroutines.core)
-                api(libs.kotlinx.collections)
+                api(projects.core.base)
+                api(projects.data.cast.api)
+                api(projects.data.episode.api)
+                api(projects.data.seasondetails.api)
             }
         }
     }

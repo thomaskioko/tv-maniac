@@ -13,14 +13,12 @@ kotlin {
         commonMain {
             dependencies {
                 api(libs.coroutines.core)
+                api(projects.core.base)
+                api(projects.core.logger.api)
+                api(projects.core.util.api)
+                api(projects.data.database.sqldelight)
+                api(projects.data.followedshows.api)
 
-                implementation(projects.core.base)
-                implementation(projects.core.logger.api)
-                implementation(projects.core.util.api)
-                implementation(projects.data.database.sqldelight)
-                implementation(projects.data.followedshows.api)
-
-                implementation(libs.kotlinx.datetime)
                 implementation(libs.sqldelight.extensions)
             }
         }

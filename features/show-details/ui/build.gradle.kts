@@ -27,13 +27,12 @@ dependencies {
     implementation(projects.androidDesignsystem)
     implementation(projects.core.testTags)
     implementation(projects.core.view)
-    implementation(projects.domain.theme)
     implementation(projects.i18n.generator)
 
-    implementation(libs.androidx.compose.foundation)
+    api(libs.androidx.compose.foundation)
+    api(libs.androidx.compose.runtime)
     implementation(libs.androidx.compose.material.icons)
     implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.runtime)
     implementation(libs.coil.compose)
     implementation(libs.snapper)
 

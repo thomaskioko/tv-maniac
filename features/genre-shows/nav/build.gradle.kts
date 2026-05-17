@@ -10,8 +10,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(projects.core.base)
-                implementation(projects.navigation.api)
+                api(projects.navigation.api)
             }
         }
     }

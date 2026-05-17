@@ -4,13 +4,17 @@ plugins {
 
 kotlin {
     sourceSets {
+        androidMain {
+            dependencies {
+                implementation(projects.data.upnext.api)
+            }
+        }
+
         commonMain {
             dependencies {
                 api(projects.data.episode.api)
-                implementation(projects.data.database.sqldelight)
-
-                implementation(libs.kotlinx.datetime)
-                implementation(libs.coroutines.core)
+                api(projects.data.database.sqldelight)
+                api(libs.coroutines.core)
             }
         }
     }

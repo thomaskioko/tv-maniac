@@ -10,13 +10,8 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                api(libs.coroutines.core)
                 api(libs.decompose.decompose)
-                api(libs.decompose.essenty.statekeeper)
-                api(libs.essenty.lifecycle)
-
-                implementation(projects.core.base)
-
-                implementation(libs.coroutines.core)
             }
         }
     }

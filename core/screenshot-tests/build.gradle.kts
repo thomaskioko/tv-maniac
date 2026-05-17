@@ -15,7 +15,7 @@ dependencies {
     implementation(projects.androidDesignsystem)
     implementation(projects.domain.theme)
 
-    implementation(libs.androidx.compose.ui.test)
+    api(libs.androidx.compose.ui.test)
     implementation(libs.differ)
     implementation(libs.roborazzi)
     implementation(libs.roborazzi.core)

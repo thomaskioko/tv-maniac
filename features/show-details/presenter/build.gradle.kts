@@ -11,51 +11,59 @@ scaffold {
 
 kotlin {
     sourceSets {
+        androidMain {
+            dependencies {
+                implementation(projects.i18n.generator)
+            }
+        }
+
         commonMain {
             dependencies {
+                api(projects.core.base)
+                api(projects.core.logger.api)
+                api(projects.core.notifications.api)
+                api(projects.core.util.api)
                 api(projects.core.view)
+                api(projects.data.episode.api)
+                api(projects.data.followedshows.api)
+                api(projects.data.seasondetails.api)
+                api(projects.data.traktauth.api)
+                api(projects.data.traktlists.api)
+                api(projects.domain.episode)
+                api(projects.domain.notifications)
+                api(projects.domain.showdetails)
+                api(projects.domain.similarshows)
+                api(projects.domain.traktlists)
+                api(projects.domain.watchproviders)
                 api(projects.features.showDetails.nav)
-                implementation(projects.core.base)
-                implementation(projects.navigation.api)
-                implementation(projects.features.root.nav)
-                implementation(projects.features.seasonDetails.nav)
-                implementation(projects.features.trailers.nav)
-                implementation(projects.core.logger.api)
-                implementation(projects.core.util.api)
-                implementation(projects.data.episode.api)
-                implementation(projects.domain.episode)
-                implementation(projects.domain.seasondetails)
-                implementation(projects.domain.showdetails)
-                implementation(projects.domain.similarshows)
-                implementation(projects.domain.watchproviders)
-                implementation(projects.core.notifications.api)
-                implementation(projects.data.followedshows.api)
-                implementation(projects.data.seasondetails.api)
-                implementation(projects.data.traktauth.api)
-                implementation(projects.data.traktlists.api)
-                implementation(projects.domain.notifications)
-                implementation(projects.domain.traktlists)
-                implementation(projects.i18n.api)
+                api(projects.i18n.api)
+                api(projects.navigation.api)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
                 api(libs.kotlinx.collections)
 
+                api(projects.features.root.nav)
                 implementation(libs.kotlinx.datetime)
+                implementation(projects.features.seasonDetails.nav)
+                implementation(projects.features.trailers.nav)
             }
         }
 
         commonTest {
             dependencies {
+                implementation(libs.bundles.unittest)
                 implementation(projects.core.base.testing)
                 implementation(projects.core.logger.testing)
+                implementation(projects.core.notifications.testing)
+                implementation(projects.core.syncstate.api)
                 implementation(projects.core.syncstate.testing)
                 implementation(projects.core.util.testing)
                 implementation(projects.data.cast.testing)
                 implementation(projects.data.datastore.testing)
                 implementation(projects.data.episode.testing)
-                implementation(projects.data.seasondetails.testing)
                 implementation(projects.data.followedshows.testing)
+                implementation(projects.data.seasondetails.testing)
                 implementation(projects.data.seasons.testing)
                 implementation(projects.data.showdetails.testing)
                 implementation(projects.data.similar.testing)
@@ -63,17 +71,12 @@ kotlin {
                 implementation(projects.data.traktauth.api)
                 implementation(projects.data.traktauth.testing)
                 implementation(projects.data.traktlists.testing)
+                implementation(projects.data.upnext.testing)
                 implementation(projects.data.user.api)
                 implementation(projects.data.user.testing)
-                implementation(projects.data.upnext.testing)
                 implementation(projects.data.watchproviders.testing)
-                implementation(projects.core.syncstate.api)
-                implementation(projects.core.util.implementation)
                 implementation(projects.i18n.testing)
-                implementation(projects.core.notifications.testing)
                 implementation(projects.navigation.testing)
-
-                implementation(libs.bundles.unittest)
             }
         }
     }

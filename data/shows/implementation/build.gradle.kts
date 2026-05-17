@@ -10,16 +10,12 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(projects.core.base)
-                implementation(projects.data.database.sqldelight)
-                implementation(projects.data.shows.api)
-                implementation(projects.data.requestManager.api)
-
                 api(libs.coroutines.core)
+                api(projects.core.base)
+                api(projects.data.database.sqldelight)
+                api(projects.data.shows.api)
 
                 implementation(libs.sqldelight.extensions)
-                implementation(libs.kotlinx.atomicfu)
-                implementation(libs.store5)
             }
         }
     }

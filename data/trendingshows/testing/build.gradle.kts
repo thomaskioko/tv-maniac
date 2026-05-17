@@ -4,12 +4,16 @@ plugins {
 
 kotlin {
     sourceSets {
+        androidMain {
+            dependencies {
+                api(projects.data.shows.api)
+            }
+        }
+
         commonMain {
             dependencies {
                 api(projects.data.trendingshows.api)
-                implementation(projects.data.database.sqldelight)
-
-                implementation(libs.coroutines.core)
+                api(libs.coroutines.core)
             }
         }
     }

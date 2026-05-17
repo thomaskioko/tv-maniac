@@ -15,22 +15,19 @@ kotlin {
         commonMain {
             dependencies {
                 api(libs.coroutines.core)
+                api(libs.store5)
+                api(projects.api.tmdb.api)
+                api(projects.api.trakt.api)
+                api(projects.core.base)
+                api(projects.core.util.api)
+                api(projects.data.database.sqldelight)
+                api(projects.data.datastore.api)
+                api(projects.data.genre.api)
+                api(projects.data.requestManager.api)
+                api(projects.data.shows.api)
 
-                implementation(projects.api.tmdb.api)
-                implementation(projects.api.trakt.api)
-                implementation(projects.core.base)
-                implementation(projects.core.logger.api)
                 implementation(projects.core.networkUtil.api)
-                implementation(projects.core.util.api)
-                implementation(projects.data.datastore.api)
-                implementation(projects.data.database.sqldelight)
-                implementation(projects.data.requestManager.api)
-                implementation(projects.data.shows.api)
-                implementation(projects.domain.genre)
-
-                implementation(libs.kotlinx.datetime)
                 implementation(libs.sqldelight.extensions)
-                implementation(libs.store5)
             }
         }
     }

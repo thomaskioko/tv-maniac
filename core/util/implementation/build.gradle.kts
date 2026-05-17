@@ -5,7 +5,6 @@ plugins {
 scaffold {
     addAndroidTarget(withDeviceTestBuilder = true)
     useMetro()
-    useSerialization()
 
     optIn(
         "kotlinx.coroutines.ExperimentalCoroutinesApi",
@@ -16,17 +15,14 @@ scaffold {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.core.base)
-            implementation(projects.core.logger.api)
-            implementation(projects.core.util.api)
-            implementation(libs.coroutines.core)
+            api(libs.coroutines.core)
+            api(libs.kotlinx.datetime)
+            api(projects.core.util.api)
             implementation(libs.kermit)
-            implementation(libs.kotlinx.datetime)
-            implementation(libs.ktor.core)
         }
 
         androidMain.dependencies {
-            implementation(libs.androidx.security.crypto)
+            implementation(libs.kermit.core)
         }
 
         commonTest.dependencies {

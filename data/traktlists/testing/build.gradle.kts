@@ -11,10 +11,8 @@ kotlin {
         commonMain {
             dependencies {
                 api(projects.data.traktlists.api)
-
-                implementation(projects.core.base)
-                implementation(projects.data.traktlists.implementation)
-                implementation(libs.coroutines.core)
+                api(projects.data.traktlists.implementation)
+                api(libs.coroutines.core)
             }
         }
     }

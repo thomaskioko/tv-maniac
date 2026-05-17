@@ -3,20 +3,7 @@ plugins {
 }
 
 scaffold {
-    useMetro()
-
     optIn(
         "kotlinx.coroutines.ExperimentalCoroutinesApi",
     )
-}
-
-kotlin {
-    sourceSets {
-        commonMain {
-            dependencies {
-                implementation(projects.data.database.sqldelight)
-                api(libs.kotlinx.datetime)
-            }
-        }
-    }
 }

@@ -9,10 +9,8 @@ scaffold {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.core.base)
-            implementation(projects.data.requestManager.api)
-            implementation(projects.data.requestManager.implementation)
-            implementation(libs.coroutines.core)
+            api(projects.data.requestManager.api)
+            api(projects.data.requestManager.implementation)
         }
     }
 }

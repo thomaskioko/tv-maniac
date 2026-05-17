@@ -7,8 +7,7 @@ kotlin {
         commonMain {
             dependencies {
                 api(projects.data.library.api)
-
-                implementation(libs.coroutines.core)
+                api(libs.coroutines.core)
             }
         }
     }

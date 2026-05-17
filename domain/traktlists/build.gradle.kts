@@ -10,11 +10,10 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(projects.core.base)
-                implementation(projects.data.traktlists.api)
-                implementation(projects.data.user.api)
-
-                implementation(libs.coroutines.core)
+                api(libs.coroutines.core)
+                api(projects.core.base)
+                api(projects.data.traktlists.api)
+                api(projects.data.user.api)
             }
         }
     }

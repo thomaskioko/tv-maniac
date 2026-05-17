@@ -10,12 +10,18 @@ scaffold {
 
 kotlin {
     sourceSets {
+        androidMain {
+            dependencies {
+                implementation(projects.data.database.sqldelight)
+            }
+        }
+
         commonMain {
             dependencies {
-                implementation(projects.core.base)
-                implementation(projects.navigation.api)
-                implementation(projects.features.trailers.nav)
-                implementation(projects.data.trailers.api)
+                api(projects.core.base)
+                api(projects.data.trailers.api)
+                api(projects.features.trailers.nav)
+                api(projects.navigation.api)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
@@ -25,9 +31,8 @@ kotlin {
 
         commonTest {
             dependencies {
-                implementation(projects.data.trailers.testing)
-
                 implementation(libs.bundles.unittest)
+                implementation(projects.data.trailers.testing)
             }
         }
     }

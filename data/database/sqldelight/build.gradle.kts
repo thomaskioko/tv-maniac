@@ -12,18 +12,8 @@ kotlin {
     sourceSets {
         androidMain { dependencies { implementation(libs.sqldelight.driver.android) } }
 
-        commonMain {
-            dependencies {
-                implementation(projects.core.base)
-                implementation(libs.sqldelight.primitive.adapters)
-                implementation(libs.kotlinx.datetime)
-            }
-        }
-
         commonTest {
             dependencies {
-                implementation(projects.data.database.testing)
-
                 implementation(libs.kotest.assertions)
                 implementation(libs.kotlin.test)
             }
@@ -31,7 +21,13 @@ kotlin {
 
         iosMain { dependencies { implementation(libs.sqldelight.driver.native) } }
 
-        jvmTest { dependencies { implementation(libs.sqldelight.driver.jvm) } }
+        jvmTest {
+            dependencies {
+                implementation(projects.data.database.sqldelight)
+                implementation(libs.sqldelight.driver.jvm)
+                implementation(libs.sqldelight.jdbc.driver)
+            }
+        }
     }
 }
 

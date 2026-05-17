@@ -11,11 +11,10 @@ kotlin {
         commonMain {
             dependencies {
                 api(projects.data.syncActivity.api)
+                api(projects.data.database.sqldelight)
+                api(projects.data.syncActivity.implementation)
+                api(libs.coroutines.core)
 
-                implementation(projects.core.base)
-                implementation(projects.data.syncActivity.implementation)
-                implementation(projects.data.database.sqldelight)
-                implementation(libs.coroutines.core)
                 implementation(libs.sqldelight.extensions)
             }
         }

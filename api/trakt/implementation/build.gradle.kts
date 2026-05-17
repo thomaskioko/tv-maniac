@@ -12,29 +12,24 @@ kotlin {
     sourceSets {
         androidMain {
             dependencies {
-                implementation(libs.appauth)
                 implementation(libs.ktor.okhttp)
             }
         }
 
         commonMain {
             dependencies {
-                implementation(projects.api.trakt.api)
-                implementation(projects.core.appconfig.api)
+                api(libs.ktor.core)
+                api(projects.api.trakt.api)
+                api(projects.core.appconfig.api)
+                api(projects.core.connectivity.api)
+                api(projects.core.logger.api)
+                api(projects.core.networkUtil.api)
+                api(projects.data.traktauth.api)
                 implementation(projects.core.base)
-                implementation(projects.core.connectivity.api)
-                implementation(projects.core.networkUtil.api)
-                implementation(projects.core.util.api)
-                implementation(projects.core.logger.api)
-                implementation(projects.data.datastore.api)
-                implementation(projects.data.traktauth.api)
-
                 implementation(libs.ktor.auth)
-                implementation(libs.ktor.core)
                 implementation(libs.ktor.logging)
                 implementation(libs.ktor.negotiation)
                 implementation(libs.ktor.serialization.json)
-                implementation(libs.sqldelight.extensions)
             }
         }
 
@@ -45,7 +40,6 @@ kotlin {
                 implementation(libs.ktor.negotiation)
                 implementation(libs.ktor.serialization.json)
                 implementation(projects.api.trakt.api)
-                implementation(projects.core.base)
                 implementation(projects.core.networkUtil.api)
             }
         }

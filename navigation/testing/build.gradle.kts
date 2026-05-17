@@ -10,11 +10,9 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.navigation.api)
-
             api(libs.coroutines.core)
+            api(libs.decompose.decompose)
             api(libs.turbine)
-
-            implementation(libs.decompose.decompose)
         }
 
         commonTest.dependencies {

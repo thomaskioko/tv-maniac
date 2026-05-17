@@ -10,16 +10,17 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(projects.core.base)
-                implementation(projects.navigation.api)
-                implementation(projects.features.home.nav)
-                implementation(projects.features.progress.nav)
-                implementation(projects.features.calendar.presenter)
-                implementation(projects.features.upnext.presenter)
+                api(projects.core.base)
+                api(projects.features.calendar.presenter)
+                api(projects.features.progress.nav)
+                api(projects.features.upnext.presenter)
+                api(projects.navigation.api)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
                 api(libs.coroutines.core)
+
+                implementation(projects.features.home.nav)
             }
         }
     }
