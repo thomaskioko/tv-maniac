@@ -10,6 +10,10 @@ let package = Package(
     ],
     products: [
         .library(
+            name: "DesignSystem",
+            targets: ["DesignSystem"]
+        ),
+        .library(
             name: "SwiftUIComponents",
             targets: ["SwiftUIComponents"]
         ),
@@ -21,8 +25,13 @@ let package = Package(
     ],
     targets: [
         .target(
+            name: "DesignSystem",
+            dependencies: []
+        ),
+        .target(
             name: "SwiftUIComponents",
             dependencies: [
+                "DesignSystem",
                 .product(name: "Nuke", package: "Nuke"),
                 .product(name: "NukeUI", package: "Nuke"),
                 "YouTubePlayerKit",
@@ -36,6 +45,7 @@ let package = Package(
             dependencies: [
                 "SnapshotTestingLib",
                 "SwiftUIComponents",
+                "DesignSystem",
             ],
             exclude: ["__Snapshots__"]
         ),
