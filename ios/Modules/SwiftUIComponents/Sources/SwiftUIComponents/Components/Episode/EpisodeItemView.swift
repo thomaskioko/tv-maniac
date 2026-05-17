@@ -6,10 +6,11 @@
 //  Copyright © 2023 orgName. All rights reserved.
 //
 
+import DesignSystem
 import SwiftUI
 
 public struct EpisodeItemView: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let imageUrl: String?
     private let episodeTitle: String
@@ -69,7 +70,7 @@ public struct EpisodeItemView: View {
         }
         .frame(height: episodeHeight)
         .frame(maxWidth: .infinity)
-        .background(theme.colors.surface)
+        .background(.appSurface)
         .cornerRadius(cornerRadius)
         .padding(.horizontal, theme.spacing.medium)
     }
@@ -95,7 +96,7 @@ public struct EpisodeItemView: View {
 
             Text(episodeOverView)
                 .textStyle(theme.typography.bodySmall)
-                .foregroundColor(theme.colors.onSurface)
+                .foregroundStyle(.appOnSurface)
                 .lineSpacing(theme.spacing.xxSmall)
                 .lineLimit(4)
                 .multilineTextAlignment(.leading)
@@ -118,11 +119,11 @@ public struct EpisodeItemView: View {
             Button(action: onWatchedToggle) {
                 ZStack {
                     Circle()
-                        .fill(isWatched ? theme.colors.success : theme.colors.grey)
+                        .fill(isWatched ? .appSuccess : .appGrey)
                         .frame(width: DimensionConstants.checkmarkSize, height: DimensionConstants.checkmarkSize)
                     Image(systemName: "checkmark")
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(.white)
+                        .font(theme.typography.labelMedium)
+                        .foregroundStyle(.white)
                 }
             }
             .buttonStyle(.plain)
@@ -131,16 +132,16 @@ public struct EpisodeItemView: View {
             VStack(spacing: 0) {
                 Text("\(daysUntilAir)")
                     .textStyle(theme.typography.titleLarge)
-                    .foregroundColor(theme.colors.onSurfaceVariant)
+                    .foregroundStyle(.appOnSurfaceVariant)
                 Text(dayLabelFormat(Int(daysUntilAir)))
                     .textStyle(theme.typography.labelSmall)
-                    .foregroundColor(theme.colors.onSurfaceVariant)
+                    .foregroundStyle(.appOnSurfaceVariant)
             }
             .padding(.trailing, theme.spacing.medium)
         } else {
             Text(tbdLabel)
                 .textStyle(theme.typography.titleMedium)
-                .foregroundColor(theme.colors.onSurfaceVariant)
+                .foregroundStyle(.appOnSurfaceVariant)
                 .padding(.trailing, theme.spacing.medium)
         }
     }
@@ -153,7 +154,7 @@ public struct EpisodeItemView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 50, height: 50, alignment: .center)
-                    .foregroundColor(theme.colors.onPrimary)
+                    .foregroundStyle(.appOnPrimary)
             }
             .frame(
                 width: episodeWidth,
@@ -219,5 +220,5 @@ private enum DimensionConstants {
             hasAired: false
         )
     }
-    .themedPreview()
+    .appPreview()
 }

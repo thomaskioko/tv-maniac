@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct PosterPlaceholder: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let title: String?
     private let icon: String
@@ -33,13 +34,13 @@ public struct PosterPlaceholder: View {
                 Image(systemName: icon)
                     .textStyle(theme.typography.titleLarge)
                     .fontWidth(.expanded)
-                    .foregroundColor(theme.colors.onPrimary.opacity(0.8))
+                    .foregroundStyle(.appOnPrimary.opacity(0.8))
                     .padding(theme.spacing.medium)
 
                 if let title {
                     Text(title)
                         .textStyle(theme.typography.bodyMedium)
-                        .foregroundColor(theme.colors.onPrimary.opacity(0.8))
+                        .foregroundStyle(.appOnPrimary.opacity(0.8))
                         .lineLimit(2)
                         .multilineTextAlignment(.center)
                         .padding(.bottom, theme.spacing.medium)

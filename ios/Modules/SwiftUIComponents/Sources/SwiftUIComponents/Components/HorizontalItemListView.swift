@@ -6,6 +6,7 @@
 //  Copyright © 2023 orgName. All rights reserved.
 //
 
+import DesignSystem
 import SwiftUI
 
 public enum CardStyle {
@@ -14,7 +15,7 @@ public enum CardStyle {
 }
 
 public struct HorizontalItemListView: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let title: String
     private let subtitle: String

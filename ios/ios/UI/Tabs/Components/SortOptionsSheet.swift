@@ -1,10 +1,11 @@
+import DesignSystem
 import SwiftUI
 import SwiftUIComponents
 import TvManiac
 import TvManiacKit
 
 struct SortOptionsSheet: View {
-    @SwiftUIComponents.Theme private var theme
+    @Environment(\.appTheme) private var theme
     @Environment(\.dismiss) private var dismiss
 
     let state: LibraryState

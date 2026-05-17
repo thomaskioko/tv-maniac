@@ -6,10 +6,11 @@
 //  Copyright © 2024 orgName. All rights reserved.
 //
 
+import DesignSystem
 import SwiftUI
 
 public struct SeasonChipViewList: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let items: [SwiftSeason]
     private let selectedIndex: Int

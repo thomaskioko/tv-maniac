@@ -1,8 +1,9 @@
+import DesignSystem
 import SwiftUI
 import YouTubePlayerKit
 
 public struct YoutubeItemView: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
     @State private var isLoading = false
     @State private var player: YouTubePlayer?
 
@@ -61,7 +62,7 @@ public struct YoutubeItemView: View {
                 HStack {
                     Text(name)
                         .textStyle(theme.typography.bodyMedium)
-                        .foregroundColor(theme.colors.onSurfaceVariant)
+                        .foregroundStyle(.appOnSurfaceVariant)
                         .lineLimit(DimensionConstants.lineLimits)
                         .padding([.trailing], theme.spacing.medium)
 
@@ -104,7 +105,7 @@ public struct YoutubeItemView: View {
                         alignment: .center
                     )
                     .symbolRenderingMode(.palette)
-                    .foregroundStyle(theme.colors.onPrimary, theme.colors.surfaceVariant.opacity(0.6))
+                    .foregroundStyle(.appOnPrimary, .appSurfaceVariant.opacity(0.6))
                     .scaledToFit()
                     .imageScale(.medium)
                     .padding(theme.spacing.medium)

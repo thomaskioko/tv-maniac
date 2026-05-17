@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct ContinueTrackingCard: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let episode: SwiftContinueTrackingEpisode
     private let dayLabelFormat: (_ count: Int) -> String
@@ -35,12 +36,12 @@ public struct ContinueTrackingCard: View {
                 VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
                     Text(episode.episodeNumberFormatted)
                         .textStyle(theme.typography.titleMedium)
-                        .foregroundColor(theme.colors.onSurface)
+                        .foregroundStyle(.appOnSurface)
                         .lineLimit(1)
 
                     Text(episode.episodeTitle)
                         .textStyle(theme.typography.bodyMedium)
-                        .foregroundColor(theme.colors.onSurfaceVariant)
+                        .foregroundStyle(.appOnSurfaceVariant)
                         .lineLimit(2)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -49,11 +50,11 @@ public struct ContinueTrackingCard: View {
                     Button(action: onMarkWatched) {
                         ZStack {
                             Circle()
-                                .fill(episode.isWatched ? theme.colors.success : theme.colors.grey)
+                                .fill(episode.isWatched ? .appSuccess : .appGrey)
                                 .frame(width: DimensionConstants.checkmarkSize, height: DimensionConstants.checkmarkSize)
                             Image(systemName: "checkmark")
-                                .font(.system(size: 14, weight: .bold))
-                                .foregroundColor(.white)
+                                .font(theme.typography.titleSmall)
+                                .foregroundStyle(.white)
                         }
                         .frame(width: DimensionConstants.tapTargetSize, height: DimensionConstants.cardHeight)
                         .contentShape(Rectangle())
@@ -63,16 +64,16 @@ public struct ContinueTrackingCard: View {
                     VStack(spacing: 0) {
                         Text("\(daysUntilAir)")
                             .textStyle(theme.typography.titleLarge)
-                            .foregroundColor(theme.colors.onSurfaceVariant)
+                            .foregroundStyle(.appOnSurfaceVariant)
                         Text(dayLabelFormat(Int(daysUntilAir)))
                             .textStyle(theme.typography.labelSmall)
-                            .foregroundColor(theme.colors.onSurfaceVariant)
+                            .foregroundStyle(.appOnSurfaceVariant)
                     }
                     .padding(.trailing, theme.spacing.small)
                 } else {
                     Text(tbdLabel)
                         .textStyle(theme.typography.titleMedium)
-                        .foregroundColor(theme.colors.onSurfaceVariant)
+                        .foregroundStyle(.appOnSurfaceVariant)
                         .padding(.trailing, theme.spacing.small)
                 }
             }
@@ -80,7 +81,7 @@ public struct ContinueTrackingCard: View {
             .padding(.vertical, theme.spacing.medium)
         }
         .frame(width: DimensionConstants.cardWidth, height: DimensionConstants.cardHeight)
-        .background(theme.colors.surfaceVariant)
+        .background(.appSurfaceVariant)
         .cornerRadius(theme.shapes.medium)
         .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
     }

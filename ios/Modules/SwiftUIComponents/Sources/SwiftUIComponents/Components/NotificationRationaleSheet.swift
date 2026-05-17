@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct NotificationRationaleSheet: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let title: String
     private let message: String
@@ -33,16 +34,16 @@ public struct NotificationRationaleSheet: View {
 
             Image(systemName: "bell.badge.fill")
                 .symbolRenderingMode(.monochrome)
-                .font(.system(size: 48))
-                .foregroundColor(theme.colors.accent)
+                .font(theme.typography.displayMedium)
+                .foregroundStyle(.appAccent)
 
             Text(title)
                 .textStyle(theme.typography.headlineSmall)
-                .foregroundColor(theme.colors.onSurface)
+                .foregroundStyle(.appOnSurface)
 
             Text(message)
                 .textStyle(theme.typography.bodyMedium)
-                .foregroundColor(theme.colors.onSurfaceVariant)
+                .foregroundStyle(.appOnSurfaceVariant)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.horizontal, theme.spacing.medium)
@@ -75,7 +76,7 @@ public struct NotificationRationaleSheet: View {
                 .frame(height: theme.spacing.medium)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(theme.colors.surface)
+        .background(.appSurface)
         .tint(theme.colors.accent)
     }
 
@@ -87,27 +88,27 @@ public struct NotificationRationaleSheet: View {
                 ForEach([12, 13, 14], id: \.self) { day in
                     Text("\(day)")
                         .textStyle(theme.typography.titleLarge)
-                        .foregroundColor(theme.colors.onSurfaceVariant)
+                        .foregroundStyle(.appOnSurfaceVariant)
                 }
 
                 VStack(spacing: theme.spacing.xxxSmall) {
                     Text("15")
                         .textStyle(theme.typography.titleLarge)
-                        .foregroundColor(theme.colors.onSurface)
+                        .foregroundStyle(.appOnSurface)
                     Text("FEB")
                         .textStyle(theme.typography.labelSmall)
-                        .foregroundColor(theme.colors.onSurface)
+                        .foregroundStyle(.appOnSurface)
                 }
                 .frame(width: 56, height: 56)
                 .overlay(
                     RoundedRectangle(cornerRadius: theme.shapes.medium)
-                        .strokeBorder(theme.colors.accent, lineWidth: 2)
+                        .strokeBorder(.appAccent, lineWidth: 2)
                 )
 
                 ForEach([16, 17, 18], id: \.self) { day in
                     Text("\(day)")
                         .textStyle(theme.typography.titleLarge)
-                        .foregroundColor(theme.colors.onSurfaceVariant)
+                        .foregroundStyle(.appOnSurfaceVariant)
                 }
             }
 

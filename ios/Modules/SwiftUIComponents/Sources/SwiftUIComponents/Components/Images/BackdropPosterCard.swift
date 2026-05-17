@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct BackdropPosterCard: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let title: String
     private let posterUrl: String?
@@ -50,7 +51,7 @@ public struct BackdropPosterCard: View {
 
                 Text(title)
                     .textStyle(theme.typography.labelLarge)
-                    .foregroundStyle(theme.colors.onSurface)
+                    .foregroundStyle(.appOnSurface)
                     .lineLimit(1)
                     .truncationMode(.tail)
                     .padding(.horizontal, theme.spacing.medium)

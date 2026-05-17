@@ -1,3 +1,4 @@
+import DesignSystem
 import SwiftUI
 
 /**
@@ -5,7 +6,7 @@ import SwiftUI
  * @see https://medium.com/swlh/swiftui-create-a-stretchable-header-with-parallax-scrolling-4a98faeeb262
  */
 public struct ParallaxView<Header: View, Content: View>: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     let imageHeight: CGFloat
     let collapsedImageHeight: CGFloat

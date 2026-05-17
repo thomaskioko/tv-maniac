@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct ChevronTitle: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let title: String
     private let subtitle: String?
@@ -70,7 +71,7 @@ public struct ChevronTitle: View {
                     .textStyle(theme.typography.bodyMedium)
             }
         }
-        .foregroundColor(theme.colors.accent.opacity(0.8))
+        .foregroundStyle(.appAccent.opacity(0.8))
     }
 }
 

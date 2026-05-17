@@ -1,9 +1,10 @@
+import DesignSystem
 import SwiftUI
 import SwiftUIComponents
 import TvManiacKit
 
 struct UpNextPageContent: View {
-    @SwiftUIComponents.Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let presenter: UpNextPresenter
     private let uiState: UpNextState

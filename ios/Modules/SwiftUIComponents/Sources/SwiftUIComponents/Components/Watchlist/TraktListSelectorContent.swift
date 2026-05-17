@@ -1,3 +1,4 @@
+import DesignSystem
 import SwiftUI
 
 public struct TraktListSelectorContent: View {
@@ -44,7 +45,7 @@ public struct TraktListSelectorContent: View {
         }
     }
 
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
     private let state: State
     private let onToggle: (Int64, Bool) -> Void
     private let onShowCreateField: () -> Void
@@ -86,33 +87,33 @@ public struct TraktListSelectorContent: View {
             }
             .scrollBounceBehavior(.basedOnSize, axes: .vertical)
             .scrollContentBackground(.hidden)
-            .background(theme.colors.background)
+            .background(.appBackground)
             .navigationTitle(state.sheetTitle)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(theme.colors.surface, for: .navigationBar)
+            .toolbarBackground(.appSurface, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button(action: onDismiss) {
                         Image(systemName: "xmark.circle.fill")
                             .font(.title2)
-                            .foregroundColor(theme.colors.accent)
+                            .foregroundStyle(.appAccent)
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     if !state.showCreateField {
                         Button(action: onShowCreateField) {
                             Image(systemName: "plus")
-                                .font(.system(size: 14, weight: .semibold))
-                                .foregroundColor(theme.colors.onAccent)
+                                .font(theme.typography.labelLarge)
+                                .foregroundStyle(.appOnAccent)
                                 .frame(width: 28, height: 28)
-                                .background(theme.colors.accent)
+                                .background(.appAccent)
                                 .clipShape(Circle())
                         }
                     }
                 }
             }
-            .background(theme.colors.background)
+            .background(.appBackground)
         }
     }
 
@@ -152,7 +153,7 @@ public struct TraktListSelectorContent: View {
                             .textStyle(theme.typography.bodyMedium)
                         Text(list.showCountText)
                             .textStyle(theme.typography.bodySmall)
-                            .foregroundColor(theme.colors.onSurfaceVariant)
+                            .foregroundStyle(.appOnSurfaceVariant)
                     }
                     Spacer()
                     Toggle("", isOn: Binding(
@@ -164,7 +165,7 @@ public struct TraktListSelectorContent: View {
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
-                .background(theme.colors.surfaceVariant.opacity(0.5))
+                .background(.appSurfaceVariant.opacity(0.5))
                 .clipShape(RoundedRectangle(cornerRadius: theme.shapes.medium, style: .continuous))
                 .listRowInsets(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
                 .listRowBackground(Color.clear)
@@ -205,11 +206,11 @@ public struct TraktListSelectorContent: View {
                     .disabled(state.isCreatingList)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 10)
-                    .background(theme.colors.surface)
+                    .background(.appSurface)
                     .clipShape(RoundedRectangle(cornerRadius: theme.shapes.medium))
                     .overlay(
                         RoundedRectangle(cornerRadius: theme.shapes.medium)
-                            .stroke(theme.colors.outline.opacity(0.3), lineWidth: 1)
+                            .stroke(.appOutline.opacity(0.3), lineWidth: 1)
                     )
 
                     Button(action: onCreateSubmitted) {

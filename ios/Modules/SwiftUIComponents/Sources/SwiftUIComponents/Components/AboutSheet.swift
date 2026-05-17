@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct AboutSheet: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let appName: String
     private let versionText: String
@@ -56,14 +57,14 @@ public struct AboutSheet: View {
 
             Text(apiDisclaimer)
                 .textStyle(theme.typography.labelSmall)
-                .foregroundColor(theme.colors.onSurfaceVariant)
+                .foregroundStyle(.appOnSurfaceVariant)
                 .multilineTextAlignment(.center)
                 .padding(theme.spacing.large)
                 .frame(maxWidth: .infinity)
-                .background(theme.colors.surface)
+                .background(.appSurface)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(theme.colors.surface)
+        .background(.appSurface)
         .tint(theme.colors.accent)
         .presentationDetents([.large])
     }
@@ -78,11 +79,11 @@ public struct AboutSheet: View {
 
             Text(appName)
                 .textStyle(theme.typography.headlineMedium)
-                .foregroundColor(theme.colors.onSurface)
+                .foregroundStyle(.appOnSurface)
 
             Text(versionText)
                 .textStyle(theme.typography.bodyMedium)
-                .foregroundColor(theme.colors.onSurfaceVariant)
+                .foregroundStyle(.appOnSurfaceVariant)
                 .contentShape(Rectangle())
                 .onTapGesture(perform: onVersionTap)
         }
@@ -93,11 +94,11 @@ public struct AboutSheet: View {
         VStack(alignment: .leading, spacing: theme.spacing.xSmall) {
             Text(aboutTitle)
                 .textStyle(theme.typography.titleMedium)
-                .foregroundColor(theme.colors.onSurface)
+                .foregroundStyle(.appOnSurface)
 
             Text(aboutDescription)
                 .textStyle(theme.typography.bodyMedium)
-                .foregroundColor(theme.colors.onSurfaceVariant)
+                .foregroundStyle(.appOnSurfaceVariant)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(theme.spacing.medium)
@@ -108,11 +109,11 @@ public struct AboutSheet: View {
             HStack {
                 Text(sourceCodeLabel)
                     .textStyle(theme.typography.bodyMedium)
-                    .foregroundColor(theme.colors.onSurface)
+                    .foregroundStyle(.appOnSurface)
                 Spacer()
                 Text(sourceCodeAction)
                     .textStyle(theme.typography.bodyMedium)
-                    .foregroundColor(theme.colors.accent)
+                    .foregroundStyle(.appAccent)
             }
             .padding(theme.spacing.medium)
             .contentShape(Rectangle())
@@ -122,7 +123,7 @@ public struct AboutSheet: View {
 
     private var themedDivider: some View {
         Rectangle()
-            .fill(theme.colors.outline)
+            .fill(.appOutline)
             .frame(height: 1)
     }
 }
@@ -140,5 +141,5 @@ public struct AboutSheet: View {
         onVersionTap: {},
         onSourceCodeTap: {}
     )
-    .themedPreview()
+    .appPreview()
 }

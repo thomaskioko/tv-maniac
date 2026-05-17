@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct SearchResultListView: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let items: [SwiftSearchShow]
     private let onClick: (Int64) -> Void

@@ -6,6 +6,7 @@
 //  Copyright © 2023 orgName. All rights reserved.
 //
 
+import DesignSystem
 import SwiftUI
 
 public extension HorizontalAlignment {

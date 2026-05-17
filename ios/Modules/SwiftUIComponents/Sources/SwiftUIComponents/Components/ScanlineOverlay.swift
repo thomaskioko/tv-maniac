@@ -1,3 +1,4 @@
+import DesignSystem
 import SwiftUI
 
 public struct ScanlineOverlay: View {
@@ -50,53 +51,16 @@ public extension View {
     }
 }
 
-public struct ScanlineConfiguration {
-    public let enabled: Bool
-    public let color: Color
-    public let lineHeight: CGFloat
-    public let opacity: Double
-
-    public init(
-        enabled: Bool,
-        color: Color,
-        lineHeight: CGFloat = 2,
-        opacity: Double = 0.15
-    ) {
-        self.enabled = enabled
-        self.color = color
-        self.lineHeight = lineHeight
-        self.opacity = opacity
-    }
-
-    public static let disabled = ScanlineConfiguration(enabled: false, color: .clear)
-
-    public static func terminal() -> ScanlineConfiguration {
-        ScanlineConfiguration(enabled: true, color: Color(hex: "20C020"), opacity: 0.12)
-    }
-
-    public static func amber() -> ScanlineConfiguration {
-        ScanlineConfiguration(enabled: true, color: Color(hex: "FF8C00"), opacity: 0.12)
-    }
-
-    public static func snow() -> ScanlineConfiguration {
-        ScanlineConfiguration(enabled: true, color: Color(hex: "FFFFFF"), opacity: 0.08)
-    }
-
-    public static func crimson() -> ScanlineConfiguration {
-        ScanlineConfiguration(enabled: true, color: Color(hex: "FF4D6A"), opacity: 0.12)
-    }
-}
-
 #Preview {
     ZStack {
         Color.black
         VStack(spacing: 20) {
             Text("CRT Scanline Effect")
                 .font(.title)
-                .foregroundColor(.green)
+                .foregroundStyle(.green)
 
             Text("Retro terminal aesthetic")
-                .foregroundColor(.green.opacity(0.8))
+                .foregroundStyle(.green.opacity(0.8))
         }
     }
     .ignoresSafeArea(.all)

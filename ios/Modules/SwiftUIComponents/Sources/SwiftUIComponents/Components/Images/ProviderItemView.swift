@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct ProviderItemView: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let logoUrl: String?
     private let imageWidth: CGFloat

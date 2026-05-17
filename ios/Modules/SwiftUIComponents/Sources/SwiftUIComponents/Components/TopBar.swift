@@ -6,10 +6,11 @@
 //  Copyright © 2023 orgName. All rights reserved.
 //
 
+import DesignSystem
 import SwiftUI
 
 public struct TopBar: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
     @Environment(\.colorScheme) private var colorScheme
     @State private var isBackButtonPressed = false
     @State private var isRefreshButtonPressed = false

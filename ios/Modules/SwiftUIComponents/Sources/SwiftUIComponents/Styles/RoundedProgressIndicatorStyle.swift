@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct RoundedRectProgressViewStyle: ProgressViewStyle {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let progressIndicatorHeight: CGFloat
     private let accentColor: Color?

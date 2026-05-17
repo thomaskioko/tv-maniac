@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct NextEpisodesSection: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let title: String
     private let episodes: [SwiftNextEpisode]

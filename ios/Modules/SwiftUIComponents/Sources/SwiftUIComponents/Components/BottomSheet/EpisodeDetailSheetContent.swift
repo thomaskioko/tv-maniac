@@ -1,3 +1,4 @@
+import DesignSystem
 import SwiftUI
 
 public struct EpisodeDetailInfo: Equatable {
@@ -26,7 +27,7 @@ public struct EpisodeDetailInfo: Equatable {
 }
 
 public struct EpisodeDetailSheetContent<Actions: View>: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let episode: EpisodeDetailInfo
     private let actions: (() -> Actions)?
@@ -47,18 +48,18 @@ public struct EpisodeDetailSheetContent<Actions: View>: View {
                 VStack(alignment: .leading, spacing: theme.spacing.xSmall) {
                     Text(episode.title)
                         .textStyle(theme.typography.titleLarge)
-                        .foregroundColor(theme.colors.onSurface)
+                        .foregroundStyle(.appOnSurface)
 
                     Text(episode.episodeInfo)
                         .textStyle(theme.typography.bodyMedium)
-                        .foregroundColor(theme.colors.onSurfaceVariant)
+                        .foregroundStyle(.appOnSurfaceVariant)
 
                     ratingRow
 
                     if let overview = episode.overview, !overview.isEmpty {
                         Text(overview)
                             .textStyle(theme.typography.bodyMedium)
-                            .foregroundColor(theme.colors.onSurface)
+                            .foregroundStyle(.appOnSurface)
                             .padding(.top, theme.spacing.xxSmall)
                     }
                 }
@@ -74,7 +75,7 @@ public struct EpisodeDetailSheetContent<Actions: View>: View {
             }
         }
         .scrollBounceBehavior(.basedOnSize)
-        .background(theme.colors.surface)
+        .background(.appSurface)
     }
 
     private var headerImage: some View {
@@ -99,12 +100,12 @@ public struct EpisodeDetailSheetContent<Actions: View>: View {
         if let rating = episode.rating {
             HStack(spacing: 4) {
                 Image(systemName: "star.fill")
-                    .font(.system(size: 12))
-                    .foregroundColor(theme.colors.accent)
+                    .font(theme.typography.labelMedium)
+                    .foregroundStyle(.appAccent)
 
                 Text(buildRatingText(rating: rating))
                     .textStyle(theme.typography.bodySmall)
-                    .foregroundColor(theme.colors.onSurfaceVariant)
+                    .foregroundStyle(.appOnSurfaceVariant)
             }
         }
     }
@@ -126,7 +127,7 @@ public extension EpisodeDetailSheetContent where Actions == EmptyView {
 }
 
 public struct SheetActionItem: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let icon: String
     private let label: String
@@ -142,13 +143,13 @@ public struct SheetActionItem: View {
         Button(action: action) {
             HStack(spacing: 16) {
                 Image(systemName: icon)
-                    .font(.system(size: 18))
-                    .foregroundColor(theme.colors.onSurface)
+                    .font(theme.typography.titleMedium)
+                    .foregroundStyle(.appOnSurface)
                     .frame(width: 24)
 
                 Text(label)
                     .textStyle(theme.typography.bodyLarge)
-                    .foregroundColor(theme.colors.onSurface)
+                    .foregroundStyle(.appOnSurface)
 
                 Spacer()
             }
@@ -160,49 +161,46 @@ public struct SheetActionItem: View {
 }
 
 #Preview("Detail Only") {
-    ThemedPreview {
-        EpisodeDetailSheetContent(
-            episode: EpisodeDetailInfo(
-                title: "The Walking Dead: Daryl Dixon",
-                imageUrl: nil,
-                episodeInfo: "S02E01 \u{2022} 45m",
-                overview: "Daryl washes ashore in France and struggles to piece together how he got there and why.",
-                rating: 8.5,
-                voteCount: 1234
-            )
+    EpisodeDetailSheetContent(
+        episode: EpisodeDetailInfo(
+            title: "The Walking Dead: Daryl Dixon",
+            imageUrl: nil,
+            episodeInfo: "S02E01 \u{2022} 45m",
+            overview: "Daryl washes ashore in France and struggles to piece together how he got there and why.",
+            rating: 8.5,
+            voteCount: 1234
         )
-    }
+    )
+    .appPreview()
 }
 
 #Preview("With Actions") {
-    ThemedPreview {
-        EpisodeDetailSheetContent(
-            episode: EpisodeDetailInfo(
-                title: "Wednesday",
-                imageUrl: nil,
-                episodeInfo: "S02E03 \u{2022} 50m",
-                overview: "Wednesday arrives at Nevermore Academy and begins investigating a series of mysterious events.",
-                rating: 7.9,
-                voteCount: 856
-            )
-        ) {
-            SheetActionItem(icon: "checkmark.circle", label: "Mark as Watched", action: {})
-            SheetActionItem(icon: "tv", label: "Open Show", action: {})
-            SheetActionItem(icon: "list.bullet", label: "Open Season", action: {})
-            SheetActionItem(icon: "minus.circle", label: "Unfollow Show", action: {})
-        }
+    EpisodeDetailSheetContent(
+        episode: EpisodeDetailInfo(
+            title: "Wednesday",
+            imageUrl: nil,
+            episodeInfo: "S02E03 \u{2022} 50m",
+            overview: "Wednesday arrives at Nevermore Academy and begins investigating a series of mysterious events.",
+            rating: 7.9,
+            voteCount: 856
+        )
+    ) {
+        SheetActionItem(icon: "checkmark.circle", label: "Mark as Watched", action: {})
+        SheetActionItem(icon: "tv", label: "Open Show", action: {})
+        SheetActionItem(icon: "list.bullet", label: "Open Season", action: {})
+        SheetActionItem(icon: "minus.circle", label: "Unfollow Show", action: {})
     }
+    .appPreview()
 }
 
 #Preview("No Rating") {
-    ThemedPreview {
-        EpisodeDetailSheetContent(
-            episode: EpisodeDetailInfo(
-                title: "House of the Dragon",
-                imageUrl: nil,
-                episodeInfo: "S03E01",
-                overview: "King Viserys hosts a tournament to celebrate the birth of his heir."
-            )
+    EpisodeDetailSheetContent(
+        episode: EpisodeDetailInfo(
+            title: "House of the Dragon",
+            imageUrl: nil,
+            episodeInfo: "S03E01",
+            overview: "King Viserys hosts a tournament to celebrate the birth of his heir."
         )
-    }
+    )
+    .appPreview()
 }

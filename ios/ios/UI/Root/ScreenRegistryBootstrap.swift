@@ -7,6 +7,7 @@
 //  adding a new screen means adding one line here. `RootNavigationView` itself does not change.
 //
 
+import DesignSystem
 import SwiftUI
 import TvManiac
 import TvManiacKit

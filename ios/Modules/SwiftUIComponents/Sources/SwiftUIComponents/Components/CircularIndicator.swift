@@ -4,12 +4,13 @@
 //
 //  Created by Thomas Kioko on 8/15/25.
 //
+import DesignSystem
 import SwiftUI
 
 // MARK: - Apple TV Style Indicator
 
 public struct CircularIndicator: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     let totalItems: Int
     let currentIndex: Int
@@ -138,7 +139,7 @@ public struct CircularIndicator: View {
 
         if isEdgeIndicator {
             Circle()
-                .fill(theme.colors.onSurfaceVariant.opacity(0.4))
+                .fill(.appOnSurfaceVariant.opacity(0.4))
                 .frame(width: 4, height: 4)
         } else {
             indicatorDot(for: actualIndex, isActive: isActive)
@@ -151,7 +152,7 @@ public struct CircularIndicator: View {
             ProgressIndicatorBar(progress: indicatorProgress, activeColor: theme.colors.onSurface)
         } else {
             Circle()
-                .fill(theme.colors.onSurfaceVariant.opacity(0.4))
+                .fill(.appOnSurfaceVariant.opacity(0.4))
                 .frame(width: 6, height: 6)
         }
     }

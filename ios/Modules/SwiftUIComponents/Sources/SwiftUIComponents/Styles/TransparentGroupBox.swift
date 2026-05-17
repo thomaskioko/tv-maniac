@@ -5,27 +5,28 @@
 //  Created by Thomas Kioko on 9/8/24.
 //
 
+import DesignSystem
 import SwiftUI
 
 struct TransparentGroupBox: GroupBoxStyle {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     func makeBody(configuration: Configuration) -> some View {
         VStack {
             HStack {
                 configuration.label
                     .textStyle(theme.typography.titleSmall)
-                    .foregroundColor(theme.colors.onSurface)
+                    .foregroundStyle(.appOnSurface)
                 Spacer()
             }
 
             configuration.content
-                .foregroundColor(theme.colors.onSurface)
+                .foregroundStyle(.appOnSurface)
         }
         .padding()
         .background {
             ZStack {
-                Rectangle().fill(theme.colors.background)
+                Rectangle().fill(.appBackground)
             }
             .clipShape(RoundedRectangle(cornerRadius: theme.shapes.medium, style: .continuous))
             .shadow(radius: 1)

@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct EmptyStateView: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let systemName: String
     private let title: String
@@ -28,14 +29,14 @@ public struct EmptyStateView: View {
             Image(systemName: systemName)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .foregroundColor(theme.colors.onSurfaceVariant)
+                .foregroundStyle(.appOnSurfaceVariant)
                 .frame(width: 64, height: 64)
 
             Spacer().frame(height: theme.spacing.large)
 
             Text(title)
                 .textStyle(theme.typography.titleMedium)
-                .foregroundColor(theme.colors.onSurface)
+                .foregroundStyle(.appOnSurface)
                 .multilineTextAlignment(.center)
 
             if let message {
@@ -43,7 +44,7 @@ public struct EmptyStateView: View {
 
                 Text(message)
                     .textStyle(theme.typography.bodyMedium)
-                    .foregroundColor(theme.colors.onSurfaceVariant)
+                    .foregroundStyle(.appOnSurfaceVariant)
                     .multilineTextAlignment(.center)
             }
 
@@ -53,13 +54,13 @@ public struct EmptyStateView: View {
                 Button(action: action) {
                     Text(buttonText)
                         .textStyle(theme.typography.labelMedium)
-                        .foregroundColor(theme.colors.accent)
+                        .foregroundStyle(.appAccent)
                         .padding(.vertical, theme.spacing.xSmall)
                         .padding(.horizontal, theme.spacing.large)
                 }
                 .overlay(
                     RoundedRectangle(cornerRadius: theme.shapes.small)
-                        .stroke(theme.colors.accent, lineWidth: 1.5)
+                        .stroke(.appAccent, lineWidth: 1.5)
                 )
             }
         }

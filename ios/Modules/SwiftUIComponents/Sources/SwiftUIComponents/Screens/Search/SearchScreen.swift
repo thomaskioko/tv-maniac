@@ -1,3 +1,4 @@
+import DesignSystem
 import SwiftUI
 
 public enum SearchScreenState {
@@ -40,7 +41,7 @@ public struct SearchScreen: View {
         }
     }
 
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let state: State
     @Binding private var query: String
@@ -75,9 +76,6 @@ public struct SearchScreen: View {
 
     public var body: some View {
         ZStack(alignment: .top) {
-            theme.colors.background
-                .ignoresSafeArea()
-
             ScrollView(showsIndicators: false) {
                 contentView
                     .padding(.top, theme.spacing.medium)
@@ -86,6 +84,7 @@ public struct SearchScreen: View {
 
             headerOverlay
         }
+        .appScreen()
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .navigationBarColor(backgroundColor: .clear)
@@ -155,7 +154,7 @@ public struct SearchScreen: View {
     private var searchBar: some View {
         HStack {
             Image(systemName: "magnifyingglass")
-                .foregroundColor(theme.colors.onSurfaceVariant)
+                .foregroundStyle(.appOnSurfaceVariant)
 
             TextField(state.searchPlaceholder, text: $query)
                 .textStyle(theme.typography.bodyMedium)
@@ -167,17 +166,17 @@ public struct SearchScreen: View {
                     query = ""
                 } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(theme.colors.onSurfaceVariant)
+                        .foregroundStyle(.appOnSurfaceVariant)
                 }
             }
         }
         .padding(.horizontal, theme.spacing.small)
         .padding(.vertical, 10)
-        .background(theme.colors.surfaceVariant.opacity(0.8))
+        .background(.appSurfaceVariant.opacity(0.8))
         .clipShape(RoundedRectangle(cornerRadius: theme.shapes.medium))
         .overlay(
             RoundedRectangle(cornerRadius: theme.shapes.medium)
-                .strokeBorder(theme.colors.onSurface.opacity(0.15), lineWidth: 1)
+                .strokeBorder(.appOnSurface.opacity(0.15), lineWidth: 1)
         )
     }
 

@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 struct TvManiacButton: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
     private let text: String
     private let color: Color?
     private let textColor: Color?

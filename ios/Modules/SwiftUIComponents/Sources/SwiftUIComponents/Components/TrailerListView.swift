@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct TrailerListView: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let trailers: [SwiftTrailer]
     private let openInYouTube: Bool

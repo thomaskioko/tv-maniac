@@ -1,3 +1,4 @@
+import DesignSystem
 import SwiftUI
 
 public struct SeasonDetailsScreen: View {
@@ -59,7 +60,7 @@ public struct SeasonDetailsScreen: View {
         }
     }
 
-    @Theme private var appTheme
+    @Environment(\.appTheme) private var appTheme
 
     private let state: State
     private let seasonImagesCountFormat: (Int) -> String
@@ -107,8 +108,6 @@ public struct SeasonDetailsScreen: View {
 
     public var body: some View {
         ZStack {
-            appTheme.colors.background.edgesIgnoringSafeArea(.all)
-
             if state.showError {
                 EmptyStateView(
                     systemName: "exclamationmark.triangle",
@@ -120,6 +119,7 @@ public struct SeasonDetailsScreen: View {
                 seasonDetailsContent
             }
         }
+        .appScreen()
         .ignoresSafeArea()
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
@@ -168,7 +168,7 @@ public struct SeasonDetailsScreen: View {
                 if !state.seasonOverview.isEmpty {
                     Text(state.overviewTitle)
                         .textStyle(appTheme.typography.titleLarge)
-                        .foregroundColor(appTheme.colors.onSurface)
+                        .foregroundStyle(.appOnSurface)
                         .lineLimit(1)
                         .padding(.top, appTheme.spacing.large)
                         .padding(.horizontal)
@@ -241,14 +241,14 @@ public struct SeasonDetailsScreen: View {
                             .frame(width: 28.0, height: 28.0)
                             .fontDesign(.rounded)
                             .textStyle(appTheme.typography.bodyMedium)
-                            .foregroundColor(appTheme.colors.onSurfaceVariant)
+                            .foregroundStyle(.appOnSurfaceVariant)
                             .alignmentGuide(.view) { d in
                                 d[HorizontalAlignment.leading]
                             }
 
                         Text(seasonImagesCountFormat(state.seasonImages.count))
                             .textStyle(appTheme.typography.bodyMedium)
-                            .foregroundColor(appTheme.colors.onSurface)
+                            .foregroundStyle(.appOnSurface)
                             .lineLimit(1)
                             .alignmentGuide(.view) { d in
                                 d[HorizontalAlignment.center]

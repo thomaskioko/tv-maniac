@@ -1,8 +1,9 @@
+import DesignSystem
 import SwiftUI
 import UIKit
 
 public struct TransparentImageBackground: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let imageUrl: String?
 

@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct EpisodeCollapsible<Content: View>: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let title: String
     private let episodeCount: Int64
@@ -62,7 +63,7 @@ public struct EpisodeCollapsible<Content: View>: View {
             progressBar
         }
         .frame(maxWidth: .infinity, minHeight: DimensionConstants.frameHeight)
-        .background(theme.colors.surface)
+        .background(.appSurface)
         .cornerRadius(theme.shapes.small)
         .padding(.horizontal, theme.spacing.medium)
     }
@@ -95,7 +96,7 @@ public struct EpisodeCollapsible<Content: View>: View {
             Image(systemName: "checkmark.circle.fill")
                 .resizable()
                 .frame(width: DimensionConstants.checkmarkSize, height: DimensionConstants.checkmarkSize)
-                .foregroundColor(isSeasonWatched ? theme.colors.success : theme.colors.grey)
+                .foregroundStyle(isSeasonWatched ? .appSuccess : .appGrey)
         }
         .buttonStyle(.plain)
         .padding(.trailing, theme.spacing.medium)
@@ -131,5 +132,5 @@ private enum DimensionConstants {
         }
         Spacer()
     }
-    .themedPreview()
+    .appPreview()
 }

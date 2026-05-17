@@ -6,11 +6,12 @@
 //  Copyright © 2022 orgName. All rights reserved.
 //
 
+import DesignSystem
 import Foundation
 import SwiftUI
 
 public struct SnapCarousel<Content: View>: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     var content: (SwiftShow) -> Content
     var list: [SwiftShow]

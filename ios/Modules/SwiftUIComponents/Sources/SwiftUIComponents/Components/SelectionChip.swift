@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct SelectionChip: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
     private let label: String
     private let isSelected: Bool
     private let action: () -> Void
@@ -20,13 +21,13 @@ public struct SelectionChip: View {
         Button(action: action) {
             Text(label)
                 .textStyle(theme.typography.bodyMedium)
-                .foregroundColor(isSelected ? theme.colors.onSecondary : theme.colors.onSurface)
+                .foregroundStyle(isSelected ? AnyShapeStyle(.appOnSecondary) : AnyShapeStyle(.appOnSurface))
                 .padding(.horizontal, theme.spacing.medium)
                 .padding(.vertical, theme.spacing.small)
-                .background(isSelected ? theme.colors.secondary : Color.clear)
+                .background(isSelected ? AnyShapeStyle(.appSecondary) : AnyShapeStyle(Color.clear))
                 .overlay(
                     RoundedRectangle(cornerRadius: 20)
-                        .stroke(isSelected ? Color.clear : theme.colors.outline, lineWidth: 1)
+                        .stroke(isSelected ? AnyShapeStyle(Color.clear) : AnyShapeStyle(.appOutline), lineWidth: 1)
                 )
                 .cornerRadius(20)
         }
@@ -35,7 +36,7 @@ public struct SelectionChip: View {
 }
 
 public struct SelectionChipGroup: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
     let options: [String]
     let selectedIndex: Int
     let onSelect: (Int) -> Void

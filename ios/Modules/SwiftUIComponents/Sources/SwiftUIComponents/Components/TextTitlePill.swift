@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct TextTitlePill: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     let title: String
     let titleStyle: Font?
@@ -23,16 +24,16 @@ public struct TextTitlePill: View {
                 Text(title)
                     .textStyle(titleStyle ?? theme.typography.titleSmall)
                     .lineLimit(1)
-                    .foregroundColor(theme.colors.onSurface)
+                    .foregroundStyle(.appOnSurface)
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 10))
-                    .foregroundColor(theme.colors.onSurface)
+                    .font(theme.typography.labelSmall)
+                    .foregroundStyle(.appOnSurface)
             }
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .stroke(theme.colors.onSurface, lineWidth: 1)
+                    .stroke(.appOnSurface, lineWidth: 1)
             )
         }
         .buttonStyle(.plain)
@@ -44,5 +45,5 @@ public struct TextTitlePill: View {
         title: "The Walking Dead: Daryl Dixon",
         onTap: {}
     )
-    .themedPreview()
+    .appPreview()
 }

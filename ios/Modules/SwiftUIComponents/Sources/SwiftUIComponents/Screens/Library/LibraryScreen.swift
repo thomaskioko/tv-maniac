@@ -1,3 +1,4 @@
+import DesignSystem
 import SwiftUI
 
 public struct LibraryScreen: View {
@@ -41,7 +42,7 @@ public struct LibraryScreen: View {
         }
     }
 
-    @Theme private var appTheme
+    @Environment(\.appTheme) private var appTheme
 
     private let state: State
     private let emptySearchResultFormat: ((String) -> String)?
@@ -78,14 +79,12 @@ public struct LibraryScreen: View {
 
     public var body: some View {
         ZStack {
-            appTheme.colors.background
-                .ignoresSafeArea()
-
             VStack {
                 contentView
             }
             .padding(.top, toolbarInset)
         }
+        .appScreen()
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarColor(backgroundColor: .clear)
         .disableAutocorrection(true)
@@ -173,7 +172,7 @@ public struct LibraryScreen: View {
         HStack(spacing: appTheme.spacing.small) {
             HStack {
                 Image(systemName: "magnifyingglass")
-                    .foregroundColor(appTheme.colors.onSurfaceVariant)
+                    .foregroundStyle(.appOnSurfaceVariant)
 
                 TextField(state.searchPlaceholder, text: $localQuery)
                     .textStyle(appTheme.typography.bodyMedium)
@@ -195,12 +194,12 @@ public struct LibraryScreen: View {
                     }
                 } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(appTheme.colors.onSurfaceVariant)
+                        .foregroundStyle(.appOnSurfaceVariant)
                 }
             }
             .padding(.horizontal, appTheme.spacing.small)
             .padding(.vertical, 6)
-            .background(appTheme.colors.surfaceVariant.opacity(0.5))
+            .background(.appSurfaceVariant.opacity(0.5))
             .clipShape(RoundedRectangle(cornerRadius: appTheme.shapes.medium))
         }
         .frame(maxWidth: .infinity)

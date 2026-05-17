@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct NavigationTopBar: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let topBarTitle: String?
     private let imageName: String
@@ -55,7 +56,7 @@ public struct NavigationTopBar: View {
                         Text(title)
                             .textStyle(theme.typography.titleLarge)
                             .bold()
-                            .foregroundColor(theme.colors.onSurface)
+                            .foregroundStyle(.appOnSurface)
 
                         Spacer()
                     }

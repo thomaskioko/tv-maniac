@@ -1,3 +1,4 @@
+import DesignSystem
 import SwiftUI
 
 public struct ProfileScreen: View {
@@ -50,7 +51,7 @@ public struct ProfileScreen: View {
         }
     }
 
-    @Theme private var appTheme
+    @Environment(\.appTheme) private var appTheme
 
     private let state: State
     private let onSettingsClicked: () -> Void
@@ -102,7 +103,7 @@ public struct ProfileScreen: View {
             )
             .animation(.easeInOut(duration: AnimationConstants.defaultDuration), value: showGlass)
         }
-        .background(appTheme.colors.background)
+        .appScreen()
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarColor(backgroundColor: .clear)
         .edgesIgnoringSafeArea(.top)
@@ -160,9 +161,9 @@ public struct ProfileScreen: View {
                         .clear,
                         .clear,
                         .clear,
-                        Color.black.opacity(0.6),
-                        Color.black.opacity(0.8),
-                        Color.black,
+                        appTheme.colors.background.opacity(0.6),
+                        appTheme.colors.background.opacity(0.8),
+                        appTheme.colors.background,
                     ]),
                     startPoint: .top,
                     endPoint: .bottom
@@ -180,18 +181,18 @@ public struct ProfileScreen: View {
                 VStack(alignment: .leading, spacing: appTheme.spacing.xSmall) {
                     Text(userProfile.fullName ?? userProfile.username)
                         .textStyle(appTheme.typography.titleLarge)
-                        .foregroundColor(appTheme.colors.onPrimary)
+                        .foregroundStyle(.appOnPrimary)
 
                     Button(action: {}) {
                         Text(state.editButtonLabel)
                             .textStyle(appTheme.typography.labelMedium)
-                            .foregroundColor(appTheme.colors.onPrimary)
+                            .foregroundStyle(.appOnPrimary)
                             .padding(.horizontal, 20)
                             .padding(.vertical, appTheme.spacing.xSmall)
                             .background(Color.clear)
                             .overlay(
                                 RoundedRectangle(cornerRadius: appTheme.shapes.medium)
-                                    .stroke(appTheme.colors.onPrimary, lineWidth: 1)
+                                    .stroke(.appOnPrimary, lineWidth: 1)
                             )
                     }
                 }
@@ -236,7 +237,7 @@ public struct ProfileScreen: View {
                         VStack(spacing: 0) {
                             Text(formatNumber(stats.episodesWatched))
                                 .textStyle(appTheme.typography.bodyMedium)
-                                .foregroundColor(appTheme.colors.onSurface)
+                                .foregroundStyle(.appOnSurface)
                                 .frame(maxWidth: .infinity)
                         }
                         .padding(appTheme.spacing.xSmall)
@@ -251,11 +252,11 @@ public struct ProfileScreen: View {
         VStack(spacing: appTheme.spacing.xxSmall) {
             Text("\(value)")
                 .textStyle(appTheme.typography.titleMedium)
-                .foregroundColor(appTheme.colors.onSurface)
+                .foregroundStyle(.appOnSurface)
 
             Text(label)
                 .textStyle(appTheme.typography.bodySmall)
-                .foregroundColor(appTheme.colors.onSurface)
+                .foregroundStyle(.appOnSurface)
         }
     }
 
@@ -276,7 +277,7 @@ public struct ProfileScreen: View {
 
                 Text(state.unauthenticatedTitle)
                     .textStyle(appTheme.typography.headlineLarge)
-                    .foregroundColor(appTheme.colors.onSurface)
+                    .foregroundStyle(.appOnSurface)
                     .lineSpacing(appTheme.spacing.xSmall)
                     .padding(.horizontal, 28)
 
@@ -293,17 +294,17 @@ public struct ProfileScreen: View {
                 VStack(spacing: 20) {
                     Text(state.footerDescription)
                         .textStyle(appTheme.typography.bodyMedium)
-                        .foregroundColor(appTheme.colors.onSurface)
+                        .foregroundStyle(.appOnSurface)
                         .lineSpacing(appTheme.spacing.xxSmall)
                         .padding(.horizontal, appTheme.spacing.large)
 
                     Button(action: onLoginClicked) {
                         Text(state.signInLabel)
                             .textStyle(appTheme.typography.bodyMedium)
-                            .foregroundColor(appTheme.colors.onButtonBackground)
+                            .foregroundStyle(.appOnButtonBackground)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, appTheme.spacing.medium)
-                            .background(appTheme.colors.buttonBackground)
+                            .background(.appButtonBackground)
                             .cornerRadius(appTheme.shapes.extraLarge)
                     }
                     .padding(.horizontal, appTheme.spacing.large)
@@ -333,17 +334,17 @@ public struct ProfileScreen: View {
         HStack(alignment: .top, spacing: appTheme.spacing.medium) {
             Image(systemName: iconName)
                 .textStyle(appTheme.typography.headlineMedium)
-                .foregroundColor(appTheme.colors.accent)
+                .foregroundStyle(.appAccent)
                 .frame(width: 44, height: 44)
 
             VStack(alignment: .leading, spacing: appTheme.spacing.xxSmall) {
                 Text(title)
                     .textStyle(appTheme.typography.titleMedium)
-                    .foregroundColor(appTheme.colors.onSurface)
+                    .foregroundStyle(.appOnSurface)
 
                 Text(description)
                     .textStyle(appTheme.typography.bodyMedium)
-                    .foregroundColor(appTheme.colors.onSurface)
+                    .foregroundStyle(.appOnSurface)
                     .lineSpacing(2)
             }
 

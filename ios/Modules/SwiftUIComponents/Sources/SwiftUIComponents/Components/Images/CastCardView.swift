@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct CastCardView: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let profileUrl: String?
     private let name: String
@@ -61,7 +62,7 @@ public struct CastCardView: View {
             Text(characterName)
                 .textStyle(theme.typography.labelSmall)
         }
-        .foregroundColor(.white)
+        .foregroundStyle(.white)
         .lineLimit(1)
         .padding(.horizontal, 6)
         .padding(.bottom, theme.spacing.medium)

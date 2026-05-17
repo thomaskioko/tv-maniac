@@ -1,6 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct ThemePreviewSwatch: View {
+    @Environment(\.appTheme) private var theme
     let backgroundColor: Color
     let accentColor: Color
     let onAccentColor: Color
@@ -58,8 +60,8 @@ public struct ThemePreviewSwatch: View {
                             .frame(width: 20, height: 20)
                             .overlay(
                                 Image(systemName: "checkmark")
-                                    .font(.system(size: 12, weight: .bold))
-                                    .foregroundColor(isSystemTheme ? .white : onAccentColor)
+                                    .font(theme.typography.labelMedium)
+                                    .foregroundStyle(isSystemTheme ? .white : onAccentColor)
                             )
                             .offset(x: 4, y: 4)
                     }

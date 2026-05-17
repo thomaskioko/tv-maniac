@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct PosterItemView: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let title: String?
     private let posterUrl: String?
@@ -63,7 +64,7 @@ private func LibraryOverlay(libraryImageOverlay: String) -> some View {
             Spacer()
             Image(systemName: libraryImageOverlay)
                 .imageScale(.medium)
-                .foregroundColor(.white)
+                .foregroundStyle(.white)
                 .padding(8)
         }
         Spacer()

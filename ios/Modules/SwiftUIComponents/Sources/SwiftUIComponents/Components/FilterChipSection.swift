@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct FilterChipSection<Item: Hashable>: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let title: String
     private let items: [Item]
@@ -65,7 +66,7 @@ public struct FilterChipSection<Item: Hashable>: View {
             dividerLine
             Text(title)
                 .textStyle(theme.typography.labelMedium)
-                .foregroundColor(theme.colors.onSurfaceVariant)
+                .foregroundStyle(.appOnSurfaceVariant)
                 .padding(.horizontal, theme.spacing.small)
             dividerLine
         }
@@ -73,7 +74,7 @@ public struct FilterChipSection<Item: Hashable>: View {
 
     private var dividerLine: some View {
         Rectangle()
-            .fill(theme.colors.outline.opacity(0.3))
+            .fill(.appOutline.opacity(0.3))
             .frame(height: 1)
     }
 
@@ -89,7 +90,7 @@ public struct FilterChipSection<Item: Hashable>: View {
                 Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                     .font(.caption)
             }
-            .foregroundColor(theme.colors.onSurfaceVariant)
+            .foregroundStyle(.appOnSurfaceVariant)
         }
         .buttonStyle(.plain)
         .padding(.top, theme.spacing.xSmall)

@@ -1,4 +1,5 @@
 import Combine
+import DesignSystem
 import SwiftUI
 
 public struct CarouselView<T, Content: View>: View {

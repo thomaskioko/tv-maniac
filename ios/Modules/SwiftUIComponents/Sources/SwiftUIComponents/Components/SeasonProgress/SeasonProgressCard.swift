@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct SeasonProgressCard: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let season: SwiftSeason
     private let isSelected: Bool
@@ -57,5 +58,5 @@ public struct SeasonProgressCard: View {
         )
     }
     .padding()
-    .environment(\.tvManiacTheme, DarkTheme())
+    .appPreview(DarkTheme())
 }

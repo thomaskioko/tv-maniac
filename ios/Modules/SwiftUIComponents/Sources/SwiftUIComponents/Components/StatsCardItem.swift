@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct StatsCardItem<Content: View>: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let systemImage: String
     private let title: String
@@ -26,11 +27,11 @@ public struct StatsCardItem<Content: View>: View {
 
                 Image(systemName: systemImage)
                     .textStyle(theme.typography.bodyLarge)
-                    .foregroundColor(theme.colors.accent)
+                    .foregroundStyle(.appAccent)
 
                 Text(title)
                     .textStyle(theme.typography.titleMedium)
-                    .foregroundColor(theme.colors.onSurface)
+                    .foregroundStyle(.appOnSurface)
 
                 Spacer()
             }
@@ -40,7 +41,7 @@ public struct StatsCardItem<Content: View>: View {
             Spacer().frame(height: theme.spacing.small)
 
             Rectangle()
-                .fill(theme.colors.onSurface)
+                .fill(.appOnSurface)
                 .frame(height: 1)
 
             Spacer().frame(height: theme.spacing.xSmall)
@@ -57,10 +58,10 @@ public struct StatsCardItem<Content: View>: View {
             .padding(.bottom, theme.spacing.medium)
         }
         .frame(height: 120)
-        .background(theme.colors.surface)
+        .background(.appSurface)
         .overlay(
             RoundedRectangle(cornerRadius: theme.shapes.small)
-                .stroke(theme.colors.onSurface, lineWidth: 2)
+                .stroke(.appOnSurface, lineWidth: 2)
         )
         .cornerRadius(theme.shapes.small)
     }

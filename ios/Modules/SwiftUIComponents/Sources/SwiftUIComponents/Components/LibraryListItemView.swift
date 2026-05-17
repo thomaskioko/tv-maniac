@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct LibraryListItemView: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let item: SwiftLibraryItem
     private let onItemClicked: () -> Void
@@ -54,24 +55,24 @@ public struct LibraryListItemView: View {
                 VStack(alignment: .leading, spacing: theme.spacing.xSmall) {
                     Text(item.title)
                         .textStyle(theme.typography.titleMedium)
-                        .foregroundColor(theme.colors.onSurface)
+                        .foregroundStyle(.appOnSurface)
                         .lineLimit(2)
 
                     if let rating = formattedRating {
                         HStack(spacing: 4) {
                             Image(systemName: "star.fill")
-                                .font(.system(size: 14))
-                                .foregroundColor(theme.colors.accent)
+                                .font(theme.typography.bodyMedium)
+                                .foregroundStyle(.appAccent)
                             Text(rating)
                                 .textStyle(theme.typography.bodyMedium)
-                                .foregroundColor(theme.colors.onSurface)
+                                .foregroundStyle(.appOnSurface)
                         }
                     }
 
                     if let metadata = metadataText {
                         Text(metadata)
                             .textStyle(theme.typography.bodySmall)
-                            .foregroundColor(theme.colors.onSurfaceVariant)
+                            .foregroundStyle(.appOnSurfaceVariant)
                             .lineLimit(3)
                     }
 
@@ -95,7 +96,7 @@ public struct LibraryListItemView: View {
                 .padding(.trailing, theme.spacing.small)
             }
             .frame(height: 200)
-            .background(theme.colors.surface)
+            .background(.appSurface)
             .clipShape(RoundedRectangle(cornerRadius: theme.shapes.small))
             .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
         }
