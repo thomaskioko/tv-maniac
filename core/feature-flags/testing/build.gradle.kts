@@ -5,7 +5,7 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.core.featureFlags.api)
+            api(projects.core.featureFlags.api)
         }
     }
 }

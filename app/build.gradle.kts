@@ -199,12 +199,14 @@ dependencies {
     implementation(libs.androidx.compose.ui.ui)
     implementation(libs.coroutines.core)
     implementation(libs.ktor.core)
+    implementation(libs.firebase.config)
 
     testRuntimeOnly(projects.core.notifications.implementation)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.crashlytics)
 
+    testImplementation(libs.firebase.config)
     testImplementation(projects.api.tmdb.api)
     testImplementation(projects.api.trakt.api)
     testImplementation(projects.core.connectivity.api)
@@ -234,6 +236,7 @@ dependencies {
     testImplementation(libs.robolectric.annotations)
     testRuntimeOnly(libs.androidx.compose.ui.test.manifest)
 
+    androidTestImplementation(libs.firebase.config)
     androidTestImplementation(libs.robolectric.annotations)
     androidTestImplementation(projects.api.tmdb.api)
     androidTestImplementation(projects.api.trakt.api)
