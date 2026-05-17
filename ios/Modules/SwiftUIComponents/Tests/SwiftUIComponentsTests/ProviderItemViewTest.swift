@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -9,7 +10,7 @@ class ProviderItemViewTest: SnapshotTestCase {
             logoUrl: ""
         )
         .padding()
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "ProviderItemView")
     }
 }

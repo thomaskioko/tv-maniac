@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -27,7 +28,7 @@ class CastListViewTest: SnapshotTestCase {
                 ),
             ]
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "CastListView")
     }
 }

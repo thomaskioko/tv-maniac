@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -33,7 +34,7 @@ class HorizontalItemListViewTest: SnapshotTestCase {
             onClick: { _ in },
             onMoreClicked: {}
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "HorizontalItemListView")
     }
 }

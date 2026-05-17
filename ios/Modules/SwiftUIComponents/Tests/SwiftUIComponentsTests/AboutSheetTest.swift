@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -27,6 +28,6 @@ class AboutSheetTest: SnapshotTestCase {
             onVersionTap: {},
             onSourceCodeTap: {}
         )
-        .themedPreview()
+        .appPreview()
     }
 }

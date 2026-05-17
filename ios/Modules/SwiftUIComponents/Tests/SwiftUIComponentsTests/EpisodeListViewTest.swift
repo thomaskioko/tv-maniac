@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -35,7 +36,7 @@ class EpisodeListViewTest: SnapshotTestCase {
             onEpisodeHeaderClicked: {},
             onWatchedStateClicked: {}
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "EpisodeListView")
     }
 }

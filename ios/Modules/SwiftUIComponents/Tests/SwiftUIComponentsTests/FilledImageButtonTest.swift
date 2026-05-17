@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -10,7 +11,7 @@ class FilledImageButtonTest: SnapshotTestCase {
             action: {}
         )
         .padding()
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "FilledButton")
     }
 
@@ -21,7 +22,7 @@ class FilledImageButtonTest: SnapshotTestCase {
             action: {}
         )
         .padding()
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "FilledImageButton")
     }
 }

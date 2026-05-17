@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -21,7 +22,7 @@ class ProviderListViewTest: SnapshotTestCase {
                 ),
             ]
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "ProviderList")
     }
 }

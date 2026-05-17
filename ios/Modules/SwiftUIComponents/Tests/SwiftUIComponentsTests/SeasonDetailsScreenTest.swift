@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -83,7 +84,7 @@ class SeasonDetailsScreenTest: SnapshotTestCase {
             onWatchedStateClicked: {},
             onEpisodeWatchToggle: { _ in }
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "SeasonDetailsScreen_Default")
     }
 
@@ -119,7 +120,7 @@ class SeasonDetailsScreenTest: SnapshotTestCase {
             onWatchedStateClicked: {},
             onEpisodeWatchToggle: { _ in }
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "SeasonDetailsScreen_Error")
     }
 
@@ -171,7 +172,7 @@ class SeasonDetailsScreenTest: SnapshotTestCase {
             onWatchedStateClicked: {},
             onEpisodeWatchToggle: { _ in }
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "SeasonDetailsScreen_FullyWatched")
     }
 }

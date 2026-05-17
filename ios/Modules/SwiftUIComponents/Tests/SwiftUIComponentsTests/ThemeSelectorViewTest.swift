@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -78,7 +79,7 @@ class ThemeSelectorViewTest: SnapshotTestCase {
             onThemeSelected: { _ in }
         )
         .padding()
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "ThemeSelectorView")
     }
 }

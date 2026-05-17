@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -12,7 +13,7 @@ class ToastViewTest: SnapshotTestCase {
             onCancelTapped: {}
         )
         .padding()
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "ToastView_Info")
     }
 
@@ -24,7 +25,7 @@ class ToastViewTest: SnapshotTestCase {
             onCancelTapped: {}
         )
         .padding()
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "ToastView_Success")
     }
 
@@ -36,7 +37,7 @@ class ToastViewTest: SnapshotTestCase {
             onCancelTapped: {}
         )
         .padding()
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "ToastView_Warning")
     }
 
@@ -48,7 +49,7 @@ class ToastViewTest: SnapshotTestCase {
             onCancelTapped: {}
         )
         .padding()
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "ToastView_Error")
     }
 }

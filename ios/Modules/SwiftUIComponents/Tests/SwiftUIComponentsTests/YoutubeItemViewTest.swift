@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -17,7 +18,7 @@ class YoutubeItemViewTest: SnapshotTestCase {
             thumbnailUrl: ""
         )
         .padding()
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "YoutubeItemView")
     }
 }

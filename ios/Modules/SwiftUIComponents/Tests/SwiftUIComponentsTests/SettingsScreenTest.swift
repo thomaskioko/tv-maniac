@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -135,7 +136,7 @@ class SettingsScreenTest: SnapshotTestCase {
             ),
             onBack: {}
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Default")
     }
 
@@ -162,7 +163,7 @@ class SettingsScreenTest: SnapshotTestCase {
             ),
             onBack: {}
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Authenticated")
     }
 
@@ -198,7 +199,7 @@ class SettingsScreenTest: SnapshotTestCase {
             ),
             onBack: {}
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_WithSyncDate")
     }
 
@@ -224,7 +225,7 @@ class SettingsScreenTest: SnapshotTestCase {
             ),
             onBack: {}
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_WithDebugMenu")
     }
 }

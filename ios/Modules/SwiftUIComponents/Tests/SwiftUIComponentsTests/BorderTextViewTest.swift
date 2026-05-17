@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -7,7 +8,7 @@ class BorderTextViewTest: SnapshotTestCase {
     func test_BorderTextView() {
         BorderTextView(text: "2024")
             .padding()
-            .themedPreview()
+            .appPreview()
             .assertSnapshot(testName: "BorderTextView")
     }
 
@@ -19,7 +20,7 @@ class BorderTextViewTest: SnapshotTestCase {
             weight: .bold
         )
         .padding()
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "BorderTextView_Tinted")
     }
 }

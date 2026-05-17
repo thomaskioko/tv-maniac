@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -83,7 +84,7 @@ class DiscoverScreenTest: SnapshotTestCase {
             onNextEpisodeClicked: { _ in },
             onCarouselIndexChanged: { _ in }
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_Loading")
     }
 
@@ -124,7 +125,7 @@ class DiscoverScreenTest: SnapshotTestCase {
             onNextEpisodeClicked: { _ in },
             onCarouselIndexChanged: { _ in }
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_Empty")
     }
 
@@ -165,7 +166,7 @@ class DiscoverScreenTest: SnapshotTestCase {
             onNextEpisodeClicked: { _ in },
             onCarouselIndexChanged: { _ in }
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_Error")
     }
 
@@ -206,7 +207,7 @@ class DiscoverScreenTest: SnapshotTestCase {
             onNextEpisodeClicked: { _ in },
             onCarouselIndexChanged: { _ in }
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_Loaded")
     }
 }

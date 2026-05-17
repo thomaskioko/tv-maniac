@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -10,7 +11,7 @@ class PosterItemViewTest: SnapshotTestCase {
             posterUrl: ""
         )
         .padding()
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "PosterItemView")
     }
 
@@ -21,7 +22,7 @@ class PosterItemViewTest: SnapshotTestCase {
             isInLibrary: true
         )
         .padding()
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "PosterItemView_inLibrary")
     }
 }

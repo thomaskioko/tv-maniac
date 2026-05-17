@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -22,7 +23,7 @@ class TrailerListViewTest: SnapshotTestCase {
             ],
             openInYouTube: false
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "TrailerListView")
     }
 }

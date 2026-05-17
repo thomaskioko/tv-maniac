@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -41,7 +42,7 @@ class WatchlistScreenTest: SnapshotTestCase {
             onShowTitleClicked: { _ in },
             onMarkWatched: { _ in }
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "WatchlistScreen_Loading")
     }
 
@@ -77,7 +78,7 @@ class WatchlistScreenTest: SnapshotTestCase {
             onShowTitleClicked: { _ in },
             onMarkWatched: { _ in }
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "WatchlistScreen_GridMode")
     }
 
@@ -113,7 +114,7 @@ class WatchlistScreenTest: SnapshotTestCase {
             onShowTitleClicked: { _ in },
             onMarkWatched: { _ in }
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "WatchlistScreen_UpToDate")
     }
 }

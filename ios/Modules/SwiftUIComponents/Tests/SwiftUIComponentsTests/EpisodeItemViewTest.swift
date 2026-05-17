@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -11,7 +12,7 @@ class EpisodeItemViewTest: SnapshotTestCase {
             episodeOverView: "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority."
         )
         .padding()
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "EpisodeItemView")
     }
 }

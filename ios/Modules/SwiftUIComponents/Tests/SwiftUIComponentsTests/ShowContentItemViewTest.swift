@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -10,7 +11,7 @@ class ShowContentItemViewTest: SnapshotTestCase {
             imageUrl: ""
         )
         .padding()
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "ShowContentItemView")
     }
 }

@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -45,7 +46,7 @@ class TraktListSelectorContentTest: SnapshotTestCase {
             onCreateSubmitted: {},
             onDismiss: {}
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "TraktListSelector_WithLists")
     }
 
@@ -65,7 +66,7 @@ class TraktListSelectorContentTest: SnapshotTestCase {
             onCreateSubmitted: {},
             onDismiss: {}
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "TraktListSelector_WithCreateField")
     }
 
@@ -83,7 +84,7 @@ class TraktListSelectorContentTest: SnapshotTestCase {
             onCreateSubmitted: {},
             onDismiss: {}
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "TraktListSelector_Empty")
     }
 }
