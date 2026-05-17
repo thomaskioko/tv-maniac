@@ -29,3 +29,23 @@ Crash reporting is disabled unless configured.
 - **iOS**: Place `GoogleService-Info.plist` in `ios/ios/Resources/`.
 
 Both files are gitignored. For CI/CD, store as base64-encoded secrets.
+
+## 5. iOS Toolchain (macOS Only)
+
+iOS development needs Xcode 16 or later plus the command-line tools listed in the project Brewfile, then a pinned SwiftLint installed via Mint:
+
+```bash
+brew bundle install
+mint bootstrap
+```
+
+`brew bundle install` installs:
+
+- `mint`. Pins Swift command-line tools to versions declared in the project Mintfile. Idempotent across re-runs.
+- `swiftformat`. Formats Swift code. Used by `fastlane format_swift_code` and `fastlane check_swift_format`.
+
+`mint bootstrap` reads the project Mintfile and installs the pinned SwiftLint version (currently `0.63.2`). Local developers and CI run the same version, so lint results are reproducible. The Xcode build's Run Script phase invokes SwiftLint via `mint run swiftlint`; CI invokes the matching version via the pinned `ghcr.io/realm/swiftlint:0.63.2` Docker image.
+
+Custom theming rules are at error severity. Reintroducing `@Theme`, hardcoded `.font(.system(size:))`, literal `.foregroundColor(.white/.black/...)`, or `Color(hex:)` outside `DesignSystem/Colors/` fails the build.
+
+If Mint is missing locally, the Xcode build prints a warning and skips the lint phase. CI still enforces the rules, so a pull request that introduces a violation fails before merge. Bump the pinned version by editing both `Mintfile` and the Docker tag in `.github/workflows/ci.yml`.
