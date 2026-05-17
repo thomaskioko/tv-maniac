@@ -17,13 +17,12 @@ dependencies {
     api(projects.navigation.ui)
 
     implementation(projects.androidDesignsystem)
-    implementation(projects.domain.theme)
     implementation(projects.i18n.generator)
 
+    api(libs.androidx.compose.foundation)
+    api(libs.androidx.compose.runtime)
     implementation(libs.androidx.compose.constraintlayout)
-    implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.runtime)
     implementation(libs.coil.compose)
     implementation(libs.youtubePlayer)
 }

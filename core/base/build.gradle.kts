@@ -5,7 +5,6 @@ plugins {
 scaffold {
     addAndroidTarget()
     useMetro()
-    useSerialization()
 
     optIn(
         "kotlinx.coroutines.InternalCoroutinesApi",
@@ -15,12 +14,15 @@ scaffold {
 
 kotlin {
     sourceSets {
+        androidMain.dependencies {
+            api(libs.essenty.lifecycle)
+        }
+
         commonMain.dependencies {
             api(projects.core.view)
-
-            implementation(projects.core.logger.api)
-            implementation(libs.coroutines.core)
-            implementation(libs.decompose.decompose)
+            api(projects.core.logger.api)
+            api(libs.coroutines.core)
+            api(libs.decompose.decompose)
         }
 
         commonTest.dependencies {

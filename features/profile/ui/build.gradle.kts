@@ -21,16 +21,14 @@ dependencies {
     api(projects.navigation.api)
     api(projects.navigation.ui)
 
+    api(libs.androidx.compose.foundation)
+    api(libs.androidx.compose.runtime)
     implementation(projects.androidDesignsystem)
     implementation(projects.features.home.nav)
     implementation(projects.core.testTags)
-    implementation(projects.domain.theme)
     implementation(projects.core.view)
     implementation(projects.i18n.generator)
-
-    implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.runtime)
     implementation(libs.coil.compose)
 
     testImplementation(libs.robolectric.annotations)

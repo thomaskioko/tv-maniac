@@ -9,10 +9,7 @@ kotlin {
                 api(projects.data.database.sqldelight)
                 api(projects.data.upnext.api)
                 api(projects.data.followedshows.api)
-                api(projects.data.seasondetails.api)
                 api(libs.coroutines.core)
-                api(libs.kotlinx.collections)
-                api(libs.kotlinx.datetime)
             }
         }
     }

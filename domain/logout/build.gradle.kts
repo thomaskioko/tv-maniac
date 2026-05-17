@@ -4,9 +4,6 @@ plugins {
 
 scaffold {
     useMetro()
-}
-
-scaffold {
     optIn(
         "kotlinx.coroutines.ExperimentalCoroutinesApi",
     )
@@ -16,14 +13,11 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api(projects.data.user.api)
+                api(projects.core.base)
+                api(projects.data.datastore.api)
+                api(projects.data.syncActivity.api)
                 api(projects.data.traktauth.api)
-                api(projects.data.requestManager.api)
-                api(projects.core.util.api)
-
-                implementation(projects.core.base)
-                implementation(projects.data.datastore.api)
-                implementation(projects.data.syncActivity.api)
+                api(projects.data.user.api)
 
                 implementation(libs.coroutines.core)
             }

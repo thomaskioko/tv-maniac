@@ -11,23 +11,29 @@ scaffold {
 
 kotlin {
     sourceSets {
+        androidMain {
+            dependencies {
+                implementation(projects.i18n.generator)
+            }
+        }
+
         commonMain {
             dependencies {
-                implementation(projects.core.base)
-                implementation(projects.core.tasks.api)
-                implementation(projects.data.datastore.api)
-                implementation(projects.data.episode.api)
-                implementation(projects.data.seasons.api)
-                implementation(projects.core.logger.api)
-                implementation(projects.core.networkUtil.api)
-                implementation(projects.core.syncstate.api)
-                implementation(projects.i18n.api)
-                implementation(projects.core.notifications.api)
-                implementation(projects.core.util.api)
-                implementation(projects.data.seasondetails.api)
-                implementation(projects.data.traktauth.api)
+                api(libs.coroutines.core)
+                api(projects.core.base)
+                api(projects.core.logger.api)
+                api(projects.core.networkUtil.api)
+                api(projects.core.notifications.api)
+                api(projects.core.syncstate.api)
+                api(projects.core.tasks.api)
+                api(projects.core.util.api)
+                api(projects.data.datastore.api)
+                api(projects.data.episode.api)
+                api(projects.data.seasondetails.api)
+                api(projects.data.seasons.api)
+                api(projects.data.traktauth.api)
+                api(projects.i18n.api)
 
-                implementation(libs.coroutines.core)
                 implementation(libs.kotlinx.datetime)
             }
         }
@@ -38,8 +44,10 @@ kotlin {
                 implementation(projects.core.logger.testing)
                 implementation(projects.core.notifications.testing)
                 implementation(projects.core.util.testing)
+                implementation(projects.core.view)
                 implementation(projects.data.datastore.testing)
                 implementation(projects.data.episode.testing)
+                implementation(projects.i18n.generator)
                 implementation(projects.i18n.testing)
             }
         }

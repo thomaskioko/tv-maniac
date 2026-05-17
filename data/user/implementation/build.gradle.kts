@@ -10,18 +10,16 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(projects.api.trakt.api)
-                implementation(projects.core.base)
-                implementation(projects.core.networkUtil.api)
-                implementation(projects.core.util.api)
-                implementation(projects.data.database.sqldelight)
-                implementation(projects.data.requestManager.api)
-                implementation(projects.data.user.api)
-
                 api(libs.coroutines.core)
+                api(libs.store5)
+                api(projects.api.trakt.api)
+                api(projects.core.base)
+                api(projects.data.database.sqldelight)
+                api(projects.data.requestManager.api)
+                api(projects.data.user.api)
 
+                implementation(projects.core.networkUtil.api)
                 implementation(libs.sqldelight.extensions)
-                implementation(libs.store5)
             }
         }
 
@@ -29,7 +27,6 @@ kotlin {
             dependencies {
                 implementation(libs.bundles.unittest)
                 implementation(projects.data.database.testing)
-                implementation(projects.core.util.testing)
             }
         }
     }

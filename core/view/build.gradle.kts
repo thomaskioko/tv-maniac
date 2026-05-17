@@ -13,9 +13,9 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(projects.core.logger.api)
+                api(projects.core.logger.api)
+                api(libs.coroutines.core)
                 implementation(libs.kotlinx.atomicfu)
-                implementation(libs.coroutines.core)
             }
         }
     }

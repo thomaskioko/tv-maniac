@@ -14,20 +14,16 @@ kotlin {
 
         commonMain {
             dependencies {
-                implementation(projects.core.appconfig.api)
+                api(libs.ktor.core)
+                api(projects.api.tmdb.api)
+                api(projects.core.appconfig.api)
+                api(projects.core.connectivity.api)
+                api(projects.core.logger.api)
+                api(projects.core.networkUtil.api)
                 implementation(projects.core.base)
-                implementation(projects.core.connectivity.api)
-                implementation(projects.core.networkUtil.api)
-                implementation(projects.core.util.api)
-                implementation(projects.core.logger.api)
-                implementation(projects.api.tmdb.api)
-
-                implementation(libs.ktor.core)
                 implementation(libs.ktor.logging)
                 implementation(libs.ktor.negotiation)
                 implementation(libs.ktor.serialization.json)
-                implementation(libs.sqldelight.extensions)
-                implementation(libs.sqldelight.extensions)
             }
         }
 

@@ -18,17 +18,14 @@ scaffold {
 dependencies {
     api(projects.features.upnext.presenter)
 
+    api(libs.androidx.compose.foundation)
+    api(libs.androidx.compose.runtime)
     implementation(projects.androidDesignsystem)
     implementation(projects.core.testTags)
     implementation(projects.core.view)
     implementation(projects.i18n.generator)
     implementation(projects.domain.upnext)
-
-    implementation(projects.domain.theme)
-
-    implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.runtime)
     implementation(libs.kotlinx.collections)
 
     testImplementation(libs.robolectric.annotations)

@@ -17,6 +17,7 @@ plugins {
     alias(libs.plugins.sqldelight) apply false
     alias(libs.plugins.roborazzi) apply false
     alias(libs.plugins.app.root)
+    alias(libs.plugins.app.lint)
     alias(libs.plugins.app.android) apply false
     alias(libs.plugins.app.application) apply false
     alias(libs.plugins.app.baseline.profile) apply false

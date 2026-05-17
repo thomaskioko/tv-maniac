@@ -10,8 +10,8 @@ scaffold {
 kotlin {
     sourceSets {
         commonMain.dependencies {
+            api(projects.core.connectivity.api)
             implementation(projects.core.base)
-            implementation(projects.core.connectivity.api)
         }
     }
 }

@@ -7,8 +7,7 @@ kotlin {
         commonMain {
             dependencies {
                 api(projects.data.calendar.api)
-
-                implementation(libs.coroutines.core)
+                api(libs.coroutines.core)
             }
         }
     }

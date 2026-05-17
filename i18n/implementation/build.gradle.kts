@@ -15,30 +15,42 @@ scaffold {
 
 kotlin {
     sourceSets {
+        androidHostTest {
+            dependencies {
+                implementation(libs.androidx.test.core)
+                implementation(projects.i18n.generator)
+            }
+        }
+
         androidMain {
             dependencies {
-                api(libs.moko.resources.compose)
+                api(projects.core.view)
+                api(projects.i18n.generator)
             }
         }
 
         commonMain {
             dependencies {
-                implementation(projects.core.base)
-                implementation(projects.core.locale.api)
-                implementation(projects.core.networkUtil.api)
-                implementation(projects.i18n.api)
-
-                implementation(libs.coroutines.core)
-
+                api(libs.coroutines.core)
                 api(libs.moko.resources)
+                api(projects.core.base)
+                api(projects.core.locale.api)
+                api(projects.i18n.api)
+
+                implementation(projects.core.networkUtil.api)
             }
         }
 
         commonTest {
             dependencies {
-                implementation(projects.core.locale.testing)
-                implementation(projects.i18n.testing)
                 implementation(libs.bundles.unittest)
+                implementation(projects.i18n.testing)
+            }
+        }
+
+        jvmTest {
+            dependencies {
+                implementation(projects.i18n.generator)
             }
         }
     }

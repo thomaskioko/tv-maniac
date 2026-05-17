@@ -15,29 +15,24 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(projects.core.base)
-                implementation(projects.navigation.api)
+                api(libs.decompose.decompose)
+                api(libs.essenty.lifecycle)
+                api(projects.core.base)
+                api(projects.domain.user)
+                api(projects.features.home.nav)
+                api(projects.navigation.api)
+
                 implementation(projects.features.discover.nav)
-                implementation(projects.features.home.nav)
                 implementation(projects.features.library.nav)
                 implementation(projects.features.profile.nav)
                 implementation(projects.features.progress.nav)
-                implementation(projects.core.logger.api)
-                implementation(projects.data.traktauth.api)
-                implementation(projects.domain.user)
-
-                implementation(libs.decompose.decompose)
-                implementation(libs.essenty.lifecycle)
             }
         }
 
         commonTest {
             dependencies {
-                implementation(projects.core.logger.testing)
-                implementation(projects.core.util.testing)
-                implementation(projects.core.integration.infra)
-
                 implementation(libs.bundles.unittest)
+                implementation(projects.core.integration.infra)
             }
         }
     }

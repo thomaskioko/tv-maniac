@@ -10,44 +10,47 @@ scaffold {
 
 kotlin {
     sourceSets {
+        androidMain {
+            dependencies {
+                implementation(projects.i18n.generator)
+            }
+        }
+
         commonMain {
             dependencies {
-                implementation(projects.core.base)
-                implementation(projects.core.logger.api)
-                implementation(projects.core.syncstate.api)
-                implementation(projects.core.view)
-                implementation(projects.data.datastore.api)
-                implementation(projects.domain.theme)
-                implementation(projects.features.settings.presenter)
-                implementation(projects.domain.logout)
-                implementation(projects.domain.user)
-                implementation(projects.i18n.api)
-                implementation(projects.navigation.api)
-                implementation(projects.features.root.nav)
-                implementation(projects.features.debug.nav)
-                implementation(projects.features.home.nav)
-                implementation(projects.features.home.presenter)
-                implementation(projects.features.seasonDetails.nav)
-                implementation(projects.features.showDetails.nav)
+                api(projects.core.base)
+                api(projects.core.logger.api)
+                api(projects.core.syncstate.api)
+                api(projects.data.datastore.api)
+                api(projects.data.traktauth.api)
+                api(projects.domain.logout)
+                api(projects.domain.user)
+                api(projects.features.home.presenter)
+                api(projects.features.root.nav)
+                api(projects.i18n.api)
+                api(projects.navigation.api)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
                 api(libs.coroutines.core)
+
+                implementation(projects.core.view)
+                implementation(projects.domain.theme)
+                implementation(projects.features.debug.nav)
+                implementation(projects.features.seasonDetails.nav)
+                implementation(projects.features.settings.presenter)
+                implementation(projects.features.showDetails.nav)
             }
         }
 
         commonTest {
             dependencies {
+                implementation(libs.bundles.unittest)
                 implementation(projects.core.integration.infra)
-                implementation(projects.i18n.testing)
-                implementation(projects.navigation.implementation)
-                implementation(projects.data.traktauth.testing)
-                implementation(projects.data.datastore.testing)
                 implementation(projects.features.genreShows.nav)
                 implementation(projects.features.moreShows.nav)
                 implementation(projects.features.trailers.nav)
-
-                implementation(libs.bundles.unittest)
+                implementation(projects.i18n.testing)
             }
         }
     }

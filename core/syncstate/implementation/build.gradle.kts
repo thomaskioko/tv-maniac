@@ -9,8 +9,8 @@ scaffold {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.core.syncstate.api)
-            implementation(libs.coroutines.core)
+            api(projects.core.syncstate.api)
+            api(libs.coroutines.core)
         }
 
         commonTest.dependencies {

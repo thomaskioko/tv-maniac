@@ -11,17 +11,16 @@ kotlin {
     sourceSets {
         androidMain {
             dependencies {
-                implementation(libs.androidx.work.runtime)
+                api(libs.androidx.work.runtime)
             }
         }
 
         commonMain {
             dependencies {
                 api(projects.core.tasks.api)
+                api(projects.core.logger.api)
+                api(projects.core.syncstate.api)
                 implementation(libs.coroutines.core)
-                implementation(projects.core.logger.api)
-                implementation(projects.core.syncstate.api)
-                implementation(libs.kotlinx.atomicfu)
             }
         }
 

@@ -12,34 +12,35 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                api(projects.core.base)
+                api(projects.core.logger.api)
                 api(projects.core.view)
-                implementation(projects.core.base)
-                implementation(projects.core.logger.api)
-                implementation(projects.navigation.api)
-                implementation(projects.features.home.nav)
-                implementation(projects.features.profile.nav)
-                implementation(projects.features.settings.nav)
-                implementation(projects.i18n.api)
-                implementation(projects.domain.user)
-                implementation(projects.data.traktauth.api)
-                implementation(projects.data.user.api)
+                api(projects.data.traktauth.api)
+                api(projects.domain.user)
+                api(projects.features.profile.nav)
+                api(projects.i18n.api)
+                api(projects.navigation.api)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
+
+                implementation(projects.data.user.api)
+                implementation(projects.features.home.nav)
+                implementation(projects.features.settings.nav)
             }
         }
 
         commonTest {
             dependencies {
+                implementation(libs.bundles.unittest)
                 implementation(projects.core.logger.testing)
-                implementation(projects.core.util.testing)
                 implementation(projects.data.traktauth.testing)
+                implementation(projects.data.traktlists.api)
                 implementation(projects.data.traktlists.testing)
                 implementation(projects.data.user.testing)
+                implementation(projects.i18n.generator)
                 implementation(projects.i18n.testing)
                 implementation(projects.navigation.testing)
-
-                implementation(libs.bundles.unittest)
             }
         }
     }

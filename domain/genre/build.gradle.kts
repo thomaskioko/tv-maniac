@@ -14,9 +14,8 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                api(projects.core.base)
                 api(projects.data.genre.api)
-
-                implementation(projects.core.base)
 
                 implementation(libs.coroutines.core)
             }
@@ -24,8 +23,6 @@ kotlin {
 
         commonTest {
             dependencies {
-                implementation(projects.data.genre.testing)
-
                 implementation(libs.bundles.unittest)
             }
         }

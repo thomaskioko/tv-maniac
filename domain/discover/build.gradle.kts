@@ -4,9 +4,6 @@ plugins {
 
 scaffold {
     useMetro()
-}
-
-scaffold {
     optIn(
         "kotlinx.coroutines.ExperimentalCoroutinesApi",
     )
@@ -16,24 +13,23 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-
+                api(libs.coroutines.core)
+                api(projects.core.base)
                 api(projects.data.featuredshows.api)
+                api(projects.data.genre.api)
                 api(projects.data.popularshows.api)
+                api(projects.data.shows.api)
                 api(projects.data.topratedshows.api)
                 api(projects.data.trendingshows.api)
                 api(projects.data.upcomingshows.api)
-                implementation(projects.data.genre.api)
-                implementation(projects.data.upnext.api)
-                implementation(projects.domain.upnext)
-
-                implementation(projects.core.base)
-
-                implementation(libs.coroutines.core)
+                api(projects.data.upnext.api)
+                api(projects.domain.upnext)
             }
         }
 
         commonTest {
             dependencies {
+                implementation(libs.bundles.unittest)
                 implementation(projects.data.featuredshows.testing)
                 implementation(projects.data.genre.testing)
                 implementation(projects.data.popularshows.testing)
@@ -41,8 +37,6 @@ kotlin {
                 implementation(projects.data.trendingshows.testing)
                 implementation(projects.data.upcomingshows.testing)
                 implementation(projects.data.upnext.testing)
-
-                implementation(libs.bundles.unittest)
             }
         }
     }

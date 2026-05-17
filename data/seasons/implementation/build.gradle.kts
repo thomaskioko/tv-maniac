@@ -10,20 +10,18 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(projects.api.tmdb.api)
-                implementation(projects.api.trakt.api)
-                implementation(projects.core.base)
-                implementation(projects.core.networkUtil.api)
-                implementation(projects.core.util.api)
-                implementation(projects.data.database.sqldelight)
-                implementation(projects.data.datastore.api)
-                implementation(projects.data.episode.api)
-                implementation(projects.data.requestManager.api)
-                implementation(projects.data.seasons.api)
+                api(libs.store5)
+                api(projects.api.trakt.api)
+                api(projects.core.base)
+                api(projects.core.util.api)
+                api(projects.data.database.sqldelight)
+                api(projects.data.datastore.api)
+                api(projects.data.episode.api)
+                api(projects.data.requestManager.api)
+                api(projects.data.seasons.api)
 
+                implementation(projects.core.networkUtil.api)
                 implementation(libs.sqldelight.extensions)
-                implementation(libs.kotlinx.atomicfu)
-                implementation(libs.store5)
             }
         }
     }

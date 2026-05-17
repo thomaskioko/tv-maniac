@@ -9,18 +9,23 @@ scaffold {
 
 kotlin {
     sourceSets {
+        androidMain {
+            dependencies {
+                implementation(projects.core.view)
+            }
+        }
+
         commonMain {
             dependencies {
-                implementation(projects.core.base)
-                implementation(projects.core.logger.api)
-                implementation(projects.core.syncstate.api)
-                implementation(projects.core.tasks.api)
-                implementation(projects.core.util.api)
-                implementation(projects.data.datastore.api)
-                implementation(projects.data.traktauth.api)
-                implementation(projects.data.upnext.api)
-
-                implementation(libs.coroutines.core)
+                api(libs.coroutines.core)
+                api(projects.core.base)
+                api(projects.core.logger.api)
+                api(projects.core.syncstate.api)
+                api(projects.core.tasks.api)
+                api(projects.core.util.api)
+                api(projects.data.datastore.api)
+                api(projects.data.traktauth.api)
+                api(projects.data.upnext.api)
             }
         }
 

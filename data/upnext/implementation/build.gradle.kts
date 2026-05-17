@@ -13,16 +13,16 @@ kotlin {
         commonMain {
             dependencies {
                 api(libs.coroutines.core)
+                api(projects.core.logger.api)
+                api(projects.data.datastore.api)
+                api(projects.data.episode.api)
+                api(projects.data.followedshows.api)
+                api(projects.data.requestManager.api)
+                api(projects.data.seasondetails.api)
+                api(projects.data.showdetails.api)
+                api(projects.data.upnext.api)
 
                 implementation(projects.core.base)
-                implementation(projects.core.logger.api)
-                implementation(projects.data.datastore.api)
-                implementation(projects.data.episode.api)
-                implementation(projects.data.followedshows.api)
-                implementation(projects.data.requestManager.api)
-                implementation(projects.data.seasondetails.api)
-                implementation(projects.data.showdetails.api)
-                implementation(projects.data.upnext.api)
             }
         }
 
@@ -39,6 +39,22 @@ kotlin {
                 implementation(projects.data.requestManager.testing)
                 implementation(projects.data.seasondetails.testing)
                 implementation(projects.data.showdetails.testing)
+            }
+        }
+
+        androidHostTest {
+            dependencies {
+                implementation(libs.kotlinx.datetime)
+                implementation(projects.core.util.api)
+                implementation(projects.data.database.sqldelight)
+            }
+        }
+
+        jvmTest {
+            dependencies {
+                implementation(libs.kotlinx.datetime)
+                implementation(projects.core.util.api)
+                implementation(projects.data.database.sqldelight)
             }
         }
     }

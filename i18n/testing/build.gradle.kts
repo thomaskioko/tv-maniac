@@ -11,18 +11,18 @@ kotlin {
     sourceSets {
         androidMain {
             dependencies {
-                implementation(libs.androidx.junit)
-                implementation(libs.robolectric)
+                api(libs.androidx.junit)
+                api(projects.i18n.generator)
+                implementation(libs.androidx.test.core)
+                runtimeOnly(libs.robolectric)
             }
         }
 
         commonMain {
             dependencies {
-                implementation(projects.core.base)
-                implementation(projects.i18n.api)
-                implementation(projects.i18n.implementation)
-                implementation(libs.coroutines.core)
-                implementation(libs.moko.resources)
+                api(libs.moko.resources)
+                api(projects.i18n.api)
+                api(projects.i18n.implementation)
             }
         }
     }

@@ -4,11 +4,15 @@ plugins {
 
 kotlin {
     sourceSets {
+        androidMain {
+            dependencies {
+                runtimeOnly(libs.coroutines.android)
+            }
+        }
+
         commonMain {
             dependencies {
-                api(projects.data.datastore.api)
                 api(libs.coroutines.core)
-                api(libs.kotlinx.datetime)
             }
         }
     }

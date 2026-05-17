@@ -5,7 +5,6 @@ plugins {
 scaffold {
     addAndroidTarget()
     useMetro()
-    useSerialization()
 
     optIn(
         "kotlinx.coroutines.InternalCoroutinesApi",
@@ -17,12 +16,8 @@ kotlin {
         commonMain.dependencies {
             api(projects.core.networkUtil.api)
 
-            implementation(projects.core.base)
-
             implementation(libs.coroutines.core)
             implementation(libs.kotlinx.atomicfu)
-            implementation(libs.ktor.core)
-            implementation(libs.store5)
         }
 
         commonTest.dependencies {

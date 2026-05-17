@@ -11,33 +11,29 @@ kotlin {
     sourceSets {
         androidMain {
             dependencies {
-                implementation(libs.appauth)
-                implementation(libs.coroutines.core)
-                implementation(projects.data.traktauth.api)
-                implementation(projects.core.util.api)
-
-                implementation(libs.androidx.activity)
-                implementation(libs.androidx.browser)
+                api(libs.androidx.activity)
+                api(libs.androidx.datastore.preference)
+                api(libs.appauth)
+                api(libs.coroutines.core)
+                api(projects.core.util.api)
+                api(projects.data.datastore.api)
+                api(projects.data.traktauth.api)
                 implementation(libs.androidx.core.ktx)
-                implementation(libs.androidx.datastore.preference)
-                implementation(projects.data.datastore.api)
+                implementation(libs.androidx.lifecycle.common)
+                implementation(projects.core.networkUtil.api)
             }
         }
 
         commonMain {
             dependencies {
-                implementation(projects.core.appconfig.api)
-                implementation(projects.core.base)
-                implementation(projects.api.trakt.api)
-                implementation(projects.core.logger.api)
-                implementation(projects.core.tasks.api)
-                implementation(projects.core.util.api)
-                implementation(projects.data.datastore.api)
-                implementation(projects.data.traktauth.api)
-                implementation(projects.data.requestManager.api)
-                implementation(projects.api.trakt.api)
-                implementation(libs.ktor.auth)
-                implementation(libs.kotlinx.datetime)
+                api(projects.api.trakt.api)
+                api(projects.core.base)
+                api(projects.core.logger.api)
+                api(projects.core.tasks.api)
+                api(projects.core.util.api)
+                api(projects.data.datastore.api)
+                api(projects.data.requestManager.api)
+                api(projects.data.traktauth.api)
             }
         }
 
@@ -45,6 +41,12 @@ kotlin {
             dependencies {
                 implementation(libs.multiplatformsettings.core)
                 implementation(libs.multiplatformsettings.coroutines)
+            }
+        }
+
+        jvmMain {
+            dependencies {
+                api(libs.coroutines.core)
             }
         }
     }

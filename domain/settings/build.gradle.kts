@@ -8,14 +8,19 @@ scaffold {
 
 kotlin {
     sourceSets {
+        androidMain {
+            dependencies {
+                implementation(libs.kotlinx.datetime)
+            }
+        }
+
         commonMain {
             dependencies {
-                implementation(projects.core.base)
-                implementation(projects.core.util.api)
-                implementation(projects.domain.theme)
-                implementation(projects.data.datastore.api)
-
-                implementation(libs.coroutines.core)
+                api(libs.coroutines.core)
+                api(projects.core.base)
+                api(projects.core.util.api)
+                api(projects.data.datastore.api)
+                api(projects.domain.theme)
             }
         }
     }

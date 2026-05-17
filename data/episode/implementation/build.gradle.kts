@@ -13,25 +13,23 @@ kotlin {
         commonMain {
             dependencies {
                 api(libs.coroutines.core)
+                api(libs.store5)
+                api(projects.api.trakt.api)
+                api(projects.core.base)
+                api(projects.core.logger.api)
+                api(projects.core.syncstate.api)
+                api(projects.core.util.api)
+                api(projects.data.database.sqldelight)
+                api(projects.data.datastore.api)
+                api(projects.data.episode.api)
+                api(projects.data.followedshows.api)
+                api(projects.data.requestManager.api)
+                api(projects.data.traktauth.api)
+                api(projects.data.upnext.api)
 
-                implementation(projects.api.tmdb.api)
-                implementation(projects.api.trakt.api)
-                implementation(projects.core.base)
-                implementation(projects.core.logger.api)
                 implementation(projects.core.networkUtil.api)
-                implementation(projects.core.syncstate.api)
-                implementation(projects.core.util.api)
-                implementation(projects.data.database.sqldelight)
-                implementation(projects.data.datastore.api)
-                implementation(projects.data.episode.api)
-                implementation(projects.data.followedshows.api)
-                implementation(projects.data.requestManager.api)
-                implementation(projects.data.traktauth.api)
-                implementation(projects.data.upnext.api)
-
                 implementation(libs.kotlinx.datetime)
                 implementation(libs.sqldelight.extensions)
-                implementation(libs.store5)
             }
         }
 
@@ -40,15 +38,12 @@ kotlin {
                 implementation(libs.bundles.unittest)
                 implementation(projects.core.base.testing)
                 implementation(projects.core.util.testing)
+                implementation(projects.core.syncstate.testing)
                 implementation(projects.data.database.testing)
                 implementation(projects.data.datastore.testing)
                 implementation(projects.data.episode.testing)
-                implementation(projects.data.upnext.testing)
-                implementation(projects.data.followedshows.testing)
                 implementation(projects.data.requestManager.testing)
-                implementation(projects.core.util.implementation)
-                implementation(projects.core.syncstate.testing)
-                implementation(projects.i18n.testing)
+                implementation(projects.data.seasondetails.api)
             }
         }
     }

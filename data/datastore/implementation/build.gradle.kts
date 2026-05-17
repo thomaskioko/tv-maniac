@@ -14,10 +14,16 @@ scaffold {
 
 kotlin {
     sourceSets {
+        androidMain {
+            dependencies {
+                implementation(libs.okio)
+            }
+        }
+
         commonMain {
             dependencies {
+                api(projects.data.datastore.api)
                 implementation(projects.core.base)
-                implementation(projects.data.datastore.api)
 
                 api(libs.androidx.datastore.preference)
             }

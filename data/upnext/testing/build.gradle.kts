@@ -6,9 +6,8 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(projects.data.upnext.api)
-
-                implementation(libs.coroutines.core)
+                api(projects.data.upnext.api)
+                api(libs.coroutines.core)
             }
         }
     }

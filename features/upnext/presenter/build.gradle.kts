@@ -11,44 +11,43 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                api(projects.core.base)
+                api(projects.core.logger.api)
                 api(projects.core.view)
-                implementation(projects.navigation.api)
-                implementation(projects.features.episodeSheet.nav)
-                implementation(projects.features.progress.nav)
-                implementation(projects.features.showDetails.nav)
-                implementation(projects.features.seasonDetails.nav)
-                implementation(projects.data.episode.api)
-                implementation(projects.data.upnext.api)
-                implementation(projects.data.followedshows.api)
-                implementation(projects.data.traktauth.api)
-                implementation(projects.core.base)
-                implementation(projects.core.logger.api)
-                implementation(projects.domain.episode)
-                implementation(projects.domain.followedshows)
-                implementation(projects.domain.upnext)
-                implementation(projects.domain.library)
-                implementation(projects.i18n.api)
+                api(projects.data.episode.api)
+                api(projects.data.followedshows.api)
+                api(projects.data.traktauth.api)
+                api(projects.data.upnext.api)
+                api(projects.domain.episode)
+                api(projects.domain.followedshows)
+                api(projects.domain.upnext)
+                api(projects.features.progress.nav)
+                api(projects.navigation.api)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
                 api(libs.kotlinx.collections)
+
+                implementation(projects.features.episodeSheet.nav)
+                implementation(projects.features.seasonDetails.nav)
+                implementation(projects.features.showDetails.nav)
             }
         }
 
         commonTest {
             dependencies {
+                implementation(libs.bundles.unittest)
                 implementation(projects.core.logger.testing)
+                implementation(projects.core.util.api)
                 implementation(projects.core.util.testing)
+                implementation(projects.data.datastore.api)
                 implementation(projects.data.datastore.testing)
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.followedshows.testing)
-                implementation(projects.data.upnext.testing)
                 implementation(projects.data.traktauth.testing)
-                implementation(projects.core.util.implementation)
+                implementation(projects.data.upnext.testing)
                 implementation(projects.i18n.testing)
                 implementation(projects.navigation.testing)
-
-                implementation(libs.bundles.unittest)
             }
         }
     }

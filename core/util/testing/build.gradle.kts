@@ -8,15 +8,19 @@ kotlin {
             dependencies {
                 api(projects.core.appconfig.api)
                 api(projects.core.util.api)
-                implementation(projects.core.base)
-                implementation(libs.coroutines.core)
+            }
+        }
+
+        androidMain {
+            dependencies {
+                api(libs.kotlinx.datetime)
             }
         }
 
         val jvmAndroidMain by creating {
             dependsOn(commonMain.get())
             dependencies {
-                implementation(libs.junit4)
+                api(libs.junit4)
             }
         }
 

@@ -22,6 +22,7 @@ dependencies {
     api(projects.navigation.api)
     api(projects.navigation.ui)
 
+    api(libs.androidx.compose.runtime)
     implementation(projects.androidDesignsystem)
     implementation(projects.features.home.nav)
     implementation(projects.core.testTags)
@@ -31,11 +32,9 @@ dependencies {
     implementation(projects.features.upnext.presenter)
     implementation(projects.i18n.generator)
     implementation(projects.core.view)
-    implementation(projects.domain.theme)
-
+    implementation(projects.domain.upnext)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.runtime)
 
     testImplementation(libs.robolectric.annotations)
     testImplementation(projects.core.screenshotTests)

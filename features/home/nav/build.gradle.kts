@@ -3,7 +3,6 @@ plugins {
 }
 
 scaffold {
-    useMetro()
     useSerialization()
 }
 
@@ -11,10 +10,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(projects.core.base)
-                implementation(projects.navigation.api)
-
-                api(libs.decompose.decompose)
+                api(projects.navigation.api)
             }
         }
     }

@@ -10,9 +10,8 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(projects.data.user.api)
-                implementation(projects.data.user.implementation)
-                implementation(projects.core.base)
+                api(projects.data.user.api)
+                api(projects.data.user.implementation)
             }
         }
     }

@@ -11,28 +11,26 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                api(projects.core.base)
+                api(projects.core.logger.api)
                 api(projects.core.view)
-                implementation(projects.data.library.api)
-                implementation(projects.data.traktauth.api)
-                implementation(projects.core.base)
-                implementation(projects.core.logger.api)
-                implementation(projects.navigation.api)
-                implementation(projects.features.home.nav)
-                implementation(projects.features.library.nav)
-                implementation(projects.features.showDetails.nav)
-                implementation(projects.domain.library)
+                api(projects.data.library.api)
+                api(projects.data.traktauth.api)
+                api(projects.domain.library)
+                api(projects.features.library.nav)
+                api(projects.navigation.api)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
                 api(libs.kotlinx.collections)
+
+                implementation(projects.features.home.nav)
+                implementation(projects.features.showDetails.nav)
             }
         }
 
         commonTest {
             dependencies {
-                implementation(projects.core.logger.testing)
-                implementation(projects.data.library.testing)
-
                 implementation(libs.bundles.unittest)
             }
         }

@@ -14,7 +14,7 @@ dependencies {
     api(projects.core.base)
     api(projects.navigation.api)
 
+    api(libs.androidx.compose.runtime)
+    api(libs.androidx.compose.ui.ui)
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.compose.runtime)
-    implementation(libs.androidx.compose.ui.ui)
 }

@@ -10,8 +10,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api(projects.features.episodeSheet.nav)
-                implementation(projects.domain.theme)
+                api(projects.domain.theme)
             }
         }
     }

@@ -11,7 +11,6 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktAccessRefreshTokenResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAccessTokenResponse
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
-import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.auth.AuthCircuitBreaker
@@ -24,7 +23,6 @@ import io.ktor.http.path
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-@Inject
 public class DefaultTraktTokenRemoteDataSource(
     @TraktApi
     private val httpClient: HttpClient,

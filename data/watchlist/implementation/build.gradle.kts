@@ -11,11 +11,10 @@ kotlin {
         commonMain {
             dependencies {
                 api(libs.coroutines.core)
-
-                implementation(projects.core.base)
-                implementation(projects.data.database.sqldelight)
-                implementation(projects.data.datastore.api)
-                implementation(projects.data.watchlist.api)
+                api(projects.core.base)
+                api(projects.data.database.sqldelight)
+                api(projects.data.datastore.api)
+                api(projects.data.watchlist.api)
 
                 implementation(libs.sqldelight.extensions)
             }
@@ -24,7 +23,6 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)
-                implementation(projects.data.datastore.testing)
             }
         }
     }

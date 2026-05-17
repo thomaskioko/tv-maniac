@@ -12,26 +12,23 @@ scaffold {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.core.base)
-            implementation(projects.navigation.api)
+            api(libs.coroutines.core)
+            api(projects.core.base)
+            api(projects.navigation.api)
             implementation(projects.features.home.nav)
-
-            implementation(libs.coroutines.core)
         }
 
         commonTest.dependencies {
-            implementation(projects.core.util.testing)
-            implementation(projects.data.traktauth.testing)
-            implementation(projects.core.integration.infra)
-            implementation(projects.features.episodeSheet.nav)
+            implementation(libs.bundles.unittest)
+            implementation(libs.kotlinx.serialization.json)
+            implementation(projects.features.discover.nav)
             implementation(projects.features.genreShows.nav)
             implementation(projects.features.home.nav)
+            implementation(projects.features.library.nav)
             implementation(projects.features.moreShows.nav)
             implementation(projects.features.seasonDetails.nav)
             implementation(projects.features.showDetails.nav)
-
-            implementation(libs.bundles.unittest)
-            implementation(libs.kotlinx.serialization.json)
+            implementation(projects.navigation.implementation)
         }
     }
 }

@@ -14,17 +14,19 @@ kotlin {
         getByName("androidDeviceTest") {
             dependencies {
                 implementation(libs.androidx.junit)
+                implementation(libs.androidx.test.core)
                 implementation(libs.bundles.unittest)
-                implementation(libs.androidx.runner)
+                implementation(libs.kotlin.test.junit)
+                runtimeOnly(libs.androidx.runner)
             }
         }
 
         commonMain {
             dependencies {
+                api(libs.coroutines.core)
+                api(projects.core.locale.api)
+                api(projects.data.datastore.api)
                 implementation(projects.core.base)
-                implementation(projects.core.locale.api)
-                implementation(projects.data.datastore.api)
-                implementation(libs.coroutines.core)
             }
         }
 

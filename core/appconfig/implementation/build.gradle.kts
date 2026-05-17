@@ -12,9 +12,9 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.core.appconfig.api)
+            api(projects.api.tmdb.api)
+            api(projects.api.trakt.api)
             implementation(projects.core.base)
-            implementation(projects.api.tmdb.api)
-            implementation(projects.api.trakt.api)
         }
     }
 }
