@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -30,7 +31,7 @@ class MoreShowsScreenTest: SnapshotTestCase {
             onBack: {},
             onRetry: {}
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "MoreShowsScreen")
     }
 
@@ -51,7 +52,7 @@ class MoreShowsScreenTest: SnapshotTestCase {
             onBack: {},
             onRetry: {}
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "MoreShowsScreen_LoadingMore")
     }
 
@@ -72,7 +73,7 @@ class MoreShowsScreenTest: SnapshotTestCase {
             onBack: {},
             onRetry: {}
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "MoreShowsScreen_Error")
     }
 
@@ -93,7 +94,7 @@ class MoreShowsScreenTest: SnapshotTestCase {
             onBack: {},
             onRetry: {}
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "MoreShowsScreen_Empty")
     }
 }

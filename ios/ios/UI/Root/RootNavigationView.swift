@@ -6,6 +6,7 @@
 //  Copyright © 2024 orgName. All rights reserved.
 //
 
+import DesignSystem
 import SwiftUI
 import SwiftUIComponents
 import TvManiac

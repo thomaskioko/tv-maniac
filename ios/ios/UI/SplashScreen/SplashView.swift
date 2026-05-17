@@ -6,11 +6,12 @@
 //  Copyright © 2024 orgName. All rights reserved.
 //
 
+import DesignSystem
 import SwiftUI
 import SwiftUIComponents
 
 struct SplashView: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
     @State private var isActive = false
     @State private var logoScale: CGFloat = 0.6
     @State private var logoOpacity: Double = 0
@@ -28,9 +29,6 @@ struct SplashView: View {
                 .transition(.opacity)
         } else {
             ZStack {
-                theme.colors.background
-                    .ignoresSafeArea()
-
                 TvManiacAppIcon.image(isDebug: isDebug)
                     .resizable()
                     .scaledToFit()
@@ -39,6 +37,7 @@ struct SplashView: View {
                     .scaleEffect(logoScale)
                     .opacity(logoOpacity)
             }
+            .appScreen()
             .onAppear {
                 withAnimation(.easeOut(duration: 0.4)) {
                     logoScale = 1.0

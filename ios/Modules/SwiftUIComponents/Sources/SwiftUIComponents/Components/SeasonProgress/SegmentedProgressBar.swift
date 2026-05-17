@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct SegmentedProgressBar: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let segmentProgress: [Float]
     private let height: CGFloat
@@ -75,5 +76,5 @@ private struct ProgressSegment: View {
         )
     }
     .padding()
-    .environment(\.tvManiacTheme, DarkTheme())
+    .appPreview(DarkTheme())
 }

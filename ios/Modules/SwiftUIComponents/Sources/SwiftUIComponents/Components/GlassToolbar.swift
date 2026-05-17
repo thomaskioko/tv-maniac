@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct GlassToolbar<LeadingIcon: View, TrailingIcon: View>: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
     @Environment(\.colorScheme) private var colorScheme
 
     private let title: String
@@ -92,7 +93,7 @@ public struct GlassToolbar<LeadingIcon: View, TrailingIcon: View>: View {
 
                 Text(title)
                     .textStyle(theme.typography.titleMedium)
-                    .foregroundColor(theme.colors.onSurface)
+                    .foregroundStyle(.appOnSurface)
                     .opacity(opacity)
                     .lineLimit(1)
                     .padding(.bottom, theme.spacing.xSmall)

@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct NextEpisodeCard: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let episode: SwiftNextEpisode
     private let onEpisodeClick: () -> Void
@@ -41,7 +42,7 @@ public struct NextEpisodeCard: View {
                         Spacer()
                         Text(runtime)
                             .textStyle(theme.typography.labelSmall)
-                            .foregroundColor(theme.colors.onPrimary)
+                            .foregroundStyle(.appOnPrimary)
                             .padding(.horizontal, theme.spacing.xxSmall + 2)
                             .padding(.vertical, theme.spacing.xxxSmall)
                             .background(Color.black.opacity(0.6))
@@ -58,12 +59,12 @@ public struct NextEpisodeCard: View {
                     VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
                         Text(episode.showName)
                             .textStyle(theme.typography.titleMedium)
-                            .foregroundColor(theme.colors.onPrimary)
+                            .foregroundStyle(.appOnPrimary)
                             .lineLimit(1)
 
                         Text(episode.episodeNumber)
                             .textStyle(theme.typography.bodyMedium)
-                            .foregroundColor(theme.colors.onPrimary.opacity(0.8))
+                            .foregroundStyle(.appOnPrimary.opacity(0.8))
                             .lineLimit(1)
                     }
                     Spacer()

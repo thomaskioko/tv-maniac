@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -52,7 +53,7 @@ class DebugScreenTest: SnapshotTestCase {
             toast: .constant(nil),
             onBack: {}
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "DebugScreen")
     }
 
@@ -83,7 +84,7 @@ class DebugScreenTest: SnapshotTestCase {
             toast: .constant(nil),
             onBack: {}
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "DebugScreen_WithLoadingItem")
     }
 
@@ -114,7 +115,7 @@ class DebugScreenTest: SnapshotTestCase {
             toast: .constant(nil),
             onBack: {}
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "DebugScreen_WithDisabledItem")
     }
 }

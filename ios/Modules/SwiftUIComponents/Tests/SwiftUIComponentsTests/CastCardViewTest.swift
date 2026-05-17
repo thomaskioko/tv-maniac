@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -11,7 +12,7 @@ class CastCardViewTest: SnapshotTestCase {
             characterName: "Claire Temple"
         )
         .padding()
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "CastCardView")
     }
 }

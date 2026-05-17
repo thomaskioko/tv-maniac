@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -11,7 +12,7 @@ class EmptyStateViewTest: SnapshotTestCase {
             buttonText: "Retry"
         )
         .padding()
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "EmptyStateView")
     }
 
@@ -21,7 +22,7 @@ class EmptyStateViewTest: SnapshotTestCase {
             message: "Shows you follow will appear here."
         )
         .padding()
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "EmptyStateView_WithMessage")
     }
 }

@@ -6,10 +6,11 @@
 //  Copyright © 2023 orgName. All rights reserved.
 //
 
+import DesignSystem
 import SwiftUI
 
 public struct ProviderListView: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let items: [SwiftProviders]
 

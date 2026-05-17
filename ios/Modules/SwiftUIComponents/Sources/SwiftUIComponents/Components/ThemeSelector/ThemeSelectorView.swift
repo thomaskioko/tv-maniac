@@ -1,3 +1,4 @@
+import DesignSystem
 import SwiftUI
 
 public struct ThemeSelectorView<Theme: ThemeItem>: View {

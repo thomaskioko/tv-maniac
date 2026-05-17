@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct WatchListItemView: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     let episode: SwiftNextEpisode
     let premiereLabel: String
@@ -37,7 +38,7 @@ public struct WatchListItemView: View {
             }
             .frame(height: WatchListItemViewConstants.height)
             .frame(maxWidth: .infinity)
-            .background(theme.colors.surface)
+            .background(.appSurface)
             .cornerRadius(WatchListItemViewConstants.cornerRadius)
         }
         .buttonStyle(PlainButtonStyle())
@@ -65,20 +66,20 @@ public struct WatchListItemView: View {
 
             HStack(spacing: 4) {
                 Text(episode.episodeNumber)
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(theme.colors.onSurface)
+                    .font(theme.typography.labelLarge)
+                    .foregroundStyle(.appOnSurface)
                     .lineLimit(1)
                 if episode.remainingEpisodes > 0 {
                     Text("+\(episode.remainingEpisodes)")
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundColor(theme.colors.onSurface.opacity(0.6))
+                        .font(theme.typography.labelMedium)
+                        .foregroundStyle(.appOnSurface.opacity(0.6))
                 }
             }
             .padding(.top, 16)
 
             Text(episode.episodeTitle)
-                .font(.system(size: 12))
-                .foregroundColor(theme.colors.onSurface.opacity(0.7))
+                .font(theme.typography.bodySmall)
+                .foregroundStyle(.appOnSurface.opacity(0.7))
                 .lineLimit(2)
                 .padding(.top, 4)
 
@@ -106,25 +107,25 @@ public struct WatchListItemView: View {
 
     private var premiereBadge: some View {
         Text(premiereLabel)
-            .font(.system(size: 10, weight: .medium))
-            .foregroundColor(theme.colors.background)
+            .font(theme.typography.labelSmall)
+            .foregroundStyle(.appBackground)
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
             .background(
                 RoundedRectangle(cornerRadius: 4)
-                    .fill(theme.colors.onSurface)
+                    .fill(.appOnSurface)
             )
     }
 
     private var newBadge: some View {
         Text(newLabel)
-            .font(.system(size: 10, weight: .medium))
-            .foregroundColor(theme.colors.onSecondary)
+            .font(theme.typography.labelSmall)
+            .foregroundStyle(.appOnSecondary)
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
             .background(
                 RoundedRectangle(cornerRadius: 4)
-                    .fill(theme.colors.secondary)
+                    .fill(.appSecondary)
             )
     }
 
@@ -132,11 +133,11 @@ public struct WatchListItemView: View {
         Button(action: onMarkWatched) {
             ZStack {
                 Circle()
-                    .fill(theme.colors.grey)
+                    .fill(.appGrey)
                     .frame(width: WatchListItemViewConstants.checkmarkSize, height: WatchListItemViewConstants.checkmarkSize)
                 Image(systemName: "checkmark")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundColor(.white)
+                    .font(theme.typography.labelMedium)
+                    .foregroundStyle(.appOnPrimary)
             }
         }
         .buttonStyle(.plain)
@@ -177,5 +178,5 @@ private enum WatchListItemViewConstants {
             onMarkWatched: {}
         )
     }
-    .themedPreview()
+    .appPreview()
 }

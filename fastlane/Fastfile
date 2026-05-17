@@ -29,6 +29,7 @@ platform :ios do
       project: "ios/tv-maniac.xcodeproj",
       scheme: "SwiftUIComponents",
       destination: "platform=iOS Simulator,OS=18.5,name=#{TEST_DEVICE}",
+      skip_detect_devices: true,
       clean: true,
       result_bundle: true,
       xcargs: "-retry-tests-on-failure -skipPackagePluginValidation",
@@ -177,13 +178,9 @@ platform :ios do
     )
   end
 
-  desc "Run SwiftLint"
+  desc "Run pinned SwiftLint via Mint against the iOS source tree"
   lane :lint do
-    swiftlint(
-      mode: :lint,
-      raise_if_swiftlint_error: true,
-      config_file: ".swiftlint.yml"
-    )
+    sh "cd #{PROJECT_DIR} && mint run swiftlint --config .swiftlint.yml"
   end
 
   desc "Format Swift code with SwiftFormat"

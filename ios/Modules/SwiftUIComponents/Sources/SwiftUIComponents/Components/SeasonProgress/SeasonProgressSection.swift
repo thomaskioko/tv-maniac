@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct SeasonProgressSection: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let title: String
     private let showHeader: Bool
@@ -64,7 +65,7 @@ public struct SeasonProgressSection: View {
                 if showHeader {
                     Text(title)
                         .textStyle(theme.typography.titleSmall)
-                        .foregroundColor(theme.colors.onSurface)
+                        .foregroundStyle(.appOnSurface)
                         .padding(.horizontal, theme.spacing.medium)
                 }
 
@@ -75,7 +76,7 @@ public struct SeasonProgressSection: View {
                     seasonsScrollView
                 }
                 .padding(theme.spacing.medium)
-                .background(theme.colors.surface)
+                .background(.appSurface)
                 .clipShape(RoundedRectangle(cornerRadius: theme.shapes.medium))
                 .padding(.horizontal, theme.spacing.medium)
             }
@@ -88,17 +89,17 @@ public struct SeasonProgressSection: View {
             if let status {
                 Text(status)
                     .textStyle(theme.typography.titleSmall)
-                    .foregroundColor(theme.colors.onSurface)
+                    .foregroundStyle(.appOnSurface)
                     .fontWeight(.bold)
 
                 Text(" · ")
                     .textStyle(theme.typography.titleSmall)
-                    .foregroundColor(theme.colors.accent)
+                    .foregroundStyle(.appAccent)
             }
 
             Text(seasonCountFormat(seasonCount))
                 .textStyle(theme.typography.titleSmall)
-                .foregroundColor(theme.colors.onSurface)
+                .foregroundStyle(.appOnSurface)
                 .fontWeight(.bold)
         }
     }
@@ -107,11 +108,11 @@ public struct SeasonProgressSection: View {
         VStack(alignment: .leading, spacing: theme.spacing.xxxSmall) {
             Text(episodesWatchedFormat(watchedEpisodesCount, totalEpisodesCount))
                 .textStyle(theme.typography.bodyMedium)
-                .foregroundColor(theme.colors.onSurfaceVariant)
+                .foregroundStyle(.appOnSurfaceVariant)
 
             Text(isUpToDate ? upToDateLabel : episodesLeftFormat(remainingEpisodes))
                 .textStyle(theme.typography.bodySmall)
-                .foregroundColor(theme.colors.onSurfaceVariant)
+                .foregroundStyle(.appOnSurfaceVariant)
         }
     }
 
@@ -177,7 +178,7 @@ public struct SeasonProgressSection: View {
         upToDateLabel: "You're up-to-date",
         onSeasonClicked: { _, _ in }
     )
-    .environment(\.tvManiacTheme, DarkTheme())
+    .appPreview(DarkTheme())
 }
 
 #Preview("Up To Date") {
@@ -199,7 +200,7 @@ public struct SeasonProgressSection: View {
         upToDateLabel: "You're up-to-date",
         onSeasonClicked: { _, _ in }
     )
-    .environment(\.tvManiacTheme, DarkTheme())
+    .appPreview(DarkTheme())
 }
 
 #Preview("Untracked") {
@@ -218,5 +219,5 @@ public struct SeasonProgressSection: View {
         upToDateLabel: "You're up-to-date",
         onSeasonClicked: { _, _ in }
     )
-    .environment(\.tvManiacTheme, DarkTheme())
+    .appPreview(DarkTheme())
 }

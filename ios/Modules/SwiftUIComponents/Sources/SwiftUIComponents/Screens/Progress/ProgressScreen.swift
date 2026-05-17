@@ -1,3 +1,4 @@
+import DesignSystem
 import SwiftUI
 
 public struct ProgressScreen<UpNextContent: View, CalendarContent: View>: View {
@@ -23,7 +24,7 @@ public struct ProgressScreen<UpNextContent: View, CalendarContent: View>: View {
         }
     }
 
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let state: State
     private let onPageChanged: (Int) -> Void
@@ -58,14 +59,14 @@ public struct ProgressScreen<UpNextContent: View, CalendarContent: View>: View {
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
         }
-        .background(theme.colors.background.ignoresSafeArea())
+        .appScreen()
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
                 titleView
             }
         }
-        .toolbarBackground(theme.colors.surface, for: .navigationBar)
+        .toolbarBackground(.appSurface, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
     }
 
@@ -74,7 +75,7 @@ public struct ProgressScreen<UpNextContent: View, CalendarContent: View>: View {
             Text(state.title)
                 .textStyle(theme.typography.titleMedium)
                 .lineLimit(1)
-                .foregroundColor(theme.colors.onSurface)
+                .foregroundStyle(.appOnSurface)
 
             if state.isLoading {
                 ProgressView()
@@ -99,47 +100,45 @@ public struct ProgressScreen<UpNextContent: View, CalendarContent: View>: View {
 }
 
 #Preview("Up Next Selected") {
-    ThemedPreview {
-        NavigationStack {
-            ProgressScreen(
-                state: ProgressScreen.State(
-                    title: "Progress",
-                    isLoading: false,
-                    selectedPage: 0,
-                    upNextTabTitle: "Up Next",
-                    calendarTabTitle: "Calendar"
-                ),
-                onPageChanged: { _ in },
-                upNextContent: {
-                    Text("Up Next Content")
-                },
-                calendarContent: {
-                    Text("Calendar Content")
-                }
-            )
-        }
+    NavigationStack {
+        ProgressScreen(
+            state: ProgressScreen.State(
+                title: "Progress",
+                isLoading: false,
+                selectedPage: 0,
+                upNextTabTitle: "Up Next",
+                calendarTabTitle: "Calendar"
+            ),
+            onPageChanged: { _ in },
+            upNextContent: {
+                Text("Up Next Content")
+            },
+            calendarContent: {
+                Text("Calendar Content")
+            }
+        )
     }
+    .appPreview()
 }
 
 #Preview("Loading") {
-    ThemedPreview {
-        NavigationStack {
-            ProgressScreen(
-                state: ProgressScreen.State(
-                    title: "Progress",
-                    isLoading: true,
-                    selectedPage: 0,
-                    upNextTabTitle: "Up Next",
-                    calendarTabTitle: "Calendar"
-                ),
-                onPageChanged: { _ in },
-                upNextContent: {
-                    Text("Up Next Content")
-                },
-                calendarContent: {
-                    Text("Calendar Content")
-                }
-            )
-        }
+    NavigationStack {
+        ProgressScreen(
+            state: ProgressScreen.State(
+                title: "Progress",
+                isLoading: true,
+                selectedPage: 0,
+                upNextTabTitle: "Up Next",
+                calendarTabTitle: "Calendar"
+            ),
+            onPageChanged: { _ in },
+            upNextContent: {
+                Text("Up Next Content")
+            },
+            calendarContent: {
+                Text("Calendar Content")
+            }
+        )
     }
+    .appPreview()
 }

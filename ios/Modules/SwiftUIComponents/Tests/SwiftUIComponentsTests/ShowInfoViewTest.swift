@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -34,7 +35,7 @@ class ShowInfoViewTest: SnapshotTestCase {
             onSeasonClicked: { _, _ in },
             onShowClicked: { _ in }
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "ShowInfoView")
     }
 

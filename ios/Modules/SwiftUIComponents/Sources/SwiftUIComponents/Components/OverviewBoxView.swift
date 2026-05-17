@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct OverviewBoxView: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
     @State private var showFullText = false
     @State private var isTruncated = false
 
@@ -25,7 +26,7 @@ public struct OverviewBoxView: View {
             VStack(alignment: .leading, spacing: theme.spacing.xSmall) {
                 Text(overview)
                     .textStyle(theme.typography.bodyMedium)
-                    .foregroundColor(theme.colors.onSurface)
+                    .foregroundStyle(.appOnSurface)
                     .lineLimit(showFullText ? nil : lineLimit)
                     .lineSpacing(4)
                     .multilineTextAlignment(.leading)
@@ -63,7 +64,7 @@ public struct OverviewBoxView: View {
                             Text(showFullText ? "Show Less" : "Show More")
                                 .textCase(.uppercase)
                                 .textStyle(theme.typography.labelMedium)
-                                .foregroundStyle(theme.colors.accent)
+                                .foregroundStyle(.appAccent)
                         }
                     }
                 }

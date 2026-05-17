@@ -6,10 +6,11 @@
 //  Copyright © 2023 orgName. All rights reserved.
 //
 
+import DesignSystem
 import SwiftUI
 
 public struct ChipView: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
     private let label: String
     private let isSelected: Bool
     private let action: () -> Void
@@ -28,10 +29,10 @@ public struct ChipView: View {
         Button(action: action) {
             Text(label)
                 .textStyle(theme.typography.bodyMedium)
-                .foregroundColor(theme.colors.secondary)
+                .foregroundStyle(.appSecondary)
                 .padding(.horizontal, theme.spacing.small)
                 .padding(.vertical, theme.spacing.xSmall)
-                .background(theme.colors.secondary.opacity(isSelected ? 0.24 : 0.08))
+                .background(.appSecondary.opacity(isSelected ? 0.24 : 0.08))
                 .cornerRadius(theme.shapes.small)
         }
     }

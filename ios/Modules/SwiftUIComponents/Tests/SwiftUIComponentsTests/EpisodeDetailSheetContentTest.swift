@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -86,6 +87,6 @@ class EpisodeDetailSheetContentTest: SnapshotTestCase {
                 SheetActionItem(icon: "minus.circle", label: "Unfollow show", action: {})
             }
         }
-        .themedPreview()
+        .appPreview()
     }
 }

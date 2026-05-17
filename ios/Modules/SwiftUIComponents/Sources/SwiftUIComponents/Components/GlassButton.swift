@@ -1,3 +1,4 @@
+import DesignSystem
 import SwiftUI
 
 /// A circular button with a glass/blur effect matching the toolbar design.
@@ -33,6 +34,8 @@ public struct GlassButton<Label: View>: View {
 }
 
 public struct GlassButtonIconLabel: View {
+    @Environment(\.appTheme) private var theme
+
     private let icon: String
 
     public init(icon: String) {
@@ -41,8 +44,8 @@ public struct GlassButtonIconLabel: View {
 
     public var body: some View {
         Image(systemName: icon)
-            .font(.system(size: 18, weight: .semibold))
-            .foregroundColor(.white)
+            .font(theme.typography.titleMedium)
+            .foregroundStyle(.appOnPrimary)
     }
 }
 

@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct UpNextListItemView: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     let episode: SwiftNextEpisode
     let onItemClicked: (Int64, Int64) -> Void
@@ -45,7 +46,7 @@ public struct UpNextListItemView: View {
         }
         .frame(height: UpNextListItemViewConstants.height)
         .frame(maxWidth: .infinity)
-        .background(theme.colors.surface)
+        .background(.appSurface)
         .cornerRadius(UpNextListItemViewConstants.cornerRadius)
         .contentShape(Rectangle())
         .onTapGesture {
@@ -78,13 +79,13 @@ public struct UpNextListItemView: View {
 
             Text(episodeInfoText)
                 .textStyle(theme.typography.bodySmall)
-                .foregroundColor(theme.colors.accent)
+                .foregroundStyle(.appAccent)
                 .lineLimit(1)
                 .padding(.top, 8)
 
             Text(episode.episodeTitle)
                 .textStyle(theme.typography.bodySmall)
-                .foregroundColor(theme.colors.onSurface.opacity(0.7))
+                .foregroundStyle(.appOnSurface.opacity(0.7))
                 .lineLimit(2)
 
             Spacer()
@@ -111,7 +112,7 @@ public struct UpNextListItemView: View {
             if episode.totalCount > 0 {
                 Text("\(episode.watchedCount)/\(episode.totalCount)")
                     .textStyle(theme.typography.labelSmall)
-                    .foregroundColor(theme.colors.onSurface.opacity(0.6))
+                    .foregroundStyle(.appOnSurface.opacity(0.6))
             }
         }
     }
@@ -120,11 +121,11 @@ public struct UpNextListItemView: View {
         Button(action: onMarkWatched) {
             ZStack {
                 Circle()
-                    .fill(theme.colors.grey)
+                    .fill(.appGrey)
                     .frame(width: UpNextListItemViewConstants.checkmarkSize, height: UpNextListItemViewConstants.checkmarkSize)
                 Image(systemName: "checkmark")
-                    .font(.system(size: 14, weight: .bold))
-                    .foregroundColor(.white)
+                    .font(theme.typography.titleSmall)
+                    .foregroundStyle(.white)
             }
             .frame(width: UpNextListItemViewConstants.tapTargetSize, height: UpNextListItemViewConstants.height)
             .contentShape(Rectangle())
@@ -168,5 +169,5 @@ private enum UpNextListItemViewConstants {
             onMarkWatched: {}
         )
     }
-    .themedPreview()
+    .appPreview()
 }

@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -11,7 +12,7 @@ class NextEpisodesSectionTest: SnapshotTestCase {
             onEpisodeClick: { _ in }
         )
         .padding()
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "NextEpisodesSectionEmpty")
     }
 
@@ -33,7 +34,7 @@ class NextEpisodesSectionTest: SnapshotTestCase {
             onEpisodeClick: { _ in }
         )
         .padding()
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "NextEpisodesSectionSingleEpisode")
     }
 
@@ -75,7 +76,7 @@ class NextEpisodesSectionTest: SnapshotTestCase {
             onEpisodeClick: { _ in }
         )
         .padding()
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "NextEpisodesSectionMultipleEpisodes")
     }
 
@@ -108,7 +109,7 @@ class NextEpisodesSectionTest: SnapshotTestCase {
             onEpisodeClick: { _ in }
         )
         .padding()
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "NextEpisodesSectionWithChevronOnly")
     }
 
@@ -131,7 +132,7 @@ class NextEpisodesSectionTest: SnapshotTestCase {
             onEpisodeClick: { _ in }
         )
         .padding()
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "NextEpisodesSectionWithChevronTitle")
     }
 }

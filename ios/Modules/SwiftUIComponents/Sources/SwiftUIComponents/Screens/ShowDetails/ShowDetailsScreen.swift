@@ -1,3 +1,4 @@
+import DesignSystem
 import SwiftUI
 
 public struct ShowDetailsScreen: View {
@@ -101,7 +102,7 @@ public struct ShowDetailsScreen: View {
         }
     }
 
-    @Theme private var appTheme
+    @Environment(\.appTheme) private var appTheme
 
     private let state: State
     private let dayLabelFormat: (Int) -> String
@@ -215,7 +216,7 @@ public struct ShowDetailsScreen: View {
                 }
             }
         )
-        .background(appTheme.colors.background)
+        .appScreen()
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarColor(backgroundColor: .clear)
         .navigationBarBackButtonHidden(true)

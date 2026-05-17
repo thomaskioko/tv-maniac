@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -17,7 +18,7 @@ class HeaderViewTest: SnapshotTestCase {
             seasonCountFormat: { count in count == 1 ? "\(count) Season" : "\(count) Seasons" },
             progress: 0
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "HeaderView")
     }
 }

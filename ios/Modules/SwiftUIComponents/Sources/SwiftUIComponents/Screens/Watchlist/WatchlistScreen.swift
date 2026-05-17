@@ -1,3 +1,4 @@
+import DesignSystem
 import SwiftUI
 
 public struct WatchlistScreen: View {
@@ -65,7 +66,7 @@ public struct WatchlistScreen: View {
         }
     }
 
-    @Theme private var appTheme
+    @Environment(\.appTheme) private var appTheme
 
     private let state: State
     private let onQueryChanged: (String) -> Void
@@ -107,13 +108,11 @@ public struct WatchlistScreen: View {
 
     public var body: some View {
         ZStack {
-            appTheme.colors.background
-                .ignoresSafeArea()
-
             VStack {
                 contentView
             }
         }
+        .appScreen()
         .navigationBarTitleDisplayMode(.inline)
         .disableAutocorrection(true)
         .toolbar {
@@ -150,7 +149,7 @@ public struct WatchlistScreen: View {
         .animation(.spring(response: 0.3, dampingFraction: 0.8), value: state.isSearchActive)
         .disableAutocorrection(true)
         .textInputAutocapitalization(.never)
-        .toolbarBackground(appTheme.colors.surface, for: .navigationBar)
+        .toolbarBackground(.appSurface, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .onAppear { localQuery = state.query }
         .onChange(of: state.query) { _, newValue in localQuery = newValue }
@@ -187,13 +186,13 @@ public struct WatchlistScreen: View {
             Text(state.title)
                 .textStyle(appTheme.typography.titleMedium)
                 .lineLimit(1)
-                .foregroundColor(appTheme.colors.onSurface)
+                .foregroundStyle(.appOnSurface)
             Button {
                 withAnimation { showListSelection.toggle() }
             } label: {
                 Image(systemName: "chevron.down.circle.fill")
                     .textStyle(appTheme.typography.labelSmall)
-                    .foregroundColor(appTheme.colors.onSurfaceVariant)
+                    .foregroundStyle(.appOnSurfaceVariant)
                     .rotationEffect(.degrees(isRotating))
                     .task(id: showListSelection) {
                         withAnimation(.easeInOut) {
@@ -235,7 +234,7 @@ public struct WatchlistScreen: View {
         HStack(spacing: appTheme.spacing.small) {
             HStack {
                 Image(systemName: "magnifyingglass")
-                    .foregroundColor(appTheme.colors.onSurfaceVariant)
+                    .foregroundStyle(.appOnSurfaceVariant)
 
                 TextField(state.searchPlaceholder, text: $localQuery)
                     .textStyle(appTheme.typography.bodyMedium)
@@ -257,12 +256,12 @@ public struct WatchlistScreen: View {
                     }
                 } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(appTheme.colors.onSurfaceVariant)
+                        .foregroundStyle(.appOnSurfaceVariant)
                 }
             }
             .padding(.horizontal, appTheme.spacing.small)
             .padding(.vertical, 6)
-            .background(appTheme.colors.surfaceVariant.opacity(0.5))
+            .background(.appSurfaceVariant.opacity(0.5))
             .clipShape(RoundedRectangle(cornerRadius: appTheme.shapes.medium))
         }
         .frame(maxWidth: .infinity)

@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -84,7 +85,7 @@ class ShowDetailsScreenTest: SnapshotTestCase {
             onShowClicked: { _ in },
             onMarkEpisodeWatched: { _ in }
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "ShowDetailsScreen_Default")
     }
 
@@ -136,7 +137,7 @@ class ShowDetailsScreenTest: SnapshotTestCase {
             onShowClicked: { _ in },
             onMarkEpisodeWatched: { _ in }
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "ShowDetailsScreen_InLibrary")
     }
 }

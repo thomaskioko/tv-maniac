@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -46,7 +47,7 @@ class GridViewTest: SnapshotTestCase {
             ],
             onAction: { _ in }
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "GridView")
     }
 }

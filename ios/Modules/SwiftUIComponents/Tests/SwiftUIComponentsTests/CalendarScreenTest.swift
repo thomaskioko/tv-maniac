@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -90,6 +91,6 @@ class CalendarScreenTest: SnapshotTestCase {
                 onEpisodeCardClicked: { _ in }
             )
         }
-        .themedPreview()
+        .appPreview()
     }
 }

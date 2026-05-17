@@ -1,3 +1,4 @@
+import DesignSystem
 import SwiftUI
 import SwiftUIComponents
 import TvManiacKit
@@ -46,7 +47,7 @@ public struct WatchlistSelector: View {
         }
     }
 
-    @SwiftUIComponents.Theme private var theme
+    @Environment(\.appTheme) private var theme
     @Binding var showView: Bool
     private let state: State
     private let onToggle: (Int64, Bool) -> Void

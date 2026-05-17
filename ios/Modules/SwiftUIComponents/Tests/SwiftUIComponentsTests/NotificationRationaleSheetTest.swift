@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -14,7 +15,7 @@ class NotificationRationaleSheetTest: SnapshotTestCase {
             onDismiss: {}
         )
         .padding()
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "NotificationRationaleSheet")
     }
 }

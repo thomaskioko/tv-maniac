@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct FilterChip: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let label: String
     private let isSelected: Bool
@@ -25,22 +26,22 @@ public struct FilterChip: View {
                 .padding(.vertical, theme.spacing.xSmall)
                 .background(
                     isSelected
-                        ? theme.colors.accent
-                        : Color.clear
+                        ? AnyShapeStyle(.appAccent)
+                        : AnyShapeStyle(Color.clear)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: theme.shapes.small)
                         .strokeBorder(
                             isSelected
-                                ? Color.clear
-                                : theme.colors.onSurface.opacity(0.8),
+                                ? AnyShapeStyle(Color.clear)
+                                : AnyShapeStyle(.appOnSurface.opacity(0.8)),
                             lineWidth: 1.5
                         )
                 )
-                .foregroundColor(
+                .foregroundStyle(
                     isSelected
-                        ? theme.colors.onAccent
-                        : theme.colors.onSurface
+                        ? AnyShapeStyle(.appOnAccent)
+                        : AnyShapeStyle(.appOnSurface)
                 )
                 .clipShape(RoundedRectangle(cornerRadius: theme.shapes.small))
         }

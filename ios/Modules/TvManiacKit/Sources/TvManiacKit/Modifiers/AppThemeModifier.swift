@@ -1,3 +1,4 @@
+import DesignSystem
 import SwiftUI
 import SwiftUIComponents
 import TvManiac
@@ -17,7 +18,7 @@ struct AppThemeModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .environment(\.colorScheme, appTheme.overrideTheme ?? colorScheme)
-            .environment(\.tvManiacTheme, resolvedTheme)
+            .appTheme(resolvedTheme)
             .overlay(
                 ScanlineOverlay(
                     color: resolvedTheme.scanlineConfig.color,

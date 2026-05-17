@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -33,7 +34,7 @@ class LibraryScreenTest: SnapshotTestCase {
             onSortClicked: {},
             onShowClicked: { _ in }
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_Loading")
     }
 
@@ -59,7 +60,7 @@ class LibraryScreenTest: SnapshotTestCase {
             onSortClicked: {},
             onShowClicked: { _ in }
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_Empty")
     }
 
@@ -85,7 +86,7 @@ class LibraryScreenTest: SnapshotTestCase {
             onSortClicked: {},
             onShowClicked: { _ in }
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_GridMode")
     }
 
@@ -162,7 +163,7 @@ class LibraryScreenTest: SnapshotTestCase {
             onSortClicked: {},
             onShowClicked: { _ in }
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_ListMode")
     }
 }

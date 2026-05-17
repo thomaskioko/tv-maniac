@@ -40,5 +40,21 @@ runs:
         restore-keys: |
           ${{ runner.os }}-spm-
 
+    - name: 🍺 Install Brewfile dependencies
+      shell: bash
+      run: brew bundle check --no-upgrade || brew bundle install --no-upgrade
+
+    - name: Cache Mint packages
+      uses: actions/cache@v5
+      with:
+        path: ~/.mint
+        key: ${{ runner.os }}-mint-${{ hashFiles('Mintfile') }}
+        restore-keys: |
+          ${{ runner.os }}-mint-
+
+    - name: 🌱 Bootstrap Mint
+      shell: bash
+      run: mint bootstrap --link
+
     - name: 🐘 Setup Gradle
       uses: ./.github/actions/setup-gradle

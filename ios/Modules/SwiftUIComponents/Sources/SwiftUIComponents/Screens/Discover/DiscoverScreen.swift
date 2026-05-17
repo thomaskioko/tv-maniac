@@ -1,3 +1,4 @@
+import DesignSystem
 import SwiftUI
 
 public struct DiscoverScreen: View {
@@ -68,7 +69,7 @@ public struct DiscoverScreen: View {
         }
     }
 
-    @Theme private var appTheme
+    @Environment(\.appTheme) private var appTheme
 
     private let state: State
     @Binding private var currentIndex: Int
@@ -125,18 +126,21 @@ public struct DiscoverScreen: View {
     @SwiftUI.State private var isScrollInteracting: Bool = false
 
     public var body: some View {
-        if state.isLoading {
-            LoadingIndicatorView()
-        } else if state.isEmpty {
-            emptyView
-        } else if state.showError {
-            EmptyStateView(
-                systemName: "exclamationmark.arrow.triangle.2.circlepath",
-                title: state.errorMessage ?? "Something went wrong"
-            )
-        } else {
-            discoverLoadedContent
+        Group {
+            if state.isLoading {
+                LoadingIndicatorView()
+            } else if state.isEmpty {
+                emptyView
+            } else if state.showError {
+                EmptyStateView(
+                    systemName: "exclamationmark.arrow.triangle.2.circlepath",
+                    title: state.errorMessage ?? "Something went wrong"
+                )
+            } else {
+                discoverLoadedContent
+            }
         }
+        .appScreen()
     }
 
     private var discoverLoadedContent: some View {
@@ -175,7 +179,6 @@ public struct DiscoverScreen: View {
             )
             .animation(.easeInOut(duration: AnimationConstants.defaultDuration), value: showGlass)
         }
-        .background(appTheme.colors.background)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarColor(backgroundColor: .clear)
         .edgesIgnoringSafeArea(.top)
@@ -295,14 +298,14 @@ public struct DiscoverScreen: View {
         VStack(alignment: .leading) {
             Text(selectedShow?.title ?? "")
                 .textStyle(appTheme.typography.headlineLarge)
-                .foregroundColor(appTheme.colors.onSurface)
+                .foregroundStyle(.appOnSurface)
                 .lineLimit(1)
                 .frame(maxWidth: .infinity, alignment: .center)
 
             if let overview = selectedShow?.overview {
                 Text(overview)
                     .textStyle(appTheme.typography.bodyLarge)
-                    .foregroundColor(appTheme.colors.onSurface.opacity(0.9))
+                    .foregroundStyle(.appOnSurface.opacity(0.9))
                     .multilineTextAlignment(.leading)
                     .lineLimit(4)
             }

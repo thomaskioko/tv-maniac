@@ -23,8 +23,9 @@ disabled_rules:
 opt_in_rules:
     - sorted_imports
 
+included:
+    - ios
 
-# Files & Folder not to check
 excluded:
     - .build
     - "**/build"
@@ -37,3 +38,29 @@ excluded:
     - ios/build
     - vendor/bundle
     - ios-framework/build
+
+custom_rules:
+    no_theme_property_wrapper:
+        name: "Legacy @Theme property wrapper"
+        regex: '@Theme\s+(private\s+)?var'
+        message: "Use .appHeadline(), .foregroundStyle(.appPrimary), or @Environment(\\.appTheme) instead."
+        severity: error
+
+    no_hardcoded_font_size:
+        name: "Hardcoded font size"
+        regex: '\.font\(\.system\(size:\s*\d'
+        message: "Use theme typography (theme.typography.x) or an .app*() modifier."
+        severity: error
+
+    no_literal_foreground_color:
+        name: "Literal foregroundColor"
+        regex: '\.foregroundColor\(\.(white|black|gray|red|blue|green|yellow|orange|pink|purple)\)'
+        message: "Use .foregroundStyle(.appPrimary/.appOnSurface/...) instead."
+        severity: error
+
+    no_hex_color_in_views:
+        name: "Hex Color initializer in view code"
+        regex: 'Color\(hex:'
+        excluded: ".*(Theme|DesignSystem)/Colors/.*"
+        message: "Hex colors belong in theme implementations, not in views."
+        severity: error

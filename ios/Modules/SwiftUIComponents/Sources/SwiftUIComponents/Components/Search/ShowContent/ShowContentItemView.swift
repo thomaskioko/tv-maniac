@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct ShowContentItemView: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let title: String
     private let imageUrl: String?
@@ -68,7 +69,7 @@ public struct ShowContentItemView: View {
 }
 
 private struct MetallicTitleView: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
     let title: String
 
     var body: some View {

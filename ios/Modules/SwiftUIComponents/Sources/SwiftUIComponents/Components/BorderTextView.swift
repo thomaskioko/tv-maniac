@@ -5,10 +5,11 @@
 //  Created by Thomas Kioko on 9/8/24.
 //
 
+import DesignSystem
 import SwiftUI
 
 public struct BorderTextView: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let text: String
     private let color: Color?

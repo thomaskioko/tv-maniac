@@ -1,3 +1,4 @@
+import DesignSystem
 import SwiftUI
 
 public struct MoreShowsScreen: View {
@@ -26,7 +27,7 @@ public struct MoreShowsScreen: View {
         }
     }
 
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let state: State
     @Binding private var toast: Toast?
@@ -99,16 +100,16 @@ public struct MoreShowsScreen: View {
                 VStack(spacing: theme.spacing.small) {
                     Text(loadError)
                         .textStyle(theme.typography.bodySmall)
-                        .foregroundColor(theme.colors.error)
+                        .foregroundStyle(.appError)
                         .multilineTextAlignment(.center)
 
                     Button(action: onRetry) {
                         Text(state.retryLabel)
                             .textStyle(theme.typography.labelLarge)
-                            .foregroundColor(theme.colors.onPrimary)
+                            .foregroundStyle(.appOnPrimary)
                             .padding(.horizontal, theme.spacing.medium)
                             .padding(.vertical, theme.spacing.xSmall)
-                            .background(theme.colors.secondary)
+                            .background(.appSecondary)
                             .clipShape(RoundedRectangle(cornerRadius: theme.shapes.medium))
                     }
                 }
@@ -126,7 +127,7 @@ public struct MoreShowsScreen: View {
             }
         }
         .contentMargins(.top, toolbarInset + theme.spacing.medium)
-        .background(theme.colors.background)
+        .appScreen()
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .navigationBarColor(backgroundColor: .clear)
@@ -153,56 +154,54 @@ public struct MoreShowsScreen: View {
 }
 
 #Preview("More Shows") {
-    ThemedPreview {
-        MoreShowsScreen(
-            state: MoreShowsScreen.State(
-                title: "Popular",
-                items: [
-                    .init(traktId: 1, title: "Arcane", posterUrl: nil),
-                    .init(traktId: 2, title: "Loki", posterUrl: nil),
-                    .init(traktId: 3, title: "The Bear", posterUrl: nil),
-                    .init(traktId: 4, title: "Severance", posterUrl: nil),
-                    .init(traktId: 5, title: "Shogun", posterUrl: nil),
-                    .init(traktId: 6, title: "Fallout", posterUrl: nil),
-                ],
-                isLoadingMore: false,
-                hasNextPage: false,
-                loadError: nil,
-                retryLabel: "Retry"
-            ),
-            toast: .constant(nil),
-            onItemAppear: { _ in },
-            onLoadMore: {},
-            onAction: { _ in },
-            onBack: {},
-            onRetry: {}
-        )
-    }
+    MoreShowsScreen(
+        state: MoreShowsScreen.State(
+            title: "Popular",
+            items: [
+                .init(traktId: 1, title: "Arcane", posterUrl: nil),
+                .init(traktId: 2, title: "Loki", posterUrl: nil),
+                .init(traktId: 3, title: "The Bear", posterUrl: nil),
+                .init(traktId: 4, title: "Severance", posterUrl: nil),
+                .init(traktId: 5, title: "Shogun", posterUrl: nil),
+                .init(traktId: 6, title: "Fallout", posterUrl: nil),
+            ],
+            isLoadingMore: false,
+            hasNextPage: false,
+            loadError: nil,
+            retryLabel: "Retry"
+        ),
+        toast: .constant(nil),
+        onItemAppear: { _ in },
+        onLoadMore: {},
+        onAction: { _ in },
+        onBack: {},
+        onRetry: {}
+    )
+    .appPreview()
     .preferredColorScheme(.dark)
 }
 
 #Preview("More Shows - Loading More") {
-    ThemedPreview {
-        MoreShowsScreen(
-            state: MoreShowsScreen.State(
-                title: "Trending",
-                items: [
-                    .init(traktId: 1, title: "Arcane", posterUrl: nil),
-                    .init(traktId: 2, title: "Loki", posterUrl: nil),
-                    .init(traktId: 3, title: "The Bear", posterUrl: nil),
-                ],
-                isLoadingMore: true,
-                hasNextPage: true,
-                loadError: nil,
-                retryLabel: "Retry"
-            ),
-            toast: .constant(nil),
-            onItemAppear: { _ in },
-            onLoadMore: {},
-            onAction: { _ in },
-            onBack: {},
-            onRetry: {}
-        )
-    }
+    MoreShowsScreen(
+        state: MoreShowsScreen.State(
+            title: "Trending",
+            items: [
+                .init(traktId: 1, title: "Arcane", posterUrl: nil),
+                .init(traktId: 2, title: "Loki", posterUrl: nil),
+                .init(traktId: 3, title: "The Bear", posterUrl: nil),
+            ],
+            isLoadingMore: true,
+            hasNextPage: true,
+            loadError: nil,
+            retryLabel: "Retry"
+        ),
+        toast: .constant(nil),
+        onItemAppear: { _ in },
+        onLoadMore: {},
+        onAction: { _ in },
+        onBack: {},
+        onRetry: {}
+    )
+    .appPreview()
     .preferredColorScheme(.dark)
 }

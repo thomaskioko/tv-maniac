@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct SectionHeaderView: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let title: String
 
@@ -14,7 +15,7 @@ public struct SectionHeaderView: View {
             Spacer()
             Text(title.uppercased())
                 .textStyle(theme.typography.labelMedium)
-                .foregroundColor(theme.colors.onSurface)
+                .foregroundStyle(.appOnSurface)
                 .padding(.horizontal, theme.spacing.medium)
                 .padding(.vertical, theme.spacing.xSmall)
                 .background(

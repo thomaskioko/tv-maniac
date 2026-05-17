@@ -1,4 +1,5 @@
 import CoreKit
+import DesignSystem
 import FirebaseCore
 import SwiftUI
 import TvManiac

@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -14,7 +15,7 @@ class SearchItemViewTest: SnapshotTestCase {
             voteAverage: 5.4
         )
         .padding()
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "SearchItemView")
     }
 }

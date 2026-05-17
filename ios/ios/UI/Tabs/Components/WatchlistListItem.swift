@@ -1,9 +1,10 @@
+import DesignSystem
 import SwiftUI
 import SwiftUIComponents
 import TvManiacKit
 
 struct WatchlistListItem: View {
-    @SwiftUIComponents.Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     let item: TvManiac.WatchlistItem
     let namespace: Namespace.ID

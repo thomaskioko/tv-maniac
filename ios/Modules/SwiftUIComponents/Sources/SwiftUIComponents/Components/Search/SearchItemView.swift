@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct SearchItemView: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let title: String
     private let overview: String?
@@ -39,43 +40,43 @@ public struct SearchItemView: View {
             VStack(alignment: .leading, spacing: theme.spacing.xxxSmall) {
                 Text(title)
                     .textStyle(theme.typography.titleMedium)
-                    .foregroundColor(theme.colors.onSurface)
+                    .foregroundStyle(.appOnSurface)
                     .lineLimit(1)
                     .padding(.top, theme.spacing.xSmall)
 
                 HStack(spacing: theme.spacing.xxxSmall) {
                     if let voteAverage {
                         Image(systemName: "star")
-                            .foregroundColor(theme.colors.secondary)
-                            .font(.system(size: 12))
+                            .foregroundStyle(.appSecondary)
+                            .font(theme.typography.bodySmall)
 
                         Text(String(format: "%.1f", voteAverage))
                             .textStyle(theme.typography.bodySmall)
-                            .foregroundColor(theme.colors.onSurface)
+                            .foregroundStyle(.appOnSurface)
 
                         Text("•")
                             .textStyle(theme.typography.labelSmall)
-                            .foregroundColor(theme.colors.secondary)
-                            .font(.system(size: 8))
+                            .foregroundStyle(.appSecondary)
+                            .font(theme.typography.labelSmall)
                     }
 
                     if let year {
                         Text(year)
                             .textStyle(theme.typography.bodySmall)
-                            .foregroundColor(theme.colors.onSurface)
+                            .foregroundStyle(.appOnSurface)
 
                         Text("•")
                             .textStyle(theme.typography.labelSmall)
-                            .foregroundColor(theme.colors.secondary)
-                            .font(.system(size: 8))
+                            .foregroundStyle(.appSecondary)
+                            .font(theme.typography.labelSmall)
                     }
 
                     if let status, !status.isEmpty {
                         Text(status)
                             .textStyle(theme.typography.labelMedium)
-                            .foregroundColor(theme.colors.secondary)
+                            .foregroundStyle(.appSecondary)
                             .padding(.horizontal, theme.spacing.xxxSmall)
-                            .background(theme.colors.secondary.opacity(0.08))
+                            .background(.appSecondary.opacity(0.08))
                     }
                 }
                 .padding(.vertical, theme.spacing.xxxSmall)
@@ -83,7 +84,7 @@ public struct SearchItemView: View {
                 if let overview, !overview.isEmpty {
                     Text(overview)
                         .textStyle(theme.typography.labelSmall)
-                        .foregroundColor(theme.colors.onSurface)
+                        .foregroundStyle(.appOnSurface)
                         .lineLimit(2)
                         .padding(.vertical, theme.spacing.xxxSmall)
                 }
@@ -94,7 +95,7 @@ public struct SearchItemView: View {
             Spacer()
         }
         .frame(maxWidth: .infinity)
-        .background(theme.colors.surface)
+        .background(.appSurface)
         .cornerRadius(theme.shapes.small)
         .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
     }

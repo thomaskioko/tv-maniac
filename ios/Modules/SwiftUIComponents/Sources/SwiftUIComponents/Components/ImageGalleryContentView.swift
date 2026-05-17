@@ -6,10 +6,11 @@
 //  Copyright © 2023 orgName. All rights reserved.
 //
 
+import DesignSystem
 import SwiftUI
 
 public struct ImageGalleryContentView: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let items: [ShowPosterImage]
     @Environment(\.presentationMode) private var presentationMode
@@ -29,7 +30,7 @@ public struct ImageGalleryContentView: View {
                 }
             }
         }
-        .background(theme.colors.background)
+        .background(.appBackground)
     }
 
     private var closeButton: some View {

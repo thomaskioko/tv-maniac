@@ -1,10 +1,11 @@
+import DesignSystem
 import SwiftUI
 import SwiftUIComponents
 import TvManiac
 import TvManiacKit
 
 public struct TabBarView: View {
-    @SwiftUIComponents.Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let presenter: HomePresenter
     private let navigator: Navigator

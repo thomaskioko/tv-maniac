@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct ShowHeaderInfoView: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let title: String
     private let overview: String
@@ -36,7 +37,7 @@ public struct ShowHeaderInfoView: View {
         VStack(spacing: 0) {
             Text(title)
                 .textStyle(theme.typography.headlineLarge)
-                .foregroundColor(theme.colors.onSurface)
+                .foregroundStyle(.appOnSurface)
                 .lineLimit(1)
                 .padding(.horizontal, theme.spacing.medium)
                 .frame(maxWidth: .infinity, alignment: .center)
@@ -63,7 +64,7 @@ public struct ShowHeaderInfoView: View {
 
                 Text("•")
                     .textStyle(theme.typography.labelSmall)
-                    .foregroundColor(theme.colors.accent)
+                    .foregroundStyle(.appAccent)
             }
 
             Text(year)
@@ -72,7 +73,7 @@ public struct ShowHeaderInfoView: View {
             if seasonCount > 0 {
                 Text("•")
                     .textStyle(theme.typography.labelSmall)
-                    .foregroundColor(theme.colors.accent)
+                    .foregroundStyle(.appAccent)
 
                 Text(seasonCountFormat(seasonCount))
                     .textStyle(theme.typography.bodyMedium)
@@ -81,7 +82,7 @@ public struct ShowHeaderInfoView: View {
             if let language {
                 Text("•")
                     .textStyle(theme.typography.labelSmall)
-                    .foregroundColor(theme.colors.accent)
+                    .foregroundStyle(.appAccent)
 
                 Text(language)
                     .textStyle(theme.typography.bodyMedium)
@@ -89,16 +90,16 @@ public struct ShowHeaderInfoView: View {
 
             Text("•")
                 .textStyle(theme.typography.labelSmall)
-                .foregroundColor(theme.colors.accent)
+                .foregroundStyle(.appAccent)
 
             Image(systemName: "star.fill")
                 .resizable()
                 .frame(width: 14, height: 14)
-                .foregroundColor(theme.colors.accent)
+                .foregroundStyle(.appAccent)
 
             Text(String(format: "%.1f", rating))
                 .textStyle(theme.typography.bodyMedium)
-                .foregroundColor(theme.colors.accent)
+                .foregroundStyle(.appAccent)
         }
         .frame(maxWidth: .infinity, alignment: .center)
     }
@@ -117,5 +118,5 @@ public struct ShowHeaderInfoView: View {
             seasonCountFormat: { count in count == 1 ? "\(count) Season" : "\(count) Seasons" }
         )
     }
-    .themedPreview()
+    .appPreview()
 }

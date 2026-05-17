@@ -1,3 +1,4 @@
+import DesignSystem
 import SwiftUI
 
 public struct DebugScreen: View {
@@ -11,7 +12,7 @@ public struct DebugScreen: View {
         }
     }
 
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let state: State
     @Binding private var toast: Toast?
@@ -49,7 +50,7 @@ public struct DebugScreen: View {
         .listStyle(.plain)
         .contentMargins(.top, toolbarInset + theme.spacing.medium)
         .scrollContentBackground(.hidden)
-        .background(theme.colors.background)
+        .appScreen()
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .navigationBarColor(backgroundColor: .clear)
@@ -75,10 +76,10 @@ public struct DebugScreen: View {
             VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
                 Text(item.title)
                     .textStyle(theme.typography.titleMedium)
-                    .foregroundColor(theme.colors.onSurface)
+                    .foregroundStyle(.appOnSurface)
                 Text(item.subtitle)
                     .textStyle(theme.typography.bodySmall)
-                    .foregroundColor(theme.colors.onSurfaceVariant)
+                    .foregroundStyle(.appOnSurfaceVariant)
             }
 
             Spacer()
@@ -88,7 +89,7 @@ public struct DebugScreen: View {
                     .tint(theme.colors.secondary)
             } else {
                 Image(systemName: "chevron.right")
-                    .foregroundColor(theme.colors.onSurfaceVariant)
+                    .foregroundStyle(.appOnSurfaceVariant)
             }
         }
         .padding(.vertical, theme.spacing.small)
@@ -102,7 +103,7 @@ public struct DebugScreen: View {
 
     private func itemIcon(systemName: String, role: DebugMenuItemRole) -> some View {
         Image(systemName: systemName)
-            .foregroundColor(role == .accent ? theme.colors.secondary : theme.colors.error)
+            .foregroundStyle(role == .accent ? AnyShapeStyle(.appSecondary) : AnyShapeStyle(.appError))
             .frame(width: theme.spacing.large, height: theme.spacing.large)
     }
 
@@ -114,54 +115,53 @@ public struct DebugScreen: View {
 }
 
 #Preview("Debug Screen") {
-    ThemedPreview {
-        DebugScreen(
-            state: DebugScreen.State(
-                title: "Debug Menu",
-                items: [
-                    DebugMenuItem(
-                        id: "notification",
-                        icon: "bell.fill",
-                        title: "Episode Notifications",
-                        subtitle: "Send a test notification",
-                        onTap: {}
-                    ),
-                    DebugMenuItem(
-                        id: "delayed",
-                        icon: "clock",
-                        title: "Delayed Notification",
-                        subtitle: "Schedule notification in 10 seconds",
-                        onTap: {}
-                    ),
-                    DebugMenuItem(
-                        id: "library-sync",
-                        icon: "arrow.triangle.2.circlepath",
-                        title: "Library Sync",
-                        subtitle: "Last synced: Never",
-                        onTap: {}
-                    ),
-                    DebugMenuItem(
-                        id: "upnext-sync",
-                        icon: "arrow.clockwise",
-                        title: "Up Next Sync",
-                        subtitle: "Last synced: 2 hours ago",
-                        isLoading: false,
-                        isEnabled: true,
-                        onTap: {}
-                    ),
-                    DebugMenuItem(
-                        id: "crash",
-                        icon: "exclamationmark.triangle",
-                        role: .destructive,
-                        title: "Test Crash",
-                        subtitle: "Trigger a fatal error",
-                        onTap: {}
-                    ),
-                ]
-            ),
-            toast: .constant(nil),
-            onBack: {}
-        )
-    }
+    DebugScreen(
+        state: DebugScreen.State(
+            title: "Debug Menu",
+            items: [
+                DebugMenuItem(
+                    id: "notification",
+                    icon: "bell.fill",
+                    title: "Episode Notifications",
+                    subtitle: "Send a test notification",
+                    onTap: {}
+                ),
+                DebugMenuItem(
+                    id: "delayed",
+                    icon: "clock",
+                    title: "Delayed Notification",
+                    subtitle: "Schedule notification in 10 seconds",
+                    onTap: {}
+                ),
+                DebugMenuItem(
+                    id: "library-sync",
+                    icon: "arrow.triangle.2.circlepath",
+                    title: "Library Sync",
+                    subtitle: "Last synced: Never",
+                    onTap: {}
+                ),
+                DebugMenuItem(
+                    id: "upnext-sync",
+                    icon: "arrow.clockwise",
+                    title: "Up Next Sync",
+                    subtitle: "Last synced: 2 hours ago",
+                    isLoading: false,
+                    isEnabled: true,
+                    onTap: {}
+                ),
+                DebugMenuItem(
+                    id: "crash",
+                    icon: "exclamationmark.triangle",
+                    role: .destructive,
+                    title: "Test Crash",
+                    subtitle: "Trigger a fatal error",
+                    onTap: {}
+                ),
+            ]
+        ),
+        toast: .constant(nil),
+        onBack: {}
+    )
+    .appPreview()
     .preferredColorScheme(.dark)
 }

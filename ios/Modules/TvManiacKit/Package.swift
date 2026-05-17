@@ -25,7 +25,8 @@ let package = Package(
             name: "TvManiacKit",
             dependencies: [
                 "CoreKit",
-                "SwiftUIComponents",
+                .product(name: "DesignSystem", package: "SwiftUIComponents"),
+                .product(name: "SwiftUIComponents", package: "SwiftUIComponents"),
                 "TraktAuthKit",
                 .product(name: "FirebaseCore", package: "firebase-ios-sdk"),
             ]

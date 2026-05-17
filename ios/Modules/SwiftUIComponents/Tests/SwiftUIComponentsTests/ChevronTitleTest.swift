@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -7,35 +8,35 @@ class ChevronTitleTest: SnapshotTestCase {
     func test_ChevronTitle() {
         ChevronTitle(title: "Coming Soon")
             .padding()
-            .themedPreview()
+            .appPreview()
             .assertSnapshot(testName: "ChevronTitle")
     }
 
     func test_ChevronTitleWithChevronOnly() {
         ChevronTitle(title: "Coming Soon", chevronStyle: .chevronOnly)
             .padding()
-            .themedPreview()
+            .appPreview()
             .assertSnapshot(testName: "ChevronTitleWithChevronOnly")
     }
 
     func test_ChevronTitleWithChevronTitle() {
         ChevronTitle(title: "Coming Soon", chevronStyle: .withTitle("More"))
             .padding()
-            .themedPreview()
+            .appPreview()
             .assertSnapshot(testName: "ChevronTitleWithChevronTitle")
     }
 
     func test_ChevronTitleWithSubTitle() {
         ChevronTitle(title: "Coming Soon", subtitle: "From Watchlist")
             .padding()
-            .themedPreview()
+            .appPreview()
             .assertSnapshot(testName: "ChevronTitleWithSubTitle")
     }
 
     func test_ChevronTitleWithSubTitleAndChevronOnly() {
         ChevronTitle(title: "Coming Soon", subtitle: "From Watchlist", chevronStyle: .chevronOnly)
             .padding()
-            .themedPreview()
+            .appPreview()
             .assertSnapshot(testName: "ChevronTitleWithSubTitleAndChevronOnly")
     }
 }

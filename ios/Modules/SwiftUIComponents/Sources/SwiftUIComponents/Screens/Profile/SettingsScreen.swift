@@ -1,3 +1,4 @@
+import DesignSystem
 import SwiftUI
 
 public struct SettingsScreen<Theme: ThemeItem>: View {
@@ -29,7 +30,7 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
         }
     }
 
-    @SwiftUIComponents.Theme private var appTheme
+    @Environment(\.appTheme) private var appTheme
 
     private let state: State
     private let onBack: () -> Void

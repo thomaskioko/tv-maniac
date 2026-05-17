@@ -1,3 +1,4 @@
+import DesignSystem
 import SwiftUI
 
 public enum CalendarScreenState: Equatable {
@@ -33,7 +34,7 @@ public struct CalendarPageContent: View {
         }
     }
 
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let state: State
     private let moreEpisodesFormat: (Int32) -> String
@@ -56,36 +57,37 @@ public struct CalendarPageContent: View {
     }
 
     public var body: some View {
-        if state.useToolbar {
-            VStack(spacing: 0) {
-                contentView
-            }
-            .background(theme.colors.background.ignoresSafeArea())
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .principal) {
+        Group {
+            if state.useToolbar {
+                VStack(spacing: 0) {
+                    contentView
+                }
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        weekNavigationHeader
+                    }
+                }
+                .toolbarBackground(.appSurface, for: .navigationBar)
+                .toolbarBackground(.visible, for: .navigationBar)
+            } else {
+                VStack(spacing: 0) {
                     weekNavigationHeader
+                        .padding(.horizontal, theme.spacing.small)
+                        .padding(.vertical, theme.spacing.xSmall)
+
+                    contentView
                 }
             }
-            .toolbarBackground(theme.colors.surface, for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
-        } else {
-            VStack(spacing: 0) {
-                weekNavigationHeader
-                    .padding(.horizontal, theme.spacing.small)
-                    .padding(.vertical, theme.spacing.xSmall)
-
-                contentView
-            }
-            .background(theme.colors.background.ignoresSafeArea())
         }
+        .appScreen()
     }
 
     private var weekNavigationHeader: some View {
         HStack {
             Button(action: onPreviousWeek) {
                 Image(systemName: "chevron.left")
-                    .foregroundColor(state.canNavigatePrevious ? theme.colors.onSurface : theme.colors.onSurface.opacity(0.3))
+                    .foregroundStyle(state.canNavigatePrevious ? AnyShapeStyle(.appOnSurface) : AnyShapeStyle(.appOnSurface.opacity(0.3)))
             }
             .disabled(!state.canNavigatePrevious)
 
@@ -94,7 +96,7 @@ public struct CalendarPageContent: View {
             HStack(spacing: theme.spacing.xSmall) {
                 Text(state.weekLabel)
                     .textStyle(theme.typography.titleSmall)
-                    .foregroundColor(theme.colors.onSurface)
+                    .foregroundStyle(.appOnSurface)
                     .lineLimit(1)
 
                 if state.isRefreshing {
@@ -108,7 +110,7 @@ public struct CalendarPageContent: View {
 
             Button(action: onNextWeek) {
                 Image(systemName: "chevron.right")
-                    .foregroundColor(state.canNavigateNext ? theme.colors.onSurface : theme.colors.onSurface.opacity(0.3))
+                    .foregroundStyle(state.canNavigateNext ? AnyShapeStyle(.appOnSurface) : AnyShapeStyle(.appOnSurface.opacity(0.3)))
             }
             .disabled(!state.canNavigateNext)
         }
@@ -161,7 +163,7 @@ public struct CalendarPageContent: View {
         VStack(alignment: .leading, spacing: theme.spacing.small) {
             Text(dateGroup.dateLabel)
                 .textStyle(theme.typography.titleMedium)
-                .foregroundColor(theme.colors.onSurface)
+                .foregroundStyle(.appOnSurface)
                 .padding(.top, isFirst ? theme.spacing.xSmall : 0)
                 .padding(.vertical, theme.spacing.xSmall)
 
@@ -188,19 +190,19 @@ public struct CalendarPageContent: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(episode.showTitle)
                             .textStyle(theme.typography.titleMedium)
-                            .foregroundColor(theme.colors.onSurface)
+                            .foregroundStyle(.appOnSurface)
                             .lineLimit(1)
 
                         Text(episode.episodeInfo)
                             .textStyle(theme.typography.bodyMedium)
-                            .foregroundColor(theme.colors.onSurfaceVariant)
+                            .foregroundStyle(.appOnSurfaceVariant)
                             .lineLimit(1)
 
                         if let airTime = episode.airTime {
                             let airTimeText = episode.network.map { "\(airTime) on \($0)" } ?? airTime
                             Text(airTimeText)
                                 .textStyle(theme.typography.bodySmall)
-                                .foregroundColor(theme.colors.onSurfaceVariant.opacity(0.7))
+                                .foregroundStyle(.appOnSurfaceVariant.opacity(0.7))
                         }
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
@@ -212,15 +214,15 @@ public struct CalendarPageContent: View {
                     HStack {
                         Text(moreEpisodesFormat(episode.additionalEpisodesCount))
                             .textStyle(theme.typography.labelMedium)
-                            .foregroundColor(theme.colors.onSurfaceVariant)
+                            .foregroundStyle(.appOnSurfaceVariant)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.horizontal, theme.spacing.medium)
                     .padding(.vertical, theme.spacing.small)
-                    .background(theme.colors.surfaceVariant)
+                    .background(.appSurfaceVariant)
                 }
             }
-            .background(theme.colors.surface)
+            .background(.appSurface)
             .clipShape(RoundedRectangle(cornerRadius: theme.shapes.medium))
         }
         .buttonStyle(.plain)
@@ -289,122 +291,118 @@ public struct CalendarScreen: View {
 }
 
 #Preview("Loading") {
-    ThemedPreview {
-        NavigationStack {
-            CalendarScreen(
-                state: CalendarScreen.State(
-                    screenState: .loading,
-                    weekLabel: "Jan 31, 2026 - Feb 6, 2026",
-                    canNavigatePrevious: false,
-                    canNavigateNext: true,
-                    isRefreshing: false
-                ),
-                moreEpisodesFormat: { "+\($0) episodes" },
-                onPreviousWeek: {},
-                onNextWeek: {},
-                onEpisodeCardClicked: { _ in }
-            )
-        }
+    NavigationStack {
+        CalendarScreen(
+            state: CalendarScreen.State(
+                screenState: .loading,
+                weekLabel: "Jan 31, 2026 - Feb 6, 2026",
+                canNavigatePrevious: false,
+                canNavigateNext: true,
+                isRefreshing: false
+            ),
+            moreEpisodesFormat: { "+\($0) episodes" },
+            onPreviousWeek: {},
+            onNextWeek: {},
+            onEpisodeCardClicked: { _ in }
+        )
     }
+    .appPreview()
     .preferredColorScheme(.dark)
 }
 
 #Preview("Login Required") {
-    ThemedPreview {
-        NavigationStack {
-            CalendarScreen(
-                state: CalendarScreen.State(
-                    screenState: .loginRequired(
-                        title: "Nothing to see here",
-                        message: "Login to Trakt to see your calendar"
-                    ),
-                    weekLabel: "Jan 31, 2026 - Feb 6, 2026",
-                    canNavigatePrevious: false,
-                    canNavigateNext: false,
-                    isRefreshing: false
+    NavigationStack {
+        CalendarScreen(
+            state: CalendarScreen.State(
+                screenState: .loginRequired(
+                    title: "Nothing to see here",
+                    message: "Login to Trakt to see your calendar"
                 ),
-                moreEpisodesFormat: { "+\($0) episodes" },
-                onPreviousWeek: {},
-                onNextWeek: {},
-                onEpisodeCardClicked: { _ in }
-            )
-        }
+                weekLabel: "Jan 31, 2026 - Feb 6, 2026",
+                canNavigatePrevious: false,
+                canNavigateNext: false,
+                isRefreshing: false
+            ),
+            moreEpisodesFormat: { "+\($0) episodes" },
+            onPreviousWeek: {},
+            onNextWeek: {},
+            onEpisodeCardClicked: { _ in }
+        )
     }
+    .appPreview()
     .preferredColorScheme(.dark)
 }
 
 #Preview("Empty") {
-    ThemedPreview {
-        NavigationStack {
-            CalendarScreen(
-                state: CalendarScreen.State(
-                    screenState: .empty(
-                        title: "Nothing to see here",
-                        message: "No upcoming episodes"
-                    ),
-                    weekLabel: "Jan 31, 2026 - Feb 6, 2026",
-                    canNavigatePrevious: false,
-                    canNavigateNext: true,
-                    isRefreshing: false
+    NavigationStack {
+        CalendarScreen(
+            state: CalendarScreen.State(
+                screenState: .empty(
+                    title: "Nothing to see here",
+                    message: "No upcoming episodes"
                 ),
-                moreEpisodesFormat: { "+\($0) episodes" },
-                onPreviousWeek: {},
-                onNextWeek: {},
-                onEpisodeCardClicked: { _ in }
-            )
-        }
+                weekLabel: "Jan 31, 2026 - Feb 6, 2026",
+                canNavigatePrevious: false,
+                canNavigateNext: true,
+                isRefreshing: false
+            ),
+            moreEpisodesFormat: { "+\($0) episodes" },
+            onPreviousWeek: {},
+            onNextWeek: {},
+            onEpisodeCardClicked: { _ in }
+        )
     }
+    .appPreview()
     .preferredColorScheme(.dark)
 }
 
 #Preview("Content") {
-    ThemedPreview {
-        NavigationStack {
-            CalendarScreen(
-                state: CalendarScreen.State(
-                    screenState: .content(dateGroups: [
-                        SwiftCalendarDateGroup(
-                            dateLabel: "Today, Jan 31, 2026",
-                            episodes: [
-                                SwiftCalendarEpisodeItem(
-                                    showTraktId: 1,
-                                    episodeTraktId: 100,
-                                    showTitle: "Severance",
-                                    posterUrl: nil,
-                                    episodeInfo: "S02E01 · Hello, Ms. Cobel",
-                                    airTime: "03:00",
-                                    network: "Apple TV+",
-                                    additionalEpisodesCount: 0
-                                ),
-                            ]
-                        ),
-                        SwiftCalendarDateGroup(
-                            dateLabel: "Tomorrow, Feb 1, 2026",
-                            episodes: [
-                                SwiftCalendarEpisodeItem(
-                                    showTraktId: 2,
-                                    episodeTraktId: 200,
-                                    showTitle: "Hell's Paradise",
-                                    posterUrl: nil,
-                                    episodeInfo: "S02E04 · The Battle Begins",
-                                    airTime: "15:45",
-                                    network: nil,
-                                    additionalEpisodesCount: 1
-                                ),
-                            ]
-                        ),
-                    ]),
-                    weekLabel: "Jan 31, 2026 - Feb 6, 2026",
-                    canNavigatePrevious: false,
-                    canNavigateNext: true,
-                    isRefreshing: false
-                ),
-                moreEpisodesFormat: { "+\($0) episodes" },
-                onPreviousWeek: {},
-                onNextWeek: {},
-                onEpisodeCardClicked: { _ in }
-            )
-        }
+    NavigationStack {
+        CalendarScreen(
+            state: CalendarScreen.State(
+                screenState: .content(dateGroups: [
+                    SwiftCalendarDateGroup(
+                        dateLabel: "Today, Jan 31, 2026",
+                        episodes: [
+                            SwiftCalendarEpisodeItem(
+                                showTraktId: 1,
+                                episodeTraktId: 100,
+                                showTitle: "Severance",
+                                posterUrl: nil,
+                                episodeInfo: "S02E01 · Hello, Ms. Cobel",
+                                airTime: "03:00",
+                                network: "Apple TV+",
+                                additionalEpisodesCount: 0
+                            ),
+                        ]
+                    ),
+                    SwiftCalendarDateGroup(
+                        dateLabel: "Tomorrow, Feb 1, 2026",
+                        episodes: [
+                            SwiftCalendarEpisodeItem(
+                                showTraktId: 2,
+                                episodeTraktId: 200,
+                                showTitle: "Hell's Paradise",
+                                posterUrl: nil,
+                                episodeInfo: "S02E04 · The Battle Begins",
+                                airTime: "15:45",
+                                network: nil,
+                                additionalEpisodesCount: 1
+                            ),
+                        ]
+                    ),
+                ]),
+                weekLabel: "Jan 31, 2026 - Feb 6, 2026",
+                canNavigatePrevious: false,
+                canNavigateNext: true,
+                isRefreshing: false
+            ),
+            moreEpisodesFormat: { "+\($0) episodes" },
+            onPreviousWeek: {},
+            onNextWeek: {},
+            onEpisodeCardClicked: { _ in }
+        )
     }
+    .appPreview()
     .preferredColorScheme(.dark)
 }

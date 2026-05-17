@@ -1,3 +1,4 @@
+import DesignSystem
 import SwiftUI
 
 struct DiscoverListContent: View {
@@ -14,7 +15,7 @@ struct DiscoverListContent: View {
         let topRatedShows: [SwiftShow]
     }
 
-    @Theme private var appTheme
+    @Environment(\.appTheme) private var appTheme
 
     let state: State
     let onShowClicked: (Int64) -> Void
@@ -70,7 +71,7 @@ struct DiscoverListContent: View {
             )
         }
         .padding(.top, appTheme.spacing.medium)
-        .background(appTheme.colors.background)
+        .background(.appBackground)
         .offset(y: -10)
     }
 }

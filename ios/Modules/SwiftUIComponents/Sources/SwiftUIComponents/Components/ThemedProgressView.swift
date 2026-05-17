@@ -5,10 +5,11 @@
 //  Created by Thomas Kioko on 8/10/25.
 //
 
+import DesignSystem
 import SwiftUI
 
 public struct ThemedProgressView: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
     @State private var rotationAngle: Double = 0
 
     public init() {}
@@ -22,7 +23,7 @@ public struct ThemedProgressView: View {
 
             ZStack {
                 Circle()
-                    .stroke(theme.colors.accent.opacity(0.2), lineWidth: 3)
+                    .stroke(.appAccent.opacity(0.2), lineWidth: 3)
                     .frame(width: 24, height: 24)
 
                 Circle()

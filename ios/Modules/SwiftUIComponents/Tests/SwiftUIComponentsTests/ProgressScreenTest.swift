@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -43,6 +44,6 @@ class ProgressScreenTest: SnapshotTestCase {
                 }
             )
         }
-        .themedPreview()
+        .appPreview()
     }
 }

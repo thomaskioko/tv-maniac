@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct ShowInfoView: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
     @State private var toast: Toast?
 
     private let isFollowed: Bool
@@ -177,13 +178,13 @@ public struct ShowInfoView: View {
         Button(action: onAddToLibrary) {
             VStack(spacing: theme.spacing.xxxSmall) {
                 Image(systemName: isFollowed ? "minus.circle.fill" : "plus.circle.fill")
-                    .foregroundColor(theme.colors.onButtonBackground)
+                    .foregroundStyle(.appOnButtonBackground)
                     .symbolEffect(isFollowed ? .bounce.down : .bounce.up, value: isFollowed)
 
                 Text(isFollowed ? stopTrackingLabel : trackLabel)
                     .lineLimit(1)
                     .textStyle(theme.typography.labelSmall)
-                    .foregroundColor(theme.colors.onButtonBackground)
+                    .foregroundStyle(.appOnButtonBackground)
             }
             .padding(.vertical, theme.spacing.xxSmall)
             .frame(width: DrawingConstants.buttonWidth, height: DrawingConstants.buttonHeight)
@@ -198,11 +199,11 @@ public struct ShowInfoView: View {
         Button(action: onAddToCustomList) {
             VStack(spacing: theme.spacing.xxxSmall) {
                 Image(systemName: false ? "rectangle.on.rectangle.angled.fill" : "rectangle.on.rectangle.angled")
-                    .foregroundColor(theme.colors.onButtonBackground)
+                    .foregroundStyle(.appOnButtonBackground)
 
                 Text(addToListLabel)
                     .textStyle(theme.typography.labelSmall)
-                    .foregroundColor(theme.colors.onButtonBackground)
+                    .foregroundStyle(.appOnButtonBackground)
                     .lineLimit(1)
             }
             .padding(.vertical, theme.spacing.xxSmall)
@@ -329,5 +330,5 @@ public struct ShowInfoView: View {
             onShowClicked: { _ in }
         )
     }
-    .environment(\.tvManiacTheme, LightTheme())
+    .appPreview(LightTheme())
 }

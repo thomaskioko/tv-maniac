@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct OutlinedButton: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let text: String
     private let systemImageName: String?

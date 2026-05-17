@@ -1,3 +1,4 @@
+import DesignSystem
 import SwiftUI
 
 public enum SwiftEpisodeBadge {

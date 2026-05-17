@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct ToastView: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let type: ToastStyle
     private let title: String
@@ -27,17 +28,17 @@ public struct ToastView: View {
         HStack(alignment: .center, spacing: theme.spacing.small) {
             if loading {
                 ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                    .progressViewStyle(CircularProgressViewStyle(tint: theme.colors.onPrimary))
                     .scaleEffect(0.8)
             } else {
                 Image(systemName: type.iconFileName)
-                    .foregroundColor(.white)
+                    .foregroundStyle(.appOnPrimary)
                     .font(.title3)
             }
 
             Text(message)
                 .textStyle(theme.typography.bodyMedium)
-                .foregroundColor(.white)
+                .foregroundStyle(.appOnPrimary)
                 .lineLimit(3)
         }
         .padding(theme.spacing.medium)

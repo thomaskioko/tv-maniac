@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -13,7 +14,7 @@ class TopBarTest: SnapshotTestCase {
             onRefreshClicked: {}
         )
         .padding()
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "TopBar")
     }
 }

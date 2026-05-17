@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct ContinueTrackingSection: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let title: String
     private let episodes: [SwiftContinueTrackingEpisode]
@@ -31,7 +32,7 @@ public struct ContinueTrackingSection: View {
             VStack(alignment: .leading, spacing: theme.spacing.small) {
                 Text(title)
                     .textStyle(theme.typography.titleMedium)
-                    .foregroundColor(theme.colors.onSurface)
+                    .foregroundStyle(.appOnSurface)
                     .padding(.horizontal, theme.spacing.medium)
 
                 ScrollViewReader { proxy in

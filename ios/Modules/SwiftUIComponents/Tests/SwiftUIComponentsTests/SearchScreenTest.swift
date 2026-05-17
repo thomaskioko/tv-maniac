@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -101,6 +102,6 @@ class SearchScreenTest: SnapshotTestCase {
             onBack: {},
             onCategoryChanged: { _ in }
         )
-        .themedPreview()
+        .appPreview()
     }
 }

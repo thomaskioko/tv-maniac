@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -34,7 +35,7 @@ class HorizontalShowContentViewViewTest: SnapshotTestCase {
             onMoreClicked: {}
         )
         .padding()
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(testName: "HorizontalShowContentView")
     }
 }

@@ -5,6 +5,7 @@
 //  Created by Thomas Kioko on 11/5/24.
 //
 
+import DesignSystem
 import SwiftUI
 
 public struct CenteredFullScreenView<Content: View>: View {

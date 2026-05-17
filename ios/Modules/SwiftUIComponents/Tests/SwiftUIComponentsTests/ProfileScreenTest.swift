@@ -1,5 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
+import DesignSystem
 import SwiftUIComponents
 import XCTest
 
@@ -32,7 +33,7 @@ class ProfileScreenTest: SnapshotTestCase {
             onSettingsClicked: {},
             onLoginClicked: {}
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_Loading")
     }
 
@@ -57,7 +58,7 @@ class ProfileScreenTest: SnapshotTestCase {
             onSettingsClicked: {},
             onLoginClicked: {}
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_Unauthenticated")
     }
 
@@ -95,7 +96,7 @@ class ProfileScreenTest: SnapshotTestCase {
             onSettingsClicked: {},
             onLoginClicked: {}
         )
-        .themedPreview()
+        .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_Authenticated")
     }
 }

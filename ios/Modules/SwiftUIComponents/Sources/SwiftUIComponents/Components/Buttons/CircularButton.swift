@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct CircularButton: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
     @State private var isPressed = false
 
     private let iconName: String
@@ -33,13 +34,13 @@ public struct CircularButton: View {
         }) {
             ZStack {
                 Circle()
-                    .fill(theme.colors.surface.opacity(0.6))
+                    .fill(.appSurface.opacity(0.6))
                     .overlay(
                         Image(systemName: iconName)
                             .resizable()
                             .scaledToFit()
-                            .foregroundColor(theme.colors.onSurface)
-                            .font(.system(size: 20, weight: .bold))
+                            .foregroundStyle(.appOnSurface)
+                            .font(theme.typography.titleSmall)
                             .padding(theme.spacing.small)
                     )
                     .frame(width: width, height: height)

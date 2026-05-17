@@ -1,7 +1,8 @@
+import DesignSystem
 import SwiftUI
 
 public struct FeaturedContentPosterView: View {
-    @Theme private var theme
+    @Environment(\.appTheme) private var theme
 
     private let showId: Int64
     private let title: String
@@ -53,7 +54,7 @@ public struct FeaturedContentPosterView: View {
 
                         Image(systemName: "square.stack.fill")
                             .imageScale(.large)
-                            .foregroundColor(theme.colors.onPrimary.opacity(0.9))
+                            .foregroundStyle(.appOnPrimary.opacity(0.9))
                             .padding([.vertical])
                             .padding(.trailing, theme.spacing.medium)
                             .textStyle(theme.typography.bodySmall)
