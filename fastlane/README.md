@@ -77,7 +77,7 @@ Build TvManiac IPA (Debug, simulator)
 [bundle exec] fastlane ios lint
 ```
 
-Run SwiftLint
+Run pinned SwiftLint via Mint against the iOS source tree
 
 ### ios format_swift_code
 

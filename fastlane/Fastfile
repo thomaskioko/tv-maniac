@@ -29,6 +29,7 @@ platform :ios do
       project: "ios/tv-maniac.xcodeproj",
       scheme: "SwiftUIComponents",
       destination: "platform=iOS Simulator,OS=18.5,name=#{TEST_DEVICE}",
+      skip_detect_devices: true,
       clean: true,
       result_bundle: true,
       xcargs: "-retry-tests-on-failure -skipPackagePluginValidation",
