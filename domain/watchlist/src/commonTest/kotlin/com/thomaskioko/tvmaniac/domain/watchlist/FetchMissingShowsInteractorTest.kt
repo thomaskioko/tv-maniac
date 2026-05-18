@@ -2,10 +2,9 @@ package com.thomaskioko.tvmaniac.domain.watchlist
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
-import com.thomaskioko.tvmaniac.domain.watchlist.model.WatchlistSections
-import com.thomaskioko.tvmaniac.domain.watchlist.model.WatchlistShowInfo
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
+import com.thomaskioko.tvmaniac.watchedshows.testing.FakeWatchedShowsDao
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -26,6 +25,7 @@ class FetchMissingShowsInteractorTest {
     private val showDetailsRepository = FakeShowDetailsRepository()
     private val seasonDetailsRepository = FakeSeasonDetailsRepository()
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
+    private val watchedShowsDao = FakeWatchedShowsDao()
 
     private val syncWatchedShowInteractor = SyncWatchedShowInteractor(
         showDetailsRepository = showDetailsRepository,
@@ -35,66 +35,36 @@ class FetchMissingShowsInteractorTest {
     )
 
     private val interactor = FetchMissingShowsInteractor(
+        watchedShowsDao = watchedShowsDao,
         syncWatchedShowInteractor = syncWatchedShowInteractor,
         dispatchers = dispatchers,
     )
 
     @Test
-    fun `should fetch each show with null title once`() = runTest(testDispatcher) {
-        val sections = WatchlistSections(
-            watchNext = listOf(showInfo(42L, title = null), showInfo(100L, title = "Loaded")),
-            stale = listOf(showInfo(99L, title = null)),
-        )
+    fun `should fetch each show id reported missing by the dao`() = runTest(testDispatcher) {
+        watchedShowsDao.setTraktIdsMissingShowDetails(listOf(42L, 99L))
 
-        interactor.executeSync(sections)
+        interactor.executeSync(false)
 
         showDetailsRepository.fetchInvocations().map { it.id } shouldBe listOf(42L, 99L)
+        showDetailsRepository.fetchInvocations().all { !it.forceRefresh } shouldBe true
     }
 
     @Test
-    fun `should skip ids already fetched on subsequent invocations`() = runTest(testDispatcher) {
-        val first = WatchlistSections(
-            watchNext = listOf(showInfo(42L, title = null)),
-            stale = emptyList(),
-        )
-        val second = WatchlistSections(
-            watchNext = listOf(showInfo(42L, title = null), showInfo(99L, title = null)),
-            stale = emptyList(),
-        )
+    fun `should pass force refresh flag to downstream sync`() = runTest(testDispatcher) {
+        watchedShowsDao.setTraktIdsMissingShowDetails(listOf(42L))
 
-        interactor.executeSync(first)
-        interactor.executeSync(second)
+        interactor.executeSync(true)
 
-        showDetailsRepository.fetchInvocations().map { it.id } shouldBe listOf(42L, 99L)
+        showDetailsRepository.fetchInvocations().single().forceRefresh shouldBe true
     }
 
     @Test
-    fun `should propagate error from downstream sync`() = runTest(testDispatcher) {
-        seasonDetailsRepository.setFetchError(IllegalStateException("boom"))
+    fun `should no-op given dao reports no missing ids`() = runTest(testDispatcher) {
+        watchedShowsDao.setTraktIdsMissingShowDetails(emptyList())
 
-        val sections = WatchlistSections(
-            watchNext = listOf(showInfo(42L, title = null)),
-            stale = emptyList(),
-        )
+        interactor.executeSync(false)
 
-        interactor.executeSync(sections)
-
-        showDetailsRepository.fetchInvocations().map { it.id } shouldBe listOf(42L)
+        showDetailsRepository.fetchInvocations() shouldBe emptyList()
     }
 }
-
-private fun showInfo(traktId: Long, title: String?): WatchlistShowInfo = WatchlistShowInfo(
-    traktId = traktId,
-    tmdbId = null,
-    title = title,
-    posterImageUrl = null,
-    status = null,
-    year = null,
-    seasonCount = 0,
-    episodeCount = 0,
-    episodesWatched = 0,
-    totalEpisodesTracked = 0,
-    watchProgress = 0f,
-    lastWatchedAt = null,
-    followedAt = null,
-)

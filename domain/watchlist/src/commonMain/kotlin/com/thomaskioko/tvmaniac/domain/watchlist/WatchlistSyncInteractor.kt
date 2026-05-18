@@ -11,6 +11,7 @@ import kotlinx.coroutines.withContext
 public class WatchlistSyncInteractor(
     private val traktActivityRepository: TraktActivityRepository,
     private val watchedShowsRepository: WatchedShowsRepository,
+    private val fetchMissingShowsInteractor: FetchMissingShowsInteractor,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<WatchlistSyncInteractor.Param>() {
 
@@ -18,6 +19,7 @@ public class WatchlistSyncInteractor(
         withContext(dispatchers.io) {
             traktActivityRepository.fetchLatestActivities(params.forceRefresh)
             watchedShowsRepository.syncWatchedShows(params.forceRefresh)
+            fetchMissingShowsInteractor.executeSync(params.forceRefresh)
         }
     }
 

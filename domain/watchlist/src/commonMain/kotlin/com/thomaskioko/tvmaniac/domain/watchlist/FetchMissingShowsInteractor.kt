@@ -2,33 +2,24 @@ package com.thomaskioko.tvmaniac.domain.watchlist
 
 import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.domain.watchlist.model.WatchlistSections
+import com.thomaskioko.tvmaniac.watchedshows.api.WatchedShowsDao
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.withContext
 
 @Inject
 public class FetchMissingShowsInteractor(
+    private val watchedShowsDao: WatchedShowsDao,
     private val syncWatchedShowInteractor: SyncWatchedShowInteractor,
     private val dispatchers: AppCoroutineDispatchers,
-) : Interactor<WatchlistSections>() {
+) : Interactor<Boolean>() {
 
-    private val fetchedShowIds = mutableSetOf<Long>()
-
-    override suspend fun doWork(params: WatchlistSections) {
+    override suspend fun doWork(params: Boolean) {
         withContext(dispatchers.io) {
-            val pendingIds = (params.watchNext + params.stale)
-                .filter { it.title == null }
-                .map { it.traktId }
-                .filter { fetchedShowIds.add(it) }
-            pendingIds.forEach { traktId ->
+            watchedShowsDao.traktIdsMissingShowDetails().forEach { traktId ->
                 syncWatchedShowInteractor.executeSync(
-                    SyncWatchedShowInteractor.Param(traktId = traktId, forceRefresh = false),
+                    SyncWatchedShowInteractor.Param(traktId = traktId, forceRefresh = params),
                 )
             }
         }
-    }
-
-    private companion object {
-        private const val TAG = "FetchMissingShowsInteractor"
     }
 }
