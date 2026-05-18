@@ -9,11 +9,18 @@ import kotlinx.coroutines.flow.map
 public class FakeWatchedShowsDao : WatchedShowsDao {
 
     private val state = MutableStateFlow<Map<Long, WatchedShowEntry>>(emptyMap())
+    private var idsMissingShowDetails: List<Long> = emptyList()
+
+    public fun setTraktIdsMissingShowDetails(ids: List<Long>) {
+        idsMissingShowDetails = ids
+    }
 
     override fun entries(): List<WatchedShowEntry> = state.value.values.toList()
 
     override fun entriesObservable(): Flow<List<WatchedShowEntry>> =
         state.map { it.values.toList() }
+
+    override fun traktIdsMissingShowDetails(): List<Long> = idsMissingShowDetails
 
     override fun upsert(entry: WatchedShowEntry) {
         state.value = state.value + (entry.traktId to entry)

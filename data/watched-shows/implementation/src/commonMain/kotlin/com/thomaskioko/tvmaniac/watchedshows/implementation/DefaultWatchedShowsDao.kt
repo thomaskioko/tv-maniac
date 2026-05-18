@@ -47,6 +47,11 @@ public class DefaultWatchedShowsDao(
                 }
             }
 
+    override fun traktIdsMissingShowDetails(): List<Long> =
+        database.traktWatchedShowsQueries.traktIdsMissingShowDetails()
+            .executeAsList()
+            .map { it.id }
+
     override fun upsert(entry: WatchedShowEntry) {
         database.traktWatchedShowsQueries.upsert(
             traktId = Id(entry.traktId),

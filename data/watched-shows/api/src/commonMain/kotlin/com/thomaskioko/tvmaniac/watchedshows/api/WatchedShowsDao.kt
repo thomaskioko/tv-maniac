@@ -8,6 +8,8 @@ public interface WatchedShowsDao {
 
     public fun entriesObservable(): Flow<List<WatchedShowEntry>>
 
+    public fun traktIdsMissingShowDetails(): List<Long>
+
     public fun upsert(entry: WatchedShowEntry)
 
     public fun deleteByTraktId(traktId: Long)

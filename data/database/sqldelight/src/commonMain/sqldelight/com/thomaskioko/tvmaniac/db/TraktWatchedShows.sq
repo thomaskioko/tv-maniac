@@ -23,6 +23,12 @@ SELECT
     trakt_watched_shows.last_updated_at
 FROM trakt_watched_shows;
 
+traktIdsMissingShowDetails:
+SELECT watched_show.trakt_id
+FROM trakt_watched_shows AS watched_show
+LEFT JOIN tvshow ON watched_show.trakt_id = tvshow.trakt_id
+WHERE tvshow.trakt_id IS NULL;
+
 entriesObservable:
 SELECT
     trakt_watched_shows.trakt_id,
