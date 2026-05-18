@@ -1,5 +1,21 @@
+import com.autonomousapps.DependencyAnalysisSubExtension
+
 plugins {
     alias(libs.plugins.app.kmp)
+}
+
+// TODO: replace with `scaffold { ignoreUnused(...) }`.
+configure<DependencyAnalysisSubExtension> {
+    issues {
+        onUnusedDependencies {
+            exclude(
+                ":data:request-manager:testing",
+                ":data:sync-activity:testing",
+                ":data:traktlists:testing",
+                ":data:user:testing",
+            )
+        }
+    }
 }
 
 scaffold {
@@ -112,6 +128,13 @@ kotlin {
             api(projects.data.traktlists.testing)
             api(projects.data.user.testing)
             implementation(libs.sqldelight.driver.jvm)
+        }
+
+        iosMain.dependencies {
+            api(projects.data.requestManager.testing)
+            api(projects.data.syncActivity.testing)
+            api(projects.data.traktlists.testing)
+            api(projects.data.user.testing)
         }
 
         androidMain.dependencies {

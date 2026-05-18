@@ -222,7 +222,7 @@ dependencies {
     testImplementation(projects.domain.watchlist)
     testImplementation(projects.features.watchlist.nav)
     testImplementation(projects.features.watchlist.presenter)
-    testImplementation("androidx.test:monitor:1.8.0")
+    testImplementation(libs.androidx.monitor)
 
     testImplementation(libs.androidx.compose.ui.test)
     testRuntimeOnly(libs.androidx.test.core)
@@ -230,10 +230,11 @@ dependencies {
     testImplementation(libs.coroutines.test)
     testImplementation(libs.kotest.assertions)
     testImplementation(libs.kotlin.test.junit)
+    testImplementation(libs.turbine)
     testImplementation(libs.ktor.core)
     testImplementation(libs.ktor.http)
-    testRuntimeOnly(libs.robolectric)
     testImplementation(libs.robolectric.annotations)
+    testRuntimeOnly(libs.robolectric)
     testRuntimeOnly(libs.androidx.compose.ui.test.manifest)
 
     androidTestImplementation(libs.firebase.config)

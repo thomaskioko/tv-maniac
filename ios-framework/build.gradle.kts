@@ -8,6 +8,8 @@ plugins {
     alias(libs.plugins.app.kmp)
 }
 
+// TODO: add `scaffold { ignoreAll() }` to ignore wrong DAGP configuration
+
 scaffold {
     useMetro()
 
