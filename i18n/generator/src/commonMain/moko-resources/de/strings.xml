@@ -342,6 +342,8 @@
     <string name="label_debug_sync_login_required">Melden Sie sich bei Trakt an, um Daten zu synchronisieren</string>
     <string name="label_debug_trigger_crash_title">Testabsturz</string>
     <string name="label_debug_trigger_crash_description">Einen Testabsturz für Crashlytics auslösen</string>
+    <string name="label_debug_feature_flags_title">Feature-Flags</string>
+    <string name="label_debug_feature_flags_description">Remote-Feature-Flags prüfen und überschreiben</string>
     <string name="label_debug_token_status_title">Token-Status</string>
     <string name="label_debug_token_expires_in">Zuletzt aktualisiert: %1$s · Läuft ab in %2$s</string>
     <string name="label_debug_token_expired">Zuletzt aktualisiert: %s · Abgelaufen</string>
