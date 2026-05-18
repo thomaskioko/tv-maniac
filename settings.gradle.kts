@@ -85,6 +85,7 @@ include(
     ":api:tmdb:implementation",
     ":api:trakt:api",
     ":api:trakt:implementation",
+    ":api:trakt:testing",
     ":app",
     ":benchmark",
     ":core:appconfig:api",
