@@ -207,14 +207,15 @@ internal class Scenarios(
     inner class Library {
         fun stubLibrarySyncEndpoints() {
             mockHandler.stubEndpoint(Endpoints.Trakt.SyncLastActivities)
+            mockHandler.stubEndpoint(Endpoints.Trakt.SyncWatchedShows)
             mockHandler.stubEndpoint(Endpoints.Trakt.UsersMeWatchlistShows)
             mockHandler.stubEndpoint(Endpoints.Trakt.ShowDetails)
             mockHandler.stubEndpoint(Endpoints.Trakt.ShowSeasons)
             mockHandler.stubEndpoint(Endpoints.Tmdb.ShowDetails)
             mockHandler.stubEndpoint(Endpoints.Tmdb.WatchProviders)
 
-            val watchlist = FixtureLoader.load(Endpoints.Trakt.UsersMeWatchlistShows.successFixture)
-            showFixtures(watchlist).forEach { mockHandler.stubShow(it) }
+            val watchedShows = FixtureLoader.load(Endpoints.Trakt.SyncWatchedShows.successFixture)
+            showFixtures(watchedShows).forEach { mockHandler.stubShow(it) }
         }
     }
 

@@ -134,6 +134,12 @@ public object Endpoints {
             override val errorFixture: String = "trakt/sync/history/error.json"
         }
 
+        public object SyncWatchedShows : Endpoint.Exact {
+            override val path: String = "/sync/watched/shows"
+            override val successFixture: String = "trakt/sync/watched/shows/success.json"
+            override val errorFixture: String = "trakt/sync/watched/shows/error.json"
+        }
+
         public object SearchByTmdb : Endpoint.Pattern {
             override val pathRegex: String = "/search/tmdb/\\d+"
             override val successFixture: String = "trakt/search/success.json"
@@ -295,6 +301,7 @@ public object Endpoints {
         Trakt.UsersMeWatchlistShows,
         Trakt.SyncLastActivities,
         Trakt.SyncHistory,
+        Trakt.SyncWatchedShows,
         Trakt.SearchByTmdb,
         Trakt.Search,
         Trakt.ShowDetails,
