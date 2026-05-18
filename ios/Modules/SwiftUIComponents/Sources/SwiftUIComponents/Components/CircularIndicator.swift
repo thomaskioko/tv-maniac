@@ -242,7 +242,7 @@ struct ProgressIndicatorBar: View {
         )
     }
     .padding()
-    .background(Color.black.opacity(0.8))
+    .background(.appScrim.opacity(0.8))
 }
 
 #Preview("Many Items") {
@@ -266,7 +266,7 @@ struct ProgressIndicatorBar: View {
         )
     }
     .padding()
-    .background(Color.black.opacity(0.8))
+    .background(.appScrim.opacity(0.8))
 }
 
 #Preview("Progress Bar") {
@@ -278,5 +278,5 @@ struct ProgressIndicatorBar: View {
         ProgressIndicatorBar(progress: 1.0)
     }
     .padding()
-    .background(Color.black.opacity(0.8))
+    .background(.appScrim.opacity(0.8))
 }

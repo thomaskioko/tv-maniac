@@ -165,8 +165,9 @@ public struct ShowInfoView: View {
 
             CastListView(casts: castsList)
 
-            HorizontalItemListView(
+            HorizontalShowContentView(
                 title: similarShowsTitle,
+                cardStyle: .backdrop,
                 items: similarShows,
                 onClick: { id in onShowClicked(id) }
             )
@@ -175,50 +176,22 @@ public struct ShowInfoView: View {
     }
 
     private var watchlistButton: some View {
-        Button(action: onAddToLibrary) {
-            VStack(spacing: theme.spacing.xxxSmall) {
-                Image(systemName: isFollowed ? "minus.circle.fill" : "plus.circle.fill")
-                    .foregroundStyle(.appOnButtonBackground)
-                    .symbolEffect(isFollowed ? .bounce.down : .bounce.up, value: isFollowed)
-
-                Text(isFollowed ? stopTrackingLabel : trackLabel)
-                    .lineLimit(1)
-                    .textStyle(theme.typography.labelSmall)
-                    .foregroundStyle(.appOnButtonBackground)
-            }
-            .padding(.vertical, theme.spacing.xxSmall)
-            .frame(width: DrawingConstants.buttonWidth, height: DrawingConstants.buttonHeight)
-        }
-        .buttonStyle(.borderedProminent)
-        .controlSize(.small)
-        .tint(isFollowed ? .red.opacity(0.65) : theme.colors.accent)
-        .buttonBorderShape(.roundedRectangle(radius: DrawingConstants.buttonRadius))
+        FilledVerticalIconButton(
+            text: isFollowed ? stopTrackingLabel : trackLabel,
+            systemImage: isFollowed ? "minus.circle.fill" : "plus.circle.fill",
+            containerColor: isFollowed ? .red.opacity(0.65) : nil,
+            symbolEffectValue: isFollowed,
+            symbolEffectDirection: isFollowed ? .down : .up,
+            action: onAddToLibrary
+        )
     }
 
     private var listButton: some View {
-        Button(action: onAddToCustomList) {
-            VStack(spacing: theme.spacing.xxxSmall) {
-                Image(systemName: false ? "rectangle.on.rectangle.angled.fill" : "rectangle.on.rectangle.angled")
-                    .foregroundStyle(.appOnButtonBackground)
-
-                Text(addToListLabel)
-                    .textStyle(theme.typography.labelSmall)
-                    .foregroundStyle(.appOnButtonBackground)
-                    .lineLimit(1)
-            }
-            .padding(.vertical, theme.spacing.xxSmall)
-            .frame(width: DrawingConstants.buttonWidth, height: DrawingConstants.buttonHeight)
-        }
-        .buttonStyle(.borderedProminent)
-        .controlSize(.small)
-        .tint(theme.colors.accent)
-        .buttonBorderShape(.roundedRectangle(radius: DrawingConstants.buttonRadius))
-    }
-
-    private enum DrawingConstants {
-        static let buttonWidth: CGFloat = 85
-        static let buttonHeight: CGFloat = 35
-        static let buttonRadius: CGFloat = 12
+        FilledVerticalIconButton(
+            text: addToListLabel,
+            systemImage: "rectangle.on.rectangle.angled",
+            action: onAddToCustomList
+        )
     }
 }
 

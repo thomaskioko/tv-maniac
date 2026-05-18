@@ -198,7 +198,7 @@ public struct LibraryScreen: View {
                 }
             }
             .padding(.horizontal, appTheme.spacing.small)
-            .padding(.vertical, 6)
+            .padding(.vertical, appTheme.spacing.xxSmall)
             .background(.appSurfaceVariant.opacity(0.5))
             .clipShape(RoundedRectangle(cornerRadius: appTheme.shapes.medium))
         }

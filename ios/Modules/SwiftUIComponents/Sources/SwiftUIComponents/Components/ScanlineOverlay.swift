@@ -52,17 +52,19 @@ public extension View {
 }
 
 #Preview {
+    let theme = TerminalTheme()
     ZStack {
-        Color.black
+        theme.colors.background
         VStack(spacing: 20) {
             Text("CRT Scanline Effect")
-                .font(.title)
-                .foregroundStyle(.green)
+                .textStyle(theme.typography.headlineSmall)
+                .foregroundStyle(theme.colors.accent)
 
             Text("Retro terminal aesthetic")
-                .foregroundStyle(.green.opacity(0.8))
+                .foregroundStyle(theme.colors.accent.opacity(0.8))
         }
     }
     .ignoresSafeArea(.all)
-    .scanlineEffect(enabled: true, color: .green, opacity: 0.15)
+    .scanlineEffect(enabled: true, color: theme.colors.accent, opacity: 0.15)
+    .appPreview(theme)
 }

@@ -57,7 +57,7 @@ public struct YoutubeItemView: View {
                 .overlay {
                     overlay
                 }
-                .shadow(radius: 2.5)
+                .appShadow(theme.shadows.small)
 
                 HStack {
                     Text(name)
@@ -79,10 +79,10 @@ public struct YoutubeItemView: View {
 
     private var overlay: some View {
         ZStack {
-            Color.black.opacity(DimensionConstants.overlayOpacity)
+            theme.colors.scrim.opacity(DimensionConstants.overlayOpacity)
             if isLoading {
                 ProgressView()
-                    .tint(theme.colors.onPrimary)
+                    .tint(theme.colors.onScrim)
                     .frame(
                         width: DimensionConstants.overlayWidth,
                         height: DimensionConstants.overlayHeight,
@@ -105,7 +105,7 @@ public struct YoutubeItemView: View {
                         alignment: .center
                     )
                     .symbolRenderingMode(.palette)
-                    .foregroundStyle(.appOnPrimary, .appSurfaceVariant.opacity(0.6))
+                    .foregroundStyle(.appOnScrim, .appScrim.opacity(0.5))
                     .scaledToFit()
                     .imageScale(.medium)
                     .padding(theme.spacing.medium)

@@ -34,6 +34,6 @@ public struct RoundedButton: View {
         .contentShape(Circle())
         .clipShape(Circle())
         .tint(tintColor)
-        .shadow(radius: 2.5)
+        .appShadow(theme.shadows.small)
     }
 }

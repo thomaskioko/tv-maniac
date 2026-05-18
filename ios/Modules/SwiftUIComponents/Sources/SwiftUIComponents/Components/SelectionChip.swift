@@ -75,5 +75,5 @@ public struct SelectionChipGroup: View {
         )
     }
     .padding()
-    .background(Color(.systemBackground))
+    .background(.appBackground)
 }

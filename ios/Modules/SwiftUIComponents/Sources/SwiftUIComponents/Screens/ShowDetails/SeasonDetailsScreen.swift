@@ -235,7 +235,7 @@ public struct SeasonDetailsScreen: View {
             ZStack(alignment: .bottom) {
                 VStack {
                     Spacer()
-                    HStack(spacing: 16) {
+                    HStack(spacing: appTheme.spacing.medium) {
                         Image(systemName: "photo.fill.on.rectangle.fill")
                             .resizable()
                             .frame(width: 28.0, height: 28.0)

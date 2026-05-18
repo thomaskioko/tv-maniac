@@ -8,7 +8,7 @@ public struct ShowContentItemView: View {
     private let imageUrl: String?
     private let imageWidth: CGFloat
     private let imageHeight: CGFloat
-    private let shadowRadius: CGFloat
+    private let shadowToken: TvManiacShadowToken?
     private let cornerRadius: CGFloat?
     private let imageRadius: CGFloat?
 
@@ -17,7 +17,7 @@ public struct ShowContentItemView: View {
         imageUrl: String?,
         imageWidth: CGFloat = 240,
         imageHeight: CGFloat = 180,
-        shadowRadius: CGFloat = 2.5,
+        shadowToken: TvManiacShadowToken? = nil,
         cornerRadius: CGFloat? = nil,
         imageRadius: CGFloat? = nil
     ) {
@@ -25,7 +25,7 @@ public struct ShowContentItemView: View {
         self.title = title
         self.imageWidth = imageWidth
         self.imageHeight = imageHeight
-        self.shadowRadius = shadowRadius
+        self.shadowToken = shadowToken
         self.cornerRadius = cornerRadius
         self.imageRadius = imageRadius
     }
@@ -40,30 +40,20 @@ public struct ShowContentItemView: View {
         )
         .overlay(nameOverlay)
         .clipShape(RoundedRectangle(cornerRadius: cornerRadius ?? theme.shapes.small, style: .continuous))
-        .shadow(color: theme.colors.surfaceVariant.opacity(0.3), radius: shadowRadius, x: 0, y: 2)
+        .appShadow(shadowToken ?? theme.shadows.small, color: theme.colors.surfaceVariant.opacity(0.3))
     }
 
     private var nameOverlay: some View {
         ZStack(alignment: .bottom) {
             LinearGradient(
-                colors: [.clear, Color.black.opacity(0.2)], startPoint: .top, endPoint: .bottom
+                colors: [.clear, theme.colors.scrim.opacity(0.7)],
+                startPoint: .top,
+                endPoint: .bottom
             )
-            Rectangle()
-                .fill(.ultraThinMaterial)
-                .frame(height: 40)
-                .mask(overlayMask)
+            .frame(height: 60)
+            .frame(maxHeight: .infinity, alignment: .bottom)
 
             MetallicTitleView(title: title)
-        }
-    }
-
-    private var overlayMask: some View {
-        VStack(spacing: 0) {
-            LinearGradient(
-                colors: [.clear, Color.black], startPoint: .top, endPoint: .bottom
-            )
-            .frame(height: 40)
-            Rectangle()
         }
     }
 }
@@ -73,18 +63,13 @@ private struct MetallicTitleView: View {
     let title: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
             Text(title)
                 .textStyle(theme.typography.titleSmall)
                 .lineLimit(DimensionConstants.lineLimit)
                 .foregroundStyle(
                     .linearGradient(
-                        colors: [
-                            Color(white: 0.95),
-                            Color(white: 0.85),
-                            Color(white: 0.95),
-                            Color(white: 0.75),
-                        ],
+                        colors: MetallicGradient.chromeStops,
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
@@ -106,8 +91,8 @@ private struct MetallicTitleView: View {
                         )
                 }
         }
-        .padding(.horizontal, 8)
-        .padding(.bottom, 10)
+        .padding(.horizontal, theme.spacing.xSmall)
+        .padding(.bottom, theme.spacing.xSmall)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
@@ -115,7 +100,6 @@ private struct MetallicTitleView: View {
 private enum DimensionConstants {
     static let imageRadius: CGFloat = 2.5
     static let cornerRadius: CGFloat = 4
-    static let shadowRadius: CGFloat = 2.5
     static let lineLimit: Int = 1
 }
 

@@ -2,6 +2,8 @@ import DesignSystem
 import SwiftUI
 
 public struct ThemeSelectorView<Theme: ThemeItem>: View {
+    @Environment(\.appTheme) private var appTheme
+
     let themes: [Theme]
     let selectedTheme: Theme
     let onThemeSelected: (Theme) -> Void
@@ -23,7 +25,7 @@ public struct ThemeSelectorView<Theme: ThemeItem>: View {
     ]
 
     public var body: some View {
-        LazyVGrid(columns: columns, spacing: 12) {
+        LazyVGrid(columns: columns, spacing: appTheme.spacing.small) {
             ForEach(themes, id: \.id) { theme in
                 ThemePreviewSwatch(
                     backgroundColor: theme.backgroundColor,
@@ -36,7 +38,7 @@ public struct ThemeSelectorView<Theme: ThemeItem>: View {
                 )
             }
         }
-        .padding(.horizontal, 8)
+        .padding(.horizontal, appTheme.spacing.xSmall)
     }
 }
 
@@ -148,5 +150,5 @@ public struct ThemeItemModel: ThemeItem, Identifiable {
         onThemeSelected: { _ in }
     )
     .padding()
-    .background(Color(.systemBackground))
+    .background(.appBackground)
 }

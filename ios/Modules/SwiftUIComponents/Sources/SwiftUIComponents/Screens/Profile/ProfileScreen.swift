@@ -84,8 +84,8 @@ public struct ProfileScreen: View {
 
             LinearGradient(
                 colors: [
-                    .black.opacity(0.6),
-                    .black.opacity(0.3),
+                    appTheme.colors.background.opacity(0.6),
+                    appTheme.colors.background.opacity(0.3),
                     .clear,
                 ],
                 startPoint: .top,
@@ -170,7 +170,7 @@ public struct ProfileScreen: View {
                 )
             )
 
-            HStack(alignment: .center, spacing: 16) {
+            HStack(alignment: .center, spacing: appTheme.spacing.medium) {
                 AvatarView(
                     avatarUrl: userProfile.avatarUrl,
                     size: 80,
@@ -187,7 +187,7 @@ public struct ProfileScreen: View {
                         Text(state.editButtonLabel)
                             .textStyle(appTheme.typography.labelMedium)
                             .foregroundStyle(.appOnPrimary)
-                            .padding(.horizontal, 20)
+                            .padding(.horizontal, appTheme.spacing.medium)
                             .padding(.vertical, appTheme.spacing.xSmall)
                             .background(Color.clear)
                             .overlay(
@@ -279,7 +279,7 @@ public struct ProfileScreen: View {
                     .textStyle(appTheme.typography.headlineLarge)
                     .foregroundStyle(.appOnSurface)
                     .lineSpacing(appTheme.spacing.xSmall)
-                    .padding(.horizontal, 28)
+                    .padding(.horizontal, appTheme.spacing.large)
 
                 VStack(alignment: .leading, spacing: appTheme.spacing.large) {
                     ForEach(state.featureItems) { item in
@@ -291,7 +291,7 @@ public struct ProfileScreen: View {
                 Spacer()
                     .frame(height: appTheme.spacing.xSmall)
 
-                VStack(spacing: 20) {
+                VStack(spacing: appTheme.spacing.medium) {
                     Text(state.footerDescription)
                         .textStyle(appTheme.typography.bodyMedium)
                         .foregroundStyle(.appOnSurface)

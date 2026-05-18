@@ -8,20 +8,20 @@ public struct ProviderItemView: View {
     private let imageWidth: CGFloat
     private let imageHeight: CGFloat
     private let imageRadius: CGFloat?
-    private let shadowRadius: CGFloat
+    private let shadowToken: TvManiacShadowToken?
 
     public init(
         logoUrl: String?,
         imageWidth: CGFloat = 80,
         imageHeight: CGFloat = 70,
         imageRadius: CGFloat? = nil,
-        shadowRadius: CGFloat = 2.5
+        shadowToken: TvManiacShadowToken? = nil
     ) {
         self.logoUrl = logoUrl
         self.imageWidth = imageWidth
         self.imageHeight = imageHeight
         self.imageRadius = imageRadius
-        self.shadowRadius = shadowRadius
+        self.shadowToken = shadowToken
     }
 
     private var resolvedRadius: CGFloat {
@@ -43,7 +43,7 @@ public struct ProviderItemView: View {
             )
             .clipped()
             .cornerRadius(resolvedRadius)
-            .shadow(color: theme.colors.surfaceVariant.opacity(0.3), radius: shadowRadius, x: 0, y: 2)
+            .appShadow(shadowToken ?? theme.shadows.small, color: theme.colors.surfaceVariant.opacity(0.3))
         }
     }
 }

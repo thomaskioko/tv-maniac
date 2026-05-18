@@ -26,24 +26,18 @@ public struct BackdropPosterCard: View {
 
     public var body: some View {
         PosterItemView(
-            title: title,
+            title: nil,
             posterUrl: posterUrl,
             isInLibrary: isInLibrary,
             imageType: .poster,
             posterWidth: cardWidth,
             posterHeight: cardHeight,
-            posterRadius: theme.shapes.small
+            posterRadius: 0
         )
         .overlay(alignment: .bottom) {
             ZStack(alignment: .bottomLeading) {
                 LinearGradient(
-                    colors: [
-                        Color.clear,
-                        theme.colors.surface.opacity(0.4),
-                        theme.colors.surface.opacity(0.7),
-                        theme.colors.surface.opacity(0.9),
-                        theme.colors.surface,
-                    ],
+                    colors: [.clear, theme.colors.scrim.opacity(0.7)],
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -51,19 +45,12 @@ public struct BackdropPosterCard: View {
 
                 Text(title)
                     .textStyle(theme.typography.labelLarge)
-                    .foregroundStyle(.appOnSurface)
+                    .foregroundStyle(.appOnScrim)
                     .lineLimit(1)
                     .truncationMode(.tail)
                     .padding(.horizontal, theme.spacing.medium)
                     .padding(.bottom, theme.spacing.xSmall)
             }
-            .clipShape(
-                UnevenRoundedRectangle(
-                    bottomLeadingRadius: theme.shapes.small,
-                    bottomTrailingRadius: theme.shapes.small,
-                    style: .continuous
-                )
-            )
         }
     }
 }

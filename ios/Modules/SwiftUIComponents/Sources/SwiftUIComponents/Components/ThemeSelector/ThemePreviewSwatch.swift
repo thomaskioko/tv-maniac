@@ -48,7 +48,7 @@ public struct ThemePreviewSwatch: View {
                             .overlay(
                                 Circle()
                                     .stroke(
-                                        isSelected ? accentColor : Color(UIColor.separator),
+                                        isSelected ? accentColor : theme.colors.outline,
                                         lineWidth: isSelected ? 3 : 1
                                     )
                             )
@@ -56,7 +56,7 @@ public struct ThemePreviewSwatch: View {
 
                     if isSelected {
                         Circle()
-                            .fill(isSystemTheme ? Color.accentColor : accentColor)
+                            .fill(isSystemTheme ? theme.colors.accent : accentColor)
                             .frame(width: 20, height: 20)
                             .overlay(
                                 Image(systemName: "checkmark")
@@ -69,11 +69,11 @@ public struct ThemePreviewSwatch: View {
                 .frame(width: 64, height: 64)
 
                 Text(displayName)
-                    .font(.caption2)
+                    .textStyle(theme.typography.labelSmall)
                     .lineLimit(1)
-                    .foregroundColor(isSelected ? .secondary : .primary)
+                    .foregroundStyle(isSelected ? theme.colors.onSurfaceVariant : theme.colors.onSurface)
             }
-            .padding(8)
+            .padding(theme.spacing.xSmall)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -81,6 +81,8 @@ public struct ThemePreviewSwatch: View {
 }
 
 struct SystemThemeSwatch: View {
+    @Environment(\.appTheme) private var theme
+
     let isSelected: Bool
 
     var body: some View {
@@ -130,7 +132,7 @@ struct SystemThemeSwatch: View {
         .overlay(
             Circle()
                 .stroke(
-                    isSelected ? Color.accentColor : Color(UIColor.separator),
+                    isSelected ? theme.colors.accent : theme.colors.outline,
                     lineWidth: isSelected ? 3 : 1
                 )
         )
@@ -199,5 +201,5 @@ struct SystemThemeSwatch: View {
         }
     }
     .padding()
-    .background(Color(.systemBackground))
+    .background(.appBackground)
 }

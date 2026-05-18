@@ -171,7 +171,7 @@ public struct SearchScreen: View {
             }
         }
         .padding(.horizontal, theme.spacing.small)
-        .padding(.vertical, 10)
+        .padding(.vertical, theme.spacing.xSmall)
         .background(.appSurfaceVariant.opacity(0.8))
         .clipShape(RoundedRectangle(cornerRadius: theme.shapes.medium))
         .overlay(
@@ -225,7 +225,7 @@ public struct SearchScreen: View {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle())
                     .scaleEffect(1.5)
-                    .tint(.accentColor)
+                    .tint(theme.colors.accent)
                     .padding(.horizontal)
                     .padding(.bottom, theme.spacing.xSmall)
             }

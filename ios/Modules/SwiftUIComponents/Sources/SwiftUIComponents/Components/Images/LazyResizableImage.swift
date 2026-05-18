@@ -62,7 +62,7 @@ public struct LazyResizableImage: View {
                 posterWidth: size.width,
                 posterHeight: size.height,
                 posterRadius: 0,
-                shadowRadius: 0
+                shadowToken: .none
             )
         }
     }

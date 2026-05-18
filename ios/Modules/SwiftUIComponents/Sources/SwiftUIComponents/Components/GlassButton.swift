@@ -4,6 +4,7 @@ import SwiftUI
 /// A circular button with a glass/blur effect matching the toolbar design.
 /// Use `init(icon:action:)` for SF Symbol icons or `init(action:label:)` for custom content.
 public struct GlassButton<Label: View>: View {
+    @Environment(\.appTheme) private var theme
     @Environment(\.colorScheme) private var colorScheme
 
     private let action: () -> Void
@@ -18,13 +19,13 @@ public struct GlassButton<Label: View>: View {
         Button(action: action) {
             ZStack {
                 Circle()
-                    .fill(Color.black.opacity(colorScheme == .dark ? 0.5 : 0.3))
+                    .fill(theme.colors.scrim.opacity(colorScheme == .dark ? 0.5 : 0.3))
                     .frame(width: 44, height: 44)
                     .overlay(
                         Circle()
-                            .strokeBorder(Color.white.opacity(0.15), lineWidth: 1)
+                            .strokeBorder(theme.colors.onScrim.opacity(0.15), lineWidth: 1)
                     )
-                    .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
+                    .appShadow(theme.shadows.medium)
 
                 label
             }

@@ -64,7 +64,7 @@ public struct WatchListItemView: View {
                 onTap: { onShowTitleClicked(episode.showTraktId) }
             )
 
-            HStack(spacing: 4) {
+            HStack(spacing: theme.spacing.xxSmall) {
                 Text(episode.episodeNumber)
                     .font(theme.typography.labelLarge)
                     .foregroundStyle(.appOnSurface)
@@ -75,13 +75,13 @@ public struct WatchListItemView: View {
                         .foregroundStyle(.appOnSurface.opacity(0.6))
                 }
             }
-            .padding(.top, 16)
+            .padding(.top, theme.spacing.medium)
 
             Text(episode.episodeTitle)
                 .font(theme.typography.bodySmall)
                 .foregroundStyle(.appOnSurface.opacity(0.7))
                 .lineLimit(2)
-                .padding(.top, 4)
+                .padding(.top, theme.spacing.xxSmall)
 
             Spacer()
 
@@ -93,40 +93,16 @@ public struct WatchListItemView: View {
     }
 
     private var badgeView: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: theme.spacing.xxSmall) {
             switch episode.badge {
             case .premiere:
-                premiereBadge
+                PremiereBadge(text: premiereLabel)
             case .new:
-                newBadge
+                NewBadge(text: newLabel)
             case .none:
                 EmptyView()
             }
         }
-    }
-
-    private var premiereBadge: some View {
-        Text(premiereLabel)
-            .font(theme.typography.labelSmall)
-            .foregroundStyle(.appBackground)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(
-                RoundedRectangle(cornerRadius: 4)
-                    .fill(.appOnSurface)
-            )
-    }
-
-    private var newBadge: some View {
-        Text(newLabel)
-            .font(theme.typography.labelSmall)
-            .foregroundStyle(.appOnSecondary)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(
-                RoundedRectangle(cornerRadius: 4)
-                    .fill(.appSecondary)
-            )
     }
 
     private var watchedButton: some View {

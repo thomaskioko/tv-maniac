@@ -34,7 +34,7 @@ struct DiscoverListContent: View {
                 onEpisodeClick: onNextEpisodeClicked
             )
 
-            HorizontalItemListView(
+            HorizontalShowContentView(
                 title: state.trendingTitle,
                 chevronStyle: .chevronOnly,
                 cardStyle: .poster,
@@ -43,7 +43,7 @@ struct DiscoverListContent: View {
                 onMoreClicked: onTrendingClicked
             )
 
-            HorizontalItemListView(
+            HorizontalShowContentView(
                 title: state.upcomingTitle,
                 chevronStyle: .chevronOnly,
                 cardStyle: .poster,
@@ -52,7 +52,7 @@ struct DiscoverListContent: View {
                 onMoreClicked: onUpcomingClicked
             )
 
-            HorizontalItemListView(
+            HorizontalShowContentView(
                 title: state.popularTitle,
                 chevronStyle: .chevronOnly,
                 cardStyle: .poster,
@@ -61,7 +61,7 @@ struct DiscoverListContent: View {
                 onMoreClicked: onPopularClicked
             )
 
-            HorizontalItemListView(
+            HorizontalShowContentView(
                 title: state.topRatedTitle,
                 chevronStyle: .chevronOnly,
                 cardStyle: .poster,

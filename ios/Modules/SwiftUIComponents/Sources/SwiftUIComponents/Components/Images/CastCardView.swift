@@ -18,7 +18,7 @@ public struct CastCardView: View {
         profileImage
             .overlay(nameOverlay)
             .clipShape(RoundedRectangle(cornerRadius: theme.shapes.small, style: .continuous))
-            .shadow(color: theme.colors.outline.opacity(0.3), radius: 2.5, x: 0, y: 2)
+            .appShadow(theme.shadows.small, color: theme.colors.outline.opacity(0.3))
     }
 
     private var profileImage: some View {
@@ -35,23 +35,13 @@ public struct CastCardView: View {
     private var nameOverlay: some View {
         ZStack(alignment: .bottom) {
             LinearGradient(
-                colors: [.clear, .black.opacity(0.2)], startPoint: .top, endPoint: .bottom
+                colors: [.clear, theme.colors.scrim.opacity(0.7)],
+                startPoint: .top,
+                endPoint: .bottom
             )
-            Rectangle()
-                .fill(.ultraThinMaterial)
-                .frame(height: 80)
-                .mask(overlayMask)
+            .frame(height: 80)
+            .frame(maxHeight: .infinity, alignment: .bottom)
             nameView
-        }
-    }
-
-    private var overlayMask: some View {
-        VStack(spacing: 0) {
-            LinearGradient(
-                colors: [.clear, .black], startPoint: .top, endPoint: .bottom
-            )
-            .frame(height: 60)
-            Rectangle()
         }
     }
 
@@ -62,9 +52,9 @@ public struct CastCardView: View {
             Text(characterName)
                 .textStyle(theme.typography.labelSmall)
         }
-        .foregroundStyle(.white)
+        .foregroundStyle(.appOnScrim)
         .lineLimit(1)
-        .padding(.horizontal, 6)
+        .padding(.horizontal, theme.spacing.xxSmall)
         .padding(.bottom, theme.spacing.medium)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
