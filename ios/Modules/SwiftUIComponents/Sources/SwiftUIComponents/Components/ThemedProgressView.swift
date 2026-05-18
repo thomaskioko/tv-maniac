@@ -19,7 +19,7 @@ public struct ThemedProgressView: View {
             Capsule()
                 .fill(.ultraThinMaterial)
                 .frame(width: 40, height: 40)
-                .shadow(color: theme.colors.onSurface.opacity(0.2), radius: 4, y: 2)
+                .appShadow(theme.shadows.medium, color: theme.colors.onSurface.opacity(0.2))
 
             ZStack {
                 Circle()

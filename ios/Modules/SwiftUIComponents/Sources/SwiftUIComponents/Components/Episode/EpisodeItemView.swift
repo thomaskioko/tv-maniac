@@ -23,7 +23,7 @@ public struct EpisodeItemView: View {
     private let tbdLabel: String
     private let episodeWidth: CGFloat
     private let episodeHeight: CGFloat
-    private let shadowRadius: CGFloat
+    private let shadowToken: TvManiacShadowToken?
     private let cornerRadius: CGFloat
     private let posterRadius: CGFloat
     private let onWatchedToggle: () -> Void
@@ -40,7 +40,7 @@ public struct EpisodeItemView: View {
         tbdLabel: String = "TBD",
         episodeWidth: CGFloat = Constants.defaultEpisodeWidth,
         episodeHeight: CGFloat = Constants.defaultEpisodeHeight,
-        shadowRadius: CGFloat = Constants.defaultShadowRadius,
+        shadowToken: TvManiacShadowToken? = nil,
         cornerRadius: CGFloat = Constants.defaultCornerRadius,
         posterRadius: CGFloat = Constants.defaultPosterRadius,
         onWatchedToggle: @escaping () -> Void = {}
@@ -56,7 +56,7 @@ public struct EpisodeItemView: View {
         self.tbdLabel = tbdLabel
         self.episodeWidth = episodeWidth
         self.episodeHeight = episodeHeight
-        self.shadowRadius = shadowRadius
+        self.shadowToken = shadowToken
         self.cornerRadius = cornerRadius
         self.posterRadius = posterRadius
         self.onWatchedToggle = onWatchedToggle
@@ -149,12 +149,12 @@ public struct EpisodeItemView: View {
     private var episodePlaceholder: some View {
         ZStack {
             ZStack {
-                Rectangle().fill(.gray.gradient)
+                Rectangle().fill(theme.colors.surfaceVariant.gradient)
                 Image(systemName: "popcorn.fill")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 50, height: 50, alignment: .center)
-                    .foregroundStyle(.appOnPrimary)
+                    .foregroundStyle(.appOnSurfaceVariant.opacity(0.8))
             }
             .frame(
                 width: episodeWidth,
@@ -166,7 +166,7 @@ public struct EpisodeItemView: View {
                     style: .continuous
                 )
             )
-            .shadow(radius: shadowRadius)
+            .appShadow(shadowToken ?? theme.shadows.small)
         }
     }
 }
@@ -174,7 +174,6 @@ public struct EpisodeItemView: View {
 public enum Constants {
     public static let defaultEpisodeWidth: CGFloat = 120
     public static let defaultEpisodeHeight: CGFloat = 140
-    public static let defaultShadowRadius: CGFloat = 2.5
     public static let defaultCornerRadius: CGFloat = 2
     public static let defaultPosterRadius: CGFloat = 0
     public static let horizontalPadding: CGFloat = 16

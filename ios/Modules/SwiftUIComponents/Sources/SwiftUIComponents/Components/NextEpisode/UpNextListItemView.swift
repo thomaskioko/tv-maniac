@@ -81,7 +81,7 @@ public struct UpNextListItemView: View {
                 .textStyle(theme.typography.bodySmall)
                 .foregroundStyle(.appAccent)
                 .lineLimit(1)
-                .padding(.top, 8)
+                .padding(.top, theme.spacing.xSmall)
 
             Text(episode.episodeTitle)
                 .textStyle(theme.typography.bodySmall)
@@ -102,7 +102,7 @@ public struct UpNextListItemView: View {
             ? Float(episode.watchedCount) / Float(episode.totalCount)
             : 0
 
-        return HStack(spacing: 8) {
+        return HStack(spacing: theme.spacing.xSmall) {
             SegmentedProgressBar(
                 segmentProgress: [progress],
                 height: 4

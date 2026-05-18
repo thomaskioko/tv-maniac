@@ -98,7 +98,7 @@ public struct LibraryListItemView: View {
             .frame(height: 200)
             .background(.appSurface)
             .clipShape(RoundedRectangle(cornerRadius: theme.shapes.small))
-            .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+            .appShadow(theme.shadows.medium)
         }
         .buttonStyle(.plain)
     }

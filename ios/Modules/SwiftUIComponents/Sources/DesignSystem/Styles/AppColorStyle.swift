@@ -92,4 +92,12 @@ public extension ShapeStyle where Self == AppColorStyle {
     static var appGrey: AppColorStyle {
         .init(\.grey)
     }
+
+    static var appScrim: AppColorStyle {
+        .init(\.scrim)
+    }
+
+    static var appOnScrim: AppColorStyle {
+        .init(\.onScrim)
+    }
 }

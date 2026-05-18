@@ -34,16 +34,16 @@ public struct PosterCardView: View {
             isInLibrary: isInLibrary,
             posterWidth: posterWidth,
             posterHeight: posterHeight,
-            posterRadius: posterRadius ?? theme.shapes.small
+            posterRadius: posterRadius ?? 0
         )
         .overlay {
             ZStack {
-                Rectangle().fill(Color.black.opacity(0.5))
+                Rectangle().fill(theme.colors.background.opacity(0.5))
                 VStack {
                     Spacer()
                     HStack {
                         Text(title)
-                            .foregroundColor(Color.white)
+                            .foregroundStyle(theme.colors.onSurface)
                             .textStyle(theme.typography.titleMedium)
                             .multilineTextAlignment(.center)
                             .lineLimit(3)

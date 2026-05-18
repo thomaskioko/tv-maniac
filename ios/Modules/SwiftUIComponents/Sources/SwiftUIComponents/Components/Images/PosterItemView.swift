@@ -37,7 +37,7 @@ public struct PosterItemView: View {
     }
 
     public var body: some View {
-        let resolvedRadius = posterRadius ?? theme.shapes.small
+        let resolvedRadius = posterRadius ?? 0
         let imageHeight = processorHeight ?? posterHeight
 
         LazyResizableImage(
@@ -65,14 +65,14 @@ private func LibraryOverlay(libraryImageOverlay: String) -> some View {
             Image(systemName: libraryImageOverlay)
                 .imageScale(.medium)
                 .foregroundStyle(.white)
-                .padding(8)
+                .padding(DimensionConstants.overlayInset)
         }
         Spacer()
     }
 }
 
 private enum DimensionConstants {
-    static let shadowRadius: CGFloat = 2
+    static let overlayInset: CGFloat = 8
 }
 
 #Preview {

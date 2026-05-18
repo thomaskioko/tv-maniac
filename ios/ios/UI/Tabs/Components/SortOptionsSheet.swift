@@ -113,9 +113,9 @@ struct SortOptionsSheet: View {
             Button {
                 onClearFilters()
             } label: {
-                HStack(spacing: 4) {
+                HStack(spacing: theme.spacing.xxSmall) {
                     Image(systemName: "trash")
-                        .font(.subheadline)
+                        .textStyle(theme.typography.bodyMedium)
                     Text(String(\.label_library_filter_clear))
                         .textStyle(theme.typography.bodyMedium)
                 }

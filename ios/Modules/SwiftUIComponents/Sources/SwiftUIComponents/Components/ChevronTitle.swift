@@ -41,7 +41,7 @@ public struct ChevronTitle: View {
             if let subtitle {
                 Text(subtitle)
                     .textStyle(theme.typography.labelMedium)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(theme.colors.onSurfaceVariant)
             }
         }
     }

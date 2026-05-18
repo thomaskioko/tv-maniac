@@ -33,7 +33,7 @@ public struct ToastView: View {
             } else {
                 Image(systemName: type.iconFileName)
                     .foregroundStyle(.appOnPrimary)
-                    .font(.title3)
+                    .textStyle(theme.typography.titleMedium)
             }
 
             Text(message)

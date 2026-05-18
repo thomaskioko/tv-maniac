@@ -88,7 +88,7 @@ public struct FilterChipSection<Item: Hashable>: View {
                 Text(isExpanded ? showLessLabel : showMoreLabel)
                     .textStyle(theme.typography.bodyMedium)
                 Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                    .font(.caption)
+                    .textStyle(theme.typography.labelSmall)
             }
             .foregroundStyle(.appOnSurfaceVariant)
         }

@@ -149,8 +149,8 @@ public struct DiscoverScreen: View {
 
             LinearGradient(
                 colors: [
-                    .black.opacity(0.6),
-                    .black.opacity(0.3),
+                    appTheme.colors.background.opacity(0.6),
+                    appTheme.colors.background.opacity(0.3),
                     .clear,
                 ],
                 startPoint: .top,
@@ -163,7 +163,7 @@ public struct DiscoverScreen: View {
                 let progress = min(pullOffset / RefreshConstants.threshold, 1.0)
 
                 ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                    .progressViewStyle(CircularProgressViewStyle(tint: appTheme.colors.onSurface))
                     .scaleEffect(2.0)
                     .opacity(pullOffset > 0 ? max(0.6, Double(progress)) : 0)
                     .padding(.top, RefreshConstants.indicatorTopPadding)

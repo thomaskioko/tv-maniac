@@ -96,7 +96,7 @@ public struct TraktListSelectorContent: View {
                 ToolbarItem(placement: .topBarLeading) {
                     Button(action: onDismiss) {
                         Image(systemName: "xmark.circle.fill")
-                            .font(.title2)
+                            .textStyle(theme.typography.titleLarge)
                             .foregroundStyle(.appAccent)
                     }
                 }
@@ -129,7 +129,7 @@ public struct TraktListSelectorContent: View {
                     )
                     .frame(width: 150, height: 220)
                     .clipShape(RoundedRectangle(cornerRadius: theme.shapes.large, style: .continuous))
-                    .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 10)
+                    .appShadow(theme.shadows.large)
                 }
                 .frame(maxWidth: .infinity)
 
@@ -163,11 +163,16 @@ public struct TraktListSelectorContent: View {
                     .labelsHidden()
                     .tint(theme.colors.secondary)
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
+                .padding(.horizontal, theme.spacing.medium)
+                .padding(.vertical, theme.spacing.small)
                 .background(.appSurfaceVariant.opacity(0.5))
                 .clipShape(RoundedRectangle(cornerRadius: theme.shapes.medium, style: .continuous))
-                .listRowInsets(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
+                .listRowInsets(EdgeInsets(
+                    top: theme.spacing.xxSmall,
+                    leading: theme.spacing.xSmall,
+                    bottom: theme.spacing.xxSmall,
+                    trailing: theme.spacing.xSmall
+                ))
                 .listRowBackground(Color.clear)
                 .listRowSeparator(.hidden)
             }
@@ -193,7 +198,7 @@ public struct TraktListSelectorContent: View {
     private var createSection: some View {
         if state.showCreateField {
             Section {
-                HStack(spacing: 8) {
+                HStack(spacing: theme.spacing.xSmall) {
                     TextField(state.newListPlaceholder, text: Binding(
                         get: { state.createListName },
                         set: { newValue in
@@ -204,8 +209,8 @@ public struct TraktListSelectorContent: View {
                     ))
                     .textStyle(theme.typography.bodyMedium)
                     .disabled(state.isCreatingList)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 10)
+                    .padding(.horizontal, theme.spacing.small)
+                    .padding(.vertical, theme.spacing.xSmall)
                     .background(.appSurface)
                     .clipShape(RoundedRectangle(cornerRadius: theme.shapes.medium))
                     .overlay(

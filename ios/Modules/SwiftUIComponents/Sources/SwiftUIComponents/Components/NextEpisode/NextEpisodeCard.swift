@@ -27,14 +27,16 @@ public struct NextEpisodeCard: View {
             .clipped()
 
             LinearGradient(
-                gradient: Gradient(colors: [
-                    Color.clear,
-                    Color.black.opacity(0.7),
-                ]),
+                colors: [.clear, theme.colors.scrim.opacity(0.7)],
                 startPoint: .top,
                 endPoint: .bottom
             )
-            .frame(width: DimensionConstants.imageWidth, height: DimensionConstants.imageHeight)
+            .frame(height: DimensionConstants.scrimHeight)
+            .frame(
+                width: DimensionConstants.imageWidth,
+                height: DimensionConstants.imageHeight,
+                alignment: .bottom
+            )
 
             if let runtime = episode.runtime {
                 VStack {
@@ -42,10 +44,10 @@ public struct NextEpisodeCard: View {
                         Spacer()
                         Text(runtime)
                             .textStyle(theme.typography.labelSmall)
-                            .foregroundStyle(.appOnPrimary)
+                            .foregroundStyle(.appOnScrim)
                             .padding(.horizontal, theme.spacing.xxSmall + 2)
                             .padding(.vertical, theme.spacing.xxxSmall)
-                            .background(Color.black.opacity(0.6))
+                            .background(theme.colors.scrim.opacity(0.6))
                             .cornerRadius(theme.shapes.small)
                             .padding(theme.spacing.xSmall)
                     }
@@ -59,12 +61,12 @@ public struct NextEpisodeCard: View {
                     VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
                         Text(episode.showName)
                             .textStyle(theme.typography.titleMedium)
-                            .foregroundStyle(.appOnPrimary)
+                            .foregroundStyle(.appOnScrim)
                             .lineLimit(1)
 
                         Text(episode.episodeNumber)
-                            .textStyle(theme.typography.bodyMedium)
-                            .foregroundStyle(.appOnPrimary.opacity(0.8))
+                            .textStyle(theme.typography.labelLarge)
+                            .foregroundStyle(.appOnScrim.opacity(0.8))
                             .lineLimit(1)
                     }
                     Spacer()
@@ -73,8 +75,8 @@ public struct NextEpisodeCard: View {
             }
         }
         .frame(width: DimensionConstants.imageWidth, height: DimensionConstants.imageHeight)
-        .cornerRadius(theme.shapes.medium)
-        .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
+        .cornerRadius(theme.shapes.small)
+        .appShadow(theme.shadows.medium)
         .onTapGesture {
             onEpisodeClick()
         }
@@ -84,6 +86,7 @@ public struct NextEpisodeCard: View {
 private enum DimensionConstants {
     static let imageWidth: CGFloat = 300
     static let imageHeight: CGFloat = 160
+    static let scrimHeight: CGFloat = 80
 }
 
 #Preview {

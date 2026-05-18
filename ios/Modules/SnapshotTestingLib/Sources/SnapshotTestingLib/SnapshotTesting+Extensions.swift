@@ -74,10 +74,19 @@ public extension View {
             )
         }
 
+        // Recording mode is opted in at build time via the `record_snapshots`
+        // Fastlane lane, which passes SWIFT_ACTIVE_COMPILATION_CONDITIONS=SNAPSHOT_RECORD.
+        // The per-call `recording` parameter still wins for one-off overrides.
+        #if SNAPSHOT_RECORD
+            let effectiveRecording: SnapshotTestingConfiguration.Record? = recording ?? .all
+        #else
+            let effectiveRecording = recording
+        #endif
+
         assertSnapshots(
             of: viewController,
             as: themes,
-            record: recording,
+            record: effectiveRecording,
             timeout: timeout,
             file: file,
             testName: testName

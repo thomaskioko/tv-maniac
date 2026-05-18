@@ -9,7 +9,7 @@ public struct PosterPlaceholder: View {
     private let posterWidth: CGFloat
     private let posterHeight: CGFloat
     private let posterRadius: CGFloat?
-    private let shadowRadius: CGFloat
+    private let shadowToken: TvManiacShadowToken?
 
     public init(
         title: String? = nil,
@@ -17,30 +17,30 @@ public struct PosterPlaceholder: View {
         posterWidth: CGFloat = 120,
         posterHeight: CGFloat = 180,
         posterRadius: CGFloat? = nil,
-        shadowRadius: CGFloat = 8
+        shadowToken: TvManiacShadowToken? = nil
     ) {
         self.title = title
         self.icon = icon
         self.posterWidth = posterWidth
         self.posterHeight = posterHeight
         self.posterRadius = posterRadius
-        self.shadowRadius = shadowRadius
+        self.shadowToken = shadowToken
     }
 
     public var body: some View {
         ZStack {
-            Rectangle().fill(.gray.gradient)
+            Rectangle().fill(theme.colors.surfaceVariant.gradient)
             VStack {
                 Image(systemName: icon)
                     .textStyle(theme.typography.titleLarge)
                     .fontWidth(.expanded)
-                    .foregroundStyle(.appOnPrimary.opacity(0.8))
+                    .foregroundStyle(.appOnSurfaceVariant.opacity(0.8))
                     .padding(theme.spacing.medium)
 
                 if let title {
                     Text(title)
                         .textStyle(theme.typography.bodyMedium)
-                        .foregroundStyle(.appOnPrimary.opacity(0.8))
+                        .foregroundStyle(.appOnSurfaceVariant.opacity(0.8))
                         .lineLimit(2)
                         .multilineTextAlignment(.center)
                         .padding(.bottom, theme.spacing.medium)
@@ -49,8 +49,8 @@ public struct PosterPlaceholder: View {
             }
         }
         .frame(width: posterWidth, height: posterHeight)
-        .clipShape(RoundedRectangle(cornerRadius: posterRadius ?? theme.shapes.small, style: .continuous))
-        .shadow(radius: shadowRadius)
+        .clipShape(RoundedRectangle(cornerRadius: posterRadius ?? 0, style: .continuous))
+        .appShadow(shadowToken ?? theme.shadows.large)
     }
 }
 

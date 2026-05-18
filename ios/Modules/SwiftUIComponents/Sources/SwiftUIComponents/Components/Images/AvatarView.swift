@@ -11,7 +11,7 @@ public struct AvatarView: View {
 
     public init(
         avatarUrl: String?,
-        size: CGFloat = 32,
+        size: CGFloat = 38,
         borderColor: Color? = nil,
         borderWidth: CGFloat = 0
     ) {

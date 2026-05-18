@@ -83,7 +83,7 @@ public struct ContinueTrackingCard: View {
         .frame(width: DimensionConstants.cardWidth, height: DimensionConstants.cardHeight)
         .background(.appSurfaceVariant)
         .cornerRadius(theme.shapes.medium)
-        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+        .appShadow(theme.shadows.medium)
     }
 }
 

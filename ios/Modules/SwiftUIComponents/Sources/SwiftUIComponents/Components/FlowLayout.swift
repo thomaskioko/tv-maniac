@@ -126,22 +126,23 @@ public struct FlowLayout<Item, ItemView: View>: View {
 
 struct FlowLayout_Previews: PreviewProvider {
     static var previews: some View {
+        let theme = LightTheme()
         VStack(alignment: .leading, spacing: 4) {
             Text("FlowLayout:")
-                .font(.caption)
-                .foregroundStyle(Color.accentColor)
+                .textStyle(theme.typography.labelSmall)
+                .foregroundStyle(.appAccent)
 
             FlowLayout(
                 items: items,
                 itemView: {
                     Text($0)
                         .padding()
-                        .background(Color.gray.opacity(0.2))
-                        .border(Color.gray, width: 1)
+                        .background(.appSurfaceVariant)
+                        .border(theme.colors.outline, width: 1)
                 }
             )
-            .background(Color.accentColor.opacity(0.2))
-            .border(Color.accentColor, width: 1)
+            .background(.appAccent.opacity(0.2))
+            .border(theme.colors.accent, width: 1)
 
             Spacer()
         }

@@ -97,7 +97,7 @@ public struct SearchItemView: View {
         .frame(maxWidth: .infinity)
         .background(.appSurface)
         .cornerRadius(theme.shapes.small)
-        .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+        .appShadow(theme.shadows.medium)
     }
 }
 

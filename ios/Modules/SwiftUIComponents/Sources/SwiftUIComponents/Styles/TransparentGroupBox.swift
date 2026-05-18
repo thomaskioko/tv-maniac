@@ -29,7 +29,7 @@ struct TransparentGroupBox: GroupBoxStyle {
                 Rectangle().fill(.appBackground)
             }
             .clipShape(RoundedRectangle(cornerRadius: theme.shapes.medium, style: .continuous))
-            .shadow(radius: 1)
+            .appShadow(theme.shadows.small)
         }
     }
 }

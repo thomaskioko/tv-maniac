@@ -89,7 +89,7 @@ public struct EpisodeDetailSheetContent<Actions: View>: View {
             .clipped()
 
             RoundedRectangle(cornerRadius: 2)
-                .fill(Color.white.opacity(0.6))
+                .fill(theme.colors.onSurface.opacity(0.6))
                 .frame(width: 32, height: 4)
                 .padding(.top, theme.spacing.xSmall)
         }
@@ -98,7 +98,7 @@ public struct EpisodeDetailSheetContent<Actions: View>: View {
     @ViewBuilder
     private var ratingRow: some View {
         if let rating = episode.rating {
-            HStack(spacing: 4) {
+            HStack(spacing: theme.spacing.xxSmall) {
                 Image(systemName: "star.fill")
                     .font(theme.typography.labelMedium)
                     .foregroundStyle(.appAccent)
@@ -141,7 +141,7 @@ public struct SheetActionItem: View {
 
     public var body: some View {
         Button(action: action) {
-            HStack(spacing: 16) {
+            HStack(spacing: theme.spacing.medium) {
                 Image(systemName: icon)
                     .font(theme.typography.titleMedium)
                     .foregroundStyle(.appOnSurface)
@@ -153,8 +153,8 @@ public struct SheetActionItem: View {
 
                 Spacer()
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
+            .padding(.horizontal, theme.spacing.medium)
+            .padding(.vertical, theme.spacing.small)
         }
         .buttonStyle(PlainButtonStyle())
     }

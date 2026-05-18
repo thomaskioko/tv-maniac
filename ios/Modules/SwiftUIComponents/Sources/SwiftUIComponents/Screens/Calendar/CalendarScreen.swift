@@ -187,7 +187,7 @@ public struct CalendarPageContent: View {
                         posterRadius: 0
                     )
 
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
                         Text(episode.showTitle)
                             .textStyle(theme.typography.titleMedium)
                             .foregroundStyle(.appOnSurface)
