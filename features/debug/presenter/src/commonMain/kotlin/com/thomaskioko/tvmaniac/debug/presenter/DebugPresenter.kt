@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
+import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
@@ -27,6 +28,8 @@ import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -73,25 +76,27 @@ public class DebugPresenter(
         traktAuthRepository.authState,
     ) {
             isSchedulingDebugNotification, isSyncingLibrary, isSyncingUpNext, lastLibrarySyncDate, lastUpNextSyncDate,
-            lastTokenRefreshDate, message, isLoggedIn, authState,
+            lastTokenRefreshDate, message, traktAuthState, authState,
         ->
-        val isUserLoggedIn = isLoggedIn == TraktAuthState.LOGGED_IN
-        // TODO: Update state to take a list of items with a title and description.
+        val isLoggedIn = traktAuthState == TraktAuthState.LOGGED_IN
+        val tokenSubtitle = formatTokenStatus(
+            isLoggedIn = isLoggedIn,
+            lastTokenRefreshTimestamp = lastTokenRefreshDate,
+            authState = authState,
+        )
+
         DebugState(
-            isSchedulingDebugNotification = isSchedulingDebugNotification,
-            isSyncingLibrary = isSyncingLibrary,
-            isSyncingUpNext = isSyncingUpNext,
-            lastLibrarySyncDate = lastLibrarySyncDate?.let(dateTimeProvider::epochToDisplayDateTime),
-            lastUpNextSyncDate = lastUpNextSyncDate?.let(dateTimeProvider::epochToDisplayDateTime),
-            tokenStatusSubtitle = formatTokenStatus(
-                isLoggedIn = isUserLoggedIn,
-                lastTokenRefreshTimestamp = lastTokenRefreshDate,
-                authState = authState,
+            title = localizer.getString(StringResourceKey.LabelDebugMenuTitle),
+            items = buildItems(
+                isSchedulingDebugNotification = isSchedulingDebugNotification,
+                isSyncingLibrary = isSyncingLibrary,
+                isSyncingUpNext = isSyncingUpNext,
+                lastLibrarySyncDate = lastLibrarySyncDate,
+                lastUpNextSyncDate = lastUpNextSyncDate,
+                tokenSubtitle = tokenSubtitle,
             ),
-            featureFlagsTitle = localizer.getString(StringResourceKey.LabelDebugFeatureFlagsTitle),
-            featureFlagsDescription = localizer.getString(StringResourceKey.LabelDebugFeatureFlagsDescription),
+            isLoggedIn = isLoggedIn,
             message = message,
-            isLoggedIn = isUserLoggedIn,
         )
     }.stateIn(
         scope = coroutineScope,
@@ -106,12 +111,101 @@ public class DebugPresenter(
             BackClicked -> navigator.navigateBack()
             TriggerDebugNotification -> scheduleDebugNotification()
             TriggerDelayedDebugNotification -> scheduleDebugNotification(5.minutes)
-            TriggerLibrarySync -> triggerLibrarySync()
-            TriggerUpNextSync -> triggerUpNextSync()
+            TriggerLibrarySync -> runIfLoggedIn { triggerLibrarySync() }
+            TriggerUpNextSync -> runIfLoggedIn { triggerUpNextSync() }
             OpenFeatureFlags -> navigator.navigateTo(FeatureFlagsRoute)
+            TriggerTestCrash -> throw RuntimeException("Test crash triggered from Debug Menu")
             is DismissSnackbar -> coroutineScope.launch { uiMessageManager.clearMessage(action.messageId) }
         }
     }
+
+    private fun runIfLoggedIn(syncAction: () -> Unit) {
+        if (state.value.isLoggedIn) {
+            syncAction()
+        } else {
+            uiMessageManager.emitMessage(
+                UiMessage(localizer.getString(StringResourceKey.LabelDebugSyncLoginRequired)),
+            )
+        }
+    }
+
+    private fun buildItems(
+        isSchedulingDebugNotification: Boolean,
+        isSyncingLibrary: Boolean,
+        isSyncingUpNext: Boolean,
+        lastLibrarySyncDate: Long?,
+        lastUpNextSyncDate: Long?,
+        tokenSubtitle: String?,
+    ): ImmutableList<DebugItem> {
+        val items = mutableListOf<DebugItem>()
+        items += DebugItem(
+            id = "notifications",
+            icon = DebugItemIcon.Notifications,
+            title = localizer.getString(StringResourceKey.LabelSettingsEpisodeNotifications),
+            subtitle = localizer.getString(StringResourceKey.LabelSettingsDebugNotificationDescription),
+            isLoading = isSchedulingDebugNotification,
+            action = TriggerDebugNotification,
+        )
+        items += DebugItem(
+            id = "delayed-notification",
+            icon = DebugItemIcon.Schedule,
+            title = localizer.getString(StringResourceKey.LabelSettingsDelayedDebugNotificationTitle),
+            subtitle = localizer.getString(StringResourceKey.LabelSettingsDelayedDebugNotificationDescription),
+            isLoading = isSchedulingDebugNotification,
+            action = TriggerDelayedDebugNotification,
+        )
+        items += DebugItem(
+            id = "library-sync",
+            icon = DebugItemIcon.LibrarySync,
+            title = localizer.getString(StringResourceKey.LabelDebugLibrarySyncTitle),
+            subtitle = syncSubtitle(lastLibrarySyncDate),
+            isLoading = isSyncingLibrary,
+            action = TriggerLibrarySync,
+        )
+        items += DebugItem(
+            id = "upnext-sync",
+            icon = DebugItemIcon.UpNextSync,
+            title = localizer.getString(StringResourceKey.LabelDebugUpnextSyncTitle),
+            subtitle = syncSubtitle(lastUpNextSyncDate),
+            isLoading = isSyncingUpNext,
+            action = TriggerUpNextSync,
+        )
+        items += DebugItem(
+            id = "feature-flags",
+            icon = DebugItemIcon.FeatureFlags,
+            title = localizer.getString(StringResourceKey.LabelDebugFeatureFlagsTitle),
+            subtitle = localizer.getString(StringResourceKey.LabelDebugFeatureFlagsDescription),
+            action = OpenFeatureFlags,
+        )
+        if (tokenSubtitle != null) {
+            items += DebugItem(
+                id = "token-status",
+                icon = DebugItemIcon.Key,
+                title = localizer.getString(StringResourceKey.LabelDebugTokenStatusTitle),
+                subtitle = tokenSubtitle,
+                action = null,
+            )
+        }
+        items += DebugItem(
+            id = "test-crash",
+            icon = DebugItemIcon.Warning,
+            role = DebugItemRole.Destructive,
+            title = localizer.getString(StringResourceKey.LabelDebugTriggerCrashTitle),
+            subtitle = localizer.getString(StringResourceKey.LabelDebugTriggerCrashDescription),
+            action = TriggerTestCrash,
+        )
+        return items.toImmutableList()
+    }
+
+    private fun syncSubtitle(timestamp: Long?): String =
+        if (timestamp != null) {
+            localizer.getString(
+                StringResourceKey.LabelSettingsLastSyncDate,
+                dateTimeProvider.epochToDisplayDateTime(timestamp),
+            )
+        } else {
+            localizer.getString(StringResourceKey.LabelDebugNeverSynced)
+        }
 
     private fun scheduleDebugNotification(duration: Duration = Duration.ZERO) {
         coroutineScope.launch {
