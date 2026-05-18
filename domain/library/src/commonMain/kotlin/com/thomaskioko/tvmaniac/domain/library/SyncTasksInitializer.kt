@@ -34,9 +34,7 @@ public class SyncTasksInitializer(
     private val traktAuthRepository by traktAuthRepo
 
     public fun init() {
-        coroutineScope.launch {
-            scheduler.cancel(LibrarySyncWorker.WORKER_NAME)
-        }
+        observeDataSync()
         observePendingUploads()
     }
 
@@ -48,7 +46,7 @@ public class SyncTasksInitializer(
                 .filter { it == TraktAuthState.LOGGED_IN }
                 .collect {
                     withContext(NonCancellable) {
-                        syncObserver.trackSync(TAG) {
+                        syncObserver.trackSync(POST_LOGIN_OPERATION_ID) {
                             syncInteractor.executeSync(SyncLibraryInteractor.Param())
                             logger.debug(TAG, "Library sync completed successfully")
                         }
@@ -67,10 +65,15 @@ public class SyncTasksInitializer(
             }
                 .distinctUntilChanged()
                 .collect { shouldSync ->
-                    if (shouldSync) {
-                        scheduler.schedulePeriodic(PendingUploadsWorker.REQUEST)
-                    } else {
-                        scheduler.cancel(PendingUploadsWorker.WORKER_NAME)
+                    when {
+                        shouldSync -> {
+                            scheduler.schedulePeriodic(LibrarySyncWorker.REQUEST)
+                            scheduler.schedulePeriodic(PendingUploadsWorker.REQUEST)
+                        }
+                        else -> {
+                            scheduler.cancel(LibrarySyncWorker.WORKER_NAME)
+                            scheduler.cancel(PendingUploadsWorker.WORKER_NAME)
+                        }
                     }
                 }
         }
@@ -78,5 +81,6 @@ public class SyncTasksInitializer(
 
     private companion object {
         private const val TAG = "SyncTasksInitializer"
+        private const val POST_LOGIN_OPERATION_ID = "PostLoginLibrarySync"
     }
 }
