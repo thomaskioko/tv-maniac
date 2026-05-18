@@ -34,7 +34,7 @@ public class DefaultTraktSyncRemoteDataSource(
                 method = HttpMethod.Get
                 path("sync/watched/shows")
                 parameters.append("extended", "progress")
-                parameters.append("limit", "100")
+                parameters.append("limit", "1000")
             }
         }
 }
