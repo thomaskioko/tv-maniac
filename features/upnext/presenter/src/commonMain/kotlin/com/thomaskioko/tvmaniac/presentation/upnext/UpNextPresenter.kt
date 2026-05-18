@@ -29,7 +29,7 @@ import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
-import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
+import com.thomaskioko.tvmaniac.upnext.api.model.UpNextEpisode
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.ChildPresenter
 import kotlinx.collections.immutable.toImmutableList
@@ -189,7 +189,7 @@ public class UpNextPresenter(
     }
 }
 
-private fun NextEpisodeWithShow.toUiModel(): UpNextEpisodeUiModel {
+private fun UpNextEpisode.toUiModel(): UpNextEpisodeUiModel {
     val season = seasonNumber.toString().padStart(2, '0')
     val episode = episodeNumber.toString().padStart(2, '0')
     return UpNextEpisodeUiModel(
