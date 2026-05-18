@@ -1,6 +1,6 @@
+import DesignSystem
 import SnapshotTestingLib
 import SwiftUI
-import DesignSystem
 import SwiftUIComponents
 import XCTest
 
