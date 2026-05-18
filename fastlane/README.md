@@ -23,6 +23,14 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Run Snapshot Tests
 
+### ios record_snapshots
+
+```sh
+[bundle exec] fastlane ios record_snapshots
+```
+
+Re-record snapshot baselines
+
 ### ios build_tvmaniac
 
 ```sh

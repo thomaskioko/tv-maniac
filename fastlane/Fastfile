@@ -40,6 +40,23 @@ platform :ios do
     )
   end
 
+  desc "Re-record snapshot baselines"
+  lane :record_snapshots do
+    run_tests(
+      project: "ios/tv-maniac.xcodeproj",
+      scheme: "SwiftUIComponents",
+      destination: "platform=iOS Simulator,OS=18.5,name=#{TEST_DEVICE}",
+      skip_detect_devices: true,
+      clean: true,
+      result_bundle: true,
+      xcargs: "SWIFT_ACTIVE_COMPILATION_CONDITIONS='$(inherited) SNAPSHOT_RECORD' -skipPackagePluginValidation",
+      number_of_retries: 0,
+      fail_build: false,
+      derived_data_path: DERIVED_DATA_PATH,
+      cloned_source_packages_path: "ios/SourcePackages"
+    )
+  end
+
   desc "Build iOS App (Debug, simulator)"
   lane :build_tvmaniac do
     sh("xcodebuild -project ../ios/tv-maniac.xcodeproj \
