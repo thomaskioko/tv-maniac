@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.featureflags.implementation
+package com.thomaskioko.tvmaniac.featureflags.implementation.di
 
 import com.thomaskioko.tvmaniac.appconfig.DebugConfig
 import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlagFetchInterval
