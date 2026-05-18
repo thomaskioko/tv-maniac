@@ -51,7 +51,7 @@ public object AndroidFeatureFlagsBindingContainer {
     @SingleIn(AppScope::class)
     public fun provideFirebaseRemoteConfig(
         firebaseApp: FirebaseApp?,
-    ): FirebaseRemoteConfig? = firebaseApp?.let { FirebaseRemoteConfig.getInstance() }
+    ): FirebaseRemoteConfig? = firebaseApp?.let { FirebaseRemoteConfig.getInstance(it) }
 
     @Provides
     @SingleIn(AppScope::class)
