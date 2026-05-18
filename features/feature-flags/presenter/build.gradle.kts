@@ -1,0 +1,36 @@
+plugins {
+    alias(libs.plugins.app.kmp)
+}
+
+scaffold {
+    useCodegen()
+}
+
+kotlin {
+    sourceSets {
+        commonMain {
+            dependencies {
+                api(libs.coroutines.core)
+                api(projects.core.base)
+                api(projects.core.featureFlags.api)
+                api(projects.core.util.api)
+                api(projects.domain.featureFlags)
+                api(projects.features.featureFlags.nav)
+                api(projects.navigation.api)
+
+                api(libs.decompose.decompose)
+                api(libs.essenty.lifecycle)
+                api(libs.kotlinx.collections)
+            }
+        }
+
+        commonTest {
+            dependencies {
+                implementation(libs.bundles.unittest)
+                implementation(projects.core.featureFlags.testing)
+                implementation(projects.core.util.testing)
+                implementation(projects.navigation.testing)
+            }
+        }
+    }
+}
