@@ -38,3 +38,11 @@ public annotation class TraktApi
 @Qualifier
 @Retention(BINARY)
 public annotation class IsDebugBuild
+
+@Qualifier
+@Retention(BINARY)
+public annotation class AppPreferencesDataStore
+
+@Qualifier
+@Retention(BINARY)
+public annotation class FeatureFlagLocalsDataStore
