@@ -10,5 +10,4 @@ public data class TraktWatchedShowResponse(
     @SerialName("last_updated_at") val lastUpdatedAt: String,
     @SerialName("reset_at") val resetAt: String? = null,
     @SerialName("show") val show: TraktShowResponse,
-    @SerialName("seasons") val seasons: List<TraktWatchedSeasonResponse>? = null,
 )
