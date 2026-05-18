@@ -18,5 +18,4 @@ CREATE TABLE trakt_watched_shows (
     last_updated_at INTEGER NOT NULL
 );
 
-CREATE INDEX IF NOT EXISTS idx_trakt_watched_shows_trakt_id ON trakt_watched_shows(trakt_id);
 CREATE INDEX IF NOT EXISTS idx_trakt_watched_shows_tmdb_id ON trakt_watched_shows(tmdb_id);
