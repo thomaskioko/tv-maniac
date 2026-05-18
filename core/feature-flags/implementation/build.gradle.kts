@@ -5,6 +5,8 @@ plugins {
 scaffold {
     addAndroidTarget()
     useMetro()
+
+    optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
 }
 
 kotlin {
@@ -12,6 +14,8 @@ kotlin {
         androidMain {
             dependencies {
                 api(libs.firebase.config)
+                implementation(libs.okio)
+                implementation(libs.kotlinx.datetime)
                 implementation(libs.coroutines.play.services)
             }
         }
@@ -23,13 +27,11 @@ kotlin {
             api(projects.core.logger.api)
 
             api(libs.coroutines.core)
+            api(libs.androidx.datastore.preference)
         }
 
         commonTest.dependencies {
             implementation(libs.bundles.unittest)
-        }
-
-        iosTest.dependencies {
             implementation(projects.core.featureFlags.testing)
             implementation(projects.core.logger.testing)
         }
