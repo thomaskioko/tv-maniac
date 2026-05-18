@@ -46,7 +46,6 @@ public object IosFeatureFlagsBindingContainer {
         }
     }
 
-
     @OptIn(ExperimentalForeignApi::class)
     @Provides
     @SingleIn(AppScope::class)
