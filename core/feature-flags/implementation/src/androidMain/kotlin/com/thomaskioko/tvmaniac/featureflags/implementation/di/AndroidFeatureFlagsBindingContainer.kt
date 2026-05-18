@@ -1,12 +1,18 @@
-package com.thomaskioko.tvmaniac.featureflags.implementation
+package com.thomaskioko.tvmaniac.featureflags.implementation.di
 
+import android.app.Application
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
 import com.google.firebase.FirebaseApp
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.thomaskioko.tvmaniac.core.base.AsyncInitializers
+import com.thomaskioko.tvmaniac.core.base.FeatureFlagLocalsDataStore
 import com.thomaskioko.tvmaniac.core.base.Initializer
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.featureflags.implementation.AndroidRemoteConfigFeatureFlags
 import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlagFetchInterval
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
@@ -16,8 +22,10 @@ import dev.zacsweers.metro.Provides
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import okio.Path.Companion.toPath
 
 private const val LOG_TAG = "FeatureFlagInitializer"
+private const val FILE_NAME = "feature_flag_locals.preferences_pb"
 
 @BindingContainer
 @ContributesTo(AppScope::class)
@@ -43,7 +51,7 @@ public object AndroidFeatureFlagsBindingContainer {
     @SingleIn(AppScope::class)
     public fun provideFirebaseRemoteConfig(
         firebaseApp: FirebaseApp?,
-    ): FirebaseRemoteConfig? = firebaseApp?.let { FirebaseRemoteConfig.getInstance() }
+    ): FirebaseRemoteConfig? = firebaseApp?.let { FirebaseRemoteConfig.getInstance(it) }
 
     @Provides
     @SingleIn(AppScope::class)
@@ -52,4 +60,17 @@ public object AndroidFeatureFlagsBindingContainer {
     ): FirebaseRemoteConfigSettings = FirebaseRemoteConfigSettings.Builder()
         .setMinimumFetchIntervalInSeconds(interval.seconds)
         .build()
+
+    @Provides
+    @SingleIn(AppScope::class)
+    @FeatureFlagLocalsDataStore
+    public fun provideLocalsDataStore(
+        context: Application,
+        @IoCoroutineScope scope: CoroutineScope,
+    ): DataStore<Preferences> = PreferenceDataStoreFactory.createWithPath(
+        corruptionHandler = null,
+        migrations = emptyList(),
+        scope = scope,
+        produceFile = { context.filesDir.resolve(FILE_NAME).absolutePath.toPath() },
+    )
 }

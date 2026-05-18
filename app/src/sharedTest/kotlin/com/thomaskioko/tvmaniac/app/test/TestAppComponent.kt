@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.app.test
 import android.app.Application
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import com.thomaskioko.tvmaniac.core.base.AppPreferencesDataStore
 import com.thomaskioko.tvmaniac.core.base.IsDebugBuild
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
@@ -17,6 +18,8 @@ interface TestAppComponent {
     val traktAuthRepository: FakeTraktAuthRepository
     val traktAuthManager: FakeTraktAuthManager
     val datastoreRepository: DatastoreRepository
+
+    @AppPreferencesDataStore
     val dataStore: DataStore<Preferences>
 
     @DependencyGraph.Factory
