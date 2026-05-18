@@ -18,16 +18,29 @@ public class UpNextSectionsMapper(
         val currentTime = dateTimeProvider.nowMillis()
 
         return episodes
-            .map { episode ->
+            .mapNotNull { episode ->
+                val showName = episode.showName ?: return@mapNotNull null
+                val episodeId = episode.episodeId ?: return@mapNotNull null
+                val seasonId = episode.seasonId ?: return@mapNotNull null
+                val seasonNumber = episode.seasonNumber ?: return@mapNotNull null
+                val episodeNumber = episode.episodeNumber ?: return@mapNotNull null
                 val remaining = (episode.totalCount - episode.watchedCount).toInt()
                 val badge = calculateBadge(
-                    episodeNumber = episode.episodeNumber,
-                    seasonNumber = episode.seasonNumber,
+                    episodeNumber = episodeNumber,
+                    seasonNumber = seasonNumber,
                     showYear = episode.showYear,
                     firstAired = episode.firstAired,
                     currentTimeMillis = currentTime,
                 )
-                episode.toUpNextEpisodeInfo(remaining, badge)
+                episode.toUpNextEpisodeInfo(
+                    showName = showName,
+                    episodeId = episodeId,
+                    seasonId = seasonId,
+                    seasonNumber = seasonNumber,
+                    episodeNumber = episodeNumber,
+                    remainingEpisodes = remaining,
+                    badge = badge,
+                )
             }
             .filter { it.firstAired != null && it.firstAired <= currentTime }
             .groupBySections(currentTime)
@@ -58,6 +71,11 @@ public class UpNextSectionsMapper(
     }
 
     private fun NextEpisodeWithShow.toUpNextEpisodeInfo(
+        showName: String,
+        episodeId: Long,
+        seasonId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
         remainingEpisodes: Int,
         badge: EpisodeBadge,
     ): UpNextEpisodeInfo {
