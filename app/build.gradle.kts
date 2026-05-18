@@ -59,6 +59,7 @@ dependencies {
     implementation(projects.navigation.ui)
     implementation(projects.features.debug.ui)
     implementation(projects.features.discover.ui)
+    implementation(projects.features.featureFlags.ui)
     implementation(projects.features.episodeSheet.ui)
     implementation(projects.features.home.ui)
     implementation(projects.features.library.ui)
@@ -187,6 +188,9 @@ dependencies {
     implementation(projects.domain.watchlist)
     implementation(projects.features.watchlist.nav)
     implementation(projects.features.watchlist.presenter)
+    implementation(projects.domain.featureFlags)
+    implementation(projects.features.featureFlags.nav)
+    implementation(projects.features.featureFlags.presenter)
 
     implementation(libs.androidx.compose.activity)
     implementation(libs.androidx.core.ktx)
