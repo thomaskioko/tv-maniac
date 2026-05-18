@@ -23,7 +23,7 @@ public class ObserveWatchlistSectionsInteractor(
         return upNextRepository.observeNextEpisodesForWatchlist()
             .map { episodes ->
                 episodes
-                    .filter { params.isBlank() || (it.showName?.contains(params, ignoreCase = true) == true) }
+                    .filter { params.isBlank() || it.showName.contains(params, ignoreCase = true) }
                     .map { it.toWatchlistShowInfo() }
                     .filterNot { it.isCompleted() }
                     .groupBySections(dateTimeProvider.nowMillis())
@@ -55,10 +55,7 @@ private fun NextEpisodeWithShow.toWatchlistShowInfo(): WatchlistShowInfo {
     )
 }
 
-private fun NextEpisodeWithShow.toNextEpisodeInfo(): NextEpisodeInfo? {
-    val episodeId = episodeId ?: return null
-    val seasonNumber = seasonNumber ?: return null
-    val episodeNumber = episodeNumber ?: return null
+private fun NextEpisodeWithShow.toNextEpisodeInfo(): NextEpisodeInfo {
     return NextEpisodeInfo(
         episodeId = episodeId,
         episodeTitle = episodeName ?: "",

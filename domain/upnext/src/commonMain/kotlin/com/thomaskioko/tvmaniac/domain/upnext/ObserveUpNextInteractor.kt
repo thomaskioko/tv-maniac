@@ -3,8 +3,7 @@ package com.thomaskioko.tvmaniac.domain.upnext
 import com.thomaskioko.tvmaniac.domain.upnext.model.UpNextResult
 import com.thomaskioko.tvmaniac.domain.upnext.model.UpNextSortOption
 import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
-import com.thomaskioko.tvmaniac.upnext.api.model.UpNextEpisode
-import com.thomaskioko.tvmaniac.upnext.api.model.toUpNextEpisode
+import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -25,13 +24,13 @@ public class ObserveUpNextInteractor(
                 .map { episodes ->
                     UpNextResult(
                         sortOption = sortOption,
-                        episodes = episodes.mapNotNull { it.toUpNextEpisode() }.sortedBy(sortOption),
+                        episodes = episodes.sortedBy(sortOption),
                     )
                 }
         }
 }
 
-private fun List<UpNextEpisode>.sortedBy(option: UpNextSortOption): List<UpNextEpisode> =
+private fun List<NextEpisodeWithShow>.sortedBy(option: UpNextSortOption): List<NextEpisodeWithShow> =
     when (option) {
         UpNextSortOption.LAST_WATCHED -> {
             val (watched, unwatched) = partition { it.lastWatchedAt != null }

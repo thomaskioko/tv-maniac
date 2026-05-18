@@ -17,7 +17,7 @@ public interface WatchlistTasksInitializerBindingContainer {
         @IntoSet
         @AsyncInitializers
         public fun provideWatchlistTasksInitializer(
-            bind: WatchlistTasksInitializer
+            bind: WatchlistTasksInitializer,
         ): Initializer = Initializer { bind.init() }
     }
 }

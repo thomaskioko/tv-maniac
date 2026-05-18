@@ -40,7 +40,7 @@ import com.thomaskioko.tvmaniac.shows.api.model.Category
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsInteractor
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
-import com.thomaskioko.tvmaniac.upnext.api.model.UpNextEpisode
+import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
@@ -283,7 +283,7 @@ public class DiscoverShowsPresenter(
     }
 }
 
-private fun UpNextEpisode.toUiModel(): NextEpisodeUiModel {
+private fun NextEpisodeWithShow.toUiModel(): NextEpisodeUiModel {
     return NextEpisodeUiModel(
         showTraktId = showTraktId,
         showName = showName,
