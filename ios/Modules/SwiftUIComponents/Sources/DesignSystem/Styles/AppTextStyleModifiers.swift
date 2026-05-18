@@ -38,7 +38,7 @@ public struct AppCaptionStyle: ViewModifier {
     public func body(content: Content) -> some View {
         content
             .font(theme.typography.labelSmall)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(theme.colors.onSurfaceVariant)
     }
 }
 

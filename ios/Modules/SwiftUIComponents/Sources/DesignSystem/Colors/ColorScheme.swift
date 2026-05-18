@@ -21,6 +21,8 @@ public struct TvManiacColorScheme {
     public let onButtonBackground: Color
     public let success: Color
     public let grey: Color
+    public let scrim: Color
+    public let onScrim: Color
 
     public init(
         primary: Color,
@@ -42,7 +44,9 @@ public struct TvManiacColorScheme {
         buttonBackground: Color,
         onButtonBackground: Color,
         success: Color = Color(hex: "00B300"),
-        grey: Color = Color(hex: "808080")
+        grey: Color = Color(hex: "808080"),
+        scrim: Color = .black,
+        onScrim: Color = .white
     ) {
         self.primary = primary
         self.primaryContainer = primaryContainer
@@ -64,6 +68,8 @@ public struct TvManiacColorScheme {
         self.onButtonBackground = onButtonBackground
         self.success = success
         self.grey = grey
+        self.scrim = scrim
+        self.onScrim = onScrim
     }
 }
 
@@ -81,11 +87,11 @@ public extension TvManiacColorScheme {
     func imageGradient() -> LinearGradient {
         LinearGradient(
             colors: [
-                Color.black.opacity(0),
-                Color.black.opacity(0.383),
-                Color.black.opacity(0.707),
-                Color.black.opacity(0.924),
-                Color.black,
+                scrim.opacity(0),
+                scrim.opacity(0.383),
+                scrim.opacity(0.707),
+                scrim.opacity(0.924),
+                scrim,
             ],
             startPoint: .top,
             endPoint: .bottom

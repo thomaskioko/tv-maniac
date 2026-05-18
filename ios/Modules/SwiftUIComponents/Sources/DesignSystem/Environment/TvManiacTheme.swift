@@ -5,12 +5,17 @@ public protocol TvManiacTheme {
     var typography: TvManiacTypographyScheme { get }
     var spacing: TvManiacSpacingScheme { get }
     var shapes: TvManiacShapeScheme { get }
+    var shadows: TvManiacShadowScheme { get }
     var scanlineConfig: ScanlineConfiguration { get }
 }
 
 public extension TvManiacTheme {
     var scanlineConfig: ScanlineConfiguration {
         .disabled
+    }
+
+    var shadows: TvManiacShadowScheme {
+        .default
     }
 }
 
