@@ -12,6 +12,7 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.UPNEXT_FUL
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
+import com.thomaskioko.tvmaniac.watchedshows.api.WatchedShowsDao
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
@@ -26,6 +27,7 @@ public class DefaultUpNextRepository(
     private val nextEpisodeDao: NextEpisodeDao,
     private val datastoreRepository: DatastoreRepository,
     private val followedShowsDao: FollowedShowsDao,
+    private val watchedShowsDao: WatchedShowsDao,
     private val showDetailsRepository: ShowDetailsRepository,
     private val seasonDetailsRepository: SeasonDetailsRepository,
     private val watchedEpisodeSyncRepository: WatchedEpisodeSyncRepository,
@@ -47,31 +49,33 @@ public class DefaultUpNextRepository(
     override suspend fun fetchUpNextEpisodes(forceRefresh: Boolean) {
         if (!forceRefresh && isSyncValid()) return
 
-        val followedShows = followedShowsDao.entriesExcludingDeleted()
-        if (followedShows.isEmpty()) {
-            logger.debug(TAG, "No followed shows found, skipping UpNext refresh")
+        val followedTraktIds = followedShowsDao.entriesExcludingDeleted().map { it.traktId }
+        val watchedTraktIds = watchedShowsDao.entries().map { it.traktId }
+        val traktIds = (followedTraktIds + watchedTraktIds).distinct()
+        if (traktIds.isEmpty()) {
+            logger.debug(TAG, "No followed or watched shows found, skipping UpNext refresh")
             return
         }
 
         logger.debug(
             TAG,
-            "Refreshing UpNext metadata for ${followedShows.size} followed shows (forceRefresh=$forceRefresh)",
+            "Refreshing UpNext metadata for ${traktIds.size} shows (forceRefresh=$forceRefresh)",
         )
 
-        followedShows.forEach { show ->
+        traktIds.forEach { traktId ->
             // Ensure the show graph (tvshow row + seasons) is loaded before syncing episodes;
             // `syncShowSeasonDetails` is a no-op when the local seasons table is empty, which
             // happens whenever this method races ahead of `SyncLibraryInteractor` on login.
             showDetailsRepository.fetchShowDetails(
-                id = show.traktId,
+                id = traktId,
                 forceRefresh = forceRefresh,
             )
             seasonDetailsRepository.syncShowSeasonDetails(
-                showTraktId = show.traktId,
+                showTraktId = traktId,
                 forceRefresh = forceRefresh,
             )
             watchedEpisodeSyncRepository.syncShowEpisodeWatches(
-                showTraktId = show.traktId,
+                showTraktId = traktId,
                 forceRefresh = forceRefresh,
             )
         }

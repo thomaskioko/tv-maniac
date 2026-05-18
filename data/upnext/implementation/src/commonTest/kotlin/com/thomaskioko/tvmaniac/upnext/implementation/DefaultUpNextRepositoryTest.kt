@@ -13,6 +13,8 @@ import com.thomaskioko.tvmaniac.followedshows.implementation.DefaultFollowedShow
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
+import com.thomaskioko.tvmaniac.watchedshows.api.WatchedShowEntry
+import com.thomaskioko.tvmaniac.watchedshows.implementation.DefaultWatchedShowsDao
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -50,6 +52,7 @@ internal class DefaultUpNextRepositoryTest : BaseDatabaseTest() {
 
     private lateinit var nextEpisodeDao: DefaultNextEpisodeDao
     private lateinit var followedShowsDao: DefaultFollowedShowsDao
+    private lateinit var watchedShowsDao: DefaultWatchedShowsDao
     private lateinit var repository: DefaultUpNextRepository
 
     @BeforeTest
@@ -59,11 +62,13 @@ internal class DefaultUpNextRepositoryTest : BaseDatabaseTest() {
 
         nextEpisodeDao = DefaultNextEpisodeDao(database, dispatchers, dateTimeProvider)
         followedShowsDao = DefaultFollowedShowsDao(database, dispatchers)
+        watchedShowsDao = DefaultWatchedShowsDao(database, dispatchers)
 
         repository = DefaultUpNextRepository(
             nextEpisodeDao = nextEpisodeDao,
             datastoreRepository = datastoreRepository,
             followedShowsDao = followedShowsDao,
+            watchedShowsDao = watchedShowsDao,
             showDetailsRepository = showDetailsRepository,
             seasonDetailsRepository = seasonDetailsRepository,
             watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
@@ -79,9 +84,9 @@ internal class DefaultUpNextRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should expose next episodes for followed shows from live source of truth`() = runTest {
+    fun `should expose next episodes for watched shows from live source of truth`() = runTest {
         insertShow(id = 1L, name = "Severance")
-        insertFollowedShow(showId = 1L, pendingAction = "NOTHING")
+        insertWatchedShow(traktId = 1L, tmdbId = 1L)
         insertSeason(showId = 1L, seasonNumber = 1)
         insertEpisode(showId = 1L, seasonId = 101L, episodeNumber = 1, title = "Good News About Hell")
         insertEpisode(showId = 1L, seasonId = 101L, episodeNumber = 2, title = "Half Loop")
@@ -98,7 +103,7 @@ internal class DefaultUpNextRepositoryTest : BaseDatabaseTest() {
     @Test
     fun `should advance next episode when watched_episodes is updated`() = runTest {
         insertShow(id = 1L, name = "Severance")
-        insertFollowedShow(showId = 1L, pendingAction = "NOTHING")
+        insertWatchedShow(traktId = 1L, tmdbId = 1L)
         insertSeason(showId = 1L, seasonNumber = 1)
         insertEpisode(showId = 1L, seasonId = 101L, episodeNumber = 1, title = "Good News About Hell")
         insertEpisode(showId = 1L, seasonId = 101L, episodeNumber = 2, title = "Half Loop")
@@ -120,7 +125,7 @@ internal class DefaultUpNextRepositoryTest : BaseDatabaseTest() {
         dateTimeProvider.setCurrentTimeMillis(realNow)
 
         insertShow(id = 1L, name = "Caught Up Show")
-        insertFollowedShow(showId = 1L, pendingAction = "NOTHING")
+        insertWatchedShow(traktId = 1L, tmdbId = 1L)
         insertSeason(showId = 1L, seasonNumber = 1, episodeCount = 2)
         insertEpisode(showId = 1L, seasonId = 101L, episodeNumber = 1, title = "Pilot", firstAired = pastMillis)
         insertEpisode(showId = 1L, seasonId = 101L, episodeNumber = 2, title = "Future", firstAired = futureMillis)
@@ -129,6 +134,20 @@ internal class DefaultUpNextRepositoryTest : BaseDatabaseTest() {
 
         repository.observeNextEpisodesForWatchlist().test {
             awaitItem().size shouldBe 0
+        }
+    }
+
+    @Test
+    fun `should load orphan watched show with null tvshow fields`() = runTest {
+        insertWatchedShow(traktId = 1L, tmdbId = null)
+
+        repository.observeNextEpisodesForWatchlist().test {
+            val items = awaitItem()
+            items.size shouldBe 1
+            items[0].showTraktId shouldBe 1L
+            items[0].showName shouldBe null
+            items[0].showTmdbId shouldBe null
+            items[0].episodeId shouldBe null
         }
     }
 
@@ -189,11 +208,86 @@ internal class DefaultUpNextRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should no-op when no followed shows exist`() = runTest {
+    fun `should no-op when no followed or watched shows exist`() = runTest {
         requestManagerRepository.requestValid = false
 
         repository.fetchUpNextEpisodes(forceRefresh = false)
 
+        seasonDetailsRepository.getSyncedShowIds().size shouldBe 0
+        watchedEpisodeSyncRepository.getSyncedShowIds().size shouldBe 0
+        requestManagerRepository.upsertCalled shouldBe false
+    }
+
+    @Test
+    fun `should sync each followed id once given followed-only set`() = runTest {
+        insertShow(id = 1L, name = "Show A")
+        insertShow(id = 2L, name = "Show B")
+        insertFollowedShow(showId = 1L, pendingAction = "NOTHING")
+        insertFollowedShow(showId = 2L, pendingAction = "NOTHING")
+        requestManagerRepository.requestValid = false
+
+        repository.fetchUpNextEpisodes(forceRefresh = false)
+
+        showDetailsRepository.fetchInvocations().map { it.id } shouldBe listOf(1L, 2L)
+        seasonDetailsRepository.getSyncedShowIds() shouldBe listOf(1L, 2L)
+        watchedEpisodeSyncRepository.getSyncedShowIds() shouldBe listOf(1L, 2L)
+    }
+
+    @Test
+    fun `should sync each watched id once given watched-only set`() = runTest {
+        insertShow(id = 1L, name = "Show A")
+        insertShow(id = 2L, name = "Show B")
+        insertWatchedShow(traktId = 1L, tmdbId = 1L)
+        insertWatchedShow(traktId = 2L, tmdbId = 2L)
+        requestManagerRepository.requestValid = false
+
+        repository.fetchUpNextEpisodes(forceRefresh = false)
+
+        showDetailsRepository.fetchInvocations().map { it.id } shouldBe listOf(1L, 2L)
+        seasonDetailsRepository.getSyncedShowIds() shouldBe listOf(1L, 2L)
+        watchedEpisodeSyncRepository.getSyncedShowIds() shouldBe listOf(1L, 2L)
+    }
+
+    @Test
+    fun `should sync each distinct id once given overlapping followed and watched sets`() = runTest {
+        insertShow(id = 1L, name = "Show A")
+        insertShow(id = 2L, name = "Show B")
+        insertShow(id = 3L, name = "Show C")
+        insertFollowedShow(showId = 1L, pendingAction = "NOTHING")
+        insertFollowedShow(showId = 2L, pendingAction = "NOTHING")
+        insertWatchedShow(traktId = 2L, tmdbId = 2L)
+        insertWatchedShow(traktId = 3L, tmdbId = 3L)
+        requestManagerRepository.requestValid = false
+
+        repository.fetchUpNextEpisodes(forceRefresh = false)
+
+        showDetailsRepository.fetchInvocations().map { it.id } shouldBe listOf(1L, 2L, 3L)
+        seasonDetailsRepository.getSyncedShowIds() shouldBe listOf(1L, 2L, 3L)
+        watchedEpisodeSyncRepository.getSyncedShowIds() shouldBe listOf(1L, 2L, 3L)
+    }
+
+    @Test
+    fun `should propagate force refresh to all repositories for every id`() = runTest {
+        insertShow(id = 1L, name = "Show A")
+        insertShow(id = 2L, name = "Show B")
+        insertFollowedShow(showId = 1L, pendingAction = "NOTHING")
+        insertWatchedShow(traktId = 2L, tmdbId = 2L)
+        requestManagerRepository.requestValid = true
+
+        repository.fetchUpNextEpisodes(forceRefresh = true)
+
+        showDetailsRepository.fetchInvocations().all { it.forceRefresh } shouldBe true
+        showDetailsRepository.fetchInvocations().size shouldBe 2
+        watchedEpisodeSyncRepository.wasForceRefreshUsed() shouldBe true
+    }
+
+    @Test
+    fun `should short-circuit empty union before fetch and request-manager upsert`() = runTest {
+        requestManagerRepository.requestValid = false
+
+        repository.fetchUpNextEpisodes(forceRefresh = false)
+
+        showDetailsRepository.fetchInvocations().size shouldBe 0
         seasonDetailsRepository.getSyncedShowIds().size shouldBe 0
         watchedEpisodeSyncRepository.getSyncedShowIds().size shouldBe 0
         requestManagerRepository.upsertCalled shouldBe false
@@ -264,6 +358,18 @@ internal class DefaultUpNextRepositoryTest : BaseDatabaseTest() {
             image_url = null,
             trakt_id = showId * 1000 + episodeNumber,
             first_aired = firstAired,
+        )
+    }
+
+    private fun insertWatchedShow(traktId: Long, tmdbId: Long?) {
+        watchedShowsDao.upsert(
+            WatchedShowEntry(
+                traktId = traktId,
+                tmdbId = tmdbId,
+                plays = 1L,
+                lastWatchedAt = NOW - 10_000L,
+                lastUpdatedAt = NOW - 10_000L,
+            ),
         )
     }
 
