@@ -34,7 +34,8 @@ struct DebugMenuView: View {
 
 private extension DebugItem {
     func toMenuItem(presenter: DebugPresenter) -> DebugMenuItem {
-        DebugMenuItem(
+        let action = action
+        return DebugMenuItem(
             id: id,
             icon: icon.toSymbolName(),
             role: role.toMenuItemRole(),

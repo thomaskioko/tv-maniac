@@ -95,6 +95,7 @@ public struct TabBarView: View {
             }
         } else {
             registry.view(for: child)
+                .toolbar(.hidden, for: .tabBar)
         }
     }
 

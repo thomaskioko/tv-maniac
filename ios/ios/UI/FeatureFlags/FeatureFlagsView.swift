@@ -16,7 +16,7 @@ struct FeatureFlagsView: View {
     var body: some View {
         FeatureFlagsScreen(
             state: uiState.toScreenState(),
-            onBack: { presenter.dispatch(action: BackClicked()) },
+            onBack: { presenter.dispatch(action: BackClicked_()) },
             onSearchQueryChanged: { presenter.dispatch(action: SearchQueryChanged(query: $0)) },
             onResetAll: { presenter.dispatch(action: ClearAllLocals()) },
             onForceRefresh: { presenter.dispatch(action: ForceRefresh()) },
