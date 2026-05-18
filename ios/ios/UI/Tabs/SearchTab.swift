@@ -29,7 +29,7 @@ struct SearchTab: View {
             query: searchQueryBinding,
             onShowClicked: { id in presenter.dispatch(action: SearchShowClicked(id: id)) },
             onRetry: { presenter.dispatch(action: ReloadShowContent()) },
-            onBack: { presenter.dispatch(action: BackClicked_()) },
+            onBack: { presenter.dispatch(action: BackClicked__()) },
             onCategoryChanged: { label in
                 if let item = categoryLabels.first(where: { $0.label == label }) {
                     presenter.dispatch(action: CategoryChanged(category: item.category))
