@@ -69,6 +69,7 @@ include(
     ":features:debug:ui",
     ":features:feature-flags:nav",
     ":features:feature-flags:presenter",
+    ":features:feature-flags:ui",
     ":features:library:presenter",
     ":features:library:ui",
     ":features:more-shows:nav",
