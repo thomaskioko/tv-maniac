@@ -52,10 +52,66 @@ custom_rules:
         message: "Use theme typography (theme.typography.x) or an .app*() modifier."
         severity: error
 
+    no_semantic_system_font:
+        name: "Semantic system font"
+        regex: '\.font\(\.(largeTitle|title|title2|title3|headline|subheadline|body|callout|footnote|caption|caption2)\)'
+        message: "Use .textStyle(theme.typography.x) or an .app*() typography modifier instead of system semantic fonts."
+        severity: error
+
     no_literal_foreground_color:
         name: "Literal foregroundColor"
-        regex: '\.foregroundColor\(\.(white|black|gray|red|blue|green|yellow|orange|pink|purple)\)'
+        regex: '\.foregroundColor\((Color\.|\.)(white|black|gray|red|blue|green|yellow|orange|pink|purple|accentColor)[\.)]'
         message: "Use .foregroundStyle(.appPrimary/.appOnSurface/...) instead."
+        severity: error
+
+    no_literal_foreground_style:
+        name: "Literal foregroundStyle system color"
+        regex: '\.foregroundStyle\((Color\.|\.)(black|gray|red|blue|green|yellow|orange|pink|purple|secondary|primary|accentColor)[\.)]'
+        message: "Use .foregroundStyle(.appOnSurface/.appOnSurfaceVariant/...) or theme.colors.* instead. .white is allowed for always-light foregrounds over imagery."
+        severity: error
+
+    no_system_tint:
+        name: "System tint color"
+        regex: '\.tint\((Color\.|\.)(accentColor|white|black|gray|red|blue|green|yellow|orange|pink|purple|secondary|primary)[\.)]'
+        message: "Use theme.colors.* (e.g., .tint(theme.colors.accent)) instead of system colors."
+        severity: error
+
+    no_literal_background:
+        name: "Literal background color"
+        regex: '\.background\((Color\.|\.)(white|black|gray|red|blue|green|yellow|orange|pink|purple|secondary|primary|accentColor)[\.)]'
+        message: "Use .background(.appBackground/.appSurface/...) or theme.colors.* instead of system colors."
+        severity: error
+
+    no_literal_fill:
+        name: "Literal fill color"
+        regex: '\.fill\((Color\.|\.)(white|black|gray|red|blue|green|yellow|orange|pink|purple|secondary|primary|accentColor)[\.)]'
+        message: "Use theme.colors.* or .app*() style modifiers instead of system colors in .fill()."
+        severity: error
+
+    no_literal_stroke:
+        name: "Literal stroke color"
+        regex: '\.(stroke|strokeBorder)\((Color\.|\.)(white|black|gray|red|blue|green|yellow|orange|pink|purple|secondary|primary|accentColor)[\.,)]'
+        message: "Use theme.colors.* or .app*() style modifiers instead of system colors in .stroke()/.strokeBorder()."
+        severity: error
+
+    no_literal_border:
+        name: "Literal border color"
+        regex: '\.border\((Color\.|\.)(white|black|gray|red|blue|green|yellow|orange|pink|purple|secondary|primary|accentColor)[\.,)]'
+        message: "Use theme.colors.* or .app*() style modifiers instead of system colors in .border()."
+        severity: error
+
+    no_raw_color_init:
+        name: "Raw Color/UIColor initializer in view code"
+        regex: '\b(Color|UIColor)\((red|white|hue): *-?[0-9]'
+        excluded: ".*(Theme|DesignSystem)/Colors/.*"
+        message: "Define new colors in the DesignSystem color schemes, not inline with raw RGB/grayscale initializers."
+        severity: error
+
+    no_uikit_system_color:
+        name: "UIKit system color in view code"
+        regex: 'Color\(UIColor\.|Color\(uiColor:|Color\(\.system'
+        excluded: ".*(Theme|DesignSystem)/Colors/.*"
+        message: "Use theme.colors.* or .app*() style modifiers instead of UIKit system colors."
         severity: error
 
     no_hex_color_in_views:
