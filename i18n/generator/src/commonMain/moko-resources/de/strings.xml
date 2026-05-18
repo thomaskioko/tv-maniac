@@ -83,6 +83,7 @@
     <string name="menu_item_settings">Einstellungen</string>
     <string name="menu_item_profile">Profil</string>
     <string name="menu_item_progress">Fortschritt</string>
+    <string name="menu_item_watchlist">Merkliste</string>
 
     <string name="cd_show_poster">Posterbild</string>
     <string name="cd_show_poster_image">Posterbild für %s</string>

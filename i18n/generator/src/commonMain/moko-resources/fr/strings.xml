@@ -84,6 +84,7 @@
     <string name="menu_item_settings">Paramètres</string>
     <string name="menu_item_profile">Profil</string>
     <string name="menu_item_progress">Progrès</string>
+    <string name="menu_item_watchlist">Liste de suivi</string>
 
     <string name="cd_show_poster">Image d'affiche</string>
     <string name="cd_show_poster_image">Image d'affiche pour %s</string>
