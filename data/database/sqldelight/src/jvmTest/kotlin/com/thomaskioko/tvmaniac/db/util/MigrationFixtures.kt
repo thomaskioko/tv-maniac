@@ -160,55 +160,6 @@ internal fun SqlDriver.queryWatchProgress(showTraktId: Long): WatchProgress = ex
     },
 ).value
 
-internal data class WatchlistRow(
-    val showTraktId: Long,
-    val showTmdbId: Long?,
-    val showName: String?,
-    val episodeId: Long?,
-    val followedAt: Long?,
-)
-
-internal fun SqlDriver.queryNextEpisodesForWatchlist(includeSpecials: Long = 0L): List<WatchlistRow> = executeQuery(
-    identifier = null,
-    sql = """
-        SELECT
-            watched_show.trakt_id AS show_trakt_id,
-            tvshow.tmdb_id AS show_tmdb_id,
-            tvshow.name AS show_name,
-            next_episode.episode_id,
-            watched_show.last_watched_at AS followed_at
-        FROM trakt_watched_shows AS watched_show
-        LEFT JOIN tvshow ON watched_show.trakt_id = tvshow.trakt_id
-        LEFT JOIN (
-            SELECT show_trakt_id, MIN(next_ep_abs_number) AS min_abs_number
-            FROM shows_next_to_watch
-            WHERE ($includeSpecials = 1 OR (season_number > 0))
-            GROUP BY show_trakt_id
-        ) AS min_next_episode ON min_next_episode.show_trakt_id = watched_show.trakt_id
-        LEFT JOIN shows_next_to_watch AS next_episode
-            ON next_episode.show_trakt_id = watched_show.trakt_id
-            AND next_episode.next_ep_abs_number = min_next_episode.min_abs_number
-        ORDER BY COALESCE(next_episode.last_watched_at, watched_show.last_watched_at) DESC
-    """.trimIndent(),
-    parameters = 0,
-    binders = null,
-    mapper = { cursor ->
-        val rows = mutableListOf<WatchlistRow>()
-        while (cursor.next().value) {
-            rows.add(
-                WatchlistRow(
-                    showTraktId = cursor.getLong(0) ?: 0L,
-                    showTmdbId = cursor.getLong(1),
-                    showName = cursor.getString(2),
-                    episodeId = cursor.getLong(3),
-                    followedAt = cursor.getLong(4),
-                ),
-            )
-        }
-        QueryResult.Value(rows.toList())
-    },
-).value
-
 internal fun SqlDriver.countNextToWatch(showTraktId: Long): Long = executeQuery(
     identifier = null,
     sql = """

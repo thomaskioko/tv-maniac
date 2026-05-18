@@ -29,22 +29,26 @@ public class DefaultNextEpisodeDao(
             .asFlow()
             .mapToList(dispatchers.databaseRead)
             .map { rows ->
-                rows.map { it.toNextEpisodeWithShow() }
+                rows.mapNotNull { it.toNextEpisodeWithShow() }
                     .filterActionableEpisodes(dateTimeProvider.nowMillis())
             }
             .catch { emit(emptyList()) }
     }
 }
 
-private fun NextEpisodesForWatchlist.toNextEpisodeWithShow(): NextEpisodeWithShow =
-    NextEpisodeWithShow(
+private fun NextEpisodesForWatchlist.toNextEpisodeWithShow(): NextEpisodeWithShow? {
+    val episodeId = episode_id?.id ?: return null
+    val seasonId = season_id?.id ?: return null
+    val seasonNumber = season_number ?: return null
+    val episodeNumber = episode_number ?: return null
+    return NextEpisodeWithShow(
         showTraktId = show_trakt_id.id,
-        showTmdbId = show_tmdb_id?.id,
-        episodeId = episode_id?.id,
+        showTmdbId = show_tmdb_id.id,
+        episodeId = episodeId,
         episodeName = episode_name,
-        seasonId = season_id?.id,
-        seasonNumber = season_number,
-        episodeNumber = episode_number,
+        seasonId = seasonId,
+        seasonNumber = seasonNumber,
+        episodeNumber = episodeNumber,
         runtime = runtime,
         stillPath = still_path,
         overview = overview,
@@ -62,6 +66,7 @@ private fun NextEpisodesForWatchlist.toNextEpisodeWithShow(): NextEpisodeWithSho
         rating = ratings,
         voteCount = vote_count,
     )
+}
 
 private fun List<NextEpisodeWithShow>.filterActionableEpisodes(
     nowMillis: Long,

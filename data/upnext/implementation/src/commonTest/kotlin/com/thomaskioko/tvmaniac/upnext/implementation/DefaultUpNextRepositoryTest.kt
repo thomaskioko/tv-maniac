@@ -84,9 +84,9 @@ internal class DefaultUpNextRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should expose next episodes for watched shows from live source of truth`() = runTest {
+    fun `should expose next episodes for followed shows from live source of truth`() = runTest {
         insertShow(id = 1L, name = "Severance")
-        insertWatchedShow(traktId = 1L, tmdbId = 1L)
+        insertFollowedShow(showId = 1L, pendingAction = "NOTHING")
         insertSeason(showId = 1L, seasonNumber = 1)
         insertEpisode(showId = 1L, seasonId = 101L, episodeNumber = 1, title = "Good News About Hell")
         insertEpisode(showId = 1L, seasonId = 101L, episodeNumber = 2, title = "Half Loop")
@@ -103,7 +103,7 @@ internal class DefaultUpNextRepositoryTest : BaseDatabaseTest() {
     @Test
     fun `should advance next episode when watched_episodes is updated`() = runTest {
         insertShow(id = 1L, name = "Severance")
-        insertWatchedShow(traktId = 1L, tmdbId = 1L)
+        insertFollowedShow(showId = 1L, pendingAction = "NOTHING")
         insertSeason(showId = 1L, seasonNumber = 1)
         insertEpisode(showId = 1L, seasonId = 101L, episodeNumber = 1, title = "Good News About Hell")
         insertEpisode(showId = 1L, seasonId = 101L, episodeNumber = 2, title = "Half Loop")
@@ -125,7 +125,7 @@ internal class DefaultUpNextRepositoryTest : BaseDatabaseTest() {
         dateTimeProvider.setCurrentTimeMillis(realNow)
 
         insertShow(id = 1L, name = "Caught Up Show")
-        insertWatchedShow(traktId = 1L, tmdbId = 1L)
+        insertFollowedShow(showId = 1L, pendingAction = "NOTHING")
         insertSeason(showId = 1L, seasonNumber = 1, episodeCount = 2)
         insertEpisode(showId = 1L, seasonId = 101L, episodeNumber = 1, title = "Pilot", firstAired = pastMillis)
         insertEpisode(showId = 1L, seasonId = 101L, episodeNumber = 2, title = "Future", firstAired = futureMillis)
@@ -134,20 +134,6 @@ internal class DefaultUpNextRepositoryTest : BaseDatabaseTest() {
 
         repository.observeNextEpisodesForWatchlist().test {
             awaitItem().size shouldBe 0
-        }
-    }
-
-    @Test
-    fun `should load orphan watched show with null tvshow fields`() = runTest {
-        insertWatchedShow(traktId = 1L, tmdbId = null)
-
-        repository.observeNextEpisodesForWatchlist().test {
-            val items = awaitItem()
-            items.size shouldBe 1
-            items[0].showTraktId shouldBe 1L
-            items[0].showName shouldBe null
-            items[0].showTmdbId shouldBe null
-            items[0].episodeId shouldBe null
         }
     }
 
