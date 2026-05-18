@@ -84,7 +84,7 @@ internal fun expectedUiResult(
         val progress = if (it.totalCount > 0) it.watchedCount.toFloat() / it.totalCount else 0f
         WatchlistItem(
             traktId = it.showTraktId,
-            title = it.showName,
+            title = it.showName ?: "",
             posterImageUrl = it.showPoster,
             status = it.showStatus,
             year = it.showYear,
@@ -95,11 +95,11 @@ internal fun expectedUiResult(
             watchProgress = progress,
             lastWatchedAt = it.lastWatchedAt,
             nextEpisode = NextEpisodeItem(
-                episodeId = it.episodeId,
+                episodeId = it.episodeId!!,
                 episodeTitle = it.episodeName ?: "",
-                episodeNumberFormatted = "S${it.seasonNumber.toString().padStart(2, '0')} | E${it.episodeNumber.toString().padStart(2, '0')}",
-                seasonNumber = it.seasonNumber,
-                episodeNumber = it.episodeNumber,
+                episodeNumberFormatted = "S${it.seasonNumber!!.toString().padStart(2, '0')} | E${it.episodeNumber!!.toString().padStart(2, '0')}",
+                seasonNumber = it.seasonNumber!!,
+                episodeNumber = it.episodeNumber!!,
                 stillPath = it.stillPath,
                 firstAired = it.firstAired,
             ),

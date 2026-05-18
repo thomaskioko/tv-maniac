@@ -74,7 +74,7 @@ internal fun WatchlistSections.toPresenter(): SectionedItems = SectionedItems(
 
 internal fun WatchlistShowInfo.toPresenter(): WatchlistItem = WatchlistItem(
     traktId = traktId,
-    title = title,
+    title = title ?: "",
     posterImageUrl = posterImageUrl,
     status = status,
     year = year,

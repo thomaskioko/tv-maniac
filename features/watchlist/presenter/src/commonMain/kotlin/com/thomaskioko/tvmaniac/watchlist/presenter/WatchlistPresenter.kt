@@ -117,6 +117,7 @@ public class WatchlistPresenter(
                     ),
                 ),
             )
+
             is RefreshWatchlist -> syncWatchlist(action.forceRefresh)
         }
     }
@@ -130,7 +131,12 @@ public class WatchlistPresenter(
                     seasonNumber = action.seasonNumber,
                     episodeNumber = action.episodeNumber,
                 ),
-            ).collectStatus(upNextActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+            ).collectStatus(
+                upNextActionLoadingState,
+                logger,
+                uiMessageManager,
+                errorToStringMapper = errorToStringMapper,
+            )
         }
     }
 
@@ -175,7 +181,12 @@ public class WatchlistPresenter(
     private fun syncWatchlist(forceRefresh: Boolean = false) {
         coroutineScope.launch {
             watchlistSyncInteractor(WatchlistSyncInteractor.Param(forceRefresh))
-                .collectStatus(watchlistLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+                .collectStatus(
+                    counter = watchlistLoadingState,
+                    logger = logger,
+                    uiMessageManager = uiMessageManager,
+                    errorToStringMapper = errorToStringMapper,
+                )
         }
     }
 }

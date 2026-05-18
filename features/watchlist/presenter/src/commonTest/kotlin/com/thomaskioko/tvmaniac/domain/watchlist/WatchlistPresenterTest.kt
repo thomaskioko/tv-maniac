@@ -272,4 +272,5 @@ class WatchlistPresenterTest {
         watchedCount = 0,
         totalCount = 10,
     )
+
 }
