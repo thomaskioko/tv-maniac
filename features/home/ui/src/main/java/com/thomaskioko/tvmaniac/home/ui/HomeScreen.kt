@@ -82,7 +82,8 @@ public fun HomeScreen(
             BottomNavigationContent(
                 component = presenter,
                 activeRoot = activeRoot,
-                modifier = Modifier.fillMaxWidth().testTag(HomeTestTags.NAVIGATION_BAR),
+                modifier = Modifier.fillMaxWidth()
+                    .testTag(HomeTestTags.NAVIGATION_BAR),
             )
         }
     }

@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.search
 
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
+import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
 import org.junit.Test
 
 internal class SearchFlowTest : BaseAppFlowTest() {
@@ -21,6 +22,7 @@ internal class SearchFlowTest : BaseAppFlowTest() {
         // 1. Enter Query & Verify results
         searchRobot
             .assertSearchScreenDisplayed()
+            .assertDoesNotExist(HomeTestTags.NAVIGATION_BAR)
             .enterSearchQuery(query)
             .assertSearchQueryDisplayed(query)
             .assertResultItemDisplayed(traktId)
@@ -43,7 +45,8 @@ internal class SearchFlowTest : BaseAppFlowTest() {
         val query = "ErrorQuery"
         scenarios.search.stubSearchError(query)
 
-        discoverRobot.navigateToSearchTab()
+        discoverRobot
+            .navigateToSearchTab()
 
         searchRobot
             .enterSearchQuery(query)

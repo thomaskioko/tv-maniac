@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.seasons
 
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
+import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
 import org.junit.Test
 
 internal class SeasonFlowTest : BaseAppFlowTest() {
@@ -23,6 +24,7 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
         // 1. Mark episode as watched & check continue tracking
         showDetailsRobot
             .clickSeasonChip(seasonNumber = 1L)
+            .assertDoesNotExist(HomeTestTags.NAVIGATION_BAR)
             .scrollToEpisodeRow(pilotEpisodeTraktId)
             .assertEpisodeRowDisplayed(pilotEpisodeTraktId)
             .clickMarkWatched(pilotEpisodeTraktId)

@@ -11,11 +11,13 @@ internal class SettingsFlowTest : BaseAppFlowTest() {
     fun givenSettings_whenImageQualitySelected_thenSelectionIsPersisted() = runAppFlowTest {
         scenarios.discover.stubBrowseGraph()
 
-        discoverRobot.assertDiscoverScreenDisplayed()
+        discoverRobot
+            .assertDiscoverScreenDisplayed()
 
         scenarios.stubUsersMeUnauthorized()
 
-        homeRobot.clickProfileTab()
+        homeRobot
+            .clickProfileTab()
             .assertTabSelected(HomeTestTags.PROFILE_TAB)
 
         profileRobot
@@ -25,6 +27,7 @@ internal class SettingsFlowTest : BaseAppFlowTest() {
 
         settingsRobot
             .assertSettingsScreenDisplayed()
+            .assertDoesNotExist(HomeTestTags.NAVIGATION_BAR)
             .scrollToImageQualityChip(ImageQuality.HIGH)
             .assertImageQualitySelected(ImageQuality.AUTO)
             .assertImageQualityNotSelected(ImageQuality.HIGH)
@@ -37,7 +40,8 @@ internal class SettingsFlowTest : BaseAppFlowTest() {
     fun givenAuthenticatedUser_whenTraktAccountClicked_thenShowsLogoutDialog() = runAppFlowTest {
         scenarios.discover.stubBrowseGraph()
 
-        discoverRobot.assertDiscoverScreenDisplayed()
+        discoverRobot
+            .assertDiscoverScreenDisplayed()
 
         scenarios.signInAndDismissRationale()
 

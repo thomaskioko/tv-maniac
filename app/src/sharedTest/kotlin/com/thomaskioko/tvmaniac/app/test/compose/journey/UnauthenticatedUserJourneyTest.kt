@@ -52,26 +52,32 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
         discoverRobot
             .assertFeaturedPagerDisplayed()
             .clickShowCard(breakingBadTraktId)
+            .assertDoesNotExist(HomeTestTags.NAVIGATION_BAR)
             .assertTrackButtonDisplayed()
             .pressBack()
 
-        discoverRobot.assertDiscoverScreenDisplayed()
+        discoverRobot
+            .assertDiscoverScreenDisplayed()
 
         // Verify logged-out empty states for Progress and Calendar
-        homeRobot.clickProgressTab()
+        homeRobot
+            .clickProgressTab()
             .assertTabSelected(HomeTestTags.PROGRESS_TAB)
 
         progressRobot
             .assertProgressScreenDisplayed()
+            .assertExists(HomeTestTags.NAVIGATION_BAR)
             .assertUpNextTabSelected()
             .assertUpNextEmptyStateDisplayed()
             .assertUpNextEpisodeDoesNotExist(breakingBadTraktId)
             .clickCalendarTab()
             .assertCalendarTabSelected()
 
-        calendarRobot.assertLoggedOutStateDisplayed()
+        calendarRobot
+            .assertLoggedOutStateDisplayed()
 
-        progressRobot.clickUpNextTab()
+        progressRobot
+            .clickUpNextTab()
 
         // Verify empty watchlist state
         homeRobot.clickWatchlistTab()
@@ -92,6 +98,7 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
 
         settingsRobot
             .assertSettingsScreenDisplayed()
+            .assertDoesNotExist(HomeTestTags.NAVIGATION_BAR)
             // Change theme from SYSTEM to DARK
             .scrollToThemeSwatch(ThemeModel.SYSTEM)
             .assertThemeSwatchSelected(ThemeModel.SYSTEM)
@@ -122,14 +129,17 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
         rootRobot.assertNotificationRationaleDoesNotExist()
 
         // Follow show locally
-        settingsRobot.clickBackButton()
+        settingsRobot
+            .clickBackButton()
 
-        homeRobot.clickDiscoverTab()
+        homeRobot
+            .clickDiscoverTab()
             .assertTabSelected(HomeTestTags.DISCOVER_TAB)
 
         discoverRobot
             .assertFeaturedPagerDisplayed()
             .clickShowCard(breakingBadTraktId)
+            .assertDoesNotExist(HomeTestTags.NAVIGATION_BAR)
             .assertTrackButtonDisplayed()
             .clickTrackButton()
             .assertStopTrackingButtonDisplayed()
@@ -143,7 +153,8 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
             .assertMarkUnwatchedDisplayed(secondEpisodeTraktId)
             .pressBack()
 
-        showDetailsRobot.pressBack()
+        showDetailsRobot
+            .pressBack()
 
         discoverRobot
             .assertDiscoverScreenDisplayed()
@@ -153,10 +164,12 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
             .clickActionItem(EpisodeSheetActionItem.OPEN_SHOW)
 
         showDetailsRobot
+            .assertDoesNotExist(HomeTestTags.NAVIGATION_BAR)
             .assertStopTrackingButtonDisplayed()
             .pressBack()
 
-        discoverRobot.assertDiscoverScreenDisplayed()
+        discoverRobot
+            .assertDiscoverScreenDisplayed()
 
         // Verify offline follow in Watchlist
         homeRobot
@@ -176,7 +189,8 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
             .assertLoginPromptDoesNotExist()
             .pressBack()
 
-        homeRobot.clickProfileTab()
+        homeRobot
+            .clickProfileTab()
             .assertTabSelected(HomeTestTags.PROFILE_TAB)
 
         profileRobot.assertUserCardDisplayed(slug = "integration-test-user")

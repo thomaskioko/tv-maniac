@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.showdetails
 
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
+import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
 import org.junit.Test
 
 internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
@@ -19,10 +20,12 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
 
         showDetailsRobot
             .assertShowDetailsDisplayed()
+            .assertDoesNotExist(HomeTestTags.NAVIGATION_BAR)
             .assertTrackButtonDisplayed()
             .clickTrackButton()
 
-        rootRobot.dismissNotificationRationale()
+        rootRobot
+            .dismissNotificationRationale()
 
         showDetailsRobot
             .assertStopTrackingButtonDisplayed()
