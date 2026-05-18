@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
+import com.thomaskioko.tvmaniac.core.base.AppPreferencesDataStore
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.core.logger.CrashReporter
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeCrashReporter
@@ -39,6 +40,7 @@ public object TestJvmPlatformBindingContainer {
 
     @Provides
     @SingleIn(AppScope::class)
+    @AppPreferencesDataStore
     public fun provideDataStore(
         @IoCoroutineScope scope: CoroutineScope,
     ): DataStore<Preferences> {

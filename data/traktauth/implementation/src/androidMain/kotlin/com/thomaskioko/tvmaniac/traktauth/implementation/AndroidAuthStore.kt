@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.thomaskioko.tvmaniac.core.base.AppPreferencesDataStore
 import com.thomaskioko.tvmaniac.traktauth.api.AuthState
 import com.thomaskioko.tvmaniac.traktauth.api.AuthStore
 import dev.zacsweers.metro.AppScope
@@ -16,7 +17,7 @@ import kotlin.time.Instant
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class AndroidAuthStore(
-    private val dataStore: DataStore<Preferences>,
+    @AppPreferencesDataStore private val dataStore: DataStore<Preferences>,
 ) : AuthStore {
 
     override suspend fun get(): AuthState? {

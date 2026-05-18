@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.datastore.implementation
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import com.thomaskioko.tvmaniac.core.base.AppPreferencesDataStore
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
@@ -22,6 +23,7 @@ public object DataStorePlatformBindingContainer {
     @OptIn(ExperimentalForeignApi::class)
     @Provides
     @SingleIn(AppScope::class)
+    @AppPreferencesDataStore
     public fun provideDataStore(
         @IoCoroutineScope scope: CoroutineScope,
     ): DataStore<Preferences> =

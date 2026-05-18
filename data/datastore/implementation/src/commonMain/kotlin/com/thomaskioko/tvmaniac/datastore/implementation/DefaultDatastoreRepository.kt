@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.thomaskioko.tvmaniac.core.base.AppPreferencesDataStore
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
@@ -24,7 +25,7 @@ import kotlinx.coroutines.launch
 @ContributesBinding(AppScope::class)
 public class DefaultDatastoreRepository(
     @IoCoroutineScope private val coroutineScope: CoroutineScope,
-    private val dataStore: DataStore<Preferences>,
+    @AppPreferencesDataStore private val dataStore: DataStore<Preferences>,
 ) : DatastoreRepository {
 
     override fun saveTheme(appTheme: AppTheme) {
