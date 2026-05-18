@@ -37,7 +37,7 @@ struct SettingsView: View {
     var body: some View {
         SettingsScreen(
             state: screenState,
-            onBack: { presenter.dispatch(action: BackClicked__()) }
+            onBack: { presenter.dispatch(action: BackClicked___()) }
         )
         .settingsObservers(
             uiState: uiState,

@@ -350,6 +350,8 @@
     <string name="label_debug_sync_login_required">Sign in to Trakt to sync data</string>
     <string name="label_debug_trigger_crash_title">Test Crash</string>
     <string name="label_debug_trigger_crash_description">Trigger a test crash for Crashlytics</string>
+    <string name="label_debug_feature_flags_title">Feature Flags</string>
+    <string name="label_debug_feature_flags_description">Inspect and override remote feature flags</string>
     <string name="label_debug_token_status_title">Token Status</string>
     <string name="label_debug_token_expires_in">Last refreshed: %1$s · Expires in %2$s</string>
     <string name="label_debug_token_expired">Last refreshed: %s · Expired</string>

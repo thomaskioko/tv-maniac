@@ -16,6 +16,7 @@ import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
 import com.thomaskioko.tvmaniac.domain.library.SyncLibraryInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleDebugEpisodeNotificationInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.RefreshUpNextInteractor
+import com.thomaskioko.tvmaniac.featureflags.nav.FeatureFlagsRoute
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
@@ -77,6 +78,7 @@ public class DebugPresenter(
             lastTokenRefreshDate, message, isLoggedIn, authState,
         ->
         val isUserLoggedIn = isLoggedIn == TraktAuthState.LOGGED_IN
+        // TODO: Update state to take a list of items with a title and description.
         DebugState(
             isSchedulingDebugNotification = isSchedulingDebugNotification,
             isSyncingLibrary = isSyncingLibrary,
@@ -88,6 +90,8 @@ public class DebugPresenter(
                 lastTokenRefreshTimestamp = lastTokenRefreshDate,
                 authState = authState,
             ),
+            featureFlagsTitle = localizer.getString(StringResourceKey.LabelDebugFeatureFlagsTitle),
+            featureFlagsDescription = localizer.getString(StringResourceKey.LabelDebugFeatureFlagsDescription),
             message = message,
             isLoggedIn = isUserLoggedIn,
         )
@@ -106,6 +110,7 @@ public class DebugPresenter(
             TriggerDelayedDebugNotification -> scheduleDebugNotification(5.minutes)
             TriggerLibrarySync -> triggerLibrarySync()
             TriggerUpNextSync -> triggerUpNextSync()
+            OpenFeatureFlags -> navigator.navigateTo(FeatureFlagsRoute)
             is DismissSnackbar -> coroutineScope.launch { uiMessageManager.clearMessage(action.messageId) }
         }
     }
