@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Schedule
@@ -52,6 +53,7 @@ import com.thomaskioko.tvmaniac.debug.presenter.BackClicked
 import com.thomaskioko.tvmaniac.debug.presenter.DebugPresenter
 import com.thomaskioko.tvmaniac.debug.presenter.DebugState
 import com.thomaskioko.tvmaniac.debug.presenter.DismissSnackbar
+import com.thomaskioko.tvmaniac.debug.presenter.OpenFeatureFlags
 import com.thomaskioko.tvmaniac.debug.presenter.TriggerDebugNotification
 import com.thomaskioko.tvmaniac.debug.presenter.TriggerDelayedDebugNotification
 import com.thomaskioko.tvmaniac.debug.presenter.TriggerLibrarySync
@@ -90,6 +92,7 @@ public fun DebugMenuScreen(
         onTriggerLibrarySync = { presenter.dispatch(TriggerLibrarySync) },
         onTriggerUpNextSync = { presenter.dispatch(TriggerUpNextSync) },
         onTriggerTestCrash = { throw RuntimeException("Test crash triggered from Debug Menu") },
+        onOpenFeatureFlags = { presenter.dispatch(OpenFeatureFlags) },
         onDismissSnackbar = { presenter.dispatch(DismissSnackbar(it)) },
         modifier = modifier,
     )
@@ -104,6 +107,7 @@ internal fun DebugMenuScreen(
     onTriggerLibrarySync: () -> Unit,
     onTriggerUpNextSync: () -> Unit,
     onTriggerTestCrash: () -> Unit,
+    onOpenFeatureFlags: () -> Unit,
     onDismissSnackbar: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -229,6 +233,22 @@ internal fun DebugMenuScreen(
                                 infoMessage = label_debug_sync_login_required.resolve(context)
                             }
                         },
+                    )
+                }
+
+                item {
+                    HorizontalDivider(
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+                        modifier = Modifier.padding(horizontal = 24.dp),
+                    )
+                }
+
+                item {
+                    DebugClickableItem(
+                        icon = Icons.Filled.Flag,
+                        title = state.featureFlagsTitle,
+                        subtitle = state.featureFlagsDescription,
+                        onClick = onOpenFeatureFlags,
                     )
                 }
 
@@ -387,6 +407,7 @@ private fun DebugMenuScreenPreview() {
         onTriggerLibrarySync = {},
         onTriggerUpNextSync = {},
         onTriggerTestCrash = {},
+        onOpenFeatureFlags = {},
         onDismissSnackbar = {},
     )
 }

@@ -68,6 +68,16 @@ struct DebugMenuView: View {
             ),
         ]
 
+        items.append(
+            DebugMenuItem(
+                id: "feature-flags",
+                icon: "flag",
+                title: uiState.featureFlagsTitle,
+                subtitle: uiState.featureFlagsDescription,
+                onTap: { presenter.dispatch(action: OpenFeatureFlags()) }
+            )
+        )
+
         if let tokenSubtitle = uiState.tokenStatusSubtitle {
             items.append(
                 DebugMenuItem(
