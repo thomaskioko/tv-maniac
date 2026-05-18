@@ -56,6 +56,11 @@ public class DefaultWatchedEpisodeDao(
                     tmdbId = null,
                     followedAt = timestamp,
                 )
+                val _ = database.traktWatchedShowsQueries.upsertIfNotExists(
+                    traktId = Id(showTraktId),
+                    tmdbId = null,
+                    watchedAt = timestamp,
+                )
                 val localEpisodeId = getEpisodeIdOrNull(showTraktId, seasonNumber, episodeNumber)
                 val _ = database.watchedEpisodesQueries.markAsWatched(
                     show_trakt_id = Id(showTraktId),
@@ -184,6 +189,11 @@ public class DefaultWatchedEpisodeDao(
                     tmdbId = null,
                     followedAt = timestamp,
                 )
+                val _ = database.traktWatchedShowsQueries.upsertIfNotExists(
+                    traktId = Id(showTraktId),
+                    tmdbId = null,
+                    watchedAt = timestamp,
+                )
                 episodes.forEach { episode ->
                     require(episode.seasonNumber == seasonNumber) {
                         "Episode ${episode.episodeId} - ${episode.episodeNumber} belongs to season ${episode.seasonNumber}, not $seasonNumber"
@@ -286,6 +296,11 @@ public class DefaultWatchedEpisodeDao(
                     tmdbId = null,
                     followedAt = timestamp,
                 )
+                val _ = database.traktWatchedShowsQueries.upsertIfNotExists(
+                    traktId = Id(showTraktId),
+                    tmdbId = null,
+                    watchedAt = timestamp,
+                )
 
                 currentSeasonEpisodes.forEach { episode ->
                     val _ = database.watchedEpisodesQueries.markAsWatched(
@@ -338,6 +353,11 @@ public class DefaultWatchedEpisodeDao(
                     traktId = Id(showTraktId),
                     tmdbId = null,
                     followedAt = timestamp,
+                )
+                val _ = database.traktWatchedShowsQueries.upsertIfNotExists(
+                    traktId = Id(showTraktId),
+                    tmdbId = null,
+                    watchedAt = timestamp,
                 )
                 val _ = database.watchedEpisodesQueries.markAsWatched(
                     show_trakt_id = Id(showTraktId),

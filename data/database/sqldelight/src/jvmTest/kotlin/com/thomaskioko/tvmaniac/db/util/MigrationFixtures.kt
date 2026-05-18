@@ -48,6 +48,24 @@ internal fun SqlDriver.seedFollowedShow(
     )
 }
 
+internal fun SqlDriver.seedTraktWatchedShow(
+    traktId: Long,
+    tmdbId: Long?,
+    plays: Long = 1L,
+    lastWatchedAtMs: Long = 1_700_000_000_000L,
+    lastUpdatedAtMs: Long = 1_700_000_000_000L,
+) {
+    val tmdbIdSql = tmdbId?.toString() ?: "NULL"
+    execute(
+        identifier = null,
+        sql = """
+            INSERT INTO trakt_watched_shows (trakt_id, tmdb_id, plays, last_watched_at, last_updated_at)
+            VALUES ($traktId, $tmdbIdSql, $plays, $lastWatchedAtMs, $lastUpdatedAtMs)
+        """.trimIndent(),
+        parameters = 0,
+    )
+}
+
 internal fun SqlDriver.seedSeason(
     id: Long,
     showTraktId: Long,

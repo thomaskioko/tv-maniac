@@ -35,7 +35,7 @@ public class SyncTasksInitializer(
 
     public fun init() {
         observeDataSync()
-        observeLibrarySync()
+        observePendingUploads()
     }
 
     private fun observeDataSync() {
@@ -55,7 +55,7 @@ public class SyncTasksInitializer(
         }
     }
 
-    private fun observeLibrarySync() {
+    private fun observePendingUploads() {
         coroutineScope.launch {
             combine(
                 traktAuthRepository.state,

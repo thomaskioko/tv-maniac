@@ -276,9 +276,9 @@ internal class UpNextPresenterTest {
             presenter.dispatch(
                 MarkWatched(
                     showTraktId = episode1.showTraktId,
-                    episodeId = episode1.episodeId,
-                    seasonNumber = episode1.seasonNumber,
-                    episodeNumber = episode1.episodeNumber,
+                    episodeId = 100L,
+                    seasonNumber = 1L,
+                    episodeNumber = 1L,
                 ),
             )
             testDispatcher.scheduler.advanceUntilIdle()

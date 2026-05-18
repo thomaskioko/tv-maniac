@@ -21,6 +21,7 @@ kotlin {
                 api(projects.data.seasondetails.api)
                 api(projects.data.showdetails.api)
                 api(projects.data.upnext.api)
+                api(projects.data.watchedShows.api)
 
                 implementation(projects.core.base)
             }
@@ -30,31 +31,13 @@ kotlin {
             dependencies {
                 implementation(libs.bundles.unittest)
                 implementation(projects.core.logger.testing)
-                implementation(projects.core.util.testing)
-                implementation(projects.data.database.testing)
                 implementation(projects.data.datastore.testing)
-                implementation(projects.data.episode.implementation)
                 implementation(projects.data.episode.testing)
-                implementation(projects.data.followedshows.implementation)
+                implementation(projects.data.followedshows.testing)
                 implementation(projects.data.requestManager.testing)
                 implementation(projects.data.seasondetails.testing)
                 implementation(projects.data.showdetails.testing)
-            }
-        }
-
-        androidHostTest {
-            dependencies {
-                implementation(libs.kotlinx.datetime)
-                implementation(projects.core.util.api)
-                implementation(projects.data.database.sqldelight)
-            }
-        }
-
-        jvmTest {
-            dependencies {
-                implementation(libs.kotlinx.datetime)
-                implementation(projects.core.util.api)
-                implementation(projects.data.database.sqldelight)
+                implementation(projects.data.watchedShows.testing)
             }
         }
     }

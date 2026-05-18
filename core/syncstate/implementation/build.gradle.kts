@@ -4,6 +4,7 @@ plugins {
 
 scaffold {
     useMetro()
+    optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
 }
 
 kotlin {

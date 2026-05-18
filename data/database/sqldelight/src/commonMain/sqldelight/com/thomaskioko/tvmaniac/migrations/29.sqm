@@ -1,0 +1,21 @@
+-- Migration 29: add trakt_watched_shows for the watchlist tab.
+--
+-- Mirrors GET sync/watched/shows?extended=progress&limit=100 (Trakt 2026-05-30
+-- contract). The watchlist screen sources rows from this table and LEFT JOINs
+-- tvshow so orphan watched shows surface for lazy enrichment on bind.
+--
+-- Temp-table swap pattern keeps the migration safe on databases that already
+-- have an older trakt_watched_shows (none in production today, but the IF NOT
+-- EXISTS in the .sq file plus a DROP here keeps both lineages aligned).
+
+DROP TABLE IF EXISTS trakt_watched_shows;
+CREATE TABLE trakt_watched_shows (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    trakt_id INTEGER NOT NULL UNIQUE,
+    tmdb_id INTEGER DEFAULT NULL,
+    plays INTEGER NOT NULL,
+    last_watched_at INTEGER NOT NULL,
+    last_updated_at INTEGER NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_trakt_watched_shows_tmdb_id ON trakt_watched_shows(tmdb_id);

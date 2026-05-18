@@ -163,6 +163,7 @@ dependencies {
     implementation(projects.data.library.implementation)
     implementation(projects.data.syncActivity.implementation)
     implementation(projects.data.upnext.implementation)
+    implementation(projects.data.watchedShows.implementation)
     implementation(projects.data.watchlist.implementation)
     implementation(projects.i18n.generator)
     implementation(projects.i18n.implementation)
