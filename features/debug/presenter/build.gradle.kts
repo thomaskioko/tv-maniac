@@ -22,6 +22,7 @@ kotlin {
                 api(projects.domain.notifications)
                 api(projects.domain.upnext)
                 api(projects.features.debug.nav)
+                api(projects.features.featureFlags.nav)
                 api(projects.i18n.api)
                 api(projects.navigation.api)
 

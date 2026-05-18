@@ -11,6 +11,8 @@ public data class DebugState(
     val lastLibrarySyncDate: String? = null,
     val lastUpNextSyncDate: String? = null,
     val tokenStatusSubtitle: String? = null,
+    val featureFlagsTitle: String = "",
+    val featureFlagsDescription: String = "",
     val message: UiMessage? = null,
 ) {
     public companion object {

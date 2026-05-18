@@ -13,3 +13,5 @@ public data object TriggerLibrarySync : DebugActions
 public data object TriggerUpNextSync : DebugActions
 
 public data class DismissSnackbar(val messageId: Long) : DebugActions
+
+public data object OpenFeatureFlags : DebugActions
