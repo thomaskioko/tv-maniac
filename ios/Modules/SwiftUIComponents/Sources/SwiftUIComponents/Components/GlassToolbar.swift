@@ -89,6 +89,7 @@ public struct GlassToolbar<LeadingIcon: View, TrailingIcon: View>: View {
                     Rectangle()
                         .fill(Color.clear)
                         .frame(width: 44)
+                        .allowsHitTesting(false)
                 }
 
                 Text(title)
@@ -98,18 +99,21 @@ public struct GlassToolbar<LeadingIcon: View, TrailingIcon: View>: View {
                     .lineLimit(1)
                     .padding(.bottom, theme.spacing.xSmall)
                     .frame(maxWidth: .infinity, alignment: .center)
+                    .allowsHitTesting(false)
 
                 if isLoading {
                     ProgressView()
                         .progressViewStyle(CircularProgressViewStyle(tint: theme.colors.onSurface))
                         .scaleEffect(0.8)
                         .frame(width: 44)
+                        .allowsHitTesting(false)
                 } else if let trailingIcon {
                     trailingIcon()
                 } else {
                     Rectangle()
                         .fill(Color.clear)
                         .frame(width: 44)
+                        .allowsHitTesting(false)
                 }
             }
             .padding(.horizontal, theme.spacing.medium)
@@ -124,7 +128,10 @@ struct VisualEffectView: UIViewRepresentable {
     let effect: UIVisualEffect
 
     func makeUIView(context _: UIViewRepresentableContext<Self>) -> UIVisualEffectView {
-        UIVisualEffectView(effect: effect)
+        let view = UIVisualEffectView(effect: effect)
+        view.isUserInteractionEnabled = false
+        view.contentView.isUserInteractionEnabled = false
+        return view
     }
 
     func updateUIView(_ uiView: UIVisualEffectView, context _: UIViewRepresentableContext<Self>) {
