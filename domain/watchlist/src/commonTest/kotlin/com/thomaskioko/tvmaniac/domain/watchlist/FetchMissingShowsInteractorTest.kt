@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsReposito
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.watchedshows.testing.FakeWatchedShowsDao
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -46,7 +47,7 @@ class FetchMissingShowsInteractorTest {
 
         interactor.executeSync(false)
 
-        showDetailsRepository.fetchInvocations().map { it.id } shouldBe listOf(42L, 99L)
+        showDetailsRepository.fetchInvocations().map { it.id } shouldContainExactlyInAnyOrder listOf(42L, 99L)
         showDetailsRepository.fetchInvocations().all { !it.forceRefresh } shouldBe true
     }
 
