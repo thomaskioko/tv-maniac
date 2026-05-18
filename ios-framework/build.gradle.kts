@@ -137,6 +137,8 @@ kotlin {
                 api(projects.data.library.implementation)
                 api(projects.data.upnext.api)
                 api(projects.data.upnext.implementation)
+                api(projects.data.watchedShows.api)
+                api(projects.data.watchedShows.implementation)
                 api(projects.domain.upnext)
                 api(projects.data.calendar.api)
                 api(projects.core.featureFlags.api)

@@ -31,32 +31,13 @@ kotlin {
             dependencies {
                 implementation(libs.bundles.unittest)
                 implementation(projects.core.logger.testing)
-                implementation(projects.core.util.testing)
-                implementation(projects.data.database.testing)
                 implementation(projects.data.datastore.testing)
-                implementation(projects.data.episode.implementation)
                 implementation(projects.data.episode.testing)
-                implementation(projects.data.followedshows.implementation)
+                implementation(projects.data.followedshows.testing)
                 implementation(projects.data.requestManager.testing)
                 implementation(projects.data.seasondetails.testing)
                 implementation(projects.data.showdetails.testing)
                 implementation(projects.data.watchedShows.testing)
-            }
-        }
-
-        androidHostTest {
-            dependencies {
-                implementation(libs.kotlinx.datetime)
-                implementation(projects.core.util.api)
-                implementation(projects.data.database.sqldelight)
-            }
-        }
-
-        jvmTest {
-            dependencies {
-                implementation(libs.kotlinx.datetime)
-                implementation(projects.core.util.api)
-                implementation(projects.data.database.sqldelight)
             }
         }
     }

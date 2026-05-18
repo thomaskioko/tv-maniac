@@ -14,7 +14,6 @@ kotlin {
                 api(libs.store5)
                 api(projects.api.trakt.api)
                 api(projects.core.base)
-                api(projects.core.util.api)
                 api(projects.data.database.sqldelight)
                 api(projects.data.requestManager.api)
                 api(projects.data.syncActivity.api)
@@ -22,7 +21,6 @@ kotlin {
 
                 implementation(projects.core.networkUtil.api)
                 implementation(libs.sqldelight.extensions)
-                implementation(libs.kotlinx.datetime)
             }
         }
 
