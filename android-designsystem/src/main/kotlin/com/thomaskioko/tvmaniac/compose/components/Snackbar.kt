@@ -48,6 +48,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 @Stable
 public enum class SnackBarStyle(
@@ -96,7 +97,7 @@ public fun TvManiacSnackBarHost(
         if (message != null) {
             visible = true
             if (!persistent) {
-                delay(durationMillis)
+                delay(durationMillis.milliseconds)
                 dismiss()
             }
         } else {
@@ -165,6 +166,7 @@ internal fun TvManiacSnackBar(
 ) {
     Row(
         modifier = modifier
+            .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .clip(MaterialTheme.shapes.large)
             .background(style.backgroundColor)
