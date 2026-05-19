@@ -236,6 +236,20 @@ public interface DatastoreRepository {
      */
     public fun observeUpNextSortOption(): Flow<String>
 
+    /**
+     * Saves the user's preferred watchlist sort option.
+     *
+     * @param sortOption The sort option name (e.g., "ADDED_DESC", "TITLE_ASC").
+     */
+    public suspend fun saveWatchlistSortOption(sortOption: String)
+
+    /**
+     * Observes the user's preferred watchlist sort option.
+     *
+     * @return A Flow of the sort option name, defaulting to "ADDED_DESC".
+     */
+    public fun observeWatchlistSortOption(): Flow<String>
+
     public suspend fun setLastUpNextSyncTimestamp(timestamp: Long)
 
     public fun observeLastUpNextSyncTimestamp(): Flow<Long?>

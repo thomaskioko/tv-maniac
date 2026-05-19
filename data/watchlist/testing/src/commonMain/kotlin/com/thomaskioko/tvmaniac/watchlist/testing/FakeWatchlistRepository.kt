@@ -3,14 +3,17 @@ package com.thomaskioko.tvmaniac.watchlist.testing
 import com.thomaskioko.tvmaniac.db.FollowedShows
 import com.thomaskioko.tvmaniac.db.SearchFollowedShows
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
+import com.thomaskioko.tvmaniac.shows.api.model.WatchlistSortOption
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 public class FakeWatchlistRepository : WatchlistRepository {
 
     private val watchlistResult = MutableStateFlow<List<FollowedShows>>(emptyList())
     private val searchlistResult = MutableStateFlow<List<SearchFollowedShows>>(emptyList())
     private val listStyleFlow = MutableStateFlow(true)
+    private val sortOptionFlow = MutableStateFlow(WatchlistSortOption.ADDED_DESC)
 
     public fun setSearchResult(result: List<SearchFollowedShows>) {
         searchlistResult.value = result
@@ -18,6 +21,10 @@ public class FakeWatchlistRepository : WatchlistRepository {
 
     public fun setObserveResult(result: List<FollowedShows>) {
         watchlistResult.value = result
+    }
+
+    public fun setSortOption(sortOption: WatchlistSortOption) {
+        sortOptionFlow.value = sortOption
     }
 
     override fun observeWatchlist(): Flow<List<FollowedShows>> =
@@ -30,5 +37,11 @@ public class FakeWatchlistRepository : WatchlistRepository {
 
     override suspend fun saveListStyle(isGridMode: Boolean) {
         listStyleFlow.value = isGridMode
+    }
+
+    override fun observeSortOption(): Flow<WatchlistSortOption> = sortOptionFlow.asStateFlow()
+
+    override suspend fun saveSortOption(sortOption: WatchlistSortOption) {
+        sortOptionFlow.value = sortOption
     }
 }

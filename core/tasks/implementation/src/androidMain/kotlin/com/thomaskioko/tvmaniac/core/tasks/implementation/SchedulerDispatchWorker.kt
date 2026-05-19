@@ -4,10 +4,8 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.thomaskioko.tvmaniac.core.logger.Logger
-import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundWorker
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerFactory
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerResult
-import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
@@ -18,7 +16,6 @@ public class SchedulerDispatchWorker(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val workerFactory: WorkerFactory,
-    private val syncObserver: SyncObserver,
     private val logger: Logger,
 ) : CoroutineWorker(context, params) {
 
@@ -43,7 +40,7 @@ public class SchedulerDispatchWorker(
         logger.debug(TAG, "Starting task [$workerName]")
 
         return try {
-            when (worker.runTracked(workerName)) {
+            when (worker.doWork()) {
                 is WorkerResult.Success -> {
                     logger.debug(TAG, "Task [$workerName] completed successfully")
                     Result.success()
@@ -64,13 +61,6 @@ public class SchedulerDispatchWorker(
             Result.failure()
         }
     }
-
-    private suspend fun BackgroundWorker.runTracked(workerName: String): WorkerResult =
-        if (isLibrarySyncWork) {
-            syncObserver.trackSync(workerName) { doWork() }
-        } else {
-            doWork()
-        }
 
     internal companion object {
         internal const val KEY_WORKER_NAME = "worker_name"

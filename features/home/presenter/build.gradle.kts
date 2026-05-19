@@ -26,6 +26,7 @@ kotlin {
                 implementation(projects.features.library.nav)
                 implementation(projects.features.profile.nav)
                 implementation(projects.features.progress.nav)
+                implementation(projects.features.watchlist.nav)
             }
         }
 

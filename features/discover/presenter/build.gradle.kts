@@ -46,8 +46,6 @@ kotlin {
                 implementation(libs.bundles.unittest)
                 implementation(projects.core.base.testing)
                 implementation(projects.core.logger.testing)
-                implementation(projects.core.syncstate.api)
-                implementation(projects.core.syncstate.testing)
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.featuredshows.api)
                 implementation(projects.data.featuredshows.testing)

@@ -79,6 +79,39 @@ class WatchlistScreenTest {
     }
 
     @Test
+    fun watchlistScreenWatchNextOnlyState() {
+        composeTestRule.captureMultiDevice("WatchNextOnly") {
+            TvManiacBackground {
+                WatchlistScreen(
+                    state = WatchlistState(
+                        isRefreshing = false,
+                        watchNextItems = watchlistItems,
+                        staleItems = persistentListOf(),
+                    ),
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun watchlistScreenEmptyInProgressState() {
+        composeTestRule.captureMultiDevice("EmptyInProgress") {
+            TvManiacBackground {
+                WatchlistScreen(
+                    state = WatchlistState(
+                        isRefreshing = false,
+                        emptyStateText = "Nothing in progress yet. Mark an episode as watched to see it here.",
+                        watchNextItems = persistentListOf(),
+                        staleItems = persistentListOf(),
+                    ),
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
     fun libraryScreenEmptyState() {
         composeTestRule.captureMultiDevice("EmptySearchResult") {
             TvManiacBackground {
@@ -86,6 +119,7 @@ class WatchlistScreenTest {
                     state = WatchlistState(
                         isGridMode = false,
                         isRefreshing = false,
+                        emptyStateText = "No content",
                         watchNextItems = persistentListOf(),
                         query = "Show title",
                         message = UiMessage(message = "Something went Wrong"),

@@ -73,13 +73,13 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
 
         progressRobot.clickUpNextTab()
 
-        // Verify empty library state
-        homeRobot.clickLibraryTab()
-            .assertTabSelected(HomeTestTags.LIBRARY_TAB)
+        // Verify empty watchlist state
+        homeRobot.clickWatchlistTab()
+            .assertTabSelected(HomeTestTags.WATCHLIST_TAB)
 
-        libraryRobot
+        watchlistRobot
             .assertEmptyStateDisplayed()
-            .assertShowRowDoesNotExist(breakingBadTraktId)
+            .assertShowCardDoesNotExist(breakingBadTraktId)
 
         // Navigate to Profile and open Settings
         homeRobot.clickProfileTab()
@@ -158,15 +158,15 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
 
         discoverRobot.assertDiscoverScreenDisplayed()
 
-        // Verify offline follow in Library
+        // Verify offline follow in Watchlist
         homeRobot
-            .clickLibraryTab()
-            .assertTabSelected(HomeTestTags.LIBRARY_TAB)
+            .clickWatchlistTab()
+            .assertTabSelected(HomeTestTags.WATCHLIST_TAB)
 
-        libraryRobot
-            .scrollToShowRow(breakingBadTraktId)
-            .assertShowRowDisplayed(breakingBadTraktId)
-            .clickShowRow(breakingBadTraktId)
+        watchlistRobot
+            .scrollToShowCard(breakingBadTraktId)
+            .assertShowCardDisplayed(breakingBadTraktId)
+            .clickShowCard(breakingBadTraktId)
             .assertStopTrackingButtonDisplayed()
             // Raise login prompt and confirm login
             .also { scenarios.stubProfileOnSignIn() }

@@ -81,7 +81,11 @@ public fun MockEngineHandler.stubShow(show: ShowFixture) {
     )
     stub(
         path = "/shows/${show.traktId}/seasons",
-        body = rewriteTraktSeasonIds(traktSeasonsTemplate, show),
+        body = if (show.traktId == CANONICAL_SHOW_TRAKT_ID) {
+            traktSeasonsTemplate
+        } else {
+            rewriteTraktSeasonIds(traktSeasonsTemplate, show)
+        },
     )
     stub(
         path = "/3/tv/${show.tmdbId}",

@@ -35,20 +35,26 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -70,16 +76,17 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.badge_premiere
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_filter
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_search
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_toggle_list_style
-import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_empty_content
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_discover_up_next
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_up_to_date
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_watchlist_empty_result
-import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_library
+import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_watchlist
 import com.thomaskioko.tvmaniac.i18n.MR.strings.msg_search_show_hint
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_not_watched_for_while
 import com.thomaskioko.tvmaniac.i18n.resolve
+import com.thomaskioko.tvmaniac.testtags.watchlist.WatchlistTestTags
 import com.thomaskioko.tvmaniac.ui.library.component.Searchbar
 import com.thomaskioko.tvmaniac.watchlist.presenter.ChangeListStyleClicked
+import com.thomaskioko.tvmaniac.watchlist.presenter.ChangeWatchlistSortOption
 import com.thomaskioko.tvmaniac.watchlist.presenter.ClearWatchlistQuery
 import com.thomaskioko.tvmaniac.watchlist.presenter.MarkUpNextEpisodeWatched
 import com.thomaskioko.tvmaniac.watchlist.presenter.ShowTitleClicked
@@ -93,12 +100,13 @@ import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistShowClicked
 import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistState
 import com.thomaskioko.tvmaniac.watchlist.presenter.model.UpNextEpisodeItem
 import com.thomaskioko.tvmaniac.watchlist.presenter.model.WatchlistItem
-import io.github.thomaskioko.codegen.annotations.ScreenUi
+import io.github.thomaskioko.codegen.annotations.TabUi
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.launch
 import java.util.Locale
 
-@ScreenUi(presenter = WatchlistPresenter::class, parentScope = ActivityScope::class)
+@TabUi(presenter = WatchlistPresenter::class, parentScope = ActivityScope::class)
 @Composable
 public fun WatchlistScreen(
     presenter: WatchlistPresenter,
@@ -126,15 +134,20 @@ internal fun WatchlistScreen(
     onAction: (WatchlistAction) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    var showSortOptions by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         modifier = modifier
-            .statusBarsPadding(),
+            .statusBarsPadding()
+            .testTag(WatchlistTestTags.SCREEN_TEST_TAG),
         topBar = {
             TopBar(
                 onAction = onAction,
                 state = state,
                 scrollBehavior = scrollBehavior,
+                onSortClick = { showSortOptions = true },
             )
         },
         content = { contentPadding ->
@@ -172,8 +185,10 @@ internal fun WatchlistScreen(
                                 null
                             }
                             EmptyStateView(
+                                modifier = Modifier
+                                    .testTag(WatchlistTestTags.EMPTY_STATE_TEST_TAG),
                                 imageVector = Icons.Outlined.Inbox,
-                                title = generic_empty_content.resolve(context),
+                                title = state.emptyStateText,
                                 message = message,
                             )
                         } else {
@@ -226,6 +241,25 @@ internal fun WatchlistScreen(
             }
         },
     )
+
+    if (showSortOptions) {
+        ModalBottomSheet(
+            onDismissRequest = { showSortOptions = false },
+            sheetState = sheetState,
+            modifier = Modifier.testTag(WatchlistTestTags.SORT_SHEET_TEST_TAG),
+        ) {
+            WatchlistSortOptionsContent(
+                selectedSortOption = state.sortOption,
+                onSortOptionSelected = { sortOption ->
+                    onAction(ChangeWatchlistSortOption(sortOption))
+                    scope.launch {
+                        sheetState.hide()
+                        showSortOptions = false
+                    }
+                },
+            )
+        }
+    }
 }
 
 @Composable
@@ -233,6 +267,7 @@ private fun TopBar(
     onAction: (WatchlistAction) -> Unit,
     state: WatchlistState,
     scrollBehavior: TopAppBarScrollBehavior,
+    onSortClick: () -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -253,6 +288,8 @@ private fun TopBar(
             ) { expanded ->
                 if (expanded) {
                     Searchbar(
+                        modifier = Modifier
+                            .testTag(WatchlistTestTags.SEARCH_BAR_TEST_TAG),
                         query = state.query,
                         hint = msg_search_show_hint.resolve(context),
                         onQueryChanged = { onAction(WatchlistQueryChanged(it)) },
@@ -266,6 +303,7 @@ private fun TopBar(
                         state = state,
                         onAction = onAction,
                         onSearchClick = { onAction(ToggleSearchActive) },
+                        onSortClick = onSortClick,
                     )
                 }
             }
@@ -283,6 +321,7 @@ private fun CollapsedTopBarContent(
     state: WatchlistState,
     onAction: (WatchlistAction) -> Unit,
     onSearchClick: () -> Unit,
+    onSortClick: () -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -292,7 +331,9 @@ private fun CollapsedTopBarContent(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         IconButton(
-            modifier = Modifier.padding(end = 8.dp),
+            modifier = Modifier
+                .padding(end = 8.dp)
+                .testTag(WatchlistTestTags.TOGGLE_LIST_STYLE_BUTTON_TEST_TAG),
             onClick = { onAction(ChangeListStyleClicked(state.isGridMode)) },
         ) {
             val image = if (state.isGridMode) {
@@ -308,7 +349,7 @@ private fun CollapsedTopBarContent(
         }
 
         Text(
-            text = menu_item_library.resolve(context),
+            text = menu_item_watchlist.resolve(context),
             style = MaterialTheme.typography.titleLarge.copy(
                 color = MaterialTheme.colorScheme.onSurface,
             ),
@@ -321,7 +362,10 @@ private fun CollapsedTopBarContent(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            IconButton(onClick = onSearchClick) {
+            IconButton(
+                modifier = Modifier.testTag(WatchlistTestTags.SEARCH_BUTTON_TEST_TAG),
+                onClick = onSearchClick,
+            ) {
                 Icon(
                     imageVector = Icons.Outlined.Search,
                     contentDescription = cd_search.resolve(context),
@@ -330,7 +374,8 @@ private fun CollapsedTopBarContent(
             }
 
             IconButton(
-                onClick = { /* TODO: Implement filter functionality */ },
+                modifier = Modifier.testTag(WatchlistTestTags.SORT_BUTTON_TEST_TAG),
+                onClick = onSortClick,
             ) {
                 Icon(
                     imageVector = Icons.Outlined.FilterList,
@@ -370,6 +415,7 @@ private fun SectionedWatchlistGridContent(
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         modifier = Modifier
+            .testTag(WatchlistTestTags.WATCHLIST_GRID_TEST_TAG)
             .nestedScroll(scrollBehavior.nestedScrollConnection)
             .padding(horizontal = 4.dp),
     ) {
@@ -449,8 +495,9 @@ private fun WatchlistGridItem(
             onClick = { onItemClicked(show.traktId) },
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(2f / 3f),
-            title = show.title,
+                .aspectRatio(2f / 3f)
+                .testTag(WatchlistTestTags.showCard(show.traktId)),
+            title = show.title.orEmpty(),
             shape = RectangleShape,
         )
         ShowLinearProgressIndicator(
@@ -478,7 +525,9 @@ private fun SectionedUpNextListContent(
 ) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier
+            .testTag(WatchlistTestTags.WATCHLIST_LIST_TEST_TAG)
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
     ) {
         if (watchNextEpisodes.isNotEmpty()) {
             stickyHeader(key = "header_watch_next") {

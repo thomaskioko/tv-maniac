@@ -12,10 +12,7 @@ public interface BackgroundTaskScheduler {
      *
      * All periodic workers route through this entry point and are dispatched by
      * the platform-specific funnel (Android: `SchedulerDispatchWorker`; iOS:
-     * `IosTaskScheduler.executeWithinWindow`). Sync visibility on top of these
-     * workers is gated by [BackgroundWorker.isLibrarySyncWork]: library-sync workers
-     * surface in the root "Syncing your library..." toast, auth-only workers stay
-     * invisible by overriding the flag to `false`.
+     * `IosTaskScheduler.executeWithinWindow`).
      */
     public fun schedulePeriodic(request: PeriodicTaskRequest)
 

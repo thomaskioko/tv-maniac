@@ -20,7 +20,6 @@ kotlin {
             dependencies {
                 api(libs.coroutines.core)
                 api(projects.core.base)
-                api(projects.core.syncstate.api)
                 api(projects.core.util.api)
                 api(projects.data.cast.api)
                 api(projects.data.episode.api)

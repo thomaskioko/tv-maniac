@@ -224,6 +224,17 @@ public class DefaultDatastoreRepository(
             preferences[KEY_UPNEXT_SORT_OPTION] ?: "LAST_WATCHED"
         }
 
+    override suspend fun saveWatchlistSortOption(sortOption: String) {
+        dataStore.edit { preferences ->
+            preferences[KEY_WATCHLIST_SORT_OPTION] = sortOption
+        }
+    }
+
+    override fun observeWatchlistSortOption(): Flow<String> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_WATCHLIST_SORT_OPTION] ?: "ADDED_DESC"
+        }
+
     override suspend fun setLastUpNextSyncTimestamp(timestamp: Long) {
         dataStore.edit { preferences ->
             preferences[KEY_LAST_UPNEXT_SYNC_TIMESTAMP] = timestamp
@@ -287,6 +298,7 @@ public class DefaultDatastoreRepository(
         public val KEY_REQUEST_NOTIFICATION_PERMISSION: Preferences.Key<Boolean> = booleanPreferencesKey("request_notification_permission")
         public val KEY_LIBRARY_SORT_OPTION: Preferences.Key<String> = stringPreferencesKey("library_sort_option")
         public val KEY_UPNEXT_SORT_OPTION: Preferences.Key<String> = stringPreferencesKey("upnext_sort_option")
+        public val KEY_WATCHLIST_SORT_OPTION: Preferences.Key<String> = stringPreferencesKey("watchlist_sort_option")
         public val KEY_LAST_UPNEXT_SYNC_TIMESTAMP: Preferences.Key<Long> = longPreferencesKey("last_upnext_sync_timestamp")
         public val KEY_GENRE_SHOW_CATEGORY: Preferences.Key<String> = stringPreferencesKey("genre_show_category")
         public val KEY_CRASH_REPORTING_ENABLED: Preferences.Key<Boolean> = booleanPreferencesKey("crash_reporting_enabled")

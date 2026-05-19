@@ -139,6 +139,7 @@ public class FakeDatastoreRepository : DatastoreRepository {
 
     private val genreShowCategoryFlow = MutableStateFlow("POPULAR")
     private val upNextSortOptionFlow = MutableStateFlow("LAST_WATCHED")
+    private val watchlistSortOptionFlow = MutableStateFlow("ADDED_DESC")
     private val lastUpNextSyncTimestampFlow: MutableStateFlow<Long?> = MutableStateFlow(null)
     private val lastTokenRefreshTimestampFlow: MutableStateFlow<Long?> = MutableStateFlow(null)
     private val crashReportingEnabledFlow = MutableStateFlow(true)
@@ -156,6 +157,12 @@ public class FakeDatastoreRepository : DatastoreRepository {
     }
 
     override fun observeUpNextSortOption(): Flow<String> = upNextSortOptionFlow.asStateFlow()
+
+    override suspend fun saveWatchlistSortOption(sortOption: String) {
+        watchlistSortOptionFlow.value = sortOption
+    }
+
+    override fun observeWatchlistSortOption(): Flow<String> = watchlistSortOptionFlow.asStateFlow()
 
     override suspend fun setLastUpNextSyncTimestamp(timestamp: Long) {
         lastUpNextSyncTimestampFlow.value = timestamp

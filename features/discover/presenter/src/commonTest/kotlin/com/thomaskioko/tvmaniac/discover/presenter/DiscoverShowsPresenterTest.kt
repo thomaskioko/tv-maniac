@@ -38,7 +38,6 @@ import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
-import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsInteractor
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
@@ -315,7 +314,6 @@ class DiscoverShowsPresenterTest {
                     showDetailsRepository = showDetailsRepository,
                     seasonDetailsRepository = seasonDetailsRepository,
                     watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
-                    syncObserver = FakeSyncObserver(),
                     dispatchers = coroutineDispatcher,
                 ),
                 appScopeLauncher = FakeAppScopeLauncher(scope = appCoroutineScope),
@@ -408,14 +406,14 @@ class DiscoverShowsPresenterTest {
         createNextEpisodesList(size).map { episode ->
             NextEpisodeUiModel(
                 showTraktId = episode.showTraktId,
-                showName = episode.showName,
+                showName = episode.showName!!,
                 imageUrl = episode.stillPath ?: episode.showPoster,
-                episodeId = episode.episodeId,
+                episodeId = episode.episodeId!!,
                 episodeTitle = episode.episodeName ?: "",
                 episodeNumberFormatted = "S${episode.seasonNumber}E${episode.episodeNumber}",
-                seasonId = episode.seasonId,
-                seasonNumber = episode.seasonNumber,
-                episodeNumber = episode.episodeNumber,
+                seasonId = episode.seasonId!!,
+                seasonNumber = episode.seasonNumber!!,
+                episodeNumber = episode.episodeNumber!!,
                 runtime = episode.runtime?.let { "$it min" },
                 overview = episode.overview ?: "",
                 isNew = false,
@@ -468,7 +466,6 @@ class DiscoverShowsPresenterTest {
                 showDetailsRepository = showDetailsRepository,
                 seasonDetailsRepository = seasonDetailsRepository,
                 watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
-                syncObserver = FakeSyncObserver(),
                 dispatchers = coroutineDispatcher,
             ),
             appScopeLauncher = FakeAppScopeLauncher(scope = appCoroutineScope),

@@ -1,7 +1,6 @@
 import DesignSystem
 import SwiftUI
 import TvManiac
-import TvManiacKit
 
 public struct DecomposeNavigationStack<T: AnyObject, Content: View>: View {
     @StateValue private var childStack: ChildStack<AnyObject, T>

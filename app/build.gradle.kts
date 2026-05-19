@@ -62,6 +62,7 @@ dependencies {
     implementation(projects.features.episodeSheet.ui)
     implementation(projects.features.home.ui)
     implementation(projects.features.library.ui)
+    implementation(projects.features.watchlist.ui)
     implementation(projects.features.moreShows.ui)
     implementation(projects.features.profile.ui)
     implementation(projects.features.progress.ui)
@@ -182,6 +183,10 @@ dependencies {
     implementation(projects.features.seasonDetails.nav)
     implementation(projects.features.settings.nav)
     implementation(projects.features.trailers.nav)
+    implementation(projects.data.watchlist.api)
+    implementation(projects.domain.watchlist)
+    implementation(projects.features.watchlist.nav)
+    implementation(projects.features.watchlist.presenter)
 
     implementation(libs.androidx.compose.activity)
     implementation(libs.androidx.core.ktx)
@@ -207,7 +212,6 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.crashlytics)
 
-    testImplementation(libs.firebase.config)
     testImplementation(projects.api.tmdb.api)
     testImplementation(projects.api.trakt.api)
     testImplementation(projects.core.connectivity.api)
@@ -219,14 +223,9 @@ dependencies {
     testImplementation(projects.core.locale.testing)
     testImplementation(projects.core.util.testing)
 
-    testImplementation(projects.data.watchlist.api)
-    testImplementation(projects.domain.watchlist)
-    testImplementation(projects.features.watchlist.nav)
-    testImplementation(projects.features.watchlist.presenter)
+    testImplementation(libs.firebase.config)
     testImplementation(libs.androidx.monitor)
-
     testImplementation(libs.androidx.compose.ui.test)
-    testRuntimeOnly(libs.androidx.test.core)
     testImplementation(libs.androidx.work.testing)
     testImplementation(libs.coroutines.test)
     testImplementation(libs.kotest.assertions)
@@ -235,6 +234,8 @@ dependencies {
     testImplementation(libs.ktor.core)
     testImplementation(libs.ktor.http)
     testImplementation(libs.robolectric.annotations)
+
+    testRuntimeOnly(libs.androidx.test.core)
     testRuntimeOnly(libs.robolectric)
     testRuntimeOnly(libs.androidx.compose.ui.test.manifest)
 
@@ -250,15 +251,9 @@ dependencies {
     androidTestImplementation(projects.core.locale.testing)
     androidTestImplementation(projects.core.util.testing)
 
-    androidTestImplementation(projects.data.watchlist.api)
-    androidTestImplementation(projects.domain.watchlist)
-    androidTestImplementation(projects.features.watchlist.nav)
-    androidTestImplementation(projects.features.watchlist.presenter)
-    androidTestImplementation("androidx.test:monitor:1.8.0")
-
     androidTestImplementation(libs.androidx.compose.ui.test)
+    androidTestImplementation(libs.androidx.monitor)
     androidTestImplementation(libs.androidx.runner)
-    androidTestRuntimeOnly(libs.androidx.test.core)
     androidTestImplementation(libs.androidx.work.testing)
     androidTestImplementation(libs.coroutines.test)
     androidTestImplementation(libs.kotest.assertions)
@@ -266,6 +261,8 @@ dependencies {
     androidTestImplementation(libs.ktor.core)
     androidTestImplementation(libs.metro.runtime)
     androidTestImplementation(libs.ktor.http)
+
+    androidTestRuntimeOnly(libs.androidx.test.core)
 }
 
 val hasGoogleServicesConfig =

@@ -72,28 +72,12 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
         episodeSheetRobot
             .clickActionItem(EpisodeSheetActionItem.TOGGLE_WATCHED)
 
-        homeRobot.clickLibraryTab()
-        libraryRobot.clickShowRow(breakingBadTraktId)
+        homeRobot.clickWatchlistTab()
+        watchlistRobot.clickShowCard(breakingBadTraktId)
         showDetailsRobot
             .assertShowDetailsDisplayed()
             .clickSeasonChip(seasonNumber = pilotSeasonNumber)
         seasonDetailsRobot.assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
-    }
-
-    @Test
-    fun givenEpisodeSheet_whenUnfollowClicked_thenRemovesShowFromLibrary() = runAppFlowTest {
-        scenarios.stubAuthenticatedSync()
-
-        openEpisodeSheetFromUpNextCard()
-
-        episodeSheetRobot
-            .clickActionItem(EpisodeSheetActionItem.UNFOLLOW)
-
-        homeRobot
-            .clickLibraryTab()
-
-        libraryRobot
-            .assertShowRowDoesNotExist(breakingBadTraktId)
     }
 
     private fun AppFlowScope.openEpisodeSheetFromUpNextCard() {
@@ -102,12 +86,12 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
         discoverRobot.assertDiscoverScreenDisplayed()
 
         homeRobot
-            .clickLibraryTab()
-            .assertTabSelected(HomeTestTags.LIBRARY_TAB)
+            .clickWatchlistTab()
+            .assertTabSelected(HomeTestTags.WATCHLIST_TAB)
 
-        libraryRobot
-            .scrollToShowRow(breakingBadTraktId)
-            .assertShowRowDisplayed(breakingBadTraktId)
+        watchlistRobot
+            .scrollToShowCard(breakingBadTraktId)
+            .assertShowCardDisplayed(breakingBadTraktId)
 
         homeRobot
             .clickProgressTab()

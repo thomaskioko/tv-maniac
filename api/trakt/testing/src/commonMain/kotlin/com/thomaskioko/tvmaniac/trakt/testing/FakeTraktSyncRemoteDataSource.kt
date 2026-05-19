@@ -46,7 +46,7 @@ public class FakeTraktSyncRemoteDataSource : TraktSyncRemoteDataSource {
         return lastActivitiesResponse
     }
 
-    override suspend fun getWatchedShows(): ApiResponse<List<TraktWatchedShowResponse>> {
+    override suspend fun getWatchedShows(limit: String): ApiResponse<List<TraktWatchedShowResponse>> {
         watchedShowsInvocations++
         return watchedShowsResponse
     }

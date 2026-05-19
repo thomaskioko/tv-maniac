@@ -16,6 +16,7 @@ import com.thomaskioko.tvmaniac.domain.watchlist.WatchlistSyncInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
+import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
@@ -103,6 +104,7 @@ class FakeWatchlistPresenterBuilder {
         markEpisodeWatchedInteractor = fakeMarkEpisodeWatchedInteractor,
         watchlistSyncInteractor = watchlistSyncInteractor,
         errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
+        localizer = FakeLocalizer(),
         logger = fakeLogger,
     )
 }

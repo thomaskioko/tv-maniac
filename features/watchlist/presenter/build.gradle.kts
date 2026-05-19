@@ -22,12 +22,14 @@ kotlin {
                 api(projects.domain.followedshows)
                 api(projects.domain.watchlist)
                 api(projects.features.watchlist.nav)
+                api(projects.i18n.api)
                 api(projects.navigation.api)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
                 api(libs.kotlinx.collections)
 
+                implementation(projects.features.home.nav)
                 implementation(projects.features.seasonDetails.nav)
                 implementation(projects.features.showDetails.nav)
             }
@@ -36,6 +38,7 @@ kotlin {
         androidMain {
             dependencies {
                 api(projects.data.database.sqldelight)
+                implementation(projects.i18n.generator)
             }
         }
 
@@ -55,6 +58,7 @@ kotlin {
                 implementation(projects.data.upnext.testing)
                 implementation(projects.data.watchedShows.testing)
                 implementation(projects.data.watchlist.testing)
+                implementation(projects.i18n.testing)
                 implementation(projects.navigation.testing)
             }
         }

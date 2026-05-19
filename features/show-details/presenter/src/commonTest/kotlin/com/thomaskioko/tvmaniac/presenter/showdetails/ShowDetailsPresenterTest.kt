@@ -55,7 +55,6 @@ import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
-import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
@@ -858,7 +857,6 @@ class ShowDetailsPresenterTest {
                     seasonDetailsRepository = seasonDetailsRepository,
                     dispatchers = coroutineDispatcher,
                     watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
-                    syncObserver = FakeSyncObserver(),
                 ),
                 appScopeLauncher = FakeAppScopeLauncher(scope = appCoroutineScope),
             ),
@@ -903,7 +901,6 @@ class ShowDetailsPresenterTest {
                 seasonDetailsRepository = seasonDetailsRepository,
                 dispatchers = coroutineDispatcher,
                 watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
-                syncObserver = FakeSyncObserver(),
             ),
             syncTraktCalendarInteractor = SyncTraktCalendarInteractor(
                 episodeRepository = episodeRepository,

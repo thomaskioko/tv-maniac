@@ -42,6 +42,7 @@
     <string name="label_watchlist_search_hint">Enter a show title to search for Show</string>
     <string name="label_watchlist_sort_list">Sort List</string>
     <string name="label_watchlist_empty_result">%s not found in your watchlist.</string>
+    <string name="label_watchlist_empty_in_progress">Nothing in progress yet. Mark an episode as watched to see it here.</string>
     <string name="label_followed_shows">Followed Shows</string>
 
 
@@ -107,6 +108,7 @@
     <string name="menu_item_settings">Settings</string>
     <string name="menu_item_profile">Profile</string>
     <string name="menu_item_progress">Progress</string>
+    <string name="menu_item_watchlist">Watchlist</string>
 
     <string name="cd_show_poster">Poster image</string>
     <string name="cd_show_poster_image">Poster image for %s</string>

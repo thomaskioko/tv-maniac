@@ -7,10 +7,10 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Bookmarks
 import androidx.compose.material.icons.outlined.Movie
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.PlayCircleOutline
-import androidx.compose.material.icons.outlined.VideoLibrary
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
@@ -31,12 +31,11 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomNavigationItem
 import com.thomaskioko.tvmaniac.compose.components.TvManiacNavigationBar
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_tab_watchlist
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_discover
-import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_library
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_profile
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_progress
 import com.thomaskioko.tvmaniac.i18n.resolve
-import com.thomaskioko.tvmaniac.library.nav.LibraryRoot
 import com.thomaskioko.tvmaniac.navigation.BaseRoute
 import com.thomaskioko.tvmaniac.navigation.NavRoot
 import com.thomaskioko.tvmaniac.navigation.RootChild
@@ -47,6 +46,7 @@ import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.profile.nav.ProfileRoot
 import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
+import com.thomaskioko.tvmaniac.watchlist.nav.WatchlistRoot
 import io.github.thomaskioko.codegen.annotations.ScreenUi
 
 @ScreenUi(presenter = HomePresenter::class, parentScope = ActivityScope::class)
@@ -121,11 +121,11 @@ internal fun BottomNavigationContent(
         )
 
         TvManiacBottomNavigationItem(
-            modifier = Modifier.testTag(HomeTestTags.LIBRARY_TAB),
-            imageVector = Icons.Outlined.VideoLibrary,
-            title = menu_item_library.resolve(context),
-            selected = activeRoot is LibraryRoot,
-            onClick = { component.onLibraryClicked() },
+            modifier = Modifier.testTag(HomeTestTags.WATCHLIST_TAB),
+            imageVector = Icons.Outlined.Bookmarks,
+            title = label_tab_watchlist.resolve(context),
+            selected = activeRoot is WatchlistRoot,
+            onClick = { component.onWatchlistClicked() },
         )
 
         ProfileNavigationItem(

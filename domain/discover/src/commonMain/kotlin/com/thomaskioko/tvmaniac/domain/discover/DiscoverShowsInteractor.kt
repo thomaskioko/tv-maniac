@@ -11,7 +11,7 @@ import com.thomaskioko.tvmaniac.domain.upnext.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.genre.GenreRepository
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsRepository
-import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
+import com.thomaskioko.tvmaniac.upnext.api.model.UpNextEpisode
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
@@ -54,5 +54,5 @@ public data class DiscoverShowsData(
     val popularShows: List<ShowEntity>,
     val trendingShows: List<ShowEntity>,
     val upcomingShows: List<ShowEntity>,
-    val nextEpisodes: List<NextEpisodeWithShow>,
+    val nextEpisodes: List<UpNextEpisode>,
 )

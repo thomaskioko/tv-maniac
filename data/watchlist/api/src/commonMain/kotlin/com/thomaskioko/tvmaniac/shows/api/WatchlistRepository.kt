@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.shows.api
 
 import com.thomaskioko.tvmaniac.db.FollowedShows
 import com.thomaskioko.tvmaniac.db.SearchFollowedShows
+import com.thomaskioko.tvmaniac.shows.api.model.WatchlistSortOption
 import kotlinx.coroutines.flow.Flow
 
 public interface WatchlistRepository {
@@ -13,4 +14,8 @@ public interface WatchlistRepository {
     public fun observeListStyle(): Flow<Boolean>
 
     public suspend fun saveListStyle(isGridMode: Boolean)
+
+    public fun observeSortOption(): Flow<WatchlistSortOption>
+
+    public suspend fun saveSortOption(sortOption: WatchlistSortOption)
 }

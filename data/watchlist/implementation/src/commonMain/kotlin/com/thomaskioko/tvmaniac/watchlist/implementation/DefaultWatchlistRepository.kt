@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.db.FollowedShows
 import com.thomaskioko.tvmaniac.db.SearchFollowedShows
 import com.thomaskioko.tvmaniac.shows.api.WatchlistDao
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
+import com.thomaskioko.tvmaniac.shows.api.model.WatchlistSortOption
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
@@ -36,5 +37,15 @@ public class DefaultWatchlistRepository(
     override suspend fun saveListStyle(isGridMode: Boolean) {
         val listStyle = if (isGridMode) ListStyle.GRID else ListStyle.LIST
         datastoreRepository.saveListStyle(listStyle)
+    }
+
+    override fun observeSortOption(): Flow<WatchlistSortOption> =
+        datastoreRepository.observeWatchlistSortOption().map { name ->
+            WatchlistSortOption.entries.find { it.name == name }
+                ?: WatchlistSortOption.ADDED_DESC
+        }
+
+    override suspend fun saveSortOption(sortOption: WatchlistSortOption) {
+        datastoreRepository.saveWatchlistSortOption(sortOption.name)
     }
 }

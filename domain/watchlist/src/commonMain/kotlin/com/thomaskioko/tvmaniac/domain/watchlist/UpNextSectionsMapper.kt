@@ -18,16 +18,29 @@ public class UpNextSectionsMapper(
         val currentTime = dateTimeProvider.nowMillis()
 
         return episodes
-            .map { episode ->
+            .mapNotNull { episode ->
+                val resolvedEpisodeId = episode.episodeId ?: return@mapNotNull null
+                val resolvedSeasonId = episode.seasonId ?: return@mapNotNull null
+                val resolvedSeasonNumber = episode.seasonNumber ?: return@mapNotNull null
+                val resolvedEpisodeNumber = episode.episodeNumber ?: return@mapNotNull null
+                val resolvedShowName = episode.showName ?: return@mapNotNull null
                 val remaining = (episode.totalCount - episode.watchedCount).toInt()
                 val badge = calculateBadge(
-                    episodeNumber = episode.episodeNumber,
-                    seasonNumber = episode.seasonNumber,
+                    episodeNumber = resolvedEpisodeNumber,
+                    seasonNumber = resolvedSeasonNumber,
                     showYear = episode.showYear,
                     firstAired = episode.firstAired,
                     currentTimeMillis = currentTime,
                 )
-                episode.toUpNextEpisodeInfo(remaining, badge)
+                episode.toUpNextEpisodeInfo(
+                    showName = resolvedShowName,
+                    episodeId = resolvedEpisodeId,
+                    seasonId = resolvedSeasonId,
+                    seasonNumber = resolvedSeasonNumber,
+                    episodeNumber = resolvedEpisodeNumber,
+                    remainingEpisodes = remaining,
+                    badge = badge,
+                )
             }
             .filter { it.firstAired != null && it.firstAired <= currentTime }
             .groupBySections(currentTime)
@@ -58,6 +71,11 @@ public class UpNextSectionsMapper(
     }
 
     private fun NextEpisodeWithShow.toUpNextEpisodeInfo(
+        showName: String,
+        episodeId: Long,
+        seasonId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
         remainingEpisodes: Int,
         badge: EpisodeBadge,
     ): UpNextEpisodeInfo {

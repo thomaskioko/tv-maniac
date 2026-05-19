@@ -73,6 +73,7 @@ public struct WatchlistScreen: View {
     private let onQueryCleared: () -> Void
     private let onToggleListStyle: () -> Void
     private let onToggleSearch: () -> Void
+    private let onSortClicked: () -> Void
     private let onShowClicked: (Int64) -> Void
     private let onEpisodeClicked: (Int64, Int64) -> Void
     private let onShowTitleClicked: (Int64) -> Void
@@ -84,6 +85,7 @@ public struct WatchlistScreen: View {
         onQueryCleared: @escaping () -> Void,
         onToggleListStyle: @escaping () -> Void,
         onToggleSearch: @escaping () -> Void,
+        onSortClicked: @escaping () -> Void,
         onShowClicked: @escaping (Int64) -> Void,
         onEpisodeClicked: @escaping (Int64, Int64) -> Void,
         onShowTitleClicked: @escaping (Int64) -> Void,
@@ -94,6 +96,7 @@ public struct WatchlistScreen: View {
         self.onQueryCleared = onQueryCleared
         self.onToggleListStyle = onToggleListStyle
         self.onToggleSearch = onToggleSearch
+        self.onSortClicked = onSortClicked
         self.onShowClicked = onShowClicked
         self.onEpisodeClicked = onEpisodeClicked
         self.onShowTitleClicked = onShowTitleClicked
@@ -123,16 +126,8 @@ public struct WatchlistScreen: View {
             } else {
                 let image = state.isGridMode ? "list.bullet" : "rectangle.grid.2x2"
                 ToolbarItem(placement: .navigationBarLeading) {
-                    HStack {
-                        Button {
-                            withAnimation { onToggleListStyle() }
-                        } label: {
-                            Label(state.listStyleLabel, systemImage: image)
-                                .labelStyle(.iconOnly)
-                        }
-                        .buttonBorderShape(.roundedRectangle(radius: appTheme.shapes.large))
-                        .buttonStyle(.bordered)
-                        .tint(appTheme.colors.accent)
+                    GlassButton(icon: image) {
+                        withAnimation { onToggleListStyle() }
                     }
                 }
                 ToolbarItem(placement: .principal) {
@@ -204,30 +199,16 @@ public struct WatchlistScreen: View {
     }
 
     private var searchButton: some View {
-        Button {
+        GlassButton(icon: "magnifyingglass") {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                 onToggleSearch()
                 isSearchFocused = true
             }
-        } label: {
-            Label(state.searchLabel, systemImage: "magnifyingglass")
-                .labelStyle(.iconOnly)
         }
-        .buttonBorderShape(.roundedRectangle(radius: appTheme.shapes.large))
-        .buttonStyle(.bordered)
-        .tint(appTheme.colors.accent)
     }
 
     private var filterButton: some View {
-        Button {
-            withAnimation {}
-        } label: {
-            Label(state.sortLabel, systemImage: "line.3.horizontal.decrease.circle")
-                .labelStyle(.iconOnly)
-        }
-        .buttonBorderShape(.roundedRectangle(radius: appTheme.shapes.large))
-        .buttonStyle(.bordered)
-        .tint(appTheme.colors.accent)
+        GlassButton(icon: "line.3.horizontal.decrease.circle", action: onSortClicked)
     }
 
     private var expandedSearchBar: some View {

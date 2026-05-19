@@ -1,8 +1,12 @@
 package com.thomaskioko.tvmaniac.watchlist.presenter
 
+import com.thomaskioko.tvmaniac.shows.api.model.WatchlistSortOption
+
 public sealed interface WatchlistAction
 
 public data class WatchlistShowClicked(val traktId: Long) : WatchlistAction
+
+public data class ChangeWatchlistSortOption(val sortOption: WatchlistSortOption) : WatchlistAction
 
 public data class WatchlistQueryChanged(val query: String) : WatchlistAction
 

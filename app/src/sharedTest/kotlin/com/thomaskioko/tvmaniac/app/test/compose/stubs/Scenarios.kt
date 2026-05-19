@@ -87,6 +87,7 @@ internal class Scenarios(
     fun stubProfileOnSignIn() {
         graph.traktAuthManager.setOnLaunchWebView {
             profile.stubProfileSyncEndpoints()
+            library.stubLibrarySyncEndpoints()
             auth.stubLoggedInUser()
         }
     }
