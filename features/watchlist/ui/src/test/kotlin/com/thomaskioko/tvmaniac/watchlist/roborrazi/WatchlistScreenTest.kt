@@ -101,6 +101,7 @@ class WatchlistScreenTest {
                 WatchlistScreen(
                     state = WatchlistState(
                         isRefreshing = false,
+                        emptyStateText = "Nothing in progress yet. Mark an episode as watched to see it here.",
                         watchNextItems = persistentListOf(),
                         staleItems = persistentListOf(),
                     ),
@@ -118,6 +119,7 @@ class WatchlistScreenTest {
                     state = WatchlistState(
                         isGridMode = false,
                         isRefreshing = false,
+                        emptyStateText = "No content",
                         watchNextItems = persistentListOf(),
                         query = "Show title",
                         message = UiMessage(message = "Something went Wrong"),

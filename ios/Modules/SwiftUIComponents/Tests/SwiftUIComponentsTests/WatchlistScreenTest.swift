@@ -130,7 +130,7 @@ class WatchlistScreenTest: SnapshotTestCase {
             state: WatchlistScreen.State(
                 title: "Watchlist",
                 searchPlaceholder: "Search",
-                emptyText: "Looks like your stash is empty",
+                emptyText: "Nothing in progress yet. Mark an episode as watched to see it here.",
                 upToDateText: "Up to date",
                 listStyleLabel: "List style",
                 searchLabel: "Search",
