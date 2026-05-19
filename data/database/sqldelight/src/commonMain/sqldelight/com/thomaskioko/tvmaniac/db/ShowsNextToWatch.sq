@@ -82,7 +82,7 @@ LIMIT 1;
 
 nextEpisodesForWatchlist:
 SELECT
-    followed_show.trakt_id AS show_trakt_id,
+    tvshow.trakt_id AS show_trakt_id,
     tvshow.tmdb_id AS show_tmdb_id,
     next_episode.episode_id,
     next_episode.episode_name,
@@ -96,19 +96,22 @@ SELECT
     tvshow.poster_path AS show_poster,
     tvshow.status AS show_status,
     tvshow.year AS show_year,
-    followed_show.followed_at,
+    followed_show.followed_at AS followed_at,
     next_episode.first_aired,
-    next_episode.last_watched_at,
+    watched_show.last_watched_at AS last_watched_at,
     COALESCE(show_metadata.season_count, 0) AS season_count,
     COALESCE(show_metadata.episode_count, 0) AS episode_count,
     COALESCE(show_watch_progress.watched_count, 0) AS watched_count,
     COALESCE(show_watch_progress.total_count, 0) AS total_count,
     next_episode.ratings,
     next_episode.vote_count
-FROM followed_shows AS followed_show
-INNER JOIN tvshow ON followed_show.trakt_id = tvshow.trakt_id
+FROM tvshow
+LEFT JOIN trakt_watched_shows AS watched_show ON watched_show.trakt_id = tvshow.trakt_id
+LEFT JOIN followed_shows AS followed_show
+    ON followed_show.trakt_id = tvshow.trakt_id
+    AND followed_show.pending_action != 'DELETE'
 LEFT JOIN show_metadata ON tvshow.trakt_id = show_metadata.show_trakt_id
-LEFT JOIN show_watch_progress ON show_watch_progress.show_trakt_id = followed_show.trakt_id
+LEFT JOIN show_watch_progress ON show_watch_progress.show_trakt_id = tvshow.trakt_id
 LEFT JOIN (
     SELECT
         show_trakt_id,
@@ -116,9 +119,11 @@ LEFT JOIN (
     FROM shows_next_to_watch
     WHERE (:includeSpecials = 1 OR (season_number > 0))
     GROUP BY show_trakt_id
-) AS min_next_episode ON min_next_episode.show_trakt_id = followed_show.trakt_id
+) AS min_next_episode ON min_next_episode.show_trakt_id = tvshow.trakt_id
 LEFT JOIN shows_next_to_watch AS next_episode
-    ON next_episode.show_trakt_id = followed_show.trakt_id
+    ON next_episode.show_trakt_id = tvshow.trakt_id
     AND next_episode.next_ep_abs_number = min_next_episode.min_abs_number
-WHERE followed_show.pending_action != 'DELETE'
-ORDER BY COALESCE(next_episode.last_watched_at, followed_show.followed_at) DESC;
+WHERE watched_show.trakt_id IS NOT NULL OR followed_show.trakt_id IS NOT NULL
+ORDER BY COALESCE(next_episode.last_watched_at, watched_show.last_watched_at, followed_show.followed_at) DESC,
+         next_episode.season_number ASC,
+         next_episode.episode_number ASC;
