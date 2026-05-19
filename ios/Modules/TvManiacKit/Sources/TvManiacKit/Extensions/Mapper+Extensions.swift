@@ -25,7 +25,7 @@ public extension TvManiac.WatchlistItem {
     func toSwift() -> ShowPosterImage {
         .init(
             traktId: traktId,
-            title: title,
+            title: title ?? "",
             posterUrl: posterImageUrl,
             inLibrary: true
         )
@@ -260,7 +260,7 @@ public extension TvManiac.UpNextEpisodeItem {
         .init(
             showTraktId: showTraktId,
             showName: showName,
-            imageUrl: showPoster,
+            imageUrl: stillImage,
             episodeId: episodeId,
             episodeTitle: episodeTitle,
             episodeNumber: episodeNumberFormatted,
@@ -375,7 +375,7 @@ public extension TvManiac.CalendarDateGroup {
     func toSwift() -> SwiftCalendarDateGroup {
         .init(
             dateLabel: dateLabel,
-            episodes: episodes.compactMap { ($0 as? TvManiac.CalendarEpisodeItem)?.toSwift() }
+            episodes: episodes.compactMap { $0.toSwift() }
         )
     }
 }
