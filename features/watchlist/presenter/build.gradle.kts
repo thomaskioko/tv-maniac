@@ -38,6 +38,7 @@ kotlin {
         androidMain {
             dependencies {
                 api(projects.data.database.sqldelight)
+                implementation(projects.i18n.generator)
             }
         }
 
