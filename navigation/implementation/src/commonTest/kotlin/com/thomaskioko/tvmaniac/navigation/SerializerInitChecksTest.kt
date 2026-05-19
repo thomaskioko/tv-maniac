@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.navigation
 import com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot
 import com.thomaskioko.tvmaniac.library.nav.LibraryRoot
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
+import com.thomaskioko.tvmaniac.watchlist.nav.WatchlistRoot
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.string.shouldContain
 import kotlin.test.Test
@@ -34,7 +35,7 @@ internal class SerializerInitChecksTest {
             DefaultBaseRouteSerializer(
                 routeBindings = routeBindings,
                 rootBindings = rootBindings,
-                navRoots = setOf(DiscoverRoot, LibraryRoot),
+                navRoots = setOf(DiscoverRoot, LibraryRoot, WatchlistRoot),
             )
         }
         error.message shouldContain "Missing NavRootBinding"

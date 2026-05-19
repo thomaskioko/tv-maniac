@@ -28,6 +28,7 @@ kotlin {
                 api(libs.essenty.lifecycle)
                 api(libs.kotlinx.collections)
 
+                implementation(projects.features.home.nav)
                 implementation(projects.features.seasonDetails.nav)
                 implementation(projects.features.showDetails.nav)
             }

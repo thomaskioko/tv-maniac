@@ -10,6 +10,7 @@ struct WatchlistTab: View {
     @State private var watchNextEpisodesSwift: [SwiftNextEpisode] = []
     @State private var staleEpisodesSwift: [SwiftNextEpisode] = []
     @State private var toast: Toast?
+    @State private var showSortOptions = false
 
     init(presenter: WatchlistPresenter) {
         self.presenter = presenter
@@ -28,6 +29,7 @@ struct WatchlistTab: View {
                 presenter.dispatch(action: ChangeListStyleClicked_(isGridMode: uiState.isGridMode))
             },
             onToggleSearch: { presenter.dispatch(action: ToggleSearchActive_()) },
+            onSortClicked: { showSortOptions = true },
             onShowClicked: { id in presenter.dispatch(action: WatchlistShowClicked(traktId: id)) },
             onEpisodeClicked: { showTraktId, episodeId in
                 presenter.dispatch(action: UpNextEpisodeClicked(showTraktId: showTraktId, episodeId: episodeId))
@@ -44,6 +46,15 @@ struct WatchlistTab: View {
                 ))
             }
         )
+        .sheet(isPresented: $showSortOptions) {
+            WatchlistSortOptionsSheet(
+                selectedSortOption: uiState.sortOption,
+                onSortOptionSelected: { sortOption in
+                    presenter.dispatch(action: ChangeWatchlistSortOption(sortOption: sortOption))
+                }
+            )
+            .presentationDetents([.medium, .large])
+        }
         .toastView(toast: $toast)
         .onChange(of: uiState.message) { _, newValue in
             if let message = newValue {
@@ -92,7 +103,7 @@ private extension WatchlistState {
             watchNextGridItems: Array(watchNextItems).map {
                 WatchlistGridItem(
                     traktId: $0.traktId,
-                    title: $0.title,
+                    title: $0.title ?? "",
                     posterImageUrl: $0.posterImageUrl,
                     watchProgress: $0.watchProgress
                 )
@@ -100,7 +111,7 @@ private extension WatchlistState {
             staleGridItems: Array(staleItems).map {
                 WatchlistGridItem(
                     traktId: $0.traktId,
-                    title: $0.title,
+                    title: $0.title ?? "",
                     posterImageUrl: $0.posterImageUrl,
                     watchProgress: $0.watchProgress
                 )
