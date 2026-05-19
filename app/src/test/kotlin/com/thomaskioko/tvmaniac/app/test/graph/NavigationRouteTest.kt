@@ -21,6 +21,7 @@ import com.thomaskioko.tvmaniac.settings.nav.SettingsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.trailers.nav.TrailersRoute
+import com.thomaskioko.tvmaniac.watchlist.nav.WatchlistRoot
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.nulls.shouldNotBeNull
 import kotlin.test.Test
@@ -61,6 +62,7 @@ internal class NavigationRouteTest : BaseAppFlowTest() {
             DiscoverRoot,
             ProgressRoot,
             LibraryRoot,
+            WatchlistRoot,
             ProfileRoot,
         )
 
