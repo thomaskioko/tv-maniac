@@ -27,6 +27,7 @@ kotlin {
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
+                api(libs.kotlinx.collections)
 
                 implementation(projects.i18n.generator)
             }

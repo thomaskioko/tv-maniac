@@ -25,7 +25,9 @@ import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -60,7 +62,7 @@ class DebugPresenterTest {
     }
 
     @Test
-    fun `should return null token status given logged out`() = runTest {
+    fun `should omit token status item given logged out`() = runTest {
         traktAuthRepository.setState(TraktAuthState.LOGGED_OUT)
 
         val presenter = createPresenter()
@@ -69,12 +71,12 @@ class DebugPresenterTest {
 
         presenter.state.test {
             val state = expectMostRecentItem()
-            state.tokenStatusSubtitle shouldBe null
+            state.items.none { it.id == "token-status" } shouldBe true
         }
     }
 
     @Test
-    fun `should return expires-in subtitle given logged in with future expiry`() = runTest {
+    fun `should expose expires-in subtitle on token status item given logged in with future expiry`() = runTest {
         val now = Instant.fromEpochMilliseconds(1_700_000_000_000L)
         dateTimeProvider.setCurrentTime(now)
         traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
@@ -93,9 +95,9 @@ class DebugPresenterTest {
 
         presenter.state.test {
             advanceUntilIdle()
-            val state = expectMostRecentItem()
+            val tokenItem = expectMostRecentItem().items.first { it.id == "token-status" }
 
-            state.tokenStatusSubtitle shouldBe localizer.getString(
+            tokenItem.subtitle shouldBe localizer.getString(
                 StringResourceKey.LabelDebugTokenExpiresIn,
                 "Mar 22, 2026 at 10:00",
                 "3h 0m",
@@ -104,7 +106,7 @@ class DebugPresenterTest {
     }
 
     @Test
-    fun `should return expired subtitle given logged in with unauthorized auth state`() = runTest {
+    fun `should expose expired subtitle on token status item given logged in with unauthorized auth state`() = runTest {
         traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
         traktAuthRepository.setAuthState(
             AuthState(
@@ -120,9 +122,9 @@ class DebugPresenterTest {
 
         presenter.state.test {
             advanceUntilIdle()
-            val state = expectMostRecentItem()
+            val tokenItem = expectMostRecentItem().items.first { it.id == "token-status" }
 
-            state.tokenStatusSubtitle shouldBe localizer.getString(
+            tokenItem.subtitle shouldBe localizer.getString(
                 StringResourceKey.LabelDebugTokenExpired,
                 "Mar 22, 2026 at 10:00",
             )
@@ -130,7 +132,7 @@ class DebugPresenterTest {
     }
 
     @Test
-    fun `should return expired subtitle given logged in with past expiry`() = runTest {
+    fun `should expose expired subtitle on token status item given logged in with past expiry`() = runTest {
         val now = Instant.fromEpochMilliseconds(1_700_000_000_000L)
         dateTimeProvider.setCurrentTime(now)
         traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
@@ -149,9 +151,9 @@ class DebugPresenterTest {
 
         presenter.state.test {
             advanceUntilIdle()
-            val state = expectMostRecentItem()
+            val tokenItem = expectMostRecentItem().items.first { it.id == "token-status" }
 
-            state.tokenStatusSubtitle shouldBe localizer.getString(
+            tokenItem.subtitle shouldBe localizer.getString(
                 StringResourceKey.LabelDebugTokenExpired,
                 "Mar 22, 2026 at 10:00",
             )
@@ -159,7 +161,7 @@ class DebugPresenterTest {
     }
 
     @Test
-    fun `should return never refreshed status given logged in with no refresh timestamp`() = runTest {
+    fun `should expose never refreshed subtitle on token status item given logged in with no refresh timestamp`() = runTest {
         traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
         traktAuthRepository.setAuthState(
             AuthState(
@@ -173,23 +175,75 @@ class DebugPresenterTest {
 
         presenter.state.test {
             advanceUntilIdle()
-            val state = expectMostRecentItem()
+            val tokenItem = expectMostRecentItem().items.first { it.id == "token-status" }
 
-            state.tokenStatusSubtitle shouldBe localizer.getString(LabelDebugNeverRefreshed)
+            tokenItem.subtitle shouldBe localizer.getString(LabelDebugNeverRefreshed)
         }
     }
 
     @Test
-    fun `should return logged in given auth state is logged in`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
-
+    fun `should expose default items including test crash row`() = runTest {
         val presenter = createPresenter()
 
-        presenter.state.test {
-            advanceUntilIdle()
-            val state = expectMostRecentItem()
+        advanceUntilIdle()
 
-            state.isLoggedIn shouldBe true
+        presenter.state.test {
+            val state = expectMostRecentItem()
+            val ids = state.items.map { it.id }
+            ids shouldBe listOf(
+                "notifications",
+                "delayed-notification",
+                "library-sync",
+                "upnext-sync",
+                "feature-flags",
+                "test-crash",
+            )
+            state.items.first { it.id == "test-crash" }.role shouldBe DebugItemRole.Destructive
+            state.title shouldBe localizer.getString(StringResourceKey.LabelDebugMenuTitle)
+        }
+    }
+
+    @Test
+    fun `should emit login required message given TriggerLibrarySync while logged out`() = runTest {
+        traktAuthRepository.setState(TraktAuthState.LOGGED_OUT)
+
+        val presenter = createPresenter()
+        advanceUntilIdle()
+
+        presenter.dispatch(TriggerLibrarySync)
+        advanceUntilIdle()
+
+        presenter.state.test {
+            val message = expectMostRecentItem().message
+            message shouldNotBe null
+            message?.message shouldBe localizer.getString(StringResourceKey.LabelDebugSyncLoginRequired)
+        }
+    }
+
+    @Test
+    fun `should emit login required message given TriggerUpNextSync while logged out`() = runTest {
+        traktAuthRepository.setState(TraktAuthState.LOGGED_OUT)
+
+        val presenter = createPresenter()
+        advanceUntilIdle()
+
+        presenter.dispatch(TriggerUpNextSync)
+        advanceUntilIdle()
+
+        presenter.state.test {
+            val message = expectMostRecentItem().message
+            message shouldNotBe null
+            message?.message shouldBe localizer.getString(StringResourceKey.LabelDebugSyncLoginRequired)
+        }
+    }
+
+    @Test
+    fun `should throw given TriggerTestCrash`() = runTest {
+        val presenter = createPresenter()
+        advanceUntilIdle()
+
+        shouldThrow<RuntimeException> {
+            presenter.dispatch(TriggerTestCrash)
         }
     }
 

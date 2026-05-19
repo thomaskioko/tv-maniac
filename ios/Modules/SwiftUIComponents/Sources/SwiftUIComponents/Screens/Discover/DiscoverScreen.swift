@@ -167,8 +167,13 @@ public struct DiscoverScreen: View {
                     .scaleEffect(2.0)
                     .opacity(pullOffset > 0 ? max(0.6, Double(progress)) : 0)
                     .padding(.top, RefreshConstants.indicatorTopPadding)
+                    .allowsHitTesting(false)
             }
-
+        }
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarColor(backgroundColor: .clear)
+        .toolbar(.hidden, for: .navigationBar)
+        .overlay(
             GlassToolbar(
                 title: state.title,
                 opacity: showGlass,
@@ -177,10 +182,9 @@ public struct DiscoverScreen: View {
                     GlassButton(icon: "magnifyingglass", action: onSearchClicked)
                 }
             )
-            .animation(.easeInOut(duration: AnimationConstants.defaultDuration), value: showGlass)
-        }
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarColor(backgroundColor: .clear)
+            .animation(.easeInOut(duration: AnimationConstants.defaultDuration), value: showGlass),
+            alignment: .top
+        )
         .edgesIgnoringSafeArea(.top)
         .onDisappear {
             selectedShow = nil

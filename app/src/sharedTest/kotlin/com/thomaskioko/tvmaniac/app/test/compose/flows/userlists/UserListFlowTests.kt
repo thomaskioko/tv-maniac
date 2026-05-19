@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.app.test.AppFlowScope
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.TEST_CREATED_LIST_NAME
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.TEST_CREATED_LIST_TRAKT_ID
+import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
 import org.junit.Test
 
 internal class UserListFlowTests : BaseAppFlowTest() {
@@ -64,6 +65,7 @@ internal class UserListFlowTests : BaseAppFlowTest() {
 
         showDetailsRobot
             .assertShowDetailsDisplayed()
+            .assertDoesNotExist(HomeTestTags.NAVIGATION_BAR)
             .clickAddToListButton()
             .assertListSheetDisplayed()
     }

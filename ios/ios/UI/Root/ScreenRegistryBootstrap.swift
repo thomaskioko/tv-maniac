@@ -26,6 +26,7 @@ enum ScreenRegistryBootstrap {
         registry.registerScreen(for: SearchShowsPresenter.self) { SearchTab(presenter: $0) }
         registry.registerScreen(for: SettingsPresenter.self) { SettingsView(presenter: $0) }
         registry.registerScreen(for: DebugPresenter.self) { DebugMenuView(presenter: $0) }
+        registry.registerScreen(for: FeatureFlagsPresenter.self) { FeatureFlagsView(presenter: $0) }
         registry.registerScreen(for: MoreShowsPresenter.self) { MoreShowsView(presenter: $0) }
     }
 

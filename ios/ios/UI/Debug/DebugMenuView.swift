@@ -16,7 +16,10 @@ struct DebugMenuView: View {
 
     var body: some View {
         DebugScreen(
-            state: uiState.toState(items: menuItems),
+            state: DebugScreen.State(
+                title: uiState.title,
+                items: uiState.items.map { $0.toMenuItem(presenter: presenter) }
+            ),
             toast: $toast,
             onBack: { presenter.dispatch(action: BackClicked()) }
         )
@@ -27,95 +30,48 @@ struct DebugMenuView: View {
             }
         }
     }
+}
 
-    private var menuItems: [DebugMenuItem] {
-        var items: [DebugMenuItem] = [
-            DebugMenuItem(
-                id: "notification",
-                icon: "bell.fill",
-                title: String(\.label_settings_episode_notifications),
-                subtitle: String(\.label_settings_debug_notification_description),
-                isLoading: uiState.isSchedulingDebugNotification,
-                isEnabled: !uiState.isSchedulingDebugNotification,
-                onTap: { presenter.dispatch(action: TriggerDebugNotification()) }
-            ),
-            DebugMenuItem(
-                id: "delayed-notification",
-                icon: "clock",
-                title: String(\.label_settings_delayed_debug_notification_title),
-                subtitle: String(\.label_settings_delayed_debug_notification_description),
-                isLoading: uiState.isSchedulingDebugNotification,
-                isEnabled: !uiState.isSchedulingDebugNotification,
-                onTap: { presenter.dispatch(action: TriggerDelayedDebugNotification()) }
-            ),
-            DebugMenuItem(
-                id: "library-sync",
-                icon: "arrow.triangle.2.circlepath",
-                title: String(\.label_debug_library_sync_title),
-                subtitle: syncSubtitle(for: uiState.lastLibrarySyncDate),
-                isLoading: uiState.isSyncingLibrary,
-                isEnabled: !uiState.isSyncingLibrary,
-                onTap: { [self] in handleSyncTap { presenter.dispatch(action: TriggerLibrarySync()) } }
-            ),
-            DebugMenuItem(
-                id: "upnext-sync",
-                icon: "arrow.clockwise",
-                title: String(\.label_debug_upnext_sync_title),
-                subtitle: syncSubtitle(for: uiState.lastUpNextSyncDate),
-                isLoading: uiState.isSyncingUpNext,
-                isEnabled: !uiState.isSyncingUpNext,
-                onTap: { [self] in handleSyncTap { presenter.dispatch(action: TriggerUpNextSync()) } }
-            ),
-        ]
-
-        if let tokenSubtitle = uiState.tokenStatusSubtitle {
-            items.append(
-                DebugMenuItem(
-                    id: "token-status",
-                    icon: "key.fill",
-                    title: String(\.label_debug_token_status_title),
-                    subtitle: tokenSubtitle,
-                    isEnabled: false,
-                    onTap: {}
-                )
-            )
-        }
-
-        items.append(
-            DebugMenuItem(
-                id: "test-crash",
-                icon: "exclamationmark.triangle",
-                role: .destructive,
-                title: String(\.label_debug_trigger_crash_title),
-                subtitle: String(\.label_debug_trigger_crash_description),
-                onTap: { fatalError("Test crash triggered from Debug Menu") }
-            )
+private extension DebugItem {
+    func toMenuItem(presenter: DebugPresenter) -> DebugMenuItem {
+        let action = action
+        return DebugMenuItem(
+            id: id,
+            icon: icon.toSymbolName(),
+            role: role.toMenuItemRole(),
+            title: title,
+            subtitle: subtitle,
+            isLoading: isLoading,
+            isEnabled: action != nil && !isLoading,
+            onTap: {
+                if let action {
+                    presenter.dispatch(action: action)
+                }
+            }
         )
-
-        return items
-    }
-
-    private func handleSyncTap(action: @escaping () -> Void) {
-        if uiState.isLoggedIn {
-            action()
-        } else {
-            toast = Toast(type: .error, message: String(\.label_debug_sync_login_required))
-        }
-    }
-
-    private func syncSubtitle(for date: String?) -> String {
-        if let date {
-            return String(\.label_settings_last_sync_date, parameter: date)
-        }
-        return String(\.label_debug_never_synced)
     }
 }
 
-private extension DebugState {
-    func toState(items: [DebugMenuItem]) -> DebugScreen.State {
-        DebugScreen.State(
-            title: String(\.label_debug_menu_title),
-            items: items
-        )
+private extension DebugItemIcon {
+    func toSymbolName() -> String {
+        switch name {
+        case "Notifications": "bell.fill"
+        case "Schedule": "clock"
+        case "LibrarySync": "arrow.triangle.2.circlepath"
+        case "UpNextSync": "arrow.clockwise"
+        case "FeatureFlags": "flag"
+        case "Key": "key.fill"
+        case "Warning": "exclamationmark.triangle"
+        default: "questionmark.circle"
+        }
+    }
+}
+
+private extension DebugItemRole {
+    func toMenuItemRole() -> DebugMenuItemRole {
+        switch name {
+        case "Destructive": .destructive
+        default: .accent
+        }
     }
 }

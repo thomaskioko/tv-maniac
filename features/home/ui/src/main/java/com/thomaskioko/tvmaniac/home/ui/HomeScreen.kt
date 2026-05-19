@@ -1,5 +1,8 @@
 package com.thomaskioko.tvmaniac.home.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -63,17 +66,26 @@ public fun HomeScreen(
     val activeStack = hostState.tabStacks[activeRoot]
         ?: error("No back stack registered for $activeRoot.")
 
+    val isAtTabRoot = activeStack.active.configuration is NavRoot
+
     Column(modifier = modifier) {
         Box(modifier = Modifier.weight(1F).fillMaxSize()) {
             saveableStateHolder.SaveableStateProvider(key = activeRoot.stableKey) {
                 TabPane(stack = activeStack, screenContents = screenContents)
             }
         }
-        BottomNavigationContent(
-            component = presenter,
-            activeRoot = activeRoot,
-            modifier = Modifier.fillMaxWidth(),
-        )
+        AnimatedVisibility(
+            visible = isAtTabRoot,
+            enter = slideInVertically(initialOffsetY = { it }),
+            exit = slideOutVertically(targetOffsetY = { it }),
+        ) {
+            BottomNavigationContent(
+                component = presenter,
+                activeRoot = activeRoot,
+                modifier = Modifier.fillMaxWidth()
+                    .testTag(HomeTestTags.NAVIGATION_BAR),
+            )
+        }
     }
 }
 

@@ -24,6 +24,7 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
         // Verify public content on Discover
         discoverRobot
             .assertDiscoverScreenDisplayed()
+            .assertExists(HomeTestTags.NAVIGATION_BAR)
             .assertFeaturedShowDisplayed(breakingBadTraktId)
             .assertUpNextCardDoesNotExist(breakingBadTraktId)
             .assertFeaturedPagerDisplayed()
@@ -34,7 +35,8 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
             .assertFeaturedShowDisplayed(breakingBadTraktId)
 
         // Navigate to Profile and verify Sign In CTA
-        homeRobot.clickProfileTab()
+        homeRobot
+            .clickProfileTab()
             .assertTabSelected(HomeTestTags.PROFILE_TAB)
 
         profileRobot
@@ -81,6 +83,7 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
 
         showDetailsRobot
             .assertShowDetailsDisplayed()
+            .assertDoesNotExist(HomeTestTags.NAVIGATION_BAR)
             .assertStopTrackingButtonDisplayed()
             .assertContinueTrackingSectionDisplayed()
             .clickContinueTrackingMarkWatched(pilotEpisodeTraktId)
@@ -88,6 +91,7 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
 
         seasonDetailsRobot
             .assertSeasonDetailsDisplayed()
+            .assertDoesNotExist(HomeTestTags.NAVIGATION_BAR)
             .scrollToMarkUnwatchedButton(pilotEpisodeTraktId)
             .assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
             .clickMarkWatched(secondEpisodeTraktId)
@@ -116,10 +120,12 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
 
         showDetailsRobot
             .assertStopTrackingButtonDisplayed()
+            .assertDoesNotExist(HomeTestTags.NAVIGATION_BAR)
             .pressBack()
 
         // UpNext Flow
-        homeRobot.clickProgressTab()
+        homeRobot
+            .clickProgressTab()
             .assertTabSelected(HomeTestTags.PROGRESS_TAB)
 
         progressRobot
@@ -133,6 +139,7 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
 
         seasonDetailsRobot
             .assertSeasonDetailsDisplayed()
+            .assertDoesNotExist(HomeTestTags.NAVIGATION_BAR)
             .scrollToMarkUnwatchedButton(pilotEpisodeTraktId)
             .assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
             .clickBackButton()
@@ -167,7 +174,8 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
         // Trigger token refresh round-trip
         scenarios.stubTokenRefresh()
 
-        homeRobot.clickProfileTab()
+        homeRobot
+            .clickProfileTab()
             .assertTabSelected(HomeTestTags.PROFILE_TAB)
 
         profileRobot
@@ -176,6 +184,7 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
 
         settingsRobot
             .assertSettingsScreenDisplayed()
+            .assertDoesNotExist(HomeTestTags.NAVIGATION_BAR)
             .scrollToTraktAccountRow()
             .clickTraktAccountRow()
             .assertLogoutDialogDisplayed()

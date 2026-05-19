@@ -4,14 +4,13 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
-import com.thomaskioko.tvmaniac.domain.featureflags.FeatureFlagRow
 import com.thomaskioko.tvmaniac.domain.featureflags.ObserveFeatureFlagRowsInteractor
 import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlag
 import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlagSortDescriptor
-import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlagSource
 import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlagLocalStore
 import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlagProvider
 import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlags
+import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.shouldBe
@@ -33,6 +32,7 @@ internal class FeatureFlagsPresenterTest {
     private val provider = FakeFeatureFlagProvider(localStore = localStore)
     private val navigator = FakeNavigator()
     private val dateTimeProvider = FakeDateTimeProvider()
+    private val localizer = FakeLocalizer()
     private val observeRows = ObserveFeatureFlagRowsInteractor(
         featureFlags = featureFlags,
         provider = provider,
@@ -59,19 +59,15 @@ internal class FeatureFlagsPresenterTest {
     }
 
     @Test
-    fun `should populate rows for every flag with Firebase source by default`() = runTest {
+    fun `should populate items for every flag with Firebase source by default`() = runTest {
         val presenter = buildPresenter(this)
 
         presenter.state.test {
             skipItems(1)
             val state = awaitItem()
-            state.rows shouldBe FeatureFlag.entries.map { flag ->
-                FeatureFlagRow(
-                    featureFlag = flag,
-                    value = flag.defaultValue,
-                    featureFlagSource = FeatureFlagSource.Firebase,
-                )
-            }.toList()
+            state.items.map { it.flag } shouldBe FeatureFlag.entries
+            state.items.all { !it.isLocal } shouldBe true
+            state.items.all { it.value == it.flag.defaultValue } shouldBe true
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -118,21 +114,21 @@ internal class FeatureFlagsPresenterTest {
     }
 
     @Test
-    fun `should refresh feature flags and update lastFetchedAt given ForceRefresh`() = runTest {
+    fun `should refresh feature flags and update forceRefreshSubtitle given ForceRefresh`() = runTest {
         val presenter = buildPresenter(this)
 
         presenter.state.test {
             skipItems(2)
             presenter.dispatch(ForceRefresh)
             testDispatcher.scheduler.advanceUntilIdle()
-            awaitItem().lastFetchedAt shouldBe dateTimeProvider.now()
+            awaitItem().forceRefreshSubtitle shouldBe "Last fetched at 2024-01-01 12:00"
             cancelAndIgnoreRemainingEvents()
         }
         featureFlags.refreshCount shouldBe 1
     }
 
     @Test
-    fun `should filter rows to empty given SearchQueryChanged with no matches`() = runTest {
+    fun `should filter items to empty given SearchQueryChanged with no matches`() = runTest {
         val presenter = buildPresenter(this)
 
         presenter.state.test {
@@ -142,7 +138,7 @@ internal class FeatureFlagsPresenterTest {
 
             val state = awaitItem()
             state.searchQuery shouldBe "no_match_for_this_query"
-            state.rows.isEmpty() shouldBe true
+            state.items.isEmpty() shouldBe true
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -203,6 +199,7 @@ internal class FeatureFlagsPresenterTest {
             localStore = localStore,
             navigator = navigator,
             dateTimeProvider = dateTimeProvider,
+            localizer = localizer,
             observeRows = observeRows,
         )
     }

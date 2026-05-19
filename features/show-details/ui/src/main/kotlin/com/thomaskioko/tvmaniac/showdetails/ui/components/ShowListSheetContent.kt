@@ -15,8 +15,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -32,6 +30,7 @@ import com.thomaskioko.tvmaniac.compose.components.FilledTextButton
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.components.TvManiacSwitch
 import com.thomaskioko.tvmaniac.presenter.showdetails.CreateListSubmitted
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsAction
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsContent
@@ -143,19 +142,12 @@ private fun TraktListItems(
                     )
                 }
 
-                Switch(
+                TvManiacSwitch(
                     checked = list.isShowInList,
                     onCheckedChange = {
                         onAction(ToggleShowInList(listId = list.id, isCurrentlyInList = list.isShowInList))
                     },
                     modifier = Modifier.testTag(ShowDetailsTestTags.traktListItemSwitch(list.id)),
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = MaterialTheme.colorScheme.secondary,
-                        checkedTrackColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f),
-                        uncheckedThumbColor = MaterialTheme.colorScheme.onSurface,
-                        uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
-                        uncheckedBorderColor = MaterialTheme.colorScheme.outline,
-                    ),
                 )
             }
         }
