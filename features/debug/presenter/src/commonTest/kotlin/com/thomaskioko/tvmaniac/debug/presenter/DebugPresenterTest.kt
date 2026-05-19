@@ -20,7 +20,6 @@ import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelDebugNeverRefreshed
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
-import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.traktauth.api.AuthState
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
@@ -232,7 +231,6 @@ class DebugPresenterTest {
                 datastoreRepository = datastoreRepository,
                 dateTimeProvider = dateTimeProvider,
             ),
-            syncObserver = FakeSyncObserver(),
             dateTimeProvider = dateTimeProvider,
             localizer = localizer,
             errorToStringMapper = { it.message ?: "Test error" },

@@ -19,7 +19,6 @@ kotlin {
             dependencies {
                 api(projects.core.tasks.api)
                 api(projects.core.logger.api)
-                api(projects.core.syncstate.api)
                 implementation(libs.coroutines.core)
             }
         }

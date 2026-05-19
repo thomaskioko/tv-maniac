@@ -20,7 +20,6 @@ import com.thomaskioko.tvmaniac.featureflags.nav.FeatureFlagsRoute
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
-import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.traktauth.api.AuthState
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
@@ -49,7 +48,6 @@ public class DebugPresenter(
     private val scheduleDebugEpisodeNotificationInteractor: ScheduleDebugEpisodeNotificationInteractor,
     private val syncLibraryInteractor: SyncLibraryInteractor,
     private val refreshUpNextInteractor: RefreshUpNextInteractor,
-    private val syncObserver: SyncObserver,
     private val dateTimeProvider: DateTimeProvider,
     private val localizer: Localizer,
     private val errorToStringMapper: ErrorToStringMapper,
@@ -129,19 +127,15 @@ public class DebugPresenter(
 
     private fun triggerLibrarySync() {
         coroutineScope.launch {
-            syncObserver.trackSync("DebugLibrarySync") {
-                syncLibraryInteractor(SyncLibraryInteractor.Param(forceRefresh = true))
-                    .collectStatus(librarySyncState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
-            }
+            syncLibraryInteractor(SyncLibraryInteractor.Param(forceRefresh = true))
+                .collectStatus(librarySyncState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         }
     }
 
     private fun triggerUpNextSync() {
         coroutineScope.launch {
-            syncObserver.trackSync("DebugUpNextSync") {
-                refreshUpNextInteractor(true)
-                    .collectStatus(upNextSyncState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
-            }
+            refreshUpNextInteractor(true)
+                .collectStatus(upNextSyncState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         }
     }
 

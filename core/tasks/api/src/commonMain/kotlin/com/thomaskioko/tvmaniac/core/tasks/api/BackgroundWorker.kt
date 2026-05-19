@@ -20,15 +20,6 @@ public interface BackgroundWorker {
     public val workerName: String
 
     /**
-     * Whether this worker contributes to the user-visible "Syncing your library..." status.
-     *
-     * Library-sync workers (defaults to `true`) flow through `SyncObserver.trackSync` so
-     * the root toast reflects an in-flight sync. Auth-only or other infrastructure workers
-     * should override to `false` to stay invisible to the toast surface.
-     */
-    public val isLibrarySyncWork: Boolean get() = true
-
-    /**
      * Executes the background work and returns the outcome.
      *
      * @return [WorkerResult.Success] if the work completed,
