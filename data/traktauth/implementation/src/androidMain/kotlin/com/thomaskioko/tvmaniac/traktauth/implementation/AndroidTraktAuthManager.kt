@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.traktauth.implementation
 
+import android.content.ActivityNotFoundException
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.lifecycle.lifecycleScope
@@ -50,7 +51,14 @@ public class AndroidTraktAuthManager(
             "registerResult() must be called before launchWebView(). " +
                 "Call registerResult() in your Activity's onCreate() or onStart()."
         }
-        launcher.launch(Unit)
+        try {
+            launcher.launch(Unit)
+        } catch (e: ActivityNotFoundException) {
+            logger.error("LaunchAuthError", e)
+            coroutineScope.launch {
+                loginAction.setAuthError(AuthError.NoBrowserAvailable)
+            }
+        }
     }
 
     override fun setAuthCallback(callback: () -> Unit) {

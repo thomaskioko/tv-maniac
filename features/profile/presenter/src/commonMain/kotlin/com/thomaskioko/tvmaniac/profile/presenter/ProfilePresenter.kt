@@ -160,5 +160,6 @@ private fun AuthError.toUiMessage(localizer: Localizer): UiMessage = when (this)
     AuthError.TokenExchangeFailed -> UiMessage(localizer.getString(StringResourceKey.ErrorLoginExchange))
     AuthError.TokenExpired -> UiMessage(localizer.getString(StringResourceKey.ErrorSessionExpired))
     AuthError.NetworkError -> UiMessage(localizer.getString(StringResourceKey.ErrorNetwork))
+    AuthError.NoBrowserAvailable -> UiMessage(localizer.getString(StringResourceKey.ErrorLoginNoBrowser))
     AuthError.Unknown -> UiMessage(localizer.getString(StringResourceKey.ErrorUnknown))
 }

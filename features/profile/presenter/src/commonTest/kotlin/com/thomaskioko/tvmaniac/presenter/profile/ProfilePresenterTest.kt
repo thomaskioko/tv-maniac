@@ -242,6 +242,25 @@ internal class ProfilePresenterTest {
         }
     }
 
+    @Test
+    fun `should surface no-browser error when sign-in cannot launch`() = runTest {
+        userRepository.setUserProfile(null)
+        traktAuthRepository.setState(TraktAuthState.LOGGED_OUT)
+
+        val testPresenter = createPresenter()
+
+        testPresenter.state.test {
+            awaitItem() shouldBe ProfileState.DEFAULT_STATE
+
+            traktAuthRepository.setAuthError(AuthError.NoBrowserAvailable)
+
+            val errorState = awaitItem()
+            errorState.errorMessage?.message shouldBe FakeLocalizer().getString(StringResourceKey.ErrorLoginNoBrowser)
+            errorState.showLoading shouldBe false
+            errorState.authenticated shouldBe false
+        }
+    }
+
     private fun createExpectedProfileInfo(profile: UserProfile): ProfileInfo {
         return ProfileInfo(
             slug = profile.slug,

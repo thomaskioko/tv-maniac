@@ -405,6 +405,7 @@
     <string name="error_login_failed">Login failed: %s</string>
     <string name="error_login_cancelled">Login cancelled.</string>
     <string name="error_login_exchange">Failed to complete login. Please try again.</string>
+    <string name="error_login_no_browser">No browser available to complete sign-in. Install a browser and try again.</string>
     <string name="error_session_expired">Session expired. Please login again.</string>
 
     <string name="notification_new_episode">New episode: %1$s - S%2$dE%3$d</string>

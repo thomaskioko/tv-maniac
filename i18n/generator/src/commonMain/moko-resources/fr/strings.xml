@@ -400,6 +400,7 @@
     <string name="error_login_failed">Échec de la connexion : %s</string>
     <string name="error_login_cancelled">Connexion annulée.</string>
     <string name="error_login_exchange">La connexion n\'a pas pu être complétée. Veuillez réessayer.</string>
+    <string name="error_login_no_browser">Aucun navigateur disponible pour se connecter. Installez un navigateur et réessayez.</string>
     <string name="error_session_expired">Session expirée. Veuillez vous reconnecter.</string>
 
     <string name="notification_new_episode">Nouvel épisode : %1$s - S%2$dE%3$d</string>
