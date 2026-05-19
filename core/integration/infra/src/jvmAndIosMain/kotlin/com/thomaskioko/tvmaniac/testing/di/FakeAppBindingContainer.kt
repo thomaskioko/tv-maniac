@@ -39,6 +39,7 @@ import com.thomaskioko.tvmaniac.profile.nav.ProfileRoot
 import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
 import com.thomaskioko.tvmaniac.traktauth.implementation.TokenRefreshWorker
 import com.thomaskioko.tvmaniac.util.api.AppUtils
+import com.thomaskioko.tvmaniac.watchlist.nav.WatchlistRoot
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
@@ -152,6 +153,9 @@ public object FakeAppBindingContainer {
         NavDestination.TabRoot(
             routeClass = ProgressRoot::class,
         ) { _: ProgressRoot, _: ComponentContext -> object : RootChild {} },
+        NavDestination.TabRoot(
+            routeClass = WatchlistRoot::class,
+        ) { _: WatchlistRoot, _: ComponentContext -> object : RootChild {} },
     )
 
     @Provides
@@ -173,6 +177,7 @@ public object FakeAppBindingContainer {
         LibraryRoot,
         ProfileRoot,
         ProgressRoot,
+        WatchlistRoot,
     )
 
     @Provides
@@ -193,6 +198,10 @@ public object FakeAppBindingContainer {
         NavRootBinding(
             ProgressRoot::class,
             ProgressRoot.serializer(),
+        ),
+        NavRootBinding(
+            WatchlistRoot::class,
+            WatchlistRoot.serializer(),
         ),
     )
 
