@@ -23,10 +23,14 @@ import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
-import com.thomaskioko.tvmaniac.watchlist.nav.WatchlistRoute
+import com.thomaskioko.tvmaniac.shows.api.model.WatchlistSortOption
+import com.thomaskioko.tvmaniac.watchlist.nav.WatchlistRoot
+import com.thomaskioko.tvmaniac.watchlist.presenter.model.WatchlistItem
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -35,9 +39,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @NavDestination(
-    route = WatchlistRoute::class,
+    route = WatchlistRoot::class,
     parentScope = ActivityScope::class,
-    kind = DestinationKind.SCREEN,
+    kind = DestinationKind.TAB_ROOT,
 )
 @Inject
 public class WatchlistPresenter(
@@ -63,7 +67,6 @@ public class WatchlistPresenter(
     init {
         observeWatchlistSectionsInteractor(queryFlow.value)
         observeUpNextSectionsInteractor(queryFlow.value)
-        syncWatchlist()
     }
 
     public val state: StateFlow<WatchlistState> = combine(
@@ -73,17 +76,19 @@ public class WatchlistPresenter(
         observeWatchlistSectionsInteractor.flow,
         observeUpNextSectionsInteractor.flow,
         repository.observeListStyle(),
+        repository.observeSortOption(),
         uiMessageManager.message,
         queryFlow,
-    ) { currentState, isLoading, upNextLoading, watchlistSections, upNextSections, isGridMode, message, query ->
+    ) { currentState, isLoading, upNextLoading, watchlistSections, upNextSections, isGridMode, sortOption, message, query ->
         val sectionedItems = watchlistSections.toPresenter()
         val sectionedEpisodes = upNextSections.toPresenter()
         currentState.copy(
             query = query,
             isGridMode = isGridMode,
             isRefreshing = isLoading || upNextLoading,
-            watchNextItems = sectionedItems.watchNext,
-            staleItems = sectionedItems.stale,
+            sortOption = sortOption,
+            watchNextItems = sectionedItems.watchNext.applySorting(sortOption),
+            staleItems = sectionedItems.stale.applySorting(sortOption),
             watchNextEpisodes = sectionedEpisodes.watchNext,
             staleEpisodes = sectionedEpisodes.stale,
             message = message,
@@ -103,6 +108,7 @@ public class WatchlistPresenter(
             is ClearWatchlistQuery -> clearQuery()
             is ToggleSearchActive -> toggleSearchActive()
             is ChangeListStyleClicked -> toggleListStyle(action.isGridMode)
+            is ChangeWatchlistSortOption -> changeSortOption(action.sortOption)
             is WatchlistMessageShown -> clearMessage(action.id)
             is UpNextEpisodeClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(id = action.showTraktId)))
             is ShowTitleClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(id = action.showTraktId)))
@@ -178,6 +184,12 @@ public class WatchlistPresenter(
         }
     }
 
+    private fun changeSortOption(sortOption: WatchlistSortOption) {
+        coroutineScope.launch {
+            repository.saveSortOption(sortOption)
+        }
+    }
+
     private fun syncWatchlist(forceRefresh: Boolean = false) {
         coroutineScope.launch {
             watchlistSyncInteractor(WatchlistSyncInteractor.Param(forceRefresh))
@@ -190,3 +202,14 @@ public class WatchlistPresenter(
         }
     }
 }
+
+private fun ImmutableList<WatchlistItem>.applySorting(
+    sortOption: WatchlistSortOption,
+): ImmutableList<WatchlistItem> = when (sortOption) {
+    WatchlistSortOption.ADDED_DESC -> sortedByDescending { it.lastWatchedAt ?: 0L }
+    WatchlistSortOption.ADDED_ASC -> sortedBy { it.lastWatchedAt ?: Long.MAX_VALUE }
+    WatchlistSortOption.RELEASED_DESC -> sortedByDescending { it.year.orEmpty() }
+    WatchlistSortOption.RELEASED_ASC -> sortedBy { it.year.orEmpty() }
+    WatchlistSortOption.TITLE_ASC -> sortedBy { it.title.lowercase() }
+    WatchlistSortOption.TITLE_DESC -> sortedByDescending { it.title.lowercase() }
+}.toImmutableList()
