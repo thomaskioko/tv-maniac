@@ -8,5 +8,5 @@ public interface TraktSyncRemoteDataSource {
 
     public suspend fun getLastActivities(): ApiResponse<TraktLastActivitiesResponse>
 
-    public suspend fun getWatchedShows(): ApiResponse<List<TraktWatchedShowResponse>>
+    public suspend fun getWatchedShows(limit: String = "100"): ApiResponse<List<TraktWatchedShowResponse>>
 }
