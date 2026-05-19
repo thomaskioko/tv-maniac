@@ -41,6 +41,7 @@ scaffold {
             export(projects.features.genreShows.presenter)
             export(projects.features.home.nav)
             export(projects.features.home.presenter)
+            export(projects.features.watchlist.nav)
             export(projects.features.watchlist.presenter)
             export(projects.features.moreShows.presenter)
             export(projects.features.search.presenter)
@@ -118,6 +119,7 @@ kotlin {
                 api(projects.features.progress.nav)
                 api(projects.features.library.nav)
                 api(projects.features.profile.nav)
+                api(projects.features.watchlist.nav)
                 api(projects.core.testTags)
 
                 api(projects.domain.calendar)
