@@ -21,6 +21,7 @@ import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
+import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.watchedshows.testing.FakeWatchedShowsDao
@@ -38,6 +39,7 @@ class FakeWatchlistPresenterBuilder {
     val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
     val watchedShowsRepository = FakeWatchedShowsRepository()
     val watchedShowsDao = FakeWatchedShowsDao()
+    val syncObserver = FakeSyncObserver()
 
     val testDispatcher = UnconfinedTestDispatcher()
 
@@ -88,6 +90,7 @@ class FakeWatchlistPresenterBuilder {
         traktActivityRepository = fakeTraktActivityRepository,
         watchedShowsRepository = watchedShowsRepository,
         fetchMissingShowsInteractor = fetchMissingShowsInteractor,
+        syncObserver = syncObserver,
         dispatchers = coroutineDispatcher,
     )
 
@@ -103,6 +106,7 @@ class FakeWatchlistPresenterBuilder {
         observeUpNextSectionsInteractor = observeUpNextSectionsInteractor,
         markEpisodeWatchedInteractor = fakeMarkEpisodeWatchedInteractor,
         watchlistSyncInteractor = watchlistSyncInteractor,
+        syncObserver = syncObserver,
         errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
         localizer = FakeLocalizer(),
         logger = fakeLogger,

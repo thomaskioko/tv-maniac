@@ -26,6 +26,7 @@ import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
 import com.thomaskioko.tvmaniac.shows.api.model.WatchlistSortOption
+import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.watchlist.nav.WatchlistRoot
 import com.thomaskioko.tvmaniac.watchlist.presenter.model.WatchlistItem
 import dev.zacsweers.metro.Inject
@@ -58,6 +59,7 @@ public class WatchlistPresenter(
     private val errorToStringMapper: ErrorToStringMapper,
     private val localizer: Localizer,
     private val logger: Logger,
+    syncObserver: SyncObserver,
 ) : ComponentContext by componentContext {
 
     private val watchlistLoadingState = ObservableLoadingCounter()
@@ -82,7 +84,8 @@ public class WatchlistPresenter(
         repository.observeSortOption(),
         uiMessageManager.message,
         queryFlow,
-    ) { currentState, isLoading, upNextLoading, watchlistSections, upNextSections, isGridMode, sortOption, message, query ->
+        syncObserver.isSyncing,
+    ) { currentState, isLoading, upNextLoading, watchlistSections, upNextSections, isGridMode, sortOption, message, query, isSyncing ->
         val sectionedItems = watchlistSections.toPresenter()
         val sectionedEpisodes = upNextSections.toPresenter()
         val emptyStateKey = if (query.isBlank()) {
@@ -94,6 +97,7 @@ public class WatchlistPresenter(
             query = query,
             isGridMode = isGridMode,
             isRefreshing = isLoading || upNextLoading,
+            isSyncing = isSyncing,
             sortOption = sortOption,
             emptyStateText = localizer.getString(emptyStateKey),
             watchNextItems = sectionedItems.watchNext.applySorting(sortOption),

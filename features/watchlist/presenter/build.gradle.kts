@@ -37,6 +37,7 @@ kotlin {
 
         androidMain {
             dependencies {
+                api(projects.core.syncstate.api)
                 api(projects.data.database.sqldelight)
                 implementation(projects.i18n.generator)
             }
@@ -47,6 +48,7 @@ kotlin {
                 implementation(libs.bundles.unittest)
                 implementation(libs.kotlinx.datetime)
                 implementation(projects.core.logger.testing)
+                implementation(projects.core.syncstate.testing)
                 implementation(projects.core.util.testing)
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.followedshows.testing)

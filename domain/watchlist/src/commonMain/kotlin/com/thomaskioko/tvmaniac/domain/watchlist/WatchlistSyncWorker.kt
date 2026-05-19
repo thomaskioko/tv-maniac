@@ -57,6 +57,7 @@ public class WatchlistSyncWorker(
             id = WORKER_NAME,
             intervalMs = TWELVE_HOURS_MS,
             constraints = TaskConstraints(requiresNetwork = true),
+            longRunning = true,
         )
     }
 }

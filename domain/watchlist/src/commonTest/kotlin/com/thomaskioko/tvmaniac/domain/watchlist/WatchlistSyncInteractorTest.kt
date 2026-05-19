@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsReposito
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
+import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.watchedshows.testing.FakeWatchedShowsDao
 import com.thomaskioko.tvmaniac.watchedshows.testing.FakeWatchedShowsRepository
 import io.kotest.matchers.shouldBe
@@ -44,10 +45,13 @@ class WatchlistSyncInteractorTest {
         dispatchers = dispatchers,
     )
 
+    private val syncObserver = FakeSyncObserver()
+
     private val interactor = WatchlistSyncInteractor(
         traktActivityRepository = activityRepository,
         watchedShowsRepository = watchedShowsRepository,
         fetchMissingShowsInteractor = fetchMissingShowsInteractor,
+        syncObserver = syncObserver,
         dispatchers = dispatchers,
     )
 
