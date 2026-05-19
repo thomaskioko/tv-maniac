@@ -17,6 +17,8 @@ import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.ObserveUpNextSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.ObserveWatchlistSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.WatchlistSyncInteractor
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey
+import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
@@ -54,6 +56,7 @@ public class WatchlistPresenter(
     private val watchlistSyncInteractor: WatchlistSyncInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val errorToStringMapper: ErrorToStringMapper,
+    private val localizer: Localizer,
     private val logger: Logger,
 ) : ComponentContext by componentContext {
 
@@ -82,11 +85,17 @@ public class WatchlistPresenter(
     ) { currentState, isLoading, upNextLoading, watchlistSections, upNextSections, isGridMode, sortOption, message, query ->
         val sectionedItems = watchlistSections.toPresenter()
         val sectionedEpisodes = upNextSections.toPresenter()
+        val emptyStateKey = if (query.isBlank()) {
+            StringResourceKey.LabelWatchlistEmptyInProgress
+        } else {
+            StringResourceKey.GenericEmptyContent
+        }
         currentState.copy(
             query = query,
             isGridMode = isGridMode,
             isRefreshing = isLoading || upNextLoading,
             sortOption = sortOption,
+            emptyStateText = localizer.getString(emptyStateKey),
             watchNextItems = sectionedItems.watchNext.applySorting(sortOption),
             staleItems = sectionedItems.stale.applySorting(sortOption),
             watchNextEpisodes = sectionedEpisodes.watchNext,

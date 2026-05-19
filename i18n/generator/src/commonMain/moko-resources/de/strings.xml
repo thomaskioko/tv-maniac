@@ -38,6 +38,7 @@
     </string>
     <string name="label_watchlist_sort_list">Liste sortieren</string>
     <string name="label_watchlist_empty_result">%s nicht in Ihrer Beobachtungsliste gefunden.</string>
+    <string name="label_watchlist_empty_in_progress">Nichts in Bearbeitung. Markieren Sie eine Episode als gesehen, um sie hier zu sehen.</string>
     <string name="label_followed_shows">Verfolgte Sendungen</string>
 
     <string name="label_tab_settings">Einstellungen</string>

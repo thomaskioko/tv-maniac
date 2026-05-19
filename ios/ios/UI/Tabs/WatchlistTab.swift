@@ -87,7 +87,7 @@ private extension WatchlistState {
         WatchlistScreen.State(
             title: String(\.label_tab_watchlist),
             searchPlaceholder: String(\.label_search_placeholder),
-            emptyText: String(\.generic_empty_content),
+            emptyText: emptyStateText,
             upToDateText: String(\.label_up_to_date),
             listStyleLabel: String(\.label_watchlist_list_style),
             searchLabel: String(\.label_tab_search),

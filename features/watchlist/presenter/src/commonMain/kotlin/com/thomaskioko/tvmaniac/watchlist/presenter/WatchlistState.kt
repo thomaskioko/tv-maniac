@@ -14,6 +14,7 @@ public data class WatchlistState(
     val isRefreshing: Boolean = true,
     val isSyncing: Boolean = false,
     val sortOption: WatchlistSortOption = WatchlistSortOption.ADDED_DESC,
+    val emptyStateText: String = "",
     val watchNextItems: ImmutableList<WatchlistItem> = persistentListOf(),
     val staleItems: ImmutableList<WatchlistItem> = persistentListOf(),
     val watchNextEpisodes: ImmutableList<UpNextEpisodeItem> = persistentListOf(),

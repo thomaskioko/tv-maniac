@@ -22,6 +22,7 @@ kotlin {
                 api(projects.domain.followedshows)
                 api(projects.domain.watchlist)
                 api(projects.features.watchlist.nav)
+                api(projects.i18n.api)
                 api(projects.navigation.api)
 
                 api(libs.decompose.decompose)
@@ -56,6 +57,7 @@ kotlin {
                 implementation(projects.data.upnext.testing)
                 implementation(projects.data.watchedShows.testing)
                 implementation(projects.data.watchlist.testing)
+                implementation(projects.i18n.testing)
                 implementation(projects.navigation.testing)
             }
         }

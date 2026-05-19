@@ -76,7 +76,6 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.badge_premiere
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_filter
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_search
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_toggle_list_style
-import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_empty_content
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_discover_up_next
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_up_to_date
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_watchlist_empty_result
@@ -189,7 +188,7 @@ internal fun WatchlistScreen(
                                 modifier = Modifier
                                     .testTag(WatchlistTestTags.EMPTY_STATE_TEST_TAG),
                                 imageVector = Icons.Outlined.Inbox,
-                                title = generic_empty_content.resolve(context),
+                                title = state.emptyStateText,
                                 message = message,
                             )
                         } else {

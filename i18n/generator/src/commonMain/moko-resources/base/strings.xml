@@ -42,6 +42,7 @@
     <string name="label_watchlist_search_hint">Enter a show title to search for Show</string>
     <string name="label_watchlist_sort_list">Sort List</string>
     <string name="label_watchlist_empty_result">%s not found in your watchlist.</string>
+    <string name="label_watchlist_empty_in_progress">Nothing in progress yet. Mark an episode as watched to see it here.</string>
     <string name="label_followed_shows">Followed Shows</string>
 
 
