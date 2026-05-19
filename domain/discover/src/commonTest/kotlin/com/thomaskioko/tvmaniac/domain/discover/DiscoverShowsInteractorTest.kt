@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.domain.upnext.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
+import com.thomaskioko.tvmaniac.upnext.api.model.toUpNextEpisode
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
@@ -109,7 +110,7 @@ class DiscoverShowsInteractorTest {
                 popularShows = shows,
                 trendingShows = shows,
                 upcomingShows = shows,
-                nextEpisodes = episodes,
+                nextEpisodes = episodes.mapNotNull { it.toUpNextEpisode() },
             )
             cancelAndConsumeRemainingEvents()
         }
