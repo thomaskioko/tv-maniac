@@ -79,6 +79,38 @@ class WatchlistScreenTest {
     }
 
     @Test
+    fun watchlistScreenWatchNextOnlyState() {
+        composeTestRule.captureMultiDevice("WatchNextOnly") {
+            TvManiacBackground {
+                WatchlistScreen(
+                    state = WatchlistState(
+                        isRefreshing = false,
+                        watchNextItems = watchlistItems,
+                        staleItems = persistentListOf(),
+                    ),
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun watchlistScreenEmptyInProgressState() {
+        composeTestRule.captureMultiDevice("EmptyInProgress") {
+            TvManiacBackground {
+                WatchlistScreen(
+                    state = WatchlistState(
+                        isRefreshing = false,
+                        watchNextItems = persistentListOf(),
+                        staleItems = persistentListOf(),
+                    ),
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
     fun libraryScreenEmptyState() {
         composeTestRule.captureMultiDevice("EmptySearchResult") {
             TvManiacBackground {
