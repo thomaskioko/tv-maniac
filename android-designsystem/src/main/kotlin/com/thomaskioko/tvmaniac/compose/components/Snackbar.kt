@@ -1,18 +1,16 @@
 package com.thomaskioko.tvmaniac.compose.components
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -22,40 +20,35 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.input.pointer.util.VelocityTracker
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.tooling.preview.PreviewWrapper
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlin.math.abs
-import kotlin.math.roundToInt
 
 @Stable
 public enum class SnackBarStyle(
@@ -80,6 +73,7 @@ public enum class SnackBarStyle(
     ),
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 public fun TvManiacSnackBarHost(
     message: String?,
@@ -93,11 +87,6 @@ public fun TvManiacSnackBarHost(
 ) {
     var visible by remember { mutableStateOf(false) }
     val currentOnDismiss by rememberUpdatedState(onDismiss)
-    val offsetX = remember { Animatable(0f) }
-    val coroutineScope = rememberCoroutineScope()
-    val density = LocalDensity.current
-    val dismissThreshold = remember(density) { with(density) { 56.dp.toPx() } }
-    val flingVelocityThreshold = remember(density) { with(density) { 500.dp.toPx() } }
 
     fun dismiss() {
         visible = false
@@ -105,7 +94,6 @@ public fun TvManiacSnackBarHost(
     }
 
     LaunchedEffect(message, persistent) {
-        offsetX.snapTo(0f)
         if (message != null) {
             visible = true
             if (!persistent) {
@@ -134,52 +122,36 @@ public fun TvManiacSnackBarHost(
                 targetOffsetY = { -it },
             ),
         ) {
-            TvManiacSnackBar(
-                modifier = Modifier
-                    .padding(vertical = 16.dp)
-                    .offset { IntOffset(offsetX.value.roundToInt(), 0) }
-                    .alpha(
-                        (1f - abs(offsetX.value) / (dismissThreshold * 3)).coerceIn(0f, 1f),
-                    )
-                    .pointerInput(Unit) {
-                        val velocityTracker = VelocityTracker()
-                        detectDragGestures(
-                            onDragStart = { velocityTracker.resetTracking() },
-                            onDragEnd = {
-                                val velocity = velocityTracker.calculateVelocity()
-                                val isFlingHorizontal = abs(velocity.x) > flingVelocityThreshold
+            val dismissState = rememberSwipeToDismissBoxState(
+                confirmValueChange = { value ->
+                    if (value != SwipeToDismissBoxValue.Settled) {
+                        dismiss()
+                        true
+                    } else {
+                        false
+                    }
+                },
+            )
 
-                                if (abs(offsetX.value) > dismissThreshold || isFlingHorizontal) {
-                                    val targetX = if (offsetX.value > 0 || velocity.x > flingVelocityThreshold) {
-                                        2000f // Off-screen right
-                                    } else {
-                                        -2000f // Off-screen left
-                                    }
-                                    coroutineScope.launch {
-                                        offsetX.animateTo(targetX, tween(200))
-                                        dismiss()
-                                    }
-                                } else {
-                                    coroutineScope.launch { offsetX.animateTo(0f) }
-                                }
-                            },
-                            onDragCancel = {
-                                velocityTracker.resetTracking()
-                                coroutineScope.launch { offsetX.animateTo(0f) }
-                            },
-                            onDrag = { change, dragAmount ->
-                                change.consume()
-                                velocityTracker.addPosition(
-                                    change.uptimeMillis,
-                                    change.position,
-                                )
-                                coroutineScope.launch { offsetX.snapTo(offsetX.value + dragAmount.x) }
-                            },
-                        )
-                    },
-                message = message.orEmpty(),
-                style = style,
-                loading = loading,
+            LaunchedEffect(message) {
+                if (message != null) {
+                    dismissState.reset()
+                }
+            }
+
+            SwipeToDismissBox(
+                state = dismissState,
+                backgroundContent = {},
+                content = {
+                    TvManiacSnackBar(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 16.dp),
+                        message = message.orEmpty(),
+                        style = style,
+                        loading = loading,
+                    )
+                },
             )
         }
     }
@@ -194,7 +166,6 @@ internal fun TvManiacSnackBar(
 ) {
     Row(
         modifier = modifier
-            .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .clip(MaterialTheme.shapes.large)
             .background(style.backgroundColor)
@@ -262,10 +233,18 @@ public fun StandardSnackBar(
 private fun TvManiacSnackBarPreview(
     @PreviewParameter(SnackBarPreviewParameterProvider::class) param: SnackBarPreviewParam,
 ) {
-    TvManiacSnackBar(
-        message = param.message,
-        style = param.style,
-    )
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.TopCenter,
+    ) {
+        TvManiacSnackBar(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp),
+            message = param.message,
+            style = param.style,
+        )
+    }
 }
 
 @ThemePreviews
