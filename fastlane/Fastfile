@@ -35,8 +35,7 @@ platform :ios do
       xcargs: "-retry-tests-on-failure -skipPackagePluginValidation",
       number_of_retries: 2,
       fail_build: true,
-      derived_data_path: DERIVED_DATA_PATH,
-      cloned_source_packages_path: "ios/SourcePackages"
+      derived_data_path: DERIVED_DATA_PATH
     )
   end
 
@@ -52,8 +51,7 @@ platform :ios do
       xcargs: "SWIFT_ACTIVE_COMPILATION_CONDITIONS='$(inherited) SNAPSHOT_RECORD' -skipPackagePluginValidation",
       number_of_retries: 0,
       fail_build: false,
-      derived_data_path: DERIVED_DATA_PATH,
-      cloned_source_packages_path: "ios/SourcePackages"
+      derived_data_path: DERIVED_DATA_PATH
     )
   end
 
