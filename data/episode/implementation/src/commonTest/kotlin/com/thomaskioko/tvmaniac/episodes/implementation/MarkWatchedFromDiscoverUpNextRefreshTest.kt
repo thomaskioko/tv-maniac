@@ -153,6 +153,13 @@ internal class MarkWatchedFromDiscoverUpNextRefreshTest : BaseDatabaseTest() {
             followedAt = now,
             pendingAction = "NOTHING",
         )
+        database.traktWatchedShowsQueries.upsert(
+            traktId = Id(SHOW_ID),
+            tmdbId = Id(SHOW_ID),
+            plays = 1L,
+            lastWatchedAt = now,
+            lastUpdatedAt = now,
+        )
         database.seasonsQueries.upsert(
             id = Id(SEASON_ID),
             show_trakt_id = Id(SHOW_ID),

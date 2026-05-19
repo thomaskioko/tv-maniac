@@ -29,26 +29,22 @@ public class DefaultNextEpisodeDao(
             .asFlow()
             .mapToList(dispatchers.databaseRead)
             .map { rows ->
-                rows.mapNotNull { it.toNextEpisodeWithShow() }
+                rows.map { it.toNextEpisodeWithShow() }
                     .filterActionableEpisodes(dateTimeProvider.nowMillis())
             }
             .catch { emit(emptyList()) }
     }
 }
 
-private fun NextEpisodesForWatchlist.toNextEpisodeWithShow(): NextEpisodeWithShow? {
-    val episodeId = episode_id?.id ?: return null
-    val seasonId = season_id?.id ?: return null
-    val seasonNumber = season_number ?: return null
-    val episodeNumber = episode_number ?: return null
+private fun NextEpisodesForWatchlist.toNextEpisodeWithShow(): NextEpisodeWithShow {
     return NextEpisodeWithShow(
         showTraktId = show_trakt_id.id,
         showTmdbId = show_tmdb_id.id,
-        episodeId = episodeId,
+        episodeId = episode_id?.id,
         episodeName = episode_name,
-        seasonId = seasonId,
-        seasonNumber = seasonNumber,
-        episodeNumber = episodeNumber,
+        seasonId = season_id?.id,
+        seasonNumber = season_number,
+        episodeNumber = episode_number,
         runtime = runtime,
         stillPath = still_path,
         overview = overview,
