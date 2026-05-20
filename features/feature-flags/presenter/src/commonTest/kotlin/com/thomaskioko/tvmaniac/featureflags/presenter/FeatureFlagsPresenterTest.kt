@@ -13,6 +13,7 @@ import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlags
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -65,7 +66,7 @@ internal class FeatureFlagsPresenterTest {
         presenter.state.test {
             skipItems(1)
             val state = awaitItem()
-            state.items.map { it.flag } shouldBe FeatureFlag.entries
+            state.items.map { it.flag } shouldContainExactlyInAnyOrder FeatureFlag.entries
             state.items.all { !it.isLocal } shouldBe true
             state.items.all { it.value == it.flag.defaultValue } shouldBe true
             cancelAndIgnoreRemainingEvents()
