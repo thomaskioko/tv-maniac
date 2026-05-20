@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
+import com.thomaskioko.tvmaniac.shows.testing.FakeTvShowsDao
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.trakt.api.model.EpisodeIds
 import com.thomaskioko.tvmaniac.trakt.api.model.ShowIds
@@ -41,17 +42,23 @@ internal class DefaultContinueWatchingRepositoryTest {
     private val activityRepository = FakeTraktActivityRepository()
     private val requestManager = FakeRequestManagerRepository()
     private val continueWatchingDao = FakeContinueWatchingDao()
+    private val tvShowsDao = FakeTvShowsDao()
     private val dateTimeProvider = FakeDateTimeProvider(currentTime = NOW)
 
     private lateinit var repository: DefaultContinueWatchingRepository
 
     @BeforeTest
     fun setUp() {
+        val transactionRunner = object : DatabaseTransactionRunner {
+            override fun <T> invoke(block: () -> T): T = block()
+        }
         val progressFetcher = ProgressContinueWatchingFetcher(
             traktSyncDataSource = syncDataSource,
             traktUserDataSource = userDataSource,
             traktActivityRepository = activityRepository,
             continueWatchingDao = continueWatchingDao,
+            tvShowsDao = tvShowsDao,
+            transactionRunner = transactionRunner,
         )
         val nitroFetcher = NitroContinueWatchingFetcher(
             traktSyncDataSource = syncDataSource,
@@ -64,11 +71,10 @@ internal class DefaultContinueWatchingRepositoryTest {
             progressFetcher = progressFetcher,
             nitroFetcher = nitroFetcher,
             continueWatchingDao = continueWatchingDao,
+            tvShowsDao = tvShowsDao,
             requestManagerRepository = requestManager,
             traktActivityRepository = activityRepository,
-            transactionRunner = object : DatabaseTransactionRunner {
-                override fun <T> invoke(block: () -> T): T = block()
-            },
+            transactionRunner = transactionRunner,
             dispatchers = dispatchers,
         )
         repository = DefaultContinueWatchingRepository(

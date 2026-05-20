@@ -85,5 +85,7 @@ private fun TraktUpNextNitroResponse.toEntry(): ContinueWatchingEntry {
         completedCount = progress.completed.toLong(),
         lastWatchedAt = lastWatchedAtMs,
         lastUpdatedAt = lastWatchedAtMs,
+        title = show.title,
+        year = show.year,
     )
 }

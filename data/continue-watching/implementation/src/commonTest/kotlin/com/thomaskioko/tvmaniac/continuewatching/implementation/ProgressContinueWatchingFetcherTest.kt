@@ -3,10 +3,13 @@ package com.thomaskioko.tvmaniac.continuewatching.implementation
 import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingDao
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
+import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
+import com.thomaskioko.tvmaniac.shows.testing.FakeTvShowsDao
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.trakt.api.model.EpisodeIds
 import com.thomaskioko.tvmaniac.trakt.api.model.ShowIds
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktHiddenItemResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktHistoryItemResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktNextEpisodeResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktPlaybackEpisodeResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
@@ -32,6 +35,10 @@ internal class ProgressContinueWatchingFetcherTest {
     private val userDataSource = FakeTraktUserRemoteDataSource()
     private val activityRepository = FakeTraktActivityRepository()
     private val continueWatchingDao = FakeContinueWatchingDao()
+    private val tvShowsDao = FakeTvShowsDao()
+    private val transactionRunner = object : DatabaseTransactionRunner {
+        override fun <T> invoke(block: () -> T): T = block()
+    }
 
     private lateinit var fetcher: ProgressContinueWatchingFetcher
 
@@ -42,6 +49,8 @@ internal class ProgressContinueWatchingFetcherTest {
             traktUserDataSource = userDataSource,
             traktActivityRepository = activityRepository,
             continueWatchingDao = continueWatchingDao,
+            tvShowsDao = tvShowsDao,
+            transactionRunner = transactionRunner,
         )
     }
 
@@ -60,6 +69,32 @@ internal class ProgressContinueWatchingFetcherTest {
         result.shouldNotBeNull().map { it.traktId } shouldContainExactlyInAnyOrder listOf(THE_WIRE_ID)
         syncDataSource.showWatchedProgressInvocations(BREAKING_BAD_ID) shouldBe 0
         syncDataSource.showWatchedProgressInvocations(THE_WIRE_ID) shouldBe 1
+    }
+
+    @Test
+    fun `should bootstrap candidates from history given empty playback and empty dao`() = runTest(testDispatcher) {
+        // Fresh install: nothing is currently paused mid-episode and the local DAO is empty.
+        // The fetcher must still surface recently watched shows so Continue Watching is not
+        // empty until the user happens to pause an episode.
+        syncDataSource.setPlaybackEpisodes(ApiResponse.Success(emptyList()))
+        syncDataSource.setHistoryEpisodes(
+            ApiResponse.Success(
+                listOf(
+                    historyEpisode(showTraktId = BREAKING_BAD_ID, showTmdbId = 1396, title = "Breaking Bad"),
+                    historyEpisode(showTraktId = THE_WIRE_ID, showTmdbId = 1438, title = "The Wire"),
+                ),
+            ),
+        )
+        syncDataSource.setShowWatchedProgress(BREAKING_BAD_ID, ApiResponse.Success(breakingBadProgress))
+        syncDataSource.setShowWatchedProgress(THE_WIRE_ID, ApiResponse.Success(theWireProgress))
+
+        val result = fetcher.run(forceRefresh = false)
+
+        result.shouldNotBeNull() shouldContainExactlyInAnyOrder listOf(
+            breakingBadEntry,
+            theWireEntry,
+        )
+        syncDataSource.historyEpisodesInvocations() shouldBe 1
     }
 
     @Test
@@ -251,6 +286,7 @@ private val breakingBadEntry = ContinueWatchingEntry(
     completedCount = 30,
     lastWatchedAt = Instant.parse("2026-05-10T20:15:00Z").toEpochMilliseconds(),
     lastUpdatedAt = Instant.parse("2026-05-10T20:15:00Z").toEpochMilliseconds(),
+    title = "Breaking Bad",
 )
 
 private val theWireEntry = ContinueWatchingEntry(
@@ -260,6 +296,7 @@ private val theWireEntry = ContinueWatchingEntry(
     completedCount = 12,
     lastWatchedAt = Instant.parse("2026-04-22T09:00:00Z").toEpochMilliseconds(),
     lastUpdatedAt = Instant.parse("2026-04-22T09:00:00Z").toEpochMilliseconds(),
+    title = "The Wire",
 )
 
 private fun hiddenItem(traktId: Long): TraktHiddenItemResponse =
@@ -278,3 +315,19 @@ private fun nextEpisode(seasonNumber: Int, episodeNumber: Int): TraktNextEpisode
         episodeNumber = episodeNumber,
         ids = EpisodeIds(trakt = seasonNumber * 100 + episodeNumber, tmdb = null),
     )
+
+private fun historyEpisode(
+    showTraktId: Long,
+    showTmdbId: Long?,
+    title: String = "Show $showTraktId",
+): TraktHistoryItemResponse = TraktHistoryItemResponse(
+    id = showTraktId * 10,
+    watchedAt = "2026-05-10T20:15:00Z",
+    action = "watch",
+    type = "episode",
+    episode = nextEpisode(seasonNumber = 1, episodeNumber = 1),
+    show = TraktShowResponse(
+        title = title,
+        ids = ShowIds(trakt = showTraktId, slug = "show-$showTraktId", tmdb = showTmdbId),
+    ),
+)

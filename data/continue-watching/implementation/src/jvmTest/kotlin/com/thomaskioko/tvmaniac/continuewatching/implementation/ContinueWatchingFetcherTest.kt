@@ -4,6 +4,8 @@ import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingDao
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
+import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
+import com.thomaskioko.tvmaniac.shows.testing.FakeTvShowsDao
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.trakt.api.model.EpisodeIds
 import com.thomaskioko.tvmaniac.trakt.api.model.ShowIds
@@ -42,6 +44,10 @@ internal class ContinueWatchingFetcherTest {
     private val userDataSource = FakeTraktUserRemoteDataSource()
     private val activityRepository = FakeTraktActivityRepository()
     private val continueWatchingDao = FakeContinueWatchingDao()
+    private val tvShowsDao = FakeTvShowsDao()
+    private val transactionRunner = object : DatabaseTransactionRunner {
+        override fun <T> invoke(block: () -> T): T = block()
+    }
     private val dateTimeProvider = FakeDateTimeProvider(currentTime = NOW)
     private val logger = FakeLogger()
 
@@ -56,6 +62,8 @@ internal class ContinueWatchingFetcherTest {
             traktUserDataSource = userDataSource,
             traktActivityRepository = activityRepository,
             continueWatchingDao = continueWatchingDao,
+            tvShowsDao = tvShowsDao,
+            transactionRunner = transactionRunner,
         )
         nitroFetcher = NitroContinueWatchingFetcher(
             traktSyncDataSource = syncDataSource,

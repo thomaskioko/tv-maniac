@@ -7,4 +7,6 @@ public data class ContinueWatchingEntry(
     val completedCount: Long,
     val lastWatchedAt: Long,
     val lastUpdatedAt: Long,
+    val title: String? = null,
+    val year: Long? = null,
 )

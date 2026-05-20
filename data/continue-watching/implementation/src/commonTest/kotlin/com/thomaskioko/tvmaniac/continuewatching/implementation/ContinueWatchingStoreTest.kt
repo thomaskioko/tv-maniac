@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
+import com.thomaskioko.tvmaniac.shows.testing.FakeTvShowsDao
 import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.trakt.api.model.EpisodeIds
@@ -44,6 +45,7 @@ internal class ContinueWatchingStoreTest {
     private val syncDataSource = FakeTraktSyncRemoteDataSource()
     private val userDataSource = FakeTraktUserRemoteDataSource()
     private val continueWatchingDao = FakeContinueWatchingDao()
+    private val tvShowsDao = FakeTvShowsDao()
     private val requestManager = FakeRequestManagerRepository()
     private val activityRepository = FakeTraktActivityRepository()
     private val dateTimeProvider = FakeDateTimeProvider(currentTime = NOW)
@@ -61,6 +63,8 @@ internal class ContinueWatchingStoreTest {
             traktUserDataSource = userDataSource,
             traktActivityRepository = activityRepository,
             continueWatchingDao = continueWatchingDao,
+            tvShowsDao = tvShowsDao,
+            transactionRunner = transactionRunner,
         )
         nitroFetcher = NitroContinueWatchingFetcher(
             traktSyncDataSource = syncDataSource,
@@ -73,6 +77,7 @@ internal class ContinueWatchingStoreTest {
             progressFetcher = progressFetcher,
             nitroFetcher = nitroFetcher,
             continueWatchingDao = continueWatchingDao,
+            tvShowsDao = tvShowsDao,
             requestManagerRepository = requestManager,
             traktActivityRepository = activityRepository,
             transactionRunner = transactionRunner,
@@ -254,6 +259,7 @@ private val breakingBadEntry = ContinueWatchingEntry(
     completedCount = 30,
     lastWatchedAt = Instant.parse("2026-05-10T20:15:00Z").toEpochMilliseconds(),
     lastUpdatedAt = Instant.parse("2026-05-10T20:15:00Z").toEpochMilliseconds(),
+    title = "Breaking Bad",
 )
 
 private val theWireEntry = ContinueWatchingEntry(
@@ -263,4 +269,5 @@ private val theWireEntry = ContinueWatchingEntry(
     completedCount = 12,
     lastWatchedAt = Instant.parse("2026-04-22T09:00:00Z").toEpochMilliseconds(),
     lastUpdatedAt = Instant.parse("2026-04-22T09:00:00Z").toEpochMilliseconds(),
+    title = "The Wire",
 )

@@ -194,6 +194,7 @@ private val breakingBadEntry = ContinueWatchingEntry(
     completedCount = 30,
     lastWatchedAt = Instant.parse("2026-05-10T20:15:00Z").toEpochMilliseconds(),
     lastUpdatedAt = Instant.parse("2026-05-10T20:15:00Z").toEpochMilliseconds(),
+    title = "Breaking Bad",
 )
 
 private val theWireEntry = ContinueWatchingEntry(
@@ -203,6 +204,7 @@ private val theWireEntry = ContinueWatchingEntry(
     completedCount = 12,
     lastWatchedAt = Instant.parse("2026-04-22T09:00:00Z").toEpochMilliseconds(),
     lastUpdatedAt = Instant.parse("2026-04-22T09:00:00Z").toEpochMilliseconds(),
+    title = "The Wire",
 )
 
 private fun hiddenItem(traktId: Long): TraktHiddenItemResponse =

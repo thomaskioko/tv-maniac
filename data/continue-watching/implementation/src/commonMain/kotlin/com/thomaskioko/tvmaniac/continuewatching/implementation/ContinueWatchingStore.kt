@@ -8,8 +8,13 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.get
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.storeBuilder
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.usingDispatchers
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
+import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.TmdbId
+import com.thomaskioko.tvmaniac.db.TraktId
+import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.CONTINUE_WATCHING_SYNC
+import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityRepository
 import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType
 import dev.zacsweers.metro.AppScope
@@ -29,6 +34,7 @@ public class ContinueWatchingStore(
     @Progress private val progressFetcher: ContinueWatchingFetcher,
     @Nitro private val nitroFetcher: ContinueWatchingFetcher,
     private val continueWatchingDao: ContinueWatchingDao,
+    private val tvShowsDao: TvShowsDao,
     private val requestManagerRepository: RequestManagerRepository,
     private val traktActivityRepository: TraktActivityRepository,
     private val transactionRunner: DatabaseTransactionRunner,
@@ -59,6 +65,7 @@ public class ContinueWatchingStore(
                         .filter { it.traktId !in incomingTraktIds }
                         .forEach { continueWatchingDao.deleteByTraktId(it.traktId) }
                     entries.forEach { continueWatchingDao.upsert(it) }
+                    entries.forEach { entry -> entry.toMinimalTvshow()?.let(tvShowsDao::upsertMerging) }
                 }
                 requestManagerRepository.upsert(
                     entityId = CONTINUE_WATCHING_SYNC.requestId,
@@ -103,4 +110,25 @@ public class ContinueWatchingStore(
             }
         }
     }
+}
+
+internal fun ContinueWatchingEntry.toMinimalTvshow(): Tvshow? {
+    val tmdb = tmdbId ?: return null
+    val name = title ?: return null
+    return Tvshow(
+        trakt_id = Id<TraktId>(traktId),
+        tmdb_id = Id<TmdbId>(tmdb),
+        name = name,
+        overview = "",
+        language = null,
+        year = year?.toString(),
+        ratings = 0.0,
+        vote_count = 0,
+        genres = null,
+        status = null,
+        episode_numbers = null,
+        season_numbers = null,
+        poster_path = null,
+        backdrop_path = null,
+    )
 }

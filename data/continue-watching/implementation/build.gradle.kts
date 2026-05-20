@@ -18,6 +18,7 @@ kotlin {
                 api(projects.core.util.api)
                 api(projects.data.database.sqldelight)
                 api(projects.data.requestManager.api)
+                api(projects.data.shows.api)
                 api(projects.data.syncActivity.api)
                 api(projects.data.continueWatching.api)
 
@@ -34,6 +35,7 @@ kotlin {
                 implementation(projects.core.util.testing)
                 implementation(projects.data.database.testing)
                 implementation(projects.data.requestManager.testing)
+                implementation(projects.data.shows.testing)
                 implementation(projects.data.syncActivity.testing)
                 implementation(projects.data.continueWatching.testing)
             }
