@@ -94,6 +94,8 @@ kotlin {
             api(projects.data.trendingshows.implementation)
             api(projects.data.upcomingshows.implementation)
             api(projects.data.upnext.implementation)
+            api(projects.core.featureFlags.api)
+            api(projects.core.featureFlags.testing)
             api(projects.data.continueWatching.implementation)
             api(projects.data.user.api)
             api(projects.data.user.implementation)
