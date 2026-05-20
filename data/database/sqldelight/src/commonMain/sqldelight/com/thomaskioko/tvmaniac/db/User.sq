@@ -44,7 +44,7 @@ WHERE slug = ?;
 deleteAll:
 DELETE FROM user;
 
-getRandomWatchlistBackdrop:
+getRandomLibraryBackdrop:
 SELECT
     COALESCE(t.backdrop_path, t.poster_path) AS image_url
 FROM followed_shows fs
@@ -54,7 +54,7 @@ WHERE COALESCE(t.backdrop_path, t.poster_path) IS NOT NULL
 ORDER BY fs.followed_at DESC
 LIMIT 1;
 
-observeWatchlistBackdrop:
+observeLibraryBackdrop:
 SELECT
     COALESCE(t.backdrop_path, t.poster_path) AS image_url
 FROM followed_shows fs
