@@ -4,11 +4,11 @@ import com.thomaskioko.tvmaniac.core.base.TraktApi
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.authSafeRequest
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.TraktSyncRemoteDataSource
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktHistoryItemResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktLastActivitiesResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktPlaybackEpisodeResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUpNextNitroResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedProgressResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedShowResponse
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
@@ -42,17 +42,6 @@ public class DefaultTraktSyncRemoteDataSource(
             }
         }
 
-    override suspend fun getHistoryEpisodes(
-        limit: Int,
-    ): ApiResponse<List<TraktHistoryItemResponse>> =
-        httpClient.authSafeRequest {
-            url {
-                method = HttpMethod.Get
-                path("sync/history/episodes")
-                parameters.append("limit", limit.toString())
-            }
-        }
-
     override suspend fun getShowWatchedProgress(
         traktId: Long,
         lastActivity: String?,
@@ -72,12 +61,28 @@ public class DefaultTraktSyncRemoteDataSource(
     override suspend fun getUpNextNitro(
         intent: String,
         limit: Int,
+        page: Int,
     ): ApiResponse<List<TraktUpNextNitroResponse>> =
         httpClient.authSafeRequest {
             url {
                 method = HttpMethod.Get
                 path("sync/progress/up_next_nitro")
                 parameters.append("intent", intent)
+                parameters.append("limit", limit.toString())
+                parameters.append("page", page.toString())
+            }
+        }
+
+    override suspend fun getWatchedShows(
+        page: Int,
+        limit: Int,
+    ): ApiResponse<List<TraktWatchedShowResponse>> =
+        httpClient.authSafeRequest {
+            url {
+                method = HttpMethod.Get
+                path("sync/watched/shows")
+                parameters.append("extended", "noseasons")
+                parameters.append("page", page.toString())
                 parameters.append("limit", limit.toString())
             }
         }

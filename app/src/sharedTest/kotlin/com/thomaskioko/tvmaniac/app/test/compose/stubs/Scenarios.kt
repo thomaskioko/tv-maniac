@@ -227,13 +227,13 @@ internal class Scenarios(
         /**
          * Stubs the Continue Watching pipeline that drives the Watchlist and Up Next tabs:
          * `/sync/progress/up_next_nitro` (default Nitro fetcher) plus the documented fallback
-         * (`/sync/playback/episodes`). Per-show metadata fan-out reuses [Library]'s show stubs
-         * since the same Trakt ids appear in both fixtures.
+         * (`/sync/watched/shows` + `/sync/playback/episodes`). Per-show metadata fan-out reuses
+         * [Library]'s show stubs since the same Trakt ids appear in both fixtures.
          */
         fun stubWatchlistSyncEndpoints() {
             mockHandler.stubEndpoint(Endpoints.Trakt.SyncProgressUpNextNitro)
             mockHandler.stubEndpoint(Endpoints.Trakt.SyncPlaybackEpisodes)
-            mockHandler.stubEndpoint(Endpoints.Trakt.SyncHistoryEpisodes)
+            mockHandler.stubEndpoint(Endpoints.Trakt.SyncWatchedShows)
             mockHandler.stubEndpoint(Endpoints.Trakt.ShowProgressWatched)
             mockHandler.stubEndpoint(Endpoints.Trakt.UsersHiddenProgressWatched)
 

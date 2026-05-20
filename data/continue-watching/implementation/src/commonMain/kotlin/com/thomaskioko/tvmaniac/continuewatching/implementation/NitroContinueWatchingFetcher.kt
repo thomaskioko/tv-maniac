@@ -54,8 +54,8 @@ public class NitroContinueWatchingFetcher(
         nitro
             .filter { it.show.ids.trakt !in hiddenIds }
             // Load-bearing filter. Same rationale as ProgressContinueWatchingFetcher: Nitro can
-            // return null next_episode for reset shows and other edge cases where
-            // the row should not surface in the watchlist.
+            // return null next_episode for reset shows and other edge cases where the row should
+            // not surface in the watchlist.
             .filter { it.progress.nextEpisode != null }
             .map { it.toEntry() }
     }

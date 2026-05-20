@@ -65,6 +65,7 @@ internal class ContinueWatchingStoreTest {
             continueWatchingDao = continueWatchingDao,
             tvShowsDao = tvShowsDao,
             transactionRunner = transactionRunner,
+            logger = logger,
         )
         nitroFetcher = NitroContinueWatchingFetcher(
             traktSyncDataSource = syncDataSource,

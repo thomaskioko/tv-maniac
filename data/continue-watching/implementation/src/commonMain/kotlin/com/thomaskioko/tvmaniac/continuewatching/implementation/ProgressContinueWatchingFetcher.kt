@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.continuewatching.implementation
 import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingDao
 import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
 import com.thomaskioko.tvmaniac.core.base.extensions.parallelMap
+import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
@@ -10,6 +11,7 @@ import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktSyncRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.TraktUserRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedProgressResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedShowResponse
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
@@ -30,18 +32,19 @@ public class ProgressContinueWatchingFetcher(
     private val continueWatchingDao: ContinueWatchingDao,
     private val tvShowsDao: TvShowsDao,
     private val transactionRunner: DatabaseTransactionRunner,
+    private val logger: Logger,
 ) : ContinueWatchingFetcher {
 
     public override suspend fun run(forceRefresh: Boolean): List<ContinueWatchingEntry>? = coroutineScope {
         val cursor = traktActivityRepository.getEpisodesWatchedSyncTimeStamp()
         val playbackDeferred = async { traktSyncDataSource.getPlaybackEpisodes() }
-        val historyDeferred = async { traktSyncDataSource.getHistoryEpisodes() }
         val hiddenDeferred = async { traktUserDataSource.getHiddenProgressWatched() }
+        val watchedShowsDeferred = async { drainWatchedShows() }
 
         val playbackResponse = playbackDeferred.await()
         if (playbackResponse !is ApiResponse.Success) return@coroutineScope null
         val playback = playbackResponse.body
-        val history = historyDeferred.await().bodyOrEmpty()
+        val watchedShows = watchedShowsDeferred.await()
         val cachedEntries = continueWatchingDao.entries()
         val hiddenIds = hiddenDeferred.await().bodyOrEmpty()
             .mapNotNull { it.show?.ids?.trakt }
@@ -51,8 +54,8 @@ public class ProgressContinueWatchingFetcher(
             cachedEntries.forEach { entry ->
                 put(entry.traktId, ShowDescriptor(entry.tmdbId, entry.title, entry.year))
             }
-            history.forEach { item ->
-                val show = item.show ?: return@forEach
+            watchedShows.forEach { item ->
+                val show = item.show
                 put(show.ids.trakt, ShowDescriptor(show.ids.tmdb, show.title, show.year))
             }
             playback.forEach { item ->
@@ -89,12 +92,26 @@ public class ProgressContinueWatchingFetcher(
             }
         }
 
-        candidates.parallelMap(concurrency = CONCURRENCY) { traktId ->
+        val perShowResults = candidates.parallelMap(concurrency = CONCURRENCY) { traktId ->
             traktId to traktSyncDataSource.getShowWatchedProgress(
                 traktId = traktId,
                 lastActivity = lastActivity,
             )
-        }.mapNotNull { (traktId, response) ->
+        }
+        val withNextEpisode = perShowResults.count { (_, response) ->
+            (response as? ApiResponse.Success)?.body?.nextEpisode != null
+        }
+        val outcomeBreakdown = perShowResults
+            .map { (_, response) -> response.outcomeLabel() }
+            .groupingBy { it }
+            .eachCount()
+        logger.debug(
+            LOG_TAG,
+            "Progress per-show progress fan-out: candidates=${candidates.size} " +
+                "withNextEpisode=$withNextEpisode breakdown=$outcomeBreakdown",
+        )
+
+        perShowResults.mapNotNull { (traktId, response) ->
             val progress = (response as? ApiResponse.Success)?.body
                 ?: return@mapNotNull null
             // Load-bearing filter. Catches reset shows (`reset_at` populated) and any case where
@@ -105,13 +122,38 @@ public class ProgressContinueWatchingFetcher(
         }
     }
 
+    private suspend fun drainWatchedShows(): List<TraktWatchedShowResponse> {
+        val collected = mutableListOf<TraktWatchedShowResponse>()
+        var page = 1
+        while (true) {
+            val response = traktSyncDataSource.getWatchedShows(page = page, limit = WATCHED_SHOWS_PAGE_SIZE)
+            val body = (response as? ApiResponse.Success)?.body ?: break
+            if (body.isEmpty()) break
+            collected += body
+            if (body.size < WATCHED_SHOWS_PAGE_SIZE) break
+            page++
+        }
+        return collected
+    }
+
     private companion object {
         const val CONCURRENCY = 4
+        const val WATCHED_SHOWS_PAGE_SIZE = 100
+        const val LOG_TAG = "ProgressContinueWatchingFetcher"
     }
 }
 
 private fun <T> ApiResponse<List<T>>.bodyOrEmpty(): List<T> =
     (this as? ApiResponse.Success)?.body ?: emptyList()
+
+private fun ApiResponse<*>.outcomeLabel(): String = when (this) {
+    is ApiResponse.Success -> "ok"
+    is ApiResponse.Error.HttpError -> "http_$code"
+    is ApiResponse.Error.NetworkFailure -> "network_$kind"
+    is ApiResponse.Error.OfflineError -> "offline"
+    is ApiResponse.Error.SerializationError -> "serialization"
+    is ApiResponse.Unauthenticated -> "unauthenticated"
+}
 
 private data class ShowDescriptor(
     val tmdbId: Long?,

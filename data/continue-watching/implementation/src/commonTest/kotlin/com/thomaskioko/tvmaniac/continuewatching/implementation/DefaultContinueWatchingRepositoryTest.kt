@@ -59,6 +59,7 @@ internal class DefaultContinueWatchingRepositoryTest {
             continueWatchingDao = continueWatchingDao,
             tvShowsDao = tvShowsDao,
             transactionRunner = transactionRunner,
+            logger = FakeLogger(),
         )
         val nitroFetcher = NitroContinueWatchingFetcher(
             traktSyncDataSource = syncDataSource,

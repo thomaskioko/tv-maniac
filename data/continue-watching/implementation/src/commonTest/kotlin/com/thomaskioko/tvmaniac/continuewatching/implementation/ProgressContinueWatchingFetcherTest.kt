@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.continuewatching.implementation
 
 import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingDao
+import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.shows.testing.FakeTvShowsDao
@@ -9,11 +10,11 @@ import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.trakt.api.model.EpisodeIds
 import com.thomaskioko.tvmaniac.trakt.api.model.ShowIds
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktHiddenItemResponse
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktHistoryItemResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktNextEpisodeResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktPlaybackEpisodeResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedProgressResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedShowResponse
 import com.thomaskioko.tvmaniac.trakt.testing.FakeTraktSyncRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.testing.FakeTraktUserRemoteDataSource
 import io.kotest.matchers.collections.shouldBeEmpty
@@ -51,6 +52,7 @@ internal class ProgressContinueWatchingFetcherTest {
             continueWatchingDao = continueWatchingDao,
             tvShowsDao = tvShowsDao,
             transactionRunner = transactionRunner,
+            logger = FakeLogger(),
         )
     }
 
@@ -72,16 +74,16 @@ internal class ProgressContinueWatchingFetcherTest {
     }
 
     @Test
-    fun `should bootstrap candidates from history given empty playback and empty dao`() = runTest(testDispatcher) {
+    fun `should bootstrap candidates from watched shows given empty playback and empty dao`() = runTest(testDispatcher) {
         // Fresh install: nothing is currently paused mid-episode and the local DAO is empty.
-        // The fetcher must still surface recently watched shows so Continue Watching is not
+        // The fetcher must still surface the user's full watch list so Continue Watching is not
         // empty until the user happens to pause an episode.
         syncDataSource.setPlaybackEpisodes(ApiResponse.Success(emptyList()))
-        syncDataSource.setHistoryEpisodes(
+        syncDataSource.setWatchedShows(
             ApiResponse.Success(
                 listOf(
-                    historyEpisode(showTraktId = BREAKING_BAD_ID, showTmdbId = 1396, title = "Breaking Bad"),
-                    historyEpisode(showTraktId = THE_WIRE_ID, showTmdbId = 1438, title = "The Wire"),
+                    watchedShow(showTraktId = BREAKING_BAD_ID, showTmdbId = 1396, title = "Breaking Bad"),
+                    watchedShow(showTraktId = THE_WIRE_ID, showTmdbId = 1438, title = "The Wire"),
                 ),
             ),
         )
@@ -94,7 +96,7 @@ internal class ProgressContinueWatchingFetcherTest {
             breakingBadEntry,
             theWireEntry,
         )
-        syncDataSource.historyEpisodesInvocations() shouldBe 1
+        syncDataSource.watchedShowsInvocations(page = 1) shouldBe 1
     }
 
     @Test
@@ -316,16 +318,14 @@ private fun nextEpisode(seasonNumber: Int, episodeNumber: Int): TraktNextEpisode
         ids = EpisodeIds(trakt = seasonNumber * 100 + episodeNumber, tmdb = null),
     )
 
-private fun historyEpisode(
+private fun watchedShow(
     showTraktId: Long,
     showTmdbId: Long?,
     title: String = "Show $showTraktId",
-): TraktHistoryItemResponse = TraktHistoryItemResponse(
-    id = showTraktId * 10,
-    watchedAt = "2026-05-10T20:15:00Z",
-    action = "watch",
-    type = "episode",
-    episode = nextEpisode(seasonNumber = 1, episodeNumber = 1),
+): TraktWatchedShowResponse = TraktWatchedShowResponse(
+    plays = 1,
+    lastWatchedAt = "2026-05-10T20:15:00Z",
+    lastUpdatedAt = "2026-05-10T20:15:00Z",
     show = TraktShowResponse(
         title = title,
         ids = ShowIds(trakt = showTraktId, slug = "show-$showTraktId", tmdb = showTmdbId),
