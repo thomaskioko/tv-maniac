@@ -23,9 +23,8 @@ import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeN
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncTraktCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
-import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
-import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor.Param
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
 import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
 import com.thomaskioko.tvmaniac.domain.traktlists.CreateTraktListInteractor
 import com.thomaskioko.tvmaniac.domain.traktlists.ObserveTraktListsInteractor
@@ -80,7 +79,7 @@ public class ShowDetailsPresenter(
     private val watchProvidersInteractor: WatchProvidersInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val markEpisodeUnwatchedInteractor: MarkEpisodeUnwatchedInteractor,
-    private val showContentSyncInteractor: ShowContentSyncInteractor,
+    private val syncShowMetadataInteractor: SyncShowMetadataInteractor,
     private val syncTraktCalendarInteractor: SyncTraktCalendarInteractor,
     private val scheduleEpisodeNotificationsInteractor: ScheduleEpisodeNotificationsInteractor,
     private val notificationManager: NotificationManager,
@@ -211,7 +210,7 @@ public class ShowDetailsPresenter(
             }
 
             DetailBackClicked -> navigator.navigateBack()
-            ReloadShowDetails -> refreshShowContent(isUserInitiated = true)
+            ReloadShowDetails -> refreshShowContent()
             is ShowDetailsMessageShown -> coroutineScope.launch { uiMessageManager.clearMessage(action.id) }
             DismissShowsListSheet -> coroutineScope.launch { _state.update { it.copy(showListSheet = false) } }
             ShowShowsListSheet -> {
@@ -295,14 +294,13 @@ public class ShowDetailsPresenter(
         }
     }
 
-    private fun observeShowDetails(forceReload: Boolean = false, isUserInitiated: Boolean = false) {
+    private fun observeShowDetails(forceReload: Boolean = false) {
         coroutineScope.launch {
             showDetailsInteractor(ShowDetailsInteractor.Param(showTraktId, forceReload))
                 .collectStatus(showDetailsLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
 
             syncShowContent(
                 forceRefresh = forceReload,
-                isUserInitiated = isUserInitiated,
                 loadingState = showDetailsLoadingState,
             )
         }
@@ -318,20 +316,18 @@ public class ShowDetailsPresenter(
         }
     }
 
-    private fun refreshShowContent(isUserInitiated: Boolean) {
-        observeShowDetails(forceReload = true, isUserInitiated = isUserInitiated)
+    private fun refreshShowContent() {
+        observeShowDetails(forceReload = true)
     }
 
     private suspend fun syncShowContent(
         forceRefresh: Boolean = false,
-        isUserInitiated: Boolean,
         loadingState: ObservableLoadingCounter,
     ) {
-        showContentSyncInteractor(
-            params = Param(
+        syncShowMetadataInteractor(
+            params = SyncShowMetadataInteractor.Param(
                 traktId = showTraktId,
                 forceRefresh = forceRefresh,
-                isUserInitiated = isUserInitiated,
             ),
         ).collectStatus(loadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
     }
@@ -348,7 +344,7 @@ public class ShowDetailsPresenter(
                 .drop(1)
                 .distinctUntilChanged()
                 .filter { it == TraktAuthState.LOGGED_IN }
-                .collect { refreshShowContent(isUserInitiated = false) }
+                .collect { refreshShowContent() }
         }
     }
 

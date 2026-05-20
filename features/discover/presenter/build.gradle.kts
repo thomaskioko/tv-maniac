@@ -68,6 +68,7 @@ kotlin {
                 implementation(projects.data.upcomingshows.testing)
                 implementation(projects.data.upnext.api)
                 implementation(projects.data.upnext.testing)
+                implementation(projects.data.watchproviders.testing)
                 implementation(projects.navigation.testing)
             }
         }
