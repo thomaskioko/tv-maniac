@@ -1,0 +1,54 @@
+[
+  {
+    "show": {
+      "title": "Breaking Bad",
+      "year": 2008,
+      "ids": { "trakt": 1388, "slug": "breaking-bad", "tmdb": 1396 },
+      "aired_episodes": 62
+    },
+    "progress": {
+      "aired": 62,
+      "completed": 30,
+      "last_watched_at": "2026-05-10T20:15:00Z",
+      "reset_at": null,
+      "next_episode": {
+        "season": 4,
+        "number": 1,
+        "title": "Box Cutter",
+        "ids": { "trakt": 401, "tmdb": 62094 }
+      },
+      "last_episode": {
+        "season": 3,
+        "number": 13,
+        "title": "Full Measure",
+        "ids": { "trakt": 313, "tmdb": 62093 }
+      }
+    }
+  },
+  {
+    "show": {
+      "title": "The Wire",
+      "year": 2002,
+      "ids": { "trakt": 1429, "slug": "the-wire", "tmdb": 1438 },
+      "aired_episodes": 60
+    },
+    "progress": {
+      "aired": 60,
+      "completed": 12,
+      "last_watched_at": "2026-04-22T09:00:00Z",
+      "reset_at": null,
+      "next_episode": {
+        "season": 1,
+        "number": 13,
+        "title": "Sentencing",
+        "ids": { "trakt": 113, "tmdb": 25307 }
+      },
+      "last_episode": {
+        "season": 1,
+        "number": 12,
+        "title": "Cleaning Up",
+        "ids": { "trakt": 112, "tmdb": 25306 }
+      }
+    }
+  }
+]

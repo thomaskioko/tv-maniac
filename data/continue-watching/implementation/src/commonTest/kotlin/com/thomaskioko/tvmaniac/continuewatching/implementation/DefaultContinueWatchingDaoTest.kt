@@ -1,10 +1,10 @@
 package com.thomaskioko.tvmaniac.continuewatching.implementation
 
 import app.cash.turbine.test
+import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingDao
+import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
-import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
-import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingDao
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.nulls.shouldBeNull

@@ -4,15 +4,20 @@ import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingRepository
 
 public class FakeContinueWatchingRepository : ContinueWatchingRepository {
 
-    private val syncInvocations = mutableListOf<Boolean>()
+    public data class SyncInvocation(
+        val forceRefresh: Boolean,
+        val useNitro: Boolean,
+    )
 
-    public fun syncInvocations(): List<Boolean> = syncInvocations.toList()
+    private val syncInvocations = mutableListOf<SyncInvocation>()
+
+    public fun syncInvocations(): List<SyncInvocation> = syncInvocations.toList()
 
     public fun clearInvocations() {
         syncInvocations.clear()
     }
 
-    override suspend fun sync(forceRefresh: Boolean) {
-        syncInvocations.add(forceRefresh)
+    override suspend fun sync(forceRefresh: Boolean, useNitro: Boolean) {
+        syncInvocations.add(SyncInvocation(forceRefresh = forceRefresh, useNitro = useNitro))
     }
 }

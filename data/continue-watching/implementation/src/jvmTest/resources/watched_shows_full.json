@@ -1,0 +1,57 @@
+[
+  {
+    "plays": 30,
+    "last_watched_at": "2026-05-10T20:15:00Z",
+    "last_updated_at": "2026-05-10T20:15:00Z",
+    "show": {
+      "title": "Breaking Bad",
+      "year": 2008,
+      "ids": { "trakt": 1388, "slug": "breaking-bad", "tmdb": 1396 },
+      "aired_episodes": 62
+    }
+  },
+  {
+    "plays": 12,
+    "last_watched_at": "2026-04-22T09:00:00Z",
+    "last_updated_at": "2026-04-22T09:00:00Z",
+    "show": {
+      "title": "The Wire",
+      "year": 2002,
+      "ids": { "trakt": 1429, "slug": "the-wire", "tmdb": 1438 },
+      "aired_episodes": 60
+    }
+  },
+  {
+    "plays": 121,
+    "last_watched_at": "2024-01-15T18:00:00Z",
+    "last_updated_at": "2024-01-15T18:00:00Z",
+    "show": {
+      "title": "Lost",
+      "year": 2004,
+      "ids": { "trakt": 222, "slug": "lost", "tmdb": 4607 },
+      "aired_episodes": 121
+    }
+  },
+  {
+    "plays": 45,
+    "last_watched_at": "2024-06-20T14:00:00Z",
+    "last_updated_at": "2024-06-20T14:00:00Z",
+    "show": {
+      "title": "Mr. Robot",
+      "year": 2015,
+      "ids": { "trakt": 333, "slug": "mr-robot", "tmdb": 62286 },
+      "aired_episodes": 45
+    }
+  },
+  {
+    "plays": 15,
+    "last_watched_at": "2025-12-01T10:00:00Z",
+    "last_updated_at": "2025-12-01T10:00:00Z",
+    "show": {
+      "title": "Dark",
+      "year": 2017,
+      "ids": { "trakt": 444, "slug": "dark", "tmdb": 70523 },
+      "aired_episodes": 26
+    }
+  }
+]

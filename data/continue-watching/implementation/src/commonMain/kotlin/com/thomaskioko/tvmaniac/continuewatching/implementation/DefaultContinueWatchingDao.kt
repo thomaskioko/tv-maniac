@@ -2,11 +2,11 @@ package com.thomaskioko.tvmaniac.continuewatching.implementation
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingDao
+import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
-import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
-import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingDao
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn

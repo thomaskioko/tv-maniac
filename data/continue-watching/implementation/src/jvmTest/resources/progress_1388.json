@@ -1,0 +1,18 @@
+{
+  "aired": 62,
+  "completed": 30,
+  "last_watched_at": "2026-05-10T20:15:00Z",
+  "reset_at": null,
+  "next_episode": {
+    "season": 4,
+    "number": 1,
+    "title": "Box Cutter",
+    "ids": { "trakt": 401, "tmdb": 62094 }
+  },
+  "last_episode": {
+    "season": 3,
+    "number": 13,
+    "title": "Full Measure",
+    "ids": { "trakt": 313, "tmdb": 62093 }
+  }
+}

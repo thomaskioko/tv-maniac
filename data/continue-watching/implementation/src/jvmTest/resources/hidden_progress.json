@@ -1,0 +1,11 @@
+[
+  {
+    "hidden_at": "2026-04-01T12:00:00Z",
+    "type": "show",
+    "show": {
+      "title": "Dark",
+      "year": 2017,
+      "ids": { "trakt": 444, "slug": "dark", "tmdb": 70523 }
+    }
+  }
+]

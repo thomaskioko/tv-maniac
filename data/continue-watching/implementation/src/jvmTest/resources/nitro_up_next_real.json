@@ -1,0 +1,82 @@
+[
+  {
+    "show_id": 181120,
+    "cached_aired_episode_count": 25,
+    "show": {
+      "ids": {
+        "imdb": "tt13911284",
+        "slug": "hell-s-paradise",
+        "tmdb": 117465,
+        "tvdb": 402474,
+        "trakt": 181120
+      },
+      "airs": {
+        "day": "Sunday",
+        "time": "23:45",
+        "timezone": "Asia/Tokyo"
+      },
+      "year": 2023,
+      "title": "Hell's Paradise",
+      "votes": 1944,
+      "genres": ["anime", "action", "adventure", "fantasy", "history"],
+      "rating": 7.935184955596924,
+      "status": "ended",
+      "country": "jp",
+      "network": "TSC",
+      "runtime": 25,
+      "tagline": "Nothing will ever be allowed to have any say in how we live...not even death itself.",
+      "trailer": "https://youtube.com/watch?v=PkCcADlua1w",
+      "homepage": "https://www.jigokuraku.com",
+      "language": "ja",
+      "overview": "For a chance at a pardon, a ninja assassin joins other condemned criminals on a journey to a mysterious island to retrieve an elixir of immortality.",
+      "first_aired": "2023-04-01T14:45:00.000Z",
+      "certification": "TV-14",
+      "aired_episodes": 25
+    },
+    "progress": {
+      "aired": 25,
+      "stats": {
+        "play_count": 28,
+        "minutes_left": 120,
+        "minutes_watched": 494
+      },
+      "hidden": 0,
+      "reset_at": null,
+      "completed": 20,
+      "last_episode": {
+        "ids": {
+          "imdb": "tt39912037",
+          "tmdb": 6863268,
+          "tvdb": 11522448,
+          "trakt": 13922788
+        },
+        "title": "Two People and One Person",
+        "votes": 147,
+        "number": 20,
+        "rating": 8.19727897644043,
+        "season": 1,
+        "runtime": 24,
+        "overview": "Gantetsusai and Fuchi struggle against Tao Fa, but they seem to be enjoying themselves.",
+        "first_aired": "2026-02-22T14:45:00.000Z"
+      },
+      "next_episode": {
+        "ids": {
+          "imdb": "tt39912044",
+          "tmdb": 6863269,
+          "tvdb": 11522449,
+          "trakt": 13922789
+        },
+        "title": "Chrysanthemum and Peach",
+        "votes": 141,
+        "number": 21,
+        "rating": 7.978723526000977,
+        "season": 1,
+        "runtime": 24,
+        "overview": "When Tao Fa asks Ju Fa for help, Ju Fa recalls the time they spent together.",
+        "first_aired": "2026-03-01T14:45:00.000Z"
+      },
+      "last_watched_at": "2026-05-19T16:28:00.000Z"
+    },
+    "total_count": 1337
+  }
+]
