@@ -5,9 +5,9 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.authSafeRequest
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.TraktSyncRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktLastActivitiesResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktPlaybackEpisodeResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUpNextNitroResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedProgressResponse
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedShowResponse
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
@@ -30,16 +30,14 @@ public class DefaultTraktSyncRemoteDataSource(
             }
         }
 
-    override suspend fun getWatchedShows(
-        limit: String,
-        extended: String,
-    ): ApiResponse<List<TraktWatchedShowResponse>> =
+    override suspend fun getPlaybackEpisodes(
+        limit: Int,
+    ): ApiResponse<List<TraktPlaybackEpisodeResponse>> =
         httpClient.authSafeRequest {
             url {
                 method = HttpMethod.Get
-                path("sync/watched/shows")
-                parameters.append("extended", extended)
-                parameters.append("limit", limit)
+                path("sync/playback/episodes")
+                parameters.append("limit", limit.toString())
             }
         }
 

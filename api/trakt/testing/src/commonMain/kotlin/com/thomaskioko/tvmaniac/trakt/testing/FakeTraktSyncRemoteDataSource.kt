@@ -4,10 +4,10 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.TraktSyncRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktEpisodeActivities
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktLastActivitiesResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktPlaybackEpisodeResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowActivities
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUpNextNitroResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedProgressResponse
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedShowResponse
 
 public class FakeTraktSyncRemoteDataSource : TraktSyncRemoteDataSource {
 
@@ -20,7 +20,7 @@ public class FakeTraktSyncRemoteDataSource : TraktSyncRemoteDataSource {
             ),
         )
 
-    private var watchedShowsResponse: ApiResponse<List<TraktWatchedShowResponse>> =
+    private var playbackEpisodesResponse: ApiResponse<List<TraktPlaybackEpisodeResponse>> =
         ApiResponse.Success(emptyList())
 
     private val showWatchedProgressResponses =
@@ -30,7 +30,7 @@ public class FakeTraktSyncRemoteDataSource : TraktSyncRemoteDataSource {
         ApiResponse.Success(emptyList())
 
     private var lastActivitiesInvocations: Int = 0
-    private var watchedShowsInvocations: Int = 0
+    private var playbackEpisodesInvocations: Int = 0
     private val showWatchedProgressInvocations = mutableMapOf<Long, Int>()
     private val showWatchedProgressLastActivityArgs = mutableMapOf<Long, String?>()
     private var upNextNitroInvocations: Int = 0
@@ -39,8 +39,8 @@ public class FakeTraktSyncRemoteDataSource : TraktSyncRemoteDataSource {
         lastActivitiesResponse = response
     }
 
-    public fun setWatchedShows(response: ApiResponse<List<TraktWatchedShowResponse>>) {
-        watchedShowsResponse = response
+    public fun setPlaybackEpisodes(response: ApiResponse<List<TraktPlaybackEpisodeResponse>>) {
+        playbackEpisodesResponse = response
     }
 
     public fun setShowWatchedProgress(
@@ -56,7 +56,7 @@ public class FakeTraktSyncRemoteDataSource : TraktSyncRemoteDataSource {
 
     public fun lastActivitiesInvocations(): Int = lastActivitiesInvocations
 
-    public fun watchedShowsInvocations(): Int = watchedShowsInvocations
+    public fun playbackEpisodesInvocations(): Int = playbackEpisodesInvocations
 
     public fun showWatchedProgressInvocations(traktId: Long): Int =
         showWatchedProgressInvocations[traktId] ?: 0
@@ -68,7 +68,7 @@ public class FakeTraktSyncRemoteDataSource : TraktSyncRemoteDataSource {
 
     public fun clearInvocations() {
         lastActivitiesInvocations = 0
-        watchedShowsInvocations = 0
+        playbackEpisodesInvocations = 0
         showWatchedProgressInvocations.clear()
         showWatchedProgressLastActivityArgs.clear()
         upNextNitroInvocations = 0
@@ -79,12 +79,11 @@ public class FakeTraktSyncRemoteDataSource : TraktSyncRemoteDataSource {
         return lastActivitiesResponse
     }
 
-    override suspend fun getWatchedShows(
-        limit: String,
-        extended: String,
-    ): ApiResponse<List<TraktWatchedShowResponse>> {
-        watchedShowsInvocations++
-        return watchedShowsResponse
+    override suspend fun getPlaybackEpisodes(
+        limit: Int,
+    ): ApiResponse<List<TraktPlaybackEpisodeResponse>> {
+        playbackEpisodesInvocations++
+        return playbackEpisodesResponse
     }
 
     override suspend fun getShowWatchedProgress(
