@@ -67,13 +67,6 @@ public class ProgressContinueWatchingFetcher(
             .filter { it !in hiddenIds }
         val lastActivity = if (forceRefresh) null else cursor?.toString()
 
-        // Provisional write: commit minimal continue_watching + tvshow rows for each candidate
-        // before per-show progress completes. This brings the documented path's first-sync UX
-        // up to Nitro's: the Watchlist surfaces shows roughly when playback+history return,
-        // not after all per-show progress calls finish. Progress fields are placeholder zeros;
-        // the Store5 writer below commits accurate values once per-show progress lands.
-        // Reset/finished shows that fail the next_episode filter briefly appear here then get
-        // removed by the writer's delete-not-in-list pass.
         transactionRunner {
             candidates.forEach { traktId ->
                 val descriptor = descriptors[traktId] ?: return@forEach
