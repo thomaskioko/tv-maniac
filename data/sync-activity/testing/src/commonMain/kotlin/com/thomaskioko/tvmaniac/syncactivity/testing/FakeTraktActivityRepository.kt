@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.syncactivity.implementation.DefaultTraktActivity
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
+import kotlin.time.Instant
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class, replaces = [DefaultTraktActivityRepository::class])
@@ -13,6 +14,7 @@ public class FakeTraktActivityRepository : TraktActivityRepository {
 
     private val changedActivities = mutableSetOf<ActivityType>()
     private val syncedActivities = mutableSetOf<ActivityType>()
+    private var episodesWatchedSyncTimeStamp: Instant? = null
 
     public fun setActivityChanged(activityType: ActivityType, changed: Boolean) {
         if (changed) {
@@ -20,6 +22,10 @@ public class FakeTraktActivityRepository : TraktActivityRepository {
         } else {
             changedActivities.remove(activityType)
         }
+    }
+
+    public fun setEpisodesWatchedSyncTimeStamp(cursor: Instant?) {
+        episodesWatchedSyncTimeStamp = cursor
     }
 
     public fun getSyncedActivities(): Set<ActivityType> = syncedActivities.toSet()
@@ -37,5 +43,8 @@ public class FakeTraktActivityRepository : TraktActivityRepository {
     override suspend fun clearAllActivities() {
         changedActivities.clear()
         syncedActivities.clear()
+        episodesWatchedSyncTimeStamp = null
     }
+
+    override suspend fun getEpisodesWatchedSyncTimeStamp(): Instant? = episodesWatchedSyncTimeStamp
 }

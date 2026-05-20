@@ -11,6 +11,7 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.withContext
+import kotlin.time.Instant
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
@@ -45,6 +46,11 @@ public class DefaultTraktActivityRepository(
             activityDao.deleteAll()
         }
     }
+
+    override suspend fun getEpisodesWatchedSyncTimeStamp(): Instant? =
+        withContext(dispatchers.io) {
+            activityDao.getByActivityType(ActivityType.EPISODES_WATCHED)?.syncedRemoteTimestamp
+        }
 
     private companion object {
         private const val TAG = "TraktActivityRepository"
