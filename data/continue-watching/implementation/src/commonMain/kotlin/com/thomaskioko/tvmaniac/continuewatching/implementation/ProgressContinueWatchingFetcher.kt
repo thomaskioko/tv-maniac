@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
 import com.thomaskioko.tvmaniac.core.base.extensions.parallelMap
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
+import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityRepository
@@ -32,6 +33,7 @@ public class ProgressContinueWatchingFetcher(
     private val continueWatchingDao: ContinueWatchingDao,
     private val tvShowsDao: TvShowsDao,
     private val transactionRunner: DatabaseTransactionRunner,
+    private val datastoreRepository: DatastoreRepository,
     private val logger: Logger,
 ) : ContinueWatchingFetcher {
 
@@ -66,6 +68,7 @@ public class ProgressContinueWatchingFetcher(
         val candidates = descriptors.keys
             .filter { it !in hiddenIds }
         val lastActivity = if (forceRefresh) null else cursor?.toString()
+        val includeSpecials = datastoreRepository.getIncludeSpecials()
 
         transactionRunner {
             candidates.forEach { traktId ->
@@ -89,6 +92,7 @@ public class ProgressContinueWatchingFetcher(
             traktId to traktSyncDataSource.getShowWatchedProgress(
                 traktId = traktId,
                 lastActivity = lastActivity,
+                specials = includeSpecials,
             )
         }
         val withNextEpisode = perShowResults.count { (_, response) ->

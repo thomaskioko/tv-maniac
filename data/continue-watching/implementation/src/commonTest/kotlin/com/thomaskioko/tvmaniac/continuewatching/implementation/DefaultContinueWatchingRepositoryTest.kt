@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingDao
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
+import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.shows.testing.FakeTvShowsDao
@@ -59,6 +60,7 @@ internal class DefaultContinueWatchingRepositoryTest {
             continueWatchingDao = continueWatchingDao,
             tvShowsDao = tvShowsDao,
             transactionRunner = transactionRunner,
+            datastoreRepository = FakeDatastoreRepository(),
             logger = FakeLogger(),
         )
         val nitroFetcher = NitroContinueWatchingFetcher(

@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingDao
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
+import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.shows.testing.FakeTvShowsDao
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
@@ -64,6 +65,7 @@ internal class ContinueWatchingFetcherTest {
             continueWatchingDao = continueWatchingDao,
             tvShowsDao = tvShowsDao,
             transactionRunner = transactionRunner,
+            datastoreRepository = FakeDatastoreRepository(),
             logger = logger,
         )
         nitroFetcher = NitroContinueWatchingFetcher(
