@@ -9,13 +9,15 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
+import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
+import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveUpNextInteractor
+import com.thomaskioko.tvmaniac.domain.continuewatching.SyncContinueWatchingInteractor
+import com.thomaskioko.tvmaniac.domain.continuewatching.model.UpNextSortOption
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
-import com.thomaskioko.tvmaniac.domain.upnext.ObserveUpNextInteractor
-import com.thomaskioko.tvmaniac.domain.upnext.model.UpNextSortOption
-import com.thomaskioko.tvmaniac.domain.watchlist.SyncWatchedShowInteractor
-import com.thomaskioko.tvmaniac.domain.watchlist.WatchlistSyncInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
+import com.thomaskioko.tvmaniac.domain.syncactivity.SyncActivityInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
@@ -359,21 +361,6 @@ internal class UpNextPresenterTest {
     }
 
     @Test
-    fun `should refresh data given followed shows count changes`() = runTest {
-        val presenter = createPresenter()
-
-        presenter.state.test {
-            awaitItem()
-            testDispatcher.scheduler.advanceUntilIdle()
-
-            upNextRepository.setFollowedShowsCount(5)
-            testDispatcher.scheduler.advanceUntilIdle()
-
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
-    @Test
     fun `should not crash given RefreshUpNext action is dispatched`() = runTest {
         upNextRepository.setNextEpisodesForWatchlist(emptyList())
         val presenter = createPresenter()
@@ -403,14 +390,18 @@ internal class UpNextPresenterTest {
             databaseRead = testDispatcher,
         )
 
-        val watchlistSyncInteractor = WatchlistSyncInteractor(
-            traktActivityRepository = FakeTraktActivityRepository(),
+        val syncContinueWatchingInteractor = SyncContinueWatchingInteractor(
+            syncActivityInteractor = SyncActivityInteractor(
+                traktActivityRepository = FakeTraktActivityRepository(),
+                dispatchers = dispatchers,
+            ),
             continueWatchingRepository = FakeContinueWatchingRepository(),
             continueWatchingDao = FakeContinueWatchingDao(),
-            syncWatchedShowInteractor = SyncWatchedShowInteractor(
+            syncShowMetadataInteractor = SyncShowMetadataInteractor(
                 showDetailsRepository = FakeShowDetailsRepository(),
                 seasonDetailsRepository = FakeSeasonDetailsRepository(),
                 watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
+                watchProviderRepository = FakeWatchProviderRepository(),
                 dispatchers = dispatchers,
             ),
             syncObserver = FakeSyncObserver(),
@@ -454,7 +445,7 @@ internal class UpNextPresenterTest {
                 override fun dismissOverlay() {}
             },
             observeUpNextInteractor = observeUpNextInteractor,
-            watchlistSyncInteractor = watchlistSyncInteractor,
+            syncContinueWatchingInteractor = syncContinueWatchingInteractor,
             markEpisodeWatchedInteractor = markEpisodeWatchedInteractor,
             upNextRepository = upNextRepository,
             unfollowShowInteractor = UnfollowShowInteractor(followedShowsRepository),

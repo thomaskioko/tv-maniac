@@ -5,12 +5,11 @@ import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.data.library.LibraryRepository
-import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository
-import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderRepository
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
+import com.thomaskioko.tvmaniac.domain.syncactivity.SyncActivityInteractor
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.LIBRARY_SYNC
-import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityRepository
 import com.thomaskioko.tvmaniac.syncstate.api.SyncError
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
@@ -22,9 +21,8 @@ import kotlinx.coroutines.withContext
 public class SyncLibraryInteractor(
     private val libraryRepository: LibraryRepository,
     private val followedShowsRepository: FollowedShowsRepository,
-    private val showDetailsRepository: ShowDetailsRepository,
-    private val watchProviderRepository: WatchProviderRepository,
-    private val traktActivityRepository: TraktActivityRepository,
+    private val syncActivityInteractor: SyncActivityInteractor,
+    private val syncShowMetadataInteractor: SyncShowMetadataInteractor,
     private val datastoreRepository: DatastoreRepository,
     private val dateTimeProvider: DateTimeProvider,
     private val dispatchers: AppCoroutineDispatchers,
@@ -40,7 +38,9 @@ public class SyncLibraryInteractor(
         }
 
         withContext(dispatchers.io) {
-            traktActivityRepository.fetchLatestActivities(params.forceRefresh)
+            syncActivityInteractor.executeSync(
+                SyncActivityInteractor.Param(forceRefresh = params.forceRefresh),
+            )
 
             logger.debug(TAG, "Syncing library watchlist")
 
@@ -51,26 +51,15 @@ public class SyncLibraryInteractor(
 
             followedShows.parallelForEach(concurrency = LIBRARY_SYNC_CONCURRENCY) { show ->
                 ensureActive()
-
                 runCatching {
-                    showDetailsRepository.fetchShowDetails(
-                        id = show.traktId,
-                        forceRefresh = params.forceRefresh,
+                    syncShowMetadataInteractor.executeSync(
+                        SyncShowMetadataInteractor.Param(
+                            traktId = show.traktId,
+                            forceRefresh = params.forceRefresh,
+                        ),
                     )
                 }.onFailure {
-                    logger.warning(TAG, "fetchShowDetails failed for ${show.traktId}: ${it.message}")
-                    syncObserver.log(SyncError.BackgroundSyncFailed(TAG, it))
-                }
-
-                ensureActive()
-
-                runCatching {
-                    watchProviderRepository.fetchWatchProviders(
-                        traktId = show.traktId,
-                        forceRefresh = params.forceRefresh,
-                    )
-                }.onFailure {
-                    logger.warning(TAG, "fetchWatchProviders failed for ${show.traktId}: ${it.message}")
+                    logger.warning(TAG, "syncShowMetadata failed for ${show.traktId}: ${it.message}")
                     syncObserver.log(SyncError.BackgroundSyncFailed(TAG, it))
                 }
             }

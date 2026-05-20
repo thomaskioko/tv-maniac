@@ -11,12 +11,12 @@ import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
+import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveUpNextSectionsInteractor
+import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveWatchlistSectionsInteractor
+import com.thomaskioko.tvmaniac.domain.continuewatching.SyncContinueWatchingInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
-import com.thomaskioko.tvmaniac.domain.watchlist.ObserveUpNextSectionsInteractor
-import com.thomaskioko.tvmaniac.domain.watchlist.ObserveWatchlistSectionsInteractor
-import com.thomaskioko.tvmaniac.domain.watchlist.WatchlistSyncInteractor
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlags
 import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlag
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
@@ -26,13 +26,13 @@ import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
-import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
-import com.thomaskioko.tvmaniac.shows.api.model.WatchlistSortOption
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.watchlist.nav.WatchlistRoot
 import com.thomaskioko.tvmaniac.watchlist.presenter.model.WatchlistItem
+import com.thomaskioko.tvmaniac.watchlistprefs.api.WatchlistPrefsRepository
+import com.thomaskioko.tvmaniac.watchlistprefs.api.model.WatchlistSortOption
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
@@ -56,11 +56,11 @@ import kotlinx.coroutines.launch
 public class WatchlistPresenter(
     componentContext: ComponentContext,
     private val navigator: Navigator,
-    private val repository: WatchlistRepository,
+    private val repository: WatchlistPrefsRepository,
     private val unfollowShowInteractor: UnfollowShowInteractor,
     private val observeWatchlistSectionsInteractor: ObserveWatchlistSectionsInteractor,
     private val observeUpNextSectionsInteractor: ObserveUpNextSectionsInteractor,
-    private val watchlistSyncInteractor: WatchlistSyncInteractor,
+    private val syncContinueWatchingInteractor: SyncContinueWatchingInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val errorToStringMapper: ErrorToStringMapper,
     private val localizer: Localizer,
@@ -234,8 +234,8 @@ public class WatchlistPresenter(
 
     private fun syncWatchlist(forceRefresh: Boolean = false) {
         coroutineScope.launch {
-            watchlistSyncInteractor(
-                WatchlistSyncInteractor.Param(
+            syncContinueWatchingInteractor(
+                SyncContinueWatchingInteractor.Param(
                     forceRefresh = forceRefresh,
                     useNitro = nitroEnabled.value,
                 ),

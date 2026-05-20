@@ -23,7 +23,7 @@ kotlin {
                 api(projects.data.trendingshows.api)
                 api(projects.data.upcomingshows.api)
                 api(projects.data.upnext.api)
-                api(projects.domain.upnext)
+                api(projects.domain.continueWatching)
             }
         }
 

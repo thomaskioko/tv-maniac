@@ -30,7 +30,7 @@ kotlin {
 
                 implementation(projects.data.episode.api)
                 implementation(projects.data.followedshows.api)
-                implementation(projects.domain.upnext)
+                implementation(projects.domain.continueWatching)
                 implementation(projects.features.episodeSheet.nav)
                 implementation(projects.features.home.nav)
                 implementation(projects.features.moreShows.nav)

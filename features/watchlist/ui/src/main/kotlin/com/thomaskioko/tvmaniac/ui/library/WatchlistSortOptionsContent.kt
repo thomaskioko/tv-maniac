@@ -21,7 +21,7 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_released_desc
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_title_asc
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_title_desc
 import com.thomaskioko.tvmaniac.i18n.resolve
-import com.thomaskioko.tvmaniac.shows.api.model.WatchlistSortOption
+import com.thomaskioko.tvmaniac.watchlistprefs.api.model.WatchlistSortOption
 import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toImmutableList
 

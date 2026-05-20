@@ -7,13 +7,15 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
+import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
+import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveUpNextSectionsInteractor
+import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveWatchlistSectionsInteractor
+import com.thomaskioko.tvmaniac.domain.continuewatching.SyncContinueWatchingInteractor
+import com.thomaskioko.tvmaniac.domain.continuewatching.UpNextSectionsMapper
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
-import com.thomaskioko.tvmaniac.domain.watchlist.ObserveUpNextSectionsInteractor
-import com.thomaskioko.tvmaniac.domain.watchlist.ObserveWatchlistSectionsInteractor
-import com.thomaskioko.tvmaniac.domain.watchlist.SyncWatchedShowInteractor
-import com.thomaskioko.tvmaniac.domain.watchlist.UpNextSectionsMapper
-import com.thomaskioko.tvmaniac.domain.watchlist.WatchlistSyncInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
+import com.thomaskioko.tvmaniac.domain.syncactivity.SyncActivityInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlags
@@ -27,17 +29,18 @@ import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
-import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
+import com.thomaskioko.tvmaniac.watchlistprefs.testing.FakeWatchlistPrefsRepository
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 
 class FakeWatchlistPresenterBuilder {
-    val repository = FakeWatchlistRepository()
+    val repository = FakeWatchlistPrefsRepository()
     val episodeRepository = FakeEpisodeRepository()
     val upNextRepository = FakeUpNextRepository()
     val dateTimeProvider = FakeDateTimeProvider()
     val showDetailsRepository = FakeShowDetailsRepository()
     val seasonDetailsRepository = FakeSeasonDetailsRepository()
     val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
+    val watchProviderRepository = FakeWatchProviderRepository()
     val continueWatchingRepository = FakeContinueWatchingRepository()
     val continueWatchingDao = FakeContinueWatchingDao()
     val syncObserver = FakeSyncObserver()
@@ -62,10 +65,16 @@ class FakeWatchlistPresenterBuilder {
         episodeRepository = episodeRepository,
     )
 
-    private val syncWatchedShowInteractor = SyncWatchedShowInteractor(
+    private val syncActivityInteractor = SyncActivityInteractor(
+        traktActivityRepository = fakeTraktActivityRepository,
+        dispatchers = coroutineDispatcher,
+    )
+
+    private val syncShowMetadataInteractor = SyncShowMetadataInteractor(
         showDetailsRepository = showDetailsRepository,
         seasonDetailsRepository = seasonDetailsRepository,
         watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
+        watchProviderRepository = watchProviderRepository,
         dispatchers = coroutineDispatcher,
     )
 
@@ -83,11 +92,11 @@ class FakeWatchlistPresenterBuilder {
         mapper = upNextSectionsMapper,
     )
 
-    private val watchlistSyncInteractor = WatchlistSyncInteractor(
-        traktActivityRepository = fakeTraktActivityRepository,
+    private val syncContinueWatchingInteractor = SyncContinueWatchingInteractor(
+        syncActivityInteractor = syncActivityInteractor,
         continueWatchingRepository = continueWatchingRepository,
         continueWatchingDao = continueWatchingDao,
-        syncWatchedShowInteractor = syncWatchedShowInteractor,
+        syncShowMetadataInteractor = syncShowMetadataInteractor,
         syncObserver = syncObserver,
         dispatchers = coroutineDispatcher,
         logger = fakeLogger,
@@ -104,7 +113,7 @@ class FakeWatchlistPresenterBuilder {
         observeWatchlistSectionsInteractor = observeWatchlistSectionsInteractor,
         observeUpNextSectionsInteractor = observeUpNextSectionsInteractor,
         markEpisodeWatchedInteractor = fakeMarkEpisodeWatchedInteractor,
-        watchlistSyncInteractor = watchlistSyncInteractor,
+        syncContinueWatchingInteractor = syncContinueWatchingInteractor,
         featureFlags = featureFlags,
         syncObserver = syncObserver,
         traktAuthRepository = fakeTraktAuthRepository,

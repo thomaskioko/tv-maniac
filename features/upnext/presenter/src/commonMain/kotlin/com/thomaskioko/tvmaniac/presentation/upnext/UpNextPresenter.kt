@@ -9,12 +9,12 @@ import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
+import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveUpNextInteractor
+import com.thomaskioko.tvmaniac.domain.continuewatching.SyncContinueWatchingInteractor
+import com.thomaskioko.tvmaniac.domain.continuewatching.model.UpNextSortOption
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
-import com.thomaskioko.tvmaniac.domain.upnext.ObserveUpNextInteractor
-import com.thomaskioko.tvmaniac.domain.upnext.model.UpNextSortOption
-import com.thomaskioko.tvmaniac.domain.watchlist.WatchlistSyncInteractor
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
@@ -42,7 +42,7 @@ import kotlinx.coroutines.launch
 public class UpNextPresenter(
     componentContext: ComponentContext,
     private val navigator: Navigator,
-    private val watchlistSyncInteractor: WatchlistSyncInteractor,
+    private val syncContinueWatchingInteractor: SyncContinueWatchingInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val upNextRepository: UpNextRepository,
     private val unfollowShowInteractor: UnfollowShowInteractor,
@@ -106,7 +106,7 @@ public class UpNextPresenter(
     private fun refreshUpNext(isUserInitiated: Boolean = false) {
         val counter = if (isUserInitiated) refreshingState else loadingState
         coroutineScope.launch {
-            watchlistSyncInteractor(WatchlistSyncInteractor.Param(forceRefresh = isUserInitiated))
+            syncContinueWatchingInteractor(SyncContinueWatchingInteractor.Param(forceRefresh = isUserInitiated))
                 .collectStatus(counter, logger, uiMessageManager, "Up Next", errorToStringMapper)
         }
     }
