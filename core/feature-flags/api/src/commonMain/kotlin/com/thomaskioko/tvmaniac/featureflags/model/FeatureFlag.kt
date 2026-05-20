@@ -26,4 +26,11 @@ public enum class FeatureFlag(
         description = "Show the Simkl login entry point on the settings screen.",
         dateAdded = LocalDate(2026, 5, 17),
     ),
+    CONTINUE_WATCHING_NITRO_ENABLED(
+        key = "enable_continue_watching_nitro",
+        defaultValue = false,
+        title = "Use Experimental Endpoint",
+        description = "Use Trakt's single call instead of the documented multi-step progress fetch.",
+        dateAdded = LocalDate(2026, 5, 20),
+    ),
 }
