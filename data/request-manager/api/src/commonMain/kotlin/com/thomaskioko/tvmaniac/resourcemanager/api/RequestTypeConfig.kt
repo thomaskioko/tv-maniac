@@ -33,5 +33,5 @@ public enum class RequestTypeConfig(public val requestId: Long, public val durat
     GENRE_SHOWS(30, 3.days),
     CALENDAR_SHOWS(31, 1.days),
     TRAKT_LISTS_SYNC(32, 6.hours),
-    WATCHED_SHOWS_SYNC(33, 6.hours),
+    CONTINUE_WATCHING_SYNC(33, 6.hours),
 }
