@@ -1,10 +1,10 @@
 package com.thomaskioko.tvmaniac.domain.watchlist
 
+import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingRepository
 import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityRepository
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
-import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingRepository
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.withContext
 

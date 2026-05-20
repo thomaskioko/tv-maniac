@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.upnext.implementation
 
+import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingDao
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
@@ -12,7 +13,6 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.UPNEXT_FUL
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
-import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingDao
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn

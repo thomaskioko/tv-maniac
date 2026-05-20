@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.upnext.implementation
 
 import app.cash.turbine.test
+import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
+import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingDao
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
@@ -12,8 +14,6 @@ import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsDao
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
-import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
-import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingDao
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
