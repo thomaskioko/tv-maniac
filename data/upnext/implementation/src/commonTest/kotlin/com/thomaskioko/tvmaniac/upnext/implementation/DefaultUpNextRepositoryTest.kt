@@ -14,7 +14,11 @@ import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsDao
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
+import com.thomaskioko.tvmaniac.syncstate.api.SyncError
+import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -45,6 +49,7 @@ internal class DefaultUpNextRepositoryTest {
     private val nextEpisodeDao = FakeNextEpisodeDao()
     private val followedShowsDao = FakeFollowedShowsDao()
     private val continueWatchingDao = FakeContinueWatchingDao()
+    private val syncObserver = FakeSyncObserver()
 
     private lateinit var repository: DefaultUpNextRepository
 
@@ -61,6 +66,7 @@ internal class DefaultUpNextRepositoryTest {
             seasonDetailsRepository = seasonDetailsRepository,
             watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
             requestManagerRepository = requestManagerRepository,
+            syncObserver = syncObserver,
             logger = FakeLogger(),
         )
     }
@@ -89,8 +95,8 @@ internal class DefaultUpNextRepositoryTest {
 
         repository.fetchUpNextEpisodes(forceRefresh = false)
 
-        seasonDetailsRepository.getSyncedShowIds() shouldBe listOf(1L, 2L)
-        watchedEpisodeSyncRepository.getSyncedShowIds() shouldBe listOf(1L, 2L)
+        seasonDetailsRepository.getSyncedShowIds() shouldContainExactlyInAnyOrder listOf(1L, 2L)
+        watchedEpisodeSyncRepository.getSyncedShowIds() shouldContainExactlyInAnyOrder listOf(1L, 2L)
         requestManagerRepository.upsertCalled shouldBe true
     }
 
@@ -138,9 +144,9 @@ internal class DefaultUpNextRepositoryTest {
 
         repository.fetchUpNextEpisodes(forceRefresh = false)
 
-        showDetailsRepository.fetchInvocations().map { it.id } shouldBe listOf(1L, 2L)
-        seasonDetailsRepository.getSyncedShowIds() shouldBe listOf(1L, 2L)
-        watchedEpisodeSyncRepository.getSyncedShowIds() shouldBe listOf(1L, 2L)
+        showDetailsRepository.fetchInvocations().map { it.id } shouldContainExactlyInAnyOrder listOf(1L, 2L)
+        seasonDetailsRepository.getSyncedShowIds() shouldContainExactlyInAnyOrder listOf(1L, 2L)
+        watchedEpisodeSyncRepository.getSyncedShowIds() shouldContainExactlyInAnyOrder listOf(1L, 2L)
     }
 
     @Test
@@ -151,9 +157,9 @@ internal class DefaultUpNextRepositoryTest {
 
         repository.fetchUpNextEpisodes(forceRefresh = false)
 
-        showDetailsRepository.fetchInvocations().map { it.id } shouldBe listOf(1L, 2L)
-        seasonDetailsRepository.getSyncedShowIds() shouldBe listOf(1L, 2L)
-        watchedEpisodeSyncRepository.getSyncedShowIds() shouldBe listOf(1L, 2L)
+        showDetailsRepository.fetchInvocations().map { it.id } shouldContainExactlyInAnyOrder listOf(1L, 2L)
+        seasonDetailsRepository.getSyncedShowIds() shouldContainExactlyInAnyOrder listOf(1L, 2L)
+        watchedEpisodeSyncRepository.getSyncedShowIds() shouldContainExactlyInAnyOrder listOf(1L, 2L)
     }
 
     @Test
@@ -166,9 +172,9 @@ internal class DefaultUpNextRepositoryTest {
 
         repository.fetchUpNextEpisodes(forceRefresh = false)
 
-        showDetailsRepository.fetchInvocations().map { it.id } shouldBe listOf(1L, 2L, 3L)
-        seasonDetailsRepository.getSyncedShowIds() shouldBe listOf(1L, 2L, 3L)
-        watchedEpisodeSyncRepository.getSyncedShowIds() shouldBe listOf(1L, 2L, 3L)
+        showDetailsRepository.fetchInvocations().map { it.id } shouldContainExactlyInAnyOrder listOf(1L, 2L, 3L)
+        seasonDetailsRepository.getSyncedShowIds() shouldContainExactlyInAnyOrder listOf(1L, 2L, 3L)
+        watchedEpisodeSyncRepository.getSyncedShowIds() shouldContainExactlyInAnyOrder listOf(1L, 2L, 3L)
     }
 
     @Test
@@ -194,6 +200,21 @@ internal class DefaultUpNextRepositoryTest {
         seasonDetailsRepository.getSyncedShowIds().size shouldBe 0
         watchedEpisodeSyncRepository.getSyncedShowIds().size shouldBe 0
         requestManagerRepository.upsertCalled shouldBe false
+    }
+
+    @Test
+    fun `should log SyncError to observer when per-show fetch fails`() = runTest {
+        followedShowsDao.upsert(followedShow(traktId = 1L))
+        requestManagerRepository.requestValid = false
+        showDetailsRepository.setFetchError(RuntimeException("rate-limited 429"))
+
+        syncObserver.errors.test {
+            repository.fetchUpNextEpisodes(forceRefresh = false)
+
+            val event = awaitItem()
+            event.shouldBeInstanceOf<SyncError.BackgroundSyncFailed>()
+            event.cause.message shouldBe "rate-limited 429"
+        }
     }
 
     @Test

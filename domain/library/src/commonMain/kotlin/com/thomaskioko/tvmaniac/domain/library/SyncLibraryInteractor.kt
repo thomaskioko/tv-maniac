@@ -11,6 +11,8 @@ import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.LIBRARY_SYNC
 import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityRepository
+import com.thomaskioko.tvmaniac.syncstate.api.SyncError
+import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.ensureActive
@@ -26,6 +28,7 @@ public class SyncLibraryInteractor(
     private val datastoreRepository: DatastoreRepository,
     private val dateTimeProvider: DateTimeProvider,
     private val dispatchers: AppCoroutineDispatchers,
+    private val syncObserver: SyncObserver,
     private val logger: Logger,
 ) : Interactor<SyncLibraryInteractor.Param>() {
 
@@ -54,7 +57,10 @@ public class SyncLibraryInteractor(
                         id = show.traktId,
                         forceRefresh = params.forceRefresh,
                     )
-                }.onFailure { logger.warning(TAG, "fetchShowDetails failed for ${show.traktId}: ${it.message}") }
+                }.onFailure {
+                    logger.warning(TAG, "fetchShowDetails failed for ${show.traktId}: ${it.message}")
+                    syncObserver.log(SyncError.BackgroundSyncFailed(TAG, it))
+                }
 
                 ensureActive()
 
@@ -63,7 +69,10 @@ public class SyncLibraryInteractor(
                         traktId = show.traktId,
                         forceRefresh = params.forceRefresh,
                     )
-                }.onFailure { logger.warning(TAG, "fetchWatchProviders failed for ${show.traktId}: ${it.message}") }
+                }.onFailure {
+                    logger.warning(TAG, "fetchWatchProviders failed for ${show.traktId}: ${it.message}")
+                    syncObserver.log(SyncError.BackgroundSyncFailed(TAG, it))
+                }
             }
 
             logger.debug(TAG, "Library sync complete")

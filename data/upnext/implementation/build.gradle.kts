@@ -14,6 +14,7 @@ kotlin {
             dependencies {
                 api(libs.coroutines.core)
                 api(projects.core.logger.api)
+                api(projects.core.syncstate.api)
                 api(projects.data.datastore.api)
                 api(projects.data.episode.api)
                 api(projects.data.followedshows.api)
@@ -31,6 +32,7 @@ kotlin {
             dependencies {
                 implementation(libs.bundles.unittest)
                 implementation(projects.core.logger.testing)
+                implementation(projects.core.syncstate.testing)
                 implementation(projects.data.datastore.testing)
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.followedshows.testing)

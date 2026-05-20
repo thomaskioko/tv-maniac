@@ -9,7 +9,6 @@ import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
-import com.thomaskioko.tvmaniac.domain.watchlist.FetchMissingShowsInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.ObserveUpNextSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.ObserveWatchlistSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.SyncWatchedShowInteractor
@@ -68,12 +67,6 @@ class FakeWatchlistPresenterBuilder {
         dispatchers = coroutineDispatcher,
     )
 
-    private val fetchMissingShowsInteractor = FetchMissingShowsInteractor(
-        continueWatchingDao = continueWatchingDao,
-        syncWatchedShowInteractor = syncWatchedShowInteractor,
-        dispatchers = coroutineDispatcher,
-    )
-
     private val observeWatchlistSectionsInteractor = ObserveWatchlistSectionsInteractor(
         upNextRepository = upNextRepository,
         dateTimeProvider = dateTimeProvider,
@@ -91,9 +84,11 @@ class FakeWatchlistPresenterBuilder {
     private val watchlistSyncInteractor = WatchlistSyncInteractor(
         traktActivityRepository = fakeTraktActivityRepository,
         continueWatchingRepository = continueWatchingRepository,
-        fetchMissingShowsInteractor = fetchMissingShowsInteractor,
+        continueWatchingDao = continueWatchingDao,
+        syncWatchedShowInteractor = syncWatchedShowInteractor,
         syncObserver = syncObserver,
         dispatchers = coroutineDispatcher,
+        logger = fakeLogger,
     )
 
     fun create(
