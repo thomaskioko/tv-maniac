@@ -17,6 +17,8 @@ import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.ObserveUpNextSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.ObserveWatchlistSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.watchlist.WatchlistSyncInteractor
+import com.thomaskioko.tvmaniac.featureflags.FeatureFlags
+import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlag
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
@@ -59,6 +61,7 @@ public class WatchlistPresenter(
     private val errorToStringMapper: ErrorToStringMapper,
     private val localizer: Localizer,
     private val logger: Logger,
+    featureFlags: FeatureFlags,
     syncObserver: SyncObserver,
 ) : ComponentContext by componentContext {
 
@@ -68,6 +71,15 @@ public class WatchlistPresenter(
     private val coroutineScope = coroutineScope()
     private val queryFlow = MutableStateFlow("")
     private val _state = MutableStateFlow(WatchlistState())
+
+    // TODO:: This is an experiment. Move to repository
+    private val nitroEnabled: StateFlow<Boolean> = featureFlags
+        .isEnabled(FeatureFlag.CONTINUE_WATCHING_NITRO_ENABLED)
+        .stateIn(
+            scope = coroutineScope,
+            started = SharingStarted.Eagerly,
+            initialValue = false,
+        )
 
     init {
         observeWatchlistSectionsInteractor(queryFlow.value)
@@ -86,6 +98,8 @@ public class WatchlistPresenter(
         queryFlow,
         syncObserver.isSyncing,
     ) { currentState, isLoading, upNextLoading, watchlistSections, upNextSections, isGridMode, sortOption, message, query, isSyncing ->
+
+        // TODO:: Move to Mapper object and inject the mapper in the presenter
         val sectionedItems = watchlistSections.toPresenter()
         val sectionedEpisodes = upNextSections.toPresenter()
         val emptyStateKey = if (query.isBlank()) {
@@ -205,7 +219,12 @@ public class WatchlistPresenter(
 
     private fun syncWatchlist(forceRefresh: Boolean = false) {
         coroutineScope.launch {
-            watchlistSyncInteractor(WatchlistSyncInteractor.Param(forceRefresh))
+            watchlistSyncInteractor(
+                WatchlistSyncInteractor.Param(
+                    forceRefresh = forceRefresh,
+                    useNitro = nitroEnabled.value,
+                ),
+            )
                 .collectStatus(
                     counter = watchlistLoadingState,
                     logger = logger,

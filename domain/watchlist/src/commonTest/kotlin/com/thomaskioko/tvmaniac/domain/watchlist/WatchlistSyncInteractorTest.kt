@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.domain.watchlist
 
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingDao
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository
+import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository.SyncInvocation
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
@@ -59,14 +60,27 @@ class WatchlistSyncInteractorTest {
     fun `should fetch activities then sync watched shows`() = runTest(testDispatcher) {
         interactor.executeSync(WatchlistSyncInteractor.Param(forceRefresh = false))
 
-        continueWatchingRepository.syncInvocations() shouldBe listOf(false)
+        continueWatchingRepository.syncInvocations() shouldBe listOf(
+            SyncInvocation(forceRefresh = false, useNitro = false),
+        )
     }
 
     @Test
     fun `should propagate force refresh to watched shows sync`() = runTest(testDispatcher) {
         interactor.executeSync(WatchlistSyncInteractor.Param(forceRefresh = true))
 
-        continueWatchingRepository.syncInvocations() shouldBe listOf(true)
+        continueWatchingRepository.syncInvocations() shouldBe listOf(
+            SyncInvocation(forceRefresh = true, useNitro = false),
+        )
+    }
+
+    @Test
+    fun `should propagate useNitro to watched shows sync`() = runTest(testDispatcher) {
+        interactor.executeSync(WatchlistSyncInteractor.Param(forceRefresh = true, useNitro = true))
+
+        continueWatchingRepository.syncInvocations() shouldBe listOf(
+            SyncInvocation(forceRefresh = true, useNitro = true),
+        )
     }
 
     @Test

@@ -21,7 +21,10 @@ public class WatchlistSyncInteractor(
         syncObserver.trackSync(TAG) {
             withContext(dispatchers.io) {
                 traktActivityRepository.fetchLatestActivities(params.forceRefresh)
-                continueWatchingRepository.sync(params.forceRefresh)
+                continueWatchingRepository.sync(
+                    forceRefresh = params.forceRefresh,
+                    useNitro = params.useNitro,
+                )
                 fetchMissingShowsInteractor.executeSync(params.forceRefresh)
             }
         }
@@ -29,6 +32,7 @@ public class WatchlistSyncInteractor(
 
     public data class Param(
         val forceRefresh: Boolean = false,
+        val useNitro: Boolean = false,
     )
 
     private companion object {

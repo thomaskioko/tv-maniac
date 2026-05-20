@@ -19,6 +19,7 @@ kotlin {
             dependencies {
                 api(libs.coroutines.core)
                 api(projects.core.base)
+                api(projects.core.featureFlags.api)
                 api(projects.core.logger.api)
                 api(projects.core.syncstate.api)
                 api(projects.core.tasks.api)

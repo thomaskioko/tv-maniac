@@ -5,6 +5,8 @@ import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundWorker
 import com.thomaskioko.tvmaniac.core.tasks.api.PeriodicTaskRequest
 import com.thomaskioko.tvmaniac.core.tasks.api.TaskConstraints
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerResult
+import com.thomaskioko.tvmaniac.featureflags.FeatureFlags
+import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlag
 import com.thomaskioko.tvmaniac.syncstate.api.SyncError
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
@@ -12,12 +14,14 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoSet
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.first
 
 @SingleIn(AppScope::class)
 @ContributesIntoSet(AppScope::class)
 public class WatchlistSyncWorker(
     private val watchlistSyncInteractor: Lazy<WatchlistSyncInteractor>,
     private val traktAuthRepository: Lazy<TraktAuthRepository>,
+    private val featureFlags: FeatureFlags,
     private val syncObserver: SyncObserver,
     private val logger: Logger,
 ) : BackgroundWorker {
@@ -33,8 +37,9 @@ public class WatchlistSyncWorker(
         }
 
         return try {
+            val useNitro = featureFlags.isEnabled(FeatureFlag.CONTINUE_WATCHING_NITRO_ENABLED).first()
             watchlistSyncInteractor.value.executeSync(
-                WatchlistSyncInteractor.Param(forceRefresh = true),
+                WatchlistSyncInteractor.Param(forceRefresh = true, useNitro = useNitro),
             )
             logger.debug(TAG, "Watchlist sync completed successfully")
             WorkerResult.Success

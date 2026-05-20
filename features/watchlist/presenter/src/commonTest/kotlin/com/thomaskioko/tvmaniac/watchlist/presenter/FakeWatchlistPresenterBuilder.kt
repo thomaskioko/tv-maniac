@@ -17,6 +17,7 @@ import com.thomaskioko.tvmaniac.domain.watchlist.UpNextSectionsMapper
 import com.thomaskioko.tvmaniac.domain.watchlist.WatchlistSyncInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
+import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlags
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
@@ -40,6 +41,7 @@ class FakeWatchlistPresenterBuilder {
     val continueWatchingRepository = FakeContinueWatchingRepository()
     val continueWatchingDao = FakeContinueWatchingDao()
     val syncObserver = FakeSyncObserver()
+    val featureFlags = FakeFeatureFlags()
 
     val testDispatcher = UnconfinedTestDispatcher()
 
@@ -106,6 +108,7 @@ class FakeWatchlistPresenterBuilder {
         observeUpNextSectionsInteractor = observeUpNextSectionsInteractor,
         markEpisodeWatchedInteractor = fakeMarkEpisodeWatchedInteractor,
         watchlistSyncInteractor = watchlistSyncInteractor,
+        featureFlags = featureFlags,
         syncObserver = syncObserver,
         errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
         localizer = FakeLocalizer(),
