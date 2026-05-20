@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.continuewatching.implementation
 
 import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
-import dev.zacsweers.metro.Qualifier
 
 public interface ContinueWatchingFetcher {
 

@@ -10,10 +10,10 @@ import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.trakt.api.model.EpisodeIds
 import com.thomaskioko.tvmaniac.trakt.api.model.ShowIds
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktNextEpisodeResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktPlaybackEpisodeResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUpNextNitroResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedProgressResponse
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedShowResponse
 import com.thomaskioko.tvmaniac.trakt.testing.FakeTraktSyncRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.testing.FakeTraktUserRemoteDataSource
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
@@ -51,6 +51,7 @@ internal class DefaultContinueWatchingRepositoryTest {
             traktSyncDataSource = syncDataSource,
             traktUserDataSource = userDataSource,
             traktActivityRepository = activityRepository,
+            continueWatchingDao = continueWatchingDao,
         )
         val nitroFetcher = NitroContinueWatchingFetcher(
             traktSyncDataSource = syncDataSource,
@@ -77,12 +78,12 @@ internal class DefaultContinueWatchingRepositoryTest {
 
     @Test
     fun `should route to progress fetcher given useNitro false`() = runTest(testDispatcher) {
-        syncDataSource.setWatchedShows(ApiResponse.Success(listOf(breakingBadWatched)))
+        syncDataSource.setPlaybackEpisodes(ApiResponse.Success(listOf(breakingBadPlayback)))
         syncDataSource.setShowWatchedProgress(BREAKING_BAD_ID, ApiResponse.Success(breakingBadProgress))
 
         repository.sync(forceRefresh = true, useNitro = false)
 
-        syncDataSource.watchedShowsInvocations() shouldBe 1
+        syncDataSource.playbackEpisodesInvocations() shouldBe 1
         syncDataSource.upNextNitroInvocations() shouldBe 0
     }
 
@@ -93,7 +94,7 @@ internal class DefaultContinueWatchingRepositoryTest {
         repository.sync(forceRefresh = true, useNitro = true)
 
         syncDataSource.upNextNitroInvocations() shouldBe 1
-        syncDataSource.watchedShowsInvocations() shouldBe 0
+        syncDataSource.playbackEpisodesInvocations() shouldBe 0
     }
 
     @Test
@@ -115,13 +116,13 @@ internal class DefaultContinueWatchingRepositoryTest {
 
     @Test
     fun `should pick fetcher per call without caching previous choice`() = runTest(testDispatcher) {
-        syncDataSource.setWatchedShows(ApiResponse.Success(listOf(breakingBadWatched)))
+        syncDataSource.setPlaybackEpisodes(ApiResponse.Success(listOf(breakingBadPlayback)))
         syncDataSource.setShowWatchedProgress(BREAKING_BAD_ID, ApiResponse.Success(breakingBadProgress))
         syncDataSource.setUpNextNitro(ApiResponse.Success(listOf(breakingBadNitro)))
 
         repository.sync(forceRefresh = true, useNitro = false)
 
-        syncDataSource.watchedShowsInvocations() shouldBe 1
+        syncDataSource.playbackEpisodesInvocations() shouldBe 1
         syncDataSource.upNextNitroInvocations() shouldBe 0
 
         repository.sync(forceRefresh = true, useNitro = true)
@@ -133,10 +134,16 @@ internal class DefaultContinueWatchingRepositoryTest {
 private val NOW: Instant = Instant.parse("2026-05-20T12:00:00Z")
 private const val BREAKING_BAD_ID = 1388L
 
-private val breakingBadWatched = TraktWatchedShowResponse(
-    plays = 30,
-    lastWatchedAt = "2026-05-10T20:15:00Z",
-    lastUpdatedAt = "2026-05-10T20:15:00Z",
+private val breakingBadPlayback = TraktPlaybackEpisodeResponse(
+    id = 100001,
+    progress = 45.0,
+    pausedAt = "2026-05-10T20:15:00.000Z",
+    type = "episode",
+    episode = TraktNextEpisodeResponse(
+        seasonNumber = 4,
+        episodeNumber = 1,
+        ids = EpisodeIds(trakt = 401, tmdb = null),
+    ),
     show = TraktShowResponse(
         title = "Breaking Bad",
         ids = ShowIds(trakt = BREAKING_BAD_ID, slug = "breaking-bad", tmdb = 1396),

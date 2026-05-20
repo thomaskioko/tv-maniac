@@ -1,15 +1,16 @@
 package com.thomaskioko.tvmaniac.continuewatching.implementation
 
 import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
+import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingDao
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.trakt.api.model.EpisodeIds
 import com.thomaskioko.tvmaniac.trakt.api.model.ShowIds
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktHiddenItemResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktNextEpisodeResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktPlaybackEpisodeResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedProgressResponse
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedShowResponse
 import com.thomaskioko.tvmaniac.trakt.testing.FakeTraktSyncRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.testing.FakeTraktUserRemoteDataSource
 import io.kotest.matchers.collections.shouldBeEmpty
@@ -30,6 +31,7 @@ internal class ProgressContinueWatchingFetcherTest {
     private val syncDataSource = FakeTraktSyncRemoteDataSource()
     private val userDataSource = FakeTraktUserRemoteDataSource()
     private val activityRepository = FakeTraktActivityRepository()
+    private val continueWatchingDao = FakeContinueWatchingDao()
 
     private lateinit var fetcher: ProgressContinueWatchingFetcher
 
@@ -39,13 +41,14 @@ internal class ProgressContinueWatchingFetcherTest {
             traktSyncDataSource = syncDataSource,
             traktUserDataSource = userDataSource,
             traktActivityRepository = activityRepository,
+            continueWatchingDao = continueWatchingDao,
         )
     }
 
     @Test
     fun `should exclude hidden shows from candidate set`() = runTest(testDispatcher) {
-        syncDataSource.setWatchedShows(
-            ApiResponse.Success(listOf(breakingBadInProgress, theWireInProgress)),
+        syncDataSource.setPlaybackEpisodes(
+            ApiResponse.Success(listOf(breakingBadPlayback, theWirePlayback)),
         )
         userDataSource.setHiddenProgressWatched(
             ApiResponse.Success(listOf(hiddenItem(traktId = BREAKING_BAD_ID))),
@@ -60,9 +63,28 @@ internal class ProgressContinueWatchingFetcherTest {
     }
 
     @Test
+    fun `should include cached dao entries as candidates given playback misses them`() = runTest(testDispatcher) {
+        // The Wire is no longer in playback (user finished an episode cleanly), but the local
+        // Continue Watching cache still tracks it. The fetcher must refresh the cached row
+        // via per-show progress so the watchlist does not silently drop it.
+        continueWatchingDao.upsert(theWireEntry)
+        syncDataSource.setPlaybackEpisodes(ApiResponse.Success(listOf(breakingBadPlayback)))
+        syncDataSource.setShowWatchedProgress(BREAKING_BAD_ID, ApiResponse.Success(breakingBadProgress))
+        syncDataSource.setShowWatchedProgress(THE_WIRE_ID, ApiResponse.Success(theWireProgress))
+
+        val result = fetcher.run(forceRefresh = false)
+
+        result.shouldNotBeNull() shouldContainExactlyInAnyOrder listOf(
+            breakingBadEntry,
+            theWireEntry,
+        )
+        syncDataSource.showWatchedProgressInvocations(THE_WIRE_ID) shouldBe 1
+    }
+
+    @Test
     fun `should pass cursor to per-show progress calls given force refresh is false`() = runTest(testDispatcher) {
         activityRepository.setEpisodesWatchedSyncTimeStamp(Instant.parse(CURSOR_ISO))
-        syncDataSource.setWatchedShows(ApiResponse.Success(listOf(breakingBadInProgress)))
+        syncDataSource.setPlaybackEpisodes(ApiResponse.Success(listOf(breakingBadPlayback)))
         syncDataSource.setShowWatchedProgress(
             BREAKING_BAD_ID,
             ApiResponse.Success(breakingBadProgress),
@@ -76,7 +98,7 @@ internal class ProgressContinueWatchingFetcherTest {
     @Test
     fun `should pass null cursor given force refresh is true`() = runTest(testDispatcher) {
         activityRepository.setEpisodesWatchedSyncTimeStamp(Instant.parse(CURSOR_ISO))
-        syncDataSource.setWatchedShows(ApiResponse.Success(listOf(breakingBadInProgress)))
+        syncDataSource.setPlaybackEpisodes(ApiResponse.Success(listOf(breakingBadPlayback)))
         syncDataSource.setShowWatchedProgress(
             BREAKING_BAD_ID,
             ApiResponse.Success(breakingBadProgress),
@@ -88,8 +110,8 @@ internal class ProgressContinueWatchingFetcherTest {
     }
 
     @Test
-    fun `should filter rows where next episode is null even when plays is less than aired`() = runTest(testDispatcher) {
-        syncDataSource.setWatchedShows(ApiResponse.Success(listOf(resetShow)))
+    fun `should filter rows where next episode is null`() = runTest(testDispatcher) {
+        syncDataSource.setPlaybackEpisodes(ApiResponse.Success(listOf(resetShowPlayback)))
         syncDataSource.setShowWatchedProgress(
             RESET_SHOW_ID,
             ApiResponse.Success(resetShowProgress),
@@ -101,19 +123,9 @@ internal class ProgressContinueWatchingFetcherTest {
     }
 
     @Test
-    fun `should exclude rows where show has null aired episodes`() = runTest(testDispatcher) {
-        syncDataSource.setWatchedShows(ApiResponse.Success(listOf(showWithoutAiredCount)))
-
-        val result = fetcher.run(forceRefresh = false)
-
-        result.shouldBeEmpty()
-        syncDataSource.showWatchedProgressInvocations(UNKNOWN_AIRED_ID) shouldBe 0
-    }
-
-    @Test
-    fun `should return entries given populated watched and empty hidden`() = runTest(testDispatcher) {
-        syncDataSource.setWatchedShows(
-            ApiResponse.Success(listOf(breakingBadInProgress, theWireInProgress)),
+    fun `should return entries given populated playback and empty hidden`() = runTest(testDispatcher) {
+        syncDataSource.setPlaybackEpisodes(
+            ApiResponse.Success(listOf(breakingBadPlayback, theWirePlayback)),
         )
         syncDataSource.setShowWatchedProgress(
             BREAKING_BAD_ID,
@@ -130,8 +142,8 @@ internal class ProgressContinueWatchingFetcherTest {
     }
 
     @Test
-    fun `should signal skip given watched shows call fails`() = runTest(testDispatcher) {
-        syncDataSource.setWatchedShows(ApiResponse.Error.HttpError(code = 500, errorBody = "boom", errorMessage = "boom"))
+    fun `should signal skip given playback call fails`() = runTest(testDispatcher) {
+        syncDataSource.setPlaybackEpisodes(ApiResponse.Error.HttpError(code = 500, errorBody = "boom", errorMessage = "boom"))
 
         val result = fetcher.run(forceRefresh = false)
 
@@ -140,8 +152,8 @@ internal class ProgressContinueWatchingFetcherTest {
 
     @Test
     fun `should skip rows where per-show progress call fails`() = runTest(testDispatcher) {
-        syncDataSource.setWatchedShows(
-            ApiResponse.Success(listOf(breakingBadInProgress, theWireInProgress)),
+        syncDataSource.setPlaybackEpisodes(
+            ApiResponse.Success(listOf(breakingBadPlayback, theWirePlayback)),
         )
         syncDataSource.setShowWatchedProgress(
             BREAKING_BAD_ID,
@@ -158,13 +170,18 @@ internal class ProgressContinueWatchingFetcherTest {
 private const val BREAKING_BAD_ID = 1388L
 private const val THE_WIRE_ID = 1429L
 private const val RESET_SHOW_ID = 2000L
-private const val UNKNOWN_AIRED_ID = 3000L
 private const val CURSOR_ISO = "2026-05-19T08:30:00Z"
 
-private val breakingBadInProgress = TraktWatchedShowResponse(
-    plays = 30,
-    lastWatchedAt = "2026-05-10T20:15:00Z",
-    lastUpdatedAt = "2026-05-10T20:15:00Z",
+private val breakingBadPlayback = TraktPlaybackEpisodeResponse(
+    id = 100001,
+    progress = 45.0,
+    pausedAt = "2026-05-10T20:15:00.000Z",
+    type = "episode",
+    episode = TraktNextEpisodeResponse(
+        seasonNumber = 4,
+        episodeNumber = 1,
+        ids = EpisodeIds(trakt = 401, tmdb = 62094),
+    ),
     show = TraktShowResponse(
         title = "Breaking Bad",
         ids = ShowIds(trakt = BREAKING_BAD_ID, slug = "breaking-bad", tmdb = 1396),
@@ -172,10 +189,16 @@ private val breakingBadInProgress = TraktWatchedShowResponse(
     ),
 )
 
-private val theWireInProgress = TraktWatchedShowResponse(
-    plays = 12,
-    lastWatchedAt = "2026-04-22T09:00:00Z",
-    lastUpdatedAt = "2026-04-22T09:00:00Z",
+private val theWirePlayback = TraktPlaybackEpisodeResponse(
+    id = 100002,
+    progress = 20.0,
+    pausedAt = "2026-04-22T09:00:00.000Z",
+    type = "episode",
+    episode = TraktNextEpisodeResponse(
+        seasonNumber = 1,
+        episodeNumber = 13,
+        ids = EpisodeIds(trakt = 113, tmdb = null),
+    ),
     show = TraktShowResponse(
         title = "The Wire",
         ids = ShowIds(trakt = THE_WIRE_ID, slug = "the-wire", tmdb = 1438),
@@ -183,10 +206,16 @@ private val theWireInProgress = TraktWatchedShowResponse(
     ),
 )
 
-private val resetShow = TraktWatchedShowResponse(
-    plays = 5,
-    lastWatchedAt = "2026-05-15T18:00:00Z",
-    lastUpdatedAt = "2026-05-15T18:00:00Z",
+private val resetShowPlayback = TraktPlaybackEpisodeResponse(
+    id = 100500,
+    progress = 10.0,
+    pausedAt = "2026-05-15T18:00:00.000Z",
+    type = "episode",
+    episode = TraktNextEpisodeResponse(
+        seasonNumber = 1,
+        episodeNumber = 1,
+        ids = EpisodeIds(trakt = 9001, tmdb = null),
+    ),
     show = TraktShowResponse(
         title = "Some Reset Show",
         ids = ShowIds(trakt = RESET_SHOW_ID, slug = "some-reset-show", tmdb = 9000),
@@ -194,26 +223,17 @@ private val resetShow = TraktWatchedShowResponse(
     ),
 )
 
-private val showWithoutAiredCount = TraktWatchedShowResponse(
-    plays = 1,
-    lastWatchedAt = "2026-05-01T10:00:00Z",
-    lastUpdatedAt = "2026-05-01T10:00:00Z",
-    show = TraktShowResponse(
-        title = "Unknown Aired",
-        ids = ShowIds(trakt = UNKNOWN_AIRED_ID, slug = "unknown-aired", tmdb = 9100),
-        airedEpisodes = null,
-    ),
-)
-
 private val breakingBadProgress = TraktWatchedProgressResponse(
     aired = 62,
     completed = 30,
+    lastWatchedAt = "2026-05-10T20:15:00Z",
     nextEpisode = nextEpisode(seasonNumber = 4, episodeNumber = 1),
 )
 
 private val theWireProgress = TraktWatchedProgressResponse(
     aired = 60,
     completed = 12,
+    lastWatchedAt = "2026-04-22T09:00:00Z",
     nextEpisode = nextEpisode(seasonNumber = 1, episodeNumber = 13),
 )
 

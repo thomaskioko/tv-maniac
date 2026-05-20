@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.continuewatching.implementation
 
 import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
+import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingDao
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
@@ -8,10 +9,10 @@ import com.thomaskioko.tvmaniac.trakt.api.model.EpisodeIds
 import com.thomaskioko.tvmaniac.trakt.api.model.ShowIds
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktHiddenItemResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktNextEpisodeResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktPlaybackEpisodeResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUpNextNitroResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedProgressResponse
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedShowResponse
 import com.thomaskioko.tvmaniac.trakt.testing.FakeTraktSyncRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.testing.FakeTraktUserRemoteDataSource
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
@@ -28,7 +29,6 @@ import kotlin.test.Test
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Instant
 
-
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class ContinueWatchingFetcherTest {
 
@@ -41,6 +41,7 @@ internal class ContinueWatchingFetcherTest {
     private val syncDataSource = FakeTraktSyncRemoteDataSource()
     private val userDataSource = FakeTraktUserRemoteDataSource()
     private val activityRepository = FakeTraktActivityRepository()
+    private val continueWatchingDao = FakeContinueWatchingDao()
     private val dateTimeProvider = FakeDateTimeProvider(currentTime = NOW)
     private val logger = FakeLogger()
 
@@ -54,6 +55,7 @@ internal class ContinueWatchingFetcherTest {
             traktSyncDataSource = syncDataSource,
             traktUserDataSource = userDataSource,
             traktActivityRepository = activityRepository,
+            continueWatchingDao = continueWatchingDao,
         )
         nitroFetcher = NitroContinueWatchingFetcher(
             traktSyncDataSource = syncDataSource,
@@ -79,9 +81,10 @@ internal class ContinueWatchingFetcherTest {
 
     @Test
     fun `should produce identical empty sets given no in-progress shows`() = runTest(testDispatcher) {
-        syncDataSource.setWatchedShows(ApiResponse.Success(emptyList()))
+        syncDataSource.setPlaybackEpisodes(ApiResponse.Success(emptyList()))
         userDataSource.setHiddenProgressWatched(ApiResponse.Success(emptyList()))
         syncDataSource.setUpNextNitro(ApiResponse.Success(emptyList()))
+        continueWatchingDao.deleteAll()
         // Stale cursor so Nitro's empty-response guard does not engage.
         activityRepository.setEpisodesWatchedSyncTimeStamp(NOW - 7.hours)
 
@@ -100,8 +103,13 @@ internal class ContinueWatchingFetcherTest {
             // parity with Progress's pre-filter that drops hidden shows before per-show fetch.
             val baselineNitro: List<TraktUpNextNitroResponse> =
                 json.decodeFromString(load("nitro_up_next.json"))
+            val baselinePlayback: List<TraktPlaybackEpisodeResponse> =
+                json.decodeFromString(load("playback_episodes.json"))
             syncDataSource.setUpNextNitro(
                 ApiResponse.Success(baselineNitro + darkNitroResponse),
+            )
+            syncDataSource.setPlaybackEpisodes(
+                ApiResponse.Success(baselinePlayback + darkPlaybackResponse),
             )
 
             val progressResult = progressFetcher.run(forceRefresh = false).shouldNotBeNull()
@@ -159,16 +167,16 @@ internal class ContinueWatchingFetcherTest {
 
     @Test
     fun `should filter reset show with null next episode from both fetchers`() = runTest(testDispatcher) {
-        // A reset show passes the `plays < aired_episodes` candidate filter but Trakt's
-        // per-show progress returns null next_episode (reset_at populated). Both fetchers
-        // must drop the row; otherwise we persist an entry that has no episode to surface.
-        val baselineWatched: List<TraktWatchedShowResponse> =
-            json.decodeFromString(load("watched_shows_full.json"))
+        // A reset show appears in playback feed but Trakt's per-show progress returns
+        // null next_episode (reset_at populated). Both fetchers must drop the row;
+        // otherwise we persist an entry that has no episode to surface.
+        val baselinePlayback: List<TraktPlaybackEpisodeResponse> =
+            json.decodeFromString(load("playback_episodes.json"))
         val baselineNitro: List<TraktUpNextNitroResponse> =
             json.decodeFromString(load("nitro_up_next.json"))
 
-        syncDataSource.setWatchedShows(
-            ApiResponse.Success(baselineWatched + resetShowWatched),
+        syncDataSource.setPlaybackEpisodes(
+            ApiResponse.Success(baselinePlayback + resetShowPlayback),
         )
         syncDataSource.setShowWatchedProgress(
             traktId = RESET_SHOW_ID,
@@ -185,18 +193,18 @@ internal class ContinueWatchingFetcherTest {
         progressResult.map { it.parityTuple() } shouldContainExactlyInAnyOrder expected
         nitroResult.map { it.parityTuple() } shouldContainExactlyInAnyOrder expected
 
-        // Sanity check: Pipeline A made the per-show progress call (passed candidate filter),
-        // then dropped the row because nextEpisode was null. If the filter regressed, we would
-        // see RESET_SHOW_ID in the result.
+        // Sanity check: Progress made the per-show progress call (reset show was a
+        // candidate via playback), then dropped the row because nextEpisode was null.
+        // If the filter regressed, RESET_SHOW_ID would appear in the result.
         syncDataSource.showWatchedProgressInvocations(RESET_SHOW_ID) shouldBe 1
     }
 
     private fun seedBaselineFixtures() {
-        val watched: List<TraktWatchedShowResponse> = json.decodeFromString(load("watched_shows_full.json"))
+        val playback: List<TraktPlaybackEpisodeResponse> = json.decodeFromString(load("playback_episodes.json"))
         val hidden: List<TraktHiddenItemResponse> = json.decodeFromString(load("hidden_progress.json"))
         val nitro: List<TraktUpNextNitroResponse> = json.decodeFromString(load("nitro_up_next.json"))
 
-        syncDataSource.setWatchedShows(ApiResponse.Success(watched))
+        syncDataSource.setPlaybackEpisodes(ApiResponse.Success(playback))
         userDataSource.setHiddenProgressWatched(ApiResponse.Success(hidden))
         syncDataSource.setUpNextNitro(ApiResponse.Success(nitro))
 
@@ -271,10 +279,34 @@ private val darkNitroResponse = TraktUpNextNitroResponse(
     ),
 )
 
-private val resetShowWatched = TraktWatchedShowResponse(
-    plays = 8,
-    lastWatchedAt = "2025-09-10T14:00:00Z",
-    lastUpdatedAt = "2025-09-10T14:00:00Z",
+private val darkPlaybackResponse = TraktPlaybackEpisodeResponse(
+    id = 100099,
+    progress = 30.0,
+    pausedAt = "2025-12-01T10:00:00.000Z",
+    type = "episode",
+    episode = TraktNextEpisodeResponse(
+        seasonNumber = 2,
+        episodeNumber = 5,
+        ids = EpisodeIds(trakt = 205, tmdb = null),
+    ),
+    show = TraktShowResponse(
+        title = "Dark",
+        year = 2017,
+        ids = ShowIds(trakt = DARK_ID, slug = "dark", tmdb = 70523),
+        airedEpisodes = 26,
+    ),
+)
+
+private val resetShowPlayback = TraktPlaybackEpisodeResponse(
+    id = 100500,
+    progress = 10.0,
+    pausedAt = "2025-09-10T14:00:00.000Z",
+    type = "episode",
+    episode = TraktNextEpisodeResponse(
+        seasonNumber = 1,
+        episodeNumber = 1,
+        ids = EpisodeIds(trakt = 5001, tmdb = null),
+    ),
     show = TraktShowResponse(
         title = "Reset Show",
         year = 2024,

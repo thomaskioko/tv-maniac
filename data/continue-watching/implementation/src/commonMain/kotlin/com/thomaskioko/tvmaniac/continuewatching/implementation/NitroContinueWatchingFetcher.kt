@@ -78,12 +78,6 @@ private fun TraktUpNextNitroResponse.toEntry(): ContinueWatchingEntry {
     val lastWatchedAtMs = progress.lastWatchedAt
         ?.let { Instant.parse(it).toEpochMilliseconds() }
         ?: 0L
-    // Nitro does not expose a separate `last_updated_at`; reuse the watched
-    // timestamp. ProgressContinueWatchingFetcher reads these from two distinct
-    // fields on TraktWatchedShowResponse. The parity test excludes
-    // lastUpdatedAt from its comparison tuple to keep the two pipelines aligned
-    // until Phase 0's real Nitro capture confirms whether the endpoint
-    // actually exposes the field.
     return ContinueWatchingEntry(
         traktId = show.ids.trakt,
         tmdbId = show.ids.tmdb,
