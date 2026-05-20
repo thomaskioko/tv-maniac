@@ -15,7 +15,6 @@ import com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot
 import com.thomaskioko.tvmaniac.domain.episode.PendingUploadsWorker
 import com.thomaskioko.tvmaniac.domain.library.LibrarySyncWorker
 import com.thomaskioko.tvmaniac.domain.notifications.EpisodeNotificationWorker
-import com.thomaskioko.tvmaniac.domain.upnext.UpNextSyncWorker
 import com.thomaskioko.tvmaniac.genreshows.nav.GenreShowsRoute
 import com.thomaskioko.tvmaniac.library.nav.LibraryRoot
 import com.thomaskioko.tvmaniac.navigation.BaseRouteSerializer
@@ -63,7 +62,6 @@ import kotlinx.coroutines.flow.flowOf
         LibrarySyncWorker::class,
         PendingUploadsWorker::class,
         TokenRefreshWorker::class,
-        UpNextSyncWorker::class,
     ],
 )
 public object FakeAppBindingContainer {

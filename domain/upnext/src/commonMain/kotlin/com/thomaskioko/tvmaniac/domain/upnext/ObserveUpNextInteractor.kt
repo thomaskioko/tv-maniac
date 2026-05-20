@@ -35,11 +35,7 @@ public class ObserveUpNextInteractor(
 
 private fun List<UpNextEpisode>.sortedBy(option: UpNextSortOption): List<UpNextEpisode> =
     when (option) {
-        UpNextSortOption.LAST_WATCHED -> {
-            val (watched, unwatched) = partition { it.lastWatchedAt != null }
-            watched.sortedByDescending { it.lastWatchedAt } +
-                unwatched.sortedByDescending { it.followedAt ?: 0L }
-        }
+        UpNextSortOption.LAST_WATCHED -> sortedByDescending { it.lastWatchedAt ?: 0L }
         UpNextSortOption.AIR_DATE -> sortedByDescending { it.firstAired ?: Long.MAX_VALUE }
     }
 

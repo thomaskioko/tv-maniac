@@ -33,22 +33,7 @@ class ObserveUpNextInteractorTest {
     }
 
     @Test
-    fun `should rank watched shows above unwatched shows when sorted by last watched`() = runTest {
-        val watchedRecently = createEpisode(showTraktId = 1, lastWatchedAt = 1_000L, followedAt = 500L)
-        val followedRecentlyButUnwatched = createEpisode(showTraktId = 2, lastWatchedAt = null, followedAt = 9_000L)
-        val followedLongAgoUnwatched = createEpisode(showTraktId = 3, lastWatchedAt = null, followedAt = 100L)
-        repository.setNextEpisodesForWatchlist(
-            listOf(followedRecentlyButUnwatched, followedLongAgoUnwatched, watchedRecently),
-        )
-        repository.setUpNextSortOption(UpNextSortOption.LAST_WATCHED.name)
-
-        interactor.flow.test {
-            awaitItem().episodes.map { it.showTraktId } shouldBe listOf(1L, 2L, 3L)
-        }
-    }
-
-    @Test
-    fun `should sort watched shows by last watched descending`() = runTest {
+    fun `should sort shows by last watched descending`() = runTest {
         val watchedNow = createEpisode(showTraktId = 1, lastWatchedAt = 5_000L)
         val watchedEarlier = createEpisode(showTraktId = 2, lastWatchedAt = 2_000L)
         val watchedLongAgo = createEpisode(showTraktId = 3, lastWatchedAt = 1_000L)
@@ -57,18 +42,6 @@ class ObserveUpNextInteractorTest {
 
         interactor.flow.test {
             awaitItem().episodes.map { it.showTraktId } shouldBe listOf(1L, 2L, 3L)
-        }
-    }
-
-    @Test
-    fun `should sort unwatched shows by followed at descending`() = runTest {
-        val followedRecently = createEpisode(showTraktId = 1, lastWatchedAt = null, followedAt = 5_000L)
-        val followedEarlier = createEpisode(showTraktId = 2, lastWatchedAt = null, followedAt = 2_000L)
-        repository.setNextEpisodesForWatchlist(listOf(followedEarlier, followedRecently))
-        repository.setUpNextSortOption(UpNextSortOption.LAST_WATCHED.name)
-
-        interactor.flow.test {
-            awaitItem().episodes.map { it.showTraktId } shouldBe listOf(1L, 2L)
         }
     }
 
@@ -87,7 +60,6 @@ class ObserveUpNextInteractorTest {
     private fun createEpisode(
         showTraktId: Long,
         lastWatchedAt: Long? = null,
-        followedAt: Long? = 0L,
         firstAired: Long? = null,
     ) = NextEpisodeWithShow(
         showTraktId = showTraktId,
@@ -104,7 +76,6 @@ class ObserveUpNextInteractorTest {
         runtime = null,
         stillPath = null,
         overview = null,
-        followedAt = followedAt,
         firstAired = firstAired,
         lastWatchedAt = lastWatchedAt,
         seasonCount = 1,
