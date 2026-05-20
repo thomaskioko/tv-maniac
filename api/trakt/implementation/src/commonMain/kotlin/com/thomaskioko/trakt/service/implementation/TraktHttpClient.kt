@@ -145,7 +145,7 @@ internal fun traktHttpClient(
         }
 
         install(Logging) {
-            level = if (isDebug) LogLevel.BODY else LogLevel.NONE
+            level = if (isDebug) LogLevel.INFO else LogLevel.NONE
             logger = if (isDebug) {
                 object : Logger {
                     override fun log(message: String) {
