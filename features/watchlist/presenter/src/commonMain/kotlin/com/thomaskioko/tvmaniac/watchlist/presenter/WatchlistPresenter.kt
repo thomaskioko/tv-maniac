@@ -71,6 +71,7 @@ public class WatchlistPresenter(
 ) : ComponentContext by componentContext {
 
     private val watchlistLoadingState = ObservableLoadingCounter()
+    private val userRefreshState = ObservableLoadingCounter()
     private val upNextActionLoadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
     private val coroutineScope = coroutineScope()
@@ -103,8 +104,7 @@ public class WatchlistPresenter(
 
     public val state: StateFlow<WatchlistState> = combine(
         _state,
-        watchlistLoadingState.observable,
-        upNextActionLoadingState.observable,
+        userRefreshState.observable,
         observeWatchlistSectionsInteractor.flow,
         observeUpNextSectionsInteractor.flow,
         repository.observeListStyle(),
@@ -112,7 +112,7 @@ public class WatchlistPresenter(
         uiMessageManager.message,
         queryFlow,
         syncObserver.isSyncing,
-    ) { currentState, isLoading, upNextLoading, watchlistSections, upNextSections, isGridMode, sortOption, message, query, isSyncing ->
+    ) { currentState, isUserRefreshing, watchlistSections, upNextSections, isGridMode, sortOption, message, query, isSyncing ->
 
         // TODO:: Move to Mapper object and inject the mapper in the presenter
         val sectionedItems = watchlistSections.toPresenter()
@@ -125,7 +125,7 @@ public class WatchlistPresenter(
         currentState.copy(
             query = query,
             isGridMode = isGridMode,
-            isRefreshing = isLoading || upNextLoading,
+            isRefreshing = isUserRefreshing,
             isSyncing = isSyncing,
             sortOption = sortOption,
             emptyStateText = localizer.getString(emptyStateKey),
@@ -234,6 +234,7 @@ public class WatchlistPresenter(
 
     private fun syncWatchlist(forceRefresh: Boolean = false) {
         coroutineScope.launch {
+            val counter = if (forceRefresh) userRefreshState else watchlistLoadingState
             syncContinueWatchingInteractor(
                 SyncContinueWatchingInteractor.Param(
                     forceRefresh = forceRefresh,
@@ -241,7 +242,7 @@ public class WatchlistPresenter(
                 ),
             )
                 .collectStatus(
-                    counter = watchlistLoadingState,
+                    counter = counter,
                     logger = logger,
                     uiMessageManager = uiMessageManager,
                     errorToStringMapper = errorToStringMapper,

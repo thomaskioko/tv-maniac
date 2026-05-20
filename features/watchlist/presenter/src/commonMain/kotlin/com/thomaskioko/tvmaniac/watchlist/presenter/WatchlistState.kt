@@ -11,7 +11,7 @@ public data class WatchlistState(
     val query: String = "",
     val isSearchActive: Boolean = false,
     val isGridMode: Boolean = true,
-    val isRefreshing: Boolean = true,
+    val isRefreshing: Boolean = false,
     val isSyncing: Boolean = false,
     val sortOption: WatchlistSortOption = WatchlistSortOption.ADDED_DESC,
     val emptyStateText: String = "",
@@ -26,5 +26,5 @@ public data class WatchlistState(
             watchNextEpisodes.isEmpty() && staleEpisodes.isEmpty()
 
     val showLoading: Boolean
-        get() = isRefreshing && isEmpty
+        get() = isSyncing && isEmpty
 }
