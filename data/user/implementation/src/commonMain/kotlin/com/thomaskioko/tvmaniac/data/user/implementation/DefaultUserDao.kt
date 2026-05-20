@@ -40,10 +40,10 @@ public class DefaultUserDao(
     override fun observeUser(slug: String): Flow<UserProfile?> =
         combine(
             observeUserBySlugQuery(slug),
-            observeWatchlistBackdrop(),
-        ) { user, watchlistBackdrop ->
-            user to watchlistBackdrop
-        }.flatMapLatest { (user, watchlistBackdrop) ->
+            observeLibraryBackdrop(),
+        ) { user, libraryBackdrop ->
+            user to libraryBackdrop
+        }.flatMapLatest { (user, libraryBackdrop) ->
             user?.let {
                 userStatsDao.observeUserProfileStats(slug).map { stats ->
                     UserProfile(
@@ -51,7 +51,7 @@ public class DefaultUserDao(
                         username = it.user_name,
                         fullName = it.full_name,
                         avatarUrl = it.profile_picture,
-                        backgroundUrl = it.background_url ?: watchlistBackdrop,
+                        backgroundUrl = it.background_url ?: libraryBackdrop,
                         stats = stats ?: UserProfileStats.Empty,
                     )
                 }
@@ -62,10 +62,10 @@ public class DefaultUserDao(
     override fun observeCurrentUser(): Flow<UserProfile?> =
         combine(
             observeCurrentUserQuery(),
-            observeWatchlistBackdrop(),
-        ) { user, watchlistBackdrop ->
-            user to watchlistBackdrop
-        }.flatMapLatest { (user, watchlistBackdrop) ->
+            observeLibraryBackdrop(),
+        ) { user, libraryBackdrop ->
+            user to libraryBackdrop
+        }.flatMapLatest { (user, libraryBackdrop) ->
             user?.let {
                 userStatsDao.observeUserProfileStats(it.slug).map { stats ->
                     UserProfile(
@@ -73,7 +73,7 @@ public class DefaultUserDao(
                         username = it.user_name,
                         fullName = it.full_name,
                         avatarUrl = it.profile_picture,
-                        backgroundUrl = it.background_url ?: watchlistBackdrop,
+                        backgroundUrl = it.background_url ?: libraryBackdrop,
                         stats = stats ?: UserProfileStats.Empty,
                     )
                 }
@@ -90,7 +90,7 @@ public class DefaultUserDao(
                     username = it.user_name,
                     fullName = it.full_name,
                     avatarUrl = it.profile_picture,
-                    backgroundUrl = it.background_url ?: getRandomWatchlistBackdrop(),
+                    backgroundUrl = it.background_url ?: getRandomLibraryBackdrop(),
                     stats = stats ?: UserProfileStats.Empty,
                 )
             }
@@ -106,14 +106,14 @@ public class DefaultUserDao(
             .asFlow()
             .mapToOneOrNull(dispatchers.databaseRead)
 
-    override fun observeWatchlistBackdrop(): Flow<String?> =
-        database.userQueries.observeWatchlistBackdrop()
+    override fun observeLibraryBackdrop(): Flow<String?> =
+        database.userQueries.observeLibraryBackdrop()
             .asFlow()
             .mapToOneOrNull(dispatchers.databaseRead)
             .map { it?.image_url }
 
-    override fun getRandomWatchlistBackdrop(): String? =
-        database.userQueries.getRandomWatchlistBackdrop().executeAsOneOrNull()?.image_url
+    override fun getRandomLibraryBackdrop(): String? =
+        database.userQueries.getRandomLibraryBackdrop().executeAsOneOrNull()?.image_url
 
     override suspend fun upsertUser(
         slug: String,

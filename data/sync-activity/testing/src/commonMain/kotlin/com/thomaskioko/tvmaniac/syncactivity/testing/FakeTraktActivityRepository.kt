@@ -15,6 +15,7 @@ public class FakeTraktActivityRepository : TraktActivityRepository {
     private val changedActivities = mutableSetOf<ActivityType>()
     private val syncedActivities = mutableSetOf<ActivityType>()
     private var episodesWatchedSyncTimeStamp: Instant? = null
+    private val fetchInvocations = mutableListOf<Boolean>()
 
     public fun setActivityChanged(activityType: ActivityType, changed: Boolean) {
         if (changed) {
@@ -30,7 +31,11 @@ public class FakeTraktActivityRepository : TraktActivityRepository {
 
     public fun getSyncedActivities(): Set<ActivityType> = syncedActivities.toSet()
 
-    override suspend fun fetchLatestActivities(forceRefresh: Boolean) {}
+    public fun fetchInvocations(): List<Boolean> = fetchInvocations.toList()
+
+    override suspend fun fetchLatestActivities(forceRefresh: Boolean) {
+        fetchInvocations.add(forceRefresh)
+    }
 
     override suspend fun hasActivityChanged(activityType: ActivityType): Boolean =
         changedActivities.contains(activityType)
@@ -44,6 +49,7 @@ public class FakeTraktActivityRepository : TraktActivityRepository {
         changedActivities.clear()
         syncedActivities.clear()
         episodesWatchedSyncTimeStamp = null
+        fetchInvocations.clear()
     }
 
     override suspend fun getEpisodesWatchedSyncTimeStamp(): Instant? = episodesWatchedSyncTimeStamp
