@@ -9,7 +9,9 @@ CREATE TABLE IF NOT EXISTS trakt_continue_watching(
     aired_episodes INTEGER NOT NULL DEFAULT 0,
     completed_count INTEGER NOT NULL DEFAULT 0,
     last_watched_at INTEGER NOT NULL,
-    last_updated_at INTEGER NOT NULL
+    last_updated_at INTEGER NOT NULL,
+    title TEXT DEFAULT NULL,
+    year INTEGER DEFAULT NULL
 );
 
 CREATE INDEX IF NOT EXISTS idx_trakt_continue_watching_tmdb_id ON trakt_continue_watching(tmdb_id);
@@ -21,7 +23,9 @@ SELECT
     trakt_continue_watching.aired_episodes,
     trakt_continue_watching.completed_count,
     trakt_continue_watching.last_watched_at,
-    trakt_continue_watching.last_updated_at
+    trakt_continue_watching.last_updated_at,
+    trakt_continue_watching.title,
+    trakt_continue_watching.year
 FROM trakt_continue_watching;
 
 traktIdsMissingShowDetails:
@@ -37,12 +41,14 @@ SELECT
     trakt_continue_watching.aired_episodes,
     trakt_continue_watching.completed_count,
     trakt_continue_watching.last_watched_at,
-    trakt_continue_watching.last_updated_at
+    trakt_continue_watching.last_updated_at,
+    trakt_continue_watching.title,
+    trakt_continue_watching.year
 FROM trakt_continue_watching;
 
 upsert:
-INSERT OR REPLACE INTO trakt_continue_watching(trakt_id, tmdb_id, aired_episodes, completed_count, last_watched_at, last_updated_at)
-VALUES(:traktId, :tmdbId, :airedEpisodes, :completedCount, :lastWatchedAt, :lastUpdatedAt);
+INSERT OR REPLACE INTO trakt_continue_watching(trakt_id, tmdb_id, aired_episodes, completed_count, last_watched_at, last_updated_at, title, year)
+VALUES(:traktId, :tmdbId, :airedEpisodes, :completedCount, :lastWatchedAt, :lastUpdatedAt, :title, :year);
 
 -- Seeds a placeholder row when the user marks an episode watched locally
 -- before the next continue-watching sync. aired_episodes is 0 until the next

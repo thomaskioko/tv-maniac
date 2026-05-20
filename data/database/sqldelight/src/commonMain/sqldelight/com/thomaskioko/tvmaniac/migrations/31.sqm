@@ -1,0 +1,15 @@
+-- Migration 31: persist show title and year on trakt_continue_watching so
+-- the Watchlist UI can surface every row even when the per-show metadata
+-- fetch (ShowDetailsStore) has not yet populated, or has failed for, the
+-- corresponding tvshow row.
+--
+-- Pairs with the nextEpisodesForWatchlist query switching its INNER JOIN
+-- on tvshow to a LEFT JOIN with COALESCE fallbacks against these columns.
+-- Without this pairing, rows in trakt_continue_watching that lack a
+-- matching tvshow row (typically shows where Trakt returns a null TMDB id,
+-- triggering ShowDetailsStore to throw and the SyncShowMetadataInteractor
+-- runCatching wrapper to swallow the failure) were silently filtered out
+-- of the Watchlist UI.
+
+ALTER TABLE trakt_continue_watching ADD COLUMN title TEXT DEFAULT NULL;
+ALTER TABLE trakt_continue_watching ADD COLUMN year INTEGER DEFAULT NULL;
