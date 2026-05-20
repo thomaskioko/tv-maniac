@@ -26,36 +26,34 @@ public class SyncContinueWatchingInteractor(
 ) : Interactor<SyncContinueWatchingInteractor.Param>() {
 
     override suspend fun doWork(params: Param) {
-        syncObserver.trackSync(TAG) {
-            withContext(dispatchers.io) {
-                syncActivityInteractor.executeSync(
-                    SyncActivityInteractor.Param(forceRefresh = params.forceRefresh),
-                )
-                continueWatchingRepository.sync(
-                    forceRefresh = params.forceRefresh,
-                    useNitro = params.useNitro,
-                )
+        withContext(dispatchers.io) {
+            syncActivityInteractor.executeSync(
+                SyncActivityInteractor.Param(forceRefresh = params.forceRefresh),
+            )
+            continueWatchingRepository.sync(
+                forceRefresh = params.forceRefresh,
+                useNitro = params.useNitro,
+            )
 
-                val watchedShows = continueWatchingDao.entries()
-                logger.debug(TAG, "Syncing metadata for ${watchedShows.size} watched shows")
+            val watchedShows = continueWatchingDao.entries()
+            logger.debug(TAG, "Syncing metadata for ${watchedShows.size} watched shows")
 
-                watchedShows.parallelForEach(concurrency = CONTINUE_WATCHING_SYNC_CONCURRENCY) { show ->
-                    ensureActive()
-                    runCatching {
-                        syncShowMetadataInteractor.executeSync(
-                            SyncShowMetadataInteractor.Param(
-                                traktId = show.traktId,
-                                forceRefresh = params.forceRefresh,
-                            ),
-                        )
-                    }.onFailure {
-                        logger.warning(TAG, "syncShowMetadata failed for ${show.traktId}: ${it.message}")
-                        syncObserver.log(SyncError.BackgroundSyncFailed(TAG, it))
-                    }
+            watchedShows.parallelForEach(concurrency = CONTINUE_WATCHING_SYNC_CONCURRENCY) { show ->
+                ensureActive()
+                runCatching {
+                    syncShowMetadataInteractor.executeSync(
+                        SyncShowMetadataInteractor.Param(
+                            traktId = show.traktId,
+                            forceRefresh = params.forceRefresh,
+                        ),
+                    )
+                }.onFailure {
+                    logger.warning(TAG, "syncShowMetadata failed for ${show.traktId}: ${it.message}")
+                    syncObserver.log(SyncError.BackgroundSyncFailed(TAG, it))
                 }
-
-                logger.debug(TAG, "Continue Watching sync complete")
             }
+
+            logger.debug(TAG, "Continue Watching sync complete")
         }
     }
 
