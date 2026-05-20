@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.continuewatching.testing
 
-import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
 import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingDao
+import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
