@@ -6,8 +6,8 @@ import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepositor
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
-import com.thomaskioko.tvmaniac.watchedshows.testing.FakeWatchedShowsDao
-import com.thomaskioko.tvmaniac.watchedshows.testing.FakeWatchedShowsRepository
+import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingDao
+import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -26,8 +26,8 @@ class WatchlistSyncInteractorTest {
         databaseRead = testDispatcher,
     )
     private val activityRepository = FakeTraktActivityRepository()
-    private val watchedShowsRepository = FakeWatchedShowsRepository()
-    private val watchedShowsDao = FakeWatchedShowsDao()
+    private val continueWatchingRepository = FakeContinueWatchingRepository()
+    private val continueWatchingDao = FakeContinueWatchingDao()
     private val showDetailsRepository = FakeShowDetailsRepository()
     private val seasonDetailsRepository = FakeSeasonDetailsRepository()
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
@@ -40,7 +40,7 @@ class WatchlistSyncInteractorTest {
     )
 
     private val fetchMissingShowsInteractor = FetchMissingShowsInteractor(
-        watchedShowsDao = watchedShowsDao,
+        continueWatchingDao = continueWatchingDao,
         syncWatchedShowInteractor = syncWatchedShowInteractor,
         dispatchers = dispatchers,
     )
@@ -49,7 +49,7 @@ class WatchlistSyncInteractorTest {
 
     private val interactor = WatchlistSyncInteractor(
         traktActivityRepository = activityRepository,
-        watchedShowsRepository = watchedShowsRepository,
+        continueWatchingRepository = continueWatchingRepository,
         fetchMissingShowsInteractor = fetchMissingShowsInteractor,
         syncObserver = syncObserver,
         dispatchers = dispatchers,
@@ -59,19 +59,19 @@ class WatchlistSyncInteractorTest {
     fun `should fetch activities then sync watched shows`() = runTest(testDispatcher) {
         interactor.executeSync(WatchlistSyncInteractor.Param(forceRefresh = false))
 
-        watchedShowsRepository.syncInvocations() shouldBe listOf(false)
+        continueWatchingRepository.syncInvocations() shouldBe listOf(false)
     }
 
     @Test
     fun `should propagate force refresh to watched shows sync`() = runTest(testDispatcher) {
         interactor.executeSync(WatchlistSyncInteractor.Param(forceRefresh = true))
 
-        watchedShowsRepository.syncInvocations() shouldBe listOf(true)
+        continueWatchingRepository.syncInvocations() shouldBe listOf(true)
     }
 
     @Test
     fun `should fetch missing show details after sync`() = runTest(testDispatcher) {
-        watchedShowsDao.setTraktIdsMissingShowDetails(listOf(42L, 99L))
+        continueWatchingDao.setTraktIdsMissingShowDetails(listOf(42L, 99L))
 
         interactor.executeSync(WatchlistSyncInteractor.Param(forceRefresh = false))
 

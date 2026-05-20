@@ -12,8 +12,8 @@ import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsDao
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
-import com.thomaskioko.tvmaniac.watchedshows.api.WatchedShowEntry
-import com.thomaskioko.tvmaniac.watchedshows.testing.FakeWatchedShowsDao
+import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
+import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingDao
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -44,7 +44,7 @@ internal class DefaultUpNextRepositoryTest {
     private val datastoreRepository = FakeDatastoreRepository()
     private val nextEpisodeDao = FakeNextEpisodeDao()
     private val followedShowsDao = FakeFollowedShowsDao()
-    private val watchedShowsDao = FakeWatchedShowsDao()
+    private val continueWatchingDao = FakeContinueWatchingDao()
 
     private lateinit var repository: DefaultUpNextRepository
 
@@ -56,7 +56,7 @@ internal class DefaultUpNextRepositoryTest {
             nextEpisodeDao = nextEpisodeDao,
             datastoreRepository = datastoreRepository,
             followedShowsDao = followedShowsDao,
-            watchedShowsDao = watchedShowsDao,
+            continueWatchingDao = continueWatchingDao,
             showDetailsRepository = showDetailsRepository,
             seasonDetailsRepository = seasonDetailsRepository,
             watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
@@ -145,8 +145,8 @@ internal class DefaultUpNextRepositoryTest {
 
     @Test
     fun `should sync each watched id once given watched-only set`() = runTest {
-        watchedShowsDao.upsert(watchedShow(traktId = 1L))
-        watchedShowsDao.upsert(watchedShow(traktId = 2L))
+        continueWatchingDao.upsert(watchedShow(traktId = 1L))
+        continueWatchingDao.upsert(watchedShow(traktId = 2L))
         requestManagerRepository.requestValid = false
 
         repository.fetchUpNextEpisodes(forceRefresh = false)
@@ -160,8 +160,8 @@ internal class DefaultUpNextRepositoryTest {
     fun `should sync each distinct id once given overlapping followed and watched sets`() = runTest {
         followedShowsDao.upsert(followedShow(traktId = 1L))
         followedShowsDao.upsert(followedShow(traktId = 2L))
-        watchedShowsDao.upsert(watchedShow(traktId = 2L))
-        watchedShowsDao.upsert(watchedShow(traktId = 3L))
+        continueWatchingDao.upsert(watchedShow(traktId = 2L))
+        continueWatchingDao.upsert(watchedShow(traktId = 3L))
         requestManagerRepository.requestValid = false
 
         repository.fetchUpNextEpisodes(forceRefresh = false)
@@ -174,7 +174,7 @@ internal class DefaultUpNextRepositoryTest {
     @Test
     fun `should propagate force refresh to all repositories for every id`() = runTest {
         followedShowsDao.upsert(followedShow(traktId = 1L))
-        watchedShowsDao.upsert(watchedShow(traktId = 2L))
+        continueWatchingDao.upsert(watchedShow(traktId = 2L))
         requestManagerRepository.requestValid = true
 
         repository.fetchUpNextEpisodes(forceRefresh = true)
@@ -219,10 +219,11 @@ internal class DefaultUpNextRepositoryTest {
         pendingAction = pendingAction,
     )
 
-    private fun watchedShow(traktId: Long): WatchedShowEntry = WatchedShowEntry(
+    private fun watchedShow(traktId: Long): ContinueWatchingEntry = ContinueWatchingEntry(
         traktId = traktId,
         tmdbId = traktId,
-        plays = 1L,
+        airedEpisodes = 0L,
+        completedCount = 1L,
         lastWatchedAt = NOW - 10_000L,
         lastUpdatedAt = NOW - 10_000L,
     )

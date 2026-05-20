@@ -4,7 +4,7 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
-import com.thomaskioko.tvmaniac.watchedshows.testing.FakeWatchedShowsDao
+import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingDao
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -26,7 +26,7 @@ class FetchMissingShowsInteractorTest {
     private val showDetailsRepository = FakeShowDetailsRepository()
     private val seasonDetailsRepository = FakeSeasonDetailsRepository()
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
-    private val watchedShowsDao = FakeWatchedShowsDao()
+    private val continueWatchingDao = FakeContinueWatchingDao()
 
     private val syncWatchedShowInteractor = SyncWatchedShowInteractor(
         showDetailsRepository = showDetailsRepository,
@@ -36,14 +36,14 @@ class FetchMissingShowsInteractorTest {
     )
 
     private val interactor = FetchMissingShowsInteractor(
-        watchedShowsDao = watchedShowsDao,
+        continueWatchingDao = continueWatchingDao,
         syncWatchedShowInteractor = syncWatchedShowInteractor,
         dispatchers = dispatchers,
     )
 
     @Test
     fun `should fetch each show id reported missing by the dao`() = runTest(testDispatcher) {
-        watchedShowsDao.setTraktIdsMissingShowDetails(listOf(42L, 99L))
+        continueWatchingDao.setTraktIdsMissingShowDetails(listOf(42L, 99L))
 
         interactor.executeSync(false)
 
@@ -53,7 +53,7 @@ class FetchMissingShowsInteractorTest {
 
     @Test
     fun `should pass force refresh flag to downstream sync`() = runTest(testDispatcher) {
-        watchedShowsDao.setTraktIdsMissingShowDetails(listOf(42L))
+        continueWatchingDao.setTraktIdsMissingShowDetails(listOf(42L))
 
         interactor.executeSync(true)
 
@@ -62,7 +62,7 @@ class FetchMissingShowsInteractorTest {
 
     @Test
     fun `should no-op given dao reports no missing ids`() = runTest(testDispatcher) {
-        watchedShowsDao.setTraktIdsMissingShowDetails(emptyList())
+        continueWatchingDao.setTraktIdsMissingShowDetails(emptyList())
 
         interactor.executeSync(false)
 

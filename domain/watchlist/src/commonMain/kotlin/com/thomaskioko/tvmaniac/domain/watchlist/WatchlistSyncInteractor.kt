@@ -4,14 +4,14 @@ import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityRepository
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
-import com.thomaskioko.tvmaniac.watchedshows.api.WatchedShowsRepository
+import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingRepository
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.withContext
 
 @Inject
 public class WatchlistSyncInteractor(
     private val traktActivityRepository: TraktActivityRepository,
-    private val watchedShowsRepository: WatchedShowsRepository,
+    private val continueWatchingRepository: ContinueWatchingRepository,
     private val fetchMissingShowsInteractor: FetchMissingShowsInteractor,
     private val syncObserver: SyncObserver,
     private val dispatchers: AppCoroutineDispatchers,
@@ -21,7 +21,7 @@ public class WatchlistSyncInteractor(
         syncObserver.trackSync(TAG) {
             withContext(dispatchers.io) {
                 traktActivityRepository.fetchLatestActivities(params.forceRefresh)
-                watchedShowsRepository.syncWatchedShows(params.forceRefresh)
+                continueWatchingRepository.sync(params.forceRefresh)
                 fetchMissingShowsInteractor.executeSync(params.forceRefresh)
             }
         }

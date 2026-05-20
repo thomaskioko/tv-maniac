@@ -12,7 +12,7 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.UPNEXT_FUL
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
-import com.thomaskioko.tvmaniac.watchedshows.api.WatchedShowsDao
+import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingDao
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
@@ -27,7 +27,7 @@ public class DefaultUpNextRepository(
     private val nextEpisodeDao: NextEpisodeDao,
     private val datastoreRepository: DatastoreRepository,
     private val followedShowsDao: FollowedShowsDao,
-    private val watchedShowsDao: WatchedShowsDao,
+    private val continueWatchingDao: ContinueWatchingDao,
     private val showDetailsRepository: ShowDetailsRepository,
     private val seasonDetailsRepository: SeasonDetailsRepository,
     private val watchedEpisodeSyncRepository: WatchedEpisodeSyncRepository,
@@ -50,7 +50,7 @@ public class DefaultUpNextRepository(
         if (!forceRefresh && isSyncValid()) return
 
         val followedTraktIds = followedShowsDao.entriesExcludingDeleted().map { it.traktId }
-        val watchedTraktIds = watchedShowsDao.entries().map { it.traktId }
+        val watchedTraktIds = continueWatchingDao.entries().map { it.traktId }
         val traktIds = (followedTraktIds + watchedTraktIds).distinct()
         if (traktIds.isEmpty()) {
             logger.debug(TAG, "No followed or watched shows found, skipping UpNext refresh")

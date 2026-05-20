@@ -24,8 +24,8 @@ import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
-import com.thomaskioko.tvmaniac.watchedshows.testing.FakeWatchedShowsDao
-import com.thomaskioko.tvmaniac.watchedshows.testing.FakeWatchedShowsRepository
+import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingDao
+import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository
 import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 
@@ -37,8 +37,8 @@ class FakeWatchlistPresenterBuilder {
     val showDetailsRepository = FakeShowDetailsRepository()
     val seasonDetailsRepository = FakeSeasonDetailsRepository()
     val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
-    val watchedShowsRepository = FakeWatchedShowsRepository()
-    val watchedShowsDao = FakeWatchedShowsDao()
+    val continueWatchingRepository = FakeContinueWatchingRepository()
+    val continueWatchingDao = FakeContinueWatchingDao()
     val syncObserver = FakeSyncObserver()
 
     val testDispatcher = UnconfinedTestDispatcher()
@@ -67,7 +67,7 @@ class FakeWatchlistPresenterBuilder {
     )
 
     private val fetchMissingShowsInteractor = FetchMissingShowsInteractor(
-        watchedShowsDao = watchedShowsDao,
+        continueWatchingDao = continueWatchingDao,
         syncWatchedShowInteractor = syncWatchedShowInteractor,
         dispatchers = coroutineDispatcher,
     )
@@ -88,7 +88,7 @@ class FakeWatchlistPresenterBuilder {
 
     private val watchlistSyncInteractor = WatchlistSyncInteractor(
         traktActivityRepository = fakeTraktActivityRepository,
-        watchedShowsRepository = watchedShowsRepository,
+        continueWatchingRepository = continueWatchingRepository,
         fetchMissingShowsInteractor = fetchMissingShowsInteractor,
         syncObserver = syncObserver,
         dispatchers = coroutineDispatcher,
