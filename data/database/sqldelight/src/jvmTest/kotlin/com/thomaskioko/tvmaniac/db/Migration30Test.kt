@@ -6,39 +6,46 @@ import com.thomaskioko.tvmaniac.db.util.openSnapshot
 import com.thomaskioko.tvmaniac.db.util.queryWatchProgress
 import com.thomaskioko.tvmaniac.db.util.seedEpisode
 import com.thomaskioko.tvmaniac.db.util.seedSeason
-import com.thomaskioko.tvmaniac.db.util.seedTraktWatchedShow
+import com.thomaskioko.tvmaniac.db.util.seedTraktContinueWatching
 import com.thomaskioko.tvmaniac.db.util.seedTvshow
 import com.thomaskioko.tvmaniac.db.util.seedWatchedEpisode
 import com.thomaskioko.tvmaniac.db.util.tableNames
 import io.kotest.matchers.shouldBe
 import kotlin.test.Test
 
-class Migration29Test {
+class Migration30Test {
 
     @Test
-    fun `should create trakt_watched_shows table on migration`() {
-        openSnapshot(version = 28).use { driver ->
-            migrateToCurrent(driver, oldVersion = 28)
+    fun `should drop trakt_watched_shows on migration`() {
+        openSnapshot(version = 29).use { driver ->
+            migrateToCurrent(driver, oldVersion = 29)
 
-            driver.tableNames().contains("trakt_watched_shows") shouldBe true
+            driver.tableNames().contains("trakt_watched_shows") shouldBe false
         }
     }
 
     @Test
-    fun `should accept upsert into trakt_watched_shows`() {
-        openSnapshot(version = 28).use { driver ->
-            migrateToCurrent(driver, oldVersion = 28)
+    fun `should create trakt_continue_watching on migration`() {
+        openSnapshot(version = 29).use { driver ->
+            migrateToCurrent(driver, oldVersion = 29)
 
-            driver.seedTraktWatchedShow(traktId = 1L, tmdbId = 100L)
-            // Subsequent insert for the same trakt id should not throw under the UNIQUE constraint;
-            // the seed helper uses INSERT OR REPLACE indirectly via the schema's primary key.
+            driver.tableNames().contains("trakt_continue_watching") shouldBe true
         }
     }
 
     @Test
-    fun `should compute show watch progress alongside trakt_watched_shows row`() {
-        openSnapshot(version = 28).use { driver ->
-            migrateToCurrent(driver, oldVersion = 28)
+    fun `should accept upsert into trakt_continue_watching`() {
+        openSnapshot(version = 29).use { driver ->
+            migrateToCurrent(driver, oldVersion = 29)
+
+            driver.seedTraktContinueWatching(traktId = 1L, tmdbId = 100L)
+        }
+    }
+
+    @Test
+    fun `should compute show watch progress alongside trakt_continue_watching row`() {
+        openSnapshot(version = 29).use { driver ->
+            migrateToCurrent(driver, oldVersion = 29)
 
             driver.seedTvshow(traktId = 1L, tmdbId = 100L)
             driver.seedSeason(id = 11L, showTraktId = 1L, seasonNumber = 1L, episodeCount = 2L)
@@ -56,7 +63,7 @@ class Migration29Test {
                 episodeNumber = 2L,
                 firstAired = OLD_EPOCH_MS,
             )
-            driver.seedTraktWatchedShow(traktId = 1L, tmdbId = 100L)
+            driver.seedTraktContinueWatching(traktId = 1L, tmdbId = 100L)
             driver.seedWatchedEpisode(
                 showTraktId = 1L,
                 episodeId = 111L,

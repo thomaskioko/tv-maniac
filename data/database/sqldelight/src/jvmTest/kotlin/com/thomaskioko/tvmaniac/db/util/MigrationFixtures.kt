@@ -48,10 +48,11 @@ internal fun SqlDriver.seedFollowedShow(
     )
 }
 
-internal fun SqlDriver.seedTraktWatchedShow(
+internal fun SqlDriver.seedTraktContinueWatching(
     traktId: Long,
     tmdbId: Long?,
-    plays: Long = 1L,
+    airedEpisodes: Long = 10L,
+    completedCount: Long = 1L,
     lastWatchedAtMs: Long = 1_700_000_000_000L,
     lastUpdatedAtMs: Long = 1_700_000_000_000L,
 ) {
@@ -59,8 +60,8 @@ internal fun SqlDriver.seedTraktWatchedShow(
     execute(
         identifier = null,
         sql = """
-            INSERT INTO trakt_watched_shows (trakt_id, tmdb_id, plays, last_watched_at, last_updated_at)
-            VALUES ($traktId, $tmdbIdSql, $plays, $lastWatchedAtMs, $lastUpdatedAtMs)
+            INSERT INTO trakt_continue_watching (trakt_id, tmdb_id, aired_episodes, completed_count, last_watched_at, last_updated_at)
+            VALUES ($traktId, $tmdbIdSql, $airedEpisodes, $completedCount, $lastWatchedAtMs, $lastUpdatedAtMs)
         """.trimIndent(),
         parameters = 0,
     )
