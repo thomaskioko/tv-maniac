@@ -76,10 +76,10 @@ internal class ProgressContinueWatchingFetcherTest {
     }
 
     @Test
-    fun `should bootstrap candidates from watched shows given empty playback and empty dao`() = runTest(testDispatcher) {
-        // Fresh install: nothing is currently paused mid-episode and the local DAO is empty.
-        // The fetcher must still surface the user's full watch list so Continue Watching is not
-        // empty until the user happens to pause an episode.
+    fun `should bootstrap candidates from watched shows given empty playback`() = runTest(testDispatcher) {
+        // Fresh install: nothing is currently paused mid-episode. The fetcher must still surface
+        // the user's full watch list so Continue Watching is not empty until the user happens
+        // to pause an episode.
         syncDataSource.setPlaybackEpisodes(ApiResponse.Success(emptyList()))
         syncDataSource.setWatchedShows(
             ApiResponse.Success(
@@ -99,25 +99,6 @@ internal class ProgressContinueWatchingFetcherTest {
             theWireEntry,
         )
         syncDataSource.watchedShowsInvocations(page = 1) shouldBe 1
-    }
-
-    @Test
-    fun `should include cached dao entries as candidates given playback misses them`() = runTest(testDispatcher) {
-        // The Wire is no longer in playback (user finished an episode cleanly), but the local
-        // Continue Watching cache still tracks it. The fetcher must refresh the cached row
-        // via per-show progress so the watchlist does not silently drop it.
-        continueWatchingDao.upsert(theWireEntry)
-        syncDataSource.setPlaybackEpisodes(ApiResponse.Success(listOf(breakingBadPlayback)))
-        syncDataSource.setShowWatchedProgress(BREAKING_BAD_ID, ApiResponse.Success(breakingBadProgress))
-        syncDataSource.setShowWatchedProgress(THE_WIRE_ID, ApiResponse.Success(theWireProgress))
-
-        val result = fetcher.run(forceRefresh = false)
-
-        result.shouldNotBeNull() shouldContainExactlyInAnyOrder listOf(
-            breakingBadEntry,
-            theWireEntry,
-        )
-        syncDataSource.showWatchedProgressInvocations(THE_WIRE_ID) shouldBe 1
     }
 
     @Test
@@ -190,7 +171,7 @@ internal class ProgressContinueWatchingFetcherTest {
     }
 
     @Test
-    fun `should skip rows where per-show progress call fails`() = runTest(testDispatcher) {
+    fun `should signal skip given any per-show progress fails`() = runTest(testDispatcher) {
         syncDataSource.setPlaybackEpisodes(
             ApiResponse.Success(listOf(breakingBadPlayback, theWirePlayback)),
         )
@@ -198,11 +179,85 @@ internal class ProgressContinueWatchingFetcherTest {
             BREAKING_BAD_ID,
             ApiResponse.Success(breakingBadProgress),
         )
-        syncDataSource.setShowWatchedProgress(THE_WIRE_ID, ApiResponse.Error.HttpError(code = 500, errorBody = "boom", errorMessage = "boom"))
+        syncDataSource.setShowWatchedProgress(
+            THE_WIRE_ID,
+            ApiResponse.Error.HttpError(code = 500, errorBody = "boom", errorMessage = "boom"),
+        )
 
         val result = fetcher.run(forceRefresh = false)
 
-        result.shouldNotBeNull().map { it.traktId } shouldContainExactlyInAnyOrder listOf(BREAKING_BAD_ID)
+        result shouldBe null
+    }
+
+    @Test
+    fun `should signal skip given watched-shows call fails`() = runTest(testDispatcher) {
+        syncDataSource.setPlaybackEpisodes(ApiResponse.Success(emptyList()))
+        syncDataSource.setWatchedShows(
+            ApiResponse.Error.HttpError(code = 500, errorBody = "boom", errorMessage = "boom"),
+        )
+
+        val result = fetcher.run(forceRefresh = false)
+
+        result shouldBe null
+    }
+
+    @Test
+    fun `should signal skip given hidden call fails`() = runTest(testDispatcher) {
+        syncDataSource.setPlaybackEpisodes(ApiResponse.Success(listOf(breakingBadPlayback)))
+        userDataSource.setHiddenProgressWatched(
+            ApiResponse.Error.HttpError(code = 500, errorBody = "boom", errorMessage = "boom"),
+        )
+
+        val result = fetcher.run(forceRefresh = false)
+
+        result shouldBe null
+    }
+
+    @Test
+    fun `should preserve existing row counts through the provisional seed`() = runTest(testDispatcher) {
+        // The provisional seed must not clobber real counts on existing rows. Force the
+        // fetcher into the strict-fail path so the Store writer never runs; only the
+        // pre-fan-out provisional seed touches the DAO.
+        continueWatchingDao.upsert(breakingBadEntry)
+        syncDataSource.setPlaybackEpisodes(ApiResponse.Success(listOf(breakingBadPlayback)))
+        syncDataSource.setShowWatchedProgress(
+            BREAKING_BAD_ID,
+            ApiResponse.Error.HttpError(code = 500, errorBody = "boom", errorMessage = "boom"),
+        )
+
+        val result = fetcher.run(forceRefresh = false)
+
+        result shouldBe null
+        continueWatchingDao.entries() shouldContainExactlyInAnyOrder listOf(breakingBadEntry)
+    }
+
+    @Test
+    fun `should seed skeleton row for new candidate before fan-out`() = runTest(testDispatcher) {
+        // Fresh-install path for a new candidate. Per-show progress fails so the sync aborts
+        // before the Store writer would replace with authoritative data. The provisional seed
+        // must already be on disk so the watchlist surfaces the card with title until the next
+        // successful sync overwrites it with real counts.
+        syncDataSource.setPlaybackEpisodes(ApiResponse.Success(listOf(breakingBadPlayback)))
+        syncDataSource.setShowWatchedProgress(
+            BREAKING_BAD_ID,
+            ApiResponse.Error.HttpError(code = 500, errorBody = "boom", errorMessage = "boom"),
+        )
+
+        val result = fetcher.run(forceRefresh = false)
+
+        result shouldBe null
+        continueWatchingDao.entries() shouldContainExactlyInAnyOrder listOf(
+            ContinueWatchingEntry(
+                traktId = BREAKING_BAD_ID,
+                tmdbId = 1396,
+                airedEpisodes = 0L,
+                completedCount = 0L,
+                lastWatchedAt = 0L,
+                lastUpdatedAt = 0L,
+                title = "Breaking Bad",
+                year = null,
+            ),
+        )
     }
 }
 

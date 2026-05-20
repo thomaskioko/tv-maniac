@@ -138,6 +138,20 @@ internal class NitroContinueWatchingFetcherTest {
 
         result shouldBe null
     }
+
+    @Test
+    fun `should signal skip given hidden call fails`() = runTest(testDispatcher) {
+        syncDataSource.setUpNextNitro(
+            ApiResponse.Success(listOf(breakingBadNitro)),
+        )
+        userDataSource.setHiddenProgressWatched(
+            ApiResponse.Error.HttpError(code = 500, errorBody = "boom", errorMessage = "boom"),
+        )
+
+        val result = fetcher.run(forceRefresh = false)
+
+        result shouldBe null
+    }
 }
 
 private val NOW: Instant = Instant.parse("2026-05-20T12:00:00Z")

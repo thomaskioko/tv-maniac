@@ -57,6 +57,10 @@ upsertIfNotExists:
 INSERT OR IGNORE INTO trakt_continue_watching(trakt_id, tmdb_id, aired_episodes, completed_count, last_watched_at, last_updated_at)
 VALUES(:traktId, :tmdbId, 0, 1, :watchedAt, :watchedAt);
 
+upsertPlaceholder:
+INSERT OR IGNORE INTO trakt_continue_watching(trakt_id, tmdb_id, aired_episodes, completed_count, last_watched_at, last_updated_at, title, year)
+VALUES(:traktId, :tmdbId, 0, 0, 0, 0, :title, :year);
+
 deleteByTraktId:
 DELETE FROM trakt_continue_watching WHERE trakt_id = ?;
 

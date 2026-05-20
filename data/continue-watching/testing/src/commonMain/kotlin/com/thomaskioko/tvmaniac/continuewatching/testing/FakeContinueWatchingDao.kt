@@ -26,6 +26,22 @@ public class FakeContinueWatchingDao : ContinueWatchingDao {
         state.value = state.value + (entry.traktId to entry)
     }
 
+    override fun upsertPlaceholder(traktId: Long, tmdbId: Long?, title: String?, year: Long?) {
+        if (state.value.containsKey(traktId)) return
+        state.value += (
+            traktId to ContinueWatchingEntry(
+                traktId = traktId,
+                tmdbId = tmdbId,
+                airedEpisodes = 0L,
+                completedCount = 0L,
+                lastWatchedAt = 0L,
+                lastUpdatedAt = 0L,
+                title = title,
+                year = year,
+            )
+            )
+    }
+
     override fun deleteByTraktId(traktId: Long) {
         state.value = state.value - traktId
     }
