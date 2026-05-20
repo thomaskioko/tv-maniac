@@ -44,7 +44,8 @@ struct WatchlistTab: View {
                     seasonNumber: episode.seasonNumber,
                     episodeNumber: episode.episodeNumberValue
                 ))
-            }
+            },
+            onRefresh: { presenter.dispatch(action: RefreshWatchlist(forceRefresh: true)) }
         )
         .sheet(isPresented: $showSortOptions) {
             WatchlistSortOptionsSheet(

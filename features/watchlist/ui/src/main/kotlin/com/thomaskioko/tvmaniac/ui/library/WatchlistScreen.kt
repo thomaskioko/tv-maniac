@@ -32,6 +32,7 @@ import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.material.icons.outlined.Inbox
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -41,6 +42,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -89,6 +91,7 @@ import com.thomaskioko.tvmaniac.watchlist.presenter.ChangeListStyleClicked
 import com.thomaskioko.tvmaniac.watchlist.presenter.ChangeWatchlistSortOption
 import com.thomaskioko.tvmaniac.watchlist.presenter.ClearWatchlistQuery
 import com.thomaskioko.tvmaniac.watchlist.presenter.MarkUpNextEpisodeWatched
+import com.thomaskioko.tvmaniac.watchlist.presenter.RefreshWatchlist
 import com.thomaskioko.tvmaniac.watchlist.presenter.ShowTitleClicked
 import com.thomaskioko.tvmaniac.watchlist.presenter.ToggleSearchActive
 import com.thomaskioko.tvmaniac.watchlist.presenter.UpNextEpisodeClicked
@@ -127,6 +130,7 @@ public fun WatchlistScreen(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun WatchlistScreen(
     state: WatchlistState,
@@ -152,89 +156,94 @@ internal fun WatchlistScreen(
         },
         content = { contentPadding ->
             val context = LocalContext.current
-            AnimatedContent(
+            PullToRefreshBox(
                 modifier = Modifier
                     .padding(contentPadding.copy(copyBottom = false))
                     .padding(horizontal = 8.dp),
-                targetState = state.isGridMode,
-                transitionSpec = {
-                    (scaleIn(animationSpec = spring()) + fadeIn()) togetherWith
-                        (scaleOut(animationSpec = spring()) + fadeOut())
-                },
-                label = "list_style_animation",
-            ) { isGridMode ->
-                val hasNoItems = state.watchNextItems.isEmpty() && state.staleItems.isEmpty()
-                val hasNoEpisodes =
-                    state.watchNextEpisodes.isEmpty() && state.staleEpisodes.isEmpty()
+                isRefreshing = state.isRefreshing,
+                onRefresh = { onAction(RefreshWatchlist(forceRefresh = true)) },
+            ) {
+                AnimatedContent(
+                    targetState = state.isGridMode,
+                    transitionSpec = {
+                        (scaleIn(animationSpec = spring()) + fadeIn()) togetherWith
+                            (scaleOut(animationSpec = spring()) + fadeOut())
+                    },
+                    label = "list_style_animation",
+                ) { isGridMode ->
+                    val hasNoItems = state.watchNextItems.isEmpty() && state.staleItems.isEmpty()
+                    val hasNoEpisodes =
+                        state.watchNextEpisodes.isEmpty() && state.staleEpisodes.isEmpty()
 
-                when {
-                    state.showLoading -> {
-                        Box(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            LoadingIndicator()
-                        }
-                    }
-
-                    isGridMode -> {
-                        if (hasNoItems) {
-                            val message = if (state.query.isNotBlank()) {
-                                label_watchlist_empty_result.resolve(context).format(state.query)
-                            } else {
-                                null
+                    when {
+                        state.showLoading -> {
+                            Box(
+                                modifier = Modifier.fillMaxWidth(),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                LoadingIndicator()
                             }
-                            EmptyStateView(
-                                modifier = Modifier
-                                    .testTag(WatchlistTestTags.EMPTY_STATE_TEST_TAG),
-                                imageVector = Icons.Outlined.Inbox,
-                                title = state.emptyStateText,
-                                message = message,
-                            )
-                        } else {
-                            SectionedWatchlistGridContent(
-                                watchNextTitle = label_discover_up_next.resolve(context),
-                                staleTitle = title_not_watched_for_while.resolve(context),
-                                watchNextItems = state.watchNextItems,
-                                staleItems = state.staleItems,
-                                scrollBehavior = scrollBehavior,
-                                onItemClicked = { onAction(WatchlistShowClicked(it)) },
-                            )
                         }
-                    }
 
-                    else -> {
-                        if (hasNoEpisodes) {
-                            EmptyStateView(
-                                imageVector = Icons.Outlined.CheckCircle,
-                                title = label_up_to_date.resolve(context),
-                            )
-                        } else {
-                            SectionedUpNextListContent(
-                                watchNextTitle = label_discover_up_next.resolve(context),
-                                staleTitle = title_not_watched_for_while.resolve(context),
-                                premiereLabel = badge_premiere.resolve(context),
-                                newLabel = badge_new.resolve(context),
-                                watchNextEpisodes = state.watchNextEpisodes,
-                                staleEpisodes = state.staleEpisodes,
-                                scrollBehavior = scrollBehavior,
-                                onEpisodeClicked = { showId, episodeId ->
-                                    onAction(UpNextEpisodeClicked(showId, episodeId))
-                                },
-                                onShowTitleClicked = { showId ->
-                                    onAction(ShowTitleClicked(showId))
-                                },
-                                onMarkWatched = { episode ->
-                                    onAction(
-                                        MarkUpNextEpisodeWatched(
-                                            showTraktId = episode.showTraktId,
-                                            episodeId = episode.episodeId,
-                                            seasonNumber = episode.seasonNumber,
-                                            episodeNumber = episode.episodeNumber,
-                                        ),
-                                    )
-                                },
-                            )
+                        isGridMode -> {
+                            if (hasNoItems) {
+                                val message = if (state.query.isNotBlank()) {
+                                    label_watchlist_empty_result.resolve(context).format(state.query)
+                                } else {
+                                    null
+                                }
+                                EmptyStateView(
+                                    modifier = Modifier
+                                        .testTag(WatchlistTestTags.EMPTY_STATE_TEST_TAG),
+                                    imageVector = Icons.Outlined.Inbox,
+                                    title = state.emptyStateText,
+                                    message = message,
+                                )
+                            } else {
+                                SectionedWatchlistGridContent(
+                                    watchNextTitle = label_discover_up_next.resolve(context),
+                                    staleTitle = title_not_watched_for_while.resolve(context),
+                                    watchNextItems = state.watchNextItems,
+                                    staleItems = state.staleItems,
+                                    scrollBehavior = scrollBehavior,
+                                    onItemClicked = { onAction(WatchlistShowClicked(it)) },
+                                )
+                            }
+                        }
+
+                        else -> {
+                            if (hasNoEpisodes) {
+                                EmptyStateView(
+                                    imageVector = Icons.Outlined.CheckCircle,
+                                    title = label_up_to_date.resolve(context),
+                                )
+                            } else {
+                                SectionedUpNextListContent(
+                                    watchNextTitle = label_discover_up_next.resolve(context),
+                                    staleTitle = title_not_watched_for_while.resolve(context),
+                                    premiereLabel = badge_premiere.resolve(context),
+                                    newLabel = badge_new.resolve(context),
+                                    watchNextEpisodes = state.watchNextEpisodes,
+                                    staleEpisodes = state.staleEpisodes,
+                                    scrollBehavior = scrollBehavior,
+                                    onEpisodeClicked = { showId, episodeId ->
+                                        onAction(UpNextEpisodeClicked(showId, episodeId))
+                                    },
+                                    onShowTitleClicked = { showId ->
+                                        onAction(ShowTitleClicked(showId))
+                                    },
+                                    onMarkWatched = { episode ->
+                                        onAction(
+                                            MarkUpNextEpisodeWatched(
+                                                showTraktId = episode.showTraktId,
+                                                episodeId = episode.episodeId,
+                                                seasonNumber = episode.seasonNumber,
+                                                episodeNumber = episode.episodeNumber,
+                                            ),
+                                        )
+                                    },
+                                )
+                            }
                         }
                     }
                 }

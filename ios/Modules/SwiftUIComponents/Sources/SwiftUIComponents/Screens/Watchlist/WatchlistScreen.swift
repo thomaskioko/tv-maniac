@@ -78,6 +78,7 @@ public struct WatchlistScreen: View {
     private let onEpisodeClicked: (Int64, Int64) -> Void
     private let onShowTitleClicked: (Int64) -> Void
     private let onMarkWatched: (SwiftNextEpisode) -> Void
+    private let onRefresh: () -> Void
 
     public init(
         state: State,
@@ -89,7 +90,8 @@ public struct WatchlistScreen: View {
         onShowClicked: @escaping (Int64) -> Void,
         onEpisodeClicked: @escaping (Int64, Int64) -> Void,
         onShowTitleClicked: @escaping (Int64) -> Void,
-        onMarkWatched: @escaping (SwiftNextEpisode) -> Void
+        onMarkWatched: @escaping (SwiftNextEpisode) -> Void,
+        onRefresh: @escaping () -> Void
     ) {
         self.state = state
         self.onQueryChanged = onQueryChanged
@@ -101,6 +103,7 @@ public struct WatchlistScreen: View {
         self.onEpisodeClicked = onEpisodeClicked
         self.onShowTitleClicked = onShowTitleClicked
         self.onMarkWatched = onMarkWatched
+        self.onRefresh = onRefresh
     }
 
     @SwiftUI.State private var showListSelection = false
@@ -113,6 +116,7 @@ public struct WatchlistScreen: View {
         ZStack {
             VStack {
                 contentView
+                    .refreshable { onRefresh() }
             }
         }
         .appScreen()
