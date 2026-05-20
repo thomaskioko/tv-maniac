@@ -123,7 +123,15 @@ LEFT JOIN (
 LEFT JOIN shows_next_to_watch AS next_episode
     ON next_episode.show_trakt_id = tvshow.trakt_id
     AND next_episode.next_ep_abs_number = min_next_episode.min_abs_number
-WHERE watched_show.trakt_id IS NOT NULL OR followed_show.trakt_id IS NOT NULL
+WHERE watched_show.trakt_id IS NOT NULL
+   OR (
+       followed_show.trakt_id IS NOT NULL
+       AND NOT EXISTS (
+           SELECT 1 FROM watched_episodes we
+           WHERE we.show_trakt_id = tvshow.trakt_id
+             AND we.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
+       )
+   )
 ORDER BY COALESCE(next_episode.last_watched_at, watched_show.last_watched_at, followed_show.followed_at) DESC,
          next_episode.season_number ASC,
          next_episode.episode_number ASC;

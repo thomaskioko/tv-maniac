@@ -490,6 +490,35 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should exclude show given followed with watched episodes and not in continue watching`() = runTest {
+        // The Trakt fetcher drops a show from `trakt_continue_watching` once the user catches
+        // up. If the followed_shows row stays (typical, the user did not unfollow), the
+        // watchlist must still hide it. The EXISTS clause uses any watched_episodes row as the
+        // "user has started this show" signal so the rule does not depend on stale local counts.
+        followShowOnly(showId = 1L, followedAt = watchDate)
+        markEpisodeWatched(showId = 1L, episodeId = 101L, seasonNumber = 1L, episodeNumber = 1L)
+
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
+            awaitItem().size shouldBe 0
+        }
+    }
+
+    @Test
+    fun `should include show given followed with watched episodes and still in continue watching`() = runTest {
+        // First branch of the WHERE clause: a row in trakt_continue_watching always keeps the
+        // show on screen. The user is mid-progress according to the server.
+        followShow(showId = 1L, followedAt = watchDate)
+        markEpisodeWatched(showId = 1L, episodeId = 101L, seasonNumber = 1L, episodeNumber = 1L)
+
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
+            val episodes = awaitItem()
+            episodes.size shouldBe 1
+            episodes[0].showTraktId shouldBe 1L
+            episodes[0].episodeName shouldBe "Episode 2"
+        }
+    }
+
+    @Test
     fun `should exclude null-aired and future-aired episodes from total count`() = runTest {
         val realNow = kotlin.time.Clock.System.now().toEpochMilliseconds()
         fakeDateTimeProvider.setCurrentTimeMillis(realNow)
