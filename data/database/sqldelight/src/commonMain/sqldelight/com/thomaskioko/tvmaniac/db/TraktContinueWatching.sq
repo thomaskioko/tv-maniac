@@ -1,0 +1,58 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.TraktId;
+import com.thomaskioko.tvmaniac.db.TmdbId;
+
+CREATE TABLE IF NOT EXISTS trakt_continue_watching(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    trakt_id INTEGER AS Id<TraktId> NOT NULL UNIQUE,
+    tmdb_id INTEGER AS Id<TmdbId> DEFAULT NULL,
+    aired_episodes INTEGER NOT NULL DEFAULT 0,
+    completed_count INTEGER NOT NULL DEFAULT 0,
+    last_watched_at INTEGER NOT NULL,
+    last_updated_at INTEGER NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_trakt_continue_watching_tmdb_id ON trakt_continue_watching(tmdb_id);
+
+entries:
+SELECT
+    trakt_continue_watching.trakt_id,
+    trakt_continue_watching.tmdb_id,
+    trakt_continue_watching.aired_episodes,
+    trakt_continue_watching.completed_count,
+    trakt_continue_watching.last_watched_at,
+    trakt_continue_watching.last_updated_at
+FROM trakt_continue_watching;
+
+traktIdsMissingShowDetails:
+SELECT watched_show.trakt_id
+FROM trakt_continue_watching AS watched_show
+LEFT JOIN tvshow ON watched_show.trakt_id = tvshow.trakt_id
+WHERE tvshow.trakt_id IS NULL;
+
+entriesObservable:
+SELECT
+    trakt_continue_watching.trakt_id,
+    trakt_continue_watching.tmdb_id,
+    trakt_continue_watching.aired_episodes,
+    trakt_continue_watching.completed_count,
+    trakt_continue_watching.last_watched_at,
+    trakt_continue_watching.last_updated_at
+FROM trakt_continue_watching;
+
+upsert:
+INSERT OR REPLACE INTO trakt_continue_watching(trakt_id, tmdb_id, aired_episodes, completed_count, last_watched_at, last_updated_at)
+VALUES(:traktId, :tmdbId, :airedEpisodes, :completedCount, :lastWatchedAt, :lastUpdatedAt);
+
+-- Seeds a placeholder row when the user marks an episode watched locally
+-- before the next continue-watching sync. aired_episodes is 0 until the next
+-- sync overwrites with the server's authoritative count.
+upsertIfNotExists:
+INSERT OR IGNORE INTO trakt_continue_watching(trakt_id, tmdb_id, aired_episodes, completed_count, last_watched_at, last_updated_at)
+VALUES(:traktId, :tmdbId, 0, 1, :watchedAt, :watchedAt);
+
+deleteByTraktId:
+DELETE FROM trakt_continue_watching WHERE trakt_id = ?;
+
+deleteAll:
+DELETE FROM trakt_continue_watching;

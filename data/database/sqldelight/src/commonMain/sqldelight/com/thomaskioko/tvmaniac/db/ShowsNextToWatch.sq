@@ -106,7 +106,7 @@ SELECT
     next_episode.ratings,
     next_episode.vote_count
 FROM tvshow
-LEFT JOIN trakt_watched_shows AS watched_show ON watched_show.trakt_id = tvshow.trakt_id
+LEFT JOIN trakt_continue_watching AS watched_show ON watched_show.trakt_id = tvshow.trakt_id
 LEFT JOIN followed_shows AS followed_show
     ON followed_show.trakt_id = tvshow.trakt_id
     AND followed_show.pending_action != 'DELETE'
