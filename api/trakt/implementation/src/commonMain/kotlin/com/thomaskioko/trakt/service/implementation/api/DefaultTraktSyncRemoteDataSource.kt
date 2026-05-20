@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.core.base.TraktApi
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.authSafeRequest
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.TraktSyncRemoteDataSource
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktHistoryItemResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktLastActivitiesResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktPlaybackEpisodeResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUpNextNitroResponse
@@ -37,6 +38,17 @@ public class DefaultTraktSyncRemoteDataSource(
             url {
                 method = HttpMethod.Get
                 path("sync/playback/episodes")
+                parameters.append("limit", limit.toString())
+            }
+        }
+
+    override suspend fun getHistoryEpisodes(
+        limit: Int,
+    ): ApiResponse<List<TraktHistoryItemResponse>> =
+        httpClient.authSafeRequest {
+            url {
+                method = HttpMethod.Get
+                path("sync/history/episodes")
                 parameters.append("limit", limit.toString())
             }
         }

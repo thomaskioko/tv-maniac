@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.trakt.testing
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.TraktSyncRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktEpisodeActivities
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktHistoryItemResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktLastActivitiesResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktPlaybackEpisodeResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowActivities
@@ -23,6 +24,9 @@ public class FakeTraktSyncRemoteDataSource : TraktSyncRemoteDataSource {
     private var playbackEpisodesResponse: ApiResponse<List<TraktPlaybackEpisodeResponse>> =
         ApiResponse.Success(emptyList())
 
+    private var historyEpisodesResponse: ApiResponse<List<TraktHistoryItemResponse>> =
+        ApiResponse.Success(emptyList())
+
     private val showWatchedProgressResponses =
         mutableMapOf<Long, ApiResponse<TraktWatchedProgressResponse>>()
 
@@ -31,6 +35,7 @@ public class FakeTraktSyncRemoteDataSource : TraktSyncRemoteDataSource {
 
     private var lastActivitiesInvocations: Int = 0
     private var playbackEpisodesInvocations: Int = 0
+    private var historyEpisodesInvocations: Int = 0
     private val showWatchedProgressInvocations = mutableMapOf<Long, Int>()
     private val showWatchedProgressLastActivityArgs = mutableMapOf<Long, String?>()
     private var upNextNitroInvocations: Int = 0
@@ -41,6 +46,10 @@ public class FakeTraktSyncRemoteDataSource : TraktSyncRemoteDataSource {
 
     public fun setPlaybackEpisodes(response: ApiResponse<List<TraktPlaybackEpisodeResponse>>) {
         playbackEpisodesResponse = response
+    }
+
+    public fun setHistoryEpisodes(response: ApiResponse<List<TraktHistoryItemResponse>>) {
+        historyEpisodesResponse = response
     }
 
     public fun setShowWatchedProgress(
@@ -58,6 +67,8 @@ public class FakeTraktSyncRemoteDataSource : TraktSyncRemoteDataSource {
 
     public fun playbackEpisodesInvocations(): Int = playbackEpisodesInvocations
 
+    public fun historyEpisodesInvocations(): Int = historyEpisodesInvocations
+
     public fun showWatchedProgressInvocations(traktId: Long): Int =
         showWatchedProgressInvocations[traktId] ?: 0
 
@@ -69,6 +80,7 @@ public class FakeTraktSyncRemoteDataSource : TraktSyncRemoteDataSource {
     public fun clearInvocations() {
         lastActivitiesInvocations = 0
         playbackEpisodesInvocations = 0
+        historyEpisodesInvocations = 0
         showWatchedProgressInvocations.clear()
         showWatchedProgressLastActivityArgs.clear()
         upNextNitroInvocations = 0
@@ -84,6 +96,13 @@ public class FakeTraktSyncRemoteDataSource : TraktSyncRemoteDataSource {
     ): ApiResponse<List<TraktPlaybackEpisodeResponse>> {
         playbackEpisodesInvocations++
         return playbackEpisodesResponse
+    }
+
+    override suspend fun getHistoryEpisodes(
+        limit: Int,
+    ): ApiResponse<List<TraktHistoryItemResponse>> {
+        historyEpisodesInvocations++
+        return historyEpisodesResponse
     }
 
     override suspend fun getShowWatchedProgress(
