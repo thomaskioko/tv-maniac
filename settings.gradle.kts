@@ -178,6 +178,7 @@ include(
     ":data:showdetails:testing",
     ":data:shows:api",
     ":data:shows:implementation",
+    ":data:shows:testing",
     ":data:similar:api",
     ":data:similar:implementation",
     ":data:similar:testing",
