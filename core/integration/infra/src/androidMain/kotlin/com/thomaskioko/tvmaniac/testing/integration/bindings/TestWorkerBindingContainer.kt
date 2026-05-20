@@ -6,7 +6,6 @@ import com.thomaskioko.tvmaniac.core.tasks.testing.FakeBackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.domain.episode.PendingUploadsWorker
 import com.thomaskioko.tvmaniac.domain.library.LibrarySyncWorker
 import com.thomaskioko.tvmaniac.domain.notifications.EpisodeNotificationWorker
-import com.thomaskioko.tvmaniac.domain.upnext.UpNextSyncWorker
 import com.thomaskioko.tvmaniac.domain.watchlist.WatchlistSyncWorker
 import com.thomaskioko.tvmaniac.traktauth.implementation.TokenRefreshWorker
 import dev.zacsweers.metro.AppScope
@@ -23,7 +22,6 @@ import dev.zacsweers.metro.SingleIn
         EpisodeNotificationWorker::class,
         LibrarySyncWorker::class,
         PendingUploadsWorker::class,
-        UpNextSyncWorker::class,
         AndroidTaskScheduler::class,
         WatchlistSyncWorker::class,
     ],
