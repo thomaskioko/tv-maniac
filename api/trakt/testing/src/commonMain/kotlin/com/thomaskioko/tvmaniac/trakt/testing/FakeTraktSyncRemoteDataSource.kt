@@ -5,6 +5,8 @@ import com.thomaskioko.tvmaniac.trakt.api.TraktSyncRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktEpisodeActivities
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktLastActivitiesResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowActivities
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktUpNextNitroResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedProgressResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedShowResponse
 
 public class FakeTraktSyncRemoteDataSource : TraktSyncRemoteDataSource {
@@ -21,8 +23,17 @@ public class FakeTraktSyncRemoteDataSource : TraktSyncRemoteDataSource {
     private var watchedShowsResponse: ApiResponse<List<TraktWatchedShowResponse>> =
         ApiResponse.Success(emptyList())
 
+    private val showWatchedProgressResponses =
+        mutableMapOf<Long, ApiResponse<TraktWatchedProgressResponse>>()
+
+    private var upNextNitroResponse: ApiResponse<List<TraktUpNextNitroResponse>> =
+        ApiResponse.Success(emptyList())
+
     private var lastActivitiesInvocations: Int = 0
     private var watchedShowsInvocations: Int = 0
+    private val showWatchedProgressInvocations = mutableMapOf<Long, Int>()
+    private val showWatchedProgressLastActivityArgs = mutableMapOf<Long, String?>()
+    private var upNextNitroInvocations: Int = 0
 
     public fun setLastActivities(response: ApiResponse<TraktLastActivitiesResponse>) {
         lastActivitiesResponse = response
@@ -32,13 +43,35 @@ public class FakeTraktSyncRemoteDataSource : TraktSyncRemoteDataSource {
         watchedShowsResponse = response
     }
 
+    public fun setShowWatchedProgress(
+        traktId: Long,
+        response: ApiResponse<TraktWatchedProgressResponse>,
+    ) {
+        showWatchedProgressResponses[traktId] = response
+    }
+
+    public fun setUpNextNitro(response: ApiResponse<List<TraktUpNextNitroResponse>>) {
+        upNextNitroResponse = response
+    }
+
     public fun lastActivitiesInvocations(): Int = lastActivitiesInvocations
 
     public fun watchedShowsInvocations(): Int = watchedShowsInvocations
 
+    public fun showWatchedProgressInvocations(traktId: Long): Int =
+        showWatchedProgressInvocations[traktId] ?: 0
+
+    public fun showWatchedProgressLastActivity(traktId: Long): String? =
+        showWatchedProgressLastActivityArgs[traktId]
+
+    public fun upNextNitroInvocations(): Int = upNextNitroInvocations
+
     public fun clearInvocations() {
         lastActivitiesInvocations = 0
         watchedShowsInvocations = 0
+        showWatchedProgressInvocations.clear()
+        showWatchedProgressLastActivityArgs.clear()
+        upNextNitroInvocations = 0
     }
 
     override suspend fun getLastActivities(): ApiResponse<TraktLastActivitiesResponse> {
@@ -46,8 +79,32 @@ public class FakeTraktSyncRemoteDataSource : TraktSyncRemoteDataSource {
         return lastActivitiesResponse
     }
 
-    override suspend fun getWatchedShows(limit: String): ApiResponse<List<TraktWatchedShowResponse>> {
+    override suspend fun getWatchedShows(
+        limit: String,
+        extended: String,
+    ): ApiResponse<List<TraktWatchedShowResponse>> {
         watchedShowsInvocations++
         return watchedShowsResponse
+    }
+
+    override suspend fun getShowWatchedProgress(
+        traktId: Long,
+        lastActivity: String?,
+        hidden: Boolean,
+        specials: Boolean,
+    ): ApiResponse<TraktWatchedProgressResponse> {
+        showWatchedProgressInvocations[traktId] =
+            (showWatchedProgressInvocations[traktId] ?: 0) + 1
+        showWatchedProgressLastActivityArgs[traktId] = lastActivity
+        return showWatchedProgressResponses[traktId]
+            ?: error("FakeTraktSyncRemoteDataSource: no showWatchedProgress response configured for traktId=$traktId")
+    }
+
+    override suspend fun getUpNextNitro(
+        intent: String,
+        limit: Int,
+    ): ApiResponse<List<TraktUpNextNitroResponse>> {
+        upNextNitroInvocations++
+        return upNextNitroResponse
     }
 }
