@@ -197,6 +197,7 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.datastore.preference)
     implementation(libs.androidx.work.runtime)
+    //noinspection LoginCredentials
     implementation(libs.appauth)
 
     implementation(libs.decompose.decompose)
