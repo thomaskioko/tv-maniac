@@ -96,7 +96,6 @@ SELECT
     tvshow.poster_path AS show_poster,
     tvshow.status AS show_status,
     tvshow.year AS show_year,
-    followed_show.followed_at AS followed_at,
     next_episode.first_aired,
     watched_show.last_watched_at AS last_watched_at,
     COALESCE(show_metadata.season_count, 0) AS season_count,
@@ -105,11 +104,8 @@ SELECT
     COALESCE(show_watch_progress.total_count, 0) AS total_count,
     next_episode.ratings,
     next_episode.vote_count
-FROM tvshow
-LEFT JOIN trakt_continue_watching AS watched_show ON watched_show.trakt_id = tvshow.trakt_id
-LEFT JOIN followed_shows AS followed_show
-    ON followed_show.trakt_id = tvshow.trakt_id
-    AND followed_show.pending_action != 'DELETE'
+FROM trakt_continue_watching AS watched_show
+INNER JOIN tvshow ON tvshow.trakt_id = watched_show.trakt_id
 LEFT JOIN show_metadata ON tvshow.trakt_id = show_metadata.show_trakt_id
 LEFT JOIN show_watch_progress ON show_watch_progress.show_trakt_id = tvshow.trakt_id
 LEFT JOIN (
@@ -123,15 +119,6 @@ LEFT JOIN (
 LEFT JOIN shows_next_to_watch AS next_episode
     ON next_episode.show_trakt_id = tvshow.trakt_id
     AND next_episode.next_ep_abs_number = min_next_episode.min_abs_number
-WHERE watched_show.trakt_id IS NOT NULL
-   OR (
-       followed_show.trakt_id IS NOT NULL
-       AND NOT EXISTS (
-           SELECT 1 FROM watched_episodes we
-           WHERE we.show_trakt_id = tvshow.trakt_id
-             AND we.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
-       )
-   )
-ORDER BY COALESCE(next_episode.last_watched_at, watched_show.last_watched_at, followed_show.followed_at) DESC,
+ORDER BY COALESCE(next_episode.last_watched_at, watched_show.last_watched_at) DESC,
          next_episode.season_number ASC,
          next_episode.episode_number ASC;

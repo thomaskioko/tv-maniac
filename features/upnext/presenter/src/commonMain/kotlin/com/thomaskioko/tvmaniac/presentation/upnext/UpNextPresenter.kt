@@ -13,8 +13,8 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.ObserveUpNextInteractor
-import com.thomaskioko.tvmaniac.domain.upnext.RefreshUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.model.UpNextSortOption
+import com.thomaskioko.tvmaniac.domain.watchlist.WatchlistSyncInteractor
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
@@ -26,8 +26,6 @@ import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.UpNextEpisode
 import dev.zacsweers.metro.Inject
@@ -36,9 +34,6 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -47,11 +42,10 @@ import kotlinx.coroutines.launch
 public class UpNextPresenter(
     componentContext: ComponentContext,
     private val navigator: Navigator,
-    private val refreshUpNextInteractor: RefreshUpNextInteractor,
+    private val watchlistSyncInteractor: WatchlistSyncInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val upNextRepository: UpNextRepository,
     private val unfollowShowInteractor: UnfollowShowInteractor,
-    private val traktAuthRepository: TraktAuthRepository,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
     observeUpNextInteractor: ObserveUpNextInteractor,
@@ -63,11 +57,6 @@ public class UpNextPresenter(
     private val loadingState = ObservableLoadingCounter()
     private val refreshingState = ObservableLoadingCounter()
     private val markWatchedLoadingState = ObservableLoadingCounter()
-
-    init {
-        observeAuthState()
-        observeFollowedShows()
-    }
 
     public val state: StateFlow<UpNextState> = combine(
         observeUpNextInteractor.flow,
@@ -114,30 +103,10 @@ public class UpNextPresenter(
         }
     }
 
-    private fun observeAuthState() {
-        coroutineScope.launch {
-            traktAuthRepository.state
-                .distinctUntilChanged()
-                .filter { it == TraktAuthState.LOGGED_IN }
-                .collect { refreshUpNext() }
-        }
-    }
-
-    private fun observeFollowedShows() {
-        coroutineScope.launch {
-            upNextRepository.observeFollowedShowsCount()
-                .distinctUntilChanged()
-                .drop(1)
-                .collect {
-                    refreshUpNext()
-                }
-        }
-    }
-
     private fun refreshUpNext(isUserInitiated: Boolean = false) {
         val counter = if (isUserInitiated) refreshingState else loadingState
         coroutineScope.launch {
-            refreshUpNextInteractor(isUserInitiated)
+            watchlistSyncInteractor(WatchlistSyncInteractor.Param(forceRefresh = isUserInitiated))
                 .collectStatus(counter, logger, uiMessageManager, "Up Next", errorToStringMapper)
         }
     }

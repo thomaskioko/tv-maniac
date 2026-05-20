@@ -16,7 +16,7 @@ import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
 import com.thomaskioko.tvmaniac.domain.library.SyncLibraryInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleDebugEpisodeNotificationInteractor
-import com.thomaskioko.tvmaniac.domain.upnext.RefreshUpNextInteractor
+import com.thomaskioko.tvmaniac.domain.watchlist.WatchlistSyncInteractor
 import com.thomaskioko.tvmaniac.featureflags.nav.FeatureFlagsRoute
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
@@ -50,7 +50,7 @@ public class DebugPresenter(
     private val datastoreRepository: DatastoreRepository,
     private val scheduleDebugEpisodeNotificationInteractor: ScheduleDebugEpisodeNotificationInteractor,
     private val syncLibraryInteractor: SyncLibraryInteractor,
-    private val refreshUpNextInteractor: RefreshUpNextInteractor,
+    private val watchlistSyncInteractor: WatchlistSyncInteractor,
     private val dateTimeProvider: DateTimeProvider,
     private val localizer: Localizer,
     private val errorToStringMapper: ErrorToStringMapper,
@@ -228,7 +228,7 @@ public class DebugPresenter(
 
     private fun triggerUpNextSync() {
         coroutineScope.launch {
-            refreshUpNextInteractor(true)
+            watchlistSyncInteractor(WatchlistSyncInteractor.Param(forceRefresh = true))
                 .collectStatus(upNextSyncState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         }
     }

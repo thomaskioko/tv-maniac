@@ -52,7 +52,6 @@ private fun NextEpisodesForWatchlist.toNextEpisodeWithShow(): NextEpisodeWithSho
         showPoster = show_poster,
         showStatus = show_status,
         showYear = show_year,
-        followedAt = followed_at,
         firstAired = first_aired,
         lastWatchedAt = last_watched_at,
         seasonCount = season_count,

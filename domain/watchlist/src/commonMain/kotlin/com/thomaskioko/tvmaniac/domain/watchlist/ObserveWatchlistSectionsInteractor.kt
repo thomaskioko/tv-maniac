@@ -50,7 +50,6 @@ private fun NextEpisodeWithShow.toWatchlistShowInfo(): WatchlistShowInfo {
         totalEpisodesTracked = totalCount,
         watchProgress = progress,
         lastWatchedAt = lastWatchedAt,
-        followedAt = followedAt,
         nextEpisode = toNextEpisodeInfo(),
     )
 }
@@ -77,13 +76,7 @@ private fun List<WatchlistShowInfo>.groupBySections(currentTimeMillis: Long): Wa
 
     forEach { item ->
         val lastWatched = item.lastWatchedAt ?: 0L
-        val followedAt = item.followedAt ?: 0L
-
-        val isStale = when {
-            lastWatched > 0 -> lastWatched < threeWeeksAgo
-            followedAt > 0 -> followedAt < threeWeeksAgo
-            else -> false
-        }
+        val isStale = lastWatched in 1 until threeWeeksAgo
 
         if (isStale) stale.add(item) else watchNext.add(item)
     }

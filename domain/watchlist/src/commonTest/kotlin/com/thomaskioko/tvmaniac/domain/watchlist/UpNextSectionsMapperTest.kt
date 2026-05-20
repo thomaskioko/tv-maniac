@@ -247,42 +247,17 @@ class UpNextSectionsMapperTest {
     }
 
     @Test
-    fun `should place episode in watchNext section given null lastWatched and recent followedAt`() {
-        val currentTime = LocalDate(2023, 11, 14).toEpochMillis()
-        val pastAired = LocalDate(2023, 10, 15).toEpochMillis()
-        val recentFollowedAt = LocalDate(2023, 11, 10).toEpochMillis()
-        dateTimeProvider.setCurrentTimeMillis(currentTime)
-
-        val episodes = listOf(
-            createNextEpisode(
-                showTraktId = 1,
-                showName = "Never Watched",
-                lastWatchedAt = null,
-                followedAt = recentFollowedAt,
-                firstAired = pastAired,
-            ),
-        )
-
-        val result = mapper.map(episodes)
-
-        result.watchNext.size shouldBe 1
-        result.watchNext[0].showName shouldBe "Never Watched"
-        result.stale.size shouldBe 0
-    }
-
-    @Test
-    fun `should place episode in stale section given null lastWatched and old followedAt`() {
+    fun `should place episode in stale section given lastWatched older than the staleness window`() {
         val currentTime = LocalDate(2023, 11, 14).toEpochMillis()
         val pastAired = LocalDate(2023, 10, 1).toEpochMillis()
-        val oldFollowedAt = LocalDate(2023, 10, 20).toEpochMillis()
+        val staleWatched = LocalDate(2023, 10, 20).toEpochMillis()
         dateTimeProvider.setCurrentTimeMillis(currentTime)
 
         val episodes = listOf(
             createNextEpisode(
                 showTraktId = 1,
-                showName = "Never Watched Old Follow",
-                lastWatchedAt = null,
-                followedAt = oldFollowedAt,
+                showName = "Stale Show",
+                lastWatchedAt = staleWatched,
                 firstAired = pastAired,
             ),
         )
@@ -291,32 +266,7 @@ class UpNextSectionsMapperTest {
 
         result.watchNext.size shouldBe 0
         result.stale.size shouldBe 1
-        result.stale[0].showName shouldBe "Never Watched Old Follow"
-    }
-
-    @Test
-    fun `should use lastWatchedAt over followedAt when both present`() {
-        val currentTime = LocalDate(2023, 11, 14).toEpochMillis()
-        val pastAired = LocalDate(2023, 10, 1).toEpochMillis()
-        val recentWatched = LocalDate(2023, 11, 10).toEpochMillis()
-        val oldFollowedAt = LocalDate(2023, 10, 1).toEpochMillis()
-        dateTimeProvider.setCurrentTimeMillis(currentTime)
-
-        val episodes = listOf(
-            createNextEpisode(
-                showTraktId = 1,
-                showName = "Recently Watched",
-                lastWatchedAt = recentWatched,
-                followedAt = oldFollowedAt,
-                firstAired = pastAired,
-            ),
-        )
-
-        val result = mapper.map(episodes)
-
-        result.watchNext.size shouldBe 1
-        result.watchNext[0].showName shouldBe "Recently Watched"
-        result.stale.size shouldBe 0
+        result.stale[0].showName shouldBe "Stale Show"
     }
 
     @Test
@@ -405,7 +355,6 @@ class UpNextSectionsMapperTest {
         showTraktId: Long,
         showName: String,
         lastWatchedAt: Long? = null,
-        followedAt: Long? = null,
         firstAired: Long? = LocalDate(2021, 6, 9).toEpochMillis(),
         watchedCount: Long = 0,
         totalCount: Long = 10,
@@ -428,7 +377,6 @@ class UpNextSectionsMapperTest {
         runtime = runtime,
         stillPath = "/still.jpg",
         overview = "Overview",
-        followedAt = followedAt,
         firstAired = firstAired,
         lastWatchedAt = lastWatchedAt,
         seasonCount = 2,

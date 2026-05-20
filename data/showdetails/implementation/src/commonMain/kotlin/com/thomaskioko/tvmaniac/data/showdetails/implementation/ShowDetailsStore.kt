@@ -43,7 +43,7 @@ public class ShowDetailsStore(
     fetcher = Fetcher.of { traktId: Long ->
         coroutineScope {
 
-            //TODO:: Remove Get or throw and handle exception
+            // TODO:: Remove Get or throw and handle exception
             val showDetailsDeferred = async {
                 traktRemoteDataSource.getShowDetails(traktId).getOrThrow()
             }

@@ -3,6 +3,8 @@ package com.thomaskioko.tvmaniac.debug.presenter
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingDao
+import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.notifications.testing.FakeNotificationManager
@@ -12,19 +14,21 @@ import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRep
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.domain.library.SyncLibraryInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleDebugEpisodeNotificationInteractor
-import com.thomaskioko.tvmaniac.domain.upnext.RefreshUpNextInteractor
+import com.thomaskioko.tvmaniac.domain.watchlist.SyncWatchedShowInteractor
+import com.thomaskioko.tvmaniac.domain.watchlist.WatchlistSyncInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
+import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelDebugNeverRefreshed
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
+import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.traktauth.api.AuthState
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
-import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
@@ -282,10 +286,19 @@ class DebugPresenterTest {
                 syncObserver = FakeSyncObserver(),
                 logger = logger,
             ),
-            refreshUpNextInteractor = RefreshUpNextInteractor(
-                upNextRepository = FakeUpNextRepository(),
-                datastoreRepository = datastoreRepository,
-                dateTimeProvider = dateTimeProvider,
+            watchlistSyncInteractor = WatchlistSyncInteractor(
+                traktActivityRepository = FakeTraktActivityRepository(),
+                continueWatchingRepository = FakeContinueWatchingRepository(),
+                continueWatchingDao = FakeContinueWatchingDao(),
+                syncWatchedShowInteractor = SyncWatchedShowInteractor(
+                    showDetailsRepository = FakeShowDetailsRepository(),
+                    seasonDetailsRepository = FakeSeasonDetailsRepository(),
+                    watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
+                    dispatchers = dispatchers,
+                ),
+                syncObserver = FakeSyncObserver(),
+                dispatchers = dispatchers,
+                logger = logger,
             ),
             dateTimeProvider = dateTimeProvider,
             localizer = localizer,

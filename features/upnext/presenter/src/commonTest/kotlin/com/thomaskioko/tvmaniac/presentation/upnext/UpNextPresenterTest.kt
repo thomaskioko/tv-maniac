@@ -3,20 +3,29 @@ package com.thomaskioko.tvmaniac.presentation.upnext
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingDao
+import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository
+import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
+import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.ObserveUpNextInteractor
-import com.thomaskioko.tvmaniac.domain.upnext.RefreshUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.upnext.model.UpNextSortOption
+import com.thomaskioko.tvmaniac.domain.watchlist.SyncWatchedShowInteractor
+import com.thomaskioko.tvmaniac.domain.watchlist.WatchlistSyncInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
+import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.NavRoute
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
+import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
+import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
+import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
@@ -127,26 +136,6 @@ internal class UpNextPresenterTest {
             state.episodes shouldHaveSize 2
             state.episodes[0].showName shouldBe "New Episode"
             state.episodes[1].showName shouldBe "Old Episode"
-        }
-    }
-
-    @Test
-    fun `should use followedAt as fallback given lastWatchedAt is null and sort is LAST_WATCHED`() = runTest {
-        val episodes = listOf(
-            createTestNextEpisode(showTraktId = 1, showName = "Old Follow", followedAt = 1000L),
-            createTestNextEpisode(showTraktId = 2, showName = "New Follow", followedAt = 2000L),
-        )
-        upNextRepository.setNextEpisodesForWatchlist(episodes)
-        upNextRepository.setUpNextSortOption(UpNextSortOption.LAST_WATCHED.name)
-
-        val presenter = createPresenter()
-
-        presenter.state.test {
-            skipItems(1)
-            val state = awaitItem()
-            state.episodes shouldHaveSize 2
-            state.episodes[0].showName shouldBe "New Follow"
-            state.episodes[1].showName shouldBe "Old Follow"
         }
     }
 
@@ -309,7 +298,6 @@ internal class UpNextPresenterTest {
             showPoster = "/poster.jpg",
             showStatus = "Returning Series",
             showYear = "2025",
-            followedAt = 500L,
             firstAired = 1000L,
             lastWatchedAt = 2000L,
             seasonCount = 5L,
@@ -407,10 +395,27 @@ internal class UpNextPresenterTest {
             repository = upNextRepository,
         )
 
-        val refreshUpNextInteractor = RefreshUpNextInteractor(
-            upNextRepository = upNextRepository,
-            dateTimeProvider = dateTimeProvider,
-            datastoreRepository = datastoreRepository,
+        val dispatchers = AppCoroutineDispatchers(
+            main = testDispatcher,
+            io = testDispatcher,
+            computation = testDispatcher,
+            databaseWrite = testDispatcher,
+            databaseRead = testDispatcher,
+        )
+
+        val watchlistSyncInteractor = WatchlistSyncInteractor(
+            traktActivityRepository = FakeTraktActivityRepository(),
+            continueWatchingRepository = FakeContinueWatchingRepository(),
+            continueWatchingDao = FakeContinueWatchingDao(),
+            syncWatchedShowInteractor = SyncWatchedShowInteractor(
+                showDetailsRepository = FakeShowDetailsRepository(),
+                seasonDetailsRepository = FakeSeasonDetailsRepository(),
+                watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
+                dispatchers = dispatchers,
+            ),
+            syncObserver = FakeSyncObserver(),
+            dispatchers = dispatchers,
+            logger = logger,
         )
 
         val markEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(
@@ -449,11 +454,10 @@ internal class UpNextPresenterTest {
                 override fun dismissOverlay() {}
             },
             observeUpNextInteractor = observeUpNextInteractor,
-            refreshUpNextInteractor = refreshUpNextInteractor,
+            watchlistSyncInteractor = watchlistSyncInteractor,
             markEpisodeWatchedInteractor = markEpisodeWatchedInteractor,
             upNextRepository = upNextRepository,
             unfollowShowInteractor = UnfollowShowInteractor(followedShowsRepository),
-            traktAuthRepository = traktAuthRepository,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = logger,
         )
@@ -464,7 +468,6 @@ internal class UpNextPresenterTest {
         showName: String,
         lastWatchedAt: Long? = null,
         firstAired: Long? = null,
-        followedAt: Long? = null,
     ): NextEpisodeWithShow = NextEpisodeWithShow(
         showTraktId = showTraktId,
         showTmdbId = showTraktId,
@@ -480,7 +483,6 @@ internal class UpNextPresenterTest {
         showPoster = null,
         showStatus = "Returning Series",
         showYear = "2024",
-        followedAt = followedAt,
         firstAired = firstAired,
         lastWatchedAt = lastWatchedAt,
         seasonCount = 3L,

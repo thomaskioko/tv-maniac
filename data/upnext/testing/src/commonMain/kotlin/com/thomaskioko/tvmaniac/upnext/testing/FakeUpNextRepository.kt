@@ -29,9 +29,6 @@ public class FakeUpNextRepository : UpNextRepository {
     override fun observeFollowedShowsCount(): Flow<Int> =
         followedShowsCountFlow.asStateFlow()
 
-    override suspend fun fetchUpNextEpisodes(forceRefresh: Boolean) {
-    }
-
     override suspend fun saveUpNextSortOption(sortOption: String) {
         upNextSortOptionFlow.value = sortOption
     }

@@ -4,12 +4,9 @@ import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.db.TmdbId
-import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.episodes.api.NextEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultNextEpisodeDao
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
-import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -75,7 +72,6 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             show2Episode.episodeName shouldBe "Show 2 Episode 1"
             show2Episode.seasonNumber shouldBe 1
             show2Episode.episodeNumber shouldBe 1
-            show2Episode.followedAt.shouldNotBeNull()
 
             val show1Episode = watchlistEpisodes[1]
             show1Episode.showTraktId shouldBe 1L
@@ -83,7 +79,6 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             show1Episode.episodeName shouldBe "Episode 2"
             show1Episode.seasonNumber shouldBe 1
             show1Episode.episodeNumber shouldBe 2
-            show1Episode.followedAt.shouldNotBeNull()
         }
     }
 
@@ -105,33 +100,8 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should appear in watchlist given followed show without trakt watched row`() = runTest {
+    fun `should exclude followed-only show given no continue-watching row`() = runTest {
         followShowOnly(showId = 1L, followedAt = watchDate)
-
-        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
-            val episodes = awaitItem()
-            episodes.size shouldBe 1
-
-            val nextEpisode = episodes[0]
-            nextEpisode.showTraktId shouldBe 1L
-            nextEpisode.showName shouldBe "Test Show 1"
-            nextEpisode.episodeId shouldBe 101L
-            nextEpisode.episodeNumber shouldBe 1L
-            nextEpisode.seasonNumber shouldBe 1L
-            nextEpisode.followedAt shouldBe watchDate
-            nextEpisode.lastWatchedAt shouldBe null
-        }
-    }
-
-    @Test
-    fun `should exclude followed show given pending DELETE action`() = runTest {
-        val _ = database.followedShowsQueries.upsert(
-            id = null,
-            traktId = Id<TraktId>(1L),
-            tmdbId = Id<TmdbId>(1L),
-            followedAt = watchDate,
-            pendingAction = "DELETE",
-        )
 
         nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
             awaitItem().size shouldBe 0
