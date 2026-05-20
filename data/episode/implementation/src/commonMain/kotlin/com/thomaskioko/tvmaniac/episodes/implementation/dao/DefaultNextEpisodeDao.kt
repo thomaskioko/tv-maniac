@@ -39,7 +39,7 @@ public class DefaultNextEpisodeDao(
 private fun NextEpisodesForWatchlist.toNextEpisodeWithShow(): NextEpisodeWithShow {
     return NextEpisodeWithShow(
         showTraktId = show_trakt_id.id,
-        showTmdbId = show_tmdb_id.id,
+        showTmdbId = show_tmdb_id?.id,
         episodeId = episode_id?.id,
         episodeName = episode_name,
         seasonId = season_id?.id,

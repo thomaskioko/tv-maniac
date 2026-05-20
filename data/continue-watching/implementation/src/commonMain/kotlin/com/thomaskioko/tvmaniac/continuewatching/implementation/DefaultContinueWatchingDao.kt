@@ -29,6 +29,8 @@ public class DefaultContinueWatchingDao(
                 completedCount = row.completed_count,
                 lastWatchedAt = row.last_watched_at,
                 lastUpdatedAt = row.last_updated_at,
+                title = row.title,
+                year = row.year,
             )
         }
 
@@ -45,6 +47,8 @@ public class DefaultContinueWatchingDao(
                         completedCount = row.completed_count,
                         lastWatchedAt = row.last_watched_at,
                         lastUpdatedAt = row.last_updated_at,
+                        title = row.title,
+                        year = row.year,
                     )
                 }
             }
@@ -62,6 +66,8 @@ public class DefaultContinueWatchingDao(
             completedCount = entry.completedCount,
             lastWatchedAt = entry.lastWatchedAt,
             lastUpdatedAt = entry.lastUpdatedAt,
+            title = entry.title,
+            year = entry.year,
         )
     }
 

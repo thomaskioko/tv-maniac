@@ -160,6 +160,8 @@ internal class MarkWatchedFromDiscoverUpNextRefreshTest : BaseDatabaseTest() {
             completedCount = 1L,
             lastWatchedAt = now,
             lastUpdatedAt = now,
+            title = null,
+            year = null,
         )
         database.seasonsQueries.upsert(
             id = Id(SEASON_ID),

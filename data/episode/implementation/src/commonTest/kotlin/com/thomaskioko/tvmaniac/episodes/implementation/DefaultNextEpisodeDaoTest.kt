@@ -545,6 +545,8 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
                 completedCount = 1L,
                 lastWatchedAt = followedAt,
                 lastUpdatedAt = followedAt,
+                title = null,
+                year = null,
             )
         }
     }
