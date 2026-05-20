@@ -233,6 +233,7 @@ internal class Scenarios(
         fun stubWatchlistSyncEndpoints() {
             mockHandler.stubEndpoint(Endpoints.Trakt.SyncProgressUpNextNitro)
             mockHandler.stubEndpoint(Endpoints.Trakt.SyncPlaybackEpisodes)
+            mockHandler.stubEndpoint(Endpoints.Trakt.SyncHistoryEpisodes)
             mockHandler.stubEndpoint(Endpoints.Trakt.ShowProgressWatched)
             mockHandler.stubEndpoint(Endpoints.Trakt.UsersHiddenProgressWatched)
 

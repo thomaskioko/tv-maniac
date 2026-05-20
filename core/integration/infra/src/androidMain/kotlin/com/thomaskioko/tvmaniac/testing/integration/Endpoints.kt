@@ -152,6 +152,12 @@ public object Endpoints {
             override val errorFixture: String = "trakt/sync/playback/episodes/error.json"
         }
 
+        public object SyncHistoryEpisodes : Endpoint.Exact {
+            override val path: String = "/sync/history/episodes"
+            override val successFixture: String = "trakt/sync/history/episodes/success.json"
+            override val errorFixture: String = "trakt/sync/history/episodes/error.json"
+        }
+
         public object UsersHiddenProgressWatched : Endpoint.Exact {
             override val path: String = "/users/hidden/progress_watched"
             override val successFixture: String = "trakt/users/hidden/progress_watched/success.json"
