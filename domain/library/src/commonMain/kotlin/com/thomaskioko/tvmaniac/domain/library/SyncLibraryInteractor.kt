@@ -49,17 +49,21 @@ public class SyncLibraryInteractor(
             followedShows.parallelForEach(concurrency = LIBRARY_SYNC_CONCURRENCY) { show ->
                 ensureActive()
 
-                showDetailsRepository.fetchShowDetails(
-                    id = show.traktId,
-                    forceRefresh = params.forceRefresh,
-                )
+                runCatching {
+                    showDetailsRepository.fetchShowDetails(
+                        id = show.traktId,
+                        forceRefresh = params.forceRefresh,
+                    )
+                }.onFailure { logger.warning(TAG, "fetchShowDetails failed for ${show.traktId}: ${it.message}") }
 
                 ensureActive()
 
-                watchProviderRepository.fetchWatchProviders(
-                    traktId = show.traktId,
-                    forceRefresh = params.forceRefresh,
-                )
+                runCatching {
+                    watchProviderRepository.fetchWatchProviders(
+                        traktId = show.traktId,
+                        forceRefresh = params.forceRefresh,
+                    )
+                }.onFailure { logger.warning(TAG, "fetchWatchProviders failed for ${show.traktId}: ${it.message}") }
             }
 
             logger.debug(TAG, "Library sync complete")
