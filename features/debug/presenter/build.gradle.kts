@@ -56,8 +56,6 @@ kotlin {
                 implementation(projects.data.syncActivity.api)
                 implementation(projects.data.syncActivity.testing)
                 implementation(projects.data.traktauth.testing)
-                implementation(projects.data.upnext.api)
-                implementation(projects.data.upnext.testing)
                 implementation(projects.data.watchproviders.api)
                 implementation(projects.data.watchproviders.testing)
                 implementation(projects.i18n.testing)

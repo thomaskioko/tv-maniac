@@ -9,6 +9,12 @@ scaffold {
 
 kotlin {
     sourceSets {
+        androidMain {
+            dependencies {
+                implementation(libs.kotlinx.datetime)
+            }
+        }
+
         commonMain {
             dependencies {
                 api(libs.coroutines.core)
