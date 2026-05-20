@@ -1,7 +1,7 @@
-package com.thomaskioko.tvmaniac.domain.watchlist
+package com.thomaskioko.tvmaniac.domain.continuewatching
 
-import com.thomaskioko.tvmaniac.domain.watchlist.model.EpisodeBadge
-import com.thomaskioko.tvmaniac.domain.watchlist.model.UpNextSections
+import com.thomaskioko.tvmaniac.domain.continuewatching.model.EpisodeBadge
+import com.thomaskioko.tvmaniac.domain.continuewatching.model.UpNextSections
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.shouldBe

@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.domain.watchlist
+package com.thomaskioko.tvmaniac.domain.continuewatching
 
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
@@ -8,6 +8,9 @@ import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRep
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
+import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
+import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
+import com.thomaskioko.tvmaniac.domain.syncactivity.SyncActivityInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
@@ -23,7 +26,7 @@ import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class WatchlistSyncInteractorTest {
+class SyncContinueWatchingInteractorTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private val dispatchers = AppCoroutineDispatchers(
@@ -39,21 +42,28 @@ class WatchlistSyncInteractorTest {
     private val showDetailsRepository = FakeShowDetailsRepository()
     private val seasonDetailsRepository = FakeSeasonDetailsRepository()
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
+    private val watchProviderRepository = FakeWatchProviderRepository()
 
-    private val syncWatchedShowInteractor = SyncWatchedShowInteractor(
+    private val syncActivityInteractor = SyncActivityInteractor(
+        traktActivityRepository = activityRepository,
+        dispatchers = dispatchers,
+    )
+
+    private val syncShowMetadataInteractor = SyncShowMetadataInteractor(
         showDetailsRepository = showDetailsRepository,
         seasonDetailsRepository = seasonDetailsRepository,
         watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
+        watchProviderRepository = watchProviderRepository,
         dispatchers = dispatchers,
     )
 
     private val syncObserver = FakeSyncObserver()
 
-    private val interactor = WatchlistSyncInteractor(
-        traktActivityRepository = activityRepository,
+    private val interactor = SyncContinueWatchingInteractor(
+        syncActivityInteractor = syncActivityInteractor,
         continueWatchingRepository = continueWatchingRepository,
         continueWatchingDao = continueWatchingDao,
-        syncWatchedShowInteractor = syncWatchedShowInteractor,
+        syncShowMetadataInteractor = syncShowMetadataInteractor,
         syncObserver = syncObserver,
         dispatchers = dispatchers,
         logger = FakeLogger(),
@@ -61,8 +71,9 @@ class WatchlistSyncInteractorTest {
 
     @Test
     fun `should fetch activities then sync watched shows`() = runTest(testDispatcher) {
-        interactor.executeSync(WatchlistSyncInteractor.Param(forceRefresh = false))
+        interactor.executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = false))
 
+        activityRepository.fetchInvocations() shouldBe listOf(false)
         continueWatchingRepository.syncInvocations() shouldBe listOf(
             SyncInvocation(forceRefresh = false, useNitro = false),
         )
@@ -70,8 +81,9 @@ class WatchlistSyncInteractorTest {
 
     @Test
     fun `should propagate force refresh to watched shows sync`() = runTest(testDispatcher) {
-        interactor.executeSync(WatchlistSyncInteractor.Param(forceRefresh = true))
+        interactor.executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = true))
 
+        activityRepository.fetchInvocations() shouldBe listOf(true)
         continueWatchingRepository.syncInvocations() shouldBe listOf(
             SyncInvocation(forceRefresh = true, useNitro = false),
         )
@@ -79,7 +91,7 @@ class WatchlistSyncInteractorTest {
 
     @Test
     fun `should propagate useNitro to watched shows sync`() = runTest(testDispatcher) {
-        interactor.executeSync(WatchlistSyncInteractor.Param(forceRefresh = true, useNitro = true))
+        interactor.executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = true, useNitro = true))
 
         continueWatchingRepository.syncInvocations() shouldBe listOf(
             SyncInvocation(forceRefresh = true, useNitro = true),
@@ -92,21 +104,23 @@ class WatchlistSyncInteractorTest {
         continueWatchingDao.upsert(watchedShow(traktId = 99L))
         continueWatchingDao.upsert(watchedShow(traktId = 101L))
 
-        interactor.executeSync(WatchlistSyncInteractor.Param(forceRefresh = false))
+        interactor.executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = false))
 
         showDetailsRepository.fetchInvocations().map { it.id } shouldContainExactlyInAnyOrder listOf(42L, 99L, 101L)
         seasonDetailsRepository.getSyncedShowIds() shouldContainExactlyInAnyOrder listOf(42L, 99L, 101L)
         watchedEpisodeSyncRepository.getSyncedShowIds() shouldContainExactlyInAnyOrder listOf(42L, 99L, 101L)
+        watchProviderRepository.fetchInvocations().map { it.traktId } shouldContainExactlyInAnyOrder listOf(42L, 99L, 101L)
     }
 
     @Test
     fun `should propagate force refresh to per-show metadata sync`() = runTest(testDispatcher) {
         continueWatchingDao.upsert(watchedShow(traktId = 7L))
 
-        interactor.executeSync(WatchlistSyncInteractor.Param(forceRefresh = true))
+        interactor.executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = true))
 
         showDetailsRepository.fetchInvocations().all { it.forceRefresh } shouldBe true
         watchedEpisodeSyncRepository.wasForceRefreshUsed() shouldBe true
+        watchProviderRepository.fetchInvocations().all { it.forceRefresh } shouldBe true
     }
 
     @Test
@@ -115,7 +129,7 @@ class WatchlistSyncInteractorTest {
         showDetailsRepository.setFetchError(RuntimeException("rate-limited 429"))
 
         syncObserver.errors.test {
-            interactor.executeSync(WatchlistSyncInteractor.Param(forceRefresh = false))
+            interactor.executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = false))
 
             val event = awaitItem()
             event.shouldBeInstanceOf<SyncError.BackgroundSyncFailed>()
@@ -125,11 +139,12 @@ class WatchlistSyncInteractorTest {
 
     @Test
     fun `should no-op metadata fan-out when no watched shows exist`() = runTest(testDispatcher) {
-        interactor.executeSync(WatchlistSyncInteractor.Param(forceRefresh = false))
+        interactor.executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = false))
 
         showDetailsRepository.fetchInvocations().shouldBeEmpty()
         seasonDetailsRepository.getSyncedShowIds().shouldBeEmpty()
         watchedEpisodeSyncRepository.getSyncedShowIds().shouldBeEmpty()
+        watchProviderRepository.fetchInvocations().shouldBeEmpty()
     }
 
     private fun watchedShow(traktId: Long): ContinueWatchingEntry = ContinueWatchingEntry(

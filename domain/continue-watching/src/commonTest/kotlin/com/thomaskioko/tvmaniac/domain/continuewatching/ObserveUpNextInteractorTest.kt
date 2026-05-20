@@ -1,7 +1,7 @@
-package com.thomaskioko.tvmaniac.domain.upnext
+package com.thomaskioko.tvmaniac.domain.continuewatching
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.domain.upnext.model.UpNextSortOption
+import com.thomaskioko.tvmaniac.domain.continuewatching.model.UpNextSortOption
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import io.kotest.matchers.shouldBe
