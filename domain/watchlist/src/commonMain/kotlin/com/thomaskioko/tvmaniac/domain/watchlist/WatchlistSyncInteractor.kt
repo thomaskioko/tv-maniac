@@ -63,6 +63,6 @@ public class WatchlistSyncInteractor(
 
     private companion object {
         private const val TAG = "WatchlistSyncInteractor"
-        private const val WATCHLIST_SYNC_CONCURRENCY = 2
+        private const val WATCHLIST_SYNC_CONCURRENCY = 10
     }
 }
