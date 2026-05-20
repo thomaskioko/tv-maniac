@@ -534,15 +534,16 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         database.transaction {
             database.followedShowsQueries.upsert(
                 id = null,
-                traktId = Id<TraktId>(showId),
-                tmdbId = Id<TmdbId>(showId),
+                traktId = Id(showId),
+                tmdbId = Id(showId),
                 followedAt = followedAt,
                 pendingAction = "NOTHING",
             )
-            database.traktWatchedShowsQueries.upsert(
-                traktId = Id<TraktId>(showId),
-                tmdbId = Id<TmdbId>(showId),
-                plays = 1L,
+            database.traktContinueWatchingQueries.upsert(
+                traktId = Id(showId),
+                tmdbId = Id(showId),
+                airedEpisodes = 0L,
+                completedCount = 1L,
                 lastWatchedAt = followedAt,
                 lastUpdatedAt = followedAt,
             )
@@ -552,8 +553,8 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     private fun followShowOnly(showId: Long, followedAt: Long) {
         val _ = database.followedShowsQueries.upsert(
             id = null,
-            traktId = Id<TraktId>(showId),
-            tmdbId = Id<TmdbId>(showId),
+            traktId = Id(showId),
+            tmdbId = Id(showId),
             followedAt = followedAt,
             pendingAction = "NOTHING",
         )
@@ -567,7 +568,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         watchedAt: Long = watchDate,
     ) {
         val _ = database.watchedEpisodesQueries.upsert(
-            show_trakt_id = Id<TraktId>(showId),
+            show_trakt_id = Id(showId),
             episode_id = Id(episodeId),
             season_number = seasonNumber,
             episode_number = episodeNumber,
@@ -585,7 +586,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         watchedAt: Long = watchDate,
     ) {
         val _ = database.watchedEpisodesQueries.upsert(
-            show_trakt_id = Id<TraktId>(showId),
+            show_trakt_id = Id(showId),
             episode_id = Id(episodeId),
             season_number = seasonNumber,
             episode_number = episodeNumber,
@@ -601,8 +602,8 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         status: String = "Returning Series",
     ) {
         val _ = database.tvShowQueries.upsert(
-            trakt_id = Id<TraktId>(id),
-            tmdb_id = Id<TmdbId>(id),
+            trakt_id = Id(id),
+            tmdb_id = Id(id),
             name = name,
             overview = overview,
             language = "en",
@@ -627,7 +628,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     ) {
         val _ = database.seasonsQueries.upsert(
             id = Id(seasonId),
-            show_trakt_id = Id<TraktId>(showId),
+            show_trakt_id = Id(showId),
             season_number = seasonNumber,
             title = title,
             overview = "Overview for $title",
@@ -647,7 +648,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         val _ = database.episodesQueries.upsert(
             id = Id(episodeId),
             season_id = Id(seasonId),
-            show_trakt_id = Id<TraktId>(showId),
+            show_trakt_id = Id(showId),
             title = title,
             overview = "Overview for $title",
             episode_number = episodeNumber,
@@ -705,13 +706,13 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         insertShow(id = 2, name = "Test Show 2", status = "Ended")
 
         val _ = database.showMetadataQueries.upsert(
-            show_trakt_id = Id<TraktId>(1),
+            show_trakt_id = Id(1),
             season_count = 1,
             episode_count = 3,
             status = "Returning Series",
         )
         val _ = database.showMetadataQueries.upsert(
-            show_trakt_id = Id<TraktId>(2),
+            show_trakt_id = Id(2),
             season_count = 1,
             episode_count = 2,
             status = "Ended",

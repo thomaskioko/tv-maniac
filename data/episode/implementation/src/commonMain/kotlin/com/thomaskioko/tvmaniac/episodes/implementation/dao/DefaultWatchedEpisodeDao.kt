@@ -56,7 +56,7 @@ public class DefaultWatchedEpisodeDao(
                     tmdbId = null,
                     followedAt = timestamp,
                 )
-                val _ = database.traktWatchedShowsQueries.upsertIfNotExists(
+                val _ = database.traktContinueWatchingQueries.upsertIfNotExists(
                     traktId = Id(showTraktId),
                     tmdbId = null,
                     watchedAt = timestamp,
@@ -189,7 +189,7 @@ public class DefaultWatchedEpisodeDao(
                     tmdbId = null,
                     followedAt = timestamp,
                 )
-                val _ = database.traktWatchedShowsQueries.upsertIfNotExists(
+                val _ = database.traktContinueWatchingQueries.upsertIfNotExists(
                     traktId = Id(showTraktId),
                     tmdbId = null,
                     watchedAt = timestamp,
@@ -296,7 +296,7 @@ public class DefaultWatchedEpisodeDao(
                     tmdbId = null,
                     followedAt = timestamp,
                 )
-                val _ = database.traktWatchedShowsQueries.upsertIfNotExists(
+                val _ = database.traktContinueWatchingQueries.upsertIfNotExists(
                     traktId = Id(showTraktId),
                     tmdbId = null,
                     watchedAt = timestamp,
@@ -354,7 +354,7 @@ public class DefaultWatchedEpisodeDao(
                     tmdbId = null,
                     followedAt = timestamp,
                 )
-                val _ = database.traktWatchedShowsQueries.upsertIfNotExists(
+                val _ = database.traktContinueWatchingQueries.upsertIfNotExists(
                     traktId = Id(showTraktId),
                     tmdbId = null,
                     watchedAt = timestamp,
