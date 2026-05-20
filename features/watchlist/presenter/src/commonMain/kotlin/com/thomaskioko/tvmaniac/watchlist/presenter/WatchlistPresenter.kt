@@ -29,6 +29,8 @@ import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
 import com.thomaskioko.tvmaniac.shows.api.model.WatchlistSortOption
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.watchlist.nav.WatchlistRoot
 import com.thomaskioko.tvmaniac.watchlist.presenter.model.WatchlistItem
 import dev.zacsweers.metro.Inject
@@ -39,6 +41,8 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -61,6 +65,7 @@ public class WatchlistPresenter(
     private val errorToStringMapper: ErrorToStringMapper,
     private val localizer: Localizer,
     private val logger: Logger,
+    private val traktAuthRepository: TraktAuthRepository,
     featureFlags: FeatureFlags,
     syncObserver: SyncObserver,
 ) : ComponentContext by componentContext {
@@ -84,6 +89,16 @@ public class WatchlistPresenter(
     init {
         observeWatchlistSectionsInteractor(queryFlow.value)
         observeUpNextSectionsInteractor(queryFlow.value)
+        observeAuthState()
+    }
+
+    private fun observeAuthState() {
+        coroutineScope.launch {
+            traktAuthRepository.state
+                .distinctUntilChanged()
+                .filter { it == TraktAuthState.LOGGED_IN }
+                .collect { syncWatchlist(forceRefresh = false) }
+        }
     }
 
     public val state: StateFlow<WatchlistState> = combine(

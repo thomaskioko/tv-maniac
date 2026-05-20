@@ -24,6 +24,7 @@ import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
+import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
@@ -47,6 +48,7 @@ class FakeWatchlistPresenterBuilder {
     private val fakeFollowedShowsRepository = FakeFollowedShowsRepository()
     private val fakeLogger = FakeLogger()
     private val fakeTraktActivityRepository = FakeTraktActivityRepository()
+    private val fakeTraktAuthRepository = FakeTraktAuthRepository()
 
     private val coroutineDispatcher = AppCoroutineDispatchers(
         main = testDispatcher,
@@ -105,6 +107,7 @@ class FakeWatchlistPresenterBuilder {
         watchlistSyncInteractor = watchlistSyncInteractor,
         featureFlags = featureFlags,
         syncObserver = syncObserver,
+        traktAuthRepository = fakeTraktAuthRepository,
         errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
         localizer = FakeLocalizer(),
         logger = fakeLogger,
