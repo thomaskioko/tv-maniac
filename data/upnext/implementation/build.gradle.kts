@@ -21,7 +21,7 @@ kotlin {
                 api(projects.data.seasondetails.api)
                 api(projects.data.showdetails.api)
                 api(projects.data.upnext.api)
-                api(projects.data.watchedShows.api)
+                api(projects.data.continueWatching.api)
 
                 implementation(projects.core.base)
             }
@@ -37,7 +37,7 @@ kotlin {
                 implementation(projects.data.requestManager.testing)
                 implementation(projects.data.seasondetails.testing)
                 implementation(projects.data.showdetails.testing)
-                implementation(projects.data.watchedShows.testing)
+                implementation(projects.data.continueWatching.testing)
             }
         }
     }

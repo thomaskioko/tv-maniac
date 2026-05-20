@@ -58,7 +58,7 @@ kotlin {
                 implementation(projects.data.syncActivity.testing)
                 implementation(projects.data.upnext.api)
                 implementation(projects.data.upnext.testing)
-                implementation(projects.data.watchedShows.testing)
+                implementation(projects.data.continueWatching.testing)
                 implementation(projects.data.watchlist.testing)
                 implementation(projects.i18n.testing)
                 implementation(projects.navigation.testing)

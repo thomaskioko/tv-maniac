@@ -94,7 +94,7 @@ kotlin {
             api(projects.data.trendingshows.implementation)
             api(projects.data.upcomingshows.implementation)
             api(projects.data.upnext.implementation)
-            api(projects.data.watchedShows.implementation)
+            api(projects.data.continueWatching.implementation)
             api(projects.data.user.api)
             api(projects.data.user.implementation)
             api(projects.data.watchlist.implementation)

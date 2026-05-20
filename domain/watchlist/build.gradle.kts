@@ -30,7 +30,7 @@ kotlin {
                 api(projects.data.syncActivity.api)
                 api(projects.data.traktauth.api)
                 api(projects.data.upnext.api)
-                api(projects.data.watchedShows.api)
+                api(projects.data.continueWatching.api)
                 api(projects.data.watchlist.api)
             }
         }
@@ -46,7 +46,7 @@ kotlin {
                 implementation(projects.data.showdetails.testing)
                 implementation(projects.data.syncActivity.testing)
                 implementation(projects.data.upnext.testing)
-                implementation(projects.data.watchedShows.testing)
+                implementation(projects.data.continueWatching.testing)
                 implementation(projects.data.watchlist.testing)
             }
         }
