@@ -395,7 +395,7 @@ private fun CollapsedTopBarContent(
                 )
             }
 
-            AnimatedVisibility(visible = state.isRefreshing || state.isSyncing) {
+            AnimatedVisibility(visible = state.isRefreshing) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(20.dp),
                     color = MaterialTheme.colorScheme.secondary,
