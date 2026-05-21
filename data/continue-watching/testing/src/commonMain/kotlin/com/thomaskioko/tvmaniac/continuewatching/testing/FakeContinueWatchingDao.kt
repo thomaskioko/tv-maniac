@@ -23,7 +23,7 @@ public class FakeContinueWatchingDao : ContinueWatchingDao {
     override fun traktIdsMissingShowDetails(): List<Long> = idsMissingShowDetails
 
     override fun upsert(entry: ContinueWatchingEntry) {
-        state.value = state.value + (entry.traktId to entry)
+        state.value += (entry.traktId to entry)
     }
 
     override fun upsertPlaceholder(traktId: Long, tmdbId: Long?, title: String?, year: Long?) {
@@ -43,7 +43,7 @@ public class FakeContinueWatchingDao : ContinueWatchingDao {
     }
 
     override fun deleteByTraktId(traktId: Long) {
-        state.value = state.value - traktId
+        state.value -= traktId
     }
 
     override fun deleteAll() {

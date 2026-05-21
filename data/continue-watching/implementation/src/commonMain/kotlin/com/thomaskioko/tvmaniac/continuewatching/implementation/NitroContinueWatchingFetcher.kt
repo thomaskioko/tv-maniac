@@ -14,6 +14,8 @@ import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlin.time.Instant
 
 @Inject
@@ -26,35 +28,47 @@ public class NitroContinueWatchingFetcher(
     private val logger: Logger,
 ) {
 
-    public suspend operator fun invoke(): List<ContinueWatchingEntry>? = coroutineScope {
-        val instant = traktActivityRepository.getEpisodesWatchedSyncTimeStamp()
-        val nitroDeferred = async { traktSyncDataSource.getUpNextNitro() }
-        val hiddenDeferred = async { traktUserDataSource.getHiddenProgressWatched() }
+    internal operator fun invoke(): Flow<ProgressBatch?> = flow {
+        coroutineScope {
+            val instant = traktActivityRepository.getEpisodesWatchedSyncTimeStamp()
+            val nitroDeferred = async { traktSyncDataSource.getUpNextNitro() }
+            val hiddenDeferred = async { traktUserDataSource.getHiddenProgressWatched() }
 
-        val nitroResponse = nitroDeferred.await()
-        if (nitroResponse !is ApiResponse.Success) return@coroutineScope null
-        val nitro = nitroResponse.body
+            val nitroResponse = nitroDeferred.await()
+            if (nitroResponse !is ApiResponse.Success) {
+                emit(null)
+                return@coroutineScope
+            }
+            val nitro = nitroResponse.body
 
-        if (nitro.isEmpty() && !shouldSync(instant)) {
-            logger.warning(
-                LOG_TAG,
-                "Nitro returned empty within recent sync window; skipping write to preserve local table.",
-            )
-            return@coroutineScope null
+            if (nitro.isEmpty() && !shouldSync(instant)) {
+                logger.warning(
+                    LOG_TAG,
+                    "Nitro returned empty within recent sync window; skipping write to preserve local table.",
+                )
+                emit(null)
+                return@coroutineScope
+            }
+
+            val hiddenResponse = hiddenDeferred.await()
+            if (hiddenResponse !is ApiResponse.Success) {
+                emit(null)
+                return@coroutineScope
+            }
+            val hiddenIds = hiddenResponse.body
+                .mapNotNull { it.show?.ids?.trakt }
+                .toSet()
+
+            val entries = nitro
+                .filter { it.show.ids.trakt !in hiddenIds }
+                // Load-bearing filter. Nitro can return null next_episode for reset shows
+                // and other edge cases where the row should not surface in the watchlist.
+                .filter { it.progress.nextEpisode != null }
+                .map { it.toEntry() }
+
+            entries.forEach { emit(ProgressBatch.Entry(it)) }
+            emit(ProgressBatch.Complete(entries.map { it.traktId }.toSet()))
         }
-
-        val hiddenResponse = hiddenDeferred.await()
-        if (hiddenResponse !is ApiResponse.Success) return@coroutineScope null
-        val hiddenIds = hiddenResponse.body
-            .mapNotNull { it.show?.ids?.trakt }
-            .toSet()
-
-        nitro
-            .filter { it.show.ids.trakt !in hiddenIds }
-            // Load-bearing filter. Nitro can return null next_episode for reset shows
-            // and other edge cases where the row should not surface in the watchlist.
-            .filter { it.progress.nextEpisode != null }
-            .map { it.toEntry() }
     }
 
     private fun shouldSync(instant: Instant?): Boolean {

@@ -55,7 +55,7 @@ internal class NitroContinueWatchingFetcherTest {
             ApiResponse.Success(listOf(breakingBadNitro, theWireNitro)),
         )
 
-        val result = fetcher.invoke()
+        val result = fetcher.collectEntries()
 
         result.shouldNotBeNull() shouldContainExactlyInAnyOrder listOf(
             breakingBadEntry,
@@ -72,7 +72,7 @@ internal class NitroContinueWatchingFetcherTest {
             ApiResponse.Success(listOf(hiddenItem(traktId = BREAKING_BAD_ID))),
         )
 
-        val result = fetcher.invoke()
+        val result = fetcher.collectEntries()
 
         result.shouldNotBeNull().map { it.traktId } shouldContainExactlyInAnyOrder listOf(THE_WIRE_ID)
     }
@@ -83,7 +83,7 @@ internal class NitroContinueWatchingFetcherTest {
             ApiResponse.Success(listOf(breakingBadNitro, resetShowNitro)),
         )
 
-        val result = fetcher.invoke()
+        val result = fetcher.collectEntries()
 
         result.shouldNotBeNull().map { it.traktId } shouldContainExactlyInAnyOrder listOf(BREAKING_BAD_ID)
     }
@@ -93,7 +93,7 @@ internal class NitroContinueWatchingFetcherTest {
         activityRepository.setEpisodesWatchedSyncTimeStamp(NOW - 1.hours)
         syncDataSource.setUpNextNitro(ApiResponse.Success(emptyList()))
 
-        val result = fetcher.invoke()
+        val result = fetcher.collectEntries()
 
         result shouldBe null
     }
@@ -103,7 +103,7 @@ internal class NitroContinueWatchingFetcherTest {
         activityRepository.setEpisodesWatchedSyncTimeStamp(NOW - 7.hours)
         syncDataSource.setUpNextNitro(ApiResponse.Success(emptyList()))
 
-        val result = fetcher.invoke()
+        val result = fetcher.collectEntries()
 
         result.shouldNotBeNull().shouldBeEmpty()
     }
@@ -113,7 +113,7 @@ internal class NitroContinueWatchingFetcherTest {
         activityRepository.setEpisodesWatchedSyncTimeStamp(null)
         syncDataSource.setUpNextNitro(ApiResponse.Success(emptyList()))
 
-        val result = fetcher.invoke()
+        val result = fetcher.collectEntries()
 
         result.shouldNotBeNull().shouldBeEmpty()
     }
@@ -124,7 +124,7 @@ internal class NitroContinueWatchingFetcherTest {
             ApiResponse.Error.HttpError(code = 500, errorBody = "boom", errorMessage = "boom"),
         )
 
-        val result = fetcher.invoke()
+        val result = fetcher.collectEntries()
 
         result shouldBe null
     }
@@ -138,7 +138,7 @@ internal class NitroContinueWatchingFetcherTest {
             ApiResponse.Error.HttpError(code = 500, errorBody = "boom", errorMessage = "boom"),
         )
 
-        val result = fetcher.invoke()
+        val result = fetcher.collectEntries()
 
         result shouldBe null
     }
@@ -227,3 +227,16 @@ private fun nextEpisode(seasonNumber: Int, episodeNumber: Int): TraktNextEpisode
         episodeNumber = episodeNumber,
         ids = EpisodeIds(trakt = seasonNumber * 100 + episodeNumber, tmdb = null),
     )
+
+private suspend fun NitroContinueWatchingFetcher.collectEntries(): List<ContinueWatchingEntry>? {
+    var skipped = false
+    val entries = mutableListOf<ContinueWatchingEntry>()
+    invoke().collect { batch ->
+        when (batch) {
+            null -> skipped = true
+            is ProgressBatch.Entry -> entries += batch.entry
+            is ProgressBatch.Complete -> Unit
+        }
+    }
+    return if (skipped) null else entries
+}

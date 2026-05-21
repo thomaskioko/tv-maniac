@@ -15,7 +15,8 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
 import kotlin.time.Instant
 
 @Inject
@@ -28,7 +29,7 @@ public class ProgressContinueWatchingFetcher(
     private val logger: Logger,
 ) {
 
-    public suspend operator fun invoke(): List<ContinueWatchingEntry>? = coroutineScope {
+    internal operator fun invoke(): Flow<ProgressBatch?> = channelFlow {
         val cursor = traktActivityRepository.getEpisodesWatchedSyncTimeStamp()
         val playbackDeferred = async { traktSyncDataSource.getPlaybackEpisodes() }
         val hiddenDeferred = async { traktUserDataSource.getHiddenProgressWatched() }
@@ -37,11 +38,20 @@ public class ProgressContinueWatchingFetcher(
         }
 
         val playbackResponse = playbackDeferred.await()
-        if (playbackResponse !is ApiResponse.Success) return@coroutineScope null
+        if (playbackResponse !is ApiResponse.Success) {
+            send(null)
+            return@channelFlow
+        }
         val watchedShowsResponse = watchedShowsDeferred.await()
-        if (watchedShowsResponse !is ApiResponse.Success) return@coroutineScope null
+        if (watchedShowsResponse !is ApiResponse.Success) {
+            send(null)
+            return@channelFlow
+        }
         val hiddenResponse = hiddenDeferred.await()
-        if (hiddenResponse !is ApiResponse.Success) return@coroutineScope null
+        if (hiddenResponse !is ApiResponse.Success) {
+            send(null)
+            return@channelFlow
+        }
 
         val hiddenIds = hiddenResponse.body
             .mapNotNull { it.show?.ids?.trakt }
@@ -52,14 +62,25 @@ public class ProgressContinueWatchingFetcher(
         val lastActivity = cursor?.toString()
         val includeSpecials = datastoreRepository.getIncludeSpecials()
 
-        val perShowResults = candidates.parallelMap(concurrency = PROGRESS_FAN_OUT_CONCURRENCY) { traktId ->
-            traktId to traktSyncDataSource.getShowWatchedProgress(
+        val responses = candidates.parallelMap(concurrency = PROGRESS_FAN_OUT_CONCURRENCY) { traktId ->
+            val response = traktSyncDataSource.getShowWatchedProgress(
                 traktId = traktId,
                 lastActivity = lastActivity,
                 specials = includeSpecials,
             )
+            if (response is ApiResponse.Success) {
+                val progress = response.body
+                // Load-bearing filter. Catches reset shows (`reset_at` populated) and any case where
+                // Trakt's per-show logic returns null next_episode. Removing it would persist rows
+                // that never render in the watchlist.
+                if (progress.nextEpisode != null) {
+                    send(ProgressBatch.Entry(toEntry(traktId, descriptors[traktId], progress)))
+                }
+            }
+            traktId to response
         }
-        val withNextEpisode = perShowResults.count { (_, response) ->
+
+        val withNextEpisode = responses.count { (_, response) ->
             (response as? ApiResponse.Success)?.body?.nextEpisode != null
         }
         logger.debug(
@@ -67,17 +88,14 @@ public class ProgressContinueWatchingFetcher(
             "Progress per-show fan-out: candidates=${candidates.size} withNextEpisode=$withNextEpisode",
         )
 
-        if (perShowResults.any { (_, response) -> response !is ApiResponse.Success }) {
-            return@coroutineScope null
-        }
-
-        perShowResults.mapNotNull { (traktId, response) ->
-            val progress = (response as ApiResponse.Success).body
-            // Load-bearing filter. Catches reset shows (`reset_at` populated) and any case where
-            // Trakt's per-show logic returns null next_episode. Removing it would persist rows
-            // that never render in the watchlist.
-            if (progress.nextEpisode == null) return@mapNotNull null
-            toEntry(traktId, descriptors[traktId], progress)
+        if (responses.all { (_, response) -> response is ApiResponse.Success }) {
+            val finalTraktIds = responses
+                .mapNotNull { (traktId, response) ->
+                    val progress = (response as ApiResponse.Success).body
+                    if (progress.nextEpisode != null) traktId else null
+                }
+                .toSet()
+            send(ProgressBatch.Complete(finalTraktIds))
         }
     }
 
@@ -106,6 +124,23 @@ internal data class ProgressDescriptor(
     val title: String?,
     val year: Long?,
 )
+
+/**
+ * Incremental sync event emitted by Continue Watching fetchers.
+ *
+ * Subscribers apply each variant to the local table independently, so the UI updates
+ * progressively as entries arrive instead of waiting for a single atomic flip.
+ */
+internal sealed interface ProgressBatch {
+    /** Single resolved show entry, sent as soon as it is ready. */
+    data class Entry(val entry: ContinueWatchingEntry) : ProgressBatch
+
+    /**
+     * Terminal event. [finalTraktIds] is the authoritative trakt-id set for the synced
+     * watchlist; subscribers delete rows not in this set, then stamp freshness markers.
+     */
+    data class Complete(val finalTraktIds: Set<Long>) : ProgressBatch
+}
 
 private fun toEntry(
     traktId: Long,
