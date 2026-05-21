@@ -5,7 +5,8 @@ import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundWorker
 import com.thomaskioko.tvmaniac.core.tasks.api.PeriodicTaskRequest
 import com.thomaskioko.tvmaniac.core.tasks.api.TaskConstraints
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerResult
-import com.thomaskioko.tvmaniac.featureflags.flags.ContinueWatchingNitroFlag
+import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
+import com.thomaskioko.tvmaniac.featureflags.flags.ContinueWatchingNitroFlagQualifier
 import com.thomaskioko.tvmaniac.syncstate.api.SyncError
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
@@ -20,7 +21,8 @@ import kotlinx.coroutines.flow.first
 public class ContinueWatchingSyncWorker(
     private val syncContinueWatchingInteractor: Lazy<SyncContinueWatchingInteractor>,
     private val traktAuthRepository: Lazy<TraktAuthRepository>,
-    private val nitroFlag: ContinueWatchingNitroFlag,
+    @ContinueWatchingNitroFlagQualifier
+    private val nitroFlag: FeatureFlag<Boolean>,
     private val syncObserver: SyncObserver,
     private val logger: Logger,
 ) : BackgroundWorker {
