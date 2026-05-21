@@ -11,7 +11,6 @@ import dev.zacsweers.metro.Provides
 import dev.zacsweers.metro.SingleIn
 import kotlinx.datetime.LocalDate
 
-
 @ContributesTo(AppScope::class)
 public interface FlagBindings {
 

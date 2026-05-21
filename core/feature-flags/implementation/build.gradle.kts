@@ -14,10 +14,14 @@ kotlin {
         androidMain {
             dependencies {
                 api(libs.firebase.config)
+                api(libs.kotlinx.datetime)
                 implementation(libs.okio)
-                implementation(libs.kotlinx.datetime)
                 implementation(libs.coroutines.play.services)
             }
+        }
+
+        jvmMain.dependencies {
+            api(libs.kotlinx.datetime)
         }
 
         commonMain.dependencies {
