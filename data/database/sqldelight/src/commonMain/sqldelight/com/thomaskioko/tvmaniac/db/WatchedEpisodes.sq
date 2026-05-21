@@ -215,6 +215,14 @@ SELECT
 FROM watched_episodes
 WHERE show_trakt_id = ? AND episode_id = ?;
 
+-- Most-recent watched_at across live (non-DELETE/SYNCED_DELETE) rows for a show.
+-- Returns null when the show has no remaining live watch rows.
+getMaxWatchedAtForShow:
+SELECT MAX(watched_at) AS last_watched_at
+FROM watched_episodes
+WHERE show_trakt_id = ?
+  AND pending_action NOT IN ('DELETE', 'SYNCED_DELETE');
+
 upsertFromTrakt:
 INSERT INTO watched_episodes(
     show_trakt_id, episode_id, season_number, episode_number, watched_at, trakt_id, synced_at, pending_action

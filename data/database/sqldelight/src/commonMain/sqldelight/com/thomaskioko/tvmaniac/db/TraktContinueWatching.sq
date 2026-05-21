@@ -46,16 +46,38 @@ SELECT
     trakt_continue_watching.year
 FROM trakt_continue_watching;
 
+-- Server sync upsert. Preserves a more recent local last_watched_at so a
+-- pending local mark is not regressed when the server's projection trails.
 upsert:
-INSERT OR REPLACE INTO trakt_continue_watching(trakt_id, tmdb_id, aired_episodes, completed_count, last_watched_at, last_updated_at, title, year)
-VALUES(:traktId, :tmdbId, :airedEpisodes, :completedCount, :lastWatchedAt, :lastUpdatedAt, :title, :year);
+INSERT INTO trakt_continue_watching(trakt_id, tmdb_id, aired_episodes, completed_count, last_watched_at, last_updated_at, title, year)
+VALUES(:traktId, :tmdbId, :airedEpisodes, :completedCount, :lastWatchedAt, :lastUpdatedAt, :title, :year)
+ON CONFLICT(trakt_id) DO UPDATE SET
+    tmdb_id = excluded.tmdb_id,
+    aired_episodes = excluded.aired_episodes,
+    completed_count = excluded.completed_count,
+    last_watched_at = MAX(excluded.last_watched_at, trakt_continue_watching.last_watched_at),
+    last_updated_at = excluded.last_updated_at,
+    title = excluded.title,
+    year = excluded.year;
 
--- Seeds a placeholder row when the user marks an episode watched locally
--- before the next continue-watching sync. aired_episodes is 0 until the next
--- sync overwrites with the server's authoritative count.
-upsertIfNotExists:
-INSERT OR IGNORE INTO trakt_continue_watching(trakt_id, tmdb_id, aired_episodes, completed_count, last_watched_at, last_updated_at)
-VALUES(:traktId, :tmdbId, 0, 1, :watchedAt, :watchedAt);
+-- Local mark upsert. Stamps last_watched_at to the timestamp of the user's
+-- mark and seeds a membership row when the show was never tracked locally.
+-- Count columns remain zero on first insert; the next server sync populates
+-- them. Count columns are non-load-bearing for query reads (queries derive
+-- counts from watched_episodes + episode).
+upsertMembershipForLocalMark:
+INSERT INTO trakt_continue_watching(trakt_id, tmdb_id, aired_episodes, completed_count, last_watched_at, last_updated_at)
+VALUES(:traktId, :tmdbId, 0, 0, :watchedAt, :watchedAt)
+ON CONFLICT(trakt_id) DO UPDATE SET
+    last_watched_at = MAX(excluded.last_watched_at, trakt_continue_watching.last_watched_at),
+    last_updated_at = excluded.last_updated_at;
+
+-- Sets last_watched_at directly. Used after a local unwatch to reflect the
+-- most-recent remaining watched timestamp for the show.
+updateLastWatchedAt:
+UPDATE trakt_continue_watching
+SET last_watched_at = :lastWatchedAt
+WHERE trakt_id = :traktId;
 
 upsertPlaceholder:
 INSERT OR IGNORE INTO trakt_continue_watching(trakt_id, tmdb_id, aired_episodes, completed_count, last_watched_at, last_updated_at, title, year)

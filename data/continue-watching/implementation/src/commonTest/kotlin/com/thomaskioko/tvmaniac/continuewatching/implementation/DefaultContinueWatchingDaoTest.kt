@@ -49,14 +49,32 @@ internal class DefaultContinueWatchingDaoTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should replace existing entry given same trakt id`() {
+    fun `should replace existing entry given newer server timestamp`() {
         dao.upsert(breakingBadEntry)
-        val updated = breakingBadEntry.copy(completedCount = 99, lastWatchedAt = 2_000_000L)
+        val updated = breakingBadEntry.copy(
+            completedCount = 99,
+            lastWatchedAt = breakingBadEntry.lastWatchedAt + 1_000L,
+        )
 
         dao.upsert(updated)
 
         val entries = dao.entries()
         entries shouldContainExactlyInAnyOrder listOf(updated)
+    }
+
+    @Test
+    fun `should preserve newer local last watched at given older server entry`() {
+        dao.upsert(breakingBadEntry)
+        val olderServerEntry = breakingBadEntry.copy(
+            completedCount = 99,
+            lastWatchedAt = breakingBadEntry.lastWatchedAt - 1_000L,
+        )
+
+        dao.upsert(olderServerEntry)
+
+        val stored = dao.entries().first()
+        stored.completedCount shouldBe 99
+        stored.lastWatchedAt shouldBe breakingBadEntry.lastWatchedAt
     }
 
     @Test
