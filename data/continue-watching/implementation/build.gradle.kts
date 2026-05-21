@@ -11,7 +11,6 @@ kotlin {
         commonMain {
             dependencies {
                 api(libs.coroutines.core)
-                api(libs.store5)
                 api(projects.api.trakt.api)
                 api(projects.core.base)
                 api(projects.core.logger.api)
