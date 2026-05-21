@@ -41,16 +41,12 @@ import dev.zacsweers.metro.AssistedInject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.collections.immutable.toPersistentSet
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.TimeSource
 
 @NavDestination(
     route = SeasonDetailsRoute::class,
@@ -281,7 +277,6 @@ public class SeasonDetailsPresenter(
         if (trackedEpisodeId != null) {
             updateState { copy(updatingEpisodeIds = (updatingEpisodeIds + trackedEpisodeId).toPersistentSet()) }
         }
-        val marker = TimeSource.Monotonic.markNow()
         try {
             when (operation) {
                 is WatchOperation.MarkEpisodeWatched ->
@@ -301,10 +296,6 @@ public class SeasonDetailsPresenter(
             }.collectStatus(episodeLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         } finally {
             if (trackedEpisodeId != null) {
-                val elapsed = marker.elapsedNow()
-                if (elapsed < INDICATOR_FLOOR) {
-                    delay(INDICATOR_FLOOR - elapsed)
-                }
                 updateState { copy(updatingEpisodeIds = (updatingEpisodeIds - trackedEpisodeId).toPersistentSet()) }
             }
         }
@@ -336,9 +327,5 @@ public class SeasonDetailsPresenter(
     @AssistedFactory
     public fun interface Factory {
         public fun create(param: SeasonDetailsUiParam): SeasonDetailsPresenter
-    }
-
-    private companion object {
-        private val INDICATOR_FLOOR: Duration = 150.milliseconds
     }
 }
