@@ -12,7 +12,7 @@ import com.thomaskioko.tvmaniac.core.base.FeatureFlagLocalsDataStore
 import com.thomaskioko.tvmaniac.core.base.Initializer
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
-import com.thomaskioko.tvmaniac.featureflags.implementation.AndroidRemoteConfigFeatureFlags
+import com.thomaskioko.tvmaniac.featureflags.implementation.AndroidRemoteConfig
 import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlagFetchInterval
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
@@ -35,7 +35,7 @@ public object AndroidFeatureFlagsBindingContainer {
     @IntoSet
     @AsyncInitializers
     public fun provideRemoteConfigInitializer(
-        bind: AndroidRemoteConfigFeatureFlags,
+        bind: AndroidRemoteConfig,
         @IoCoroutineScope scope: CoroutineScope,
         logger: Logger,
     ): Initializer = Initializer {

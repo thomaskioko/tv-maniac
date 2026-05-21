@@ -1,9 +1,10 @@
 package com.thomaskioko.tvmaniac.featureflags.implementation
 
 import com.thomaskioko.tvmaniac.core.logger.Logger
-import com.thomaskioko.tvmaniac.featureflags.FeatureFlags
+import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
+import com.thomaskioko.tvmaniac.featureflags.FeatureFlagsRemoteConfig
 import com.thomaskioko.tvmaniac.featureflags.RemoteConfigBridge
-import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlag
+import com.thomaskioko.tvmaniac.featureflags.RemoteFlag
 import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlagFetchInterval
 import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlagSource
 import dev.zacsweers.metro.AppScope
@@ -13,21 +14,22 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
-private const val LOG_TAG = "IosRemoteConfigFeatureFlags"
+private const val LOG_TAG = "IosRemoteConfig"
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-public class IosRemoteConfigFeatureFlags(
+public class IosRemoteConfig(
     private val bridge: RemoteConfigBridge,
     private val fetchInterval: FeatureFlagFetchInterval,
-    private val state: FeatureFlagsState,
+    private val state: RemoteConfigState,
+    private val flags: Lazy<Set<FeatureFlag>>,
     private val logger: Logger,
-) : FeatureFlags {
+) : FeatureFlagsRemoteConfig {
 
     public suspend fun setup() {
         logger.debug(LOG_TAG, "setup start (bridge=${bridge::class.simpleName}, intervalSeconds=${fetchInterval.seconds})")
         bridge.setMinimumFetchIntervalSeconds(fetchInterval.seconds)
-        bridge.setDefaults(FeatureFlag.entries.associate { it.key to it.defaultValue })
+        setDefaults(flagDefaults())
         bridge.addOnConfigUpdateListener {
             logger.debug(LOG_TAG, "realtime update received")
             runCatching { publishCurrent() }
@@ -36,9 +38,10 @@ public class IosRemoteConfigFeatureFlags(
         logger.debug(LOG_TAG, "realtime listener registered")
     }
 
-    override fun isEnabled(flag: FeatureFlag): Flow<Boolean> = state.isEnabled(flag)
+    override fun observeBoolean(key: String, default: Boolean): Flow<Boolean> =
+        state.observeBoolean(key, default)
 
-    override fun source(flag: FeatureFlag): Flow<FeatureFlagSource> = state.source(flag)
+    override fun observeSource(key: String): Flow<FeatureFlagSource> = state.observeSource(key)
 
     override suspend fun refresh() {
         logger.debug(LOG_TAG, "refresh start")
@@ -52,8 +55,16 @@ public class IosRemoteConfigFeatureFlags(
         publishCurrent()
     }
 
+    override suspend fun setDefaults(defaults: Map<String, Boolean>) {
+        bridge.setDefaults(defaults)
+        state.update(defaults)
+    }
+
+    private fun flagDefaults(): Map<String, Boolean> =
+        flags.value.filterIsInstance<RemoteFlag>().associate { it.key to it.defaultValue }
+
     private fun publishCurrent() {
-        val values = FeatureFlag.entries.associateWith { bridge.getBoolean(it.key) }
+        val values = flags.value.filterIsInstance<RemoteFlag>().associate { it.key to bridge.getBoolean(it.key) }
         state.update(values)
         logger.debug(LOG_TAG, "published values=$values")
     }

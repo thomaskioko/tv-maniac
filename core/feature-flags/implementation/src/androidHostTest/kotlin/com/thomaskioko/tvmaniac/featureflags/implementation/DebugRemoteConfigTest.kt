@@ -8,7 +8,6 @@ import app.cash.turbine.test
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.thomaskioko.tvmaniac.appconfig.DebugConfig
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
-import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlag
 import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlagSource
 import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlagLocalStore
 import io.kotest.matchers.shouldBe
@@ -22,18 +21,19 @@ import org.junit.After
 import org.junit.Test
 import kotlin.random.Random
 
-class AndroidDebugFeatureFlagsTest {
+class DebugRemoteConfigTest {
 
     private val testDispatcher = UnconfinedTestDispatcher()
     private val testScope: CoroutineScope = CoroutineScope(testDispatcher + Job())
     private val testFile = FileSystem.SYSTEM_TEMPORARY_DIRECTORY /
-        "android_debug_feature_flags_${Random.nextInt()}.preferences_pb"
+        "debug_remote_config_${Random.nextInt()}.preferences_pb"
     private val dataStore: DataStore<Preferences> = PreferenceDataStoreFactory.createWithPath(
         corruptionHandler = null,
         migrations = emptyList(),
         scope = testScope,
         produceFile = { testFile },
     )
+    private val flagKey = "simkl_login_enabled"
 
     @After
     fun cleanup() = runTest {
@@ -44,24 +44,20 @@ class AndroidDebugFeatureFlagsTest {
 
     @Test
     fun `should pass through production when debug is false`() = runTest {
-        val state = FeatureFlagsState().also {
-            it.update(mapOf(FeatureFlag.SIMKL_LOGIN_ENABLED to true))
-        }
+        val state = RemoteConfigState().also { it.update(mapOf(flagKey to true)) }
         val production = buildProduction(state)
-        val localStore = FakeFeatureFlagLocalStore().also {
-            it.set(FeatureFlag.SIMKL_LOGIN_ENABLED, false)
-        }
-        val wrapper = AndroidDebugFeatureFlags(
+        val localStore = FakeFeatureFlagLocalStore().also { it.set(flagKey, false) }
+        val wrapper = DebugRemoteConfig(
             production = production,
             localStore = localStore,
             debugConfig = StubDebugConfig(isDebug = false),
         )
 
-        wrapper.isEnabled(FeatureFlag.SIMKL_LOGIN_ENABLED).test {
+        wrapper.observeBoolean(flagKey, default = false).test {
             awaitItem() shouldBe true
             cancelAndIgnoreRemainingEvents()
         }
-        wrapper.source(FeatureFlag.SIMKL_LOGIN_ENABLED).test {
+        wrapper.observeSource(flagKey).test {
             awaitItem() shouldBe FeatureFlagSource.Firebase
             cancelAndIgnoreRemainingEvents()
         }
@@ -69,20 +65,16 @@ class AndroidDebugFeatureFlagsTest {
 
     @Test
     fun `should let local value win over remote in debug`() = runTest {
-        val state = FeatureFlagsState().also {
-            it.update(mapOf(FeatureFlag.SIMKL_LOGIN_ENABLED to true))
-        }
+        val state = RemoteConfigState().also { it.update(mapOf(flagKey to true)) }
         val production = buildProduction(state)
-        val localStore = FakeFeatureFlagLocalStore().also {
-            it.set(FeatureFlag.SIMKL_LOGIN_ENABLED, false)
-        }
-        val wrapper = AndroidDebugFeatureFlags(
+        val localStore = FakeFeatureFlagLocalStore().also { it.set(flagKey, false) }
+        val wrapper = DebugRemoteConfig(
             production = production,
             localStore = localStore,
             debugConfig = StubDebugConfig(isDebug = true),
         )
 
-        wrapper.isEnabled(FeatureFlag.SIMKL_LOGIN_ENABLED).test {
+        wrapper.observeBoolean(flagKey, default = false).test {
             awaitItem() shouldBe false
             cancelAndIgnoreRemainingEvents()
         }
@@ -90,48 +82,45 @@ class AndroidDebugFeatureFlagsTest {
 
     @Test
     fun `should flip source to Local when local value is set in debug`() = runTest {
-        val production = buildProduction(FeatureFlagsState())
+        val production = buildProduction(RemoteConfigState())
         val localStore = FakeFeatureFlagLocalStore()
-        val wrapper = AndroidDebugFeatureFlags(
+        val wrapper = DebugRemoteConfig(
             production = production,
             localStore = localStore,
             debugConfig = StubDebugConfig(isDebug = true),
         )
 
-        wrapper.source(FeatureFlag.SIMKL_LOGIN_ENABLED).test {
+        wrapper.observeSource(flagKey).test {
             awaitItem() shouldBe FeatureFlagSource.Firebase
-            localStore.set(FeatureFlag.SIMKL_LOGIN_ENABLED, true)
+            localStore.set(flagKey, true)
             awaitItem() shouldBe FeatureFlagSource.Local
         }
     }
 
     @Test
     fun `should revert to remote when local value is cleared in debug`() = runTest {
-        val state = FeatureFlagsState().also {
-            it.update(mapOf(FeatureFlag.SIMKL_LOGIN_ENABLED to true))
-        }
+        val state = RemoteConfigState().also { it.update(mapOf(flagKey to true)) }
         val production = buildProduction(state)
-        val localStore = FakeFeatureFlagLocalStore().also {
-            it.set(FeatureFlag.SIMKL_LOGIN_ENABLED, false)
-        }
-        val wrapper = AndroidDebugFeatureFlags(
+        val localStore = FakeFeatureFlagLocalStore().also { it.set(flagKey, false) }
+        val wrapper = DebugRemoteConfig(
             production = production,
             localStore = localStore,
             debugConfig = StubDebugConfig(isDebug = true),
         )
 
-        wrapper.isEnabled(FeatureFlag.SIMKL_LOGIN_ENABLED).test {
+        wrapper.observeBoolean(flagKey, default = false).test {
             awaitItem() shouldBe false
-            localStore.clear(FeatureFlag.SIMKL_LOGIN_ENABLED)
+            localStore.clear(flagKey)
             awaitItem() shouldBe true
         }
     }
 
-    private fun buildProduction(state: FeatureFlagsState): AndroidRemoteConfigFeatureFlags =
-        AndroidRemoteConfigFeatureFlags(
+    private fun buildProduction(state: RemoteConfigState): AndroidRemoteConfig =
+        AndroidRemoteConfig(
             remoteConfig = null,
             settings = FirebaseRemoteConfigSettings.Builder().build(),
             state = state,
+            flags = lazyOf(emptySet()),
             logger = FakeLogger(),
             scope = testScope,
         )
