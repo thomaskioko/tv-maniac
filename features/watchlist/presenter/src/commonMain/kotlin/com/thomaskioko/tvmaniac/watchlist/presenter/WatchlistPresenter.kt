@@ -17,8 +17,8 @@ import com.thomaskioko.tvmaniac.domain.continuewatching.SyncContinueWatchingInte
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
-import com.thomaskioko.tvmaniac.featureflags.FeatureFlags
-import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlag
+import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
+import com.thomaskioko.tvmaniac.featureflags.flags.ContinueWatchingNitroFlagQualifier
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
@@ -71,7 +71,8 @@ public class WatchlistPresenter(
     private val localizer: Localizer,
     private val logger: Logger,
     private val traktAuthRepository: TraktAuthRepository,
-    featureFlags: FeatureFlags,
+    @ContinueWatchingNitroFlagQualifier
+    nitroFlag: FeatureFlag<Boolean>,
     syncObserver: SyncObserver,
 ) : ComponentContext by componentContext {
 
@@ -84,8 +85,8 @@ public class WatchlistPresenter(
     private val _state = MutableStateFlow(WatchlistState())
 
     // TODO:: This is an experiment. Move to repository
-    private val nitroEnabled: StateFlow<Boolean> = featureFlags
-        .isEnabled(FeatureFlag.CONTINUE_WATCHING_NITRO_ENABLED)
+    private val nitroEnabled: StateFlow<Boolean> = nitroFlag
+        .observe()
         .stateIn(
             scope = coroutineScope,
             started = SharingStarted.Eagerly,

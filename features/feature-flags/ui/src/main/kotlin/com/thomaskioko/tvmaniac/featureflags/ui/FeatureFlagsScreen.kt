@@ -51,7 +51,6 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvide
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSwitch
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
-import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlag
 import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlagSortDescriptor
 import com.thomaskioko.tvmaniac.featureflags.presenter.BackClicked
 import com.thomaskioko.tvmaniac.featureflags.presenter.ClearAllLocals
@@ -83,7 +82,7 @@ public fun FeatureFlagsScreen(
         onSearchQueryChanged = { presenter.dispatch(SearchQueryChanged(it)) },
         onResetAll = { presenter.dispatch(ClearAllLocals) },
         onForceRefresh = { presenter.dispatch(ForceRefresh) },
-        onToggleFlag = { flag, value -> presenter.dispatch(ToggleFlag(flag, value)) },
+        onToggleFlag = { key, value -> presenter.dispatch(ToggleFlag(key, value)) },
         onResetFlag = { presenter.dispatch(ClearLocal(it)) },
         onSortChanged = { presenter.dispatch(SortChanged(it)) },
         onDirectionToggled = { presenter.dispatch(DirectionToggled) },
@@ -99,8 +98,8 @@ internal fun FeatureFlagsScreen(
     onSearchQueryChanged: (String) -> Unit,
     onResetAll: () -> Unit,
     onForceRefresh: () -> Unit,
-    onToggleFlag: (FeatureFlag, Boolean) -> Unit,
-    onResetFlag: (FeatureFlag) -> Unit,
+    onToggleFlag: (String, Boolean) -> Unit,
+    onResetFlag: (String) -> Unit,
     onSortChanged: (FeatureFlagSortDescriptor) -> Unit,
     onDirectionToggled: () -> Unit,
     onGroupByTypeToggled: () -> Unit,
@@ -213,13 +212,13 @@ internal fun FeatureFlagsScreen(
                 } else {
                     itemsIndexed(
                         items = state.items,
-                        key = { _, it -> it.flag.key },
+                        key = { _, it -> it.key },
                     ) { index, item ->
                         FeatureFlagRowItem(
                             item = item,
                             resetButtonLabel = state.resetButtonLabel,
-                            onToggle = { onToggleFlag(item.flag, it) },
-                            onReset = { onResetFlag(item.flag) },
+                            onToggle = { onToggleFlag(item.key, it) },
+                            onReset = { onResetFlag(item.key) },
                         )
                         if (index < state.items.lastIndex) {
                             HorizontalDivider(

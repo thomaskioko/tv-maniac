@@ -9,7 +9,7 @@ import com.thomaskioko.tvmaniac.domain.featureflags.FeatureFlagRow
 import com.thomaskioko.tvmaniac.domain.featureflags.ObserveFeatureFlagRowsInteractor
 import com.thomaskioko.tvmaniac.domain.featureflags.ObserveFeatureFlagRowsInteractor.Param
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlagLocalStore
-import com.thomaskioko.tvmaniac.featureflags.FeatureFlags
+import com.thomaskioko.tvmaniac.featureflags.FeatureFlagsRemoteConfig
 import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlagSource
 import com.thomaskioko.tvmaniac.featureflags.nav.FeatureFlagsRoute
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
@@ -39,7 +39,7 @@ import kotlinx.coroutines.launch
 @Inject
 public class FeatureFlagsPresenter(
     componentContext: ComponentContext,
-    private val featureFlags: FeatureFlags,
+    private val remoteConfig: FeatureFlagsRemoteConfig,
     private val localStore: FeatureFlagLocalStore,
     private val navigator: Navigator,
     private val dateTimeProvider: DateTimeProvider,
@@ -95,16 +95,16 @@ public class FeatureFlagsPresenter(
         when (action) {
             BackClicked -> navigator.navigateBack()
             is ToggleFlag -> coroutineScope.launch {
-                localStore.set(action.flag, action.value)
+                localStore.set(action.key, action.value)
             }
             is ClearLocal -> coroutineScope.launch {
-                localStore.clear(action.flag)
+                localStore.clear(action.key)
             }
             ClearAllLocals -> coroutineScope.launch {
                 localStore.clearAll()
             }
             ForceRefresh -> coroutineScope.launch {
-                featureFlags.refresh()
+                remoteConfig.refresh()
                 lastFetchedAt.update {
                     val timestamp = dateTimeProvider.epochToDisplayDateTime(dateTimeProvider.now().toEpochMilliseconds())
                     localizer.getString(StringResourceKey.LabelFeatureFlagsLastFetchedAt, timestamp)
@@ -124,7 +124,7 @@ public class FeatureFlagsPresenter(
                 FeatureFlagSource.Local -> localizer.getString(StringResourceKey.LabelFeatureFlagSourceLocal)
             }
             FeatureFlagItem(
-                flag = row.featureFlag,
+                key = row.featureFlag.key,
                 title = row.featureFlag.title,
                 description = row.featureFlag.description,
                 source = sourceLabel,

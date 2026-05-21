@@ -5,7 +5,11 @@ plugins {
 kotlin {
     sourceSets {
         androidMain.dependencies {
-            implementation(libs.kotlinx.datetime)
+            api(libs.kotlinx.datetime)
+        }
+
+        jvmMain.dependencies {
+            api(libs.kotlinx.datetime)
         }
 
         commonMain.dependencies {

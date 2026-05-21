@@ -5,11 +5,11 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
 import com.thomaskioko.tvmaniac.domain.featureflags.ObserveFeatureFlagRowsInteractor
-import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlag
+import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
 import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlagSortDescriptor
+import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlag
 import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlagLocalStore
-import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlagProvider
-import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlags
+import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlagsRemoteConfig
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
@@ -17,7 +17,6 @@ import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -28,16 +27,17 @@ import kotlin.test.Test
 internal class FeatureFlagsPresenterTest {
 
     private val testDispatcher = StandardTestDispatcher()
-    private val featureFlags = FakeFeatureFlags()
+    private val remoteConfig = FakeFeatureFlagsRemoteConfig()
     private val localStore = FakeFeatureFlagLocalStore()
-    private val provider = FakeFeatureFlagProvider(localStore = localStore)
     private val navigator = FakeNavigator()
     private val dateTimeProvider = FakeDateTimeProvider()
     private val localizer = FakeLocalizer()
-    private val observeRows = ObserveFeatureFlagRowsInteractor(
-        featureFlags = featureFlags,
-        provider = provider,
-    )
+
+    private val nitroFlag = FakeFeatureFlag(initial = false, key = "enable_continue_watching_nitro")
+    private val simklFlag = FakeFeatureFlag(initial = false, key = "simkl_login_enabled", title = "Simkl Login")
+    private val flags: Set<FeatureFlag<Boolean>> = setOf(nitroFlag, simklFlag)
+
+    private val observeRows = ObserveFeatureFlagRowsInteractor(flags = flags)
 
     @BeforeTest
     fun setUp() {
@@ -51,7 +51,7 @@ internal class FeatureFlagsPresenterTest {
 
     @Test
     fun `should emit default state on init`() = runTest {
-        val presenter = buildPresenter(this)
+        val presenter = buildPresenter()
 
         presenter.state.test {
             awaitItem() shouldBe FeatureFlagsState.DEFAULT_STATE
@@ -61,37 +61,36 @@ internal class FeatureFlagsPresenterTest {
 
     @Test
     fun `should populate items for every flag with Firebase source by default`() = runTest {
-        val presenter = buildPresenter(this)
+        val presenter = buildPresenter()
 
         presenter.state.test {
             skipItems(1)
             val state = awaitItem()
-            state.items.map { it.flag } shouldContainExactlyInAnyOrder FeatureFlag.entries
+            state.items.map { it.key } shouldContainExactlyInAnyOrder flags.map { it.key }
             state.items.all { !it.isLocal } shouldBe true
-            state.items.all { it.value == it.flag.defaultValue } shouldBe true
             cancelAndIgnoreRemainingEvents()
         }
     }
 
     @Test
     fun `should write to local store given ToggleFlag`() = runTest {
-        val presenter = buildPresenter(this)
+        val presenter = buildPresenter()
 
-        presenter.dispatch(ToggleFlag(FeatureFlag.SIMKL_LOGIN_ENABLED, value = true))
+        presenter.dispatch(ToggleFlag(key = simklFlag.key, value = true))
         testDispatcher.scheduler.advanceUntilIdle()
 
         localStore.observeAll().test {
-            awaitItem() shouldBe mapOf(FeatureFlag.SIMKL_LOGIN_ENABLED to true)
+            awaitItem() shouldBe mapOf(simklFlag.key to true)
             cancelAndIgnoreRemainingEvents()
         }
     }
 
     @Test
     fun `should clear single flag given ClearLocal`() = runTest {
-        val presenter = buildPresenter(this)
-        localStore.set(FeatureFlag.SIMKL_LOGIN_ENABLED, true)
+        val presenter = buildPresenter()
+        localStore.set(simklFlag.key, true)
 
-        presenter.dispatch(ClearLocal(FeatureFlag.SIMKL_LOGIN_ENABLED))
+        presenter.dispatch(ClearLocal(key = simklFlag.key))
         testDispatcher.scheduler.advanceUntilIdle()
 
         localStore.observeAll().test {
@@ -102,8 +101,8 @@ internal class FeatureFlagsPresenterTest {
 
     @Test
     fun `should empty store given ClearAllLocals`() = runTest {
-        val presenter = buildPresenter(this)
-        localStore.set(FeatureFlag.SIMKL_LOGIN_ENABLED, true)
+        val presenter = buildPresenter()
+        localStore.set(simklFlag.key, true)
 
         presenter.dispatch(ClearAllLocals)
         testDispatcher.scheduler.advanceUntilIdle()
@@ -115,8 +114,8 @@ internal class FeatureFlagsPresenterTest {
     }
 
     @Test
-    fun `should refresh feature flags and update forceRefreshSubtitle given ForceRefresh`() = runTest {
-        val presenter = buildPresenter(this)
+    fun `should refresh remote config and update forceRefreshSubtitle given ForceRefresh`() = runTest {
+        val presenter = buildPresenter()
 
         presenter.state.test {
             skipItems(2)
@@ -125,12 +124,12 @@ internal class FeatureFlagsPresenterTest {
             awaitItem().forceRefreshSubtitle shouldBe "Last fetched at 2024-01-01 12:00"
             cancelAndIgnoreRemainingEvents()
         }
-        featureFlags.refreshCount shouldBe 1
+        remoteConfig.refreshCount shouldBe 1
     }
 
     @Test
     fun `should filter items to empty given SearchQueryChanged with no matches`() = runTest {
-        val presenter = buildPresenter(this)
+        val presenter = buildPresenter()
 
         presenter.state.test {
             skipItems(2)
@@ -146,7 +145,7 @@ internal class FeatureFlagsPresenterTest {
 
     @Test
     fun `should flip ascending given DirectionToggled`() = runTest {
-        val presenter = buildPresenter(this)
+        val presenter = buildPresenter()
 
         presenter.state.test {
             skipItems(2)
@@ -159,7 +158,7 @@ internal class FeatureFlagsPresenterTest {
 
     @Test
     fun `should update sort given SortChanged`() = runTest {
-        val presenter = buildPresenter(this)
+        val presenter = buildPresenter()
 
         presenter.state.test {
             skipItems(2)
@@ -172,7 +171,7 @@ internal class FeatureFlagsPresenterTest {
 
     @Test
     fun `should flip groupByType given GroupByTypeToggled`() = runTest {
-        val presenter = buildPresenter(this)
+        val presenter = buildPresenter()
 
         presenter.state.test {
             skipItems(2)
@@ -185,18 +184,18 @@ internal class FeatureFlagsPresenterTest {
 
     @Test
     fun `should navigate back given BackClicked`() = runTest {
-        val presenter = buildPresenter(this)
+        val presenter = buildPresenter()
 
         presenter.dispatch(BackClicked)
 
         navigator.navigateBackCount shouldBe 1
     }
 
-    private fun buildPresenter(scope: TestScope): FeatureFlagsPresenter {
+    private fun buildPresenter(): FeatureFlagsPresenter {
         val lifecycle = LifecycleRegistry().apply { resume() }
         return FeatureFlagsPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
-            featureFlags = featureFlags,
+            remoteConfig = remoteConfig,
             localStore = localStore,
             navigator = navigator,
             dateTimeProvider = dateTimeProvider,

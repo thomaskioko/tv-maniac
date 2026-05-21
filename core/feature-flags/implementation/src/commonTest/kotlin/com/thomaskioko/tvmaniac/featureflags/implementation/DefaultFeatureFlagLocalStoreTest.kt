@@ -5,7 +5,6 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlag
 import com.thomaskioko.tvmaniac.featureflags.observe
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
@@ -33,6 +32,7 @@ internal class DefaultFeatureFlagLocalStoreTest {
     )
 
     private val store = DefaultFeatureFlagLocalStore(dataStore = dataStore)
+    private val sampleKey = "simkl_login_enabled"
 
     @AfterTest
     fun cleanup() = runTest {
@@ -43,56 +43,56 @@ internal class DefaultFeatureFlagLocalStoreTest {
 
     @Test
     fun `should emit null given key has no local value`() = runTest {
-        store.observe<Boolean>(FeatureFlag.SIMKL_LOGIN_ENABLED).test {
+        store.observe<Boolean>(sampleKey).test {
             awaitItem() shouldBe null
             cancelAndIgnoreRemainingEvents()
         }
     }
 
     @Test
-    fun `should emit Boolean value after setLocal`() = runTest {
-        store.observe<Boolean>(FeatureFlag.SIMKL_LOGIN_ENABLED).test {
+    fun `should emit Boolean value after set`() = runTest {
+        store.observe<Boolean>(sampleKey).test {
             awaitItem() shouldBe null
-            store.set(FeatureFlag.SIMKL_LOGIN_ENABLED, true)
+            store.set(sampleKey, true)
             awaitItem() shouldBe true
         }
     }
 
     @Test
-    fun `should emit Int value after setLocal`() = runTest {
-        store.observe<Int>(FeatureFlag.SIMKL_LOGIN_ENABLED).test {
+    fun `should emit Int value after set`() = runTest {
+        store.observe<Int>(sampleKey).test {
             awaitItem() shouldBe null
-            store.set(FeatureFlag.SIMKL_LOGIN_ENABLED, 42)
+            store.set(sampleKey, 42)
             awaitItem() shouldBe 42
         }
     }
 
     @Test
-    fun `should emit String value after setLocal`() = runTest {
-        store.observe<String>(FeatureFlag.SIMKL_LOGIN_ENABLED).test {
+    fun `should emit String value after set`() = runTest {
+        store.observe<String>(sampleKey).test {
             awaitItem() shouldBe null
-            store.set(FeatureFlag.SIMKL_LOGIN_ENABLED, "hello")
+            store.set(sampleKey, "hello")
             awaitItem() shouldBe "hello"
         }
     }
 
     @Test
-    fun `should emit null again after clearLocal`() = runTest {
-        store.set(FeatureFlag.SIMKL_LOGIN_ENABLED, true)
+    fun `should emit null again after clear`() = runTest {
+        store.set(sampleKey, true)
 
-        store.observe<Boolean>(FeatureFlag.SIMKL_LOGIN_ENABLED).test {
+        store.observe<Boolean>(sampleKey).test {
             awaitItem() shouldBe true
-            store.clear(FeatureFlag.SIMKL_LOGIN_ENABLED)
+            store.clear(sampleKey)
             awaitItem() shouldBe null
         }
     }
 
     @Test
-    fun `should emit empty map after clearAllLocals`() = runTest {
-        store.set(FeatureFlag.SIMKL_LOGIN_ENABLED, true)
+    fun `should emit empty map after clearAll`() = runTest {
+        store.set(sampleKey, true)
 
         store.observeAll().test {
-            awaitItem() shouldBe mapOf<FeatureFlag, Any>(FeatureFlag.SIMKL_LOGIN_ENABLED to true)
+            awaitItem() shouldBe mapOf<String, Any>(sampleKey to true)
             store.clearAll()
             awaitItem() shouldBe emptyMap()
         }
@@ -100,10 +100,10 @@ internal class DefaultFeatureFlagLocalStoreTest {
 
     @Test
     fun `should persist value across re-construction with same DataStore`() = runTest {
-        store.set(FeatureFlag.SIMKL_LOGIN_ENABLED, true)
+        store.set(sampleKey, true)
 
         val secondStore = DefaultFeatureFlagLocalStore(dataStore = dataStore)
-        secondStore.observe<Boolean>(FeatureFlag.SIMKL_LOGIN_ENABLED).test {
+        secondStore.observe<Boolean>(sampleKey).test {
             awaitItem() shouldBe true
             cancelAndIgnoreRemainingEvents()
         }

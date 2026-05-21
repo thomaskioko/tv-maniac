@@ -1,15 +1,14 @@
 package com.thomaskioko.tvmaniac.featureflags.presenter
 
-import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlag
 import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlagSortDescriptor
 
 public sealed interface FeatureFlagsActions
 
 public data object BackClicked : FeatureFlagsActions
 
-public data class ToggleFlag(val flag: FeatureFlag, val value: Boolean) : FeatureFlagsActions
+public data class ToggleFlag(val key: String, val value: Boolean) : FeatureFlagsActions
 
-public data class ClearLocal(val flag: FeatureFlag) : FeatureFlagsActions
+public data class ClearLocal(val key: String) : FeatureFlagsActions
 
 public data object ClearAllLocals : FeatureFlagsActions
 

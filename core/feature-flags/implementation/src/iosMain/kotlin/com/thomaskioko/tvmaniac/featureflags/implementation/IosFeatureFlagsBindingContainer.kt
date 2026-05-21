@@ -34,7 +34,7 @@ public object IosFeatureFlagsBindingContainer {
     @IntoSet
     @AsyncInitializers
     public fun provideRemoteConfigInitializer(
-        bind: IosRemoteConfigFeatureFlags,
+        bind: IosRemoteConfig,
         @IoCoroutineScope scope: CoroutineScope,
         logger: Logger,
     ): Initializer = Initializer {

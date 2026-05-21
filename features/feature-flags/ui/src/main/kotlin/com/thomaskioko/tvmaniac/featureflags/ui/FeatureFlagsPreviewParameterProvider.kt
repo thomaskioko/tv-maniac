@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.featureflags.ui
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlag
 import com.thomaskioko.tvmaniac.featureflags.presenter.FeatureFlagItem
 import com.thomaskioko.tvmaniac.featureflags.presenter.FeatureFlagsState
 import kotlinx.collections.immutable.ImmutableList
@@ -17,19 +16,44 @@ internal class FeatureFlagsPreviewParameterProvider : PreviewParameterProvider<F
         )
 }
 
-internal val defaultFeatureFlagsState: FeatureFlagsState = baseState(
-    items = previewItems(sourceLabel = "Firebase", isLocal = false),
+private data class PreviewFlag(
+    val key: String,
+    val title: String,
+    val description: String,
+    val defaultValue: Boolean,
 )
 
-internal val localSourceFeatureFlagsState: FeatureFlagsState = baseState(
-    items = previewItems(sourceLabel = "Local", isLocal = true, value = true),
-    forceRefreshSubtitle = "Last fetched at 2026-05-18 09:42",
+private val previewFlags = listOf(
+    PreviewFlag(
+        key = "simkl_login_enabled",
+        title = "Simkl Login",
+        description = "Show the Simkl login entry point on the settings screen.",
+        defaultValue = false,
+    ),
+    PreviewFlag(
+        key = "enable_continue_watching_nitro",
+        title = "Progress Endpoint",
+        description = "Use Trakt's internal /sync/progress/up_next_nitro call instead of the documented multi-step progress fetch.",
+        defaultValue = false,
+    ),
 )
 
-internal val emptyFeatureFlagsState: FeatureFlagsState = baseState(
-    searchQuery = "missing_flag",
-    items = persistentListOf(),
-)
+private fun previewItems(
+    sourceLabel: String,
+    isLocal: Boolean,
+    value: Boolean = false,
+) = previewFlags
+    .map { flag ->
+        FeatureFlagItem(
+            key = flag.key,
+            title = flag.title,
+            description = flag.description,
+            source = sourceLabel,
+            value = if (isLocal) value else flag.defaultValue,
+            isLocal = isLocal,
+        )
+    }
+    .toImmutableList()
 
 private fun baseState(
     items: ImmutableList<FeatureFlagItem> = persistentListOf(),
@@ -53,19 +77,16 @@ private fun baseState(
     sortDescendingLabel = "Sort descending",
 )
 
-private fun previewItems(
-    sourceLabel: String,
-    isLocal: Boolean,
-    value: Boolean = false,
-) = FeatureFlag.entries
-    .map { flag ->
-        FeatureFlagItem(
-            flag = flag,
-            title = flag.title,
-            description = flag.description,
-            source = sourceLabel,
-            value = if (isLocal) value else flag.defaultValue,
-            isLocal = isLocal,
-        )
-    }
-    .toImmutableList()
+internal val defaultFeatureFlagsState: FeatureFlagsState = baseState(
+    items = previewItems(sourceLabel = "Firebase", isLocal = false),
+)
+
+internal val localSourceFeatureFlagsState: FeatureFlagsState = baseState(
+    items = previewItems(sourceLabel = "Local", isLocal = true, value = true),
+    forceRefreshSubtitle = "Last fetched at 2026-05-18 09:42",
+)
+
+internal val emptyFeatureFlagsState: FeatureFlagsState = baseState(
+    searchQuery = "missing_flag",
+    items = persistentListOf(),
+)

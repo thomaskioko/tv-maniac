@@ -7,8 +7,9 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigException
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
-import com.thomaskioko.tvmaniac.featureflags.FeatureFlags
-import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlag
+import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
+import com.thomaskioko.tvmaniac.featureflags.FeatureFlagsRemoteConfig
+import com.thomaskioko.tvmaniac.featureflags.RemoteFlag
 import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlagSource
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
@@ -21,33 +22,35 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.tasks.await
 
-private const val LOG_TAG = "AndroidRemoteConfigFeatureFlags"
+private const val LOG_TAG = "AndroidRemoteConfig"
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-public class AndroidRemoteConfigFeatureFlags(
+public class AndroidRemoteConfig(
     private val remoteConfig: FirebaseRemoteConfig?,
     private val settings: FirebaseRemoteConfigSettings,
-    private val state: FeatureFlagsState,
+    private val state: RemoteConfigState,
+    private val flags: Lazy<Set<FeatureFlag<Boolean>>>,
     private val logger: Logger,
     @IoCoroutineScope private val scope: CoroutineScope,
-) : FeatureFlags {
+) : FeatureFlagsRemoteConfig {
 
     public suspend fun setup() {
         val config = remoteConfig
         if (config == null) {
-            logger.debug(LOG_TAG, "FirebaseRemoteConfig unavailable, using enum defaults")
+            logger.debug(LOG_TAG, "FirebaseRemoteConfig unavailable, using flag defaults")
             return
         }
         logger.debug(LOG_TAG, "setup start (intervalSeconds=${settings.minimumFetchIntervalInSeconds})")
         config.setConfigSettingsAsync(settings).await()
-        config.setDefaultsAsync(FeatureFlag.entries.associate { it.key to it.defaultValue }).await()
+        setDefaults(flagDefaults())
         registerListener(config)
     }
 
-    override fun isEnabled(flag: FeatureFlag): Flow<Boolean> = state.isEnabled(flag)
+    override fun observeBoolean(key: String, default: Boolean): Flow<Boolean> =
+        state.observeBoolean(key, default)
 
-    override fun source(flag: FeatureFlag): Flow<FeatureFlagSource> = state.source(flag)
+    override fun observeSource(key: String): Flow<FeatureFlagSource> = state.observeSource(key)
 
     override suspend fun refresh() {
         val config = remoteConfig ?: run {
@@ -57,11 +60,23 @@ public class AndroidRemoteConfigFeatureFlags(
         runCatching { config.fetchAndActivate().await() }
             .onSuccess { activated -> logger.debug(LOG_TAG, "fetchAndActivate succeeded (activated=$activated)") }
             .onFailure { logger.error(LOG_TAG, "fetchAndActivate failed", it) }
-        updateFlagsFromRemoteConfig(config)
+        updateFromRemoteConfig(config)
     }
 
-    private fun updateFlagsFromRemoteConfig(config: FirebaseRemoteConfig) {
-        val values = FeatureFlag.entries.associateWith { config.getBoolean(it.key) }
+    override suspend fun setDefaults(defaults: Map<String, Boolean>) {
+        val config = remoteConfig ?: run {
+            state.update(defaults)
+            return
+        }
+        config.setDefaultsAsync(defaults).await()
+        state.update(defaults)
+    }
+
+    private fun flagDefaults(): Map<String, Boolean> =
+        flags.value.filterIsInstance<RemoteFlag>().associate { it.key to it.defaultValue }
+
+    private fun updateFromRemoteConfig(config: FirebaseRemoteConfig) {
+        val values = flags.value.filterIsInstance<RemoteFlag>().associate { it.key to config.getBoolean(it.key) }
         state.update(values)
         logger.debug(LOG_TAG, "published values=$values")
     }
@@ -71,7 +86,7 @@ public class AndroidRemoteConfigFeatureFlags(
             .onEach { update ->
                 logger.debug(LOG_TAG, "realtime update received (keys=${update.updatedKeys})")
                 runCatching { config.activate().await() }
-                    .onSuccess { updateFlagsFromRemoteConfig(config) }
+                    .onSuccess { updateFromRemoteConfig(config) }
                     .onFailure { logger.error(LOG_TAG, "Activation failed during realtime update", it) }
             }
             .launchIn(scope)

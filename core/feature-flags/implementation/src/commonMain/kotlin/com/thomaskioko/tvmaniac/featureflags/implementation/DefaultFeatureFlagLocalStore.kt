@@ -11,7 +11,6 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.thomaskioko.tvmaniac.core.base.FeatureFlagLocalsDataStore
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlagLocalStore
-import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlag
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
@@ -26,44 +25,39 @@ public class DefaultFeatureFlagLocalStore(
     @FeatureFlagLocalsDataStore private val dataStore: DataStore<Preferences>,
 ) : FeatureFlagLocalStore {
 
-    override fun <T : Any> observe(flag: FeatureFlag, type: KClass<T>): Flow<T?> {
-        val key = keyFor(flag, type)
+    override fun <T : Any> observe(key: String, type: KClass<T>): Flow<T?> {
+        val prefsKey = preferencesKeyFor(key, type)
         return dataStore.data
-            .map { prefs -> prefs[key] }
+            .map { prefs -> prefs[prefsKey] }
             .distinctUntilChanged()
     }
 
-    override fun observeAll(): Flow<Map<FeatureFlag, Any>> {
-        val flagsByKey = FeatureFlag.entries.associateBy { it.key }
-        return dataStore.data
+    override fun observeAll(): Flow<Map<String, Any>> =
+        dataStore.data
             .map { prefs ->
                 prefs.asMap()
-                    .mapNotNull { (prefKey, value) ->
-                        flagsByKey[prefKey.name]?.let { flag -> flag to value }
-                    }
-                    .toMap()
+                    .mapKeys { (prefKey, _) -> prefKey.name }
             }
             .distinctUntilChanged()
-    }
 
-    override suspend fun <T : Any> set(flag: FeatureFlag, value: T) {
+    override suspend fun <T : Any> set(key: String, value: T) {
         dataStore.edit { prefs ->
             when (value) {
-                is Boolean -> prefs[booleanPreferencesKey(flag.key)] = value
-                is Int -> prefs[intPreferencesKey(flag.key)] = value
-                is Long -> prefs[longPreferencesKey(flag.key)] = value
-                is Float -> prefs[floatPreferencesKey(flag.key)] = value
-                is Double -> prefs[doublePreferencesKey(flag.key)] = value
-                is String -> prefs[stringPreferencesKey(flag.key)] = value
+                is Boolean -> prefs[booleanPreferencesKey(key)] = value
+                is Int -> prefs[intPreferencesKey(key)] = value
+                is Long -> prefs[longPreferencesKey(key)] = value
+                is Float -> prefs[floatPreferencesKey(key)] = value
+                is Double -> prefs[doublePreferencesKey(key)] = value
+                is String -> prefs[stringPreferencesKey(key)] = value
                 else -> error("Unsupported feature flag value type: ${value::class.simpleName}")
             }
         }
     }
 
-    override suspend fun clear(flag: FeatureFlag) {
+    override suspend fun clear(key: String) {
         dataStore.edit { prefs ->
             prefs.asMap().keys
-                .filter { it.name == flag.key }
+                .filter { it.name == key }
                 .forEach { prefs.remove(it) }
         }
     }
@@ -73,13 +67,13 @@ public class DefaultFeatureFlagLocalStore(
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun <T : Any> keyFor(flag: FeatureFlag, type: KClass<T>): Preferences.Key<T> = when (type) {
-        Boolean::class -> booleanPreferencesKey(flag.key) as Preferences.Key<T>
-        Int::class -> intPreferencesKey(flag.key) as Preferences.Key<T>
-        Long::class -> longPreferencesKey(flag.key) as Preferences.Key<T>
-        Float::class -> floatPreferencesKey(flag.key) as Preferences.Key<T>
-        Double::class -> doublePreferencesKey(flag.key) as Preferences.Key<T>
-        String::class -> stringPreferencesKey(flag.key) as Preferences.Key<T>
+    private fun <T : Any> preferencesKeyFor(key: String, type: KClass<T>): Preferences.Key<T> = when (type) {
+        Boolean::class -> booleanPreferencesKey(key) as Preferences.Key<T>
+        Int::class -> intPreferencesKey(key) as Preferences.Key<T>
+        Long::class -> longPreferencesKey(key) as Preferences.Key<T>
+        Float::class -> floatPreferencesKey(key) as Preferences.Key<T>
+        Double::class -> doublePreferencesKey(key) as Preferences.Key<T>
+        String::class -> stringPreferencesKey(key) as Preferences.Key<T>
         else -> error("Unsupported feature flag value type: ${type.simpleName}")
     }
 }
