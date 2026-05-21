@@ -27,19 +27,6 @@ import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.Validator
 
-/**
- * Store backing the Nitro continue-watching path.
- *
- * Fetcher delegates to [NitroContinueWatchingFetcher] which calls Trakt's
- * undocumented `/sync/progress/up_next_nitro` endpoint and returns the full
- * up-next entries in a single hop. Returns `null` to signal skip on upstream
- * failure or the empty-response guard so the SoT writer leaves the local
- * table intact.
- *
- * SourceOfTruth writer atomically replaces the `trakt_continue_watching`
- * table (delete non-incoming, upsert incoming, seed minimal tvshow rows) and
- * stamps the freshness signal.
- */
 @Inject
 @SingleIn(AppScope::class)
 public class NitroContinueWatchingStore(

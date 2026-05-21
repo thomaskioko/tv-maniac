@@ -27,15 +27,6 @@ import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.Validator
 
-/**
- * Store backing the documented multi-step Progress path.
- *
- * Delegates the network work to [ProgressContinueWatchingFetcher]; the SoT
- * writer atomically replaces the `trakt_continue_watching` table (delete
- * non-incoming, upsert incoming, seed minimal tvshow rows) and stamps the
- * freshness signal. Returns `null` from the fetcher to signal skip on any
- * upstream failure so the local table stays intact.
- */
 @Inject
 @SingleIn(AppScope::class)
 public class ProgressContinueWatchingStore(

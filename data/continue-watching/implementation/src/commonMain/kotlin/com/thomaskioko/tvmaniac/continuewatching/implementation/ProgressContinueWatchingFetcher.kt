@@ -18,15 +18,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlin.time.Instant
 
-/**
- * Resolves continue-watching entries for the documented multi-step Progress path.
- *
- * Pulls `playback`, `hidden`, and `watched-shows` concurrently to compute the
- * candidate set, then fans out [TraktSyncRemoteDataSource.getShowWatchedProgress]
- * per candidate to resolve authoritative aired/completed counts. Returns `null`
- * on any non-success upstream response so the caller can skip the write and
- * leave the local table intact.
- */
 @Inject
 @SingleIn(AppScope::class)
 public class ProgressContinueWatchingFetcher(
