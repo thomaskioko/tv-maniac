@@ -93,16 +93,7 @@ internal fun EpisodeItem(
                 )
             }
 
-            // TODO:: Move this logic to the presenter and return a object with the correct data
-            if (isProcessing) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .padding(12.dp)
-                        .size(28.dp),
-                    strokeWidth = 2.dp,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-            } else if (hasAired) {
+            if (hasAired) {
                 val toggleTag = episodeId?.let {
                     if (isWatched) {
                         SeasonDetailsTestTags.markEpisodeUnwatchedButton(it)
@@ -113,6 +104,7 @@ internal fun EpisodeItem(
 
                 Surface(
                     onClick = onWatchedToggle,
+                    enabled = !isProcessing,
                     modifier = Modifier
                         .padding(12.dp)
                         .size(28.dp)
@@ -121,12 +113,20 @@ internal fun EpisodeItem(
                     color = if (isWatched) green else grey,
                 ) {
                     Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            modifier = Modifier.size(16.dp),
-                            imageVector = Icons.Rounded.Check,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimary,
-                        )
+                        if (isProcessing) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(16.dp),
+                                strokeWidth = 2.dp,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                        } else {
+                            Icon(
+                                modifier = Modifier.size(16.dp),
+                                imageVector = Icons.Rounded.Check,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                            )
+                        }
                     }
                 }
             } else if (daysUntilAir != null && daysUntilAir > 0) {
