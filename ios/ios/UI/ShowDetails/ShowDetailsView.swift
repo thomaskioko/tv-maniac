@@ -6,8 +6,6 @@ import TvManiacKit
 struct ShowDetailsView: View {
     private let presenter: ShowDetailsPresenter
     @StateValue private var uiState: ShowDetailsContent
-    @State private var showCustomList = false
-    @State private var showLoginPrompt = false
     @State private var toast: Toast?
 
     init(presenter: ShowDetailsPresenter) {
@@ -27,7 +25,7 @@ struct ShowDetailsView: View {
             toast: $toast,
             onBack: { presenter.dispatch(action: DetailBackClicked()) },
             onRefresh: { presenter.dispatch(action: ReloadShowDetails()) },
-            onAddToCustomList: { presenter.dispatch(action: ShowShowsListSheet()) },
+            onAddToCustomList: { presenter.dispatch(action: OpenShowList()) },
             onAddToLibrary: {
                 presenter.dispatch(action: FollowShowClicked(isInLibrary: uiState.showDetails.isInLibrary))
             },
@@ -64,45 +62,6 @@ struct ShowDetailsView: View {
                 toast = Toast(type: .error, title: "Error", message: message.message)
                 presenter.dispatch(action: ShowDetailsMessageShown(id: message.id))
             }
-        }
-        .onChange(of: uiState.showListSheet) { _, newValue in
-            showCustomList = newValue
-        }
-        .onChange(of: showCustomList) { _, newValue in
-            if !newValue {
-                presenter.dispatch(action: DismissShowsListSheet())
-            }
-        }
-        .onChange(of: uiState.showLoginPrompt) { _, newValue in
-            showLoginPrompt = newValue
-        }
-        .sheet(isPresented: $showCustomList) {
-            WatchlistSelector(
-                showView: $showCustomList,
-                state: uiState.toWatchlistSelectorState(),
-                onToggle: { listId, isInList in
-                    presenter.dispatch(action: ToggleShowInList(listId: listId, isCurrentlyInList: isInList))
-                },
-                onShowCreateField: {
-                    presenter.dispatch(action: ShowCreateListField())
-                },
-                onDismissCreateField: {
-                    presenter.dispatch(action: DismissCreateListField())
-                },
-                onCreateListNameChanged: { name in
-                    presenter.dispatch(action: UpdateCreateListName(name: name))
-                },
-                onCreateSubmitted: {
-                    presenter.dispatch(action: CreateListSubmitted())
-                }
-            )
-        }
-        .alert(uiState.loginRequiredTitle, isPresented: $showLoginPrompt) {
-            Button(uiState.loginRequiredConfirmText) {
-                presenter.dispatch(action: LoginClicked())
-            }
-        } message: {
-            Text(uiState.loginRequiredMessage)
         }
     }
 }
@@ -142,23 +101,6 @@ private extension ShowDetailsContent {
             showSeasonDetailsHeader: continueTrackingEpisodes.isEmpty,
             upToDateLabel: String(\.label_up_to_date),
             updatingEpisodeIds: Set(updatingEpisodeIds.map(\.int64Value))
-        )
-    }
-
-    func toWatchlistSelectorState() -> WatchlistSelector.State {
-        WatchlistSelector.State(
-            title: showDetails.title,
-            posterUrl: showDetails.posterImageUrl,
-            traktLists: traktLists.map { $0.toSwift() },
-            showCreateField: showCreateListField,
-            isCreatingList: isCreatingList,
-            createListName: createListName,
-            sheetTitle: sheetTitle,
-            createButtonText: createListButtonText,
-            doneButtonText: createListDoneText,
-            emptyListText: emptyListText,
-            createListPlaceholder: createListPlaceholder,
-            listsHeaderText: listsHeaderText
         )
     }
 }

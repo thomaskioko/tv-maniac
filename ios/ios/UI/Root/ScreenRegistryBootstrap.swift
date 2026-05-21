@@ -36,5 +36,10 @@ enum ScreenRegistryBootstrap {
             builder: { EpisodeDetailSheetView(presenter: $0) },
             dismiss: { $0.dispatch(action: EpisodeSheetActionDismiss()) }
         )
+        registry.registerSheet(
+            for: ShowListPresenter.self,
+            builder: { ShowListSheetView(presenter: $0) },
+            dismiss: { $0.dispatch(action: ShowListActionDismiss()) }
+        )
     }
 }
