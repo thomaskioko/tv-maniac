@@ -8,24 +8,20 @@ import dev.zacsweers.metro.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class DefaultContinueWatchingRepository(
-    private val continueWatchingStore: ContinueWatchingStore,
-    private val discoveryStore: ContinueWatchingDiscoveryStore,
+    private val nitroStore: NitroContinueWatchingStore,
+    private val progressStore: ProgressContinueWatchingStore,
 ) : ContinueWatchingRepository {
 
     override suspend fun sync(forceRefresh: Boolean, useNitro: Boolean) {
-        val key = if (useNitro) ContinueWatchingKey.Nitro else ContinueWatchingKey.Progress
         try {
-            if (key == ContinueWatchingKey.Progress) {
-                // Discovery seeds placeholder rows for new candidates and prunes hidden ones
-                // before the detail store fans out per-show progress. Both stores share the
-                // continue-watching freshness signal so they skip together when the cache is fresh.
-                discoveryStore.fetchWith(forceRefresh)
+            if (useNitro) {
+                nitroStore.fetchWith(forceRefresh)
+            } else {
+                progressStore.fetchWith(forceRefresh)
             }
-            continueWatchingStore.fetchWith(key, forceRefresh)
         } catch (_: FetcherSkipSignal) {
-            // Intentional: a fetcher signaled "leave the local table alone".
-            // Discovery upstream failure, empty Nitro response within the guard window,
-            // or per-show fan-out failure on the detail store. The DAO state is preserved.
+            // Intentional: a store signaled "leave the local table alone".
+            // Upstream HTTP failure, or Nitro's empty-response guard. The DAO state is preserved.
         }
     }
 }

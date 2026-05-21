@@ -26,7 +26,7 @@ public class NitroContinueWatchingFetcher(
     private val logger: Logger,
 ) {
 
-    public suspend fun run(forceRefresh: Boolean): List<ContinueWatchingEntry>? = coroutineScope {
+    public suspend fun run(): List<ContinueWatchingEntry>? = coroutineScope {
         val instant = traktActivityRepository.getEpisodesWatchedSyncTimeStamp()
         val nitroDeferred = async { traktSyncDataSource.getUpNextNitro() }
         val hiddenDeferred = async { traktUserDataSource.getHiddenProgressWatched() }
@@ -35,7 +35,7 @@ public class NitroContinueWatchingFetcher(
         if (nitroResponse !is ApiResponse.Success) return@coroutineScope null
         val nitro = nitroResponse.body
 
-        if (!forceRefresh && nitro.isEmpty() && !shouldSync(instant)) {
+        if (nitro.isEmpty() && !shouldSync(instant)) {
             logger.warning(
                 LOG_TAG,
                 "Nitro returned empty within recent sync window; skipping write to preserve local table.",

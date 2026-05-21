@@ -71,15 +71,6 @@ public class DefaultContinueWatchingDao(
         )
     }
 
-    override fun upsertPlaceholder(traktId: Long, tmdbId: Long?, title: String?, year: Long?) {
-        database.traktContinueWatchingQueries.upsertPlaceholder(
-            traktId = Id(traktId),
-            tmdbId = tmdbId?.let { Id(it) },
-            title = title,
-            year = year,
-        )
-    }
-
     override fun deleteByTraktId(traktId: Long) {
         database.traktContinueWatchingQueries.deleteByTraktId(Id(traktId))
     }

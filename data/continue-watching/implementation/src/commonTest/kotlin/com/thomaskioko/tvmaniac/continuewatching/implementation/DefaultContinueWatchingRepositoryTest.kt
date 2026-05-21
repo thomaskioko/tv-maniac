@@ -60,9 +60,18 @@ internal class DefaultContinueWatchingRepositoryTest {
             dateTimeProvider = dateTimeProvider,
             logger = FakeLogger(),
         )
-        val store = ContinueWatchingStore(
+        val nitroStore = NitroContinueWatchingStore(
             nitroFetcher = nitroFetcher,
+            continueWatchingDao = continueWatchingDao,
+            tvShowsDao = tvShowsDao,
+            requestManagerRepository = requestManager,
+            traktActivityRepository = activityRepository,
+            transactionRunner = transactionRunner,
+            dispatchers = dispatchers,
+        )
+        val progressStore = ProgressContinueWatchingStore(
             traktSyncDataSource = syncDataSource,
+            traktUserDataSource = userDataSource,
             continueWatchingDao = continueWatchingDao,
             tvShowsDao = tvShowsDao,
             requestManagerRepository = requestManager,
@@ -72,19 +81,9 @@ internal class DefaultContinueWatchingRepositoryTest {
             dispatchers = dispatchers,
             logger = FakeLogger(),
         )
-        val discoveryStore = ContinueWatchingDiscoveryStore(
-            traktSyncDataSource = syncDataSource,
-            traktUserDataSource = userDataSource,
-            continueWatchingDao = continueWatchingDao,
-            tvShowsDao = tvShowsDao,
-            requestManagerRepository = requestManager,
-            traktActivityRepository = activityRepository,
-            transactionRunner = transactionRunner,
-            dispatchers = dispatchers,
-        )
         repository = DefaultContinueWatchingRepository(
-            continueWatchingStore = store,
-            discoveryStore = discoveryStore,
+            nitroStore = nitroStore,
+            progressStore = progressStore,
         )
     }
 

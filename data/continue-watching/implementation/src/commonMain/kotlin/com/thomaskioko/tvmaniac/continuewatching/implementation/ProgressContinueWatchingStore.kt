@@ -22,11 +22,15 @@ import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityRepository
 import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType
 import com.thomaskioko.tvmaniac.trakt.api.TraktSyncRemoteDataSource
+import com.thomaskioko.tvmaniac.trakt.api.TraktUserRemoteDataSource
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktPlaybackEpisodeResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedProgressResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedShowResponse
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
-import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.FetcherResult
@@ -35,11 +39,24 @@ import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.Validator
 import kotlin.time.Instant
 
+/**
+ * Store backing the documented multi-step Progress path.
+ *
+ * Fetcher pulls `playback`, `hidden`, and `watched-shows` concurrently to
+ * compute the candidate set, then fans out
+ * [TraktSyncRemoteDataSource.getShowWatchedProgress] per candidate to resolve
+ * authoritative aired/completed counts. Returns `null` on any non-success
+ * upstream response so the SoT writer skips and the local table stays intact.
+ *
+ * SourceOfTruth writer atomically replaces the `trakt_continue_watching`
+ * table (delete non-incoming, upsert incoming, seed minimal tvshow rows) and
+ * stamps the freshness signal.
+ */
 @Inject
 @SingleIn(AppScope::class)
-public class ContinueWatchingStore(
-    private val nitroFetcher: NitroContinueWatchingFetcher,
+public class ProgressContinueWatchingStore(
     private val traktSyncDataSource: TraktSyncRemoteDataSource,
+    private val traktUserDataSource: TraktUserRemoteDataSource,
     private val continueWatchingDao: ContinueWatchingDao,
     private val tvShowsDao: TvShowsDao,
     private val requestManagerRepository: RequestManagerRepository,
@@ -50,27 +67,21 @@ public class ContinueWatchingStore(
     private val logger: Logger,
 ) {
 
-    private val store: Store<ContinueWatchingKey, List<ContinueWatchingEntry>> = storeBuilder(
-        fetcher = Fetcher.ofResult { key: ContinueWatchingKey ->
-            val forceRefresh = currentCoroutineContext()[FetchHints]?.forceRefresh ?: false
-            val entries = when (key) {
-                ContinueWatchingKey.Progress -> runProgressFanOut(forceRefresh)
-                ContinueWatchingKey.Nitro -> nitroFetcher.run(forceRefresh)
-            }
-            when (entries) {
+    private val store: Store<Unit, List<ContinueWatchingEntry>> = storeBuilder(
+        fetcher = Fetcher.ofResult { _: Unit ->
+            when (val entries = fetchProgressEntries()) {
                 null -> FetcherResult.Error.Exception(
-                    FetcherSkipSignal("Fetcher signaled skip; leaving local table unchanged"),
+                    FetcherSkipSignal("Progress fetcher signaled skip; leaving local table unchanged"),
                 )
                 else -> FetcherResult.Data(entries)
             }
         },
         sourceOfTruth = SourceOfTruth.of(
-            reader = { _: ContinueWatchingKey -> continueWatchingDao.entriesObservable() },
-            writer = { _: ContinueWatchingKey, entries: List<ContinueWatchingEntry> ->
+            reader = { _: Unit -> continueWatchingDao.entriesObservable() },
+            writer = { _: Unit, entries: List<ContinueWatchingEntry> ->
                 val incomingTraktIds = entries.map { it.traktId }.toSet()
                 transactionRunner {
-                    val existing = continueWatchingDao.entries()
-                    existing
+                    continueWatchingDao.entries()
                         .filter { it.traktId !in incomingTraktIds }
                         .forEach { continueWatchingDao.deleteByTraktId(it.traktId) }
                     entries.forEach { continueWatchingDao.upsert(it) }
@@ -82,7 +93,7 @@ public class ContinueWatchingStore(
                 )
                 traktActivityRepository.markActivityAsSynced(ActivityType.EPISODES_WATCHED)
             },
-            delete = { _: ContinueWatchingKey -> continueWatchingDao.deleteAll() },
+            delete = { _: Unit -> continueWatchingDao.deleteAll() },
             deleteAll = { continueWatchingDao.deleteAll() },
         ).usingDispatchers(
             readDispatcher = dispatchers.databaseRead,
@@ -101,47 +112,33 @@ public class ContinueWatchingStore(
         },
     ).build()
 
-    /**
-     * Triggers a Store5 fetch or cache read depending on [forceRefresh]. The
-     * [forceRefresh] flag is plumbed to the fetcher lambda via [FetchHints] on
-     * the coroutine context so the key can stay free of call-time state.
-     *
-     * Throws [FetcherSkipSignal] (via Store5's error propagation) when the
-     * Progress fan-out or Nitro fetcher returns null. Callers should catch it
-     * explicitly if they want "skip the write" to be silent.
-     */
-    public suspend fun fetchWith(key: ContinueWatchingKey, forceRefresh: Boolean) {
-        withContext(FetchHints(forceRefresh)) {
-            if (forceRefresh) {
-                store.fresh(key)
-            } else {
-                store.get(key)
-            }
-        }
+    public suspend fun fetchWith(forceRefresh: Boolean) {
+        if (forceRefresh) store.fresh(Unit) else store.get(Unit)
     }
 
-    /**
-     * Per-show progress fan-out for the Progress key.
-     *
-     * Reads the candidate set that [ContinueWatchingDiscoveryStore] has
-     * already placed in the DAO and resolves authoritative counts via
-     * [TraktSyncRemoteDataSource.getShowWatchedProgress]. Returns `null` on
-     * any non-success response so the SoT writer skips and the local table
-     * stays intact.
-     */
-    private suspend fun runProgressFanOut(forceRefresh: Boolean): List<ContinueWatchingEntry>? {
-        val daoRows = continueWatchingDao.entries()
-        if (daoRows.isEmpty()) {
-            logger.debug(LOG_TAG, "No candidates in DAO; nothing to fan out.")
-            return emptyList()
+    private suspend fun fetchProgressEntries(): List<ContinueWatchingEntry>? = coroutineScope {
+        val cursor = traktActivityRepository.getEpisodesWatchedSyncTimeStamp()
+        val playbackDeferred = async { traktSyncDataSource.getPlaybackEpisodes() }
+        val hiddenDeferred = async { traktUserDataSource.getHiddenProgressWatched() }
+        val watchedShowsDeferred = async {
+            traktSyncDataSource.getWatchedShows(page = 1, limit = WATCHED_SHOWS_LIMIT)
         }
 
-        val cursor = traktActivityRepository.getEpisodesWatchedSyncTimeStamp()
-        val lastActivity = if (forceRefresh) null else cursor?.toString()
-        val includeSpecials = datastoreRepository.getIncludeSpecials()
+        val playbackResponse = playbackDeferred.await()
+        if (playbackResponse !is ApiResponse.Success) return@coroutineScope null
+        val watchedShowsResponse = watchedShowsDeferred.await()
+        if (watchedShowsResponse !is ApiResponse.Success) return@coroutineScope null
+        val hiddenResponse = hiddenDeferred.await()
+        if (hiddenResponse !is ApiResponse.Success) return@coroutineScope null
 
-        val descriptorByTraktId = daoRows.associateBy { it.traktId }
-        val candidates = descriptorByTraktId.keys.toList()
+        val hiddenIds = hiddenResponse.body
+            .mapNotNull { it.show?.ids?.trakt }
+            .toSet()
+        val descriptors = buildDescriptors(watchedShowsResponse.body, playbackResponse.body)
+        val candidates = descriptors.keys.filter { it !in hiddenIds }
+
+        val lastActivity = cursor?.toString()
+        val includeSpecials = datastoreRepository.getIncludeSpecials()
 
         val perShowResults = candidates.parallelMap(concurrency = PROGRESS_FAN_OUT_CONCURRENCY) { traktId ->
             traktId to traktSyncDataSource.getShowWatchedProgress(
@@ -159,26 +156,66 @@ public class ContinueWatchingStore(
         )
 
         if (perShowResults.any { (_, response) -> response !is ApiResponse.Success }) {
-            return null
+            return@coroutineScope null
         }
 
-        return perShowResults.mapNotNull { (traktId, response) ->
+        perShowResults.mapNotNull { (traktId, response) ->
             val progress = (response as ApiResponse.Success).body
             // Load-bearing filter. Catches reset shows (`reset_at` populated) and any case where
             // Trakt's per-show logic returns null next_episode. Removing it would persist rows
             // that never render in the watchlist.
             if (progress.nextEpisode == null) return@mapNotNull null
-            toEntry(traktId, descriptorByTraktId[traktId], progress)
+            toEntry(traktId, descriptors[traktId], progress)
+        }
+    }
+
+    private fun buildDescriptors(
+        watchedShows: List<TraktWatchedShowResponse>,
+        playback: List<TraktPlaybackEpisodeResponse>,
+    ): Map<Long, ProgressDescriptor> = buildMap {
+        watchedShows.forEach { item ->
+            val show = item.show
+            put(show.ids.trakt, ProgressDescriptor(show.ids.tmdb, show.title, show.year))
+        }
+        playback.forEach { item ->
+            put(item.show.ids.trakt, ProgressDescriptor(item.show.ids.tmdb, item.show.title, item.show.year))
         }
     }
 
     private companion object {
         const val PROGRESS_FAN_OUT_CONCURRENCY = 4
-        const val LOG_TAG = "ContinueWatchingStore"
+        const val WATCHED_SHOWS_LIMIT = 100
+        const val LOG_TAG = "ProgressContinueWatchingStore"
     }
 }
 
-internal fun ContinueWatchingEntry.toMinimalTvshow(): Tvshow? {
+private data class ProgressDescriptor(
+    val tmdbId: Long?,
+    val title: String?,
+    val year: Long?,
+)
+
+private fun toEntry(
+    traktId: Long,
+    descriptor: ProgressDescriptor?,
+    progress: TraktWatchedProgressResponse,
+): ContinueWatchingEntry {
+    val lastWatchedAtMs = progress.lastWatchedAt
+        ?.let { Instant.parse(it).toEpochMilliseconds() }
+        ?: 0L
+    return ContinueWatchingEntry(
+        traktId = traktId,
+        tmdbId = descriptor?.tmdbId,
+        airedEpisodes = progress.aired.toLong(),
+        completedCount = progress.completed.toLong(),
+        lastWatchedAt = lastWatchedAtMs,
+        lastUpdatedAt = lastWatchedAtMs,
+        title = descriptor?.title,
+        year = descriptor?.year,
+    )
+}
+
+private fun ContinueWatchingEntry.toMinimalTvshow(): Tvshow? {
     val tmdb = tmdbId ?: return null
     val name = title ?: return null
     return Tvshow(
@@ -196,25 +233,5 @@ internal fun ContinueWatchingEntry.toMinimalTvshow(): Tvshow? {
         season_numbers = null,
         poster_path = null,
         backdrop_path = null,
-    )
-}
-
-private fun toEntry(
-    traktId: Long,
-    existing: ContinueWatchingEntry?,
-    progress: TraktWatchedProgressResponse,
-): ContinueWatchingEntry {
-    val lastWatchedAtMs = progress.lastWatchedAt
-        ?.let { Instant.parse(it).toEpochMilliseconds() }
-        ?: 0L
-    return ContinueWatchingEntry(
-        traktId = traktId,
-        tmdbId = existing?.tmdbId,
-        airedEpisodes = progress.aired.toLong(),
-        completedCount = progress.completed.toLong(),
-        lastWatchedAt = lastWatchedAtMs,
-        lastUpdatedAt = lastWatchedAtMs,
-        title = existing?.title,
-        year = existing?.year,
     )
 }

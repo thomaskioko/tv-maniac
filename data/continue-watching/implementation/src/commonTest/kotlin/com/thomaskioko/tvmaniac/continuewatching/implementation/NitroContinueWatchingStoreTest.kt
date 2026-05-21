@@ -6,7 +6,6 @@ import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingDao
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
-import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.shows.testing.FakeTvShowsDao
@@ -15,7 +14,6 @@ import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.trakt.api.model.EpisodeIds
 import com.thomaskioko.tvmaniac.trakt.api.model.ShowIds
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktNextEpisodeResponse
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktPlaybackEpisodeResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUpNextNitroResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedProgressResponse
@@ -30,10 +28,11 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.Instant
 
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class ContinueWatchingStoreTest {
+internal class NitroContinueWatchingStoreTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private val dispatchers = AppCoroutineDispatchers(
@@ -54,7 +53,7 @@ internal class ContinueWatchingStoreTest {
     private val logger = FakeLogger()
 
     private lateinit var nitroFetcher: NitroContinueWatchingFetcher
-    private lateinit var store: ContinueWatchingStore
+    private lateinit var store: NitroContinueWatchingStore
 
     @BeforeTest
     fun setUp() {
@@ -65,52 +64,31 @@ internal class ContinueWatchingStoreTest {
             dateTimeProvider = dateTimeProvider,
             logger = logger,
         )
-        store = ContinueWatchingStore(
+        store = NitroContinueWatchingStore(
             nitroFetcher = nitroFetcher,
-            traktSyncDataSource = syncDataSource,
             continueWatchingDao = continueWatchingDao,
             tvShowsDao = tvShowsDao,
             requestManagerRepository = requestManager,
             traktActivityRepository = activityRepository,
-            datastoreRepository = FakeDatastoreRepository(),
             transactionRunner = transactionRunner,
             dispatchers = dispatchers,
-            logger = logger,
         )
     }
 
     @Test
-    fun `should write progress fetcher result to dao given progress key`() = runTest(testDispatcher) {
-        // Discovery normally seeds the placeholder before the detail store runs.
-        // This test exercises only the detail store, so the placeholder is seeded directly.
-        continueWatchingDao.upsertPlaceholder(BREAKING_BAD_ID, tmdbId = 1396, title = "Breaking Bad", year = null)
-        syncDataSource.setShowWatchedProgress(BREAKING_BAD_ID, ApiResponse.Success(breakingBadProgress))
-        requestManager.requestValid = false
-
-        store.fetchWith(key = ContinueWatchingKey.Progress, forceRefresh = true)
-
-        continueWatchingDao.entriesObservable().test {
-            awaitItem() shouldContainExactlyInAnyOrder listOf(breakingBadEntry)
-            cancelAndIgnoreRemainingEvents()
-        }
-        requestManager.upsertCalled shouldBe true
-        activityRepository.getSyncedActivities() shouldBe setOf(ActivityType.EPISODES_WATCHED)
-        syncDataSource.upNextNitroInvocations() shouldBe 0
-    }
-
-    @Test
-    fun `should write nitro fetcher result to dao given nitro key`() = runTest(testDispatcher) {
+    fun `should write nitro fetcher result to dao`() = runTest(testDispatcher) {
         syncDataSource.setUpNextNitro(ApiResponse.Success(listOf(breakingBadNitro)))
         requestManager.requestValid = false
 
-        store.fetchWith(key = ContinueWatchingKey.Nitro, forceRefresh = true)
+        store.fetchWith(forceRefresh = true)
 
         continueWatchingDao.entriesObservable().test {
             awaitItem() shouldContainExactlyInAnyOrder listOf(breakingBadEntry)
             cancelAndIgnoreRemainingEvents()
         }
         syncDataSource.upNextNitroInvocations() shouldBe 1
-        syncDataSource.playbackEpisodesInvocations() shouldBe 0
+        requestManager.upsertCalled shouldBe true
+        activityRepository.getSyncedActivities() shouldBe setOf(ActivityType.EPISODES_WATCHED)
     }
 
     @Test
@@ -120,7 +98,7 @@ internal class ContinueWatchingStoreTest {
         syncDataSource.setUpNextNitro(ApiResponse.Success(listOf(breakingBadNitro)))
         requestManager.requestValid = false
 
-        store.fetchWith(key = ContinueWatchingKey.Nitro, forceRefresh = true)
+        store.fetchWith(forceRefresh = true)
 
         continueWatchingDao.entriesObservable().test {
             awaitItem() shouldContainExactlyInAnyOrder listOf(breakingBadEntry)
@@ -134,7 +112,7 @@ internal class ContinueWatchingStoreTest {
         requestManager.requestValid = true
         activityRepository.setActivityChanged(ActivityType.EPISODES_WATCHED, changed = false)
 
-        store.fetchWith(key = ContinueWatchingKey.Nitro, forceRefresh = false)
+        store.fetchWith(forceRefresh = false)
 
         syncDataSource.upNextNitroInvocations() shouldBe 0
         continueWatchingDao.entries().shouldBeEmpty()
@@ -146,7 +124,7 @@ internal class ContinueWatchingStoreTest {
         requestManager.requestValid = true
         activityRepository.setActivityChanged(ActivityType.EPISODES_WATCHED, changed = false)
 
-        store.fetchWith(key = ContinueWatchingKey.Nitro, forceRefresh = true)
+        store.fetchWith(forceRefresh = true)
 
         syncDataSource.upNextNitroInvocations() shouldBe 1
         continueWatchingDao.entries() shouldContainExactlyInAnyOrder listOf(breakingBadEntry)
@@ -158,7 +136,7 @@ internal class ContinueWatchingStoreTest {
         requestManager.requestValid = false
         activityRepository.setActivityChanged(ActivityType.EPISODES_WATCHED, changed = false)
 
-        store.fetchWith(key = ContinueWatchingKey.Nitro, forceRefresh = false)
+        store.fetchWith(forceRefresh = false)
 
         syncDataSource.upNextNitroInvocations() shouldBe 1
         continueWatchingDao.entries() shouldContainExactlyInAnyOrder listOf(breakingBadEntry)
@@ -170,7 +148,7 @@ internal class ContinueWatchingStoreTest {
         requestManager.requestValid = true
         activityRepository.setActivityChanged(ActivityType.EPISODES_WATCHED, changed = true)
 
-        store.fetchWith(key = ContinueWatchingKey.Nitro, forceRefresh = false)
+        store.fetchWith(forceRefresh = false)
 
         syncDataSource.upNextNitroInvocations() shouldBe 1
         continueWatchingDao.entries() shouldContainExactlyInAnyOrder listOf(breakingBadEntry)
@@ -179,14 +157,14 @@ internal class ContinueWatchingStoreTest {
     @Test
     fun `should leave dao unchanged given fetcher signals skip`() = runTest(testDispatcher) {
         continueWatchingDao.upsert(breakingBadEntry)
-        activityRepository.setEpisodesWatchedSyncTimeStamp(NOW - kotlin.time.Duration.parse("1h"))
+        activityRepository.setEpisodesWatchedSyncTimeStamp(NOW - 1.hours)
         syncDataSource.setUpNextNitro(ApiResponse.Success(emptyList()))
         requestManager.requestValid = false
 
         try {
-            store.fetchWith(key = ContinueWatchingKey.Nitro, forceRefresh = false)
+            store.fetchWith(forceRefresh = false)
         } catch (_: FetcherSkipSignal) {
-            // expected: empty Nitro + fresh cursor + no force refresh = guard trips
+            // expected: empty Nitro + fresh cursor = guard trips
         }
 
         continueWatchingDao.entries() shouldContainExactlyInAnyOrder listOf(breakingBadEntry)
@@ -200,34 +178,6 @@ private class ImmediateTransactionRunner : DatabaseTransactionRunner {
 private val NOW: Instant = Instant.parse("2026-05-20T12:00:00Z")
 private const val BREAKING_BAD_ID = 1388L
 private const val THE_WIRE_ID = 1429L
-
-private val breakingBadPlayback = TraktPlaybackEpisodeResponse(
-    id = 100001,
-    progress = 45.0,
-    pausedAt = "2026-05-10T20:15:00.000Z",
-    type = "episode",
-    episode = TraktNextEpisodeResponse(
-        seasonNumber = 4,
-        episodeNumber = 1,
-        ids = EpisodeIds(trakt = 401, tmdb = null),
-    ),
-    show = TraktShowResponse(
-        title = "Breaking Bad",
-        ids = ShowIds(trakt = BREAKING_BAD_ID, slug = "breaking-bad", tmdb = 1396),
-        airedEpisodes = 62,
-    ),
-)
-
-private val breakingBadProgress = TraktWatchedProgressResponse(
-    aired = 62,
-    completed = 30,
-    lastWatchedAt = "2026-05-10T20:15:00Z",
-    nextEpisode = TraktNextEpisodeResponse(
-        seasonNumber = 4,
-        episodeNumber = 1,
-        ids = EpisodeIds(trakt = 401, tmdb = null),
-    ),
-)
 
 private val breakingBadNitro = TraktUpNextNitroResponse(
     show = TraktShowResponse(

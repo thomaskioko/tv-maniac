@@ -63,8 +63,7 @@ internal class ContinueWatchingFetcherTest {
     private val logger = FakeLogger()
 
     private lateinit var nitroFetcher: NitroContinueWatchingFetcher
-    private lateinit var discoveryStore: ContinueWatchingDiscoveryStore
-    private lateinit var store: ContinueWatchingStore
+    private lateinit var progressStore: ProgressContinueWatchingStore
 
     @BeforeTest
     fun setUp() {
@@ -76,19 +75,9 @@ internal class ContinueWatchingFetcherTest {
             dateTimeProvider = dateTimeProvider,
             logger = logger,
         )
-        discoveryStore = ContinueWatchingDiscoveryStore(
+        progressStore = ProgressContinueWatchingStore(
             traktSyncDataSource = syncDataSource,
             traktUserDataSource = userDataSource,
-            continueWatchingDao = continueWatchingDao,
-            tvShowsDao = tvShowsDao,
-            requestManagerRepository = requestManager,
-            traktActivityRepository = activityRepository,
-            transactionRunner = transactionRunner,
-            dispatchers = dispatchers,
-        )
-        store = ContinueWatchingStore(
-            nitroFetcher = nitroFetcher,
-            traktSyncDataSource = syncDataSource,
             continueWatchingDao = continueWatchingDao,
             tvShowsDao = tvShowsDao,
             requestManagerRepository = requestManager,
@@ -104,7 +93,7 @@ internal class ContinueWatchingFetcherTest {
     fun `should produce identical entry sets across progress and nitro paths`() = runTest(testDispatcher) {
         val progressEntries = syncProgressAndReadDao(forceRefresh = false)
         continueWatchingDao.deleteAll()
-        val nitroResult = nitroFetcher.run(forceRefresh = false).shouldNotBeNull()
+        val nitroResult = nitroFetcher.run().shouldNotBeNull()
 
         progressEntries.map { it.parityTuple() } shouldContainExactlyInAnyOrder
             listOf(breakingBadTuple, theWireTuple)
@@ -124,7 +113,7 @@ internal class ContinueWatchingFetcherTest {
 
         val progressEntries = syncProgressAndReadDao(forceRefresh = false)
         continueWatchingDao.deleteAll()
-        val nitroResult = nitroFetcher.run(forceRefresh = false).shouldNotBeNull()
+        val nitroResult = nitroFetcher.run().shouldNotBeNull()
 
         progressEntries.shouldBeEmpty()
         nitroResult.shouldBeEmpty()
@@ -149,7 +138,7 @@ internal class ContinueWatchingFetcherTest {
 
             val progressEntries = syncProgressAndReadDao(forceRefresh = false)
             continueWatchingDao.deleteAll()
-            val nitroResult = nitroFetcher.run(forceRefresh = false).shouldNotBeNull()
+            val nitroResult = nitroFetcher.run().shouldNotBeNull()
 
             val expected = listOf(breakingBadTuple, theWireTuple)
             progressEntries.map { it.parityTuple() } shouldContainExactlyInAnyOrder expected
@@ -162,17 +151,12 @@ internal class ContinueWatchingFetcherTest {
 
         val progressEntries = syncProgressAndReadDao(forceRefresh = true)
         continueWatchingDao.deleteAll()
-        val nitroResult = nitroFetcher.run(forceRefresh = true).shouldNotBeNull()
+        val nitroResult = nitroFetcher.run().shouldNotBeNull()
 
         progressEntries.map { it.parityTuple() } shouldContainExactlyInAnyOrder
             listOf(breakingBadTuple, theWireTuple)
         nitroResult.map { it.parityTuple() } shouldContainExactlyInAnyOrder
             progressEntries.map { it.parityTuple() }
-
-        // Sanity check the internal behavior difference: the Progress fan-out passes
-        // lastActivity=null when forceRefresh is true; the Nitro fetcher skips the empty-
-        // response guard. Both still write through to the same mapped entries.
-        syncDataSource.showWatchedProgressLastActivity(BREAKING_BAD_ID) shouldBe null
     }
 
     @Test
@@ -191,7 +175,7 @@ internal class ContinueWatchingFetcherTest {
             syncDataSource.setUpNextNitro(ApiResponse.Success(realNitro))
             userDataSource.setHiddenProgressWatched(ApiResponse.Success(emptyList()))
 
-            val result = nitroFetcher.run(forceRefresh = false).shouldNotBeNull()
+            val result = nitroFetcher.run().shouldNotBeNull()
 
             result.size shouldBe 1
             val entry = result.single()
@@ -225,7 +209,7 @@ internal class ContinueWatchingFetcherTest {
 
         val progressEntries = syncProgressAndReadDao(forceRefresh = false)
         continueWatchingDao.deleteAll()
-        val nitroResult = nitroFetcher.run(forceRefresh = false).shouldNotBeNull()
+        val nitroResult = nitroFetcher.run().shouldNotBeNull()
 
         val expected = listOf(breakingBadTuple, theWireTuple)
         progressEntries.map { it.parityTuple() } shouldContainExactlyInAnyOrder expected
@@ -239,8 +223,7 @@ internal class ContinueWatchingFetcherTest {
 
     private suspend fun syncProgressAndReadDao(forceRefresh: Boolean): List<ContinueWatchingEntry> {
         requestManager.requestValid = false
-        discoveryStore.fetchWith(forceRefresh)
-        runCatching { store.fetchWith(ContinueWatchingKey.Progress, forceRefresh) }
+        runCatching { progressStore.fetchWith(forceRefresh) }
             .onFailure { error -> if (error !is FetcherSkipSignal) throw error }
         return continueWatchingDao.entries()
     }

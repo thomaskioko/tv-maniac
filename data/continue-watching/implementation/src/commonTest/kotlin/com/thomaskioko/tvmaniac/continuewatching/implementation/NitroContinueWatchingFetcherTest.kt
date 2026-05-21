@@ -55,7 +55,7 @@ internal class NitroContinueWatchingFetcherTest {
             ApiResponse.Success(listOf(breakingBadNitro, theWireNitro)),
         )
 
-        val result = fetcher.run(forceRefresh = false)
+        val result = fetcher.run()
 
         result.shouldNotBeNull() shouldContainExactlyInAnyOrder listOf(
             breakingBadEntry,
@@ -72,7 +72,7 @@ internal class NitroContinueWatchingFetcherTest {
             ApiResponse.Success(listOf(hiddenItem(traktId = BREAKING_BAD_ID))),
         )
 
-        val result = fetcher.run(forceRefresh = false)
+        val result = fetcher.run()
 
         result.shouldNotBeNull().map { it.traktId } shouldContainExactlyInAnyOrder listOf(THE_WIRE_ID)
     }
@@ -83,29 +83,19 @@ internal class NitroContinueWatchingFetcherTest {
             ApiResponse.Success(listOf(breakingBadNitro, resetShowNitro)),
         )
 
-        val result = fetcher.run(forceRefresh = false)
+        val result = fetcher.run()
 
         result.shouldNotBeNull().map { it.traktId } shouldContainExactlyInAnyOrder listOf(BREAKING_BAD_ID)
     }
 
     @Test
-    fun `should return null given empty response and fresh cursor and no force refresh`() = runTest(testDispatcher) {
+    fun `should return null given empty response and fresh cursor`() = runTest(testDispatcher) {
         activityRepository.setEpisodesWatchedSyncTimeStamp(NOW - 1.hours)
         syncDataSource.setUpNextNitro(ApiResponse.Success(emptyList()))
 
-        val result = fetcher.run(forceRefresh = false)
+        val result = fetcher.run()
 
         result shouldBe null
-    }
-
-    @Test
-    fun `should write through empty response given force refresh`() = runTest(testDispatcher) {
-        activityRepository.setEpisodesWatchedSyncTimeStamp(NOW - 1.hours)
-        syncDataSource.setUpNextNitro(ApiResponse.Success(emptyList()))
-
-        val result = fetcher.run(forceRefresh = true)
-
-        result.shouldNotBeNull().shouldBeEmpty()
     }
 
     @Test
@@ -113,7 +103,7 @@ internal class NitroContinueWatchingFetcherTest {
         activityRepository.setEpisodesWatchedSyncTimeStamp(NOW - 7.hours)
         syncDataSource.setUpNextNitro(ApiResponse.Success(emptyList()))
 
-        val result = fetcher.run(forceRefresh = false)
+        val result = fetcher.run()
 
         result.shouldNotBeNull().shouldBeEmpty()
     }
@@ -123,7 +113,7 @@ internal class NitroContinueWatchingFetcherTest {
         activityRepository.setEpisodesWatchedSyncTimeStamp(null)
         syncDataSource.setUpNextNitro(ApiResponse.Success(emptyList()))
 
-        val result = fetcher.run(forceRefresh = false)
+        val result = fetcher.run()
 
         result.shouldNotBeNull().shouldBeEmpty()
     }
@@ -134,7 +124,7 @@ internal class NitroContinueWatchingFetcherTest {
             ApiResponse.Error.HttpError(code = 500, errorBody = "boom", errorMessage = "boom"),
         )
 
-        val result = fetcher.run(forceRefresh = false)
+        val result = fetcher.run()
 
         result shouldBe null
     }
@@ -148,7 +138,7 @@ internal class NitroContinueWatchingFetcherTest {
             ApiResponse.Error.HttpError(code = 500, errorBody = "boom", errorMessage = "boom"),
         )
 
-        val result = fetcher.run(forceRefresh = false)
+        val result = fetcher.run()
 
         result shouldBe null
     }
