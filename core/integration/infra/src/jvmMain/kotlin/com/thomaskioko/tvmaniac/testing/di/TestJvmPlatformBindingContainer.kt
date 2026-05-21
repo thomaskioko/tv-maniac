@@ -9,8 +9,8 @@ import com.thomaskioko.tvmaniac.core.base.AppPreferencesDataStore
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.datastore.implementation.DATA_STORE_FILE_NAME
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
-import com.thomaskioko.tvmaniac.featureflags.FeatureFlags
-import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlags
+import com.thomaskioko.tvmaniac.featureflags.FeatureFlagsRemoteConfig
+import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlagsRemoteConfig
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
@@ -34,7 +34,7 @@ public object TestJvmPlatformBindingContainer {
 
     @Provides
     @SingleIn(AppScope::class)
-    public fun provideFeatureFlags(): FeatureFlags = FakeFeatureFlags()
+    public fun provideFeatureFlagsRemoteConfig(): FeatureFlagsRemoteConfig = FakeFeatureFlagsRemoteConfig()
 
     @Provides
     @SingleIn(AppScope::class)
