@@ -17,16 +17,17 @@ import com.thomaskioko.tvmaniac.data.topratedshows.testing.FakeTopRatedShowsRepo
 import com.thomaskioko.tvmaniac.data.trendingshows.testing.FakeTrendingShowsRepository
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsInteractor
 import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepository
+import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsInteractor
 import com.thomaskioko.tvmaniac.discover.presenter.model.DiscoverShow
 import com.thomaskioko.tvmaniac.discover.presenter.model.NextEpisodeUiModel
+import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.discover.DiscoverShowsInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
-import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
-import com.thomaskioko.tvmaniac.domain.upnext.ObserveUpNextInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
@@ -75,6 +76,7 @@ class DiscoverShowsPresenterTest {
     private val upNextRepository = FakeUpNextRepository()
     private val followedShowsRepository = FakeFollowedShowsRepository()
     private val traktAuthRepository = FakeTraktAuthRepository()
+    private val watchProviderRepository = FakeWatchProviderRepository()
     private val observeUpNextInteractor = ObserveUpNextInteractor(
         repository = upNextRepository,
     )
@@ -310,10 +312,11 @@ class DiscoverShowsPresenterTest {
             ),
             followShowInteractor = FollowShowInteractor(
                 followedShowsRepository = followedShowsRepository,
-                showContentSyncInteractor = ShowContentSyncInteractor(
+                syncShowMetadataInteractor = SyncShowMetadataInteractor(
                     showDetailsRepository = showDetailsRepository,
                     seasonDetailsRepository = seasonDetailsRepository,
                     watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
+                    watchProviderRepository = watchProviderRepository,
                     dispatchers = coroutineDispatcher,
                 ),
                 appScopeLauncher = FakeAppScopeLauncher(scope = appCoroutineScope),
@@ -462,10 +465,11 @@ class DiscoverShowsPresenterTest {
         ),
         followShowInteractor = FollowShowInteractor(
             followedShowsRepository = followedShowsRepository,
-            showContentSyncInteractor = ShowContentSyncInteractor(
+            syncShowMetadataInteractor = SyncShowMetadataInteractor(
                 showDetailsRepository = showDetailsRepository,
                 seasonDetailsRepository = seasonDetailsRepository,
                 watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
+                watchProviderRepository = watchProviderRepository,
                 dispatchers = coroutineDispatcher,
             ),
             appScopeLauncher = FakeAppScopeLauncher(scope = appCoroutineScope),

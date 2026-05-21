@@ -23,9 +23,8 @@ import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeN
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncTraktCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
-import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
-import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor.Param
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
 import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
 import com.thomaskioko.tvmaniac.domain.traktlists.CreateTraktListInteractor
 import com.thomaskioko.tvmaniac.domain.traktlists.ObserveTraktListsInteractor
@@ -51,6 +50,8 @@ import dev.zacsweers.metro.AssistedInject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toPersistentSet
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -61,6 +62,9 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.TimeSource
 
 @NavDestination(
     route = ShowDetailsRoute::class,
@@ -80,7 +84,7 @@ public class ShowDetailsPresenter(
     private val watchProvidersInteractor: WatchProvidersInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val markEpisodeUnwatchedInteractor: MarkEpisodeUnwatchedInteractor,
-    private val showContentSyncInteractor: ShowContentSyncInteractor,
+    private val syncShowMetadataInteractor: SyncShowMetadataInteractor,
     private val syncTraktCalendarInteractor: SyncTraktCalendarInteractor,
     private val scheduleEpisodeNotificationsInteractor: ScheduleEpisodeNotificationsInteractor,
     private val notificationManager: NotificationManager,
@@ -211,7 +215,7 @@ public class ShowDetailsPresenter(
             }
 
             DetailBackClicked -> navigator.navigateBack()
-            ReloadShowDetails -> refreshShowContent(isUserInitiated = true)
+            ReloadShowDetails -> refreshShowContent()
             is ShowDetailsMessageShown -> coroutineScope.launch { uiMessageManager.clearMessage(action.id) }
             DismissShowsListSheet -> coroutineScope.launch { _state.update { it.copy(showListSheet = false) } }
             ShowShowsListSheet -> {
@@ -256,29 +260,25 @@ public class ShowDetailsPresenter(
                 }
             }
 
-            is MarkEpisodeWatched -> {
-                coroutineScope.launch {
-                    markEpisodeWatchedInteractor(
-                        MarkEpisodeWatchedParams(
-                            showTraktId = action.showTraktId,
-                            episodeId = action.episodeId,
-                            seasonNumber = action.seasonNumber,
-                            episodeNumber = action.episodeNumber,
-                            markPreviousEpisodes = false,
-                        ),
-                    ).collectStatus(episodeActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
-                }
+            is MarkEpisodeWatched -> launchEpisodeMark(action.episodeId) {
+                markEpisodeWatchedInteractor(
+                    MarkEpisodeWatchedParams(
+                        showTraktId = action.showTraktId,
+                        episodeId = action.episodeId,
+                        seasonNumber = action.seasonNumber,
+                        episodeNumber = action.episodeNumber,
+                        markPreviousEpisodes = false,
+                    ),
+                ).collectStatus(episodeActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
             }
 
-            is MarkEpisodeUnwatched -> {
-                coroutineScope.launch {
-                    markEpisodeUnwatchedInteractor(
-                        MarkEpisodeUnwatchedParams(
-                            showTraktId = action.showTraktId,
-                            episodeId = action.episodeId,
-                        ),
-                    ).collectStatus(episodeActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
-                }
+            is MarkEpisodeUnwatched -> launchEpisodeMark(action.episodeId) {
+                markEpisodeUnwatchedInteractor(
+                    MarkEpisodeUnwatchedParams(
+                        showTraktId = action.showTraktId,
+                        episodeId = action.episodeId,
+                    ),
+                ).collectStatus(episodeActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
             }
 
             is ToggleShowInList -> {
@@ -295,14 +295,13 @@ public class ShowDetailsPresenter(
         }
     }
 
-    private fun observeShowDetails(forceReload: Boolean = false, isUserInitiated: Boolean = false) {
+    private fun observeShowDetails(forceReload: Boolean = false) {
         coroutineScope.launch {
             showDetailsInteractor(ShowDetailsInteractor.Param(showTraktId, forceReload))
                 .collectStatus(showDetailsLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
 
             syncShowContent(
                 forceRefresh = forceReload,
-                isUserInitiated = isUserInitiated,
                 loadingState = showDetailsLoadingState,
             )
         }
@@ -318,20 +317,18 @@ public class ShowDetailsPresenter(
         }
     }
 
-    private fun refreshShowContent(isUserInitiated: Boolean) {
-        observeShowDetails(forceReload = true, isUserInitiated = isUserInitiated)
+    private fun refreshShowContent() {
+        observeShowDetails(forceReload = true)
     }
 
     private suspend fun syncShowContent(
         forceRefresh: Boolean = false,
-        isUserInitiated: Boolean,
         loadingState: ObservableLoadingCounter,
     ) {
-        showContentSyncInteractor(
-            params = Param(
+        syncShowMetadataInteractor(
+            params = SyncShowMetadataInteractor.Param(
                 traktId = showTraktId,
                 forceRefresh = forceRefresh,
-                isUserInitiated = isUserInitiated,
             ),
         ).collectStatus(loadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
     }
@@ -348,12 +345,33 @@ public class ShowDetailsPresenter(
                 .drop(1)
                 .distinctUntilChanged()
                 .filter { it == TraktAuthState.LOGGED_IN }
-                .collect { refreshShowContent(isUserInitiated = false) }
+                .collect { refreshShowContent() }
+        }
+    }
+
+    private fun launchEpisodeMark(episodeId: Long, block: suspend () -> Unit) {
+        if (episodeId in _state.value.updatingEpisodeIds) return
+        _state.update { it.copy(updatingEpisodeIds = (it.updatingEpisodeIds + episodeId).toPersistentSet()) }
+        coroutineScope.launch {
+            val marker = TimeSource.Monotonic.markNow()
+            try {
+                block()
+            } finally {
+                val elapsed = marker.elapsedNow()
+                if (elapsed < INDICATOR_FLOOR) {
+                    delay(INDICATOR_FLOOR - elapsed)
+                }
+                _state.update { it.copy(updatingEpisodeIds = (it.updatingEpisodeIds - episodeId).toPersistentSet()) }
+            }
         }
     }
 
     @AssistedFactory
     public fun interface Factory {
         public fun create(param: ShowDetailsParam): ShowDetailsPresenter
+    }
+
+    private companion object {
+        private val INDICATOR_FLOOR: Duration = 150.milliseconds
     }
 }

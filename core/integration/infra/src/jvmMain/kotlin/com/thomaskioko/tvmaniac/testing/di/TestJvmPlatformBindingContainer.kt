@@ -9,6 +9,8 @@ import com.thomaskioko.tvmaniac.core.base.AppPreferencesDataStore
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.datastore.implementation.DATA_STORE_FILE_NAME
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
+import com.thomaskioko.tvmaniac.featureflags.FeatureFlags
+import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlags
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
@@ -29,6 +31,10 @@ public object TestJvmPlatformBindingContainer {
         TvManiacDatabase.Schema.create(driver)
         return driver
     }
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideFeatureFlags(): FeatureFlags = FakeFeatureFlags()
 
     @Provides
     @SingleIn(AppScope::class)

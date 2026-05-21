@@ -31,6 +31,7 @@ import com.thomaskioko.tvmaniac.seasondetails.presenter.data.buildSeasonDetailsL
 import com.thomaskioko.tvmaniac.seasondetails.presenter.data.buildSeasonDetailsWithEpisodes
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.EpisodeDetailsModel
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.collections.immutable.persistentListOf
@@ -512,8 +513,9 @@ class SeasonPresenterTest {
 
             testDispatcher.scheduler.advanceUntilIdle()
 
-            val finalState = awaitItem()
+            val finalState = expectMostRecentItem()
             finalState.dialogState.shouldBeInstanceOf<SeasonDialogState.Hidden>()
+            finalState.updatingEpisodeIds.shouldBeEmpty()
 
             episodeRepository.lastMarkEpisodeWatchedCall shouldBe MarkEpisodeWatchedCall(
                 showTraktId = 1,
@@ -585,8 +587,9 @@ class SeasonPresenterTest {
 
             testDispatcher.scheduler.advanceUntilIdle()
 
-            val finalState = awaitItem()
+            val finalState = expectMostRecentItem()
             finalState.dialogState.shouldBeInstanceOf<SeasonDialogState.Hidden>()
+            finalState.updatingEpisodeIds.shouldBeEmpty()
 
             episodeRepository.lastMarkEpisodeWatchedCall shouldBe MarkEpisodeWatchedCall(
                 showTraktId = 1,
@@ -618,8 +621,9 @@ class SeasonPresenterTest {
 
             testDispatcher.scheduler.advanceUntilIdle()
 
-            val finalState = awaitItem()
+            val finalState = expectMostRecentItem()
             finalState.dialogState.shouldBeInstanceOf<SeasonDialogState.Hidden>()
+            finalState.updatingEpisodeIds.shouldBeEmpty()
 
             episodeRepository.lastMarkEpisodeUnwatchedCall shouldBe MarkEpisodeUnwatchedCall(
                 showTraktId = 1,
@@ -866,14 +870,15 @@ class SeasonPresenterTest {
             presenter.dispatch(ConfirmDialogAction)
             testDispatcher.scheduler.advanceUntilIdle()
 
-            val dialogDismissedState = awaitItem()
+            val dialogDismissedState = expectMostRecentItem()
             dialogDismissedState.dialogState.shouldBeInstanceOf<SeasonDialogState.Hidden>()
 
             episodeRepository.setSeasonWatchProgress(
                 SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 4, totalCount = 10),
             )
+            testDispatcher.scheduler.advanceUntilIdle()
 
-            val updatedState = awaitItem()
+            val updatedState = expectMostRecentItem()
             updatedState.watchedEpisodeCount shouldBe 4
             updatedState.watchProgress shouldBe 0.4f
         }
@@ -968,14 +973,15 @@ class SeasonPresenterTest {
             presenter.dispatch(ConfirmDialogAction)
             testDispatcher.scheduler.advanceUntilIdle()
 
-            val dialogDismissedState = awaitItem()
+            val dialogDismissedState = expectMostRecentItem()
             dialogDismissedState.dialogState.shouldBeInstanceOf<SeasonDialogState.Hidden>()
 
             episodeRepository.setSeasonWatchProgress(
                 SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 9, totalCount = 10),
             )
+            testDispatcher.scheduler.advanceUntilIdle()
 
-            val updatedState = awaitItem()
+            val updatedState = expectMostRecentItem()
             updatedState.isSeasonWatched shouldBe false
             updatedState.watchProgress shouldBe 0.9f
             updatedState.watchedEpisodeCount shouldBe 9

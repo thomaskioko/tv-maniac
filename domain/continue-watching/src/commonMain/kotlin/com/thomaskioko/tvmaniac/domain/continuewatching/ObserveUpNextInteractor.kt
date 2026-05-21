@@ -1,0 +1,45 @@
+package com.thomaskioko.tvmaniac.domain.continuewatching
+
+import com.thomaskioko.tvmaniac.domain.continuewatching.model.UpNextResult
+import com.thomaskioko.tvmaniac.domain.continuewatching.model.UpNextSortOption
+import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
+import com.thomaskioko.tvmaniac.upnext.api.model.UpNextEpisode
+import com.thomaskioko.tvmaniac.upnext.api.model.toUpNextEpisode
+import dev.zacsweers.metro.Inject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+
+@Inject
+public class ObserveUpNextInteractor(
+    private val repository: UpNextRepository,
+) {
+    @OptIn(ExperimentalCoroutinesApi::class)
+    public val flow: Flow<UpNextResult> = repository.observeUpNextSortOption()
+        .map { it.toUpNextSortOption() }
+        .distinctUntilChanged()
+        .flatMapLatest { sortOption ->
+            repository.observeNextEpisodesForWatchlist()
+                .map { episodes ->
+                    UpNextResult(
+                        sortOption = sortOption,
+                        episodes = episodes
+                            .mapNotNull { it.toUpNextEpisode() }
+                            .sortedBy(sortOption),
+                    )
+                }
+        }
+}
+
+private fun List<UpNextEpisode>.sortedBy(option: UpNextSortOption): List<UpNextEpisode> =
+    when (option) {
+        UpNextSortOption.LAST_WATCHED -> sortedByDescending { it.lastWatchedAt ?: 0L }
+        UpNextSortOption.AIR_DATE -> sortedByDescending { it.firstAired ?: Long.MAX_VALUE }
+    }
+
+private fun String.toUpNextSortOption(): UpNextSortOption = when (this) {
+    UpNextSortOption.AIR_DATE.name -> UpNextSortOption.AIR_DATE
+    else -> UpNextSortOption.LAST_WATCHED
+}

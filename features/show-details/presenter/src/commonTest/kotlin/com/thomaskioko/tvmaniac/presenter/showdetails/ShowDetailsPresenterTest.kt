@@ -28,8 +28,8 @@ import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeN
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncTraktCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
-import com.thomaskioko.tvmaniac.domain.showdetails.ShowContentSyncInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
 import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
 import com.thomaskioko.tvmaniac.domain.traktlists.CreateTraktListInteractor
 import com.thomaskioko.tvmaniac.domain.traktlists.ObserveTraktListsInteractor
@@ -852,11 +852,12 @@ class ShowDetailsPresenterTest {
             followedShowsRepository = followedShowsRepository,
             followShowInteractor = FollowShowInteractor(
                 followedShowsRepository = followedShowsRepository,
-                showContentSyncInteractor = ShowContentSyncInteractor(
+                syncShowMetadataInteractor = SyncShowMetadataInteractor(
                     showDetailsRepository = showDetailsRepository,
                     seasonDetailsRepository = seasonDetailsRepository,
-                    dispatchers = coroutineDispatcher,
                     watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
+                    watchProviderRepository = watchProvidersRepository,
+                    dispatchers = coroutineDispatcher,
                 ),
                 appScopeLauncher = FakeAppScopeLauncher(scope = appCoroutineScope),
             ),
@@ -896,11 +897,12 @@ class ShowDetailsPresenterTest {
             observeShowWatchProgressInteractor = ObserveShowWatchProgressInteractor(
                 episodeRepository = episodeRepository,
             ),
-            showContentSyncInteractor = ShowContentSyncInteractor(
+            syncShowMetadataInteractor = SyncShowMetadataInteractor(
                 showDetailsRepository = showDetailsRepository,
                 seasonDetailsRepository = seasonDetailsRepository,
-                dispatchers = coroutineDispatcher,
                 watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
+                watchProviderRepository = watchProvidersRepository,
+                dispatchers = coroutineDispatcher,
             ),
             syncTraktCalendarInteractor = SyncTraktCalendarInteractor(
                 episodeRepository = episodeRepository,

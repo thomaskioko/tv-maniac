@@ -220,25 +220,17 @@ public class SeasonDetailsPresenter(
     private suspend fun handleToggleEpisodeWatched(episodeId: Long) {
         if (episodeId in state.value.updatingEpisodeIds) return
 
-        updateState { copy(updatingEpisodeIds = (updatingEpisodeIds + episodeId).toPersistentSet()) }
-
-        val episode = state.value.episodeDetailsList.find { it.id == episodeId }
-        if (episode == null) {
-            updateState { copy(updatingEpisodeIds = (updatingEpisodeIds - episodeId).toPersistentSet()) }
-            return
-        }
+        val episode = state.value.episodeDetailsList.find { it.id == episodeId } ?: return
 
         if (episode.isWatched) {
             updateState {
                 copy(
-                    updatingEpisodeIds = (updatingEpisodeIds - episodeId).toPersistentSet(),
                     dialogState = SeasonDialogState.UnwatchEpisodeConfirmation(
                         primaryOperation = WatchOperation.MarkEpisodeUnwatched(param.showTraktId, episodeId),
                     ),
                 )
             }
         } else {
-            updateState { copy(updatingEpisodeIds = (updatingEpisodeIds - episodeId).toPersistentSet()) }
             handleMarkEpisodeWatched(
                 MarkEpisodeWatched(
                     episodeId = episodeId,
@@ -277,22 +269,36 @@ public class SeasonDetailsPresenter(
     }
 
     private suspend fun execute(operation: WatchOperation) {
-        when (operation) {
-            is WatchOperation.MarkEpisodeWatched ->
-                markEpisodeWatchedInteractor(operation.params)
-            is WatchOperation.MarkEpisodeUnwatched ->
-                markEpisodeUnwatchedInteractor(
-                    MarkEpisodeUnwatchedParams(operation.showTraktId, operation.episodeId),
-                )
-            is MarkSeasonWatched ->
-                markSeasonWatchedInteractor(
-                    MarkSeasonWatchedParams(operation.showTraktId, operation.seasonNumber, operation.markPreviousSeasons),
-                )
-            is WatchOperation.MarkSeasonUnwatched ->
-                markSeasonUnwatchedInteractor(
-                    MarkSeasonUnwatchedParams(operation.showTraktId, operation.seasonNumber),
-                )
-        }.collectStatus(episodeLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+        val trackedEpisodeId = when (operation) {
+            is WatchOperation.MarkEpisodeWatched -> operation.params.episodeId
+            is WatchOperation.MarkEpisodeUnwatched -> operation.episodeId
+            is MarkSeasonWatched, is WatchOperation.MarkSeasonUnwatched -> null
+        }
+        if (trackedEpisodeId != null) {
+            updateState { copy(updatingEpisodeIds = (updatingEpisodeIds + trackedEpisodeId).toPersistentSet()) }
+        }
+        try {
+            when (operation) {
+                is WatchOperation.MarkEpisodeWatched ->
+                    markEpisodeWatchedInteractor(operation.params)
+                is WatchOperation.MarkEpisodeUnwatched ->
+                    markEpisodeUnwatchedInteractor(
+                        MarkEpisodeUnwatchedParams(operation.showTraktId, operation.episodeId),
+                    )
+                is MarkSeasonWatched ->
+                    markSeasonWatchedInteractor(
+                        MarkSeasonWatchedParams(operation.showTraktId, operation.seasonNumber, operation.markPreviousSeasons),
+                    )
+                is WatchOperation.MarkSeasonUnwatched ->
+                    markSeasonUnwatchedInteractor(
+                        MarkSeasonUnwatchedParams(operation.showTraktId, operation.seasonNumber),
+                    )
+            }.collectStatus(episodeLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+        } finally {
+            if (trackedEpisodeId != null) {
+                updateState { copy(updatingEpisodeIds = (updatingEpisodeIds - trackedEpisodeId).toPersistentSet()) }
+            }
+        }
     }
 
     private fun updateState(update: SeasonDetailsModel.() -> SeasonDetailsModel) {

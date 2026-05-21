@@ -140,6 +140,24 @@ public object Endpoints {
             override val errorFixture: String = "trakt/sync/watched/shows/error.json"
         }
 
+        public object SyncProgressUpNextNitro : Endpoint.Exact {
+            override val path: String = "/sync/progress/up_next_nitro"
+            override val successFixture: String = "trakt/sync/progress/up_next_nitro/success.json"
+            override val errorFixture: String = "trakt/sync/progress/up_next_nitro/error.json"
+        }
+
+        public object SyncPlaybackEpisodes : Endpoint.Exact {
+            override val path: String = "/sync/playback/episodes"
+            override val successFixture: String = "trakt/sync/playback/episodes/success.json"
+            override val errorFixture: String = "trakt/sync/playback/episodes/error.json"
+        }
+
+        public object UsersHiddenProgressWatched : Endpoint.Exact {
+            override val path: String = "/users/hidden/progress_watched"
+            override val successFixture: String = "trakt/users/hidden/progress_watched/success.json"
+            override val errorFixture: String = "trakt/users/hidden/progress_watched/error.json"
+        }
+
         public object SearchByTmdb : Endpoint.Pattern {
             override val pathRegex: String = "/search/tmdb/\\d+"
             override val successFixture: String = "trakt/search/success.json"

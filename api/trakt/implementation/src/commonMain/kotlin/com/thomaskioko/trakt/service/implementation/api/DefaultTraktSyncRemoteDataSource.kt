@@ -5,6 +5,9 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.authSafeRequest
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.TraktSyncRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktLastActivitiesResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktPlaybackEpisodeResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktUpNextNitroResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedProgressResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedShowResponse
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
@@ -28,13 +31,59 @@ public class DefaultTraktSyncRemoteDataSource(
             }
         }
 
-    override suspend fun getWatchedShows(limit: String): ApiResponse<List<TraktWatchedShowResponse>> =
+    override suspend fun getPlaybackEpisodes(
+        limit: Int,
+    ): ApiResponse<List<TraktPlaybackEpisodeResponse>> =
+        httpClient.authSafeRequest {
+            url {
+                method = HttpMethod.Get
+                path("sync/playback/episodes")
+                parameters.append("limit", limit.toString())
+            }
+        }
+
+    override suspend fun getShowWatchedProgress(
+        traktId: Long,
+        lastActivity: String?,
+        hidden: Boolean,
+        specials: Boolean,
+    ): ApiResponse<TraktWatchedProgressResponse> =
+        httpClient.authSafeRequest {
+            url {
+                method = HttpMethod.Get
+                path("shows/$traktId/progress/watched")
+                lastActivity?.let { parameters.append("last_activity", it) }
+                parameters.append("hidden", hidden.toString())
+                parameters.append("specials", specials.toString())
+            }
+        }
+
+    override suspend fun getUpNextNitro(
+        intent: String,
+        limit: Int,
+        page: Int,
+    ): ApiResponse<List<TraktUpNextNitroResponse>> =
+        httpClient.authSafeRequest {
+            url {
+                method = HttpMethod.Get
+                path("sync/progress/up_next_nitro")
+                parameters.append("intent", intent)
+                parameters.append("limit", limit.toString())
+                parameters.append("page", page.toString())
+            }
+        }
+
+    override suspend fun getWatchedShows(
+        page: Int,
+        limit: Int,
+    ): ApiResponse<List<TraktWatchedShowResponse>> =
         httpClient.authSafeRequest {
             url {
                 method = HttpMethod.Get
                 path("sync/watched/shows")
-                parameters.append("extended", "progress")
-                parameters.append("limit", limit)
+                parameters.append("extended", "noseasons")
+                parameters.append("page", page.toString())
+                parameters.append("limit", limit.toString())
             }
         }
 }

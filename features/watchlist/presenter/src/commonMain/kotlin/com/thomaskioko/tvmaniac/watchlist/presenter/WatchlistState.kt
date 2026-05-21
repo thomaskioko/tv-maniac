@@ -1,17 +1,19 @@
 package com.thomaskioko.tvmaniac.watchlist.presenter
 
 import com.thomaskioko.tvmaniac.core.view.UiMessage
-import com.thomaskioko.tvmaniac.shows.api.model.WatchlistSortOption
 import com.thomaskioko.tvmaniac.watchlist.presenter.model.UpNextEpisodeItem
 import com.thomaskioko.tvmaniac.watchlist.presenter.model.WatchlistItem
+import com.thomaskioko.tvmaniac.watchlistprefs.api.model.WatchlistSortOption
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentSetOf
 
 public data class WatchlistState(
     val query: String = "",
     val isSearchActive: Boolean = false,
     val isGridMode: Boolean = true,
-    val isRefreshing: Boolean = true,
+    val isRefreshing: Boolean = false,
     val isSyncing: Boolean = false,
     val sortOption: WatchlistSortOption = WatchlistSortOption.ADDED_DESC,
     val emptyStateText: String = "",
@@ -19,6 +21,7 @@ public data class WatchlistState(
     val staleItems: ImmutableList<WatchlistItem> = persistentListOf(),
     val watchNextEpisodes: ImmutableList<UpNextEpisodeItem> = persistentListOf(),
     val staleEpisodes: ImmutableList<UpNextEpisodeItem> = persistentListOf(),
+    val updatingEpisodeIds: ImmutableSet<Long> = persistentSetOf(),
     val message: UiMessage? = null,
 ) {
     val isEmpty: Boolean
@@ -26,5 +29,5 @@ public data class WatchlistState(
             watchNextEpisodes.isEmpty() && staleEpisodes.isEmpty()
 
     val showLoading: Boolean
-        get() = isRefreshing && isEmpty
+        get() = isSyncing && isEmpty
 }

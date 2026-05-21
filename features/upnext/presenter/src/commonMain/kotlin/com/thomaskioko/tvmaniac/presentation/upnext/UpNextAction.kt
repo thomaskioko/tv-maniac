@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.presentation.upnext
 
-import com.thomaskioko.tvmaniac.domain.upnext.model.UpNextSortOption
+import com.thomaskioko.tvmaniac.domain.continuewatching.model.UpNextSortOption
 
 public sealed interface UpNextAction
 

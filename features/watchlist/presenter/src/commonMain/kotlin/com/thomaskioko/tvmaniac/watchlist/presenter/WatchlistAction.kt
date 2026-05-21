@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.watchlist.presenter
 
-import com.thomaskioko.tvmaniac.shows.api.model.WatchlistSortOption
+import com.thomaskioko.tvmaniac.watchlistprefs.api.model.WatchlistSortOption
 
 public sealed interface WatchlistAction
 

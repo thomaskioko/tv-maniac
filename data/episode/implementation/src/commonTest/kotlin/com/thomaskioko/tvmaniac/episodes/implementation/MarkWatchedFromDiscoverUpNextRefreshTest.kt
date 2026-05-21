@@ -129,6 +129,64 @@ internal class MarkWatchedFromDiscoverUpNextRefreshTest : BaseDatabaseTest() {
         }
     }
 
+    @Test
+    fun `should advance trakt continue watching last watched at on subsequent local marks`() = runTest {
+        val initialLastWatchedAt = database.traktContinueWatchingQueries
+            .entries()
+            .executeAsList()
+            .first { it.trakt_id.id == SHOW_ID }
+            .last_watched_at
+
+        fakeDateTimeProvider.setCurrentTimeMillis(now + 10_000L)
+        watchedEpisodeDao.markAsWatched(
+            showTraktId = SHOW_ID,
+            episodeId = EPISODE_1_ID,
+            seasonNumber = 1L,
+            episodeNumber = 1L,
+            includeSpecials = false,
+        )
+
+        val afterMark = database.traktContinueWatchingQueries
+            .entries()
+            .executeAsList()
+            .first { it.trakt_id.id == SHOW_ID }
+            .last_watched_at
+        afterMark shouldBe maxOf(initialLastWatchedAt, now + 10_000L)
+    }
+
+    @Test
+    fun `should recompute trakt continue watching last watched at on local unmark`() = runTest {
+        fakeDateTimeProvider.setCurrentTimeMillis(now + 1_000L)
+        watchedEpisodeDao.markAsWatched(
+            showTraktId = SHOW_ID,
+            episodeId = EPISODE_1_ID,
+            seasonNumber = 1L,
+            episodeNumber = 1L,
+            includeSpecials = false,
+        )
+        fakeDateTimeProvider.setCurrentTimeMillis(now + 5_000L)
+        watchedEpisodeDao.markAsWatched(
+            showTraktId = SHOW_ID,
+            episodeId = EPISODE_2_ID,
+            seasonNumber = 1L,
+            episodeNumber = 2L,
+            includeSpecials = false,
+        )
+
+        watchedEpisodeDao.markAsUnwatched(
+            showTraktId = SHOW_ID,
+            episodeId = EPISODE_2_ID,
+            includeSpecials = false,
+        )
+
+        val afterUnmark = database.traktContinueWatchingQueries
+            .entries()
+            .executeAsList()
+            .first { it.trakt_id.id == SHOW_ID }
+            .last_watched_at
+        afterUnmark shouldBe now + 1_000L
+    }
+
     private fun seedShowWithThreeAiredEpisodes() {
         database.tvShowQueries.upsert(
             trakt_id = Id(SHOW_ID),
@@ -153,12 +211,15 @@ internal class MarkWatchedFromDiscoverUpNextRefreshTest : BaseDatabaseTest() {
             followedAt = now,
             pendingAction = "NOTHING",
         )
-        database.traktWatchedShowsQueries.upsert(
+        database.traktContinueWatchingQueries.upsert(
             traktId = Id(SHOW_ID),
             tmdbId = Id(SHOW_ID),
-            plays = 1L,
+            airedEpisodes = 0L,
+            completedCount = 1L,
             lastWatchedAt = now,
             lastUpdatedAt = now,
+            title = null,
+            year = null,
         )
         database.seasonsQueries.upsert(
             id = Id(SEASON_ID),

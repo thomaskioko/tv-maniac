@@ -116,7 +116,7 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
         calendar_entryAdapter = Calendar_entry.Adapter(
             show_trakt_idAdapter = IdAdapter(),
         ),
-        trakt_watched_showsAdapter = Trakt_watched_shows.Adapter(
+        trakt_continue_watchingAdapter = Trakt_continue_watching.Adapter(
             trakt_idAdapter = IdAdapter(),
             tmdb_idAdapter = IdAdapter(),
         ),

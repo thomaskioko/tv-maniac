@@ -30,7 +30,7 @@ dependencies {
     implementation(projects.core.view)
     implementation(projects.features.home.nav)
     implementation(projects.i18n.generator)
-    implementation(projects.data.watchlist.api)
+    implementation(projects.data.watchlistPrefs.api)
 
     implementation(libs.androidx.compose.activity)
     implementation(libs.androidx.compose.material3)

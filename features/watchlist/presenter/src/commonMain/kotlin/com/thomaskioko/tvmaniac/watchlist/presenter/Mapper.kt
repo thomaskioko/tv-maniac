@@ -2,11 +2,11 @@ package com.thomaskioko.tvmaniac.watchlist.presenter
 
 import com.thomaskioko.tvmaniac.db.FollowedShows
 import com.thomaskioko.tvmaniac.db.SearchFollowedShows
-import com.thomaskioko.tvmaniac.domain.watchlist.model.NextEpisodeInfo
-import com.thomaskioko.tvmaniac.domain.watchlist.model.UpNextEpisodeInfo
-import com.thomaskioko.tvmaniac.domain.watchlist.model.UpNextSections
-import com.thomaskioko.tvmaniac.domain.watchlist.model.WatchlistSections
-import com.thomaskioko.tvmaniac.domain.watchlist.model.WatchlistShowInfo
+import com.thomaskioko.tvmaniac.domain.continuewatching.model.NextEpisodeInfo
+import com.thomaskioko.tvmaniac.domain.continuewatching.model.UpNextEpisodeInfo
+import com.thomaskioko.tvmaniac.domain.continuewatching.model.UpNextSections
+import com.thomaskioko.tvmaniac.domain.continuewatching.model.WatchlistSections
+import com.thomaskioko.tvmaniac.domain.continuewatching.model.WatchlistShowInfo
 import com.thomaskioko.tvmaniac.watchlist.presenter.model.EpisodeBadge
 import com.thomaskioko.tvmaniac.watchlist.presenter.model.NextEpisodeItem
 import com.thomaskioko.tvmaniac.watchlist.presenter.model.SectionedEpisodes
@@ -17,7 +17,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
-import com.thomaskioko.tvmaniac.domain.watchlist.model.EpisodeBadge as DomainEpisodeBadge
+import com.thomaskioko.tvmaniac.domain.continuewatching.model.EpisodeBadge as DomainEpisodeBadge
 
 public fun List<FollowedShows>.entityToWatchlistShowList(
     lastWatchedMap: Map<Long, Long?> = emptyMap(),

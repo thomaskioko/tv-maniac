@@ -41,7 +41,8 @@ class WatchlistScreenTest: SnapshotTestCase {
             onShowClicked: { _ in },
             onEpisodeClicked: { _, _ in },
             onShowTitleClicked: { _ in },
-            onMarkWatched: { _ in }
+            onMarkWatched: { _ in },
+            onRefresh: {}
         )
         .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "WatchlistScreen_Loading")
@@ -78,7 +79,8 @@ class WatchlistScreenTest: SnapshotTestCase {
             onShowClicked: { _ in },
             onEpisodeClicked: { _, _ in },
             onShowTitleClicked: { _ in },
-            onMarkWatched: { _ in }
+            onMarkWatched: { _ in },
+            onRefresh: {}
         )
         .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "WatchlistScreen_GridMode")
@@ -119,7 +121,8 @@ class WatchlistScreenTest: SnapshotTestCase {
             onShowClicked: { _ in },
             onEpisodeClicked: { _, _ in },
             onShowTitleClicked: { _ in },
-            onMarkWatched: { _ in }
+            onMarkWatched: { _ in },
+            onRefresh: {}
         )
         .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "WatchlistScreen_GridMode_WithStale")
@@ -156,7 +159,8 @@ class WatchlistScreenTest: SnapshotTestCase {
             onShowClicked: { _ in },
             onEpisodeClicked: { _, _ in },
             onShowTitleClicked: { _ in },
-            onMarkWatched: { _ in }
+            onMarkWatched: { _ in },
+            onRefresh: {}
         )
         .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "WatchlistScreen_EmptyInProgress")
@@ -193,7 +197,8 @@ class WatchlistScreenTest: SnapshotTestCase {
             onShowClicked: { _ in },
             onEpisodeClicked: { _, _ in },
             onShowTitleClicked: { _ in },
-            onMarkWatched: { _ in }
+            onMarkWatched: { _ in },
+            onRefresh: {}
         )
         .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "WatchlistScreen_UpToDate")

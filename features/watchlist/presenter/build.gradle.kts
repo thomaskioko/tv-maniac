@@ -12,15 +12,16 @@ kotlin {
         commonMain {
             dependencies {
                 api(projects.core.base)
+                api(projects.core.featureFlags.api)
                 api(projects.core.logger.api)
                 api(projects.core.util.api)
                 api(projects.core.view)
                 api(projects.data.episode.api)
                 api(projects.data.followedshows.api)
-                api(projects.data.watchlist.api)
+                api(projects.data.watchlistPrefs.api)
                 api(projects.domain.episode)
                 api(projects.domain.followedshows)
-                api(projects.domain.watchlist)
+                api(projects.domain.continueWatching)
                 api(projects.features.watchlist.nav)
                 api(projects.i18n.api)
                 api(projects.navigation.api)
@@ -37,6 +38,7 @@ kotlin {
 
         androidMain {
             dependencies {
+                api(projects.core.syncstate.api)
                 api(projects.data.database.sqldelight)
                 implementation(projects.i18n.generator)
             }
@@ -46,7 +48,9 @@ kotlin {
             dependencies {
                 implementation(libs.bundles.unittest)
                 implementation(libs.kotlinx.datetime)
+                implementation(projects.core.featureFlags.testing)
                 implementation(projects.core.logger.testing)
+                implementation(projects.core.syncstate.testing)
                 implementation(projects.core.util.testing)
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.followedshows.testing)
@@ -54,10 +58,13 @@ kotlin {
                 implementation(projects.data.showdetails.testing)
                 implementation(projects.data.syncActivity.api)
                 implementation(projects.data.syncActivity.testing)
+                implementation(projects.data.traktauth.api)
+                implementation(projects.data.traktauth.testing)
                 implementation(projects.data.upnext.api)
                 implementation(projects.data.upnext.testing)
-                implementation(projects.data.watchedShows.testing)
-                implementation(projects.data.watchlist.testing)
+                implementation(projects.data.watchproviders.testing)
+                implementation(projects.data.continueWatching.testing)
+                implementation(projects.data.watchlistPrefs.testing)
                 implementation(projects.i18n.testing)
                 implementation(projects.navigation.testing)
             }

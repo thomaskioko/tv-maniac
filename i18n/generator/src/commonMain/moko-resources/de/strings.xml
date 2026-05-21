@@ -402,6 +402,7 @@
     <string name="error_login_failed">Anmeldung fehlgeschlagen: %s</string>
     <string name="error_login_cancelled">Anmeldung abgebrochen.</string>
     <string name="error_login_exchange">Anmeldung konnte nicht abgeschlossen werden. Bitte versuchen Sie es erneut.</string>
+    <string name="error_login_no_browser">Kein Browser zum Anmelden verfügbar. Installieren Sie einen Browser und versuchen Sie es erneut.</string>
     <string name="error_session_expired">Sitzung abgelaufen. Bitte melden Sie sich erneut an.</string>
 
     <string name="notification_new_episode">Neue Folge: %1$s - S%2$dE%3$d</string>

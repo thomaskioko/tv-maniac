@@ -7,10 +7,6 @@ public interface UpNextRepository {
 
     public fun observeNextEpisodesForWatchlist(): Flow<List<NextEpisodeWithShow>>
 
-    public fun observeFollowedShowsCount(): Flow<Int>
-
-    public suspend fun fetchUpNextEpisodes(forceRefresh: Boolean)
-
     public suspend fun saveUpNextSortOption(sortOption: String)
 
     public fun observeUpNextSortOption(): Flow<String>

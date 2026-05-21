@@ -8,7 +8,7 @@ import dev.zacsweers.metro.Inject
 @Inject
 public class FollowShowInteractor(
     private val followedShowsRepository: FollowedShowsRepository,
-    private val showContentSyncInteractor: ShowContentSyncInteractor,
+    private val syncShowMetadataInteractor: SyncShowMetadataInteractor,
     private val appScopeLauncher: AppScopeLauncher,
 ) : Interactor<FollowShowInteractor.Param>() {
 
@@ -16,8 +16,8 @@ public class FollowShowInteractor(
         followedShowsRepository.addFollowedShow(params.traktId)
 
         appScopeLauncher.launch(TAG) {
-            showContentSyncInteractor.executeSync(
-                ShowContentSyncInteractor.Param(
+            syncShowMetadataInteractor.executeSync(
+                SyncShowMetadataInteractor.Param(
                     traktId = params.traktId,
                     forceRefresh = params.forceRefresh,
                 ),

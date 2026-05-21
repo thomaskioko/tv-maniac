@@ -4,12 +4,9 @@ import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.db.TmdbId
-import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.episodes.api.NextEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultNextEpisodeDao
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
-import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -75,7 +72,6 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             show2Episode.episodeName shouldBe "Show 2 Episode 1"
             show2Episode.seasonNumber shouldBe 1
             show2Episode.episodeNumber shouldBe 1
-            show2Episode.followedAt.shouldNotBeNull()
 
             val show1Episode = watchlistEpisodes[1]
             show1Episode.showTraktId shouldBe 1L
@@ -83,7 +79,6 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             show1Episode.episodeName shouldBe "Episode 2"
             show1Episode.seasonNumber shouldBe 1
             show1Episode.episodeNumber shouldBe 2
-            show1Episode.followedAt.shouldNotBeNull()
         }
     }
 
@@ -105,33 +100,8 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should appear in watchlist given followed show without trakt watched row`() = runTest {
+    fun `should exclude followed-only show given no continue-watching row`() = runTest {
         followShowOnly(showId = 1L, followedAt = watchDate)
-
-        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
-            val episodes = awaitItem()
-            episodes.size shouldBe 1
-
-            val nextEpisode = episodes[0]
-            nextEpisode.showTraktId shouldBe 1L
-            nextEpisode.showName shouldBe "Test Show 1"
-            nextEpisode.episodeId shouldBe 101L
-            nextEpisode.episodeNumber shouldBe 1L
-            nextEpisode.seasonNumber shouldBe 1L
-            nextEpisode.followedAt shouldBe watchDate
-            nextEpisode.lastWatchedAt shouldBe null
-        }
-    }
-
-    @Test
-    fun `should exclude followed show given pending DELETE action`() = runTest {
-        val _ = database.followedShowsQueries.upsert(
-            id = null,
-            traktId = Id<TraktId>(1L),
-            tmdbId = Id<TmdbId>(1L),
-            followedAt = watchDate,
-            pendingAction = "DELETE",
-        )
 
         nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
             awaitItem().size shouldBe 0
@@ -490,6 +460,35 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should exclude show given followed with watched episodes and not in continue watching`() = runTest {
+        // The Trakt fetcher drops a show from `trakt_continue_watching` once the user catches
+        // up. If the followed_shows row stays (typical, the user did not unfollow), the
+        // watchlist must still hide it. The EXISTS clause uses any watched_episodes row as the
+        // "user has started this show" signal so the rule does not depend on stale local counts.
+        followShowOnly(showId = 1L, followedAt = watchDate)
+        markEpisodeWatched(showId = 1L, episodeId = 101L, seasonNumber = 1L, episodeNumber = 1L)
+
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
+            awaitItem().size shouldBe 0
+        }
+    }
+
+    @Test
+    fun `should include show given followed with watched episodes and still in continue watching`() = runTest {
+        // First branch of the WHERE clause: a row in trakt_continue_watching always keeps the
+        // show on screen. The user is mid-progress according to the server.
+        followShow(showId = 1L, followedAt = watchDate)
+        markEpisodeWatched(showId = 1L, episodeId = 101L, seasonNumber = 1L, episodeNumber = 1L)
+
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
+            val episodes = awaitItem()
+            episodes.size shouldBe 1
+            episodes[0].showTraktId shouldBe 1L
+            episodes[0].episodeName shouldBe "Episode 2"
+        }
+    }
+
+    @Test
     fun `should exclude null-aired and future-aired episodes from total count`() = runTest {
         val realNow = kotlin.time.Clock.System.now().toEpochMilliseconds()
         fakeDateTimeProvider.setCurrentTimeMillis(realNow)
@@ -534,17 +533,20 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         database.transaction {
             database.followedShowsQueries.upsert(
                 id = null,
-                traktId = Id<TraktId>(showId),
-                tmdbId = Id<TmdbId>(showId),
+                traktId = Id(showId),
+                tmdbId = Id(showId),
                 followedAt = followedAt,
                 pendingAction = "NOTHING",
             )
-            database.traktWatchedShowsQueries.upsert(
-                traktId = Id<TraktId>(showId),
-                tmdbId = Id<TmdbId>(showId),
-                plays = 1L,
+            database.traktContinueWatchingQueries.upsert(
+                traktId = Id(showId),
+                tmdbId = Id(showId),
+                airedEpisodes = 0L,
+                completedCount = 1L,
                 lastWatchedAt = followedAt,
                 lastUpdatedAt = followedAt,
+                title = null,
+                year = null,
             )
         }
     }
@@ -552,8 +554,8 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     private fun followShowOnly(showId: Long, followedAt: Long) {
         val _ = database.followedShowsQueries.upsert(
             id = null,
-            traktId = Id<TraktId>(showId),
-            tmdbId = Id<TmdbId>(showId),
+            traktId = Id(showId),
+            tmdbId = Id(showId),
             followedAt = followedAt,
             pendingAction = "NOTHING",
         )
@@ -567,7 +569,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         watchedAt: Long = watchDate,
     ) {
         val _ = database.watchedEpisodesQueries.upsert(
-            show_trakt_id = Id<TraktId>(showId),
+            show_trakt_id = Id(showId),
             episode_id = Id(episodeId),
             season_number = seasonNumber,
             episode_number = episodeNumber,
@@ -585,7 +587,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         watchedAt: Long = watchDate,
     ) {
         val _ = database.watchedEpisodesQueries.upsert(
-            show_trakt_id = Id<TraktId>(showId),
+            show_trakt_id = Id(showId),
             episode_id = Id(episodeId),
             season_number = seasonNumber,
             episode_number = episodeNumber,
@@ -601,8 +603,8 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         status: String = "Returning Series",
     ) {
         val _ = database.tvShowQueries.upsert(
-            trakt_id = Id<TraktId>(id),
-            tmdb_id = Id<TmdbId>(id),
+            trakt_id = Id(id),
+            tmdb_id = Id(id),
             name = name,
             overview = overview,
             language = "en",
@@ -627,7 +629,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     ) {
         val _ = database.seasonsQueries.upsert(
             id = Id(seasonId),
-            show_trakt_id = Id<TraktId>(showId),
+            show_trakt_id = Id(showId),
             season_number = seasonNumber,
             title = title,
             overview = "Overview for $title",
@@ -647,7 +649,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         val _ = database.episodesQueries.upsert(
             id = Id(episodeId),
             season_id = Id(seasonId),
-            show_trakt_id = Id<TraktId>(showId),
+            show_trakt_id = Id(showId),
             title = title,
             overview = "Overview for $title",
             episode_number = episodeNumber,
@@ -705,13 +707,13 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         insertShow(id = 2, name = "Test Show 2", status = "Ended")
 
         val _ = database.showMetadataQueries.upsert(
-            show_trakt_id = Id<TraktId>(1),
+            show_trakt_id = Id(1),
             season_count = 1,
             episode_count = 3,
             status = "Returning Series",
         )
         val _ = database.showMetadataQueries.upsert(
-            show_trakt_id = Id<TraktId>(2),
+            show_trakt_id = Id(2),
             season_count = 1,
             episode_count = 2,
             status = "Ended",

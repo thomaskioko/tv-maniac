@@ -140,7 +140,8 @@ private extension ShowDetailsContent {
             similarShowsTitle: String(\.title_similar),
             seasonDetailsTitle: String(\.title_season_details),
             showSeasonDetailsHeader: continueTrackingEpisodes.isEmpty,
-            upToDateLabel: String(\.label_up_to_date)
+            upToDateLabel: String(\.label_up_to_date),
+            updatingEpisodeIds: Set(updatingEpisodeIds.map(\.int64Value))
         )
     }
 

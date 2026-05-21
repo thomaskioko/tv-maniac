@@ -1,0 +1,27 @@
+-- Migration 30: replace trakt_watched_shows with trakt_continue_watching.
+--
+-- Drops the day-old trakt_watched_shows table (migration 29) and creates
+-- trakt_continue_watching with aired_episodes + completed_count columns.
+-- Existing rows are not backfilled because aired/completed counts are not
+-- present on the old table; the data is re-derived on the next sync.
+--
+-- Also clears the last_requests TTL row (both pre-rename and post-rename
+-- names) so the first launch after upgrade forces a fresh fetch instead of
+-- trusting a surviving stale TTL row from migration 29.
+
+DROP TABLE IF EXISTS trakt_watched_shows;
+
+CREATE TABLE trakt_continue_watching (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    trakt_id INTEGER NOT NULL UNIQUE,
+    tmdb_id INTEGER DEFAULT NULL,
+    aired_episodes INTEGER NOT NULL DEFAULT 0,
+    completed_count INTEGER NOT NULL DEFAULT 0,
+    last_watched_at INTEGER NOT NULL,
+    last_updated_at INTEGER NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_trakt_continue_watching_tmdb_id ON trakt_continue_watching(tmdb_id);
+
+DELETE FROM last_requests WHERE request_type = 'WATCHED_SHOWS_SYNC';
+DELETE FROM last_requests WHERE request_type = 'CONTINUE_WATCHING_SYNC';

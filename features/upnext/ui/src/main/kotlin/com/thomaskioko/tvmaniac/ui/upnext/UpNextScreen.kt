@@ -42,7 +42,7 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.extensions.copy
-import com.thomaskioko.tvmaniac.domain.upnext.model.UpNextSortOption
+import com.thomaskioko.tvmaniac.domain.continuewatching.model.UpNextSortOption
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_upnext_empty
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_upnext_sort_air_date
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_upnext_sort_last_watched
@@ -193,6 +193,7 @@ private fun UpNextLoadedContent(
                 onLongPress = {
                     episode.episodeId?.let { onAction(UpNextEpisodeLongPressed(it)) }
                 },
+                isUpdating = episode.episodeId != null && episode.episodeId in state.updatingEpisodeIds,
             )
         }
 

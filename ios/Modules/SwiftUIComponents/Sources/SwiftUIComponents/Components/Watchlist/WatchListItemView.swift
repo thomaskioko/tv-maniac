@@ -10,6 +10,7 @@ public struct WatchListItemView: View {
     let onItemClicked: (Int64, Int64) -> Void
     let onShowTitleClicked: (Int64) -> Void
     let onMarkWatched: () -> Void
+    let isUpdating: Bool
 
     public init(
         episode: SwiftNextEpisode,
@@ -17,7 +18,8 @@ public struct WatchListItemView: View {
         newLabel: String,
         onItemClicked: @escaping (Int64, Int64) -> Void,
         onShowTitleClicked: @escaping (Int64) -> Void,
-        onMarkWatched: @escaping () -> Void
+        onMarkWatched: @escaping () -> Void,
+        isUpdating: Bool = false
     ) {
         self.episode = episode
         self.premiereLabel = premiereLabel
@@ -25,6 +27,7 @@ public struct WatchListItemView: View {
         self.onItemClicked = onItemClicked
         self.onShowTitleClicked = onShowTitleClicked
         self.onMarkWatched = onMarkWatched
+        self.isUpdating = isUpdating
     }
 
     public var body: some View {
@@ -111,12 +114,19 @@ public struct WatchListItemView: View {
                 Circle()
                     .fill(.appGrey)
                     .frame(width: WatchListItemViewConstants.checkmarkSize, height: WatchListItemViewConstants.checkmarkSize)
-                Image(systemName: "checkmark")
-                    .font(theme.typography.labelMedium)
-                    .foregroundStyle(.appOnPrimary)
+                if isUpdating {
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                        .tint(theme.colors.onPrimary)
+                } else {
+                    Image(systemName: "checkmark")
+                        .font(theme.typography.labelMedium)
+                        .foregroundStyle(.appOnPrimary)
+                }
             }
         }
         .buttonStyle(.plain)
+        .disabled(isUpdating)
         .frame(maxHeight: .infinity)
         .padding(.trailing, theme.spacing.medium)
     }

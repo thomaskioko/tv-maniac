@@ -9,11 +9,16 @@ import kotlinx.coroutines.flow.filterNotNull
 public class FakeShowDetailsRepository : ShowDetailsRepository {
     private val showDetails = MutableStateFlow<TvshowDetails?>(null)
     private val fetchInvocations = mutableListOf<FetchInvocation>()
+    private var fetchError: Throwable? = null
 
     public data class FetchInvocation(val id: Long, val forceRefresh: Boolean)
 
     public fun setShowDetailsResult(result: TvshowDetails) {
         showDetails.value = result
+    }
+
+    public fun setFetchError(error: Throwable?) {
+        fetchError = error
     }
 
     public fun fetchInvocations(): List<FetchInvocation> = fetchInvocations.toList()
@@ -24,6 +29,7 @@ public class FakeShowDetailsRepository : ShowDetailsRepository {
 
     override suspend fun fetchShowDetails(id: Long, forceRefresh: Boolean) {
         fetchInvocations.add(FetchInvocation(id, forceRefresh))
+        fetchError?.let { throw it }
     }
 
     override fun observeShowDetails(id: Long): Flow<TvshowDetails> = showDetails.filterNotNull()

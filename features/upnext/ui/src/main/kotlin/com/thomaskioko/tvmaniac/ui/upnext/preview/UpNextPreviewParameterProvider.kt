@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.ui.upnext.preview
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.domain.upnext.model.UpNextSortOption
+import com.thomaskioko.tvmaniac.domain.continuewatching.model.UpNextSortOption
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextState
 import com.thomaskioko.tvmaniac.presentation.upnext.model.UpNextEpisodeUiModel
 import kotlinx.collections.immutable.persistentListOf

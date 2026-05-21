@@ -40,6 +40,7 @@ internal class Scenarios(
     val discover: Discover = Discover()
     val profile: Profile = Profile()
     val library: Library = Library()
+    val watchlist: Watchlist = Watchlist()
     val search: Search = Search()
     val calendar: Calendar = Calendar()
     val upNext: UpNext = UpNext()
@@ -55,6 +56,7 @@ internal class Scenarios(
         auth.stubLoggedInUser()
         discover.stubBrowseGraph()
         library.stubLibrarySyncEndpoints()
+        watchlist.stubWatchlistSyncEndpoints()
         profile.stubProfileSyncEndpoints()
         calendar.stubWeek()
         calendar.stubWeek(weekStart = TEST_NEXT_WEEK)
@@ -74,6 +76,7 @@ internal class Scenarios(
         graph.traktAuthManager.setOnLaunchWebView {
             profile.stubProfileSyncEndpoints()
             library.stubLibrarySyncEndpoints()
+            watchlist.stubWatchlistSyncEndpoints()
             auth.stubLoggedInUser()
             calendar.stubWeek()
         }
@@ -217,6 +220,25 @@ internal class Scenarios(
 
             val watchedShows = FixtureLoader.load(Endpoints.Trakt.SyncWatchedShows.successFixture)
             showFixtures(watchedShows).forEach { mockHandler.stubShow(it) }
+        }
+    }
+
+    inner class Watchlist {
+        /**
+         * Stubs the Continue Watching pipeline that drives the Watchlist and Up Next tabs:
+         * `/sync/progress/up_next_nitro` (default Nitro fetcher) plus the documented fallback
+         * (`/sync/watched/shows` + `/sync/playback/episodes`). Per-show metadata fan-out reuses
+         * [Library]'s show stubs since the same Trakt ids appear in both fixtures.
+         */
+        fun stubWatchlistSyncEndpoints() {
+            mockHandler.stubEndpoint(Endpoints.Trakt.SyncProgressUpNextNitro)
+            mockHandler.stubEndpoint(Endpoints.Trakt.SyncPlaybackEpisodes)
+            mockHandler.stubEndpoint(Endpoints.Trakt.SyncWatchedShows)
+            mockHandler.stubEndpoint(Endpoints.Trakt.ShowProgressWatched)
+            mockHandler.stubEndpoint(Endpoints.Trakt.UsersHiddenProgressWatched)
+
+            val nitroShows = FixtureLoader.load(Endpoints.Trakt.SyncProgressUpNextNitro.successFixture)
+            showFixtures(nitroShows).forEach { mockHandler.stubShow(it) }
         }
     }
 

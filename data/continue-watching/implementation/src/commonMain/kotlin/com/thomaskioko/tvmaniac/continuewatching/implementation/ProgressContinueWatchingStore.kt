@@ -1,0 +1,97 @@
+package com.thomaskioko.tvmaniac.continuewatching.implementation
+
+import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingDao
+import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
+import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
+import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.Tvshow
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.CONTINUE_WATCHING_SYNC
+import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
+import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityRepository
+import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.withContext
+
+@Inject
+@SingleIn(AppScope::class)
+public class ProgressContinueWatchingStore(
+    private val progressFetcher: ProgressContinueWatchingFetcher,
+    private val continueWatchingDao: ContinueWatchingDao,
+    private val tvShowsDao: TvShowsDao,
+    private val requestManagerRepository: RequestManagerRepository,
+    private val traktActivityRepository: TraktActivityRepository,
+    private val transactionRunner: DatabaseTransactionRunner,
+    private val dispatchers: AppCoroutineDispatchers,
+) {
+
+    public suspend fun fetchWith(forceRefresh: Boolean) {
+        if (!forceRefresh && isFresh()) return
+
+        progressFetcher().collect { batch ->
+            if (batch == null) {
+                throw FetcherSkipSignal("Progress fetcher signaled skip; leaving local table unchanged")
+            }
+            apply(batch)
+        }
+    }
+
+    private suspend fun isFresh(): Boolean = withContext(dispatchers.io) {
+        val ttlValid = requestManagerRepository.isRequestValid(
+            requestType = CONTINUE_WATCHING_SYNC.name,
+            threshold = CONTINUE_WATCHING_SYNC.duration,
+        )
+        val activityChanged = traktActivityRepository.hasActivityChanged(ActivityType.EPISODES_WATCHED)
+        ttlValid && !activityChanged
+    }
+
+    private suspend fun apply(batch: ProgressBatch) {
+        when (batch) {
+            is ProgressBatch.Entry -> withContext(dispatchers.databaseWrite) {
+                transactionRunner {
+                    continueWatchingDao.upsert(batch.entry)
+                    batch.entry.toMinimalTvshow()?.let(tvShowsDao::upsertMerging)
+                }
+            }
+            is ProgressBatch.Complete -> {
+                withContext(dispatchers.databaseWrite) {
+                    transactionRunner {
+                        continueWatchingDao.entries()
+                            .filter { it.traktId !in batch.finalTraktIds }
+                            .forEach { continueWatchingDao.deleteByTraktId(it.traktId) }
+                    }
+                }
+                requestManagerRepository.upsert(
+                    entityId = CONTINUE_WATCHING_SYNC.requestId,
+                    requestType = CONTINUE_WATCHING_SYNC.name,
+                )
+                traktActivityRepository.markActivityAsSynced(ActivityType.EPISODES_WATCHED)
+            }
+        }
+    }
+}
+
+private fun ContinueWatchingEntry.toMinimalTvshow(): Tvshow? {
+    val tmdb = tmdbId ?: return null
+    val name = title ?: return null
+    return Tvshow(
+        trakt_id = Id(traktId),
+        tmdb_id = Id(tmdb),
+        name = name,
+        overview = "",
+        language = null,
+        year = year?.toString(),
+        ratings = 0.0,
+        vote_count = 0,
+        genres = null,
+        status = null,
+        episode_numbers = null,
+        season_numbers = null,
+        poster_path = null,
+        backdrop_path = null,
+    )
+}

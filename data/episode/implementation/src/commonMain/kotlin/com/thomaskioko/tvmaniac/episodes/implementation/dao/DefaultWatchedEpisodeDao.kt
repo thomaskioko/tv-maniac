@@ -56,7 +56,7 @@ public class DefaultWatchedEpisodeDao(
                     tmdbId = null,
                     followedAt = timestamp,
                 )
-                val _ = database.traktWatchedShowsQueries.upsertIfNotExists(
+                val _ = database.traktContinueWatchingQueries.upsertMembershipForLocalMark(
                     traktId = Id(showTraktId),
                     tmdbId = null,
                     watchedAt = timestamp,
@@ -107,6 +107,7 @@ public class DefaultWatchedEpisodeDao(
                     show_trakt_id = Id(showTraktId),
                     include_specials = if (includeSpecials) 1L else 0L,
                 )
+                recalculateContinueWatchingLastWatchedAt(showTraktId)
             }
         }
     }
@@ -189,7 +190,7 @@ public class DefaultWatchedEpisodeDao(
                     tmdbId = null,
                     followedAt = timestamp,
                 )
-                val _ = database.traktWatchedShowsQueries.upsertIfNotExists(
+                val _ = database.traktContinueWatchingQueries.upsertMembershipForLocalMark(
                     traktId = Id(showTraktId),
                     tmdbId = null,
                     watchedAt = timestamp,
@@ -241,6 +242,7 @@ public class DefaultWatchedEpisodeDao(
                     show_trakt_id = Id(showTraktId),
                     include_specials = if (includeSpecials) 1L else 0L,
                 )
+                recalculateContinueWatchingLastWatchedAt(showTraktId)
             }
         }
     }
@@ -296,7 +298,7 @@ public class DefaultWatchedEpisodeDao(
                     tmdbId = null,
                     followedAt = timestamp,
                 )
-                val _ = database.traktWatchedShowsQueries.upsertIfNotExists(
+                val _ = database.traktContinueWatchingQueries.upsertMembershipForLocalMark(
                     traktId = Id(showTraktId),
                     tmdbId = null,
                     watchedAt = timestamp,
@@ -354,7 +356,7 @@ public class DefaultWatchedEpisodeDao(
                     tmdbId = null,
                     followedAt = timestamp,
                 )
-                val _ = database.traktWatchedShowsQueries.upsertIfNotExists(
+                val _ = database.traktContinueWatchingQueries.upsertMembershipForLocalMark(
                     traktId = Id(showTraktId),
                     tmdbId = null,
                     watchedAt = timestamp,
@@ -406,6 +408,18 @@ public class DefaultWatchedEpisodeDao(
             .executeAsOneOrNull()
             ?.episode_id
             ?.id
+    }
+
+    private fun recalculateContinueWatchingLastWatchedAt(showTraktId: Long) {
+        val maxWatchedAt = database.watchedEpisodesQueries
+            .getMaxWatchedAtForShow(Id(showTraktId))
+            .executeAsOne()
+            .last_watched_at
+            ?: return
+        database.traktContinueWatchingQueries.updateLastWatchedAt(
+            lastWatchedAt = maxWatchedAt,
+            traktId = Id(showTraktId),
+        )
     }
 
     override suspend fun getEpisodesForSeason(

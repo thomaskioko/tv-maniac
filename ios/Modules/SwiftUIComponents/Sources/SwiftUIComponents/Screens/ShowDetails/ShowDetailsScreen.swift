@@ -26,6 +26,7 @@ public struct ShowDetailsScreen: View {
         public let continueTrackingEpisodes: [SwiftContinueTrackingEpisode]
         public let continueTrackingScrollIndex: Int
         public let continueTrackingTitle: String
+        public let updatingEpisodeIds: Set<Int64>
         public let tbdLabel: String
         public let trackLabel: String
         public let stopTrackingLabel: String
@@ -66,7 +67,8 @@ public struct ShowDetailsScreen: View {
             similarShowsTitle: String,
             seasonDetailsTitle: String,
             showSeasonDetailsHeader: Bool,
-            upToDateLabel: String
+            upToDateLabel: String,
+            updatingEpisodeIds: Set<Int64> = []
         ) {
             self.title = title
             self.overview = overview
@@ -91,6 +93,7 @@ public struct ShowDetailsScreen: View {
             self.continueTrackingEpisodes = continueTrackingEpisodes
             self.continueTrackingScrollIndex = continueTrackingScrollIndex
             self.continueTrackingTitle = continueTrackingTitle
+            self.updatingEpisodeIds = updatingEpisodeIds
             self.tbdLabel = tbdLabel
             self.trackLabel = trackLabel
             self.stopTrackingLabel = stopTrackingLabel
@@ -190,6 +193,7 @@ public struct ShowDetailsScreen: View {
                     continueTrackingEpisodes: state.continueTrackingEpisodes,
                     continueTrackingScrollIndex: state.continueTrackingScrollIndex,
                     continueTrackingTitle: state.continueTrackingTitle,
+                    updatingEpisodeIds: state.updatingEpisodeIds,
                     dayLabelFormat: dayLabelFormat,
                     tbdLabel: state.tbdLabel,
                     trackLabel: state.trackLabel,

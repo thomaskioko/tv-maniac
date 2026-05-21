@@ -98,6 +98,38 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should advance next episode given show is watched but not followed`() = runTest {
+        val unfollowedShowId = 4L
+        seedShowWithSecondEpisodeAt(
+            showId = unfollowedShowId,
+            seasonId = 41L,
+            airedEpisodeId = 401L,
+            secondEpisodeId = 402L,
+            secondEpisodeFirstAired = now - 86_400_000L,
+            addToFollowedShows = false,
+        )
+
+        episodesDao.observeNextEpisodeForShow(
+            showTraktId = unfollowedShowId,
+            includeSpecials = false,
+        ).test {
+            val initial = awaitItem()
+            initial?.episode_number shouldBe 1L
+
+            watchedEpisodeDao.markAsWatched(
+                showTraktId = unfollowedShowId,
+                episodeId = 401L,
+                seasonNumber = 1L,
+                episodeNumber = 1L,
+                includeSpecials = false,
+            )
+
+            val advanced = awaitItem()
+            advanced?.episode_number shouldBe 2L
+        }
+    }
+
+    @Test
     fun `should hide next episode given lowest unwatched has not aired`() = runTest {
         val realNow = kotlin.time.Clock.System.now().toEpochMilliseconds()
         val futureShowId = 2L
@@ -156,6 +188,7 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
         airedEpisodeId: Long,
         secondEpisodeId: Long,
         secondEpisodeFirstAired: Long?,
+        addToFollowedShows: Boolean = true,
     ) {
         database.tvShowQueries.upsert(
             trakt_id = Id(showId),
@@ -173,13 +206,15 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
             poster_path = null,
             backdrop_path = null,
         )
-        database.followedShowsQueries.upsert(
-            id = null,
-            traktId = Id(showId),
-            tmdbId = Id(showId),
-            followedAt = now,
-            pendingAction = "NOTHING",
-        )
+        if (addToFollowedShows) {
+            database.followedShowsQueries.upsert(
+                id = null,
+                traktId = Id(showId),
+                tmdbId = Id(showId),
+                followedAt = now,
+                pendingAction = "NOTHING",
+            )
+        }
         database.seasonsQueries.upsert(
             id = Id(seasonId),
             show_trakt_id = Id(showId),

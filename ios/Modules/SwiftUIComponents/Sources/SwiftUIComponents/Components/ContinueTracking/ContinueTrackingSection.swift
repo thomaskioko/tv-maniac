@@ -10,6 +10,7 @@ public struct ContinueTrackingSection: View {
     private let dayLabelFormat: (_ count: Int) -> String
     private let tbdLabel: String
     private let onMarkWatched: (SwiftContinueTrackingEpisode) -> Void
+    private let updatingEpisodeIds: Set<Int64>
 
     public init(
         title: String,
@@ -17,7 +18,8 @@ public struct ContinueTrackingSection: View {
         scrollIndex: Int,
         dayLabelFormat: @escaping (_ count: Int) -> String,
         tbdLabel: String,
-        onMarkWatched: @escaping (SwiftContinueTrackingEpisode) -> Void
+        onMarkWatched: @escaping (SwiftContinueTrackingEpisode) -> Void,
+        updatingEpisodeIds: Set<Int64> = []
     ) {
         self.title = title
         self.episodes = episodes
@@ -25,6 +27,7 @@ public struct ContinueTrackingSection: View {
         self.dayLabelFormat = dayLabelFormat
         self.tbdLabel = tbdLabel
         self.onMarkWatched = onMarkWatched
+        self.updatingEpisodeIds = updatingEpisodeIds
     }
 
     public var body: some View {
@@ -43,7 +46,8 @@ public struct ContinueTrackingSection: View {
                                     episode: episode,
                                     dayLabelFormat: dayLabelFormat,
                                     tbdLabel: tbdLabel,
-                                    onMarkWatched: { onMarkWatched(episode) }
+                                    onMarkWatched: { onMarkWatched(episode) },
+                                    isUpdating: updatingEpisodeIds.contains(episode.episodeId)
                                 )
                                 .id(episode.id)
                             }

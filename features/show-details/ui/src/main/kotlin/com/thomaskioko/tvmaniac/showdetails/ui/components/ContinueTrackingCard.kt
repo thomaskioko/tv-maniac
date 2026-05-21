@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -41,6 +42,7 @@ internal fun ContinueTrackingCard(
     episode: ContinueTrackingEpisodeModel,
     onMarkWatched: () -> Unit,
     modifier: Modifier = Modifier,
+    isUpdating: Boolean = false,
 ) {
     Card(
         modifier = modifier
@@ -95,15 +97,23 @@ internal fun ContinueTrackingCard(
                             color = if (episode.isWatched) green else grey,
                             shape = CircleShape,
                         )
-                        .clickable { onMarkWatched() },
+                        .clickable(enabled = !isUpdating) { onMarkWatched() },
                     contentAlignment = Alignment.Center,
                 ) {
-                    Icon(
-                        modifier = Modifier.size(16.dp),
-                        imageVector = Icons.Rounded.Check,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                    )
+                    if (isUpdating) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(16.dp),
+                            strokeWidth = 2.dp,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                        )
+                    } else {
+                        Icon(
+                            modifier = Modifier.size(16.dp),
+                            imageVector = Icons.Rounded.Check,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                        )
+                    }
                 }
             } else {
                 val daysUntilAir = episode.daysUntilAir
