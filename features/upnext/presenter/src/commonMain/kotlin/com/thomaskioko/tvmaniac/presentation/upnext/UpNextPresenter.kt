@@ -30,12 +30,19 @@ import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.UpNextEpisode
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.ChildPresenter
+import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.TimeSource
 
 @ChildPresenter(scope = ProgressChildScope::class, parentScope = ProgressRoot::class)
 @Inject
@@ -56,19 +63,21 @@ public class UpNextPresenter(
     private val uiMessageManager = UiMessageManager()
     private val loadingState = ObservableLoadingCounter()
     private val refreshingState = ObservableLoadingCounter()
-    private val markWatchedLoadingState = ObservableLoadingCounter()
+    private val updatingEpisodeIdsState = MutableStateFlow(persistentSetOf<Long>())
 
     public val state: StateFlow<UpNextState> = combine(
         observeUpNextInteractor.flow,
         uiMessageManager.message,
         refreshingState.observable,
         loadingState.observable,
-    ) { result, message, isRefreshing, isLoading ->
+        updatingEpisodeIdsState,
+    ) { result, message, isRefreshing, isLoading, updatingEpisodeIds ->
         UpNextState(
             isLoading = isLoading,
             isRefreshing = isRefreshing,
             sortOption = result.sortOption,
             episodes = result.episodes.map { it.toUiModel() }.toImmutableList(),
+            updatingEpisodeIds = updatingEpisodeIds,
             message = message,
         )
     }.stateIn(
@@ -112,16 +121,31 @@ public class UpNextPresenter(
     }
 
     private fun markEpisodeWatched(action: MarkWatched) {
+        if (action.episodeId in updatingEpisodeIdsState.value) return
+        updatingEpisodeIdsState.update { it.add(action.episodeId) }
         coroutineScope.launch {
-            markEpisodeWatchedInteractor(
-                MarkEpisodeWatchedParams(
-                    showTraktId = action.showTraktId,
-                    episodeId = action.episodeId,
-                    seasonNumber = action.seasonNumber,
-                    episodeNumber = action.episodeNumber,
-                ),
-            ).collectStatus(markWatchedLoadingState, logger, uiMessageManager, "Mark Watched", errorToStringMapper)
+            val marker = TimeSource.Monotonic.markNow()
+            try {
+                markEpisodeWatchedInteractor(
+                    MarkEpisodeWatchedParams(
+                        showTraktId = action.showTraktId,
+                        episodeId = action.episodeId,
+                        seasonNumber = action.seasonNumber,
+                        episodeNumber = action.episodeNumber,
+                    ),
+                ).collectStatus(loadingState, logger, uiMessageManager, "Mark Watched", errorToStringMapper)
+            } finally {
+                val elapsed = marker.elapsedNow()
+                if (elapsed < INDICATOR_FLOOR) {
+                    delay(INDICATOR_FLOOR - elapsed)
+                }
+                updatingEpisodeIdsState.update { it.remove(action.episodeId) }
+            }
         }
+    }
+
+    private companion object {
+        private val INDICATOR_FLOOR: Duration = 150.milliseconds
     }
 
     private fun changeSortOption(sortOption: UpNextSortOption) {

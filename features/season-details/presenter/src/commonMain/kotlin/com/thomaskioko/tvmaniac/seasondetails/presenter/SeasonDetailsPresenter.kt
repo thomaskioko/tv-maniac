@@ -41,12 +41,16 @@ import dev.zacsweers.metro.AssistedInject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.collections.immutable.toPersistentSet
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.TimeSource
 
 @NavDestination(
     route = SeasonDetailsRoute::class,
@@ -220,25 +224,17 @@ public class SeasonDetailsPresenter(
     private suspend fun handleToggleEpisodeWatched(episodeId: Long) {
         if (episodeId in state.value.updatingEpisodeIds) return
 
-        updateState { copy(updatingEpisodeIds = (updatingEpisodeIds + episodeId).toPersistentSet()) }
-
-        val episode = state.value.episodeDetailsList.find { it.id == episodeId }
-        if (episode == null) {
-            updateState { copy(updatingEpisodeIds = (updatingEpisodeIds - episodeId).toPersistentSet()) }
-            return
-        }
+        val episode = state.value.episodeDetailsList.find { it.id == episodeId } ?: return
 
         if (episode.isWatched) {
             updateState {
                 copy(
-                    updatingEpisodeIds = (updatingEpisodeIds - episodeId).toPersistentSet(),
                     dialogState = SeasonDialogState.UnwatchEpisodeConfirmation(
                         primaryOperation = WatchOperation.MarkEpisodeUnwatched(param.showTraktId, episodeId),
                     ),
                 )
             }
         } else {
-            updateState { copy(updatingEpisodeIds = (updatingEpisodeIds - episodeId).toPersistentSet()) }
             handleMarkEpisodeWatched(
                 MarkEpisodeWatched(
                     episodeId = episodeId,
@@ -277,22 +273,41 @@ public class SeasonDetailsPresenter(
     }
 
     private suspend fun execute(operation: WatchOperation) {
-        when (operation) {
-            is WatchOperation.MarkEpisodeWatched ->
-                markEpisodeWatchedInteractor(operation.params)
-            is WatchOperation.MarkEpisodeUnwatched ->
-                markEpisodeUnwatchedInteractor(
-                    MarkEpisodeUnwatchedParams(operation.showTraktId, operation.episodeId),
-                )
-            is MarkSeasonWatched ->
-                markSeasonWatchedInteractor(
-                    MarkSeasonWatchedParams(operation.showTraktId, operation.seasonNumber, operation.markPreviousSeasons),
-                )
-            is WatchOperation.MarkSeasonUnwatched ->
-                markSeasonUnwatchedInteractor(
-                    MarkSeasonUnwatchedParams(operation.showTraktId, operation.seasonNumber),
-                )
-        }.collectStatus(episodeLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+        val trackedEpisodeId = when (operation) {
+            is WatchOperation.MarkEpisodeWatched -> operation.params.episodeId
+            is WatchOperation.MarkEpisodeUnwatched -> operation.episodeId
+            is MarkSeasonWatched, is WatchOperation.MarkSeasonUnwatched -> null
+        }
+        if (trackedEpisodeId != null) {
+            updateState { copy(updatingEpisodeIds = (updatingEpisodeIds + trackedEpisodeId).toPersistentSet()) }
+        }
+        val marker = TimeSource.Monotonic.markNow()
+        try {
+            when (operation) {
+                is WatchOperation.MarkEpisodeWatched ->
+                    markEpisodeWatchedInteractor(operation.params)
+                is WatchOperation.MarkEpisodeUnwatched ->
+                    markEpisodeUnwatchedInteractor(
+                        MarkEpisodeUnwatchedParams(operation.showTraktId, operation.episodeId),
+                    )
+                is MarkSeasonWatched ->
+                    markSeasonWatchedInteractor(
+                        MarkSeasonWatchedParams(operation.showTraktId, operation.seasonNumber, operation.markPreviousSeasons),
+                    )
+                is WatchOperation.MarkSeasonUnwatched ->
+                    markSeasonUnwatchedInteractor(
+                        MarkSeasonUnwatchedParams(operation.showTraktId, operation.seasonNumber),
+                    )
+            }.collectStatus(episodeLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+        } finally {
+            if (trackedEpisodeId != null) {
+                val elapsed = marker.elapsedNow()
+                if (elapsed < INDICATOR_FLOOR) {
+                    delay(INDICATOR_FLOOR - elapsed)
+                }
+                updateState { copy(updatingEpisodeIds = (updatingEpisodeIds - trackedEpisodeId).toPersistentSet()) }
+            }
+        }
     }
 
     private fun updateState(update: SeasonDetailsModel.() -> SeasonDetailsModel) {
@@ -321,5 +336,9 @@ public class SeasonDetailsPresenter(
     @AssistedFactory
     public fun interface Factory {
         public fun create(param: SeasonDetailsUiParam): SeasonDetailsPresenter
+    }
+
+    private companion object {
+        private val INDICATOR_FLOOR: Duration = 150.milliseconds
     }
 }

@@ -38,6 +38,8 @@ import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toPersistentSet
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -46,6 +48,9 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.TimeSource
 
 @NavDestination(
     route = WatchlistRoot::class,
@@ -171,21 +176,36 @@ public class WatchlistPresenter(
     }
 
     private fun markEpisodeWatched(action: MarkUpNextEpisodeWatched) {
+        if (action.episodeId in _state.value.updatingEpisodeIds) return
+        _state.update { it.copy(updatingEpisodeIds = (it.updatingEpisodeIds + action.episodeId).toPersistentSet()) }
         coroutineScope.launch {
-            markEpisodeWatchedInteractor(
-                MarkEpisodeWatchedParams(
-                    showTraktId = action.showTraktId,
-                    episodeId = action.episodeId,
-                    seasonNumber = action.seasonNumber,
-                    episodeNumber = action.episodeNumber,
-                ),
-            ).collectStatus(
-                upNextActionLoadingState,
-                logger,
-                uiMessageManager,
-                errorToStringMapper = errorToStringMapper,
-            )
+            val marker = TimeSource.Monotonic.markNow()
+            try {
+                markEpisodeWatchedInteractor(
+                    MarkEpisodeWatchedParams(
+                        showTraktId = action.showTraktId,
+                        episodeId = action.episodeId,
+                        seasonNumber = action.seasonNumber,
+                        episodeNumber = action.episodeNumber,
+                    ),
+                ).collectStatus(
+                    upNextActionLoadingState,
+                    logger,
+                    uiMessageManager,
+                    errorToStringMapper = errorToStringMapper,
+                )
+            } finally {
+                val elapsed = marker.elapsedNow()
+                if (elapsed < INDICATOR_FLOOR) {
+                    delay(INDICATOR_FLOOR - elapsed)
+                }
+                _state.update { it.copy(updatingEpisodeIds = (it.updatingEpisodeIds - action.episodeId).toPersistentSet()) }
+            }
         }
+    }
+
+    private companion object {
+        private val INDICATOR_FLOOR: Duration = 150.milliseconds
     }
 
     private fun unfollowShow(showTraktId: Long) {
