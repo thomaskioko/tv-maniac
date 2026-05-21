@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.flowOf
 
 @Inject
 public class ObserveFeatureFlagRowsInteractor(
-    private val flags: Set<FeatureFlag>,
+    private val flags: Set<FeatureFlag<Boolean>>,
 ) : SubjectInteractor<ObserveFeatureFlagRowsInteractor.Param, ObserveFeatureFlagRowsInteractor.Result>() {
 
     override fun createObservable(params: Param): Flow<Result> {
@@ -25,15 +25,15 @@ public class ObserveFeatureFlagRowsInteractor(
         }
     }
 
-    private fun rowFor(flag: FeatureFlag): Flow<FeatureFlagRow> = combine(
+    private fun rowFor(flag: FeatureFlag<Boolean>): Flow<FeatureFlagRow> = combine(
         flag.observe(),
         flag.observeSource(),
     ) { value, source ->
         FeatureFlagRow(featureFlag = flag, value = value, featureFlagSource = source)
     }
 
-    private fun comparator(sort: FeatureFlagSortDescriptor, ascending: Boolean): Comparator<FeatureFlag> {
-        val base: Comparator<FeatureFlag> = when (sort) {
+    private fun comparator(sort: FeatureFlagSortDescriptor, ascending: Boolean): Comparator<FeatureFlag<Boolean>> {
+        val base: Comparator<FeatureFlag<Boolean>> = when (sort) {
             FeatureFlagSortDescriptor.Title -> compareBy { it.title }
             FeatureFlagSortDescriptor.Key -> compareBy { it.key }
             FeatureFlagSortDescriptor.Date -> compareBy { it.dateAdded }
@@ -41,7 +41,7 @@ public class ObserveFeatureFlagRowsInteractor(
         return if (ascending) base else base.reversed()
     }
 
-    private fun FeatureFlag.matches(query: String): Boolean =
+    private fun FeatureFlag<Boolean>.matches(query: String): Boolean =
         query.isBlank() ||
             title.contains(query, ignoreCase = true) ||
             key.contains(query, ignoreCase = true) ||

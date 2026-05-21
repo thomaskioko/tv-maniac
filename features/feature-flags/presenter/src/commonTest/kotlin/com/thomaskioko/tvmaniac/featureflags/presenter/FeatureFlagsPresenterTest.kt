@@ -6,9 +6,8 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
 import com.thomaskioko.tvmaniac.domain.featureflags.ObserveFeatureFlagRowsInteractor
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
-import com.thomaskioko.tvmaniac.featureflags.flags.ContinueWatchingNitroFlag
-import com.thomaskioko.tvmaniac.featureflags.flags.SimklLoginFlag
 import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlagSortDescriptor
+import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlag
 import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlagLocalStore
 import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlagsRemoteConfig
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
@@ -34,9 +33,9 @@ internal class FeatureFlagsPresenterTest {
     private val dateTimeProvider = FakeDateTimeProvider()
     private val localizer = FakeLocalizer()
 
-    private val nitroFlag = ContinueWatchingNitroFlag(remote = remoteConfig)
-    private val simklFlag = SimklLoginFlag(remote = remoteConfig)
-    private val flags: Set<FeatureFlag> = setOf(nitroFlag, simklFlag)
+    private val nitroFlag = FakeFeatureFlag(initial = false, key = "enable_continue_watching_nitro")
+    private val simklFlag = FakeFeatureFlag(initial = false, key = "simkl_login_enabled", title = "Simkl Login")
+    private val flags: Set<FeatureFlag<Boolean>> = setOf(nitroFlag, simklFlag)
 
     private val observeRows = ObserveFeatureFlagRowsInteractor(flags = flags)
 

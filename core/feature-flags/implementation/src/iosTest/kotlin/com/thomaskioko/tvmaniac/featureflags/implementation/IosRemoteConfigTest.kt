@@ -15,7 +15,7 @@ import kotlin.test.Test
 class IosRemoteConfigTest {
 
     private val flagKey = "simkl_login_enabled"
-    private val flag: FeatureFlag = TestRemoteFlag(flagKey)
+    private val flag: FeatureFlag<Boolean> = TestRemoteFlag(flagKey)
 
     @Test
     fun `should apply minimum fetch interval given setup`() = runTest {

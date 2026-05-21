@@ -11,20 +11,10 @@ import kotlinx.datetime.LocalDate
  * `DebugRemoteConfig` decorator in the implementation module; this class itself stays free of
  * `DebugConfig` and `FeatureFlagLocalStore` dependencies.
  *
- * Concrete subclasses declare metadata once and inject the shared [FeatureFlagsRemoteConfig]:
- *
- * ```kotlin
- * @SingleIn(AppScope::class)
- * @ContributesIntoSet(AppScope::class, binding = binding<FeatureFlag>())
- * class SimklLoginFlag(remote: FeatureFlagsRemoteConfig) : RemoteFlag(
- *   key = "simkl_login_enabled",
- *   title = "Simkl Login",
- *   description = "Show the Simkl login entry point on the settings screen.",
- *   dateAdded = LocalDate(2026, 5, 17),
- *   defaultValue = false,
- *   remote = remote,
- * )
- * ```
+ * Instances are produced by [FeatureFlagFactory.boolean], invoked from `@Provides` functions in
+ * the implementation module's `FlagBindings` interface. Authors should not subclass [RemoteFlag]
+ * directly in feature code; declare a qualifier annotation under `flags/` and add a binding pair
+ * to `FlagBindings` instead.
  *
  * @param key Firebase Remote Config key.
  * @param title Human-readable name shown on the debug screen row.
@@ -40,7 +30,7 @@ public abstract class RemoteFlag(
     override val dateAdded: LocalDate,
     public val defaultValue: Boolean,
     private val remote: FeatureFlagsRemoteConfig,
-) : FeatureFlag {
+) : FeatureFlag<Boolean> {
 
     override fun observe(): Flow<Boolean> = remote.observeBoolean(key, defaultValue)
 

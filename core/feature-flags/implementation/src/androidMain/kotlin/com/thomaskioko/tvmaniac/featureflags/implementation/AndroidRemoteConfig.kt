@@ -30,7 +30,7 @@ public class AndroidRemoteConfig(
     private val remoteConfig: FirebaseRemoteConfig?,
     private val settings: FirebaseRemoteConfigSettings,
     private val state: RemoteConfigState,
-    private val flags: Lazy<Set<FeatureFlag>>,
+    private val flags: Lazy<Set<FeatureFlag<Boolean>>>,
     private val logger: Logger,
     @IoCoroutineScope private val scope: CoroutineScope,
 ) : FeatureFlagsRemoteConfig {

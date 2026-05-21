@@ -2,11 +2,9 @@ package com.thomaskioko.tvmaniac.domain.featureflags
 
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
-import com.thomaskioko.tvmaniac.featureflags.flags.ContinueWatchingNitroFlag
-import com.thomaskioko.tvmaniac.featureflags.flags.SimklLoginFlag
 import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlagSortDescriptor
 import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlagSource
-import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlagsRemoteConfig
+import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlag
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
@@ -22,10 +20,9 @@ import kotlin.test.Test
 internal class ObserveFeatureFlagRowsInteractorTest {
 
     private val testDispatcher = StandardTestDispatcher()
-    private val remoteConfig = FakeFeatureFlagsRemoteConfig()
-    private val nitroFlag = ContinueWatchingNitroFlag(remote = remoteConfig)
-    private val simklFlag = SimklLoginFlag(remote = remoteConfig)
-    private val flags: Set<FeatureFlag> = setOf(nitroFlag, simklFlag)
+    private val nitroFlag = FakeFeatureFlag(initial = false, key = "enable_continue_watching_nitro")
+    private val simklFlag = FakeFeatureFlag(initial = false, key = "simkl_login_enabled", title = "Simkl Login")
+    private val flags: Set<FeatureFlag<Boolean>> = setOf(nitroFlag, simklFlag)
 
     private lateinit var interactor: ObserveFeatureFlagRowsInteractor
 
@@ -116,9 +113,9 @@ internal class ObserveFeatureFlagRowsInteractorTest {
     }
 
     @Test
-    fun `should emit row with Local source when remote config reports Local`() = runTest {
+    fun `should emit row with Local source when flag source is Local`() = runTest {
         interactor(ObserveFeatureFlagRowsInteractor.Param())
-        remoteConfig.setSource(simklFlag.key, FeatureFlagSource.Local)
+        simklFlag.setSource(FeatureFlagSource.Local)
 
         interactor.flow.test {
             val result = awaitItem()
