@@ -40,9 +40,12 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
             .assertCastListDisplayed()
             .assertTrailersListDisplayed()
             .assertSimilarShowsListDisplayed()
-            // Verify login prompt for logged-out users when adding to list
+            // Verify login-required content inside the sheet for logged-out users
             .clickAddToListButton()
-            .assertLoginPromptDisplayed()
+
+        showListRobot
+            .assertSheetDisplayed()
+            .assertLoginRequiredDisplayed()
     }
 
     @Test
@@ -61,7 +64,9 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
         showDetailsRobot
             .assertShowDetailsDisplayed()
             .clickAddToListButton()
-            .assertListSheetDisplayed()
+
+        showListRobot
+            .assertSheetDisplayed()
             .assertTraktListItemDisplayed(favoritesListTraktId)
     }
 }

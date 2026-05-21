@@ -75,18 +75,6 @@ internal class ShowDetailsRobot(composeUi: ComposeUiTest) : BaseRobot<ShowDetail
         click(tag)
     }
 
-    fun assertLoginPromptDisplayed() = apply {
-        assertExists(ShowDetailsTestTags.LOGIN_REQUIRED_DIALOG_CONFIRM_BUTTON_TEST_TAG)
-    }
-
-    fun assertLoginPromptDoesNotExist() = apply {
-        assertDoesNotExist(ShowDetailsTestTags.LOGIN_REQUIRED_DIALOG_CONFIRM_BUTTON_TEST_TAG)
-    }
-
-    fun confirmLoginPrompt() = apply {
-        click(ShowDetailsTestTags.LOGIN_REQUIRED_DIALOG_CONFIRM_BUTTON_TEST_TAG)
-    }
-
     fun clickSeasonChip(seasonNumber: Long): SeasonDetailsRobot {
         val tag = ShowDetailsTestTags.seasonChip(seasonNumber)
         scrollDownUntilTag(
@@ -149,57 +137,5 @@ internal class ShowDetailsRobot(composeUi: ComposeUiTest) : BaseRobot<ShowDetail
             itemTag = ShowDetailsTestTags.CONTINUE_TRACKING_SECTION_TEST_TAG,
         )
         assertDisplayed(ShowDetailsTestTags.CONTINUE_TRACKING_SECTION_TEST_TAG)
-    }
-
-    fun assertListSheetDisplayed() = apply {
-        assertDisplayed(ShowDetailsTestTags.LIST_SHEET_TEST_TAG)
-    }
-
-    fun assertListSheetDoesNotExist() = apply {
-        assertDoesNotExist(ShowDetailsTestTags.LIST_SHEET_TEST_TAG)
-    }
-
-    fun assertTraktListItemDisplayed(listId: Long) = apply {
-        assertExists(ShowDetailsTestTags.traktListItem(listId))
-    }
-
-    fun clickCloseListSheetButton() = apply {
-        click(ShowDetailsTestTags.LIST_SHEET_CLOSE_BUTTON_TEST_TAG)
-    }
-
-    fun clickCreateListButton() = apply {
-        click(ShowDetailsTestTags.LIST_SHEET_CREATE_LIST_BUTTON_TEST_TAG)
-    }
-
-    fun assertCreateListFieldDisplayed() = apply {
-        assertExists(ShowDetailsTestTags.LIST_SHEET_CREATE_LIST_INPUT_TEST_TAG)
-    }
-
-    fun assertCreateListFieldDoesNotExist() = apply {
-        assertDoesNotExist(ShowDetailsTestTags.LIST_SHEET_CREATE_LIST_INPUT_TEST_TAG)
-    }
-
-    fun typeCreateListName(name: String) = apply {
-        inputText(ShowDetailsTestTags.LIST_SHEET_CREATE_LIST_INPUT_TEST_TAG, name)
-    }
-
-    fun clickCreateListSubmit() = apply {
-        click(ShowDetailsTestTags.LIST_SHEET_CREATE_LIST_SUBMIT_TEST_TAG)
-    }
-
-    fun clickListSwitch(listId: Long) = apply {
-        click(ShowDetailsTestTags.traktListItemSwitch(listId))
-    }
-
-    fun assertListSwitchIsChecked(listId: Long) = apply {
-        assertChecked(ShowDetailsTestTags.traktListItemSwitch(listId))
-    }
-
-    fun assertListSwitchIsUnchecked(listId: Long) = apply {
-        assertUnchecked(ShowDetailsTestTags.traktListItemSwitch(listId))
-    }
-
-    fun assertTraktListShowCountText(listId: Long, expectedText: String) = apply {
-        assertNodeHasText(ShowDetailsTestTags.traktListItemShowCount(listId), expectedText)
     }
 }

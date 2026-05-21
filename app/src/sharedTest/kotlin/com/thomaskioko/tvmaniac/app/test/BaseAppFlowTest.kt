@@ -24,6 +24,7 @@ import com.thomaskioko.tvmaniac.app.test.compose.robot.SearchRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.SeasonDetailsRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.SettingsRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.ShowDetailsRobot
+import com.thomaskioko.tvmaniac.app.test.compose.robot.ShowListRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.WatchlistRobot
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.Scenarios
 import com.thomaskioko.tvmaniac.testing.integration.MockEngineHandler
@@ -124,6 +125,7 @@ internal class AppFlowScope(
     val calendarRobot: CalendarRobot by lazy { CalendarRobot(composeUi) }
     val discoverRobot: DiscoverRobot by lazy { DiscoverRobot(composeUi) }
     val showDetailsRobot: ShowDetailsRobot by lazy { ShowDetailsRobot(composeUi) }
+    val showListRobot: ShowListRobot by lazy { ShowListRobot(composeUi) }
     val seasonDetailsRobot: SeasonDetailsRobot by lazy { SeasonDetailsRobot(composeUi) }
     val progressRobot: ProgressRobot by lazy { ProgressRobot(composeUi) }
     val profileRobot: ProfileRobot by lazy { ProfileRobot(composeUi) }

@@ -181,13 +181,19 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
             .assertShowCardDisplayed(breakingBadTraktId)
             .clickShowCard(breakingBadTraktId)
             .assertStopTrackingButtonDisplayed()
-            // Raise login prompt and confirm login
+            // Raise login-required content inside the sheet and confirm login
             .also { scenarios.stubProfileOnSignIn() }
             .clickAddToListButton()
-            .assertLoginPromptDisplayed()
-            .confirmLoginPrompt()
-            .assertLoginPromptDoesNotExist()
-            .pressBack()
+
+        showListRobot
+            .assertSheetDisplayed()
+            .assertLoginRequiredDisplayed()
+            .confirmLogin()
+            .assertLoginRequiredDoesNotExist()
+            .clickCloseSheetButton()
+            .assertSheetDoesNotExist()
+
+        showDetailsRobot.pressBack()
 
         homeRobot
             .clickProfileTab()
