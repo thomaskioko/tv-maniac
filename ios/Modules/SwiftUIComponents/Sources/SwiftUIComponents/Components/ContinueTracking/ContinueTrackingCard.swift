@@ -58,7 +58,7 @@ public struct ContinueTrackingCard: View {
                             if isUpdating {
                                 ProgressView()
                                     .progressViewStyle(.circular)
-                                    .tint(.white)
+                                    .tint(theme.colors.onPrimary)
                             } else {
                                 Image(systemName: "checkmark")
                                     .font(theme.typography.titleSmall)
