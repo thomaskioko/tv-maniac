@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.presenter.showdetails.model
+package com.thomaskioko.tvmaniac.presentation.showlist.model
 
 public data class TraktListModel(
     val id: Long,

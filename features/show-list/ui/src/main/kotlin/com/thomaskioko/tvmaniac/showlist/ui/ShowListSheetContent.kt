@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.showdetails.ui.components
+package com.thomaskioko.tvmaniac.showlist.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
@@ -23,62 +23,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.FilledTextButton
-import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSwitch
-import com.thomaskioko.tvmaniac.presenter.showdetails.CreateListSubmitted
-import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsAction
-import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsContent
-import com.thomaskioko.tvmaniac.presenter.showdetails.ToggleShowInList
-import com.thomaskioko.tvmaniac.presenter.showdetails.UpdateCreateListName
-import com.thomaskioko.tvmaniac.showdetails.ui.showDetailsWithCreateFieldExpanded
-import com.thomaskioko.tvmaniac.showdetails.ui.showDetailsWithCreateListLoading
-import com.thomaskioko.tvmaniac.showdetails.ui.showDetailsWithEmptyTraktLists
-import com.thomaskioko.tvmaniac.showdetails.ui.showDetailsWithTraktLists
-import com.thomaskioko.tvmaniac.testtags.showdetails.ShowDetailsTestTags
+import com.thomaskioko.tvmaniac.presentation.showlist.ShowListAction
+import com.thomaskioko.tvmaniac.presentation.showlist.ShowListState
+import com.thomaskioko.tvmaniac.testtags.showlist.ShowListTestTags
 
-// TODO:: Move this to a feature module user-show-list
 @Composable
 internal fun ShowListSheetContent(
-    state: ShowDetailsContent,
-    onAction: (ShowDetailsAction) -> Unit,
+    state: ShowListState,
+    onAction: (ShowListAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .testTag(ShowDetailsTestTags.LIST_SHEET_TEST_TAG)
+            .testTag(ShowListTestTags.SHEET_TEST_TAG)
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        if (!state.isLoggedIn) {
+            LoginRequiredContent(state, onAction)
+            return@Column
+        }
+
         Spacer(modifier = Modifier.height(8.dp))
-
-        val title = state.showDetails.title
-
-        PosterCard(
-            imageUrl = state.showDetails.posterImageUrl,
-            title = title,
-            imageWidth = 150.dp,
-            shape = MaterialTheme.shapes.medium,
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium.copy(
-                color = MaterialTheme.colorScheme.onSurface,
-            ),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
 
         Text(
             text = state.listsHeaderText,
@@ -105,14 +78,14 @@ internal fun ShowListSheetContent(
 
 @Composable
 private fun TraktListItems(
-    state: ShowDetailsContent,
-    onAction: (ShowDetailsAction) -> Unit,
+    state: ShowListState,
+    onAction: (ShowListAction) -> Unit,
 ) {
     state.traktLists.forEach { list ->
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .testTag(ShowDetailsTestTags.traktListItem(list.id))
+                .testTag(ShowListTestTags.traktListItem(list.id))
                 .padding(vertical = 4.dp),
             shape = MaterialTheme.shapes.medium,
             colors = CardDefaults.cardColors(
@@ -136,7 +109,7 @@ private fun TraktListItems(
                     )
                     Text(
                         text = list.showCountText,
-                        modifier = Modifier.testTag(ShowDetailsTestTags.traktListItemShowCount(list.id)),
+                        modifier = Modifier.testTag(ShowListTestTags.traktListItemShowCount(list.id)),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -145,9 +118,14 @@ private fun TraktListItems(
                 TvManiacSwitch(
                     checked = list.isShowInList,
                     onCheckedChange = {
-                        onAction(ToggleShowInList(listId = list.id, isCurrentlyInList = list.isShowInList))
+                        onAction(
+                            ShowListAction.ToggleShowInList(
+                                listId = list.id,
+                                isCurrentlyInList = list.isShowInList,
+                            ),
+                        )
                     },
-                    modifier = Modifier.testTag(ShowDetailsTestTags.traktListItemSwitch(list.id)),
+                    modifier = Modifier.testTag(ShowListTestTags.traktListItemSwitch(list.id)),
                 )
             }
         }
@@ -155,9 +133,7 @@ private fun TraktListItems(
 }
 
 @Composable
-private fun EmptyListContent(
-    state: ShowDetailsContent,
-) {
+private fun EmptyListContent(state: ShowListState) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -174,8 +150,8 @@ private fun EmptyListContent(
 
 @Composable
 private fun CreateListInlineField(
-    state: ShowDetailsContent,
-    onAction: (ShowDetailsAction) -> Unit,
+    state: ShowListState,
+    onAction: (ShowListAction) -> Unit,
 ) {
     AnimatedVisibility(visible = state.showCreateListField) {
         Row(
@@ -185,10 +161,14 @@ private fun CreateListInlineField(
         ) {
             OutlinedTextField(
                 value = state.createListName,
-                onValueChange = { if (it.length <= 50) onAction(UpdateCreateListName(it)) },
+                onValueChange = {
+                    if (it.length <= MAX_LIST_NAME_LENGTH) {
+                        onAction(ShowListAction.UpdateCreateListName(it))
+                    }
+                },
                 modifier = Modifier
                     .weight(1f)
-                    .testTag(ShowDetailsTestTags.LIST_SHEET_CREATE_LIST_INPUT_TEST_TAG),
+                    .testTag(ShowListTestTags.CREATE_LIST_INPUT_TEST_TAG),
                 placeholder = {
                     Text(
                         text = state.createListPlaceholder,
@@ -214,14 +194,14 @@ private fun CreateListInlineField(
                 CircularProgressIndicator(
                     modifier = Modifier
                         .size(24.dp)
-                        .testTag(ShowDetailsTestTags.LIST_SHEET_CREATE_LIST_PROGRESS_TEST_TAG),
+                        .testTag(ShowListTestTags.CREATE_LIST_PROGRESS_TEST_TAG),
                     strokeWidth = 2.dp,
                     color = MaterialTheme.colorScheme.secondary,
                 )
             } else {
                 FilledTextButton(
-                    onClick = { onAction(CreateListSubmitted) },
-                    modifier = Modifier.testTag(ShowDetailsTestTags.LIST_SHEET_CREATE_LIST_SUBMIT_TEST_TAG),
+                    onClick = { onAction(ShowListAction.CreateListSubmitted) },
+                    modifier = Modifier.testTag(ShowListTestTags.CREATE_LIST_SUBMIT_TEST_TAG),
                     enabled = state.createListName.isNotBlank(),
                     buttonColors = ButtonDefaults.textButtonColors(
                         containerColor = MaterialTheme.colorScheme.secondary,
@@ -236,24 +216,60 @@ private fun CreateListInlineField(
     }
 }
 
+@Composable
+private fun LoginRequiredContent(
+    state: ShowListState,
+    onAction: (ShowListAction) -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 24.dp, horizontal = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = state.loginRequiredTitle,
+            style = MaterialTheme.typography.titleMedium.copy(
+                color = MaterialTheme.colorScheme.onSurface,
+            ),
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = state.loginRequiredMessage,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        FilledTextButton(
+            onClick = { onAction(ShowListAction.Login) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag(ShowListTestTags.LOGIN_REQUIRED_CONFIRM_BUTTON_TEST_TAG),
+            buttonColors = ButtonDefaults.textButtonColors(
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.onSecondary,
+            ),
+            shape = MaterialTheme.shapes.medium,
+        ) {
+            Text(state.loginRequiredConfirmText)
+        }
+    }
+}
+
+private const val MAX_LIST_NAME_LENGTH = 50
+
 @ThemePreviews
 @PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun ShowListSheetContentPreview(
-    @PreviewParameter(ShowListSheetPreviewParameterProvider::class) state: ShowDetailsContent,
+    @PreviewParameter(ShowListPreviewParameterProvider::class) state: ShowListState,
 ) {
     ShowListSheetContent(
         state = state,
         onAction = {},
     )
-}
-
-private class ShowListSheetPreviewParameterProvider : PreviewParameterProvider<ShowDetailsContent> {
-    override val values: Sequence<ShowDetailsContent>
-        get() = sequenceOf(
-            showDetailsWithTraktLists,
-            showDetailsWithEmptyTraktLists,
-            showDetailsWithCreateFieldExpanded,
-            showDetailsWithCreateListLoading,
-        )
 }
