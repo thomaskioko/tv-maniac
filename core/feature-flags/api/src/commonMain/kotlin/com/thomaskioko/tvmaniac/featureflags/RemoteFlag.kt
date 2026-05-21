@@ -13,14 +13,14 @@ import kotlinx.datetime.LocalDate
  *
  * Concrete subclasses declare metadata once and inject the shared [FeatureFlagsRemoteConfig]:
  *
- * ```
- * @Inject @SingleIn(AppScope::class)
+ * ```kotlin
+ * @SingleIn(AppScope::class)
  * @ContributesIntoSet(AppScope::class, binding = binding<FeatureFlag>())
- * class MyFlag(remote: FeatureFlagsRemoteConfig) : RemoteFlag(
- *   key = "my_flag_enabled",
- *   title = "My Flag",
- *   description = "One-line summary shown on the debug screen.",
- *   dateAdded = LocalDate(2026, 5, 21),
+ * class SimklLoginFlag(remote: FeatureFlagsRemoteConfig) : RemoteFlag(
+ *   key = "simkl_login_enabled",
+ *   title = "Simkl Login",
+ *   description = "Show the Simkl login entry point on the settings screen.",
+ *   dateAdded = LocalDate(2026, 5, 17),
  *   defaultValue = false,
  *   remote = remote,
  * )

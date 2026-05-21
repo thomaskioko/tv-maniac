@@ -26,13 +26,13 @@ public sealed interface FeatureFlag {
 
     /**
      * Observes the flag's current value. Emits updates from the Firebase realtime listener and,
-     *  in debug builds, from local overrides.
-     *  */
+     * in debug builds, from local overrides.
+     */
     public fun observe(): Flow<Boolean>
 
     /**
      * Observes the source of the current value. Emits [FeatureFlagSource.Local] when a debug
-     *  override is active, otherwise [FeatureFlagSource.Firebase].
-     *  */
+     * override is active, otherwise [FeatureFlagSource.Firebase].
+     */
     public fun observeSource(): Flow<FeatureFlagSource>
 }

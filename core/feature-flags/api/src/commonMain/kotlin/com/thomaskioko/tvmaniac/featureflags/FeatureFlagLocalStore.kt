@@ -13,12 +13,16 @@ import kotlin.reflect.KClass
  */
 public interface FeatureFlagLocalStore {
 
-    /** Observes the local override for [key]. Emits null until [set] is called for the same [key]
-     *  and a value matching [type] has been written. */
+    /**
+     * Observes the local override for [key]. Emits null until [set] is called for the same [key]
+     * and a value matching [type] has been written.
+     */
     public fun <T : Any> observe(key: String, type: KClass<T>): Flow<T?>
 
-    /** Observes the full set of stored override entries. Used by the debug screen to show which
-     *  flags currently carry a local override. */
+    /**
+     * Observes the full set of stored override entries. Used by the debug screen to show which
+     * flags currently carry a local override.
+     */
     public fun observeAll(): Flow<Map<String, Any>>
 
     /** Writes a local override for [key]. Persists across process restarts. */
