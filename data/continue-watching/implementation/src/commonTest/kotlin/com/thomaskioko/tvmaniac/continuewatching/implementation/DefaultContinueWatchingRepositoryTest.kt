@@ -53,16 +53,6 @@ internal class DefaultContinueWatchingRepositoryTest {
         val transactionRunner = object : DatabaseTransactionRunner {
             override fun <T> invoke(block: () -> T): T = block()
         }
-        val progressFetcher = ProgressContinueWatchingFetcher(
-            traktSyncDataSource = syncDataSource,
-            traktUserDataSource = userDataSource,
-            traktActivityRepository = activityRepository,
-            continueWatchingDao = continueWatchingDao,
-            tvShowsDao = tvShowsDao,
-            transactionRunner = transactionRunner,
-            datastoreRepository = FakeDatastoreRepository(),
-            logger = FakeLogger(),
-        )
         val nitroFetcher = NitroContinueWatchingFetcher(
             traktSyncDataSource = syncDataSource,
             traktUserDataSource = userDataSource,
@@ -71,8 +61,20 @@ internal class DefaultContinueWatchingRepositoryTest {
             logger = FakeLogger(),
         )
         val store = ContinueWatchingStore(
-            progressFetcher = progressFetcher,
             nitroFetcher = nitroFetcher,
+            traktSyncDataSource = syncDataSource,
+            continueWatchingDao = continueWatchingDao,
+            tvShowsDao = tvShowsDao,
+            requestManagerRepository = requestManager,
+            traktActivityRepository = activityRepository,
+            datastoreRepository = FakeDatastoreRepository(),
+            transactionRunner = transactionRunner,
+            dispatchers = dispatchers,
+            logger = FakeLogger(),
+        )
+        val discoveryStore = ContinueWatchingDiscoveryStore(
+            traktSyncDataSource = syncDataSource,
+            traktUserDataSource = userDataSource,
             continueWatchingDao = continueWatchingDao,
             tvShowsDao = tvShowsDao,
             requestManagerRepository = requestManager,
@@ -82,6 +84,7 @@ internal class DefaultContinueWatchingRepositoryTest {
         )
         repository = DefaultContinueWatchingRepository(
             continueWatchingStore = store,
+            discoveryStore = discoveryStore,
         )
     }
 

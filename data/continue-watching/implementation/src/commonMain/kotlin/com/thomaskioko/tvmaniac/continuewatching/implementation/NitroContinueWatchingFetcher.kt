@@ -10,17 +10,13 @@ import com.thomaskioko.tvmaniac.trakt.api.TraktUserRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUpNextNitroResponse
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import dev.zacsweers.metro.AppScope
-import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
-import dev.zacsweers.metro.binding
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlin.time.Instant
 
-@ContributesBinding(
-    scope = AppScope::class,
-    binding = binding<@Nitro ContinueWatchingFetcher>(),
-)
+@Inject
 @SingleIn(AppScope::class)
 public class NitroContinueWatchingFetcher(
     private val traktSyncDataSource: TraktSyncRemoteDataSource,
@@ -28,9 +24,9 @@ public class NitroContinueWatchingFetcher(
     private val traktActivityRepository: TraktActivityRepository,
     private val dateTimeProvider: DateTimeProvider,
     private val logger: Logger,
-) : ContinueWatchingFetcher {
+) {
 
-    public override suspend fun run(forceRefresh: Boolean): List<ContinueWatchingEntry>? = coroutineScope {
+    public suspend fun run(forceRefresh: Boolean): List<ContinueWatchingEntry>? = coroutineScope {
         val instant = traktActivityRepository.getEpisodesWatchedSyncTimeStamp()
         val nitroDeferred = async { traktSyncDataSource.getUpNextNitro() }
         val hiddenDeferred = async { traktUserDataSource.getHiddenProgressWatched() }
@@ -55,9 +51,8 @@ public class NitroContinueWatchingFetcher(
 
         nitro
             .filter { it.show.ids.trakt !in hiddenIds }
-            // Load-bearing filter. Same rationale as ProgressContinueWatchingFetcher: Nitro can
-            // return null next_episode for reset shows and other edge cases where the row should
-            // not surface in the watchlist.
+            // Load-bearing filter. Nitro can return null next_episode for reset shows
+            // and other edge cases where the row should not surface in the watchlist.
             .filter { it.progress.nextEpisode != null }
             .map { it.toEntry() }
     }

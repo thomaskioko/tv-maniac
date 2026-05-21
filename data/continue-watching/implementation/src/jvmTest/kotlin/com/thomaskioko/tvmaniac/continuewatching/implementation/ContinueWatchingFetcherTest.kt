@@ -2,10 +2,12 @@ package com.thomaskioko.tvmaniac.continuewatching.implementation
 
 import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingDao
+import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
+import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.shows.testing.FakeTvShowsDao
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.trakt.api.model.EpisodeIds
@@ -46,28 +48,27 @@ internal class ContinueWatchingFetcherTest {
     private val activityRepository = FakeTraktActivityRepository()
     private val continueWatchingDao = FakeContinueWatchingDao()
     private val tvShowsDao = FakeTvShowsDao()
+    private val requestManager = FakeRequestManagerRepository()
     private val transactionRunner = object : DatabaseTransactionRunner {
         override fun <T> invoke(block: () -> T): T = block()
     }
+    private val dispatchers = AppCoroutineDispatchers(
+        main = testDispatcher,
+        io = testDispatcher,
+        computation = testDispatcher,
+        databaseWrite = testDispatcher,
+        databaseRead = testDispatcher,
+    )
     private val dateTimeProvider = FakeDateTimeProvider(currentTime = NOW)
     private val logger = FakeLogger()
 
-    private lateinit var progressFetcher: ProgressContinueWatchingFetcher
     private lateinit var nitroFetcher: NitroContinueWatchingFetcher
+    private lateinit var discoveryStore: ContinueWatchingDiscoveryStore
+    private lateinit var store: ContinueWatchingStore
 
     @BeforeTest
     fun setUp() {
         seedBaselineFixtures()
-        progressFetcher = ProgressContinueWatchingFetcher(
-            traktSyncDataSource = syncDataSource,
-            traktUserDataSource = userDataSource,
-            traktActivityRepository = activityRepository,
-            continueWatchingDao = continueWatchingDao,
-            tvShowsDao = tvShowsDao,
-            transactionRunner = transactionRunner,
-            datastoreRepository = FakeDatastoreRepository(),
-            logger = logger,
-        )
         nitroFetcher = NitroContinueWatchingFetcher(
             traktSyncDataSource = syncDataSource,
             traktUserDataSource = userDataSource,
@@ -75,43 +76,66 @@ internal class ContinueWatchingFetcherTest {
             dateTimeProvider = dateTimeProvider,
             logger = logger,
         )
+        discoveryStore = ContinueWatchingDiscoveryStore(
+            traktSyncDataSource = syncDataSource,
+            traktUserDataSource = userDataSource,
+            continueWatchingDao = continueWatchingDao,
+            tvShowsDao = tvShowsDao,
+            requestManagerRepository = requestManager,
+            traktActivityRepository = activityRepository,
+            transactionRunner = transactionRunner,
+            dispatchers = dispatchers,
+        )
+        store = ContinueWatchingStore(
+            nitroFetcher = nitroFetcher,
+            traktSyncDataSource = syncDataSource,
+            continueWatchingDao = continueWatchingDao,
+            tvShowsDao = tvShowsDao,
+            requestManagerRepository = requestManager,
+            traktActivityRepository = activityRepository,
+            datastoreRepository = FakeDatastoreRepository(),
+            transactionRunner = transactionRunner,
+            dispatchers = dispatchers,
+            logger = logger,
+        )
     }
 
     @Test
-    fun `should produce identical entry sets from both fetchers given the same logical state`() =
-        runTest(testDispatcher) {
-            val progressResult = progressFetcher.run(forceRefresh = false).shouldNotBeNull()
-            val nitroResult = nitroFetcher.run(forceRefresh = false).shouldNotBeNull()
+    fun `should produce identical entry sets across progress and nitro paths`() = runTest(testDispatcher) {
+        val progressEntries = syncProgressAndReadDao(forceRefresh = false)
+        continueWatchingDao.deleteAll()
+        val nitroResult = nitroFetcher.run(forceRefresh = false).shouldNotBeNull()
 
-            val progressTuples = progressResult.map { it.parityTuple() }
-            val nitroTuples = nitroResult.map { it.parityTuple() }
-
-            progressTuples shouldContainExactlyInAnyOrder listOf(breakingBadTuple, theWireTuple)
-            nitroTuples shouldContainExactlyInAnyOrder progressTuples
-        }
+        progressEntries.map { it.parityTuple() } shouldContainExactlyInAnyOrder
+            listOf(breakingBadTuple, theWireTuple)
+        nitroResult.map { it.parityTuple() } shouldContainExactlyInAnyOrder
+            progressEntries.map { it.parityTuple() }
+    }
 
     @Test
     fun `should produce identical empty sets given no in-progress shows`() = runTest(testDispatcher) {
         syncDataSource.setPlaybackEpisodes(ApiResponse.Success(emptyList()))
         userDataSource.setHiddenProgressWatched(ApiResponse.Success(emptyList()))
         syncDataSource.setUpNextNitro(ApiResponse.Success(emptyList()))
+        syncDataSource.setWatchedShows(ApiResponse.Success(emptyList()))
         continueWatchingDao.deleteAll()
         // Stale cursor so Nitro's empty-response guard does not engage.
         activityRepository.setEpisodesWatchedSyncTimeStamp(NOW - 7.hours)
 
-        val progressResult = progressFetcher.run(forceRefresh = false).shouldNotBeNull()
+        val progressEntries = syncProgressAndReadDao(forceRefresh = false)
+        continueWatchingDao.deleteAll()
         val nitroResult = nitroFetcher.run(forceRefresh = false).shouldNotBeNull()
 
-        progressResult.shouldBeEmpty()
+        progressEntries.shouldBeEmpty()
         nitroResult.shouldBeEmpty()
     }
 
     @Test
-    fun `should filter hidden shows from both fetchers even when nitro fails to pre-filter`() =
+    fun `should filter hidden shows from both paths even when nitro fails to pre-filter`() =
         runTest(testDispatcher) {
             // Trakt sometimes returns hidden shows in the Nitro feed (server bug). The
             // client-side filter in NitroContinueWatchingFetcher must catch this, keeping
-            // parity with Progress's pre-filter that drops hidden shows before per-show fetch.
+            // parity with discovery's pre-filter that drops hidden shows before per-show fetch.
             val baselineNitro: List<TraktUpNextNitroResponse> =
                 json.decodeFromString(load("nitro_up_next.json"))
             val baselinePlayback: List<TraktPlaybackEpisodeResponse> =
@@ -123,11 +147,12 @@ internal class ContinueWatchingFetcherTest {
                 ApiResponse.Success(baselinePlayback + darkPlaybackResponse),
             )
 
-            val progressResult = progressFetcher.run(forceRefresh = false).shouldNotBeNull()
+            val progressEntries = syncProgressAndReadDao(forceRefresh = false)
+            continueWatchingDao.deleteAll()
             val nitroResult = nitroFetcher.run(forceRefresh = false).shouldNotBeNull()
 
             val expected = listOf(breakingBadTuple, theWireTuple)
-            progressResult.map { it.parityTuple() } shouldContainExactlyInAnyOrder expected
+            progressEntries.map { it.parityTuple() } shouldContainExactlyInAnyOrder expected
             nitroResult.map { it.parityTuple() } shouldContainExactlyInAnyOrder expected
         }
 
@@ -135,17 +160,18 @@ internal class ContinueWatchingFetcherTest {
     fun `should produce identical entry sets given forceRefresh is true`() = runTest(testDispatcher) {
         activityRepository.setEpisodesWatchedSyncTimeStamp(NOW - 1.hours)
 
-        val progressResult = progressFetcher.run(forceRefresh = true).shouldNotBeNull()
+        val progressEntries = syncProgressAndReadDao(forceRefresh = true)
+        continueWatchingDao.deleteAll()
         val nitroResult = nitroFetcher.run(forceRefresh = true).shouldNotBeNull()
 
-        progressResult.map { it.parityTuple() } shouldContainExactlyInAnyOrder
+        progressEntries.map { it.parityTuple() } shouldContainExactlyInAnyOrder
             listOf(breakingBadTuple, theWireTuple)
         nitroResult.map { it.parityTuple() } shouldContainExactlyInAnyOrder
-            progressResult.map { it.parityTuple() }
+            progressEntries.map { it.parityTuple() }
 
-        // Sanity check the internal behavior difference: Progress passes lastActivity=null
-        // when forceRefresh is true, Nitro skips the guard. Both still write through to the
-        // same mapped entries.
+        // Sanity check the internal behavior difference: the Progress fan-out passes
+        // lastActivity=null when forceRefresh is true; the Nitro fetcher skips the empty-
+        // response guard. Both still write through to the same mapped entries.
         syncDataSource.showWatchedProgressLastActivity(BREAKING_BAD_ID) shouldBe null
     }
 
@@ -154,7 +180,7 @@ internal class ContinueWatchingFetcherTest {
         runTest(testDispatcher) {
             // Captured 2026-05-20 from a live Trakt account. Pinned here so future Nitro
             // shape changes (new top-level fields, renamed progress fields, etc.) surface
-            // as a deserialization failure rather than silent data loss. See PRD Phase 0.
+            // as a deserialization failure rather than silent data loss.
             //
             // The real response carries extra fields beyond TraktUpNextNitroResponse
             // (top-level `show_id`, `cached_aired_episode_count`, `total_count`;
@@ -177,9 +203,9 @@ internal class ContinueWatchingFetcherTest {
         }
 
     @Test
-    fun `should filter reset show with null next episode from both fetchers`() = runTest(testDispatcher) {
+    fun `should filter reset show with null next episode from both paths`() = runTest(testDispatcher) {
         // A reset show appears in playback feed but Trakt's per-show progress returns
-        // null next_episode (reset_at populated). Both fetchers must drop the row;
+        // null next_episode (reset_at populated). Both paths must drop the row;
         // otherwise we persist an entry that has no episode to surface.
         val baselinePlayback: List<TraktPlaybackEpisodeResponse> =
             json.decodeFromString(load("playback_episodes.json"))
@@ -197,17 +223,26 @@ internal class ContinueWatchingFetcherTest {
             ApiResponse.Success(baselineNitro + resetShowNitro),
         )
 
-        val progressResult = progressFetcher.run(forceRefresh = false).shouldNotBeNull()
+        val progressEntries = syncProgressAndReadDao(forceRefresh = false)
+        continueWatchingDao.deleteAll()
         val nitroResult = nitroFetcher.run(forceRefresh = false).shouldNotBeNull()
 
         val expected = listOf(breakingBadTuple, theWireTuple)
-        progressResult.map { it.parityTuple() } shouldContainExactlyInAnyOrder expected
+        progressEntries.map { it.parityTuple() } shouldContainExactlyInAnyOrder expected
         nitroResult.map { it.parityTuple() } shouldContainExactlyInAnyOrder expected
 
-        // Sanity check: Progress made the per-show progress call (reset show was a
-        // candidate via playback), then dropped the row because nextEpisode was null.
+        // Sanity check: the Progress fan-out called per-show progress for the reset show
+        // (it was a candidate via playback), then dropped the row because nextEpisode was null.
         // If the filter regressed, RESET_SHOW_ID would appear in the result.
         syncDataSource.showWatchedProgressInvocations(RESET_SHOW_ID) shouldBe 1
+    }
+
+    private suspend fun syncProgressAndReadDao(forceRefresh: Boolean): List<ContinueWatchingEntry> {
+        requestManager.requestValid = false
+        discoveryStore.fetchWith(forceRefresh)
+        runCatching { store.fetchWith(ContinueWatchingKey.Progress, forceRefresh) }
+            .onFailure { error -> if (error !is FetcherSkipSignal) throw error }
+        return continueWatchingDao.entries()
     }
 
     private fun seedBaselineFixtures() {

@@ -53,22 +53,11 @@ internal class ContinueWatchingStoreTest {
     private val transactionRunner = ImmediateTransactionRunner()
     private val logger = FakeLogger()
 
-    private lateinit var progressFetcher: ProgressContinueWatchingFetcher
     private lateinit var nitroFetcher: NitroContinueWatchingFetcher
     private lateinit var store: ContinueWatchingStore
 
     @BeforeTest
     fun setUp() {
-        progressFetcher = ProgressContinueWatchingFetcher(
-            traktSyncDataSource = syncDataSource,
-            traktUserDataSource = userDataSource,
-            traktActivityRepository = activityRepository,
-            continueWatchingDao = continueWatchingDao,
-            tvShowsDao = tvShowsDao,
-            transactionRunner = transactionRunner,
-            datastoreRepository = FakeDatastoreRepository(),
-            logger = logger,
-        )
         nitroFetcher = NitroContinueWatchingFetcher(
             traktSyncDataSource = syncDataSource,
             traktUserDataSource = userDataSource,
@@ -77,20 +66,24 @@ internal class ContinueWatchingStoreTest {
             logger = logger,
         )
         store = ContinueWatchingStore(
-            progressFetcher = progressFetcher,
             nitroFetcher = nitroFetcher,
+            traktSyncDataSource = syncDataSource,
             continueWatchingDao = continueWatchingDao,
             tvShowsDao = tvShowsDao,
             requestManagerRepository = requestManager,
             traktActivityRepository = activityRepository,
+            datastoreRepository = FakeDatastoreRepository(),
             transactionRunner = transactionRunner,
             dispatchers = dispatchers,
+            logger = logger,
         )
     }
 
     @Test
     fun `should write progress fetcher result to dao given progress key`() = runTest(testDispatcher) {
-        syncDataSource.setPlaybackEpisodes(ApiResponse.Success(listOf(breakingBadPlayback)))
+        // Discovery normally seeds the placeholder before the detail store runs.
+        // This test exercises only the detail store, so the placeholder is seeded directly.
+        continueWatchingDao.upsertPlaceholder(BREAKING_BAD_ID, tmdbId = 1396, title = "Breaking Bad", year = null)
         syncDataSource.setShowWatchedProgress(BREAKING_BAD_ID, ApiResponse.Success(breakingBadProgress))
         requestManager.requestValid = false
 
@@ -102,7 +95,6 @@ internal class ContinueWatchingStoreTest {
         }
         requestManager.upsertCalled shouldBe true
         activityRepository.getSyncedActivities() shouldBe setOf(ActivityType.EPISODES_WATCHED)
-        syncDataSource.playbackEpisodesInvocations() shouldBe 1
         syncDataSource.upNextNitroInvocations() shouldBe 0
     }
 
