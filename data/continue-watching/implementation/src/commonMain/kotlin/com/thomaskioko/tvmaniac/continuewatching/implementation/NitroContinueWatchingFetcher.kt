@@ -26,7 +26,7 @@ public class NitroContinueWatchingFetcher(
     private val logger: Logger,
 ) {
 
-    public suspend fun run(): List<ContinueWatchingEntry>? = coroutineScope {
+    public suspend operator fun invoke(): List<ContinueWatchingEntry>? = coroutineScope {
         val instant = traktActivityRepository.getEpisodesWatchedSyncTimeStamp()
         val nitroDeferred = async { traktSyncDataSource.getUpNextNitro() }
         val hiddenDeferred = async { traktUserDataSource.getHiddenProgressWatched() }

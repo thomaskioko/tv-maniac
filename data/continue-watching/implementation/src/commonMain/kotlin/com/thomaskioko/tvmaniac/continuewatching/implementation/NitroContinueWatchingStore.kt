@@ -54,7 +54,7 @@ public class NitroContinueWatchingStore(
 
     private val store: Store<Unit, List<ContinueWatchingEntry>> = storeBuilder(
         fetcher = Fetcher.ofResult { _: Unit ->
-            when (val entries = nitroFetcher.run()) {
+            when (val entries = nitroFetcher()) {
                 null -> FetcherResult.Error.Exception(
                     FetcherSkipSignal("Nitro fetcher signaled skip; leaving local table unchanged"),
                 )

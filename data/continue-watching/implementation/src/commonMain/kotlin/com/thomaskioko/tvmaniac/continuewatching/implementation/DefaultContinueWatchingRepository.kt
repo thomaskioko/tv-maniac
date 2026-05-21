@@ -20,8 +20,8 @@ public class DefaultContinueWatchingRepository(
                 progressStore.fetchWith(forceRefresh)
             }
         } catch (_: FetcherSkipSignal) {
-            // Intentional: a store signaled "leave the local table alone".
-            // Upstream HTTP failure, or Nitro's empty-response guard. The DAO state is preserved.
+            // Intentional: a fetcher signaled "leave the local table alone".
+            // Upstream HTTP failure or Nitro's empty-response guard.
         }
     }
 }

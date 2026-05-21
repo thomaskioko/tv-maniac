@@ -69,17 +69,21 @@ internal class DefaultContinueWatchingRepositoryTest {
             transactionRunner = transactionRunner,
             dispatchers = dispatchers,
         )
-        val progressStore = ProgressContinueWatchingStore(
+        val progressFetcher = ProgressContinueWatchingFetcher(
             traktSyncDataSource = syncDataSource,
             traktUserDataSource = userDataSource,
+            traktActivityRepository = activityRepository,
+            datastoreRepository = FakeDatastoreRepository(),
+            logger = FakeLogger(),
+        )
+        val progressStore = ProgressContinueWatchingStore(
+            progressFetcher = progressFetcher,
             continueWatchingDao = continueWatchingDao,
             tvShowsDao = tvShowsDao,
             requestManagerRepository = requestManager,
             traktActivityRepository = activityRepository,
-            datastoreRepository = FakeDatastoreRepository(),
             transactionRunner = transactionRunner,
             dispatchers = dispatchers,
-            logger = FakeLogger(),
         )
         repository = DefaultContinueWatchingRepository(
             nitroStore = nitroStore,
@@ -110,14 +114,12 @@ internal class DefaultContinueWatchingRepositoryTest {
 
     @Test
     fun `should swallow fetcher skip signal silently`() = runTest(testDispatcher) {
+        // Empty Nitro response within the fresh-cursor guard window: fetcher returns null,
+        // store throws FetcherSkipSignal, repository swallows it.
         activityRepository.setEpisodesWatchedSyncTimeStamp(NOW)
         syncDataSource.setUpNextNitro(ApiResponse.Success(emptyList()))
-        // Force the validator stale so the fetcher actually runs; otherwise the
-        // signal never fires and the swallow path is never exercised.
         requestManager.requestValid = false
 
-        // empty Nitro + fresh cursor + no force = guard trips, fetcher returns null,
-        // store throws FetcherSkipSignal which the repo must swallow.
         repository.sync(forceRefresh = false, useNitro = true)
 
         // Sanity: the Nitro endpoint WAS called (proving the validator did not
