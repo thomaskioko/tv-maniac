@@ -21,14 +21,10 @@ struct FeatureFlagsView: View {
             onResetAll: { presenter.dispatch(action: ClearAllLocals()) },
             onForceRefresh: { presenter.dispatch(action: ForceRefresh()) },
             onToggle: { id, value in
-                if let flag = FeatureFlag.entries.first(where: { $0.key == id }) {
-                    presenter.dispatch(action: ToggleFlag(flag: flag, value: value))
-                }
+                presenter.dispatch(action: ToggleFlag(key: id, value: value))
             },
             onResetItem: { id in
-                if let flag = FeatureFlag.entries.first(where: { $0.key == id }) {
-                    presenter.dispatch(action: ClearLocal(flag: flag))
-                }
+                presenter.dispatch(action: ClearLocal(key: id))
             },
             onSortChanged: { id in
                 if let descriptor = FeatureFlagSortDescriptor.entries.first(where: { $0.name == id }) {
@@ -66,7 +62,7 @@ private extension FeatureFlagsState {
             groupByType: groupByType,
             items: items.map { item in
                 FeatureFlagsScreen.Item(
-                    id: item.flag.key,
+                    id: item.key,
                     title: item.title,
                     description: item.description_,
                     source: item.source,
