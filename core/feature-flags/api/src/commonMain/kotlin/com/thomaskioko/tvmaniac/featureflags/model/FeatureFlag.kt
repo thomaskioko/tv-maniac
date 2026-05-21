@@ -29,8 +29,8 @@ public enum class FeatureFlag(
     CONTINUE_WATCHING_NITRO_ENABLED(
         key = "enable_continue_watching_nitro",
         defaultValue = false,
-        title = "Use Experimental Endpoint",
-        description = "Use Trakt's single call instead of the documented multi-step progress fetch.",
+        title = "Progress Endpoint",
+        description = "Use Trakt's single call instead of the documented multi-step progress fetch. (/sync/progress/up_next_nitro)",
         dateAdded = LocalDate(2026, 5, 20),
     ),
 }
