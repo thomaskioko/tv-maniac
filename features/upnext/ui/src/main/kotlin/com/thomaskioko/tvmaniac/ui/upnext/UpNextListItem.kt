@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -51,6 +52,7 @@ internal fun UpNextListItem(
     onMarkWatched: () -> Unit,
     modifier: Modifier = Modifier,
     onLongPress: () -> Unit = {},
+    isUpdating: Boolean = false,
 ) {
     Card(
         modifier = modifier
@@ -156,6 +158,7 @@ internal fun UpNextListItem(
 
             Surface(
                 onClick = onMarkWatched,
+                enabled = !isUpdating,
                 modifier = Modifier
                     .padding(12.dp)
                     .size(28.dp)
@@ -164,12 +167,20 @@ internal fun UpNextListItem(
                 color = grey,
             ) {
                 Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        modifier = Modifier.size(16.dp),
-                        imageVector = Icons.Rounded.Check,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                    )
+                    if (isUpdating) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(16.dp),
+                            strokeWidth = 2.dp,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                        )
+                    } else {
+                        Icon(
+                            modifier = Modifier.size(16.dp),
+                            imageVector = Icons.Rounded.Check,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                        )
+                    }
                 }
             }
         }

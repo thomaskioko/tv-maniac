@@ -22,6 +22,7 @@ public struct WatchlistScreen: View {
         public let staleGridItems: [WatchlistGridItem]
         public let watchNextEpisodes: [SwiftNextEpisode]
         public let staleEpisodes: [SwiftNextEpisode]
+        public let updatingEpisodeIds: Set<Int64>
 
         public init(
             title: String,
@@ -42,7 +43,8 @@ public struct WatchlistScreen: View {
             watchNextGridItems: [WatchlistGridItem],
             staleGridItems: [WatchlistGridItem],
             watchNextEpisodes: [SwiftNextEpisode],
-            staleEpisodes: [SwiftNextEpisode]
+            staleEpisodes: [SwiftNextEpisode],
+            updatingEpisodeIds: Set<Int64> = []
         ) {
             self.title = title
             self.searchPlaceholder = searchPlaceholder
@@ -63,6 +65,7 @@ public struct WatchlistScreen: View {
             self.staleGridItems = staleGridItems
             self.watchNextEpisodes = watchNextEpisodes
             self.staleEpisodes = staleEpisodes
+            self.updatingEpisodeIds = updatingEpisodeIds
         }
     }
 
@@ -266,7 +269,8 @@ public struct WatchlistScreen: View {
                                 newLabel: state.newLabel,
                                 onItemClicked: onEpisodeClicked,
                                 onShowTitleClicked: onShowTitleClicked,
-                                onMarkWatched: { onMarkWatched(episode) }
+                                onMarkWatched: { onMarkWatched(episode) },
+                                isUpdating: state.updatingEpisodeIds.contains(episode.episodeId)
                             )
                             .transition(
                                 .asymmetric(
@@ -289,7 +293,8 @@ public struct WatchlistScreen: View {
                                 newLabel: state.newLabel,
                                 onItemClicked: onEpisodeClicked,
                                 onShowTitleClicked: onShowTitleClicked,
-                                onMarkWatched: { onMarkWatched(episode) }
+                                onMarkWatched: { onMarkWatched(episode) },
+                                isUpdating: state.updatingEpisodeIds.contains(episode.episodeId)
                             )
                             .transition(
                                 .asymmetric(

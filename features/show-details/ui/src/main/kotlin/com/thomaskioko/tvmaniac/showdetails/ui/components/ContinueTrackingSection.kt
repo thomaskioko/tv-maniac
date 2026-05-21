@@ -33,7 +33,9 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.model.ContinueTrackingEpis
 import com.thomaskioko.tvmaniac.testtags.showdetails.ShowDetailsTestTags
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentSetOf
 
 @Composable
 internal fun ContinueTrackingSection(
@@ -41,6 +43,7 @@ internal fun ContinueTrackingSection(
     scrollIndex: Int,
     onMarkWatched: (ContinueTrackingEpisodeModel) -> Unit,
     modifier: Modifier = Modifier,
+    updatingEpisodeIds: ImmutableSet<Long> = persistentSetOf(),
 ) {
     Box(
         modifier = modifier
@@ -96,6 +99,7 @@ internal fun ContinueTrackingSection(
                         ContinueTrackingCard(
                             episode = episode,
                             onMarkWatched = { onMarkWatched(episode) },
+                            isUpdating = episode.episodeId in updatingEpisodeIds,
                         )
                     }
                 }

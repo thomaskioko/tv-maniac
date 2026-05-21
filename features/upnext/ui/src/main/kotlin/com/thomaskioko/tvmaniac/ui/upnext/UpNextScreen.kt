@@ -193,6 +193,7 @@ private fun UpNextLoadedContent(
                 onLongPress = {
                     episode.episodeId?.let { onAction(UpNextEpisodeLongPressed(it)) }
                 },
+                isUpdating = episode.episodeId != null && episode.episodeId in state.updatingEpisodeIds,
             )
         }
 

@@ -8,17 +8,20 @@ public struct ContinueTrackingCard: View {
     private let dayLabelFormat: (_ count: Int) -> String
     private let tbdLabel: String
     private let onMarkWatched: () -> Void
+    private let isUpdating: Bool
 
     public init(
         episode: SwiftContinueTrackingEpisode,
         dayLabelFormat: @escaping (_ count: Int) -> String,
         tbdLabel: String,
-        onMarkWatched: @escaping () -> Void
+        onMarkWatched: @escaping () -> Void,
+        isUpdating: Bool = false
     ) {
         self.episode = episode
         self.dayLabelFormat = dayLabelFormat
         self.tbdLabel = tbdLabel
         self.onMarkWatched = onMarkWatched
+        self.isUpdating = isUpdating
     }
 
     public var body: some View {
@@ -52,14 +55,21 @@ public struct ContinueTrackingCard: View {
                             Circle()
                                 .fill(episode.isWatched ? .appSuccess : .appGrey)
                                 .frame(width: DimensionConstants.checkmarkSize, height: DimensionConstants.checkmarkSize)
-                            Image(systemName: "checkmark")
-                                .font(theme.typography.titleSmall)
-                                .foregroundStyle(.white)
+                            if isUpdating {
+                                ProgressView()
+                                    .progressViewStyle(.circular)
+                                    .tint(.white)
+                            } else {
+                                Image(systemName: "checkmark")
+                                    .font(theme.typography.titleSmall)
+                                    .foregroundStyle(.white)
+                            }
                         }
                         .frame(width: DimensionConstants.tapTargetSize, height: DimensionConstants.cardHeight)
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
+                    .disabled(isUpdating)
                 } else if let daysUntilAir = episode.daysUntilAir, daysUntilAir > 0 {
                     VStack(spacing: 0) {
                         Text("\(daysUntilAir)")

@@ -118,7 +118,8 @@ private extension WatchlistState {
                 )
             },
             watchNextEpisodes: watchNextEpisodes,
-            staleEpisodes: staleEpisodes
+            staleEpisodes: staleEpisodes,
+            updatingEpisodeIds: Set(updatingEpisodeIds.map { $0.int64Value })
         )
     }
 }

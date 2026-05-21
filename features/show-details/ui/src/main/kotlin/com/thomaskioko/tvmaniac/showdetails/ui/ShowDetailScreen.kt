@@ -354,6 +354,7 @@ internal fun LazyColumnContent(
                             )
                         }
                     },
+                    updatingEpisodeIds = detailsContent.updatingEpisodeIds,
                 )
             }
 

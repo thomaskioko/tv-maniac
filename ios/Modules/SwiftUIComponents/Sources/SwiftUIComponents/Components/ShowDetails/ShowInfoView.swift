@@ -20,6 +20,7 @@ public struct ShowInfoView: View {
     private let continueTrackingEpisodes: [SwiftContinueTrackingEpisode]
     private let continueTrackingScrollIndex: Int
     private let continueTrackingTitle: String
+    private let updatingEpisodeIds: Set<Int64>
     private let dayLabelFormat: (_ count: Int) -> String
     private let tbdLabel: String
     private let trackLabel: String
@@ -54,6 +55,7 @@ public struct ShowInfoView: View {
         continueTrackingEpisodes: [SwiftContinueTrackingEpisode] = [],
         continueTrackingScrollIndex: Int = 0,
         continueTrackingTitle: String,
+        updatingEpisodeIds: Set<Int64> = [],
         dayLabelFormat: @escaping (_ count: Int) -> String,
         tbdLabel: String,
         trackLabel: String,
@@ -87,6 +89,7 @@ public struct ShowInfoView: View {
         self.continueTrackingEpisodes = continueTrackingEpisodes
         self.continueTrackingScrollIndex = continueTrackingScrollIndex
         self.continueTrackingTitle = continueTrackingTitle
+        self.updatingEpisodeIds = updatingEpisodeIds
         self.dayLabelFormat = dayLabelFormat
         self.tbdLabel = tbdLabel
         self.trackLabel = trackLabel
@@ -130,7 +133,8 @@ public struct ShowInfoView: View {
                 scrollIndex: continueTrackingScrollIndex,
                 dayLabelFormat: dayLabelFormat,
                 tbdLabel: tbdLabel,
-                onMarkWatched: onMarkEpisodeWatched
+                onMarkWatched: onMarkEpisodeWatched,
+                updatingEpisodeIds: updatingEpisodeIds
             )
 
             SeasonProgressSection(

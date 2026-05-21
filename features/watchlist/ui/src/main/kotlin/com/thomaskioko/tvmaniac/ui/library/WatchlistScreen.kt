@@ -105,6 +105,7 @@ import com.thomaskioko.tvmaniac.watchlist.presenter.model.UpNextEpisodeItem
 import com.thomaskioko.tvmaniac.watchlist.presenter.model.WatchlistItem
 import io.github.thomaskioko.codegen.annotations.TabUi
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -225,6 +226,7 @@ internal fun WatchlistScreen(
                                     newLabel = badge_new.resolve(context),
                                     watchNextEpisodes = state.watchNextEpisodes,
                                     staleEpisodes = state.staleEpisodes,
+                                    updatingEpisodeIds = state.updatingEpisodeIds,
                                     scrollBehavior = scrollBehavior,
                                     onEpisodeClicked = { showId, episodeId ->
                                         onAction(UpNextEpisodeClicked(showId, episodeId))
@@ -527,6 +529,7 @@ private fun SectionedUpNextListContent(
     newLabel: String,
     watchNextEpisodes: ImmutableList<UpNextEpisodeItem>,
     staleEpisodes: ImmutableList<UpNextEpisodeItem>,
+    updatingEpisodeIds: ImmutableSet<Long>,
     scrollBehavior: TopAppBarScrollBehavior,
     onEpisodeClicked: (Long, Long) -> Unit,
     onShowTitleClicked: (Long) -> Unit,
@@ -558,6 +561,7 @@ private fun SectionedUpNextListContent(
                     onShowTitleClicked = { onShowTitleClicked(episode.showTraktId) },
                     onMarkWatched = { onMarkWatched(episode) },
                     modifier = Modifier.animateItem(),
+                    isUpdating = episode.episodeId in updatingEpisodeIds,
                 )
             }
         }
@@ -582,6 +586,7 @@ private fun SectionedUpNextListContent(
                     onShowTitleClicked = { onShowTitleClicked(episode.showTraktId) },
                     onMarkWatched = { onMarkWatched(episode) },
                     modifier = Modifier.animateItem(),
+                    isUpdating = episode.episodeId in updatingEpisodeIds,
                 )
             }
         }

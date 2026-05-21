@@ -9,6 +9,7 @@ public struct UpNextListItemView: View {
     let onShowTitleClicked: (Int64) -> Void
     let onMarkWatched: () -> Void
     let onLongPress: () -> Void
+    let isUpdating: Bool
 
     private let posterImageUrl: String?
     private let episodeInfoText: String
@@ -18,13 +19,15 @@ public struct UpNextListItemView: View {
         onItemClicked: @escaping (Int64, Int64) -> Void,
         onShowTitleClicked: @escaping (Int64) -> Void,
         onMarkWatched: @escaping () -> Void,
-        onLongPress: @escaping () -> Void = {}
+        onLongPress: @escaping () -> Void = {},
+        isUpdating: Bool = false
     ) {
         self.episode = episode
         self.onItemClicked = onItemClicked
         self.onShowTitleClicked = onShowTitleClicked
         self.onMarkWatched = onMarkWatched
         self.onLongPress = onLongPress
+        self.isUpdating = isUpdating
 
         posterImageUrl = episode.imageUrl
 
@@ -123,14 +126,21 @@ public struct UpNextListItemView: View {
                 Circle()
                     .fill(.appGrey)
                     .frame(width: UpNextListItemViewConstants.checkmarkSize, height: UpNextListItemViewConstants.checkmarkSize)
-                Image(systemName: "checkmark")
-                    .font(theme.typography.titleSmall)
-                    .foregroundStyle(.white)
+                if isUpdating {
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                        .tint(.white)
+                } else {
+                    Image(systemName: "checkmark")
+                        .font(theme.typography.titleSmall)
+                        .foregroundStyle(.white)
+                }
             }
             .frame(width: UpNextListItemViewConstants.tapTargetSize, height: UpNextListItemViewConstants.height)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .disabled(isUpdating)
         .frame(maxHeight: .infinity)
         .padding(.trailing, theme.spacing.small)
     }

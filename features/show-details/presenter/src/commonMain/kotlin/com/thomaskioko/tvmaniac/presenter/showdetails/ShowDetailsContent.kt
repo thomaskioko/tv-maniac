@@ -5,7 +5,9 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.model.ContinueTrackingEpis
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.TraktListModel
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentSetOf
 
 public data class ShowDetailsContent(
     val showDetailsRefreshing: Boolean = false,
@@ -31,6 +33,7 @@ public data class ShowDetailsContent(
     val loginRequiredTitle: String = "",
     val loginRequiredMessage: String = "",
     val loginRequiredConfirmText: String = "",
+    val updatingEpisodeIds: ImmutableSet<Long> = persistentSetOf(),
     val message: UiMessage? = null,
 ) {
     public val isRefreshing: Boolean

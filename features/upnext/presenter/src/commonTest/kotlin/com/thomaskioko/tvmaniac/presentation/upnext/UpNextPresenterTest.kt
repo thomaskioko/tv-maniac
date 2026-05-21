@@ -33,6 +33,8 @@ import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
+import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
@@ -275,11 +277,43 @@ internal class UpNextPresenterTest {
             testDispatcher.scheduler.advanceUntilIdle()
 
             upNextRepository.setNextEpisodesForWatchlist(listOf(episode2))
+            testDispatcher.scheduler.advanceUntilIdle()
 
-            val updatedState = awaitItem()
+            val updatedState = expectMostRecentItem()
             updatedState.episodes shouldHaveSize 1
             updatedState.episodes.any { it.showTraktId == 1L } shouldBe false
             updatedState.episodes.any { it.showTraktId == 2L } shouldBe true
+            updatedState.updatingEpisodeIds.shouldBeEmpty()
+        }
+    }
+
+    @Test
+    fun `should populate updatingEpisodeIds while mark watched is in flight`() = runTest {
+        val episode = createTestNextEpisode(showTraktId = 1, showName = "Show 1")
+        upNextRepository.setNextEpisodesForWatchlist(listOf(episode))
+
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            skipItems(1)
+            val initial = awaitItem()
+            initial.updatingEpisodeIds.shouldBeEmpty()
+
+            presenter.dispatch(
+                MarkWatched(
+                    showTraktId = episode.showTraktId,
+                    episodeId = 100L,
+                    seasonNumber = 1L,
+                    episodeNumber = 1L,
+                ),
+            )
+
+            val inFlight = awaitItem()
+            inFlight.updatingEpisodeIds shouldContain 100L
+
+            testDispatcher.scheduler.advanceUntilIdle()
+            val settled = expectMostRecentItem()
+            settled.updatingEpisodeIds.shouldBeEmpty()
         }
     }
 
