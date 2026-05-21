@@ -30,7 +30,7 @@ public enum class FeatureFlag(
         key = "enable_continue_watching_nitro",
         defaultValue = false,
         title = "Progress Endpoint",
-        description = "Use Trakt's single call instead of the documented multi-step progress fetch. (/sync/progress/up_next_nitro)",
+        description = "Use Trakt's internal call instead of the documented multi-step progress fetch. /sync/progress/up_next_nitro",
         dateAdded = LocalDate(2026, 5, 20),
     ),
 }
