@@ -1,12 +1,12 @@
 package com.thomaskioko.tvmaniac.domain.featureflags
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlag
+import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
+import com.thomaskioko.tvmaniac.featureflags.flags.ContinueWatchingNitroFlag
+import com.thomaskioko.tvmaniac.featureflags.flags.SimklLoginFlag
 import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlagSortDescriptor
 import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlagSource
-import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlagLocalStore
-import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlagProvider
-import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlags
+import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlagsRemoteConfig
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
@@ -22,16 +22,17 @@ import kotlin.test.Test
 internal class ObserveFeatureFlagRowsInteractorTest {
 
     private val testDispatcher = StandardTestDispatcher()
-    private val featureFlags = FakeFeatureFlags()
-    private val localStore = FakeFeatureFlagLocalStore()
-    private val provider = FakeFeatureFlagProvider(localStore = localStore)
+    private val remoteConfig = FakeFeatureFlagsRemoteConfig()
+    private val nitroFlag = ContinueWatchingNitroFlag(remote = remoteConfig)
+    private val simklFlag = SimklLoginFlag(remote = remoteConfig)
+    private val flags: Set<FeatureFlag> = setOf(nitroFlag, simklFlag)
 
     private lateinit var interactor: ObserveFeatureFlagRowsInteractor
 
     @BeforeTest
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        interactor = ObserveFeatureFlagRowsInteractor(featureFlags, provider)
+        interactor = ObserveFeatureFlagRowsInteractor(flags = flags)
     }
 
     @AfterTest
@@ -44,7 +45,7 @@ internal class ObserveFeatureFlagRowsInteractorTest {
         interactor(ObserveFeatureFlagRowsInteractor.Param())
 
         interactor.flow.test {
-            awaitItem().rows.size shouldBe FeatureFlag.entries.size
+            awaitItem().rows.size shouldBe flags.size
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -72,11 +73,10 @@ internal class ObserveFeatureFlagRowsInteractorTest {
 
     @Test
     fun `should emit subset of rows given partial title match`() = runTest {
-        val target = FeatureFlag.SIMKL_LOGIN_ENABLED
-        interactor(ObserveFeatureFlagRowsInteractor.Param(query = target.title))
+        interactor(ObserveFeatureFlagRowsInteractor.Param(query = simklFlag.title))
 
         interactor.flow.test {
-            awaitItem().rows.map { it.featureFlag } shouldBe listOf(target)
+            awaitItem().rows.map { it.featureFlag } shouldBe listOf(simklFlag)
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -86,8 +86,7 @@ internal class ObserveFeatureFlagRowsInteractorTest {
         interactor(ObserveFeatureFlagRowsInteractor.Param(sort = FeatureFlagSortDescriptor.Title))
 
         interactor.flow.test {
-            awaitItem().rows.map { it.featureFlag } shouldBe
-                FeatureFlag.entries.sortedByDescending { it.title }
+            awaitItem().rows.map { it.featureFlag } shouldBe flags.sortedByDescending { it.title }
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -97,8 +96,7 @@ internal class ObserveFeatureFlagRowsInteractorTest {
         interactor(ObserveFeatureFlagRowsInteractor.Param(ascending = true))
 
         interactor.flow.test {
-            awaitItem().rows.map { it.featureFlag } shouldBe
-                FeatureFlag.entries.sortedBy { it.dateAdded }
+            awaitItem().rows.map { it.featureFlag } shouldBe flags.sortedBy { it.dateAdded }
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -118,15 +116,15 @@ internal class ObserveFeatureFlagRowsInteractorTest {
     }
 
     @Test
-    fun `should emit row with Local source when FakeFeatureFlags reports Local`() = runTest {
+    fun `should emit row with Local source when remote config reports Local`() = runTest {
         interactor(ObserveFeatureFlagRowsInteractor.Param())
-        featureFlags.setSource(FeatureFlag.SIMKL_LOGIN_ENABLED, FeatureFlagSource.Local)
+        remoteConfig.setSource(simklFlag.key, FeatureFlagSource.Local)
 
         interactor.flow.test {
             val result = awaitItem()
             result.rows shouldContain FeatureFlagRow(
-                featureFlag = FeatureFlag.SIMKL_LOGIN_ENABLED,
-                value = FeatureFlag.SIMKL_LOGIN_ENABLED.defaultValue,
+                featureFlag = simklFlag,
+                value = false,
                 featureFlagSource = FeatureFlagSource.Local,
             )
             cancelAndIgnoreRemainingEvents()

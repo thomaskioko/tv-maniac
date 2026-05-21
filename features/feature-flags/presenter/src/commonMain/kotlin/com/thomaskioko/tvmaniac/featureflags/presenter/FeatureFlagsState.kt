@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.featureflags.presenter
 
-import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlag
 import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlagSortDescriptor
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -31,7 +30,7 @@ public data class FeatureFlagsState(
 }
 
 public data class FeatureFlagItem(
-    val flag: FeatureFlag,
+    val key: String,
     val title: String,
     val description: String,
     val source: String,

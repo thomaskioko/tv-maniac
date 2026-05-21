@@ -5,8 +5,7 @@ import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundWorker
 import com.thomaskioko.tvmaniac.core.tasks.api.PeriodicTaskRequest
 import com.thomaskioko.tvmaniac.core.tasks.api.TaskConstraints
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerResult
-import com.thomaskioko.tvmaniac.featureflags.FeatureFlags
-import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlag
+import com.thomaskioko.tvmaniac.featureflags.flags.ContinueWatchingNitroFlag
 import com.thomaskioko.tvmaniac.syncstate.api.SyncError
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
@@ -21,7 +20,7 @@ import kotlinx.coroutines.flow.first
 public class ContinueWatchingSyncWorker(
     private val syncContinueWatchingInteractor: Lazy<SyncContinueWatchingInteractor>,
     private val traktAuthRepository: Lazy<TraktAuthRepository>,
-    private val featureFlags: FeatureFlags,
+    private val nitroFlag: ContinueWatchingNitroFlag,
     private val syncObserver: SyncObserver,
     private val logger: Logger,
 ) : BackgroundWorker {
@@ -37,7 +36,8 @@ public class ContinueWatchingSyncWorker(
         }
 
         return try {
-            val useNitro = featureFlags.isEnabled(FeatureFlag.CONTINUE_WATCHING_NITRO_ENABLED).first()
+            // TODO:: Move this to the repository layer
+            val useNitro = nitroFlag.observe().first()
             syncContinueWatchingInteractor.value.executeSync(
                 SyncContinueWatchingInteractor.Param(forceRefresh = true, useNitro = useNitro),
             )
