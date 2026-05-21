@@ -26,22 +26,17 @@ import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteract
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
 import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
-import com.thomaskioko.tvmaniac.domain.traktlists.CreateTraktListInteractor
-import com.thomaskioko.tvmaniac.domain.traktlists.ObserveTraktListsInteractor
-import com.thomaskioko.tvmaniac.domain.traktlists.SyncTraktListsInteractor
-import com.thomaskioko.tvmaniac.domain.traktlists.ToggleShowInListInteractor
 import com.thomaskioko.tvmaniac.domain.watchproviders.WatchProvidersInteractor
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
-import com.thomaskioko.tvmaniac.i18n.PluralsResourceKey
-import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
+import com.thomaskioko.tvmaniac.showlist.nav.ShowListParam
+import com.thomaskioko.tvmaniac.showlist.nav.ShowListRoute
 import com.thomaskioko.tvmaniac.trailers.nav.TrailersRoute
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import dev.zacsweers.metro.Assisted
@@ -49,7 +44,6 @@ import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentSet
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -88,14 +82,9 @@ public class ShowDetailsPresenter(
     private val syncTraktCalendarInteractor: SyncTraktCalendarInteractor,
     private val scheduleEpisodeNotificationsInteractor: ScheduleEpisodeNotificationsInteractor,
     private val notificationManager: NotificationManager,
-    private val createTraktListInteractor: CreateTraktListInteractor,
-    private val toggleShowInListInteractor: ToggleShowInListInteractor,
-    private val syncTraktListsInteractor: SyncTraktListsInteractor,
     observableShowDetailsInteractor: ObservableShowDetailsInteractor,
     observeShowWatchProgressInteractor: ObserveShowWatchProgressInteractor,
-    observeTraktListsInteractor: ObserveTraktListsInteractor,
     private val traktAuthRepository: TraktAuthRepository,
-    private val traktAuthManager: TraktAuthManager,
     private val localizer: Localizer,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
@@ -115,7 +104,6 @@ public class ShowDetailsPresenter(
     init {
         observableShowDetailsInteractor(showTraktId)
         observeShowWatchProgressInteractor(showTraktId)
-        observeTraktListsInteractor(showTraktId)
         observeShowDetails(forceReload = param.forceRefresh)
         observeAuthState()
     }
@@ -126,11 +114,10 @@ public class ShowDetailsPresenter(
         watchProvidersLoadingState.observable,
         observableShowDetailsInteractor.flow,
         observeShowWatchProgressInteractor.flow,
-        observeTraktListsInteractor.flow,
         uiMessageManager.message,
         _state,
     ) { showDetailsUpdating, similarShowsUpdating, watchProvidersUpdating,
-        showDetails, watchProgress, traktLists, message, currentState,
+        showDetails, watchProgress, message, currentState,
         ->
         currentState.copy(
             showDetails = showDetails.toShowDetails(
@@ -144,25 +131,6 @@ public class ShowDetailsPresenter(
             watchProvidersRefreshing = watchProvidersUpdating,
             continueTrackingEpisodes = mapContinueTrackingEpisodes(showDetails.continueTrackingEpisodes, showTraktId),
             continueTrackingScrollIndex = showDetails.continueTrackingScrollIndex,
-            traktLists = traktLists.map { list ->
-                com.thomaskioko.tvmaniac.presenter.showdetails.model.TraktListModel(
-                    id = list.id,
-                    slug = list.slug,
-                    name = list.name,
-                    description = list.description,
-                    showCountText = localizer.getPlural(PluralsResourceKey.ShowCount, list.itemCount.toInt(), list.itemCount.toInt()),
-                    isShowInList = list.isShowInList,
-                )
-            }.toImmutableList(),
-            sheetTitle = localizer.getString(StringResourceKey.LabelWatchlistSaveToList),
-            createListButtonText = localizer.getString(StringResourceKey.LabelWatchlistCreateCustomList),
-            createListDoneText = localizer.getString(StringResourceKey.LabelWatchlistDone),
-            createListPlaceholder = localizer.getString(StringResourceKey.LabelWatchlistNewListPlaceholder),
-            emptyListText = localizer.getString(StringResourceKey.LabelWatchlistEmptyList),
-            listsHeaderText = localizer.getString(StringResourceKey.LabelWatchlistYourLists),
-            loginRequiredTitle = localizer.getString(StringResourceKey.LabelWatchlistLoginRequiredTitle),
-            loginRequiredMessage = localizer.getString(StringResourceKey.LabelWatchlistLoginRequiredMessage),
-            loginRequiredConfirmText = localizer.getString(StringResourceKey.LabelOk),
             message = message,
         )
     }
@@ -217,48 +185,7 @@ public class ShowDetailsPresenter(
             DetailBackClicked -> navigator.navigateBack()
             ReloadShowDetails -> refreshShowContent()
             is ShowDetailsMessageShown -> coroutineScope.launch { uiMessageManager.clearMessage(action.id) }
-            DismissShowsListSheet -> coroutineScope.launch { _state.update { it.copy(showListSheet = false) } }
-            ShowShowsListSheet -> {
-                coroutineScope.launch {
-                    if (traktAuthRepository.isLoggedIn()) {
-                        _state.update { it.copy(showListSheet = true) }
-                        syncTraktListsInteractor(SyncTraktListsInteractor.Params())
-                            .collectStatus(showDetailsLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
-                    } else {
-                        _state.update { it.copy(showLoginPrompt = true) }
-                    }
-                }
-            }
-            DismissLoginPrompt -> coroutineScope.launch { _state.update { it.copy(showLoginPrompt = false) } }
-            LoginClicked -> {
-                _state.update { it.copy(showLoginPrompt = false) }
-                traktAuthManager.launchWebView()
-            }
-            ShowCreateListField -> _state.update { it.copy(showCreateListField = true) }
-            DismissCreateListField -> _state.update {
-                it.copy(showCreateListField = false, createListName = "", createListError = null)
-            }
-            is UpdateCreateListName -> _state.update { it.copy(createListName = action.name) }
-            CreateListSubmitted -> {
-                val name = _state.value.createListName
-                coroutineScope.launch {
-                    _state.update { it.copy(isCreatingList = true) }
-                    createTraktListInteractor(CreateTraktListInteractor.Params(name = name))
-                        .collectStatus(
-                            episodeActionLoadingState,
-                            logger,
-                            uiMessageManager,
-                            errorToStringMapper = errorToStringMapper,
-                        )
-                    _state.update {
-                        if (it.message == null) {
-                            it.copy(isCreatingList = false, showCreateListField = false, createListName = "")
-                        } else {
-                            it.copy(isCreatingList = false)
-                        }
-                    }
-                }
-            }
+            OpenShowList -> navigator.navigateTo(ShowListRoute(ShowListParam(showId = showTraktId)))
 
             is MarkEpisodeWatched -> launchEpisodeMark(action.episodeId) {
                 markEpisodeWatchedInteractor(
@@ -279,18 +206,6 @@ public class ShowDetailsPresenter(
                         episodeId = action.episodeId,
                     ),
                 ).collectStatus(episodeActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
-            }
-
-            is ToggleShowInList -> {
-                coroutineScope.launch {
-                    toggleShowInListInteractor(
-                        ToggleShowInListInteractor.Params(
-                            listId = action.listId,
-                            traktShowId = showTraktId,
-                            isCurrentlyInList = action.isCurrentlyInList,
-                        ),
-                    ).collectStatus(episodeActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
-                }
             }
         }
     }
