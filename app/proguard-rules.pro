@@ -9,6 +9,12 @@
 
 -dontwarn org.slf4j.impl.StaticLoggerBinder
 
+# --- androidx.window ---
+# Extension and sidecar classes are provided by the device OEM at runtime
+# and are not on the compile classpath, so R8 reports them as missing.
+-dontwarn androidx.window.extensions.**
+-dontwarn androidx.window.sidecar.**
+
 -keepattributes SourceFile,
                 LineNumberTable,
                 InnerClasses,
