@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktAddRemoveShowFromListRespon
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAddShowToListResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktCreateListResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktFollowedShowResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktListItemResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktPersonalListsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
 
@@ -13,6 +14,11 @@ public interface TraktListRemoteDataSource {
     public suspend fun getUser(userId: String): ApiResponse<TraktUserResponse>
 
     public suspend fun getUserList(userId: String): ApiResponse<List<TraktPersonalListsResponse>>
+
+    public suspend fun getListItems(
+        userSlug: String,
+        listId: Long,
+    ): ApiResponse<List<TraktListItemResponse>>
 
     public suspend fun createList(userSlug: String, name: String): ApiResponse<TraktCreateListResponse>
 

@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktAddShowToListResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktCreateListRequest
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktCreateListResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktFollowedShowResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktListItemResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktPersonalListsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShow
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowIds
@@ -46,6 +47,17 @@ public class DefaultTraktListRemoteDataSource(
             url {
                 method = HttpMethod.Get
                 path("users/$userId/lists")
+            }
+        }
+
+    override suspend fun getListItems(
+        userSlug: String,
+        listId: Long,
+    ): ApiResponse<List<TraktListItemResponse>> =
+        httpClient.authSafeRequest {
+            url {
+                method = HttpMethod.Get
+                path("users/$userSlug/lists/$listId/items")
             }
         }
 
