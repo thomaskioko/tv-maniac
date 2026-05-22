@@ -8,13 +8,11 @@ import kotlinx.coroutines.flow.Flow
 public interface WatchProviderDao {
     public fun upsert(entity: Watch_providers)
 
-    public fun fetchWatchProviders(id: Long): List<WatchProviders>
+    public fun fetchWatchProviders(tmdbId: Long): List<WatchProviders>
 
-    public fun observeWatchProviders(id: Long): Flow<List<WatchProviders>>
+    public fun observeWatchProviders(tmdbId: Long): Flow<List<WatchProviders>>
 
     public fun observeWatchProvidersByTraktId(traktId: Long): Flow<List<WatchProvidersByTraktId>>
-
-    public fun fetchWatchProvidersByTraktId(traktId: Long): List<WatchProvidersByTraktId>
 
     public fun deleteByTraktId(traktId: Long)
 

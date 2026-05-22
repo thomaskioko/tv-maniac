@@ -9,11 +9,12 @@ import com.thomaskioko.tvmaniac.data.library.LibraryRepository
 import com.thomaskioko.tvmaniac.data.library.model.LibraryItem
 import com.thomaskioko.tvmaniac.data.library.model.LibrarySortOption
 import com.thomaskioko.tvmaniac.data.library.model.WatchProvider
+import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderDao
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.LibraryShows
-import com.thomaskioko.tvmaniac.db.WatchProvidersForShow
+import com.thomaskioko.tvmaniac.db.WatchProviders
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsDao
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
@@ -39,6 +40,7 @@ import kotlin.time.Duration
 @ContributesBinding(AppScope::class)
 public class DefaultLibraryRepository(
     private val libraryDao: LibraryDao,
+    private val watchProviderDao: WatchProviderDao,
     private val libraryStore: LibraryStore,
     private val datastoreRepository: DatastoreRepository,
     private val followedShowsDao: FollowedShowsDao,
@@ -71,7 +73,7 @@ public class DefaultLibraryRepository(
         if (shows.isEmpty()) return flowOf(emptyList())
 
         val providerFlows = shows.map { show ->
-            libraryDao.observeWatchProviders(show.show_tmdb_id.id)
+            watchProviderDao.observeWatchProviders(show.show_tmdb_id.id)
         }
 
         return combine(providerFlows) { providerArrays ->
@@ -137,7 +139,7 @@ public class DefaultLibraryRepository(
             watchProviders = watchProviders,
         )
 
-    private fun WatchProvidersForShow.toWatchProvider(): WatchProvider = WatchProvider(
+    private fun WatchProviders.toWatchProvider(): WatchProvider = WatchProvider(
         id = provider_id.id,
         name = name,
         logoPath = logo_path?.let { formatterUtil.formatTmdbPosterPath(it) },

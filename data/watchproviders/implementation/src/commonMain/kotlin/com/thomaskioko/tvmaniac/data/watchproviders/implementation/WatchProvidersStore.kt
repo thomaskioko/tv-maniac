@@ -6,15 +6,12 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.usingDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderDao
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
-import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.WatchProvidersByTraktId
-import com.thomaskioko.tvmaniac.db.Watch_providers
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.WATCH_PROVIDERS
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.WatchProvidersResult
-import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.withContext
 import org.mobilenativefoundation.store.store5.Fetcher
@@ -27,7 +24,7 @@ public class WatchProvidersStore(
     private val remoteDataSource: TmdbShowDetailsNetworkDataSource,
     private val tvShowsDao: TvShowsDao,
     private val dao: WatchProviderDao,
-    private val formatterUtil: FormatterUtil,
+    private val mapper: WatchProvidersMapper,
     private val requestManagerRepository: RequestManagerRepository,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
@@ -56,30 +53,10 @@ public class WatchProvidersStore(
         },
         writer = { traktId, result ->
             databaseTransactionRunner {
-                result.response.results.US?.let { usProvider ->
-                    usProvider.free.forEach {
-                        dao.upsert(
-                            Watch_providers(
-                                id = Id(it.providerId.toLong()),
-                                tmdb_id = Id(result.tmdbId),
-                                trakt_id = Id(traktId),
-                                logo_path = it.logoPath?.let { path -> formatterUtil.formatTmdbPosterPath(path) },
-                                name = it.providerName,
-                            ),
-                        )
-                    }
-                    usProvider.flatrate.forEach {
-                        dao.upsert(
-                            Watch_providers(
-                                id = Id(it.providerId.toLong()),
-                                tmdb_id = Id(result.tmdbId),
-                                trakt_id = Id(traktId),
-                                logo_path = it.logoPath?.let { path -> formatterUtil.formatTmdbPosterPath(path) },
-                                name = it.providerName,
-                            ),
-                        )
-                    }
-                }
+                dao.deleteByTraktId(traktId)
+                result.response.results.US
+                    ?.let { mapper.mapToRows(us = it, tmdbId = result.tmdbId, traktId = traktId) }
+                    ?.forEach(dao::upsert)
             }
         },
         delete = { traktId ->

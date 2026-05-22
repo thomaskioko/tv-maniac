@@ -23,6 +23,7 @@ kotlin {
                 api(projects.data.requestManager.api)
                 api(projects.data.syncActivity.api)
                 api(projects.data.traktauth.api)
+                api(projects.data.watchproviders.api)
 
                 implementation(projects.core.networkUtil.api)
                 implementation(libs.sqldelight.extensions)

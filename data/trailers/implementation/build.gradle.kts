@@ -15,6 +15,7 @@ kotlin {
                 api(projects.core.base)
                 api(projects.core.util.api)
                 api(projects.data.database.sqldelight)
+                api(projects.data.requestManager.api)
                 api(projects.data.shows.api)
                 api(projects.data.trailers.api)
 
