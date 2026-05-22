@@ -10,6 +10,8 @@ import com.thomaskioko.tvmaniac.db.Casts
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.ShowCast
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.SHOW_CAST
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
@@ -17,9 +19,11 @@ import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
+import org.mobilenativefoundation.store.store5.Validator
 
 @Inject
 public class ShowCastStore(
@@ -28,6 +32,7 @@ public class ShowCastStore(
     private val tvShowsDao: TvShowsDao,
     private val castDao: CastDao,
     private val formatterUtil: FormatterUtil,
+    private val requestManagerRepository: RequestManagerRepository,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, List<ShowCast>> by storeBuilder(
@@ -42,11 +47,18 @@ public class ShowCastStore(
                 async { tmdbNetworkDataSource.getShowCredits(id).getOrNull() }
             }
 
-            ShowCastResult(
+            val result = ShowCastResult(
                 showTraktId = traktId,
                 traktPeople = traktDeferred.await(),
                 tmdbCredits = tmdbCreditsDeferred?.await(),
             )
+
+            requestManagerRepository.upsert(
+                entityId = traktId,
+                requestType = SHOW_CAST.name,
+            )
+
+            result
         }
     },
     sourceOfTruth = SourceOfTruth.of<Long, ShowCastResult, List<ShowCast>>(
@@ -89,4 +101,15 @@ public class ShowCastStore(
             readDispatcher = dispatchers.databaseRead,
             writeDispatcher = dispatchers.databaseWrite,
         ),
+).validator(
+    Validator.by { result ->
+        withContext(dispatchers.io) {
+            val traktId = result.firstOrNull()?.show_trakt_id?.id ?: return@withContext false
+            !requestManagerRepository.isRequestExpired(
+                entityId = traktId,
+                requestType = SHOW_CAST.name,
+                threshold = SHOW_CAST.duration,
+            )
+        }
+    },
 ).build()
