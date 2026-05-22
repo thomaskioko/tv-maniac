@@ -31,5 +31,13 @@ FROM trakt_list_shows
 WHERE pending_action != 'DELETE'
 GROUP BY list_id;
 
+deleteSyncedByListId:
+DELETE FROM trakt_list_shows
+WHERE list_id = ? AND pending_action = 'NOTHING';
+
+upsertSynced:
+INSERT OR IGNORE INTO trakt_list_shows(list_id, show_trakt_id, listed_at, pending_action)
+VALUES(?, ?, ?, 'NOTHING');
+
 deleteAll:
 DELETE FROM trakt_list_shows;

@@ -49,6 +49,18 @@ public class DefaultTraktListShowDao(
         )
     }
 
+    override fun upsertSynced(listId: Long, showTraktId: Long, listedAt: String) {
+        database.traktListShowsQueries.upsertSynced(
+            list_id = listId,
+            show_trakt_id = showTraktId,
+            listed_at = listedAt,
+        )
+    }
+
+    override fun deleteSyncedByListId(listId: Long) {
+        database.traktListShowsQueries.deleteSyncedByListId(list_id = listId)
+    }
+
     override fun updatePendingAction(listId: Long, showTraktId: Long, pendingAction: String) {
         database.traktListShowsQueries.updatePendingAction(
             pending_action = pendingAction,

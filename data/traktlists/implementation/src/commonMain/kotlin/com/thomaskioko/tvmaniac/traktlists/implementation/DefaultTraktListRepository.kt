@@ -17,12 +17,14 @@ import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class DefaultTraktListRepository(
     private val traktListsStore: TraktListsStore,
+    private val traktListItemsStore: TraktListItemsStore,
     private val createTraktListStore: CreateTraktListStore,
     private val traktListDao: TraktListDao,
     private val traktListShowDao: TraktListShowDao,
@@ -56,10 +58,27 @@ public class DefaultTraktListRepository(
         }.distinctUntilChanged()
 
     override suspend fun fetchUserLists(slug: String, forceRefresh: Boolean) {
+        fetchListMetadata(slug = slug, forceRefresh = forceRefresh)
+        fetchListItems(slug = slug, forceRefresh = forceRefresh)
+    }
+
+    private suspend fun fetchListMetadata(slug: String, forceRefresh: Boolean) {
         if (forceRefresh) {
             traktListsStore.fresh(key = slug)
         } else {
             traktListsStore.get(key = slug)
+        }
+    }
+
+    private suspend fun fetchListItems(slug: String, forceRefresh: Boolean) {
+        val listIds = traktListDao.observeAll().first().map { it.id }
+        listIds.forEach { listId ->
+            val key = TraktListItemsKey(userSlug = slug, listId = listId)
+            if (forceRefresh) {
+                traktListItemsStore.fresh(key = key)
+            } else {
+                traktListItemsStore.get(key = key)
+            }
         }
     }
 
