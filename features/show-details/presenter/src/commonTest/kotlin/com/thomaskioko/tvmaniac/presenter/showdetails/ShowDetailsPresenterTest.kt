@@ -778,7 +778,7 @@ class ShowDetailsPresenterTest {
             ),
             notificationManager = fakeNotificationManager,
             traktAuthRepository = traktAuthRepository,
-            localizer = fakeLocalizer,
+            mapper = ShowDetailsMapper(localizer = fakeLocalizer),
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             dispatchers = coroutineDispatcher,
             logger = fakeLogger,

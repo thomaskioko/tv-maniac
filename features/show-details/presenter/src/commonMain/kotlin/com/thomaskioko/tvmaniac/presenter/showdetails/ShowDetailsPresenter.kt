@@ -26,7 +26,6 @@ import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowMetadataInterac
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
-import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
@@ -82,7 +81,7 @@ public class ShowDetailsPresenter(
     observableShowMetadataInteractor: ObservableShowMetadataInteractor,
     observeShowWatchProgressInteractor: ObserveShowWatchProgressInteractor,
     private val traktAuthRepository: TraktAuthRepository,
-    private val localizer: Localizer,
+    private val mapper: ShowDetailsMapper,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
     @Suppress("UNUSED_PARAMETER") dispatchers: AppCoroutineDispatchers,
@@ -107,7 +106,7 @@ public class ShowDetailsPresenter(
 
         observableShowDetailsInteractor.flow
             .onEach { details ->
-                _state.update { it.copy(showDetails = it.showDetails.applyShowDetails(details, localizer)) }
+                _state.update { it.copy(showDetails = mapper.applyShowDetails(it.showDetails, details)) }
             }
             .launchIn(coroutineScope)
 
@@ -115,8 +114,8 @@ public class ShowDetailsPresenter(
             .onEach { metadata ->
                 _state.update {
                     it.copy(
-                        showDetails = it.showDetails.applyMetadata(metadata),
-                        continueTrackingEpisodes = mapContinueTrackingEpisodes(metadata.continueTrackingEpisodes, showTraktId),
+                        showDetails = mapper.applyMetadata(it.showDetails, metadata),
+                        continueTrackingEpisodes = mapper.mapContinueTrackingEpisodes(metadata.continueTrackingEpisodes, showTraktId),
                         continueTrackingScrollIndex = metadata.continueTrackingScrollIndex,
                     )
                 }
@@ -125,7 +124,7 @@ public class ShowDetailsPresenter(
 
         observeShowWatchProgressInteractor.flow
             .onEach { progress ->
-                _state.update { it.copy(showDetails = it.showDetails.applyWatchProgress(progress)) }
+                _state.update { it.copy(showDetails = mapper.applyWatchProgress(it.showDetails, progress)) }
             }
             .launchIn(coroutineScope)
 
