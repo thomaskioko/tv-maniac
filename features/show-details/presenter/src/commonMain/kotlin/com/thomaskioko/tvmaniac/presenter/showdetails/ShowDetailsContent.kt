@@ -11,7 +11,6 @@ import kotlinx.collections.immutable.persistentSetOf
 public data class ShowDetailsContent(
     val showDetailsRefreshing: Boolean = false,
     val similarShowsRefreshing: Boolean = false,
-    val watchProvidersRefreshing: Boolean = false,
     val showDetails: ShowDetailsModel = ShowDetailsModel.Empty,
     val selectedSeasonIndex: Int = -1,
     val continueTrackingEpisodes: ImmutableList<ContinueTrackingEpisodeModel> = persistentListOf(),
@@ -20,9 +19,9 @@ public data class ShowDetailsContent(
     val message: UiMessage? = null,
 ) {
     public val isRefreshing: Boolean
-        get() = showDetailsRefreshing || similarShowsRefreshing || watchProvidersRefreshing
+        get() = showDetailsRefreshing || similarShowsRefreshing
 
     public companion object {
-        public val Empty: ShowDetailsContent = ShowDetailsContent(showDetailsRefreshing = true)
+        public val Empty: ShowDetailsContent = ShowDetailsContent()
     }
 }

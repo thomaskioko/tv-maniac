@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.presenter.showdetails
 
+import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.CastModel
@@ -17,36 +18,41 @@ import com.thomaskioko.tvmaniac.domain.showdetails.model.Providers as DomainProv
 import com.thomaskioko.tvmaniac.domain.showdetails.model.Season as DomainSeason
 import com.thomaskioko.tvmaniac.domain.showdetails.model.Show as DomainShow
 import com.thomaskioko.tvmaniac.domain.showdetails.model.ShowDetails as DomainShowDetails
+import com.thomaskioko.tvmaniac.domain.showdetails.model.ShowMetadata as DomainShowMetadata
 import com.thomaskioko.tvmaniac.domain.showdetails.model.Trailer as DomainTrailer
 
-public fun DomainShowDetails.toShowDetails(
+internal fun ShowDetailsModel.applyShowDetails(
+    details: DomainShowDetails,
     localizer: Localizer,
-    watchedEpisodesCount: Int = 0,
-    totalEpisodesCount: Int = 0,
-    watchProgress: Float = 0f,
-): ShowDetailsModel = ShowDetailsModel(
-    tmdbId = tmdbId,
-    title = title,
-    overview = overview,
-    language = language,
-    posterImageUrl = posterImageUrl,
-    backdropImageUrl = backdropImageUrl,
-    votes = votes,
-    rating = rating,
-    year = year,
-    status = status?.localizeStatus(localizer),
-    isInLibrary = isInLibrary,
-    hasWebViewInstalled = hasWebViewInstalled,
-    numberOfSeasons = numberOfSeasons ?: 0,
-    watchedEpisodesCount = watchedEpisodesCount,
-    totalEpisodesCount = totalEpisodesCount,
-    watchProgress = watchProgress,
-    genres = genres.toImmutableList(),
-    seasonsList = seasonsList.toSeasonsList(),
-    providers = providers.toWatchProviderList(),
-    castsList = castsList.toCastList(),
-    similarShows = similarShows.toShowList(),
-    trailersList = trailersList.toTrailerList(),
+): ShowDetailsModel = copy(
+    tmdbId = details.tmdbId,
+    title = details.title,
+    overview = details.overview,
+    language = details.language,
+    posterImageUrl = details.posterImageUrl,
+    backdropImageUrl = details.backdropImageUrl,
+    votes = details.votes,
+    rating = details.rating,
+    year = details.year,
+    status = details.status?.localizeStatus(localizer),
+    isInLibrary = details.isInLibrary,
+    genres = details.genres.toImmutableList(),
+)
+
+internal fun ShowDetailsModel.applyMetadata(metadata: DomainShowMetadata): ShowDetailsModel = copy(
+    hasWebViewInstalled = metadata.hasWebViewInstalled,
+    numberOfSeasons = metadata.seasonsList.size,
+    providers = metadata.providers.toWatchProviderList(),
+    castsList = metadata.castsList.toCastList(),
+    seasonsList = metadata.seasonsList.toSeasonsList(),
+    similarShows = metadata.similarShows.toShowList(),
+    trailersList = metadata.trailersList.toTrailerList(),
+)
+
+internal fun ShowDetailsModel.applyWatchProgress(progress: ShowWatchProgress): ShowDetailsModel = copy(
+    watchedEpisodesCount = progress.watchedCount,
+    totalEpisodesCount = progress.totalCount,
+    watchProgress = progress.progressPercentage,
 )
 
 private fun String.localizeStatus(localizer: Localizer): String {

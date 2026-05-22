@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.presenter.showdetails
 
-import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.root.nav.NotificationRationale
@@ -27,10 +26,10 @@ import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeN
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncTraktCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowMetadataInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
 import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
-import com.thomaskioko.tvmaniac.domain.watchproviders.WatchProvidersInteractor
 import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
@@ -116,6 +115,15 @@ class ShowDetailsPresenterTest {
     @AfterTest
     fun tearDown() {
         Dispatchers.resetMain()
+    }
+
+    @Test
+    fun `should not flag refreshing when initial state is empty`() {
+        val empty = ShowDetailsContent.Empty
+
+        empty.showDetailsRefreshing shouldBe false
+        empty.similarShowsRefreshing shouldBe false
+        empty.isRefreshing shouldBe false
     }
 
     @Test
@@ -396,17 +404,12 @@ class ShowDetailsPresenterTest {
         )
 
         val presenter = buildShowDetailsPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
 
-        presenter.state.test {
-            awaitItem()
-            awaitItem()
+        presenter.dispatch(FollowShowClicked(isInLibrary = false))
+        testDispatcher.scheduler.advanceUntilIdle()
 
-            presenter.dispatch(FollowShowClicked(isInLibrary = false))
-
-            testDispatcher.scheduler.advanceUntilIdle()
-
-            fakeNotificationManager.getPendingNotifications().size shouldBe 1
-        }
+        fakeNotificationManager.getPendingNotifications().size shouldBe 1
     }
 
     @Test
@@ -415,17 +418,12 @@ class ShowDetailsPresenterTest {
         fakeDatastoreRepository.setEpisodeNotificationsEnabled(false)
 
         val presenter = buildShowDetailsPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
 
-        presenter.state.test {
-            awaitItem()
-            awaitItem()
+        presenter.dispatch(FollowShowClicked(isInLibrary = false))
+        testDispatcher.scheduler.advanceUntilIdle()
 
-            presenter.dispatch(FollowShowClicked(isInLibrary = false))
-
-            testDispatcher.scheduler.advanceUntilIdle()
-
-            fakeNotificationManager.getScheduledNotifications() shouldBe emptyMap()
-        }
+        fakeNotificationManager.getScheduledNotifications() shouldBe emptyMap()
     }
 
     @Test
@@ -730,27 +728,28 @@ class ShowDetailsPresenterTest {
                 showDetailsRepository = showDetailsRepository,
                 castRepository = castRepository,
                 trailerRepository = trailerRepository,
-                dispatchers = coroutineDispatcher,
                 providerRepository = watchProvidersRepository,
+                seasonDetailsRepository = seasonDetailsRepository,
+                watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
+                dispatchers = coroutineDispatcher,
             ),
             similarShowsInteractor = SimilarShowsInteractor(
                 similarShowsRepository = similarShowsRepository,
                 dispatchers = coroutineDispatcher,
             ),
-            watchProvidersInteractor = WatchProvidersInteractor(
-                repository = watchProvidersRepository,
+            observableShowDetailsInteractor = ObservableShowDetailsInteractor(
+                showDetailsRepository = showDetailsRepository,
+                formatterUtil = fakeFormatterUtil,
                 dispatchers = coroutineDispatcher,
             ),
-            observableShowDetailsInteractor = ObservableShowDetailsInteractor(
+            observableShowMetadataInteractor = ObservableShowMetadataInteractor(
                 castRepository = castRepository,
                 episodeRepository = episodeRepository,
                 seasonDetailsRepository = seasonDetailsRepository,
                 seasonsRepository = seasonsRepository,
-                showDetailsRepository = showDetailsRepository,
                 similarShowsRepository = similarShowsRepository,
                 trailerRepository = trailerRepository,
-                watchProviders = watchProvidersRepository,
-                formatterUtil = fakeFormatterUtil,
+                watchProviderRepository = watchProvidersRepository,
                 dispatchers = coroutineDispatcher,
             ),
             markEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(
@@ -761,13 +760,6 @@ class ShowDetailsPresenterTest {
             ),
             observeShowWatchProgressInteractor = ObserveShowWatchProgressInteractor(
                 episodeRepository = episodeRepository,
-            ),
-            syncShowMetadataInteractor = SyncShowMetadataInteractor(
-                showDetailsRepository = showDetailsRepository,
-                seasonDetailsRepository = seasonDetailsRepository,
-                watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
-                watchProviderRepository = watchProvidersRepository,
-                dispatchers = coroutineDispatcher,
             ),
             syncTraktCalendarInteractor = SyncTraktCalendarInteractor(
                 episodeRepository = episodeRepository,

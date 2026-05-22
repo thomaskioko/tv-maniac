@@ -1,8 +1,5 @@
 package com.thomaskioko.tvmaniac.domain.showdetails.model
 
-import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
-import kotlinx.collections.immutable.ImmutableList
-
 public data class ShowDetails(
     val tmdbId: Long,
     val traktId: Long,
@@ -14,27 +11,27 @@ public data class ShowDetails(
     val year: String,
     val status: String?,
     val votes: Long = 0,
-    val numberOfSeasons: Int? = null,
-    val numberOfEpisodes: Long? = null,
     val rating: Double,
     val isInLibrary: Boolean,
-    val hasWebViewInstalled: Boolean,
-    val genres: List<String>,
-    val providers: List<Providers>,
-    val castsList: List<Casts>,
-    val seasonsList: List<Season>,
-    val similarShows: List<Show>,
-    val trailersList: List<Trailer>,
-    val continueTrackingEpisodes: ImmutableList<EpisodeDetails>,
+    val genres: List<String> = emptyList(),
 ) {
-    val continueTrackingScrollIndex: Int
-        get() {
-            val firstUnwatched = continueTrackingEpisodes.indexOfFirst { !it.isWatched }
-            if (firstUnwatched >= 0) return firstUnwatched
-
-            val nextAfterLastWatched = continueTrackingEpisodes.indexOfLast { it.isWatched } + 1
-            return if (nextAfterLastWatched < continueTrackingEpisodes.size) nextAfterLastWatched else 0
-        }
+    public companion object {
+        public val Empty: ShowDetails = ShowDetails(
+            tmdbId = 0,
+            traktId = 0,
+            title = "",
+            overview = "",
+            language = null,
+            posterImageUrl = null,
+            backdropImageUrl = null,
+            year = "",
+            status = null,
+            votes = 0,
+            rating = 0.0,
+            isInLibrary = false,
+            genres = emptyList(),
+        )
+    }
 }
 
 public data class Casts(
