@@ -26,6 +26,7 @@ kotlin {
                 api(projects.data.watchproviders.api)
 
                 implementation(projects.core.networkUtil.api)
+                implementation(projects.core.syncstate.api)
                 implementation(libs.sqldelight.extensions)
             }
         }

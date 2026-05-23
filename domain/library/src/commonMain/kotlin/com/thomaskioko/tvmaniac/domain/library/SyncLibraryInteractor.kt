@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.domain.library
 
-import com.thomaskioko.tvmaniac.core.base.extensions.parallelForEach
 import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.toSyncError
 import com.thomaskioko.tvmaniac.data.library.LibraryRepository
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
@@ -16,6 +16,7 @@ import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.SyncError as NetworkSyncError
 
 @Inject
 public class SyncLibraryInteractor(
@@ -49,18 +50,24 @@ public class SyncLibraryInteractor(
             val followedShows = followedShowsRepository.getFollowedShows()
             logger.debug(TAG, "Syncing ${followedShows.size} followed shows")
 
-            followedShows.parallelForEach(concurrency = LIBRARY_SYNC_CONCURRENCY) { show ->
+            for (show in followedShows) {
                 ensureActive()
-                runCatching {
+                val result = runCatching {
                     syncShowMetadataInteractor.executeSync(
                         SyncShowMetadataInteractor.Param(
                             traktId = show.traktId,
                             forceRefresh = params.forceRefresh,
                         ),
                     )
-                }.onFailure {
-                    logger.warning(TAG, "syncShowMetadata failed for ${show.traktId}: ${it.message}")
-                    syncObserver.log(SyncError.BackgroundSyncFailed(TAG, it))
+                }
+                val failure = result.exceptionOrNull() ?: continue
+
+                logger.warning(TAG, "syncShowMetadata failed for ${show.traktId}: ${failure.message}")
+                syncObserver.log(SyncError.BackgroundSyncFailed(TAG, failure))
+
+                if (failure.toSyncError() is NetworkSyncError.Retryable) {
+                    logger.warning(TAG, "Backing off metadata fan-out after retryable failure on ${show.traktId}")
+                    break
                 }
             }
 

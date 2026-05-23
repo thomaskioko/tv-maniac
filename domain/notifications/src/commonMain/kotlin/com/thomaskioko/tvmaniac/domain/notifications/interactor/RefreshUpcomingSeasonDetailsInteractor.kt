@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.domain.notifications.interactor
 
-import com.thomaskioko.tvmaniac.core.base.extensions.parallelForEach
 import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.ApiRateLimiter
@@ -30,7 +29,7 @@ public class RefreshUpcomingSeasonDetailsInteractor(
         if (latestSeasons.isEmpty()) return
 
         withContext(dispatchers.io) {
-            latestSeasons.parallelForEach(concurrency = SEASON_REFRESH_CONCURRENCY) { season ->
+            latestSeasons.forEach { season ->
                 apiRateLimiter.withRateLimitTracking {
                     seasonDetailsRepository.fetchSeasonDetails(
                         param = SeasonDetailsParam(
