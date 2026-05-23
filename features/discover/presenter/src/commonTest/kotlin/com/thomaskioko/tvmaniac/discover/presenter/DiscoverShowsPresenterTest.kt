@@ -308,7 +308,6 @@ class DiscoverShowsPresenterTest {
                 upcomingShowsRepository = upcomingShowsRepository,
                 genreRepository = genreRepository,
                 observeUpNextInteractor = observeUpNextInteractor,
-                dispatchers = coroutineDispatcher,
             ),
             followShowInteractor = FollowShowInteractor(
                 followedShowsRepository = followedShowsRepository,
@@ -461,7 +460,6 @@ class DiscoverShowsPresenterTest {
             upcomingShowsRepository = upcomingShowsRepository,
             genreRepository = genreRepository,
             observeUpNextInteractor = observeUpNextInteractor,
-            dispatchers = coroutineDispatcher,
         ),
         followShowInteractor = FollowShowInteractor(
             followedShowsRepository = followedShowsRepository,
