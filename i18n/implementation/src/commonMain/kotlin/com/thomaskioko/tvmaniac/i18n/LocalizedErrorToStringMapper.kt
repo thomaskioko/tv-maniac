@@ -28,6 +28,8 @@ public class LocalizedErrorToStringMapper(
         is SyncError.Permanent.NotFound -> localizer.getString(StringResourceKey.ErrorNotFound)
         is SyncError.Permanent.InvalidData -> localizer.getString(StringResourceKey.ErrorParse)
         is SyncError.Permanent.Forbidden -> localizer.getString(StringResourceKey.ErrorForbidden)
+        is SyncError.Permanent.AccountLimitExceeded ->
+            localizer.getString(StringResourceKey.AccountLimitBannerMessage)
         is SyncError.Unknown -> localizer.getString(StringResourceKey.ErrorGeneric)
     }
 }
