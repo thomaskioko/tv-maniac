@@ -239,6 +239,13 @@ public object Endpoints {
             errorFixture = "trakt/users/lists/create/error.json",
         )
 
+        /** `GET /users/{slug}/lists/{listId}/items` — slug- and list-bound. Returns items in a list. */
+        public object UserListItems : Endpoint.Pattern {
+            override val pathRegex: String = "/users/[^/]+/lists/\\d+/items"
+            override val successFixture: String = "trakt/users/lists/items/success.json"
+            override val errorFixture: String = "trakt/users/lists/items/error.json"
+        }
+
         /** `POST /users/{slug}/lists/{listId}/items` — slug- and list-bound. Adds a show to a list. */
         public fun addShowToList(slug: String, listId: Long): Endpoint.Exact = ExactEndpoint(
             path = "/users/$slug/lists/$listId/items",

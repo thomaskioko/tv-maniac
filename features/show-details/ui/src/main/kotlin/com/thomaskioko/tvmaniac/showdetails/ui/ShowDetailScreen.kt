@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,8 +25,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.LibraryAddCheck
 import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.RemoveCircle
@@ -37,9 +34,9 @@ import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -59,7 +56,6 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -77,8 +73,6 @@ import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
 import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.TextLoadingItem
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
-import com.thomaskioko.tvmaniac.compose.components.TvManiacAlertDialog
-import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.actionIconWhen
@@ -100,20 +94,16 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.unfollow
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presenter.showdetails.DetailBackClicked
 import com.thomaskioko.tvmaniac.presenter.showdetails.DetailShowClicked
-import com.thomaskioko.tvmaniac.presenter.showdetails.DismissLoginPrompt
-import com.thomaskioko.tvmaniac.presenter.showdetails.DismissShowsListSheet
 import com.thomaskioko.tvmaniac.presenter.showdetails.FollowShowClicked
-import com.thomaskioko.tvmaniac.presenter.showdetails.LoginClicked
 import com.thomaskioko.tvmaniac.presenter.showdetails.MarkEpisodeUnwatched
 import com.thomaskioko.tvmaniac.presenter.showdetails.MarkEpisodeWatched
+import com.thomaskioko.tvmaniac.presenter.showdetails.OpenShowList
 import com.thomaskioko.tvmaniac.presenter.showdetails.ReloadShowDetails
 import com.thomaskioko.tvmaniac.presenter.showdetails.SeasonClicked
-import com.thomaskioko.tvmaniac.presenter.showdetails.ShowCreateListField
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsAction
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsContent
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsMessageShown
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenter
-import com.thomaskioko.tvmaniac.presenter.showdetails.ShowShowsListSheet
 import com.thomaskioko.tvmaniac.presenter.showdetails.WatchTrailerClicked
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.CastModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ProviderModel
@@ -122,7 +112,6 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.TrailerModel
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.showdetails.ui.components.ContinueTrackingSection
-import com.thomaskioko.tvmaniac.showdetails.ui.components.ShowListSheetContent
 import com.thomaskioko.tvmaniac.showdetails.ui.components.WatchProgressSection
 import com.thomaskioko.tvmaniac.testtags.showdetails.ShowDetailsTestTags
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
@@ -156,141 +145,54 @@ internal fun ShowDetailsScreen(
     onAction: (ShowDetailsAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    TvManiacBottomSheetScaffold(
+    Scaffold(
         modifier = modifier,
-        showBottomSheet = state.showListSheet,
-        onDismissBottomSheet = { onAction(DismissShowsListSheet) },
-        sheetDragHandle = {
-            ListSheetTopBar(
-                title = state.sheetTitle,
-                showCreateField = state.showCreateListField,
-                onClose = { onAction(DismissShowsListSheet) },
-                onCreateClicked = { onAction(ShowCreateListField) },
+        containerColor = MaterialTheme.colorScheme.background,
+    ) { contentPadding ->
+        Box(Modifier.fillMaxSize()) {
+            LazyColumnContent(
+                detailsContent = state,
+                contentPadding = contentPadding,
+                listState = listState,
+                onAction = onAction,
             )
-        },
-        sheetContent = {
-            ShowListSheetContent(state, onAction)
-        },
-        content = { contentPadding ->
-            Box(Modifier.fillMaxSize()) {
-                LazyColumnContent(
-                    detailsContent = state,
-                    contentPadding = contentPadding,
-                    listState = listState,
-                    onAction = onAction,
-                )
 
-                RefreshCollapsableTopAppBar(
-                    listState = listState,
-                    isRefreshing = state.isRefreshing,
-                    title = {
-                        Text(
-                            text = title,
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                color = MaterialTheme.colorScheme.onSurface,
-                            ),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    },
-                    navigationIcon = {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = cd_navigate_back.resolve(LocalContext.current),
-                            tint = MaterialTheme.colorScheme.onBackground,
-                        )
-                    },
-                    actionIcon = actionIconWhen(state.message == null) {
-                        Icon(
-                            imageVector = Icons.Default.Refresh,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onBackground,
-                        )
-                    },
-                    onNavIconClicked = { onAction(DetailBackClicked) },
-                    onActionIconClicked = { onAction(ReloadShowDetails) },
-                )
-
-                TvManiacSnackBarHost(
-                    message = state.message?.message,
-                    style = SnackBarStyle.Error,
-                    onDismiss = { state.message?.let { onAction(ShowDetailsMessageShown(it.id)) } },
-                )
-            }
-        },
-    )
-
-    if (state.showLoginPrompt) {
-        TvManiacAlertDialog(
-            title = state.loginRequiredTitle,
-            message = state.loginRequiredMessage,
-            confirmButtonText = state.loginRequiredConfirmText,
-            onConfirm = { onAction(LoginClicked) },
-            onDismiss = { onAction(DismissLoginPrompt) },
-            confirmButtonTestTag = ShowDetailsTestTags.LOGIN_REQUIRED_DIALOG_CONFIRM_BUTTON_TEST_TAG,
-        )
-    }
-}
-
-@Composable
-private fun ListSheetTopBar(
-    title: String,
-    showCreateField: Boolean,
-    onClose: () -> Unit,
-    onCreateClicked: () -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .statusBarsPadding()
-            .padding(horizontal = 24.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        FilledIconButton(
-            onClick = onClose,
-            modifier = Modifier
-                .size(36.dp)
-                .testTag(ShowDetailsTestTags.LIST_SHEET_CLOSE_BUTTON_TEST_TAG),
-            colors = androidx.compose.material3.IconButtonDefaults.filledIconButtonColors(
-                containerColor = MaterialTheme.colorScheme.secondary,
-                contentColor = MaterialTheme.colorScheme.onSecondary,
-            ),
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Close,
-                contentDescription = null,
-                modifier = Modifier.size(20.dp),
+            RefreshCollapsableTopAppBar(
+                listState = listState,
+                isRefreshing = state.isRefreshing,
+                title = {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            color = MaterialTheme.colorScheme.onSurface,
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                },
+                navigationIcon = {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = cd_navigate_back.resolve(LocalContext.current),
+                        tint = MaterialTheme.colorScheme.onBackground,
+                    )
+                },
+                actionIcon = actionIconWhen(state.message == null) {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onBackground,
+                    )
+                },
+                onNavIconClicked = { onAction(DetailBackClicked) },
+                onActionIconClicked = { onAction(ReloadShowDetails) },
             )
-        }
 
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.weight(1f),
-            textAlign = TextAlign.Center,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-
-        if (!showCreateField) {
-            FilledIconButton(
-                onClick = onCreateClicked,
-                modifier = Modifier
-                    .size(36.dp)
-                    .testTag(ShowDetailsTestTags.LIST_SHEET_CREATE_LIST_BUTTON_TEST_TAG),
-                colors = androidx.compose.material3.IconButtonDefaults.filledIconButtonColors(
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary,
-                ),
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.LibraryAddCheck,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp),
-                )
-            }
-        } else {
-            Spacer(modifier = Modifier.size(36.dp))
+            TvManiacSnackBarHost(
+                message = state.message?.message,
+                style = SnackBarStyle.Error,
+                onDismiss = { state.message?.let { onAction(ShowDetailsMessageShown(it.id)) } },
+            )
         }
     }
 }
@@ -314,7 +216,7 @@ internal fun LazyColumnContent(
             HeaderContent(
                 show = detailsContent.showDetails,
                 onUpdateFavoriteClicked = { onAction(FollowShowClicked(it)) },
-                onAddToListClicked = { onAction(ShowShowsListSheet) },
+                onAddToListClicked = { onAction(OpenShowList) },
             )
         }
 

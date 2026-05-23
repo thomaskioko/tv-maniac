@@ -58,11 +58,6 @@ public class IosTaskScheduler(
         submitRequest(request)
     }
 
-    override fun scheduleAndExecute(request: PeriodicTaskRequest) {
-        schedulePeriodic(request)
-        executeImmediately(request.id)
-    }
-
     override fun cancel(id: String) {
         lock.withLock { activeRequests.remove(id) }
         scheduler.cancelTaskRequestWithIdentifier(id)
@@ -171,25 +166,6 @@ public class IosTaskScheduler(
                     "Submit failed [${request.id}] type=$type code=${error?.code} " +
                         "domain=${error?.domain} desc=${error?.localizedDescription}",
                 )
-            }
-        }
-    }
-
-    private fun executeImmediately(taskId: String) {
-        val worker = workerFactory.createWorker(taskId) ?: run {
-            logger.error(TAG, "No worker found for [$taskId]")
-            return
-        }
-
-        logger.debug(TAG, "Starting immediate execution of [$taskId]")
-        appCoroutineScope.launch {
-            try {
-                worker.doWork()
-                logger.debug(TAG, "Immediate execution of [$taskId] completed")
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Throwable) {
-                logger.error(TAG, "Immediate execution of [$taskId] failed: ${e.message}")
             }
         }
     }

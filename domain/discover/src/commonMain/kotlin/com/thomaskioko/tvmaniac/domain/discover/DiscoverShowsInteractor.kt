@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.domain.discover
 
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.interactor.SubjectInteractor
-import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.featuredshows.api.FeaturedShowsRepository
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsRepository
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsRepository
@@ -14,7 +13,6 @@ import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.UpNextEpisode
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOn
 
 @Inject
 public class DiscoverShowsInteractor(
@@ -25,7 +23,6 @@ public class DiscoverShowsInteractor(
     private val upcomingShowsRepository: UpcomingShowsRepository,
     private val genreRepository: GenreRepository,
     private val observeUpNextInteractor: ObserveUpNextInteractor,
-    private val dispatchers: AppCoroutineDispatchers,
 ) : SubjectInteractor<Unit, DiscoverShowsData>() {
 
     override fun createObservable(params: Unit): Flow<DiscoverShowsData> = combine(
@@ -45,7 +42,7 @@ public class DiscoverShowsInteractor(
             upcomingShows = upcoming,
             nextEpisodes = upNextResult.episodes,
         )
-    }.flowOn(dispatchers.io.limitedParallelism(6))
+    }
 }
 
 public data class DiscoverShowsData(

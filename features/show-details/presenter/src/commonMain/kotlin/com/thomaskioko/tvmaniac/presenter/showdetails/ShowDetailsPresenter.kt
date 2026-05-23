@@ -5,7 +5,6 @@ import com.arkivanov.decompose.value.Value
 import com.thomaskioko.root.nav.NotificationRationale
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
-import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.Logger
@@ -23,25 +22,18 @@ import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeN
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncTraktCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowMetadataInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
-import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
 import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
-import com.thomaskioko.tvmaniac.domain.traktlists.CreateTraktListInteractor
-import com.thomaskioko.tvmaniac.domain.traktlists.ObserveTraktListsInteractor
-import com.thomaskioko.tvmaniac.domain.traktlists.SyncTraktListsInteractor
-import com.thomaskioko.tvmaniac.domain.traktlists.ToggleShowInListInteractor
-import com.thomaskioko.tvmaniac.domain.watchproviders.WatchProvidersInteractor
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
-import com.thomaskioko.tvmaniac.i18n.PluralsResourceKey
-import com.thomaskioko.tvmaniac.i18n.StringResourceKey
-import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
+import com.thomaskioko.tvmaniac.showlist.nav.ShowListParam
+import com.thomaskioko.tvmaniac.showlist.nav.ShowListRoute
 import com.thomaskioko.tvmaniac.trailers.nav.TrailersRoute
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import dev.zacsweers.metro.Assisted
@@ -49,17 +41,16 @@ import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentSet
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.time.Duration
@@ -81,99 +72,77 @@ public class ShowDetailsPresenter(
     private val followShowInteractor: FollowShowInteractor,
     private val showDetailsInteractor: ShowDetailsInteractor,
     private val similarShowsInteractor: SimilarShowsInteractor,
-    private val watchProvidersInteractor: WatchProvidersInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val markEpisodeUnwatchedInteractor: MarkEpisodeUnwatchedInteractor,
-    private val syncShowMetadataInteractor: SyncShowMetadataInteractor,
     private val syncTraktCalendarInteractor: SyncTraktCalendarInteractor,
     private val scheduleEpisodeNotificationsInteractor: ScheduleEpisodeNotificationsInteractor,
     private val notificationManager: NotificationManager,
-    private val createTraktListInteractor: CreateTraktListInteractor,
-    private val toggleShowInListInteractor: ToggleShowInListInteractor,
-    private val syncTraktListsInteractor: SyncTraktListsInteractor,
     observableShowDetailsInteractor: ObservableShowDetailsInteractor,
+    observableShowMetadataInteractor: ObservableShowMetadataInteractor,
     observeShowWatchProgressInteractor: ObserveShowWatchProgressInteractor,
-    observeTraktListsInteractor: ObserveTraktListsInteractor,
     private val traktAuthRepository: TraktAuthRepository,
-    private val traktAuthManager: TraktAuthManager,
-    private val localizer: Localizer,
+    private val mapper: ShowDetailsMapper,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
-    dispatchers: AppCoroutineDispatchers,
+    @Suppress("UNUSED_PARAMETER") dispatchers: AppCoroutineDispatchers,
 ) : ComponentContext by componentContext {
 
     private val showTraktId: Long = param.id
     private val showDetailsLoadingState = ObservableLoadingCounter()
     private val similarShowsLoadingState = ObservableLoadingCounter()
-    private val watchProvidersLoadingState = ObservableLoadingCounter()
     private val episodeActionLoadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
 
     private val coroutineScope = coroutineScope()
     private val _state = MutableStateFlow(ShowDetailsContent.Empty)
 
+    public val state: StateFlow<ShowDetailsContent> = _state.asStateFlow()
+    public val stateValue: Value<ShowDetailsContent> = state.asValue(coroutineScope)
+
     init {
         observableShowDetailsInteractor(showTraktId)
+        observableShowMetadataInteractor(showTraktId)
         observeShowWatchProgressInteractor(showTraktId)
-        observeTraktListsInteractor(showTraktId)
+
+        observableShowDetailsInteractor.flow
+            .onEach { details ->
+                _state.update { it.copy(showDetails = mapper.applyShowDetails(it.showDetails, details)) }
+            }
+            .launchIn(coroutineScope)
+
+        observableShowMetadataInteractor.flow
+            .onEach { metadata ->
+                _state.update {
+                    it.copy(
+                        showDetails = mapper.applyMetadata(it.showDetails, metadata),
+                        continueTrackingEpisodes = mapper.mapContinueTrackingEpisodes(metadata.continueTrackingEpisodes, showTraktId),
+                        continueTrackingScrollIndex = metadata.continueTrackingScrollIndex,
+                    )
+                }
+            }
+            .launchIn(coroutineScope)
+
+        observeShowWatchProgressInteractor.flow
+            .onEach { progress ->
+                _state.update { it.copy(showDetails = mapper.applyWatchProgress(it.showDetails, progress)) }
+            }
+            .launchIn(coroutineScope)
+
+        showDetailsLoadingState.observable
+            .onEach { refreshing -> _state.update { it.copy(showDetailsRefreshing = refreshing) } }
+            .launchIn(coroutineScope)
+
+        similarShowsLoadingState.observable
+            .onEach { refreshing -> _state.update { it.copy(similarShowsRefreshing = refreshing) } }
+            .launchIn(coroutineScope)
+
+        uiMessageManager.message
+            .onEach { message -> _state.update { it.copy(message = message) } }
+            .launchIn(coroutineScope)
+
         observeShowDetails(forceReload = param.forceRefresh)
         observeAuthState()
     }
-
-    public val state: StateFlow<ShowDetailsContent> = combine(
-        showDetailsLoadingState.observable,
-        similarShowsLoadingState.observable,
-        watchProvidersLoadingState.observable,
-        observableShowDetailsInteractor.flow,
-        observeShowWatchProgressInteractor.flow,
-        observeTraktListsInteractor.flow,
-        uiMessageManager.message,
-        _state,
-    ) { showDetailsUpdating, similarShowsUpdating, watchProvidersUpdating,
-        showDetails, watchProgress, traktLists, message, currentState,
-        ->
-        currentState.copy(
-            showDetails = showDetails.toShowDetails(
-                localizer = localizer,
-                watchedEpisodesCount = watchProgress.watchedCount,
-                totalEpisodesCount = watchProgress.totalCount,
-                watchProgress = watchProgress.progressPercentage,
-            ),
-            showDetailsRefreshing = showDetailsUpdating,
-            similarShowsRefreshing = similarShowsUpdating,
-            watchProvidersRefreshing = watchProvidersUpdating,
-            continueTrackingEpisodes = mapContinueTrackingEpisodes(showDetails.continueTrackingEpisodes, showTraktId),
-            continueTrackingScrollIndex = showDetails.continueTrackingScrollIndex,
-            traktLists = traktLists.map { list ->
-                com.thomaskioko.tvmaniac.presenter.showdetails.model.TraktListModel(
-                    id = list.id,
-                    slug = list.slug,
-                    name = list.name,
-                    description = list.description,
-                    showCountText = localizer.getPlural(PluralsResourceKey.ShowCount, list.itemCount.toInt(), list.itemCount.toInt()),
-                    isShowInList = list.isShowInList,
-                )
-            }.toImmutableList(),
-            sheetTitle = localizer.getString(StringResourceKey.LabelWatchlistSaveToList),
-            createListButtonText = localizer.getString(StringResourceKey.LabelWatchlistCreateCustomList),
-            createListDoneText = localizer.getString(StringResourceKey.LabelWatchlistDone),
-            createListPlaceholder = localizer.getString(StringResourceKey.LabelWatchlistNewListPlaceholder),
-            emptyListText = localizer.getString(StringResourceKey.LabelWatchlistEmptyList),
-            listsHeaderText = localizer.getString(StringResourceKey.LabelWatchlistYourLists),
-            loginRequiredTitle = localizer.getString(StringResourceKey.LabelWatchlistLoginRequiredTitle),
-            loginRequiredMessage = localizer.getString(StringResourceKey.LabelWatchlistLoginRequiredMessage),
-            loginRequiredConfirmText = localizer.getString(StringResourceKey.LabelOk),
-            message = message,
-        )
-    }
-        .flowOn(dispatchers.computation)
-        .stateIn(
-            scope = coroutineScope,
-            started = SharingStarted.Eagerly,
-            initialValue = _state.value,
-        )
-
-    public val stateValue: Value<ShowDetailsContent> = state.asValue(coroutineScope)
 
     public fun dispatch(action: ShowDetailsAction) {
         when (action) {
@@ -217,48 +186,7 @@ public class ShowDetailsPresenter(
             DetailBackClicked -> navigator.navigateBack()
             ReloadShowDetails -> refreshShowContent()
             is ShowDetailsMessageShown -> coroutineScope.launch { uiMessageManager.clearMessage(action.id) }
-            DismissShowsListSheet -> coroutineScope.launch { _state.update { it.copy(showListSheet = false) } }
-            ShowShowsListSheet -> {
-                coroutineScope.launch {
-                    if (traktAuthRepository.isLoggedIn()) {
-                        _state.update { it.copy(showListSheet = true) }
-                        syncTraktListsInteractor(SyncTraktListsInteractor.Params())
-                            .collectStatus(showDetailsLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
-                    } else {
-                        _state.update { it.copy(showLoginPrompt = true) }
-                    }
-                }
-            }
-            DismissLoginPrompt -> coroutineScope.launch { _state.update { it.copy(showLoginPrompt = false) } }
-            LoginClicked -> {
-                _state.update { it.copy(showLoginPrompt = false) }
-                traktAuthManager.launchWebView()
-            }
-            ShowCreateListField -> _state.update { it.copy(showCreateListField = true) }
-            DismissCreateListField -> _state.update {
-                it.copy(showCreateListField = false, createListName = "", createListError = null)
-            }
-            is UpdateCreateListName -> _state.update { it.copy(createListName = action.name) }
-            CreateListSubmitted -> {
-                val name = _state.value.createListName
-                coroutineScope.launch {
-                    _state.update { it.copy(isCreatingList = true) }
-                    createTraktListInteractor(CreateTraktListInteractor.Params(name = name))
-                        .collectStatus(
-                            episodeActionLoadingState,
-                            logger,
-                            uiMessageManager,
-                            errorToStringMapper = errorToStringMapper,
-                        )
-                    _state.update {
-                        if (it.message == null) {
-                            it.copy(isCreatingList = false, showCreateListField = false, createListName = "")
-                        } else {
-                            it.copy(isCreatingList = false)
-                        }
-                    }
-                }
-            }
+            OpenShowList -> navigator.navigateTo(ShowListRoute(ShowListParam(showId = showTraktId)))
 
             is MarkEpisodeWatched -> launchEpisodeMark(action.episodeId) {
                 markEpisodeWatchedInteractor(
@@ -280,18 +208,6 @@ public class ShowDetailsPresenter(
                     ),
                 ).collectStatus(episodeActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
             }
-
-            is ToggleShowInList -> {
-                coroutineScope.launch {
-                    toggleShowInListInteractor(
-                        ToggleShowInListInteractor.Params(
-                            listId = action.listId,
-                            traktShowId = showTraktId,
-                            isCurrentlyInList = action.isCurrentlyInList,
-                        ),
-                    ).collectStatus(episodeActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
-                }
-            }
         }
     }
 
@@ -299,38 +215,16 @@ public class ShowDetailsPresenter(
         coroutineScope.launch {
             showDetailsInteractor(ShowDetailsInteractor.Param(showTraktId, forceReload))
                 .collectStatus(showDetailsLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
-
-            syncShowContent(
-                forceRefresh = forceReload,
-                loadingState = showDetailsLoadingState,
-            )
         }
 
         coroutineScope.launch {
             similarShowsInteractor(SimilarShowsInteractor.Param(showTraktId, forceReload))
                 .collectStatus(similarShowsLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         }
-
-        coroutineScope.launch {
-            watchProvidersInteractor(WatchProvidersInteractor.Param(showTraktId, forceReload))
-                .collectStatus(watchProvidersLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
-        }
     }
 
     private fun refreshShowContent() {
         observeShowDetails(forceReload = true)
-    }
-
-    private suspend fun syncShowContent(
-        forceRefresh: Boolean = false,
-        loadingState: ObservableLoadingCounter,
-    ) {
-        syncShowMetadataInteractor(
-            params = SyncShowMetadataInteractor.Param(
-                traktId = showTraktId,
-                forceRefresh = forceRefresh,
-            ),
-        ).collectStatus(loadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
     }
 
     private fun clearMessage(id: Long) {

@@ -105,6 +105,28 @@ class DefaultTraktListRemoteDataSourceTest {
     }
 
     @Test
+    fun `should use GET and correct path given getListItems is called`() = runTest {
+        var capturedMethod: HttpMethod? = null
+        var capturedPath: String? = null
+
+        val engine = MockEngine { request ->
+            capturedMethod = request.method
+            capturedPath = request.url.encodedPath
+            respond(
+                content = """[]""",
+                status = HttpStatusCode.OK,
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
+            )
+        }
+        val dataSource = createDataSource(engine)
+
+        dataSource.getListItems(userSlug = "sean", listId = 42L)
+
+        capturedMethod shouldBe HttpMethod.Get
+        capturedPath shouldBe "/users/sean/lists/42/items"
+    }
+
+    @Test
     fun `should use POST with body given addShowToWatchListByTmdbId is called`() = runTest {
         var capturedMethod: HttpMethod? = null
         var capturedPath: String? = null

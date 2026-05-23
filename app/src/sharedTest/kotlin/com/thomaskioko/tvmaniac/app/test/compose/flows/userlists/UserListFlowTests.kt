@@ -24,8 +24,8 @@ internal class UserListFlowTests : BaseAppFlowTest() {
         // 1. Open list sheet & verify initial state
         openListSheet()
 
-        showDetailsRobot
-            .assertListSheetDisplayed()
+        showListRobot
+            .assertSheetDisplayed()
             .assertTraktListItemDisplayed(favoritesListTraktId)
             .assertTraktListItemDisplayed(animeListTraktId)
             .assertListSwitchIsUnchecked(favoritesListTraktId)
@@ -52,8 +52,8 @@ internal class UserListFlowTests : BaseAppFlowTest() {
             .clickListSwitch(TEST_CREATED_LIST_TRAKT_ID)
             .assertListSwitchIsChecked(TEST_CREATED_LIST_TRAKT_ID)
             .assertTraktListShowCountText(TEST_CREATED_LIST_TRAKT_ID, "1 show")
-            .clickCloseListSheetButton()
-            .assertListSheetDoesNotExist()
+            .clickCloseSheetButton()
+            .assertSheetDoesNotExist()
     }
 
     private fun AppFlowScope.openListSheet() {
@@ -67,6 +67,7 @@ internal class UserListFlowTests : BaseAppFlowTest() {
             .assertShowDetailsDisplayed()
             .assertDoesNotExist(HomeTestTags.NAVIGATION_BAR)
             .clickAddToListButton()
-            .assertListSheetDisplayed()
+
+        showListRobot.assertSheetDisplayed()
     }
 }

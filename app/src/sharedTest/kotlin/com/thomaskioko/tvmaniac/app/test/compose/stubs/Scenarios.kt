@@ -205,6 +205,7 @@ internal class Scenarios(
             mockHandler.stubEndpoint(Endpoints.Trakt.UsersMe)
             mockHandler.stubEndpoint(Endpoints.Trakt.userStats(slug))
             mockHandler.stubEndpoint(Endpoints.Trakt.userLists(slug))
+            mockHandler.stubEndpoint(Endpoints.Trakt.UserListItems)
         }
     }
 

@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.presenter.showdetails
 
-import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.root.nav.NotificationRationale
@@ -12,7 +11,6 @@ import com.thomaskioko.tvmaniac.core.notifications.testing.FakeNotificationManag
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
-import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.SelectByShowTraktId
@@ -28,14 +26,10 @@ import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeN
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncTraktCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowMetadataInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
 import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
-import com.thomaskioko.tvmaniac.domain.traktlists.CreateTraktListInteractor
-import com.thomaskioko.tvmaniac.domain.traktlists.ObserveTraktListsInteractor
-import com.thomaskioko.tvmaniac.domain.traktlists.SyncTraktListsInteractor
-import com.thomaskioko.tvmaniac.domain.traktlists.ToggleShowInListInteractor
-import com.thomaskioko.tvmaniac.domain.watchproviders.WatchProvidersInteractor
 import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
@@ -54,12 +48,12 @@ import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepositor
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowSeasonDetailsParam
+import com.thomaskioko.tvmaniac.showlist.nav.ShowListRoute
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
-import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
@@ -95,8 +89,6 @@ class ShowDetailsPresenterTest {
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
     private val upNextRepository = FakeUpNextRepository()
     private val traktAuthRepository = FakeTraktAuthRepository()
-    private val traktListRepository = FakeTraktListRepository()
-    private val userRepository = FakeUserRepository()
     private val fakeLocalizer = FakeLocalizer()
     private val fakeFormatterUtil = FakeFormatterUtil()
     private val fakeNotificationManager = FakeNotificationManager()
@@ -123,6 +115,15 @@ class ShowDetailsPresenterTest {
     @AfterTest
     fun tearDown() {
         Dispatchers.resetMain()
+    }
+
+    @Test
+    fun `should not flag refreshing when initial state is empty`() {
+        val empty = ShowDetailsContent.Empty
+
+        empty.showDetailsRefreshing shouldBe false
+        empty.similarShowsRefreshing shouldBe false
+        empty.isRefreshing shouldBe false
     }
 
     @Test
@@ -403,17 +404,12 @@ class ShowDetailsPresenterTest {
         )
 
         val presenter = buildShowDetailsPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
 
-        presenter.state.test {
-            awaitItem()
-            awaitItem()
+        presenter.dispatch(FollowShowClicked(isInLibrary = false))
+        testDispatcher.scheduler.advanceUntilIdle()
 
-            presenter.dispatch(FollowShowClicked(isInLibrary = false))
-
-            testDispatcher.scheduler.advanceUntilIdle()
-
-            fakeNotificationManager.getPendingNotifications().size shouldBe 1
-        }
+        fakeNotificationManager.getPendingNotifications().size shouldBe 1
     }
 
     @Test
@@ -422,17 +418,12 @@ class ShowDetailsPresenterTest {
         fakeDatastoreRepository.setEpisodeNotificationsEnabled(false)
 
         val presenter = buildShowDetailsPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
 
-        presenter.state.test {
-            awaitItem()
-            awaitItem()
+        presenter.dispatch(FollowShowClicked(isInLibrary = false))
+        testDispatcher.scheduler.advanceUntilIdle()
 
-            presenter.dispatch(FollowShowClicked(isInLibrary = false))
-
-            testDispatcher.scheduler.advanceUntilIdle()
-
-            fakeNotificationManager.getScheduledNotifications() shouldBe emptyMap()
-        }
+        fakeNotificationManager.getScheduledNotifications() shouldBe emptyMap()
     }
 
     @Test
@@ -677,146 +668,18 @@ class ShowDetailsPresenterTest {
     }
 
     @Test
-    fun `should show create field given ShowCreateListField is dispatched`() = runTest {
+    fun `should navigate to ShowListRoute given OpenShowList is dispatched`() = runTest {
         buildMockData()
 
         val presenter = buildShowDetailsPresenter()
         testDispatcher.scheduler.advanceUntilIdle()
 
-        presenter.dispatch(ShowCreateListField)
+        presenter.dispatch(OpenShowList)
         testDispatcher.scheduler.advanceUntilIdle()
 
-        presenter.state.value.showCreateListField shouldBe true
-    }
-
-    @Test
-    fun `should dismiss create field and clear state given DismissCreateListField is dispatched`() = runTest {
-        buildMockData()
-
-        val presenter = buildShowDetailsPresenter()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        presenter.dispatch(ShowCreateListField)
-        presenter.dispatch(UpdateCreateListName("My List"))
-        presenter.dispatch(DismissCreateListField)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val state = presenter.state.value
-        state.showCreateListField shouldBe false
-        state.createListName shouldBe ""
-        state.createListError shouldBe null
-    }
-
-    @Test
-    fun `should update create list name given UpdateCreateListName is dispatched`() = runTest {
-        buildMockData()
-
-        val presenter = buildShowDetailsPresenter()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        presenter.dispatch(UpdateCreateListName("My List"))
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        presenter.state.value.createListName shouldBe "My List"
-    }
-
-    @Test
-    fun `should show login prompt given ShowShowsListSheet dispatched and not logged in`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_OUT)
-        buildMockData()
-
-        val presenter = buildShowDetailsPresenter()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        presenter.dispatch(ShowShowsListSheet)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val state = presenter.state.value
-        state.showLoginPrompt shouldBe true
-        state.showListSheet shouldBe false
-    }
-
-    @Test
-    fun `should show list sheet given ShowShowsListSheet dispatched and logged in`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
-        buildMockData()
-
-        val presenter = buildShowDetailsPresenter()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        presenter.dispatch(ShowShowsListSheet)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val state = presenter.state.value
-        state.showListSheet shouldBe true
-        state.showLoginPrompt shouldBe false
-    }
-
-    @Test
-    fun `should set isCreatingList given CreateListSubmitted is dispatched`() = runTest {
-        buildMockData()
-
-        val presenter = buildShowDetailsPresenter()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        presenter.dispatch(ShowCreateListField)
-        presenter.dispatch(UpdateCreateListName("My List"))
-        presenter.dispatch(CreateListSubmitted)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val state = presenter.state.value
-        state.isCreatingList shouldBe false
-        state.showCreateListField shouldBe false
-        state.createListName shouldBe ""
-    }
-
-    @Test
-    fun `should dispatch toggle action given ToggleShowInList is dispatched`() = runTest {
-        buildMockData()
-
-        val presenter = buildShowDetailsPresenter()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        presenter.dispatch(ToggleShowInList(listId = 1, isCurrentlyInList = false))
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        presenter.state.value.message shouldBe null
-    }
-
-    @Test
-    fun `should dismiss login prompt given DismissLoginPrompt is dispatched`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_OUT)
-        buildMockData()
-
-        val presenter = buildShowDetailsPresenter()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        presenter.dispatch(ShowShowsListSheet)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        presenter.state.value.showLoginPrompt shouldBe true
-
-        presenter.dispatch(DismissLoginPrompt)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        presenter.state.value.showLoginPrompt shouldBe false
-    }
-
-    @Test
-    fun `should dismiss list sheet given DismissShowsListSheet is dispatched`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
-        buildMockData()
-
-        val presenter = buildShowDetailsPresenter()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        presenter.dispatch(ShowShowsListSheet)
-        testDispatcher.scheduler.advanceUntilIdle()
-        presenter.state.value.showListSheet shouldBe true
-
-        presenter.dispatch(DismissShowsListSheet)
-        testDispatcher.scheduler.advanceUntilIdle()
-        presenter.state.value.showListSheet shouldBe false
+        val route = fakeNavigator.lastActivatedOverlay
+        route.shouldBeInstanceOf<ShowListRoute>()
+        route.param.showId shouldBe 84958L
     }
 
     private suspend fun buildMockData(
@@ -865,27 +728,28 @@ class ShowDetailsPresenterTest {
                 showDetailsRepository = showDetailsRepository,
                 castRepository = castRepository,
                 trailerRepository = trailerRepository,
-                dispatchers = coroutineDispatcher,
                 providerRepository = watchProvidersRepository,
+                seasonDetailsRepository = seasonDetailsRepository,
+                watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
+                dispatchers = coroutineDispatcher,
             ),
             similarShowsInteractor = SimilarShowsInteractor(
                 similarShowsRepository = similarShowsRepository,
                 dispatchers = coroutineDispatcher,
             ),
-            watchProvidersInteractor = WatchProvidersInteractor(
-                repository = watchProvidersRepository,
+            observableShowDetailsInteractor = ObservableShowDetailsInteractor(
+                showDetailsRepository = showDetailsRepository,
+                formatterUtil = fakeFormatterUtil,
                 dispatchers = coroutineDispatcher,
             ),
-            observableShowDetailsInteractor = ObservableShowDetailsInteractor(
+            observableShowMetadataInteractor = ObservableShowMetadataInteractor(
                 castRepository = castRepository,
                 episodeRepository = episodeRepository,
                 seasonDetailsRepository = seasonDetailsRepository,
                 seasonsRepository = seasonsRepository,
-                showDetailsRepository = showDetailsRepository,
                 similarShowsRepository = similarShowsRepository,
                 trailerRepository = trailerRepository,
-                watchProviders = watchProvidersRepository,
-                formatterUtil = fakeFormatterUtil,
+                watchProviderRepository = watchProvidersRepository,
                 dispatchers = coroutineDispatcher,
             ),
             markEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(
@@ -896,13 +760,6 @@ class ShowDetailsPresenterTest {
             ),
             observeShowWatchProgressInteractor = ObserveShowWatchProgressInteractor(
                 episodeRepository = episodeRepository,
-            ),
-            syncShowMetadataInteractor = SyncShowMetadataInteractor(
-                showDetailsRepository = showDetailsRepository,
-                seasonDetailsRepository = seasonDetailsRepository,
-                watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
-                watchProviderRepository = watchProvidersRepository,
-                dispatchers = coroutineDispatcher,
             ),
             syncTraktCalendarInteractor = SyncTraktCalendarInteractor(
                 episodeRepository = episodeRepository,
@@ -920,24 +777,8 @@ class ShowDetailsPresenterTest {
                 dispatchers = coroutineDispatcher,
             ),
             notificationManager = fakeNotificationManager,
-            createTraktListInteractor = CreateTraktListInteractor(
-                repository = traktListRepository,
-                userRepository = userRepository,
-            ),
-            toggleShowInListInteractor = ToggleShowInListInteractor(
-                repository = traktListRepository,
-                userRepository = userRepository,
-            ),
-            syncTraktListsInteractor = SyncTraktListsInteractor(
-                repository = traktListRepository,
-                userRepository = userRepository,
-            ),
-            observeTraktListsInteractor = ObserveTraktListsInteractor(
-                repository = traktListRepository,
-            ),
             traktAuthRepository = traktAuthRepository,
-            traktAuthManager = com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager(),
-            localizer = fakeLocalizer,
+            mapper = ShowDetailsMapper(localizer = fakeLocalizer),
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             dispatchers = coroutineDispatcher,
             logger = fakeLogger,

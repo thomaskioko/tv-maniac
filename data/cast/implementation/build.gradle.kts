@@ -21,6 +21,7 @@ kotlin {
                 api(projects.core.util.api)
                 api(projects.data.cast.api)
                 api(projects.data.database.sqldelight)
+                api(projects.data.requestManager.api)
                 api(projects.data.shows.api)
                 implementation(projects.core.networkUtil.api)
                 implementation(libs.sqldelight.extensions)

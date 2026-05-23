@@ -5,7 +5,6 @@ import com.thomaskioko.tvmaniac.core.tasks.api.PeriodicTaskRequest
 
 public class FakeBackgroundTaskScheduler : BackgroundTaskScheduler {
     override fun schedulePeriodic(request: PeriodicTaskRequest) {}
-    override fun scheduleAndExecute(request: PeriodicTaskRequest) {}
     override fun cancel(id: String) {}
     override fun cancelAll() {}
 }

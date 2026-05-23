@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.presenter.showdetails.model
+package com.thomaskioko.tvmaniac.presentation.showlist.model
 
 public data class TraktListModel(
     val id: Long,
@@ -7,4 +7,5 @@ public data class TraktListModel(
     val description: String?,
     val showCountText: String,
     val isShowInList: Boolean,
+    val isToggling: Boolean = false,
 )

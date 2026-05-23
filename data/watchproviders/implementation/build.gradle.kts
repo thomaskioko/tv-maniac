@@ -29,5 +29,11 @@ kotlin {
                 implementation(libs.sqldelight.extensions)
             }
         }
+
+        commonTest {
+            dependencies {
+                implementation(libs.bundles.unittest)
+            }
+        }
     }
 }

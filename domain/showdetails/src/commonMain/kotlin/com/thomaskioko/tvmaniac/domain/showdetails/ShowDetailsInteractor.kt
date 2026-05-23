@@ -7,7 +7,11 @@ import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderRepository
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor.Param
+import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
+import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import dev.zacsweers.metro.Inject
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Inject
@@ -16,15 +20,21 @@ public class ShowDetailsInteractor(
     private val castRepository: CastRepository,
     private val trailerRepository: TrailerRepository,
     private val providerRepository: WatchProviderRepository,
+    private val seasonDetailsRepository: SeasonDetailsRepository,
+    private val watchedEpisodeSyncRepository: WatchedEpisodeSyncRepository,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Param>() {
 
     override suspend fun doWork(params: Param) {
         withContext(dispatchers.io) {
-            showDetailsRepository.fetchShowDetails(id = params.id, forceRefresh = params.forceRefresh)
-            castRepository.fetchShowCast(showTraktId = params.id, forceRefresh = params.forceRefresh)
-            trailerRepository.fetchTrailers(traktId = params.id, forceRefresh = params.forceRefresh)
-            providerRepository.fetchWatchProviders(traktId = params.id, forceRefresh = params.forceRefresh)
+            coroutineScope {
+                launch { showDetailsRepository.fetchShowDetails(id = params.id, forceRefresh = params.forceRefresh) }
+                launch { castRepository.fetchShowCast(showTraktId = params.id, forceRefresh = params.forceRefresh) }
+                launch { trailerRepository.fetchTrailers(traktId = params.id, forceRefresh = params.forceRefresh) }
+                launch { providerRepository.fetchWatchProviders(traktId = params.id, forceRefresh = params.forceRefresh) }
+                launch { seasonDetailsRepository.syncShowSeasonDetails(showTraktId = params.id, forceRefresh = params.forceRefresh) }
+                launch { watchedEpisodeSyncRepository.syncShowEpisodeWatches(showTraktId = params.id, forceRefresh = params.forceRefresh) }
+            }
         }
     }
 
