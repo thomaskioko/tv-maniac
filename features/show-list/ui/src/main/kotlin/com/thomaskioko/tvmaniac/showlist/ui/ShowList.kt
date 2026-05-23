@@ -85,7 +85,7 @@ internal fun ShowListSheetTopBar(
         }
 
         Text(
-            text = state.copy.sheetTitle,
+            text = state.labels.sheetTitle,
             style = MaterialTheme.typography.titleMedium.copy(
                 color = MaterialTheme.colorScheme.onSurface,
             ),
@@ -100,7 +100,7 @@ internal fun ShowListSheetTopBar(
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Add,
-                    contentDescription = state.copy.createListButtonText,
+                    contentDescription = state.labels.createListButtonText,
                     tint = MaterialTheme.colorScheme.onSurface,
                 )
             }

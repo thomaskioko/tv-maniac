@@ -20,19 +20,19 @@ private val previewCopy = ShowListCopy(
 
 internal val loggedOutState = ShowListState(
     isLoggedIn = false,
-    copy = previewCopy,
+    labels = previewCopy,
 )
 
 internal val loggedInLoading = ShowListState(
     isLoggedIn = true,
     isLoading = true,
-    copy = previewCopy,
+    labels = previewCopy,
 )
 
 internal val loggedInWithLists = ShowListState(
     isLoggedIn = true,
     isLoading = false,
-    copy = previewCopy,
+    labels = previewCopy,
     traktLists = persistentListOf(
         TraktListModel(
             id = 1L,

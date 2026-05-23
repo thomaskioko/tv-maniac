@@ -54,7 +54,7 @@ internal fun ShowListSheetContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = state.copy.listsHeaderText,
+            text = state.labels.listsHeaderText,
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier
@@ -169,7 +169,7 @@ private fun EmptyListContent(state: ShowListState) {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = state.copy.emptyListText,
+            text = state.labels.emptyListText,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -199,7 +199,7 @@ private fun CreateListInlineField(
                     .testTag(ShowListTestTags.CREATE_LIST_INPUT_TEST_TAG),
                 placeholder = {
                     Text(
-                        text = state.copy.createListPlaceholder,
+                        text = state.labels.createListPlaceholder,
                         style = MaterialTheme.typography.bodyMedium.copy(
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                         ),
@@ -237,7 +237,7 @@ private fun CreateListInlineField(
                     ),
                     shape = MaterialTheme.shapes.medium,
                 ) {
-                    Text(state.copy.createListDoneText)
+                    Text(state.labels.createListDoneText)
                 }
             }
         }
@@ -256,7 +256,7 @@ private fun LoginRequiredContent(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = state.copy.loginRequiredTitle,
+            text = state.labels.loginRequiredTitle,
             style = MaterialTheme.typography.titleMedium.copy(
                 color = MaterialTheme.colorScheme.onSurface,
             ),
@@ -265,7 +265,7 @@ private fun LoginRequiredContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = state.copy.loginRequiredMessage,
+            text = state.labels.loginRequiredMessage,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -283,7 +283,7 @@ private fun LoginRequiredContent(
             ),
             shape = MaterialTheme.shapes.medium,
         ) {
-            Text(state.copy.loginRequiredConfirmText)
+            Text(state.labels.loginRequiredConfirmText)
         }
     }
 }

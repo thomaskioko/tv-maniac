@@ -65,15 +65,15 @@ internal class ShowListPresenterTest {
         val initial = presenter.state.value
 
         initial.isLoading shouldBe true
-        initial.copy.sheetTitle.isNotEmpty() shouldBe true
-        initial.copy.loginRequiredTitle.isNotEmpty() shouldBe true
-        initial.copy.loginRequiredMessage.isNotEmpty() shouldBe true
-        initial.copy.loginRequiredConfirmText.isNotEmpty() shouldBe true
-        initial.copy.emptyListText.isNotEmpty() shouldBe true
-        initial.copy.listsHeaderText.isNotEmpty() shouldBe true
-        initial.copy.createListButtonText.isNotEmpty() shouldBe true
-        initial.copy.createListDoneText.isNotEmpty() shouldBe true
-        initial.copy.createListPlaceholder.isNotEmpty() shouldBe true
+        initial.labels.sheetTitle.isNotEmpty() shouldBe true
+        initial.labels.loginRequiredTitle.isNotEmpty() shouldBe true
+        initial.labels.loginRequiredMessage.isNotEmpty() shouldBe true
+        initial.labels.loginRequiredConfirmText.isNotEmpty() shouldBe true
+        initial.labels.emptyListText.isNotEmpty() shouldBe true
+        initial.labels.listsHeaderText.isNotEmpty() shouldBe true
+        initial.labels.createListButtonText.isNotEmpty() shouldBe true
+        initial.labels.createListDoneText.isNotEmpty() shouldBe true
+        initial.labels.createListPlaceholder.isNotEmpty() shouldBe true
     }
 
     @Test

@@ -65,7 +65,7 @@ public class ShowListPresenter(
     private val actionLoadingState = ObservableLoadingCounter()
     private val createListState = MutableStateFlow(CreateListUiState())
     private val togglingListIds = MutableStateFlow<PersistentSet<Long>>(persistentSetOf())
-    private val copy: ShowListCopy = mapper.resolveCopy()
+    private val labels: ShowListCopy = mapper.resolveCopy()
 
     public val state: StateFlow<ShowListState> = combine(
         observeTraktListsInteractor.flow,
@@ -83,7 +83,7 @@ public class ShowListPresenter(
             isCreatingList = createUi.isCreating,
             createListName = createUi.name,
             createListError = createUi.error,
-            copy = copy,
+            labels = labels,
             message = message,
         )
     }.stateIn(
@@ -91,7 +91,7 @@ public class ShowListPresenter(
         started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
         initialValue = ShowListState(
             isLoggedIn = traktAuthRepository.isLoggedIn(),
-            copy = copy,
+            labels = labels,
         ),
     )
 

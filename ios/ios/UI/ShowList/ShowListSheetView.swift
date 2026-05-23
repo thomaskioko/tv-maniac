@@ -24,7 +24,7 @@ struct ShowListSheetView: View {
                 }
             }
             .background(.appBackground)
-            .navigationTitle(state.copy.sheetTitle)
+            .navigationTitle(state.labels.sheetTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.appSurface, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
@@ -85,7 +85,7 @@ struct ShowListSheetView: View {
                 Spacer()
                 ProgressView()
                     .progressViewStyle(.circular)
-                    .tint(.appAccent)
+                    .tint(theme.colors.accent)
                     .padding(.vertical, 16)
                 Spacer()
             }
@@ -99,7 +99,7 @@ struct ShowListSheetView: View {
                 listRow(for: list)
             }
         } header: {
-            Text(state.copy.listsHeaderText)
+            Text(state.labels.listsHeaderText)
         }
     }
 
@@ -117,7 +117,7 @@ struct ShowListSheetView: View {
                 ProgressView()
                     .progressViewStyle(.circular)
                     .scaleEffect(0.8)
-                    .tint(.appAccent)
+                    .tint(theme.colors.accent)
             } else {
                 Toggle("", isOn: Binding(
                     get: { list.isShowInList },
@@ -129,17 +129,17 @@ struct ShowListSheetView: View {
                     }
                 ))
                 .labelsHidden()
-                .tint(.appAccent)
+                .tint(theme.colors.accent)
             }
         }
         .padding(.vertical, 4)
-        .listRowBackground(Color.appSurfaceVariant.opacity(0.5))
+        .listRowBackground(theme.colors.surfaceVariant.opacity(0.5))
     }
 
     private var emptySection: some View {
         Section {
             VStack {
-                Text(state.copy.emptyListText)
+                Text(state.labels.emptyListText)
                     .textStyle(theme.typography.bodyMedium)
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.appOnSurfaceVariant)
@@ -152,7 +152,7 @@ struct ShowListSheetView: View {
     private var createSection: some View {
         Section {
             HStack(spacing: 8) {
-                TextField(state.copy.createListPlaceholder, text: Binding(
+                TextField(state.labels.createListPlaceholder, text: Binding(
                     get: { state.createListName },
                     set: { newValue in
                         if newValue.count <= 50 {
@@ -176,11 +176,11 @@ struct ShowListSheetView: View {
                             .progressViewStyle(.circular)
                             .scaleEffect(0.8)
                     } else {
-                        Text(state.copy.createListDoneText)
+                        Text(state.labels.createListDoneText)
                     }
                 }
                 .buttonStyle(.borderedProminent)
-                .tint(.appAccent)
+                .tint(theme.colors.accent)
                 .disabled(
                     state.createListName.trimmingCharacters(in: .whitespaces).isEmpty ||
                         state.isCreatingList
@@ -194,19 +194,19 @@ struct ShowListSheetView: View {
     private var loginRequiredContent: some View {
         VStack(alignment: .center, spacing: 16) {
             Spacer()
-            Text(state.copy.loginRequiredTitle)
+            Text(state.labels.loginRequiredTitle)
                 .textStyle(theme.typography.titleLarge)
-            Text(state.copy.loginRequiredMessage)
+            Text(state.labels.loginRequiredMessage)
                 .textStyle(theme.typography.bodyMedium)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.appOnSurfaceVariant)
             Button(action: { presenter.dispatch(action: ShowListActionLogin()) }) {
-                Text(state.copy.loginRequiredConfirmText)
+                Text(state.labels.loginRequiredConfirmText)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)
             }
             .buttonStyle(.borderedProminent)
-            .tint(.appAccent)
+            .tint(theme.colors.accent)
             .padding(.horizontal, 24)
             Spacer()
         }

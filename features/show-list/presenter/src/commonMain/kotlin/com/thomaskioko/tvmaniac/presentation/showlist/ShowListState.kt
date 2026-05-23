@@ -13,7 +13,7 @@ public data class ShowListState(
     val isCreatingList: Boolean = false,
     val createListName: String = "",
     val createListError: String? = null,
-    val copy: ShowListCopy = ShowListCopy(),
+    val labels: ShowListCopy = ShowListCopy(),
     val message: UiMessage? = null,
 )
 
