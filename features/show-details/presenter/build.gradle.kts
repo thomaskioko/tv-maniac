@@ -32,7 +32,6 @@ kotlin {
                 api(projects.domain.notifications)
                 api(projects.domain.showdetails)
                 api(projects.domain.similarshows)
-                api(projects.domain.watchproviders)
                 api(projects.features.showDetails.nav)
                 api(projects.features.showList.nav)
                 api(projects.i18n.api)

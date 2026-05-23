@@ -33,7 +33,6 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)
-                implementation(projects.core.util.testing)
             }
         }
     }

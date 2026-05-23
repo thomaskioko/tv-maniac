@@ -10,6 +10,10 @@ scaffold {
 
 kotlin {
     sourceSets {
+        androidMain.dependencies {
+            api(projects.data.traktlists.api)
+        }
+
         commonMain {
             dependencies {
                 api(projects.core.base)

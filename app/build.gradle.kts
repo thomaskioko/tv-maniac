@@ -117,7 +117,6 @@ dependencies {
     implementation(projects.domain.seasondetails)
     implementation(projects.domain.showdetails)
     implementation(projects.domain.similarshows)
-    implementation(projects.domain.watchproviders)
     implementation(projects.domain.settings)
     implementation(projects.domain.continueWatching)
     implementation(projects.domain.library)
