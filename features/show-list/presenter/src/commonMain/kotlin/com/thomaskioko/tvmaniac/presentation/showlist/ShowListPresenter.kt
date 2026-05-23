@@ -26,7 +26,9 @@ import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
+import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -62,37 +64,35 @@ public class ShowListPresenter(
     private val uiMessageManager = UiMessageManager()
     private val actionLoadingState = ObservableLoadingCounter()
     private val createListState = MutableStateFlow(CreateListUiState())
+    private val togglingListIds = MutableStateFlow<PersistentSet<Long>>(persistentSetOf())
+    private val copy: ShowListCopy = mapper.resolveCopy()
 
     public val state: StateFlow<ShowListState> = combine(
         observeTraktListsInteractor.flow,
         traktAuthRepository.state,
         uiMessageManager.message,
         createListState,
-    ) { lists, authState, message, createUi ->
-        val copy = mapper.resolveCopy()
+        togglingListIds,
+    ) { lists, authState, message, createUi, togglingIds ->
         val isLoggedIn = authState == TraktAuthState.LOGGED_IN
         ShowListState(
             isLoggedIn = isLoggedIn,
-            traktLists = if (isLoggedIn) mapper.toModels(lists) else persistentListOf(),
+            isLoading = false,
+            traktLists = if (isLoggedIn) mapper.toModels(lists, togglingIds) else persistentListOf(),
             showCreateListField = createUi.showField,
             isCreatingList = createUi.isCreating,
             createListName = createUi.name,
             createListError = createUi.error,
-            sheetTitle = copy.sheetTitle,
-            createListButtonText = copy.createListButtonText,
-            createListDoneText = copy.createListDoneText,
-            createListPlaceholder = copy.createListPlaceholder,
-            emptyListText = copy.emptyListText,
-            listsHeaderText = copy.listsHeaderText,
-            loginRequiredTitle = copy.loginRequiredTitle,
-            loginRequiredMessage = copy.loginRequiredMessage,
-            loginRequiredConfirmText = copy.loginRequiredConfirmText,
+            copy = copy,
             message = message,
         )
     }.stateIn(
         scope = coroutineScope,
         started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
-        initialValue = ShowListState(),
+        initialValue = ShowListState(
+            isLoggedIn = traktAuthRepository.isLoggedIn(),
+            copy = copy,
+        ),
     )
 
     public val stateValue: Value<ShowListState> = state.asValue(coroutineScope)
@@ -115,7 +115,11 @@ public class ShowListPresenter(
                 it.copy(name = action.name)
             }
             ShowListAction.CreateListSubmitted -> createList()
-            is ShowListAction.ToggleShowInList -> toggleShowInList(action.listId, action.isCurrentlyInList)
+            is ShowListAction.ToggleShowInList -> {
+                if (action.listId !in togglingListIds.value) {
+                    toggleShowInList(action.listId, action.isCurrentlyInList)
+                }
+            }
             ShowListAction.Dismiss -> navigator.dismissOverlay()
             is ShowListAction.MessageShown -> clearMessage(action.id)
         }
@@ -155,19 +159,24 @@ public class ShowListPresenter(
     }
 
     private fun toggleShowInList(listId: Long, isCurrentlyInList: Boolean) {
+        togglingListIds.update { it.add(listId) }
         appScopeLauncher.launch(TAG) {
-            toggleShowInListInteractor(
-                ToggleShowInListInteractor.Params(
-                    listId = listId,
-                    traktShowId = param.showId,
-                    isCurrentlyInList = isCurrentlyInList,
-                ),
-            ).collectStatus(
-                actionLoadingState,
-                logger,
-                uiMessageManager,
-                errorToStringMapper = errorToStringMapper,
-            )
+            try {
+                toggleShowInListInteractor(
+                    ToggleShowInListInteractor.Params(
+                        listId = listId,
+                        traktShowId = param.showId,
+                        isCurrentlyInList = isCurrentlyInList,
+                    ),
+                ).collectStatus(
+                    actionLoadingState,
+                    logger,
+                    uiMessageManager,
+                    errorToStringMapper = errorToStringMapper,
+                )
+            } finally {
+                togglingListIds.update { it.remove(listId) }
+            }
         }
     }
 

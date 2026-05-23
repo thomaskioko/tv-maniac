@@ -1,25 +1,38 @@
 package com.thomaskioko.tvmaniac.showlist.ui
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import com.thomaskioko.tvmaniac.presentation.showlist.ShowListCopy
 import com.thomaskioko.tvmaniac.presentation.showlist.ShowListState
 import com.thomaskioko.tvmaniac.presentation.showlist.model.TraktListModel
 import kotlinx.collections.immutable.persistentListOf
 
-internal val loggedOutState = ShowListState(
-    isLoggedIn = false,
+private val previewCopy = ShowListCopy(
     sheetTitle = "Add to …",
+    createListButtonText = "Create a List",
+    createListDoneText = "Create",
+    createListPlaceholder = "New list name",
+    emptyListText = "You don't have any lists yet.",
+    listsHeaderText = "Your Lists",
     loginRequiredTitle = "Login Required",
     loginRequiredMessage = "Please log in with Trakt to manage your lists.",
     loginRequiredConfirmText = "OK",
 )
 
+internal val loggedOutState = ShowListState(
+    isLoggedIn = false,
+    copy = previewCopy,
+)
+
+internal val loggedInLoading = ShowListState(
+    isLoggedIn = true,
+    isLoading = true,
+    copy = previewCopy,
+)
+
 internal val loggedInWithLists = ShowListState(
     isLoggedIn = true,
-    sheetTitle = "Add to …",
-    listsHeaderText = "Your Lists",
-    createListButtonText = "Create a List",
-    createListDoneText = "Create",
-    createListPlaceholder = "New list name",
+    isLoading = false,
+    copy = previewCopy,
     traktLists = persistentListOf(
         TraktListModel(
             id = 1L,
@@ -49,8 +62,8 @@ internal val loggedInWithLists = ShowListState(
 )
 
 internal val loggedInEmpty = loggedInWithLists.copy(
+    isLoading = false,
     traktLists = persistentListOf(),
-    emptyListText = "You don't have any lists yet.",
 )
 
 internal val loggedInWithCreateField = loggedInWithLists.copy(
@@ -64,13 +77,37 @@ internal val loggedInWithCreateLoading = loggedInWithLists.copy(
     createListName = "Sci-Fi Picks",
 )
 
+internal val loggedInWithToggleInFlight = loggedInWithLists.copy(
+    traktLists = persistentListOf(
+        TraktListModel(
+            id = 1L,
+            slug = "favorites",
+            name = "Favorites",
+            description = "My favorite shows",
+            showCountText = "12 shows",
+            isShowInList = true,
+            isToggling = true,
+        ),
+        TraktListModel(
+            id = 2L,
+            slug = "watch-later",
+            name = "Watch Later",
+            description = "Shows to watch later",
+            showCountText = "5 shows",
+            isShowInList = false,
+        ),
+    ),
+)
+
 internal class ShowListPreviewParameterProvider : PreviewParameterProvider<ShowListState> {
     override val values: Sequence<ShowListState>
         get() = sequenceOf(
             loggedOutState,
+            loggedInLoading,
             loggedInEmpty,
             loggedInWithLists,
             loggedInWithCreateField,
             loggedInWithCreateLoading,
+            loggedInWithToggleInFlight,
         )
 }

@@ -54,7 +54,7 @@ internal fun ShowListSheetContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = state.listsHeaderText,
+            text = state.copy.listsHeaderText,
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier
@@ -64,10 +64,10 @@ internal fun ShowListSheetContent(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        if (state.traktLists.isEmpty()) {
-            EmptyListContent(state)
-        } else {
-            TraktListItems(state, onAction)
+        when {
+            state.isLoading -> LoadingContent()
+            state.traktLists.isEmpty() -> EmptyListContent(state)
+            else -> TraktListItems(state, onAction)
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -115,20 +115,48 @@ private fun TraktListItems(
                     )
                 }
 
-                TvManiacSwitch(
-                    checked = list.isShowInList,
-                    onCheckedChange = {
-                        onAction(
-                            ShowListAction.ToggleShowInList(
-                                listId = list.id,
-                                isCurrentlyInList = list.isShowInList,
-                            ),
-                        )
-                    },
-                    modifier = Modifier.testTag(ShowListTestTags.traktListItemSwitch(list.id)),
-                )
+                if (list.isToggling) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .testTag(ShowListTestTags.traktListItemProgress(list.id)),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.secondary,
+                    )
+                } else {
+                    TvManiacSwitch(
+                        checked = list.isShowInList,
+                        onCheckedChange = {
+                            onAction(
+                                ShowListAction.ToggleShowInList(
+                                    listId = list.id,
+                                    isCurrentlyInList = list.isShowInList,
+                                ),
+                            )
+                        },
+                        modifier = Modifier.testTag(ShowListTestTags.traktListItemSwitch(list.id)),
+                    )
+                }
             }
         }
+    }
+}
+
+@Composable
+private fun LoadingContent() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier
+                .size(28.dp)
+                .testTag(ShowListTestTags.LOADING_INDICATOR_TEST_TAG),
+            strokeWidth = 2.dp,
+            color = MaterialTheme.colorScheme.secondary,
+        )
     }
 }
 
@@ -141,7 +169,7 @@ private fun EmptyListContent(state: ShowListState) {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = state.emptyListText,
+            text = state.copy.emptyListText,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -171,7 +199,7 @@ private fun CreateListInlineField(
                     .testTag(ShowListTestTags.CREATE_LIST_INPUT_TEST_TAG),
                 placeholder = {
                     Text(
-                        text = state.createListPlaceholder,
+                        text = state.copy.createListPlaceholder,
                         style = MaterialTheme.typography.bodyMedium.copy(
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                         ),
@@ -209,7 +237,7 @@ private fun CreateListInlineField(
                     ),
                     shape = MaterialTheme.shapes.medium,
                 ) {
-                    Text(state.createListDoneText)
+                    Text(state.copy.createListDoneText)
                 }
             }
         }
@@ -228,7 +256,7 @@ private fun LoginRequiredContent(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = state.loginRequiredTitle,
+            text = state.copy.loginRequiredTitle,
             style = MaterialTheme.typography.titleMedium.copy(
                 color = MaterialTheme.colorScheme.onSurface,
             ),
@@ -237,7 +265,7 @@ private fun LoginRequiredContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = state.loginRequiredMessage,
+            text = state.copy.loginRequiredMessage,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -255,7 +283,7 @@ private fun LoginRequiredContent(
             ),
             shape = MaterialTheme.shapes.medium,
         ) {
-            Text(state.loginRequiredConfirmText)
+            Text(state.copy.loginRequiredConfirmText)
         }
     }
 }

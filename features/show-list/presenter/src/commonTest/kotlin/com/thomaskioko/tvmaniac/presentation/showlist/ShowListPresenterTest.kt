@@ -22,6 +22,7 @@ import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -55,6 +56,38 @@ internal class ShowListPresenterTest {
     fun tearDown() {
         Dispatchers.resetMain()
         navigator.reset()
+    }
+
+    @Test
+    fun `should expose resolved copy and loading flag in initial state given presenter is created`() {
+        val presenter = createPresenter()
+
+        val initial = presenter.state.value
+
+        initial.isLoading shouldBe true
+        initial.copy.sheetTitle.isNotEmpty() shouldBe true
+        initial.copy.loginRequiredTitle.isNotEmpty() shouldBe true
+        initial.copy.loginRequiredMessage.isNotEmpty() shouldBe true
+        initial.copy.loginRequiredConfirmText.isNotEmpty() shouldBe true
+        initial.copy.emptyListText.isNotEmpty() shouldBe true
+        initial.copy.listsHeaderText.isNotEmpty() shouldBe true
+        initial.copy.createListButtonText.isNotEmpty() shouldBe true
+        initial.copy.createListDoneText.isNotEmpty() shouldBe true
+        initial.copy.createListPlaceholder.isNotEmpty() shouldBe true
+    }
+
+    @Test
+    fun `should clear loading flag once combine emits`() = runTest {
+        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+            val state = expectMostRecentItem()
+
+            state.isLoading shouldBe false
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test
@@ -98,6 +131,59 @@ internal class ShowListPresenterTest {
             state.traktLists[0].id shouldBe 1L
             state.traktLists[0].name shouldBe "Watchlist"
             state.traktLists[0].isShowInList shouldBe true
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should emit correct show counts given lists are synced`() = runTest {
+        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        traktListRepository.setListsForShow(
+            listOf(
+                TraktList(
+                    id = 1L,
+                    slug = "watchlist",
+                    name = "Watchlist",
+                    description = null,
+                    itemCount = 10L,
+                    isShowInList = false,
+                ),
+                TraktList(
+                    id = 2L,
+                    slug = "favorites",
+                    name = "Favorites",
+                    description = null,
+                    itemCount = 3L,
+                    isShowInList = true,
+                ),
+            ),
+        )
+
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+            val state = expectMostRecentItem()
+
+            state.traktLists shouldHaveSize 2
+            state.traktLists[0].showCountText shouldBe "10 shows"
+            state.traktLists[1].showCountText shouldBe "3 shows"
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should sync lists given user becomes logged in`() = runTest {
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+            expectMostRecentItem()
+
+            traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            traktListRepository.fetchUserListsInvocations shouldBe 1
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -253,6 +339,89 @@ internal class ShowListPresenterTest {
             )
             testDispatcher.scheduler.advanceUntilIdle()
 
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should mark list as toggling while interactor is running`() = runTest {
+        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        traktListRepository.setListsForShow(
+            listOf(
+                TraktList(
+                    id = 7L,
+                    slug = "favorites",
+                    name = "Favorites",
+                    description = null,
+                    itemCount = 1L,
+                    isShowInList = false,
+                ),
+            ),
+        )
+        val gate = CompletableDeferred<Unit>()
+        traktListRepository.setToggleGate(gate)
+
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+            expectMostRecentItem()
+
+            presenter.dispatch(
+                ShowListAction.ToggleShowInList(listId = 7L, isCurrentlyInList = false),
+            )
+            testDispatcher.scheduler.runCurrent()
+
+            val whileToggling = expectMostRecentItem()
+            whileToggling.traktLists[0].isToggling shouldBe true
+
+            gate.complete(Unit)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            val afterToggling = expectMostRecentItem()
+            afterToggling.traktLists[0].isToggling shouldBe false
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should ignore duplicate ToggleShowInList given a toggle is already in flight`() = runTest {
+        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        traktListRepository.setListsForShow(
+            listOf(
+                TraktList(
+                    id = 7L,
+                    slug = "favorites",
+                    name = "Favorites",
+                    description = null,
+                    itemCount = 1L,
+                    isShowInList = false,
+                ),
+            ),
+        )
+        val gate = CompletableDeferred<Unit>()
+        traktListRepository.setToggleGate(gate)
+
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+            expectMostRecentItem()
+
+            presenter.dispatch(
+                ShowListAction.ToggleShowInList(listId = 7L, isCurrentlyInList = false),
+            )
+            testDispatcher.scheduler.runCurrent()
+
+            presenter.dispatch(
+                ShowListAction.ToggleShowInList(listId = 7L, isCurrentlyInList = false),
+            )
+            testDispatcher.scheduler.runCurrent()
+
+            traktListRepository.toggleShowInListInvocations shouldBe 1
+
+            gate.complete(Unit)
+            testDispatcher.scheduler.advanceUntilIdle()
             cancelAndIgnoreRemainingEvents()
         }
     }

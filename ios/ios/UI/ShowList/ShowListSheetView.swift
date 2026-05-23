@@ -23,7 +23,7 @@ struct ShowListSheetView: View {
                 }
             }
             .background(.appBackground)
-            .navigationTitle(state.sheetTitle)
+            .navigationTitle(state.copy.sheetTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.appSurface, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
@@ -63,7 +63,9 @@ struct ShowListSheetView: View {
 
     private var loggedInContent: some View {
         Form {
-            if state.traktLists.isEmpty {
+            if state.isLoading {
+                loadingSection
+            } else if state.traktLists.isEmpty {
                 emptySection
             } else {
                 listsSection
@@ -76,13 +78,27 @@ struct ShowListSheetView: View {
         .scrollContentBackground(.hidden)
     }
 
+    private var loadingSection: some View {
+        Section {
+            HStack {
+                Spacer()
+                ProgressView()
+                    .progressViewStyle(.circular)
+                    .tint(.appAccent)
+                    .padding(.vertical, 16)
+                Spacer()
+            }
+        }
+        .listRowBackground(Color.clear)
+    }
+
     private var listsSection: some View {
         Section {
             ForEach(state.traktLists, id: \.id) { list in
                 listRow(for: list)
             }
         } header: {
-            Text(state.listsHeaderText)
+            Text(state.copy.listsHeaderText)
         }
     }
 
@@ -95,17 +111,24 @@ struct ShowListSheetView: View {
                     .font(.footnote)
             }
             Spacer()
-            Toggle("", isOn: Binding(
-                get: { list.isShowInList },
-                set: { _ in
-                    presenter.dispatch(action: ShowListActionToggleShowInList(
-                        listId: list.id,
-                        isCurrentlyInList: list.isShowInList
-                    ))
-                }
-            ))
-            .labelsHidden()
-            .tint(.appAccent)
+            if list.isToggling {
+                ProgressView()
+                    .progressViewStyle(.circular)
+                    .scaleEffect(0.8)
+                    .tint(.appAccent)
+            } else {
+                Toggle("", isOn: Binding(
+                    get: { list.isShowInList },
+                    set: { _ in
+                        presenter.dispatch(action: ShowListActionToggleShowInList(
+                            listId: list.id,
+                            isCurrentlyInList: list.isShowInList
+                        ))
+                    }
+                ))
+                .labelsHidden()
+                .tint(.appAccent)
+            }
         }
         .padding(.vertical, 4)
         .listRowBackground(Color.appSurfaceVariant.opacity(0.5))
@@ -114,7 +137,7 @@ struct ShowListSheetView: View {
     private var emptySection: some View {
         Section {
             VStack {
-                Text(state.emptyListText)
+                Text(state.copy.emptyListText)
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.appOnSurfaceVariant)
             }
@@ -126,7 +149,7 @@ struct ShowListSheetView: View {
     private var createSection: some View {
         Section {
             HStack(spacing: 8) {
-                TextField(state.createListPlaceholder, text: Binding(
+                TextField(state.copy.createListPlaceholder, text: Binding(
                     get: { state.createListName },
                     set: { newValue in
                         if newValue.count <= 50 {
@@ -150,7 +173,7 @@ struct ShowListSheetView: View {
                             .progressViewStyle(.circular)
                             .scaleEffect(0.8)
                     } else {
-                        Text(state.createListDoneText)
+                        Text(state.copy.createListDoneText)
                     }
                 }
                 .buttonStyle(.borderedProminent)
@@ -168,13 +191,13 @@ struct ShowListSheetView: View {
     private var loginRequiredContent: some View {
         VStack(alignment: .center, spacing: 16) {
             Spacer()
-            Text(state.loginRequiredTitle)
+            Text(state.copy.loginRequiredTitle)
                 .font(.title3.weight(.semibold))
-            Text(state.loginRequiredMessage)
+            Text(state.copy.loginRequiredMessage)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.appOnSurfaceVariant)
             Button(action: { presenter.dispatch(action: ShowListActionLogin()) }) {
-                Text(state.loginRequiredConfirmText)
+                Text(state.copy.loginRequiredConfirmText)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)
             }

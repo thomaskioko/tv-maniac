@@ -13,7 +13,7 @@ import kotlinx.collections.immutable.toImmutableList
 public class ShowListMapper(
     private val localizer: Localizer,
 ) {
-    public fun toModels(lists: List<TraktList>): ImmutableList<TraktListModel> =
+    public fun toModels(lists: List<TraktList>, togglingListIds: Set<Long>): ImmutableList<TraktListModel> =
         lists.map { list ->
             TraktListModel(
                 id = list.id,
@@ -26,6 +26,7 @@ public class ShowListMapper(
                     list.itemCount.toInt(),
                 ),
                 isShowInList = list.isShowInList,
+                isToggling = list.id in togglingListIds,
             )
         }.toImmutableList()
 
@@ -41,15 +42,3 @@ public class ShowListMapper(
         loginRequiredConfirmText = localizer.getString(StringResourceKey.LabelOk),
     )
 }
-
-public data class ShowListCopy(
-    val sheetTitle: String,
-    val createListButtonText: String,
-    val createListDoneText: String,
-    val createListPlaceholder: String,
-    val emptyListText: String,
-    val listsHeaderText: String,
-    val loginRequiredTitle: String,
-    val loginRequiredMessage: String,
-    val loginRequiredConfirmText: String,
-)

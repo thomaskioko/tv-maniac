@@ -23,7 +23,7 @@ internal class ShowListMapperTest {
             isShowInList = true,
         )
 
-        val models = mapper.toModels(listOf(source))
+        val models = mapper.toModels(listOf(source), togglingListIds = emptySet())
 
         models shouldHaveSize 1
         val model = models[0]
@@ -32,12 +32,29 @@ internal class ShowListMapperTest {
         model.name shouldBe "Favorites"
         model.description shouldBe "My favorite shows"
         model.isShowInList shouldBe true
+        model.isToggling shouldBe false
         model.showCountText.shouldNotBeEmpty()
     }
 
     @Test
+    fun `should mark TraktListModel as toggling given list id is in toggling set`() {
+        val source = TraktList(
+            id = 7L,
+            slug = "favorites",
+            name = "Favorites",
+            description = null,
+            itemCount = 3L,
+            isShowInList = false,
+        )
+
+        val models = mapper.toModels(listOf(source), togglingListIds = setOf(7L))
+
+        models[0].isToggling shouldBe true
+    }
+
+    @Test
     fun `should return empty list given empty input`() {
-        mapper.toModels(emptyList()).shouldBeEmpty()
+        mapper.toModels(emptyList(), togglingListIds = emptySet()).shouldBeEmpty()
     }
 
     @Test
