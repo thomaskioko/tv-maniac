@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.testing.di
 
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerFactory
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
 import com.thomaskioko.tvmaniac.navigation.NavDestination
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.presenter.home.di.HomeScreenGraph
@@ -21,6 +22,7 @@ public interface TestGraph {
     public val homeScreenGraphFactory: HomeScreenGraph.Factory
     public val syncObserver: SyncObserver
     public val workerFactory: WorkerFactory
+    public val featureFlags: Set<FeatureFlag<Boolean>>
 
     @DependencyGraph.Factory
     public fun interface Factory {
