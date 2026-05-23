@@ -679,7 +679,7 @@ class ShowDetailsPresenterTest {
 
         val route = fakeNavigator.lastActivatedOverlay
         route.shouldBeInstanceOf<ShowListRoute>()
-        (route as ShowListRoute).param.showId shouldBe 84958L
+        route.param.showId shouldBe 84958L
     }
 
     private suspend fun buildMockData(
