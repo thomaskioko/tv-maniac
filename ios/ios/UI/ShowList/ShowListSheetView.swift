@@ -4,6 +4,7 @@ import SwiftUIComponents
 import TvManiacKit
 
 struct ShowListSheetView: View {
+    @Environment(\.appTheme) private var theme
     private let presenter: ShowListPresenter
     @StateValue private var state: ShowListState
     @State private var toast: Toast?
@@ -106,9 +107,10 @@ struct ShowListSheetView: View {
         HStack {
             VStack(alignment: .leading) {
                 Text(list.name)
+                    .textStyle(theme.typography.bodyMedium)
                 Text(list.showCountText)
                     .foregroundStyle(.appOnSurfaceVariant)
-                    .font(.footnote)
+                    .textStyle(theme.typography.bodySmall)
             }
             Spacer()
             if list.isToggling {
@@ -138,6 +140,7 @@ struct ShowListSheetView: View {
         Section {
             VStack {
                 Text(state.copy.emptyListText)
+                    .textStyle(theme.typography.bodyMedium)
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.appOnSurfaceVariant)
             }
@@ -192,8 +195,9 @@ struct ShowListSheetView: View {
         VStack(alignment: .center, spacing: 16) {
             Spacer()
             Text(state.copy.loginRequiredTitle)
-                .font(.title3.weight(.semibold))
+                .textStyle(theme.typography.titleLarge)
             Text(state.copy.loginRequiredMessage)
+                .textStyle(theme.typography.bodyMedium)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.appOnSurfaceVariant)
             Button(action: { presenter.dispatch(action: ShowListActionLogin()) }) {
