@@ -9,8 +9,8 @@ import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.episodes.api.WatchedShowBatch
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
-import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncTypes
 import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncRepository
+import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncTypes
 import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider

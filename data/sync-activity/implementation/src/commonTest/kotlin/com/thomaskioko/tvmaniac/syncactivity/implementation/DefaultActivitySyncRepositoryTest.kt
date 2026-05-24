@@ -2,8 +2,8 @@ package com.thomaskioko.tvmaniac.syncactivity.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
-import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncTypes
 import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncRepository
+import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncTypes
 import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityDao
 import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider

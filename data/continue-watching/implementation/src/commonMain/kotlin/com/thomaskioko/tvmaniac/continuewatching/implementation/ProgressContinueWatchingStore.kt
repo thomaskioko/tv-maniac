@@ -9,8 +9,8 @@ import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.CONTINUE_WATCHING_SYNC
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
-import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncTypes
 import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncRepository
+import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncTypes
 import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
