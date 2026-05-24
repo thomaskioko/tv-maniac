@@ -45,6 +45,7 @@ kotlin {
                 implementation(projects.core.logger.testing)
                 implementation(projects.core.util.testing)
                 implementation(projects.data.datastore.testing)
+                implementation(projects.data.requestManager.testing)
                 implementation(projects.data.syncActivity.api)
                 implementation(projects.data.syncActivity.testing)
                 implementation(projects.data.traktauth.testing)

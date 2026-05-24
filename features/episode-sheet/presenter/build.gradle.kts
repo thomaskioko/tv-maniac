@@ -41,6 +41,7 @@ kotlin {
                 implementation(projects.data.database.sqldelight)
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.followedshows.testing)
+                implementation(projects.data.library.testing)
                 implementation(projects.i18n.testing)
                 implementation(projects.navigation.testing)
             }

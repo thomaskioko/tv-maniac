@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.featuredshows.api.interactor.FeaturedShowsInteractor
 import com.thomaskioko.tvmaniac.data.featuredshows.testing.FakeFeaturedShowsRepository
+import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsInteractor
 import com.thomaskioko.tvmaniac.data.popularshows.testing.FakePopularShowsRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
@@ -311,10 +312,10 @@ class DiscoverShowsPresenterTest {
             ),
             followShowInteractor = FollowShowInteractor(
                 followedShowsRepository = followedShowsRepository,
+                libraryRepository = FakeLibraryRepository(),
                 syncShowMetadataInteractor = SyncShowMetadataInteractor(
                     showDetailsRepository = showDetailsRepository,
                     seasonDetailsRepository = seasonDetailsRepository,
-                    watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
                     watchProviderRepository = watchProviderRepository,
                     dispatchers = coroutineDispatcher,
                 ),
@@ -347,7 +348,11 @@ class DiscoverShowsPresenterTest {
             markEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(
                 episodeRepository = episodeRepository,
             ),
-            unfollowShowInteractor = UnfollowShowInteractor(followedShowsRepository),
+            unfollowShowInteractor = UnfollowShowInteractor(
+                followedShowsRepository = followedShowsRepository,
+                libraryRepository = FakeLibraryRepository(),
+                appScopeLauncher = FakeAppScopeLauncher(scope = appCoroutineScope),
+            ),
             traktAuthRepository = traktAuthRepository,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = FakeLogger(),
@@ -463,10 +468,10 @@ class DiscoverShowsPresenterTest {
         ),
         followShowInteractor = FollowShowInteractor(
             followedShowsRepository = followedShowsRepository,
+            libraryRepository = FakeLibraryRepository(),
             syncShowMetadataInteractor = SyncShowMetadataInteractor(
                 showDetailsRepository = showDetailsRepository,
                 seasonDetailsRepository = seasonDetailsRepository,
-                watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
                 watchProviderRepository = watchProviderRepository,
                 dispatchers = coroutineDispatcher,
             ),
@@ -499,7 +504,11 @@ class DiscoverShowsPresenterTest {
         markEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(
             episodeRepository = episodeRepository,
         ),
-        unfollowShowInteractor = UnfollowShowInteractor(followedShowsRepository),
+        unfollowShowInteractor = UnfollowShowInteractor(
+            followedShowsRepository = followedShowsRepository,
+            libraryRepository = FakeLibraryRepository(),
+            appScopeLauncher = FakeAppScopeLauncher(scope = appCoroutineScope),
+        ),
         traktAuthRepository = traktAuthRepository,
         errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
         logger = FakeLogger(),

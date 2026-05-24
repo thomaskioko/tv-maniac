@@ -30,6 +30,7 @@ dependencies {
     api(libs.androidx.compose.foundation)
     api(libs.androidx.compose.runtime)
     implementation(libs.androidx.browser)
+    implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.common)
     implementation(libs.androidx.compose.activity)
     implementation(libs.androidx.compose.material3)

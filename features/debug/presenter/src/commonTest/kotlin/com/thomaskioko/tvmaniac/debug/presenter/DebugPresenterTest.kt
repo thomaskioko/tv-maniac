@@ -24,7 +24,9 @@ import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelDebugNeverRefreshed
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
+import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
+import com.thomaskioko.tvmaniac.syncactivity.testing.FakeActivitySyncRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.traktauth.api.AuthState
@@ -285,10 +287,11 @@ class DebugPresenterTest {
                 syncShowMetadataInteractor = SyncShowMetadataInteractor(
                     showDetailsRepository = FakeShowDetailsRepository(),
                     seasonDetailsRepository = FakeSeasonDetailsRepository(),
-                    watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
                     watchProviderRepository = FakeWatchProviderRepository(),
                     dispatchers = dispatchers,
                 ),
+                watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
+                syncRepository = FakeActivitySyncRepository(),
                 datastoreRepository = datastoreRepository,
                 dateTimeProvider = dateTimeProvider,
                 dispatchers = dispatchers,
@@ -305,10 +308,11 @@ class DebugPresenterTest {
                 syncShowMetadataInteractor = SyncShowMetadataInteractor(
                     showDetailsRepository = FakeShowDetailsRepository(),
                     seasonDetailsRepository = FakeSeasonDetailsRepository(),
-                    watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
                     watchProviderRepository = FakeWatchProviderRepository(),
                     dispatchers = dispatchers,
                 ),
+                watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
+                requestManagerRepository = FakeRequestManagerRepository(),
                 syncObserver = FakeSyncObserver(),
                 dispatchers = dispatchers,
                 logger = logger,

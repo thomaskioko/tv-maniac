@@ -12,6 +12,7 @@ import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNot
 import com.thomaskioko.tvmaniac.domain.settings.ObserveSettingsPreferencesInteractor
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
+import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.settings.presenter.ChangeThemeClicked
 import com.thomaskioko.tvmaniac.settings.presenter.DismissThemeClicked
 import com.thomaskioko.tvmaniac.settings.presenter.DismissTraktDialog
@@ -21,6 +22,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.ShowTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
 import com.thomaskioko.tvmaniac.settings.presenter.toAppTheme
+import com.thomaskioko.tvmaniac.syncactivity.testing.FakeActivitySyncRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeAppMetadata
@@ -44,6 +46,8 @@ class SettingsPresenterTest {
     private val traktAuthRepository = FakeTraktAuthRepository()
     private val userRepository = FakeUserRepository()
     private val fakeTraktActivityRepository = FakeTraktActivityRepository()
+    private val fakeActivitySyncRepository = FakeActivitySyncRepository()
+    private val fakeRequestManagerRepository = FakeRequestManagerRepository()
     private val fakeLogger = FakeLogger()
     private lateinit var presenter: SettingsPresenter
 
@@ -62,6 +66,8 @@ class SettingsPresenterTest {
                 userRepository = userRepository,
                 datastoreRepository = datastoreRepository,
                 traktActivityRepository = fakeTraktActivityRepository,
+                syncRepository = fakeActivitySyncRepository,
+                requestManagerRepository = fakeRequestManagerRepository,
             ),
             observeSettingsPreferencesInteractor = ObserveSettingsPreferencesInteractor(
                 datastoreRepository = datastoreRepository,

@@ -5,9 +5,11 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingDao
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository
+import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
+import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
@@ -24,6 +26,7 @@ import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepositor
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.NavRoute
 import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
@@ -37,7 +40,9 @@ import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -50,6 +55,7 @@ internal class UpNextPresenterTest {
 
     private val lifecycle = LifecycleRegistry()
     private val testDispatcher = StandardTestDispatcher()
+    private val appCoroutineScope = CoroutineScope(testDispatcher + SupervisorJob())
     private val episodeRepository = FakeEpisodeRepository()
     private val upNextRepository = FakeUpNextRepository()
     private val followedShowsRepository = FakeFollowedShowsRepository()
@@ -434,10 +440,11 @@ internal class UpNextPresenterTest {
             syncShowMetadataInteractor = SyncShowMetadataInteractor(
                 showDetailsRepository = FakeShowDetailsRepository(),
                 seasonDetailsRepository = FakeSeasonDetailsRepository(),
-                watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
                 watchProviderRepository = FakeWatchProviderRepository(),
                 dispatchers = dispatchers,
             ),
+            watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
+            requestManagerRepository = FakeRequestManagerRepository(initialRequestValid = false),
             syncObserver = FakeSyncObserver(),
             dispatchers = dispatchers,
             logger = logger,
@@ -482,7 +489,11 @@ internal class UpNextPresenterTest {
             syncContinueWatchingInteractor = syncContinueWatchingInteractor,
             markEpisodeWatchedInteractor = markEpisodeWatchedInteractor,
             upNextRepository = upNextRepository,
-            unfollowShowInteractor = UnfollowShowInteractor(followedShowsRepository),
+            unfollowShowInteractor = UnfollowShowInteractor(
+                followedShowsRepository = followedShowsRepository,
+                libraryRepository = FakeLibraryRepository(),
+                appScopeLauncher = FakeAppScopeLauncher(scope = appCoroutineScope),
+            ),
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = logger,
         )
