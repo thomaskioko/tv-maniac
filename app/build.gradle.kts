@@ -88,6 +88,7 @@ dependencies {
     implementation(projects.data.popularshows.api)
     implementation(projects.data.popularshows.implementation)
     implementation(projects.data.recommendedshows.implementation)
+    implementation(projects.data.requestManager.api)
     implementation(projects.data.requestManager.implementation)
     implementation(projects.data.search.implementation)
     implementation(projects.data.seasondetails.implementation)
