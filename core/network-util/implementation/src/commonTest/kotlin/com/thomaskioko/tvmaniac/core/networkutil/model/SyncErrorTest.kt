@@ -62,6 +62,16 @@ internal class SyncErrorTest {
     }
 
     @Test
+    fun `should classify Trakt 420 as AccountLimitExceeded`() {
+        val error = ApiResponse.Error.HttpError<Unit>(420, null, "Account limit reached")
+
+        val result = error.toSyncError()
+
+        result.shouldBeInstanceOf<SyncError.Permanent.AccountLimitExceeded>()
+        result.message shouldBe "Account limit reached"
+    }
+
+    @Test
     fun `should classify 500 as ServerError`() {
         val error = ApiResponse.Error.HttpError<Unit>(500, null, "Internal server error")
 

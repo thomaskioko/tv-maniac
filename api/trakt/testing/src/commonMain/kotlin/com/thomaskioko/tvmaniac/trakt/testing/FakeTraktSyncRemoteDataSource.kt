@@ -41,6 +41,7 @@ public class FakeTraktSyncRemoteDataSource : TraktSyncRemoteDataSource {
     private val showWatchedProgressLastActivityArgs = mutableMapOf<Long, String?>()
     private var upNextNitroInvocations: Int = 0
     private val watchedShowsInvocationsByPage = mutableMapOf<Int, Int>()
+    private val watchedShowsExtendedByPage = mutableMapOf<Int, String>()
 
     public fun setLastActivities(response: ApiResponse<TraktLastActivitiesResponse>) {
         lastActivitiesResponse = response
@@ -88,6 +89,9 @@ public class FakeTraktSyncRemoteDataSource : TraktSyncRemoteDataSource {
     public fun watchedShowsInvocations(page: Int): Int =
         watchedShowsInvocationsByPage[page] ?: 0
 
+    public fun watchedShowsExtended(page: Int): String? =
+        watchedShowsExtendedByPage[page]
+
     public fun clearInvocations() {
         lastActivitiesInvocations = 0
         playbackEpisodesInvocations = 0
@@ -95,6 +99,7 @@ public class FakeTraktSyncRemoteDataSource : TraktSyncRemoteDataSource {
         showWatchedProgressLastActivityArgs.clear()
         upNextNitroInvocations = 0
         watchedShowsInvocationsByPage.clear()
+        watchedShowsExtendedByPage.clear()
     }
 
     override suspend fun getLastActivities(): ApiResponse<TraktLastActivitiesResponse> {
@@ -134,8 +139,10 @@ public class FakeTraktSyncRemoteDataSource : TraktSyncRemoteDataSource {
     override suspend fun getWatchedShows(
         page: Int,
         limit: Int,
+        extended: String,
     ): ApiResponse<List<TraktWatchedShowResponse>> {
         watchedShowsInvocationsByPage[page] = (watchedShowsInvocationsByPage[page] ?: 0) + 1
+        watchedShowsExtendedByPage[page] = extended
         return watchedShowsResponsesByPage[page] ?: defaultWatchedShowsResponse
     }
 }

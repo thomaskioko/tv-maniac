@@ -4,8 +4,10 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import kotlin.time.Duration
 import kotlin.time.Instant
 
-public class FakeRequestManagerRepository : RequestManagerRepository {
-    public var requestValid: Boolean = true
+public class FakeRequestManagerRepository(
+    initialRequestValid: Boolean = true,
+) : RequestManagerRepository {
+    public var requestValid: Boolean = initialRequestValid
     public var upsertCalled: Boolean = false
 
     override fun upsert(entityId: Long, requestType: String, timestamp: Instant) {

@@ -4,6 +4,7 @@ public enum class ActivityType(public val value: String) {
     SHOWS_WATCHLISTED("shows_watchlisted"),
     SHOWS_FAVORITED("shows_favorited"),
     EPISODES_WATCHED("episodes_watched"),
+    EPISODES_PAUSED("episodes_paused"),
     ;
 
     public companion object {

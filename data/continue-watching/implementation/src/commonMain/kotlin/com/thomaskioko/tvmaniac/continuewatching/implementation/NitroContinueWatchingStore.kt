@@ -11,12 +11,12 @@ import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.CONTINUE_WATCHING_SYNC
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
-import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityRepository
+import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncRepository
+import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncTypes
 import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
 
 @Inject
@@ -26,7 +26,7 @@ public class NitroContinueWatchingStore(
     private val continueWatchingDao: ContinueWatchingDao,
     private val tvShowsDao: TvShowsDao,
     private val requestManagerRepository: RequestManagerRepository,
-    private val traktActivityRepository: TraktActivityRepository,
+    private val syncRepository: ActivitySyncRepository,
     private val transactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
 ) {
@@ -47,8 +47,15 @@ public class NitroContinueWatchingStore(
             requestType = CONTINUE_WATCHING_SYNC.name,
             threshold = CONTINUE_WATCHING_SYNC.duration,
         )
-        val activityChanged = traktActivityRepository.hasActivityChanged(ActivityType.EPISODES_WATCHED)
-        ttlValid && !activityChanged
+        val watchedChanged = syncRepository.isAheadOf(
+            consumerId = ActivitySyncTypes.NITRO_CONTINUE_WATCHING,
+            activityType = ActivityType.EPISODES_WATCHED,
+        )
+        val pausedChanged = syncRepository.isAheadOf(
+            consumerId = ActivitySyncTypes.NITRO_CONTINUE_WATCHING,
+            activityType = ActivityType.EPISODES_PAUSED,
+        )
+        ttlValid && !watchedChanged && !pausedChanged
     }
 
     private suspend fun apply(batch: ProgressBatch) {
@@ -71,7 +78,14 @@ public class NitroContinueWatchingStore(
                     entityId = CONTINUE_WATCHING_SYNC.requestId,
                     requestType = CONTINUE_WATCHING_SYNC.name,
                 )
-                traktActivityRepository.markActivityAsSynced(ActivityType.EPISODES_WATCHED)
+                syncRepository.markSyncedTo(
+                    consumerId = ActivitySyncTypes.NITRO_CONTINUE_WATCHING,
+                    activityType = ActivityType.EPISODES_WATCHED,
+                )
+                syncRepository.markSyncedTo(
+                    consumerId = ActivitySyncTypes.NITRO_CONTINUE_WATCHING,
+                    activityType = ActivityType.EPISODES_PAUSED,
+                )
             }
         }
     }

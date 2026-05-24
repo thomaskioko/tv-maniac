@@ -1,11 +1,14 @@
 package com.thomaskioko.tvmaniac.continuewatching.implementation
 
 import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
-import com.thomaskioko.tvmaniac.core.base.extensions.parallelMap
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.SyncError
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.toSyncError
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
-import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityRepository
+import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncRepository
+import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncTypes
+import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType
 import com.thomaskioko.tvmaniac.trakt.api.TraktSyncRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.TraktUserRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktPlaybackEpisodeResponse
@@ -24,13 +27,16 @@ import kotlin.time.Instant
 public class ProgressContinueWatchingFetcher(
     private val traktSyncDataSource: TraktSyncRemoteDataSource,
     private val traktUserDataSource: TraktUserRemoteDataSource,
-    private val traktActivityRepository: TraktActivityRepository,
+    private val syncRepository: ActivitySyncRepository,
     private val datastoreRepository: DatastoreRepository,
     private val logger: Logger,
 ) {
 
     internal operator fun invoke(): Flow<ProgressBatch?> = channelFlow {
-        val cursor = traktActivityRepository.getEpisodesWatchedSyncTimeStamp()
+        val cursor = syncRepository.getSyncTimestamp(
+            consumerId = ActivitySyncTypes.PROGRESS_CONTINUE_WATCHING,
+            activityType = ActivityType.EPISODES_WATCHED,
+        )
         val playbackDeferred = async { traktSyncDataSource.getPlaybackEpisodes() }
         val hiddenDeferred = async { traktUserDataSource.getHiddenProgressWatched() }
         val watchedShowsDeferred = async {
@@ -62,22 +68,41 @@ public class ProgressContinueWatchingFetcher(
         val lastActivity = cursor?.toString()
         val includeSpecials = datastoreRepository.getIncludeSpecials()
 
-        val responses = candidates.parallelMap(concurrency = PROGRESS_FAN_OUT_CONCURRENCY) { traktId ->
+        val responses = mutableListOf<Pair<Long, ApiResponse<TraktWatchedProgressResponse>>>()
+        var rateLimitedAt: Long? = null
+        for (traktId in candidates) {
             val response = traktSyncDataSource.getShowWatchedProgress(
                 traktId = traktId,
                 lastActivity = lastActivity,
                 specials = includeSpecials,
             )
-            if (response is ApiResponse.Success) {
-                val progress = response.body
-                // Load-bearing filter. Catches reset shows (`reset_at` populated) and any case where
-                // Trakt's per-show logic returns null next_episode. Removing it would persist rows
-                // that never render in the watchlist.
-                if (progress.nextEpisode != null) {
-                    send(ProgressBatch.Entry(toEntry(traktId, descriptors[traktId], progress)))
+            responses += traktId to response
+            when (response) {
+                is ApiResponse.Success -> {
+                    val progress = response.body
+                    // Load-bearing filter. Catches reset shows (`reset_at` populated) and any case where
+                    // Trakt's per-show logic returns null next_episode. Removing it would persist rows
+                    // that never render in the watchlist.
+                    if (progress.nextEpisode != null) {
+                        send(ProgressBatch.Entry(toEntry(traktId, descriptors[traktId], progress)))
+                    }
+                }
+                is ApiResponse.Error -> {
+                    if (response.toSyncError() is SyncError.Retryable) {
+                        rateLimitedAt = traktId
+                        break
+                    }
+                }
+                is ApiResponse.Unauthenticated -> {
+                    rateLimitedAt = traktId
+                    break
                 }
             }
-            traktId to response
+        }
+
+        if (rateLimitedAt != null) {
+            logger.warning(LOG_TAG, "Backing off progress fan-out after retryable failure on $rateLimitedAt")
+            return@channelFlow
         }
 
         val withNextEpisode = responses.count { (_, response) ->
@@ -113,7 +138,6 @@ public class ProgressContinueWatchingFetcher(
     }
 
     private companion object {
-        const val PROGRESS_FAN_OUT_CONCURRENCY = 4
         const val WATCHED_SHOWS_LIMIT = 100
         const val LOG_TAG = "ProgressContinueWatchingFetcher"
     }

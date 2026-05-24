@@ -15,6 +15,7 @@ kotlin {
             dependencies {
                 api(projects.core.base)
                 api(projects.data.datastore.api)
+                api(projects.data.requestManager.api)
                 api(projects.data.syncActivity.api)
                 api(projects.data.traktauth.api)
                 api(projects.data.user.api)

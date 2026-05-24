@@ -21,6 +21,9 @@ struct iOSApp: App {
         TvManiacTypographyScheme.configureMoko()
     }
 
+    @State private var dragOffsetX: CGFloat = 0
+    @State private var dragOffsetY: CGFloat = 0
+
     var body: some Scene {
         WindowGroup {
             if let holder = componentHolder {
@@ -45,8 +48,37 @@ struct iOSApp: App {
                                 toastManager.dismiss()
                             }
                         )
+                        .offset(x: dragOffsetX, y: dragOffsetY)
+                        .highPriorityGesture(
+                            DragGesture()
+                                .onChanged { value in
+                                    dragOffsetX = value.translation.width
+                                    dragOffsetY = min(0, value.translation.height)
+                                }
+                                .onEnded { value in
+                                    if value.translation.height < -50 || abs(value.translation.width) > 50 {
+                                        if toast.persistent {
+                                            holder.component.rootPresenter.dismissSyncStatus()
+                                        }
+                                        toastManager.dismiss()
+                                        dragOffsetX = 0
+                                        dragOffsetY = 0
+                                    } else {
+                                        withAnimation(.spring()) {
+                                            dragOffsetX = 0
+                                            dragOffsetY = 0
+                                        }
+                                    }
+                                }
+                        )
                         .transition(.move(edge: .top).combined(with: .opacity))
                         .padding(.top, 8)
+                        .onChange(of: toastManager.toast) { _, newValue in
+                            if newValue == nil {
+                                dragOffsetX = 0
+                                dragOffsetY = 0
+                            }
+                        }
                     }
                 }
                 .animation(.spring(), value: toastManager.toast)

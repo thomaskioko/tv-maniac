@@ -23,5 +23,7 @@ public interface LibraryRepository {
 
     public suspend fun syncLibrary(forceRefresh: Boolean = false)
 
+    public suspend fun syncPendingFollowedShows()
+
     public suspend fun needsSync(expiry: Duration): Boolean
 }

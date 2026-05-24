@@ -8,7 +8,9 @@ import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.shows.testing.FakeTvShowsDao
-import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
+import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncTypes
+import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType
+import com.thomaskioko.tvmaniac.syncactivity.testing.FakeActivitySyncRepository
 import com.thomaskioko.tvmaniac.trakt.api.model.EpisodeIds
 import com.thomaskioko.tvmaniac.trakt.api.model.ShowIds
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktNextEpisodeResponse
@@ -40,7 +42,7 @@ internal class DefaultContinueWatchingRepositoryTest {
     )
     private val syncDataSource = FakeTraktSyncRemoteDataSource()
     private val userDataSource = FakeTraktUserRemoteDataSource()
-    private val activityRepository = FakeTraktActivityRepository()
+    private val syncRepository = FakeActivitySyncRepository()
     private val requestManager = FakeRequestManagerRepository()
     private val continueWatchingDao = FakeContinueWatchingDao()
     private val tvShowsDao = FakeTvShowsDao()
@@ -56,7 +58,7 @@ internal class DefaultContinueWatchingRepositoryTest {
         val nitroFetcher = NitroContinueWatchingFetcher(
             traktSyncDataSource = syncDataSource,
             traktUserDataSource = userDataSource,
-            traktActivityRepository = activityRepository,
+            syncRepository = syncRepository,
             dateTimeProvider = dateTimeProvider,
             logger = FakeLogger(),
         )
@@ -65,14 +67,14 @@ internal class DefaultContinueWatchingRepositoryTest {
             continueWatchingDao = continueWatchingDao,
             tvShowsDao = tvShowsDao,
             requestManagerRepository = requestManager,
-            traktActivityRepository = activityRepository,
+            syncRepository = syncRepository,
             transactionRunner = transactionRunner,
             dispatchers = dispatchers,
         )
         val progressFetcher = ProgressContinueWatchingFetcher(
             traktSyncDataSource = syncDataSource,
             traktUserDataSource = userDataSource,
-            traktActivityRepository = activityRepository,
+            syncRepository = syncRepository,
             datastoreRepository = FakeDatastoreRepository(),
             logger = FakeLogger(),
         )
@@ -81,7 +83,7 @@ internal class DefaultContinueWatchingRepositoryTest {
             continueWatchingDao = continueWatchingDao,
             tvShowsDao = tvShowsDao,
             requestManagerRepository = requestManager,
-            traktActivityRepository = activityRepository,
+            syncRepository = syncRepository,
             transactionRunner = transactionRunner,
             dispatchers = dispatchers,
         )
@@ -116,7 +118,11 @@ internal class DefaultContinueWatchingRepositoryTest {
     fun `should swallow fetcher skip signal silently`() = runTest(testDispatcher) {
         // Empty Nitro response within the fresh-cursor guard window: fetcher returns null,
         // store throws FetcherSkipSignal, repository swallows it.
-        activityRepository.setEpisodesWatchedSyncTimeStamp(NOW)
+        syncRepository.setCheckpoint(
+            consumerId = ActivitySyncTypes.NITRO_CONTINUE_WATCHING,
+            activityType = ActivityType.EPISODES_WATCHED,
+            instant = NOW,
+        )
         syncDataSource.setUpNextNitro(ApiResponse.Success(emptyList()))
         requestManager.requestValid = false
 

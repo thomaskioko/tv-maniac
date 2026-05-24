@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
+import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.db.EpisodeById
 import com.thomaskioko.tvmaniac.db.EpisodeId
 import com.thomaskioko.tvmaniac.db.Id
@@ -375,7 +376,11 @@ internal class EpisodeSheetPresenterTest {
             observeEpisodeByIdInteractor = ObserveEpisodeByIdInteractor(episodeRepository),
             markEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(episodeRepository),
             markEpisodeUnwatchedInteractor = MarkEpisodeUnwatchedInteractor(episodeRepository),
-            unfollowShowInteractor = UnfollowShowInteractor(followedShowsRepository),
+            unfollowShowInteractor = UnfollowShowInteractor(
+                followedShowsRepository = followedShowsRepository,
+                libraryRepository = FakeLibraryRepository(),
+                appScopeLauncher = appScopeLauncher,
+            ),
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             localizer = localizer,
             logger = logger,

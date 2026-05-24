@@ -4,7 +4,9 @@ import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.CONTINUE_WATCHING_SYNC
-import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityRepository
+import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncRepository
+import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncTypes
+import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType
 import com.thomaskioko.tvmaniac.trakt.api.TraktSyncRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.TraktUserRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUpNextNitroResponse
@@ -23,14 +25,17 @@ import kotlin.time.Instant
 public class NitroContinueWatchingFetcher(
     private val traktSyncDataSource: TraktSyncRemoteDataSource,
     private val traktUserDataSource: TraktUserRemoteDataSource,
-    private val traktActivityRepository: TraktActivityRepository,
+    private val syncRepository: ActivitySyncRepository,
     private val dateTimeProvider: DateTimeProvider,
     private val logger: Logger,
 ) {
 
     internal operator fun invoke(): Flow<ProgressBatch?> = flow {
         coroutineScope {
-            val instant = traktActivityRepository.getEpisodesWatchedSyncTimeStamp()
+            val instant = syncRepository.getSyncTimestamp(
+                consumerId = ActivitySyncTypes.NITRO_CONTINUE_WATCHING,
+                activityType = ActivityType.EPISODES_WATCHED,
+            )
             val nitroDeferred = async { traktSyncDataSource.getUpNextNitro() }
             val hiddenDeferred = async { traktUserDataSource.getHiddenProgressWatched() }
 

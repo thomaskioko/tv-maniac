@@ -34,6 +34,10 @@ public interface RootPresenter {
 
     public val toastStateValue: Value<ToastState>
 
+    public val accountLimitBannerVisible: StateFlow<Boolean>
+
+    public val accountLimitBannerVisibleValue: Value<Boolean>
+
     public fun onRationaleAccepted()
 
     public fun onRationaleDismissed()
@@ -45,4 +49,6 @@ public interface RootPresenter {
     public fun onToastShown(id: Long)
 
     public fun dismissSyncStatus()
+
+    public fun onDismissAccountLimitBanner()
 }

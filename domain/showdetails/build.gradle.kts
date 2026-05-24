@@ -24,6 +24,7 @@ kotlin {
                 api(projects.data.cast.api)
                 api(projects.data.episode.api)
                 api(projects.data.followedshows.api)
+                api(projects.data.library.api)
                 api(projects.data.seasondetails.api)
                 api(projects.data.seasons.api)
                 api(projects.data.showdetails.api)
@@ -36,7 +37,6 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)
-                implementation(projects.data.episode.testing)
                 implementation(projects.data.seasondetails.testing)
                 implementation(projects.data.showdetails.testing)
                 implementation(projects.data.watchproviders.testing)

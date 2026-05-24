@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.domain.showdetails
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
-import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -24,25 +23,22 @@ class SyncShowMetadataInteractorTest {
     )
     private val showDetailsRepository = FakeShowDetailsRepository()
     private val seasonDetailsRepository = FakeSeasonDetailsRepository()
-    private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
     private val watchProviderRepository = FakeWatchProviderRepository()
 
     private val interactor = SyncShowMetadataInteractor(
         showDetailsRepository = showDetailsRepository,
         seasonDetailsRepository = seasonDetailsRepository,
-        watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
         watchProviderRepository = watchProviderRepository,
         dispatchers = dispatchers,
     )
 
     @Test
-    fun `should fan out show details season details episode watches and watch providers for the given trakt id`() =
+    fun `should fan out show details season details and watch providers for the given trakt id`() =
         runTest(testDispatcher) {
             interactor.executeSync(SyncShowMetadataInteractor.Param(traktId = 1388L))
 
             showDetailsRepository.fetchInvocations().map { it.id } shouldBe listOf(1388L)
             seasonDetailsRepository.getSyncedShowIds() shouldBe listOf(1388L)
-            watchedEpisodeSyncRepository.getSyncedShowIds() shouldBe listOf(1388L)
             watchProviderRepository.fetchInvocations().map { it.traktId } shouldBe listOf(1388L)
         }
 
@@ -53,7 +49,6 @@ class SyncShowMetadataInteractorTest {
         )
 
         showDetailsRepository.fetchInvocations().single().forceRefresh shouldBe true
-        watchedEpisodeSyncRepository.wasForceRefreshUsed() shouldBe true
         watchProviderRepository.fetchInvocations().single().forceRefresh shouldBe true
     }
 }

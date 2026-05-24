@@ -2,17 +2,47 @@ package com.thomaskioko.tvmaniac.episodes.testing
 
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeWatchesDataSource
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
+import com.thomaskioko.tvmaniac.episodes.api.WatchedShowBatch
 
 public class FakeEpisodeWatchesDataSource : EpisodeWatchesDataSource {
     private val watchesMap = mutableMapOf<Long, List<WatchedEpisodeEntry>>()
+    private val allWatchedShowsPages = mutableMapOf<Int, List<WatchedShowBatch>>()
+    private val addEpisodeWatchesInvocations = mutableListOf<List<WatchedEpisodeEntry>>()
+    private val removeEpisodeWatchesInvocations = mutableListOf<List<Long>>()
+    private var allWatchedShowsError: Throwable? = null
+
+    public fun setShowEpisodeWatches(showTraktId: Long, watches: List<WatchedEpisodeEntry>) {
+        watchesMap[showTraktId] = watches
+    }
+
+    public fun setAllWatchedShowsPage(page: Int, batches: List<WatchedShowBatch>) {
+        allWatchedShowsPages[page] = batches
+    }
+
+    public fun setAllWatchedShowsError(error: Throwable?) {
+        allWatchedShowsError = error
+    }
+
+    public fun addEpisodeWatchesInvocations(): List<List<WatchedEpisodeEntry>> =
+        addEpisodeWatchesInvocations.toList()
+
+    public fun removeEpisodeWatchesInvocations(): List<List<Long>> =
+        removeEpisodeWatchesInvocations.toList()
 
     override suspend fun getShowEpisodeWatches(showTraktId: Long): List<WatchedEpisodeEntry> {
         return watchesMap[showTraktId] ?: emptyList()
     }
 
-    override suspend fun addEpisodeWatches(watches: List<WatchedEpisodeEntry>) {
+    override suspend fun getAllWatchedShows(page: Int, limit: Int): List<WatchedShowBatch> {
+        allWatchedShowsError?.let { throw it }
+        return allWatchedShowsPages[page] ?: emptyList()
     }
 
-    override suspend fun removeEpisodeWatches(traktHistoryIds: List<Long>) {
+    override suspend fun addEpisodeWatches(watches: List<WatchedEpisodeEntry>) {
+        addEpisodeWatchesInvocations.add(watches)
+    }
+
+    override suspend fun removeEpisodeWatches(episodeTraktIds: List<Long>) {
+        removeEpisodeWatchesInvocations.add(episodeTraktIds)
     }
 }

@@ -39,6 +39,10 @@ public sealed class SyncError {
         public data class Forbidden(
             override val message: String = "Access forbidden.",
         ) : Permanent()
+
+        public data class AccountLimitExceeded(
+            override val message: String = "Trakt account limit reached. Upgrade your Trakt account to sync more shows.",
+        ) : Permanent()
     }
 
     public data class Unknown(
@@ -80,6 +84,7 @@ public fun classifyHttpError(code: Int, errorMessage: String?): SyncError {
         403 -> SyncError.Permanent.Forbidden(message)
         404 -> SyncError.Permanent.NotFound(message)
         408 -> SyncError.Retryable.Timeout(message)
+        420 -> SyncError.Permanent.AccountLimitExceeded(message)
         429 -> SyncError.Retryable.RateLimited(message)
         in 500..599 -> SyncError.Retryable.ServerError(statusCode = code, message = message)
         else -> SyncError.Unknown(message)

@@ -1,15 +1,18 @@
 package com.thomaskioko.tvmaniac.compose.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -35,6 +38,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -42,18 +46,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.tooling.preview.PreviewWrapper
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.math.abs
+import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.milliseconds
 
 @Stable
 public enum class SnackBarStyle(
-    internal val backgroundColor: Color,
-    internal val icon: ImageVector,
+    public val backgroundColor: Color,
+    public val icon: ImageVector,
 ) {
     Error(
         backgroundColor = Color(0xFFE53935),
@@ -132,10 +142,14 @@ public fun TvManiacSnackBarHost(
                     }
                 },
             )
+            val coroutineScope = rememberCoroutineScope()
+            val density = LocalDensity.current
+            var offsetY by remember { mutableStateOf(0f) }
 
             LaunchedEffect(message) {
                 if (message != null) {
                     dismissState.reset()
+                    offsetY = 0f
                 }
             }
 
@@ -146,7 +160,34 @@ public fun TvManiacSnackBarHost(
                     TvManiacSnackBar(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 16.dp),
+                            .padding(vertical = 16.dp)
+                            .offset { IntOffset(0, offsetY.roundToInt()) }
+                            .pointerInput(alignment) {
+                                detectVerticalDragGestures(
+                                    onVerticalDrag = { _, dragAmount ->
+                                        val isTop = alignment == Alignment.TopCenter ||
+                                            alignment == Alignment.TopStart ||
+                                            alignment == Alignment.TopEnd
+
+                                        if (isTop) {
+                                            offsetY = (offsetY + dragAmount).coerceAtMost(0f)
+                                        } else {
+                                            offsetY = (offsetY + dragAmount).coerceAtLeast(0f)
+                                        }
+                                    },
+                                    onDragEnd = {
+                                        if (abs(offsetY) > with(density) { 40.dp.toPx() }) {
+                                            dismiss()
+                                        } else {
+                                            coroutineScope.launch {
+                                                Animatable(offsetY).animateTo(0f) {
+                                                    offsetY = value
+                                                }
+                                            }
+                                        }
+                                    },
+                                )
+                            },
                         message = message.orEmpty(),
                         style = style,
                         loading = loading,

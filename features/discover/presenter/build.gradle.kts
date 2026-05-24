@@ -52,6 +52,7 @@ kotlin {
                 implementation(projects.data.followedshows.testing)
                 implementation(projects.data.genre.api)
                 implementation(projects.data.genre.testing)
+                implementation(projects.data.library.testing)
                 implementation(projects.data.popularshows.api)
                 implementation(projects.data.popularshows.testing)
                 implementation(projects.data.seasondetails.api)

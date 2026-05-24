@@ -104,7 +104,7 @@ private extension WatchlistState {
             watchNextGridItems: Array(watchNextItems).map {
                 WatchlistGridItem(
                     traktId: $0.traktId,
-                    title: $0.title ?? "",
+                    title: $0.title,
                     posterImageUrl: $0.posterImageUrl,
                     watchProgress: $0.watchProgress
                 )

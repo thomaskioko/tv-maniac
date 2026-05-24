@@ -416,4 +416,8 @@
 
     <string name="sync_failed_will_retry">Couldn\'t sync with server. Your change is saved and will retry when you\'re back online.</string>
     <string name="syncing_library">Syncing your library&#8230;</string>
+
+    <string name="account_limit_banner_message">You\'ve reached your Trakt list limit. Upgrade to VIP to keep adding shows.</string>
+    <string name="account_limit_upgrade_cta">Upgrade</string>
+    <string name="account_limit_dismiss_cta">Dismiss</string>
 </resources>

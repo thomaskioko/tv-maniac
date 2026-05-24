@@ -4,7 +4,6 @@ CREATE TABLE trakt_last_activity (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     activity_type TEXT NOT NULL,
     remote_timestamp INTEGER AS Instant NOT NULL,
-    synced_remote_timestamp INTEGER AS Instant,
     fetched_at INTEGER AS Instant NOT NULL
 );
 
@@ -14,23 +13,8 @@ upsert:
 INSERT OR REPLACE INTO trakt_last_activity (
     activity_type,
     remote_timestamp,
-    synced_remote_timestamp,
     fetched_at
-) VALUES (?, ?, (SELECT synced_remote_timestamp FROM trakt_last_activity WHERE activity_type = ?), ?);
-
-markAsSynced:
-UPDATE trakt_last_activity
-SET synced_remote_timestamp = remote_timestamp
-WHERE activity_type = ?;
-
-hasActivityChanged:
-SELECT CASE
-    WHEN synced_remote_timestamp IS NULL THEN 1
-    WHEN remote_timestamp > synced_remote_timestamp THEN 1
-    ELSE 0
-END AS has_changed
-FROM trakt_last_activity
-WHERE activity_type = ?;
+) VALUES (?, ?, ?);
 
 getByActivityType:
 SELECT *

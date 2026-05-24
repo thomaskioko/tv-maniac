@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.core.notifications.api.EpisodeNotification
 import com.thomaskioko.tvmaniac.core.notifications.testing.FakeNotificationManager
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
+import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
@@ -715,10 +716,10 @@ class ShowDetailsPresenterTest {
             followedShowsRepository = followedShowsRepository,
             followShowInteractor = FollowShowInteractor(
                 followedShowsRepository = followedShowsRepository,
+                libraryRepository = FakeLibraryRepository(),
                 syncShowMetadataInteractor = SyncShowMetadataInteractor(
                     showDetailsRepository = showDetailsRepository,
                     seasonDetailsRepository = seasonDetailsRepository,
-                    watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
                     watchProviderRepository = watchProvidersRepository,
                     dispatchers = coroutineDispatcher,
                 ),

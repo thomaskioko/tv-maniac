@@ -15,6 +15,7 @@ kotlin {
                 api(projects.api.trakt.api)
                 api(projects.core.base)
                 api(projects.core.logger.api)
+                api(projects.core.syncstate.api)
                 api(projects.core.util.api)
                 api(projects.data.database.sqldelight)
                 api(projects.data.datastore.api)

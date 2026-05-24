@@ -8,6 +8,8 @@
 		<string>com.thomaskioko.tvmaniac.librarysync</string>
 		<string>com.thomaskioko.tvmaniac.episodenotifications</string>
 		<string>com.thomaskioko.tvmaniac.upnextsync</string>
+		<string>com.thomaskioko.tvmaniac.pendinguploads</string>
+		<string>com.thomaskioko.tvmaniac.watchlistsync</string>
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>

@@ -69,6 +69,7 @@ public fun RootScreen(
     val notificationPermissionState by rootPresenter.notificationPermissionState.collectAsStateWithLifecycle()
     val episodeSheetSlot by rootPresenter.episodeSheetSlot.collectAsStateWithLifecycle()
     val toastState by rootPresenter.toastState.collectAsStateWithLifecycle()
+    val accountLimitBannerVisible by rootPresenter.accountLimitBannerVisible.collectAsStateWithLifecycle()
 
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
@@ -92,9 +93,11 @@ public fun RootScreen(
         toastState = toastState,
         notificationPermissionState = notificationPermissionState,
         episodeSheetSlot = episodeSheetSlot,
+        accountLimitBannerVisible = accountLimitBannerVisible,
         onRationaleAccepted = { rootPresenter.onRationaleAccepted() },
         onRationaleDismissed = { rootPresenter.onRationaleDismissed() },
         onDismissToast = { handleToastDismiss(rootPresenter, toastState) },
+        onDismissAccountLimitBanner = { rootPresenter.onDismissAccountLimitBanner() },
         modifier = modifier,
     ) {
         HomeScreen(
@@ -111,9 +114,11 @@ internal fun RootContent(
     toastState: ToastState,
     notificationPermissionState: NotificationPermissionState,
     episodeSheetSlot: ChildSlot<*, SheetChild>,
+    accountLimitBannerVisible: Boolean,
     onRationaleAccepted: () -> Unit,
     onRationaleDismissed: () -> Unit,
     onDismissToast: () -> Unit,
+    onDismissAccountLimitBanner: () -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -143,6 +148,10 @@ internal fun RootContent(
                     .fillMaxSize()
                     .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
             ) {
+                AccountLimitBanner(
+                    onDismiss = onDismissAccountLimitBanner,
+                    visible = accountLimitBannerVisible,
+                )
                 content()
             }
 
@@ -181,9 +190,11 @@ private fun RootScreenPreview(
         toastState = state.toastState,
         notificationPermissionState = state.notificationPermissionState,
         episodeSheetSlot = ChildSlot<Nothing, Nothing>(),
+        accountLimitBannerVisible = state.accountLimitBannerVisible,
         onRationaleAccepted = {},
         onRationaleDismissed = {},
         onDismissToast = {},
+        onDismissAccountLimitBanner = {},
     ) {
         Box(modifier = Modifier.fillMaxSize())
     }
@@ -192,6 +203,7 @@ private fun RootScreenPreview(
 internal data class RootPreviewState(
     val toastState: ToastState = ToastState(),
     val notificationPermissionState: NotificationPermissionState = NotificationPermissionState(),
+    val accountLimitBannerVisible: Boolean = false,
 )
 
 internal class RootPreviewParameterProvider : PreviewParameterProvider<RootPreviewState> {
@@ -207,5 +219,6 @@ internal class RootPreviewParameterProvider : PreviewParameterProvider<RootPrevi
                     type = ToastType.Error,
                 ),
             ),
+            RootPreviewState(accountLimitBannerVisible = true),
         )
 }

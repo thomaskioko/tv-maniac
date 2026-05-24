@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.seasondetails.implementation
 
-import com.thomaskioko.tvmaniac.core.base.extensions.parallelForEach
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.db.EpisodesBySeasonId
 import com.thomaskioko.tvmaniac.db.GetSeasonWithShowInfo
@@ -78,7 +77,7 @@ public class DefaultSeasonDetailsRepository(
 
         if (seasons.isEmpty()) return
 
-        seasons.parallelForEach(concurrency = SEASON_SYNC_CONCURRENCY) { season ->
+        seasons.forEach { season ->
             fetchSeasonDetails(
                 param = SeasonDetailsParam(
                     showTraktId = showTraktId,
@@ -102,7 +101,7 @@ public class DefaultSeasonDetailsRepository(
     ) {
         val seasons = seasonsRepository.getSeasonsByShowId(showTraktId)
         val previousSeasons = seasons.filter { it.season_number in 1..<beforeSeasonNumber }
-        previousSeasons.parallelForEach { season ->
+        previousSeasons.forEach { season ->
             currentCoroutineContext().ensureActive()
             fetchSeasonDetails(
                 SeasonDetailsParam(

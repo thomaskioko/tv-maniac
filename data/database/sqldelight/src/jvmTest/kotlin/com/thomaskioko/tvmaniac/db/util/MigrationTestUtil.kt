@@ -38,6 +38,14 @@ internal fun migrateToCurrent(driver: SqlDriver, oldVersion: Int) {
     )
 }
 
+internal fun migrateToVersion(driver: SqlDriver, oldVersion: Int, newVersion: Int) {
+    TvManiacDatabase.Schema.migrate(
+        driver = driver,
+        oldVersion = oldVersion.toLong(),
+        newVersion = newVersion.toLong(),
+    )
+}
+
 internal fun SqlDriver.tableNames(): Set<String> = executeQuery(
     identifier = null,
     sql = "SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name",

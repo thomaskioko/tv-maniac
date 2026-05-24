@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultEpisodesDao
 import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultWatchedEpisodeDao
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
+import com.thomaskioko.tvmaniac.syncactivity.testing.FakeActivitySyncRepository
 import com.thomaskioko.tvmaniac.traktauth.api.AuthError
 import com.thomaskioko.tvmaniac.traktauth.api.AuthState
 import com.thomaskioko.tvmaniac.traktauth.api.TokenRefreshResult
@@ -51,21 +52,23 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
     private val requestManagerRepository = FakeRequestManagerRepository()
     private val traktAuthRepository = AuthorizedFakeTraktAuthRepository()
     private val recordingDataSource = RecordingEpisodeWatchesDataSource()
+    private val syncRepository = FakeActivitySyncRepository()
 
     private lateinit var dao: DefaultWatchedEpisodeDao
-    private lateinit var syncRepository: DefaultWatchedEpisodeSyncRepository
+    private lateinit var defaultWatchedEpisodeSyncRepository: DefaultWatchedEpisodeSyncRepository
 
     @BeforeTest
     fun setup() {
         Dispatchers.setMain(testDispatcher)
         seedShow()
         dao = DefaultWatchedEpisodeDao(database, dispatchers, fakeDateTimeProvider)
-        syncRepository = DefaultWatchedEpisodeSyncRepository(
+        defaultWatchedEpisodeSyncRepository = DefaultWatchedEpisodeSyncRepository(
             dao = dao,
             episodesDao = DefaultEpisodesDao(database, dispatchers, fakeDateTimeProvider),
             dataSource = recordingDataSource,
             datastoreRepository = datastoreRepository,
             lastRequestStore = EpisodeWatchesLastRequestStore(requestManagerRepository),
+            syncRepository = syncRepository,
             traktAuthRepository = traktAuthRepository,
             dateTimeProvider = fakeDateTimeProvider,
             logger = NoOpLogger,
@@ -82,7 +85,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
     fun `should hard-delete pending DELETE row that was never synced to Trakt`() = runTest {
         seedDeletePending(seasonNumber = 1L, episodeNumber = 1L, traktId = null)
 
-        syncRepository.syncPendingEpisodes()
+        defaultWatchedEpisodeSyncRepository.syncPendingEpisodes()
 
         recordingDataSource.removedTraktIds.shouldBeEmpty()
         readRow(seasonNumber = 1L, episodeNumber = 1L).shouldBeNull()
@@ -90,9 +93,10 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should mark pending DELETE row as SYNCED_DELETE when trakt_id is present`() = runTest {
+        seedEpisode(seasonId = 100L, seasonNumber = 1L, episodeNumber = 1L, episodeTraktId = 999L)
         seedDeletePending(seasonNumber = 1L, episodeNumber = 1L, traktId = 999L)
 
-        syncRepository.syncPendingEpisodes()
+        defaultWatchedEpisodeSyncRepository.syncPendingEpisodes()
 
         recordingDataSource.removedTraktIds shouldContainExactly listOf(999L)
         val row = readRow(seasonNumber = 1L, episodeNumber = 1L)
@@ -102,10 +106,12 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should hard-delete unsynced rows and tombstone synced rows in same batch`() = runTest {
+        seedEpisode(seasonId = 100L, seasonNumber = 1L, episodeNumber = 1L, episodeTraktId = 555L)
+        seedEpisode(seasonId = 101L, seasonNumber = 1L, episodeNumber = 2L, episodeTraktId = null)
         seedDeletePending(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)
         seedDeletePending(seasonNumber = 1L, episodeNumber = 2L, traktId = null)
 
-        syncRepository.syncPendingEpisodes()
+        defaultWatchedEpisodeSyncRepository.syncPendingEpisodes()
 
         recordingDataSource.removedTraktIds shouldContainExactly listOf(555L)
         readRow(seasonNumber = 1L, episodeNumber = 1L)
@@ -141,6 +147,37 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
         )
     }
 
+    private fun seedEpisode(
+        seasonId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+        episodeTraktId: Long?,
+    ) {
+        database.seasonsQueries.upsert(
+            id = Id(seasonId),
+            show_trakt_id = Id(SHOW_ID),
+            season_number = seasonNumber,
+            episode_count = 12L,
+            title = "Season $seasonNumber",
+            overview = "",
+            image_url = null,
+        )
+        database.episodesQueries.upsert(
+            id = Id(seasonId * 100 + episodeNumber),
+            season_id = Id(seasonId),
+            show_trakt_id = Id(SHOW_ID),
+            title = "Episode $episodeNumber",
+            overview = "",
+            runtime = null,
+            vote_count = 100L,
+            ratings = 8.0,
+            episode_number = episodeNumber,
+            image_url = null,
+            trakt_id = episodeTraktId,
+            first_aired = null,
+        )
+    }
+
     private fun seedShow() {
         database.tvShowQueries.upsert(
             trakt_id = Id(SHOW_ID),
@@ -170,9 +207,13 @@ private class RecordingEpisodeWatchesDataSource : EpisodeWatchesDataSource {
     val removedTraktIds: List<Long> get() = _removedTraktIds.toList()
 
     override suspend fun getShowEpisodeWatches(showTraktId: Long): List<WatchedEpisodeEntry> = emptyList()
+    override suspend fun getAllWatchedShows(
+        page: Int,
+        limit: Int,
+    ): List<com.thomaskioko.tvmaniac.episodes.api.WatchedShowBatch> = emptyList()
     override suspend fun addEpisodeWatches(watches: List<WatchedEpisodeEntry>) {}
-    override suspend fun removeEpisodeWatches(traktHistoryIds: List<Long>) {
-        _removedTraktIds += traktHistoryIds
+    override suspend fun removeEpisodeWatches(episodeTraktIds: List<Long>) {
+        _removedTraktIds += episodeTraktIds
     }
 }
 
@@ -187,10 +228,12 @@ private class AuthorizedFakeTraktAuthRepository : TraktAuthRepository {
         AuthState(accessToken = "test-access", refreshToken = "test-refresh", isAuthorized = true),
     )
     private val _authError = MutableStateFlow<AuthError?>(null)
+    private val _loginEvents = kotlinx.coroutines.flow.MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
     override val state: Flow<TraktAuthState> = _state.asStateFlow()
     override val authState: Flow<AuthState?> = _authState.asStateFlow()
     override val authError: Flow<AuthError?> = _authError.asStateFlow()
+    override val loginEvents: kotlinx.coroutines.flow.SharedFlow<Unit> = _loginEvents
 
     override fun isLoggedIn(): Boolean = true
     override suspend fun getAuthState(): AuthState? = _authState.value

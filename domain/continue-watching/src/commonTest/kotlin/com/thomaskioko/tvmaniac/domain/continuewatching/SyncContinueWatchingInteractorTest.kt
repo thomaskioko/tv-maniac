@@ -12,6 +12,7 @@ import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRep
 import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
 import com.thomaskioko.tvmaniac.domain.syncactivity.SyncActivityInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
+import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.syncstate.api.SyncError
@@ -43,6 +44,7 @@ class SyncContinueWatchingInteractorTest {
     private val seasonDetailsRepository = FakeSeasonDetailsRepository()
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
     private val watchProviderRepository = FakeWatchProviderRepository()
+    private val requestManagerRepository = FakeRequestManagerRepository(initialRequestValid = false)
 
     private val syncActivityInteractor = SyncActivityInteractor(
         traktActivityRepository = activityRepository,
@@ -52,7 +54,6 @@ class SyncContinueWatchingInteractorTest {
     private val syncShowMetadataInteractor = SyncShowMetadataInteractor(
         showDetailsRepository = showDetailsRepository,
         seasonDetailsRepository = seasonDetailsRepository,
-        watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
         watchProviderRepository = watchProviderRepository,
         dispatchers = dispatchers,
     )
@@ -64,33 +65,52 @@ class SyncContinueWatchingInteractorTest {
         continueWatchingRepository = continueWatchingRepository,
         continueWatchingDao = continueWatchingDao,
         syncShowMetadataInteractor = syncShowMetadataInteractor,
+        watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
+        requestManagerRepository = requestManagerRepository,
         syncObserver = syncObserver,
         dispatchers = dispatchers,
         logger = FakeLogger(),
     )
 
     @Test
-    fun `should fetch activities then sync watched shows`() = runTest(testDispatcher) {
+    fun `should skip when ttl valid and not force refresh`() = runTest(testDispatcher) {
+        requestManagerRepository.requestValid = true
+
         interactor.executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = false))
 
-        activityRepository.fetchInvocations() shouldBe listOf(false)
-        continueWatchingRepository.syncInvocations() shouldBe listOf(
-            SyncInvocation(forceRefresh = false, useNitro = false),
-        )
+        activityRepository.fetchInvocations().shouldBeEmpty()
+        continueWatchingRepository.syncInvocations().shouldBeEmpty()
+        watchedEpisodeSyncRepository.syncAllInvocations().shouldBeEmpty()
     }
 
     @Test
-    fun `should propagate force refresh to watched shows sync`() = runTest(testDispatcher) {
-        interactor.executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = true))
+    fun `should fetch activities and bulk watched episodes then sync continue watching`() =
+        runTest(testDispatcher) {
+            interactor.executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = false))
 
-        activityRepository.fetchInvocations() shouldBe listOf(true)
-        continueWatchingRepository.syncInvocations() shouldBe listOf(
-            SyncInvocation(forceRefresh = true, useNitro = false),
-        )
-    }
+            activityRepository.fetchInvocations() shouldBe listOf(false)
+            watchedEpisodeSyncRepository.syncAllInvocations() shouldBe listOf(false)
+            continueWatchingRepository.syncInvocations() shouldBe listOf(
+                SyncInvocation(forceRefresh = false, useNitro = false),
+            )
+        }
 
     @Test
-    fun `should propagate useNitro to watched shows sync`() = runTest(testDispatcher) {
+    fun `should propagate force refresh to bulk and continue watching syncs`() =
+        runTest(testDispatcher) {
+            requestManagerRepository.requestValid = true
+
+            interactor.executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = true))
+
+            activityRepository.fetchInvocations() shouldBe listOf(true)
+            watchedEpisodeSyncRepository.syncAllInvocations() shouldBe listOf(true)
+            continueWatchingRepository.syncInvocations() shouldBe listOf(
+                SyncInvocation(forceRefresh = true, useNitro = false),
+            )
+        }
+
+    @Test
+    fun `should propagate useNitro to continue watching sync`() = runTest(testDispatcher) {
         interactor.executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = true, useNitro = true))
 
         continueWatchingRepository.syncInvocations() shouldBe listOf(
@@ -108,7 +128,6 @@ class SyncContinueWatchingInteractorTest {
 
         showDetailsRepository.fetchInvocations().map { it.id } shouldContainExactlyInAnyOrder listOf(42L, 99L, 101L)
         seasonDetailsRepository.getSyncedShowIds() shouldContainExactlyInAnyOrder listOf(42L, 99L, 101L)
-        watchedEpisodeSyncRepository.getSyncedShowIds() shouldContainExactlyInAnyOrder listOf(42L, 99L, 101L)
         watchProviderRepository.fetchInvocations().map { it.traktId } shouldContainExactlyInAnyOrder listOf(42L, 99L, 101L)
     }
 
@@ -119,7 +138,6 @@ class SyncContinueWatchingInteractorTest {
         interactor.executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = true))
 
         showDetailsRepository.fetchInvocations().all { it.forceRefresh } shouldBe true
-        watchedEpisodeSyncRepository.wasForceRefreshUsed() shouldBe true
         watchProviderRepository.fetchInvocations().all { it.forceRefresh } shouldBe true
     }
 
@@ -143,7 +161,6 @@ class SyncContinueWatchingInteractorTest {
 
         showDetailsRepository.fetchInvocations().shouldBeEmpty()
         seasonDetailsRepository.getSyncedShowIds().shouldBeEmpty()
-        watchedEpisodeSyncRepository.getSyncedShowIds().shouldBeEmpty()
         watchProviderRepository.fetchInvocations().shouldBeEmpty()
     }
 

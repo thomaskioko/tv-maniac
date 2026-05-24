@@ -127,6 +127,56 @@ class DefaultTraktListRemoteDataSourceTest {
     }
 
     @Test
+    fun `should batch all trakt ids into a single POST given addShowsToWatchListByTraktIds`() = runTest {
+        var requestCount = 0
+        var capturedBody: String? = null
+
+        val engine = MockEngine { request ->
+            requestCount++
+            capturedBody = request.body.toByteArray().decodeToString()
+            respond(
+                content = loadJson("trakt_add_show_response.json"),
+                status = HttpStatusCode.OK,
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
+            )
+        }
+        val dataSource = createDataSource(engine)
+
+        dataSource.addShowsToWatchListByTraktIds(traktIds = listOf(101L, 202L, 303L))
+
+        requestCount shouldBe 1
+        capturedBody shouldContain "101"
+        capturedBody shouldContain "202"
+        capturedBody shouldContain "303"
+    }
+
+    @Test
+    fun `should batch all trakt ids into a single POST given removeShowsFromWatchListByTraktIds`() = runTest {
+        var requestCount = 0
+        var capturedPath: String? = null
+        var capturedBody: String? = null
+
+        val engine = MockEngine { request ->
+            requestCount++
+            capturedPath = request.url.encodedPath
+            capturedBody = request.body.toByteArray().decodeToString()
+            respond(
+                content = """{"deleted":{"shows":2},"not_found":{"shows":[]},"list":{"item_count":0,"updated_at":"2026-01-01T00:00:00Z"}}""",
+                status = HttpStatusCode.OK,
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
+            )
+        }
+        val dataSource = createDataSource(engine)
+
+        dataSource.removeShowsFromWatchListByTraktIds(traktIds = listOf(404L, 505L))
+
+        requestCount shouldBe 1
+        capturedPath shouldBe "/sync/watchlist/remove"
+        capturedBody shouldContain "404"
+        capturedBody shouldContain "505"
+    }
+
+    @Test
     fun `should use POST with body given addShowToWatchListByTmdbId is called`() = runTest {
         var capturedMethod: HttpMethod? = null
         var capturedPath: String? = null

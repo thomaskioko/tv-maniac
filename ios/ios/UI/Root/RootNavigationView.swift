@@ -20,6 +20,7 @@ struct RootNavigationView: View {
     @StateValue private var themeState: ThemeState
     @StateValue private var notificationPermissionState: NotificationPermissionState
     @StateValue private var episodeSheetSlot: ChildSlot<AnyObject, SheetChild>
+    @StateValue private var accountLimitBannerVisible: KotlinBoolean
     @StateObject private var store = SettingsAppStorage.shared
     @EnvironmentObject private var appDelegate: AppDelegate
     @State private var rationaleActionTaken = false
@@ -31,15 +32,21 @@ struct RootNavigationView: View {
         _themeState = .init(rootPresenter.themeStateValue)
         _notificationPermissionState = .init(rootPresenter.notificationPermissionStateValue)
         _episodeSheetSlot = .init(rootPresenter.episodeSheetSlotValue)
+        _accountLimitBannerVisible = .init(rootPresenter.accountLimitBannerVisibleValue)
     }
 
     var body: some View {
         SplashView(isDebug: appDelegate.isDebug) {
-            TabBarView(
-                presenter: rootPresenter.homePresenter,
-                navigator: navigator,
-                registry: registry
-            )
+            VStack(spacing: 0) {
+                if accountLimitBannerVisible.boolValue {
+                    AccountLimitBanner(onDismiss: { rootPresenter.onDismissAccountLimitBanner() })
+                }
+                TabBarView(
+                    presenter: rootPresenter.homePresenter,
+                    navigator: navigator,
+                    registry: registry
+                )
+            }
         }
         .appTheme()
         .sheet(

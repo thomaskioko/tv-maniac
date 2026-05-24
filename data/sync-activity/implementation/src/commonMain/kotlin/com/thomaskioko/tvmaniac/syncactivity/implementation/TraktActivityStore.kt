@@ -48,6 +48,10 @@ public class TraktActivityStore(
                 activityDao.upsert(ActivityType.EPISODES_WATCHED, instant, now)
             }
 
+            response.episodes.pausedAt?.parseInstant()?.let { instant ->
+                activityDao.upsert(ActivityType.EPISODES_PAUSED, instant, now)
+            }
+
             requestManagerRepository.upsert(
                 entityId = TRAKT_ACTIVITIES.requestId,
                 requestType = TRAKT_ACTIVITIES.name,

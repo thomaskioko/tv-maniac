@@ -411,4 +411,8 @@
 
     <string name="sync_failed_will_retry">Impossible de synchroniser avec le serveur. Ta modification est enregistrée et sera retentée dès ton retour en ligne.</string>
     <string name="syncing_library">Synchronisation de votre bibliothèque&#8230;</string>
+
+    <string name="account_limit_banner_message">Vous avez atteint la limite de votre liste Trakt. Passez à VIP pour continuer à ajouter des séries.</string>
+    <string name="account_limit_upgrade_cta">Mettre à niveau</string>
+    <string name="account_limit_dismiss_cta">Ignorer</string>
 </resources>

@@ -147,6 +147,11 @@ internal class Scenarios(
             graph.traktAuthRepository.setAuthState(authState)
             graph.traktAuthRepository.setRefreshOutcome(TokenRefreshResult.Success(authState))
             runBlocking { graph.traktAuthRepository.setState(TraktAuthState.LOGGED_IN) }
+            // Mirror the production sign-in path: a successful OAuth handshake
+            // calls `saveTokens` which emits `loginEvents`. The fake's
+            // `setState(LOGGED_IN)` only flips state, so we also emit the
+            // login event here to drive ContinueWatchingTasksInitializer's collector.
+            graph.traktAuthRepository.triggerLogin()
         }
     }
 

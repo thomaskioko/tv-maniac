@@ -76,12 +76,13 @@ public class DefaultTraktSyncRemoteDataSource(
     override suspend fun getWatchedShows(
         page: Int,
         limit: Int,
+        extended: String,
     ): ApiResponse<List<TraktWatchedShowResponse>> =
         httpClient.authSafeRequest {
             url {
                 method = HttpMethod.Get
                 path("sync/watched/shows")
-                parameters.append("extended", "noseasons")
+                parameters.append("extended", extended)
                 parameters.append("page", page.toString())
                 parameters.append("limit", limit.toString())
             }

@@ -4,7 +4,6 @@ import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderRepository
-import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.withContext
@@ -13,7 +12,6 @@ import kotlinx.coroutines.withContext
 public class SyncShowMetadataInteractor(
     private val showDetailsRepository: ShowDetailsRepository,
     private val seasonDetailsRepository: SeasonDetailsRepository,
-    private val watchedEpisodeSyncRepository: WatchedEpisodeSyncRepository,
     private val watchProviderRepository: WatchProviderRepository,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<SyncShowMetadataInteractor.Param>() {
@@ -25,10 +23,6 @@ public class SyncShowMetadataInteractor(
                 forceRefresh = params.forceRefresh,
             )
             seasonDetailsRepository.syncShowSeasonDetails(
-                showTraktId = params.traktId,
-                forceRefresh = params.forceRefresh,
-            )
-            watchedEpisodeSyncRepository.syncShowEpisodeWatches(
                 showTraktId = params.traktId,
                 forceRefresh = params.forceRefresh,
             )

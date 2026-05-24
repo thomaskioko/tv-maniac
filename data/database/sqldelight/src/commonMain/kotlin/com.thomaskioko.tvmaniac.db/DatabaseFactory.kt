@@ -110,7 +110,6 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
         ),
         trakt_last_activityAdapter = Trakt_last_activity.Adapter(
             remote_timestampAdapter = InstantColumnAdapter,
-            synced_remote_timestampAdapter = InstantColumnAdapter,
             fetched_atAdapter = InstantColumnAdapter,
         ),
         calendar_entryAdapter = Calendar_entry.Adapter(
@@ -119,6 +118,10 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
         trakt_continue_watchingAdapter = Trakt_continue_watching.Adapter(
             trakt_idAdapter = IdAdapter(),
             tmdb_idAdapter = IdAdapter(),
+        ),
+        activity_checkpointAdapter = Activity_checkpoint.Adapter(
+            synced_untilAdapter = InstantColumnAdapter,
+            updated_atAdapter = InstantColumnAdapter,
         ),
     )
 }

@@ -19,7 +19,10 @@ import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -47,6 +50,13 @@ public class DefaultTraktAuthRepository(
     private val refreshMutex = Mutex()
 
     private val _authError = MutableStateFlow<AuthError?>(null)
+
+    // replay = 1 so a subscriber attached AFTER a sign-in still sees the event.
+    // The SharedFlow lives in AppScope (process lifetime), so a cold relaunch
+    // starts with a fresh empty buffer and never replays a previous session's
+    // sign-in. Within a session, only the explicit sign-in path emits.
+    private val _loginEvents = MutableSharedFlow<Unit>(replay = 1, extraBufferCapacity = 1)
+    override val loginEvents: SharedFlow<Unit> = _loginEvents.asSharedFlow()
 
     init {
         scope.launch {
@@ -128,6 +138,11 @@ public class DefaultTraktAuthRepository(
         )
 
         updateAuthState(newAuthState, persist = true)
+
+        // Explicit sign-in completion. Cache restore (init block) and token
+        // refresh (refreshTokens) intentionally do not emit so cold relaunches
+        // and silent token rotations cannot trigger the post-login sync block.
+        _loginEvents.tryEmit(Unit)
     }
 
     override suspend fun setAuthError(error: AuthError?) {

@@ -1,0 +1,37 @@
+-- Migration 32: introduce per-consumer activity checkpoints.
+--
+-- Today `trakt_last_activity.synced_remote_timestamp` is a single shared
+-- column with multiple writers (ProgressContinueWatchingStore,
+-- NitroContinueWatchingStore, LibraryStore). Whoever marks a given
+-- activity synced first prevents the others from re-syncing. Adding a
+-- bulk watched-episode sync would race against Continue Watching for
+-- EPISODES_WATCHED, so each consumer needs its own checkpoint.
+--
+-- This migration introduces `activity_checkpoint(consumer_id, activity_type)`
+-- and backfills the two known existing writers:
+--   - ProgressContinueWatchingStore -> 'progress_continue_watching' / 'episodes_watched'
+--   - LibraryStore -> 'library_watchlist' / 'shows_watchlisted'
+--
+-- The `synced_remote_timestamp` column stays on `trakt_last_activity`
+-- through this migration so the existing TraktActivityDao/Repository API
+-- continues to compile and run unchanged. Migration 33 (a later phase)
+-- drops the column via the temp-table pattern once every caller has
+-- switched to ActivityCheckpointStore.
+
+CREATE TABLE activity_checkpoint (
+    consumer_id TEXT NOT NULL,
+    activity_type TEXT NOT NULL,
+    synced_until INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    PRIMARY KEY (consumer_id, activity_type)
+);
+
+INSERT INTO activity_checkpoint (consumer_id, activity_type, synced_until, updated_at)
+SELECT 'progress_continue_watching', activity_type, synced_remote_timestamp, fetched_at
+FROM trakt_last_activity
+WHERE activity_type = 'episodes_watched' AND synced_remote_timestamp IS NOT NULL;
+
+INSERT INTO activity_checkpoint (consumer_id, activity_type, synced_until, updated_at)
+SELECT 'library_watchlist', activity_type, synced_remote_timestamp, fetched_at
+FROM trakt_last_activity
+WHERE activity_type = 'shows_watchlisted' AND synced_remote_timestamp IS NOT NULL;
