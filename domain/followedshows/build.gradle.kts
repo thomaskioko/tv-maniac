@@ -14,6 +14,7 @@ kotlin {
             dependencies {
                 api(projects.core.base)
                 api(projects.data.followedshows.api)
+                api(projects.data.library.api)
             }
         }
 

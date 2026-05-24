@@ -18,6 +18,7 @@ kotlin {
                 api(projects.core.tasks.api)
                 api(projects.data.database.sqldelight)
                 api(projects.data.episode.api)
+                api(projects.data.library.api)
                 api(projects.data.traktauth.api)
 
                 implementation(projects.core.view)
@@ -30,6 +31,7 @@ kotlin {
                 implementation(projects.core.logger.testing)
                 implementation(projects.core.syncstate.testing)
                 implementation(projects.data.episode.testing)
+                implementation(projects.data.library.testing)
                 implementation(projects.data.traktauth.testing)
             }
         }

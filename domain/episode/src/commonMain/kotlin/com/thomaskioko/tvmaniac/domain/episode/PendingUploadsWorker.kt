@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundWorker
 import com.thomaskioko.tvmaniac.core.tasks.api.PeriodicTaskRequest
 import com.thomaskioko.tvmaniac.core.tasks.api.TaskConstraints
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerResult
+import com.thomaskioko.tvmaniac.data.library.LibraryRepository
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.syncstate.api.SyncError
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
@@ -14,27 +15,12 @@ import dev.zacsweers.metro.ContributesIntoSet
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CancellationException
 
-/**
- * Drains rows stuck in `pending_action='UPLOAD'` or `pending_action='DELETE'` by invoking
- * [WatchedEpisodeSyncRepository.syncPendingEpisodes]. Scheduled by `SyncTasksInitializer`
- * alongside `LibrarySyncWorker` whenever the user is logged in and background sync is enabled.
- *
- * Returns [WorkerResult.Retry] on transient failures so the platform scheduler (WorkManager on
- * Android, BGTaskScheduler on iOS) applies its native exponential backoff.
- *
- * Why 15 minutes:
- * - `WorkManager.PeriodicWorkRequest` rejects intervals shorter than 15 minutes; this is the
- *   shortest cadence the platform accepts.
- * - 15 minutes bounds how long a pending push can sit before the next retry attempt, which
- *   matches the snackbar's "will retry when you're back online" promise without being so
- *   aggressive that it drains battery while the user is offline.
- * - Network and idle constraints (`requiresNetwork = true`) gate execution, so the worker
- *   doesn't fire when there's no network or the device is throttling.
- */
+
 @SingleIn(AppScope::class)
 @ContributesIntoSet(AppScope::class)
 public class PendingUploadsWorker(
     private val syncRepository: Lazy<WatchedEpisodeSyncRepository>,
+    private val libraryRepository: Lazy<LibraryRepository>,
     private val traktAuthRepository: Lazy<TraktAuthRepository>,
     private val syncObserver: SyncObserver,
     private val logger: Logger,
@@ -52,6 +38,7 @@ public class PendingUploadsWorker(
 
         return try {
             syncRepository.value.syncPendingEpisodes()
+            libraryRepository.value.syncPendingFollowedShows()
             logger.debug(TAG, "Pending uploads sync completed successfully")
             WorkerResult.Success
         } catch (cancellation: CancellationException) {
@@ -67,11 +54,11 @@ public class PendingUploadsWorker(
     public companion object {
         public const val WORKER_NAME: String = "com.thomaskioko.tvmaniac.pendinguploads"
         private const val TAG = "PendingUploadsWorker"
-        private const val FIFTEEN_MINUTES_MS = 15L * 60 * 1000
+        private const val SIX_HOURS_MS = 6L * 60 * 60 * 1000
 
         public val REQUEST: PeriodicTaskRequest = PeriodicTaskRequest(
             id = WORKER_NAME,
-            intervalMs = FIFTEEN_MINUTES_MS,
+            intervalMs = SIX_HOURS_MS,
             constraints = TaskConstraints(requiresNetwork = true),
         )
     }

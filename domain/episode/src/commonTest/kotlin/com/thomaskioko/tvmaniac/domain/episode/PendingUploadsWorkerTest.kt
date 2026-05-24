@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.domain.episode
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerResult
+import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.syncstate.api.SyncError
 import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
@@ -16,12 +17,14 @@ import kotlin.test.Test
 internal class PendingUploadsWorkerTest {
 
     private val syncRepository = FakeWatchedEpisodeSyncRepository()
+    private val libraryRepository = FakeLibraryRepository()
     private val authRepository = FakeTraktAuthRepository()
     private val syncObserver = FakeSyncObserver()
     private val logger = FakeLogger()
 
     private val worker = PendingUploadsWorker(
         syncRepository = lazy { syncRepository },
+        libraryRepository = lazy { libraryRepository },
         traktAuthRepository = lazy { authRepository },
         syncObserver = syncObserver,
         logger = logger,
@@ -45,6 +48,16 @@ internal class PendingUploadsWorkerTest {
         val result = worker.doWork()
 
         result.shouldBeInstanceOf<WorkerResult.Success>()
+        libraryRepository.syncPendingFollowedShowsInvocations() shouldBe 0
+    }
+
+    @Test
+    fun `should flush pending followed shows when user is logged in`() = runTest {
+        authRepository.setState(TraktAuthState.LOGGED_IN)
+
+        worker.doWork().shouldBeInstanceOf<WorkerResult.Success>()
+
+        libraryRepository.syncPendingFollowedShowsInvocations() shouldBe 1
     }
 
     @Test

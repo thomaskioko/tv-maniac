@@ -10,7 +10,10 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 @SingleIn(AppScope::class)
@@ -21,6 +24,7 @@ public class FakeTraktAuthRepository : TraktAuthRepository {
     private val _authState = MutableStateFlow<AuthState?>(null)
     private var refreshOutcome: TokenRefreshResult = TokenRefreshResult.NotLoggedIn
     private val _authError = MutableStateFlow<AuthError?>(null)
+    private val _loginEvents = MutableSharedFlow<Unit>(replay = 1, extraBufferCapacity = 1)
 
     public suspend fun setState(traktAuthState: TraktAuthState) {
         _state.emit(traktAuthState)
@@ -34,11 +38,21 @@ public class FakeTraktAuthRepository : TraktAuthRepository {
         refreshOutcome = outcome
     }
 
+    /**
+     * Emits a login event in tests without going through the real OAuth handshake.
+     * Mirrors what `DefaultTraktAuthRepository.saveTokens` does on a successful sign-in.
+     */
+    public fun triggerLogin() {
+        _loginEvents.tryEmit(Unit)
+    }
+
     override val state: Flow<TraktAuthState> = _state.asStateFlow()
 
     override val authState: Flow<AuthState?> = _authState.asStateFlow()
 
     override val authError: Flow<AuthError?> = _authError.asStateFlow()
+
+    override val loginEvents: SharedFlow<Unit> = _loginEvents.asSharedFlow()
 
     override fun isLoggedIn(): Boolean = _state.value == TraktAuthState.LOGGED_IN
 
@@ -57,6 +71,7 @@ public class FakeTraktAuthRepository : TraktAuthRepository {
         expiresAtSeconds: Long,
     ) {
         _state.emit(TraktAuthState.LOGGED_IN)
+        _loginEvents.tryEmit(Unit)
     }
 
     override suspend fun setAuthError(error: AuthError?) {

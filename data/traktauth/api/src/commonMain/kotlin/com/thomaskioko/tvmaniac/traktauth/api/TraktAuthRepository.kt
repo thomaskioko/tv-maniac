@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.traktauth.api
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
 
 public interface TraktAuthRepository {
 
@@ -11,6 +12,20 @@ public interface TraktAuthRepository {
     public fun isLoggedIn(): Boolean
 
     public val authError: Flow<AuthError?>
+
+    /**
+     * Emits exactly once per explicit sign-in completion (the user finished
+     * the OAuth handshake and we just persisted fresh tokens). Cache restore
+     * on app launch and token refresh paths do not emit, so cold relaunches
+     * never re-trigger the post-login sync block.
+     *
+     * Backed by a `MutableSharedFlow` with `replay = 1` so a subscriber that
+     * attaches after the emit still observes the sign-in (matters for tests
+     * and for any future subscriber added late within the same process). The
+     * flow lives in `AppScope` (process lifetime), so a cold relaunch starts
+     * with an empty buffer and never replays a previous session's sign-in.
+     */
+    public val loginEvents: SharedFlow<Unit>
 
     public suspend fun getAuthState(): AuthState?
 
