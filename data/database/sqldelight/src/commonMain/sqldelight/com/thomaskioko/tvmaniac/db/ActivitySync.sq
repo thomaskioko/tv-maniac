@@ -1,0 +1,32 @@
+import kotlin.time.Instant;
+
+CREATE TABLE activity_checkpoint (
+    consumer_id TEXT NOT NULL,
+    activity_type TEXT NOT NULL,
+    synced_until INTEGER AS Instant NOT NULL,
+    updated_at INTEGER AS Instant NOT NULL,
+    PRIMARY KEY (consumer_id, activity_type)
+);
+
+upsert:
+INSERT OR REPLACE INTO activity_checkpoint (
+    consumer_id,
+    activity_type,
+    synced_until,
+    updated_at
+) VALUES (?, ?, ?, ?);
+
+getCheckpoint:
+SELECT *
+FROM activity_checkpoint
+WHERE consumer_id = ? AND activity_type = ?;
+
+getAll:
+SELECT *
+FROM activity_checkpoint;
+
+deleteAll:
+DELETE FROM activity_checkpoint;
+
+countRows:
+SELECT COUNT(*) FROM activity_checkpoint;

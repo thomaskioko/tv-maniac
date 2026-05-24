@@ -1,0 +1,29 @@
+-- Migration 33: drop `synced_remote_timestamp` from `trakt_last_activity`.
+--
+-- By this point every consumer (ProgressContinueWatchingStore,
+-- NitroContinueWatchingStore, LibraryStore, the bulk watched-episode sync) has
+-- switched to per-consumer checkpoints stored in `activity_checkpoint` (created
+-- in migration 32). The column is dead schema; this migration removes it.
+--
+-- SQLite does not support `ALTER TABLE ... DROP COLUMN` on older releases, so
+-- the temp-table pattern recreates the table without the column and copies the
+-- remaining columns over.
+
+DROP INDEX IF EXISTS idx_trakt_activity_type;
+
+CREATE TABLE trakt_last_activity_new (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    activity_type TEXT NOT NULL,
+    remote_timestamp INTEGER NOT NULL,
+    fetched_at INTEGER NOT NULL
+);
+
+INSERT INTO trakt_last_activity_new (id, activity_type, remote_timestamp, fetched_at)
+SELECT id, activity_type, remote_timestamp, fetched_at
+FROM trakt_last_activity;
+
+DROP TABLE trakt_last_activity;
+
+ALTER TABLE trakt_last_activity_new RENAME TO trakt_last_activity;
+
+CREATE UNIQUE INDEX idx_trakt_activity_type ON trakt_last_activity(activity_type);
