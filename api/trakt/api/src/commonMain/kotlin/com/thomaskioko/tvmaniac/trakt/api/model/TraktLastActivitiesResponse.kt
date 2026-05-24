@@ -29,4 +29,5 @@ public data class TraktEpisodeActivities(
     @SerialName("rated_at") val ratedAt: String? = null,
     @SerialName("watchlisted_at") val watchlistedAt: String? = null,
     @SerialName("commented_at") val commentedAt: String? = null,
+    @SerialName("paused_at") val pausedAt: String? = null,
 )
