@@ -489,6 +489,89 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should report 8 of 10 watched given user marked first 8 of 10 aired episodes`() = runTest {
+        insertShowWithTenAiredEpisodes()
+        followShow(showId = 12L, followedAt = watchDate)
+        (1L..8L).forEach { episodeNumber ->
+            markEpisodeWatched(
+                showId = 12L,
+                episodeId = 1200L + episodeNumber,
+                seasonNumber = 1L,
+                episodeNumber = episodeNumber,
+            )
+        }
+
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
+            val episodes = awaitItem()
+            episodes.size shouldBe 1
+            episodes[0].showTraktId shouldBe 12L
+            episodes[0].episodeNumber shouldBe 9L
+            episodes[0].watchedCount shouldBe 8L
+            episodes[0].totalCount shouldBe 10L
+        }
+    }
+
+    @Test
+    fun `should report 8 of 10 watched given Trakt-synced rows with null episode_id`() = runTest {
+        insertShowWithTenAiredEpisodes()
+        followShow(showId = 12L, followedAt = watchDate)
+        (1L..8L).forEach { episodeNumber ->
+            seedTraktSyncedWatch(
+                showId = 12L,
+                seasonNumber = 1L,
+                episodeNumber = episodeNumber,
+                traktId = 9000L + episodeNumber,
+            )
+        }
+
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
+            val episodes = awaitItem()
+            episodes.size shouldBe 1
+            episodes[0].showTraktId shouldBe 12L
+            episodes[0].episodeNumber shouldBe 9L
+            episodes[0].watchedCount shouldBe 8L
+            episodes[0].totalCount shouldBe 10L
+        }
+    }
+
+    @Test
+    fun `should reproduce 6 of 10 with next as 9 given SYNCED_DELETE rows linger from prior unwatch`() = runTest {
+        insertShowWithTenAiredEpisodes()
+        followShow(showId = 12L, followedAt = watchDate)
+        (1L..8L).forEach { episodeNumber ->
+            markEpisodeWatched(
+                showId = 12L,
+                episodeId = 1200L + episodeNumber,
+                seasonNumber = 1L,
+                episodeNumber = episodeNumber,
+            )
+        }
+        markEpisodeWatchedWithPendingAction(
+            showId = 12L,
+            episodeId = 1205L,
+            seasonNumber = 1L,
+            episodeNumber = 5L,
+            pendingAction = "SYNCED_DELETE",
+        )
+        markEpisodeWatchedWithPendingAction(
+            showId = 12L,
+            episodeId = 1206L,
+            seasonNumber = 1L,
+            episodeNumber = 6L,
+            pendingAction = "SYNCED_DELETE",
+        )
+
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
+            val episodes = awaitItem()
+            episodes.size shouldBe 1
+            episodes[0].showTraktId shouldBe 12L
+            episodes[0].episodeNumber shouldBe 9L
+            episodes[0].watchedCount shouldBe 6L
+            episodes[0].totalCount shouldBe 10L
+        }
+    }
+
+    @Test
     fun `should exclude null-aired and future-aired episodes from total count`() = runTest {
         val realNow = kotlin.time.Clock.System.now().toEpochMilliseconds()
         fakeDateTimeProvider.setCurrentTimeMillis(realNow)
@@ -738,6 +821,39 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
 
         insertSeason(seasonId = 32L, showId = 3L, seasonNumber = 2L)
         insertEpisode(episodeId = 303L, seasonId = 32L, showId = 3L, episodeNumber = 1L, title = "S2E1")
+    }
+
+    private fun insertShowWithTenAiredEpisodes() {
+        insertShow(id = 12L, name = "Severance", status = "Returning Series")
+        insertSeason(seasonId = 1210L, showId = 12L, seasonNumber = 1L, episodeCount = 10L)
+        (1L..10L).forEach { episodeNumber ->
+            insertEpisode(
+                episodeId = 1200L + episodeNumber,
+                seasonId = 1210L,
+                showId = 12L,
+                episodeNumber = episodeNumber,
+                title = "Episode $episodeNumber",
+            )
+        }
+    }
+
+    private fun seedTraktSyncedWatch(
+        showId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+        traktId: Long,
+        watchedAt: Long = watchDate,
+    ) {
+        database.watchedEpisodesQueries.upsertFromTrakt(
+            show_trakt_id = Id(showId),
+            episode_id = null,
+            season_number = seasonNumber,
+            episode_number = episodeNumber,
+            watched_at = watchedAt,
+            trakt_id = traktId,
+            synced_at = watchedAt,
+            pending_action = "NOTHING",
+        )
     }
 
     private fun insertShow4WithSpecials() {

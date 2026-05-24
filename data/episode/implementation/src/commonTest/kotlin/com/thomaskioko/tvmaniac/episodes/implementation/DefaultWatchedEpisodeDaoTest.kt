@@ -247,6 +247,140 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should resurrect SYNCED_DELETE row when Trakt re-reports the episode as watched`() = runTest {
+        val priorSyncedAt = LocalDate(2024, 1, 1).toEpochMillis()
+        database.watchedEpisodesQueries.upsertFromTrakt(
+            show_trakt_id = Id(TEST_SHOW_ID),
+            episode_id = Id(101L),
+            season_number = SEASON_1_NUMBER,
+            episode_number = 1L,
+            watched_at = priorSyncedAt,
+            trakt_id = 9001L,
+            synced_at = priorSyncedAt,
+            pending_action = "SYNCED_DELETE",
+        )
+
+        val laterWatchedAt = kotlin.time.Instant.fromEpochMilliseconds(priorSyncedAt + 86_400_000L)
+        watchedEpisodeDao.upsertBatchFromTrakt(
+            showTraktId = TEST_SHOW_ID,
+            entries = listOf(
+                WatchedEpisodeEntry(
+                    id = 0,
+                    showTraktId = TEST_SHOW_ID,
+                    episodeId = 101L,
+                    seasonNumber = SEASON_1_NUMBER,
+                    episodeNumber = 1L,
+                    watchedAt = laterWatchedAt,
+                    traktId = 9001L,
+                ),
+            ),
+            includeSpecials = false,
+        )
+
+        watchedEpisodeDao.observeShowWatchProgress(TEST_SHOW_ID).test {
+            val progress = awaitItem()
+            progress.watchedCount shouldBe 1
+        }
+    }
+
+    @Test
+    fun `should keep SYNCED_DELETE tombstone given stale Trakt response with older watched_at`() = runTest {
+        val syncedAt = LocalDate(2024, 6, 1).toEpochMillis()
+        database.watchedEpisodesQueries.upsertFromTrakt(
+            show_trakt_id = Id(TEST_SHOW_ID),
+            episode_id = Id(101L),
+            season_number = SEASON_1_NUMBER,
+            episode_number = 1L,
+            watched_at = syncedAt,
+            trakt_id = 9001L,
+            synced_at = syncedAt,
+            pending_action = "SYNCED_DELETE",
+        )
+
+        val stalerWatchedAt = kotlin.time.Instant.fromEpochMilliseconds(syncedAt - 86_400_000L)
+        watchedEpisodeDao.upsertBatchFromTrakt(
+            showTraktId = TEST_SHOW_ID,
+            entries = listOf(
+                WatchedEpisodeEntry(
+                    id = 0,
+                    showTraktId = TEST_SHOW_ID,
+                    episodeId = 101L,
+                    seasonNumber = SEASON_1_NUMBER,
+                    episodeNumber = 1L,
+                    watchedAt = stalerWatchedAt,
+                    traktId = 9001L,
+                ),
+            ),
+            includeSpecials = false,
+        )
+
+        watchedEpisodeDao.observeShowWatchProgress(TEST_SHOW_ID).test {
+            val progress = awaitItem()
+            progress.watchedCount shouldBe 0
+        }
+    }
+
+    @Test
+    fun `should preserve pending UPLOAD action when Trakt sync upserts the same episode`() = runTest {
+        val now = LocalDate(2024, 6, 1).toEpochMillis()
+        database.watchedEpisodesQueries.markAsWatched(
+            show_trakt_id = Id(TEST_SHOW_ID),
+            episode_id = Id(101L),
+            season_number = SEASON_1_NUMBER,
+            episode_number = 1L,
+            watched_at = now,
+            pending_action = "UPLOAD",
+        )
+
+        watchedEpisodeDao.upsertBatchFromTrakt(
+            showTraktId = TEST_SHOW_ID,
+            entries = listOf(
+                WatchedEpisodeEntry(
+                    id = 0,
+                    showTraktId = TEST_SHOW_ID,
+                    episodeId = 101L,
+                    seasonNumber = SEASON_1_NUMBER,
+                    episodeNumber = 1L,
+                    watchedAt = Clock.System.now(),
+                    traktId = 9001L,
+                ),
+            ),
+            includeSpecials = false,
+        )
+
+        val row = database.watchedEpisodesQueries
+            .getWatchedEpisodes(Id(TEST_SHOW_ID))
+            .executeAsList()
+            .first { it.season_number == SEASON_1_NUMBER && it.episode_number == 1L }
+        row.pending_action shouldBe "UPLOAD"
+    }
+
+    @Test
+    fun `should skip upsertBatchFromTrakt given show is missing from tvshow`() = runTest {
+        val unknownShowId = 7777L
+        val entry = WatchedEpisodeEntry(
+            id = 0,
+            showTraktId = unknownShowId,
+            episodeId = null,
+            seasonNumber = 1L,
+            episodeNumber = 1L,
+            watchedAt = Clock.System.now(),
+            traktId = 8001L,
+        )
+
+        watchedEpisodeDao.upsertBatchFromTrakt(
+            showTraktId = unknownShowId,
+            entries = listOf(entry),
+            includeSpecials = false,
+        )
+
+        database.watchedEpisodesQueries
+            .getWatchedEpisodes(Id(unknownShowId))
+            .executeAsList()
+            .shouldBeEmpty()
+    }
+
+    @Test
     fun `should mark episode as watched without local episode data given UpNext context`() = runTest {
         val showId = 9999L
         val nonExistentEpisodeId = 88888L

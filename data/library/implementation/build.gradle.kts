@@ -15,6 +15,7 @@ kotlin {
                 api(projects.api.trakt.api)
                 api(projects.core.base)
                 api(projects.core.logger.api)
+                api(projects.core.syncstate.api)
                 api(projects.core.util.api)
                 api(projects.data.database.sqldelight)
                 api(projects.data.datastore.api)
@@ -26,7 +27,6 @@ kotlin {
                 api(projects.data.watchproviders.api)
 
                 implementation(projects.core.networkUtil.api)
-                implementation(projects.core.syncstate.api)
                 implementation(libs.sqldelight.extensions)
             }
         }

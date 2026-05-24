@@ -8,8 +8,6 @@ import kotlin.time.Instant
 public interface TraktActivityDao {
     public fun upsert(activityType: ActivityType, remoteTimestamp: Instant, fetchedAt: Instant)
     public fun getByActivityType(activityType: ActivityType): TraktLastActivity?
-    public fun isDurationExpired(activityType: ActivityType): Boolean
-    public fun markAsSynced(activityType: ActivityType)
     public fun observeAll(): Flow<List<TraktLastActivity>>
     public fun getAll(): List<TraktLastActivity>
     public fun delete(activityType: ActivityType)

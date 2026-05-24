@@ -3,7 +3,9 @@ package com.thomaskioko.tvmaniac.continuewatching.implementation
 import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
-import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
+import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncTypes
+import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType
+import com.thomaskioko.tvmaniac.syncactivity.testing.FakeActivitySyncRepository
 import com.thomaskioko.tvmaniac.trakt.api.model.EpisodeIds
 import com.thomaskioko.tvmaniac.trakt.api.model.ShowIds
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktHiddenItemResponse
@@ -32,7 +34,7 @@ internal class NitroContinueWatchingFetcherTest {
     private val testDispatcher = StandardTestDispatcher()
     private val syncDataSource = FakeTraktSyncRemoteDataSource()
     private val userDataSource = FakeTraktUserRemoteDataSource()
-    private val activityRepository = FakeTraktActivityRepository()
+    private val checkpointStore = FakeActivitySyncRepository()
     private val dateTimeProvider = FakeDateTimeProvider(currentTime = NOW)
     private val logger = FakeLogger()
 
@@ -43,7 +45,7 @@ internal class NitroContinueWatchingFetcherTest {
         fetcher = NitroContinueWatchingFetcher(
             traktSyncDataSource = syncDataSource,
             traktUserDataSource = userDataSource,
-            traktActivityRepository = activityRepository,
+            syncRepository = checkpointStore,
             dateTimeProvider = dateTimeProvider,
             logger = logger,
         )
@@ -90,7 +92,11 @@ internal class NitroContinueWatchingFetcherTest {
 
     @Test
     fun `should return null given empty response and fresh cursor`() = runTest(testDispatcher) {
-        activityRepository.setEpisodesWatchedSyncTimeStamp(NOW - 1.hours)
+        checkpointStore.setCheckpoint(
+            consumerId = ActivitySyncTypes.NITRO_CONTINUE_WATCHING,
+            activityType = ActivityType.EPISODES_WATCHED,
+            instant = NOW - 1.hours,
+        )
         syncDataSource.setUpNextNitro(ApiResponse.Success(emptyList()))
 
         val result = fetcher.collectEntries()
@@ -100,7 +106,11 @@ internal class NitroContinueWatchingFetcherTest {
 
     @Test
     fun `should write through empty response given stale cursor`() = runTest(testDispatcher) {
-        activityRepository.setEpisodesWatchedSyncTimeStamp(NOW - 7.hours)
+        checkpointStore.setCheckpoint(
+            consumerId = ActivitySyncTypes.NITRO_CONTINUE_WATCHING,
+            activityType = ActivityType.EPISODES_WATCHED,
+            instant = NOW - 7.hours,
+        )
         syncDataSource.setUpNextNitro(ApiResponse.Success(emptyList()))
 
         val result = fetcher.collectEntries()
@@ -110,7 +120,7 @@ internal class NitroContinueWatchingFetcherTest {
 
     @Test
     fun `should write through empty response given no cursor at all`() = runTest(testDispatcher) {
-        activityRepository.setEpisodesWatchedSyncTimeStamp(null)
+        // No checkpoint set, getCheckpointTimestamp returns null.
         syncDataSource.setUpNextNitro(ApiResponse.Success(emptyList()))
 
         val result = fetcher.collectEntries()

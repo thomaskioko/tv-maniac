@@ -6,6 +6,5 @@ public data class TraktLastActivity(
     val id: Long,
     val activityType: ActivityType,
     val remoteTimestamp: Instant,
-    val syncedRemoteTimestamp: Instant?,
     val fetchedAt: Instant,
 )

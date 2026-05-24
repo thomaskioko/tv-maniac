@@ -76,5 +76,19 @@ public class FakeLibraryRepository : LibraryRepository {
     override suspend fun syncLibrary(forceRefresh: Boolean) {
     }
 
+    private var syncPendingFollowedShowsError: Throwable? = null
+    private var syncPendingFollowedShowsCount = 0
+
+    public fun setSyncPendingFollowedShowsError(error: Throwable?) {
+        syncPendingFollowedShowsError = error
+    }
+
+    public fun syncPendingFollowedShowsInvocations(): Int = syncPendingFollowedShowsCount
+
+    override suspend fun syncPendingFollowedShows() {
+        syncPendingFollowedShowsCount++
+        syncPendingFollowedShowsError?.let { throw it }
+    }
+
     override suspend fun needsSync(expiry: Duration): Boolean = needsSyncResult
 }

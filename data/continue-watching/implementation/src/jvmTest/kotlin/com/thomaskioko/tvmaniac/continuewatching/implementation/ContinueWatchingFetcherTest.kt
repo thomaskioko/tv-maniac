@@ -9,7 +9,9 @@ import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.shows.testing.FakeTvShowsDao
-import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
+import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncTypes
+import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType
+import com.thomaskioko.tvmaniac.syncactivity.testing.FakeActivitySyncRepository
 import com.thomaskioko.tvmaniac.trakt.api.model.EpisodeIds
 import com.thomaskioko.tvmaniac.trakt.api.model.ShowIds
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktHiddenItemResponse
@@ -45,7 +47,7 @@ internal class ContinueWatchingFetcherTest {
 
     private val syncDataSource = FakeTraktSyncRemoteDataSource()
     private val userDataSource = FakeTraktUserRemoteDataSource()
-    private val activityRepository = FakeTraktActivityRepository()
+    private val checkpointStore = FakeActivitySyncRepository()
     private val continueWatchingDao = FakeContinueWatchingDao()
     private val tvShowsDao = FakeTvShowsDao()
     private val requestManager = FakeRequestManagerRepository()
@@ -71,14 +73,14 @@ internal class ContinueWatchingFetcherTest {
         nitroFetcher = NitroContinueWatchingFetcher(
             traktSyncDataSource = syncDataSource,
             traktUserDataSource = userDataSource,
-            traktActivityRepository = activityRepository,
+            syncRepository = checkpointStore,
             dateTimeProvider = dateTimeProvider,
             logger = logger,
         )
         val progressFetcher = ProgressContinueWatchingFetcher(
             traktSyncDataSource = syncDataSource,
             traktUserDataSource = userDataSource,
-            traktActivityRepository = activityRepository,
+            syncRepository = checkpointStore,
             datastoreRepository = FakeDatastoreRepository(),
             logger = logger,
         )
@@ -87,7 +89,7 @@ internal class ContinueWatchingFetcherTest {
             continueWatchingDao = continueWatchingDao,
             tvShowsDao = tvShowsDao,
             requestManagerRepository = requestManager,
-            traktActivityRepository = activityRepository,
+            syncRepository = checkpointStore,
             transactionRunner = transactionRunner,
             dispatchers = dispatchers,
         )
@@ -113,7 +115,11 @@ internal class ContinueWatchingFetcherTest {
         syncDataSource.setWatchedShows(ApiResponse.Success(emptyList()))
         continueWatchingDao.deleteAll()
         // Stale cursor so Nitro's empty-response guard does not engage.
-        activityRepository.setEpisodesWatchedSyncTimeStamp(NOW - 7.hours)
+        checkpointStore.setCheckpoint(
+            consumerId = ActivitySyncTypes.NITRO_CONTINUE_WATCHING,
+            activityType = ActivityType.EPISODES_WATCHED,
+            instant = NOW - 7.hours,
+        )
 
         val progressEntries = syncProgressAndReadDao(forceRefresh = false)
         continueWatchingDao.deleteAll()
@@ -151,7 +157,11 @@ internal class ContinueWatchingFetcherTest {
 
     @Test
     fun `should produce identical entry sets given forceRefresh is true`() = runTest(testDispatcher) {
-        activityRepository.setEpisodesWatchedSyncTimeStamp(NOW - 1.hours)
+        checkpointStore.setCheckpoint(
+            consumerId = ActivitySyncTypes.NITRO_CONTINUE_WATCHING,
+            activityType = ActivityType.EPISODES_WATCHED,
+            instant = NOW - 1.hours,
+        )
 
         val progressEntries = syncProgressAndReadDao(forceRefresh = true)
         continueWatchingDao.deleteAll()

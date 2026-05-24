@@ -11,7 +11,8 @@ import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsDao
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.LIBRARY_SYNC
-import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityDao
+import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncTypes
+import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncRepository
 import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType.SHOWS_WATCHLISTED
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktFollowedShowResponse
@@ -30,7 +31,7 @@ public class LibraryStore(
     private val traktListDataSource: TraktListRemoteDataSource,
     private val followedShowsDao: FollowedShowsDao,
     private val requestManagerRepository: RequestManagerRepository,
-    private val traktActivityDao: TraktActivityDao,
+    private val syncRepository: ActivitySyncRepository,
     private val transactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<LibrarySortOption, List<FollowedShowEntry>> by storeBuilder(
@@ -64,7 +65,10 @@ public class LibraryStore(
                 requestType = LIBRARY_SYNC.name,
             )
 
-            traktActivityDao.markAsSynced(SHOWS_WATCHLISTED)
+            syncRepository.markSyncedTo(
+                consumerId = ActivitySyncTypes.LIBRARY_WATCHLIST,
+                activityType = SHOWS_WATCHLISTED,
+            )
         },
         delete = { _: LibrarySortOption -> },
         deleteAll = { },

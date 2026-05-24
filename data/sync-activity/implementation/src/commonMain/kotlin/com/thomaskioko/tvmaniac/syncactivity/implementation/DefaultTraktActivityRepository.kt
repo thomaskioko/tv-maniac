@@ -6,12 +6,10 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.fresh
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.get
 import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityDao
 import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityRepository
-import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.withContext
-import kotlin.time.Instant
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
@@ -29,28 +27,11 @@ public class DefaultTraktActivityRepository(
         }
     }
 
-    override suspend fun hasActivityChanged(activityType: ActivityType): Boolean =
-        withContext(dispatchers.io) {
-            activityDao.isDurationExpired(activityType)
-        }
-
-    override suspend fun markActivityAsSynced(activityType: ActivityType) {
-        withContext(dispatchers.io) {
-            activityDao.markAsSynced(activityType)
-            logger.debug(TAG, "Marked $activityType as synced")
-        }
-    }
-
     override suspend fun clearAllActivities() {
         withContext(dispatchers.io) {
             activityDao.deleteAll()
         }
     }
-
-    override suspend fun getEpisodesWatchedSyncTimeStamp(): Instant? =
-        withContext(dispatchers.io) {
-            activityDao.getByActivityType(ActivityType.EPISODES_WATCHED)?.syncedRemoteTimestamp
-        }
 
     private companion object {
         private const val TAG = "TraktActivityRepository"

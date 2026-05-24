@@ -9,8 +9,9 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.shows.testing.FakeTvShowsDao
+import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncTypes
 import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType
-import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
+import com.thomaskioko.tvmaniac.syncactivity.testing.FakeActivitySyncRepository
 import com.thomaskioko.tvmaniac.trakt.api.model.EpisodeIds
 import com.thomaskioko.tvmaniac.trakt.api.model.ShowIds
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktNextEpisodeResponse
@@ -47,7 +48,7 @@ internal class NitroContinueWatchingStoreTest {
     private val continueWatchingDao = FakeContinueWatchingDao()
     private val tvShowsDao = FakeTvShowsDao()
     private val requestManager = FakeRequestManagerRepository()
-    private val activityRepository = FakeTraktActivityRepository()
+    private val checkpointStore = FakeActivitySyncRepository()
     private val dateTimeProvider = FakeDateTimeProvider(currentTime = NOW)
     private val transactionRunner = ImmediateTransactionRunner()
     private val logger = FakeLogger()
@@ -60,7 +61,7 @@ internal class NitroContinueWatchingStoreTest {
         nitroFetcher = NitroContinueWatchingFetcher(
             traktSyncDataSource = syncDataSource,
             traktUserDataSource = userDataSource,
-            traktActivityRepository = activityRepository,
+            syncRepository = checkpointStore,
             dateTimeProvider = dateTimeProvider,
             logger = logger,
         )
@@ -69,7 +70,7 @@ internal class NitroContinueWatchingStoreTest {
             continueWatchingDao = continueWatchingDao,
             tvShowsDao = tvShowsDao,
             requestManagerRepository = requestManager,
-            traktActivityRepository = activityRepository,
+            syncRepository = checkpointStore,
             transactionRunner = transactionRunner,
             dispatchers = dispatchers,
         )
@@ -79,6 +80,7 @@ internal class NitroContinueWatchingStoreTest {
     fun `should write nitro fetcher result to dao`() = runTest(testDispatcher) {
         syncDataSource.setUpNextNitro(ApiResponse.Success(listOf(breakingBadNitro)))
         requestManager.requestValid = false
+        checkpointStore.setRemoteTimestamp(ActivityType.EPISODES_WATCHED, NOW)
 
         store.fetchWith(forceRefresh = true)
 
@@ -88,7 +90,10 @@ internal class NitroContinueWatchingStoreTest {
         }
         syncDataSource.upNextNitroInvocations() shouldBe 1
         requestManager.upsertCalled shouldBe true
-        activityRepository.getSyncedActivities() shouldBe setOf(ActivityType.EPISODES_WATCHED)
+        checkpointStore.markSyncedToCalls() shouldContainExactlyInAnyOrder listOf(
+            ActivitySyncTypes.NITRO_CONTINUE_WATCHING to ActivityType.EPISODES_WATCHED,
+            ActivitySyncTypes.NITRO_CONTINUE_WATCHING to ActivityType.EPISODES_PAUSED,
+        )
     }
 
     @Test
@@ -110,7 +115,7 @@ internal class NitroContinueWatchingStoreTest {
     fun `should skip fetch given ttl valid and no activity change`() = runTest(testDispatcher) {
         syncDataSource.setUpNextNitro(ApiResponse.Success(listOf(breakingBadNitro)))
         requestManager.requestValid = true
-        activityRepository.setActivityChanged(ActivityType.EPISODES_WATCHED, changed = false)
+        // No remote timestamp set, so isAheadOf returns false for both activity types.
 
         store.fetchWith(forceRefresh = false)
 
@@ -122,7 +127,6 @@ internal class NitroContinueWatchingStoreTest {
     fun `should fetch given force refresh bypasses validator`() = runTest(testDispatcher) {
         syncDataSource.setUpNextNitro(ApiResponse.Success(listOf(breakingBadNitro)))
         requestManager.requestValid = true
-        activityRepository.setActivityChanged(ActivityType.EPISODES_WATCHED, changed = false)
 
         store.fetchWith(forceRefresh = true)
 
@@ -134,7 +138,6 @@ internal class NitroContinueWatchingStoreTest {
     fun `should fetch given ttl stale`() = runTest(testDispatcher) {
         syncDataSource.setUpNextNitro(ApiResponse.Success(listOf(breakingBadNitro)))
         requestManager.requestValid = false
-        activityRepository.setActivityChanged(ActivityType.EPISODES_WATCHED, changed = false)
 
         store.fetchWith(forceRefresh = false)
 
@@ -146,7 +149,8 @@ internal class NitroContinueWatchingStoreTest {
     fun `should fetch given activity changed`() = runTest(testDispatcher) {
         syncDataSource.setUpNextNitro(ApiResponse.Success(listOf(breakingBadNitro)))
         requestManager.requestValid = true
-        activityRepository.setActivityChanged(ActivityType.EPISODES_WATCHED, changed = true)
+        // Remote timestamp present with no checkpoint -> isAheadOf returns true.
+        checkpointStore.setRemoteTimestamp(ActivityType.EPISODES_WATCHED, NOW)
 
         store.fetchWith(forceRefresh = false)
 
@@ -157,7 +161,11 @@ internal class NitroContinueWatchingStoreTest {
     @Test
     fun `should leave dao unchanged given fetcher signals skip`() = runTest(testDispatcher) {
         continueWatchingDao.upsert(breakingBadEntry)
-        activityRepository.setEpisodesWatchedSyncTimeStamp(NOW - 1.hours)
+        checkpointStore.setCheckpoint(
+            consumerId = ActivitySyncTypes.NITRO_CONTINUE_WATCHING,
+            activityType = ActivityType.EPISODES_WATCHED,
+            instant = NOW - 1.hours,
+        )
         syncDataSource.setUpNextNitro(ApiResponse.Success(emptyList()))
         requestManager.requestValid = false
 

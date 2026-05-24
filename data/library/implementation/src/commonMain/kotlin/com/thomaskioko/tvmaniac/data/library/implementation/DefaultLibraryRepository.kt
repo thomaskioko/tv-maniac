@@ -4,6 +4,9 @@ import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.fresh
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.get
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.SyncError
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.SyncException
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.toSyncError
 import com.thomaskioko.tvmaniac.data.library.LibraryDao
 import com.thomaskioko.tvmaniac.data.library.LibraryRepository
 import com.thomaskioko.tvmaniac.data.library.model.LibraryItem
@@ -19,6 +22,7 @@ import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsDao
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.LIBRARY_SYNC
+import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
@@ -34,6 +38,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlin.time.Duration
+import com.thomaskioko.tvmaniac.syncstate.api.SyncError as SyncStateError
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @SingleIn(AppScope::class)
@@ -49,6 +54,7 @@ public class DefaultLibraryRepository(
     private val traktAuthRepository: TraktAuthRepository,
     private val transactionRunner: DatabaseTransactionRunner,
     private val formatterUtil: FormatterUtil,
+    private val syncObserver: SyncObserver,
     private val logger: Logger,
 ) : LibraryRepository {
 
@@ -149,8 +155,7 @@ public class DefaultLibraryRepository(
         val authState = traktAuthRepository.getAuthState()
         if (authState == null || !authState.isAuthorized) return
 
-        processPendingUploadActions()
-        processPendingDeleteActions()
+        if (flushPendingFollowActions() == PendingActionOutcome.BACK_OFF) return
 
         val sortOption = currentSortOption()
         when {
@@ -161,54 +166,114 @@ public class DefaultLibraryRepository(
         logger.debug(TAG, "Sync completed")
     }
 
+    override suspend fun syncPendingFollowedShows() {
+        val authState = traktAuthRepository.getAuthState()
+        if (authState == null || !authState.isAuthorized) return
+
+        val _ = flushPendingFollowActions()
+    }
+
+    private suspend fun flushPendingFollowActions(): PendingActionOutcome {
+        if (processPendingUploadActions() == PendingActionOutcome.BACK_OFF) return PendingActionOutcome.BACK_OFF
+        if (processPendingDeleteActions() == PendingActionOutcome.BACK_OFF) return PendingActionOutcome.BACK_OFF
+        return PendingActionOutcome.CONTINUE
+    }
+
     override suspend fun needsSync(expiry: Duration): Boolean =
         !requestManagerRepository.isRequestValid(
             requestType = LIBRARY_SYNC.name,
             threshold = expiry,
         )
 
-    private suspend fun processPendingUploadActions() {
+    private suspend fun processPendingUploadActions(): PendingActionOutcome {
         val pendingUploads = followedShowsDao.entriesWithUploadPendingAction()
-        if (pendingUploads.isEmpty()) return
+        if (pendingUploads.isEmpty()) return PendingActionOutcome.CONTINUE
 
         val traktIds = pendingUploads.map { it.traktId }
         logger.debug(TAG, "Processing ${traktIds.size} pending uploads")
 
-        for (traktId in traktIds) {
-            when (val response = traktListDataSource.addShowToWatchListByTraktId(traktId)) {
-                is ApiResponse.Success -> {
-                    val _ = transactionRunner {
-                        followedShowsDao.entryWithTraktId(traktId)?.let { entry ->
-                            followedShowsDao.updatePendingAction(entry.id, PendingAction.NOTHING)
-                        }
+        return when (val response = traktListDataSource.addShowsToWatchListByTraktIds(traktIds)) {
+            is ApiResponse.Success -> {
+                val notFoundCount = response.body.notFound.shows.size
+                transactionRunner {
+                    pendingUploads.forEach { entry ->
+                        followedShowsDao.updatePendingAction(entry.id, PendingAction.NOTHING)
                     }
                 }
-                is ApiResponse.Unauthenticated -> return
-                is ApiResponse.Error -> {
-                    logger.error(TAG, "Failed to upload show $traktId: ${response.toErrorMessage()}")
+                if (notFoundCount > 0) {
+                    logger.debug(TAG, "Cleared $notFoundCount unknown ids on upload (Trakt not_found)")
                 }
+                PendingActionOutcome.CONTINUE
             }
+            is ApiResponse.Unauthenticated -> PendingActionOutcome.BACK_OFF
+            is ApiResponse.Error -> handleBatchError(action = "upload", traktIds = traktIds, error = response)
         }
     }
 
-    private suspend fun processPendingDeleteActions() {
+    private suspend fun processPendingDeleteActions(): PendingActionOutcome {
         val pendingDeletes = followedShowsDao.entriesWithDeletePendingAction()
-        if (pendingDeletes.isEmpty()) return
+        if (pendingDeletes.isEmpty()) return PendingActionOutcome.CONTINUE
 
         val traktIds = pendingDeletes.map { it.traktId }
         logger.debug(TAG, "Processing ${traktIds.size} pending deletes")
 
-        for (entry in pendingDeletes) {
-            when (val response = traktListDataSource.removeShowFromWatchListByTraktId(entry.traktId)) {
-                is ApiResponse.Success -> {
-                    transactionRunner {
+        return when (val response = traktListDataSource.removeShowsFromWatchListByTraktIds(traktIds)) {
+            is ApiResponse.Success -> {
+                val notFoundCount = response.body.notFound.shows.size
+                transactionRunner {
+                    pendingDeletes.forEach { entry ->
                         followedShowsDao.deleteById(entry.id)
                     }
                 }
-                is ApiResponse.Unauthenticated -> return
-                is ApiResponse.Error -> {
-                    logger.error(TAG, "Failed to delete show ${entry.traktId}: ${response.toErrorMessage()}")
+                if (notFoundCount > 0) {
+                    logger.debug(TAG, "Cleared $notFoundCount unknown ids on delete (Trakt not_found)")
                 }
+                PendingActionOutcome.CONTINUE
+            }
+            is ApiResponse.Unauthenticated -> PendingActionOutcome.BACK_OFF
+            is ApiResponse.Error -> handleBatchError(action = "delete", traktIds = traktIds, error = response)
+        }
+    }
+
+    private fun handleBatchError(
+        action: String,
+        traktIds: List<Long>,
+        error: ApiResponse.Error<*>,
+    ): PendingActionOutcome {
+        val message = error.toErrorMessage()
+        return when (val syncError = error.toSyncError()) {
+            is SyncError.Retryable -> {
+                logger.error(TAG, "Backing off $action for ${traktIds.size} shows: $message ($syncError)")
+                syncObserver.log(
+                    SyncStateError.BackgroundSyncFailed(
+                        operationId = "$TAG:$action",
+                        cause = SyncException(syncError),
+                    ),
+                )
+                PendingActionOutcome.BACK_OFF
+            }
+            is SyncError.Permanent -> {
+                logger.error(TAG, "$action permanently failed for ${traktIds.size} shows: $message ($syncError)")
+                if (syncError is SyncError.Permanent.AccountLimitExceeded) {
+                    syncObserver.log(
+                        SyncStateError.AccountLimitExceeded(
+                            message = syncError.message,
+                            cause = SyncException(syncError),
+                        ),
+                    )
+                } else {
+                    syncObserver.log(
+                        SyncStateError.BackgroundSyncFailed(
+                            operationId = "$TAG:$action",
+                            cause = SyncException(syncError),
+                        ),
+                    )
+                }
+                PendingActionOutcome.BACK_OFF
+            }
+            is SyncError.Unknown -> {
+                logger.error(TAG, "$action failed for ${traktIds.size} shows: $message")
+                PendingActionOutcome.CONTINUE
             }
         }
     }
@@ -225,6 +290,8 @@ public class DefaultLibraryRepository(
         return LibrarySortOption.entries.find { it.name == name }
             ?: LibrarySortOption.ADDED_DESC
     }
+
+    private enum class PendingActionOutcome { CONTINUE, BACK_OFF }
 
     private companion object {
         private const val TAG = "LibraryRepository"
