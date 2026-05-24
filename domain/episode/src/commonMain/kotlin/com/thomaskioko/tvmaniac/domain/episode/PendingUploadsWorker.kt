@@ -15,7 +15,6 @@ import dev.zacsweers.metro.ContributesIntoSet
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CancellationException
 
-
 @SingleIn(AppScope::class)
 @ContributesIntoSet(AppScope::class)
 public class PendingUploadsWorker(
