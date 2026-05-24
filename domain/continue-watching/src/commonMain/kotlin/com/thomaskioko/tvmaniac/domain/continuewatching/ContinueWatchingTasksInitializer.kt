@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.domain.episode.PendingUploadsWorker
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
@@ -12,8 +13,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -39,10 +38,7 @@ public class ContinueWatchingTasksInitializer(
 
     private fun observeDataSync() {
         coroutineScope.launch {
-            traktAuthRepository.state
-                .distinctUntilChanged()
-                .drop(1)
-                .filter { it == TraktAuthState.LOGGED_IN }
+            traktAuthRepository.loginEvents
                 .collect {
                     withContext(NonCancellable) {
                         syncObserver.trackSync(POST_LOGIN_OPERATION_ID) {
@@ -66,8 +62,10 @@ public class ContinueWatchingTasksInitializer(
                 .collect { shouldSync ->
                     if (shouldSync) {
                         scheduler.schedulePeriodic(ContinueWatchingSyncWorker.REQUEST)
+                        scheduler.schedulePeriodic(PendingUploadsWorker.REQUEST)
                     } else {
                         scheduler.cancel(ContinueWatchingSyncWorker.WORKER_NAME)
+                        scheduler.cancel(PendingUploadsWorker.WORKER_NAME)
                     }
                 }
         }

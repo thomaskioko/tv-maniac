@@ -8,8 +8,12 @@ import com.thomaskioko.tvmaniac.data.library.LibraryRepository
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
 import com.thomaskioko.tvmaniac.domain.syncactivity.SyncActivityInteractor
+import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.LIBRARY_SYNC
+import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncRepository
+import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncTypes
+import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType
 import com.thomaskioko.tvmaniac.syncstate.api.SyncError
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
@@ -24,6 +28,8 @@ public class SyncLibraryInteractor(
     private val followedShowsRepository: FollowedShowsRepository,
     private val syncActivityInteractor: SyncActivityInteractor,
     private val syncShowMetadataInteractor: SyncShowMetadataInteractor,
+    private val watchedEpisodeSyncRepository: WatchedEpisodeSyncRepository,
+    private val syncRepository: ActivitySyncRepository,
     private val datastoreRepository: DatastoreRepository,
     private val dateTimeProvider: DateTimeProvider,
     private val dispatchers: AppCoroutineDispatchers,
@@ -44,8 +50,20 @@ public class SyncLibraryInteractor(
             )
 
             logger.debug(TAG, "Syncing library watchlist")
-
             libraryRepository.syncLibrary(params.forceRefresh)
+
+            watchedEpisodeSyncRepository.syncAllWatchedEpisodes(params.forceRefresh)
+
+            val watchlistChanged = params.forceRefresh ||
+                syncRepository.isAheadOf(
+                    consumerId = ActivitySyncTypes.LIBRARY_WATCHLIST,
+                    activityType = ActivityType.SHOWS_WATCHLISTED,
+                )
+            if (!watchlistChanged) {
+                logger.debug(TAG, "Metadata fan-out skipped — watchlist activity unchanged")
+                datastoreRepository.setLastSyncTimestamp(dateTimeProvider.nowMillis())
+                return@withContext
+            }
 
             val followedShows = followedShowsRepository.getFollowedShows()
             logger.debug(TAG, "Syncing ${followedShows.size} followed shows")

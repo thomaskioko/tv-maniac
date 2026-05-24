@@ -13,11 +13,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+/**
+ * Dormant. Not registered as an app initializer while the Library surface is disabled — the
+ * Continue Watching flow owns post-login sync and worker scheduling. Retained as the reference
+ * wiring for when the Library feature is rebuilt.
+ */
 @Inject
 public class SyncTasksInitializer(
     private val scheduler: BackgroundTaskScheduler,
@@ -40,18 +43,17 @@ public class SyncTasksInitializer(
 
     private fun observeDataSync() {
         coroutineScope.launch {
-            traktAuthRepository.state
-                .distinctUntilChanged()
-                .drop(1)
-                .filter { it == TraktAuthState.LOGGED_IN }
-                .collect {
-                    withContext(NonCancellable) {
-                        syncObserver.trackSync(POST_LOGIN_OPERATION_ID) {
-                            syncInteractor.executeSync(SyncLibraryInteractor.Param())
-                            logger.debug(TAG, "Library sync completed successfully")
-                        }
+            // loginEvents emits exactly once per explicit sign-in. Cache restore on
+            // cold relaunch and token refresh paths do not emit, so a relaunch with
+            // cached auth no longer re-enters this block.
+            traktAuthRepository.loginEvents.collect {
+                withContext(NonCancellable) {
+                    syncObserver.trackSync(POST_LOGIN_OPERATION_ID) {
+                        syncInteractor.executeSync(SyncLibraryInteractor.Param())
+                        logger.debug(TAG, "Library sync completed successfully")
                     }
                 }
+            }
         }
     }
 
