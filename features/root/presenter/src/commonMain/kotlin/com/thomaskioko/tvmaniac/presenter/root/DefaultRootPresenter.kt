@@ -62,6 +62,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
+import com.thomaskioko.tvmaniac.syncstate.api.SyncError as SyncStateError
 
 @OptIn(kotlinx.coroutines.FlowPreview::class)
 @AppRoot(parentScope = ActivityScope::class)
@@ -87,6 +88,7 @@ public class DefaultRootPresenter(
     private val uiMessageManager = UiMessageManager()
     private val syncErrorMessages = UiMessageManager()
     private val userDismissed = MutableStateFlow(false)
+    private val accountLimitErrorOccurred = MutableStateFlow(false)
 
     init {
         coroutineScope.launch {
@@ -122,10 +124,14 @@ public class DefaultRootPresenter(
         }
 
         coroutineScope.launch {
-            syncObserver.errors.collect {
-                syncErrorMessages.emitMessage(
-                    UiMessage(message = localizer.getString(StringResourceKey.SyncFailedWillRetry)),
-                )
+            syncObserver.errors.collect { error ->
+                if (error is SyncStateError.AccountLimitExceeded) {
+                    accountLimitErrorOccurred.value = true
+                } else {
+                    syncErrorMessages.emitMessage(
+                        UiMessage(message = localizer.getString(StringResourceKey.SyncFailedWillRetry)),
+                    )
+                }
             }
         }
     }
@@ -209,6 +215,20 @@ public class DefaultRootPresenter(
 
     override val toastStateValue: Value<ToastState> = toastState.asValue(coroutineScope)
 
+    override val accountLimitBannerVisible: StateFlow<Boolean> = combine(
+        accountLimitErrorOccurred,
+        datastoreRepository.observeAccountLimitBannerDismissed(),
+    ) { occurred, dismissed -> occurred && !dismissed }
+        .distinctUntilChanged()
+        .stateIn(
+            scope = coroutineScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = false,
+        )
+
+    override val accountLimitBannerVisibleValue: Value<Boolean> =
+        accountLimitBannerVisible.asValue(coroutineScope)
+
     override fun onRationaleAccepted() {
         coroutineScope.launch {
             datastoreRepository.setShowNotificationRationale(false)
@@ -287,6 +307,13 @@ public class DefaultRootPresenter(
 
     override fun dismissSyncStatus() {
         userDismissed.value = true
+    }
+
+    override fun onDismissAccountLimitBanner() {
+        accountLimitErrorOccurred.value = false
+        coroutineScope.launch {
+            datastoreRepository.setAccountLimitBannerDismissed(true)
+        }
     }
 
     @AssistedFactory

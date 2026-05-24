@@ -26,9 +26,10 @@ public final class ToastManager {
         type: ToastStyle,
         title: String,
         message: String,
-        duration: Double = 3.5
+        duration: Double = 3.5,
+        onDismiss: (() -> Void)? = nil
     ) {
-        show(Toast(type: type, title: title, message: message, duration: duration))
+        show(Toast(type: type, title: title, message: message, duration: duration, onDismiss: onDismiss))
     }
 
     public func dismiss() {

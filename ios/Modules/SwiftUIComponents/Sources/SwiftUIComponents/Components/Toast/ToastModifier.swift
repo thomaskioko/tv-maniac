@@ -34,13 +34,11 @@ public struct ToastModifier: ViewModifier {
                 )
                 .offset(x: dragOffsetX, y: dragOffsetY)
                 .opacity(1.0 - max(abs(dragOffsetX) / 300.0, abs(dragOffsetY) / 240.0))
-                .gesture(
+                .highPriorityGesture(
                     DragGesture()
                         .onChanged { value in
                             dragOffsetX = value.translation.width
-                            if value.translation.height < 0 {
-                                dragOffsetY = value.translation.height
-                            }
+                            dragOffsetY = min(0, value.translation.height)
                         }
                         .onEnded { value in
                             let predicted = value.predictedEndTranslation
@@ -88,6 +86,7 @@ public struct ToastModifier: ViewModifier {
     }
 
     private func dismissToast() {
+        toast?.onDismiss?()
         withAnimation {
             toast = nil
         }

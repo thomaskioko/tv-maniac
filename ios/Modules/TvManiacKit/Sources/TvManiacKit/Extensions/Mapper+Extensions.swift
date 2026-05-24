@@ -25,7 +25,7 @@ public extension TvManiac.WatchlistItem {
     func toSwift() -> ShowPosterImage {
         .init(
             traktId: traktId,
-            title: title ?? "",
+            title: title,
             posterUrl: posterImageUrl,
             inLibrary: true
         )
