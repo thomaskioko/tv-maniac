@@ -34,6 +34,8 @@ internal const val TIMEOUT_DURATION: Long = 60_000
 
 private const val OAUTH_PATH = "oauth/"
 
+private const val TRAKT_ACCOUNT_LIMIT_STATUS: Int = 420
+
 internal fun traktHttpClient(
     isDebug: Boolean = false,
     traktClientId: String,
@@ -113,17 +115,18 @@ internal fun traktHttpClient(
         HttpResponseValidator {
             validateResponse { response ->
                 if (!response.status.isSuccess() && response.status != HttpStatusCode.Unauthorized) {
-                    val failureReason =
-                        when (response.status) {
-                            HttpStatusCode.Forbidden -> "${response.status.value} Missing API key."
-                            HttpStatusCode.NotFound -> "Invalid Request"
-                            HttpStatusCode.TooManyRequests -> "Rate limited. Please try again in a moment."
-                            HttpStatusCode.UpgradeRequired -> "Upgrade to VIP"
-                            HttpStatusCode.RequestTimeout -> "Network Timeout"
-                            in HttpStatusCode.InternalServerError..HttpStatusCode.GatewayTimeout ->
-                                "${response.status.value} Server Error"
-                            else -> "Network error!"
-                        }
+                    val failureReason = when {
+                        response.status == HttpStatusCode.Forbidden -> "${response.status.value} Missing API key."
+                        response.status == HttpStatusCode.NotFound -> "Invalid Request"
+                        response.status == HttpStatusCode.TooManyRequests ->
+                            "Rate limited. Please try again in a moment."
+                        response.status.value == TRAKT_ACCOUNT_LIMIT_STATUS ->
+                            "Trakt account limit reached. Upgrade your Trakt account to sync more shows."
+                        response.status == HttpStatusCode.UpgradeRequired -> "Upgrade to VIP"
+                        response.status == HttpStatusCode.RequestTimeout -> "Network Timeout"
+                        response.status.value in 500..599 -> "${response.status.value} Server Error"
+                        else -> "Network error!"
+                    }
 
                     throw HttpExceptions(
                         response = response,

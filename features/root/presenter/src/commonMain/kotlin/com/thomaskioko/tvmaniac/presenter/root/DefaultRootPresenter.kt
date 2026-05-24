@@ -311,9 +311,6 @@ public class DefaultRootPresenter(
 
     override fun onDismissAccountLimitBanner() {
         accountLimitErrorOccurred.value = false
-        coroutineScope.launch {
-            datastoreRepository.setAccountLimitBannerDismissed(true)
-        }
     }
 
     @AssistedFactory

@@ -22,4 +22,9 @@ public sealed interface SyncError {
         public val operationId: String,
         override val cause: Throwable,
     ) : SyncError
+
+    public data class AccountLimitExceeded(
+        public val message: String,
+        override val cause: Throwable,
+    ) : SyncError
 }
