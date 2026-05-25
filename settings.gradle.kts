@@ -64,6 +64,8 @@ include(
     ":features:upnext:ui",
     ":features:my-shows:ui",
     ":features:my-shows:nav",
+    ":features:continue-watching:presenter",
+    ":features:continue-watching:ui",
     ":features:debug:nav",
     ":features:debug:presenter",
     ":features:debug:ui",
