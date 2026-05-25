@@ -30,10 +30,10 @@ kotlin {
                 api(libs.essenty.lifecycle)
                 api(libs.kotlinx.collections)
 
+                api(projects.domain.continueWatching)
                 implementation(projects.data.episode.api)
                 implementation(projects.data.followedshows.api)
                 implementation(projects.data.startWatching.api)
-                implementation(projects.domain.continueWatching)
                 implementation(projects.features.episodeSheet.nav)
                 implementation(projects.features.home.nav)
                 implementation(projects.features.moreShows.nav)
