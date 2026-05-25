@@ -98,6 +98,7 @@ kotlin {
             api(projects.core.featureFlags.implementation)
             api(projects.core.featureFlags.testing)
             api(projects.data.continueWatching.implementation)
+            api(projects.data.startWatching.implementation)
             api(projects.data.user.api)
             api(projects.data.user.implementation)
             api(projects.data.watchlistPrefs.implementation)
