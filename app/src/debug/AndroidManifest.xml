@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <application>
+    <application android:icon="@mipmap/ic_launcher" android:label="@string/app_name">
         <!--
             Re-register androidx.activity.ComponentActivity in the debug
             variant so Robolectric can resolve it when unit tests call
