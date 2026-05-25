@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.myshows.presenter
 
 import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.myshows.presenter.model.MyShowsItem
+import com.thomaskioko.tvmaniac.myshows.presenter.model.StartWatchingItem
 import com.thomaskioko.tvmaniac.myshows.presenter.model.UpNextEpisodeItem
 import com.thomaskioko.tvmaniac.watchlistprefs.api.model.WatchlistSortOption
 import kotlinx.collections.immutable.ImmutableList
@@ -17,6 +18,9 @@ public data class MyShowsState(
     val isSyncing: Boolean = false,
     val sortOption: WatchlistSortOption = WatchlistSortOption.ADDED_DESC,
     val emptyStateText: String = "",
+    val startWatchingTitle: String = "",
+    val continueWatchingTitle: String = "",
+    val startWatchingItems: ImmutableList<StartWatchingItem> = persistentListOf(),
     val watchNextItems: ImmutableList<MyShowsItem> = persistentListOf(),
     val staleItems: ImmutableList<MyShowsItem> = persistentListOf(),
     val watchNextEpisodes: ImmutableList<UpNextEpisodeItem> = persistentListOf(),
@@ -25,7 +29,7 @@ public data class MyShowsState(
     val message: UiMessage? = null,
 ) {
     val isEmpty: Boolean
-        get() = watchNextItems.isEmpty() && staleItems.isEmpty() &&
+        get() = startWatchingItems.isEmpty() && watchNextItems.isEmpty() && staleItems.isEmpty() &&
             watchNextEpisodes.isEmpty() && staleEpisodes.isEmpty()
 
     val showLoading: Boolean

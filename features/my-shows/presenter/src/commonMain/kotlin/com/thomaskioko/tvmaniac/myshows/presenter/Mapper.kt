@@ -12,7 +12,9 @@ import com.thomaskioko.tvmaniac.myshows.presenter.model.MyShowsItem
 import com.thomaskioko.tvmaniac.myshows.presenter.model.NextEpisodeItem
 import com.thomaskioko.tvmaniac.myshows.presenter.model.SectionedEpisodes
 import com.thomaskioko.tvmaniac.myshows.presenter.model.SectionedItems
+import com.thomaskioko.tvmaniac.myshows.presenter.model.StartWatchingItem
 import com.thomaskioko.tvmaniac.myshows.presenter.model.UpNextEpisodeItem
+import com.thomaskioko.tvmaniac.startwatching.api.StartWatchingShow
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toImmutableList
@@ -66,6 +68,18 @@ public fun List<SearchFollowedShows>.entityToWatchlistShowList(
     }
         .toPersistentList()
 }
+
+internal fun List<StartWatchingShow>.toStartWatchingItems(query: String): ImmutableList<StartWatchingItem> =
+    filter { query.isBlank() || it.title.contains(query, ignoreCase = true) }
+        .map {
+            StartWatchingItem(
+                traktId = it.traktId,
+                title = it.title,
+                posterImageUrl = it.posterPath,
+                year = it.year,
+            )
+        }
+        .toImmutableList()
 
 internal fun WatchlistSections.toPresenter(): SectionedItems = SectionedItems(
     watchNext = watchNext.map { it.toPresenter() }.toImmutableList(),

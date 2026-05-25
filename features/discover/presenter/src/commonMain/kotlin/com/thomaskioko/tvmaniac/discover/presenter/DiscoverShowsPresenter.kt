@@ -25,10 +25,14 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
+import com.thomaskioko.tvmaniac.domain.startwatching.ObserveStartWatchingInteractor
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey
+import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.moreshows.nav.MoreShowsRoute
+import com.thomaskioko.tvmaniac.myshows.nav.MyShowsRoot
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
 import com.thomaskioko.tvmaniac.search.nav.SearchRoute
@@ -74,7 +78,9 @@ public class DiscoverShowsPresenter(
     private val upcomingShowsInteractor: UpcomingShowsInteractor,
     private val genreShowsInteractor: GenreShowsInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
+    private val observeStartWatchingInteractor: ObserveStartWatchingInteractor,
     private val traktAuthRepository: TraktAuthRepository,
+    private val localizer: Localizer,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
 ) : ComponentContext by componentContext {
@@ -119,10 +125,11 @@ public class DiscoverShowsPresenter(
             discoverShowsInteractor.flow,
             uiMessageManager.message,
             _state,
+            observeStartWatchingInteractor.flow,
         ) {
                 upNextUpdating, featuredShowsIsUpdating, topRatedShowsIsUpdating, popularShowsIsUpdating,
                 trendingShowsIsUpdating, upComingIsUpdating,
-                showData, message, currentState,
+                showData, message, currentState, startWatching,
             ->
 
             val isUpdating = featuredShowsIsUpdating || topRatedShowsIsUpdating || popularShowsIsUpdating ||
@@ -149,6 +156,8 @@ public class DiscoverShowsPresenter(
                 nextEpisodes = showData.nextEpisodes
                     .map { it.toUiModel() }
                     .toImmutableList(),
+                startWatchingShows = startWatching.toStartWatchingShowList(),
+                startWatchingTitle = localizer.getString(StringResourceKey.LabelStartWatching),
             )
         }.stateIn(
             scope = coroutineScope,
@@ -158,6 +167,7 @@ public class DiscoverShowsPresenter(
 
         public fun init() {
             discoverShowsInteractor(Unit)
+            observeStartWatchingInteractor(Unit)
             observeShowData()
             observeAuthState()
         }
@@ -180,6 +190,7 @@ public class DiscoverShowsPresenter(
                 TrendingClicked -> navigator.navigateTo(MoreShowsRoute(Category.TRENDING_TODAY.id))
                 UpComingClicked -> navigator.navigateTo(MoreShowsRoute(Category.UPCOMING.id))
                 UpNextMoreClicked -> navigator.switchBackStack(ProgressRoot)
+                StartWatchingMoreClicked -> navigator.switchBackStack(MyShowsRoot)
                 RefreshData -> observeShowData(forceRefresh = true)
                 is UpdateShowInLibrary -> {
                     coroutineScope.launch {

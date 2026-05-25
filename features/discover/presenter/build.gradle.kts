@@ -21,7 +21,9 @@ kotlin {
                 api(projects.domain.followedshows)
                 api(projects.domain.genre)
                 api(projects.domain.showdetails)
+                api(projects.domain.startWatching)
                 api(projects.features.discover.nav)
+                api(projects.i18n.api)
                 api(projects.navigation.api)
 
                 api(libs.decompose.decompose)
@@ -30,14 +32,22 @@ kotlin {
 
                 implementation(projects.data.episode.api)
                 implementation(projects.data.followedshows.api)
+                implementation(projects.data.startWatching.api)
                 implementation(projects.domain.continueWatching)
                 implementation(projects.features.episodeSheet.nav)
                 implementation(projects.features.home.nav)
                 implementation(projects.features.moreShows.nav)
+                implementation(projects.features.myShows.nav)
                 implementation(projects.features.progress.nav)
                 implementation(projects.features.search.nav)
                 implementation(projects.features.showDetails.nav)
                 implementation(projects.features.seasonDetails.nav)
+            }
+        }
+
+        androidMain {
+            dependencies {
+                implementation(projects.i18n.generator)
             }
         }
 
@@ -60,6 +70,7 @@ kotlin {
                 implementation(projects.data.showdetails.api)
                 implementation(projects.data.showdetails.testing)
                 implementation(projects.data.shows.api)
+                implementation(projects.data.startWatching.testing)
                 implementation(projects.data.topratedshows.api)
                 implementation(projects.data.topratedshows.testing)
                 implementation(projects.data.traktauth.testing)
@@ -70,6 +81,7 @@ kotlin {
                 implementation(projects.data.upnext.api)
                 implementation(projects.data.upnext.testing)
                 implementation(projects.data.watchproviders.testing)
+                implementation(projects.i18n.testing)
                 implementation(projects.navigation.testing)
             }
         }

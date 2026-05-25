@@ -4,13 +4,10 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
-import com.thomaskioko.tvmaniac.myshows.presenter.ChangeMyShowsListStyle
-import com.thomaskioko.tvmaniac.myshows.presenter.FakeMyShowsPresenterBuilder
-import com.thomaskioko.tvmaniac.myshows.presenter.MyShowsPresenter
-import com.thomaskioko.tvmaniac.myshows.presenter.MyShowsQueryChanged
-import com.thomaskioko.tvmaniac.myshows.presenter.MyShowsState
-import com.thomaskioko.tvmaniac.myshows.presenter.ToggleMyShowsSearch
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.myshows.presenter.model.EpisodeBadge
+import com.thomaskioko.tvmaniac.myshows.presenter.model.StartWatchingItem
+import com.thomaskioko.tvmaniac.startwatching.api.StartWatchingShow
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
@@ -27,6 +24,40 @@ import kotlin.test.Test
 
 private fun LocalDate.toEpochMillis(): Long =
     atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
+
+private val startWatchingShows = listOf(
+    StartWatchingShow(
+        traktId = 1,
+        tmdbId = 1,
+        title = "Breaking Bad",
+        posterPath = "/1.jpg",
+        year = "2008",
+        inLibrary = true,
+    ),
+    StartWatchingShow(
+        traktId = 2,
+        tmdbId = 2,
+        title = "Better Call Saul",
+        posterPath = "/2.jpg",
+        year = "2015",
+        inLibrary = true,
+    ),
+)
+
+private val expectedStartWatchingItems = listOf(
+    StartWatchingItem(
+        traktId = 1,
+        title = "Breaking Bad",
+        posterImageUrl = "/1.jpg",
+        year = "2008",
+    ),
+    StartWatchingItem(
+        traktId = 2,
+        title = "Better Call Saul",
+        posterImageUrl = "/2.jpg",
+        year = "2015",
+    ),
+)
 
 class MyShowsPresenterTest {
 
@@ -75,6 +106,41 @@ class MyShowsPresenterTest {
 
             val secondUpdate = awaitItem()
             secondUpdate.watchNextItems shouldBe expectedUiResult()
+        }
+    }
+
+    @Test
+    fun `should emit start watching items when interactor emits`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe MyShowsState()
+
+            factory.startWatchingRepository.setStartWatchingShows(startWatchingShows)
+
+            val state = awaitItem()
+            state.startWatchingItems shouldBe expectedStartWatchingItems
+            state.startWatchingTitle shouldBe factory.localizer.getString(StringResourceKey.LabelStartWatching)
+            state.continueWatchingTitle shouldBe factory.localizer.getString(StringResourceKey.LabelContinueWatching)
+        }
+    }
+
+    @Test
+    fun `should filter start watching items by search query`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe MyShowsState()
+
+            factory.startWatchingRepository.setStartWatchingShows(startWatchingShows)
+            awaitItem().startWatchingItems shouldBe expectedStartWatchingItems
+
+            presenter.dispatch(MyShowsQueryChanged("better"))
+
+            awaitItem().startWatchingItems shouldBe listOf(
+                StartWatchingItem(
+                    traktId = 2,
+                    title = "Better Call Saul",
+                    posterImageUrl = "/2.jpg",
+                    year = "2015",
+                ),
+            )
         }
     }
 
@@ -232,7 +298,12 @@ class MyShowsPresenterTest {
         presenter.state.test {
             awaitItem() shouldBe MyShowsState()
 
-            factory.upNextRepository.setNextEpisodesForWatchlist(listOf(staleEpisode, activeEpisode))
+            factory.upNextRepository.setNextEpisodesForWatchlist(
+                listOf(
+                    staleEpisode,
+                    activeEpisode,
+                ),
+            )
 
             val state = awaitItem()
             state.watchNextEpisodes.size shouldBe 1
