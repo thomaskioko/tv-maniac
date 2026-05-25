@@ -8,7 +8,8 @@ SELECT
     tvshow.tmdb_id AS show_tmdb_id,
     tvshow.name AS title,
     tvshow.poster_path,
-    tvshow.year
+    tvshow.year,
+    CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM followed_shows
 INNER JOIN tvshow ON followed_shows.trakt_id = tvshow.trakt_id
 LEFT JOIN show_watch_progress ON tvshow.trakt_id = show_watch_progress.show_trakt_id

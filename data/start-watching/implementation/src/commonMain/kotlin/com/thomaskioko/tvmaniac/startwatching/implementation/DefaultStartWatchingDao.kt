@@ -36,4 +36,5 @@ private fun StartWatchingShows.toStartWatchingShow(): StartWatchingShow =
         title = title,
         posterPath = poster_path,
         year = year,
+        inLibrary = in_library == 1L,
     )

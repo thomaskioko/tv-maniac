@@ -117,7 +117,7 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
     }
 
     private fun expectedShow(id: Long, title: String): StartWatchingShow =
-        StartWatchingShow(traktId = id, tmdbId = id, title = title, posterPath = "/$id.jpg", year = "2025-01-01")
+        StartWatchingShow(traktId = id, tmdbId = id, title = title, posterPath = "/$id.jpg", year = "2025-01-01", inLibrary = true)
 
     private fun insertReleasedShow(id: Long, name: String) {
         insertShow(id, name)

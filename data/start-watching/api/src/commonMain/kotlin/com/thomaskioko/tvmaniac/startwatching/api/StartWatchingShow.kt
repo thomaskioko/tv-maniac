@@ -6,4 +6,5 @@ public data class StartWatchingShow(
     val title: String,
     val posterPath: String?,
     val year: String?,
+    val inLibrary: Boolean,
 )
