@@ -256,8 +256,8 @@
 
     <issue
         id="UnusedResources"
-        message="The resource `R.string.label_tab_watchlist` appears to be unused"
-        errorLine1=" &lt;string name=&quot;label_tab_watchlist&quot;>Watchlist&lt;/string>"
+        message="The resource `R.string.label_tab_my_shows` appears to be unused"
+        errorLine1=" &lt;string name=&quot;label_tab_my_shows&quot;>My Shows&lt;/string>"
         errorLine2="         ~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="../i18n/generator/build/generated/moko-resources/androidMain/res/values/multiplatform_strings.xml"

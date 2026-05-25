@@ -62,8 +62,8 @@ include(
     ":features:season-details:ui",
     ":features:show-details:ui",
     ":features:upnext:ui",
-    ":features:watchlist:ui",
-    ":features:watchlist:nav",
+    ":features:my-shows:ui",
+    ":features:my-shows:nav",
     ":features:debug:nav",
     ":features:debug:presenter",
     ":features:debug:ui",
@@ -271,6 +271,6 @@ include(
     ":features:show-list:presenter",
     ":features:show-list:ui",
     ":features:upnext:presenter",
-    ":features:watchlist:presenter",
+    ":features:my-shows:presenter",
     ":ios-framework",
 )

@@ -117,7 +117,7 @@ kotlin {
             api(projects.features.profile.nav)
             api(projects.features.progress.nav)
             api(projects.features.root.presenter)
-            api(projects.features.watchlist.nav)
+            api(projects.features.myShows.nav)
             api(projects.i18n.implementation)
             api(projects.navigation.api)
             api(projects.navigation.implementation)

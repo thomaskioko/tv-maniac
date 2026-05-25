@@ -9,7 +9,7 @@ import com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot
 import com.thomaskioko.tvmaniac.library.nav.LibraryRoot
 import com.thomaskioko.tvmaniac.profile.nav.ProfileRoot
 import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
-import com.thomaskioko.tvmaniac.watchlist.nav.WatchlistRoot
+import com.thomaskioko.tvmaniac.myshows.nav.MyShowsRoot
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -64,12 +64,12 @@ abstract class HomePresenterTest {
     }
 
     @Test
-    fun `should switch active root to Watchlist when onWatchlistClicked`() = runTest {
+    fun `should switch active root to Watchlist when onMyShowsClicked`() = runTest {
         presenter.activeRoot.test {
             awaitItem() shouldBe DiscoverRoot
-            presenter.onWatchlistClicked()
+            presenter.onMyShowsClicked()
 
-            awaitItem() shouldBe WatchlistRoot
+            awaitItem() shouldBe MyShowsRoot
         }
     }
 
@@ -83,7 +83,7 @@ abstract class HomePresenterTest {
                 ProgressRoot,
                 LibraryRoot,
                 ProfileRoot,
-                WatchlistRoot,
+                MyShowsRoot,
             )
         }
     }

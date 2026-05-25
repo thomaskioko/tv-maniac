@@ -22,7 +22,7 @@ import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.RootChild
 import com.thomaskioko.tvmaniac.profile.nav.ProfileRoot
 import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
-import com.thomaskioko.tvmaniac.watchlist.nav.WatchlistRoot
+import com.thomaskioko.tvmaniac.myshows.nav.MyShowsRoot
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
 import kotlinx.coroutines.flow.SharingStarted
@@ -76,8 +76,8 @@ public class HomePresenter(
     public val progressChildStackValue: Value<ChildStack<*, RootChild>> =
         hostStateValue.map { it.tabStacks.getValue(ProgressRoot) }
 
-    public val watchlistChildStackValue: Value<ChildStack<*, RootChild>> =
-        hostStateValue.map { it.tabStacks.getValue(WatchlistRoot) }
+    public val myShowsChildStackValue: Value<ChildStack<*, RootChild>> =
+        hostStateValue.map { it.tabStacks.getValue(MyShowsRoot) }
 
     public val discoverChildStack: StateFlow<ChildStack<*, RootChild>> =
         discoverChildStackValue.asStateFlow(componentContext.componentCoroutineScope())
@@ -91,8 +91,8 @@ public class HomePresenter(
     public val progressChildStack: StateFlow<ChildStack<*, RootChild>> =
         progressChildStackValue.asStateFlow(componentContext.componentCoroutineScope())
 
-    public val watchlistChildStack: StateFlow<ChildStack<*, RootChild>> =
-        watchlistChildStackValue.asStateFlow(componentContext.componentCoroutineScope())
+    public val myShowsChildStack: StateFlow<ChildStack<*, RootChild>> =
+        myShowsChildStackValue.asStateFlow(componentContext.componentCoroutineScope())
 
     public val profileAvatarUrl: StateFlow<String?> = run {
         observeUserProfileInteractor(Unit)
@@ -127,8 +127,8 @@ public class HomePresenter(
         onTabClicked(LibraryRoot)
     }
 
-    public fun onWatchlistClicked() {
-        onTabClicked(WatchlistRoot)
+    public fun onMyShowsClicked() {
+        onTabClicked(MyShowsRoot)
     }
 
     public fun onProfileClicked() {

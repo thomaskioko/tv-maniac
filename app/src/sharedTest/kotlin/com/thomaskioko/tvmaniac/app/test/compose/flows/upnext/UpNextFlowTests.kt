@@ -50,8 +50,8 @@ internal class UpNextFlowTests : BaseAppFlowTest() {
             .assertDiscoverScreenDisplayed()
 
         homeRobot
-            .clickWatchlistTab()
-            .assertTabSelected(HomeTestTags.WATCHLIST_TAB)
+            .clickMyShowsTab()
+            .assertTabSelected(HomeTestTags.MY_SHOWS_TAB)
 
         watchlistRobot
             .scrollToShowCard(breakingBadTraktId)

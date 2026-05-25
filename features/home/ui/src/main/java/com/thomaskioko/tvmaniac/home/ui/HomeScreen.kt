@@ -34,7 +34,7 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomNavigationItem
 import com.thomaskioko.tvmaniac.compose.components.TvManiacNavigationBar
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_tab_watchlist
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_tab_my_shows
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_discover
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_profile
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_progress
@@ -49,7 +49,7 @@ import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.profile.nav.ProfileRoot
 import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
-import com.thomaskioko.tvmaniac.watchlist.nav.WatchlistRoot
+import com.thomaskioko.tvmaniac.myshows.nav.MyShowsRoot
 import io.github.thomaskioko.codegen.annotations.ScreenUi
 
 @ScreenUi(presenter = HomePresenter::class, parentScope = ActivityScope::class)
@@ -133,11 +133,11 @@ internal fun BottomNavigationContent(
         )
 
         TvManiacBottomNavigationItem(
-            modifier = Modifier.testTag(HomeTestTags.WATCHLIST_TAB),
+            modifier = Modifier.testTag(HomeTestTags.MY_SHOWS_TAB),
             imageVector = Icons.Outlined.Bookmarks,
-            title = label_tab_watchlist.resolve(context),
-            selected = activeRoot is WatchlistRoot,
-            onClick = { component.onWatchlistClicked() },
+            title = label_tab_my_shows.resolve(context),
+            selected = activeRoot is MyShowsRoot,
+            onClick = { component.onMyShowsClicked() },
         )
 
         ProfileNavigationItem(
