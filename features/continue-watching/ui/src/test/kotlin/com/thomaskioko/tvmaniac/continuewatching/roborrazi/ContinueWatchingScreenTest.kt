@@ -7,7 +7,6 @@ import com.thomaskioko.tvmaniac.continuewatching.presenter.ContinueWatchingState
 import com.thomaskioko.tvmaniac.continuewatching.ui.ContinueWatchingScreen
 import com.thomaskioko.tvmaniac.continuewatching.ui.continueWatchingItems
 import com.thomaskioko.tvmaniac.continuewatching.ui.watchNextEpisodes
-import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import kotlinx.collections.immutable.persistentListOf
 import org.junit.Rule
@@ -122,7 +121,6 @@ class ContinueWatchingScreenTest {
                         emptyStateText = "No content",
                         watchNextItems = persistentListOf(),
                         query = "Show title",
-                        message = UiMessage(message = "Something went Wrong"),
                     ),
                     onAction = {},
                 )
@@ -139,7 +137,6 @@ class ContinueWatchingScreenTest {
                         isGridMode = false,
                         isRefreshing = false,
                         watchNextItems = persistentListOf(),
-                        message = UiMessage(message = "Something went Wrong"),
                     ),
                     onAction = {},
                 )

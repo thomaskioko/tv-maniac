@@ -45,7 +45,6 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -77,7 +76,6 @@ import com.thomaskioko.tvmaniac.continuewatching.presenter.ChangeContinueWatchin
 import com.thomaskioko.tvmaniac.continuewatching.presenter.ClearContinueWatchingQuery
 import com.thomaskioko.tvmaniac.continuewatching.presenter.ContinueWatchingAction
 import com.thomaskioko.tvmaniac.continuewatching.presenter.ContinueWatchingMessageShown
-import com.thomaskioko.tvmaniac.continuewatching.presenter.ContinueWatchingPresenter
 import com.thomaskioko.tvmaniac.continuewatching.presenter.ContinueWatchingQueryChanged
 import com.thomaskioko.tvmaniac.continuewatching.presenter.ContinueWatchingShowClicked
 import com.thomaskioko.tvmaniac.continuewatching.presenter.ContinueWatchingState
@@ -108,29 +106,9 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import java.util.Locale
 
-@Composable
-public fun ContinueWatchingScreen(
-    presenter: ContinueWatchingPresenter,
-    modifier: Modifier = Modifier,
-) {
-    val continueWatchingState by presenter.state.collectAsState()
-
-    ContinueWatchingScreen(
-        modifier = modifier,
-        state = continueWatchingState,
-        onAction = presenter::dispatch,
-    )
-
-    TvManiacSnackBarHost(
-        message = continueWatchingState.message?.message,
-        style = SnackBarStyle.Error,
-        onDismiss = { continueWatchingState.message?.let { presenter.dispatch(ContinueWatchingMessageShown(it.id)) } },
-    )
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun ContinueWatchingScreen(
+public fun ContinueWatchingScreen(
     state: ContinueWatchingState,
     modifier: Modifier = Modifier,
     onAction: (ContinueWatchingAction) -> Unit,
@@ -268,6 +246,12 @@ internal fun ContinueWatchingScreen(
             )
         }
     }
+
+    TvManiacSnackBarHost(
+        message = state.message?.message,
+        style = SnackBarStyle.Error,
+        onDismiss = { state.message?.let { onAction(ContinueWatchingMessageShown(it.id)) } },
+    )
 }
 
 @Composable

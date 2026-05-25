@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.myshows.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.thomaskioko.tvmaniac.continuewatching.ui.ContinueWatchingScreen
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
@@ -13,8 +15,11 @@ public fun MyShowsScreen(
     presenter: MyShowsPresenter,
     modifier: Modifier = Modifier,
 ) {
+    val continueWatchingState by presenter.continueWatchingPresenter.state.collectAsState()
+
     ContinueWatchingScreen(
-        presenter = presenter.continueWatchingPresenter,
+        state = continueWatchingState,
+        onAction = presenter.continueWatchingPresenter::dispatch,
         modifier = modifier,
     )
 }
