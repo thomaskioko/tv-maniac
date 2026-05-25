@@ -6,11 +6,9 @@ import com.thomaskioko.tvmaniac.data.featuredshows.api.FeaturedShowsRepository
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsRepository
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsRepository
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
-import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.genre.GenreRepository
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsRepository
-import com.thomaskioko.tvmaniac.upnext.api.model.UpNextEpisode
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.Flow
 
@@ -22,7 +20,6 @@ public class DiscoverShowsInteractor(
     private val trendingShowsRepository: TrendingShowsRepository,
     private val upcomingShowsRepository: UpcomingShowsRepository,
     private val genreRepository: GenreRepository,
-    private val observeUpNextInteractor: ObserveUpNextInteractor,
 ) : SubjectInteractor<Unit, DiscoverShowsData>() {
 
     override fun createObservable(params: Unit): Flow<DiscoverShowsData> = combine(
@@ -32,15 +29,13 @@ public class DiscoverShowsInteractor(
         popularShowsRepository.observePopularShows(),
         trendingShowsRepository.observeTrendingShows(),
         upcomingShowsRepository.observeUpcomingShows(),
-        observeUpNextInteractor.flow,
-    ) { _, featured, topRated, popular, trending, upcoming, upNextResult ->
+    ) { _, featured, topRated, popular, trending, upcoming ->
         DiscoverShowsData(
             featuredShows = featured,
             topRatedShows = topRated,
             popularShows = popular,
             trendingShows = trending,
             upcomingShows = upcoming,
-            nextEpisodes = upNextResult.episodes,
         )
     }
 }
@@ -51,5 +46,4 @@ public data class DiscoverShowsData(
     val popularShows: List<ShowEntity>,
     val trendingShows: List<ShowEntity>,
     val upcomingShows: List<ShowEntity>,
-    val nextEpisodes: List<UpNextEpisode>,
 )

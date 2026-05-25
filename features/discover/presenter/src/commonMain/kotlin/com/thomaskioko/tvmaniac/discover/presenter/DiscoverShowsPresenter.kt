@@ -19,6 +19,7 @@ import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsInteractor
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsInteractor
 import com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot
 import com.thomaskioko.tvmaniac.discover.presenter.model.NextEpisodeUiModel
+import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.discover.DiscoverShowsInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
@@ -79,6 +80,7 @@ public class DiscoverShowsPresenter(
     private val genreShowsInteractor: GenreShowsInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val observeStartWatchingInteractor: ObserveStartWatchingInteractor,
+    private val observeUpNextInteractor: ObserveUpNextInteractor,
     private val traktAuthRepository: TraktAuthRepository,
     private val localizer: Localizer,
     private val errorToStringMapper: ErrorToStringMapper,
@@ -126,10 +128,11 @@ public class DiscoverShowsPresenter(
             uiMessageManager.message,
             _state,
             observeStartWatchingInteractor.flow,
+            observeUpNextInteractor.flow,
         ) {
                 upNextUpdating, featuredShowsIsUpdating, topRatedShowsIsUpdating, popularShowsIsUpdating,
                 trendingShowsIsUpdating, upComingIsUpdating,
-                showData, message, currentState, startWatching,
+                showData, message, currentState, startWatching, upNextResult,
             ->
 
             val isUpdating = featuredShowsIsUpdating || topRatedShowsIsUpdating || popularShowsIsUpdating ||
@@ -153,7 +156,7 @@ public class DiscoverShowsPresenter(
                 popularShows = showData.popularShows.toShowList(),
                 trendingToday = showData.trendingShows.toShowList(),
                 upcomingShows = showData.upcomingShows.toShowList(),
-                nextEpisodes = showData.nextEpisodes
+                nextEpisodes = upNextResult.episodes
                     .map { it.toUiModel() }
                     .toImmutableList(),
                 startWatchingShows = startWatching.toStartWatchingShowList(),

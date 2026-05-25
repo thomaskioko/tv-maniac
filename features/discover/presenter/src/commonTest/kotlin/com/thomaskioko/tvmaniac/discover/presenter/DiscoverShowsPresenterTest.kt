@@ -327,7 +327,6 @@ class DiscoverShowsPresenterTest {
                 trendingShowsRepository = trendingShowsRepository,
                 upcomingShowsRepository = upcomingShowsRepository,
                 genreRepository = genreRepository,
-                observeUpNextInteractor = observeUpNextInteractor,
             ),
             followShowInteractor = FollowShowInteractor(
                 followedShowsRepository = followedShowsRepository,
@@ -373,6 +372,7 @@ class DiscoverShowsPresenterTest {
                 appScopeLauncher = FakeAppScopeLauncher(scope = appCoroutineScope),
             ),
             observeStartWatchingInteractor = observeStartWatchingInteractor,
+            observeUpNextInteractor = observeUpNextInteractor,
             traktAuthRepository = traktAuthRepository,
             localizer = fakeLocalizer,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
@@ -520,7 +520,6 @@ class DiscoverShowsPresenterTest {
             trendingShowsRepository = trendingShowsRepository,
             upcomingShowsRepository = upcomingShowsRepository,
             genreRepository = genreRepository,
-            observeUpNextInteractor = observeUpNextInteractor,
         ),
         followShowInteractor = FollowShowInteractor(
             followedShowsRepository = followedShowsRepository,
@@ -566,6 +565,7 @@ class DiscoverShowsPresenterTest {
             appScopeLauncher = FakeAppScopeLauncher(scope = appCoroutineScope),
         ),
         observeStartWatchingInteractor = observeStartWatchingInteractor,
+        observeUpNextInteractor = observeUpNextInteractor,
         traktAuthRepository = traktAuthRepository,
         localizer = fakeLocalizer,
         errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },

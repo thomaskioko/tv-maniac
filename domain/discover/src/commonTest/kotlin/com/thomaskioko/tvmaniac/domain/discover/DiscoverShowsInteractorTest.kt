@@ -6,12 +6,8 @@ import com.thomaskioko.tvmaniac.data.popularshows.testing.FakePopularShowsReposi
 import com.thomaskioko.tvmaniac.data.topratedshows.testing.FakeTopRatedShowsRepository
 import com.thomaskioko.tvmaniac.data.trendingshows.testing.FakeTrendingShowsRepository
 import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepository
-import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
-import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
-import com.thomaskioko.tvmaniac.upnext.api.model.toUpNextEpisode
-import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -31,17 +27,12 @@ class DiscoverShowsInteractorTest {
     private val trendingShowsRepository = FakeTrendingShowsRepository()
     private val upcomingShowsRepository = FakeUpcomingShowsRepository()
     private val genreRepository = FakeGenreRepository()
-    private val upNextRepository = FakeUpNextRepository()
 
     private lateinit var interactor: DiscoverShowsInteractor
 
     @BeforeTest
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-
-        val observeUpNextInteractor = ObserveUpNextInteractor(
-            repository = upNextRepository,
-        )
 
         interactor = DiscoverShowsInteractor(
             featuredShowsRepository = featuredShowsRepository,
@@ -50,7 +41,6 @@ class DiscoverShowsInteractorTest {
             trendingShowsRepository = trendingShowsRepository,
             upcomingShowsRepository = upcomingShowsRepository,
             genreRepository = genreRepository,
-            observeUpNextInteractor = observeUpNextInteractor,
         )
     }
 
@@ -75,7 +65,6 @@ class DiscoverShowsInteractorTest {
                 popularShows = emptyList(),
                 trendingShows = emptyList(),
                 upcomingShows = emptyList(),
-                nextEpisodes = emptyList(),
             )
             cancelAndConsumeRemainingEvents()
         }
@@ -85,9 +74,7 @@ class DiscoverShowsInteractorTest {
     fun `should return populated DiscoverShowsData when repositories return result`() = runTest {
         // Given
         val shows = createTestShows()
-        val episodes = createNextEpisodesList()
         setTestData(shows)
-        setNextEpisodes(episodes)
 
         // When
         interactor(Unit)
@@ -100,7 +87,6 @@ class DiscoverShowsInteractorTest {
                 popularShows = shows,
                 trendingShows = shows,
                 upcomingShows = shows,
-                nextEpisodes = episodes.mapNotNull { it.toUpNextEpisode() },
             )
             cancelAndConsumeRemainingEvents()
         }
@@ -113,33 +99,6 @@ class DiscoverShowsInteractorTest {
         trendingShowsRepository.setTrendingShows(shows)
         upcomingShowsRepository.setUpcomingShows(shows)
         genreRepository.setGenreResult(emptyList())
-    }
-
-    private fun setNextEpisodes(episodes: List<NextEpisodeWithShow>) {
-        upNextRepository.setNextEpisodesForWatchlist(episodes)
-    }
-
-    private fun createNextEpisodesList(size: Int = 5) = List(size) { index ->
-        NextEpisodeWithShow(
-            showTraktId = 84958L + index,
-            showTmdbId = 84958L + index,
-            showName = "Test Show $index",
-            showPoster = "/test-poster-$index.jpg",
-            showStatus = "Ended",
-            showYear = "2024",
-            episodeId = 1000L + index,
-            episodeName = "Test Episode $index",
-            seasonNumber = 1L,
-            episodeNumber = index.toLong() + 1,
-            runtime = 45L,
-            stillPath = "/test-still-$index.jpg",
-            overview = "Test episode overview $index",
-            seasonId = 1234,
-            seasonCount = 2,
-            episodeCount = 12,
-            watchedCount = 0,
-            totalCount = 10,
-        )
     }
 
     private fun createTestShows() = List(3) {
