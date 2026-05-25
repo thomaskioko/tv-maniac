@@ -4,14 +4,14 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
-import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.myshows.presenter.ChangeListStyleClicked
 import com.thomaskioko.tvmaniac.myshows.presenter.FakeMyShowsPresenterBuilder
-import com.thomaskioko.tvmaniac.myshows.presenter.ToggleSearchActive
 import com.thomaskioko.tvmaniac.myshows.presenter.MyShowsPresenter
 import com.thomaskioko.tvmaniac.myshows.presenter.MyShowsQueryChanged
 import com.thomaskioko.tvmaniac.myshows.presenter.MyShowsState
+import com.thomaskioko.tvmaniac.myshows.presenter.ToggleSearchActive
 import com.thomaskioko.tvmaniac.myshows.presenter.model.EpisodeBadge
+import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher

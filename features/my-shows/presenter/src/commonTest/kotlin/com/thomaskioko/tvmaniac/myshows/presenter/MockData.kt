@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.myshows.presenter
 
-import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
-import com.thomaskioko.tvmaniac.myshows.presenter.model.NextEpisodeItem
 import com.thomaskioko.tvmaniac.myshows.presenter.model.MyShowsItem
+import com.thomaskioko.tvmaniac.myshows.presenter.model.NextEpisodeItem
+import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import kotlinx.collections.immutable.toPersistentList
 
 val cachedNextEpisodes = mutableListOf(

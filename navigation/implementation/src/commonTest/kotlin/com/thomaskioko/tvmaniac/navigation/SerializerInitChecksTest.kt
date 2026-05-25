@@ -2,8 +2,8 @@ package com.thomaskioko.tvmaniac.navigation
 
 import com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot
 import com.thomaskioko.tvmaniac.library.nav.LibraryRoot
-import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.myshows.nav.MyShowsRoot
+import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.string.shouldContain
 import kotlin.test.Test

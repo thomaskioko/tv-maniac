@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.myshows.presenter
 
 import com.thomaskioko.tvmaniac.core.view.UiMessage
-import com.thomaskioko.tvmaniac.myshows.presenter.model.UpNextEpisodeItem
 import com.thomaskioko.tvmaniac.myshows.presenter.model.MyShowsItem
+import com.thomaskioko.tvmaniac.myshows.presenter.model.UpNextEpisodeItem
 import com.thomaskioko.tvmaniac.watchlistprefs.api.model.WatchlistSortOption
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet

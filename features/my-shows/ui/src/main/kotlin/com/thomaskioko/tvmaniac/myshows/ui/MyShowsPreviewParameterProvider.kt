@@ -4,8 +4,8 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.myshows.presenter.MyShowsState
 import com.thomaskioko.tvmaniac.myshows.presenter.model.EpisodeBadge
-import com.thomaskioko.tvmaniac.myshows.presenter.model.UpNextEpisodeItem
 import com.thomaskioko.tvmaniac.myshows.presenter.model.MyShowsItem
+import com.thomaskioko.tvmaniac.myshows.presenter.model.UpNextEpisodeItem
 import kotlinx.collections.immutable.toPersistentList
 
 internal val myShowsItems = List(3) { index ->

@@ -13,6 +13,7 @@ import com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot
 import com.thomaskioko.tvmaniac.domain.user.ObserveUserProfileInteractor
 import com.thomaskioko.tvmaniac.home.nav.HomeRoute
 import com.thomaskioko.tvmaniac.library.nav.LibraryRoot
+import com.thomaskioko.tvmaniac.myshows.nav.MyShowsRoot
 import com.thomaskioko.tvmaniac.navigation.BaseRoute
 import com.thomaskioko.tvmaniac.navigation.MultiStackHostState
 import com.thomaskioko.tvmaniac.navigation.NavDestination
@@ -22,7 +23,6 @@ import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.RootChild
 import com.thomaskioko.tvmaniac.profile.nav.ProfileRoot
 import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
-import com.thomaskioko.tvmaniac.myshows.nav.MyShowsRoot
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
 import kotlinx.coroutines.flow.SharingStarted

@@ -39,6 +39,7 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_discover
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_profile
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_progress
 import com.thomaskioko.tvmaniac.i18n.resolve
+import com.thomaskioko.tvmaniac.myshows.nav.MyShowsRoot
 import com.thomaskioko.tvmaniac.navigation.BaseRoute
 import com.thomaskioko.tvmaniac.navigation.NavRoot
 import com.thomaskioko.tvmaniac.navigation.RootChild
@@ -49,7 +50,6 @@ import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.profile.nav.ProfileRoot
 import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
-import com.thomaskioko.tvmaniac.myshows.nav.MyShowsRoot
 import io.github.thomaskioko.codegen.annotations.ScreenUi
 
 @ScreenUi(presenter = HomePresenter::class, parentScope = ActivityScope::class)

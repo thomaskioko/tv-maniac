@@ -21,6 +21,8 @@ import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
 import com.thomaskioko.tvmaniac.featureflags.flags.ContinueWatchingNitroFlagQualifier
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
+import com.thomaskioko.tvmaniac.myshows.nav.MyShowsRoot
+import com.thomaskioko.tvmaniac.myshows.presenter.model.MyShowsItem
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
@@ -29,8 +31,6 @@ import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
-import com.thomaskioko.tvmaniac.myshows.nav.MyShowsRoot
-import com.thomaskioko.tvmaniac.myshows.presenter.model.MyShowsItem
 import com.thomaskioko.tvmaniac.watchlistprefs.api.WatchlistPrefsRepository
 import com.thomaskioko.tvmaniac.watchlistprefs.api.model.WatchlistSortOption
 import dev.zacsweers.metro.Inject

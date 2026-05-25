@@ -4,11 +4,11 @@ import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.core.view.UiMessage
-import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
-import com.thomaskioko.tvmaniac.myshows.ui.MyShowsScreen
-import com.thomaskioko.tvmaniac.myshows.ui.watchNextEpisodes
-import com.thomaskioko.tvmaniac.myshows.ui.myShowsItems
 import com.thomaskioko.tvmaniac.myshows.presenter.MyShowsState
+import com.thomaskioko.tvmaniac.myshows.ui.MyShowsScreen
+import com.thomaskioko.tvmaniac.myshows.ui.myShowsItems
+import com.thomaskioko.tvmaniac.myshows.ui.watchNextEpisodes
+import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import kotlinx.collections.immutable.persistentListOf
 import org.junit.Rule
 import org.junit.Test

@@ -8,11 +8,11 @@ import com.thomaskioko.tvmaniac.domain.continuewatching.model.UpNextSections
 import com.thomaskioko.tvmaniac.domain.continuewatching.model.WatchlistSections
 import com.thomaskioko.tvmaniac.domain.continuewatching.model.WatchlistShowInfo
 import com.thomaskioko.tvmaniac.myshows.presenter.model.EpisodeBadge
+import com.thomaskioko.tvmaniac.myshows.presenter.model.MyShowsItem
 import com.thomaskioko.tvmaniac.myshows.presenter.model.NextEpisodeItem
 import com.thomaskioko.tvmaniac.myshows.presenter.model.SectionedEpisodes
 import com.thomaskioko.tvmaniac.myshows.presenter.model.SectionedItems
 import com.thomaskioko.tvmaniac.myshows.presenter.model.UpNextEpisodeItem
-import com.thomaskioko.tvmaniac.myshows.presenter.model.MyShowsItem
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toImmutableList

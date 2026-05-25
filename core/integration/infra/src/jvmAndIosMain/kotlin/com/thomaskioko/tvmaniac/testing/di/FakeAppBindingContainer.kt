@@ -17,6 +17,7 @@ import com.thomaskioko.tvmaniac.domain.library.LibrarySyncWorker
 import com.thomaskioko.tvmaniac.domain.notifications.EpisodeNotificationWorker
 import com.thomaskioko.tvmaniac.genreshows.nav.GenreShowsRoute
 import com.thomaskioko.tvmaniac.library.nav.LibraryRoot
+import com.thomaskioko.tvmaniac.myshows.nav.MyShowsRoot
 import com.thomaskioko.tvmaniac.navigation.BaseRouteSerializer
 import com.thomaskioko.tvmaniac.navigation.DefaultBaseRouteSerializer
 import com.thomaskioko.tvmaniac.navigation.DefaultNavRootSerializer
@@ -38,7 +39,6 @@ import com.thomaskioko.tvmaniac.profile.nav.ProfileRoot
 import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
 import com.thomaskioko.tvmaniac.traktauth.implementation.TokenRefreshWorker
 import com.thomaskioko.tvmaniac.util.api.AppUtils
-import com.thomaskioko.tvmaniac.myshows.nav.MyShowsRoot
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
